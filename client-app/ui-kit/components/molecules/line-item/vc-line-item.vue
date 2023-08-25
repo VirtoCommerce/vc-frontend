@@ -39,7 +39,7 @@
         </div>
 
         <div class="vc-line-item__properties">
-          <VcProperty v-for="property in properties" :key="property.name" :label="property.label">
+          <VcProperty v-for="property in properties" :key="property.name" :label="property.label!">
             {{ property.value }}
           </VcProperty>
 

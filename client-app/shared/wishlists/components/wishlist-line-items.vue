@@ -16,8 +16,8 @@
           :max-quantity="item.maxQuantity"
           :count-in-cart="item.countInCart"
           :disabled="addToCartDisabled(item)"
-          @update:model-value="changeItemQuantity(item.sku, $event)"
-          @update:cart-item-quantity="changeCartItemQuantity(item.sku, $event)"
+          @update:model-value="changeItemQuantity(item, $event)"
+          @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
         />
 
         <VcInStock
@@ -42,13 +42,12 @@
 
 <script setup lang="ts">
 import { ProductType } from "@/core/enums";
-import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
-  (event: "update:cartItem", value: InputNewBulkItemType): void;
-  (event: "update:listItem", value: InputNewBulkItemType): void;
-  (event: "remove:listItem", value: PreparedLineItemType): void;
+  (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;
+  (event: "update:listItem", item: PreparedLineItemType, quantity: number): void;
+  (event: "remove:listItem", item: PreparedLineItemType): void;
 }
 
 interface IProp {
@@ -65,11 +64,11 @@ function addToCartDisabled(item: PreparedLineItemType) {
   );
 }
 
-function changeCartItemQuantity(sku: string, quantity: number): void {
-  emit("update:cartItem", { productSku: sku, quantity });
+function changeCartItemQuantity(item: PreparedLineItemType, quantity: number): void {
+  emit("update:cartItem", item, quantity);
 }
 
-function changeItemQuantity(sku: string, quantity: number): void {
-  emit("update:listItem", { productSku: sku, quantity });
+function changeItemQuantity(item: PreparedLineItemType, quantity: number): void {
+  emit("update:listItem", item, quantity);
 }
 </script>

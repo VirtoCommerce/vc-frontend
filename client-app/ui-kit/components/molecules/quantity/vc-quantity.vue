@@ -10,7 +10,6 @@
     :error="error"
     size="sm"
     type="number"
-    pattern="\d*"
     center
     truncate
     @keydown="onKeydown"

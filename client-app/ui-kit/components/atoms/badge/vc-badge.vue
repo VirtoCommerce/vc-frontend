@@ -13,9 +13,9 @@
 
 <script setup lang="ts">
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
+  color?: VcBadgeColorType;
   size?: "xs" | "sm" | "md";
-  variant?: "solid" | "solid-light" | "outline" | "outline-dark";
+  variant?: VcBadgeVariantType;
   truncate?: boolean;
 }
 
@@ -28,7 +28,7 @@ withDefaults(defineProps<IProps>(), {
 
 <style scoped lang="scss">
 .vc-badge {
-  $colors: primary, secondary, success, info, neutral, warning, danger;
+  $colors: primary, secondary, neutral, info, success, warning, danger;
 
   @apply inline-block border rounded-full font-bold text-center;
 

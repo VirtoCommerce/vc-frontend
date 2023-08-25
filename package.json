@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode=development",
     "build:watch": "vite build --mode=development --watch",
     "compress": "yarn build && gulp compress",
-    "type-check": "vue-tsc --noEmit -p tsconfig.json --composite false",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json",
     "lint-staged": "lint-staged",
     "lint": "eslint \"client-app/**/*.{js,ts,vue}\"",
     "lint:fix": "eslint --fix \"client-app/**/*.{js,ts,vue}\"",

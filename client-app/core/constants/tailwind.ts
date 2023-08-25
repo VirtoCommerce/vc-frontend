@@ -8,3 +8,16 @@ export const BREAKPOINTS = {
 } as const;
 
 export type BreakpointsType = keyof typeof BREAKPOINTS;
+
+export const COLORS = {
+  primary: "primary",
+  secondary: "secondary",
+  neutral: "neutral",
+  info: "info",
+  success: "success",
+  warning: "warning",
+  danger: "danger",
+  additional: "additional",
+};
+
+export type ColorsType = keyof typeof COLORS;

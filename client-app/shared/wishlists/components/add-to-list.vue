@@ -35,7 +35,7 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   product: Product;
   customClass?: string;
-  tooltipPlacement?: string;
+  tooltipPlacement?: VcTooltipPlacement;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

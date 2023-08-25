@@ -1,75 +1,76 @@
 {
-    "content": [
+  "content": [
+    {
+      "background": "bg-gray-100",
+      "hidden": true,
+      "id": "loginh27b",
+      "type": "login"
+    },
+    {
+      "background": "bg-gray-100",
+      "id": "slider2e19",
+      "slides": [
         {
-            "background": "bg-gray-100",
-            "hidden": true,
-            "id": "loginh27b",
-            "type": "login"
+          "image": "/static/images/home/slide-1.webp",
+          "text": "",
+          "title": ""
         },
         {
-            "background": "bg-gray-100",
-            "id": "slider2e19",
-            "slides": [
-                {
-                    "image": "/static/images/home/slide-1.webp",
-                    "text": "",
-                    "title": ""
-                },
-                {
-                    "image": "/static/images/home/slide-2.webp",
-                    "text": "",
-                    "title": ""
-                }
-            ],
-            "subtitle": "",
-            "title": "",
-            "type": "slider"
-        },
-        {
-            "background": null,
-            "count": null,
-            "id": "productsREO0",
-            "query": null,
-            "subtitle": "",
-            "title": "Daily Deals",
-            "type": "products"
-        },
-        {
-            "background": "bg-gray-100",
-            "columns": [
-                {
-                    "image": "/static/images/home/hexa-1.webp",
-                    "text": null,
-                    "title": "Corporate account management"
-                },
-                {
-                    "image": "/static/images/home/hexa-2.webp",
-                    "text": null,
-                    "title": "Quote management and price negotiation"
-                },
-                {
-                    "image": "/static/images/home/hexa-3.webp",
-                    "text": null,
-                    "title": "Multiple stores, channels, and locations"
-                },
-                {
-                    "image": "/static/images/home/hexa-4.webp",
-                    "text": null,
-                    "title": "B2B customization and price management"
-                }
-            ],
-            "columnsCount": "4",
-            "id": "featurese7PU",
-            "subtitle": null,
-            "title": "Commercial management has never been that easy",
-            "type": "features"
+          "image": "/static/images/home/slide-2.webp",
+          "text": "",
+          "title": ""
         }
-    ],
-    "settings": {
-        "header": null,
-        "hideBreadcrumbs": true,
-        "name": "Home",
-        "permalink": "/",
-        "type": "settings"
+      ],
+      "subtitle": "",
+      "title": "",
+      "type": "slider",
+      "height": "small"
+    },
+    {
+      "background": null,
+      "count": null,
+      "id": "productsREO0",
+      "query": null,
+      "subtitle": "",
+      "title": "Daily Deals",
+      "type": "products"
+    },
+    {
+      "background": "bg-gray-100",
+      "columns": [
+        {
+          "image": "/static/images/home/hexa-1.webp",
+          "text": null,
+          "title": "Corporate account management"
+        },
+        {
+          "image": "/static/images/home/hexa-2.webp",
+          "text": null,
+          "title": "Quote management and price negotiation"
+        },
+        {
+          "image": "/static/images/home/hexa-3.webp",
+          "text": null,
+          "title": "Multiple stores, channels, and locations"
+        },
+        {
+          "image": "/static/images/home/hexa-4.webp",
+          "text": null,
+          "title": "B2B customization and price management"
+        }
+      ],
+      "columnsCount": "4",
+      "id": "featurese7PU",
+      "subtitle": null,
+      "title": "Commercial management has never been that easy",
+      "type": "features"
     }
+  ],
+  "settings": {
+    "header": null,
+    "hideBreadcrumbs": true,
+    "name": "Home",
+    "permalink": "/",
+    "type": "settings"
+  }
 }
