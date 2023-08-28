@@ -91,7 +91,7 @@
       "date": "Date",
       "created_date": "Created date",
       "sort_by": "Sort by:",
-      "sku": "Item #",
+      "sku": "SKU",
       "item": "Item",
       "true_property": "Yes",
       "false_property": "No",
@@ -114,7 +114,9 @@
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
-      "ends_to": "End: {0}"
+      "ends_to": "End: {0}",
+      "product_name": "Product name",
+      "cart": "Cart"
     },
     "prefixes": {
       "please": "Please"
@@ -523,7 +525,7 @@
           "product_email_title": "Please have a look on the product: {0}"
         },
         "product_variation_card": {
-          "variation_sku_label": "@:common.labels.sku",
+          "variation_sku_label": "Item #",
           "price_label": "@:common.labels.product_price",
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
         }
