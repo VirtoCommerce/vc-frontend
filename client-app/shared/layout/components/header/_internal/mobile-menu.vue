@@ -162,7 +162,7 @@
                   v-t="'shared.layout.header.link_logout'"
                   type="button"
                   class="font-bold text-[color:var(--color-primary)]"
-                  @click="signOut"
+                  @click="() => signMeOut()"
                 />
               </div>
             </div>
@@ -275,11 +275,6 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
         icon: "/static/images/dashboard/icons/dashboard.svg#main",
       },
 );
-
-async function signOut() {
-  await signMeOut();
-  location.href = "/";
-}
 
 onMounted(() => {
   goMainMenu();

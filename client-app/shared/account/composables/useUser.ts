@@ -15,7 +15,7 @@ import {
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { pageReloadEvent, useBroadcast, userReloadEvent } from "@/shared/broadcast";
+import { TabsType, pageReloadEvent, useBroadcast, userBlockedEvent, userReloadEvent } from "@/shared/broadcast";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -41,9 +41,6 @@ const user = ref<UserType>();
 
 const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
-const isPasswordNeedToBeChanged = computed<boolean>(
-  () => !!user.value?.forcePasswordChange || !!user.value?.passwordExpired,
-);
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
@@ -72,12 +69,17 @@ export default function useUser() {
       if (withBroadcast) {
         broadcast.emit(userReloadEvent);
       }
-      if (isPasswordNeedToBeChanged.value) {
-        const { hash, pathname, search } = location;
 
-        if (pathname !== "/change-password") {
-          location.href = `/change-password?returnUrl=${pathname + search + hash}`;
-        }
+      const { hash, pathname, search } = location;
+
+      if ((user.value?.forcePasswordChange || user.value?.passwordExpired) && pathname !== "/change-password") {
+        location.href = `/change-password?returnUrl=${pathname + search + hash}`;
+      }
+
+      if (user.value?.lockedState) {
+        await signMeOut({ reloadPage: false });
+
+        broadcast.emit(userBlockedEvent, undefined, TabsType.ALL);
       }
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
@@ -197,11 +199,13 @@ export default function useUser() {
     }
   }
 
-  async function signMeOut(): Promise<void> {
+  async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
     try {
       loading.value = true;
       await innerFetch("/storefrontapi/account/logout");
-      broadcast.emit(pageReloadEvent);
+      if (options.reloadPage) {
+        broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
+      }
     } catch (e) {
       Logger.error(`${useUser.name}.${signMeOut.name}`, e);
       throw e;
@@ -313,7 +317,6 @@ export default function useUser() {
     registerByInvite,
     changePassword,
     sendVerifyEmail,
-    isPasswordNeedToBeChanged,
     loading: readonly(loading),
     user: computed({
       get() {

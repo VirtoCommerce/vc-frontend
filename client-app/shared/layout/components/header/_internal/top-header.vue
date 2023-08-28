@@ -83,7 +83,7 @@
                 color="neutral"
                 size="xs"
                 icon
-                @click="signOut"
+                @click="() => signMeOut()"
               >
                 <VcIcon name="logout" />
               </VcButton>
@@ -124,11 +124,6 @@ import TopHeaderLink from "./top-header-link.vue";
 const { isAuthenticated, user, operator, signMeOut } = useUser();
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
-
-async function signOut() {
-  await signMeOut();
-  location.href = "/";
-}
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;

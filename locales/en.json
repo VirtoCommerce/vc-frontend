@@ -159,7 +159,8 @@
       "role_update_successfull": "The customer role has been updated successfully.",
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values.",
-      "password_new_same_old": "Your current password and new password must be different."
+      "password_new_same_old": "Your current password and new password must be different.",
+      "blocked": "You have been blocked. You can not reach any information or create the order. For more details please "
     },
     "placeholders": {
       "enter_value": "Please enter a value",
@@ -195,7 +196,8 @@
       "cart": "Cart",
       "company_info": "Company Info",
       "company_members": "Company Members",
-      "quote_requests": "Quote Requests"
+      "quote_requests": "Quote Requests",
+      "contact_administrator": "contact the site administrator"
     },
     "titles": {
       "all_actions": "All actions",
@@ -363,11 +365,11 @@
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "email_or_password_incorrect_alert": "The <strong>email</strong>&nbsp;or <strong>password</strong>&nbsp;you provided is invalid",
-        "user_is_locked_out_alert": "Your account is locked. Please contact the site administrator"
+        "email_or_password_incorrect_alert": "The email or password you provided is invalid",
+        "user_is_locked_out_alert": "@:common.messages.blocked"
       },
       "forgot_password_form": {
-        "error_alert": "Invalid result of the reset password request. Please contact the administrator if this issue persists."
+        "error_alert": "Invalid result of the reset password request. Please "
       },
       "checkout_default_success_dialog": {
         "title": "Checkout Defaults",
@@ -647,8 +649,7 @@
         }
       },
       "manual": {
-        "text": "The payment method you selected does not support online payment. Please select another method or",
-        "link": "contact the website administrator"
+        "text": "The payment method you selected does not support online payment. Please select another method or "
       },
       "redirection": {
         "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
@@ -1281,6 +1282,13 @@
       },
       "title": "Registration completed",
       "description": "Thank you for showing your interest in registering with us. We kindly ask you to check your mailbox to verify the email address you’ve entered."
+    },
+    "blocked": {
+      "meta": {
+        "title": "Blocked"
+      },
+      "title": "Your account is blocked",
+      "message": "@:common.messages.blocked"
     }
   },
   "identity_error": {

@@ -11,6 +11,7 @@ query GetMe($after: String, $first: Int, $sort: String) {
     isAdministrator
     passwordExpired
     forcePasswordChange
+    lockedState
     contact {
       firstName
       lastName
