@@ -337,8 +337,11 @@ export default function useCheckout() {
         addressType: AddressType.BillingAndShipping,
       });
     }
-
-    if (billingAddress && !billingAddressEqualsShipping.value && !isExistAddress(billingAddress)) {
+    if (
+      billingAddress &&
+      !isExistAddress(billingAddress) &&
+      (!shippingAddress || !isEqualAddresses(shippingAddress, billingAddress))
+    ) {
       newAddresses.push({
         ...billingAddress,
         isDefault: false,
