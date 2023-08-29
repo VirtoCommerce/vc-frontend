@@ -274,8 +274,8 @@ function print() {
 
   printWindow.onload = () => {
     setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
+      //printWindow.print();
+      //printWindow.close();
     }, 500);
   };
 

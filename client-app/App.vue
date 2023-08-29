@@ -22,8 +22,10 @@ import { useNavigations, usePagesWithFullCartLoad } from "@/core/composables";
 import { useCart } from "@/shared/cart";
 import { NotificationsHost } from "@/shared/notification";
 import { PopupHost } from "@/shared/popup";
-import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
+import { getLayout } from "./core/utilities";
+import { MainLayout, SecureLayout, PrintLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
+import type { Layout } from "vue-router";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
 const _props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });
@@ -36,12 +38,13 @@ const { pagesWithFullCartLoad, registerPagesWithFullCartLoad } = usePagesWithFul
 const { fetchMenus } = useNavigations();
 const { fetchShortCart } = useCart();
 
-const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
+const layouts: Record<NonNullable<Layout>, Component> = {
   Main: markRaw(MainLayout),
   Secure: markRaw(SecureLayout),
+  Print: markRaw(PrintLayout),
 };
 
-const layout = computedEager(() => layouts[route.meta?.layout ?? "Main"]);
+const layout = computedEager(() => layouts[getLayout(route)]);
 
 router.beforeEach((to) => {
   // Hiding the drop-down list of search results

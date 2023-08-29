@@ -4,7 +4,7 @@ import type { App, Plugin } from "vue";
 
 export const configPlugin: Plugin<IThemeConfigPreset> = {
   install: (app: App, options: IThemeConfigPreset) => {
-    app.config.globalProperties.$cfg = options;
+    app.config.globalProperties.$cfg = app.config.globalProperties.$config = options;
     app.provide(configInjectionKey, options);
 
     // Set CSS variables to use as TailwindCSS arbitrary values: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values

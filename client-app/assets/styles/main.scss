@@ -8,9 +8,19 @@
 @layer base {
   body {
     @apply text-[--color-body-text];
+  }
 
-    @media print {
-      @apply min-w-[1024px] w-full;
+  @media print {
+    html {
+      @apply h-full min-h-screen;
+    }
+
+    body {
+      @apply min-w-[1024px] max-w-[1024px] w-full h-full min-h-screen mx-auto;
+
+      #app {
+        @apply h-full min-h-screen;
+      }
 
       zoom: 0.7;
 

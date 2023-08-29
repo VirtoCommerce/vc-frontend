@@ -124,19 +124,15 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { sumBy } from "lodash";
-import moment from "moment";
-import { computed, inject, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { configInjectionKey } from "@/core/injection-keys";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
-import type { InputNewBulkItemType, OrderLineItemType } from "@/core/api/graphql/types";
-import type { LineItemsGroupByVendorType } from "@/core/types/line-items";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   orderId: string;
@@ -144,7 +140,6 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const config = inject(configInjectionKey, {});
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const {
   order,
@@ -200,175 +195,13 @@ async function reorderItems() {
   loadingAddItemsToCart.value = false;
 }
 
-// TODO: Might be better to move somewhere else? Similar functionality in the checkout on the review step
-function getGroupContent(group: LineItemsGroupByVendorType<OrderLineItemType>) {
-  let vendorContent = "";
-
-  vendorContent += `
-    <div class="space-y-3">
-      <div class="vc-vendor">
-        <svg class="vc-icon vc-icon--size--sm vc-vendor__icon">
-          <use href="/static/icons/basic/vendor.svg#icon" />
-        </svg>
-
-        <span class="vc-vendor__title">
-          ${t("common.labels.vendor")}:
-
-          <span class="${group.vendor?.name || "text-gray-400"}">
-            ${group.vendor?.name || t("common.labels.not_available")}
-          </span>
-        </span>
-      </div>
-
-
-      <div class="overflow-hidden border border-[--color-neutral-100] rounded">
-        <table class="w-full border-collapse text-xs">
-          <thead class="bg-[--color-neutral-50] font-bold text-left">
-            <th class="px-2.5 py-2 w-1/2">
-              ${t("common.labels.product_name")}
-            </th>
-            <th class="px-2.5 py-2 w-1/6">
-              ${t("common.labels.sku")}
-            </th>
-            <th class="px-2.5 py-2 w-1/6">
-              ${t("common.labels.price_per_item")}
-            </th>
-            <th class="px-2.5 py-2 w-1/6">
-              ${t("common.labels.quantity")}
-            </th>
-            <th class="px-2.5 py-2 w-2/6">
-              ${t("common.labels.total")}
-            </th>
-          </thead>
-
-          ${getTableRowsHtml(group.items)}
-          <tr class="bg-[--color-additional-50] border-[--color-neutral-100] border-t">
-            <td class="px-2.5 py-2 font-bold">${t("common.labels.subtotal")}</td>
-            <td class="px-2.5 py-2"></td>
-            <td class="px-2.5 py-2"></td>
-            <td class="px-2.5 py-2"></td>
-            <td class="px-2.5 py-2 font-bold">
-              ${n(
-                sumBy(group.items, (item: OrderLineItemType) => item.extendedPrice?.amount),
-                "currency",
-              )}
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-    `;
-
-  return vendorContent;
-}
-
-function getTableRowsHtml(items: OrderLineItemType[]) {
-  let rows = "";
-
-  items.forEach((item) => {
-    rows += `
-    <tr class="even:bg-[--color-neutral-50]">
-      <td class="px-2.5 py-2">${item.name}</td>
-      <td class="px-2.5 py-2">${item.sku}</td>
-      <td class="px-2.5 py-2">${item.placedPrice?.formattedAmount}</td>
-      <td class="px-2.5 py-2">${item.quantity}</td>
-      <td class="px-2.5 py-2">${item.extendedPrice?.formattedAmount}</td>
-    </tr>`;
-  });
-
-  return rows;
-}
-
 function print() {
-  const logo = config?.logo_image;
-  const htmlStyle = document.documentElement.attributes.getNamedItem("style")?.textContent;
-  const styleLinks = Array.from(document.head.querySelectorAll("link[rel=stylesheet], style"))
-    .map((el) => el.outerHTML)
-    .join("");
-
-  const headerHtml = `
-  <header class="flex justify-between items-start">
-    <img class="h-7" src="${logo}" alt="">
-
-    <div class="p-2 border border-[--color-neutral-100] rounded text-xs">
-      <div class="font-black">${t("common.labels.created_date")}</div>
-      <div class="mt-1">${moment().format("DD MMMM YYYY")}</div>
-    </div>
-  </header>`;
-
-  let contentHtml = "";
-
-  if (config.line_items_group_by_vendor_enabled) {
-    orderItemsGroupedByVendor.value.forEach((group) => {
-      contentHtml += `
-      <div class="space-y-6">
-        ${getGroupContent(group)}
-      </div>`;
-    });
-  } else {
-    contentHtml += `
-    <div class="overflow-hidden border border-[--color-neutral-100] rounded">
-      <table class="w-full border-collapse text-xs">
-        <thead class="bg-[--color-neutral-50] font-bold text-left">
-          <th class="px-2.5 py-2 w-1/2">
-            ${t("common.labels.product_name")}
-          </th>
-          <th class="px-2.5 py-2 w-1/6">
-            ${t("common.labels.sku")}
-          </th>
-          <th class="px-2.5 py-2 w-1/6">
-            ${t("common.labels.price_per_item")}
-          </th>
-          <th class="px-2.5 py-2 w-1/6">
-            ${t("common.labels.quantity")}
-          </th>
-          <th class="px-2.5 py-2 w-2/6">
-            ${t("common.labels.total")}
-          </th>
-        </thead>
-
-        ${getTableRowsHtml(orderItems.value)}
-        <tr class="bg-[--color-additional-50] border-[--color-neutral-100] border-t">
-          <td class="px-2.5 py-2 font-bold">${t("common.labels.subtotal")}</td>
-          <td class="px-2.5 py-2"></td>
-          <td class="px-2.5 py-2"></td>
-          <td class="px-2.5 py-2"></td>
-          <td class="px-2.5 py-2 font-bold">
-            ${n(
-              sumBy(orderItems.value, (item: OrderLineItemType) => item.extendedPrice?.amount),
-              "currency",
-            )}
-          </td>
-        </tr>
-      </table>
-    </div>`;
-  }
-
-  const printWindow = window.open("", "print")!;
-
-  printWindow.document.write(`
-  <html style="${htmlStyle}">
-    <head>${styleLinks}</head>
-    <body class="font-lato">
-      <div class="flex flex-col mx-auto h-full min-h-screen w-full max-w-[1024px] p-6 print:p-0">
-        ${headerHtml}
-
-        <div class="grow mt-6 px-4 space-y-4">
-          <h2 class="text-xl font-bold uppercase">
-            ${t("pages.account.order_details.title", [order?.value?.number])}
-          </h2>
-
-          ${contentHtml}
-        </div>
-      </div>
-    </body>
-  </html>`);
+  const printWindow = window.open(location.href + "/print", "print")!;
 
   printWindow.onload = () => {
     setTimeout(() => {
-      // TODO: uncomment before merge
-      // printWindow.print();
-      // printWindow.close();
+      printWindow.print();
+      printWindow.close();
     }, 500);
   };
 

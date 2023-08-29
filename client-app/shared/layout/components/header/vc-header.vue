@@ -8,8 +8,13 @@
     <BottomHeader class="sticky top-0 z-20 shadow-md print:hidden" />
   </template>
 
-  <div class="mx-auto hidden w-full max-w-screen-2xl print:block">
+  <div class="hidden items-start justify-between print:flex">
     <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-[3rem]" />
+
+    <div class="rounded border border-[--color-neutral-100] p-2 text-xs">
+      <div class="font-black">{{ $t("common.labels.created_date") }}</div>
+      <div class="mt-1">{{ $d(new Date()) }}</div>
+    </div>
   </div>
 </template>
 

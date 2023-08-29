@@ -7,6 +7,7 @@ const Profile = () => import("@/pages/account/profile.vue");
 const Addresses = () => import("@/pages/account/addresses.vue");
 const Orders = () => import("@/pages/account/orders.vue");
 const OrderDetails = () => import("@/pages/account/order-details.vue");
+const OrderPrint = () => import("@/pages/account/order-print.vue");
 const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
@@ -44,6 +45,13 @@ export const accountRoutes: RouteRecordRaw[] = [
             name: "OrderDetails",
             component: OrderDetails,
             props: true,
+          },
+          {
+            path: "print",
+            name: "OrderPrint",
+            component: OrderPrint,
+            props: true,
+            meta: { layout: "Print" },
           },
           {
             path: "payment",

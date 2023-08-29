@@ -1,7 +1,5 @@
 <template>
-  <router-view v-if="isEmptyLayout" />
-
-  <VcContainer v-else>
+  <VcContainer v-if="getLayout($route) === 'Secure'">
     <div class="px-5 lg:px-0">
       <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
         {{ pageTitle }}
@@ -30,6 +28,8 @@
 
     <router-view />
   </VcContainer>
+
+  <router-view v-else />
 </template>
 
 <script setup lang="ts">
@@ -38,6 +38,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead } from "@/core/composables";
+import { getLayout } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
@@ -45,8 +46,6 @@ const route = useRoute();
 const { t } = useI18n();
 const { loading: loadingCart, allItemsAreDigital } = useCart();
 const { loading: loadingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
-
-const stepIDsWithEmptyLayout = ["CheckoutPaymentResult", "CheckoutCompleted"];
 
 const steps = computed<IStepsItem[]>(() => {
   const result: IStepsItem[] = [
@@ -100,7 +99,6 @@ const steps = computed<IStepsItem[]>(() => {
 });
 const currentStepId = computed<string>(() => route.name as string);
 const currentStepIndex = computed<number>(() => steps.value.findIndex((step) => step.id === currentStepId.value));
-const isEmptyLayout = computed<boolean>(() => stepIDsWithEmptyLayout.includes(currentStepId.value));
 const pageTitle = computed<string>(() => steps.value[currentStepIndex.value]?.text ?? "<UNKNOWN__FOR_DEV_MODE>");
 
 usePageHead({

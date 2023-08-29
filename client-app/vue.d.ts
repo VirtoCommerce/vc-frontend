@@ -6,7 +6,9 @@ export {};
 
 declare module "@vue/runtime-core" {
   interface ComponentCustomProperties {
+    /** @deprecated Use $config */
     $cfg: IThemeConfigPreset;
+    $config: IThemeConfigPreset;
     $context: IThemeContext;
     $permissions: { xApi: typeof XApiPermissions; storefront: typeof StorefrontPermissions };
     $can: (...permissions: string[]) => boolean;

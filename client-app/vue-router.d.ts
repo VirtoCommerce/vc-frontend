@@ -8,9 +8,11 @@ export {};
 import "vue-router";
 
 declare module "vue-router" {
+  type Layout = "Main" | "Secure" | "Print";
+
   interface RouteMeta {
     /** The type of layout used for the route. */
-    layout?: "Main" | "Secure";
+    layout?: Layout;
 
     /**
      * Allows anonymous access when the "Allow anonymous users

@@ -2,6 +2,7 @@ export * from "./address";
 export * from "./breadcrumbs";
 export * from "./categories";
 export * from "./common";
+export * from "./layout";
 export * from "./line-items";
 export * from "./logger";
 export * from "./menu";
