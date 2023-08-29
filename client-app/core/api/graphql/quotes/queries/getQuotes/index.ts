@@ -3,7 +3,7 @@ import { graphqlClient } from "../../../client";
 import getQuotesQueryDocument from "./getQuotesQuery.graphql";
 import type { Query, QueryQuotesArgs, QuoteConnection } from "@/core/api/graphql/types";
 
-export default async function getQuotes(payload?: QueryQuotesArgs): Promise<QuoteConnection> {
+export async function getQuotes(payload?: QueryQuotesArgs): Promise<QuoteConnection> {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "quotes">>, QueryQuotesArgs>({

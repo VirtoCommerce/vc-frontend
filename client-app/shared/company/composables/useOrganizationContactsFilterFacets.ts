@@ -12,7 +12,7 @@ import {
 import { ContactStatus } from "@/shared/company";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
-export default function useOrganizationContactsFilterFacets() {
+export function useOrganizationContactsFilterFacets() {
   const { t } = useI18n();
 
   const initialFacets: FacetItemType[] = [

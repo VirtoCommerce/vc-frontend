@@ -15,7 +15,7 @@ const pages = shallowRef<PageType[]>([]);
 const suggestions = shallowRef<{ text: string; label: string }[]>([]);
 const total = ref(0);
 
-export default function useSearchBar() {
+export function useSearchBar() {
   function showSearchDropdown() {
     if (!searchDropdownVisible.value) {
       searchDropdownVisible.value = true;

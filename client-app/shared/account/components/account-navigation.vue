@@ -89,7 +89,7 @@ import { eagerComputed } from "@vueuse/core";
 import { watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useWishlists } from "@/shared/wishlists";
-import useUser from "../composables/useUser";
+import { useUser } from "../composables/useUser";
 import AccountNavigationLink from "./account-navigation-link.vue";
 
 const route = useRoute();

@@ -1,12 +1,12 @@
 import { computed, readonly, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import useCart from "./useCart";
+import { useCart } from "./useCart";
 import type { CouponType } from "@/core/api/graphql/types";
 
 const couponCode = ref("");
 const validationError = ref("");
 
-export default function useCoupon() {
+export function useCoupon() {
   const { t } = useI18n();
   const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useCart();
 

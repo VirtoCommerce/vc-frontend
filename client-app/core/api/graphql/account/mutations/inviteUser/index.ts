@@ -7,7 +7,7 @@ import type {
   MutationsInviteUserArgs,
 } from "@/core/api/graphql/types";
 
-export default async function inviteUser(payload: InputInviteUserType): Promise<CustomIdentityResultType> {
+export async function inviteUser(payload: InputInviteUserType): Promise<CustomIdentityResultType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "inviteUser">>, MutationsInviteUserArgs>({
     mutation: mutationDocument,
     variables: {

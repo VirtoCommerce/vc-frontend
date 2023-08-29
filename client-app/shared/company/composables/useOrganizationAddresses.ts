@@ -16,7 +16,7 @@ const sort = ref<ISortInfo>({
   direction: SORT_DESCENDING,
 });
 
-export default function useOrganizationAddresses(organizationId: MaybeRef<string>) {
+export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   async function fetchAddresses() {
     try {
       loading.value = true;

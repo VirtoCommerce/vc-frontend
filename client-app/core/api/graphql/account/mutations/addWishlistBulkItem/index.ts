@@ -7,7 +7,7 @@ import type {
   InputAddWishlistBulkItemType,
 } from "@/core/api/graphql/types";
 
-export default async function addWishlistBulkItem(payload: InputAddWishlistBulkItemType): Promise<BulkWishlistType> {
+export async function addWishlistBulkItem(payload: InputAddWishlistBulkItemType): Promise<BulkWishlistType> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "addWishlistBulkItem">>,
     MutationsAddWishlistBulkItemArgs

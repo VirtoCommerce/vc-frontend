@@ -22,7 +22,7 @@ import type { ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { MaybeRef } from "@vueuse/core";
 
-export default function useOrganizationContacts(organizationId: MaybeRef<string>) {
+export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const loading = ref(false);
   const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
   const pages = ref(0);

@@ -2,7 +2,7 @@ import { graphqlClient } from "../../../client";
 import mutationDocument from "./deleteWishlistMutation.graphql";
 import type { Mutations, MutationsRemoveWishlistArgs } from "@/core/api/graphql/types";
 
-export default async function deleteWishlist(listId: string): Promise<boolean> {
+export async function deleteWishlist(listId: string): Promise<boolean> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "removeWishlist">>, MutationsRemoveWishlistArgs>(
     {
       mutation: mutationDocument,

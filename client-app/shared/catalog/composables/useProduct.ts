@@ -4,7 +4,7 @@ import { Logger } from "@/core/utilities";
 import type { Product } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
-export default () => {
+export function useProduct() {
   const loading: Ref<boolean> = ref(true);
   const product: Ref<Product | null> = ref(null);
 
@@ -25,4 +25,4 @@ export default () => {
     loading: readonly(loading),
     product: computed(() => product.value),
   };
-};
+}

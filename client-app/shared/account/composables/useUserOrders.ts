@@ -2,7 +2,7 @@ import { computed, readonly, ref, shallowRef } from "vue";
 import { getOrders } from "@/core/api/graphql/orders";
 import { SORT_DESCENDING } from "@/core/constants";
 import { dateToIsoDateString, getSortingExpression, Logger } from "@/core/utilities";
-import useUserOrdersFilter from "./useUserOrdersFilter";
+import { useUserOrdersFilter } from "./useUserOrdersFilter";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { OrdersFilterData } from "@/shared/account";
@@ -10,7 +10,7 @@ import type { Ref } from "vue";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
 
-export default () => {
+export function useUserOrders() {
   const { appliedFilterData } = useUserOrdersFilter();
 
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
@@ -60,7 +60,7 @@ export default () => {
     page,
     keyword,
   };
-};
+}
 
 function getFilterExpression(keyword: string, filterData: OrdersFilterData): string {
   let filterExpression = "";

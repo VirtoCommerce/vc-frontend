@@ -4,7 +4,7 @@ import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import type { InputUpdateOrganizationType } from "@/core/api/graphql/types";
 
-export default function useOrganization() {
+export function useOrganization() {
   const loading = ref(false);
 
   const { fetchUser } = useUser();

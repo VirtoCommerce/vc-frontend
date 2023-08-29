@@ -7,7 +7,7 @@ import type {
   WishlistType,
 } from "@/core/api/graphql/types";
 
-export default async function deleteWishlistItem(payload: InputRemoveWishlistItemType): Promise<WishlistType> {
+export async function deleteWishlistItem(payload: InputRemoveWishlistItemType): Promise<WishlistType> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "removeWishlistItem">>,
     MutationsRemoveWishlistItemArgs

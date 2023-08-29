@@ -8,7 +8,7 @@ import type {
   QueryOrganizationArgs,
 } from "@/core/api/graphql/types";
 
-export default async function getOrganizationAddresses(
+export async function getOrganizationAddresses(
   organizationId: string,
   payload?: OrganizationAddressesArgs,
 ): Promise<MemberAddressConnection> {

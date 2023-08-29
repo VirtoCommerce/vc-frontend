@@ -284,7 +284,7 @@ import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { SORT_DESCENDING } from "@/core/constants";
 import { OrderStatus } from "@/shared/account";
-import useUserOrders from "@/shared/account/composables/useUserOrders";
+import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
