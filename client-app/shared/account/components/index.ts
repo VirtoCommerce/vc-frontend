@@ -8,6 +8,7 @@ export { default as ChangePasswordForm } from "./change-password-form.vue";
 export { default as RegistrationSuccessDialog } from "./registration-success-dialog.vue";
 export { default as CheckoutDefaultsSuccessDialog } from "./checkout-default-success-dialog.vue";
 export { default as ProfileUpdateSuccessDialog } from "./profile-update-success-dialog.vue";
+export { default as Orders } from "./orders.vue";
 export { default as OrdersFilter } from "./orders-filter.vue";
 export { default as OrderStatus } from "./order-status.vue";
 export { default as QuoteStatus } from "./quote-status.vue";
