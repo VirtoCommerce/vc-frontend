@@ -60,8 +60,16 @@ import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
+import { Logger } from "@/core/utilities";
+import { useNotifications } from "@/shared/notification";
 import useCart from "../composables/useCart";
 import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+const notifications = useNotifications();
 
 interface IEmits {
   (event: "update:lineItem", lineItem: LineItemType): void;
@@ -71,9 +79,6 @@ interface IProps {
   product: Product | VariationType;
   reservedSpace?: boolean;
 }
-
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
 
 // Define max qty available to add
 const MAX_VALUE = 999999999;
@@ -162,10 +167,15 @@ async function onChange() {
   }
 
   if (!lineItem) {
-    throw new ReferenceError(`The variable "lineItem" must be defined`);
+    Logger.error(onChange.name, 'The variable "lineItem" must be defined');
+    notifications.error({
+      text: t("common.messages.fail_add_product_to_cart"),
+      duration: 4000,
+      single: true,
+    });
+  } else {
+    emit("update:lineItem", lineItem);
   }
-
-  emit("update:lineItem", lineItem);
 
   loading.value = false;
 }
