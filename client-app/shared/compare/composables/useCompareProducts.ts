@@ -11,7 +11,7 @@ const NAME_MAX_LENGTH = 60;
 
 const productsIds = useLocalStorage<string[]>("productCompareListIds", []);
 
-export default () => {
+export function useCompareProducts() {
   const config = inject(configInjectionKey);
   const notifications = useNotifications();
   const productsLimit = config?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
@@ -82,4 +82,4 @@ export default () => {
     productsLimit,
     productsIds: computed(() => productsIds.value.slice(0, productsLimit)),
   };
-};
+}

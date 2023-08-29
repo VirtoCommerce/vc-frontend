@@ -3,7 +3,7 @@ import { graphqlClient } from "../../../client";
 import getMenusQueryDocument from "./getMenus.graphql";
 import type { MenuLinkListType, Query, QueryMenusArgs } from "@/core/api/graphql/types";
 
-export default async function getMenus(payload?: Partial<QueryMenusArgs>): Promise<MenuLinkListType[]> {
+export async function getMenus(payload?: Partial<QueryMenusArgs>): Promise<MenuLinkListType[]> {
   const { storeId } = globals;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "menus">>, QueryMenusArgs>({

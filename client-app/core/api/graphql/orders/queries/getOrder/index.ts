@@ -17,7 +17,7 @@ export type GetOrderOptionsType = {
   fields?: GetOrderFeldsType;
 };
 
-export default async function getOrder(
+export async function getOrder(
   payload: GetOrderPayloadType,
   options: GetOrderOptionsType = {},
 ): Promise<CustomerOrderType> {

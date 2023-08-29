@@ -3,7 +3,7 @@ import { authorizePayment } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
 import type { MaybeRef } from "@vueuse/core";
 
-export default function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualScriptLoading?: boolean }) {
+export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualScriptLoading?: boolean }) {
   const { scriptURL, manualScriptLoading = false } = options;
 
   const { load: loadAcceptJS } = useScriptTag(scriptURL, noop, {

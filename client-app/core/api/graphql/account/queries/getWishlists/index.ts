@@ -5,7 +5,7 @@ import queryDocument from "./getWishlists.graphql";
 import type { WishlistsSearchParams } from "@/core/api/graphql/account";
 import type { Query, QueryWishlistsArgs, WishlistConnection } from "@/core/api/graphql/types";
 
-export default async function getWishlists({
+export async function getWishlists({
   itemsPerPage = DEFAULT_PAGE_SIZE,
   page = 1,
   sort,

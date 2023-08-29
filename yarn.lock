@@ -8763,6 +8763,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-sort-export-all@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "eslint-plugin-sort-export-all@npm:1.4.1"
+  dependencies:
+    natural-compare: ^1.4.0
+  peerDependencies:
+    eslint: ^4 || ^5 || ^6 || ^7 || ^8
+  checksum: 96851e6feb0d423911e947318d347b0a1543dea4364421421f03948b20f44a0e4ff8fd185a562217e35a0baf8724a63b9653988211ee46b449802c55f55cd33e
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-sort-exports@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "eslint-plugin-sort-exports@npm:0.8.0"
+  peerDependencies:
+    eslint: ">=5.0.0"
+  checksum: f3cf350d36feeae72e0f6fc8ca0121a301db70eeb3cc60b90b8adcf1aa161d9446f67281faea7f2c7da0185c298c79b60a99a35367760fb4e41d7fd792c2ab5c
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-storybook@npm:^0.6.13":
   version: 0.6.13
   resolution: "eslint-plugin-storybook@npm:0.6.13"
@@ -17009,6 +17029,8 @@ __metadata:
     eslint-import-resolver-typescript: ^3.5.5
     eslint-plugin-import: ^2.28.0
     eslint-plugin-sonarjs: ^0.19.0
+    eslint-plugin-sort-export-all: ^1.4.1
+    eslint-plugin-sort-exports: ^0.8.0
     eslint-plugin-storybook: ^0.6.13
     eslint-plugin-tailwindcss: ^3.13.0
     eslint-plugin-vue: ^9.15.1

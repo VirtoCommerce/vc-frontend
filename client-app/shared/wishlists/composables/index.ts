@@ -1,1 +1,1 @@
-export { default as useWishlists } from "./useWishlists";
+export * from "./useWishlists";

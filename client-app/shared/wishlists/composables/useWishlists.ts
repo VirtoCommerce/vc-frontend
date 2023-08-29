@@ -6,7 +6,7 @@ import {
   deleteWishlistItem,
   getWishList,
   getWishlists,
-  updateWishListItems,
+  updateWishlistItems,
   renameWishlist as _renameWishlist,
 } from "@/core/api/graphql/account";
 import { SortDirection } from "@/core/enums";
@@ -26,7 +26,7 @@ const list: Ref<WishlistType | undefined> = ref();
 
 const DEFAULT_WISHLIST_NAME = "My wish list";
 
-export default function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
+export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(name: string): Promise<string | undefined> {
     let newList: WishlistType;
     loading.value = true;
@@ -150,7 +150,7 @@ export default function useWishlists(options: { autoRefetch: boolean } = { autoR
     loading.value = true;
 
     try {
-      await updateWishListItems(payload);
+      await updateWishlistItems(payload);
       await fetchWishList(payload.listId);
     } catch (e) {
       Logger.error(`${useWishlists.name}.${updateItemsInWishlist.name}`, e);

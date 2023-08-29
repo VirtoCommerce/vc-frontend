@@ -60,7 +60,7 @@ import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
-import useCart from "../composables/useCart";
+import { useCart } from "../composables/useCart";
 import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
 
 interface IEmits {

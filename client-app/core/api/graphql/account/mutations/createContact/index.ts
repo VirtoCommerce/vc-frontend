@@ -7,7 +7,7 @@ import type {
   MutationsCreateContactArgs,
 } from "@/core/api/graphql/types";
 
-export default async function createContact(contact: InputCreateContactType): Promise<ContactType> {
+export async function createContact(contact: InputCreateContactType): Promise<ContactType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "createContact">>, MutationsCreateContactArgs>({
     mutation: mutationDocument,
     variables: {

@@ -6,7 +6,7 @@ import type { Ref } from "vue";
 const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
 const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
 
-export default () => {
+export function useUserOrdersFilter() {
   const { d, t } = useI18n();
 
   const isFilterEmpty = computed(() => {
@@ -88,4 +88,4 @@ export default () => {
     resetDataToApplied,
     removeFilterChipsItem,
   };
-};
+}

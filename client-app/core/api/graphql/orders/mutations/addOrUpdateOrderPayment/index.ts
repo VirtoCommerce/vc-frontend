@@ -6,7 +6,7 @@ import type {
   MutationsAddOrUpdateOrderPaymentArgs,
 } from "@/core/api/graphql/types";
 
-export default async function addOrUpdateOrderPayment(payload: InputAddOrUpdateOrderPaymentType): Promise<void> {
+export async function addOrUpdateOrderPayment(payload: InputAddOrUpdateOrderPaymentType): Promise<void> {
   await graphqlClient.mutate<
     Required<Pick<Mutations, "addOrUpdateOrderPayment">>,
     MutationsAddOrUpdateOrderPaymentArgs

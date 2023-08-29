@@ -1,1 +1,1 @@
-export { default as usePopup } from "./usePopup";
+export * from "./usePopup";

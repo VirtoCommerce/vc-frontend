@@ -5,7 +5,7 @@ import type { PasswordOptionsType } from "@/core/types";
 
 const passwordRequirements = ref<PasswordOptionsType>();
 
-export default function usePasswordRequirements() {
+export function usePasswordRequirements() {
   const { innerFetch } = useFetch();
 
   async function fetchPasswordRequirements(): Promise<void> {

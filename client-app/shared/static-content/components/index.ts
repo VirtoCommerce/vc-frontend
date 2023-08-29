@@ -13,7 +13,7 @@ import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
-const templateBlocks: { [key: string]: Component } = {
+export const templateBlocks: { [key: string]: Component } = {
   "call-to-action-with-image": CallToActionWithImage,
   "call-to-action": CallToAction,
   "demo-product-list": DemoProductList,
@@ -28,5 +28,3 @@ const templateBlocks: { [key: string]: Component } = {
   "text-block": TextBlock,
   "title-block": TitleBlock,
 };
-
-export default templateBlocks;

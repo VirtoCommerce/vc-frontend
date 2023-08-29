@@ -6,7 +6,7 @@ import type {
   MutationsUpdateWishListItemsArgs,
 } from "@/core/api/graphql/types";
 
-export default async function updateWishlistItems(payload: InputUpdateWishlistItemsType): Promise<void> {
+export async function updateWishlistItems(payload: InputUpdateWishlistItemsType): Promise<void> {
   await graphqlClient.mutate<Required<Pick<Mutations, "updateWishListItems">>, MutationsUpdateWishListItemsArgs>({
     mutation: mutationDocument,
     variables: {

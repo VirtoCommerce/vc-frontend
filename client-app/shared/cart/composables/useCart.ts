@@ -76,7 +76,7 @@ const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
-export default function useCart() {
+export function useCart() {
   const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { openPopup } = usePopup();

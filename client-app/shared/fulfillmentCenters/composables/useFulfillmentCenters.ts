@@ -3,7 +3,7 @@ import { getFulfillmentCenter, getFulfillmentCenters } from "@/core/api/graphql/
 import { Logger } from "@/core/utilities";
 import type { IFulfillmentCenter } from "../types";
 
-export default () => {
+export function useFulfillmentCenters() {
   const loading = ref(true);
   const fulfillmentCenter = ref<IFulfillmentCenter | null>(null);
   const fulfillmentCenters = ref<IFulfillmentCenter[]>([]);
@@ -70,4 +70,4 @@ export default () => {
     fulfillmentCenter: computed(() => fulfillmentCenter.value),
     fulfillmentCenters: computed(() => fulfillmentCenters.value),
   };
-};
+}

@@ -4,7 +4,7 @@ import type { ClosePopupHandle, IPopup } from "..";
 
 const stack = ref<IPopup[]>([]);
 
-export default function usePopup() {
+export function usePopup() {
   function openPopup(options: IPopup): ClosePopupHandle {
     const id = options.id || _.uniqueId();
 

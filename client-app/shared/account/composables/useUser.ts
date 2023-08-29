@@ -44,7 +44,7 @@ const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organiz
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
-export default function useUser() {
+export function useUser() {
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
 

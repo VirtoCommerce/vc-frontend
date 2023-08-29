@@ -1,2 +1,2 @@
-export { default as useStaticPage } from "./useStaticPage";
-export { default as useTemplate } from "./useTemplate";
+export * from "./useStaticPage";
+export * from "./useTemplate";

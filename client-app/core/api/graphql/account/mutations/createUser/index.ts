@@ -7,7 +7,7 @@ import type {
   MutationsCreateUserArgs,
 } from "@/core/api/graphql/types";
 
-export default async function createUser(user: InputCreateApplicationUserType): Promise<IdentityResultType> {
+export async function createUser(user: InputCreateApplicationUserType): Promise<IdentityResultType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "createUser">>, MutationsCreateUserArgs>({
     mutation: mutationDocument,
     variables: {

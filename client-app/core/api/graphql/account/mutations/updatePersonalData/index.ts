@@ -7,7 +7,7 @@ import type {
   MutationsUpdatePersonalDataArgs,
 } from "@/core/api/graphql/types";
 
-export default async function updatePersonalData(personalData: InputPersonalDataType): Promise<IdentityResultType> {
+export async function updatePersonalData(personalData: InputPersonalDataType): Promise<IdentityResultType> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "updatePersonalData">>,
     MutationsUpdatePersonalDataArgs

@@ -1,2 +1,2 @@
-export { default as getFulfillmentCenter } from "./queries/getFulfillmentCenter";
-export { default as getFulfillmentCenters } from "./queries/getFulfillmentCenters";
+export * from "./queries/getFulfillmentCenter";
+export * from "./queries/getFulfillmentCenters";

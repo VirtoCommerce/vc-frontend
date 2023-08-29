@@ -3,7 +3,7 @@ import { graphqlClient } from "../../../client";
 import mutationDocument from "./sendVerifyEmailMutation.graphql";
 import type { Mutations, MutationsSendVerifyEmailArgs } from "@/core/api/graphql/types";
 
-export default async function sendVerifyEmail(userId: string): Promise<boolean | undefined> {
+export async function sendVerifyEmail(userId: string): Promise<boolean | undefined> {
   const { storeId, cultureName } = globals;
 
   const response = await graphqlClient.mutate<
