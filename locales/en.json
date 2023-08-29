@@ -585,7 +585,7 @@
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
         "select_button": "@:common.buttons.select",
-        "add_address_button": "Add new address",
+        "add_address_button": "@:common.buttons.add_new_address",
         "phone_label": "@:common.labels.phone{':'}",
         "email_label": "@:common.labels.email{':'}",
         "no_addresses_message": "You do not have any addresses yet",
@@ -1041,7 +1041,7 @@
           "default": "Default"
         },
         "buttons": {
-          "add_new_address": "Add new address",
+          "add_new_address": "@:common.buttons.add_new_address",
           "add_new_address_mobile": "Add new"
         }
       },

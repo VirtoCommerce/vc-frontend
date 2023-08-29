@@ -84,7 +84,7 @@ function error(options: INotification) {
   });
 }
 
-export default function useNotifications() {
+export function useNotifications() {
   return {
     info,
     success,

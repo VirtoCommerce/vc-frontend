@@ -3,7 +3,7 @@ import { graphqlClient } from "../../../client";
 import mutationDocument from "./addWishlistMutation.graphql";
 import type { Mutations, MutationsCreateWishlistArgs, WishlistType } from "@/core/api/graphql/types";
 
-export default async function addWishlist(listName?: string): Promise<WishlistType> {
+export async function addWishlist(listName?: string): Promise<WishlistType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "createWishlist">>, MutationsCreateWishlistArgs>(

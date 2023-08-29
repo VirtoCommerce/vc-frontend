@@ -3,7 +3,7 @@ import { getOrders } from "@/core/api/graphql/orders";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { dateToIsoDateString, Logger } from "@/core/utilities";
-import useUserOrdersFilter from "./useUserOrdersFilter";
+import { useUserOrdersFilter } from "./useUserOrdersFilter";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { OrdersFilterData } from "@/shared/account";
 import type { MaybeRef, Ref } from "vue";

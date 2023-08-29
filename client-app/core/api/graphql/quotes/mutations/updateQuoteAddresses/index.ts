@@ -2,7 +2,7 @@ import { graphqlClient } from "../../../client";
 import mutationDocument from "./updateQuoteAddressesMutation.graphql";
 import type { Mutations, MutationsUpdateQuoteAddressesArgs, QuoteType } from "@/core/api/graphql/types";
 
-export default async function removeQuoteItem(payload: MutationsUpdateQuoteAddressesArgs): Promise<QuoteType> {
+export async function updateQuoteAddresses(payload: MutationsUpdateQuoteAddressesArgs): Promise<QuoteType> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "updateQuoteAddresses">>,
     MutationsUpdateQuoteAddressesArgs

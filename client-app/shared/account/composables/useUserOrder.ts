@@ -30,7 +30,7 @@ const payment = computed<PaymentInType | undefined>(() => order.value?.inPayment
 const deliveryAddress = computed<OrderAddressType | undefined>(() => shipment.value?.deliveryAddress);
 const billingAddress = computed<OrderAddressType | undefined>(() => payment.value?.billingAddress);
 
-export default function useUserOrder() {
+export function useUserOrder() {
   async function fetchShortOrder(payload: GetOrderPayloadType) {
     loading.value = true;
 

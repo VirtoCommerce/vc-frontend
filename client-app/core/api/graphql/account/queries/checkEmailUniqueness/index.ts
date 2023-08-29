@@ -2,7 +2,7 @@ import { graphqlClient } from "../../../client";
 import checkEmailUniquenessQueryDocument from "./checkEmailUniquenessQuery.graphql";
 import type { Query, QueryCheckEmailUniquenessArgs } from "@/core/api/graphql/types";
 
-export default async function checkEmailUniqueness(payload: QueryCheckEmailUniquenessArgs): Promise<boolean> {
+export async function checkEmailUniqueness(payload: QueryCheckEmailUniquenessArgs): Promise<boolean> {
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "checkEmailUniqueness">>,
     QueryCheckEmailUniquenessArgs

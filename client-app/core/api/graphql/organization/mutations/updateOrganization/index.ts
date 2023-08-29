@@ -7,7 +7,7 @@ import type {
   Organization,
 } from "@/core/api/graphql/types";
 
-export default async function updateOrganization(payload: InputUpdateOrganizationType): Promise<Organization> {
+export async function updateOrganization(payload: InputUpdateOrganizationType): Promise<Organization> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "updateOrganization">>,
     MutationsUpdateOrganizationArgs

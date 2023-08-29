@@ -4,7 +4,7 @@ import { Logger } from "@/core/utilities";
 import type { RelatedProductsSearchParamsType } from "@/core/api/graphql/catalog";
 import type { Product } from "@/core/api/graphql/types";
 
-export default () => {
+export function useRelatedProducts() {
   const loading = ref(true);
   const relatedProducts = shallowRef<Product[]>([]);
 
@@ -26,4 +26,4 @@ export default () => {
     loading: readonly(loading),
     relatedProducts: computed(() => relatedProducts.value),
   };
-};
+}

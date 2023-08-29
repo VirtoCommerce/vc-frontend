@@ -33,7 +33,7 @@ const placedOrder = shallowRef<CustomerOrderType | null>(null);
 const _comment = ref<string>();
 const _purchaseOrderNumber = ref<string>();
 
-export default function useCheckout() {
+export function useCheckout() {
   const broadcast = useBroadcast();
   const ga = useGoogleAnalytics();
   const notifications = useNotifications();
@@ -337,8 +337,11 @@ export default function useCheckout() {
         addressType: AddressType.BillingAndShipping,
       });
     }
-
-    if (billingAddress && !billingAddressEqualsShipping.value && !isExistAddress(billingAddress)) {
+    if (
+      billingAddress &&
+      !isExistAddress(billingAddress) &&
+      (!shippingAddress || !isEqualAddresses(shippingAddress, billingAddress))
+    ) {
       newAddresses.push({
         ...billingAddress,
         isDefault: false,

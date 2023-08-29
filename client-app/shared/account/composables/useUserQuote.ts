@@ -21,7 +21,7 @@ const shippingAddress = computed<QuoteAddressType | undefined>(
   () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
 );
 
-export default function useUserQuote() {
+export function useUserQuote() {
   function clearQuote(): void {
     quote.value = undefined;
   }

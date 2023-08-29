@@ -11,7 +11,7 @@ import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
-export default (
+export function useProducts(
   options: {
     /** @default false */
     withFacets?: boolean;
@@ -20,7 +20,7 @@ export default (
     /** @default config.zero_price_product_enabled */
     withZeroPrice?: boolean;
   } = {},
-) => {
+) {
   const config = inject(configInjectionKey, {});
   const {
     withFacets = false,
@@ -165,4 +165,4 @@ export default (
     facetsLoading: readonly(facetsLoading),
     products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
   };
-};
+}
