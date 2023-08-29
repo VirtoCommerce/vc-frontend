@@ -1,41 +1,41 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { getOrders } from "@/core/api/graphql/orders";
-import { SORT_DESCENDING } from "@/core/constants";
-import { dateToIsoDateString, getSortingExpression, Logger } from "@/core/utilities";
+import { SortDirection } from "@/core/enums";
+import { Sort } from "@/core/types";
+import { dateToIsoDateString, Logger } from "@/core/utilities";
 import { useUserOrdersFilter } from "./useUserOrdersFilter";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
-import type { ISortInfo } from "@/core/types";
 import type { OrdersFilterData } from "@/shared/account";
-import type { Ref } from "vue";
+import type { MaybeRef, Ref } from "vue";
 
-const DEFAULT_ITEMS_PER_PAGE = 10;
+export const DEFAULT_ORDERS_PER_PAGE = 10;
 
-export function useUserOrders() {
+export interface IUseUserOrdersOptions {
+  itemsPerPage?: MaybeRef<number>;
+}
+
+export function useUserOrders(options: IUseUserOrdersOptions) {
+  const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);
+
   const { appliedFilterData } = useUserOrdersFilter();
 
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
   const loading: Ref<boolean> = ref(false);
-  const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
   const pages: Ref<number> = ref(0);
   const page: Ref<number> = ref(1);
   const keyword: Ref<string> = ref("");
 
   // TODO: refine the sorting logic
-  const sort: Ref<ISortInfo> = ref({
-    column: "createdDate",
-    direction: SORT_DESCENDING,
-  });
+  const sort: Ref<Sort> = ref(new Sort("createdDate", SortDirection.Descending));
 
   async function loadOrders() {
     loading.value = true;
-
-    const sortingExpression = getSortingExpression(sort.value);
 
     const filterExpression = getFilterExpression(keyword.value, appliedFilterData.value);
 
     try {
       const response = await getOrders({
-        sort: sortingExpression,
+        sort: sort.value.toString(),
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
         filter: filterExpression,

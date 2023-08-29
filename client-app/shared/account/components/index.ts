@@ -7,6 +7,7 @@ export { default as ForgotPasswordForm } from "./forgot-password-form.vue";
 export { default as MobileOrdersFilter } from "./mobile-orders-filter.vue";
 export { default as OrderLineItems } from "./order-line-items.vue";
 export { default as OrderStatus } from "./order-status.vue";
+export { default as Orders } from "./orders.vue";
 export { default as OrdersFilter } from "./orders-filter.vue";
 export { default as PageToolbarBlock } from "./page-toolbar-block.vue";
 export { default as PasswordTips } from "./password-tips.vue";
