@@ -361,7 +361,7 @@ watchEffect(async () => {
 .side-space {
   @apply mx-5;
 
-  @media (min-width: theme("screens.lg")) {
+  @screen lg {
     @apply mx-0;
   }
 }

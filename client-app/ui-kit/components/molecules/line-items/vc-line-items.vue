@@ -135,18 +135,18 @@ function removeAllItems() {
 
 <style lang="scss">
 .vc-line-items {
-  @media (min-width: theme("screens.md")) {
+  @screen md {
     @apply border rounded divide-y;
   }
 
   &__head {
     @apply hidden;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
     }
 
-    @media (min-width: theme("screens.2xl")) {
+    @screen 2xl {
       @apply px-3;
     }
   }
@@ -154,11 +154,11 @@ function removeAllItems() {
   &__product {
     @apply flex-none w-[12.75rem];
 
-    @media (min-width: theme("screens.lg")) {
+    @screen lg {
       @apply w-[11.75rem];
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @screen xl {
       @apply w-[16.75rem];
     }
   }
@@ -170,7 +170,7 @@ function removeAllItems() {
   &__price {
     @apply hidden;
 
-    @media (min-width: theme("screens.2xl")) {
+    @screen 2xl {
       @apply flex-none block w-[8.75rem] text-right;
     }
   }
@@ -178,15 +178,15 @@ function removeAllItems() {
   &__slot {
     @apply shrink-0 flex items-center justify-between w-[15.75rem];
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply gap-4;
     }
 
-    @media (min-width: theme("screens.lg")) {
+    @screen lg {
       @apply w-1/3;
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @screen xl {
       @apply w-[15.85rem];
     }
   }
@@ -198,7 +198,7 @@ function removeAllItems() {
   &__body {
     @apply flex flex-col gap-4 md:gap-0 md:divide-y;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply space-y-0 divide-y;
     }
   }
@@ -206,7 +206,7 @@ function removeAllItems() {
   &__foot {
     @apply flex justify-end py-2.5;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply px-3;
     }
 
@@ -219,7 +219,7 @@ function removeAllItems() {
     @apply me-auto;
 
     &--mobile.vc-button {
-      @media (min-width: theme("screens.md")) {
+      @screen md {
         @apply hidden;
       }
     }
@@ -227,7 +227,7 @@ function removeAllItems() {
     &--desktop.vc-button {
       @apply hidden;
 
-      @media (min-width: theme("screens.md")) {
+      @screen md {
         @apply inline-block;
       }
     }

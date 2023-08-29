@@ -22,18 +22,18 @@ withDefaults(defineProps<Prop>(), {
 .vc-line-item-property {
   @apply grid grid-cols-[auto_1fr_auto] gap-1.5 text-13;
 
-  @media (min-width: theme("screens.md")) {
+  @screen md {
     @apply grid-cols-[45%_1fr];
   }
 
-  @media (min-width: theme("screens.lg")) {
+  @screen lg {
     @apply text-xs;
   }
 
   &__label {
     @apply grow min-w-0 font-medium capitalize text-gray-600 truncate;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply font-bold text-gray-800;
     }
   }
@@ -41,7 +41,7 @@ withDefaults(defineProps<Prop>(), {
   &__dots {
     @apply grow mb-1 h-4 border-b-2 border-gray-200 border-dotted;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply hidden;
     }
   }
@@ -49,7 +49,7 @@ withDefaults(defineProps<Prop>(), {
   &__value {
     @apply min-w-0 font-semibold truncate;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply font-normal;
     }
   }

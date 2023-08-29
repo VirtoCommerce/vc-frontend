@@ -93,7 +93,7 @@
     "mobile-left add-to-cart"
     "mobile-left .";
 
-  @media (min-width: theme("screens.sm")) {
+  @screen sm {
     grid-template-columns: 72px 1fr 40%;
     grid-template-areas:
       "img name price"
@@ -102,7 +102,7 @@
       "img buttons add-to-cart";
   }
 
-  @media (min-width: theme("screens.lg")) {
+  @screen lg {
     grid-template-columns: 72px 1fr 126px 207px;
     grid-template-areas:
       "img name price add-to-cart"
@@ -111,7 +111,7 @@
       "img . price add-to-cart";
   }
 
-  @media (min-width: theme("screens.xl")) {
+  @screen xl {
     grid-template-columns: 86px 1fr 31.5% 140px 207px;
     grid-template-areas:
       "img name properties price add-to-cart"

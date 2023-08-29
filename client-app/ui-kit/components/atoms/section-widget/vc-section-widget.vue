@@ -46,7 +46,7 @@ defineProps({
 
   @apply relative bg-[color:var(--color-white)];
 
-  @media (min-width: theme("screens.lg")) {
+  @screen lg {
     @apply border rounded shadow-md-x;
   }
 
@@ -54,7 +54,7 @@ defineProps({
     @apply content-[''] z-[1] absolute top-full w-full h-3
     bg-gradient-to-b from-[#f1f1f1];
 
-    @media (min-width: theme("screens.lg")) {
+    @screen lg {
       @apply content-none;
     }
   }
@@ -62,7 +62,7 @@ defineProps({
   &__title {
     @apply flex items-center gap-3 px-4 pt-6 pb-3;
 
-    @media (min-width: theme("screens.xs")) {
+    @screen xs {
       @apply px-7;
     }
 
@@ -86,11 +86,11 @@ defineProps({
   &__content {
     @apply px-4 pt-3 pb-7;
 
-    @media (min-width: theme("screens.xs")) {
+    @screen xs {
       @apply px-7;
     }
 
-    @media (min-width: theme("screens.lg")) {
+    @screen lg {
       @apply pb-6;
     }
 
@@ -99,7 +99,7 @@ defineProps({
     }
 
     #{$hideDesktopTitle} ~ & {
-      @media (min-width: theme("screens.lg")) {
+      @screen lg {
         @apply pt-6;
       }
     }

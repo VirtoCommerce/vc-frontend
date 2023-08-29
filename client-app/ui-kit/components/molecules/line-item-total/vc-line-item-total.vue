@@ -36,7 +36,7 @@ defineProps<IProps>();
   &__label {
     @apply text-sm font-bold;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       @apply hidden;
     }
   }

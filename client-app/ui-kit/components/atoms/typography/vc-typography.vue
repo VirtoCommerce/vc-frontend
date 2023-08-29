@@ -29,7 +29,7 @@ withDefaults(defineProps<Props>(), {
     &--h1 {
       @apply text-3xl uppercase tracking-wide;
 
-      @media (min-width: theme("screens.lg")) {
+      @screen lg {
         @apply text-4xl;
       }
     }
@@ -54,7 +54,7 @@ withDefaults(defineProps<Props>(), {
     &--large {
       @apply text-lg;
 
-      @media (min-width: theme("screens.lg")) {
+      @screen lg {
         @apply text-xl;
       }
     }

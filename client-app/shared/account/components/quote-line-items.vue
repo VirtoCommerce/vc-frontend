@@ -218,12 +218,12 @@ const subtotal = computed<number>(() =>
 <style scoped lang="scss">
 .vc-quote-line-items {
   &__header {
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       grid-template-columns: 250px 1fr 100px min-content;
       grid-template-areas: "product properties total remove-button";
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @screen xl {
       grid-template-columns: 250px 1fr 120px 88px 100px min-content;
       grid-template-areas: "product properties price quantity total remove-button";
     }
@@ -236,14 +236,14 @@ const subtotal = computed<number>(() =>
       "img quantity total";
     grid-template-columns: 64px auto 1fr;
 
-    @media (min-width: theme("screens.md")) {
+    @screen md {
       grid-template-areas:
         "product props quantity remove-button"
         "product props total remove-button";
       grid-template-columns: 250px 1fr 100px min-content;
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @screen xl {
       grid-template-areas: "product properties price quantity total remove-button";
       grid-template-columns: 250px 1fr 120px 88px 100px min-content;
     }
