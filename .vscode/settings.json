@@ -1,8 +1,10 @@
 {
-  "eslint.packageManager": "yarn",
+  "editor.formatOnSave": true,
   "eslint.useESLintClass": true,
+  "files.associations": {
+    "*.scss": "postcss"
+  },
   "i18n-ally.localesPaths": ["locales"],
   "i18n-ally.keystyle": "nested",
-  "typescript.tsdk": "./node_modules/typescript/lib",
-  "editor.formatOnSave": true
+  "typescript.tsdk": "./node_modules/typescript/lib"
 }
