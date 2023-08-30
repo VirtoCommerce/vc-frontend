@@ -29,7 +29,8 @@ jobs:
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
       SLEEP_TIME: '5m'
-      ARGO_SERVER: argo.govirto.com
+      ARGO_SERVER: argo.govirto.com,
+      APP: ""
 
     steps:
 
@@ -42,13 +43,13 @@ jobs:
       run: |
           if [ ${{ github.ref }} == 'refs/heads/master' ]; then
             echo "IS master branch"
-            echo "::set-output name=APP::vcst-demo"
+            echo "APP=vcst-demo" >> $GITHUB_ENV
           elif [ ${{ github.ref }} == 'refs/heads/dev' ]; then
             echo "IS dev branch"
-            echo "::set-output name=APP::vcst-dev"
+            echo "APP=vcst-dev" >> $GITHUB_ENV
           elif [ ${{ github.ref }} == 'refs/heads/demo' ]; then
             echo "IS demo branch"
-            echo "::set-output name=APP::vcst-demo"
+            echo "APP=vcst-demo" >> $GITHUB_ENV
           fi
 
     - name: Read deployment config
@@ -70,7 +71,7 @@ jobs:
     - name: Update environment
       run: |
         export ARTIFACT=$(echo "${{ github.event.inputs.artifactUrl }}" | xargs)
-        vc-build SetHelmParameter -ArgoServer https://argo.virtocommerce.cloud -ArgoAppName ${{ steps.app-name.outputs.APP }} -ArgoToken ${{ secrets.VCST_TOKEN }} -HelmParameters themes.B2B-store=$ARTIFACT
+        vc-build SetHelmParameter -ArgoServer https://argo.virtocommerce.cloud -ArgoAppName ${{ env.APP }} -ArgoToken ${{ secrets.VCST_TOKEN }} -HelmParameters themes.B2B-store=$ARTIFACT
 
     - name: DEPLOY_STATE::successful
       if: success()
