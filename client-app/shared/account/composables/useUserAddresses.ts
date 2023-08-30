@@ -2,7 +2,7 @@ import { computed, readonly, ref, shallowRef } from "vue";
 import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/core/api/graphql/account";
 import { SORT_ASCENDING } from "@/core/constants";
 import { getSortingExpression, isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
-import useUser from "./useUser";
+import { useUser } from "./useUser";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType, ISortInfo } from "@/core/types";
 
@@ -13,7 +13,7 @@ const sort = ref<ISortInfo>({
   direction: SORT_ASCENDING,
 });
 
-export default function useUserAddresses() {
+export function useUserAddresses() {
   const { user } = useUser();
 
   function isExistAddress(address: AnyAddressType): boolean {

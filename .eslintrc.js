@@ -14,6 +14,7 @@ module.exports = {
     "@vue/prettier",
     "plugin:import/recommended",
     "plugin:import/typescript",
+    "plugin:sort-export-all/recommended",
     "plugin:sonarjs/recommended",
     "plugin:tailwindcss/recommended", // See rules: https://github.com/francoismassart/eslint-plugin-tailwindcss#supported-rules
     "plugin:vuejs-accessibility/recommended", // See rules: https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility/tree/main/docs
@@ -28,6 +29,8 @@ module.exports = {
   plugins: [
     "vue",
     "import",
+    "sort-exports",
+    "sort-export-all",
     "@typescript-eslint",
     "sonarjs",
     "vuejs-accessibility",
@@ -153,6 +156,34 @@ module.exports = {
         "no-undef": "off",
       },
     },
+    {
+      files: ["*.ts"],
+      excludedFiles: ["**/components/**/index.ts", "*.stories.ts", "shims-*.d.ts"],
+      rules: {
+        "no-restricted-exports": [
+          "warn",
+          {
+            "restrictDefaultExports": {
+              direct: true,
+              named: true,
+              defaultFrom: true,
+              namedFrom: true,
+              namespaceFrom: true,
+            }
+          }
+        ],
+      }
+    },
+    {
+      files: ["**/components/**/index.ts"],
+      rules: {
+        "padding-line-between-statements": [
+          "warn",
+          { "blankLine": "never", "prev": "export", "next": "export" }
+        ],
+        "sort-exports/sort-exports": "warn",
+      }
+    }
   ],
   globals: {
     /**

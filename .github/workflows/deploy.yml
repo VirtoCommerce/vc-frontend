@@ -59,13 +59,13 @@ jobs:
         deployConfigPath: ${{ github.event.inputs.deployConfigPath }}
 
     - name: Start deployment
-      uses: bobheadxi/deployments@master
+      uses: bobheadxi/deployments@v1
       id: deployment
       with:
         step: start
         token: ${{ secrets.GITHUB_TOKEN }}
         env: ${{ steps.deployConfig.outputs.environmentName }}
-        no_override: false
+        override: true
 
     - name: Update environment
       run: |
@@ -81,7 +81,7 @@ jobs:
       run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
 
     - name: Update GitHub deployment status
-      uses: bobheadxi/deployments@master
+      uses: bobheadxi/deployments@v1
       if: always()
       with:
         step: finish

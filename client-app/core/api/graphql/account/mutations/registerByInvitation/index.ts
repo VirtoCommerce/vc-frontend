@@ -7,9 +7,7 @@ import type {
   MutationsRegisterByInvitationArgs,
 } from "@/core/api/graphql/types";
 
-export default async function registerByInvitation(
-  payload: InputRegisterByInvitationType,
-): Promise<CustomIdentityResultType> {
+export async function registerByInvitation(payload: InputRegisterByInvitationType): Promise<CustomIdentityResultType> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "registerByInvitation">>,
     MutationsRegisterByInvitationArgs

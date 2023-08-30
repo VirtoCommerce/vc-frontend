@@ -20,7 +20,7 @@ function resetSlots() {
   }
 }
 
-export default function useNestedMobileHeader() {
+export function useNestedMobileHeader() {
   return {
     setSlots,
     resetSlots,

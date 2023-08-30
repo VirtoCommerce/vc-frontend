@@ -1,6 +1,6 @@
 import { useFetch } from "@/core/composables";
 import { useStaticPage, useTemplate } from "@/shared/static-content";
-import templateBlocks from "@/shared/static-content/components";
+import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
 import type { App } from "vue";
 import type { Router } from "vue-router";
@@ -86,6 +86,7 @@ export function measureElement(element: any): {
   return rect;
 }
 
+// eslint-disable-next-line no-restricted-exports
 export default {
   install: (app: App, options: { router: Router }) => {
     const bodyEl = document.getElementsByTagName("body").item(0);

@@ -8,7 +8,7 @@ import type { Ref } from "vue";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
 
-export default () => {
+export function useUserQuotes() {
   const quotes: Ref<QuoteType[]> = shallowRef<QuoteType[]>([]);
   const fetching: Ref<boolean> = ref(false);
   const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
@@ -50,4 +50,4 @@ export default () => {
     sort,
     fetchQuotes,
   };
-};
+}

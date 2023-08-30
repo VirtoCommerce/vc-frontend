@@ -1,1 +1,1 @@
-export { default as useAuthorizeNet } from "./useAuthorizeNet";
+export * from "./useAuthorizeNet";

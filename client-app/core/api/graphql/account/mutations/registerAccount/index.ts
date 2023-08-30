@@ -7,7 +7,7 @@ import type {
   MutationsRequestRegistrationArgs,
 } from "@/core/api/graphql/types";
 
-export default async function registerAccount(
+export async function registerAccount(
   registrationData: InputRequestRegistrationType,
 ): Promise<RequestRegistrationType> {
   const { data } = await graphqlClient.mutate<

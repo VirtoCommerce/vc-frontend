@@ -1,8 +1,8 @@
 import { Logger } from "@/core/utilities";
-import useUser from "./useUser";
+import { useUser } from "./useUser";
 import type { CheckoutDefaults } from "@/shared/account";
 
-export default function useUserCheckoutDefaults() {
+export function useUserCheckoutDefaults() {
   const { user } = useUser();
   const keyPrefix = "checkout_defaults_";
 

@@ -74,7 +74,7 @@ import { mergeCart } from "@/core/api/graphql/cart";
 import { Logger } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { ContactAdministratorLink } from "@/shared/common";
-import useUser from "../composables/useUser";
+import { useUser } from "../composables/useUser";
 
 interface IEmits {
   (event: "succeeded"): void;

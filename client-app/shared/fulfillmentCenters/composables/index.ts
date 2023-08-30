@@ -1,1 +1,1 @@
-export { default as useFulfillmentCenters } from "./useFulfillmentCenters";
+export * from "./useFulfillmentCenters";

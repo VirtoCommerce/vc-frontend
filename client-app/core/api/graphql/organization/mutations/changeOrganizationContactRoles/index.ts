@@ -7,7 +7,7 @@ import type {
   MutationsChangeOrganizationContactRoleArgs,
 } from "@/core/api/graphql/types";
 
-export default async function changeOrganizationContactRole(
+export async function changeOrganizationContactRole(
   payload: InputChangeOrganizationContactRoleType,
 ): Promise<CustomIdentityResultType | undefined> {
   const { data } = await graphqlClient.mutate<

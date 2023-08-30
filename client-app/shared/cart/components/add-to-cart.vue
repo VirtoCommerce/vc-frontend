@@ -62,7 +62,7 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
-import useCart from "../composables/useCart";
+import { useCart } from "../composables/useCart";
 import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<IEmits>();

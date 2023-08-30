@@ -1,1 +1,1 @@
-export { default as useNotifications } from "./useNotifications";
+export * from "./useNotifications";
