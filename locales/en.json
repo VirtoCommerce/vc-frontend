@@ -155,6 +155,7 @@
       "save_changes": "Would you like to save changes",
       "address_deletion_successful": "Address has been successfully deleted",
       "cart_contains_deleted_products": "Cart contains products, that cannot be purchased any more. Please remove those products and try once again",
+      "fail_add_product_to_cart": "Sorry, this product cannot be added to cart",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
       "role_update_successfull": "The customer role has been updated successfully.",
       "role_update_failed": "Errors occurred during the role updating: {0}",
