@@ -202,6 +202,7 @@
     },
     "titles": {
       "all_actions": "All actions",
+      "other_actions": "Other actions",
       "order_summary": "Order summary",
       "quote_request": "Quote request",
       "billing_address": "Billing address",

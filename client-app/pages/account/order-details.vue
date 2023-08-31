@@ -11,10 +11,9 @@
       </VcTypography>
 
       <div class="flex flex-wrap gap-3 print:hidden">
-        <!-- US-3534 -->
-        <!-- <VcButton class="min-w-[8.5rem]" variant="outline" prepend-icon="printer">
+        <VcButton class="min-w-[8.5rem]" variant="outline" prepend-icon="printer" @click="print()">
           {{ $t("common.buttons.print_order") }}
-        </VcButton> -->
+        </VcButton>
 
         <VcButton
           v-if="showReorderButton"
@@ -206,6 +205,10 @@ async function reorderItems() {
   });
 
   loadingAddItemsToCart.value = false;
+}
+
+function print() {
+  window.print();
 }
 
 watchEffect(() => {

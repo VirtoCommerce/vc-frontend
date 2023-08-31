@@ -136,6 +136,13 @@
           </transition>
         </template>
       </OrderSummary>
+
+      <!-- Order actions -->
+      <VcCardWidget :title="$t('common.titles.other_actions')" class="print:hidden">
+        <VcButton full-width variant="outline" prepend-icon="printer" @click="print()">
+          {{ $t("common.buttons.print_order") }}
+        </VcButton>
+      </VcCardWidget>
     </template>
   </VcLayoutWithRightSidebar>
 </template>
@@ -203,5 +210,9 @@ async function createOrder(): Promise<void> {
   await fetchFullCart();
 
   creatingOrder.value = false;
+}
+
+function print() {
+  window.print();
 }
 </script>
