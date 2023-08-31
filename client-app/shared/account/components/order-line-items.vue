@@ -45,12 +45,12 @@ const preparedLineItems = computed(() => prepareLineItems(props.items));
 <style scoped lang="scss">
 .vc-order-line-items {
   &__header {
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       grid-template-columns: 250px 1fr 100px;
       grid-template-areas: "product properties total";
     }
 
-    @screen xl {
+    @media (min-width: theme("screens.xl")) {
       grid-template-columns: 250px 1fr 120px 88px 100px;
       grid-template-areas: "product properties price quantity total";
     }
@@ -63,14 +63,14 @@ const preparedLineItems = computed(() => prepareLineItems(props.items));
       "img quantity total";
     grid-template-columns: 64px auto 1fr;
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       grid-template-areas:
         "product props quantity"
         "product props total";
       grid-template-columns: 250px 1fr 100px;
     }
 
-    @screen xl {
+    @media (min-width: theme("screens.xl")) {
       grid-template-areas: "product properties price quantity total";
       grid-template-columns: 250px 1fr 120px 88px 100px;
     }

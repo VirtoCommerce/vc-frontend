@@ -28,14 +28,14 @@ defineProps({
 .vc-layout-with-right-sidebar {
   @apply flex flex-col;
 
-  @screen lg {
+  @media (min-width: theme("screens.lg")) {
     @apply flex-row items-start gap-x-6;
   }
 
   &__main {
     @apply contents min-w-0;
 
-    @screen lg {
+    @media (min-width: theme("screens.lg")) {
       @apply grow block space-y-6;
     }
   }
@@ -43,16 +43,16 @@ defineProps({
   &__sidebar {
     @apply contents;
 
-    @screen lg {
+    @media (min-width: theme("screens.lg")) {
       @apply block shrink-0 space-y-6 w-1/4;
     }
 
-    @screen 2xl {
+    @media (min-width: theme("screens.2xl")) {
       @apply w-[285px];
     }
 
     &--sticky {
-      @screen lg {
+      @media (min-width: theme("screens.lg")) {
         @apply sticky top-[6.5rem];
       }
     }

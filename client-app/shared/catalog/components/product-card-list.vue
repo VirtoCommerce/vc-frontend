@@ -190,7 +190,7 @@ const properties = computed(() =>
     "mobile-left add-to-cart"
     "mobile-left .";
 
-  @screen sm {
+  @media (min-width: theme("screens.sm")) {
     grid-template-columns: 72px 1fr 1fr;
     grid-template-areas:
       "img name price"
@@ -198,7 +198,7 @@ const properties = computed(() =>
       "img buttons add-to-cart";
   }
 
-  @screen md {
+  @media (min-width: theme("screens.md")) {
     grid-template-columns: 72px 1fr 200px 207px;
     grid-template-areas:
       "img name price add-to-cart"
@@ -207,7 +207,7 @@ const properties = computed(() =>
       "img . price add-to-cart";
   }
 
-  @screen xl {
+  @media (min-width: theme("screens.xl")) {
     grid-template-columns: 86px 1fr 1fr 200px 207px;
     grid-template-areas:
       "img name properties price add-to-cart"

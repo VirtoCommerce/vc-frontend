@@ -45,7 +45,7 @@ defineProps<IProps>();
 
   @apply relative bg-[color:var(--color-white)];
 
-  @screen lg {
+  @media (min-width: theme("screens.lg")) {
     @apply border rounded shadow-md-x;
   }
 
@@ -58,7 +58,7 @@ defineProps<IProps>();
       @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
     }
 
-    @screen lg {
+    @media (min-width: theme("screens.lg")) {
       @apply content-none;
     }
   }
@@ -66,11 +66,11 @@ defineProps<IProps>();
   &__title {
     @apply flex items-center gap-3 px-4 pt-6 pb-3;
 
-    @screen xs {
+    @media (min-width: theme("screens.xs")) {
       @apply px-7;
     }
 
-    @screen lg {
+    @media (min-width: theme("screens.lg")) {
       @apply px-5 py-3 border-b;
     }
 
@@ -108,11 +108,11 @@ defineProps<IProps>();
   &__content {
     @apply px-4 pt-3 pb-7;
 
-    @screen xs {
+    @media (min-width: theme("screens.xs")) {
       @apply px-7;
     }
 
-    @screen lg {
+    @media (min-width: theme("screens.lg")) {
       @apply p-5;
     }
 
