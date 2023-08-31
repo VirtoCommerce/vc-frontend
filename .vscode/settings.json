@@ -1,10 +1,10 @@
 {
   "editor.formatOnSave": true,
   "eslint.useESLintClass": true,
-  "i18n-ally.localesPaths": ["locales"],
-  "i18n-ally.keystyle": "nested",
-  "typescript.tsdk": "./node_modules/typescript/lib",
   "files.associations": {
     "*.scss": "postcss"
-  }
+  },
+  "i18n-ally.localesPaths": ["locales"],
+  "i18n-ally.keystyle": "nested",
+  "typescript.tsdk": "./node_modules/typescript/lib"
 }
