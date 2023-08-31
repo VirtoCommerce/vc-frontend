@@ -148,7 +148,6 @@
 </template>
 
 <script setup lang="ts">
-import { useMediaQuery } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGoogleAnalytics } from "@/core/composables";

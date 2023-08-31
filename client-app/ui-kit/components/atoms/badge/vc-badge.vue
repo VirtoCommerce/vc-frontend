@@ -69,34 +69,26 @@ withDefaults(defineProps<IProps>(), {
   @media screen {
     @each $color in $colors {
       &--solid--#{$color} {
-        @media screen {
-          @apply bg-[color:var(--color-#{$color}-500)]
-          border-[color:var(--color-#{$color}-500)];
-        }
+        @apply bg-[color:var(--color-#{$color}-500)]
+        border-[color:var(--color-#{$color}-500)];
         @apply text-[color:var(--color-additional-50)];
       }
 
       &--solid-light--#{$color} {
-        @media screen {
-          @apply bg-[color:var(--color-#{$color}-50)]
-          border-[color:var(--color-#{$color}-50)];
-        }
+        @apply bg-[color:var(--color-#{$color}-50)]
+        border-[color:var(--color-#{$color}-50)];
         @apply text-[color:var(--color-#{$color}-800)];
       }
 
       &--outline--#{$color} {
-        @media screen {
-          @apply bg-[color:var(--color-additional-50)]
-          border-[color:var(--color-#{$color}-500)];
-        }
+        @apply bg-[color:var(--color-additional-50)]
+        border-[color:var(--color-#{$color}-500)];
         @apply text-[color:var(--color-#{$color}-800)];
       }
 
       &--outline-dark--#{$color} {
-        @media screen {
-          @apply bg-[color:var(--color-#{$color}-50)]
-          border-[color:var(--color-#{$color}-500)];
-        }
+        @apply bg-[color:var(--color-#{$color}-50)]
+        border-[color:var(--color-#{$color}-500)];
         @apply text-[color:var(--color-#{$color}-800)];
       }
     }

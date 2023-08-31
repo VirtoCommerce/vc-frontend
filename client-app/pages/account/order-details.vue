@@ -11,7 +11,7 @@
       </VcTypography>
 
       <div class="flex flex-wrap gap-3 print:hidden">
-        <VcButton class="min-w-[8.5rem]" variant="outline" prepend-icon="printer" @click="print()">
+        <VcButton variant="outline" prepend-icon="printer" @click="print()">
           {{ $t("common.buttons.print_order") }}
         </VcButton>
 
@@ -128,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints, useMediaQuery } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";

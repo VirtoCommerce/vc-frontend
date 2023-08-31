@@ -61,7 +61,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     letter-spacing: 0.02em;
     text-transform: uppercase;
 
-    @media (min-width: theme("screens.lg")) {
+    @media (screen(lg)) {
       font-size: 2.25rem;
       line-height: 2.875rem;
     }
@@ -74,7 +74,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     letter-spacing: 0.02em;
     text-transform: uppercase;
 
-    @media (min-width: theme("screens.lg")) {
+    @media (screen(lg)) {
       font-size: 1.875rem;
       line-height: 2.5rem;
     }
@@ -87,7 +87,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     letter-spacing: 0.02em;
     text-transform: uppercase;
 
-    @media (min-width: theme("screens.lg")) {
+    @media (screen(lg)) {
       font-size: 1.625rem;
       line-height: 2.375rem;
     }
@@ -100,7 +100,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROF
     letter-spacing: 0.02em;
     text-transform: uppercase;
 
-    @media (min-width: theme("screens.lg")) {
+    @media (screen(lg)) {
       font-size: 1.5rem;
       line-height: 2rem;
     }

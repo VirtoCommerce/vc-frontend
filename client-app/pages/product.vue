@@ -14,7 +14,7 @@
         :text="product.code"
         :notification="$t('pages.product.sku_copied_message')"
       >
-        {{ $t("pages.product.sku_label") }}
+        <span class="mr-1">{{ $t("pages.product.sku_label") }}</span>
         <span class="font-extrabold">{{ product.code }}</span>
       </VcCopyText>
 
