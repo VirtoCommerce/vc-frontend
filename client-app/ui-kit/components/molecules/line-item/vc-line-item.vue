@@ -38,12 +38,16 @@
           </div>
         </div>
 
+        <div class="vc-line-item__sku">
+          {{ sku }}
+        </div>
+
         <div class="vc-line-item__properties">
           <VcProperty v-for="property in properties" :key="property.name" :label="property.label!">
             {{ property.value }}
           </VcProperty>
 
-          <VcProperty class="2xl:hidden" :label="$t('common.labels.price_per_item')">
+          <VcProperty class="vc-line-item__price--property" :label="$t('common.labels.price_per_item')">
             <VcLineItemPrice :list-price="listPrice" :actual-price="actualPrice" />
           </VcProperty>
         </div>
@@ -91,6 +95,7 @@ interface IEmits {
 interface IProps {
   imageUrl?: string;
   name: string;
+  sku?: string;
   route?: RouteLocationRaw;
   properties?: Property[];
   listPrice?: MoneyType;
@@ -126,8 +131,12 @@ watchEffect(() => {
 
   @apply flex flex-col gap-2 p-3 rounded border shadow-t-3sm;
 
-  @screen md {
+  @media (screen("md")), print {
     @apply px-3 rounded-none border-0 shadow-none;
+  }
+
+  @media print {
+    @apply break-inside-avoid;
   }
 
   &--selected {
@@ -162,7 +171,7 @@ watchEffect(() => {
   &__main {
     @apply relative flex items-start gap-3;
 
-    @screen md {
+    @media (screen("md")), print {
       @apply items-center;
     }
   }
@@ -170,7 +179,7 @@ watchEffect(() => {
   &__checkbox {
     @apply flex-none absolute -top-2 -left-2 p-2 rounded bg-[--color-additional-50];
 
-    @screen md {
+    @media (screen("md")), print {
       @apply static top-auto left-auto -mx-2;
     }
 
@@ -189,12 +198,16 @@ watchEffect(() => {
     @screen xl {
       @apply w-16 h-16;
     }
+
+    @media print {
+      @apply hidden;
+    }
   }
 
   &__content {
     @apply grow;
 
-    @screen md {
+    @media (screen("md")), print {
       @apply contents;
     }
   }
@@ -210,13 +223,19 @@ watchEffect(() => {
       @apply w-48;
     }
 
+    @media print {
+      @apply grow mt-0;
+    }
+
     #{$removable} & {
       @apply pr-10 md:pr-0;
     }
   }
 
   &__name-link {
-    @apply text-[--color-accent-600];
+    @media screen {
+      @apply text-[--color-accent-600];
+    }
 
     word-break: break-word;
 
@@ -239,11 +258,25 @@ watchEffect(() => {
     }
   }
 
+  &__sku {
+    @media screen {
+      @apply hidden;
+    }
+
+    @media print {
+      @apply shrink-0 min-h-0 w-[5.5rem] text-xs/[1rem];
+    }
+  }
+
   &__properties {
     @apply space-y-px mt-3;
 
     @screen md {
       @apply grow mt-0;
+    }
+
+    @media print {
+      @apply hidden;
     }
 
     #{$removed} &,
@@ -254,10 +287,26 @@ watchEffect(() => {
   }
 
   &__price {
-    @apply hidden;
+    @media screen {
+      @apply hidden;
+    }
+
+    &--property {
+      @screen 2xl {
+        @apply hidden;
+      }
+    }
 
     @screen 2xl {
-      @apply block shrink-0 w-[8.5rem] text-right;
+      @apply w-[8.5rem];
+    }
+
+    @media (screen("2xl")), print {
+      @apply block shrink-0 text-right;
+    }
+
+    @media print {
+      @apply w-[7rem];
     }
 
     #{$removed} & {
@@ -267,7 +316,7 @@ watchEffect(() => {
     #{$deleted} & {
       @apply hidden;
 
-      @screen 2xl {
+      @media (screen("2xl")), print {
         @apply block invisible;
       }
     }
@@ -276,7 +325,7 @@ watchEffect(() => {
   &__slot {
     @apply flex items-start gap-1 mt-4 empty:hidden;
 
-    @screen md {
+    @media (screen("md")), print {
       @apply flex-shrink-0 items-center gap-2 mt-0 w-64 empty:block;
     }
 
@@ -286,6 +335,10 @@ watchEffect(() => {
 
     @screen xl {
       @apply w-64;
+    }
+
+    @media print {
+      @apply w-[13rem];
     }
 
     #{$removed} & {
@@ -300,7 +353,7 @@ watchEffect(() => {
   &__remove-button {
     @apply shrink-0 absolute top-0 right-0;
 
-    @screen md {
+    @media (screen("md")), print {
       @apply relative;
     }
   }

@@ -266,7 +266,9 @@ watchEffect(() => {
     }
 
     &:disabled {
-      @apply text-gray-400;
+      @media screen {
+        @apply text-gray-400;
+      }
     }
 
     &::placeholder {
@@ -290,6 +292,10 @@ watchEffect(() => {
 
   &__bg {
     @apply content-[''] z-[-1] absolute inset-0 bg-white border rounded;
+
+    @media print {
+      @apply hidden;
+    }
 
     input:focus ~ & {
       @apply ring ring-[color:var(--color-primary-light)];

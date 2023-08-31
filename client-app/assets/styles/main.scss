@@ -8,15 +8,23 @@
 @layer base {
   body {
     @apply text-[--color-body-text];
+  }
 
-    @media print {
-      @apply min-w-[1024px] w-full;
+  @media print {
+     html {
+       @apply h-full min-h-screen;
+     }
 
-      zoom: 0.7;
+     body {
+       @apply w-full h-full min-h-screen mx-auto;
 
-      @page {
-        size: A4 portrait;
-      }
+       #app {
+         @apply h-full min-h-screen;
+       }
+     }
+
+    @page {
+      size: A4 portrait;
     }
   }
 }

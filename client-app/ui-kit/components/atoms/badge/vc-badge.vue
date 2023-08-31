@@ -30,19 +30,35 @@ withDefaults(defineProps<IProps>(), {
 .vc-badge {
   $colors: primary, secondary, neutral, info, success, warning, danger;
 
-  @apply inline-block border rounded-full font-bold text-center;
+  @apply inline-block rounded-full font-bold text-center;
+
+  @media screen {
+    @apply border;
+  }
 
   &--size {
     &--xs {
-      @apply px-1 text-xxs;
+      @apply text-xxs;
+
+      @media screen {
+        @apply px-1;
+      }
     }
 
     &--sm {
-      @apply py-0.5 px-2 text-xs;
+      @apply text-xs;
+
+      @media screen {
+        @apply py-0.5 px-2;
+      }
     }
 
     &--md {
-      @apply py-[3px] px-3 text-sm;
+      @apply text-sm;
+
+      @media screen {
+        @apply py-[3px] px-3;
+      }
     }
   }
 
@@ -50,29 +66,39 @@ withDefaults(defineProps<IProps>(), {
     @apply truncate max-w-full;
   }
 
-  @each $color in $colors {
-    &--solid--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-500)]
-      border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-additional-50)];
-    }
+  @media screen {
+    @each $color in $colors {
+      &--solid--#{$color} {
+        @media screen {
+          @apply bg-[color:var(--color-#{$color}-500)]
+          border-[color:var(--color-#{$color}-500)];
+        }
+        @apply text-[color:var(--color-additional-50)];
+      }
 
-    &--solid-light--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-50)]
-      border-[color:var(--color-#{$color}-50)]
-      text-[color:var(--color-#{$color}-800)];
-    }
+      &--solid-light--#{$color} {
+        @media screen {
+          @apply bg-[color:var(--color-#{$color}-50)]
+          border-[color:var(--color-#{$color}-50)];
+        }
+        @apply text-[color:var(--color-#{$color}-800)];
+      }
 
-    &--outline--#{$color} {
-      @apply bg-[color:var(--color-additional-50)]
-      border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
-    }
+      &--outline--#{$color} {
+        @media screen {
+          @apply bg-[color:var(--color-additional-50)]
+          border-[color:var(--color-#{$color}-500)];
+        }
+        @apply text-[color:var(--color-#{$color}-800)];
+      }
 
-    &--outline-dark--#{$color} {
-      @apply bg-[color:var(--color-#{$color}-50)]
-      border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
+      &--outline-dark--#{$color} {
+        @media screen {
+          @apply bg-[color:var(--color-#{$color}-50)]
+          border-[color:var(--color-#{$color}-500)];
+        }
+        @apply text-[color:var(--color-#{$color}-800)];
+      }
     }
   }
 }

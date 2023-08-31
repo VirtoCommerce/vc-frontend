@@ -8,6 +8,8 @@
         {{ $t("common.labels.product") }}
       </div>
 
+      <div class="vc-line-items__sku">{{ $t("common.labels.sku") }}</div>
+
       <div class="vc-line-items__properties">{{ $t("common.labels.properties") }}</div>
 
       <div class="vc-line-items__price">
@@ -28,6 +30,7 @@
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
+        :sku="item.sku"
         :route="item.route"
         :deleted="item.deleted"
         :properties="item.properties"
@@ -135,14 +138,14 @@ function removeAllItems() {
 
 <style lang="scss">
 .vc-line-items {
-  @screen md {
+  @media (screen("md")), print {
     @apply border rounded divide-y;
   }
 
   &__head {
     @apply hidden;
 
-    @screen md {
+    @media (screen("md")), print {
       @apply flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
     }
 
@@ -152,7 +155,13 @@ function removeAllItems() {
   }
 
   &__product {
-    @apply flex-none w-[12.75rem];
+    @media screen {
+      @apply flex-none w-[12.75rem];
+    }
+
+    @media print {
+      @apply flex-grow;
+    }
 
     @screen lg {
       @apply w-[11.75rem];
@@ -163,22 +172,48 @@ function removeAllItems() {
     }
   }
 
+  &__sku {
+    @media screen {
+      @apply hidden;
+    }
+
+    @media print {
+      @apply flex-none w-[5.5rem];
+    }
+  }
+
   &__properties {
     @apply flex-grow;
+
+    @media print {
+      @apply hidden;
+    }
   }
 
   &__price {
-    @apply hidden;
+    @apply text-right;
+
+    @media screen {
+      @apply hidden;
+    }
 
     @screen 2xl {
-      @apply flex-none block w-[8.75rem] text-right;
+      @apply w-[8.5rem];
+    }
+
+    @media (screen("2xl")), print {
+      @apply flex-none block text-right;
+    }
+
+    @media print {
+      @apply w-[7rem];
     }
   }
 
   &__slot {
     @apply shrink-0 flex items-center justify-between w-[15.75rem];
 
-    @screen md {
+    @media (screen("md")), print {
       @apply gap-4;
     }
 
@@ -189,6 +224,10 @@ function removeAllItems() {
     @screen xl {
       @apply w-[15.85rem];
     }
+
+    @media print {
+      @apply w-[13rem];
+    }
   }
 
   &__removable {
@@ -196,17 +235,17 @@ function removeAllItems() {
   }
 
   &__body {
-    @apply flex flex-col gap-4 md:gap-0 md:divide-y;
+    @apply flex flex-col gap-4;
 
-    @screen md {
-      @apply space-y-0 divide-y;
+    @media (screen("md")), print {
+      @apply gap-0 divide-y space-y-0;
     }
   }
 
   &__foot {
     @apply flex justify-end py-2.5;
 
-    @screen md {
+    @media (screen("md")), print {
       @apply px-3;
     }
 
@@ -216,10 +255,10 @@ function removeAllItems() {
   }
 
   &__button {
-    @apply me-auto;
+    @apply me-1;
 
     &--mobile.vc-button {
-      @screen md {
+      @media (screen("md")), print {
         @apply hidden;
       }
     }
@@ -227,14 +266,22 @@ function removeAllItems() {
     &--desktop.vc-button {
       @apply hidden;
 
-      @screen md {
+      @media (screen("md")), print {
         @apply inline-block;
       }
     }
   }
 
   &__subtotal {
-    @apply ms-1 justify-self-end flex items-center gap-2 text-[--color-success-600];
+    @apply justify-self-end flex items-center gap-2;
+
+    @media screen {
+      @apply text-[--color-success-600];
+    }
+
+    @media print {
+      @apply w-full justify-between;
+    }
   }
 
   &__subtotal-label {

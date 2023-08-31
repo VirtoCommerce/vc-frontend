@@ -33,7 +33,7 @@ defineProps<IProps>();
   &__actual {
     @apply max-w-full text-xs font-bold text-[--actual-color] truncate [word-break:break-word];
 
-    @screen 2xl {
+    @media (screen("2xl")), print {
       @apply text-sm font-normal;
     }
   }

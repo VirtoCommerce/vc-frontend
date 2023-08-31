@@ -36,7 +36,7 @@ defineProps<IProps>();
   &__label {
     @apply text-sm font-bold;
 
-    @screen md {
+    @media (screen("md")), print {
       @apply hidden;
     }
   }

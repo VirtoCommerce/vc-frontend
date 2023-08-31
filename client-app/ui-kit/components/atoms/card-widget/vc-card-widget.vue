@@ -25,20 +25,15 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  hideMobileTitle: Boolean,
-  hideDesktopTitle: Boolean,
+export interface IProps {
+  hideMobileTitle?: boolean;
+  hideDesktopTitle?: boolean;
 
-  title: {
-    type: String,
-    default: "",
-  },
+  title?: string;
+  icon?: string;
+}
 
-  icon: {
-    type: String,
-    default: "",
-  },
-});
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
@@ -51,8 +46,14 @@ defineProps({
     @apply border rounded shadow-md-x;
   }
 
+  @media print {
+    @apply border-b break-inside-avoid;
+  }
+
   &:after {
-    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
+    @media screen {
+      @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
+    }
 
     @screen lg {
       @apply content-none;
@@ -70,6 +71,10 @@ defineProps({
       @apply px-5 py-3 border-b;
     }
 
+    @media print {
+      @apply px-0;
+    }
+
     &--hide-mobile {
       $hideMobileTitle: &;
 
@@ -83,6 +88,10 @@ defineProps({
 
   &__icon {
     @apply lg:hidden;
+
+    @media print {
+      @apply hidden;
+    }
   }
 
   &__content {
@@ -94,6 +103,10 @@ defineProps({
 
     @screen lg {
       @apply p-5;
+    }
+
+    @media print {
+      @apply px-0;
     }
 
     #{$hideMobileTitle} ~ & {

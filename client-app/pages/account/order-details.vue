@@ -5,12 +5,12 @@
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
     <!-- Title block -->
-    <div class="mx-5 flex flex-col gap-2.5 lg:mx-0 lg:flex-row lg:justify-between">
+    <div class="mx-7 flex flex-col gap-2.5 print:mx-0 lg:mx-0 lg:flex-row lg:justify-between">
       <VcTypography tag="h1" variant="h2" weight="bold">
         {{ $t("pages.account.order_details.title", [order?.number]) }}
       </VcTypography>
 
-      <div class="flex flex-wrap gap-3">
+      <div class="flex flex-wrap gap-3 print:hidden">
         <!-- US-3534 -->
         <!-- <VcButton class="min-w-[8.5rem]" variant="outline" prepend-icon="printer">
           {{ $t("common.buttons.print_order") }}
@@ -28,7 +28,12 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcSectionWidget :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
+      <VcSectionWidget
+        :title="$t('shared.cart.products_section.title')"
+        icon="cube"
+        hide-desktop-title
+        :hide-mobile-title="isPrint"
+      >
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
@@ -55,20 +60,25 @@
       <template #sidebar>
         <!-- Order Data Widget -->
         <VcCardWidget :title="$t('common.titles.order_data')" class="order-first" hide-mobile-title>
-          <div class="flex flex-col gap-1.5 text-15">
+          <div class="flex flex-col gap-1.5 text-sm">
             <p v-if="order.createdDate">
               <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
               {{ $d(order.createdDate) }}
             </p>
             <p v-if="order.status" class="flex items-center">
-              <span class="mr-2 font-extrabold"> {{ $t("common.labels.status") }}: </span>
-              <OrderStatus class="min-w-[7.785rem]" :status="order.status" />
+              <span class="mr-1 font-extrabold"> {{ $t("common.labels.status") }}: </span>
+              <OrderStatus class="min-w-[7.785rem] print:min-w-0" :status="order.status" />
             </p>
           </div>
         </VcCardWidget>
 
         <!-- Order summary -->
-        <OrderSummary :cart="order" :no-shipping="allItemsAreDigital" class="order-last">
+        <OrderSummary
+          :cart="order"
+          :no-shipping="allItemsAreDigital"
+          class="order-last print:order-none"
+          :hide-mobile-title="isPrint"
+        >
           <template #footer>
             <VcButton
               v-if="showPaymentButton"
@@ -89,7 +99,7 @@
         <!-- Shipping Method Card -->
         <VcCardWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')" icon="truck">
           <div class="flex items-center gap-4 text-15">
-            <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12" lazy />
+            <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12 print:hidden" lazy />
 
             <span class="min-w-0 break-words">
               {{ $t(`common.methods.delivery_by_id.${shipment.shipmentMethodCode}_${shipment.shipmentMethodOption}`) }}
@@ -110,7 +120,7 @@
         <!-- Payment Method section -->
         <VcCardWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')" icon="document-text">
           <div class="flex items-center gap-4 text-15">
-            <VcImage :src="payment.paymentMethod.logoUrl" class="h-12 w-12" lazy />
+            <VcImage :src="payment.paymentMethod.logoUrl" class="h-12 w-12 print:hidden" lazy />
             <span class="min-w-0 break-words">
               {{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}
             </span>
@@ -124,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useMediaQuery } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
@@ -152,7 +162,7 @@ const {
   shipment,
   payment,
   allItemsAreDigital,
-  fetchOrder,
+  fetchFullOrder,
   clearOrder,
 } = useUserOrder();
 const { addBulkItemsToCart } = useCart();
@@ -170,6 +180,8 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const isMobile = breakpoints.smaller("lg");
+const isPrint = useMediaQuery("print");
+
 const loadingAddItemsToCart = ref(false);
 
 const showPaymentButton = computed<boolean>(
@@ -198,6 +210,6 @@ async function reorderItems() {
 
 watchEffect(() => {
   clearOrder();
-  fetchOrder({ id: props.orderId });
+  fetchFullOrder({ id: props.orderId });
 });
 </script>

@@ -1,6 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <VcSectionWidget :title="$t('common.titles.review_order')" icon="clipboard-copy-1">
+    <VcSectionWidget :title="$t('common.titles.review_order')" icon="clipboard-copy-1" :hide-mobile-title="isPrint">
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
         <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
@@ -27,8 +27,12 @@
               {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
             </VcLabel>
 
-            <div class="grow divide-y rounded border">
-              <VcAddressSelection :address="shipment?.deliveryAddress" class="min-h-[4.625rem] px-3 py-1.5" readonly />
+            <div class="grow divide-y rounded border print:border-none">
+              <VcAddressSelection
+                :address="shipment?.deliveryAddress"
+                class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
+                readonly
+              />
             </div>
           </div>
 
@@ -42,8 +46,8 @@
             readonly
           >
             <template #selected="{ item }">
-              <VcSelectItem>
-                <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItem class="print:px-0 print:py-1.5">
+                <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
                 <VcSelectItemText>
                   {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
                 </VcSelectItemText>
@@ -59,8 +63,12 @@
               {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
             </VcLabel>
 
-            <div class="grow divide-y rounded border">
-              <VcAddressSelection :address="billingAddress" class="min-h-[4.625rem] px-3 py-1.5" readonly />
+            <div class="grow divide-y rounded border print:border-none">
+              <VcAddressSelection
+                :address="billingAddress"
+                class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
+                readonly
+              />
             </div>
           </div>
 
@@ -74,15 +82,15 @@
               readonly
             >
               <template #selected="{ item }">
-                <VcSelectItem>
-                  <VcSelectItemImage :src="item.logoUrl" />
+                <VcSelectItem class="print:px-0 print:py-1.5">
+                  <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
                   <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
                 </VcSelectItem>
               </template>
             </VcSelect>
 
             <VcInput
-              v-if="isPurchaseOrderNumberEnabled"
+              v-if="isPurchaseOrderNumberEnabled && purchaseOrderNumber"
               :model-value="purchaseOrderNumber"
               name="purchaseOrderNumber"
               readonly
@@ -115,7 +123,7 @@
             :disabled="isDisabledOrderCreation"
             :loading="creatingOrder"
             full-width
-            class="mt-4"
+            class="mt-4 print:!hidden"
             @click="createOrder"
           >
             {{ $t("common.buttons.place_order") }}
@@ -133,6 +141,7 @@
 </template>
 
 <script setup lang="ts">
+import { useMediaQuery } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGoogleAnalytics } from "@/core/composables";
@@ -176,6 +185,8 @@ const billingAddress = computed<CartAddressType | undefined>(() =>
     ? shipment.value?.deliveryAddress
     : payment.value?.billingAddress,
 );
+
+const isPrint = useMediaQuery("print");
 
 const ga = useGoogleAnalytics();
 

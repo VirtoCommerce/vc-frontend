@@ -26,7 +26,11 @@ defineProps<Props>();
 .vc-vendor {
   $notAvailable: "";
 
-  @apply flex gap-x-1.5 items-center min-w-0 text-[color:var(--color-primary)];
+  @apply flex gap-x-1.5 items-center min-w-0;
+
+  @media screen {
+    @apply text-[color:var(--color-primary)];
+  }
 
   &--not-available {
     $notAvailable: &;
@@ -34,6 +38,10 @@ defineProps<Props>();
 
   &__icon {
     @apply flex-none;
+
+    @media print {
+      @apply hidden;
+    }
   }
 
   &__title {
