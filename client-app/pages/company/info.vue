@@ -76,7 +76,6 @@
         <div v-else class="flex flex-col md:rounded md:border">
           <VcTable
             :loading="loadingAddresses"
-            :item-actions-builder="itemActionsBuilder"
             :columns="columns"
             :items="paginatedAddresses"
             :sort="sort"
@@ -131,6 +130,32 @@
                   <span class="overflow-hidden text-ellipsis leading-tight">
                     {{ item.postalCode }}
                   </span>
+                </div>
+
+                <div class="absolute right-4 top-3">
+                  <VcActionDropdownMenu placement="left-start">
+                    <button
+                      type="button"
+                      class="flex items-center gap-2.5 whitespace-nowrap p-3"
+                      @click="openAddOrUpdateCompanyAddressModal(item)"
+                    >
+                      <VcIcon class="text-[--color-primary-500]" name="pencil" size="sm" />
+
+                      {{ $t("common.buttons.edit") }}
+                    </button>
+
+                    <button
+                      type="button"
+                      :disabled="item.isDefault"
+                      :title="item.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
+                      class="flex items-center gap-2.5 whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
+                      @click="openDeleteAddressModal(item)"
+                    >
+                      <VcIcon :class="{ 'text-[--color-danger-500]': !item.isDefault }" name="delete-2" size="sm" />
+
+                      {{ $t("common.buttons.delete") }}
+                    </button>
+                  </VcActionDropdownMenu>
                 </div>
               </div>
             </template>
@@ -195,27 +220,24 @@
                   <VcActionDropdownMenu>
                     <button
                       type="button"
-                      class="flex items-center whitespace-nowrap p-3"
+                      class="flex items-center gap-2.5 whitespace-nowrap p-3"
                       @click="openAddOrUpdateCompanyAddressModal(address)"
                     >
-                      <VcIcon class="mr-1 text-[--color-primary-500]" name="pencil" :size="18" />
+                      <VcIcon class="text-[--color-primary-500]" name="pencil" size="sm" />
 
-                      <span class="text-sm">{{ $t("common.buttons.edit") }}</span>
+                      {{ $t("common.buttons.edit") }}
                     </button>
 
                     <button
                       type="button"
                       :disabled="address.isDefault"
                       :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
-                      class="flex items-center whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
+                      class="flex items-center gap-2.5 whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
                       @click="openDeleteAddressModal(address)"
                     >
-                      <VcIcon
-                        :class="['mr-1', { 'text-[--color-danger-500]': !address.isDefault }]"
-                        name="x"
-                        :size="18"
-                      />
-                      <span class="text-sm">{{ $t("common.buttons.delete") }}</span>
+                      <VcIcon :class="{ 'text-[--color-danger-500]': !address.isDefault }" name="delete-2" size="sm" />
+
+                      {{ $t("common.buttons.delete") }}
                     </button>
                   </VcActionDropdownMenu>
                 </td>
