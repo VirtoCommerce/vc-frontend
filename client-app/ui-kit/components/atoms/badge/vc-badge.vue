@@ -70,26 +70,26 @@ withDefaults(defineProps<IProps>(), {
     @each $color in $colors {
       &--solid--#{$color} {
         @apply bg-[color:var(--color-#{$color}-500)]
-        border-[color:var(--color-#{$color}-500)];
-        @apply text-[color:var(--color-additional-50)];
+        border-[color:var(--color-#{$color}-500)]
+        text-[color:var(--color-additional-50)];
       }
 
       &--solid-light--#{$color} {
         @apply bg-[color:var(--color-#{$color}-50)]
-        border-[color:var(--color-#{$color}-50)];
-        @apply text-[color:var(--color-#{$color}-800)];
+        border-[color:var(--color-#{$color}-50)]
+        text-[color:var(--color-#{$color}-800)];
       }
 
       &--outline--#{$color} {
         @apply bg-[color:var(--color-additional-50)]
-        border-[color:var(--color-#{$color}-500)];
-        @apply text-[color:var(--color-#{$color}-800)];
+        border-[color:var(--color-#{$color}-500)]
+        text-[color:var(--color-#{$color}-800)];
       }
 
       &--outline-dark--#{$color} {
         @apply bg-[color:var(--color-#{$color}-50)]
-        border-[color:var(--color-#{$color}-500)];
-        @apply text-[color:var(--color-#{$color}-800)];
+        border-[color:var(--color-#{$color}-500)]
+        text-[color:var(--color-#{$color}-800)];
       }
     }
   }
