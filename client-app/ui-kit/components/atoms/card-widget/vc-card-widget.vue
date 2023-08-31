@@ -4,6 +4,7 @@
       :class="[
         'vc-card-widget__title',
         {
+          'vc-card-widget__title--hide-print': hidePrintTitle || !title,
           'vc-card-widget__title--hide-mobile': hideMobileTitle || !title,
           'vc-card-widget__title--hide-desktop': hideDesktopTitle || !title,
         },
@@ -26,6 +27,7 @@
 
 <script setup lang="ts">
 export interface IProps {
+  hidePrintTitle?: boolean;
   hideMobileTitle?: boolean;
   hideDesktopTitle?: boolean;
 
@@ -38,6 +40,7 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-card-widget {
+  $hidePrintTitle: "";
   $hideMobileTitle: "";
 
   @apply relative bg-[color:var(--color-white)];
@@ -75,6 +78,14 @@ defineProps<IProps>();
       @apply px-0;
     }
 
+    &--hide-print {
+      $hidePrintTitle: &;
+
+      @media print {
+        @apply hidden;
+      }
+    }
+
     &--hide-mobile {
       $hideMobileTitle: &;
 
@@ -109,6 +120,7 @@ defineProps<IProps>();
       @apply px-0;
     }
 
+    #{$hidePrintTitle} ~ &,
     #{$hideMobileTitle} ~ & {
       @apply pt-7 lg:pt-5;
     }

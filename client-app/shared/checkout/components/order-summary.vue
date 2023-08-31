@@ -1,5 +1,5 @@
 <template>
-  <VcCardWidget :title="$t('common.titles.order_summary')" icon="truck">
+  <VcCardWidget :title="$t('common.titles.order_summary')" icon="truck" hide-print-title>
     <slot name="header" />
 
     <!-- Totals block -->

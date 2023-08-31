@@ -1,6 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <VcSectionWidget :title="$t('common.titles.review_order')" icon="clipboard-copy-1" :hide-mobile-title="isPrint">
+    <VcSectionWidget :title="$t('common.titles.review_order')" icon="clipboard-copy-1" hide-print-title>
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
         <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
@@ -192,8 +192,6 @@ const billingAddress = computed<CartAddressType | undefined>(() =>
     ? shipment.value?.deliveryAddress
     : payment.value?.billingAddress,
 );
-
-const isPrint = useMediaQuery("print");
 
 const ga = useGoogleAnalytics();
 

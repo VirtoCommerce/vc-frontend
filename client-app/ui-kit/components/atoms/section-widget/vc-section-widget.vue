@@ -4,6 +4,7 @@
       :class="[
         'vc-section-widget__title',
         {
+          'vc-section-widget__title--hide-print': hidePrintTitle || !title,
           'vc-section-widget__title--hide-mobile': hideMobileTitle || !title,
           'vc-section-widget__title--hide-desktop': hideDesktopTitle || !title,
         },
@@ -24,6 +25,7 @@
 
 <script setup lang="ts">
 export interface IProps {
+  hidePrintTitle?: boolean;
   hideMobileTitle?: boolean;
   hideDesktopTitle?: boolean;
 
@@ -36,6 +38,7 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-section-widget {
+  $hidePrintTitle: "";
   $hideMobileTitle: "";
   $hideDesktopTitle: "";
 
@@ -68,6 +71,14 @@ defineProps<IProps>();
 
     @media print {
       @apply px-0;
+    }
+
+    &--hide-print {
+      $hidePrintTitle: &;
+
+      @media print {
+        @apply hidden;
+      }
     }
 
     &--hide-mobile {
@@ -106,6 +117,7 @@ defineProps<IProps>();
       @apply px-0;
     }
 
+    #{$hidePrintTitle} ~ &,
     #{$hideMobileTitle} ~ & {
       @apply pt-7 lg:pt-3;
     }

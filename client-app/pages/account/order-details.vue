@@ -31,7 +31,7 @@
         :title="$t('shared.cart.products_section.title')"
         icon="cube"
         hide-desktop-title
-        :hide-mobile-title="isPrint"
+        hide-print-title
       >
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
@@ -72,12 +72,7 @@
         </VcCardWidget>
 
         <!-- Order summary -->
-        <OrderSummary
-          :cart="order"
-          :no-shipping="allItemsAreDigital"
-          class="order-last print:order-none"
-          :hide-mobile-title="isPrint"
-        >
+        <OrderSummary :cart="order" :no-shipping="allItemsAreDigital" class="order-last print:order-none">
           <template #footer>
             <VcButton
               v-if="showPaymentButton"
@@ -179,7 +174,6 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const isMobile = breakpoints.smaller("lg");
-const isPrint = useMediaQuery("print");
 
 const loadingAddItemsToCart = ref(false);
 
