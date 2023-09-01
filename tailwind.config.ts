@@ -1,6 +1,5 @@
 import { BREAKPOINTS } from "./client-app/core/constants/tailwind";
 import type { Config } from "tailwindcss";
-import {deprecate} from "util";
 
 module.exports = {
   content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],

@@ -132,7 +132,7 @@
                   </span>
                 </div>
 
-                <div class="absolute right-4 top-3">
+                <div v-if="userCanEditOrganization" class="absolute right-4 top-3">
                   <VcActionDropdownMenu placement="left-start">
                     <button
                       type="button"
@@ -434,34 +434,6 @@ async function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): 
       },
     },
   });
-}
-
-function itemActionsBuilder(inputObject: MemberAddressType) {
-  const actions: SlidingActionsItem[] = [];
-
-  if (userCanEditOrganization.value) {
-    actions.push(
-      {
-        icon: "trash",
-        title: t("common.buttons.delete"),
-        left: true,
-        classes: inputObject.isDefault ? "bg-[--color-neutral-200]" : "bg-[--color-danger-500]",
-        clickHandler(address: MemberAddressType) {
-          openDeleteAddressModal(address);
-        },
-      },
-      {
-        icon: "pencil",
-        title: t("common.buttons.edit"),
-        classes: "bg-[--color-neutral-500]",
-        clickHandler(address: MemberAddressType) {
-          openAddOrUpdateCompanyAddressModal(address);
-        },
-      },
-    );
-  }
-
-  return actions;
 }
 
 fetchAddresses();
