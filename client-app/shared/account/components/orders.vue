@@ -162,7 +162,7 @@
           </div>
 
           <div class="flex flex-col items-end justify-center">
-            <OrderStatus class="min-w-[7rem]" :status="itemData.item.status" />
+            <OrderStatus class="w-full !max-w-[9rem]" :status="itemData.item.status" />
           </div>
 
           <div class="flex flex-col">
@@ -233,7 +233,7 @@
           <td class="p-5 text-center">
             <VcTooltip class="!block">
               <template #trigger>
-                <OrderStatus class="!block" :status="order.status" />
+                <OrderStatus class="w-full !max-w-[9rem]" :status="order.status" />
               </template>
 
               <template #content>
