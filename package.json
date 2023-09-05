@@ -49,6 +49,7 @@
     "maska": "~1.5.2",
     "moment": "^2.29.4",
     "swiper": "^8.4.7",
+    "tw-elements": "^1.0.0-rc.1",
     "vee-validate": "^4.11.0",
     "vue": "^3.3.4",
     "vue-i18n": "^9.2.2",

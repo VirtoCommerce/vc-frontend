@@ -1,13 +1,36 @@
 <template>
   <div
     ref="mainImageElement"
-    class="square relative flex flex-col items-center justify-center overflow-hidden rounded-sm border border-gray-100"
+    class="vc-image-gallery square relative flex flex-col overflow-hidden rounded-sm border border-gray-100"
+    data-te-lightbox-init
   >
+    <template v-if="images.length > 1">
+      <VcImage
+        v-for="(image, i) in images"
+        :key="image.url || i"
+        :src="image.url"
+        size-suffix="md"
+        class="vc-image-gallery__main-image absolute top-0 h-full w-full cursor-zoom-in rounded-sm object-cover object-center data-[te-lightbox-disabled]:cursor-auto"
+        :class="{ hidden: image.url !== activeSrc }"
+        lazy
+      />
+    </template>
+
     <VcImage
+      v-else
       :src="activeSrc"
+      :data-te-img="activeSrc"
       size-suffix="md"
-      class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
+      class="vc-image-gallery__main-image absolute top-0 h-full w-full cursor-pointer rounded-sm object-cover object-center"
     />
+
+    <div
+      class="vc-image-gallery__hover-bg absolute top-0 h-full w-full cursor-pointer rounded-sm object-cover object-center"
+      :data-te-img="activeSrc"
+      :src="activeSrc"
+    >
+      <VcIcon class="vc-image-gallery__hover-bg__icon text-[--color-accent-950]" name="search" size="xxl" />
+    </div>
 
     <slot name="badges" />
   </div>
@@ -54,7 +77,8 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints, useSwipe } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { Lightbox, initTE } from "tw-elements";
+import { computed, ref, watchEffect, onMounted } from "vue";
 import type { ImageType, Product } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -98,4 +122,48 @@ useSwipe(mainImageElement, {
 watchEffect(() => {
   activeSrc.value = props.product.imgSrc ?? "";
 });
+
+onMounted(() => {
+  initTE({ Lightbox });
+});
 </script>
+
+<style scoped lang="scss">
+.vc-image-gallery {
+  $hover: "";
+
+  &:hover {
+    $hover: &;
+  }
+
+  &__main-image {
+    z-index: 2;
+    opacity: 1;
+    transition: 0.5s ease;
+    backface-visibility: hidden;
+
+    #{$hover} & {
+      opacity: 0.5;
+    }
+  }
+
+  &__hover-bg {
+    z-index: 1;
+    transition: 0.3s ease;
+    opacity: 0;
+
+    #{$hover} & {
+      opacity: 1;
+    }
+
+    &__icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      text-align: center;
+    }
+  }
+}
+</style>
