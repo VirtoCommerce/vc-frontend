@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import DEFAULT_LOCALE_MESSAGE from "../../../locales/en.json";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -44,14 +45,14 @@ function fetchLocaleMessages(locale: string): Promise<any> {
     return locales[path]();
   }
 
-  return import("../../../locales/en.json");
+  return Promise.resolve(undefined);
 }
 
 async function setLocale(i18n: I18n, locale: string): Promise<void> {
   let messages = i18n.global.getLocaleMessage(locale);
 
   if (!Object.keys(messages).length) {
-    messages = await fetchLocaleMessages(locale);
+    messages = (await fetchLocaleMessages(locale)) || DEFAULT_LOCALE_MESSAGE;
     i18n.global.setLocaleMessage(locale, messages);
   }
 
@@ -104,5 +105,6 @@ export function useLanguages() {
     currentLanguage,
     setLocale,
     saveLocaleAndReload,
+    DEFAULT_LOCALE_MESSAGE,
   };
 }

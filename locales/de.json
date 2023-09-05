@@ -1,0 +1,11 @@
+{
+  "shared": {
+    "layout": {
+      "header": {
+        "bottom_header": {
+          "catalog_menu_button": "Katalog"
+        }
+      }
+    }
+  }
+}

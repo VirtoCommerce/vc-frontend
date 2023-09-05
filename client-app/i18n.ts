@@ -1,4 +1,7 @@
 import { createI18n as _createI18n } from "vue-i18n";
+import { useLanguages } from "@/core/composables";
+
+const { defaultLocale, DEFAULT_LOCALE_MESSAGE } = useLanguages();
 
 export function createI18n(locale: string, currency: string) {
   return _createI18n({
@@ -35,6 +38,12 @@ export function createI18n(locale: string, currency: string) {
         },
       },
     },
+    fallbackLocale: defaultLocale.value,
+    messages: {
+      [defaultLocale.value]: DEFAULT_LOCALE_MESSAGE,
+    },
+    fallbackWarn: false,
+    missingWarn: false,
     numberFormats: {
       [locale]: {
         currency: {
