@@ -42,6 +42,7 @@
                     @click="hideSearchDropdown"
                   >
                     <VcIcon name="search-circle" size="xs" class="shrink-0 text-[--color-neutral-300]" />
+                    <!-- eslint-disable-next-line vue/no-v-html -->
                     <span class="truncate" v-html="suggestion.label" />
                   </router-link>
                 </li>
@@ -59,6 +60,7 @@
               <ul>
                 <li v-for="page in pages" :key="page.relativeUrl">
                   <router-link :to="page.relativeUrl!" class="block py-1" @click="hideSearchDropdown">
+                    <!-- eslint-disable-next-line vue/no-v-html -->
                     <span v-html="page.name" />
                   </router-link>
                 </li>
@@ -76,6 +78,7 @@
               <ul v-for="(column, index) in categoriesColumns" :key="index">
                 <li v-for="category in column" :key="category.name">
                   <router-link :to="categoriesRoutes[category.id]" class="block py-1" @click="hideSearchDropdown">
+                    <!-- eslint-disable-next-line vue/no-v-html -->
                     <span v-html="category.name" />
                   </router-link>
                 </li>

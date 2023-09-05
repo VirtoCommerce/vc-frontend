@@ -7,6 +7,7 @@
       <div class="text-center">
         <div class="mt-4">
           <VcCheckbox class="inline-flex">
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span class="checkbox-label" v-html="model.checkboxText"></span>
           </VcCheckbox>
         </div>

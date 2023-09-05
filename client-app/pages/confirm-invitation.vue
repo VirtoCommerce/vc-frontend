@@ -6,6 +6,7 @@
         class="mb-3 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"
       />
 
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <p class="mb-4 text-sm" v-html="$t('pages.confirm_invitation.text')" />
 
       <form @submit="onSubmit">

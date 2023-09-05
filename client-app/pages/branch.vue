@@ -32,6 +32,7 @@
         >
           <div class="hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
 
+          <!-- eslint-disable-next-line vue/no-v-html -->
           <div id="description" class="break-words" v-html="fulfillmentCenter?.description"></div>
         </div>
       </div>
