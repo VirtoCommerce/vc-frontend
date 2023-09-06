@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
-import DEFAULT_LOCALE_MESSAGE from "../../../locales/en.json";
+import englishMessage from "../../../locales/en.json";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -33,7 +33,15 @@ const currentLanguage = computed<ILanguage>(
   () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
 );
 
+const FALLBACK = {
+  locale: "en",
+  message: englishMessage,
+};
+
 function fetchLocaleMessages(locale: string): Promise<any> {
+  if (locale === FALLBACK.locale) {
+    return Promise.resolve(FALLBACK.message);
+  }
   /**
    * FIXME: Don't use import
    * Fetch localization files (json) from Storefront to be able to edit localization files in Admin panel
@@ -52,7 +60,7 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
   let messages = i18n.global.getLocaleMessage(locale);
 
   if (!Object.keys(messages).length) {
-    messages = (await fetchLocaleMessages(locale)) || DEFAULT_LOCALE_MESSAGE;
+    messages = await fetchLocaleMessages(locale);
     i18n.global.setLocaleMessage(locale, messages);
   }
 
@@ -105,6 +113,6 @@ export function useLanguages() {
     currentLanguage,
     setLocale,
     saveLocaleAndReload,
-    DEFAULT_LOCALE_MESSAGE,
+    FALLBACK,
   };
 }
