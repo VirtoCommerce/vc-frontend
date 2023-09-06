@@ -25,12 +25,10 @@
           <svg class="text-[color:var(--color-branch-dialog-clock)] md:mt-px" width="16" height="16">
             <use href="/static/images/clock.svg#main"></use>
           </svg>
-          <!-- eslint-disable vue/no-v-html -->
           <div
+            v-html-safe="branch.shortDescription"
             class="short-description ml-1.5 flex space-x-3 whitespace-nowrap text-xs md:block md:space-x-0"
-            v-html="branch.shortDescription"
           />
-          <!-- eslint-enable -->
         </div>
       </div>
     </div>
