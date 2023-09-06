@@ -1,54 +1,40 @@
 <template>
-  <div
-    ref="mainImageElement"
-    class="vc-image-gallery square relative flex flex-col overflow-hidden rounded-sm border border-gray-100"
-    data-te-lightbox-init
-  >
+  <div ref="mainImageElement" class="vc-image-gallery" data-te-lightbox-init>
     <template v-if="images.length > 1">
       <VcImage
         v-for="(image, i) in images"
         :key="image.url || i"
         :src="image.url"
         size-suffix="md"
-        class="vc-image-gallery__main-image absolute top-0 h-full w-full cursor-zoom-in rounded-sm object-cover object-center data-[te-lightbox-disabled]:cursor-auto"
+        class="vc-image-gallery__main-image"
         :class="{ hidden: image.url !== activeSrc }"
         lazy
       />
     </template>
 
-    <VcImage
-      v-else
-      :src="activeSrc"
-      :data-te-img="activeSrc"
-      size-suffix="md"
-      class="vc-image-gallery__main-image absolute top-0 h-full w-full cursor-pointer rounded-sm object-cover object-center"
-    />
+    <VcImage v-else :src="activeSrc" :data-te-img="activeSrc" size-suffix="md" class="vc-image-gallery__main-image" />
 
-    <div
-      class="vc-image-gallery__hover-bg absolute top-0 h-full w-full cursor-pointer rounded-sm object-cover object-center"
-      :data-te-img="activeSrc"
-      :src="activeSrc"
-    >
-      <VcIcon class="vc-image-gallery__search-icon text-[--color-accent-950]" name="search" size="xxl" />
+    <div class="vc-image-gallery__hover-bg" :data-te-img="activeSrc" :src="activeSrc">
+      <VcIcon class="vc-image-gallery__search-icon" name="search" size="xxl" />
     </div>
 
     <slot name="badges" />
   </div>
 
   <template v-if="images.length > 1">
-    <div class="mt-3 flex flex-wrap justify-center gap-x-2.5 gap-y-1 print:hidden lg:hidden">
+    <div class="vc-image-gallery__mobile-dots">
       <button
         v-for="(image, i) in images"
         :key="image.url || i"
-        :class="{ 'bg-[color:var(--color-primary)]': image.url === activeSrc }"
         type="button"
-        class="h-4 w-4 cursor-pointer rounded-full border border-[color:var(--color-primary)]"
+        class="vc-image-gallery__mobile-dot"
+        :class="{ 'vc-image-gallery__mobile-dot--active': image.url === activeSrc }"
         @click="setActiveImage(image.url)"
         @keyup.enter="setActiveImage(image.url)"
       />
     </div>
 
-    <div class="mt-6 hidden grid-cols-3 gap-5 print:grid print:ps-1 lg:grid">
+    <div class="vc-image-gallery__images">
       <button
         v-for="(image, i) in images"
         :key="image.url || i"
@@ -57,18 +43,10 @@
         @keyup.enter="setActiveImage(image.url)"
       >
         <span
-          class="square relative flex cursor-pointer flex-col items-center justify-center rounded-sm border border-gray-100 hover:ring hover:ring-[color:var(--color-primary-hover)]"
-          :class="{
-            'ring ring-[color:var(--color-primary)]': image.url === activeSrc,
-          }"
+          class="vc-image-gallery__image-wrapper"
+          :class="{ 'vc-image-gallery__image-wrapper--active': image.url === activeSrc }"
         >
-          <VcImage
-            :src="image.url"
-            :alt="image.name"
-            size-suffix="sm"
-            class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
-            lazy
-          />
+          <VcImage :src="image.url" :alt="image.name" size-suffix="sm" class="vc-image-gallery__image" lazy />
         </span>
       </button>
     </div>
@@ -76,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints, useSwipe } from "@vueuse/core";
+import { useSwipe } from "@vueuse/core";
 import { Lightbox, initTE } from "tw-elements";
 import { computed, ref, watchEffect, onMounted } from "vue";
 import type { ImageType, Product } from "@/core/api/graphql/types";
@@ -86,9 +64,6 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 
 const mainImageElement = ref<HTMLElement | null>(null);
 const activeSrc = ref("");
@@ -132,38 +107,59 @@ onMounted(() => {
 .vc-image-gallery {
   $hover: "";
 
+  @apply pb-[100%] relative flex flex-col overflow-hidden rounded-sm border border-gray-100;
+
   &:hover {
     $hover: &;
   }
 
   &__main-image {
-    z-index: 2;
-    opacity: 1;
-    transition: 0.5s ease;
-    backface-visibility: hidden;
+    @apply duration-300 ease-linear z-[2] opacity-100 absolute top-0 h-full w-full cursor-zoom-in rounded-sm object-cover object-center;
 
     #{$hover} & {
-      opacity: 0.5;
+      @apply opacity-50;
     }
   }
 
   &__hover-bg {
-    z-index: 1;
-    transition: 0.3s ease;
+    @apply z-[1] duration-300 ease-linear opacity-0 absolute top-0 h-full w-full cursor-pointer rounded-sm object-cover object-center;
     opacity: 0;
 
     #{$hover} & {
-      opacity: 1;
+      @apply opacity-100;
     }
   }
 
   &__search-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    text-align: center;
+    @apply top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]  absolute text-[--color-accent-950] text-center;
+  }
+
+  &__mobile-dots {
+    @apply mt-3 flex flex-wrap justify-center gap-x-2.5 gap-y-1 print:hidden lg:hidden;
+  }
+
+  &__mobile-dot {
+    @apply h-4 w-4 cursor-pointer rounded-full border border-[color:var(--color-primary)];
+
+    &--active {
+      @apply bg-[color:var(--color-primary)];
+    }
+  }
+
+  &__images {
+    @apply mt-6 hidden grid-cols-3 gap-5 print:grid print:ps-1 lg:grid;
+  }
+
+  &__image-wrapper {
+    @apply pb-[100%] relative flex cursor-pointer flex-col items-center justify-center rounded-sm border border-gray-100 hover:ring hover:ring-[color:var(--color-primary-hover)];
+
+    &--active {
+      @apply ring ring-[color:var(--color-primary)];
+    }
+  }
+
+  &__image {
+    @apply absolute top-0 h-full w-full rounded-sm object-cover object-center;
   }
 }
 </style>
