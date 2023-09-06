@@ -52,8 +52,7 @@ function fetchLocaleMessages(locale: string): Promise<any> {
   if (locales[path]) {
     return locales[path]();
   }
-
-  return Promise.resolve(undefined);
+  return Promise.resolve(englishMessage);
 }
 
 async function setLocale(i18n: I18n, locale: string): Promise<void> {
