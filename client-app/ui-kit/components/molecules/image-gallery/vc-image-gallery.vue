@@ -29,7 +29,7 @@
       :data-te-img="activeSrc"
       :src="activeSrc"
     >
-      <VcIcon class="vc-image-gallery__hover-bg__icon text-[--color-accent-950]" name="search" size="xxl" />
+      <VcIcon class="vc-image-gallery__search-icon text-[--color-accent-950]" name="search" size="xxl" />
     </div>
 
     <slot name="badges" />
@@ -155,15 +155,15 @@ onMounted(() => {
     #{$hover} & {
       opacity: 1;
     }
+  }
 
-    &__icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      -ms-transform: translate(-50%, -50%);
-      text-align: center;
-    }
+  &__search-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
   }
 }
 </style>
