@@ -1,4 +1,3 @@
-import fetch from "isomorphic-fetch";
 import { shallowRef, unref } from "vue";
 import { globals } from "../globals";
 
