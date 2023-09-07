@@ -36,12 +36,9 @@ const currentLanguage = computed<ILanguage>(
 );
 
 function fetchLocaleMessages(locale: string): Promise<any> {
-  try {
-    return innerFetch(`/locales/${locale}.json`);
-  } catch (e) {
-    Logger.error(`${locale} locale not presented`);
-    return innerFetch("/locales/en.json");
-  }
+  return innerFetch(`/locales/${locale}.json`).catch(() => {
+    Logger.error(`"${locale}" locale not presented`);
+  });
 }
 
 async function setLocale(i18n: I18n, locale: string): Promise<void> {
