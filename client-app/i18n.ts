@@ -1,8 +1,7 @@
 import { createI18n as _createI18n } from "vue-i18n";
-import { useLanguages } from "@/core/composables";
-const { FALLBACK } = useLanguages();
+import type { LocaleMessage } from "@intlify/core-base";
 
-export function createI18n(locale: string, currency: string) {
+export function createI18n(locale: string, currency: string, fallback: { locale: string; message: LocaleMessage }) {
   return _createI18n({
     legacy: false,
     datetimeFormats: {
@@ -37,9 +36,9 @@ export function createI18n(locale: string, currency: string) {
         },
       },
     },
-    fallbackLocale: FALLBACK.locale,
+    fallbackLocale: fallback.locale,
     messages: {
-      [FALLBACK.locale]: FALLBACK.message,
+      [fallback.locale]: fallback.message,
     },
     fallbackWarn: false,
     missingWarn: false,

@@ -1,12 +1,14 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
-import englishMessage from "../../../locales/en.json";
+import { useFetch } from "@/core/composables/useFetch";
+import { Logger } from "@/core/utilities";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
 import type { Composer } from "vue-i18n";
 
+const { innerFetch } = useFetch();
 const { themeContext } = useThemeContext();
 
 const savedLocale = useLocalStorage<string>("locale", "");
@@ -33,26 +35,13 @@ const currentLanguage = computed<ILanguage>(
   () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
 );
 
-const FALLBACK = {
-  locale: "en",
-  message: englishMessage,
-};
-
 function fetchLocaleMessages(locale: string): Promise<any> {
-  if (locale === FALLBACK.locale) {
-    return Promise.resolve(FALLBACK.message);
+  try {
+    return innerFetch(`/locales/${locale}.json`);
+  } catch (e) {
+    Logger.error(`${locale} locale not presented`);
+    return innerFetch("/locales/en.json");
   }
-  /**
-   * FIXME: Don't use import
-   * Fetch localization files (json) from Storefront to be able to edit localization files in Admin panel
-   */
-  const locales = import.meta.glob("../../../locales/*.json");
-  const path = `../../../locales/${locale}.json`;
-
-  if (locales[path]) {
-    return locales[path]();
-  }
-  return Promise.resolve(englishMessage);
 }
 
 async function setLocale(i18n: I18n, locale: string): Promise<void> {
@@ -112,6 +101,6 @@ export function useLanguages() {
     currentLanguage,
     setLocale,
     saveLocaleAndReload,
-    FALLBACK,
+    fetchLocaleMessages,
   };
 }
