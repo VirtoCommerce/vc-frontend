@@ -27,7 +27,7 @@
       >
         <span class="vc-select__button-content">
           <slot v-if="selected" name="selected" v-bind="{ item: selected, error }">
-            <VcSelectItem class="vc-select__button-item">
+            <VcSelectItem>
               <VcSelectItemText :error="error">
                 {{ selectedText }}
               </VcSelectItemText>
@@ -35,7 +35,7 @@
           </slot>
 
           <slot v-else-if="$slots.placeholder || placeholder" name="placeholder" v-bind="{ error }">
-            <VcSelectItem class="vc-select__button-item">
+            <VcSelectItem>
               <VcSelectItemText placeholder :error="error">
                 {{ placeholder }}
               </VcSelectItemText>
@@ -347,12 +347,6 @@ function prev(index: number) {
       @apply bg-gray-50 cursor-not-allowed;
     }
 
-    #{$readonly} & {
-      @media print {
-        @apply border-0;
-      }
-    }
-
     #{$readonly}:not(#{$disabled}) & {
       @apply pointer-events-none;
     }
@@ -371,14 +365,6 @@ function prev(index: number) {
 
     #{$error} & {
       @apply text-[color:var(--color-danger)];
-    }
-  }
-
-  &__button-item {
-    #{$readonly} & {
-      @media print {
-        @apply px-0;
-      }
     }
   }
 

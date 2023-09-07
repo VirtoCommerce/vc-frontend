@@ -22,7 +22,7 @@
     <VcBreadcrumbs :items="breadcrumbs" class="mx-5 hidden md:mx-0 lg:block" />
 
     <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-5 mb-5 lg:mx-0">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-5 mb-5 print:mx-0 lg:mx-0">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
@@ -140,7 +140,11 @@
         </OrderSummary>
 
         <!-- Create quote widget -->
-        <VcCardWidget v-if="$cfg.quotes_enabled && isAuthenticated" :title="$t('common.titles.quote_request')">
+        <VcCardWidget
+          v-if="$cfg.quotes_enabled && isAuthenticated"
+          :title="$t('common.titles.quote_request')"
+          class="print:hidden"
+        >
           <p class="mb-5 text-xs font-normal text-gray-400">
             {{ $t("common.messages.quote_request") }}
           </p>

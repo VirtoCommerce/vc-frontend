@@ -1,0 +1,13 @@
+.vc-input {
+    &__bg {
+    @apply hidden;
+  }
+
+  &__input {
+    @apply px-0;
+
+    &:disabled {
+      @apply text-[color:var(--color-additional-950)];
+    }
+  }
+}

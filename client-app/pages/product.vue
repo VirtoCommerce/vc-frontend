@@ -174,3 +174,11 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style lang="scss">
+@media print {
+  html {
+    font-size: 70% !important;
+  }
+}
+</style>

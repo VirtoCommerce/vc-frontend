@@ -2,13 +2,16 @@
   <div class="vc-line-items">
     <!-- table header -->
     <div class="vc-line-items__head">
-      <VcCheckbox v-if="selectable" v-model="selectAll" @change="$emit('select:allItems', selectAll)" />
+      <VcCheckbox
+        v-if="selectable"
+        v-model="selectAll"
+        class="vc-line-items__checkbox"
+        @change="$emit('select:allItems', selectAll)"
+      />
 
       <div class="vc-line-items__product">
         {{ $t("common.labels.product") }}
       </div>
-
-      <div class="vc-line-items__sku">{{ $t("common.labels.sku") }}</div>
 
       <div class="vc-line-items__properties">{{ $t("common.labels.properties") }}</div>
 
@@ -138,14 +141,14 @@ function removeAllItems() {
 
 <style lang="scss">
 .vc-line-items {
-  @media (min-width: theme("screens.md")), print {
+  @media (min-width: theme("screens.md")) {
     @apply border rounded divide-y;
   }
 
   &__head {
     @apply hidden;
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
     }
 
@@ -155,13 +158,7 @@ function removeAllItems() {
   }
 
   &__product {
-    @media screen {
-      @apply flex-none w-[12.75rem];
-    }
-
-    @media print {
-      @apply flex-grow;
-    }
+    @apply flex-none w-[12.75rem];
 
     @media (min-width: theme("screens.lg")) {
       @apply w-[11.75rem];
@@ -172,48 +169,18 @@ function removeAllItems() {
     }
   }
 
-  &__sku {
-    @media screen {
-      @apply hidden;
-    }
-
-    @media print {
-      @apply flex-none w-[5.5rem];
-    }
-  }
-
-  &__properties {
-    @apply flex-grow;
-
-    @media print {
-      @apply hidden;
-    }
-  }
-
   &__price {
-    @apply text-right;
-
-    @media screen {
-      @apply hidden;
-    }
+    @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply w-[8.5rem];
-    }
-
-    @media (min-width: theme("screens.2xl")), print {
-      @apply flex-none block text-right;
-    }
-
-    @media print {
-      @apply w-[7rem];
+      @apply flex-none block w-[8.75rem] text-right;
     }
   }
 
   &__slot {
     @apply shrink-0 flex items-center justify-between w-[15.75rem];
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply gap-4;
     }
 
@@ -224,10 +191,6 @@ function removeAllItems() {
     @media (min-width: theme("screens.xl")) {
       @apply w-[15.85rem];
     }
-
-    @media print {
-      @apply w-[13rem];
-    }
   }
 
   &__removable {
@@ -237,7 +200,7 @@ function removeAllItems() {
   &__body {
     @apply flex flex-col gap-4;
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply gap-0 divide-y space-y-0;
     }
   }
@@ -245,7 +208,7 @@ function removeAllItems() {
   &__foot {
     @apply flex justify-end py-2.5;
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply px-3;
     }
 
@@ -258,7 +221,7 @@ function removeAllItems() {
     @apply me-1;
 
     &--mobile.vc-button {
-      @media (min-width: theme("screens.md")), print {
+      @media (min-width: theme("screens.md")) {
         @apply hidden;
       }
     }
@@ -266,22 +229,14 @@ function removeAllItems() {
     &--desktop.vc-button {
       @apply hidden;
 
-      @media (min-width: theme("screens.md")), print {
+      @media (min-width: theme("screens.md")) {
         @apply inline-block;
       }
     }
   }
 
   &__subtotal {
-    @apply justify-self-end flex items-center gap-2;
-
-    @media screen {
-      @apply text-[--color-success-600];
-    }
-
-    @media print {
-      @apply w-full justify-between;
-    }
+    @apply justify-self-end flex items-center gap-2 text-[--color-success-600];
   }
 
   &__subtotal-label {

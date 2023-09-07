@@ -4,7 +4,6 @@
       :class="[
         'vc-section-widget__title',
         {
-          'vc-section-widget__title--hide-print': hidePrintTitle || !title,
           'vc-section-widget__title--hide-mobile': hideMobileTitle || !title,
           'vc-section-widget__title--hide-desktop': hideDesktopTitle || !title,
         },
@@ -25,7 +24,6 @@
 
 <script setup lang="ts">
 export interface IProps {
-  hidePrintTitle?: boolean;
   hideMobileTitle?: boolean;
   hideDesktopTitle?: boolean;
 
@@ -38,7 +36,6 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-section-widget {
-  $hidePrintTitle: "";
   $hideMobileTitle: "";
   $hideDesktopTitle: "";
 
@@ -49,16 +46,10 @@ defineProps<IProps>();
   }
 
   &:after {
-    @media screen {
-      @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
-    }
+    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
 
     @media (min-width: theme("screens.lg")) {
       @apply content-none;
-    }
-
-    @media print {
-      @apply border-b;
     }
   }
 
@@ -67,18 +58,6 @@ defineProps<IProps>();
 
     @media (min-width: theme("screens.xs")) {
       @apply px-7;
-    }
-
-    @media print {
-      @apply px-0;
-    }
-
-    &--hide-print {
-      $hidePrintTitle: &;
-
-      @media print {
-        @apply hidden;
-      }
     }
 
     &--hide-mobile {
@@ -96,10 +75,6 @@ defineProps<IProps>();
 
   &__hexagon {
     @apply shrink-0;
-
-    @media print {
-      @apply hidden;
-    }
   }
 
   &__content {
@@ -113,11 +88,6 @@ defineProps<IProps>();
       @apply pb-6;
     }
 
-    @media print {
-      @apply px-0;
-    }
-
-    #{$hidePrintTitle} ~ &,
     #{$hideMobileTitle} ~ & {
       @apply pt-7 lg:pt-3;
     }

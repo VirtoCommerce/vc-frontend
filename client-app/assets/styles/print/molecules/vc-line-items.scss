@@ -1,0 +1,43 @@
+.vc-line-items {
+  @apply border rounded divide-y;
+
+  &__head {
+    @apply flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
+  }
+
+  &__checkbox {
+    @apply p-2 -me-2;
+  }
+
+  &__product {
+    @apply flex-grow w-auto;
+  }
+
+  &__properties {
+    @apply hidden;
+  }
+
+  &__price {
+    @apply flex-none block text-right w-[7rem];
+  }
+
+  &__slot {
+    @apply gap-4 w-[13rem];;
+  }
+
+  &__removable {
+    @apply hidden;
+  }
+
+  &__body {
+    @apply gap-0 divide-y space-y-0;
+  }
+
+  &__foot {
+    @apply px-3;
+  }
+
+  &__subtotal {
+    @apply w-full justify-between;
+  }
+}

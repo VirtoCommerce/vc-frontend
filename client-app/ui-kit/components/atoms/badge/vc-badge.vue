@@ -26,39 +26,23 @@ withDefaults(defineProps<IProps>(), {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-badge {
   $colors: primary, secondary, neutral, info, success, warning, danger;
 
-  @apply inline-block rounded-full font-bold text-center;
-
-  @media screen {
-    @apply border;
-  }
+  @apply inline-block border rounded-full font-bold text-center;
 
   &--size {
     &--xs {
-      @apply text-xxs;
-
-      @media screen {
-        @apply px-1;
-      }
+      @apply px-1 text-xxs;
     }
 
     &--sm {
-      @apply text-xs;
-
-      @media screen {
-        @apply py-0.5 px-2;
-      }
+      @apply py-0.5 px-2 text-xs;
     }
 
     &--md {
-      @apply text-sm;
-
-      @media screen {
-        @apply py-[3px] px-3;
-      }
+      @apply py-[3px] px-3 text-sm;
     }
   }
 
@@ -66,31 +50,29 @@ withDefaults(defineProps<IProps>(), {
     @apply truncate max-w-full;
   }
 
-  @media screen {
-    @each $color in $colors {
-      &--solid--#{$color} {
-        @apply bg-[color:var(--color-#{$color}-500)]
-        border-[color:var(--color-#{$color}-500)]
-        text-[color:var(--color-additional-50)];
-      }
+  @each $color in $colors {
+    &--solid--#{$color} {
+      @apply bg-[color:var(--color-#{$color}-500)]
+      border-[color:var(--color-#{$color}-500)]
+      text-[color:var(--color-additional-50)];
+    }
 
-      &--solid-light--#{$color} {
-        @apply bg-[color:var(--color-#{$color}-50)]
-        border-[color:var(--color-#{$color}-50)]
-        text-[color:var(--color-#{$color}-800)];
-      }
+    &--solid-light--#{$color} {
+      @apply bg-[color:var(--color-#{$color}-50)]
+      border-[color:var(--color-#{$color}-50)]
+      text-[color:var(--color-#{$color}-800)];
+    }
 
-      &--outline--#{$color} {
-        @apply bg-[color:var(--color-additional-50)]
-        border-[color:var(--color-#{$color}-500)]
-        text-[color:var(--color-#{$color}-800)];
-      }
+    &--outline--#{$color} {
+      @apply bg-[color:var(--color-additional-50)]
+      border-[color:var(--color-#{$color}-500)]
+      text-[color:var(--color-#{$color}-800)];
+    }
 
-      &--outline-dark--#{$color} {
-        @apply bg-[color:var(--color-#{$color}-50)]
-        border-[color:var(--color-#{$color}-500)]
-        text-[color:var(--color-#{$color}-800)];
-      }
+    &--outline-dark--#{$color} {
+      @apply bg-[color:var(--color-#{$color}-50)]
+      border-[color:var(--color-#{$color}-500)]
+      text-[color:var(--color-#{$color}-800)];
     }
   }
 }

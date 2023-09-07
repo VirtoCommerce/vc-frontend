@@ -38,16 +38,12 @@
           </div>
         </div>
 
-        <div class="vc-line-item__sku">
-          {{ sku }}
-        </div>
-
         <div class="vc-line-item__properties">
           <VcProperty v-for="property in properties" :key="property.name" :label="property.label!">
             {{ property.value }}
           </VcProperty>
 
-          <VcProperty class="vc-line-item__price--property" :label="$t('common.labels.price_per_item')">
+          <VcProperty :label="$t('common.labels.price_per_item')">
             <VcLineItemPrice :list-price="listPrice" :actual-price="actualPrice" />
           </VcProperty>
         </div>
@@ -95,7 +91,6 @@ interface IEmits {
 interface IProps {
   imageUrl?: string;
   name: string;
-  sku?: string;
   route?: RouteLocationRaw;
   properties?: Property[];
   listPrice?: MoneyType;
@@ -121,7 +116,7 @@ watchEffect(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-line-item {
   $selected: "";
   $removable: "";
@@ -131,12 +126,8 @@ watchEffect(() => {
 
   @apply flex flex-col gap-2 p-3 rounded border shadow-t-3sm;
 
-  @media (min-width: theme("screens.md")), print {
+  @media (min-width: theme("screens.md")) {
     @apply px-3 rounded-none border-0 shadow-none;
-  }
-
-  @media print {
-    @apply break-inside-avoid;
   }
 
   &--selected {
@@ -171,7 +162,7 @@ watchEffect(() => {
   &__main {
     @apply relative flex items-start gap-3;
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply items-center;
     }
   }
@@ -179,7 +170,7 @@ watchEffect(() => {
   &__checkbox {
     @apply flex-none absolute -top-2 -left-2 p-2 rounded bg-[--color-additional-50];
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply static top-auto left-auto -mx-2;
     }
 
@@ -198,16 +189,12 @@ watchEffect(() => {
     @media (min-width: theme("screens.xl")) {
       @apply w-16 h-16;
     }
-
-    @media print {
-      @apply hidden;
-    }
   }
 
   &__content {
     @apply grow;
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply contents;
     }
   }
@@ -223,19 +210,13 @@ watchEffect(() => {
       @apply w-48;
     }
 
-    @media print {
-      @apply grow mt-0;
-    }
-
     #{$removable} & {
       @apply pr-10 md:pr-0;
     }
   }
 
   &__name-link {
-    @media screen {
-      @apply text-[--color-accent-600];
-    }
+    @apply text-[--color-accent-600];
 
     word-break: break-word;
 
@@ -258,25 +239,11 @@ watchEffect(() => {
     }
   }
 
-  &__sku {
-    @media screen {
-      @apply hidden;
-    }
-
-    @media print {
-      @apply shrink-0 min-h-0 w-[5.5rem] text-xs/[1rem];
-    }
-  }
-
   &__properties {
     @apply space-y-px mt-3;
 
     @media (min-width: theme("screens.md")) {
       @apply grow mt-0;
-    }
-
-    @media print {
-      @apply hidden;
     }
 
     #{$removed} &,
@@ -287,26 +254,14 @@ watchEffect(() => {
   }
 
   &__price {
-    @media screen {
-      @apply hidden;
-    }
-
-    &--property {
-      @media (min-width: theme("screens.2xl")) {
-        @apply hidden;
-      }
-    }
+    @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
       @apply w-[8.5rem];
     }
 
-    @media (min-width: theme("screens.2xl")), print {
+    @media (min-width: theme("screens.2xl")) {
       @apply block shrink-0 text-right;
-    }
-
-    @media print {
-      @apply w-[7rem];
     }
 
     #{$removed} & {
@@ -316,7 +271,7 @@ watchEffect(() => {
     #{$deleted} & {
       @apply hidden;
 
-      @media (min-width: theme("screens.2xl")), print {
+      @media (min-width: theme("screens.2xl")) {
         @apply block invisible;
       }
     }
@@ -325,7 +280,7 @@ watchEffect(() => {
   &__slot {
     @apply flex items-start gap-1 mt-4 empty:hidden;
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply flex-shrink-0 items-center gap-2 mt-0 w-64 empty:block;
     }
 
@@ -335,10 +290,6 @@ watchEffect(() => {
 
     @media (min-width: theme("screens.xl")) {
       @apply w-64;
-    }
-
-    @media print {
-      @apply w-[13rem];
     }
 
     #{$removed} & {
@@ -353,7 +304,7 @@ watchEffect(() => {
   &__remove-button {
     @apply shrink-0 absolute top-0 right-0;
 
-    @media (min-width: theme("screens.md")), print {
+    @media (min-width: theme("screens.md")) {
       @apply relative;
     }
   }

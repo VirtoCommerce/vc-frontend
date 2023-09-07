@@ -1,0 +1,19 @@
+.vc-section-widget {
+  @apply border-b break-inside-avoid;
+
+  &:after {
+    @apply hidden;
+  }
+
+  &__title {
+    @apply px-0;
+  }
+
+  &__hexagon {
+    @apply hidden;
+  }
+
+  &__content {
+    @apply px-0;
+  }
+}

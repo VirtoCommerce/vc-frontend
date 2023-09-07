@@ -4,7 +4,6 @@
       :class="[
         'vc-card-widget__title',
         {
-          'vc-card-widget__title--hide-print': hidePrintTitle || !title,
           'vc-card-widget__title--hide-mobile': hideMobileTitle || !title,
           'vc-card-widget__title--hide-desktop': hideDesktopTitle || !title,
         },
@@ -27,7 +26,6 @@
 
 <script setup lang="ts">
 export interface IProps {
-  hidePrintTitle?: boolean;
   hideMobileTitle?: boolean;
   hideDesktopTitle?: boolean;
 
@@ -40,7 +38,6 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-card-widget {
-  $hidePrintTitle: "";
   $hideMobileTitle: "";
 
   @apply relative bg-[color:var(--color-white)];
@@ -49,14 +46,8 @@ defineProps<IProps>();
     @apply border rounded shadow-md-x;
   }
 
-  @media print {
-    @apply border-b break-inside-avoid;
-  }
-
   &:after {
-    @media screen {
-      @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
-    }
+    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
 
     @media (min-width: theme("screens.lg")) {
       @apply content-none;
@@ -74,18 +65,6 @@ defineProps<IProps>();
       @apply px-5 py-3 border-b;
     }
 
-    @media print {
-      @apply px-0;
-    }
-
-    &--hide-print {
-      $hidePrintTitle: &;
-
-      @media print {
-        @apply hidden;
-      }
-    }
-
     &--hide-mobile {
       $hideMobileTitle: &;
 
@@ -99,10 +78,6 @@ defineProps<IProps>();
 
   &__icon {
     @apply lg:hidden;
-
-    @media print {
-      @apply hidden;
-    }
   }
 
   &__content {
@@ -116,11 +91,6 @@ defineProps<IProps>();
       @apply p-5;
     }
 
-    @media print {
-      @apply px-0;
-    }
-
-    #{$hidePrintTitle} ~ &,
     #{$hideMobileTitle} ~ & {
       @apply pt-7 lg:pt-5;
     }

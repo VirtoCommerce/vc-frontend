@@ -1,6 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <VcSectionWidget :title="$t('common.titles.review_order')" icon="clipboard-copy-1" hide-print-title>
+    <VcSectionWidget id="review-order" :title="$t('common.titles.review_order')" icon="clipboard-copy-1">
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
         <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
@@ -213,3 +213,13 @@ function print() {
   window.print();
 }
 </script>
+
+<style lang="scss">
+#review-order {
+  @media print {
+    .vc-section-widget__title {
+      @apply hidden;
+    }
+  }
+}
+</style>

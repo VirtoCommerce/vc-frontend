@@ -27,12 +27,7 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcSectionWidget
-        :title="$t('shared.cart.products_section.title')"
-        icon="cube"
-        hide-desktop-title
-        hide-print-title
-      >
+      <VcSectionWidget id="products" :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
@@ -210,3 +205,13 @@ watchEffect(() => {
   fetchFullOrder({ id: props.orderId });
 });
 </script>
+
+<style lang="scss">
+#products {
+  @media print {
+    .vc-section-widget__title {
+      @apply hidden;
+    }
+  }
+}
+</style>
