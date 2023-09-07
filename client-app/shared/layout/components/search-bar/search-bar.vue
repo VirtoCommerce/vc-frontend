@@ -42,7 +42,7 @@
                     @click="hideSearchDropdown"
                   >
                     <VcIcon name="search-circle" size="xs" class="shrink-0 text-[--color-neutral-300]" />
-                    <span class="truncate" v-html="suggestion.label" />
+                    <span v-html-safe="suggestion.label" class="truncate" />
                   </router-link>
                 </li>
               </ul>
@@ -59,7 +59,7 @@
               <ul>
                 <li v-for="page in pages" :key="page.relativeUrl">
                   <router-link :to="page.relativeUrl!" class="block py-1" @click="hideSearchDropdown">
-                    <span v-html="page.name" />
+                    <span v-html-safe="page.name" />
                   </router-link>
                 </li>
               </ul>
@@ -76,7 +76,7 @@
               <ul v-for="(column, index) in categoriesColumns" :key="index">
                 <li v-for="category in column" :key="category.name">
                   <router-link :to="categoriesRoutes[category.id]" class="block py-1" @click="hideSearchDropdown">
-                    <span v-html="category.name" />
+                    <span v-html-safe="category.name" />
                   </router-link>
                 </li>
               </ul>
