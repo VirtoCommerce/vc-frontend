@@ -128,10 +128,10 @@ const lineItemsDiscountTotal = computed(() =>
 const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);
 </script>
 
-<style lang="scss">
-#order-summary {
-  @media print {
-    .vc-card-widget__title {
+<style scoped lang="scss">
+@media print {
+  #order-summary {
+    :deep(.vc-card-widget__title) {
       @apply hidden;
     }
   }

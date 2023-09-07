@@ -204,7 +204,7 @@ function removeAllItems() {
     @apply flex flex-col gap-4;
 
     @media (min-width: theme("screens.md")) {
-      @apply gap-0 divide-y space-y-0;
+      @apply gap-0 space-y-0 divide-y;
     }
   }
 

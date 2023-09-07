@@ -214,10 +214,10 @@ function print() {
 }
 </script>
 
-<style lang="scss">
-#review-order {
-  @media print {
-    .vc-section-widget__title {
+<style scoped lang="scss">
+@media print {
+  #review-order {
+    :deep(.vc-section-widget__title) {
       @apply hidden;
     }
   }

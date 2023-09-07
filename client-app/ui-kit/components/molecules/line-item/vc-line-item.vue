@@ -126,7 +126,7 @@ watchEffect(() => {
 
   @apply flex flex-col gap-2 p-3 rounded border shadow-t-3sm;
 
-  @screen md {
+  @media (min-width: theme("screens.md")) {
     @apply px-3 rounded-none border-0 shadow-none;
   }
 
@@ -162,7 +162,7 @@ watchEffect(() => {
   &__main {
     @apply relative flex items-start gap-3;
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       @apply items-center;
     }
   }
@@ -170,7 +170,7 @@ watchEffect(() => {
   &__checkbox {
     @apply flex-none absolute -top-2 -left-2 p-2 rounded bg-[--color-additional-50];
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       @apply static top-auto left-auto -mx-2;
     }
 
@@ -182,11 +182,11 @@ watchEffect(() => {
   &__img {
     @apply shrink-0 w-16 h-16 rounded border;
 
-    @screen lg {
+    @media (min-width: theme("screens.lg")) {
       @apply w-12 h-12;
     }
 
-    @screen xl {
+    @media (min-width: theme("screens.xl")) {
       @apply w-16 h-16;
     }
   }
@@ -194,7 +194,7 @@ watchEffect(() => {
   &__content {
     @apply grow;
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       @apply contents;
     }
   }
@@ -202,11 +202,11 @@ watchEffect(() => {
   &__name {
     @apply min-h-[2rem] text-sm/[1rem] font-bold line-clamp-4;
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       @apply shrink-0 min-h-0 w-[8rem];
     }
 
-    @screen xl {
+    @media (min-width: theme("screens.xl")) {
       @apply w-48;
     }
 
@@ -242,7 +242,7 @@ watchEffect(() => {
   &__properties {
     @apply space-y-px mt-3;
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       @apply grow mt-0;
     }
 
@@ -256,7 +256,7 @@ watchEffect(() => {
   &__price {
     @apply hidden;
 
-    @screen 2xl {
+    @media (min-width: theme("screens.2xl")) {
       @apply block shrink-0 w-[8.5rem] text-right;
     }
 
@@ -267,7 +267,7 @@ watchEffect(() => {
     #{$deleted} & {
       @apply hidden;
 
-      @screen 2xl {
+      @media (min-width: theme("screens.2xl")) {
         @apply block invisible;
       }
     }
@@ -276,15 +276,15 @@ watchEffect(() => {
   &__slot {
     @apply flex items-start gap-1 mt-4 empty:hidden;
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       @apply flex-shrink-0 items-center gap-2 mt-0 w-64 empty:block;
     }
 
-    @screen lg {
+    @media (min-width: theme("screens.lg")) {
       @apply w-1/3;
     }
 
-    @screen xl {
+    @media (min-width: theme("screens.xl")) {
       @apply w-64;
     }
 
@@ -300,7 +300,7 @@ watchEffect(() => {
   &__remove-button {
     @apply shrink-0 absolute top-0 right-0;
 
-    @screen md {
+    @media (min-width: theme("screens.md")) {
       @apply relative;
     }
   }

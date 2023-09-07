@@ -206,10 +206,10 @@ watchEffect(() => {
 });
 </script>
 
-<style lang="scss">
-#products {
-  @media print {
-    .vc-section-widget__title {
+<style scoped lang="scss">
+@media print {
+  #products {
+    :deep(.vc-section-widget__title) {
       @apply hidden;
     }
   }

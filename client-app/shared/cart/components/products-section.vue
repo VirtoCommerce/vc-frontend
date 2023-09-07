@@ -89,9 +89,9 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
-#products {
-  @media print {
-    .vc-section-widget__title {
+@media print {
+  #products {
+    :deep(.vc-section-widget__title) {
       @apply hidden;
     }
   }
