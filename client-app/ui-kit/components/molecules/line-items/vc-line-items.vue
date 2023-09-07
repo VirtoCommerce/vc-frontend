@@ -33,7 +33,6 @@
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
-        :sku="item.sku"
         :route="item.route"
         :deleted="item.deleted"
         :properties="item.properties"
@@ -167,6 +166,10 @@ function removeAllItems() {
     @media (min-width: theme("screens.xl")) {
       @apply w-[16.75rem];
     }
+  }
+
+  &__properties {
+    @apply flex-grow;
   }
 
   &__price {

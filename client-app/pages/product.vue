@@ -175,9 +175,9 @@ watchEffect(() => {
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @media print {
-  html {
+  :global(html) {
     font-size: 70% !important;
   }
 }

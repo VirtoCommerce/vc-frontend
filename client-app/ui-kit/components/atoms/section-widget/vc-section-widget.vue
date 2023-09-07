@@ -46,7 +46,8 @@ defineProps<IProps>();
   }
 
   &:after {
-    @apply content-[''] z-[1] absolute top-full w-full h-3 bg-gradient-to-b from-[#f1f1f1];
+    @apply content-[''] z-[1] absolute top-full w-full h-3
+    bg-gradient-to-b from-[#f1f1f1];
 
     @media (min-width: theme("screens.lg")) {
       @apply content-none;

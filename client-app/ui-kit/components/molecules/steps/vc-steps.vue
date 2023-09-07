@@ -60,10 +60,6 @@ withDefaults(defineProps<IProps>(), {
 
   @apply flex flex-wrap gap-x-5 gap-y-2.5;
 
-  @media print {
-    @apply hidden;
-  }
-
   &__item {
     &--active {
       $itemActive: &;
