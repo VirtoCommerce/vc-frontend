@@ -12,7 +12,7 @@
         <div class="flex items-center gap-x-1.5 text-gray-500 print:-mr-[1px] print:border print:px-2">
           <VcIcon size="xs" name="lock-closed" />
 
-          <span class="hidden text-14 font-semibold xs:inline">
+          <span class="hidden text-14 font-semibold print:inline xs:inline">
             {{ $t("common.labels.secure_checkout") }}
           </span>
         </div>

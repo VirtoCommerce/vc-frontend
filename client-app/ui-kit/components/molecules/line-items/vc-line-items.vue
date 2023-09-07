@@ -239,7 +239,7 @@ function removeAllItems() {
   }
 
   &__subtotal {
-    @apply justify-self-end flex items-center gap-2 text-[--color-success-600];
+    @apply ms-auto justify-self-end flex items-center gap-2 text-[--color-success-600];
   }
 
   &__subtotal-label {

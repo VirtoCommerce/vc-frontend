@@ -19,7 +19,7 @@
       <!-- Items not grouped by Vendor -->
       <OrderLineItems v-else :items="cart!.items" />
 
-      <div class="divide-y lg:divide-y-0">
+      <div class="divide-y print:divide-y-0 lg:divide-y-0">
         <!-- Shipping details -->
         <div v-if="!allItemsAreDigital" class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-8">
           <div class="lg:w-3/5">

@@ -88,7 +88,7 @@ withDefaults(defineProps<IProps>(), {
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @media print {
   #products {
     :deep(.vc-section-widget__title) {
