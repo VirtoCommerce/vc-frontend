@@ -4,7 +4,7 @@ import type { PropertyType } from "../../enums";
 import type { Property } from "@/core/api/graphql/types";
 
 export function getPropertyValue(property: Property): string {
-  const { t, d } = globals.i18n.global;
+  const { t, d, n } = globals.i18n.global;
 
   switch (property.valueType) {
     case PropertyValueType.Boolean:
@@ -12,6 +12,10 @@ export function getPropertyValue(property: Property): string {
 
     case PropertyValueType.DateTime:
       return d(new Date(property.value));
+
+    case PropertyValueType.Integer:
+    case PropertyValueType.DecimalNumber:
+      return n(property.value);
 
     default:
       return String(property.value);
