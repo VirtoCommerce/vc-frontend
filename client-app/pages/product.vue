@@ -1,5 +1,5 @@
 <template>
-  <div v-if="product && template" class="bg-[--color-neutral-50] pb-8 pt-7 print:bg-[--color-additional-50]">
+  <div v-if="product && template" class="product bg-[--color-neutral-50] pb-8 pt-7 print:bg-[--color-additional-50]">
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <div class="mx-auto max-w-screen-2xl px-5 print:!px-0 md:px-12">
@@ -14,7 +14,7 @@
         :text="product.code"
         :notification="$t('pages.product.sku_copied_message')"
       >
-        {{ $t("pages.product.sku_label") }}
+        <span class="mr-1">{{ $t("pages.product.sku_label") }}</span>
         <span class="font-extrabold">{{ product.code }}</span>
       </VcCopyText>
 
@@ -174,3 +174,13 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style scoped lang="scss">
+@media print {
+  .product {
+    @apply min-w-[1024px] w-full;
+
+    zoom: 0.7;
+  }
+}
+</style>

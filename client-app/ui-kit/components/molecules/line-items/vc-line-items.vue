@@ -2,7 +2,12 @@
   <div class="vc-line-items">
     <!-- table header -->
     <div class="vc-line-items__head">
-      <VcCheckbox v-if="selectable" v-model="selectAll" @change="$emit('select:allItems', selectAll)" />
+      <VcCheckbox
+        v-if="selectable"
+        v-model="selectAll"
+        class="vc-line-items__checkbox"
+        @change="$emit('select:allItems', selectAll)"
+      />
 
       <div class="vc-line-items__product">
         {{ $t("common.labels.product") }}
@@ -196,10 +201,10 @@ function removeAllItems() {
   }
 
   &__body {
-    @apply flex flex-col gap-4 md:gap-0 md:divide-y;
+    @apply flex flex-col gap-4;
 
     @media (min-width: theme("screens.md")) {
-      @apply space-y-0 divide-y;
+      @apply gap-0 space-y-0 divide-y;
     }
   }
 
@@ -216,7 +221,7 @@ function removeAllItems() {
   }
 
   &__button {
-    @apply me-auto;
+    @apply me-1;
 
     &--mobile.vc-button {
       @media (min-width: theme("screens.md")) {
@@ -234,7 +239,7 @@ function removeAllItems() {
   }
 
   &__subtotal {
-    @apply ms-1 justify-self-end flex items-center gap-2 text-[--color-success-600];
+    @apply ms-auto justify-self-end flex items-center gap-2 text-[--color-success-600];
   }
 
   &__subtotal-label {

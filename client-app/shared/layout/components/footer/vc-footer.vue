@@ -75,7 +75,7 @@
 
     <!-- Bottom footer -->
     <div
-      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] print:flex-row print:px-3 md:flex-row md:px-12"
+      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] print:flex-row print:bg-[color:var(--color-white)] print:px-0 print:text-[color:var(--color-black)] md:flex-row md:px-12"
     >
       <span>
         {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
@@ -86,7 +86,7 @@
 
       <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="span" scope="global">
         <a
-          class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)]"
+          class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)] print:text-black"
           href="https://virtocommerce.com"
           target="_blank"
           rel="noopener noreferrer"

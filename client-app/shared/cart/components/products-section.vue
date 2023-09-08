@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
+  <VcSectionWidget id="products" :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
     <!-- Items grouped by Vendor -->
     <div v-if="grouped" class="space-y-5 md:space-y-7">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
@@ -87,3 +87,13 @@ withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 </script>
+
+<style scoped lang="scss">
+@media print {
+  #products {
+    :deep(.vc-section-widget__title) {
+      @apply hidden;
+    }
+  }
+}
+</style>

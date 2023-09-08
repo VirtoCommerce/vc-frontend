@@ -1,6 +1,6 @@
 # compiled output
 artifacts
-assets
+assets/*
 dist
 tmp
 out-tsc

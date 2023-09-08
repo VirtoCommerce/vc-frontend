@@ -23,20 +23,15 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  hideMobileTitle: Boolean,
-  hideDesktopTitle: Boolean,
+export interface IProps {
+  hideMobileTitle?: boolean;
+  hideDesktopTitle?: boolean;
 
-  title: {
-    type: String,
-    default: "",
-  },
+  title?: string;
+  icon?: string;
+}
 
-  icon: {
-    type: String,
-    default: "",
-  },
-});
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
