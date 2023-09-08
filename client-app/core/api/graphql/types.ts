@@ -517,6 +517,45 @@ export type ContactTypeSeoInfoArgs = {
   storeId: Scalars['String'];
 };
 
+/** A connection from an object to a list of objects of type `Contract`. */
+export type ContractConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<ContractEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<ContractType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+/** An edge in a connection from an object to another object of type `Contract`. */
+export type ContractEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+  /** The item at the end of the edge */
+  node?: Maybe<ContractType>;
+};
+
+export type ContractType = {
+  code: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  /** Contract dynamic property values */
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  endDate?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  name: Scalars['String'];
+  startDate?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<Scalars['String']>;
+  storeId?: Maybe<Scalars['String']>;
+  vendorId?: Maybe<Scalars['String']>;
+};
+
+
+export type ContractTypeDynamicPropertiesArgs = {
+  cultureName?: InputMaybe<Scalars['String']>;
+};
+
 export type CountryRegionType = {
   /** Code of country region. For example 'AL'. */
   id: Scalars['String'];
@@ -3117,6 +3156,7 @@ export type OrderShipmentItemType = {
   lineItemId: Scalars['String'];
   outerId?: Maybe<Scalars['String']>;
   quantity: Scalars['Int'];
+  status?: Maybe<Scalars['String']>;
 };
 
 export type OrderShipmentPackageType = {
@@ -3844,6 +3884,7 @@ export type Query = {
   childCategories?: Maybe<ChildCategoriesQueryResponseType>;
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
+  contract?: Maybe<ContractType>;
   countries?: Maybe<Array<Maybe<CountryType>>>;
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
@@ -3857,6 +3898,7 @@ export type Query = {
   order?: Maybe<CustomerOrderType>;
   orders?: Maybe<CustomerOrderConnection>;
   organization?: Maybe<Organization>;
+  organizationContracts?: Maybe<ContractConnection>;
   organizationOrders?: Maybe<CustomerOrderConnection>;
   organizations?: Maybe<OrganizationConnection>;
   pages?: Maybe<PageConnection>;
@@ -3964,6 +4006,11 @@ export type QueryContactsArgs = {
 };
 
 
+export type QueryContractArgs = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryCustomerReviewsArgs = {
   after?: InputMaybe<Scalars['String']>;
   entityId: Scalars['String'];
@@ -4054,6 +4101,18 @@ export type QueryOrdersArgs = {
 export type QueryOrganizationArgs = {
   id: Scalars['String'];
   userId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryOrganizationContractsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  endDate?: InputMaybe<Scalars['DateTime']>;
+  first?: InputMaybe<Scalars['Int']>;
+  organizationId: Scalars['String'];
+  startDate?: InputMaybe<Scalars['DateTime']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  storeId?: InputMaybe<Scalars['String']>;
+  vendorId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -4643,6 +4702,8 @@ export type UserType = {
   normalizedUserName?: Maybe<Scalars['String']>;
   operator?: Maybe<UserType>;
   passwordExpired: Scalars['Boolean'];
+  /** Password expiry in days */
+  passwordExpiryInDays?: Maybe<Scalars['Int']>;
   /** Account permissions */
   permissions?: Maybe<Array<Maybe<Scalars['String']>>>;
   phoneNumber?: Maybe<Scalars['String']>;
@@ -5014,7 +5075,7 @@ export type GetMeQueryVariables = Exact<{
 }>;
 
 
-export type GetMeQuery = { me?: { id: string, memberId?: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string>, isAdministrator: boolean, passwordExpired: boolean, forcePasswordChange?: boolean, contact?: { firstName: string, lastName: string, fullName: string, organizationId?: string, organizations?: { items?: Array<{ id: string, name?: string }> } }, operator?: { userName: string, contact?: { fullName: string } } } };
+export type GetMeQuery = { me?: { id: string, memberId?: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string>, isAdministrator: boolean, passwordExpired: boolean, passwordExpiryInDays?: number, forcePasswordChange?: boolean, lockedState?: boolean, contact?: { firstName: string, lastName: string, fullName: string, organizationId?: string, organizations?: { items?: Array<{ id: string, name?: string }> } }, operator?: { userName: string, contact?: { fullName: string } } } };
 
 export type GetMyAddressesQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']>;

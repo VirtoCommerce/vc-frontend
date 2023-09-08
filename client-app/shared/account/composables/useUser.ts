@@ -1,5 +1,6 @@
 import { eagerComputed } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -13,9 +14,12 @@ import {
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
+import { PASSWORD_EXPIRY_IN_DAYS } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { TabsType, pageReloadEvent, useBroadcast, userBlockedEvent, userReloadEvent } from "@/shared/broadcast";
+import { usePopup } from "@/shared/popup";
+import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -45,8 +49,29 @@ const organization = eagerComputed<Organization | null>(() => user.value?.contac
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 export function useUser() {
+  const route = useRoute();
+  const router = useRouter();
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
+  const { openPopup } = usePopup();
+
+  function handlePasswordExpiration(): void {
+    //if (user.value.passwordExpiryInDays && user.value.passwordExpiryInDays <= PASSWORD_EXPIRY_IN_DAYS) {
+    openPopup({
+      component: PasswordExpirationModal,
+
+      props: {
+        onConfirm(): void {
+          router.replace({ name: "ChangePassword" });
+        },
+
+        onDismiss(): void {
+          console.log();
+        },
+      },
+    });
+    //}
+  }
 
   function checkPermissions(...permissions: string[]): boolean {
     let access = !!user.value?.isAdministrator;
@@ -65,6 +90,10 @@ export function useUser() {
       loading.value = true;
 
       user.value = await getMe();
+
+      if (!route.meta.public) {
+        handlePasswordExpiration();
+      }
 
       if (withBroadcast) {
         broadcast.emit(userReloadEvent);

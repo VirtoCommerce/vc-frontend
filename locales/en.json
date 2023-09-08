@@ -57,7 +57,8 @@
       "add_new_address": "Add new address",
       "remove_selected": "Remove Selected",
       "remove_all": "Remove all",
-      "resend_link": "Resend link"
+      "resend_link": "Resend link",
+      "set_new_password": "Set a new password"
     },
     "labels": {
       "actions": "Actions",
@@ -161,7 +162,8 @@
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values.",
       "password_new_same_old": "Your current password and new password must be different.",
-      "blocked": "You have been blocked. You can not reach any information or create the order. For more details please "
+      "blocked": "You have been blocked. You can not reach any information or create the order. For more details please ",
+      "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile."
     },
     "placeholders": {
       "enter_value": "Please enter a value",
@@ -218,7 +220,8 @@
       "delete_address": "Delete address",
       "remove_products": "Remove products",
       "change_role": "Change role",
-      "save_changes": "Save Changes"
+      "save_changes": "Save Changes",
+      "password_expired": "Password is about to expired"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
