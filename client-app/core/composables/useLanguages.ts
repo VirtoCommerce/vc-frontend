@@ -1,11 +1,14 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { useFetch } from "@/core/composables/useFetch";
+import { Logger } from "@/core/utilities";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
 import type { Composer } from "vue-i18n";
 
+const { innerFetch } = useFetch();
 const { themeContext } = useThemeContext();
 
 const savedLocale = useLocalStorage<string>("locale", "");
@@ -33,18 +36,9 @@ const currentLanguage = computed<ILanguage>(
 );
 
 function fetchLocaleMessages(locale: string): Promise<any> {
-  /**
-   * FIXME: Don't use import
-   * Fetch localization files (json) from Storefront to be able to edit localization files in Admin panel
-   */
-  const locales = import.meta.glob("../../../locales/*.json");
-  const path = `../../../locales/${locale}.json`;
-
-  if (locales[path]) {
-    return locales[path]();
-  }
-
-  return import("../../../locales/en.json");
+  return innerFetch(`/locales/${locale}.json`).catch(() => {
+    Logger.error(`"${locale}" locale not presented`);
+  });
 }
 
 async function setLocale(i18n: I18n, locale: string): Promise<void> {
@@ -104,5 +98,6 @@ export function useLanguages() {
     currentLanguage,
     setLocale,
     saveLocaleAndReload,
+    fetchLocaleMessages,
   };
 }
