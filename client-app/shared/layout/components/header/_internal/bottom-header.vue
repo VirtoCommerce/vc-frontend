@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div
+    <nav
       ref="bottomHeader"
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)] px-5 py-3 xl:px-12"
     >
@@ -41,8 +41,8 @@
 
       <SearchBar />
 
-      <div class="-mx-2 flex items-center">
-        <template v-for="item in desktopMainMenuItems" :key="item.id">
+      <ul class="-mx-2 flex items-center">
+        <li v-for="item in desktopMainMenuItems" :key="item.id">
           <BottomHeaderLink v-if="item.id === 'compare'" :link="item" :count="productsIds.length">
             {{ item.title }}
           </BottomHeaderLink>
@@ -54,9 +54,9 @@
           <BottomHeaderLink v-else :link="item">
             {{ item.title }}
           </BottomHeaderLink>
-        </template>
-      </div>
-    </div>
+        </li>
+      </ul>
+    </nav>
 
     <!-- Catalog dropdown -->
     <transition

@@ -1,5 +1,5 @@
 <template>
-  <div
+  <nav
     class="fixed z-50 flex h-screen w-full flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
   >
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
@@ -89,13 +89,14 @@
 
     <!-- region Main menu section -->
     <section v-else class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
-      <div class="flex flex-col gap-y-2 px-9 py-6">
+      <ul class="flex flex-col gap-y-2 px-9 py-6">
         <!-- Home link -->
-        <MobileMenuLink :link="homeMenuItem" class="py-1 text-2xl font-bold" @close="$emit('close')">
-          {{ homeMenuItem.title }}
-        </MobileMenuLink>
-
-        <template v-for="item in mobileMainMenuItems" :key="item.title">
+        <li>
+          <MobileMenuLink :link="homeMenuItem" class="py-1 text-2xl font-bold" @close="$emit('close')">
+            {{ homeMenuItem.title }}
+          </MobileMenuLink>
+        </li>
+        <li v-for="item in mobileMainMenuItems" :key="item.title">
           <MobileMenuLink
             v-if="item.id === 'cart'"
             :link="item"
@@ -125,8 +126,8 @@
           >
             {{ item.title }}
           </MobileMenuLink>
-        </template>
-      </div>
+        </li>
+      </ul>
 
       <div class="flex flex-col gap-y-2 px-9 py-6">
         <template v-if="isAuthenticated">
@@ -169,38 +170,46 @@
           </div>
 
           <!-- Account link -->
-          <MobileMenuLink
-            v-if="mobileAccountMenuItem"
-            :link="mobileAccountMenuItem"
-            class="py-1 text-2xl font-bold"
-            @select="selectMenuItem(mobileAccountMenuItem!)"
-          >
-            {{ mobileAccountMenuItem.title }}
-          </MobileMenuLink>
+          <ul>
+            <li>
+              <MobileMenuLink
+                v-if="mobileAccountMenuItem"
+                :link="mobileAccountMenuItem"
+                class="py-1 text-2xl font-bold"
+                @select="selectMenuItem(mobileAccountMenuItem!)"
+              >
+                {{ mobileAccountMenuItem.title }}
+              </MobileMenuLink>
+            </li>
 
-          <!-- Corporate link -->
-          <MobileMenuLink
-            v-if="mobileCorporateMenuItem && isCorporateMember"
-            :link="mobileCorporateMenuItem"
-            class="py-1 text-2xl font-bold"
-            @select="selectMenuItem(mobileCorporateMenuItem!)"
-          >
-            {{ mobileCorporateMenuItem.title }}
-          </MobileMenuLink>
+            <!-- Corporate link -->
+            <li>
+              <MobileMenuLink
+                v-if="mobileCorporateMenuItem && isCorporateMember"
+                :link="mobileCorporateMenuItem"
+                class="py-1 text-2xl font-bold"
+                @select="selectMenuItem(mobileCorporateMenuItem!)"
+              >
+                {{ mobileCorporateMenuItem.title }}
+              </MobileMenuLink>
+            </li>
+          </ul>
         </template>
 
         <!-- Unauthorized links -->
-        <div v-else class="mb-1">
-          <MobileMenuLink
-            v-for="item in unauthorizedMenuItems"
-            :key="item.title"
-            :link="item"
-            class="py-1.5 text-2xl font-bold"
-            @close="$emit('close')"
-          >
-            {{ item.title }}
-          </MobileMenuLink>
-        </div>
+        <ul v-else class="mb-1">
+          <li>
+            <MobileMenuLink
+              v-for="item in unauthorizedMenuItems"
+              :key="item.title"
+              :link="item"
+              class="py-1.5 text-2xl font-bold"
+              @close="$emit('close')"
+            >
+              {{ item.title }}
+            </MobileMenuLink>
+          </li>
+        </ul>
 
         <!-- Settings link -->
         <MobileMenuLink
@@ -214,7 +223,7 @@
       </div>
     </section>
     <!-- endregion Main menu section -->
-  </div>
+  </nav>
 </template>
 
 <script setup lang="ts">
