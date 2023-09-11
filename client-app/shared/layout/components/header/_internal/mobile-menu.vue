@@ -32,8 +32,8 @@
           {{ openedItem?.title }}
         </h2>
 
-        <div class="mt-4 flex flex-col gap-y-2">
-          <template v-for="childItem in openedItem?.children" :key="childItem.title">
+        <ul class="mt-4 flex flex-col gap-y-2">
+          <li v-for="childItem in openedItem?.children" :key="childItem.title">
             <!-- Currency setting -->
             <div v-if="childItem.id === 'currency-setting'" class="flex grow flex-col gap-y-1 font-normal">
               <header class="-mt-1 mb-1 text-2xl uppercase text-white">
@@ -69,8 +69,8 @@
             >
               {{ childItem.title }}
             </MobileMenuLink>
-          </template>
-        </div>
+          </li>
+        </ul>
 
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
           <div class="my-5 h-px bg-gradient-to-r from-[--color-accent-500] to-transparent"></div>
