@@ -1,34 +1,34 @@
 <template>
   <component
     :is="clickable ? 'button' : 'span'"
-    :disabled="isDisabled"
-    :draggable="isDraggable && !isDisabled"
+    :disabled="disabled"
+    :draggable="draggable && !disabled"
     :class="[
       'vc-chip',
-      `vc-chip--${size}`,
-      `vc-chip--${variant}`,
+      `vc-chip--size--${size}`,
+      `vc-chip--color--${color}`,
+      `vc-chip--${variant}--${color}`,
       {
-        'vc-chip--outline': isOutline,
-        'vc-chip--disabled': isDisabled,
+        'vc-chip--disabled': disabled,
         'vc-chip--clickable': clickable,
+        'vc-chip--closable': closable,
+        'vc-chip--rounded': rounded,
       },
     ]"
   >
-    <span class="vc-chip__content">
-      <slot />
+    <slot />
 
-      <button
-        v-if="closable"
-        :disabled="isDisabled"
-        type="button"
-        class="vc-chip__close-button"
-        @click.stop="isDisabled ? null : $emit('close')"
-      >
-        <slot name="close-icon">
-          <VcIcon name="x" size="xs" />
-        </slot>
-      </button>
-    </span>
+    <button
+      v-if="closable"
+      :disabled="disabled"
+      type="button"
+      class="vc-chip__close-button"
+      @click.stop="disabled ? null : $emit('close')"
+    >
+      <slot name="close-icon">
+        <VcIcon name="delete-mini" />
+      </slot>
+    </button>
   </component>
 </template>
 
@@ -38,86 +38,142 @@ interface IEmits {
 }
 
 interface IProps {
-  variant?: "primary" | "secondary" | "success" | "warning" | "danger";
-  size?: "sm" | "md" | "lg";
+  color?: "primary" | "secondary" | "success" | "info" | "warning" | "danger" | "neutral";
+  variant?: "solid" | "solid-light" | "outline" | "outline-dark";
+  size?: "xs" | "sm" | "md" | "lg";
   clickable?: boolean;
   closable?: boolean;
-  isOutline?: boolean;
-  isDisabled?: boolean;
-  isDraggable?: boolean;
+  disabled?: boolean;
+  draggable?: boolean;
+  rounded?: boolean;
+  truncate?: boolean;
 }
 
 defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
-  variant: "primary",
+  color: "primary",
+  variant: "solid",
   size: "md",
 });
 </script>
 
-<style scoped lang="scss">
-$colors: primary, secondary, success, warning, danger;
-
+<style lang="scss">
 .vc-chip {
-  $self: &;
+  $colors: primary, secondary, success, info, warning, danger, neutral;
 
-  @apply relative inline-flex justify-center items-center rounded
-  border border-transparent font-bold whitespace-nowrap select-none
-  focus:outline outline-[3px] outline-[color:var(--color-primary-light)] px-2.5;
+  $truncate: "";
+  $clickable: "";
 
-  &__content {
-    @apply flex items-center justify-center;
-  }
+  @apply relative inline-flex items-center rounded-sm border font-bold;
 
-  &__close-button {
-    @apply flex p-2 w-8 -mr-2;
-  }
+  &--size {
+    &--xs {
+      --vc-icon-size: 0.5rem;
+      --padding-y: 0;
+      --padding-x: 0.25rem;
 
-  &--sm {
-    @apply h-8 text-sm;
-  }
+      @apply px-[--padding-x] text-[0.625rem]/[0.875rem];
+    }
 
-  &--md {
-    @apply h-9 text-base;
+    &--sm {
+      --vc-icon-size: 0.625rem;
+      --padding-y: 0.125rem;
+      --padding-x: 0.5rem;
 
-    #{$self}__close-button {
-      @apply flex;
+      @apply px-[--padding-x] py-[--padding-y] text-xs;
+    }
+
+    &--md {
+      --vc-icon-size: 0.75rem;
+      --padding-y: 0.25rem;
+      --padding-x: 0.75rem;
+
+      @apply gap-0.5 px-[--padding-x] py-[--padding-y] text-sm/[1.125rem];
+    }
+
+    &--lg {
+      --vc-icon-size: 0.875rem;
+      --padding-y: 0.375rem;
+      --padding-x: 0.75rem;
+
+      @apply gap-0.5 px-[--padding-x] py-[--padding-y] text-sm;
     }
   }
 
-  &--lg {
-    @apply h-11 text-lg;
-
-    #{$self}__close-button {
-      @apply scale-125 ml-0.5 -mr-1.5;
-    }
-  }
-
-  &--disabled {
-    @apply bg-gray-200 text-gray-400 [--tw-bg-opacity:0.7] [--tw-text-opacity:0.7] #{!important};
-
-    &#{$self}--outline {
-      @apply bg-transparent border-gray-300 [--tw-border-opacity:0.8] #{!important};
-    }
+  &--truncate {
+    $truncate: &;
   }
 
   &--clickable {
-    @apply cursor-pointer;
+    $clickable: &;
+  }
 
-    &#{$self}--disabled,
-    &#{$self}--disabled #{$self}__close-button {
-      @apply cursor-not-allowed;
-    }
+  &--rounded {
+    @apply rounded-full;
   }
 
   @each $color in $colors {
-    &--#{$color} {
-      @apply bg-[color:var(--color-#{$color})] hover:bg-[color:var(--color-#{$color}-hover)] text-white;
+    &--solid--#{$color} {
+      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500] text-[--color-additional-50];
 
-      &#{$self}--outline {
-        @apply bg-transparent
-        border-[color:var(--color-#{$color})] hover:border-[color:var(--color-#{$color}-hover)]
-        text-[color:var(--color-#{$color})] hover:text-[color:var(--color-#{$color}-hover)];
+      &#{$clickable} {
+        &:hover {
+          @apply bg-[--color-#{$color}-700] border-[--color-#{$color}-700];
+        }
       }
+    }
+
+    &--solid-light--#{$color} {
+      @apply bg-[--color-#{$color}-50] border-[--color-#{$color}-50] text-[--color-#{$color}-800];
+
+      &#{$clickable} {
+        &:hover {
+          @apply bg-[--color-#{$color}-100];
+        }
+      }
+    }
+
+    &--outline--#{$color} {
+      @apply bg-[--color-additional-50] text-[--color-#{$color}-800] border-[--color-#{$color}-500];
+
+      &#{$clickable} {
+        &:hover {
+          @apply bg-[--color-#{$color}-50];
+        }
+      }
+    }
+
+    &--outline-dark--#{$color} {
+      @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-800] border-[--color-#{$color}-500];
+
+      &#{$clickable} {
+        &:hover {
+          @apply bg-[--color-#{$color}-100];
+        }
+      }
+    }
+
+    &--color--#{$color} {
+      &#{$clickable} {
+        &:focus {
+          @apply ring-[3px] ring-[--color-#{$color}-100];
+        }
+      }
+    }
+  }
+
+  &__close-button {
+    @apply self-stretch flex items-center ps-1 pe-[--padding-x] -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
+  }
+
+  &:disabled,
+  &--disabled {
+    &[class*="--solid-"] {
+      @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
+    }
+
+    &[class*="--outline-"] {
+      @apply text-[--color-neutral-400] border-current;
     }
   }
 }
