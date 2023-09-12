@@ -133,29 +133,7 @@
                 </div>
 
                 <div v-if="userCanEditOrganization" class="absolute right-4 top-3">
-                  <VcActionDropdownMenu placement="left-start">
-                    <button
-                      type="button"
-                      class="flex items-center gap-2.5 whitespace-nowrap p-3"
-                      @click="openAddOrUpdateCompanyAddressModal(item)"
-                    >
-                      <VcIcon class="text-[--color-primary-500]" name="pencil" size="sm" />
-
-                      {{ $t("common.buttons.edit") }}
-                    </button>
-
-                    <button
-                      type="button"
-                      :disabled="item.isDefault"
-                      :title="item.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
-                      class="flex items-center gap-2.5 whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
-                      @click="openDeleteAddressModal(item)"
-                    >
-                      <VcIcon :class="{ 'text-[--color-danger-500]': !item.isDefault }" name="delete-2" size="sm" />
-
-                      {{ $t("common.buttons.delete") }}
-                    </button>
-                  </VcActionDropdownMenu>
+                  <VcActionDropdownMenu placement="left-start" :actions="getActionsForItem(item)" />
                 </div>
               </div>
             </template>
@@ -217,29 +195,7 @@
                 </td>
 
                 <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
-                  <VcActionDropdownMenu>
-                    <button
-                      type="button"
-                      class="flex items-center gap-2.5 whitespace-nowrap p-3"
-                      @click="openAddOrUpdateCompanyAddressModal(address)"
-                    >
-                      <VcIcon class="text-[--color-primary-500]" name="pencil" size="sm" />
-
-                      {{ $t("common.buttons.edit") }}
-                    </button>
-
-                    <button
-                      type="button"
-                      :disabled="address.isDefault"
-                      :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
-                      class="flex items-center gap-2.5 whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
-                      @click="openDeleteAddressModal(address)"
-                    >
-                      <VcIcon :class="{ 'text-[--color-danger-500]': !address.isDefault }" name="delete-2" size="sm" />
-
-                      {{ $t("common.buttons.delete") }}
-                    </button>
-                  </VcActionDropdownMenu>
+                  <VcActionDropdownMenu :actions="getActionsForItem(address)" />
                 </td>
               </tr>
             </template>
@@ -355,6 +311,26 @@ const columns = computed<ITableColumn[]>(() => {
 
   return result;
 });
+
+function getActionsForItem(item: MemberAddressType) {
+  return [
+    {
+      label: t("common.buttons.edit"),
+      icon: "pencil",
+      iconClass: "text-[--color-primary-500]",
+      onClick: () => openAddOrUpdateCompanyAddressModal(item),
+      disabled: false,
+    },
+    {
+      label: t("common.buttons.delete"),
+      icon: "delete-2",
+      iconClass: item.isDefault ? "text-[--color-neutral-400]" : "text-[--color-danger-500]",
+      onClick: () => openDeleteAddressModal(item),
+      disabled: item.isDefault,
+      title: item.isDefault ? t("pages.company.info.address_not_delete_message") : undefined,
+    },
+  ];
+}
 
 async function onPageChange(newPage: number) {
   window.scroll({ top: 0, behavior: "smooth" });
