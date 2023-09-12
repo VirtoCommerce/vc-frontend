@@ -1,6 +1,7 @@
 {
   "name": "GraphQL Schema",
   "schema": "client-app/core/api/graphql/schema.json",
+  "documents": ["client-app/**/*.gql", "client-app/**/*.graphql"],
   "extensions": {
     "endpoints": {
       "GraphQL Endpoint": {
@@ -12,6 +13,6 @@
       }
     }
   },
-  "include": ["client-app/**/*.gql", "client-app/**/*.graphql", "client-app/**/*.ts", "client-app/**/*.vue"],
+  "include": ["client-app/**/*.ts", "client-app/**/*.vue"],
   "exclude": ["node_modules"]
 }
