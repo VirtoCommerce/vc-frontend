@@ -104,5 +104,6 @@ export function useLanguages() {
     currentLanguage,
     setLocale,
     saveLocaleAndReload,
+    fetchLocaleMessages,
   };
 }

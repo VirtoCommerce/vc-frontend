@@ -1,6 +1,6 @@
 {
   "name": "vc-theme-b2b-vue",
-  "version": "1.38.0",
+  "version": "1.39.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -43,14 +43,15 @@
     "flag-icons": "^6.7.0",
     "graphql": "^15.8.0",
     "graphql-tag": "^2.12.6",
-    "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
     "marked": "~4.3.0",
     "maska": "~1.5.2",
     "moment": "^2.29.4",
     "swiper": "^8.4.7",
+    "tw-elements": "^1.0.0-rc.1",
     "vee-validate": "^4.11.0",
     "vue": "^3.3.4",
+    "vue-html-secure": "^1.0.10",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.4",
     "yup": "1.2.0"
@@ -78,7 +79,6 @@
     "@tsconfig/node18": "^18.2.0",
     "@types/dompurify": "^3.0.2",
     "@types/gtag.js": "^0.0.12",
-    "@types/isomorphic-fetch": "^0.0.36",
     "@types/lodash": "^4.14.195",
     "@types/marked": "^4.3.1",
     "@types/node": "^18.17.0",

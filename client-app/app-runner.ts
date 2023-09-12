@@ -1,5 +1,6 @@
 import { createHead } from "@vueuse/head";
 import { createApp } from "vue";
+import VueSecureHTML from "vue-html-secure";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -25,19 +26,27 @@ export default async (getPlugins: (options: { router: Router }) => { plugin: Plu
 
   const { fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
-  const { currentLocale, currentLanguage, supportedLocales, setLocale } = useLanguages();
+  const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
+
+  const fallback = {
+    locale: "en",
+    message: {},
+    async setMessage() {
+      this.message = await fetchLocaleMessages(this.locale);
+    },
+  };
 
   /**
    * Fetching required app data
    */
-  await Promise.all([fetchThemeContext(), fetchUser()]);
+  await Promise.all([fetchThemeContext(), fetchUser(), fallback.setMessage()]);
 
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(currentLanguage.value.twoLetterLanguageName, currentCurrency.value.code);
+  const i18n = createI18n(currentLanguage.value.twoLetterLanguageName, currentCurrency.value.code, fallback);
   const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
   /**
@@ -72,6 +81,7 @@ export default async (getPlugins: (options: { router: Router }) => { plugin: Plu
   app.use(head);
   app.use(i18n);
   app.use(router);
+  app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);

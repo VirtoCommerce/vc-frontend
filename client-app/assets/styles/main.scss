@@ -3,21 +3,12 @@
 @tailwind utilities;
 
 @import "helpers";
+@import "print";
 @import "vendors";
 
 @layer base {
   body {
     @apply text-[--color-body-text];
-
-    @media print {
-      @apply min-w-[1024px] w-full;
-
-      zoom: 0.7;
-
-      @page {
-        size: A4 portrait;
-      }
-    }
   }
 }
 

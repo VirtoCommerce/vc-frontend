@@ -26,9 +26,9 @@
             <use href="/static/images/clock.svg#main"></use>
           </svg>
           <div
+            v-html-safe="branch.shortDescription"
             class="short-description ml-1.5 flex space-x-3 whitespace-nowrap text-xs md:block md:space-x-0"
-            v-html="branch.shortDescription"
-          ></div>
+          />
         </div>
       </div>
     </div>

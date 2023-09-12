@@ -6,7 +6,7 @@
         class="mb-3 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"
       />
 
-      <p class="mb-4 text-sm" v-html="$t('pages.confirm_invitation.text')" />
+      <p v-html-safe="$t('pages.confirm_invitation.text')" class="mb-4 text-sm" />
 
       <form @submit="onSubmit">
         <VcInput

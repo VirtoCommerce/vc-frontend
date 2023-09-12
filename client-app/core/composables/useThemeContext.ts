@@ -1,4 +1,3 @@
-import fetch from "isomorphic-fetch";
 import { computed, ref } from "vue";
 import { IS_DEVELOPMENT } from "../constants";
 import type { IThemeConfig, IThemeContext } from "../types";

@@ -65,7 +65,7 @@
             </div>
 
             <div class="flex flex-col items-end justify-center">
-              <TableStatusBadge :status="itemData.item.status" />
+              <QuoteStatus class="w-full !max-w-[9rem]" :status="itemData.item.status" />
             </div>
 
             <div class="flex flex-col">
@@ -126,7 +126,7 @@
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-center">
-              <QuoteStatus :status="quote.status" />
+              <QuoteStatus class="w-full !max-w-[9rem]" :status="quote.status" />
             </td>
 
             <td class="overflow-hidden text-ellipsis p-5 text-right">

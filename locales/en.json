@@ -91,7 +91,7 @@
       "date": "Date",
       "created_date": "Created date",
       "sort_by": "Sort by:",
-      "sku": "Item #",
+      "sku": "SKU",
       "item": "Item",
       "true_property": "Yes",
       "false_property": "No",
@@ -202,6 +202,7 @@
     },
     "titles": {
       "all_actions": "All actions",
+      "other_actions": "Other actions",
       "order_summary": "Order summary",
       "quote_request": "Quote request",
       "billing_address": "Billing address",
@@ -487,7 +488,7 @@
           "not_added": "Not added"
         },
         "labels": {
-          "sku": "SKU",
+          "sku": "@:common.labels.sku",
           "product_name": "Product name",
           "quantity": "Quantity"
         }
@@ -506,7 +507,6 @@
         "label": "Results per page:"
       },
       "product_card": {
-        "product_sku_label": "@:common.labels.sku",
         "price_label": "@:common.labels.product_price",
         "product_rating": "Rating:",
         "product_vendor": "Vendor:"
@@ -603,14 +603,14 @@
     "bulk_order": {
       "manually": {
         "title": "Manually",
-        "product_sku_label": "Product SKU",
+        "product_sku_label": "@:common.labels.sku",
         "quantity_label": "@:common.labels.quantity",
         "add_rows_action_link": "Add 5 more rows",
         "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "subtitle_message_start": "Quickly add items to your",
         "cart_link": "Cart",
-        "subtitle_message_end": "by entering item SKUs and quantities."
+        "subtitle_message_end": "by entering item {@common.labels.sku}s and quantities."
       },
       "copy_n_paste": {
         "title": "Copy and Paste",
@@ -690,7 +690,7 @@
       },
       "added_to_wishlists_dialog": {
         "title": "Item added to list | Item added to lists",
-        "sku_label": "SKU",
+        "sku_label": "@:common.labels.sku",
         "continue_shopping_button": "@:common.buttons.continue_shopping",
         "view_your_list_button": "View your list | View your lists"
       },
@@ -1143,8 +1143,8 @@
       "products_icon": "Product icon"
     },
     "product": {
-      "sku_label": "SKU #",
-      "sku_copied_message": "Product SKU successfully copied",
+      "sku_label": "@:common.labels.sku",
+      "sku_copied_message": "@:common.labels.sku successfully copied",
       "variations_total_label": "Total in your cart:",
       "view_cart_button": "View cart",
       "related_product_section_title": "Related products",

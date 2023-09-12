@@ -14,7 +14,7 @@
         <!-- Content -->
         <div>
           <component :is="notification.component" v-if="notification.component" v-bind="notification.props" />
-          <span v-else-if="notification.html" v-html="notification.html" />
+          <span v-else-if="notification.html" v-html-safe="notification.html" />
           <span v-else-if="notification.text" v-text="notification.text" />
         </div>
 
@@ -26,7 +26,7 @@
           :class="['vc-notifications__button', notification.button.classes]"
           @click="notification.button?.clickHandler ? notification.button.clickHandler(notification.id!, $event) : null"
         >
-          <span v-if="notification.button.html" v-html="notification.button.html" />
+          <span v-if="notification.button.html" v-html-safe="notification.button.html" />
           <span v-else-if="notification.button.text" v-text="notification.button.text" />
         </component>
 

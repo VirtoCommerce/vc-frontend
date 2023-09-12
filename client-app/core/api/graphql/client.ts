@@ -2,7 +2,6 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
-import fetch from "isomorphic-fetch";
 import { TabsType, unauthorizedErrorEvent, unhandledErrorEvent, useBroadcast } from "@/shared/broadcast";
 import { GraphQLErrorCode } from "./enums";
 import { hasErrorCode } from "./utils";
@@ -10,7 +9,7 @@ import type { FetchPolicy } from "apollo-client";
 
 const fetchPolicy: FetchPolicy = "no-cache";
 
-const httpLink = new HttpLink({ uri: `/xapi/graphql`, fetch });
+const httpLink = new HttpLink({ uri: `/xapi/graphql` });
 
 const broadcast = useBroadcast();
 

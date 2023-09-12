@@ -7,7 +7,7 @@
       <div class="text-center">
         <div class="mt-4">
           <VcCheckbox class="inline-flex">
-            <span class="checkbox-label" v-html="model.checkboxText"></span>
+            <span v-html-safe="model.checkboxText" class="checkbox-label"></span>
           </VcCheckbox>
         </div>
 

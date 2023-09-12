@@ -8,7 +8,7 @@
     <div class="h-full p-6 pb-5 pt-4 md:p-5">
       <p v-t="'shared.bulk_order.copy_n_paste.subtitle_message'" class="mb-2 text-sm font-bold"></p>
 
-      <p class="mb-2 text-sm text-gray-500" v-html="$t('shared.bulk_order.copy_n_paste.guide_message')"></p>
+      <p v-html-safe="$t('shared.bulk_order.copy_n_paste.guide_message')" class="mb-2 text-sm text-gray-500"></p>
 
       <VcTextarea
         v-model.trim="text"

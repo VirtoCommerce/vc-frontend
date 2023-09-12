@@ -10,8 +10,8 @@
     ]"
   >
     <!-- Message -->
-    <!-- eslint-disable vue/no-v-html-->
     <template v-if="message">
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="!singleLine" class="vc-input-details__message" v-html="message"></div>
 
       <VcTooltip v-else class="w-full" placement="bottom-start" strategy="fixed">

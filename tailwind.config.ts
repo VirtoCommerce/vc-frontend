@@ -2,7 +2,7 @@ import { BREAKPOINTS } from "./client-app/core/constants/tailwind";
 import type { Config } from "tailwindcss";
 
 module.exports = {
-  content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}"],
+  content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}", "./node_modules/tw-elements/dist/js/**/*.js"],
 
   theme: {
     screens: BREAKPOINTS,
@@ -143,7 +143,7 @@ module.exports = {
         "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
         "t-2sm": "1px 2px 4px rgba(0, 0, 0, 0.15)",
         "t-3sm": "1px 2px 4px rgba(0, 0, 0, 0.05)",
-        t: "0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);",
+        t: "0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
         "md-s": "2px 3px 6px rgba(0, 0, 0, 0.08)",
         "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
         "t-mds": "1px 1px 3px rgba(0, 0, 0, 0.25)",
@@ -178,7 +178,7 @@ module.exports = {
           "0.75rem", //12px
           {
             lineHeight: "1rem", //16px
-          }
+          },
         ],
         13: [
           "0.8125rem", //13px
@@ -282,4 +282,6 @@ module.exports = {
       },
     },
   },
+
+  plugins: [require("tw-elements/dist/plugin.cjs")],
 } satisfies Config;

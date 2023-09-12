@@ -116,7 +116,7 @@ watchEffect(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-line-item {
   $selected: "";
   $removable: "";

@@ -68,9 +68,9 @@
           class="whitespace-nowrap text-3xl font-extrabold uppercase text-white"
         ></div>
         <div
+          v-html-safe="$t('pages.home.subscription_block.info_message')"
           class="max-w-max text-base font-medium leading-tight text-white lg:max-w-min"
-          v-html="$t('pages.home.subscription_block.info_message')"
-        ></div>
+        />
         <div class="flex w-full grow space-x-6">
           <VcInput :placeholder="$t('pages.home.subscription_block.email_placeholder')" class="grow" no-border />
           <!-- todo: use VcButton -->
