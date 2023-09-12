@@ -2,7 +2,7 @@
   <div v-if="template">
     <div
       v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
-      class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
+      class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
     >
       <VcBreadcrumbs class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
       <h1 v-if="template.settings?.header" class="text-3xl font-bold uppercase text-gray-900 lg:text-4xl">
