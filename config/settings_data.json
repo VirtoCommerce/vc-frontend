@@ -2,8 +2,6 @@
   "current": "Mercury",
   "presets": {
     "Mercury": {
-      "password_expiry_in_days": 3,
-
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
@@ -335,8 +333,6 @@
     },
 
     "Watermelon": {
-      "password_expiry_in_days": 3,
-
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",

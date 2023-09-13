@@ -1,5 +1,5 @@
 import { eagerComputed, useStorage } from "@vueuse/core";
-import { computed, inject, readonly, ref } from "vue";
+import { computed, readonly, ref } from "vue";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -14,7 +14,6 @@ import {
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
-import { configInjectionKey } from "@/core/injection-keys";
 import { Logger } from "@/core/utilities";
 import { TabsType, pageReloadEvent, useBroadcast, userBlockedEvent, userReloadEvent } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
@@ -49,8 +48,6 @@ const organization = eagerComputed<Organization | null>(() => user.value?.contac
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 export function useUser() {
-  const config = inject(configInjectionKey);
-
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
   const { openPopup, closePopup } = usePopup();
@@ -60,7 +57,7 @@ export function useUser() {
   function handlePasswordExpiration(): void {
     if (
       user.value?.passwordExpiryInDays &&
-      user.value.passwordExpiryInDays <= (config?.password_expiry_in_days || 3) &&
+      user.value.passwordExpiryInDays > 0 &&
       (!changePasswordReminderDate.value || changePasswordReminderDate.value <= new Date())
     ) {
       openPopup({
