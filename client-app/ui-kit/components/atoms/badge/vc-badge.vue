@@ -26,7 +26,7 @@ withDefaults(defineProps<IProps>(), {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-badge {
   $colors: primary, secondary, neutral, info, success, warning, danger;
 

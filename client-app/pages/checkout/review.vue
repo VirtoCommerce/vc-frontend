@@ -1,6 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <VcSectionWidget :title="$t('common.titles.review_order')" icon="clipboard-copy-1">
+    <VcSectionWidget id="review-order" :title="$t('common.titles.review_order')" icon="clipboard-copy-1">
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
         <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
@@ -19,7 +19,7 @@
       <!-- Items not grouped by Vendor -->
       <OrderLineItems v-else :items="cart!.items" />
 
-      <div class="divide-y lg:divide-y-0">
+      <div class="divide-y print:divide-y-0 lg:divide-y-0">
         <!-- Shipping details -->
         <div v-if="!allItemsAreDigital" class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-8">
           <div class="lg:w-3/5">
@@ -27,8 +27,12 @@
               {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
             </VcLabel>
 
-            <div class="grow divide-y rounded border">
-              <VcAddressSelection :address="shipment?.deliveryAddress" class="min-h-[4.625rem] px-3 py-1.5" readonly />
+            <div class="grow divide-y rounded border print:border-none">
+              <VcAddressSelection
+                :address="shipment?.deliveryAddress"
+                class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
+                readonly
+              />
             </div>
           </div>
 
@@ -42,8 +46,8 @@
             readonly
           >
             <template #selected="{ item }">
-              <VcSelectItem>
-                <VcSelectItemImage :src="item.logoUrl" />
+              <VcSelectItem class="print:px-0 print:py-1.5">
+                <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
                 <VcSelectItemText>
                   {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
                 </VcSelectItemText>
@@ -59,8 +63,12 @@
               {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
             </VcLabel>
 
-            <div class="grow divide-y rounded border">
-              <VcAddressSelection :address="billingAddress" class="min-h-[4.625rem] px-3 py-1.5" readonly />
+            <div class="grow divide-y rounded border print:border-none">
+              <VcAddressSelection
+                :address="billingAddress"
+                class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
+                readonly
+              />
             </div>
           </div>
 
@@ -74,15 +82,15 @@
               readonly
             >
               <template #selected="{ item }">
-                <VcSelectItem>
-                  <VcSelectItemImage :src="item.logoUrl" />
+                <VcSelectItem class="print:px-0 print:py-1.5">
+                  <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
                   <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
                 </VcSelectItem>
               </template>
             </VcSelect>
 
             <VcInput
-              v-if="isPurchaseOrderNumberEnabled"
+              v-if="isPurchaseOrderNumberEnabled && purchaseOrderNumber"
               :model-value="purchaseOrderNumber"
               name="purchaseOrderNumber"
               readonly
@@ -115,7 +123,7 @@
             :disabled="isDisabledOrderCreation"
             :loading="creatingOrder"
             full-width
-            class="mt-4"
+            class="mt-4 print:!hidden"
             @click="createOrder"
           >
             {{ $t("common.buttons.place_order") }}
@@ -128,6 +136,13 @@
           </transition>
         </template>
       </OrderSummary>
+
+      <!-- Order actions -->
+      <VcCardWidget :title="$t('common.titles.other_actions')" class="print:hidden">
+        <VcButton full-width variant="outline" prepend-icon="printer" @click="print()">
+          {{ $t("common.buttons.print_order") }}
+        </VcButton>
+      </VcCardWidget>
     </template>
   </VcLayoutWithRightSidebar>
 </template>
@@ -193,4 +208,18 @@ async function createOrder(): Promise<void> {
 
   creatingOrder.value = false;
 }
+
+function print() {
+  window.print();
+}
 </script>
+
+<style scoped lang="scss">
+@media print {
+  #review-order {
+    :deep(.vc-section-widget__title) {
+      @apply hidden;
+    }
+  }
+}
+</style>

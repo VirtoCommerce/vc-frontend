@@ -2,8 +2,8 @@
   <router-view v-if="isEmptyLayout" />
 
   <VcContainer v-else>
-    <div class="px-5 lg:px-0">
-      <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
+    <div class="px-5 print:px-0 lg:px-0">
+      <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5 print:mb-0">
         {{ pageTitle }}
       </VcTypography>
 

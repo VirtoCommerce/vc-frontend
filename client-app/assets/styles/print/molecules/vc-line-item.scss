@@ -1,0 +1,39 @@
+.vc-line-item {
+  @apply break-inside-avoid px-3 rounded-none border-0 shadow-none;
+
+  &__main {
+    @apply items-center;
+  }
+
+  &__checkbox {
+    @apply static top-auto left-auto -me-2;
+  }
+
+  &__img {
+    @apply hidden;
+  }
+
+  &__content {
+    @apply contents;
+  }
+
+  &__name {
+    @apply grow mt-0 min-h-0;
+  }
+
+  &__properties {
+    @apply hidden;
+  }
+
+  &__price {
+    @apply block shrink-0 text-right w-[7rem];
+  }
+
+  &__deleted &__price {
+    @apply block invisible;
+  }
+
+  &__slot {
+    @apply flex-shrink-0 items-center gap-2 mt-0 w-[13rem] empty:block;
+  }
+}

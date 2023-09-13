@@ -1,5 +1,5 @@
 <template>
-  <VcCardWidget :title="$t('common.titles.order_summary')" icon="truck">
+  <VcCardWidget id="order-summary" :title="$t('common.titles.order_summary')" icon="truck">
     <slot name="header" />
 
     <!-- Totals block -->
@@ -19,8 +19,8 @@
             {{ $t("common.labels.discount") }}
             <VcIcon
               v-if="hasDiscounts"
-              class="ml-1 text-[--color-primary-500]"
-              :name="discountsCollapsed ? 'chevron-up' : 'chevron-down'"
+              class="ml-1 text-[--color-primary-500] print:hidden"
+              :name="discountsCollapsed ? 'chevron-down' : 'chevron-up'"
               size="xs"
             />
           </component>
@@ -28,31 +28,33 @@
           <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal!" /></span>
         </div>
 
-        <div v-if="hasDiscounts && discountsCollapsed">
-          <ul class="list-disc pl-5 text-gray-400">
-            <li v-for="(discount, index) in cart.discounts!" :key="index">
-              <div class="flex items-center justify-between">
-                <span class="text-sm">{{ discount.description || discount.coupon }}</span>
-                <VcTotalDisplay
-                  :amount="-getDiscountAmmount(discount)"
-                  :currency-code="currentCurrency.code"
-                  :culture-name="currentLanguage.cultureName"
-                />
-              </div>
-            </li>
+        <template v-if="hasDiscounts">
+          <div class="print:block" :class="{ hidden: discountsCollapsed }">
+            <ul class="list-disc pl-5 text-gray-400 print:text-[color:var(--color-additional-950)]">
+              <li v-for="(discount, index) in cart.discounts!" :key="index">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm">{{ discount.description || discount.coupon }}</span>
+                  <VcTotalDisplay
+                    :amount="-getDiscountAmmount(discount)"
+                    :currency-code="currentCurrency.code"
+                    :culture-name="currentLanguage.cultureName"
+                  />
+                </div>
+              </li>
 
-            <li v-if="lineItemsDiscountTotal > 0">
-              <div class="flex items-center justify-between">
-                <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
-                <VcTotalDisplay
-                  :amount="-lineItemsDiscountTotal"
-                  :currency-code="currentCurrency.code"
-                  :culture-name="currentLanguage.cultureName"
-                />
-              </div>
-            </li>
-          </ul>
-        </div>
+              <li v-if="lineItemsDiscountTotal > 0">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
+                  <VcTotalDisplay
+                    :amount="-lineItemsDiscountTotal"
+                    :currency-code="currentCurrency.code"
+                    :culture-name="currentLanguage.cultureName"
+                  />
+                </div>
+              </li>
+            </ul>
+          </div>
+        </template>
 
         <div class="flex justify-between">
           <span>{{ $t("common.labels.tax") }}</span>
@@ -73,7 +75,7 @@
 
       <div class="mt-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.total") }}</span>
-        <span class="text-green-700">
+        <span class="text-green-700 print:text-inherit">
           <VcPriceDisplay :value="cart.total!" />
         </span>
       </div>
@@ -113,7 +115,7 @@ const props = defineProps<IProps>();
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
 
-const discountsCollapsed = ref(false);
+const discountsCollapsed = ref(true);
 
 const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
   return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
@@ -125,3 +127,13 @@ const lineItemsDiscountTotal = computed(() =>
 
 const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);
 </script>
+
+<style scoped lang="scss">
+@media print {
+  #order-summary {
+    :deep(.vc-card-widget__title) {
+      @apply hidden;
+    }
+  }
+}
+</style>

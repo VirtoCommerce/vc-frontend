@@ -24,7 +24,7 @@
       />
 
       <VcTextarea
-        v-model.trim="emails"
+        v-model="emails"
         :label="$t('shared.account.invite_member_dialog.emails_label')"
         :placeholder="$t('shared.account.invite_member_dialog.emails_placeholder')"
         :disabled="loading"
@@ -35,7 +35,7 @@
       />
 
       <VcTextarea
-        v-model.trim="message"
+        v-model="message"
         :label="$t('shared.account.invite_member_dialog.message_label')"
         :placeholder="$t('common.placeholders.enter_value')"
         :disabled="loading"
@@ -153,7 +153,7 @@ const send = handleSubmit(async (data) => {
     organizationId: organization.value!.id,
     roleIds: [data.roleId],
     emails: normalizeEmails(getEmailAddresses(data.emails)),
-    message: data.message,
+    message: data.message.trim(),
   });
 
   loading.value = false;
