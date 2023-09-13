@@ -133,7 +133,12 @@
                 </div>
 
                 <div v-if="userCanEditOrganization" class="absolute right-4 top-3">
-                  <VcActionDropdownMenu placement="left-start" :actions="getActionsForItem(item)" />
+                  <CompanyInfoDropdownMenu
+                    :address="item"
+                    placement="left-start"
+                    @edit="openAddOrUpdateCompanyAddressModal(item)"
+                    @delete="openDeleteAddressModal(item)"
+                  />
                 </div>
               </div>
             </template>
@@ -195,7 +200,11 @@
                 </td>
 
                 <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
-                  <VcActionDropdownMenu :actions="getActionsForItem(address)" />
+                  <CompanyInfoDropdownMenu
+                    :address="address"
+                    @edit="openAddOrUpdateCompanyAddressModal(address)"
+                    @delete="openDeleteAddressModal(address)"
+                  />
                 </td>
               </tr>
             </template>
@@ -224,7 +233,12 @@ import { string } from "yup";
 import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
-import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import {
+  CompanyInfoDropdownMenu,
+  AddOrUpdateCompanyAddressModal,
+  useOrganization,
+  useOrganizationAddresses,
+} from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -311,26 +325,6 @@ const columns = computed<ITableColumn[]>(() => {
 
   return result;
 });
-
-function getActionsForItem(item: MemberAddressType) {
-  return [
-    {
-      label: t("common.buttons.edit"),
-      icon: "pencil",
-      iconClass: "text-[--color-primary-500]",
-      onClick: () => openAddOrUpdateCompanyAddressModal(item),
-      disabled: false,
-    },
-    {
-      label: t("common.buttons.delete"),
-      icon: "delete-2",
-      iconClass: item.isDefault ? "text-[--color-neutral-400]" : "text-[--color-danger-500]",
-      onClick: () => openDeleteAddressModal(item),
-      disabled: item.isDefault,
-      title: item.isDefault ? t("pages.company.info.address_not_delete_message") : undefined,
-    },
-  ];
-}
 
 async function onPageChange(newPage: number) {
   window.scroll({ top: 0, behavior: "smooth" });
