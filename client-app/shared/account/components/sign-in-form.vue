@@ -12,7 +12,8 @@
           {{ $t("common.messages.password_expired") }}
         </span>
 
-        <a href="/change-password?mode=new-password" class="text-sm font-semibold text-blue-700 hover:text-blue-500">
+        <!-- Keep the A tag to reiinitialize the app -->
+        <a href="/change-password" class="text-sm font-semibold text-blue-700 hover:text-blue-500">
           {{ $t("common.buttons.set_new_password") }}
         </a>
       </span>
