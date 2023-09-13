@@ -56,7 +56,7 @@
         {
           "title": "COMPLETE CONTROL",
           "text": "Keep your Phantom 3 fully under your command while accessing the most used features right on the included remote",
-          "image": /static/images/demo-landing/feat-3.svg
+          "image": "/static/images/demo-landing/feat-3.svg"
         }
       ],
       "background": "bg-gray-100"
