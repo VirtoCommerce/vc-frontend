@@ -24,7 +24,12 @@
               </VcButton>
             </div>
           </div>
-          <div class="order-1 aspect-video rounded bg-gray-200 lg:order-2"></div>
+          <div class="order-1 aspect-video rounded bg-gray-200 lg:order-2">
+            <VcImage
+              src="/static/images/demo-landing/note.webp"
+              :alt="$t('pages.demo_landing.primary_block.image_alt')"
+            />
+          </div>
         </div>
       </div>
     </div>
