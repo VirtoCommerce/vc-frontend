@@ -9,7 +9,7 @@
   >
     <div class="border-b px-6 pb-6 pt-5">
       <VcInput
-        v-model.trim="listName"
+        v-model="listName"
         :label="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_label')"
         :placeholder="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_placeholder')"
         :disabled="loading"
@@ -73,10 +73,10 @@ async function save(closingHandle: () => void) {
   if (isEditMode.value) {
     await renameWishlist({
       listId: props.list!.id!,
-      listName: listName.value,
+      listName: listName.value.trim(),
     });
   } else {
-    await createWishlist(listName.value);
+    await createWishlist(listName.value.trim());
   }
 
   closingHandle();
