@@ -382,7 +382,7 @@
         "title": "Invite member",
         "role_label": "Role",
         "role_placeholder": "Select role",
-        "emails_label": "Enter email addresses of the people you wish to invite",
+        "emails_label": "Input the email addresses of people you want to invite",
         "emails_placeholder": "Use commas, semicolons, or line breaks to separate multiple entries",
         "message_label": "Message",
         "cancel_button": "@:common.buttons.cancel",
