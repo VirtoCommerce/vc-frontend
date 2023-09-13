@@ -1,14 +1,25 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert v-if="authError" class="mb-4" color="danger" size="sm" variant="outline-dark" icon>
-      <span>{{ $t("shared.account.sign_in_form.email_or_password_incorrect_alert") }}</span>
-    </VcAlert>
-
-    <VcAlert v-if="userIsLockedError" class="mb-4" color="danger" size="sm" variant="outline-dark" icon>
-      <span>
+    <VcAlert v-if="error" class="mb-4" color="danger" size="sm" variant="outline-dark" icon>
+      <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT_ERROR_CODE">
         {{ $t("shared.account.sign_in_form.user_is_locked_out_alert") }}
         <ContactAdministratorLink />.
+      </span>
+
+      <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="flex place-items-center justify-between">
+        <span>
+          {{ $t("common.messages.password_expired") }}
+        </span>
+
+        <!-- Keep the A tag to reiinitialize the app -->
+        <a href="/change-password" class="text-sm font-semibold text-blue-700 hover:text-blue-500">
+          {{ $t("common.buttons.set_new_password") }}
+        </a>
+      </span>
+
+      <span v-else>
+        {{ $t("shared.account.sign_in_form.email_or_password_incorrect_alert") }}
       </span>
     </VcAlert>
 
@@ -47,8 +58,7 @@
         v-t="'shared.account.sign_in_form.forgot_password_link'"
         to="/forgot-password"
         class="text-sm font-semibold text-blue-700 hover:text-blue-500"
-      >
-      </router-link>
+      />
     </div>
 
     <!-- Form actions -->
@@ -71,10 +81,12 @@ import { reactive, ref, watch } from "vue";
 import { object, string } from "yup";
 import { getMe } from "@/core/api/graphql";
 import { mergeCart } from "@/core/api/graphql/cart";
+import { IdentityErrors } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { ContactAdministratorLink } from "@/shared/common";
 import { useUser } from "../composables/useUser";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "succeeded"): void;
@@ -83,14 +95,11 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
-const USER_IS_LOCKED_OUT_ERROR_CODE = "user_is_locked_out";
-
 const { cart, fetchShortCart } = useCart();
 const { signMeIn } = useUser();
 
 const loading = ref(false);
-const authError = ref(false);
-const userIsLockedError = ref(false);
+const error = ref<IdentityErrorType>();
 
 const schema = toTypedSchema(
   object({
@@ -123,13 +132,8 @@ const onSubmit = handleSubmit(async () => {
       const user = await getMe();
       await mergeCart(user.id, cart.value!.id!);
       emit("succeeded");
-      return;
-    }
-
-    if (result.errors?.find((e) => e.code === USER_IS_LOCKED_OUT_ERROR_CODE)) {
-      userIsLockedError.value = true;
     } else {
-      authError.value = true;
+      error.value = result.errors?.find((e) => !!e.code);
     }
   } catch (e) {
     Logger.error(useUser.name, e);
@@ -139,7 +143,6 @@ const onSubmit = handleSubmit(async () => {
 });
 
 watch(values, () => {
-  authError.value = false;
-  userIsLockedError.value = false;
+  error.value = undefined;
 });
 </script>
