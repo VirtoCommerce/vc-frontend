@@ -13,10 +13,14 @@
         'vc-chip--clickable': clickable,
         'vc-chip--closable': closable,
         'vc-chip--rounded': rounded,
+        'vc-chip--truncate': truncate,
+        'vc-chip--nowrap': nowrap,
       },
     ]"
   >
-    <slot />
+    <span class="vc-chip__content">
+      <slot />
+    </span>
 
     <button
       v-if="closable"
@@ -47,6 +51,7 @@ interface IProps {
   draggable?: boolean;
   rounded?: boolean;
   truncate?: boolean;
+  nowrap?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -63,45 +68,54 @@ withDefaults(defineProps<IProps>(), {
 
   $truncate: "";
   $clickable: "";
+  $content: "";
 
-  @apply relative inline-flex items-center rounded-sm border font-bold;
+  @apply relative inline-flex justify-between rounded-sm border font-bold;
 
   &--size {
     &--xs {
       --vc-icon-size: 0.5rem;
+      --content-icon-top: 0.2rem;
       --padding-y: 0;
       --padding-x: 0.25rem;
 
-      @apply px-[--padding-x] text-[0.625rem]/[0.875rem];
+      @apply gap-1 px-[--padding-x] text-[0.625rem]/[0.875rem];
     }
 
     &--sm {
       --vc-icon-size: 0.625rem;
+      --content-icon-top: 0.225rem;
       --padding-y: 0.125rem;
       --padding-x: 0.5rem;
 
-      @apply px-[--padding-x] py-[--padding-y] text-xs;
+      @apply gap-1 px-[--padding-x] py-[--padding-y] text-xs;
     }
 
     &--md {
       --vc-icon-size: 0.75rem;
+      --content-icon-top: 0.23rem;
       --padding-y: 0.25rem;
       --padding-x: 0.75rem;
 
-      @apply gap-0.5 px-[--padding-x] py-[--padding-y] text-sm/[1.125rem];
+      @apply gap-1.5 px-[--padding-x] py-[--padding-y] text-sm/[1.125rem];
     }
 
     &--lg {
       --vc-icon-size: 0.875rem;
+      --content-icon-top: 0.175rem;
       --padding-y: 0.375rem;
       --padding-x: 0.75rem;
 
-      @apply gap-0.5 px-[--padding-x] py-[--padding-y] text-sm;
+      @apply gap-1.5 px-[--padding-x] py-[--padding-y] text-sm;
     }
   }
 
   &--truncate {
     $truncate: &;
+  }
+
+  &--nowrap {
+    @apply w-auto whitespace-nowrap #{!important};
   }
 
   &--clickable {
@@ -162,8 +176,30 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
+  &__content {
+    $content: &;
+
+    #{$truncate} & {
+      @apply truncate;
+    }
+
+    & > .vc-icon {
+      &:first-child {
+        @apply me-1;
+      }
+
+      &:last-child {
+        @apply ms-1;
+      }
+    }
+  }
+
   &__close-button {
-    @apply self-stretch flex items-center ps-1 pe-[--padding-x] -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
+    @apply self-stretch flex ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
+  }
+
+  .vc-icon {
+    @apply relative top-[--content-icon-top] flex-none;
   }
 
   &:disabled,

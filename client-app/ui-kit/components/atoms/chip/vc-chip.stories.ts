@@ -65,6 +65,26 @@ Disabled.args = {
   disabled: true,
 };
 
+export const Icon: StoryFn<typeof VcChip> = (args) => ({
+  components: { VcChip, VcIcon },
+  setup: () => ({ args }),
+  template: `<VcChip v-bind="args">
+    <VcIcon name="cog" />
+    <span>Chip text</span>
+  </VcChip>`,
+});
+
+export const Truncate: StoryFn<typeof VcChip> = (args) => ({
+  components: { VcChip },
+  setup: () => ({ args }),
+  template: `<VcChip v-bind="args" class="w-36">
+    <span>Long long long Chip text</span>
+  </VcChip>`,
+});
+Truncate.args = {
+  truncate: true,
+};
+
 export const AllStates: StoryFn<typeof VcChip> = () => ({
   components: { VcChip },
   setup: () => ({ colors: COLORS, variants: VARIANTS, sizes: SIZES }),
