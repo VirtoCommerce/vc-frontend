@@ -75,7 +75,6 @@ withDefaults(defineProps<IProps>(), {
   &--size {
     &--xs {
       --vc-icon-size: 0.5rem;
-      --content-icon-top: 0.2rem;
       --padding-y: 0;
       --padding-x: 0.25rem;
 
@@ -84,7 +83,6 @@ withDefaults(defineProps<IProps>(), {
 
     &--sm {
       --vc-icon-size: 0.625rem;
-      --content-icon-top: 0.225rem;
       --padding-y: 0.125rem;
       --padding-x: 0.5rem;
 
@@ -93,7 +91,6 @@ withDefaults(defineProps<IProps>(), {
 
     &--md {
       --vc-icon-size: 0.75rem;
-      --content-icon-top: 0.23rem;
       --padding-y: 0.25rem;
       --padding-x: 0.75rem;
 
@@ -102,7 +99,6 @@ withDefaults(defineProps<IProps>(), {
 
     &--lg {
       --vc-icon-size: 0.875rem;
-      --content-icon-top: 0.175rem;
       --padding-y: 0.375rem;
       --padding-x: 0.75rem;
 
@@ -177,33 +173,29 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    $content: &;
+    &:has(.vc-icon) {
+      @apply inline-flex items-center gap-1;
+    }
 
     #{$truncate} & {
       @apply truncate;
-    }
 
-    & > .vc-icon {
-      &:first-child {
-        @apply me-1;
-      }
-
-      &:last-child {
-        @apply ms-1;
+      & > * {
+        @apply truncate;
       }
     }
   }
 
   &__close-button {
-    @apply self-stretch flex ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
+    @apply self-stretch flex items-center ps-1 pe-[--padding-x] -ms-1 -me-[--padding-x] py-[--padding-y] -my-[--padding-y] rounded-r-[inherit];
   }
 
   .vc-icon {
-    @apply relative top-[--content-icon-top] flex-none;
+    @apply flex-none;
   }
 
-  &:disabled,
-  &--disabled {
+  &:disabled#{$clickable},
+  &--disabled#{$clickable} {
     &[class*="--solid-"] {
       @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }

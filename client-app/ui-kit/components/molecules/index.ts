@@ -4,6 +4,7 @@ export { default as VcAddressSelection } from "./address-selection/vc-address-se
 export { default as VcAlert } from "./alert/vc-alert.vue";
 export { default as VcButtonSeeMoreLess } from "./button-see-more-less/vc-button-see-more-less.vue";
 export { default as VcCarousel } from "./carousel/vc-carousel.vue";
+export { default as VcChip } from "./chip/vc-chip.vue";
 export { default as VcCollapsibleContent } from "./collapsible-content/vc-collapsible-content.vue";
 export { default as VcCopyText } from "./copy-text/vc-copy-text.vue";
 export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";

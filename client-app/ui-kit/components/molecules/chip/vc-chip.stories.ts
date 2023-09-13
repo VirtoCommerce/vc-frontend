@@ -1,4 +1,5 @@
-import { VcChip, VcIcon } from "..";
+import { VcChip } from "..";
+import { VcIcon } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 const SIZES = ["xs", "sm", "md", "lg"];
@@ -6,7 +7,7 @@ const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning",
 const VARIANTS = ["solid", "solid-light", "outline", "outline-dark"];
 
 export default {
-  title: "Components/Atoms/VcChip",
+  title: "Components/Molecules/VcChip",
   component: VcChip,
   argTypes: {
     size: {
@@ -60,9 +61,15 @@ Closable.args = {
   closable: true,
 };
 
+export const Clickable = Template.bind({});
+Clickable.args = {
+  clickable: true,
+};
+
 export const Disabled = Template.bind({});
 Disabled.args = {
   disabled: true,
+  clickable: true,
 };
 
 export const Icon: StoryFn<typeof VcChip> = (args) => ({
