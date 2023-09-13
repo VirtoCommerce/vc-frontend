@@ -1,4 +1,4 @@
-import { eagerComputed } from "@vueuse/core";
+import { eagerComputed, useStorage } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
 import {
   getMe,
@@ -16,6 +16,8 @@ import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { TabsType, pageReloadEvent, useBroadcast, userBlockedEvent, userReloadEvent } from "@/shared/broadcast";
+import { usePopup } from "@/shared/popup";
+import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
   AccountCreationResultType,
   CustomIdentityResultType,
@@ -35,6 +37,7 @@ import type {
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
+import type { RemovableRef } from "@vueuse/core";
 
 const loading = ref(false);
 const user = ref<UserType>();
@@ -47,6 +50,37 @@ const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 export function useUser() {
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
+  const { openPopup, closePopup } = usePopup();
+
+  const changePasswordReminderDate: RemovableRef<Date | null> = useStorage("vcst-password-expire-reminder-date", null);
+
+  function handlePasswordExpiration(): void {
+    if (
+      user.value?.passwordExpiryInDays &&
+      (!changePasswordReminderDate.value || changePasswordReminderDate.value <= new Date())
+    ) {
+      openPopup({
+        component: PasswordExpirationModal,
+
+        props: {
+          expiryInDays: user.value?.passwordExpiryInDays,
+
+          onConfirm(): void {
+            globals.router.replace({ name: "ChangePassword" });
+            changePasswordReminderDate.value = null;
+            closePopup();
+          },
+
+          onDismiss(): void {
+            const nextDate = new Date();
+            nextDate.setDate(nextDate.getDate() + 1);
+            changePasswordReminderDate.value = nextDate;
+            closePopup();
+          },
+        },
+      });
+    }
+  }
 
   function checkPermissions(...permissions: string[]): boolean {
     let access = !!user.value?.isAdministrator;
@@ -65,6 +99,8 @@ export function useUser() {
       loading.value = true;
 
       user.value = await getMe();
+
+      handlePasswordExpiration();
 
       if (withBroadcast) {
         broadcast.emit(userReloadEvent);
