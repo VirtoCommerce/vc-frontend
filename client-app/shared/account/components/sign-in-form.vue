@@ -7,11 +7,14 @@
         <ContactAdministratorLink />.
       </span>
 
-      <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED">
-        {{ $t("common.messages.password_expired") }}
-        <VcButton color="danger" size="sm" variant="outline" @click="toChangePassword">
+      <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="flex place-items-center justify-between">
+        <span>
+          {{ $t("common.messages.password_expired") }}
+        </span>
+
+        <a href="/change-password?mode=new-password" class="text-sm font-semibold text-blue-700 hover:text-blue-500">
           {{ $t("common.buttons.set_new_password") }}
-        </VcButton>
+        </a>
       </span>
 
       <span v-else>
@@ -114,10 +117,6 @@ const { value: password } = useField<string>("password");
 const rememberMe = ref(false);
 const model = reactive({ email, password, rememberMe });
 
-function toChangePassword(): void {
-  location.href = "/change-password";
-}
-
 const onSubmit = handleSubmit(async () => {
   loading.value = true;
 
@@ -132,10 +131,9 @@ const onSubmit = handleSubmit(async () => {
       const user = await getMe();
       await mergeCart(user.id, cart.value!.id!);
       emit("succeeded");
-      return;
+    } else {
+      error.value = result.errors?.find((e) => !!e.code);
     }
-
-    error.value = result.errors?.find((e) => !!e.code);
   } catch (e) {
     Logger.error(useUser.name, e);
   }
