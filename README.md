@@ -32,85 +32,85 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ## Theme structure
 
 ```text
-├── assets                        // Scripts, styles and other assets compiled and minified for production.
+├── assets                           // Scripts, styles and other assets compiled and minified for production.
 |
-├── client-app                    // The main folder for the application.
-|   ├── assets                    // Assets needed to be precompiled during building.
+├── client-app                       // The main folder for the application.
+|   ├── assets                       // Assets needed to be precompiled during building.
 |   |   └──...
 |   |
-|   ├── core                      // Common utilities and shared logic that can be used by any pages and libraries.
-|   |   ├── api/graphql           // GraphQL Models aligned with the Virto Backoffice.
+|   ├── core                         // Common utilities and shared logic that can be used by any pages and libraries.
+|   |   ├── api/graphql              // GraphQL Models aligned with the Virto Backoffice.
 |   |   |   └──...
-|   |   ├── composables           // Core composables (app-level shared logic).
+|   |   ├── composables              // Core composables (app-level shared logic).
 |   |   |   └──...
-|   |   ├── directives            // Core Vue directives.
+|   |   ├── directives               // Core Vue directives.
 |   |   |   └──...
-|   |   ├── plugins               // Core Vue plugins.
+|   |   ├── plugins                  // Core Vue plugins.
 |   |   |   └──...
-|   |   ├── enums                 // Core enums.
+|   |   ├── enums                    // Core enums.
 |   |   |   └──...
-|   |   ├── types                 // Core types.
+|   |   ├── types                    // Core types.
 |   |   |   └──...
-|   |   ├── utilities             // Some miscellaneous utils.
+|   |   ├── utilities                // Some miscellaneous utils.
 |   |   |   └──...
-|   |   └── constants.ts          // Global-available constants (DO NOT USE, will be removed later).
+|   |   └── constants.ts             // Global-available constants (DO NOT USE, will be removed later).
 |   |
-|   ├── pages                     // Set of application pages used within Application router.
+|   ├── pages                        // Set of application pages used within Application router.
 |   |   └──...
 |   |
-|   ├── public                    // Statically served files
+|   ├── public                       // Statically served files
 |   |   └── static
-|   |       ├── icons             // Icons used for favicons, PWA, etc.
-|   |       └── images            // Static images used inside the application.
+|   |       ├── icons                // Icons used for favicons, PWA, etc.
+|   |       └── images               // Static images used inside the application.
 |   |
-|   ├── router                    // SPA routing configuration.
+|   ├── router                       // SPA routing configuration.
 |   |   └──...
 |   |
-|   ├── shared                    // A set of shared files grouped by their domain context.
-|   |   ├── catalog               // Grouping context (ex.: catalog browsing).
-|   |   |   ├── components        // The collection of components specific for this domain context.
+|   ├── shared                       // A set of shared files grouped by their domain context.
+|   |   ├── catalog                  // Grouping context (ex.: catalog browsing).
+|   |   |   ├── components           // The collection of components specific for this domain context.
 |   |   |   |   └──...
-|   |   |   ├── composables       // The collection of shared logic written using Composable API pattern.
+|   |   |   ├── composables          // The collection of shared logic written using Composable API pattern.
 |   |   |   |   └──...
-|   |   |   ├── types             // Types used in this context.
+|   |   |   ├── types                // Types used in this context.
 |   |   |   |   └──...
-|   |   |   ├── utils             // Utilities and helpers specific for this context.
+|   |   |   ├── utils                // Utilities and helpers specific for this context.
 |   |   |   |   └──...
-|   |   |   └── index.ts          // Entry point for this context used as library.
+|   |   |   └── index.ts             // Entry point for this context used as library.
 |   |   |
 |   |   └──...
 |   |
-|   ├── ui-kit                    // Atoms, Molecules, Organisms and their types, used within the whole application.
+|   ├── ui-kit                       // Atoms, Molecules, Organisms and their types, used within the whole application.
 |   |   └──...
 |   |
-|   ├── App.vue                   // Main Application component. Use it as a wrapper for routable pages.
-|   ├── env.d.ts                  // Definition file to provide IDE IntelliSense support.
-|   ├── main.ts                   // Application entry point. Main initialization script.
-|   ├── shims-acceptjs.d.ts       // Definition file to provide IDE IntelliSense support for Accept.js (Authorize.net).
-|   ├── shims-graphql.d.ts        // Definition file to provide IDE IntelliSense support for importing *.graphql files.
-|   ├── shims-vue.d.ts            // Definition file to provide IDE IntelliSense support for importing *.vue files.
-|   ├── vue.d.ts                  // Definition file to provide IDE IntelliSense support for additional global Vue properties.
-|   └── vue-router.d.ts           // Definition file to provide IDE IntelliSense support for additional global Vue Router properties.
+|   ├── App.vue                      // Main Application component. Use it as a wrapper for routable pages.
+|   ├── env.d.ts                     // Definition file to provide IDE IntelliSense support.
+|   ├── main.ts                      // Application entry point. Main initialization script.
+|   ├── shims-acceptjs.d.ts          // Definition file to provide IDE IntelliSense support for Accept.js (Authorize.net).
+|   ├── shims-graphql.d.ts           // Definition file to provide IDE IntelliSense support for importing *.graphql files.
+|   ├── shims-vue.d.ts               // Definition file to provide IDE IntelliSense support for importing *.vue files.
+|   ├── vue.d.ts                     // Definition file to provide IDE IntelliSense support for additional global Vue properties.
+|   └── vue-router.d.ts              // Definition file to provide IDE IntelliSense support for additional global Vue Router properties.
 |
-├── config                        // The Virto theme settings.
-|   ├── menu.json                 // Theme menu settings file.
-|   ├── routes.json               // Autogenerated file with SPA routes for Storefront application.
-|   └── settings_data.json        // Theme config file.
+├── config                           // The Virto theme settings.
+|   ├── menu.json                    // Theme menu settings file.
+|   ├── routes.json                  // Autogenerated file with SPA routes for Storefront application.
+|   └── settings_data.json           // Theme config file.
 |   
-├── layout                        // Layout templates used to render theme within Storefront.
-|   └── theme.liquid              // Wrapper for SPA, providing HTML document structure.
+├── layout                           // Layout templates used to render theme within Storefront.
+|   └── theme.liquid                 // Wrapper for SPA, providing HTML document structure.
 |
-├── locales                       // Locale files used to provide translated content for the theme.
+├── locales                          // Locale files used to provide translated content for the theme.
 |   └──...
 |
-├── scripts                       // Auxiliary build files that run in the Node environment.
+├── scripts                          // Auxiliary build files that run in the Node environment.
 |   └──...
 |
-├── snippets                      // Liquid snippets, included in Liquid templates.
+├── snippets                         // Liquid snippets, included in Liquid templates.
 |   └──...
 |
-├── templates                     // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
-|   └──index.liquid               // Entry point for SPA, providing container with necessary scripts and styles.
+├── templates                        // Liquid templates, used in SSR and MPA. Each MPA page needs to have a liquid template here if you want SSR.
+|   └──index.liquid                  // Entry point for SPA, providing container with necessary scripts and styles.
 |
 ├── .babelrc                         // Babel configuration for storybook
 ├── .browserslistrc                  // Browserslist config file to support actual versions of browsers.
@@ -122,14 +122,14 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ├── .eslintrc.js                     // ESlint configuration file.
 ├── .gitattributes                   // Set attributes to specified path in Git.
 ├── .gitignore                       // Ignore some files from Git.
-├── .graphqlconfig                   // Config file for JS GraphQL IntelliJ Plugin (https://plugins.jetbrains.com/plugin/8097-graphql).
 ├── .npmrc                           // Node.js package manager settings and Node.js restrictions
 ├── .prettierignore                  // Ignore some files from Prettier.
 ├── .prettierrc                      // Config for Prettier.
 ├── .yarnrc                          // Yarn package manager configuration
 ├── builder-preview.html             // Page Builder entry point
-├── graphql-codegen.schema.config.ts // GraphQL configuration file to generate schema from your VirtoCommerce Storefront url.
-├── graphql-codegen.types.types.ts   // GraphQL configuration file to generate types from your VirtoCommerce Storefront url.
+├── graphql.config.json              // GraphQL configuration (https://the-guild.dev/graphql/config/docs) to use generated schema and types.
+├── graphql-codegen.schema.config.ts // Configuration file to generate GraphQL schema.
+├── graphql-codegen.types.types.ts   // Configuration file to generate GraphQL types.
 ├── gulpfile.js                      // Artifact build script to product zip-file installable by VirtoCommerce Storefront.
 ├── index.html                       // Vite Development entry point.
 ├── package.json                     // NPM Package description.

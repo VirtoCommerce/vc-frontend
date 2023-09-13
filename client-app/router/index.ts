@@ -55,7 +55,7 @@ export function createRouter(options: { base: string }) {
         "ConfirmInvitation",
       ).includes(to.name!)
     ) {
-      return next(getReturnUrlValue() || { name: "Dashboard" });
+      return next(getReturnUrlValue() || { name: "Catalog" });
     }
 
     return next();
