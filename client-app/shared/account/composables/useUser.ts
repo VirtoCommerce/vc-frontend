@@ -57,7 +57,6 @@ export function useUser() {
   function handlePasswordExpiration(): void {
     if (
       user.value?.passwordExpiryInDays &&
-      user.value.passwordExpiryInDays > 0 &&
       (!changePasswordReminderDate.value || changePasswordReminderDate.value <= new Date())
     ) {
       openPopup({
