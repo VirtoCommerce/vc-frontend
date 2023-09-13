@@ -1,4 +1,3 @@
-<!-- @deprecated the component will be removed from ui-kit -->
 <template>
   <VcTooltip :y-offset="4" :x-offset="0" placement="bottom-end" trigger="click">
     <template #trigger>
