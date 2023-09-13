@@ -63,5 +63,3 @@ export const ALL_ROLES: ExtendedRoleType[] = [
   STORE_ADMINISTRATOR,
   STORE_MANAGER,
 ];
-
-export const PASSWORD_EXPIRY_IN_DAYS = 7;

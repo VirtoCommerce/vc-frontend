@@ -1,6 +1,5 @@
-import { eagerComputed } from "@vueuse/core";
-import { computed, readonly, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { eagerComputed, useStorage } from "@vueuse/core";
+import { computed, inject, readonly, ref } from "vue";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -14,8 +13,8 @@ import {
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
 import { useFetch } from "@/core/composables";
-import { PASSWORD_EXPIRY_IN_DAYS } from "@/core/constants";
 import { globals } from "@/core/globals";
+import { configInjectionKey } from "@/core/injection-keys";
 import { Logger } from "@/core/utilities";
 import { TabsType, pageReloadEvent, useBroadcast, userBlockedEvent, userReloadEvent } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
@@ -39,6 +38,7 @@ import type {
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
+import type { RemovableRef } from "@vueuse/core";
 
 const loading = ref(false);
 const user = ref<UserType>();
@@ -49,28 +49,41 @@ const organization = eagerComputed<Organization | null>(() => user.value?.contac
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 export function useUser() {
-  const route = useRoute();
-  const router = useRouter();
+  const config = inject(configInjectionKey);
+
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
-  const { openPopup } = usePopup();
+  const { openPopup, closePopup } = usePopup();
+
+  const changePasswordReminderDate: RemovableRef<Date | null> = useStorage("vcst-password-expire-reminder-date", null);
 
   function handlePasswordExpiration(): void {
-    //if (user.value.passwordExpiryInDays && user.value.passwordExpiryInDays <= PASSWORD_EXPIRY_IN_DAYS) {
-    openPopup({
-      component: PasswordExpirationModal,
+    if (
+      user.value?.passwordExpiryInDays &&
+      user.value.passwordExpiryInDays <= (config?.password_expiry_in_days || 3) &&
+      (!changePasswordReminderDate.value || changePasswordReminderDate.value <= new Date())
+    ) {
+      openPopup({
+        component: PasswordExpirationModal,
 
-      props: {
-        onConfirm(): void {
-          router.replace({ name: "ChangePassword" });
-        },
+        props: {
+          expiryInDays: user.value?.passwordExpiryInDays,
 
-        onDismiss(): void {
-          console.log();
+          onConfirm(): void {
+            globals.router.replace({ name: "ChangePassword" });
+            changePasswordReminderDate.value = null;
+            closePopup();
+          },
+
+          onDismiss(): void {
+            const nextDate = new Date();
+            nextDate.setDate(nextDate.getDate() + 1);
+            changePasswordReminderDate.value = nextDate;
+            closePopup();
+          },
         },
-      },
-    });
-    //}
+      });
+    }
   }
 
   function checkPermissions(...permissions: string[]): boolean {
@@ -91,9 +104,7 @@ export function useUser() {
 
       user.value = await getMe();
 
-      if (!route.meta.public) {
-        handlePasswordExpiration();
-      }
+      handlePasswordExpiration();
 
       if (withBroadcast) {
         broadcast.emit(userReloadEvent);
