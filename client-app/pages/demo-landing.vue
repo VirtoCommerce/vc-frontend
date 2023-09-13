@@ -190,7 +190,7 @@ const breadcrumbs = useBreadcrumbs([{ title: t("shared.layout.footer.demo_landin
 onMounted(async () => {
   await fetchProducts({
     itemsPerPage: 4,
-    filter: '"BRAND":"HP"',
+    keyword: "printer",
   });
 });
 </script>
