@@ -1,7 +1,7 @@
 import { createHead } from "@vueuse/head";
 import { createApp } from "vue";
 import VueSecureHTML from "vue-html-secure";
-import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
+import { useAppContext, useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
@@ -12,13 +12,14 @@ import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
-import type { Plugin } from "vue";
-import type { Router } from "vue-router";
 
 // eslint-disable-next-line no-restricted-exports
-export default async (getPlugins: (options: { router: Router }) => { plugin: Plugin; options: any }[] = () => []) => {
+export default async () => {
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
+  const {
+    storeSettings: { isPageBuilderPreviewMode },
+  } = useAppContext();
 
   if (!appElement) {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
@@ -87,7 +88,13 @@ export default async (getPlugins: (options: { router: Router }) => { plugin: Plu
   app.use(configPlugin, themeContext.value!.settings);
   app.use(uiKit);
 
-  getPlugins({ router }).forEach(({ plugin, options }) => app.use(plugin, options));
+  if (isPageBuilderPreviewMode) {
+    const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
+      ?.default;
+    if (builderPreviewPlugin) {
+      app.use(builderPreviewPlugin, { router });
+    }
+  }
 
   // Register Page builder components globally
   Object.entries(templateBlocks).forEach(([name, component]) => app.component(name, component));
