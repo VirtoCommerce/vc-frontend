@@ -69,7 +69,6 @@ Clickable.args = {
 export const Disabled = Template.bind({});
 Disabled.args = {
   disabled: true,
-  clickable: true,
 };
 
 export const Icon: StoryFn<typeof VcChip> = (args) => ({

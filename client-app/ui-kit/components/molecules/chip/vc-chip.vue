@@ -199,8 +199,8 @@ withDefaults(defineProps<IProps>(), {
     @apply flex-none;
   }
 
-  &:disabled#{$clickable},
-  &--disabled#{$clickable} {
+  &:disabled,
+  &--disabled {
     &[class*="--solid-"] {
       @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }
