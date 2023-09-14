@@ -10,6 +10,7 @@ query GetMe($after: String, $first: Int, $sort: String) {
     permissions
     isAdministrator
     passwordExpired
+    passwordExpiryInDays
     forcePasswordChange
     lockedState
     contact {
