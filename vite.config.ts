@@ -81,7 +81,6 @@ export default defineConfig(({ mode }): UserConfig => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, "index.html"),
-          builder: path.resolve(__dirname, "builder-preview.html"),
         },
         output: {
           entryFileNames: "[name].js",

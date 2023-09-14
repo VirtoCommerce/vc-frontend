@@ -52,7 +52,9 @@
     {% endcomment %}
     "storeSettings": {
       "anonymousAccessEnabled": {{ current_store.anonymous_users_allowed }},
-      "googleAnalyticsEnabled": {{ google_analytics_enabled }}
+      "googleAnalyticsEnabled": {{ google_analytics_enabled }},
+    {%- comment %}can we detect it?{% endcomment -%}
+      "isPageBuilderPreviewMode": false
     }
     {%- comment %}"themeSettings": {{ settings | json }}{% endcomment -%}
     {%- comment %}"localization": {{ '' | t }}{% endcomment -%}
