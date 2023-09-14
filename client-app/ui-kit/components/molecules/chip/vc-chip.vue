@@ -68,9 +68,24 @@ withDefaults(defineProps<IProps>(), {
 
   $truncate: "";
   $clickable: "";
-  $content: "";
 
-  @apply relative inline-flex justify-between rounded-sm border font-bold;
+  @apply relative inline-flex justify-between rounded-sm border font-bold text-center;
+
+  &--clickable {
+    $clickable: &;
+  }
+
+  &--truncate {
+    $truncate: &;
+  }
+
+  &--nowrap {
+    @apply w-auto whitespace-nowrap #{!important};
+  }
+
+  &--rounded {
+    @apply rounded-full;
+  }
 
   &--size {
     &--xs {
@@ -104,22 +119,6 @@ withDefaults(defineProps<IProps>(), {
 
       @apply gap-1.5 px-[--padding-x] py-[--padding-y] text-sm;
     }
-  }
-
-  &--truncate {
-    $truncate: &;
-  }
-
-  &--nowrap {
-    @apply w-auto whitespace-nowrap #{!important};
-  }
-
-  &--clickable {
-    $clickable: &;
-  }
-
-  &--rounded {
-    @apply rounded-full;
   }
 
   @each $color in $colors {
@@ -173,14 +172,20 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
+    @apply grow;
+
     &:has(.vc-icon) {
-      @apply inline-flex items-center gap-1;
+      @apply inline-flex items-center gap-[inherit];
     }
 
     #{$truncate} & {
       @apply truncate;
+    }
 
-      & > * {
+    & > * {
+      @apply text-left;
+
+      #{$truncate} & {
         @apply truncate;
       }
     }

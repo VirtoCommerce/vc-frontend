@@ -1,7 +1,7 @@
 <template>
-  <VcBadge :variant="quoteStatus?.variant" :color="quoteStatus?.color || defaultColor" truncate>
+  <VcChip :variant="quoteStatus?.variant" :color="quoteStatus?.color || defaultColor" truncate rounded>
     {{ status }}
-  </VcBadge>
+  </VcChip>
 </template>
 
 <script setup lang="ts">
