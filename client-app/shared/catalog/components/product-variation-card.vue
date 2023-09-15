@@ -20,7 +20,7 @@
     <div class="flex flex-1 flex-col">
       <!-- Name -->
       <div class="mb-2 text-base font-bold uppercase">
-        {{ $t("shared.catalog.product_details.product_variation_card.variation_sku_label") }}{{ variation.code }}
+        {{ $t("shared.catalog.product_details.product_variation_card.variation_sku_label") }} {{ variation.code }}
       </div>
       <div class="flex flex-1 flex-col xl:flex-row xl:space-x-3">
         <div class="flex flex-1 flex-col gap-y-3 max-xl:mb-2 md:gap-y-1">
