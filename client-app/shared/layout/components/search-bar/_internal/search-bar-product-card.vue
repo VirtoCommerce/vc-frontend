@@ -27,7 +27,7 @@
 
       <!-- Product props -->
       <div class="grid grid-cols-[auto_1fr] overflow-hidden text-xs leading-[1.063rem]">
-        <span class="pr-3.5 font-bold">{{ $t("common.labels.item") }}</span>
+        <span class="pr-3.5 font-bold">{{ $t("common.labels.sku") }}</span>
         <span class="truncate">{{ product.code }}</span>
 
         <span class="pr-3.5 font-bold">{{ $t("common.labels.price") }}</span>
