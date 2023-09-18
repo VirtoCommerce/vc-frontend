@@ -8,7 +8,7 @@ import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
-import { useCart } from "@/shared/cart";
+import { useCart, DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
@@ -72,14 +72,14 @@ export function useCheckout() {
       await changeComment(value);
     }
     _comment.value = undefined;
-  }, 2000);
+  }, DEFAULT_DEBOUNCE_IN_MS);
 
   const updatePurchaseOrderNumberDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.purchaseOrderNumber !== value) {
       await updatePurchaseOrderNumber(value);
     }
     _purchaseOrderNumber.value = undefined;
-  }, 2000);
+  }, DEFAULT_DEBOUNCE_IN_MS);
 
   const comment = computed({
     get: () => _comment.value ?? cart.value?.comment ?? "",

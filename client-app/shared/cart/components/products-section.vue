@@ -12,14 +12,12 @@
 
           <CartLineItems
             :items="group.items"
-            :selected-items="selectedItems"
+            :all-selected-item-ids="selectedItemIds"
             :disabled="disabled"
             :validation-errors="validationErrors"
             @change:item-quantity="$emit('change:itemQuantity', $event)"
-            @select:item="$emit('select:item', $event)"
-            @select:all-items="$emit('select:allItems', { items: group.items, selectAll: $event })"
-            @remove:item="$emit('remove:item', $event)"
-            @remove:selected-items="$emit('remove:selectedItems', $event)"
+            @select:items="$emit('select:items', $event)"
+            @remove:items="$emit('remove:items', $event)"
           />
         </div>
       </template>
@@ -29,14 +27,12 @@
     <template v-else>
       <CartLineItems
         :items="items"
-        :selected-items="selectedItems"
+        :all-selected-item-ids="selectedItemIds"
         :disabled="disabled"
         :validation-errors="validationErrors"
         @change:item-quantity="$emit('change:itemQuantity', $event)"
-        @select:item="$emit('select:item', $event)"
-        @select:all-items="$emit('select:allItems', { items, selectAll: $event })"
-        @remove:item="$emit('remove:item', $event)"
-        @remove:selected-items="$emit('remove:selectedItems', $event)"
+        @select:items="$emit('select:items', $event)"
+        @remove:items="$emit('remove:items', $event)"
       />
     </template>
 
@@ -62,10 +58,8 @@ import type { LineItemsGroupByVendorType } from "@/core/types";
 
 interface IEmits {
   (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;
-  (event: "select:item", value: { id: string; selected: boolean }): void;
-  (event: "select:allItems", value: { items: LineItemType[]; selectAll: boolean }): void;
-  (event: "remove:item", value: LineItemType): void;
-  (event: "remove:selectedItems", value: string[]): void;
+  (event: "remove:items", value: string[]): void;
+  (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "clear:cart"): void;
 }
 
@@ -73,7 +67,7 @@ interface IProps {
   grouped?: boolean;
   disabled?: boolean;
   items?: LineItemType[];
-  selectedItems?: string[];
+  selectedItemIds?: string[];
   itemsGroupedByVendor?: LineItemsGroupByVendorType<LineItemType>[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];

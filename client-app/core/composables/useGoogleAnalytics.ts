@@ -142,11 +142,18 @@ function addItemsToCart(items: LineItemType[], params?: EventParamsExtendedType)
 }
 
 function removeItemFromCart(item: LineItemType, params?: EventParamsExtendedType): void {
+  removeItemsFromCart([item], params);
+}
+
+function removeItemsFromCart(items: LineItemType[], params?: EventParamsExtendedType): void {
+  const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
+  const inputItems = items.map((item) => lineItemToGtagItem(item));
+
   sendEvent("remove_from_cart", {
     ...params,
     currency: globals.currencyCode,
-    value: item.placedPrice?.amount * (item.quantity ?? 1),
-    items: [lineItemToGtagItem(item)],
+    value: subtotal,
+    items: inputItems,
   });
 }
 
@@ -230,6 +237,7 @@ function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType):
     items: order.items!.map(lineItemToGtagItem),
   });
 }
+
 export function useGoogleAnalytics() {
   return {
     isAvailableGtag,
@@ -240,7 +248,9 @@ export function useGoogleAnalytics() {
     addItemToWishList,
     addItemToCart,
     addItemsToCart,
+    /** @deprecated */
     removeItemFromCart,
+    removeItemsFromCart,
     viewCart,
     clearCart,
     beginCheckout,

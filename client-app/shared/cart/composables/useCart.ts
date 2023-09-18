@@ -1,6 +1,6 @@
-import { computedEager } from "@vueuse/core";
-import { keyBy, sumBy } from "lodash";
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computedEager, refDebounced, syncRefs } from "@vueuse/core";
+import _, { keyBy, sumBy } from "lodash";
+import { computed, readonly, ref, shallowRef, watch } from "vue";
 import {
   addBulkItemsCart,
   addCoupon,
@@ -22,6 +22,7 @@ import {
   removeShipment as _removeShipment,
   validateCoupon,
   GetCartFeldsType,
+  changeSelectedCartItems,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
@@ -31,6 +32,7 @@ import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { ClearCartModal } from "../components";
+import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
@@ -48,6 +50,8 @@ import type {
 } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
 import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
+
+const broadcast = useBroadcast();
 
 const loading = ref(false);
 const cart = shallowRef<CartType>();
@@ -76,8 +80,45 @@ const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
+const selectedItemIds = shallowRef<string[]>();
+syncRefs(
+  computed(() =>
+    // Compute only if field is loaded
+    cart.value?.items?.every((item) => item.selectedForCheckout !== undefined)
+      ? cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id)
+      : undefined,
+  ),
+  selectedItemIds,
+);
+
+const selectedItemIdsDebounced = refDebounced(selectedItemIds, DEFAULT_DEBOUNCE_IN_MS);
+
+watch(selectedItemIdsDebounced, watchSelectedItemIdsDebounced);
+
+async function watchSelectedItemIdsDebounced(
+  newValue: string[] | undefined,
+  oldValue: string[] | undefined,
+): Promise<void> {
+  if (newValue && oldValue) {
+    const newlySelectedLineItemIds = _.difference(newValue, oldValue);
+    const newlyUnselectedLineItemIds = _.difference(oldValue, newValue);
+    if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
+      loading.value = true;
+
+      try {
+        cart.value = await changeSelectedCartItems(newlySelectedLineItemIds, newlyUnselectedLineItemIds);
+        broadcast.emit(cartReloadEvent);
+      } catch (e) {
+        Logger.error(`${watchSelectedItemIdsDebounced.name}`, e);
+        throw e;
+      } finally {
+        loading.value = false;
+      }
+    }
+  }
+}
+
 export function useCart() {
-  const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { openPopup } = usePopup();
   const ga = useGoogleAnalytics();
@@ -455,6 +496,7 @@ export function useCart() {
     payment,
     availableShippingMethods,
     availablePaymentMethods,
+    selectedItemIds,
     lineItemsGroupedByVendor,
     allItemsAreDigital,
     addedGiftsByIds,
@@ -467,6 +509,7 @@ export function useCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
+    /** @deprecated Use removeItems */
     removeItem,
     removeItems,
     validateCartCoupon,

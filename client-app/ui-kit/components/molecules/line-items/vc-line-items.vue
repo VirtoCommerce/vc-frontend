@@ -4,9 +4,9 @@
     <div class="vc-line-items__head">
       <VcCheckbox
         v-if="selectable"
-        v-model="selectAll"
+        :model-value="isAllItemsSelected"
         class="vc-line-items__checkbox"
-        @change="$emit('select:allItems', selectAll)"
+        @change="($event) => selectAllItems($event as boolean)"
       />
 
       <div class="vc-line-items__product">
@@ -41,9 +41,9 @@
         :actual-price="item.actualPrice"
         :removable="removable"
         :selectable="selectable"
-        :selected="selectedItems?.includes(item.id)"
-        @select="$emit('select:item', { id: item.id, selected: $event })"
-        @remove="$emit('remove:item', item)"
+        :selected="selectedItemIds?.includes(item.id)"
+        @select="($event) => selectSingleItem(item.id, $event)"
+        @remove="() => removeSingleItem(item.id)"
       >
         <template #before>
           <slot name="before-content" v-bind="{ item }" />
@@ -65,7 +65,7 @@
         <VcButton
           class="vc-line-items__button vc-line-items__button--desktop"
           size="xs"
-          :disabled="!filteredSelectedItems.length"
+          :disabled="!selectedItemIds.length"
           @click="removeSelectedItems"
         >
           {{ $t("common.buttons.remove_selected") }}
@@ -91,14 +91,12 @@
 
 <script setup lang="ts">
 import _, { sumBy } from "lodash";
-import { computed, ref, watchEffect } from "vue";
+import { computed } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
-  (event: "remove:item", value: PreparedLineItemType): void;
-  (event: "remove:selectedItems", value: string[]): void;
-  (event: "select:item", value: { id: string; selected: boolean }): void;
-  (event: "select:allItems", value: boolean): void;
+  (event: "remove:items", value: string[]): void;
+  (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
 }
 
 interface IProps {
@@ -106,7 +104,7 @@ interface IProps {
   readonly?: boolean;
   removable?: boolean;
   items?: PreparedLineItemType[];
-  selectedItems?: string[];
+  allSelectedItemIds?: string[];
   disableSubtotal?: boolean;
   selectable?: boolean;
 }
@@ -117,24 +115,30 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const selectAll = ref<boolean>(false);
-
 const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
 
-const filteredSelectedItems = computed(() => _.intersection(props.selectedItems, _.map(props.items, "id")));
+const itemIds = computed(() => _.map(props.items, "id"));
+const selectedItemIds = computed(() => _.intersection(props.allSelectedItemIds, itemIds.value));
+const isAllItemsSelected = computed<boolean>(() => selectedItemIds.value.length === props.items.length);
 
-const allItemsSelected = computed<boolean>(() => filteredSelectedItems.value.length === props.items.length);
+function selectSingleItem(itemId: string, value: boolean) {
+  emit("select:items", { itemIds: [itemId], selected: value });
+}
 
-watchEffect(() => {
-  selectAll.value = allItemsSelected.value;
-});
+function selectAllItems(value: boolean) {
+  emit("select:items", { itemIds: itemIds.value, selected: value });
+}
+
+function removeSingleItem(itemId: string) {
+  emit("remove:items", [itemId]);
+}
 
 function removeSelectedItems() {
-  emit("remove:selectedItems", filteredSelectedItems.value);
+  emit("remove:items", selectedItemIds.value);
 }
 
 function removeAllItems() {
-  emit("remove:selectedItems", _.map(props.items, "id"));
+  emit("remove:items", itemIds.value);
 }
 </script>
 

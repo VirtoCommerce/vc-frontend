@@ -102,7 +102,7 @@ const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
 });
 
-const isSelected = ref<boolean>(false);
+const isSelected = ref<boolean>(true);
 
 watchEffect(() => {
   isSelected.value = props.selected;
