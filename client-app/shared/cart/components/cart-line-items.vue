@@ -1,7 +1,7 @@
 <template>
   <VcLineItems
     :items="preparedLineItems"
-    :all-selected-item-ids="allSelectedItemIds"
+    :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
     removable
@@ -69,7 +69,7 @@ interface IProps {
   items?: LineItemType[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];
-  allSelectedItemIds?: string[];
+  sharedSelectedItemIds?: string[];
 }
 
 interface IEmits {

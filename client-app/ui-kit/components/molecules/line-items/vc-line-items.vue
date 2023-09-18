@@ -104,7 +104,7 @@ interface IProps {
   readonly?: boolean;
   removable?: boolean;
   items?: PreparedLineItemType[];
-  allSelectedItemIds?: string[];
+  sharedSelectedItemIds?: string[];
   disableSubtotal?: boolean;
   selectable?: boolean;
 }
@@ -118,7 +118,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
 
 const itemIds = computed(() => _.map(props.items, "id"));
-const selectedItemIds = computed(() => _.intersection(props.allSelectedItemIds, itemIds.value));
+const selectedItemIds = computed(() => _.intersection(props.sharedSelectedItemIds, itemIds.value));
 const isAllItemsSelected = computed<boolean>(() => selectedItemIds.value.length === props.items.length);
 
 function selectSingleItem(itemId: string, value: boolean) {

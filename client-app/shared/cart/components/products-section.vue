@@ -12,7 +12,7 @@
 
           <CartLineItems
             :items="group.items"
-            :all-selected-item-ids="selectedItemIds"
+            :shared-selected-item-ids="selectedItemIds"
             :disabled="disabled"
             :validation-errors="validationErrors"
             @change:item-quantity="$emit('change:itemQuantity', $event)"
@@ -27,7 +27,7 @@
     <template v-else>
       <CartLineItems
         :items="items"
-        :all-selected-item-ids="selectedItemIds"
+        :shared-selected-item-ids="selectedItemIds"
         :disabled="disabled"
         :validation-errors="validationErrors"
         @change:item-quantity="$emit('change:itemQuantity', $event)"
