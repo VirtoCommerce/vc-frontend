@@ -13,7 +13,7 @@
           :to="{ name: 'Cart' }"
           class="text-[color:var(--color-link)]"
         ></router-link>
-        {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
+        {{ $t("shared.bulk_order.manually.subtitle_message_end", { s: $t("common.suffixes.multiple") }) }}
       </p>
 
       <div class="mb-1.5 mt-3 flex flex-row gap-x-5">
