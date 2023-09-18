@@ -119,7 +119,7 @@ const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineIt
 
 const itemIds = computed(() => _.map(props.items, "id"));
 const selectedItemIds = computed(() => _.intersection(props.sharedSelectedItemIds, itemIds.value));
-const isAllItemsSelected = computed<boolean>(() => selectedItemIds.value.length === props.items.length);
+const isAllItemsSelected = computed(() => selectedItemIds.value.length === props.items.length);
 
 function selectSingleItem(itemId: string, value: boolean) {
   emit("select:items", { itemIds: [itemId], selected: value });
