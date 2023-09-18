@@ -93,6 +93,7 @@ syncRefs(
 
 const selectedItemIdsDebounced = refDebounced(selectedItemIds, DEFAULT_DEBOUNCE_IN_MS);
 
+// FIXME: Change to watchDebounced after bug will be fixed: https://github.com/vueuse/vueuse/issues/3410
 watch(selectedItemIdsDebounced, watchSelectedItemIdsDebounced);
 
 async function watchSelectedItemIdsDebounced(
@@ -102,6 +103,7 @@ async function watchSelectedItemIdsDebounced(
   if (newValue && oldValue) {
     const newlySelectedLineItemIds = _.difference(newValue, oldValue);
     const newlyUnselectedLineItemIds = _.difference(oldValue, newValue);
+
     if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
       loading.value = true;
 
