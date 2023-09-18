@@ -2,7 +2,7 @@
   <div class="flex min-h-screen flex-col font-lato">
     <!-- Header -->
     <div
-      class="sticky top-0 z-10 flex h-14 items-center justify-between gap-3 bg-[color:var(--color-header-bottom-bg)] px-6 shadow-md print:px-0 print:shadow-none lg:h-auto lg:px-12 lg:py-5"
+      class="sticky top-0 z-10 flex h-14 items-center justify-between gap-3 bg-[color:var(--color-header-bottom-bg)] px-6 shadow-md print:relative print:px-0 print:shadow-none lg:h-auto lg:px-12 lg:py-5"
     >
       <router-link to="/" replace>
         <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-9 print:h-[3rem] lg:h-12" lazy />

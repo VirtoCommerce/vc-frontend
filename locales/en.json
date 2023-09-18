@@ -93,7 +93,6 @@
       "created_date": "Created date",
       "sort_by": "Sort by:",
       "sku": "SKU",
-      "item": "Item",
       "true_property": "Yes",
       "false_property": "No",
       "product": "Product",
@@ -614,7 +613,7 @@
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "subtitle_message_start": "Quickly add items to your",
         "cart_link": "Cart",
-        "subtitle_message_end": "by entering item {@common.labels.sku}s and quantities."
+        "subtitle_message_end": "by entering item @:{'common.labels.sku'}s and quantities."
       },
       "copy_n_paste": {
         "title": "Copy and Paste",
