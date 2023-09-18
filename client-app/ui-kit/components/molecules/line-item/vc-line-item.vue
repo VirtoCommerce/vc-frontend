@@ -56,19 +56,12 @@
           <slot />
         </div>
 
-        <VcButton
-          v-if="removable"
-          class="vc-line-item__remove-button"
-          color="secondary"
-          size="xs"
-          variant="outline"
-          icon
-          :disabled="disabled"
-          @click="$emit('remove')"
-        >
-          <VcIcon v-if="removed" class="text-[--color-success-500]" name="reset" />
-          <VcIcon v-else class="text-[--color-danger-500]" name="delete-2" />
-        </VcButton>
+        <div v-if="removable" class="vc-line-item__remove-button">
+          <VcButton color="secondary" size="xs" variant="outline" icon :disabled="disabled" @click="$emit('remove')">
+            <VcIcon v-if="removed" class="text-[--color-success-500]" name="reset" />
+            <VcIcon v-else class="text-[--color-danger-500]" name="delete-2" />
+          </VcButton>
+        </div>
       </div>
     </div>
 
