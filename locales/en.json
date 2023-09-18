@@ -122,8 +122,7 @@
     "suffixes": {
       "from": "From",
       "per_item": " per item",
-      "product_count_in_stock": "in stock",
-      "multiple": "s"
+      "product_count_in_stock": "in stock"
     },
     "messages": {
       "loading_text": "Loading...",
