@@ -14,11 +14,11 @@
             ></div>
             <div v-t="'pages.demo_landing.primary_block.secondary_text'" class="text-lg"></div>
             <div class="mt-6 flex gap-6 lg:mt-14">
-              <VcButton class="flex-1 lg:flex-none">
+              <VcButton class="flex-1 lg:flex-none" link="https://virtocommerce.com" target="_blank">
                 {{ $t("pages.demo_landing.primary_block.first_button") }}
               </VcButton>
 
-              <VcButton class="flex-1 lg:flex-none">
+              <VcButton class="flex-1 lg:flex-none" link="https://virtocommerce.com">
                 {{ $t("pages.demo_landing.primary_block.second_button") }}
               </VcButton>
             </div>
