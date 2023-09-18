@@ -42,8 +42,8 @@ interface IEmits {
 }
 
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "warning" | "danger" | "neutral";
-  variant?: "solid" | "solid-light" | "outline" | "outline-dark";
+  color?: VcChipColorType;
+  variant?: VcChipVariantType;
   size?: "xs" | "sm" | "md" | "lg";
   clickable?: boolean;
   closable?: boolean;
