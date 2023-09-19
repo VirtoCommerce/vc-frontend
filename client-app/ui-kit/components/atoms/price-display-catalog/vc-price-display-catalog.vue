@@ -1,5 +1,5 @@
 <template>
-  <div class="flex" :class="{ 'flex-row-reverse': !isSignFirst }">
+  <div :class="{ 'flex-row-reverse': !isSignFirst }" class="flex [word-break:break-word]">
     <div class="-mt-0.5 text-[60%]">{{ value?.currency?.symbol }}</div>
     <div :class="{ 'line-through': isOldPrice }">
       {{ value?.formattedAmountWithoutCurrency ?? "N/A" }}
@@ -10,19 +10,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { MoneyType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  value: {
-    type: Object as PropType<MoneyType>,
-    default: undefined,
-  },
+interface IProps {
+  value?: MoneyType;
+  isOldPrice?: boolean;
+}
 
-  isOldPrice: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = defineProps<IProps>();
 
 const isSignFirst = computed<boolean>(
   () => (props.value?.formattedAmount.search(/\d/) && props.value?.formattedAmount.search(/\d/) > 0) || false,

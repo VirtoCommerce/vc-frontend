@@ -1,5 +1,5 @@
 <template>
-  <div class="relative inline-flex">
+  <div class="relative">
     <div
       ref="triggerNode"
       :aria-describedby="`popover-${$.uid}`"
