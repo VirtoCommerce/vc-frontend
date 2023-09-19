@@ -92,10 +92,7 @@ const inputElement = shallowRef<HTMLInputElement>();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
-const lineItemInCart = computed<LineItemType | undefined>(
-  () => cart.value?.items?.find((item) => item.productId === props.product.id),
-);
-const countInCart = computed<number>(() => lineItemInCart.value?.quantity || 0);
+const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, props.product.maxQuantity || MAX_VALUE),
@@ -142,15 +139,17 @@ async function onChange() {
 
   loading.value = true;
 
-  const isRemoving = !!lineItemInCart.value && !enteredQuantity.value;
-  let lineItem = clone(lineItemInCart.value);
+  const isRemoving = !!getLineItem(cart.value?.items) && !enteredQuantity.value;
+  let lineItem = clone(getLineItem(cart.value?.items));
+
+  let updatedCart;
 
   if (lineItem) {
-    await changeItemQuantity(lineItem.id, enteredQuantity.value || 0);
+    updatedCart = await changeItemQuantity(lineItem.id, enteredQuantity.value || 0);
   } else {
     const inputQuantity = enteredQuantity.value || minQty.value;
 
-    await addToCart(props.product.id!, inputQuantity);
+    updatedCart = await addToCart(props.product.id!, inputQuantity);
 
     /**
      * Send Google Analytics event for an item added to cart.
@@ -163,7 +162,7 @@ async function onChange() {
     enteredQuantity.value = minQty.value;
     setValue(enteredQuantity.value);
   } else {
-    lineItem = clone(lineItemInCart.value);
+    lineItem = clone(getLineItem(updatedCart?.items));
   }
 
   if (!lineItem) {
@@ -178,6 +177,10 @@ async function onChange() {
   }
 
   loading.value = false;
+}
+
+function getLineItem(items?: LineItemType[]): LineItemType | undefined {
+  return items?.find((item) => item.productId === props.product.id);
 }
 
 /**
