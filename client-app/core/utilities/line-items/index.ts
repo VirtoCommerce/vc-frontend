@@ -43,7 +43,7 @@ export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineIt
   return result;
 }
 
-/** @deprecated Use `prepareLineItem` function */
+/** @deprecated Use {@link prepareLineItem} function */
 export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLineItemType<T> {
   return {
     ...item,

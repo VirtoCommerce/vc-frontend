@@ -3,7 +3,7 @@
     <VcSectionWidget id="review-order" :title="$t('common.titles.review_order')" icon="clipboard-copy-1">
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
-        <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
+        <template v-for="(group, vendorId) in selectedLineItemsGroupedByVendor" :key="vendorId">
           <div v-if="group.items.length" class="space-y-3">
             <!-- Vendor -->
             <div class="flex max-w-full flex-wrap gap-x-3">
@@ -17,7 +17,7 @@
       </div>
 
       <!-- Items not grouped by Vendor -->
-      <OrderLineItems v-else :items="cart!.items" />
+      <OrderLineItems v-else :items="selectedLineItems" />
 
       <div class="divide-y print:divide-y-0 lg:divide-y-0">
         <!-- Shipping details -->
@@ -161,7 +161,8 @@ const {
   cart,
   shipment,
   payment,
-  lineItemsGroupedByVendor,
+  selectedLineItems,
+  selectedLineItemsGroupedByVendor,
   availableShippingMethods,
   availablePaymentMethods,
   hasValidationErrors,

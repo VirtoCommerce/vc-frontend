@@ -156,7 +156,7 @@
 
     <transition name="slide-fade-bottom">
       <div
-        v-if="selectedItemIds?.length"
+        v-if="!isEmpty(selectedItemIds)"
         class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden"
       >
         <VcButton
@@ -174,7 +174,7 @@
 
 <script setup lang="ts">
 import { invoke } from "@vueuse/core";
-import _ from "lodash";
+import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -249,8 +249,12 @@ const creatingOrder = ref(false);
 const creatingQuote = ref(false);
 
 const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
-const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
-const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
+const isDisabledNextStep = computed<boolean>(
+  () => loading.value || hasValidationErrors.value || isEmpty(selectedItemIds.value),
+);
+const isDisabledOrderCreation = computed<boolean>(
+  () => loading.value || !isValidCheckout.value || isEmpty(selectedItemIds.value),
+);
 const cartContainsDeletedProducts = computed<boolean | undefined>(
   () => cart.value?.items?.some((item: LineItemType) => !item.product),
 );
@@ -269,9 +273,9 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   if (!value.selected) {
-    selectedItemIds.value = _.without(selectedItemIds.value, ...value.itemIds);
+    selectedItemIds.value = without(selectedItemIds.value, ...value.itemIds);
   } else {
-    selectedItemIds.value = _.union(selectedItemIds.value, value.itemIds);
+    selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
   }
 }
 

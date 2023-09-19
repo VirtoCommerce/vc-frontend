@@ -1,6 +1,6 @@
-import { computedEager, refDebounced, syncRefs } from "@vueuse/core";
-import _, { keyBy, sumBy } from "lodash";
-import { computed, readonly, ref, shallowRef, watch } from "vue";
+import { computedEager, useDebounceFn } from "@vueuse/core";
+import { difference, keyBy, sumBy } from "lodash";
+import { computed, readonly, ref, shallowRef } from "vue";
 import {
   addBulkItemsCart,
   addCoupon,
@@ -12,6 +12,7 @@ import {
   changeCartComment,
   changeCartItemQuantity,
   changePurchaseOrderNumber,
+  clearCart as _clearCart,
   createQuoteFromCart as _createQuoteFromCart,
   getCart,
   rejectGiftItems,
@@ -62,9 +63,7 @@ const payment = computed<PaymentType | undefined>(() => cart.value?.payments?.[0
 const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value?.availableShippingMethods ?? []);
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.availablePaymentMethods ?? []);
 
-const lineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(cart.value?.items ?? []),
-);
+const lineItemsGroupedByVendor = computed(() => getLineItemsGroupedByVendor(cart.value?.items ?? []));
 
 const allItemsAreDigital = computed<boolean>(
   () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital),
@@ -80,45 +79,47 @@ const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
-const selectedItemIds = shallowRef<string[]>();
-syncRefs(
-  computed(() =>
-    // Compute only if field is loaded
-    cart.value?.items?.every((item) => item.selectedForCheckout !== undefined)
-      ? cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id)
-      : undefined,
-  ),
-  selectedItemIds,
-);
+const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[], oldValue: string[]): Promise<void> => {
+  const newlySelectedLineItemIds = difference(newValue, oldValue);
+  const newlyUnselectedLineItemIds = difference(oldValue, newValue);
 
-const selectedItemIdsDebounced = refDebounced(selectedItemIds, DEFAULT_DEBOUNCE_IN_MS);
+  if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
+    loading.value = true;
 
-// FIXME: Change to watchDebounced after bug will be fixed: https://github.com/vueuse/vueuse/issues/3410
-watch(selectedItemIdsDebounced, watchSelectedItemIdsDebounced);
-
-async function watchSelectedItemIdsDebounced(
-  newValue: string[] | undefined,
-  oldValue: string[] | undefined,
-): Promise<void> {
-  if (newValue && oldValue) {
-    const newlySelectedLineItemIds = _.difference(newValue, oldValue);
-    const newlyUnselectedLineItemIds = _.difference(oldValue, newValue);
-
-    if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
-      loading.value = true;
-
-      try {
-        cart.value = await changeSelectedCartItems(newlySelectedLineItemIds, newlyUnselectedLineItemIds);
-        broadcast.emit(cartReloadEvent);
-      } catch (e) {
-        Logger.error(`${watchSelectedItemIdsDebounced.name}`, e);
-        throw e;
-      } finally {
-        loading.value = false;
-      }
+    try {
+      cart.value = await changeSelectedCartItems(newlySelectedLineItemIds, newlyUnselectedLineItemIds);
+      broadcast.emit(cartReloadEvent);
+    } catch (e) {
+      Logger.error(`${selectedItemIdsDebounced.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
   }
-}
+
+  _selectedItemIds.value = undefined;
+}, DEFAULT_DEBOUNCE_IN_MS);
+
+const _selectedItemIds = shallowRef<string[]>();
+const selectedItemIds = computed({
+  get: () =>
+    _selectedItemIds.value ??
+    cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ??
+    [],
+  set: async (value) => {
+    const oldValue = selectedItemIds.value;
+    _selectedItemIds.value = value;
+    await selectedItemIdsDebounced(value, oldValue);
+  },
+});
+
+const selectedLineItems = computed(
+  () => cart.value?.items?.filter((item) => selectedItemIds.value.includes(item.id)) ?? [],
+);
+
+const selectedLineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
+  getLineItemsGroupedByVendor(selectedLineItems.value),
+);
 
 export function useCart() {
   const notifications = useNotifications();
@@ -145,6 +146,20 @@ export function useCart() {
       cart.value = await getCart();
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchFullCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function clearCart(cartId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await _clearCart(cartId);
+      broadcast.emit(cartReloadEvent);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${clearCart.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -475,8 +490,8 @@ export function useCart() {
       component: ClearCartModal,
       props: {
         async onResult() {
+          await clearCart(cart.value!.id!);
           ga.clearCart(cart.value!);
-          await removeCart(cart.value!.id!);
         },
       },
     });
@@ -500,6 +515,8 @@ export function useCart() {
     availablePaymentMethods,
     selectedItemIds,
     lineItemsGroupedByVendor,
+    selectedLineItems,
+    selectedLineItemsGroupedByVendor,
     allItemsAreDigital,
     addedGiftsByIds,
     availableExtendedGifts,
@@ -511,7 +528,7 @@ export function useCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
-    /** @deprecated Use removeItems */
+    /** @deprecated Use {@link removeItems } */
     removeItem,
     removeItems,
     validateCartCoupon,
@@ -522,6 +539,8 @@ export function useCart() {
     removeShipment,
     updatePayment,
     updatePurchaseOrderNumber,
+    clearCart,
+    /** @deprecated Don't remove cart after order creation. Use {@link clearCart } for cart clearing */
     removeCart,
     createQuoteFromCart,
     addGiftsToCart,

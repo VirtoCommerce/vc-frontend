@@ -401,10 +401,6 @@ export function useCheckout() {
     }
   }
 
-  function resetVariables() {
-    billingAddressEqualsShipping.value = true;
-  }
-
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     const cartId = cart.value!.id!;
 
@@ -418,10 +414,7 @@ export function useCheckout() {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
-    if (placedOrder.value) {
-      await removeCart(cartId);
-      resetVariables();
-    } else {
+    if (!placedOrder.value) {
       notifications.error({
         text: t("common.messages.creating_order_error"),
         duration: 15000,
