@@ -68,7 +68,7 @@ interface IProps {
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
-  externalLink?: string | null;
+  externalLink?: string;
   target?: "_self" | "_blank";
   prependIcon?: string;
   appendIcon?: string;
@@ -89,7 +89,6 @@ const props = withDefaults(defineProps<IProps>(), {
   disabled: false,
   loading: false,
   to: null,
-  externalLink: null,
   truncate: false,
   fullWidth: false,
   noWrap: false,

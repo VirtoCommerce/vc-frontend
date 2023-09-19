@@ -121,6 +121,11 @@ Link.args = {
   to: "/some/link",
 };
 
+export const ExternalLink = Template.bind({});
+ExternalLink.args = {
+  externalLink: "https://virtocommerce.com",
+};
+
 export const Loading = Template.bind({});
 Loading.args = {
   loading: true,
