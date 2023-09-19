@@ -55,7 +55,6 @@
 
 <script setup lang="ts">
 import { useSwipe } from "@vueuse/core";
-import { Lightbox, initTE } from "tw-elements";
 import { computed, ref, watchEffect, onMounted } from "vue";
 import type { ImageType, Product } from "@/core/api/graphql/types";
 
@@ -98,8 +97,12 @@ watchEffect(() => {
   activeSrc.value = props.product.imgSrc ?? "";
 });
 
-onMounted(() => {
-  initTE({ Lightbox });
+onMounted(async () => {
+  // Dynamic import is required to avoid SSR errors
+  // SSR is used to generate routes.json
+  // https://virtocommerce.atlassian.net/browse/ST-5051
+  const twElements = await import("tw-elements");
+  twElements.initTE({ Lightbox: twElements.Lightbox });
 });
 </script>
 
