@@ -272,7 +272,6 @@ export function useCart() {
 
     try {
       const updatedCart = await changeCartItemQuantity(lineItemId, qty, options);
-      // todo find out how not to mutate global cart
       cart.value = updatedCart;
       broadcast.emit(cartReloadEvent);
       return updatedCart;
