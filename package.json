@@ -4,25 +4,24 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "dev-expose": "vite --host",
-    "build": "yarn type-check && vite build",
-    "build:dev": "vite build --mode=development",
-    "build:watch": "vite build --mode=development --watch",
+    "dev:expose": "yarn dev --host",
+    "build": "yarn type-check && yarn generate:routes && vite build",
+    "build:dev": "yarn build --mode=development",
+    "build:watch": "yarn build:dev --watch",
     "compress": "yarn build && gulp compress",
-    "type-check": "vue-tsc --noEmit -p tsconfig.app.json",
+    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint-staged": "lint-staged",
     "lint": "eslint \"client-app/**/*.{js,ts,vue}\"",
-    "lint:fix": "eslint --fix \"client-app/**/*.{js,ts,vue}\"",
+    "lint:fix": "yarn lint --fix",
     "prettier": "prettier --check \"client-app/**/*.{js,ts,vue,graphql,json}\"",
-    "prettier:fix": "prettier --write \"client-app/**/*.{js,ts,vue,graphql,json}\"",
+    "prettier:fix": "yarn prettier --write",
     "generate:graphql:schema": "graphql-codegen --config graphql-codegen.schema.config.ts --require ./scripts/graphql-codegen.js",
     "generate:graphql:types": "graphql-codegen --config graphql-codegen.types.config.ts --require ./scripts/graphql-codegen.js",
     "generate:graphql": "yarn generate:graphql:schema && yarn generate:graphql:types",
     "generate:routes": "vite-node scripts/generate-routes.ts --mode production",
     "storybook:dev": "storybook dev -p 6006 --no-open",
     "storybook:build": "storybook build --docs",
-    "postinstall": "husky install",
-    "postbuild": "yarn generate:routes"
+    "postinstall": "husky install"
   },
   "dependencies": {
     "@builder.io/sdk-vue": "^0.3.1",
@@ -48,7 +47,7 @@
     "maska": "~1.5.2",
     "moment": "^2.29.4",
     "swiper": "^8.4.7",
-    "tw-elements": "^1.0.0-rc.1",
+    "tw-elements": "^1.0.0",
     "vee-validate": "^4.11.0",
     "vue": "^3.3.4",
     "vue-html-secure": "^1.0.10",
@@ -114,8 +113,7 @@
     "vite-node": "^0.33.0",
     "vite-plugin-checker": "^0.6.1",
     "vite-plugin-mkcert": "^1.16.0",
-    "vue-tsc": "^1.8.6",
-    "yarn": "1.22.19"
+    "vue-tsc": "^1.8.6"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [

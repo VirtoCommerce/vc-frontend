@@ -16953,9 +16953,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tw-elements@npm:^1.0.0-rc.1":
-  version: 1.0.0-rc.1
-  resolution: "tw-elements@npm:1.0.0-rc.1"
+"tw-elements@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "tw-elements@npm:1.0.0"
   dependencies:
     "@popperjs/core": ^2.6.0
     chart.js: ^3.7.1
@@ -16964,7 +16964,7 @@ __metadata:
     detect-autofill: ^1.1.3
     perfect-scrollbar: ^1.5.5
     tailwindcss: 3.3.0
-  checksum: 229f7ea39895762ef8bbc5618ee1a256425bdc69be4cc13ea67cd59f22dee4e062fea358ef14925583963a5b795b89bfa5c95a03264a2c7f9f7e72f2637d12a7
+  checksum: 6ee6315703ed709a0cb8092591ac6c11ac565de84363019e4854cc42b25a8989f564339516b5500c32ce195a69f7eae3ed56a8b644995ddb1ea350e0450a4913
   languageName: node
   linkType: hard
 
@@ -17666,7 +17666,7 @@ __metadata:
     storybook-vue3-router: ^3.0.0
     swiper: ^8.4.7
     tailwindcss: ^3.3.3
-    tw-elements: ^1.0.0-rc.1
+    tw-elements: ^1.0.0
     typescript: ~5.1.6
     vee-validate: ^4.11.0
     vite: ^4.4.6
@@ -17678,7 +17678,6 @@ __metadata:
     vue-i18n: ^9.2.2
     vue-router: ^4.2.4
     vue-tsc: ^1.8.6
-    yarn: 1.22.19
     yup: 1.2.0
   languageName: unknown
   linkType: soft
@@ -18530,16 +18529,6 @@ __metadata:
     y18n: ^3.2.1
     yargs-parser: ^5.0.1
   checksum: 0c330ce1338cd9f293157bf8955af6833ae59032ab1bc936510ce7a216de9bb65b05b39a82ff0e7359bfb643342cc05de5049ce50ee9404b0818f65911fb59a5
-  languageName: node
-  linkType: hard
-
-"yarn@npm:1.22.19":
-  version: 1.22.19
-  resolution: "yarn@npm:1.22.19"
-  bin:
-    yarn: bin/yarn.js
-    yarnpkg: bin/yarn.js
-  checksum: b43d2cc5fee7e933beb12a8aee7dfceca9e9ef2dd17c5d04d15a12ab7bec5f5744ea34a07b86e013da7f291a18c4e1ad8f70e150f5ed2f4666e6723c7f0a8452
   languageName: node
   linkType: hard
 

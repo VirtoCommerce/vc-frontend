@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from "node:url";
 import path from "path";
 import { defineConfig, loadEnv, ProxyOptions, splitVendorChunkPlugin, UserConfig } from "vite";
 import mkcert from "vite-plugin-mkcert";
@@ -63,7 +64,7 @@ export default defineConfig(({ mode }): UserConfig => {
     ],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./client-app"),
+        "@": fileURLToPath(new URL('./client-app', import.meta.url)),
       },
     },
     define: {
