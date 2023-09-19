@@ -215,8 +215,7 @@
                 <VcChip
                   v-if="filterItem.selected"
                   :key="facet.paramName + filterItem.value"
-                  size="sm"
-                  variant="secondary"
+                  color="secondary"
                   closable
                   @close="
                     removeFacetFilterItem({
@@ -230,10 +229,10 @@
               </template>
             </template>
 
-            <VcChip size="sm" variant="secondary" is-outline clickable @click="resetFacetFilters">
-              {{ $t("common.buttons.reset_filters") }}
+            <VcChip color="secondary" variant="outline" clickable @click="resetFacetFilters">
+              <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-              <VcIcon class="ml-2" name="reset" size="xs" />
+              <VcIcon name="reset" />
             </VcChip>
           </div>
 

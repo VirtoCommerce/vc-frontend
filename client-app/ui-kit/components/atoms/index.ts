@@ -8,7 +8,6 @@ export { default as VcCard } from "./card/vc-card.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
 export { default as VcCardWidget } from "./card-widget/vc-card-widget.vue";
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
-export { default as VcChip } from "./chip/vc-chip.vue";
 export { default as VcContainer } from "./container/vc-container.vue";
 export { default as VcCountInCart } from "./count-in-cart/vc-count-in-cart.vue";
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
