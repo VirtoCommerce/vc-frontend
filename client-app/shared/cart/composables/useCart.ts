@@ -114,7 +114,7 @@ const selectedItemIds = computed({
 });
 
 const selectedLineItems = computed(
-  () => cart.value?.items?.filter((item) => selectedItemIds.value?.includes(item.id)) ?? [],
+  () => cart.value?.items?.filter((item) => selectedItemIds.value.includes(item.id)) ?? [],
 );
 
 const selectedLineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
