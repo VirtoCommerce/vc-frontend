@@ -4,6 +4,7 @@
     <VcPriceDisplayCatalog :value="variationsMinPrice" class="text-xl font-bold" />
   </div>
   <div v-else-if="value?.list?.amount > value?.actual?.amount" class="flex flex-wrap items-end gap-1.5">
+    <VcPriceDisplayCatalog :class="priceColorClass" :value="value?.actual" class="text-xl font-bold" />
     <VcPriceDisplayCatalog
       :value="value?.list"
       class="mb-px pb-0.5 text-xs font-semibold text-[color:var(--color-price-old)]"
