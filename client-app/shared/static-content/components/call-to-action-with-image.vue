@@ -6,7 +6,12 @@
           <div class="mb-4 text-2xl font-bold lg:text-5xl">{{ model.title }}</div>
           <div class="text-lg">{{ model.subtitle }}</div>
           <div v-if="model.buttons && model.buttons.length" class="mt-6 flex space-x-6 lg:mt-14">
-            <VcButton v-for="(item, index) in model.buttons" :key="index" :to="item.link" class="flex-1 lg:flex-none">
+            <VcButton
+              v-for="(item, index) in model.buttons"
+              :key="index"
+              v-bind="getLinkAttr(item.link)"
+              class="flex-1 lg:flex-none"
+            >
               {{ item.label }}
             </VcButton>
           </div>
@@ -23,6 +28,8 @@
 </template>
 
 <script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
+
 defineProps({
   model: {
     type: Object,
@@ -34,4 +41,16 @@ defineProps({
     required: true,
   },
 });
+
+type LinkAttrType = { to: RouteLocationRaw } | { link: string } | object;
+const getLinkAttr = (link?: string): LinkAttrType => {
+  if (link) {
+    if (link.startsWith("/")) {
+      return { to: link };
+    } else {
+      return { externalLink: link };
+    }
+  }
+  return {};
+};
 </script>
