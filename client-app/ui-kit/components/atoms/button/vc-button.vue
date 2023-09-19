@@ -68,7 +68,7 @@ interface IProps {
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
-  link?: string | null;
+  externalLink?: string | null;
   target?: "_self" | "_blank";
   prependIcon?: string;
   appendIcon?: string;
@@ -89,7 +89,7 @@ const props = withDefaults(defineProps<IProps>(), {
   disabled: false,
   loading: false,
   to: null,
-  link: null,
+  externalLink: null,
   truncate: false,
   fullWidth: false,
   noWrap: false,
@@ -97,10 +97,12 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
 const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const isExternalLink = eagerComputed<boolean>(() => !!props.link && enabled.value);
+const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+
 const target = computed<string | undefined>(() =>
   props.target && (isExternalLink.value || isRouterLink.value) ? props.target : undefined,
 );
+
 const componentTag = computed(() => {
   if (isRouterLink.value) {
     return "router-link";
@@ -110,12 +112,13 @@ const componentTag = computed(() => {
   }
   return "button";
 });
+
 const linkAttr = computed(() => {
   if (componentTag.value === "router-link") {
     return { to: props.to };
   }
   if (componentTag.value === "a") {
-    return { href: props.link };
+    return { href: props.externalLink };
   }
   return {};
 });

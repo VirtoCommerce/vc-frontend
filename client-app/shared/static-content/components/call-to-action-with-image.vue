@@ -48,7 +48,7 @@ const getLinkAttr = (link?: string): LinkAttrType => {
     if (link.startsWith("/")) {
       return { to: link };
     } else {
-      return { link };
+      return { externalLink: link };
     }
   }
   return {};
