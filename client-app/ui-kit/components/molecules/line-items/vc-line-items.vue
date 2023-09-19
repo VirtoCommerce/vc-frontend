@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import _, { sumBy } from "lodash";
+import { intersection, map, sumBy } from "lodash";
 import { computed } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -117,8 +117,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
 
-const itemIds = computed(() => _.map(props.items, "id"));
-const selectedItemIds = computed(() => _.intersection(props.sharedSelectedItemIds, itemIds.value));
+const itemIds = computed(() => map(props.items, "id"));
+const selectedItemIds = computed(() => intersection(props.sharedSelectedItemIds, itemIds.value));
 const isAllItemsSelected = computed(() => selectedItemIds.value.length === props.items.length);
 
 function selectSingleItem(itemId: string, value: boolean) {

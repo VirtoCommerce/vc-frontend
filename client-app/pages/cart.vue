@@ -174,7 +174,7 @@
 
 <script setup lang="ts">
 import { invoke } from "@vueuse/core";
-import _ from "lodash";
+import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -250,10 +250,10 @@ const creatingQuote = ref(false);
 
 const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
 const isDisabledNextStep = computed<boolean>(
-  () => loading.value || hasValidationErrors.value || _.isEmpty(selectedItemIds.value),
+  () => loading.value || hasValidationErrors.value || isEmpty(selectedItemIds.value),
 );
 const isDisabledOrderCreation = computed<boolean>(
-  () => loading.value || !isValidCheckout.value || _.isEmpty(selectedItemIds.value),
+  () => loading.value || !isValidCheckout.value || isEmpty(selectedItemIds.value),
 );
 const cartContainsDeletedProducts = computed<boolean | undefined>(
   () => cart.value?.items?.some((item: LineItemType) => !item.product),
@@ -273,9 +273,9 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   if (!value.selected) {
-    selectedItemIds.value = _.without(selectedItemIds.value, ...value.itemIds);
+    selectedItemIds.value = without(selectedItemIds.value, ...value.itemIds);
   } else {
-    selectedItemIds.value = _.union(selectedItemIds.value, value.itemIds);
+    selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
   }
 }
 

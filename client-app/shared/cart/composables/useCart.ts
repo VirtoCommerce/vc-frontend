@@ -1,6 +1,6 @@
-import { computedEager, refDebounced, syncRefs, useDebounceFn } from "@vueuse/core";
-import _, { keyBy, sumBy } from "lodash";
-import { computed, readonly, ref, shallowRef, watch } from "vue";
+import { computedEager, useDebounceFn } from "@vueuse/core";
+import { difference, keyBy, sumBy } from "lodash";
+import { computed, readonly, ref, shallowRef } from "vue";
 import {
   addBulkItemsCart,
   addCoupon,
@@ -80,8 +80,8 @@ const hasValidationErrors = computedEager<boolean>(
 );
 
 const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[], oldValue: string[]): Promise<void> => {
-  const newlySelectedLineItemIds = _.difference(newValue, oldValue);
-  const newlyUnselectedLineItemIds = _.difference(oldValue, newValue);
+  const newlySelectedLineItemIds = difference(newValue, oldValue);
+  const newlyUnselectedLineItemIds = difference(oldValue, newValue);
 
   if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
     loading.value = true;
