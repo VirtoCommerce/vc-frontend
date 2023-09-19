@@ -4,6 +4,9 @@ declare module "@vue/runtime-core" {
   // Glboal components is already declated interface which we want to augment
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
+    /**
+     * @deprecated the component will be removed from ui-kit
+     */
     VcActionDropdownMenu: typeof Components.VcActionDropdownMenu;
     VcActionInput: typeof Components.VcActionInput;
     VcAddressLine: typeof Components.VcAddressLine;
@@ -14,7 +17,6 @@ declare module "@vue/runtime-core" {
     VcCardWidget: typeof Components.VcCardWidget;
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCheckbox: typeof Components.VcCheckbox;
-    VcChip: typeof Components.VcChip;
     VcContainer: typeof Components.VcContainer;
     VcCountInCart: typeof Components.VcCountInCart;
     VcDateSelector: typeof Components.VcDateSelector;

@@ -1,7 +1,6 @@
 <template>
   <div class="pt-7">
     <div class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10">
-      <VcBreadcrumbs class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
       <h1 v-t="'pages.demo_landing.header'" class="text-3xl font-bold uppercase text-gray-900 lg:text-4xl"></h1>
     </div>
 
@@ -24,7 +23,12 @@
               </VcButton>
             </div>
           </div>
-          <div class="order-1 aspect-video rounded bg-gray-200 lg:order-2"></div>
+          <div class="order-1 aspect-video rounded bg-gray-200 lg:order-2">
+            <VcImage
+              src="/static/images/demo-landing/note.webp"
+              :alt="$t('pages.demo_landing.primary_block.image_alt')"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -185,7 +189,7 @@ const breadcrumbs = useBreadcrumbs([{ title: t("shared.layout.footer.demo_landin
 onMounted(async () => {
   await fetchProducts({
     itemsPerPage: 4,
-    filter: '"BRAND":"HP"',
+    keyword: "printer",
   });
 });
 </script>
