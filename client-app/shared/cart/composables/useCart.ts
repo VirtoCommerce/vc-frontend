@@ -1,4 +1,4 @@
-import { computedEager, refDebounced, syncRefs } from "@vueuse/core";
+import { computedEager, refDebounced, syncRefs, useDebounceFn } from "@vueuse/core";
 import _, { keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import {
@@ -79,45 +79,39 @@ const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
-const selectedItemIds = shallowRef<string[]>();
-syncRefs(
-  computed(() =>
-    // Compute only if field is loaded
-    !_.isEmpty(cart.value?.items) && _.every(cart.value?.items, (item) => item.selectedForCheckout !== undefined)
-      ? cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id)
-      : undefined,
-  ),
-  selectedItemIds,
-);
+const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[], oldValue: string[]): Promise<void> => {
+  const newlySelectedLineItemIds = _.difference(newValue, oldValue);
+  const newlyUnselectedLineItemIds = _.difference(oldValue, newValue);
 
-const selectedItemIdsDebounced = refDebounced(selectedItemIds, DEFAULT_DEBOUNCE_IN_MS);
+  if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
+    loading.value = true;
 
-// FIXME: Change to watchDebounced after bug will be fixed: https://github.com/vueuse/vueuse/issues/3410
-watch(selectedItemIdsDebounced, watchSelectedItemIdsDebounced);
-
-async function watchSelectedItemIdsDebounced(
-  newValue: string[] | undefined,
-  oldValue: string[] | undefined,
-): Promise<void> {
-  if (newValue && oldValue) {
-    const newlySelectedLineItemIds = _.difference(newValue, oldValue);
-    const newlyUnselectedLineItemIds = _.difference(oldValue, newValue);
-
-    if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
-      loading.value = true;
-
-      try {
-        cart.value = await changeSelectedCartItems(newlySelectedLineItemIds, newlyUnselectedLineItemIds);
-        broadcast.emit(cartReloadEvent);
-      } catch (e) {
-        Logger.error(`${watchSelectedItemIdsDebounced.name}`, e);
-        throw e;
-      } finally {
-        loading.value = false;
-      }
+    try {
+      cart.value = await changeSelectedCartItems(newlySelectedLineItemIds, newlyUnselectedLineItemIds);
+      broadcast.emit(cartReloadEvent);
+    } catch (e) {
+      Logger.error(`${selectedItemIdsDebounced.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
   }
-}
+
+  _selectedItemIds.value = undefined;
+}, DEFAULT_DEBOUNCE_IN_MS);
+
+const _selectedItemIds = shallowRef<string[]>();
+const selectedItemIds = computed({
+  get: () =>
+    _selectedItemIds.value ??
+    cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ??
+    [],
+  set: async (value) => {
+    const oldValue = selectedItemIds.value;
+    _selectedItemIds.value = value;
+    await selectedItemIdsDebounced(value, oldValue);
+  },
+});
 
 const selectedLineItems = computed(
   () => cart.value?.items?.filter((item) => selectedItemIds.value?.includes(item.id)) ?? [],
