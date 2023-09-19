@@ -12,6 +12,7 @@ import {
   changeCartComment,
   changeCartItemQuantity,
   changePurchaseOrderNumber,
+  clearCart as _clearCart,
   createQuoteFromCart as _createQuoteFromCart,
   getCart,
   rejectGiftItems,
@@ -62,9 +63,7 @@ const payment = computed<PaymentType | undefined>(() => cart.value?.payments?.[0
 const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value?.availableShippingMethods ?? []);
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.availablePaymentMethods ?? []);
 
-const lineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(cart.value?.items ?? []),
-);
+const lineItemsGroupedByVendor = computed(() => getLineItemsGroupedByVendor(cart.value?.items ?? []));
 
 const allItemsAreDigital = computed<boolean>(
   () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital),
@@ -84,7 +83,7 @@ const selectedItemIds = shallowRef<string[]>();
 syncRefs(
   computed(() =>
     // Compute only if field is loaded
-    cart.value?.items?.every((item) => item.selectedForCheckout !== undefined)
+    !_.isEmpty(cart.value?.items) && _.every(cart.value?.items, (item) => item.selectedForCheckout !== undefined)
       ? cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id)
       : undefined,
   ),
@@ -120,6 +119,14 @@ async function watchSelectedItemIdsDebounced(
   }
 }
 
+const selectedLineItems = computed(
+  () => cart.value?.items?.filter((item) => selectedItemIds.value?.includes(item.id)) ?? [],
+);
+
+const selectedLineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
+  getLineItemsGroupedByVendor(selectedLineItems.value),
+);
+
 export function useCart() {
   const notifications = useNotifications();
   const { openPopup } = usePopup();
@@ -145,6 +152,20 @@ export function useCart() {
       cart.value = await getCart();
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchFullCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function clearCart(cartId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await _clearCart(cartId);
+      broadcast.emit(cartReloadEvent);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${clearCart.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -475,8 +496,8 @@ export function useCart() {
       component: ClearCartModal,
       props: {
         async onResult() {
+          await clearCart(cart.value!.id!);
           ga.clearCart(cart.value!);
-          await removeCart(cart.value!.id!);
         },
       },
     });
@@ -500,6 +521,8 @@ export function useCart() {
     availablePaymentMethods,
     selectedItemIds,
     lineItemsGroupedByVendor,
+    selectedLineItems,
+    selectedLineItemsGroupedByVendor,
     allItemsAreDigital,
     addedGiftsByIds,
     availableExtendedGifts,
@@ -511,7 +534,7 @@ export function useCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
-    /** @deprecated Use removeItems */
+    /** @deprecated Use {@link removeItems } */
     removeItem,
     removeItems,
     validateCartCoupon,
@@ -522,6 +545,8 @@ export function useCart() {
     removeShipment,
     updatePayment,
     updatePurchaseOrderNumber,
+    clearCart,
+    /** @deprecated Don't remove cart after order creation. Use {@link clearCart } for cart clearing */
     removeCart,
     createQuoteFromCart,
     addGiftsToCart,

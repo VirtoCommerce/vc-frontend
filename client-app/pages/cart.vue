@@ -249,8 +249,12 @@ const creatingOrder = ref(false);
 const creatingQuote = ref(false);
 
 const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
-const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
-const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
+const isDisabledNextStep = computed<boolean>(
+  () => loading.value || hasValidationErrors.value || _.isEmpty(selectedItemIds.value),
+);
+const isDisabledOrderCreation = computed<boolean>(
+  () => loading.value || !isValidCheckout.value || _.isEmpty(selectedItemIds.value),
+);
 const cartContainsDeletedProducts = computed<boolean | undefined>(
   () => cart.value?.items?.some((item: LineItemType) => !item.product),
 );

@@ -159,7 +159,7 @@ module.exports = {
       },
 
       fontSize: {
-        /*@deprecated Use tailwindcss classes*/
+        /** @deprecated Use tailwindcss classes*/
 
         xxs: [
           "0.625rem", //10px

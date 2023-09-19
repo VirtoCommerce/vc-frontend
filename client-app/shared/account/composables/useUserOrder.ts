@@ -91,7 +91,7 @@ export function useUserOrder() {
     payment,
     fetchShortOrder,
     fetchFullOrder,
-    /** @deprecated Use fetchFullOrder */
+    /** @deprecated Use {@link fetchFullOrder} */
     fetchOrder: fetchFullOrder,
     clearOrder,
     addOrUpdatePayment,

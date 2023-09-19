@@ -248,7 +248,7 @@ export function useGoogleAnalytics() {
     addItemToWishList,
     addItemToCart,
     addItemsToCart,
-    /** @deprecated */
+    /** @deprecated Use {@link removeItemsFromCart } */
     removeItemFromCart,
     removeItemsFromCart,
     viewCart,

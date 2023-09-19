@@ -1,0 +1,7 @@
+#import "../../../fragments/fullCartFields.graphql"
+
+mutation ClearCart($command: InputClearCartType!) {
+  clearCart(command: $command) {
+    ...fullCartFields
+  }
+}
