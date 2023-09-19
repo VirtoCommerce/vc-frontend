@@ -9,6 +9,7 @@ fragment lineItemFields on LineItemType {
   quantity
   inStockQuantity
   imageUrl
+  selectedForCheckout
   productId
   productType
   product {

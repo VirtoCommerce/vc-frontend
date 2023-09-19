@@ -1,15 +1,13 @@
 <template>
   <VcLineItems
     :items="preparedLineItems"
-    :selected-items="selectedItems"
+    :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
     removable
     selectable
-    @select:item="$emit('select:item', $event)"
-    @select:all-items="$emit('select:allItems', $event)"
-    @remove:item="$emit('remove:item', $event)"
-    @remove:selected-items="$emit('remove:selectedItems', $event)"
+    @select:items="$emit('select:items', $event)"
+    @remove:items="$emit('remove:items', $event)"
   >
     <template #titles>
       <div class="min-w-[5.5rem] text-center">
@@ -71,15 +69,13 @@ interface IProps {
   items?: LineItemType[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];
-  selectedItems?: string[];
+  sharedSelectedItemIds?: string[];
 }
 
 interface IEmits {
   (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;
-  (event: "remove:item", value: LineItemType): void;
-  (event: "remove:selectedItems", value: string[]): void;
-  (event: "select:item", value: { id: string; selected: boolean }): void;
-  (event: "select:allItems", value: boolean): void;
+  (event: "remove:items", value: string[]): void;
+  (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
 }
 
 defineEmits<IEmits>();

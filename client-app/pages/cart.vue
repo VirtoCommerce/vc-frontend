@@ -31,14 +31,12 @@
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
-        :selected-items="selectedItems"
+        :selected-item-ids="selectedItemIds"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
         @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity, { reloadFullCart: true })"
-        @select:item="handleSelectItem"
-        @select:all-items="handleSelectAllItems"
-        @remove:item="handleRemoveItem"
-        @remove:selected-items="handleRemoveSelectedItems"
+        @select:items="handleSelectItems"
+        @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"
       />
 
@@ -158,14 +156,14 @@
 
     <transition name="slide-fade-bottom">
       <div
-        v-if="selectedItems.length"
+        v-if="selectedItemIds?.length"
         class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden"
       >
         <VcButton
           variant="outline"
           prepend-icon="trash"
           :disabled="loading"
-          @click="handleRemoveSelectedItems(selectedItems)"
+          @click="handleRemoveItems(selectedItemIds)"
         >
           {{ $t("common.buttons.remove_selected") }}
         </VcButton>
@@ -207,6 +205,7 @@ const {
   cart,
   shipment,
   payment,
+  selectedItemIds,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
   availableShippingMethods,
@@ -215,7 +214,6 @@ const {
   allItemsAreDigital,
   fetchFullCart,
   changeItemQuantity,
-  removeItem,
   removeItems,
   toggleGift,
   openClearCartModal,
@@ -260,37 +258,21 @@ const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
 
-async function handleRemoveSelectedItems(items: string[]): Promise<void> {
-  await removeItems(items);
-
-  selectedItems.value = _.intersection(selectedItems.value, _.map(cart.value?.items, "id"));
-}
-
-const selectedItems = ref<string[]>([]);
-
-function handleSelectItem(value: { id: string; selected: boolean }) {
-  if (value.selected && !selectedItems.value.includes(value.id)) {
-    selectedItems.value.push(value.id);
-  } else if (!value.selected) {
-    _.pull(selectedItems.value, value.id);
-  }
-}
-
-function handleSelectAllItems(value: { items: LineItemType[]; selectAll: boolean }) {
-  _.pullAll(selectedItems.value, _.map(value.items, "id"));
-
-  if (value.selectAll) {
-    selectedItems.value = [...selectedItems.value, ..._.map(value.items, "id")];
-  }
-}
-
-async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
-  await removeItem(lineItem.id);
+async function handleRemoveItems(itemIds: string[]): Promise<void> {
+  await removeItems(itemIds);
 
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  ga.removeItemFromCart(lineItem);
+  ga.removeItemsFromCart(cart.value!.items!.filter((item) => itemIds.includes(item.id)));
+}
+
+function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
+  if (!value.selected) {
+    selectedItemIds.value = _.without(selectedItemIds.value, ...value.itemIds);
+  } else {
+    selectedItemIds.value = _.union(selectedItemIds.value, value.itemIds);
+  }
 }
 
 function onChangeBillingAddress() {
