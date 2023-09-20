@@ -79,12 +79,12 @@ const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
-const selectedForCheckout = computed(
+const selectedForCheckoutItemIds = computed(
   () => cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ?? [],
 );
 
 const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[]): Promise<void> => {
-  const oldValue = selectedForCheckout.value;
+  const oldValue = selectedForCheckoutItemIds.value;
 
   const newlySelectedLineItemIds = difference(newValue, oldValue);
   const newlyUnselectedLineItemIds = difference(oldValue, newValue);
@@ -108,7 +108,7 @@ const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[]): Promi
 
 const _selectedItemIds = shallowRef<string[]>();
 const selectedItemIds = computed({
-  get: () => _selectedItemIds.value ?? selectedForCheckout.value,
+  get: () => _selectedItemIds.value ?? selectedForCheckoutItemIds.value,
   set: async (value) => {
     _selectedItemIds.value = value;
     await selectedItemIdsDebounced(value);
