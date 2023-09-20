@@ -172,7 +172,7 @@
 
     <!-- Product price -->
     <div class="my-4 lg:my-3">
-      <VcItemPriceCatalog :variations="product.variations" :value="product.price" />
+      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" />
     </div>
 
     <div v-if="product.hasVariations" class="flex flex-col">
@@ -242,6 +242,7 @@ const isDigital = computed(() => props.product.productType === ProductType.Digit
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
+const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;
