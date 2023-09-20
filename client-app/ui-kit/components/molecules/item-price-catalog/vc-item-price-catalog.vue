@@ -1,6 +1,8 @@
 <template>
   <div v-if="hasVariations" class="flex items-end gap-1.5">
-    <div v-t="'common.suffixes.from'" class="pb-0.5 text-14 text-[color:var(--color-price-from)] lg:text-xs" />
+    <div class="pb-0.5 text-14 text-[color:var(--color-price-from)] lg:text-xs">
+      {{ $t("common.suffixes.from") }}
+    </div>
     <VcPriceDisplayCatalog :value="value?.actual" class="text-xl font-bold" />
   </div>
   <div v-else-if="value?.list?.amount > value?.actual?.amount" class="flex flex-wrap items-end gap-1.5">

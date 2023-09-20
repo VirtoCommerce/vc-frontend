@@ -22,17 +22,13 @@
 
 <script setup lang="ts">
 import type { MoneyType, PriceType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-defineProps({
-  value: {
-    type: Object as PropType<PriceType | { list: MoneyType; actual: MoneyType }>,
-    default: undefined,
-  },
+interface IProps {
+  value?: PriceType | { list: MoneyType; actual: MoneyType };
+  priceColorClass?: string;
+}
 
-  priceColorClass: {
-    type: String,
-    default: "text-[color:var(--color-price)]",
-  },
+withDefaults(defineProps<IProps>(), {
+  priceColorClass: "text-[color:var(--color-price)]",
 });
 </script>
