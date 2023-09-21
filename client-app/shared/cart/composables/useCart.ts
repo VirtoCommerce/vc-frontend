@@ -1,5 +1,5 @@
 import { computedEager, useDebounceFn } from "@vueuse/core";
-import { difference, keyBy, sumBy } from "lodash";
+import { difference, first, keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import {
   addBulkItemsCart,
@@ -77,6 +77,12 @@ const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
 
 const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
+);
+
+const hasOnlyUnselectedValidationError = computedEager<boolean>(
+  () =>
+    cart.value?.validationErrors?.length == 1 &&
+    first(cart.value.validationErrors)?.errorCode == "ALL_LINE_ITEMS_UNSELECTED",
 );
 
 const selectedForCheckoutItemIds = computed(
@@ -523,6 +529,7 @@ export function useCart() {
     addedGiftsByIds,
     availableExtendedGifts,
     hasValidationErrors,
+    hasOnlyUnselectedValidationError,
     getItemsTotal,
     fetchShortCart,
     fetchFullCart,

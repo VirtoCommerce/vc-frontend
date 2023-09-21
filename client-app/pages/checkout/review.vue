@@ -121,10 +121,10 @@
 
           <VcButton
             :disabled="isDisabledOrderCreation"
-            :loading="creatingOrder"
+            :loading="loading"
             full-width
             class="mt-4 print:!hidden"
-            @click="createOrder"
+            @click="createOrderFromCart"
           >
             {{ $t("common.buttons.place_order") }}
           </VcButton>
@@ -148,15 +148,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useGoogleAnalytics } from "@/core/composables";
+import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
-const router = useRouter();
 const {
   cart,
   shipment,
@@ -167,21 +164,17 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-  fetchFullCart,
 } = useCart();
 const {
+  loading,
   billingAddressEqualsShipping,
   comment,
   purchaseOrderNumber,
   isPurchaseOrderNumberEnabled,
-  canPayNow,
   isValidCheckout,
   createOrderFromCart,
 } = useCheckout();
 const { couponCode } = useCoupon();
-
-const creatingOrder = ref(false);
-
 const isDisabledOrderCreation = computed<boolean>(() => !isValidCheckout.value);
 
 const shippingMethodId = computed(
@@ -192,23 +185,6 @@ const billingAddress = computed<CartAddressType | undefined>(() =>
     ? shipment.value?.deliveryAddress
     : payment.value?.billingAddress,
 );
-
-const ga = useGoogleAnalytics();
-
-async function createOrder(): Promise<void> {
-  creatingOrder.value = true;
-
-  const order = await createOrderFromCart();
-
-  if (order) {
-    ga.placeOrder(order);
-    await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
-  }
-
-  await fetchFullCart();
-
-  creatingOrder.value = false;
-}
 
 function print() {
   window.print();

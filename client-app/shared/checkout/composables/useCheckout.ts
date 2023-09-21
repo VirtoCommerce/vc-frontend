@@ -2,7 +2,8 @@ import { useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { createOrderFromCart as _createOrderFromCart, removeCart } from "@/core/api/graphql";
+import { useRouter } from "vue-router";
+import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
@@ -36,9 +37,10 @@ const _purchaseOrderNumber = ref<string>();
 export function useCheckout() {
   const broadcast = useBroadcast();
   const ga = useGoogleAnalytics();
+  const { t } = useI18n();
   const notifications = useNotifications();
   const { openPopup, closePopup } = usePopup();
-  const { t } = useI18n();
+  const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
   const {
@@ -53,6 +55,7 @@ export function useCheckout() {
   } = useOrganizationAddresses(user.value.contact?.organizationId || "");
   const {
     cart,
+    selectedItemIds,
     shipment,
     payment,
     availableShippingMethods,
@@ -402,19 +405,25 @@ export function useCheckout() {
   }
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
-    const cartId = cart.value!.id!;
-
     loading.value = true;
 
     await prepareOrderData();
 
     try {
-      placedOrder.value = await _createOrderFromCart(cartId);
+      placedOrder.value = await _createOrderFromCart(cart.value!.id!);
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
-    if (!placedOrder.value) {
+    if (placedOrder.value) {
+      await fetchFullCart();
+
+      selectedItemIds.value = cart.value!.items!.map((item) => item.id);
+
+      ga.placeOrder(placedOrder.value);
+
+      await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
+    } else {
       notifications.error({
         text: t("common.messages.creating_order_error"),
         duration: 15000,
