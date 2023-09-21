@@ -79,6 +79,12 @@ const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
+const hasOnlyUnselectedValidationError = computedEager<boolean>(
+  () =>
+    cart.value?.validationErrors?.length == 1 &&
+    cart.value.validationErrors[0]?.errorCode == "ALL_LINE_ITEMS_UNSELECTED",
+);
+
 const selectedForCheckoutItemIds = computed(
   () => cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ?? [],
 );
@@ -523,6 +529,7 @@ export function useCart() {
     addedGiftsByIds,
     availableExtendedGifts,
     hasValidationErrors,
+    hasOnlyUnselectedValidationError,
     getItemsTotal,
     fetchShortCart,
     fetchFullCart,

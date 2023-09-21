@@ -106,10 +106,10 @@
             <VcButton
               v-else
               :disabled="isDisabledOrderCreation"
-              :loading="creatingOrder"
+              :loading="loadingCheckout"
               full-width
               class="mt-4"
-              @click="createOrder"
+              @click="createOrderFromCart"
             >
               {{ $t("common.buttons.place_order") }}
             </VcButton>
@@ -130,7 +130,14 @@
             </template>
 
             <transition name="slide-fade-top" mode="out-in" appear>
-              <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
+              <VcAlert
+                v-show="hasValidationErrors && !hasOnlyUnselectedValidationError"
+                color="warning"
+                size="sm"
+                variant="solid-light"
+                class="mt-4"
+                icon
+              >
                 {{ $t("common.messages.something_went_wrong") }}
               </VcAlert>
             </transition>
@@ -211,6 +218,7 @@ const {
   availableShippingMethods,
   availablePaymentMethods,
   hasValidationErrors,
+  hasOnlyUnselectedValidationError,
   allItemsAreDigital,
   fetchFullCart,
   changeItemQuantity,
@@ -220,13 +228,13 @@ const {
   createQuoteFromCart,
 } = useCart();
 const {
+  loading: loadingCheckout,
   comment,
   purchaseOrderNumber,
   billingAddressEqualsShipping,
   isValidShipment,
   isValidPayment,
   isValidCheckout,
-  canPayNow,
   isPurchaseOrderNumberEnabled,
   initialize: initCheckout,
   onDeliveryAddressChange,
@@ -245,10 +253,9 @@ usePageHead({
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const initialized = ref(false);
-const creatingOrder = ref(false);
 const creatingQuote = ref(false);
 
-const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
+const loading = computed<boolean>(() => loadingCart.value || loadingCheckout.value || creatingQuote.value);
 const isDisabledNextStep = computed<boolean>(
   () => loading.value || hasValidationErrors.value || isEmpty(selectedItemIds.value),
 );
@@ -287,20 +294,7 @@ function onChangeBillingAddress() {
   }
 }
 
-async function createOrder(): Promise<void> {
-  creatingOrder.value = true;
-
-  const order = await createOrderFromCart();
-
-  if (order) {
-    await router.push({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
-  }
-
-  await fetchFullCart();
-
-  creatingOrder.value = false;
-}
-
+// FIXME: Move to composable
 async function createQuote(): Promise<void> {
   if (cartContainsDeletedProducts.value) {
     openPopup({
