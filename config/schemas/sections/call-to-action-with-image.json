@@ -29,6 +29,7 @@
       "label": "Image description",
       "info": "Transforms to the \"alt\" attribute for images. Which is crucial for accessibility, aiding the visually impaired, and enhancing SEO",
       "type": "string",
+      "multiline": true,
       "tab": "Content"
     },
     {
