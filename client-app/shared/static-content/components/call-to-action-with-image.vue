@@ -20,7 +20,7 @@
           class="aspect-video rounded bg-gray-200"
           :class="[imagePosition === 'right' ? 'order-1 lg:order-2' : 'order-2 lg:order-1']"
         >
-          <img :src="image" alt="" />
+          <img :src="image" :alt="imageDescription" />
         </div>
       </div>
     </div>
@@ -42,6 +42,7 @@ interface IProps {
   title?: string;
   subtitle?: string;
   image?: string;
+  imageDescription?: string;
   imagePosition?: ImagePositionType;
   buttons?: Array<ButtonsType>;
 }
