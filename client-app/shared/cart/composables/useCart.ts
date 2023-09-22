@@ -203,12 +203,14 @@ export function useCart() {
     return result;
   }
 
-  async function addToCart(productId: string, qty: number): Promise<void> {
+  async function addToCart(productId: string, qty: number): Promise<CartType> {
     loading.value = true;
 
     try {
-      cart.value = await addItemToCart(productId, qty);
+      const updatedCart = await addItemToCart(productId, qty);
+      cart.value = updatedCart;
       broadcast.emit(cartReloadEvent);
+      return updatedCart;
     } catch (e) {
       Logger.error(`${useCart.name}.${addToCart.name}`, e);
       throw e;
@@ -288,12 +290,14 @@ export function useCart() {
     lineItemId: string,
     qty: number,
     options: ChangeCartItemQuantityOptionsType = {},
-  ): Promise<void> {
+  ): Promise<CartType> {
     loading.value = true;
 
     try {
-      cart.value = await changeCartItemQuantity(lineItemId, qty, options);
+      const updatedCart = await changeCartItemQuantity(lineItemId, qty, options);
+      cart.value = updatedCart;
       broadcast.emit(cartReloadEvent);
+      return updatedCart;
     } catch (e) {
       Logger.error(`${useCart.name}.${changeItemQuantity.name}`, e);
       throw e;
