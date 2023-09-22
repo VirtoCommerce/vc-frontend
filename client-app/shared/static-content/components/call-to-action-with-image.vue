@@ -31,7 +31,7 @@
 import type { RouteLocationRaw } from "vue-router";
 
 type ImagePositionType = "left" | "right";
-type ButtonsType = {
+type ButtonType = {
   label: string;
   link: string;
 };
@@ -44,7 +44,7 @@ interface IProps {
   image?: string;
   imageDescription?: string;
   imagePosition?: ImagePositionType;
-  buttons?: Array<ButtonsType>;
+  buttons?: Array<ButtonType>;
 }
 
 defineProps<IProps>();
