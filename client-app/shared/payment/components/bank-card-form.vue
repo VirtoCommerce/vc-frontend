@@ -4,7 +4,7 @@
       v-mask="'#### #### #### #### ###'"
       :model-value="number.replace(/(.{4})/g, '$1 ')"
       :label="$t('shared.payment.bank_card_form.number_label')"
-      :message="formErrors.number || errors.number"
+      :message="capitalizeAllSentences(formErrors.number || errors.number)"
       :error="!!formErrors.number || !!errors.number"
       :readonly="readonly"
       :disabled="disabled"
@@ -19,7 +19,7 @@
     <VcInput
       v-model.trim="cardholderName"
       :label="$t('shared.payment.bank_card_form.cardholder_name_label')"
-      :message="formErrors.cardholderName || errors.cardholderName"
+      :message="capitalizeAllSentences(formErrors.cardholderName || errors.cardholderName)"
       :error="!!formErrors.cardholderName || !!errors.cardholderName"
       :readonly="readonly"
       :disabled="disabled"
@@ -33,7 +33,7 @@
         v-mask="'## / ##'"
         :label="$t('shared.payment.bank_card_form.expiration_date_label')"
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
-        :message="expirationDateErrors"
+        :message="capitalizeAllSentences(expirationDateErrors)"
         :error="!!expirationDateErrors"
         :readonly="readonly"
         :disabled="disabled"
@@ -50,7 +50,7 @@
         v-model="securityCode"
         v-mask="'####'"
         :label="$t('shared.payment.bank_card_form.security_code_label')"
-        :message="formErrors.securityCode || errors.securityCode"
+        :message="capitalizeAllSentences(formErrors.securityCode || errors.securityCode)"
         :error="!!formErrors.securityCode || !!errors.securityCode"
         :readonly="readonly"
         :disabled="disabled"
@@ -77,7 +77,13 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
+import { capitalizeAllSentences } from "@/core/utilities";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
+
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  errors: () => ({}),
+});
 
 interface IEmits {
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
@@ -92,11 +98,6 @@ interface IProps {
   disabled?: boolean;
   errors?: BankCardErrorsType;
 }
-
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  errors: () => ({}),
-});
 
 const { t } = useI18n();
 
