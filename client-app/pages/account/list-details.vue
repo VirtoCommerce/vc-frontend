@@ -4,124 +4,95 @@
 
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between gap-x-3 lg:mx-0">
-      <h2 v-if="list?.name" class="truncate text-3xl font-bold uppercase text-gray-800">
-        {{ list.name }}
-      </h2>
+    <div class="flex flex-col">
+      <!-- Title block -->
+      <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
+        <h2 v-if="list?.name" class="mx-5 truncate text-3xl font-bold uppercase text-gray-800 lg:mx-0">
+          {{ list.name }}
+        </h2>
 
-      <!-- Title skeleton -->
-      <div v-else class="w-2/3 bg-gray-200 text-3xl md:w-1/3">&nbsp;</div>
+        <!-- Title skeleton -->
+        <div v-else class="mx-5 w-2/3 bg-gray-200 text-3xl md:w-1/3 lg:mx-0">&nbsp;</div>
 
-      <div class="hidden shrink-0 space-x-3 lg:block">
-        <VcButton
-          :disabled="loading || !isDirty || !list"
-          size="sm"
-          variant="outline"
-          prepend-icon="save-v2"
-          @click="openSaveChangesModal"
-        >
-          {{ $t("common.buttons.save_changes") }}
-        </VcButton>
+        <div class="order-last mx-5 mt-8 flex flex-wrap gap-3 md:ms-0 md:mt-0 md:shrink-0 lg:m-0">
+          <VcButton
+            :disabled="loading || !pagedListItems.length"
+            size="sm"
+            prepend-icon="cart"
+            class="w-full md:order-last md:w-auto"
+            @click="addAllListItemsToCart"
+          >
+            {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
+          </VcButton>
 
-        <VcButton
-          :disabled="loading || !list"
-          size="sm"
-          variant="outline"
-          prepend-icon="cog"
-          @click="openListSettingsModal"
-        >
-          {{ $t("shared.wishlists.list_card.list_settings_button") }}
-        </VcButton>
+          <VcButton
+            :disabled="loading || !isDirty || !list"
+            size="sm"
+            variant="outline"
+            prepend-icon="save-v2"
+            class="grow"
+            @click="openSaveChangesModal"
+          >
+            {{ $t("common.buttons.save_changes") }}
+          </VcButton>
 
-        <VcButton
-          :disabled="loading || !pagedListItems.length"
-          size="sm"
-          prepend-icon="cart"
-          @click="addAllListItemsToCart"
-        >
-          {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
-        </VcButton>
-      </div>
-    </div>
-
-    <!-- Skeletons -->
-    <template v-if="listLoading">
-      <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 lg:mx-0">
-        <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
+          <VcButton
+            :disabled="loading || !list"
+            size="sm"
+            variant="outline"
+            prepend-icon="cog"
+            class="grow"
+            @click="openListSettingsModal"
+          >
+            {{ $t("shared.wishlists.list_card.list_settings_button") }}
+          </VcButton>
+        </div>
       </div>
 
-      <div v-else class="flex flex-col rounded border bg-white shadow-sm">
-        <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-gray-50" />
-      </div>
-    </template>
+      <div class="mt-5 w-full">
+        <!-- Skeletons -->
+        <template v-if="listLoading">
+          <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 lg:mx-0">
+            <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
+          </div>
 
-    <!-- List details -->
-    <template v-else-if="pagedListItems.length">
-      <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
-        <WishlistLineItems
-          :items="pagedListItems"
-          @update:cart-item="addOrUpdateCartItem"
-          @update:list-item="updateWishListItem"
-          @remove:list-item="openDeleteProductModal"
-        />
+          <div v-else class="flex flex-col rounded border bg-white shadow-sm">
+            <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-gray-50" />
+          </div>
+        </template>
 
-        <VcPagination
-          v-if="pagesCount > 1"
-          v-model:page="page"
-          :pages="pagesCount"
-          class="self-start"
-          @update:page="onUpdatePage()"
-        />
-      </div>
-    </template>
+        <!-- List details -->
+        <template v-else-if="pagedListItems.length">
+          <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
+            <WishlistLineItems
+              :items="pagedListItems"
+              @update:cart-item="addOrUpdateCartItem"
+              @update:list-item="updateWishListItem"
+              @remove:list-item="openDeleteProductModal"
+            />
 
-    <!-- Empty list -->
-    <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')">
-      <template #icon>
-        <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
-      </template>
+            <VcPagination
+              v-if="pagesCount > 1"
+              v-model:page="page"
+              :pages="pagesCount"
+              class="self-start"
+              @update:page="onUpdatePage()"
+            />
+          </div>
+        </template>
 
-      <template #button>
-        <VcButton :to="{ name: 'Catalog' }">
-          {{ $t("shared.wishlists.list_details.empty_list_button") }}
-        </VcButton>
-      </template>
-    </VcEmptyView>
+        <!-- Empty list -->
+        <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')">
+          <template #icon>
+            <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
+          </template>
 
-    <div class="space-y-5 px-5 py-7 lg:hidden">
-      <VcButton
-        :disabled="loading || !pagedListItems.length"
-        size="sm"
-        prepend-icon="cart"
-        full-width
-        @click="addAllListItemsToCart"
-      >
-        {{ $t("shared.wishlists.list_details.add_all_to_cart_button") }}
-      </VcButton>
-
-      <div class="flex flex-wrap gap-5">
-        <VcButton
-          :disabled="loading || !list"
-          class="flex-1"
-          size="sm"
-          variant="outline"
-          prepend-icon="cog"
-          @click="openListSettingsModal"
-        >
-          {{ $t("shared.wishlists.list_card.list_settings_button") }}
-        </VcButton>
-
-        <VcButton
-          :disabled="loading || !isDirty || !list"
-          class="flex-1"
-          size="sm"
-          variant="outline"
-          prepend-icon="save-v2"
-          @click="openSaveChangesModal"
-        >
-          {{ $t("common.buttons.save_changes") }}
-        </VcButton>
+          <template #button>
+            <VcButton :to="{ name: 'Catalog' }">
+              {{ $t("shared.wishlists.list_details.empty_list_button") }}
+            </VcButton>
+          </template>
+        </VcEmptyView>
       </div>
     </div>
   </div>
