@@ -4,8 +4,8 @@
       v-if="images?.length"
       :modules="[Pagination, Navigation]"
       :navigation="{
-        nextEl: '[data-btn=btn-prev]',
-        prevEl: '[data-btn=btn-next]',
+        nextEl: '[data-btn=btn-next]',
+        prevEl: '[data-btn=btn-prev]',
         lockClass: '!hidden',
       }"
       class="vc-product-image__carousel"
@@ -114,7 +114,7 @@ function slideChanged(swiper: SwiperInstance) {
 
 <style lang="scss">
 .vc-product-image {
-  @apply relative aspect-square;
+  @apply relative aspect-square border border-[--color-neutral-200] rounded;
 
   &__carousel {
     @apply h-full w-full;
