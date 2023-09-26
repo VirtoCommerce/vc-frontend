@@ -73,7 +73,7 @@ export function dateToIsoDateString(date: Date | undefined) {
   return date?.toISOString().substring(0, lastDateSymbolIndex);
 }
 
-//todo understand and add unit test
+//todo add unit test
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
 }
@@ -89,15 +89,4 @@ export async function asyncForEach<T>(
   for (let i = 0, l = array.length; i < l; i++) {
     await callbackFn(array[i], i, array);
   }
-}
-
-export function capitalizeAllSentences(text = ""): string {
-  const separator = ". ";
-  const sentences = text.split(separator);
-
-  const capitalizedSentences = sentences.map((sentence) => {
-    return sentence.charAt(0).toUpperCase() + sentence.slice(1);
-  });
-
-  return capitalizedSentences.join(separator);
 }
