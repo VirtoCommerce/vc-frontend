@@ -24,6 +24,11 @@ Lazy.args = {
   alt: "Product",
 };
 
+export const NoImage = Template.bind({});
+NoImage.args = {
+  alt: "Product",
+};
+
 export const Carousel = Template.bind({});
 Carousel.args = {
   imgSrc: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM70C3/1426013445000_1121979.jpg",
