@@ -45,7 +45,7 @@ const ga = useGoogleAnalytics();
 const isMobile = breakpoints.smaller("lg");
 
 const relatedProductsCarouselOptions: CarouselOptions = {
-  spaceBetween: 16,
+  spaceBetween: 8,
   slidesPerView: 4,
   slidesPerGroup: 4,
   breakpoints: {
@@ -53,7 +53,7 @@ const relatedProductsCarouselOptions: CarouselOptions = {
       spaceBetween: 0,
     },
     1500: {
-      spaceBetween: 16,
+      spaceBetween: 8,
     },
   },
 };
