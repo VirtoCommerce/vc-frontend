@@ -17,13 +17,20 @@ query SearchRelatedProducts(
           code
           slug
           imgSrc
+          images {
+            url
+          }
           vendor {
             id
             name
           }
+          hasVariations
           availabilityData {
             availableQuantity
+            isAvailable
+            isInStock
           }
+          inWishlist
           price {
             actual {
               amount

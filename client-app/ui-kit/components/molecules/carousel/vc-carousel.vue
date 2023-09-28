@@ -6,10 +6,9 @@
         :navigation="navigationParams"
         :pagination="paginationParams"
         v-bind="attrs"
-        class="w-full"
         v-on="listeners"
       >
-        <SwiperSlide v-for="(slide, index) in slides" :key="index">
+        <SwiperSlide v-for="(slide, index) in slides" :key="index" class="!h-auto">
           <slot name="slide" v-bind="{ slide, index }">
             {{ slide }}
           </slot>
@@ -17,15 +16,15 @@
       </Swiper>
 
       <!-- Navigation buttons-->
-      <div v-if="navigation" class="vc-carousel__navigation">
+      <template v-if="navigation">
         <div class="vc-carousel__btn vc-carousel__btn--prev">
-          <VcIcon name="chevron-left" :size="28" />
+          <VcIcon name="chevron-left" data-nav="next" :size="24" />
         </div>
 
         <div class="vc-carousel__btn vc-carousel__btn--next">
-          <VcIcon name="chevron-right" :size="28" />
+          <VcIcon name="chevron-right" :size="24" />
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -36,28 +35,17 @@ import { Pagination, Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { computed, getCurrentInstance } from "vue";
 import type { NavigationOptions, PaginationOptions } from "swiper/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  slides: {
-    type: Array as PropType<any[]>,
-    default: () => [],
-  },
+interface IProps {
+  slides?: any[];
+  options?: CarouselOptions;
+  navigation?: boolean;
+  pagination?: boolean;
+}
 
-  options: {
-    type: Object as PropType<CarouselOptions>,
-    default: () => ({}),
-  },
-
-  navigation: {
-    type: Boolean,
-    default: false,
-  },
-
-  pagination: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  slides: () => [],
+  options: () => ({}),
 });
 
 const componentId = `vc-carousel_${getCurrentInstance()!.uid}`;
@@ -94,10 +82,6 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
 
 <style lang="scss">
 .vc-carousel {
-  $self: &;
-
-  --navigation-size: 36px;
-  --navigation-offset: 0px;
   --pagination-offset: -5px;
 
   --swiper-pagination-bullet-size: 13px;
@@ -105,36 +89,25 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
   --swiper-pagination-bullet-inactive-opacity: 1;
 
   &__wrapper {
-    @apply relative w-full;
-  }
-
-  &--navigation {
-    #{$self}__wrapper {
-      @apply px-12;
-    }
-  }
-
-  &__navigation {
-    @apply absolute w-full h-full top-0 -mx-12;
+    @apply relative max-w-full;
   }
 
   &__btn {
-    @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)]
-    flex items-center justify-center text-[color:var(--color-primary)] rounded
-    border-2 border-[color:var(--color-primary)] cursor-pointer;
+    @apply z-10 absolute flex items-center justify-center w-14 h-14 rounded-full bg-[--color-additional-50]
+    text-[--color-primary-500] shadow-xl cursor-pointer;
 
-    margin-top: calc(0px - (var(--navigation-size) / 2) - var(--navigation-offset));
+    top: calc(50% - 1.75rem);
 
     &--prev {
-      @apply left-0;
+      @apply -left-5;
     }
 
     &--next {
-      @apply right-0;
+      @apply -right-5;
     }
 
     &--disabled {
-      @apply cursor-auto pointer-events-none opacity-30;
+      @apply text-[--color-neutral-300] cursor-auto pointer-events-none;
     }
 
     &--lock {
@@ -150,7 +123,7 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
   }
 
   .swiper-pagination-bullet {
-    @apply border-2 border-[color:var(--color-primary)];
+    @apply border-2 border-[--color-primary-500];
   }
 }
 </style>
