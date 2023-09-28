@@ -38,7 +38,6 @@ export function useUserOrder() {
       order.value = await getOrder(payload, { fields: GetOrderFeldsType.Short });
     } catch (e) {
       Logger.error(`${useUserOrder.name}.${fetchShortOrder.name}`, e);
-      throw e;
     } finally {
       loading.value = false;
     }
@@ -51,7 +50,6 @@ export function useUserOrder() {
       order.value = await getOrder(payload);
     } catch (e) {
       Logger.error(`${useUserOrder.name}.${fetchFullOrder.name}`, e);
-      throw e;
     } finally {
       loading.value = false;
     }

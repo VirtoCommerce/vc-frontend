@@ -2,7 +2,13 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
 import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
-import { TabsType, unauthorizedErrorEvent, unhandledErrorEvent, useBroadcast } from "@/shared/broadcast";
+import {
+  forbiddenEvent,
+  TabsType,
+  unauthorizedErrorEvent,
+  unhandledErrorEvent,
+  useBroadcast,
+} from "@/shared/broadcast";
 import { GraphQLErrorCode } from "./enums";
 import { hasErrorCode } from "./utils";
 import type { FetchPolicy } from "apollo-client";
@@ -27,8 +33,7 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
   }
 
   if (forbidden) {
-    // TODO: Use notification
-    alert("User doesn't have the required permission.");
+    broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
   }
 });
 

@@ -12,6 +12,7 @@ import {
   openReturnUrl,
   unhandledErrorEvent,
   userBlockedEvent,
+  forbiddenEvent,
 } from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
@@ -77,5 +78,9 @@ export function setupBroadcastGlobalListeners() {
   });
   on(openReturnUrl, () => {
     location.href = getReturnUrlValue() || "/";
+  });
+
+  on(forbiddenEvent, () => {
+    router.push({ name: "NoAccess" });
   });
 }
