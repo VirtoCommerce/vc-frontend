@@ -3,7 +3,7 @@
     <VcInput
       v-mask="'#### #### #### #### ###'"
       :model-value="number.replace(/(.{4})/g, '$1 ')"
-      :label="$t('shared.payment.bank_card_form.number_label')"
+      :label="labels.number"
       :message="formErrors.number || errors.number"
       :error="!!formErrors.number || !!errors.number"
       :readonly="readonly"
@@ -18,7 +18,7 @@
 
     <VcInput
       v-model.trim="cardholderName"
-      :label="$t('shared.payment.bank_card_form.cardholder_name_label')"
+      :label="labels.cardholderName"
       :message="formErrors.cardholderName || errors.cardholderName"
       :error="!!formErrors.cardholderName || !!errors.cardholderName"
       :readonly="readonly"
@@ -31,7 +31,7 @@
       <VcInput
         v-model="expirationDate"
         v-mask="'## / ##'"
-        :label="$t('shared.payment.bank_card_form.expiration_date_label')"
+        :label="labels.expirationDate"
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
         :message="expirationDateErrors"
         :error="!!expirationDateErrors"
@@ -49,7 +49,7 @@
       <VcInput
         v-model="securityCode"
         v-mask="'####'"
-        :label="$t('shared.payment.bank_card_form.security_code_label')"
+        :label="labels.securityCode"
         :message="formErrors.securityCode || errors.securityCode"
         :error="!!formErrors.securityCode || !!errors.securityCode"
         :readonly="readonly"
@@ -79,6 +79,11 @@ import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  errors: () => ({}),
+});
+
 interface IEmits {
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
   (event: "update:valid", value: boolean): void;
@@ -93,28 +98,37 @@ interface IProps {
   errors?: BankCardErrorsType;
 }
 
-const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  errors: () => ({}),
-});
-
 const { t } = useI18n();
 
 const initialValues = ref<BankCardType>(clone(props.modelValue));
 
+const labels = computed(() => {
+  return {
+    number: t("shared.payment.bank_card_form.number_label"),
+    cardholderName: t("shared.payment.bank_card_form.cardholder_name_label"),
+    expirationDate: t("shared.payment.bank_card_form.expiration_date_label"),
+    yearLabel: t("shared.payment.bank_card_form.year_label"),
+    monthLabel: t("shared.payment.bank_card_form.month_label"),
+    securityCode: t("shared.payment.bank_card_form.security_code_label"),
+  };
+});
+
 const validationSchema = toTypedSchema(
   object({
-    number: string().required().min(12).max(19),
-    cardholderName: string().required().max(64),
+    number: string().required().min(12).max(19).label(labels.value.number),
+    cardholderName: string().required().max(64).label(labels.value.cardholderName),
     month: string()
       .required()
       .length(2)
-      .matches(/^(0?[1-9]|1[012])$/, t("shared.payment.authorize_net.errors.month")),
-    year: string().when("month", {
-      is: (monthValue?: string) => monthValue?.length === 2,
-      then: (stringSchema) => stringSchema.length(2),
-    }),
-    securityCode: string().required().min(3).max(4),
+      .matches(/^(0?[1-9]|1[012])$/, t("shared.payment.authorize_net.errors.month"))
+      .label(labels.value.monthLabel),
+    year: string()
+      .when("month", {
+        is: (monthValue?: string) => monthValue?.length === 2,
+        then: (stringSchema) => stringSchema.length(2),
+      })
+      .label(labels.value.yearLabel),
+    securityCode: string().required().min(3).max(4).label(labels.value.securityCode),
   }),
 );
 
