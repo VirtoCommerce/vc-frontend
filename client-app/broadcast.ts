@@ -11,7 +11,7 @@ import {
   useBroadcast,
   openReturnUrl,
   unhandledErrorEvent,
-  userBlockedEvent,
+  userLockedEvent,
 } from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
@@ -29,15 +29,15 @@ export function setupBroadcastGlobalListeners() {
   const router = useRouter();
   const { on } = useBroadcast();
   const notifications = useNotifications();
-  const { fetchUser, user } = useUser();
+  const { fetchUser, signMeOut, user } = useUser();
   const { pagesWithFullCartLoad } = usePagesWithFullCartLoad();
   const { fetchShortCart, fetchFullCart } = useCart();
 
   on(pageReloadEvent, () => location.reload());
   on(userReloadEvent, () => fetchUser());
-  on(userBlockedEvent, async () => {
+  on(userLockedEvent, async () => {
+    await signMeOut({ reloadPage: false });
     const { pathname } = location;
-
     if (pathname !== "/blocked") {
       location.href = "/blocked";
     }
