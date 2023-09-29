@@ -92,18 +92,7 @@ const preparedLineItems = computed(() => prepareLineItems(props.items));
 const getValidationErrorTranslation = useCartValidationErrorTranslator();
 
 const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
-  const errors: ValidationErrorType[] = [
-    {
-      objectId: "2638912b-c9f1-4beb-9e28-00ee63edfd0f",
-      errorMessage: "Error 1",
-    },
-    {
-      objectId: "2638912b-c9f1-4beb-9e28-00ee63edfd0f",
-      errorMessage: "Error 2",
-    },
-  ];
-
-  const result: Record<string, ValidationErrorType[]> = errors.reduce(
+  const result: Record<string, ValidationErrorType[]> = props.validationErrors.reduce(
     (records, item) => {
       if (item.objectId) {
         const key = item.objectId;
