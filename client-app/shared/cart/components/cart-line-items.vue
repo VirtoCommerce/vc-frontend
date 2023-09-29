@@ -42,16 +42,18 @@
     </template>
 
     <template #after-content="{ item }">
-      <VcAlert
-        v-for="(validationError, index) in validationErrorsByItemId[item.id]"
-        :key="index"
-        color="danger"
-        size="sm"
-        variant="outline-dark"
-        icon
-      >
-        {{ validationError.errorMessage }}
-      </VcAlert>
+      <div class="grid gap-y-2">
+        <VcAlert
+          v-for="(validationError, index) in validationErrorsByItemId[item.id]"
+          :key="index"
+          color="danger"
+          size="sm"
+          variant="outline-dark"
+          icon
+        >
+          {{ validationError.errorMessage }}
+        </VcAlert>
+      </div>
     </template>
   </VcLineItems>
 </template>
@@ -90,7 +92,18 @@ const preparedLineItems = computed(() => prepareLineItems(props.items));
 const getValidationErrorTranslation = useCartValidationErrorTranslator();
 
 const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
-  const result: Record<string, ValidationErrorType[]> = props.validationErrors.reduce(
+  const errors: ValidationErrorType[] = [
+    {
+      objectId: "2638912b-c9f1-4beb-9e28-00ee63edfd0f",
+      errorMessage: "Error 1",
+    },
+    {
+      objectId: "2638912b-c9f1-4beb-9e28-00ee63edfd0f",
+      errorMessage: "Error 2",
+    },
+  ];
+
+  const result: Record<string, ValidationErrorType[]> = errors.reduce(
     (records, item) => {
       if (item.objectId) {
         const key = item.objectId;
