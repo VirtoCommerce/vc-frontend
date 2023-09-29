@@ -3,6 +3,7 @@
     :is="componentType"
     :to="linkTo"
     :target="target"
+    :title="title"
     :class="[
       'vc-product-title',
       {
@@ -26,6 +27,7 @@ interface IEmits {
 interface IProps {
   to?: RouteLocationRaw | null;
   target?: "_blank" | "_self";
+  title?: string;
   disabled?: boolean;
 }
 

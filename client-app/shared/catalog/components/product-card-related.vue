@@ -10,7 +10,13 @@
     </VcProductImage>
 
     <div class="flex grow flex-col justify-between gap-2">
-      <VcProductTitle class="text-sm" :to="link" target="_blank" @click="$emit('linkClick', $event)">
+      <VcProductTitle
+        class="text-sm"
+        :to="link"
+        :title="product.name"
+        target="_blank"
+        @click="$emit('linkClick', $event)"
+      >
         {{ product.name }}
       </VcProductTitle>
 

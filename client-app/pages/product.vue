@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, eagerComputed, useBreakpoints, watchDebounced } from "@vueuse/core";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -126,4 +126,14 @@ watchEffect(() => {
     });
   }
 });
+
+watchDebounced(
+  computed(() => relatedProducts.value),
+  () => fetchRelatedProducts({ productId: props.productId, itemsPerPage: 30 }),
+  {
+    immediate: true,
+    flush: "post",
+    debounce: 20,
+  },
+);
 </script>
