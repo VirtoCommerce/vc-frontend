@@ -7,6 +7,17 @@
         </template>
       </VcImageGallery>
 
+      <!-- VcVideos draft -->
+      <div style="width: 100%; margin-top: 40px; display: flex; flex-direction: column; gap: 20px">
+        <iframe
+          v-for="(v, i) in product?.videos?.items"
+          :key="i"
+          style="width: 100%"
+          :src="v.embedUrl"
+          :title="i + ''"
+        />
+      </div>
+
       <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mt-8 inline-flex print:hidden" />
     </div>
 

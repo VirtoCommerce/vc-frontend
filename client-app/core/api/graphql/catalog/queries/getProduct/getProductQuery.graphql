@@ -14,6 +14,12 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     imgSrc
     inWishlist
     productType
+    videos {
+      items {
+        embedUrl
+        contentUrl
+      }
+    }
     images {
       url
     }
