@@ -594,7 +594,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
         };
 
         if (result?.succeeded) {
-          notifications.success({ ...notification, text: t("common.messages.role_update_successfull") });
+          notifications.success({ ...notification, text: t("common.messages.role_update_successful") });
 
           await fetchContacts();
         } else {

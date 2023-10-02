@@ -21,3 +21,4 @@ export const productsInWishlistEvent = "products_in_wishlist" as InjectionEvent<
 export const unauthorizedErrorEvent = "unauthorized_error" as InjectionEvent<void>;
 export const unhandledErrorEvent = "unhandled_error" as InjectionEvent<void>;
 export const openReturnUrl = "open_return_url" as InjectionEvent<void>;
+export const forbiddenEvent = "forbidden" as InjectionEvent<void>;
