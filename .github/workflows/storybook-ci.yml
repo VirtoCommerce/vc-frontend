@@ -1,5 +1,5 @@
-# v1.1.0.vcst
-name: Theme CI
+# v1.0.1
+name: Storybook CI
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
-      - '**/cloudDeploy.json'
+      - '**/argoDeploy.json'
   pull_request:
     branches:
       [master, dev, demo]
@@ -22,7 +22,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
-      - '**/cloudDeploy.json'
+      - '**/argoDeploy.json'
 
 jobs:
   ci:
@@ -41,9 +41,14 @@ jobs:
       VERSION_SUFFIX: ''
       BUILD_STATE: 'failed'
       RELEASE_STATUS: 'false'
+      DOCKER_URL: ''
+      DOCKER_REPOSITORY: 'ghcr.io'
+      DOCKER_IMAGE: 'vc-theme-b2b-vue-storybook'
+      DOCKER_TAG: ''
     outputs:
-      artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      version: ${{ steps.image.outputs.shortVersion }}
+      tag: ${{ env.DOCKER_TAG }}
 
     steps:
 
@@ -65,10 +70,6 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
         id: image
 
-      - name: Get changelog
-        id: changelog
-        uses: VirtoCommerce/vc-github-actions/changelog-generator@master
-
       - name: Set release VERSION_SUFFIX
         run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
@@ -83,6 +84,14 @@ jobs:
         run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
 
+      - name: Set DOCKER_TAG variable
+        run: |
+          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+            echo "DOCKER_TAG=${{ steps.image.outputs.shortVersion }}" >> $GITHUB_ENV
+          else
+            echo "DOCKER_TAG=${{ steps.image.outputs.taggedVersion }}" >> $GITHUB_ENV
+          fi;
+
       - name: Install dependencies
         run: |
           yarn install
@@ -91,7 +100,7 @@ jobs:
 
       - name: Build
         run: |
-          yarn build
+          yarn storybook:build
 
       - name: BUILD_STATE::successful
         if: success()
@@ -99,7 +108,7 @@ jobs:
 
       - name: Packaging
         run: |
-          yarn compress ${{ github.event.repository.name }}-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+          yarn storybook:compress ${{ github.event.repository.name }}-storybook-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
@@ -109,43 +118,29 @@ jobs:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
 
-      - name: Add link to PR
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
-        with:
-          artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
-          repoOrg: ${{ github.repository_owner }}
-          downloadComment: 'Artifact URL:'
-
-      - name: Create Release
-        if: ${{ github.ref == 'refs/heads/master' }}
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ steps.image.outputs.prefix }}
-          release_name: ${{ steps.image.outputs.prefix }}
-          draft: false
-          prerelease: false
-          body: ${{ steps.changelog.outputs.changelog }}
-
-      - name: Upload Release Asset
-        if: ${{ github.ref == 'refs/heads/master' }}
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.blobRelease.outputs.packageUrl }}
-          asset_name: ${{ steps.blobRelease.outputs.blobId }}
-          asset_content_type: application/zip
-
-      - name: Set artifactUrl value
-        id: artifactUrl
+      - name: Set URLs
+        id: urls
         run: |
-          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo "download_url=${{ steps.upload-release-asset.outputs.browser_download_url }}" >> $GITHUB_OUTPUT
-          else
-            echo "download_url=${{ steps.publish.outputs.blobUrl }}" >> $GITHUB_OUTPUT
-          fi;
+          echo "DOCKER_URL=${{ env.DOCKER_REPOSITORY }}/${GITHUB_REPOSITORY_OWNER,,}/${{ env.DOCKER_IMAGE }}:" >> $GITHUB_OUTPUT
+          echo "BLOB_URL=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REPOSITORY }}
+          username: $GITHUB_ACTOR
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
+          context: .
+          file: .storybook/Dockerfile
+          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.ref == 'refs/head/dev' && 'dev-latest' || 'latest'}}
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
@@ -159,7 +154,7 @@ jobs:
       - name: Push Build Info to Jira
         if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
-        uses: VirtoCommerce/jira-upload-build-info@master
+        uses: HighwayThree/jira-upload-build-info@master
         with:
           cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
           client-id: '${{ secrets.CLIENT_ID }}'
@@ -186,8 +181,8 @@ jobs:
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:
-      parameterName: 'themes.B2B-store'
-      parameterValue: ${{ needs.ci.outputs.artifactUrl }}
-      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+      parameterName: 'custom.app1.image.tag'
+      parameterValue: ${{ needs.ci.outputs.tag }}
+      environmentId: ${{ github.ref == 'refs/head/dev' && 'dev' || 'prod' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
     secrets: inherit
