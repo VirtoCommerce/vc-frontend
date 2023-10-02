@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RouteLocationRaw } from "vue-router";
+import { getLinkAttr } from "@/shared/static-content/utils";
 
 type ButtonType = {
   label: string;
@@ -34,17 +34,4 @@ interface IProps {
 }
 
 defineProps<IProps>();
-
-type LinkAttrType = { to: RouteLocationRaw } | { link: string } | object;
-
-const getLinkAttr = (link?: string): LinkAttrType => {
-  if (link) {
-    if (link.startsWith("/")) {
-      return { to: link };
-    } else {
-      return { externalLink: link };
-    }
-  }
-  return {};
-};
 </script>
