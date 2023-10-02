@@ -69,7 +69,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
 
 export interface IEmits<T> {
-  (event: "update:modelValue", value?: T): void;
+  (event: "update:modelValue", value: T): void;
 }
 
 export interface IProps<T> {
@@ -125,7 +125,7 @@ const inputValue = computed({
       return;
     }
 
-    emit("update:modelValue", (props.type === "number" ? Number(value) : value) as T);
+    emit("update:modelValue", value!);
   },
 });
 

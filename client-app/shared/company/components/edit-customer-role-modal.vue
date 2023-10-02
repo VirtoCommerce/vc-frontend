@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import { VcPopup, VcRadioButton } from "@/ui-kit/components";
 import RoleIcon from "./role-icon.vue";
 import type { ExtendedRoleType } from "@/core/types";
@@ -51,14 +51,14 @@ defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 interface IProps {
-  currentRoleId?: string;
+  currentRoleId: string;
   roles: ExtendedRoleType[];
   loading: boolean;
 }
 
-const selectedRoleId = ref<string>();
-
-watchEffect(() => {
-  selectedRoleId.value = props.currentRoleId;
+const _selectedRoleId = ref<string>();
+const selectedRoleId = computed({
+  get: () => _selectedRoleId.value ?? props.currentRoleId,
+  set: (value) => (_selectedRoleId.value = value),
 });
 </script>

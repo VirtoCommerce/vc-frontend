@@ -4,6 +4,7 @@ import { setLocale as setLocaleForYup } from "yup";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
+import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
@@ -32,7 +33,7 @@ const currentLanguage = computed<ILanguage>(
   () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
 );
 
-function fetchLocaleMessages(locale: string): Promise<any> {
+async function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   /**
    * FIXME: Don't use import
    * Fetch localization files (json) from Storefront to be able to edit localization files in Admin panel
@@ -41,10 +42,10 @@ function fetchLocaleMessages(locale: string): Promise<any> {
   const path = `../../../locales/${locale}.json`;
 
   if (locales[path]) {
-    return locales[path]();
+    return (await locales[path]()) as LocaleMessage;
   }
 
-  return import("../../../locales/en.json");
+  return (await import("../../../locales/en.json")) as LocaleMessage;
 }
 
 async function setLocale(i18n: I18n, locale: string): Promise<void> {

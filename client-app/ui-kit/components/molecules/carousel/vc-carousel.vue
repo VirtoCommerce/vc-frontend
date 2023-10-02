@@ -30,34 +30,23 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import _ from "lodash";
 import { Pagination, Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { computed, getCurrentInstance } from "vue";
 import type { NavigationOptions, PaginationOptions } from "swiper/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  slides: {
-    type: Array as PropType<any[]>,
-    default: () => [],
-  },
+export interface IProps<T> {
+  slides: T[];
+  options: CarouselOptions;
+  navigation?: boolean;
+  pagination?: boolean;
+}
 
-  options: {
-    type: Object as PropType<CarouselOptions>,
-    default: () => ({}),
-  },
-
-  navigation: {
-    type: Boolean,
-    default: false,
-  },
-
-  pagination: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<IProps<T>>(), {
+  navigation: false,
+  pagination: false,
 });
 
 const componentId = `vc-carousel_${getCurrentInstance()!.uid}`;

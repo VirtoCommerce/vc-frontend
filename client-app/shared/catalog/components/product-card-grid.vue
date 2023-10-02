@@ -221,7 +221,7 @@ import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
 
-defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
+defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
 const props = withDefaults(defineProps<IProps>(), {
   lazy: true,

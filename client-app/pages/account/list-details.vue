@@ -237,11 +237,11 @@ function updateWishListItem(item: PreparedLineItemType, quantity: number): void 
   }
 }
 
-async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
+async function addOrUpdateCartItem(item: PreparedLineItemType, quantity?: number): Promise<void> {
   const product: Product | undefined = wishlistItems.value.find((listItem) => listItem.productId === item.productId)
     ?.product;
 
-  if (!product) {
+  if (!product || !quantity) {
     return;
   }
 

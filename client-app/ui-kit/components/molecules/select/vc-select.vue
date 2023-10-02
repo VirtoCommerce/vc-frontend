@@ -127,6 +127,7 @@
 </template>
 
 <script setup lang="ts">
+// FIXME: https://virtocommerce.atlassian.net/browse/ST-5117
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { union, lowerCase } from "lodash";
 import { computed, ref, shallowRef } from "vue";

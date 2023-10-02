@@ -37,7 +37,7 @@ import { useI18n } from "vue-i18n";
 
 interface IEmits {
   (event: "update:modelValue", value: number): void;
-  (event: "update:cartItemQuantity", quantity: number): void;
+  (event: "update:cartItemQuantity", quantity?: number): void;
 }
 
 interface IProps {

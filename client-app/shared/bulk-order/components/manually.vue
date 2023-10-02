@@ -35,7 +35,7 @@
               min="1"
               type="number"
               placeholder="0"
-              @update:model-value="$nextTick(() => (item.quantity = String(validateQuantity($event) || '')))"
+              @update:model-value="$nextTick(() => (item.quantity = validateQuantity($event)))"
               @keypress="onKeypress"
             />
           </div>
@@ -75,8 +75,6 @@ import { maxQuantity, validateQuantity } from "@/shared/bulk-order";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
-type InputNewBulkItemExtendedType = { [prop in keyof InputNewBulkItemType]: string };
-
 const emit = defineEmits<{
   (event: "add-to-cart", value: InputNewBulkItemType[]): void;
   (event: "error", value: InputNewBulkItemType[]): void;
@@ -86,15 +84,14 @@ defineProps({
   loading: Boolean,
 });
 
-const items: Ref<InputNewBulkItemExtendedType[]> = ref(createItems(5));
+const items: Ref<InputNewBulkItemType[]> = ref(createItems(5));
 
 const dirty = computed<boolean>(() => !!items.value.filter((item) => item.productSku || +item.quantity! > 0).length);
 const valid = computed<boolean>(() => !!items.value.filter((item) => item.productSku && +item.quantity! > 0).length);
 
-function createItems(quantity: number): InputNewBulkItemExtendedType[] {
-  return Array.from({ length: quantity }).map<InputNewBulkItemExtendedType>(() => ({
+function createItems(quantity: number): InputNewBulkItemType[] {
+  return Array.from({ length: quantity }).map<InputNewBulkItemType>(() => ({
     productSku: "",
-    quantity: "",
   }));
 }
 

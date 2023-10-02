@@ -579,7 +579,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
     component: EditCustomerRoleModal,
     props: {
       roles: B2B_ROLES,
-      currentRoleId: contact.extended.roles[0]?.id,
+      currentRoleId: contact.extended.roles[0].id,
       loading: contactsLoading,
 
       async onConfirm(selectedRoleId: string): Promise<void> {

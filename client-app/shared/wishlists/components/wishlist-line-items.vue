@@ -45,7 +45,7 @@ import { ProductType } from "@/core/enums";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
-  (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;
+  (event: "update:cartItem", item: PreparedLineItemType, quantity?: number): void;
   (event: "update:listItem", item: PreparedLineItemType, quantity: number): void;
   (event: "remove:items", value: string[]): void;
 }
@@ -64,7 +64,7 @@ function addToCartDisabled(item: PreparedLineItemType) {
   );
 }
 
-function changeCartItemQuantity(item: PreparedLineItemType, quantity: number): void {
+function changeCartItemQuantity(item: PreparedLineItemType, quantity?: number): void {
   emit("update:cartItem", item, quantity);
 }
 
