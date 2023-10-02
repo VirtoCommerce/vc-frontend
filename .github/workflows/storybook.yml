@@ -31,6 +31,7 @@ jobs:
          github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
     runs-on: ubuntu-latest
     env:
+      FORCE_COLOR: true
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
