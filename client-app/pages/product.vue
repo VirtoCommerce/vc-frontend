@@ -41,8 +41,8 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, eagerComputed, useBreakpoints, watchDebounced } from "@vueuse/core";
-import { computed, defineAsyncComponent, watchEffect } from "vue";
+import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
+import { ref, computed, defineAsyncComponent, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
@@ -65,7 +65,7 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 const { t } = useI18n();
 const { getItemsTotal } = useCart();
 const { product, loading, loadProduct } = useProduct();
-const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
+const { relatedProducts: _relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
@@ -79,6 +79,8 @@ usePageHead({
     description: computed(() => product.value?.seoInfo?.metaDescription),
   },
 });
+
+const relatedProducts = ref([..._relatedProducts.value]);
 
 const breadcrumbs = useBreadcrumbs(() => {
   const firstItem: Breadcrumb = { itemId: rootCategory.id, title: rootCategory.name, seoPath: rootCategory.slug };
@@ -127,13 +129,11 @@ watchEffect(() => {
   }
 });
 
-watchDebounced(
-  computed(() => relatedProducts.value),
-  () => fetchRelatedProducts({ productId: props.productId, itemsPerPage: 30 }),
-  {
-    immediate: true,
-    flush: "post",
-    debounce: 20,
+watch(
+  _relatedProducts,
+  (newVal) => {
+    relatedProducts.value = [...newVal];
   },
+  { deep: true },
 );
 </script>
