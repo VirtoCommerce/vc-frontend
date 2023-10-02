@@ -15,7 +15,7 @@ import {
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { TabsType, pageReloadEvent, useBroadcast, userBlockedEvent, userReloadEvent } from "@/shared/broadcast";
+import { TabsType, pageReloadEvent, useBroadcast, userLockedEvent, userReloadEvent } from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
@@ -113,9 +113,7 @@ export function useUser() {
       }
 
       if (user.value?.lockedState) {
-        await signMeOut({ reloadPage: false });
-
-        broadcast.emit(userBlockedEvent, undefined, TabsType.ALL);
+        broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
       }
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
