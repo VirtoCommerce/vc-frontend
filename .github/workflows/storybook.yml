@@ -1,5 +1,5 @@
-# v1.1.0
-name: Theme CI
+# v1.0.1
+name: Storybook CI
 
 on:
   workflow_dispatch:
@@ -38,13 +38,19 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
       VERSION_SUFFIX: ''
-      REPOSITORY_OWNER: ''
-      REPOSITORY_NAME: ''
       BUILD_STATE: 'failed'
       RELEASE_STATUS: 'false'
+      REPOSITORY_OWNER: ''
+      REPOSITORY_NAME: ''
+      DOCKER_URL: ''
+      DOCKER_REPOSITORY: 'ghcr.io'
+      DOCKER_IMAGE: 'vc-theme-b2b-vue-storybook'
+      DOCKER_TAG: 'dev-linux-latest'
     outputs:
       artifactUrl: '${{ steps.artifactUrl.outputs.download_url }}'
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      version: ${{ steps.image.outputs.shortVersion }}
+      tag: ${{ env.DOCKER_TAG }}
 
     steps:
 
@@ -66,10 +72,6 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
         id: image
 
-      - name: Get changelog
-        id: changelog
-        uses: VirtoCommerce/vc-github-actions/changelog-generator@master
-
       - name: Set release VERSION_SUFFIX
         run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
@@ -84,6 +86,18 @@ jobs:
         run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
 
+      - name: Set DOCKER_TAG variable
+        run: |
+          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+            echo "DOCKER_TAG=${{ steps.image.outputs.shortVersion }}" >> $GITHUB_ENV
+          else
+            echo "DOCKER_TAG=${{ steps.image.outputs.taggedVersion }}" >> $GITHUB_ENV
+          fi;
+
+      - name: Set DOCKER_URL variable
+        run: |
+          echo "DOCKER_URL=${{ env.DOCKER_REPOSITORY }}/${GITHUB_REPOSITORY_OWNER,,}/${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: |
           yarn install
@@ -92,7 +106,7 @@ jobs:
 
       - name: Build
         run: |
-          yarn build
+          yarn storybook:build
 
       - name: BUILD_STATE::successful
         if: success()
@@ -100,7 +114,25 @@ jobs:
 
       - name: Packaging
         run: |
-          yarn compress ${{ github.event.repository.name }}-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+          yarn storybook:compress ${{ github.event.repository.name }}-storybook-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REPOSITORY }}
+          username: $GITHUB_ACTOR
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          context: .
+          file: .storybook/Dockerfile
+          tags: ${{ env.DOCKER_URL }}
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
@@ -110,30 +142,18 @@ jobs:
           blobSAS: ${{ secrets.BLOB_TOKEN }}
           blobUrl: ${{ vars.BLOB_URL }}
 
+      - name: Set artifactUrl value
+        id: artifactUrl
+        run: |
+          echo "BLOB_URL=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
+
       - name: Add link to PR
         if: ${{ github.event_name == 'pull_request' }}
         uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
         with:
-          artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
+          artifactUrl: ${{ env.DOCKER_URL }}
           repoOrg: ${{ github.repository_owner }}
           downloadComment: 'Artifact URL:'
-
-      - name: Publish Github Release
-        if: ${{ github.ref == 'refs/heads/master' }}
-        id: githubRelease
-        with:
-          changelog: ${{ steps.changelog.outputs.changelog }}
-          organization: ${{ github.repository_owner }}
-        uses: VirtoCommerce/vc-github-actions/publish-github-release@master
-
-      - name: Set artifactUrl value
-        id: artifactUrl
-        run: |
-          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo "download_url=${{ steps.githubRelease.outputs.downloadUrl }}" >> $GITHUB_OUTPUT
-          else
-            echo "download_url=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
-          fi;
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
@@ -168,27 +188,3 @@ jobs:
         if: success()
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
-
-  deploy:
-    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
-    needs: ci
-    runs-on: ubuntu-latest
-    env:
-      CONFIG_PATH: '.deployment/storefront-app/argoDeploy.json'
-    steps:
-
-      - name: Set deployment environment
-        id: deployEnv
-        run: |
-          if [ '${{ github.ref }}' = 'refs/heads/demo' ] || [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo ::set-output name=NAME::prod
-          else
-            echo ::set-output name=NAME::dev
-          fi;
-
-      - name: Invoke Module deployment workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: VC deployment
-          token: ${{ secrets.REPO_TOKEN }}
-          inputs: '{ "artifactUrl": "${{ needs.ci.outputs.artifactUrl }}", "deployEnvironment": "${{  steps.deployEnv.outputs.NAME }}", "deployConfigPath": "${{ env.CONFIG_PATH }}", "jiraKeys":"${{ needs.ci.outputs.jira-keys }}" }'

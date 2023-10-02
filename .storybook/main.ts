@@ -36,6 +36,7 @@ const storybookConfig: StorybookConfig = {
       resolve(__dirname, "../vite.config.ts"),
     ))!;
     return mergeConfig(storybookViteConfig, {
+      mode: "development",
       envPrefix: config.envPrefix,
       plugins: [splitVendorChunkPlugin()],
       resolve: config.resolve,
