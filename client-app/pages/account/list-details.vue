@@ -68,7 +68,7 @@
               :items="pagedListItems"
               @update:cart-item="addOrUpdateCartItem"
               @update:list-item="updateWishListItem"
-              @remove:list-item="openDeleteProductModal"
+              @remove:items="openDeleteProductModal"
             />
 
             <VcPagination
@@ -258,32 +258,37 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   }
 }
 
-function openDeleteProductModal(item: PreparedLineItemType): void {
-  openPopup({
-    component: DeleteWishlistProductModal,
-    props: {
-      listId: list.value?.id,
-      listItem: item,
+function openDeleteProductModal(values: string[]): void {
+  // FIXME: Make wishlist items selectable and support multiple removal
+  const item = list.value?.items?.find((i) => values.includes(i.id));
 
-      async onResult(): Promise<void> {
-        const previousPagesCount = pagesCount.value;
+  if (item) {
+    openPopup({
+      component: DeleteWishlistProductModal,
+      props: {
+        listId: list.value?.id,
+        listItem: item,
 
-        broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
+        async onResult(): Promise<void> {
+          const previousPagesCount = pagesCount.value;
 
-        await fetchWishList(props.listId);
+          broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
 
-        wishlistItems.value = cloneDeep(list.value?.items || []);
+          await fetchWishList(props.listId);
 
-        /**
-         * If you were on the last page, and after deleting the product
-         * the number of pages has decreased, go to the previous page
-         */
-        if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pagesCount.value) {
-          page.value -= 1;
-        }
+          wishlistItems.value = cloneDeep(list.value?.items || []);
+
+          /**
+           * If you were on the last page, and after deleting the product
+           * the number of pages has decreased, go to the previous page
+           */
+          if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pagesCount.value) {
+            page.value -= 1;
+          }
+        },
       },
-    },
-  });
+    });
+  }
 }
 
 /**
