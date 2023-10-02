@@ -15,9 +15,10 @@ import type { InjectionEvent, ProductInWishlistEventDataType } from "../types";
 
 export const pageReloadEvent = "page_reload" as InjectionEvent<void>;
 export const userReloadEvent = "user_reload" as InjectionEvent<void>;
-export const userBlockedEvent = "user_blocked" as InjectionEvent<void>;
+export const userLockedEvent = "user_locked" as InjectionEvent<void>;
 export const cartReloadEvent = "cart_reload" as InjectionEvent<void>;
 export const productsInWishlistEvent = "products_in_wishlist" as InjectionEvent<ProductInWishlistEventDataType[]>;
 export const unauthorizedErrorEvent = "unauthorized_error" as InjectionEvent<void>;
 export const unhandledErrorEvent = "unhandled_error" as InjectionEvent<void>;
 export const openReturnUrl = "open_return_url" as InjectionEvent<void>;
+export const forbiddenEvent = "forbidden" as InjectionEvent<void>;

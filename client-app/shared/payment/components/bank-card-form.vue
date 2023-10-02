@@ -2,17 +2,17 @@
   <form class="flex flex-col gap-y-3" autocomplete="off">
     <VcInput
       v-mask="'#### #### #### #### ###'"
-      :model-value="number.replace(/(.{4})/g, '$1 ')"
+      :model-value="cardNumber"
       :label="labels.number"
       :message="formErrors.number || errors.number"
       :error="!!formErrors.number || !!errors.number"
       :readonly="readonly"
       :disabled="disabled"
       placeholder="1111 1111 1111 1111"
-      minlength="14"
-      maxlength="23"
+      minlength="12"
+      maxlength="19"
       required
-      @update:model-value="number = $event.replace(/\D/g, '')"
+      @update:model-value="updateValue($event)"
       @input="input"
     />
 
@@ -100,7 +100,7 @@ interface IProps {
 
 const { t } = useI18n();
 
-const initialValues = ref<BankCardType>(clone(props.modelValue));
+const initialValues = ref<BankCardType>({ number: "", cardholderName: "", month: "", year: "", securityCode: "" });
 
 const labels = computed(() => {
   return {
@@ -152,6 +152,12 @@ const expirationDate = computed({
 const expirationDateErrors = computed<string>(() =>
   [formErrors.value.month, formErrors.value.year, props.errors.month, props.errors.year].filter(Boolean).join(". "),
 );
+
+const cardNumber = computed<string | undefined>(() => (number.value ? number.value.match(/.{1,4}/g)?.join(" ") : ""));
+
+function updateValue(value?: string): void {
+  number.value = value ? value.replace(/ /g, "") : "";
+}
 
 function input() {
   emit("update:modelValue", clone(values));
