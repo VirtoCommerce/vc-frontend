@@ -12,6 +12,7 @@ import {
   openReturnUrl,
   unhandledErrorEvent,
   userLockedEvent,
+  forbiddenEvent,
 } from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
@@ -38,6 +39,7 @@ export function setupBroadcastGlobalListeners() {
   on(userLockedEvent, async () => {
     await signMeOut({ reloadPage: false });
     const { pathname } = location;
+
     if (pathname !== "/blocked") {
       location.href = "/blocked";
     }
@@ -77,5 +79,9 @@ export function setupBroadcastGlobalListeners() {
   });
   on(openReturnUrl, () => {
     location.href = getReturnUrlValue() || "/";
+  });
+
+  on(forbiddenEvent, () => {
+    router.push({ name: "NoAccess" });
   });
 }

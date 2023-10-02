@@ -4,6 +4,7 @@ import { onError } from "apollo-link-error";
 import { HttpLink } from "apollo-link-http";
 import {
   TabsType,
+  forbiddenEvent,
   unauthorizedErrorEvent,
   unhandledErrorEvent,
   userLockedEvent,
@@ -38,8 +39,7 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
   }
 
   if (forbidden) {
-    // TODO: Use notification
-    alert("User doesn't have the required permission.");
+    broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
   }
 });
 
