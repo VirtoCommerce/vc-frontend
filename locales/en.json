@@ -370,8 +370,17 @@
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "email_or_password_incorrect_alert": "The email or password you provided is invalid",
-        "user_is_locked_out_alert": "@:common.messages.blocked"
+        "errors": {
+          "username_or_emails_required": "Please provide a username or email",
+          "login_failed": "Login attempt failed. Please check your credentials",
+          "email_verification_is_required": "Email verification required. Please verify your email address",
+          "user_is_temporary_locked_out": "Your account has been temporarily locked. Please try again after some time",
+          "user_is_locked_out": "@:common.messages.blocked",
+          "user_cannot_login_in_store": "Access denied. You cannot sign in to the current store",
+          "password_expired": "@:common.messages.password_expired",
+          "user_not_found": "User not found. Please ensure you've entered the correct information",
+          "default": "The email or password you provided is invalid"
+        }
       },
       "forgot_password_form": {
         "error_alert": "Invalid result of the reset password request. Please "
