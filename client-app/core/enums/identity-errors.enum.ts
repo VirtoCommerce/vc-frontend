@@ -1,5 +1,4 @@
 export enum IdentityErrors {
-  USERNAME_OR_EMAILS_REQUIRED = "username_or_emails_required",
   LOGIN_FAILED = "login_failed",
   EMAIL_VERIFICATION_REQUIRED = "email_verification_is_required",
   USER_IS_TEMPORARY_LOCKED_OUT = "user_is_temporary_locked_out",

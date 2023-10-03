@@ -150,7 +150,6 @@ watch(values, () => {
 });
 
 const errorMessages = computed<{ [key in IdentityErrors]: string }>(() => ({
-  [IdentityErrors.USERNAME_OR_EMAILS_REQUIRED]: t("shared.account.sign_in_form.errors.username_or_emailIs_required"),
   [IdentityErrors.LOGIN_FAILED]: t("shared.account.sign_in_form.errors.login_failed"),
   [IdentityErrors.EMAIL_VERIFICATION_REQUIRED]: t("shared.account.sign_in_form.errors.email_verification_is_required"),
   [IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT]: t("shared.account.sign_in_form.errors.user_is_temporary_locked_out"),

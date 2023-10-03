@@ -371,7 +371,6 @@
         "login_button": "Log in",
         "registration_button": "Sign up",
         "errors": {
-          "username_or_emails_required": "Please provide a username or email",
           "login_failed": "Login attempt failed. Please check your credentials",
           "email_verification_is_required": "Email verification required. Please verify your email address",
           "user_is_temporary_locked_out": "Your account has been temporarily locked. Please try again after some time",
