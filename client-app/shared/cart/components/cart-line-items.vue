@@ -42,16 +42,18 @@
     </template>
 
     <template #after-content="{ item }">
-      <VcAlert
-        v-for="(validationError, index) in validationErrorsByItemId[item.id]"
-        :key="index"
-        color="danger"
-        size="sm"
-        variant="outline-dark"
-        icon
-      >
-        {{ validationError.errorMessage }}
-      </VcAlert>
+      <div class="flex flex-col gap-1">
+        <VcAlert
+          v-for="(validationError, index) in validationErrorsByItemId[item.id]"
+          :key="index"
+          color="danger"
+          size="sm"
+          variant="outline-dark"
+          icon
+        >
+          {{ validationError.errorMessage }}
+        </VcAlert>
+      </div>
     </template>
   </VcLineItems>
 </template>

@@ -68,7 +68,9 @@ import { useI18n } from "vue-i18n";
 import { initializePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
-import { BankCardForm, PaymentActionType, useAuthorizeNet } from "@/shared/payment";
+import BankCardForm from "../components/bank-card-form.vue";
+import { useAuthorizeNet } from "../composables/useAuthorizeNet";
+import { PaymentActionType } from "../types";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
