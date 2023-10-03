@@ -55,6 +55,6 @@ export function useRelatedProducts() {
   return {
     fetchRelatedProducts,
     loading: readonly(loading),
-    relatedProducts: computed(() => relatedProducts.value),
+    relatedProducts: computed(() => [...relatedProducts.value]),
   };
 }
