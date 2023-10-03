@@ -14,13 +14,13 @@ const Template: StoryFn<typeof VcProductImage> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  imgSrc: "/static/images/product/product-1.jpg",
+  imgSrc: "/static/images/product/product-1.webp",
   alt: "Product",
 };
 
 export const Lazy = Template.bind({});
 Lazy.args = {
-  imgSrc: "/static/images/product/product-1.jpg",
+  imgSrc: "/static/images/product/product-1.webp",
   alt: "Product",
 };
 
@@ -31,13 +31,13 @@ NoImage.args = {
 
 export const Carousel = Template.bind({});
 Carousel.args = {
-  imgSrc: "/static/images/product/product-1.jpg",
+  imgSrc: "/static/images/product/product-1.webp",
   alt: "Product",
   images: [
-    { url: "/static/images/product/product-1.jpg" },
-    { url: "/static/images/product/product-2.jpg" },
-    { url: "/static/images/product/product-3.jpg" },
-    { url: "/static/images/product/product-4.jpg" },
-    { url: "/static/images/product/product-5.jpg" },
+    { url: "/static/images/product/product-1.webp" },
+    { url: "/static/images/product/product-2.webp" },
+    { url: "/static/images/product/product-3.webp" },
+    { url: "/static/images/product/product-4.webp" },
+    { url: "/static/images/product/product-5.webp" },
   ],
 };
