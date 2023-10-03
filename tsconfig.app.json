@@ -1,7 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["client-app/**/*.ts", "client-app/**/*.vue", "config/*.json", "locales/*.json", "package.json"],
+  "include": [
+    "client-app/**/*.ts",
+    "client-app/**/*.vue",
+    "client-app/shared/static-content/**/*.ts",
+    "config/*.json",
+    "locales/*.json",
+    "package.json"
+  ],
   "exclude": ["artifacts", "assets", "content", "**/*.spec.ts", "**/*.stories.ts", "**/*.js"],
   "compilerOptions": {
     "composite": true,
