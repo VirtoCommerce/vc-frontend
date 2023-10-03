@@ -14,13 +14,13 @@ const Template: StoryFn<typeof VcProductImage> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  imgSrc: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM70C3/1426013445000_1121979.jpg",
+  imgSrc: "/static/images/product/product-1.jpg",
   alt: "Product",
 };
 
 export const Lazy = Template.bind({});
 Lazy.args = {
-  imgSrc: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM70C3/1426013445000_1121979.jpg",
+  imgSrc: "/static/images/product/product-1.jpg",
   alt: "Product",
 };
 
@@ -31,14 +31,13 @@ NoImage.args = {
 
 export const Carousel = Template.bind({});
 Carousel.args = {
-  imgSrc: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM70C3/1426013445000_1121979.jpg",
+  imgSrc: "/static/images/product/product-1.jpg",
   alt: "Product",
   images: [
-    { url: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM65C1/1426013445000_1121978.jpg" },
-    { url: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM65C1/1426014314000_IMG_475304.jpg" },
-    { url: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM65C1/1426014314000_IMG_475305.jpg" },
-    { url: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM65C1/1426014314000_IMG_475306.jpg" },
-    { url: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM65C1/1426014314000_IMG_475307.jpg" },
-    { url: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/VIM65C1/1426014314000_IMG_475308.jpg" },
+    { url: "/static/images/product/product-1.jpg" },
+    { url: "/static/images/product/product-2.jpg" },
+    { url: "/static/images/product/product-3.jpg" },
+    { url: "/static/images/product/product-4.jpg" },
+    { url: "/static/images/product/product-5.jpg" },
   ],
 };
