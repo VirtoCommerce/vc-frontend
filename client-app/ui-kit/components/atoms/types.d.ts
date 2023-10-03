@@ -40,6 +40,7 @@ declare module "@vue/runtime-core" {
     VcPopupSidebar: typeof Components.VcPopupSidebar;
     VcPriceDisplay: typeof Components.VcPriceDisplay;
     VcPriceDisplayCatalog: typeof Components.VcPriceDisplayCatalog;
+    VcProductTitle: typeof Components.VcProductTitle;
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;

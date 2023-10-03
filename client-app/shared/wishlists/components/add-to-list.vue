@@ -1,17 +1,11 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <button type="button" class="block" :disabled="!isAuthenticated" @click="openAddToListModal">
-        <svg
-          :class="[
-            customClass,
-            product.inWishlist
-              ? 'text-[color:var(--color-product-icon-active)]'
-              : 'text-[color:var(--color-product-icon)]',
-          ]"
-        >
-          <use href="/static/images/star.svg#main"></use>
-        </svg>
+      <button type="button" class="flex" :disabled="!isAuthenticated" @click="openAddToListModal">
+        <VcIcon
+          :class="[customClass, product.inWishlist ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
+          name="whishlist"
+        />
       </button>
     </template>
 
@@ -39,7 +33,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  customClass: "w-6 h-6 lg:w-4 lg:h-4",
+  customClass: "w-5 h-5 lg:w-4 lg:h-4",
   tooltipPlacement: "left",
 });
 

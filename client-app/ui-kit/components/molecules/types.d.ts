@@ -27,6 +27,7 @@ declare module "@vue/runtime-core" {
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;
     VcLoaderWithText: typeof Components.VcLoaderWithText;
     VcLayoutWithRightSidebar: typeof Components.VcLayoutWithRightSidebar;
+    VcProductPrice: typeof Components.VcProductPrice;
     VcQuantity: typeof Components.VcQuantity;
     VcSelect: typeof Components.VcSelect;
     VcSteps: typeof Components.VcSteps;
