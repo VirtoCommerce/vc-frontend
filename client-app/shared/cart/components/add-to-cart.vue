@@ -56,7 +56,15 @@
 
       <template #content>
         <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
-          {{ errorMessage }}
+          <QuantityRestrictionsLabel
+            v-if="!errorMessage && (product.minQuantity || product.maxQuantity)"
+            :min-qty="product.minQuantity"
+            :max-qty="product.maxQuantity"
+          />
+
+          <span v-else>
+            {{ errorMessage }}
+          </span>
         </div>
       </template>
     </VcTooltip>
