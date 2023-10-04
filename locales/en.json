@@ -114,7 +114,10 @@
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
-      "ends_to": "End: {0}"
+      "ends_to": "End: {0}",
+      "order_from_to_items": "Order from {0} to {1} items",
+      "min_order_items": "Min order {0} item(s)",
+      "max_order_items": "Max order {0} item(s)"
     },
     "prefixes": {
       "please": "Please"

@@ -33,10 +33,24 @@
     </div>
 
     <!-- Info hint -->
-    <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
+    <VcTooltip
+      v-if="product.minQuantity || product.maxQuantity || errorMessage"
+      class="!block"
+      :x-offset="28"
+      placement="bottom-start"
+      strategy="fixed"
+    >
       <template #trigger>
-        <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
-          {{ errorMessage }}
+        <div :class="{ 'text-[color:var(--color-danger)]': !!errorMessage }" class="pt-0.5 text-11 xs:line-clamp-1">
+          <QuantityRestrictionsLabel
+            v-if="!errorMessage && (product.minQuantity || product.maxQuantity)"
+            :min-qty="product.minQuantity"
+            :max-qty="product.maxQuantity"
+          />
+
+          <span v-else>
+            {{ errorMessage }}
+          </span>
         </div>
       </template>
 
@@ -63,6 +77,7 @@ import { ProductType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { useCart } from "../composables/useCart";
+import QuantityRestrictionsLabel from "./quantity-restrictions-label.vue";
 import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<IEmits>();

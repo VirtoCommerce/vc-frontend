@@ -52,7 +52,7 @@
               :is-in-stock="product.availabilityData?.isInStock"
               :is-digital="isDigital"
               :quantity="product.availabilityData?.availableQuantity"
-            ></VcInStock>
+            />
           </div>
         </div>
       </ProductPriceBlock>
