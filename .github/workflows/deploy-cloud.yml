@@ -88,7 +88,7 @@ jobs:
       run: |
         export PARAMETER_NAME=$(echo "${{ inputs.parameterName }}" | xargs)
         export PARAMETER_VALUE=$(echo "${{ inputs.parameterValue }}" | xargs)
-        vc-build SetHelmParameter -ArgoServer https://${{ env.ARGO_SERVER }} -ArgoAppName ${{ steps.deployConfig.outputs.deployAppName }} -ArgoToken ${{ secrets.VCST_TOKEN }} -HelmParameters $PARAMETER_NAME=$PARAMETER_VALUE
+        vc-build SetEnvParameter -EnvironmentName ${{ steps.deployConfig.outputs.deployAppName }} -CloudToken ${{ secrets.VCST_PLATFORM_TOKEN }} -HelmParameters $PARAMETER_NAME=$PARAMETER_VALUE
 
     - name: Sleep for ${{ env.SLEEP_TIME }}
       run: sleep ${{ env.SLEEP_TIME }}
