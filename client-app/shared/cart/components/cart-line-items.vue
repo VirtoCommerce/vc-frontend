@@ -34,8 +34,8 @@
         <VcInStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
+          :quantity="item.availabilityData?.availableQuantity"
           :is-digital="item.productType === ProductType.Digital"
-          :quantity="item.inStockQuantity"
         />
       </div>
 
