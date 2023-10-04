@@ -7,6 +7,7 @@ import Login from "./login.vue";
 import ProductInfo from "./product-info.vue";
 import ProductsBlock from "./products-block.vue";
 import PromoText from "./promo-text.vue";
+import RelatedProducts from "./related-products.vue";
 import Slider from "./slider.vue";
 import SubscribeForm from "./subscribe-form.vue";
 import TextBlock from "./text-block.vue";
@@ -24,6 +25,7 @@ export const templateBlocks: { [key: string]: Component } = {
   products: ProductsBlock,
   "promo-text": PromoText,
   slider: Slider,
+  "related-products": RelatedProducts,
   "subscribe-form": SubscribeForm,
   "text-block": TextBlock,
   "title-block": TitleBlock,

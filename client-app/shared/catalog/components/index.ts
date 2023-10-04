@@ -6,6 +6,7 @@ export { default as DisplayProducts } from "./display-products.vue";
 export { default as FacetFilter } from "./facet-filter.vue";
 export { default as ProductCardGrid } from "./product-card-grid.vue";
 export { default as ProductCardList } from "./product-card-list.vue";
+export { default as ProductCardRelated } from "./product-card-related.vue";
 export { default as ProductDetails } from "./product-details.vue";
 export { default as ProductPriceBlock } from "./product-price-block.vue";
 export { default as ProductProperty } from "./product-property.vue";

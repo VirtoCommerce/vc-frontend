@@ -41,7 +41,7 @@
       strategy="fixed"
     >
       <template #trigger>
-        <div :class="{ 'text-[color:var(--color-danger)]': !!errorMessage }" class="pt-0.5 text-11 xs:line-clamp-1">
+        <div :class="{ 'text-[color:var(--color-danger)]': !!errorMessage }" class="line-clamp-1 pt-0.5 text-11">
           <QuantityRestrictionsLabel
             v-if="!errorMessage && (product.minQuantity || product.maxQuantity)"
             :min-qty="product.minQuantity"

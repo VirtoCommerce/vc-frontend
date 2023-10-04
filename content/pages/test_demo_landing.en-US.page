@@ -66,7 +66,7 @@
       "type": "call-to-action",
       "id": "calltoactionsNDR",
       "title": "Book a free ecommerce consulting session",
-      "background": null,
+      "background": "bg-gray-800",
       "buttons": [
         {
           "label": "Learn more",
