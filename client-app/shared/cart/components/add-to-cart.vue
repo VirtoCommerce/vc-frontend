@@ -35,7 +35,7 @@
     <!-- Info hint -->
     <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
       <template #trigger>
-        <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
+        <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
           {{ errorMessage }}
         </div>
       </template>

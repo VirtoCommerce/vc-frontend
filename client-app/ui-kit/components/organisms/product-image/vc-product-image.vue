@@ -121,7 +121,7 @@ function slideChanged(swiper: SwiperInstance) {
   }
 
   &__carousel-img {
-    @apply h-full w-full select-none rounded object-cover object-center;
+    @apply aspect-square select-none rounded object-cover object-center;
   }
 
   &__carousel-btn {
@@ -153,7 +153,7 @@ function slideChanged(swiper: SwiperInstance) {
   }
 
   &__img {
-    @apply h-full w-full rounded object-cover object-center;
+    @apply aspect-square rounded object-cover object-center;
   }
 
   &__slot {
