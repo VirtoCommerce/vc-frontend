@@ -1,5 +1,6 @@
-# v1.0.0.vst
-name: VST Theme CI
+# v1.0.1.vcst
+name: Theme CI
+
 on:
   workflow_dispatch:
   push:
@@ -11,7 +12,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
-      - '**/argoDeploy.json'
+      - '**/cloudDeploy.json'
   pull_request:
     branches:
       [master, dev, demo]
@@ -21,7 +22,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
-      - '**/argoDeploy.json'
+      - '**/cloudDeploy.json'
 
 jobs:
   ci:
@@ -125,11 +126,10 @@ jobs:
         id: artifactUrl
         run: |
           if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo ::set-output name=download_url:: ${{ steps.upload-release-asset.outputs.browser_download_url }}
+            echo "download_url=${{ steps.upload-release-asset.outputs.browser_download_url }}" >> $GITHUB_OUTPUT
           else
-            echo ::set-output name=download_url::${{ steps.publish.outputs.blobUrl }}
+            echo "download_url=${{ steps.publish.outputs.blobUrl }}" >> $GITHUB_OUTPUT
           fi;
-
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
@@ -147,7 +147,7 @@ jobs:
       - name: Push Build Info to Jira
         if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
-        uses: HighwayThree/jira-upload-build-info@master
+        uses: VirtoCommerce/jira-upload-build-info@master
         with:
           cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
           client-id: '${{ secrets.CLIENT_ID }}'
@@ -169,26 +169,13 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
-  deploy:
+  deploy-cloud:
     if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
     needs: ci
-    runs-on: ubuntu-latest
-    env:
-      CONFIG_PATH: '.deployment/storefront-app/argoDeploy.json'
-    steps:
-
-      - name: Set deployment environment
-        id: deployEnv
-        run: |
-          if [ '${{ github.ref }}' = 'refs/heads/demo' ] || [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo ::set-output name=NAME::prod
-          else
-            echo ::set-output name=NAME::dev
-          fi;
-
-      - name: Invoke Module deployment workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: VC deployment
-          token: ${{ secrets.REPO_TOKEN }}
-          inputs: '{ "artifactUrl": "${{ needs.ci.outputs.artifactUrl }}", "deployEnvironment": "${{  steps.deployEnv.outputs.NAME }}", "deployConfigPath": "${{ env.CONFIG_PATH }}", "jiraKeys":"${{ needs.ci.outputs.jira-keys }}" }'
+    uses: ./.github/workflows/deploy-cloud.yml
+    with:
+      parameterName: 'themes.B2B-store'
+      parameterValue: ${{ needs.ci.outputs.artifactUrl }}
+      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+    secrets: inherit

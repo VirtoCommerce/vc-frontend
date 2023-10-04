@@ -1,0 +1,29 @@
+{
+  "artifactKey": "vc-theme-b2b-vue",
+  "deployRepo": "vc-deploy-dev",
+  "cmPath": "backend/packages.json",
+  "dev": {
+      "deployAppName": "vcst-dev",
+      "deployBranch": "vcst-dev",
+      "environmentId": "dev",
+      "environmentName": "Development",
+      "environmentType": "staging",
+      "environmentUrl": "https://vcst-dev-storefront.paas.govirto.com/"
+  },
+  "qa": {
+      "deployAppName": "vcst-qa",
+      "deployBranch": "vcst-qa",
+      "environmentId": "qa",
+      "environmentName": "QA",
+      "environmentType": "testing",
+      "environmentUrl": "https://vcst-qa-storefront.paas.govirto.com/"
+  },
+  "prod": {
+      "deployAppName": "vcst-demo",
+      "deployBranch": "vcst-demo",
+      "environmentId": "prod",
+      "environmentName": "Demo",
+      "environmentType": "production",
+      "environmentUrl": "https://vcst-demo-storefront.paas.govirto.com/"
+  }
+}
