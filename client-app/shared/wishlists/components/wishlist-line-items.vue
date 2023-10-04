@@ -23,7 +23,6 @@
         <VcInStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
-          :availability-data="item.availabilityData"
           :quantity="item.availabilityData?.availableQuantity"
           :is-digital="item.productType === ProductType.Digital"
         />
