@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": ["*.ts", "scripts/**"],
+  "include": ["client-app/router/routes", "*.ts", "scripts/*.ts", "package.json"],
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node", "vite/client"]
+    "types": ["node", "@types/archiver", "vite/client"]
   }
 }
