@@ -1,66 +1,78 @@
-# v1.3.1
-
-name: VC deployment
+# v1.0.0.vcst
+name: VC cloud deployment
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      artifactUrl:
-        description: 'Full link to artifact docker image or artifact download url'
+      argoServer:
+        required: false
+        default: 'argo.virtocommerce.cloud'
+        type: string
+      parameterName:
+        description: 'Helm parameter name'
         required: true
-      deployEnvironment:
-        description: 'Deployment environment type. Allowed values: dev, qa, prod'
+        type: string
+      parameterValue:
+        description: 'Helm parameter value'
         required: true
+        type: string
+      environmentId:
+        description: 'Environment ID (dev, qa, prod)'
         default: 'dev'
-      deployConfigPath:
-        description: 'Full path to argoDeploy.json'
-        required: true
-        default: 'argoDeploy.json'
+        required: false
+        type: string
       jiraKeys:
         description: 'Deployed artifact Jira keys (for cycle time report)'
         required: false
         default: ''
+        type: string
+  workflow_dispatch:
+    inputs:
+      argoServer:
+        required: false
+        default: 'argo.virtocommerce.cloud'
+        type: string
+      parameterName:
+        description: 'Helm parameter name'
+        required: true
+        type: string
+      parameterValue:
+        description: 'Helm parameter value'
+        required: true
+        type: string
+      environmentId:
+        description: 'Environment ID (dev, qa, prod)'
+        default: 'dev'
+        required: false
+        type: string
+      jiraKeys:
+        description: 'Deployed artifact Jira keys (for cycle time report)'
+        required: false
+        default: ''
+        type: string
 
 jobs:
-  cd:
+  deploy:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-      CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+      ARGO_SERVER: ${{ inputs.argoServer }}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
-      SLEEP_TIME: '5m'
-      ARGO_SERVER: argo.govirto.com,
-      APP: ""
+      CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+      DEPLOY_STATE: ''
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      SLEEP_TIME: '3m'
 
     steps:
-
-    - name: Install vc-build
-      run: |
-        dotnet tool install --global VirtoCommerce.GlobalTool
-
-    - name: Set Output
-      id: app-name
-      run: |
-          if [ ${{ github.ref }} == 'refs/heads/master' ]; then
-            echo "IS master branch"
-            echo "APP=vcst-demo" >> $GITHUB_ENV
-          elif [ ${{ github.ref }} == 'refs/heads/dev' ]; then
-            echo "IS dev branch"
-            echo "APP=vcst-dev" >> $GITHUB_ENV
-          elif [ ${{ github.ref }} == 'refs/heads/demo' ]; then
-            echo "IS demo branch"
-            echo "APP=vcst-demo" >> $GITHUB_ENV
-          fi
 
     - name: Read deployment config
       uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
       id: deployConfig
       with:
-        envName: ${{ github.event.inputs.deployEnvironment }}
-        deployConfigPath: ${{ github.event.inputs.deployConfigPath }}
+        envName: ${{ inputs.environmentId }}
+        deployConfigPath: .deployment/theme/cloudDeploy.json
 
     - name: Start deployment
-      uses: bobheadxi/deployments@v1
+      uses: bobheadxi/deployments@main
       id: deployment
       with:
         step: start
@@ -68,10 +80,28 @@ jobs:
         env: ${{ steps.deployConfig.outputs.environmentName }}
         override: true
 
+    - name: Install vc-build
+      run: |
+        dotnet tool install --global VirtoCommerce.GlobalTool --version 3.16.0
+
     - name: Update environment
       run: |
-        export ARTIFACT=$(echo "${{ github.event.inputs.artifactUrl }}" | xargs)
-        vc-build SetHelmParameter -ArgoServer https://argo.virtocommerce.cloud -ArgoAppName ${{ env.APP }} -ArgoToken ${{ secrets.VCST_TOKEN }} -HelmParameters themes.B2B-store=$ARTIFACT
+        export PARAMETER_NAME=$(echo "${{ inputs.parameterName }}" | xargs)
+        export PARAMETER_VALUE=$(echo "${{ inputs.parameterValue }}" | xargs)
+        vc-build SetEnvParameter -EnvironmentName ${{ steps.deployConfig.outputs.deployAppName }} -CloudToken ${{ secrets.VCST_PLATFORM_TOKEN }} -HelmParameters $PARAMETER_NAME=$PARAMETER_VALUE
+
+    - name: Sleep for ${{ env.SLEEP_TIME }}
+      run: sleep ${{ env.SLEEP_TIME }}
+      shell: bash
+
+    - name: Wait for environment is up
+      timeout-minutes: 5
+      uses: VirtoCommerce/vc-github-actions/vc-argocd-cli@master
+      with:
+        server: ${{env.ARGO_SERVER}}
+        username: ${{ secrets.VIRTOCLOUD_LOGIN }}
+        password: ${{ secrets.VIRTOCLOUD_PASSWORD }}
+        command: app wait ${{ steps.deployConfig.outputs.deployAppName }}
 
     - name: DEPLOY_STATE::successful
       if: success()
@@ -82,19 +112,19 @@ jobs:
       run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
 
     - name: Update GitHub deployment status
-      uses: bobheadxi/deployments@v1
+      uses: bobheadxi/deployments@main
       if: always()
       with:
         step: finish
         token: ${{ secrets.GITHUB_TOKEN }}
-        env: ${{ steps.deployConfig.outputs.environmentName }}
         status: ${{ job.status }}
+        env: ${{ steps.deployment.outputs.env }}
         deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
     - name: Push Deployment Info to Jira
       if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && github.event.inputs.jiraKeys != '' && always() }}
       id: push_deployment_info_to_jira
-      uses: HighwayThree/jira-upload-deployment-info@master
+      uses: VirtoCommerce/jira-upload-deployment-info@master
       env:
         CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
         CLIENT_ID: ${{secrets.CLIENT_ID}}
@@ -108,6 +138,7 @@ jobs:
         issue-keys: ${{ github.event.inputs.jiraKeys }}
         display-name: ${{ steps.deployConfig.outputs.deployAppName }}
         url: ${{ steps.deployConfig.outputs.environmentUrl }}
+        label: ${{ steps.deployConfig.outputs.environmentName }}
         description: 'Deployment to the ${{ steps.deployConfig.outputs.environmentName }} environment'
         last-updated: '${{github.event.head_commit.timestamp}}'
         state: '${{ env.DEPLOY_STATE }}'
