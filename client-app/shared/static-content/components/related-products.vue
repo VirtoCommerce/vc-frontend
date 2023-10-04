@@ -3,7 +3,7 @@
   <div v-show="relatedProducts.length" class="mt-5 flex flex-col print:hidden lg:flex-row">
     <div class="-mx-5 print:mx-0 print:grow lg:mx-0 lg:w-full xl:w-9/12 xl:pe-8">
       <VcSectionWidget :title="$t('pages.product.related_product_section_title')" icon="cube">
-        <div v-if="isMobile" class="flex flex-wrap items-stretch gap-x-7 gap-y-8 px-2">
+        <div v-if="isMobile" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4 px-2">
           <ProductCardRelated
             v-for="(item, index) in relatedProducts.slice(0, 4)"
             :key="index"

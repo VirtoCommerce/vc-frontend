@@ -30,6 +30,8 @@ query SearchRelatedProducts(
             isAvailable
             isInStock
           }
+          minQuantity
+          maxQuantity
           inWishlist
           price {
             actual {
