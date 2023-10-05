@@ -1,7 +1,22 @@
 <template>
   <VcLineItems :items="items" removable disable-subtotal @remove:items="$emit('remove:items', $event)">
+    <template #header-product>
+      <div class="text-center">
+        {{ $t("common.labels.product") }}
+      </div>
+    </template>
+    <template #header-properties>
+      <div class="text-center">
+        {{ $t("common.labels.properties") }}
+      </div>
+    </template>
+    <template #header-price>
+      <div class="text-center">
+        {{ $t("common.labels.price_per_item") }}
+      </div>
+    </template>
     <template #titles>
-      <div class="ps-2">
+      <div class="w-full ps-2 text-center">
         {{ $t("common.labels.quantity") }}
       </div>
     </template>
