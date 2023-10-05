@@ -114,7 +114,7 @@ function slideChanged(swiper: SwiperInstance) {
 
 <style lang="scss">
 .vc-product-image {
-  @apply relative aspect-square border border-[--color-neutral-200] rounded;
+  @apply relative aspect-square w-full border border-[--color-neutral-200] rounded;
 
   &__carousel {
     @apply h-full w-full;
