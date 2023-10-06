@@ -122,7 +122,7 @@ jobs:
         deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
     - name: Push Deployment Info to Jira
-      if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && github.event.inputs.jiraKeys != '' && always() }}
+      if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && inputs.jiraKeys != '' && always() }}
       id: push_deployment_info_to_jira
       uses: VirtoCommerce/jira-upload-deployment-info@master
       env:
@@ -135,7 +135,7 @@ jobs:
         client-secret: ${{ secrets.CLIENT_SECRET }}
         deployment-sequence-number: ${{ github.run_id }}
         update-sequence-number: ${{ github.run_id }}
-        issue-keys: ${{ github.event.inputs.jiraKeys }}
+        issue-keys: ${{ inputs.jiraKeys }}
         display-name: ${{ steps.deployConfig.outputs.deployAppName }}
         url: ${{ steps.deployConfig.outputs.environmentUrl }}
         label: ${{ steps.deployConfig.outputs.environmentName }}
