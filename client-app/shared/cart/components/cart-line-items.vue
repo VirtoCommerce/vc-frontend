@@ -32,9 +32,10 @@
         />
 
         <VcInStock
-          :quantity="item.inStockQuantity"
+          :is-in-stock="item.availabilityData?.isInStock"
+          :is-available="!item.deleted"
+          :quantity="item.availabilityData?.availableQuantity"
           :is-digital="item.productType === ProductType.Digital"
-          is-in-stock
         />
       </div>
 

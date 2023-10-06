@@ -4,7 +4,6 @@ import type { StorybookConfig } from "@storybook/vue3-vite";
 
 const storybookConfig: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
-  staticDirs: ["../client-app/public"],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
@@ -36,6 +35,7 @@ const storybookConfig: StorybookConfig = {
       resolve(__dirname, "../vite.config.ts"),
     ))!;
     return mergeConfig(storybookViteConfig, {
+      mode: "development",
       envPrefix: config.envPrefix,
       plugins: [splitVendorChunkPlugin()],
       resolve: config.resolve,

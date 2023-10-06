@@ -2,14 +2,14 @@
   <form @submit="onSubmit">
     <!-- Errors block -->
     <VcAlert v-if="error" class="mb-4" color="danger" size="sm" variant="outline-dark" icon>
-      <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT_ERROR_CODE">
-        {{ $t("shared.account.sign_in_form.user_is_locked_out_alert") }}
+      <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT">
+        {{ errorMessages.user_is_locked_out }}
         <ContactAdministratorLink />.
       </span>
 
       <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="flex place-items-center justify-between">
         <span>
-          {{ $t("common.messages.password_expired") }}
+          {{ errorMessages.password_expired }}
         </span>
 
         <!-- Keep the A tag to reiinitialize the app -->
@@ -19,7 +19,7 @@
       </span>
 
       <span v-else>
-        {{ $t("shared.account.sign_in_form.email_or_password_incorrect_alert") }}
+        {{ errorMessage }}
       </span>
     </VcAlert>
 
@@ -77,7 +77,8 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { getMe } from "@/core/api/graphql";
 import { mergeCart } from "@/core/api/graphql/cart";
@@ -107,6 +108,8 @@ const schema = toTypedSchema(
     password: string().required(),
   }),
 );
+
+const { t } = useI18n();
 
 const { errors, handleSubmit, values } = useForm({
   validationSchema: schema,
@@ -144,5 +147,24 @@ const onSubmit = handleSubmit(async () => {
 
 watch(values, () => {
   error.value = undefined;
+});
+
+const errorMessages = computed<{ [key in IdentityErrors]: string }>(() => ({
+  [IdentityErrors.LOGIN_FAILED]: t("shared.account.sign_in_form.errors.login_failed"),
+  [IdentityErrors.EMAIL_VERIFICATION_REQUIRED]: t("shared.account.sign_in_form.errors.email_verification_is_required"),
+  [IdentityErrors.USER_IS_TEMPORARY_LOCKED_OUT]: t("shared.account.sign_in_form.errors.user_is_temporary_locked_out"),
+  [IdentityErrors.USER_IS_LOCKED_OUT]: t("shared.account.sign_in_form.errors.user_is_locked_out"),
+  [IdentityErrors.USER_CANNOT_LOGIN_IN_STORE]: t("shared.account.sign_in_form.errors.user_cannot_login_in_store"),
+  [IdentityErrors.PASSWORD_EXPIRED]: t("shared.account.sign_in_form.errors.password_expired"),
+  [IdentityErrors.USER_NOT_FOUND]: t("shared.account.sign_in_form.errors.user_not_found"),
+}));
+const errorMessage = computed(() => {
+  const defaultMessage = t("shared.account.sign_in_form.errors.default");
+  const code = error?.value?.code as IdentityErrors;
+
+  if (code && errorMessages.value[code]) {
+    return errorMessages.value[code];
+  }
+  return defaultMessage;
 });
 </script>
