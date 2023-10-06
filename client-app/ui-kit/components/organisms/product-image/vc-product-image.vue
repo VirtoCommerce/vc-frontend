@@ -114,14 +114,14 @@ function slideChanged(swiper: SwiperInstance) {
 
 <style lang="scss">
 .vc-product-image {
-  @apply relative aspect-square w-full border border-[--color-neutral-200] rounded;
+  @apply relative max-w-full aspect-square border border-[--color-neutral-200] rounded;
 
   &__carousel {
     @apply h-full w-full;
   }
 
   &__carousel-img {
-    @apply aspect-square select-none rounded object-cover object-center;
+    @apply w-full aspect-square select-none rounded object-contain object-center;
   }
 
   &__carousel-btn {
@@ -153,7 +153,7 @@ function slideChanged(swiper: SwiperInstance) {
   }
 
   &__img {
-    @apply aspect-square rounded object-cover object-center;
+    @apply w-full aspect-square rounded object-contain object-center;
   }
 
   &__slot {
