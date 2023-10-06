@@ -10,21 +10,13 @@
       />
 
       <div class="vc-line-items__product">
-        <slot name="header-product">
-          {{ $t("common.labels.product") }}
-        </slot>
+        {{ $t("common.labels.product") }}
       </div>
 
-      <div class="vc-line-items__properties">
-        <slot name="header-properties">
-          {{ $t("common.labels.properties") }}
-        </slot>
-      </div>
+      <div class="vc-line-items__properties">{{ $t("common.labels.properties") }}</div>
 
       <div class="vc-line-items__price">
-        <slot name="header-price">
-          {{ $t("common.labels.price_per_item") }}
-        </slot>
+        {{ $t("common.labels.price_per_item") }}
       </div>
 
       <div class="vc-line-items__slot">
