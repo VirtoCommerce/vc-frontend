@@ -189,7 +189,8 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
 const quoteChanged = computed<boolean>(
   () =>
     !isEqual(originalQuote.value, quote.value) ||
-    (comment.value && originalQuote.value?.comment !== comment.value && quoteItemsValid.value) ||
+    originalQuote.value?.comment !== comment.value ||
+    quoteItemsValid.value ||
     (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value),
 );
 const quoteItemsValid = computed<boolean>(
