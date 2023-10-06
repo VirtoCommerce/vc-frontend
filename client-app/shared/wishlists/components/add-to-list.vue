@@ -10,7 +10,7 @@
     </template>
 
     <template #content>
-      <div class="rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+      <div class="max-w-[8rem] rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y xs:max-w-[10rem]">
         {{ tooltipText }}
       </div>
     </template>
