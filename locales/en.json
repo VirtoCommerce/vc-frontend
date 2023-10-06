@@ -114,10 +114,7 @@
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
-      "ends_to": "End: {0}",
-      "order_from_to_items": "Order from {0} to {1} items",
-      "min_order_items": "Min order {0} item(s)",
-      "max_order_items": "Max order {0} item(s)"
+      "ends_to": "End: {0}"
     },
     "prefixes": {
       "please": "Please"
@@ -477,8 +474,9 @@
           "in_cart": "in Cart",
           "already_in_cart_message": "{0} has already been added to the cart",
           "enter_correct_number_message": "Please enter a valid number",
-          "min": "The minimum quantity is {0} product(s)",
-          "max": "The maximum quantity is {0} product(s)"
+          "min": "Min order {0} item(s)",
+          "max": "Max order {0} item(s)",
+          "min_max": "Order from {0} to {1} items"
         }
       },
       "products_section": {
