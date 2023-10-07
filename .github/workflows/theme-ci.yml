@@ -1,5 +1,6 @@
-# v1.0.0.vst
-name: VST Theme CI
+# v1.1.0.vcst
+name: Theme CI
+
 on:
   workflow_dispatch:
   push:
@@ -11,7 +12,7 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
-      - '**/argoDeploy.json'
+      - '**/cloudDeploy.json'
   pull_request:
     branches:
       [master, dev, demo]
@@ -21,19 +22,23 @@ on:
       - 'build/**'
       - 'README.md'
       - 'LICENSE'
-      - '**/argoDeploy.json'
+      - '**/cloudDeploy.json'
 
 jobs:
   ci:
+    if: ${{ github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
     runs-on: ubuntu-latest
     env:
+      FORCE_COLOR: true
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
       SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
-      VERSION_SUFFIX: ""
+      VERSION_SUFFIX: ''
       BUILD_STATE: 'failed'
       RELEASE_STATUS: 'false'
     outputs:
@@ -41,6 +46,11 @@ jobs:
       jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
 
     steps:
+
+      - name: Set up Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
       - name: Set RELEASE_STATUS
         if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
@@ -51,54 +61,61 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
         id: image
-
-      - name: Set release variables
-        run: |
-          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
-
-      - name: Set release-alpha variables
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          echo "VERSION_SUFFIX=${{ steps.image.outputs.fullSuffix }}" >> $GITHUB_ENV
-
-      - name: Set PR variables
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
 
       - name: Get changelog
         id: changelog
         uses: VirtoCommerce/vc-github-actions/changelog-generator@master
 
-      - name: Build
-        id: build
-        uses: VirtoCommerce/vc-github-actions/build-vue-theme@master
-        with:
-          versionSuffix:  ${{ env.VERSION_SUFFIX }}
+      - name: Set release VERSION_SUFFIX
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
+
+      - name: Set release-alpha VERSION_SUFFIX
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.fullSuffix }}" >> $GITHUB_ENV
+
+      - name: Set PR VERSION_SUFFIX
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          yarn install
         env:
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
-      - name: Publish
+      - name: Build
+        run: |
+          yarn build
+
+      - name: BUILD_STATE::successful
+        if: success()
+        run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
+
+      - name: Packaging
+        run: |
+          yarn compress ${{ github.event.repository.name }}-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+
+      - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
-        id: publish
-        uses: VirtoCommerce/vc-github-actions/publish-theme@master
+        id: blobRelease
+        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
         with:
-          artifactPath: ${{ steps.build.outputs.artifactPath }}
-          artifactName: ${{ steps.build.outputs.artifactName }}
+          blobSAS: ${{ secrets.BLOB_TOKEN }}
+          blobUrl: ${{ vars.BLOB_URL }}
 
       - name: Add link to PR
         if: ${{ github.event_name == 'pull_request' }}
         uses: VirtoCommerce/vc-github-actions/publish-artifact-link@master
         with:
-          artifactUrl: ${{ steps.publish.outputs.blobUrl }}
+          artifactUrl: ${{ steps.blobRelease.outputs.packageUrl }}
+          repoOrg: ${{ github.repository_owner }}
+          downloadComment: 'Artifact URL:'
 
       - name: Create Release
         if: ${{ github.ref == 'refs/heads/master' }}
@@ -117,19 +134,18 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.build.outputs.artifactPath }}
-          asset_name: ${{ steps.build.outputs.artifactName }}
+          asset_path: ${{ steps.blobRelease.outputs.packageUrl }}
+          asset_name: ${{ steps.blobRelease.outputs.blobId }}
           asset_content_type: application/zip
 
-      - name: Set download artifactUrl
+      - name: Set artifactUrl value
         id: artifactUrl
         run: |
           if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo ::set-output name=download_url:: ${{ steps.upload-release-asset.outputs.browser_download_url }}
+            echo "download_url=${{ steps.upload-release-asset.outputs.browser_download_url }}" >> $GITHUB_OUTPUT
           else
-            echo ::set-output name=download_url::${{ steps.publish.outputs.blobUrl }}
+            echo "download_url=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
           fi;
-
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
@@ -140,14 +156,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: BUILD_STATE::successful
-        if: success()
-        run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
-
       - name: Push Build Info to Jira
         if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
-        uses: HighwayThree/jira-upload-build-info@master
+        uses: VirtoCommerce/jira-upload-build-info@master
         with:
           cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
           client-id: '${{ secrets.CLIENT_ID }}'
@@ -169,26 +181,13 @@ jobs:
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
-  deploy:
+  deploy-cloud:
     if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
     needs: ci
-    runs-on: ubuntu-latest
-    env:
-      CONFIG_PATH: '.deployment/storefront-app/argoDeploy.json'
-    steps:
-
-      - name: Set deployment environment
-        id: deployEnv
-        run: |
-          if [ '${{ github.ref }}' = 'refs/heads/demo' ] || [ '${{ github.ref }}' = 'refs/heads/master' ]; then
-            echo ::set-output name=NAME::prod
-          else
-            echo ::set-output name=NAME::dev
-          fi;
-
-      - name: Invoke Module deployment workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: VC deployment
-          token: ${{ secrets.REPO_TOKEN }}
-          inputs: '{ "artifactUrl": "${{ needs.ci.outputs.artifactUrl }}", "deployEnvironment": "${{  steps.deployEnv.outputs.NAME }}", "deployConfigPath": "${{ env.CONFIG_PATH }}", "jiraKeys":"${{ needs.ci.outputs.jira-keys }}" }'
+    uses: ./.github/workflows/deploy-cloud.yml
+    with:
+      parameterName: 'themes.B2B-store'
+      parameterValue: ${{ needs.ci.outputs.artifactUrl }}
+      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+    secrets: inherit

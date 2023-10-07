@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/shared";
+import { computedEager } from "@vueuse/core";
 import type { PriceType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 

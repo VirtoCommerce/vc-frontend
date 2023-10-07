@@ -87,11 +87,11 @@
             class="text-center text-2xl font-bold text-white lg:text-3xl"
           ></div>
           <div class="flex w-full justify-center gap-6">
-            <VcButton class="flex-1 lg:flex-none">
+            <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com">
               {{ $t("pages.demo_landing.booking_block.first_button") }}
             </VcButton>
 
-            <VcButton class="flex-1 lg:flex-none">
+            <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com">
               {{ $t("pages.demo_landing.booking_block.second_button") }}
             </VcButton>
           </div>
