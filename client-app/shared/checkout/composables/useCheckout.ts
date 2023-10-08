@@ -314,13 +314,13 @@ export function useCheckout() {
     }
   }
 
-  async function onDeliveryAddressChange() {
+  function onDeliveryAddressChange() {
     addresses.value.length
       ? openSelectAddressModal(AddressType.Shipping)
       : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
   }
 
-  async function onBillingAddressChange() {
+  function onBillingAddressChange() {
     addresses.value.length
       ? openSelectAddressModal(AddressType.Billing)
       : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
@@ -410,7 +410,7 @@ export function useCheckout() {
     await prepareOrderData();
 
     try {
-      placedOrder.value = await _createOrderFromCart(cart.value!.id!);
+      placedOrder.value = await _createOrderFromCart(cart.value!.id);
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }

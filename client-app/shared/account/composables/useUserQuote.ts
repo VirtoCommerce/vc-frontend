@@ -94,7 +94,7 @@ export function useUserQuote() {
 
       await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });
     } catch (e) {
-      Logger.error(`${useUserQuote.name}.${updateAddresses}`, e);
+      Logger.error(`${useUserQuote.name}.${updateAddresses.name}`, e);
       throw e;
     } finally {
       fetching.value = false;

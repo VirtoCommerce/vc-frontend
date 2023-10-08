@@ -62,7 +62,7 @@ fetchMenus();
  * Except for pages that load a full cart.
  */
 if (!pagesWithFullCartLoad.has(route.name!)) {
-  fetchShortCart();
+  void fetchShortCart();
 }
 
 onMounted(setupBroadcastGlobalListeners);

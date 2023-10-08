@@ -234,7 +234,7 @@ const columns = computed<ITableColumn[]>(() =>
       ],
 );
 
-const onPageChange = async (newPage: number) => {
+const onPageChange = (newPage: number) => {
   page.value = newPage;
 };
 

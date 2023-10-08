@@ -1,6 +1,6 @@
-import { green, red } from "chalk";
 import { writeFile } from "fs/promises";
 import { resolve } from "path";
+import { green, red } from "chalk";
 import { createRouterMatcher } from "vue-router";
 import { mainRoutes } from "../client-app/router/routes";
 
@@ -25,21 +25,18 @@ async function createFile(): Promise<void> {
   console.log("Routes (regular expression):", routes);
 
   await writeFile(filePath, fileContent);
- }
+}
 
- try {
+try {
   console.log("Generating routes...");
 
   await createFile();
 
   console.log(green("Routes successfully generated!"));
-}
-catch (error) {
+} catch (error) {
   console.error(red("Routes generation failed!"));
   throw error;
-}
-finally {
+} finally {
   // Because of dependency hell we need to exit the process manually
   process.exit();
 }
-

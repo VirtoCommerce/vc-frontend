@@ -1,3 +1,4 @@
+import { getMoney } from "@/ui-kit/mocks";
 import { VcPriceDisplay } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
@@ -14,7 +15,5 @@ const Template: StoryFn<typeof VcPriceDisplay> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  value: {
-    formattedAmount: "$1000.99",
-  },
+  value: getMoney(1000.99),
 };

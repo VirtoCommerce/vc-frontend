@@ -5450,6 +5450,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prop-types@npm:*":
+  version: 15.7.8
+  resolution: "@types/prop-types@npm:15.7.8"
+  checksum: 61dfad79da8b1081c450bab83b77935df487ae1cdd4660ec7df6be8e74725c15fa45cf486ce057addc956ca4ae78300b97091e2a25061133d1b9a1440bc896ae
+  languageName: node
+  linkType: hard
+
 "@types/qs@npm:*, @types/qs@npm:^6.9.5":
   version: 6.9.8
   resolution: "@types/qs@npm:6.9.8"
@@ -5464,10 +5471,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@file:stub/@types/react::locator=vc-theme-b2b-vue%40workspace%3A.":
-  version: 0.0.0
-  resolution: "@types/react@file:stub/@types/react#stub/@types/react::hash=361817&locator=vc-theme-b2b-vue%40workspace%3A."
-  checksum: 2638969f6ce7788d5d3d68f6d1028ceb8ee4cf1d1b5a5bd285cc8b64def457768014e40eeab8bb8e3162e0f9281db6ba30faf436a38333d4accedd7ac036542b
+"@types/react@npm:>=16":
+  version: 18.2.25
+  resolution: "@types/react@npm:18.2.25"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 177515cd44135d56191ec6c5c10edd490c96c175d37624d9c37bc2007c3abcf6cc2d2137d2a073d692cdc5129d5d5785bd60a6ddd315f695da5d8b989fa2afc5
+  languageName: node
+  linkType: hard
+
+"@types/scheduler@npm:*":
+  version: 0.16.4
+  resolution: "@types/scheduler@npm:0.16.4"
+  checksum: a57b0f10da1b021e6bd5eeef8a1917dd3b08a8715bd8029e2ded2096d8f091bb1bb1fef2d66e139588a983c4bfbad29b59e48011141725fa83c76e986e1257d7
   languageName: node
   linkType: hard
 
@@ -7906,7 +7924,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.1.1":
+"csstype@npm:^3.0.2, csstype@npm:^3.1.1":
   version: 3.1.2
   resolution: "csstype@npm:3.1.2"
   checksum: e1a52e6c25c1314d6beef5168da704ab29c5186b877c07d822bd0806717d9a265e8493a2e35ca7e68d0f5d472d43fac1cdce70fd79fd0853dff81f3028d857b5
@@ -15960,6 +15978,7 @@ __metadata:
     maska: ~1.5.2
     moment: ^2.29.4
     postcss: ^8.4.31
+    postcss-import: ^15.1.0
     prettier: ^3.0.3
     react: ^18.2.0
     react-dom: ^18.2.0

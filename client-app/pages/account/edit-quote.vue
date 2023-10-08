@@ -166,7 +166,7 @@ const {
 const notifications = useNotifications();
 
 usePageHead({
-  title: t("pages.account.quote_details.title", [quote!.value?.number]),
+  title: t("pages.account.quote_details.title", [quote.value?.number]),
 });
 
 const breadcrumbs = useBreadcrumbs(() => [

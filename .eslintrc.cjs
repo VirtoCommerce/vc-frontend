@@ -1,3 +1,4 @@
+/* eslint-env node */
 require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
@@ -6,9 +7,9 @@ module.exports = {
     node: true,
   },
   extends: [
-    "eslint:recommended",
+    "eslint:recommended", // See rules: https://eslint.org/docs/latest/rules/
     "plugin:vue/vue3-recommended", // See rules: https://eslint.vuejs.org/rules
-    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-type-checked", // See rules: https://typescript-eslint.io/rules/
     "@vue/eslint-config-typescript/recommended",
     "@vue/eslint-config-prettier",
     "@vue/prettier",
@@ -24,7 +25,9 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     parser: "@typescript-eslint/parser",
+    project: ["./tsconfig.app.json", "./tsconfig.node.json"],
     sourceType: "module",
+    tsconfigRootDir: __dirname,
   },
   plugins: [
     "vue",
@@ -40,6 +43,7 @@ module.exports = {
      * Errors
      */
     "@typescript-eslint/no-shadow": "error",
+    "curly": "error",
     "import/no-unresolved": "error",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
     "vue/block-lang": ["error", { script: { lang: "ts" } }],
@@ -67,13 +71,20 @@ module.exports = {
     /**
      * Warnings
      */
-    "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/consistent-type-imports": ["warn", { disallowTypeAnnotations: false }],
     "@typescript-eslint/naming-convention": [
       "warn",
       { selector: "interface", format: ["PascalCase"], prefix: ["I"] },
       { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
     ],
+    "@typescript-eslint/no-floating-promises": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-misused-promises": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unsafe-argument": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unsafe-assignment": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unsafe-call": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unsafe-enum-comparison": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unsafe-member-access": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unsafe-return": "warn", // TODO: Switch to error
     "import/consistent-type-specifier-style": "warn",
     "import/no-cycle": "warn", // TODO: Switch to error
     "import/order": [
@@ -109,7 +120,7 @@ module.exports = {
     "vue/component-tags-order": [
       "warn",
       { order: ["template", "script:not([setup])", "script[setup]", "style:not([scoped])", "style[scoped]"] },
-    ],
+    ], // TODO: Deprecated, but still used in recommended. Switch to block-order, when recommended will switch.
     "vue/custom-event-name-casing": [
       "warn",
       "camelCase",
@@ -124,7 +135,7 @@ module.exports = {
     "vue/no-multiple-objects-in-class": "warn",
     "vue/no-required-prop-with-default": "warn",
     "vue/no-static-inline-styles": "warn",
-    "vue/no-setup-props-destructure": "warn", // TODO: Remove (switch to error) after refactoring
+    "vue/no-setup-props-reactivity-loss": "warn", // TODO: Remove (switch to error) after refactoring
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
     // TODO: enable "vue/padding-line-between-tags": "warn",
@@ -137,13 +148,13 @@ module.exports = {
     /**
      * Disabled
      */
-    "@typescript-eslint/no-non-null-assertion": "off",
-    curly: "error",
-    "no-prototype-builtins": "off",
+    "@typescript-eslint/no-non-null-assertion": "off", // TODO: Remove (switch to error) after XAPI types refactoring
+    "@typescript-eslint/no-redundant-type-constituents": "off", // TODO: Investigate why there are false positives
+    "@typescript-eslint/unbound-method": "off", // TODO: Investigate why there are false positives
     "sonarjs/no-duplicate-string": "off",
     "tailwindcss/no-custom-classname": "off",
     "vue/multi-word-component-names": "off",
-    "vue/no-dupe-keys": "off", // TODO: Remove (switch to error). Does not work correctly with <script setup>
+    //"vue/no-dupe-keys": "off", // TODO: Remove (switch to error). Does not work correctly with <script setup>
     "vue/require-default-prop": "off",
     "vuejs-accessibility/form-control-has-label": "off",
     "vuejs-accessibility/label-has-for": "off",
@@ -158,7 +169,7 @@ module.exports = {
     },
     {
       files: ["*.ts"],
-      excludedFiles: ["**/components/**/index.ts", "*.stories.ts", "shims-*.d.ts"],
+      excludedFiles: ["./*.js", "./*.ts", "**/components/**/index.ts", "*.stories.ts", "shims-*.d.ts"],
       rules: {
         "no-restricted-exports": [
           "warn",
@@ -183,6 +194,12 @@ module.exports = {
         ],
         "sort-exports/sort-exports": "warn",
       }
+    },
+    {
+      files: ["scripts/*"],
+      rules: {
+        "no-console": "off",
+      }
     }
   ],
   globals: {
@@ -199,7 +216,7 @@ module.exports = {
     "import/resolver": {
       typescript: {
         alwaysTryTypes: true,
-        project: "./tsconfig.app.json",
+        project: ["./tsconfig.app.json", "./tsconfig.node.json"],
       },
       node: true,
     },

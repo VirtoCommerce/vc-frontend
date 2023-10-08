@@ -199,7 +199,7 @@ async function addAllListItemsToCart(): Promise<void> {
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id!,
-    items: wishlistItems.value!.map<InputUpdateWishlistLineItemType>((item) => ({
+    items: wishlistItems.value.map<InputUpdateWishlistLineItemType>((item) => ({
       lineItemId: item.id,
       quantity: item.quantity!,
     })),

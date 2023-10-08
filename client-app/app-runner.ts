@@ -86,7 +86,7 @@ export default async (
   app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value!.settings);
+  app.use(configPlugin, themeContext.value.settings);
   app.use(uiKit);
 
   getPlugins({ router }).forEach(({ plugin, options }) => app.use(plugin, options));

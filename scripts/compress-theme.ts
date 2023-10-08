@@ -1,6 +1,6 @@
 import { resolve } from "path";
-import { getArtifactFileName, compress } from "./compress";
 import packageJson from "../package.json";
+import { getArtifactFileName, compress } from "./compress";
 
 const cwd = process.cwd();
 
@@ -9,7 +9,7 @@ const version = packageJson.version;
 
 const artifactFileName = getArtifactFileName(`${name}-${version}`);
 
-compress(artifactFileName, (archive) => {
+await compress(artifactFileName, (archive) => {
   const entries = [
     { folder: "assets", filter: /.*(?<!index\.html)$/ },
     { folder: "config" },

@@ -222,7 +222,7 @@ function purchase(order: CustomerOrderType, transactionId?: string, params?: Eve
     coupon: order.coupons?.[0],
     shipping: order.shippingTotal?.amount,
     tax: order.taxTotal?.amount,
-    items: order.items!.map(lineItemToGtagItem),
+    items: order.items.map(lineItemToGtagItem),
   });
 }
 
@@ -234,7 +234,7 @@ function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType):
     coupon: order.coupons?.[0],
     shipping: order.shippingTotal?.amount,
     tax: order.taxTotal?.amount,
-    items: order.items!.map(lineItemToGtagItem),
+    items: order.items.map(lineItemToGtagItem),
   });
 }
 

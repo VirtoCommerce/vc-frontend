@@ -13,9 +13,9 @@
     "validate:dependencies": "depcruise client-app",
     "validate": "yarn validate:types && yarn validate:dependencies",
     "lint-staged": "lint-staged",
-    "lint": "eslint \"client-app/**/*.{js,ts,vue}\"",
+    "lint": "eslint . --ext .js,.ts,.vue --ignore-path .eslintignore",
     "lint:fix": "yarn lint --fix",
-    "prettier": "prettier --check \"client-app/**/*.{js,ts,vue,graphql,json}\"",
+    "prettier": "prettier --check client-app/",
     "prettier:fix": "yarn prettier --write",
     "generate:graphql:schema": "graphql-codegen --config graphql-codegen.schema.config.ts --require ./scripts/graphql-codegen.js",
     "generate:graphql:types": "graphql-codegen --config graphql-codegen.types.config.ts --require ./scripts/graphql-codegen.js",
@@ -106,6 +106,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
     "postcss": "^8.4.31",
+    "postcss-import": "^15.1.0",
     "prettier": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -130,9 +131,6 @@
   },
   "engines": {
     "node": ">=18.0.0 <19.0.0"
-  },
-  "resolutions": {
-    "@types/react": "file:stub/@types/react"
   },
   "packageManager": "yarn@3.6.4"
 }

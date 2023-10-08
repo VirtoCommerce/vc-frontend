@@ -56,13 +56,13 @@ function resetOffset() {
   }
 }
 
-async function handleTouchStart(event: TouchEvent) {
+function handleTouchStart(event: TouchEvent) {
   startX.value = event.touches[0].clientX;
   startY.value = event.touches[0].clientY;
   startOffsetX.value = offsetX.value;
 
   if (!actions.value.length) {
-    actions.value = await props.actionsBuilder(props.inputObject);
+    actions.value = props.actionsBuilder(props.inputObject);
     resetOffset();
   }
 

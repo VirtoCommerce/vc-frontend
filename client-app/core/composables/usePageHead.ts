@@ -19,6 +19,7 @@ export function usePageHead(data: IUsePageSeoData) {
     meta: HeadAttrs[];
   } = { meta: [] };
 
+  // eslint-disable-next-line no-prototype-builtins
   if (data.hasOwnProperty("title")) {
     headObject.title = eagerComputed(() => {
       const textOrChunks = unref(data.title);

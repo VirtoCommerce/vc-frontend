@@ -17,7 +17,6 @@ export const lineItemMock = {
     formattedAmountWithoutPointAndCurrency: "0",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -102,7 +101,6 @@ export const lineItemMock = {
     formattedAmountWithoutPointAndCurrency: "4,062",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -116,7 +114,6 @@ export const lineItemMock = {
     formattedAmountWithoutPointAndCurrency: "9",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -130,7 +127,6 @@ export const lineItemMock = {
     formattedAmountWithoutPointAndCurrency: "9",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -144,7 +140,6 @@ export const lineItemMock = {
     formattedAmountWithoutPointAndCurrency: "9",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -158,7 +153,6 @@ export const lineItemMock = {
     formattedAmountWithoutPointAndCurrency: "0",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -180,7 +174,6 @@ export const preparedLineItemMock = {
     formattedAmountWithoutPointAndCurrency: "57",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -194,7 +187,6 @@ export const preparedLineItemMock = {
     formattedAmountWithoutPointAndCurrency: "57",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -208,7 +200,6 @@ export const preparedLineItemMock = {
     formattedAmountWithoutPointAndCurrency: "57",
     currency: {
       code: "USD",
-      customFormatting: null,
       exchangeRate: 1,
       symbol: "$",
     },
@@ -222,6 +213,7 @@ export const preparedLineItemMock = {
       value: "FABORY",
       type: "Product",
       hidden: false,
+      multivalue: false,
       valueType: "ShortText",
       label: "Brand",
     },
@@ -230,6 +222,7 @@ export const preparedLineItemMock = {
       value: '5/16"',
       type: "Product",
       hidden: false,
+      multivalue: false,
       valueType: "ShortText",
       label: "EYE INSIDE DIA",
     },
@@ -238,6 +231,7 @@ export const preparedLineItemMock = {
       value: "Blank with Shoulder",
       type: "Product",
       hidden: false,
+      multivalue: false,
       valueType: "ShortText",
       label: "EYEBOLT TYPE",
     },
