@@ -32,8 +32,9 @@ import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { ClearCartModal } from "../components";
+import ClearCartModal from "../components/clear-cart-modal.vue";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
+import { CartValidationErrors } from "../enums";
 import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
@@ -50,7 +51,7 @@ import type {
   ShippingMethodType,
 } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
-import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
+import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart/types";
 
 const broadcast = useBroadcast();
 
@@ -82,7 +83,7 @@ const hasValidationErrors = computedEager<boolean>(
 const hasOnlyUnselectedValidationError = computedEager<boolean>(
   () =>
     cart.value?.validationErrors?.length == 1 &&
-    cart.value.validationErrors[0]?.errorCode == "ALL_LINE_ITEMS_UNSELECTED",
+    cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
 );
 
 const selectedForCheckoutItemIds = computed(
