@@ -483,8 +483,9 @@
           "in_cart": "in Cart",
           "already_in_cart_message": "{0} has already been added to the cart",
           "enter_correct_number_message": "Please enter a valid number",
-          "min": "The minimum quantity is {0} product(s)",
-          "max": "The maximum quantity is {0} product(s)"
+          "min": "Min order {0} item(s)",
+          "max": "Max order {0} item(s)",
+          "min_max": "Order from {0} to {1} item(s)"
         }
       },
       "products_section": {
