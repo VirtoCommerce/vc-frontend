@@ -58,17 +58,18 @@ import { useField } from "vee-validate";
 import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
-import { useGoogleAnalytics } from "@/core/composables";
-import { ProductType } from "@/core/enums";
+import { useCartValidationErrorTranslator, useGoogleAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { useCart } from "../composables/useCart";
+import { CartValidationErrors } from "../enums";
 import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
+const getValidationErrorTranslation = useCartValidationErrorTranslator();
 const notifications = useNotifications();
 
 interface IEmits {
@@ -90,19 +91,13 @@ const ga = useGoogleAnalytics();
 const loading = ref(false);
 const inputElement = shallowRef<HTMLInputElement>();
 
-const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
-
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, props.product.maxQuantity || MAX_VALUE),
 );
 
-const disabled = computed<boolean>(
-  () =>
-    loading.value ||
-    (!isDigital.value && (!props.product.availabilityData?.isAvailable || !props.product.availabilityData?.isInStock)),
-);
+const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
 
 const buttonText = computed<string>(() =>
   countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
@@ -124,10 +119,6 @@ const { errorMessage, validate, setValue, setErrors } = useField("quantity", rul
  * Process button click to add/update cart line item.
  */
 async function onChange() {
-  if (!countInCart.value && (!enteredQuantity.value || isNaN(enteredQuantity.value))) {
-    setValue(minQty.value);
-  }
-
   const { valid } = await validate();
 
   if (!valid || disabled.value) {
@@ -136,13 +127,13 @@ async function onChange() {
 
   loading.value = true;
 
-  const isRemoving = !!getLineItem(cart.value?.items) && !enteredQuantity.value;
-  let lineItem = clone(getLineItem(cart.value?.items));
+  let lineItem = getLineItem(cart.value?.items);
 
   let updatedCart;
 
-  if (lineItem) {
-    updatedCart = await changeItemQuantity(lineItem.id, enteredQuantity.value || 0);
+  const isAlreadyExistsInTheCart = !!lineItem;
+  if (isAlreadyExistsInTheCart) {
+    updatedCart = await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
   } else {
     const inputQuantity = enteredQuantity.value || minQty.value;
 
@@ -154,18 +145,22 @@ async function onChange() {
     ga.addItemToCart(props.product, inputQuantity);
   }
 
-  if (isRemoving) {
-    lineItem!.quantity = 0;
-    enteredQuantity.value = minQty.value;
-    setValue(enteredQuantity.value);
-  } else {
-    lineItem = clone(getLineItem(updatedCart?.items));
-  }
+  lineItem = clone(getLineItem(updatedCart?.items));
 
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     notifications.error({
-      text: t("common.messages.fail_add_product_to_cart"),
+      text: t(
+        isAlreadyExistsInTheCart
+          ? "common.messages.fail_to_change_quantity_in_cart"
+          : "common.messages.fail_add_product_to_cart",
+        {
+          reason: updatedCart.validationErrors
+            ?.filter((validationError) => validationError.errorCode != CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED)
+            .map(getValidationErrorTranslation)
+            .join(" "),
+        },
+      ),
       duration: 4000,
       single: true,
     });
