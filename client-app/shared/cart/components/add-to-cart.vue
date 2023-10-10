@@ -33,13 +33,7 @@
     </div>
 
     <!-- Info hint -->
-    <VcTooltip
-      v-if="product.minQuantity || product.maxQuantity || errorMessage"
-      class="!block"
-      :x-offset="28"
-      placement="bottom-start"
-      strategy="fixed"
-    >
+    <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
       <template #trigger>
         <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
           {{ errorMessage }}
@@ -116,18 +110,15 @@ const buttonText = computed<string>(() =>
 
 const rules = computed(() =>
   toTypedSchema(
-    number()
-      .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-      .integer()
-      .positive()
-      .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
-      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max])),
+    number().typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message")).integer().positive(),
   ),
 );
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
-const { validate, errorMessage, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
+const { errorMessage, validate, setValue, setErrors } = useField("quantity", rules, {
+  initialValue: enteredQuantity,
+});
 
 /**
  * Process button click to add/update cart line item.
@@ -201,11 +192,27 @@ function onKeypress(event: KeyboardEvent) {
 /**
  * Limit max value.
  */
-function onInput() {
+function onInput(): void {
   if (!enteredQuantity.value) {
     enteredQuantity.value = undefined;
   } else if (enteredQuantity.value > MAX_VALUE) {
     enteredQuantity.value = MAX_VALUE;
+  }
+
+  if (!enteredQuantity.value) {
+    return;
+  }
+
+  if (
+    props.product.minQuantity &&
+    props.product.maxQuantity &&
+    (enteredQuantity.value < props.product.minQuantity || enteredQuantity.value > props.product.maxQuantity)
+  ) {
+    setErrors(t("shared.cart.add_to_cart.errors.min_max", [props.product.minQuantity, props.product.maxQuantity]));
+  } else if (props.product.minQuantity && enteredQuantity.value < props.product.minQuantity) {
+    setErrors(t("shared.cart.add_to_cart.errors.min", [props.product.minQuantity]));
+  } else if (props.product.maxQuantity && enteredQuantity.value > props.product.maxQuantity) {
+    setErrors(t("shared.cart.add_to_cart.errors.max", [props.product.maxQuantity]));
   } else {
     setValue(enteredQuantity.value);
   }
