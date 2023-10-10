@@ -103,41 +103,44 @@ const buttonText = computed<string>(() =>
   countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
 
-const rules = computed(() => {
-  const numberSchema = number()
-    .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-    .integer()
-    .positive();
+const rules = computed(() =>
+  toTypedSchema(
+    number()
+      .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
+      .integer()
+      .positive()
+      .withMutation((schema) => {
+        if (!!props.product.minQuantity && !!props.product.maxQuantity) {
+          return schema.test(
+            "minMaxValue",
+            t("shared.cart.add_to_cart.errors.min_max", [props.product.minQuantity, props.product.maxQuantity]),
+            (value) =>
+              !!value &&
+              !!props.product.minQuantity &&
+              !!props.product.maxQuantity &&
+              value >= props.product.minQuantity &&
+              value <= props.product.maxQuantity,
+          );
+        }
 
-  if (!!props.product.minQuantity && !!props.product.maxQuantity) {
-    return toTypedSchema(
-      numberSchema.test(
-        "minMaxValue",
-        t("shared.cart.add_to_cart.errors.min_max", [props.product.minQuantity, props.product.maxQuantity]),
-        (value) =>
-          !!value &&
-          !!props.product.minQuantity &&
-          !!props.product.maxQuantity &&
-          value >= props.product.minQuantity &&
-          value <= props.product.maxQuantity,
-      ),
-    );
-  }
+        if (props.product.minQuantity) {
+          return schema.min(
+            props.product.minQuantity,
+            t("shared.cart.add_to_cart.errors.min", [props.product.minQuantity]),
+          );
+        }
 
-  if (props.product.minQuantity) {
-    return toTypedSchema(
-      numberSchema.min(props.product.minQuantity, t("shared.cart.add_to_cart.errors.min", [props.product.minQuantity])),
-    );
-  }
+        if (props.product.maxQuantity) {
+          return schema.max(
+            props.product.maxQuantity,
+            t("shared.cart.add_to_cart.errors.max", [props.product.maxQuantity]),
+          );
+        }
 
-  if (props.product.maxQuantity) {
-    return toTypedSchema(
-      numberSchema.max(props.product.maxQuantity, t("shared.cart.add_to_cart.errors.max", [props.product.maxQuantity])),
-    );
-  }
-
-  return toTypedSchema(numberSchema);
-});
+        return schema;
+      }),
+  ),
+);
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
