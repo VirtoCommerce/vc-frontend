@@ -28,6 +28,16 @@ query SearchRelatedProducts(
           variations {
             id
           }
+          minVariationPrice {
+            list {
+              amount
+              formattedAmount
+            }
+            actual {
+              amount
+              formattedAmount
+            }
+          }
           availabilityData {
             availableQuantity
             isAvailable
