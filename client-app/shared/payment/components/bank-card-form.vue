@@ -113,21 +113,20 @@ const labels = computed(() => {
   };
 });
 
+const yupMonthFieldSchema = string()
+  .required()
+  .length(2)
+  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
+  .label(labels.value.monthLabel);
+
 const validationSchema = toTypedSchema(
   object({
     number: string().required().min(12).max(19).label(labels.value.number),
     cardholderName: string().required().max(64).label(labels.value.cardholderName),
-    month: string()
-      .required()
-      .length(2)
-      .matches(/^(0?[1-9]|1[012])$/, t("shared.payment.authorize_net.errors.month"))
-      .label(labels.value.monthLabel),
-    year: string()
-      .when("month", {
-        is: (monthValue?: string) => monthValue?.length === 2,
-        then: (stringSchema) => stringSchema.length(2),
-      })
-      .label(labels.value.yearLabel),
+    month: yupMonthFieldSchema,
+    year: string().when("month", ([month], schema) => {
+      return yupMonthFieldSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
+    }),
     securityCode: string().required().min(3).max(4).label(labels.value.securityCode),
   }),
 );
