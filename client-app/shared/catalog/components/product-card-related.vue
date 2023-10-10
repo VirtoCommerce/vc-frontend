@@ -22,7 +22,12 @@
         {{ product.name }}
       </VcProductTitle>
 
-      <VcProductPrice class="h-9 text-lg" :actual-price="product.price?.actual" :list-price="product.price?.list" />
+      <VcProductPrice
+        class="h-9 text-lg"
+        :actual-price="product.price?.actual"
+        :list-price="product.price?.list"
+        :has-variations="product.hasVariations"
+      />
     </div>
 
     <div class="h-[3.25rem]">

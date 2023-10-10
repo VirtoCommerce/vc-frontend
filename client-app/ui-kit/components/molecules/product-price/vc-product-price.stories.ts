@@ -81,6 +81,15 @@ Truncate.args = {
   truncate: true,
 };
 
+export const VariationsPrice = Template.bind({});
+VariationsPrice.args = {
+  listPrice: {
+    amount: 1599999999,
+    formattedAmount: "$1,599,999,999.00",
+  },
+  hasVariations: true,
+};
+
 export const UsageExamples: StoryFn<typeof VcProductPrice> = (args) => ({
   components: { VcProductPrice },
   setup: () => ({ args }),
