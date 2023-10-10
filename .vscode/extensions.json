@@ -12,7 +12,8 @@
     "lokalise.i18n-ally",
     "graphql.vscode-graphql",
     "graphql.vscode-graphql-syntax",
-    "graphql.vscode-graphql-execution"
+    "graphql.vscode-graphql-execution",
+    "sonarsource.sonarlint-vscode"
   ],
   "unwantedRecommendations": [
     "octref.vetur"
