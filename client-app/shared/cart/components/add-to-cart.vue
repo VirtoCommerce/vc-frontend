@@ -109,14 +109,42 @@ const rules = computed(() =>
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
       .integer()
       .positive()
-      .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
-      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max])),
+      .withMutation((schema) => {
+        if (!!props.product.minQuantity && !!props.product.maxQuantity) {
+          return schema.test(
+            "minMaxValue",
+            t("shared.cart.add_to_cart.errors.min_max", [props.product.minQuantity, props.product.maxQuantity]),
+            (value) =>
+              !!value &&
+              !!props.product.minQuantity &&
+              !!props.product.maxQuantity &&
+              value >= props.product.minQuantity &&
+              value <= props.product.maxQuantity,
+          );
+        }
+
+        if (props.product.minQuantity) {
+          return schema.min(
+            props.product.minQuantity,
+            t("shared.cart.add_to_cart.errors.min", [props.product.minQuantity]),
+          );
+        }
+
+        if (props.product.maxQuantity) {
+          return schema.max(
+            props.product.maxQuantity,
+            t("shared.cart.add_to_cart.errors.max", [props.product.maxQuantity]),
+          );
+        }
+
+        return schema;
+      }),
   ),
 );
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
-const { validate, errorMessage, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
+const { errorMessage, validate, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
 
 /**
  * Process button click to add/update cart line item.
