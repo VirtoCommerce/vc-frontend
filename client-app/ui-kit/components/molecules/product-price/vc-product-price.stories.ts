@@ -62,8 +62,7 @@ Truncate.args = {
 export const VariationsPrice = Template.bind({});
 VariationsPrice.args = {
   listPrice: {
-    amount: 1599999999,
-    formattedAmount: "$1,599,999,999.00",
+    ...sharedArgs.listPrice,
   },
   hasVariations: true,
 };
