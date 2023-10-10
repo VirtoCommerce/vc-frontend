@@ -139,7 +139,7 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
-import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { PasswordTips, ProfileUpdateSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -204,7 +204,7 @@ const showErrors = (responseErrors: IdentityErrorType[]) => {
   });
 };
 
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
+const getIdentityErrorTranslation = useErrorsTranslator();
 
 const onSubmit = handleSubmit(async (data) => {
   const results: boolean[] = [];

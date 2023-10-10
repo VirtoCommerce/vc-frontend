@@ -1,7 +1,7 @@
 import { useI18n } from "vue-i18n";
 import type { IdentityErrorInfoType, RegistrationErrorType } from "@/core/api/graphql/types";
 
-export function useIdentityErrorTranslator() {
+export function useErrorsTranslator() {
   const { t, te } = useI18n();
 
   return (error: IdentityErrorInfoType | RegistrationErrorType): string | undefined => {

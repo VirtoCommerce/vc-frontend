@@ -146,7 +146,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
-import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { PasswordTips, RegistrationKind, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import type { AccountCreationResultType } from "@/core/api/graphql/types";
@@ -157,7 +157,7 @@ const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 const { t } = useI18n();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
+const getIdentityErrorTranslation = useErrorsTranslator();
 
 usePageHead({
   title: t("pages.sign_up.meta.title"),

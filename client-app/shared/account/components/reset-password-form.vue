@@ -54,7 +54,7 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
-import { useIdentityErrorTranslator } from "@/core/composables";
+import { useErrorsTranslator } from "@/core/composables";
 import { usePasswordRequirements, useUser } from "../composables";
 import PasswordTips from "./password-tips.vue";
 
@@ -77,7 +77,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 const { resetPassword, loading } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
+const getIdentityErrorTranslation = useErrorsTranslator();
 
 const validationSchema = toTypedSchema(
   object({
