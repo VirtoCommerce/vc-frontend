@@ -1,11 +1,5 @@
 <template>
   <VcLineItems :items="items" removable disable-subtotal @remove:items="$emit('remove:items', $event)">
-    <template #titles>
-      <div class="ps-2">
-        {{ $t("common.labels.quantity") }}
-      </div>
-    </template>
-
     <template #default="{ item }">
       <div class="flex w-full max-w-[16rem] flex-wrap gap-1.5 md:max-w-none">
         <VcAddToCart

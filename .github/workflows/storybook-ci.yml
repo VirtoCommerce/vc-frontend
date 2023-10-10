@@ -140,7 +140,7 @@ jobs:
           push: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
           context: .
           file: .storybook/Dockerfile
-          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.ref == 'refs/head/dev' && 'dev-latest' || 'latest'}}
+          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.ref == 'refs/heads/dev' && 'dev-latest' || 'latest'}}
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
