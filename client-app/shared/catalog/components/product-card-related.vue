@@ -24,8 +24,8 @@
 
       <VcProductPrice
         class="h-9 text-lg"
-        :actual-price="product.price?.actual"
-        :list-price="product.price?.list"
+        :actual-price="price?.actual"
+        :list-price="price?.list"
         :has-variations="product.hasVariations"
       />
     </div>
@@ -69,6 +69,8 @@ interface IProps {
 defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
+
+const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>
