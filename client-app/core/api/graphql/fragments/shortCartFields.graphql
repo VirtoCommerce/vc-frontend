@@ -1,5 +1,3 @@
-#import "./validationErrorFields.graphql"
-
 fragment shortCartFields on CartType {
   id
   itemsQuantity
@@ -11,8 +9,5 @@ fragment shortCartFields on CartType {
     extendedPrice {
       amount
     }
-  }
-  validationErrors {
-    ...validationErrorFields
   }
 }
