@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+// FIXME: https://virtocommerce.atlassian.net/browse/ST-5121
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { computed, ref } from "vue";
 import ActionsBox from "./_internal/actions-box.vue";
 import type { PropType } from "vue";
@@ -54,13 +56,13 @@ function resetOffset() {
   }
 }
 
-async function handleTouchStart(event: TouchEvent) {
+function handleTouchStart(event: TouchEvent) {
   startX.value = event.touches[0].clientX;
   startY.value = event.touches[0].clientY;
   startOffsetX.value = offsetX.value;
 
   if (!actions.value.length) {
-    actions.value = await props.actionsBuilder(props.inputObject);
+    actions.value = props.actionsBuilder(props.inputObject);
     resetOffset();
   }
 

@@ -10,7 +10,7 @@ export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualSc
     manual: manualScriptLoading,
   });
 
-  async function dispatchData(secureData: Accept.SecureData, handler: Accept.ResponseHandler) {
+  function dispatchData(secureData: Accept.SecureData, handler: Accept.ResponseHandler) {
     try {
       Accept.dispatchData(secureData, handler);
     } catch (e) {

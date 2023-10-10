@@ -250,7 +250,7 @@ const columns = computed<ITableColumn[]>(() => [
   },
 ]);
 
-const onPageChange = async (newPage: number) => {
+const onPageChange = (newPage: number) => {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
 };
@@ -300,7 +300,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await fetchAddresses();
 }
 
-async function removeAddress(address: MemberAddressType): Promise<void> {
+function removeAddress(address: MemberAddressType): void {
   const closeDeleteAddressDialog = openPopup({
     component: "VcConfirmationDialog",
     props: {

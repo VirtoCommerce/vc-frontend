@@ -326,7 +326,7 @@ const columns = computed<ITableColumn[]>(() => {
   return result;
 });
 
-async function onPageChange(newPage: number) {
+function onPageChange(newPage: number) {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
 }
@@ -344,7 +344,7 @@ async function saveOrganizationName() {
   });
 }
 
-async function openDeleteAddressModal(address: MemberAddressType) {
+function openDeleteAddressModal(address: MemberAddressType) {
   if (address.isDefault) {
     return;
   }
@@ -383,7 +383,7 @@ async function openDeleteAddressModal(address: MemberAddressType) {
   });
 }
 
-async function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): Promise<void> {
+function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
   const closeAddOrUpdateAddressModal = openPopup({
     component: AddOrUpdateCompanyAddressModal,
     props: {

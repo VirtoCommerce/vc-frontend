@@ -23,7 +23,7 @@ usePageHead({
   title: t("pages.sign_in.meta.title"),
 });
 
-async function onSignIn() {
+function onSignIn() {
   location.href = getReturnUrlValue() || "/";
 }
 </script>
