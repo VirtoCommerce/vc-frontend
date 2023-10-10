@@ -9,11 +9,17 @@
       },
     ]"
   >
+    <span class="vc-product-price__actual">
+      <span v-if="hasVariations" class="vc-product-price__variations"> {{ $t("common.suffixes.from") }}</span>
+
+      <VcPriceDisplay :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice" />
+    </span>
+
     <VcPriceDisplay
-      class="vc-product-price__actual"
-      :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice"
+      v-if="!hasVariations && listPrice?.amount > actualPrice?.amount"
+      class="vc-product-price__list"
+      :value="listPrice"
     />
-    <VcPriceDisplay v-if="listPrice?.amount > actualPrice?.amount" class="vc-product-price__list" :value="listPrice" />
   </div>
 </template>
 
@@ -26,6 +32,7 @@ interface IProps {
   align?: "start" | "end";
   singleLine?: boolean;
   truncate?: boolean;
+  hasVariations?: boolean;
 }
 
 withDefaults(defineProps<IProps>(), {
@@ -39,7 +46,7 @@ withDefaults(defineProps<IProps>(), {
 
   --font-size: --vc-product-price-font-size;
 
-  @apply flex flex-col text-[length:var(--font-size)] font-bold text-[--color-neutral-950] [word-break:break-word];
+  @apply flex flex-col text-[length:var(--font-size)] text-[--color-neutral-950] [word-break:break-word];
 
   @apply leading-[1.2] #{!important};
 
@@ -62,11 +69,15 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__actual {
-    @apply text-[--color-neutral-950];
+    @apply font-bold text-[--color-neutral-950];
 
     #{$truncate} & {
-      @apply max-w-full truncate;
+      @apply whitespace-nowrap max-w-full truncate;
     }
+  }
+
+  &__variations {
+    @apply me-1 whitespace-nowrap text-xs font-normal text-[--color-neutral-500];
   }
 
   &__list {

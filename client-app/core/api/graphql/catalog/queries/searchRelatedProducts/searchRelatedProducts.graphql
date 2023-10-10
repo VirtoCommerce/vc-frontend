@@ -25,6 +25,9 @@ query SearchRelatedProducts(
             name
           }
           hasVariations
+          variations {
+            id
+          }
           availabilityData {
             availableQuantity
             isAvailable
