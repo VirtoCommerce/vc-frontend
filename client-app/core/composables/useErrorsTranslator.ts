@@ -14,18 +14,18 @@ type ErrorToStringType = {
 
 type TranslatedErrorType = ErrorType & { translation?: string };
 
-type ErrorsTranslationsType = { translatedErrors: ComputedRef<TranslatedErrorType[]> };
+type ComputedTranslatedErrorsType = { translatedErrors: ComputedRef<TranslatedErrorType[]> };
 
 /** @deprecated Use useErrorsTranslator('path in locale', Array<errors>) */
 export function useErrorsTranslator(keyInLocale?: string): ErrorToStringType;
 export function useErrorsTranslator(
   keyInLocale?: string,
   errors?: Ref<ErrorType[] | undefined>,
-): ErrorsTranslationsType;
+): ComputedTranslatedErrorsType;
 export function useErrorsTranslator(
   keyInLocale = "identity_error.",
   errors?: Ref<ErrorType[] | undefined>,
-): ErrorToStringType | ErrorsTranslationsType {
+): ErrorToStringType | ComputedTranslatedErrorsType {
   const { t, te } = useI18n();
 
   if (errors) {
