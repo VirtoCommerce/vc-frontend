@@ -15,11 +15,11 @@
       </template>
     </VcEmptyPage>
 
-    <div v-else class="mx-auto w-full pt-7 md:max-w-screen-2xl md:px-12">
+    <div v-else class="mx-auto w-full pt-7 lg:max-w-[91rem] lg:px-12">
       <!-- Page header -->
-      <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 md:px-0"></VcBreadcrumbs>
+      <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 lg:px-0"></VcBreadcrumbs>
 
-      <div class="flex flex-col px-5 md:px-0 lg:mb-5 lg:flex-row lg:space-x-12">
+      <div class="flex flex-col px-5 lg:mb-5 lg:flex-row lg:space-x-12 lg:px-0">
         <div class="flex flex-col space-y-1.5">
           <h1 class="text-black-800 text-3xl font-bold uppercase">{{ $t("pages.compare.header_block.title") }}</h1>
 
@@ -39,100 +39,45 @@
             {{ $t("pages.compare.header_block.differences_checkbox_label") }}
           </VcCheckbox>
 
-          <VcButton variant="outline" @click="openClearListModal">
+          <VcButton variant="outline" size="sm" @click="openClearListModal">
             {{ $t("pages.compare.header_block.clear_button") }}
           </VcButton>
         </div>
       </div>
 
       <!-- Main block -->
-      <div class="overflow-x-auto bg-white py-8 shadow md:rounded">
+      <div class="relative w-full overflow-x-auto bg-[--color-additional-50] p-5 shadow lg:rounded lg:px-0">
         <!-- Product cards block -->
-        <div class="flex gap-x-5 px-8 lg:pl-0">
-          <div class="hidden w-56 shrink-0 lg:block"></div>
-          <div
+        <div
+          class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] pb-1 lg:pb-5 lg:pe-5 lg:ps-[11rem]"
+        >
+          <ProductCardCompare
             v-for="product in products"
             :key="product.id"
-            class="flex w-40 shrink-0 flex-col md:w-48 md:pb-6 lg:shrink"
-          >
-            <!-- Product image -->
-            <router-link :to="productsRoutes[product.id]" class="mb-3 cursor-pointer" @click="ga.selectItem(product)">
-              <div
-                class="relative flex h-32 w-40 flex-col items-center justify-center border border-gray-100 md:h-48 md:w-48"
-              >
-                <VcImage
-                  :src="product.imgSrc"
-                  :alt="product.name"
-                  size-suffix="md"
-                  class="h-full w-full object-cover object-center"
-                  lazy
-                />
-
-                <button
-                  class="absolute -right-3 -top-3 flex rounded-full border border-[--color-neutral-200] bg-[--color-additional-50] p-1 hover:bg-[--color-neutral-100]"
-                  type="button"
-                  @click.prevent="removeFromCompareList(product)"
-                >
-                  <VcIcon class="text-[--color-danger-500]" name="delete-mini" size="xs" />
-                </button>
-              </div>
-            </router-link>
-
-            <!-- Product title -->
-            <router-link
-              :to="productsRoutes[product.id]"
-              class="mb-3 line-clamp-3 h-16 cursor-pointer text-sm font-extrabold text-[--color-accent-600]"
-              @click="ga.selectItem(product)"
-            >
-              {{ product.name }}
-            </router-link>
-
-            <!-- Product price -->
-            <div class="mb-3 flex h-8 flex-col items-baseline justify-between text-sm md:flex-row">
-              <div v-if="!isMobile" class="text-xs font-bold">
-                {{ $t("pages.compare.main_block.price_label") }}
-              </div>
-              <VcItemPrice :value="product.price" />
-            </div>
-
-            <div class="h-12">
-              <AddToCart :product="product" @update:line-item="refreshProducts" />
-            </div>
-
-            <div v-if="product.productType === ProductType.Digital" class="mt-1 flex items-center gap-1">
-              <VcBadge size="sm" color="info" variant="solid-light">
-                {{ $t("common.labels.digital_product") }}
-              </VcBadge>
-            </div>
-          </div>
+            :product="product"
+            class="w-[9.625rem] lg:w-[13.625rem]"
+            @remove="removeFromCompareList(product)"
+          />
         </div>
 
         <!-- Properties block -->
-        <div
-          v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
-          :key="index"
-          class="items-start space-x-5 border-b border-gray-100 px-8 md:items-center lg:border-0 lg:px-0"
-          :class="!isMobile ? 'even:bg-gray-50 flex' : productsIds.length >= 3 ? 'inline-flex' : 'flex'"
-        >
-          <div v-if="!isMobile" class="w-56 shrink-0 pl-8 text-sm font-extrabold">{{ prop.label }}</div>
+        <div class="relative float-left min-w-full space-y-5 lg:space-y-0">
+          <div
+            v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
+            :key="index"
+            class="flex gap-[1.125rem] lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:px-0 lg:py-2 lg:even:bg-[--color-neutral-50]"
+          >
+            <div class="hidden w-[9.875rem] shrink-0 pl-6 text-sm font-black lg:block">{{ prop.label }}</div>
 
-          <div v-for="(value, i) in prop.values" :key="i" class="w-40 shrink-0 py-5 last:pr-8 md:w-48">
-            <span v-if="isMobile" class="block text-sm font-extrabold">{{ prop.label }}</span>
-            {{ value }}
-          </div>
-        </div>
+            <div
+              v-for="(value, i) in prop.values"
+              :key="i"
+              class="w-[9.625rem] shrink-0 text-xs lg:w-[13.625rem] lg:px-2 lg:text-sm"
+            >
+              <div class="font-black lg:hidden">{{ prop.label }}</div>
 
-        <div class="flex items-center space-x-5 px-5 lg:px-0">
-          <div v-if="!isMobile" class="w-56 shrink-0"></div>
-          <div v-for="product in products" :key="product.id" class="w-40 shrink-0 md:w-48">
-            <!-- Product price -->
-            <div class="my-4 flex h-8 flex-col items-baseline justify-between text-sm md:flex-row">
-              <div v-if="!isMobile" class="text-xs font-bold">
-                {{ $t("pages.compare.main_block.price_label") }}
-              </div>
-              <VcItemPrice :value="product.price" />
+              <div class="break-words text-[--color-neutral-700]">{{ value }}</div>
             </div>
-            <AddToCart :product="product" @update:line-item="refreshProducts" />
           </div>
         </div>
       </div>
@@ -141,15 +86,12 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import _ from "lodash";
 import { ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead, useProductsRoutes } from "@/core/composables";
-import { ProductType } from "@/core/enums";
+import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { getPropertyValue } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
-import { useProducts } from "@/shared/catalog";
+import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
 import { usePopup } from "@/shared/popup";
 import { VcConfirmationDialog } from "@/ui-kit/components";
@@ -169,11 +111,8 @@ usePageHead({
 });
 
 const ga = useGoogleAnalytics();
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
-const productsRoutes = useProductsRoutes(products);
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
 const { openPopup, closePopup } = usePopup();
 
