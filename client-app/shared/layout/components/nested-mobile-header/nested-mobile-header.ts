@@ -42,7 +42,7 @@ export default defineComponent({
       { immediate: true },
     );
 
-    watchEffect(async () => {
+    watchEffect(() => {
       isAnimated.value = props.animated;
     });
 

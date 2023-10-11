@@ -299,7 +299,7 @@ function onUpdatePage(): void {
 }
 
 async function canChangeRoute() {
-  return !isDirty.value || (await openSaveChangesModal());
+  return !list.value || !isDirty.value || (await openSaveChangesModal());
 }
 
 onBeforeRouteLeave(canChangeRoute);

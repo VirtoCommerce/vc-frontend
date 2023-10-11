@@ -46,7 +46,7 @@ defineProps({
 
 const text = ref("");
 
-async function addToCart() {
+function addToCart(): void {
   const pattern = /^(\s*[A-Za-z0-9_-]+\s*,\s*\d{1,9}\s*)+$/;
 
   if (!pattern.test(text.value)) {

@@ -40,7 +40,7 @@ import ProductSkeletonList from "./product-skeleton-list.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IEmits {
-  (eventName: "itemLinkClick", product: Product, globalEvent: PointerEvent): void;
+  (eventName: "itemLinkClick", product: Product, globalEvent: MouseEvent): void;
 }
 
 interface IProps {

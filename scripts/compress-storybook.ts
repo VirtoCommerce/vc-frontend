@@ -1,11 +1,11 @@
-import { getArtifactFileName, compress } from "./compress";
 import packageJson from "../package.json";
+import { getArtifactFileName, compress } from "./compress";
 
 const name = packageJson.name;
 const version = packageJson.version;
 
 const artifactFileName = getArtifactFileName(`${name}-storybook-${version}`);
 
-compress(artifactFileName, (archive) => {
+await compress(artifactFileName, (archive) => {
   archive.addLocalFolder("storybook-static");
 });
