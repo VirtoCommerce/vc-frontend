@@ -59,7 +59,7 @@ import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
-  (event: "linkClick", globalEvent: PointerEvent): void;
+  (event: "linkClick", globalEvent: MouseEvent): void;
 }
 
 interface IProps {

@@ -22,7 +22,7 @@
           size="sm"
           class="w-28"
           truncate
-          @click="$emit('update:cartItemQuantity', quantity)"
+          @click="$emit('update:cartItemQuantity', quantity!)"
         >
           {{ buttonText }}
         </VcButton>

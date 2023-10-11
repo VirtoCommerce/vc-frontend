@@ -83,7 +83,7 @@
           name="newPassword"
           class="mb-5"
           autocomplete="new-password"
-          @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
+          @update:model-value="newPassword = trimPassword(newPassword, $event)"
         />
 
         <VcInput
@@ -99,7 +99,7 @@
           name="confirmNewPassword"
           class="mb-5"
           autocomplete="off"
-          @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
+          @update:model-value="confirmNewPassword = trimPassword(confirmNewPassword, $event)"
         />
 
         <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
@@ -247,6 +247,10 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
+
+function trimPassword(oldValue: string, newValue: string | undefined): string {
+  return oldPassword.value ? newValue?.trim() ?? "" : oldValue;
+}
 
 whenever(
   () => !oldPassword.value,
