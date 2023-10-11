@@ -9,6 +9,7 @@ export * from "./useCurrency";
 export * from "./useErrorsTranslator";
 export * from "./useFetch";
 export * from "./useGoogleAnalytics";
+export * from "./useIdentityErrorTranslator";
 export * from "./useLanguages";
 export * from "./useListeners";
 export * from "./useNavigations";

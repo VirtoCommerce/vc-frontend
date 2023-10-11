@@ -65,7 +65,7 @@ import { ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { string } from "yup";
-import { useErrorsTranslator } from "@/core/composables";
+import { useIdentityErrorTranslator } from "@/core/composables";
 import { B2B_ROLES } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
@@ -91,7 +91,7 @@ const { t } = useI18n();
 const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
-const getIdentityErrorTranslation = useErrorsTranslator();
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const roles = B2B_ROLES.map((role) => {
   role.normalizedName = t("common.roles." + role.id);
