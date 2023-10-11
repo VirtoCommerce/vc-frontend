@@ -248,7 +248,7 @@ const onSubmit = handleSubmit(async (data) => {
   }
 });
 
-function trimPassword(oldValue: string, newValue: string | undefined) {
+function trimPassword(oldValue: string, newValue: string | undefined): string {
   return oldPassword.value ? newValue?.trim() ?? "" : oldValue;
 }
 
