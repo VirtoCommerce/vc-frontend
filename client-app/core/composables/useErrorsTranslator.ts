@@ -15,10 +15,6 @@ type ComputedTranslatedErrorsType = { translatedErrors: ComputedRef<TranslatedEr
 export function useErrorsTranslator(
   keyInLocale: string,
   errors: Ref<ErrorType[] | undefined>,
-): ComputedTranslatedErrorsType;
-export function useErrorsTranslator(
-  keyInLocale: string,
-  errors: Ref<ErrorType[] | undefined>,
 ): ComputedTranslatedErrorsType {
   const { t, te } = useI18n();
 
