@@ -29,21 +29,21 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import _ from "lodash";
 import { Pagination, Navigation } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { computed, getCurrentInstance } from "vue";
 import type { NavigationOptions, PaginationOptions } from "swiper/types";
 
-interface IProps {
-  slides?: any[];
+export interface IProps<T> {
+  slides?: T[];
   options?: CarouselOptions;
   navigation?: boolean;
   pagination?: boolean;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps<T>>(), {
   slides: () => [],
   options: () => ({}),
 });
