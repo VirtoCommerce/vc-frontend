@@ -36,7 +36,7 @@ import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/
 import { computed, getCurrentInstance } from "vue";
 import type { NavigationOptions, PaginationOptions } from "swiper/types";
 
-export interface IProps<T> {
+interface IProps<T> {
   slides?: T[];
   options?: CarouselOptions;
   navigation?: boolean;
