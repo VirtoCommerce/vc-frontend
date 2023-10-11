@@ -326,25 +326,25 @@ const columns = computed<ITableColumn[]>(() => {
   return result;
 });
 
-function onPageChange(newPage: number) {
+function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
 }
 
-async function applySorting(sortInfo: ISortInfo) {
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = sortInfo;
   page.value = 1;
   await fetchAddresses();
 }
 
-async function saveOrganizationName() {
+async function saveOrganizationName(): Promise<void> {
   await updateOrganization({
     id: organizationId.value,
     name: organizationName.value,
   });
 }
 
-function openDeleteAddressModal(address: MemberAddressType) {
+function openDeleteAddressModal(address: MemberAddressType): void {
   if (address.isDefault) {
     return;
   }

@@ -1,6 +1,7 @@
 import { noop, useScriptTag } from "@vueuse/core";
 import { authorizePayment } from "@/core/api/graphql";
 import { Logger } from "@/core/utilities";
+import type { AuthorizePaymentResultType } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
 
 export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualScriptLoading?: boolean }) {
@@ -10,7 +11,7 @@ export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualSc
     manual: manualScriptLoading,
   });
 
-  function dispatchData(secureData: Accept.SecureData, handler: Accept.ResponseHandler) {
+  function dispatchData(secureData: Accept.SecureData, handler: Accept.ResponseHandler): void {
     try {
       Accept.dispatchData(secureData, handler);
     } catch (e) {
@@ -18,7 +19,11 @@ export function useAuthorizeNet(options: { scriptURL: MaybeRef<string>; manualSc
     }
   }
 
-  async function sendOpaqueData(payload: { orderId?: string; paymentId: string; opaqueData: Accept.OpaqueData }) {
+  async function sendOpaqueData(payload: {
+    orderId?: string;
+    paymentId: string;
+    opaqueData: Accept.OpaqueData;
+  }): Promise<AuthorizePaymentResultType> {
     const { orderId, paymentId, opaqueData } = payload;
     try {
       return await authorizePayment({

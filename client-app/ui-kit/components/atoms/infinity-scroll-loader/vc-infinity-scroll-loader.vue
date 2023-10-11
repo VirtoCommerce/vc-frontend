@@ -57,7 +57,7 @@ function intersectionCallback([entry]: IntersectionObserverEntry[]): void {
   }
 }
 
-function initObserver() {
+function initObserver(): void {
   if (observer) {
     observer.disconnect();
   }
