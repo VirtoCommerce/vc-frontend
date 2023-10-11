@@ -19,6 +19,8 @@ declare global {
     title: string;
     classes?: string;
     left?: boolean;
+    // FIXME: https://virtocommerce.atlassian.net/browse/ST-5121
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     clickHandler(inputObject: any): any;
   }
 

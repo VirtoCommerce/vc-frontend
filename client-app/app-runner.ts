@@ -16,7 +16,9 @@ import type { Plugin } from "vue";
 import type { Router } from "vue-router";
 
 // eslint-disable-next-line no-restricted-exports
-export default async (getPlugins: (options: { router: Router }) => { plugin: Plugin; options: any }[] = () => []) => {
+export default async function (
+  getPlugins: (options: { router: Router }) => { plugin: Plugin; options: { router: Router } }[] = () => [],
+) {
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -98,4 +100,4 @@ export default async (getPlugins: (options: { router: Router }) => { plugin: Plu
   await router.isReady();
 
   app.mount(appElement);
-};
+}
