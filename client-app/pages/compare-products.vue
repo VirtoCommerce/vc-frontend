@@ -46,37 +46,44 @@
       </div>
 
       <!-- Main block -->
-      <div class="relative w-full overflow-x-auto bg-[--color-additional-50] p-5 shadow lg:rounded lg:px-0">
-        <!-- Product cards block -->
+      <div class="w-full bg-[--color-additional-50] pt-5 shadow lg:rounded">
         <div
-          class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] pb-1 lg:pb-5 lg:pe-5 lg:ps-[11rem]"
+          ref="cardsElement"
+          class="hide-scrollbar sticky top-[-6.25rem] z-10 max-w-full overflow-x-auto bg-[--color-additional-50] lg:top-[-7.25rem]"
         >
-          <ProductCardCompare
-            v-for="product in products"
-            :key="product.id"
-            :product="product"
-            class="w-[9.625rem] lg:w-[13.625rem]"
-            @remove="removeFromCompareList(product)"
-          />
+          <!-- Product cards block -->
+          <div
+            class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] px-5 pb-1 lg:pb-5 lg:ps-[11rem]"
+          >
+            <ProductCardCompare
+              v-for="product in products"
+              :key="product.id"
+              :product="product"
+              class="w-[9.625rem] lg:w-[13.625rem]"
+              @remove="removeFromCompareList(product)"
+            />
+          </div>
         </div>
 
-        <!-- Properties block -->
-        <div class="relative float-left min-w-full space-y-5 lg:space-y-0">
-          <div
-            v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
-            :key="index"
-            class="flex gap-[1.125rem] lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:px-0 lg:py-2 lg:even:bg-[--color-neutral-50]"
-          >
-            <div class="hidden w-[9.875rem] shrink-0 pl-6 text-sm font-black lg:block">{{ prop.label }}</div>
-
+        <div ref="propertiesElement" class="relative w-full overflow-x-auto pb-5">
+          <!-- Properties block -->
+          <div class="float-left min-w-full space-y-5 lg:space-y-0">
             <div
-              v-for="(value, i) in prop.values"
-              :key="i"
-              class="w-[9.625rem] shrink-0 text-xs lg:w-[13.625rem] lg:px-2 lg:text-sm"
+              v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
+              :key="index"
+              class="flex gap-[1.125rem] px-5 lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:py-2 lg:even:bg-[--color-neutral-50]"
             >
-              <div class="font-black lg:hidden">{{ prop.label }}</div>
+              <div class="hidden w-[8.5rem] shrink-0 pl-1 text-sm font-black lg:block">{{ prop.label }}</div>
 
-              <div class="break-words text-[--color-neutral-700]">{{ value }}</div>
+              <div
+                v-for="(value, i) in prop.values"
+                :key="i"
+                class="w-[9.625rem] shrink-0 text-xs lg:w-[13.625rem] lg:px-2 lg:text-sm"
+              >
+                <div class="font-black lg:hidden">{{ prop.label }}</div>
+
+                <div class="break-words text-[--color-neutral-700]">{{ value }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -87,7 +94,7 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { ref, watch, watchEffect } from "vue";
+import { ref, watch, watchEffect, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { getPropertyValue } from "@/core/utilities";
@@ -120,6 +127,9 @@ const showOnlyDifferences = ref(false);
 
 const properties = ref<ICompareProductProperties>({});
 const propertiesDiffs = ref<ICompareProductProperties>({});
+
+const cardsElement = ref<HTMLElement | null>(null);
+const propertiesElement = ref<HTMLElement | null>(null);
 
 function onShowOnlyDifferencesChange() {
   if (showOnlyDifferences.value && productsIds.value.length > 1) {
@@ -184,6 +194,16 @@ watch(
   { immediate: true },
 );
 
+function syncScroll(event: Event) {
+  if (cardsElement.value && propertiesElement.value) {
+    if (event.target === cardsElement.value) {
+      propertiesElement.value.scrollLeft = cardsElement.value.scrollLeft;
+    } else {
+      cardsElement.value.scrollLeft = propertiesElement.value.scrollLeft;
+    }
+  }
+}
+
 /**
  * Send Google Analytics event for related products.
  */
@@ -195,4 +215,23 @@ watchEffect(() => {
     });
   }
 });
+
+onMounted(() => {
+  // Add scroll event listeners to both elements
+  if (cardsElement.value && propertiesElement.value) {
+    cardsElement.value.addEventListener("scroll", syncScroll);
+    propertiesElement.value.addEventListener("scroll", syncScroll);
+  }
+});
 </script>
+
+<style scoped lang="scss">
+.hide-scrollbar {
+  -ms-overflow-style: none; /* for Edge */
+  scrollbar-width: none; /* for Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+  }
+}
+</style>

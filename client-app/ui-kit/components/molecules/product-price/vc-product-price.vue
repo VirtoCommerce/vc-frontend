@@ -12,7 +12,7 @@
     <span class="vc-product-price__actual">
       <span v-if="hasVariations" class="vc-product-price__variations"> {{ $t("common.suffixes.from") }}</span>
 
-      <VcPriceDisplay :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice" />
+      <VcPriceDisplay :value="listPrice?.amount > actualPrice?.amount || !listPrice ? actualPrice : listPrice" />
     </span>
 
     <VcPriceDisplay
