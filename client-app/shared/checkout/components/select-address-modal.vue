@@ -234,9 +234,9 @@ const columns = computed<ITableColumn[]>(() =>
       ],
 );
 
-const onPageChange = (newPage: number) => {
+function onPageChange(newPage: number): void {
   page.value = newPage;
-};
+}
 
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;

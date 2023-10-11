@@ -250,10 +250,10 @@ const columns = computed<ITableColumn[]>(() => [
   },
 ]);
 
-const onPageChange = (newPage: number) => {
+function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
-};
+}
 
 function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
   openPopup({
