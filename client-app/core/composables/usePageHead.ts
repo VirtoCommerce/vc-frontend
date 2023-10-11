@@ -19,7 +19,7 @@ export function usePageHead(data: IUsePageSeoData) {
     meta: HeadAttrs[];
   } = { meta: [] };
 
-  if (data.hasOwnProperty("title")) {
+  if (Object.prototype.hasOwnProperty.call(data, "title")) {
     headObject.title = eagerComputed(() => {
       const textOrChunks = unref(data.title);
       const titleChunks: string[] = [];
