@@ -24,7 +24,7 @@ export function useErrorsTranslator(
 
   const translatedErrors = computed<TranslatedErrorType[]>(() => {
     return (
-      errors?.value?.map((error: ErrorType) => {
+      errors.value?.map((error: ErrorType) => {
         const translationKey = keyInLocale + error.code;
         return {
           ...error,
