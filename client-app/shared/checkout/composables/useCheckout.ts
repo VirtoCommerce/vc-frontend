@@ -148,7 +148,7 @@ export function useCheckout() {
     return addresses.value.some((item) => isEqualAddresses(item, address));
   }
 
-  async function setShippingMethod(method: ShippingMethodType, options = { withBroadcast: true }) {
+  async function setShippingMethod(method: ShippingMethodType, options = { withBroadcast: true }): Promise<void> {
     await updateShipment(
       {
         id: shipment.value?.id,
@@ -162,7 +162,7 @@ export function useCheckout() {
     ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
-  async function setPaymentMethod(method: PaymentMethodType, options = { withBroadcast: true }) {
+  async function setPaymentMethod(method: PaymentMethodType, options = { withBroadcast: true }): Promise<void> {
     await updatePayment(
       {
         id: payment.value?.id,
@@ -174,7 +174,7 @@ export function useCheckout() {
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
-  async function setCheckoutDefaults() {
+  async function setCheckoutDefaults(): Promise<void> {
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
     const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
     const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
@@ -221,7 +221,10 @@ export function useCheckout() {
     loading.value = false;
   }
 
-  async function updateBillingOrDeliveryAddress(addressType: AddressType, inputAddress: InputAddressType) {
+  async function updateBillingOrDeliveryAddress(
+    addressType: AddressType,
+    inputAddress: InputAddressType,
+  ): Promise<void> {
     if (
       addressType === AddressType.Billing &&
       (!payment.value?.billingAddress || !isEqualAddresses(payment.value?.billingAddress, inputAddress))
@@ -250,7 +253,7 @@ export function useCheckout() {
   function openAddOrUpdateAddressModal(
     addressType: AddressType,
     editableAddress?: MemberAddressType | CartAddressType,
-  ) {
+  ): void {
     openPopup({
       component: VcAddOrUpdateAddressModal,
       props: {
@@ -314,13 +317,13 @@ export function useCheckout() {
     }
   }
 
-  async function onDeliveryAddressChange() {
+  function onDeliveryAddressChange(): void {
     addresses.value.length
       ? openSelectAddressModal(AddressType.Shipping)
       : openAddOrUpdateAddressModal(AddressType.Shipping, shipment.value?.deliveryAddress);
   }
 
-  async function onBillingAddressChange() {
+  function onBillingAddressChange(): void {
     addresses.value.length
       ? openSelectAddressModal(AddressType.Billing)
       : openAddOrUpdateAddressModal(AddressType.Billing, payment.value?.billingAddress);
@@ -368,7 +371,7 @@ export function useCheckout() {
     }
   }
 
-  async function prepareOrderData() {
+  async function prepareOrderData(): Promise<void> {
     // Update payment with required properties
     const filledPayment: InputPaymentType = {
       id: payment.value!.id,

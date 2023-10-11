@@ -44,7 +44,7 @@ const actions = ref<SlidingActionsItem[]>([]);
 const actionsOnLeft = computed<SlidingActionsItem[]>(() => actions.value.filter((action) => action.left));
 const actionsOnRight = computed<SlidingActionsItem[]>(() => actions.value.filter((action) => !action.left));
 
-function resetOffset() {
+function resetOffset(): void {
   if (actionsOnLeft.value.length) {
     offsetX.value = -maxWidth;
     startOffsetX.value = offsetX.value;
@@ -54,13 +54,13 @@ function resetOffset() {
   }
 }
 
-async function handleTouchStart(event: TouchEvent) {
+function handleTouchStart(event: TouchEvent): void {
   startX.value = event.touches[0].clientX;
   startY.value = event.touches[0].clientY;
   startOffsetX.value = offsetX.value;
 
   if (!actions.value.length) {
-    actions.value = await props.actionsBuilder(props.inputObject);
+    actions.value = props.actionsBuilder(props.inputObject);
     resetOffset();
   }
 
@@ -69,7 +69,7 @@ async function handleTouchStart(event: TouchEvent) {
   }
 }
 
-function handleTouchMove(event: TouchEvent) {
+function handleTouchMove(event: TouchEvent): void {
   if (!actions.value.length) {
     return;
   }
@@ -99,7 +99,7 @@ function handleTouchMove(event: TouchEvent) {
   offsetX.value = newOffsetX;
 }
 
-function handleTouchEnd() {
+function handleTouchEnd(): void {
   const absoluteOffsetX = Math.abs(offsetX.value);
 
   if (absoluteOffsetX < maxWidth) {
