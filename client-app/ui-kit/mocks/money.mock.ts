@@ -1,6 +1,4 @@
-import type { MoneyType } from "@/core/api/graphql/types";
-
-export function getMoney(amount: number, culture = "en-US", currencyCode = "USD"): MoneyType {
+export function getMoney(amount: number, culture = "en-US", currencyCode = "USD") {
   const currencyFormat = new Intl.NumberFormat(culture, { currency: currencyCode, style: "currency" });
 
   const formattedAmount = currencyFormat.format(amount);
