@@ -83,7 +83,7 @@
           name="newPassword"
           class="mb-5"
           autocomplete="new-password"
-          @update:model-value="oldPassword ? (newPassword = $event.trim()) : null"
+          @update:model-value="oldPassword ? (newPassword = $event?.trim() ?? '') : null"
         />
 
         <VcInput
@@ -99,7 +99,7 @@
           name="confirmNewPassword"
           class="mb-5"
           autocomplete="off"
-          @update:model-value="oldPassword ? (confirmNewPassword = $event.trim()) : null"
+          @update:model-value="oldPassword ? (confirmNewPassword = $event?.trim() ?? '') : null"
         />
 
         <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
