@@ -1,12 +1,20 @@
 import { vOnClickOutside } from "@vueuse/components";
 import { vMaska } from "maska";
 import * as UIKitComponents from "@/ui-kit/components";
-import type { App, Plugin } from "vue";
+import type { MaskaDetail } from "maska";
+import type { App, FunctionDirective, Plugin } from "vue";
+
+type VMaskaType = FunctionDirective<HTMLElement, MaskaDetail | undefined>;
 
 export const uiKit: Plugin = {
   install: (app: App) => {
     // Directives
-    app.directive("mask", vMaska);
+    const vMask: VMaskaType = (element, binding, vnode, prevVNode) => {
+      // eslint-disable-next-line no-console
+      console.warn("[ui-kit] v-mask is deprecated, use v-maska directly instead: https://beholdr.github.io/maska/");
+      (vMaska as VMaskaType)(element, binding, vnode, prevVNode);
+    };
+    app.directive("mask", vMask);
     app.directive("onClickOutside", vOnClickOutside);
 
     // Components
