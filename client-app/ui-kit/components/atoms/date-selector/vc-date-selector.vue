@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { dateToIsoDateString } from "@/core/utilities";
+import { dateToIsoDateString } from "@/ui-kit/utilities";
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: Date | undefined): void;
