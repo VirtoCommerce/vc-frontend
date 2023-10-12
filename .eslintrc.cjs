@@ -222,4 +222,5 @@ module.exports = {
       node: true,
     },
   },
+  ignorePatterns: "client-app/core/api/graphql/types.ts"
 };

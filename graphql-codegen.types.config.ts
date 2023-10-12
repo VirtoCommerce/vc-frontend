@@ -8,9 +8,7 @@ const graphQLCodegenTypesConfig: CodegenConfig = {
       plugins: [
         {
           add: {
-            content:
-              '// This file was generated based on "codegen.types.ts". Do not edit manually.\n\n' +
-              "/* eslint-disable */\n",
+            content: "// This file is auto-generated. Do not edit manually.\n",
           },
         },
         "typescript",
