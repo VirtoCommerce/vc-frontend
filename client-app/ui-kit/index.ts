@@ -1,12 +1,12 @@
 import { vOnClickOutside } from "@vueuse/components";
-import { maska } from "maska";
+import { vMaska } from "maska";
 import * as UIKitComponents from "@/ui-kit/components";
 import type { App, Plugin } from "vue";
 
 export const uiKit: Plugin = {
   install: (app: App) => {
     // Directives
-    app.directive("mask", maska);
+    app.directive("mask", vMaska);
     app.directive("onClickOutside", vOnClickOutside);
 
     // Components

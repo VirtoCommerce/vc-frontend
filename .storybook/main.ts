@@ -14,24 +14,18 @@ const storybookConfig: StorybookConfig = {
     name: "@storybook/vue3-vite",
     options: {},
   },
-  typescript: {
-    check: false,
-  },
-  core: {
-    disableTelemetry: true,
-  },
   async viteFinal(storybookViteConfig, options) {
     const isDevelopment = options.configType === "DEVELOPMENT";
     const { config } = (await loadConfigFromFile(
       isDevelopment
         ? {
-            command: "serve",
-            mode: "development",
-          }
+          command: "serve",
+          mode: "development",
+        }
         : {
-            command: "build",
-            mode: "production",
-          },
+          command: "build",
+          mode: "production",
+        },
       resolve(__dirname, "../vite.config.ts"),
     ))!;
     return mergeConfig(storybookViteConfig, {

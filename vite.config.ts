@@ -86,7 +86,14 @@ export default defineConfig(({ mode }): UserConfig => {
         },
         output: {
           entryFileNames: "[name].js",
-          assetFileNames: "[name][extname]",
+          assetFileNames: (assetInfo) => {
+            // There is no way to get file path here, only name is available.
+            // Only flag-icons is svg assets currently.
+            if (assetInfo.name?.endsWith(".svg")) {
+              return "static/icons/flag-icons/[name].svg";
+            }
+            return "[name][extname]";
+          },
         },
       },
     },
