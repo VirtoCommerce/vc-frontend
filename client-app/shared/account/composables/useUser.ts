@@ -1,4 +1,5 @@
-import { eagerComputed, useStorage } from "@vueuse/core";
+import { eagerComputed, useLocalStorage } from "@vueuse/core";
+import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
   getMe,
@@ -47,39 +48,77 @@ const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organiz
 const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
+interface IPasswordExpirationEntry {
+  userId: string;
+  date: Date;
+}
+
 export function useUser() {
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
   const { openPopup, closePopup } = usePopup();
 
-  const changePasswordReminderDate: RemovableRef<Date | null> = useStorage("vcst-password-expire-reminder-date", null);
+  const changePasswordReminderDates: RemovableRef<string | null> = useLocalStorage(
+    "vcst-password-expire-reminder-date",
+    null,
+  );
 
   function handlePasswordExpiration(): void {
-    if (
-      user.value?.passwordExpiryInDays &&
-      (!changePasswordReminderDate.value || changePasswordReminderDate.value <= new Date())
-    ) {
-      openPopup({
-        component: PasswordExpirationModal,
-
-        props: {
-          expiryInDays: user.value?.passwordExpiryInDays,
-
-          onConfirm(): void {
-            globals.router.replace({ name: "ChangePassword" });
-            changePasswordReminderDate.value = null;
-            closePopup();
-          },
-
-          onDismiss(): void {
-            const nextDate = new Date();
-            nextDate.setDate(nextDate.getDate() + 1);
-            changePasswordReminderDate.value = nextDate;
-            closePopup();
-          },
-        },
-      });
+    if (!user.value?.passwordExpiryInDays) {
+      return;
     }
+
+    const passwordExpirationEntries = changePasswordReminderDates.value
+      ? (JSON.parse(changePasswordReminderDates.value) as Array<IPasswordExpirationEntry>)
+      : [];
+
+    const userPasswordExpirationEntry = passwordExpirationEntries.find((entry) => entry.userId === user.value!.id);
+
+    if (userPasswordExpirationEntry && new Date(userPasswordExpirationEntry.date) > new Date()) {
+      return;
+    }
+
+    if (!passwordExpirationEntries.length) {
+      changePasswordReminderDates.value = null;
+    }
+
+    openPopup({
+      component: PasswordExpirationModal,
+
+      props: {
+        expiryInDays: user.value?.passwordExpiryInDays,
+
+        async onConfirm(): Promise<void> {
+          if (userPasswordExpirationEntry) {
+            remove(passwordExpirationEntries, (entry) => entry.userId === userPasswordExpirationEntry.userId);
+          }
+
+          changePasswordReminderDates.value = JSON.stringify(passwordExpirationEntries);
+
+          closePopup();
+
+          await globals.router.replace({ name: "ChangePassword" });
+        },
+
+        onDismiss(): void {
+          const nextDate = new Date();
+          nextDate.setDate(nextDate.getDate() + 1);
+
+          if (userPasswordExpirationEntry) {
+            userPasswordExpirationEntry.date = nextDate;
+          } else {
+            passwordExpirationEntries.push({
+              userId: user.value!.id,
+              date: nextDate,
+            });
+          }
+
+          changePasswordReminderDates.value = JSON.stringify(passwordExpirationEntries);
+
+          closePopup();
+        },
+      },
+    });
   }
 
   function checkPermissions(...permissions: string[]): boolean {
