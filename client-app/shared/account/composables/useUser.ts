@@ -38,7 +38,6 @@ import type {
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
-import type { RemovableRef } from "@vueuse/core";
 
 const loading = ref(false);
 const user = ref<UserType>();
@@ -58,9 +57,9 @@ export function useUser() {
   const { innerFetch } = useFetch();
   const { openPopup, closePopup } = usePopup();
 
-  const changePasswordReminderDates: RemovableRef<string | null> = useLocalStorage(
+  const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
-    null,
+    [],
   );
 
   function handlePasswordExpiration(): void {
@@ -68,18 +67,12 @@ export function useUser() {
       return;
     }
 
-    const passwordExpirationEntries = changePasswordReminderDates.value
-      ? (JSON.parse(changePasswordReminderDates.value) as Array<IPasswordExpirationEntry>)
-      : [];
-
-    const userPasswordExpirationEntry = passwordExpirationEntries.find((entry) => entry.userId === user.value!.id);
+    const userPasswordExpirationEntry = changePasswordReminderDates.value.find(
+      (entry) => entry.userId === user.value!.id,
+    );
 
     if (userPasswordExpirationEntry && new Date(userPasswordExpirationEntry.date) > new Date()) {
       return;
-    }
-
-    if (!passwordExpirationEntries.length) {
-      changePasswordReminderDates.value = null;
     }
 
     openPopup({
@@ -90,10 +83,8 @@ export function useUser() {
 
         async onConfirm(): Promise<void> {
           if (userPasswordExpirationEntry) {
-            remove(passwordExpirationEntries, (entry) => entry.userId === userPasswordExpirationEntry.userId);
+            remove(changePasswordReminderDates.value, (entry) => entry.userId === userPasswordExpirationEntry.userId);
           }
-
-          changePasswordReminderDates.value = JSON.stringify(passwordExpirationEntries);
 
           closePopup();
 
@@ -107,13 +98,11 @@ export function useUser() {
           if (userPasswordExpirationEntry) {
             userPasswordExpirationEntry.date = nextDate;
           } else {
-            passwordExpirationEntries.push({
+            changePasswordReminderDates.value.push({
               userId: user.value!.id,
               date: nextDate,
             });
           }
-
-          changePasswordReminderDates.value = JSON.stringify(passwordExpirationEntries);
 
           closePopup();
         },
