@@ -88,7 +88,7 @@ export default defineConfig(({ mode }): UserConfig => {
           entryFileNames: "[name].js",
           assetFileNames: (assetInfo) => {
             // There is no way to get file path here, only name is available.
-            // Only flag-icons is svg assets currently.
+            // Only flag-icons is svg assets (i.e. copied from npm package) currently.
             if (assetInfo.name?.endsWith(".svg")) {
               return "static/icons/flag-icons/[name].svg";
             }
