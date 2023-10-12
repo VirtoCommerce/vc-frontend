@@ -96,7 +96,7 @@ module.exports = {
         "newlines-between": "never",
       },
     ],
-    "no-console": "warn",
+    "no-console": ["warn", { allow: ["warn", "error"] }],
     "vue/component-api-style": "warn",
     "vue/component-name-in-template-casing": [
       "warn",

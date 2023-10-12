@@ -10,7 +10,6 @@ export const uiKit: Plugin = {
   install: (app: App) => {
     // Directives
     const vMask: VMaskaType = (element, binding, vnode, prevVNode) => {
-      // eslint-disable-next-line no-console
       console.warn("[ui-kit] v-mask is deprecated, use v-maska directly instead: https://beholdr.github.io/maska/");
       (vMaska as VMaskaType)(element, binding, vnode, prevVNode);
     };
