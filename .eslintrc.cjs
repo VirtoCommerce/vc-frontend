@@ -96,7 +96,7 @@ module.exports = {
         "newlines-between": "never",
       },
     ],
-    "no-console": ["warn", { allow: ["warn", "error"] }],
+    "no-console": "warn",
     "vue/component-api-style": "warn",
     "vue/component-name-in-template-casing": [
       "warn",
@@ -194,6 +194,12 @@ module.exports = {
           { "blankLine": "never", "prev": "export", "next": "export" }
         ],
         "sort-exports/sort-exports": "warn",
+      }
+    },
+    {
+      files: ["client-app/ui-kit/*"],
+      rules: {
+        "no-console": ["warn", { allow: ["warn", "error"] }],
       }
     },
     {
