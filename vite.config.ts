@@ -68,6 +68,8 @@ export default defineConfig(({ mode }): UserConfig => {
       },
     },
     define: {
+      // https://www.apollographql.com/docs/react/development-testing/reducing-bundle-size#vite
+      "globalThis.__DEV__": JSON.stringify(isDevelopment),
       // https://vue-i18n.intlify.dev/guide/advanced/optimization.html#reduce-bundle-size-with-feature-build-flags
       __VUE_I18N_FULL_INSTALL__: true,
       __VUE_I18N_LEGACY_API__: false,
