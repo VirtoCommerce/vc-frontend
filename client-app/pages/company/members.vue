@@ -162,8 +162,7 @@
           <VcChip
             v-if="facetValue.selected"
             :key="facet.paramName + facetValue.value"
-            size="sm"
-            variant="secondary"
+            color="secondary"
             closable
             @close="resetFilterItem(facet, facetValue)"
           >
@@ -172,10 +171,10 @@
         </template>
       </template>
 
-      <VcChip size="sm" variant="secondary" is-outline clickable @click="resetFilters">
-        {{ $t("common.buttons.reset_filters") }}
+      <VcChip color="secondary" variant="outline" clickable @click="resetFilters">
+        <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon class="ml-2" name="reset" size="xs" />
+        <VcIcon name="reset" />
       </VcChip>
     </div>
 
@@ -580,7 +579,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
     component: EditCustomerRoleModal,
     props: {
       roles: B2B_ROLES,
-      currentRoleId: contact.extended.roles[0]?.id,
+      currentRoleId: contact.extended.roles[0].id,
       loading: contactsLoading,
 
       async onConfirm(selectedRoleId: string): Promise<void> {
@@ -595,7 +594,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
         };
 
         if (result?.succeeded) {
-          notifications.success({ ...notification, text: t("common.messages.role_update_successfull") });
+          notifications.success({ ...notification, text: t("common.messages.role_update_successful") });
 
           await fetchContacts();
         } else {

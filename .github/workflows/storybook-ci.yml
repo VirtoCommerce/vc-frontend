@@ -1,0 +1,194 @@
+# v1.0.0.vcst
+name: Storybook CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      [master, dev, demo]
+    paths-ignore:
+      - '.github/**'
+      - 'docs/**'
+      - 'build/**'
+      - 'README.md'
+      - 'LICENSE'
+      - '**/argoDeploy.json'
+  pull_request:
+    branches:
+      [master, dev, demo]
+    paths-ignore:
+      - '.github/**'
+      - 'docs/**'
+      - 'build/**'
+      - 'README.md'
+      - 'LICENSE'
+      - '**/argoDeploy.json'
+
+jobs:
+  ci:
+    if: ${{ github.actor != 'dependabot[bot]' &&
+         (github.event.pull_request.head.repo.full_name == github.repository ||
+         github.event.pull_request.head.repo.full_name == '') }}  # Check that PR not from forked repo and not from Dependabot
+    runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: true
+      CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+      CLIENT_ID: ${{secrets.CLIENT_ID}}
+      CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
+      VERSION_SUFFIX: ''
+      BUILD_STATE: 'failed'
+      RELEASE_STATUS: 'false'
+      DOCKER_URL: ''
+      DOCKER_REPOSITORY: 'ghcr.io'
+      DOCKER_IMAGE: 'vc-theme-b2b-vue-storybook'
+      DOCKER_TAG: ''
+    outputs:
+      jira-keys: ${{ steps.jira_keys.outputs.jira-keys }}
+      version: ${{ steps.image.outputs.shortVersion }}
+      tag: ${{ env.DOCKER_TAG }}
+
+    steps:
+
+      - name: Set up Node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Set RELEASE_STATUS
+        if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
+        run: |
+          echo "RELEASE_STATUS=true" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get Image Version
+        uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        id: image
+
+      - name: Set release VERSION_SUFFIX
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}" >> $GITHUB_ENV
+
+      - name: Set release-alpha VERSION_SUFFIX
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.fullSuffix }}" >> $GITHUB_ENV
+
+      - name: Set PR VERSION_SUFFIX
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
+
+      - name: Set DOCKER_TAG variable
+        run: |
+          if [ '${{ github.ref }}' = 'refs/heads/master' ]; then
+            echo "DOCKER_TAG=${{ steps.image.outputs.shortVersion }}" >> $GITHUB_ENV
+          else
+            echo "DOCKER_TAG=${{ steps.image.outputs.taggedVersion }}" >> $GITHUB_ENV
+          fi;
+
+      - name: Install dependencies
+        run: |
+          yarn install
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: false
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Build
+        run: |
+          yarn storybook:build
+
+      - name: BUILD_STATE::successful
+        if: success()
+        run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
+
+      - name: Packaging
+        run: |
+          yarn storybook:compress ${{ github.event.repository.name }}-storybook-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+
+      - name: Publish to Blob
+        if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        id: blobRelease
+        uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
+        with:
+          blobSAS: ${{ secrets.BLOB_TOKEN }}
+          blobUrl: ${{ vars.BLOB_URL }}
+
+      - name: Set URLs
+        id: urls
+        run: |
+          echo "DOCKER_URL=${{ env.DOCKER_REPOSITORY }}/${GITHUB_REPOSITORY_OWNER,,}/${{ env.DOCKER_IMAGE }}:" >> $GITHUB_OUTPUT
+          echo "BLOB_URL=${{ steps.blobRelease.outputs.packageUrl }}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REPOSITORY }}
+          username: $GITHUB_ACTOR
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
+          context: .
+          file: .storybook/Dockerfile
+          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.ref == 'refs/heads/dev' && 'dev-latest' || 'latest'}}
+
+      - name: Parse Jira Keys from All Commits
+        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
+        if: always()
+        id: jira_keys
+        with:
+          release: ${{ env.RELEASE_STATUS }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Build Info to Jira
+        if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
+        id: push_build_info_to_jira
+        uses: HighwayThree/jira-upload-build-info@master
+        with:
+          cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
+          client-id: '${{ secrets.CLIENT_ID }}'
+          client-secret: '${{ secrets.CLIENT_SECRET }}'
+          pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+          build-number: ${{ github.run_number }}
+          build-display-name: 'Workflow: ${{ github.workflow }} (#${{ github.run_number }})'
+          build-state: '${{ env.BUILD_STATE }}'
+          build-url: '${{github.event.repository.url}}/actions/runs/${{github.run_id}}'
+          update-sequence-number: '${{ github.run_id }}'
+          last-updated: '${{github.event.head_commit.timestamp}}'
+          issue-keys: '${{ steps.jira_keys.outputs.jira-keys }}'
+          commit-id: '${{ github.sha }}'
+          repo-url: '${{ github.event.repository.url }}'
+          build-ref-url: '${{ github.event.repository.url }}/actions/runs/${{ github.run_id }}'
+
+      - name: Confirm Jira Build Output
+        if: success()
+        run: |
+          echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
+
+  deploy-cloud:
+    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
+    needs: ci
+    uses: ./.github/workflows/deploy-cloud.yml
+    with:
+      parameterName: 'custom.app1.image.tag'
+      parameterValue: ${{ needs.ci.outputs.tag }}
+      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+    secrets: inherit

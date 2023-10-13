@@ -90,7 +90,7 @@ fragment fullCartFields on CartType {
   warnings {
     ...validationErrorFields
   }
-  validationErrors(ruleSet: "items") {
+  validationErrors(ruleSet: "*") {
     ...validationErrorFields
   }
 }

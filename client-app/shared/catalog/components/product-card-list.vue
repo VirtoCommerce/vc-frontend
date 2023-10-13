@@ -105,7 +105,7 @@
     </div>
 
     <div class="vc-product-card-list__price mt-2 w-full sm:mt-0 2xl:pr-2">
-      <VcItemPriceCatalog class="md:flex-col md:gap-0" :variations="product.variations" :value="product.price" />
+      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" class="md:flex-col md:gap-0" />
     </div>
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
@@ -160,7 +160,7 @@ import DiscountBadge from "./discount-badge.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 
-defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
+defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
 const props = withDefaults(defineProps<IProps>(), {
   lazy: true,
@@ -178,6 +178,7 @@ const isDigital = computed(() => props.product.productType === ProductType.Digit
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
+const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 </script>
 
 <style scoped lang="scss">

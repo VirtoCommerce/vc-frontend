@@ -10,6 +10,7 @@ declare module "@vue/runtime-core" {
     VcAlert: typeof Components.VcAlert;
     VcButtonSeeMoreLess: typeof Components.VcButtonSeeMoreLess;
     VcCarousel: typeof Components.VcCarousel;
+    VcChip: typeof Components.VcChip;
     VcCollapsibleContent: typeof Components.VcCollapsibleContent;
     VcCopyText: typeof Components.VcCopyText;
     VcEmptyPage: typeof Components.VcEmptyPage;
@@ -26,6 +27,7 @@ declare module "@vue/runtime-core" {
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;
     VcLoaderWithText: typeof Components.VcLoaderWithText;
     VcLayoutWithRightSidebar: typeof Components.VcLayoutWithRightSidebar;
+    VcProductPrice: typeof Components.VcProductPrice;
     VcQuantity: typeof Components.VcQuantity;
     VcSelect: typeof Components.VcSelect;
     VcSteps: typeof Components.VcSteps;

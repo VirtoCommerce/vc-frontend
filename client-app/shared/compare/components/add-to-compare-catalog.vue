@@ -1,17 +1,11 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <button type="button" class="block" @click="toggle">
-        <svg
-          :class="[
-            customClass,
-            isInCompareList
-              ? 'text-[color:var(--color-product-icon-active)]'
-              : 'text-[color:var(--color-product-icon)]',
-          ]"
-        >
-          <use href="/static/images/compare.svg#main"></use>
-        </svg>
+      <button type="button" class="flex" @click="toggle">
+        <VcIcon
+          :class="[customClass, isInCompareList ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
+          name="compare"
+        />
       </button>
     </template>
 
@@ -37,7 +31,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  customClass: "w-6 h-6 lg:w-4 lg:h-4",
+  customClass: "w-5 h-5 lg:w-4 lg:h-4",
   tooltipPlacement: "left",
 });
 

@@ -76,7 +76,6 @@
         <div v-else class="flex flex-col md:rounded md:border">
           <VcTable
             :loading="loadingAddresses"
-            :item-actions-builder="itemActionsBuilder"
             :columns="columns"
             :items="paginatedAddresses"
             :sort="sort"
@@ -131,6 +130,15 @@
                   <span class="overflow-hidden text-ellipsis leading-tight">
                     {{ item.postalCode }}
                   </span>
+                </div>
+
+                <div v-if="userCanEditOrganization" class="absolute right-4 top-3">
+                  <CompanyInfoDropdownMenu
+                    :address="item"
+                    placement="left-start"
+                    @edit="openAddOrUpdateCompanyAddressModal(item)"
+                    @delete="openDeleteAddressModal(item)"
+                  />
                 </div>
               </div>
             </template>
@@ -192,32 +200,11 @@
                 </td>
 
                 <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
-                  <VcActionDropdownMenu>
-                    <button
-                      type="button"
-                      class="flex items-center whitespace-nowrap p-3"
-                      @click="openAddOrUpdateCompanyAddressModal(address)"
-                    >
-                      <VcIcon class="mr-1 text-[--color-primary-500]" name="pencil" :size="18" />
-
-                      <span class="text-sm">{{ $t("common.buttons.edit") }}</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      :disabled="address.isDefault"
-                      :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
-                      class="flex items-center whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
-                      @click="openDeleteAddressModal(address)"
-                    >
-                      <VcIcon
-                        :class="['mr-1', { 'text-[--color-danger-500]': !address.isDefault }]"
-                        name="x"
-                        :size="18"
-                      />
-                      <span class="text-sm">{{ $t("common.buttons.delete") }}</span>
-                    </button>
-                  </VcActionDropdownMenu>
+                  <CompanyInfoDropdownMenu
+                    :address="address"
+                    @edit="openAddOrUpdateCompanyAddressModal(address)"
+                    @delete="openDeleteAddressModal(address)"
+                  />
                 </td>
               </tr>
             </template>
@@ -246,7 +233,12 @@ import { string } from "yup";
 import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { useUser } from "@/shared/account";
-import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import {
+  CompanyInfoDropdownMenu,
+  AddOrUpdateCompanyAddressModal,
+  useOrganization,
+  useOrganizationAddresses,
+} from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -334,25 +326,25 @@ const columns = computed<ITableColumn[]>(() => {
   return result;
 });
 
-async function onPageChange(newPage: number) {
+function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
 }
 
-async function applySorting(sortInfo: ISortInfo) {
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = sortInfo;
   page.value = 1;
   await fetchAddresses();
 }
 
-async function saveOrganizationName() {
+async function saveOrganizationName(): Promise<void> {
   await updateOrganization({
     id: organizationId.value,
     name: organizationName.value,
   });
 }
 
-async function openDeleteAddressModal(address: MemberAddressType) {
+function openDeleteAddressModal(address: MemberAddressType): void {
   if (address.isDefault) {
     return;
   }
@@ -391,7 +383,7 @@ async function openDeleteAddressModal(address: MemberAddressType) {
   });
 }
 
-async function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): Promise<void> {
+function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
   const closeAddOrUpdateAddressModal = openPopup({
     component: AddOrUpdateCompanyAddressModal,
     props: {
@@ -412,34 +404,6 @@ async function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): 
       },
     },
   });
-}
-
-function itemActionsBuilder(inputObject: MemberAddressType) {
-  const actions: SlidingActionsItem[] = [];
-
-  if (userCanEditOrganization.value) {
-    actions.push(
-      {
-        icon: "trash",
-        title: t("common.buttons.delete"),
-        left: true,
-        classes: inputObject.isDefault ? "bg-[--color-neutral-200]" : "bg-[--color-danger-500]",
-        clickHandler(address: MemberAddressType) {
-          openDeleteAddressModal(address);
-        },
-      },
-      {
-        icon: "pencil",
-        title: t("common.buttons.edit"),
-        classes: "bg-[--color-neutral-500]",
-        clickHandler(address: MemberAddressType) {
-          openAddOrUpdateCompanyAddressModal(address);
-        },
-      },
-    );
-  }
-
-  return actions;
 }
 
 fetchAddresses();

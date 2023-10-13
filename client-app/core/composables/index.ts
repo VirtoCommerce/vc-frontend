@@ -6,6 +6,7 @@ export * from "./useCategoriesRoutes";
 export * from "./useComponentId";
 export * from "./useCountries";
 export * from "./useCurrency";
+export * from "./useErrorsTranslator";
 export * from "./useFetch";
 export * from "./useGoogleAnalytics";
 export * from "./useIdentityErrorTranslator";

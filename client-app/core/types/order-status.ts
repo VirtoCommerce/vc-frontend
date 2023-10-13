@@ -1,5 +1,5 @@
 export interface IOrderStatus {
   code: string;
-  color: VcBadgeColorType;
-  variant: VcBadgeVariantType;
+  color: VcChipColorType;
+  variant: VcChipVariantType;
 }

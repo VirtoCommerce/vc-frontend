@@ -100,15 +100,15 @@
     <!-- Filters chips -->
     <div v-if="!isFilterEmpty" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
       <template v-for="item in filterChipsItems" :key="item.value">
-        <VcChip size="sm" variant="secondary" closable @close="removeFilterChipsItem(item)">
+        <VcChip color="secondary" closable @close="removeFilterChipsItem(item)">
           {{ item.label }}
         </VcChip>
       </template>
 
-      <VcChip size="sm" variant="secondary" is-outline clickable @click="resetFilters">
-        {{ $t("common.buttons.reset_filters") }}
+      <VcChip color="secondary" variant="outline" clickable @click="resetFilters">
+        <span>{{ $t("common.buttons.reset_filters") }}</span>
 
-        <VcIcon class="ml-2" name="reset" size="xs" />
+        <VcIcon name="reset" />
       </VcChip>
     </div>
   </template>

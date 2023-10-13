@@ -155,9 +155,10 @@
       "save_changes": "Would you like to save changes",
       "address_deletion_successful": "Address has been successfully deleted",
       "cart_contains_deleted_products": "Cart contains products, that cannot be purchased any more. Please remove those products and try once again",
-      "fail_add_product_to_cart": "Sorry, this product cannot be added to cart",
+      "fail_add_product_to_cart": "Sorry, this product cannot be added to cart. {reason}",
+      "fail_to_change_quantity_in_cart": "Sorry, can't update product quantity in cart. {reason}",
       "unhandled_error": "Apologies for the inconvenience. Our server is currently experiencing technical issues. Please try again later.",
-      "role_update_successfull": "The customer role has been updated successfully.",
+      "role_update_successful": "The customer role has been updated successfully.",
       "role_update_failed": "Errors occurred during the role updating: {0}",
       "passwords_do_not_match": "The password fields must have matching values.",
       "password_new_same_old": "Your current password and new password must be different.",
@@ -370,8 +371,15 @@
         "forgot_password_link": "Forgot your password?",
         "login_button": "Log in",
         "registration_button": "Sign up",
-        "email_or_password_incorrect_alert": "The email or password you provided is invalid",
-        "user_is_locked_out_alert": "@:common.messages.blocked"
+        "errors": {
+          "login_failed": "Login attempt failed. Please check your credentials",
+          "email_verification_is_required": "Email verification required. Please verify your email address",
+          "user_is_temporary_locked_out": "Your account has been temporarily locked. Please try again after some time",
+          "user_is_locked_out": "@:common.messages.blocked",
+          "user_cannot_login_in_store": "Access denied. You cannot sign in to the current store",
+          "password_expired": "@:common.messages.password_expired",
+          "user_not_found": "User not found. Please ensure you've entered the correct information"
+        }
       },
       "forgot_password_form": {
         "error_alert": "Invalid result of the reset password request. Please "
@@ -474,8 +482,9 @@
           "in_cart": "in Cart",
           "already_in_cart_message": "{0} has already been added to the cart",
           "enter_correct_number_message": "Please enter a valid number",
-          "min": "The minimum quantity is {0} product(s)",
-          "max": "The maximum quantity is {0} product(s)"
+          "min": "Min order {0} item(s)",
+          "max": "Max order {0} item(s)",
+          "min_max": "Order from {0} to {1} item(s)"
         }
       },
       "products_section": {
@@ -613,7 +622,7 @@
         "add_to_cart_button": "@:common.buttons.add_to_cart",
         "subtitle_message_start": "Quickly add items to your",
         "cart_link": "Cart",
-        "subtitle_message_end": "by entering item {@common.labels.sku}s and quantities."
+        "subtitle_message_end": "by entering item @:{'common.labels.sku'}s and quantities."
       },
       "copy_n_paste": {
         "title": "Copy and Paste",
@@ -1198,16 +1207,17 @@
       "meta": {
         "title": "Demo landing"
       },
-      "header": "Gaming laptop market overview",
+      "header": "Printers market overview",
       "primary_block": {
         "primary_text": "Commercial management has never been that easy",
         "secondary_text": "Anything you dream about may come true right at the moment you decide to win",
         "first_button": "Learn more",
-        "second_button": "Get in touch"
+        "second_button": "Get in touch",
+        "image_alt": "A laptop on a table"
       },
       "secondary_block": {
         "primary_text": "Readability is a primary concern of a designer",
-        "secondary_text": "In quo enim maxime consuevit iactare vestra se repellere, idque instituit docere sic: omne animal, simul atque insitam in liberos atque haec ratio late patet in quo quaerimus, non ero tibique, si ob rem aperiam eaque ipsa, quae sunt in gravissimo bello animadversionis metu contineret."
+        "secondary_text": "Readability is a critical focus for designers as it directly impacts how effectively a message is communicated through design.  It involves choices such as fonts, spacing, and layout to ensure that content is easily understood. An emphasis on readability enhances user engagement and the overall success of a design."
       },
       "features_block": {
         "primary_text": "Explore the features",
@@ -1231,13 +1241,13 @@
         "second_button": "Get in touch"
       },
       "products_block": {
-        "title": "Gaming laptops",
-        "message": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
+        "title": "Printers",
+        "message": "Printers are necessary for creating physical documents, records, and communication materials across various industries and sectors",
         "choose_button": "Choose"
       },
       "after_products_block": {
-        "primary_text": "Readability is a primary concern of a designer",
-        "secondary_text": "In quo enim maxime consuevit iactare vestra se repellere, idque instituit docere sic: omne animal, simul atque insitam in liberos atque haec ratio late patet in quo quaerimus, non ero tibique, si ob rem aperiam eaque ipsa, quae sunt in gravissimo bello animadversionis metu contineret."
+        "primary_text": "The Dynamic World of Business-to-Business Sales",
+        "secondary_text": "The modern business world is a world of sales. Companies, both large and small, actively engage with each other, offering their products and services. Successful businesses build long-term relationships, understanding customer needs and reacting to market changes. The success and survival of companies depend on effective sales. This dynamic world requires adaptation, innovation, and continuous learning to meet the demands of modern business partners."
       },
       "subscription_block": {
         "primary_text": "Subscribe to our promotions",
@@ -1323,7 +1333,16 @@
     "required_unique_chars": "At least one unique character | Minimum {0} unique characters"
   },
   "validation_error": {
-    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed",
-    "CART_PRODUCT_UNAVAILABLE": "The product's available quantity has changed"
+    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed.",
+    "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
+    "CART_PRODUCT_INACTIVE": "The product is inactive.",
+    "PRODUCT_PRICE_INVALID": "Price is invalid.",
+    "PRODUCT_FFC_QTY": "Maximum available quantity is {availableQty}.",
+    "PRODUCT_MIN_QTY": "Product quantity {qty} is less than minumum {minQty}.",
+    "PRODUCT_MAX_QTY": "Product quantity {qty} is greater than maximum {maxQty}.",
+    "UNABLE_SET_LESS_PRICE": "Unable to set less price.",
+    "LINE_ITEM_NOT_FOUND": "Line item not found.",
+    "LINE_ITEM_IS_READ_ONLY": "Line item is read only.",
+    "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
   }
 }

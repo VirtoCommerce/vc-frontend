@@ -1,0 +1,102 @@
+{
+  "settings": {
+    "type": "settings",
+    "permalink": "/test-demo-landing",
+    "name": "test demo landing",
+    "header": "Printers market overview",
+    "hideBreadcrumbs": true
+  },
+  "content": [
+    {
+      "type": "call-to-action-with-image",
+      "id": "calltoactionwithimageDoUZ",
+      "title": "Commercial management has never been that easy",
+      "subtitle": "Anything you dream about may come true right at the moment you decide to win",
+      "image": "/static/images/demo-landing/note.webp",
+      "imagePosition": "right",
+      "background": "bg-gray-100",
+      "buttons": [
+        {
+          "label": "Learn more",
+          "link": "https://virtocommerce.com"
+        },
+        {
+          "label": "Get in touch",
+          "link": "https://virtocommerce.com"
+        }
+      ],
+      "imageDescription": "Bright office. Laptop and mobile phone on a table"
+    },
+    {
+      "heading": "h2",
+      "type": "text",
+      "id": "text4nEs",
+      "title": "Readability is a primary concern of a designer",
+      "text": {
+        "markdown": "Readability is a critical focus for designers as it directly impacts how effectively a message is communicated through design. It involves choices such as fonts, spacing, and layout to ensure that content is easily understood. An emphasis on readability enhances user engagement and the overall success of a design.",
+        "html": "<p>Readability is a critical focus for designers as it directly impacts how effectively a message is communicated through design. It involves choices such as fonts, spacing, and layout to ensure that content is easily understood. An emphasis on readability enhances user engagement and the overall success of a design.</p>"
+      },
+      "background": "bg-gray-800"
+    },
+    {
+      "type": "features",
+      "id": "featuresqeo",
+      "title": "Explore the features",
+      "subtitle": "With a crystal-clear camera, real-time HD video display, and intuitive flight controls, what will you create?",
+      "columns": [
+        {
+          "title": "EPIC AERIAL VIDEO",
+          "text": "With the Phantom 3 Professional, you can shoot 4K videos at up to 30 frames per second and capture 12MP photos.",
+          "image": "/static/images/demo-landing/feat-1.svg"
+        },
+        {
+          "title": "LIVE HD VIEW",
+          "text": "Simply connect your phone or tablet and showcase 720p HD view of everything your camera sees.",
+          "image": "/static/images/demo-landing/feat-2.svg"
+        },
+        {
+          "title": "COMPLETE CONTROL",
+          "text": "Keep your Phantom 3 fully under your command while accessing the most used features right on the included remote",
+          "image": "/static/images/demo-landing/feat-3.svg"
+        }
+      ],
+      "background": "bg-gray-100"
+    },
+    {
+      "type": "call-to-action",
+      "id": "calltoactionsNDR",
+      "title": "Book a free ecommerce consulting session",
+      "background": "bg-gray-800",
+      "buttons": [
+        {
+          "label": "Learn more",
+          "link": "https://virtocommerce.com"
+        },
+        {
+          "label": "Get in touch",
+          "link": "https://virtocommerce.com"
+        }
+      ]
+    },
+    {
+      "type": "products",
+      "id": "productsvazh",
+      "title": "Printers",
+      "subtitle": "\nPrinters are necessary for creating physical documents, records, and communication materials across various industries and sectors.",
+      "query": "printer",
+      "count": 4,
+      "background": "bg-gray-100"
+    },
+    {
+      "heading": "h2",
+      "type": "text",
+      "id": "textiEAb",
+      "title": "The Dynamic World of Business-to-Business Sales",
+      "text": {
+        "markdown": "The modern business world is a world of sales. Companies, both large and small, actively engage with each other, offering their products and services. Successful businesses build long-term relationships, understanding customer needs and reacting to market changes. The success and survival of companies depend on effective sales. This dynamic world requires adaptation, innovation, and continuous learning to meet the demands of modern business partners.",
+        "html": "<p>The modern business world is a world of sales. Companies, both large and small, actively engage with each other, offering their products and services. Successful businesses build long-term relationships, understanding customer needs and reacting to market changes. The success and survival of companies depend on effective sales. This dynamic world requires adaptation, innovation, and continuous learning to meet the demands of modern business partners.</p>\n"
+      },
+      "background": "bg-gray-800"
+    }
+  ]
+}

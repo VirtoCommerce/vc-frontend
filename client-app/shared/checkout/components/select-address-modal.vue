@@ -234,15 +234,15 @@ const columns = computed<ITableColumn[]>(() =>
       ],
 );
 
-const onPageChange = async (newPage: number) => {
+function onPageChange(newPage: number): void {
   page.value = newPage;
-};
+}
 
 function setAddress(address: AnyAddressType): void {
   selectedAddress.value = address;
 }
 
-function save() {
+function save(): void {
   if (selectedAddress.value) {
     emit("result", selectedAddress.value);
   }

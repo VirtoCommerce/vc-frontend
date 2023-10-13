@@ -18,6 +18,6 @@ export const COLORS = {
   warning: "warning",
   danger: "danger",
   additional: "additional",
-};
+} as const;
 
 export type ColorsType = keyof typeof COLORS;

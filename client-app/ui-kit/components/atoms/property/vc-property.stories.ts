@@ -16,9 +16,3 @@ export const Basic = Template.bind({});
 Basic.args = {
   label: "Label",
 };
-
-export const Disabled = Template.bind({});
-Disabled.args = {
-  label: "Label",
-  disabled: true,
-};

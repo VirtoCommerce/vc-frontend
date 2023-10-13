@@ -31,14 +31,12 @@
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
-        :selected-items="selectedItems"
+        :selected-item-ids="selectedItemIds"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
         @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity, { reloadFullCart: true })"
-        @select:item="handleSelectItem"
-        @select:all-items="handleSelectAllItems"
-        @remove:item="handleRemoveItem"
-        @remove:selected-items="handleRemoveSelectedItems"
+        @select:items="handleSelectItems"
+        @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"
       />
 
@@ -108,10 +106,10 @@
             <VcButton
               v-else
               :disabled="isDisabledOrderCreation"
-              :loading="creatingOrder"
+              :loading="loadingCheckout"
               full-width
               class="mt-4"
-              @click="createOrder"
+              @click="createOrderFromCart"
             >
               {{ $t("common.buttons.place_order") }}
             </VcButton>
@@ -132,7 +130,14 @@
             </template>
 
             <transition name="slide-fade-top" mode="out-in" appear>
-              <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
+              <VcAlert
+                v-show="hasValidationErrors && !hasOnlyUnselectedValidationError"
+                color="warning"
+                size="sm"
+                variant="solid-light"
+                class="mt-4"
+                icon
+              >
                 {{ $t("common.messages.something_went_wrong") }}
               </VcAlert>
             </transition>
@@ -158,14 +163,14 @@
 
     <transition name="slide-fade-bottom">
       <div
-        v-if="selectedItems.length"
+        v-if="!isEmpty(selectedItemIds)"
         class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden"
       >
         <VcButton
           variant="outline"
           prepend-icon="trash"
           :disabled="loading"
-          @click="handleRemoveSelectedItems(selectedItems)"
+          @click="handleRemoveItems(selectedItemIds)"
         >
           {{ $t("common.buttons.remove_selected") }}
         </VcButton>
@@ -176,7 +181,7 @@
 
 <script setup lang="ts">
 import { invoke } from "@vueuse/core";
-import _ from "lodash";
+import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -207,28 +212,29 @@ const {
   cart,
   shipment,
   payment,
+  selectedItemIds,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
   availableShippingMethods,
   availablePaymentMethods,
   hasValidationErrors,
+  hasOnlyUnselectedValidationError,
   allItemsAreDigital,
   fetchFullCart,
   changeItemQuantity,
-  removeItem,
   removeItems,
   toggleGift,
   openClearCartModal,
   createQuoteFromCart,
 } = useCart();
 const {
+  loading: loadingCheckout,
   comment,
   purchaseOrderNumber,
   billingAddressEqualsShipping,
   isValidShipment,
   isValidPayment,
   isValidCheckout,
-  canPayNow,
   isPurchaseOrderNumberEnabled,
   initialize: initCheckout,
   onDeliveryAddressChange,
@@ -247,12 +253,15 @@ usePageHead({
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const initialized = ref(false);
-const creatingOrder = ref(false);
 const creatingQuote = ref(false);
 
-const loading = computed<boolean>(() => loadingCart.value || creatingQuote.value || creatingOrder.value);
-const isDisabledNextStep = computed<boolean>(() => loading.value || hasValidationErrors.value);
-const isDisabledOrderCreation = computed<boolean>(() => loading.value || !isValidCheckout.value);
+const loading = computed<boolean>(() => loadingCart.value || loadingCheckout.value || creatingQuote.value);
+const isDisabledNextStep = computed<boolean>(
+  () => loading.value || hasValidationErrors.value || isEmpty(selectedItemIds.value),
+);
+const isDisabledOrderCreation = computed<boolean>(
+  () => loading.value || !isValidCheckout.value || isEmpty(selectedItemIds.value),
+);
 const cartContainsDeletedProducts = computed<boolean | undefined>(
   () => cart.value?.items?.some((item: LineItemType) => !item.product),
 );
@@ -260,37 +269,21 @@ const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
 
-async function handleRemoveSelectedItems(items: string[]): Promise<void> {
-  await removeItems(items);
-
-  selectedItems.value = _.intersection(selectedItems.value, _.map(cart.value?.items, "id"));
-}
-
-const selectedItems = ref<string[]>([]);
-
-function handleSelectItem(value: { id: string; selected: boolean }) {
-  if (value.selected && !selectedItems.value.includes(value.id)) {
-    selectedItems.value.push(value.id);
-  } else if (!value.selected) {
-    _.pull(selectedItems.value, value.id);
-  }
-}
-
-function handleSelectAllItems(value: { items: LineItemType[]; selectAll: boolean }) {
-  _.pullAll(selectedItems.value, _.map(value.items, "id"));
-
-  if (value.selectAll) {
-    selectedItems.value = [...selectedItems.value, ..._.map(value.items, "id")];
-  }
-}
-
-async function handleRemoveItem(lineItem: LineItemType): Promise<void> {
-  await removeItem(lineItem.id);
+async function handleRemoveItems(itemIds: string[]): Promise<void> {
+  await removeItems(itemIds);
 
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  ga.removeItemFromCart(lineItem);
+  ga.removeItemsFromCart(cart.value!.items!.filter((item) => itemIds.includes(item.id)));
+}
+
+function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
+  if (!value.selected) {
+    selectedItemIds.value = without(selectedItemIds.value, ...value.itemIds);
+  } else {
+    selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
+  }
 }
 
 function onChangeBillingAddress() {
@@ -301,20 +294,7 @@ function onChangeBillingAddress() {
   }
 }
 
-async function createOrder(): Promise<void> {
-  creatingOrder.value = true;
-
-  const order = await createOrderFromCart();
-
-  if (order) {
-    await router.push({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
-  }
-
-  await fetchFullCart();
-
-  creatingOrder.value = false;
-}
-
+// FIXME: Move to composable
 async function createQuote(): Promise<void> {
   if (cartContainsDeletedProducts.value) {
     openPopup({

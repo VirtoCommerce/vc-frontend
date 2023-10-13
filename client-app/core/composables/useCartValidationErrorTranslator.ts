@@ -1,6 +1,7 @@
 import { useI18n } from "vue-i18n";
 import type { ValidationErrorType } from "@/core/api/graphql/types";
 
+/** @deprecated Use useErrorsTranslator('path in locale', Array<errors>) */
 export function useCartValidationErrorTranslator() {
   const { t, te } = useI18n();
 

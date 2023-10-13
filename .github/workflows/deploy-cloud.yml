@@ -1,0 +1,150 @@
+# v1.0.0.vcst
+name: VC cloud deployment
+on:
+  workflow_call:
+    inputs:
+      argoServer:
+        required: false
+        default: 'argo.virtocommerce.cloud'
+        type: string
+      parameterName:
+        description: 'Helm parameter name'
+        required: true
+        type: string
+      parameterValue:
+        description: 'Helm parameter value'
+        required: true
+        type: string
+      environmentId:
+        description: 'Environment ID (dev, qa, prod)'
+        default: 'dev'
+        required: false
+        type: string
+      jiraKeys:
+        description: 'Deployed artifact Jira keys (for cycle time report)'
+        required: false
+        default: ''
+        type: string
+  workflow_dispatch:
+    inputs:
+      argoServer:
+        required: false
+        default: 'argo.virtocommerce.cloud'
+        type: string
+      parameterName:
+        description: 'Helm parameter name'
+        required: true
+        type: string
+      parameterValue:
+        description: 'Helm parameter value'
+        required: true
+        type: string
+      environmentId:
+        description: 'Environment ID (dev, qa, prod)'
+        default: 'dev'
+        required: false
+        type: string
+      jiraKeys:
+        description: 'Deployed artifact Jira keys (for cycle time report)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      ARGO_SERVER: ${{ inputs.argoServer }}
+      CLIENT_ID: ${{secrets.CLIENT_ID}}
+      CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+      DEPLOY_STATE: ''
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+      SLEEP_TIME: '3m'
+
+    steps:
+
+    - name: Read deployment config
+      uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
+      id: deployConfig
+      with:
+        envName: ${{ inputs.environmentId }}
+        deployConfigPath: .deployment/theme/cloudDeploy.json
+
+    - name: Start deployment
+      uses: bobheadxi/deployments@main
+      id: deployment
+      with:
+        step: start
+        token: ${{ env.GITHUB_TOKEN }}
+        env: ${{ steps.deployConfig.outputs.environmentName }}
+        override: true
+
+    - name: Install vc-build
+      run: |
+        dotnet tool install --global VirtoCommerce.GlobalTool --version 3.16.0
+
+    - name: Update environment
+      run: |
+        export PARAMETER_NAME=$(echo "${{ inputs.parameterName }}" | xargs)
+        export PARAMETER_VALUE=$(echo "${{ inputs.parameterValue }}" | xargs)
+        vc-build SetEnvParameter -EnvironmentName ${{ steps.deployConfig.outputs.deployAppName }} -CloudToken ${{ secrets.VCST_PLATFORM_TOKEN }} -HelmParameters $PARAMETER_NAME=$PARAMETER_VALUE
+
+    - name: Sleep for ${{ env.SLEEP_TIME }}
+      run: sleep ${{ env.SLEEP_TIME }}
+      shell: bash
+
+    - name: Wait for environment is up
+      timeout-minutes: 5
+      uses: VirtoCommerce/vc-github-actions/vc-argocd-cli@master
+      with:
+        server: ${{env.ARGO_SERVER}}
+        username: ${{ secrets.VIRTOCLOUD_LOGIN }}
+        password: ${{ secrets.VIRTOCLOUD_PASSWORD }}
+        command: app wait ${{ steps.deployConfig.outputs.deployAppName }}
+
+    - name: DEPLOY_STATE::successful
+      if: success()
+      run: echo "DEPLOY_STATE=successful" >> $GITHUB_ENV
+
+    - name: DEPLOY_STATE::failed
+      if: failure()
+      run: echo "DEPLOY_STATE=failed"  >> $GITHUB_ENV
+
+    - name: Update GitHub deployment status
+      uses: bobheadxi/deployments@main
+      if: always()
+      with:
+        step: finish
+        token: ${{ env.GITHUB_TOKEN }}
+        status: ${{ job.status }}
+        env: ${{ steps.deployment.outputs.env }}
+        deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+    - name: Push Deployment Info to Jira
+      if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && inputs.jiraKeys != '' && always() }}
+      id: push_deployment_info_to_jira
+      uses: VirtoCommerce/jira-upload-deployment-info@master
+      env:
+        CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
+        CLIENT_ID: ${{secrets.CLIENT_ID}}
+        CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      with:
+        cloud-instance-base-url: ${{ secrets.CLOUD_INSTANCE_BASE_URL }}
+        client-id: ${{ secrets.CLIENT_ID }}
+        client-secret: ${{ secrets.CLIENT_SECRET }}
+        deployment-sequence-number: ${{ github.run_id }}
+        update-sequence-number: ${{ github.run_id }}
+        issue-keys: ${{ inputs.jiraKeys }}
+        display-name: ${{ steps.deployConfig.outputs.deployAppName }}
+        url: ${{ steps.deployConfig.outputs.environmentUrl }}
+        label: ${{ steps.deployConfig.outputs.environmentName }}
+        description: 'Deployment to the ${{ steps.deployConfig.outputs.environmentName }} environment'
+        last-updated: '${{github.event.head_commit.timestamp}}'
+        state: '${{ env.DEPLOY_STATE }}'
+        pipeline-id: '${{ github.repository }} ${{ github.workflow }}'
+        pipeline-display-name: 'Workflow: ${{ github.workflow }} (#${{ github.run_number }})'
+        pipeline-url: '${{github.event.repository.html_url}}/actions/runs/${{github.run_id}}'
+        environment-id: ${{ steps.deployConfig.outputs.environmentId }}
+        environment-display-name: ${{ steps.deployConfig.outputs.environmentName }}
+        environment-type: ${{ steps.deployConfig.outputs.environmentType }}

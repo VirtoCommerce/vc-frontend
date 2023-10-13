@@ -1,13 +1,7 @@
 <template>
-  <VcLineItems :items="items" removable disable-subtotal @remove:item="$emit('remove:listItem', $event)">
-    <template #titles>
-      <div class="ps-2">
-        {{ $t("common.labels.quantity") }}
-      </div>
-    </template>
-
+  <VcLineItems :items="items" removable disable-subtotal @remove:items="$emit('remove:items', $event)">
     <template #default="{ item }">
-      <div class="flex max-w-[16rem] flex-wrap gap-1.5 md:max-w-none">
+      <div class="flex w-full max-w-[16rem] flex-wrap gap-1.5 md:max-w-none">
         <VcAddToCart
           v-if="!item.deleted"
           class="w-full"
@@ -23,7 +17,6 @@
         <VcInStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
-          :availability-data="item.availabilityData"
           :quantity="item.availabilityData?.availableQuantity"
           :is-digital="item.productType === ProductType.Digital"
         />
@@ -47,7 +40,7 @@ import type { PreparedLineItemType } from "@/core/types";
 interface IEmits {
   (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;
   (event: "update:listItem", item: PreparedLineItemType, quantity: number): void;
-  (event: "remove:listItem", item: PreparedLineItemType): void;
+  (event: "remove:items", value: string[]): void;
 }
 
 interface IProp {

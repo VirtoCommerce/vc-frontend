@@ -1,7 +1,7 @@
 <template>
   <component
-    :is="isLink ? 'router-link' : 'button'"
-    :to="enabled ? to : ''"
+    :is="componentTag"
+    v-bind="linkAttr"
     :target="target"
     :type="type"
     :disabled="!enabled"
@@ -68,6 +68,7 @@ interface IProps {
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
+  externalLink?: string;
   target?: "_self" | "_blank";
   prependIcon?: string;
   appendIcon?: string;
@@ -94,8 +95,32 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
-const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const target = computed<string | undefined>(() => (props.target && isLink.value ? props.target : undefined));
+const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
+const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+
+const target = computed<string | undefined>(() =>
+  props.target && (isExternalLink.value || isRouterLink.value) ? props.target : undefined,
+);
+
+const componentTag = computed(() => {
+  if (isRouterLink.value) {
+    return "router-link";
+  }
+  if (isExternalLink.value) {
+    return "a";
+  }
+  return "button";
+});
+
+const linkAttr = computed(() => {
+  if (componentTag.value === "router-link") {
+    return { to: props.to };
+  }
+  if (componentTag.value === "a") {
+    return { href: props.externalLink };
+  }
+  return {};
+});
 </script>
 
 <style scoped lang="scss">
