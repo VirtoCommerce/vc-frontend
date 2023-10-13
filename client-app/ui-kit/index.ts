@@ -10,7 +10,9 @@ export const uiKit: Plugin = {
   install: (app: App) => {
     // Directives
     const vMask: VMaskaType = (element, binding, vnode, prevVNode) => {
-      console.warn("[ui-kit] v-mask is deprecated, use v-maska directly instead: https://beholdr.github.io/maska/");
+      console.warn(
+        "[UIKit][warn] v-mask is deprecated, use v-maska directly instead: https://beholdr.github.io/maska/",
+      );
       (vMaska as VMaskaType)(element, binding, vnode, prevVNode);
     };
     app.directive("mask", vMask);
