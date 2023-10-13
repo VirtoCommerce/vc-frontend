@@ -86,6 +86,12 @@ export default defineConfig(({ mode }): UserConfig => {
         output: {
           entryFileNames: "[name].js",
           assetFileNames: "[name][extname]",
+          manualChunks: (id) => {
+            // Force app-runner to have separate chunk to temporarely eliminate caveats of liquid-based hashing
+            if (id.includes("app-runner")) {
+              return "app-runner";
+            }
+          },
         },
       },
     },
