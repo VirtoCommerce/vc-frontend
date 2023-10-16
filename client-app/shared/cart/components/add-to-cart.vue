@@ -35,7 +35,7 @@
     <!-- Info hint -->
     <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
       <template #trigger>
-        <div class="pt-0.5 text-11 text-[color:var(--color-danger)] xs:line-clamp-1">
+        <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
           {{ errorMessage }}
         </div>
       </template>
@@ -58,8 +58,8 @@ import { useField } from "vee-validate";
 import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
-import { useGoogleAnalytics } from "@/core/composables";
-import { ProductType } from "@/core/enums";
+import { useCartValidationErrorTranslator, useGoogleAnalytics } from "@/core/composables";
+import { PRODUCT_OBJECT_TYPE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { useCart } from "../composables/useCart";
@@ -69,6 +69,7 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
+const getValidationErrorTranslation = useCartValidationErrorTranslator();
 const notifications = useNotifications();
 
 interface IEmits {
@@ -90,22 +91,13 @@ const ga = useGoogleAnalytics();
 const loading = ref(false);
 const inputElement = shallowRef<HTMLInputElement>();
 
-const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
-
-const lineItemInCart = computed<LineItemType | undefined>(
-  () => cart.value?.items?.find((item) => item.productId === props.product.id),
-);
-const countInCart = computed<number>(() => lineItemInCart.value?.quantity || 0);
+const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, props.product.maxQuantity || MAX_VALUE),
 );
 
-const disabled = computed<boolean>(
-  () =>
-    loading.value ||
-    (!isDigital.value && (!props.product.availabilityData?.isAvailable || !props.product.availabilityData?.isInStock)),
-);
+const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
 
 const buttonText = computed<string>(() =>
   countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
@@ -117,23 +109,47 @@ const rules = computed(() =>
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
       .integer()
       .positive()
-      .min(minQty.value, ({ min }) => t("shared.cart.add_to_cart.errors.min", [min]))
-      .max(maxQty.value, ({ max }) => t("shared.cart.add_to_cart.errors.max", [max])),
+      .withMutation((schema) => {
+        if (!!props.product.minQuantity && !!props.product.maxQuantity) {
+          return schema.test(
+            "minMaxValue",
+            t("shared.cart.add_to_cart.errors.min_max", [props.product.minQuantity, props.product.maxQuantity]),
+            (value) =>
+              !!value &&
+              !!props.product.minQuantity &&
+              !!props.product.maxQuantity &&
+              value >= props.product.minQuantity &&
+              value <= props.product.maxQuantity,
+          );
+        }
+
+        if (props.product.minQuantity) {
+          return schema.min(
+            props.product.minQuantity,
+            t("shared.cart.add_to_cart.errors.min", [props.product.minQuantity]),
+          );
+        }
+
+        if (props.product.maxQuantity) {
+          return schema.max(
+            props.product.maxQuantity,
+            t("shared.cart.add_to_cart.errors.max", [props.product.maxQuantity]),
+          );
+        }
+
+        return schema;
+      }),
   ),
 );
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
-const { validate, errorMessage, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
+const { errorMessage, validate, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
 
 /**
  * Process button click to add/update cart line item.
  */
 async function onChange() {
-  if (!countInCart.value && (!enteredQuantity.value || isNaN(enteredQuantity.value))) {
-    setValue(minQty.value);
-  }
-
   const { valid } = await validate();
 
   if (!valid || disabled.value) {
@@ -142,15 +158,17 @@ async function onChange() {
 
   loading.value = true;
 
-  const isRemoving = !!lineItemInCart.value && !enteredQuantity.value;
-  let lineItem = clone(lineItemInCart.value);
+  let lineItem = getLineItem(cart.value?.items);
 
-  if (lineItem) {
-    await changeItemQuantity(lineItem.id, enteredQuantity.value || 0);
+  let updatedCart;
+
+  const isAlreadyExistsInTheCart = !!lineItem;
+  if (isAlreadyExistsInTheCart) {
+    updatedCart = await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
   } else {
     const inputQuantity = enteredQuantity.value || minQty.value;
 
-    await addToCart(props.product.id!, inputQuantity);
+    updatedCart = await addToCart(props.product.id!, inputQuantity);
 
     /**
      * Send Google Analytics event for an item added to cart.
@@ -158,18 +176,25 @@ async function onChange() {
     ga.addItemToCart(props.product, inputQuantity);
   }
 
-  if (isRemoving) {
-    lineItem!.quantity = 0;
-    enteredQuantity.value = minQty.value;
-    setValue(enteredQuantity.value);
-  } else {
-    lineItem = clone(lineItemInCart.value);
-  }
+  lineItem = clone(getLineItem(updatedCart?.items));
 
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     notifications.error({
-      text: t("common.messages.fail_add_product_to_cart"),
+      text: t(
+        isAlreadyExistsInTheCart
+          ? "common.messages.fail_to_change_quantity_in_cart"
+          : "common.messages.fail_add_product_to_cart",
+        {
+          reason: updatedCart.validationErrors
+            ?.filter(
+              (validationError) =>
+                validationError.objectId === props.product.code && validationError.objectType === PRODUCT_OBJECT_TYPE,
+            )
+            .map(getValidationErrorTranslation)
+            .join(" "),
+        },
+      ),
       duration: 4000,
       single: true,
     });
@@ -178,6 +203,10 @@ async function onChange() {
   }
 
   loading.value = false;
+}
+
+function getLineItem(items?: LineItemType[]): LineItemType | undefined {
+  return items?.find((item) => item.productId === props.product.id);
 }
 
 /**

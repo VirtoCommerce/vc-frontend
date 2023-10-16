@@ -1,9 +1,11 @@
+import { fileURLToPath, URL } from "node:url";
 import path from "path";
-import { defineConfig, loadEnv, ProxyOptions, splitVendorChunkPlugin, UserConfig } from "vite";
-import mkcert from "vite-plugin-mkcert";
-import vue from "@vitejs/plugin-vue";
 import graphql from "@rollup/plugin-graphql";
-import checker from "vite-plugin-checker";
+import vue from "@vitejs/plugin-vue";
+import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
+import { checker } from "vite-plugin-checker";
+import mkcert from "vite-plugin-mkcert";
+import type { ProxyOptions, UserConfig } from "vite";
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
@@ -42,17 +44,16 @@ export default defineConfig(({ mode }): UserConfig => {
               tsconfigPath: path.resolve(__dirname, "tsconfig.app.json"),
             },
             eslint: {
-              lintCommand:
-                'eslint "client-app/**/*.{js,ts,vue}"',
+              lintCommand: "eslint client-app",
               dev: {
                 overrideConfig: {
+                  cache: true,
+                  cacheLocation: "node_modules/.cache/.eslintcache",
                   cwd: process.cwd(),
-                  globInputPaths: true,
+                  extensions: ["js", "ts", "vue"],
                   ignore: true,
                   ignorePath: ".eslintignore",
                   useEslintrc: true,
-                  cache: true,
-                  cacheLocation: "node_modules/.cache/.eslintcache",
                 },
                 logLevel: ["error"],
               },
@@ -63,7 +64,7 @@ export default defineConfig(({ mode }): UserConfig => {
     ],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./client-app"),
+        "@": fileURLToPath(new URL("./client-app", import.meta.url)),
       },
     },
     define: {
@@ -84,7 +85,13 @@ export default defineConfig(({ mode }): UserConfig => {
         },
         output: {
           entryFileNames: "[name].js",
-          assetFileNames: "[name][extname]",
+          assetFileNames: (assetInfo) => {
+            // This code will move flag-icons svg files to separate directory during build.
+            if (assetInfo.name?.endsWith(".svg")) {
+              return "static/icons/flag-icons/[name].svg";
+            }
+            return "[name][extname]";
+          },
         },
       },
     },

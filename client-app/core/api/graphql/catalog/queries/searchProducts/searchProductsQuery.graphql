@@ -1,5 +1,6 @@
 #import "../../../fragments/propertyFields.graphql"
 #import "../../../fragments/availabilityDataFields.graphql"
+#import "../../../fragments/moneyFields.graphql"
 
 query SearchProducts(
   $storeId: String!
@@ -48,20 +49,10 @@ query SearchProducts(
         id
         price {
           list {
-            amount
-            formattedAmount
-            formattedAmountWithoutCurrency
-            currency {
-              symbol
-            }
+            ...moneyFields
           }
           actual {
-            amount
-            formattedAmount
-            formattedAmountWithoutCurrency
-            currency {
-              symbol
-            }
+            ...moneyFields
           }
         }
       }
@@ -81,12 +72,7 @@ query SearchProducts(
       }
       price {
         actual {
-          amount
-          formattedAmount
-          formattedAmountWithoutCurrency
-          currency {
-            symbol
-          }
+          ...moneyFields
         }
         discountAmount {
           amount
@@ -97,14 +83,14 @@ query SearchProducts(
           formattedAmount
         }
         list {
-          amount
-          formattedAmount
-          formattedAmountWithoutCurrency
-          currency {
-            symbol
-          }
+          ...moneyFields
         }
         discountPercent
+      }
+      minVariationPrice {
+        actual {
+          ...moneyFields
+        }
       }
       properties {
         ...propertyFields

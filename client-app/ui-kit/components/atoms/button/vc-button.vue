@@ -1,7 +1,7 @@
 <template>
   <component
-    :is="isLink ? 'router-link' : 'button'"
-    :to="enabled ? to : ''"
+    :is="componentTag"
+    v-bind="linkAttr"
     :target="target"
     :type="type"
     :disabled="!enabled"
@@ -9,6 +9,7 @@
     :class="[
       'vc-button',
       `vc-button--size--${size}`,
+      `vc-button--color--${color}`,
       `vc-button--${variant}--${color}`,
       {
         'vc-button--icon': !!icon,
@@ -63,11 +64,12 @@ export interface IEmits {
 interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "outline";
+  variant?: "solid" | "outline" | "solid-lightest";
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
   loading?: boolean;
   to?: RouteLocationRaw | null;
+  externalLink?: string;
   target?: "_self" | "_blank";
   prependIcon?: string;
   appendIcon?: string;
@@ -94,8 +96,32 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
-const isLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
-const target = computed<string | undefined>(() => (props.target && isLink.value ? props.target : undefined));
+const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
+const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+
+const target = computed<string | undefined>(() =>
+  props.target && (isExternalLink.value || isRouterLink.value) ? props.target : undefined,
+);
+
+const componentTag = computed(() => {
+  if (isRouterLink.value) {
+    return "router-link";
+  }
+  if (isExternalLink.value) {
+    return "a";
+  }
+  return "button";
+});
+
+const linkAttr = computed(() => {
+  if (componentTag.value === "router-link") {
+    return { to: props.to };
+  }
+  if (componentTag.value === "a") {
+    return { href: props.externalLink };
+  }
+  return {};
+});
 </script>
 
 <style scoped lang="scss">
@@ -200,6 +226,12 @@ const target = computed<string | undefined>(() => (props.target && isLink.value 
   }
 
   @each $color in $colors {
+    &--color--#{$color} {
+      &:focus {
+        @apply outline-[--color-#{$color}-100];
+      }
+    }
+
     &--solid--#{$color} {
       @apply bg-[--color-#{$color}-500]
       border-[--color-#{$color}-500]
@@ -209,9 +241,13 @@ const target = computed<string | undefined>(() => (props.target && isLink.value 
         @apply bg-[--color-#{$color}-700]
         border-[--color-#{$color}-700];
       }
+    }
 
-      &:focus {
-        @apply outline-[--color-#{$color}-100];
+    &--solid-lightest--#{$color} {
+      @apply bg-[--color-additional-50] text-[--color-#{$color}-600] border-[--color-additional-50];
+
+      &:hover {
+        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-800];
       }
     }
 
@@ -221,16 +257,12 @@ const target = computed<string | undefined>(() => (props.target && isLink.value 
       &:hover {
         @apply text-[--color-#{$color}-700];
       }
-
-      &:focus {
-        @apply outline-[--color-#{$color}-100];
-      }
     }
   }
 
   &:disabled,
   #{$disabled} {
-    &[class*="--solid--"] {
+    &[class*="--solid-"] {
       @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }
 

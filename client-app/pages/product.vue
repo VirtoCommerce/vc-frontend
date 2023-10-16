@@ -1,8 +1,11 @@
 <template>
-  <div v-if="product && template" class="product bg-[--color-neutral-50] pb-8 pt-7 print:bg-[--color-additional-50]">
+  <div
+    v-if="product && template"
+    class="bg-[--color-neutral-50] pb-8 pt-7 print:w-full print:min-w-[1024px] print:bg-[--color-additional-50] print:[zoom:0.7]"
+  >
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <div class="mx-auto max-w-screen-2xl px-5 print:!px-0 md:px-12">
+    <div class="mx-auto max-w-screen-2xl px-5 print:!px-0 lg:px-12">
       <!-- Breadcrumbs -->
       <VcBreadcrumbs class="mb-3 hidden print:block lg:block" :items="breadcrumbs" />
 
@@ -31,31 +34,6 @@
           :variations-cart-total-amount="variationsCartTotalAmount"
         />
       </template>
-
-      <!-- Related products section -->
-      <div v-show="relatedProducts.length" class="mt-10 flex flex-col print:hidden lg:mt-6 lg:flex-row lg:space-x-8">
-        <div class="-mx-5 flex flex-col md:mx-0 lg:w-8/12 xl:w-9/12">
-          <VcSection
-            :title="$t('pages.product.related_product_section_title')"
-            icon-url="/static/images/checkout/products.svg"
-            class="rounded-none border shadow-sm md:rounded"
-          >
-            <VcCarousel
-              :slides="relatedProducts"
-              :options="relatedProductsCarouselOptions"
-              :pagination="isMobile"
-              :navigation="!isMobile"
-              class="mb-8 px-6 [--navigation-offset:3rem] lg:mb-2"
-            >
-              <template #slide="{ slide: item }">
-                <CarouselProductCard :product="item" class="mb-6" @link-click="ga.selectItem(item)" />
-              </template>
-            </VcCarousel>
-          </VcSection>
-        </div>
-
-        <div class="flex flex-col lg:w-4/12 xl:w-3/12"></div>
-      </div>
     </div>
   </div>
 
@@ -69,7 +47,7 @@ import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
-import { CarouselProductCard, useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
+import { useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
 import type { Breadcrumb } from "@/core/api/graphql/types";
@@ -83,31 +61,6 @@ interface IProps {
 }
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
-
-const relatedProductsCarouselOptions: CarouselOptions = {
-  spaceBetween: 30,
-  slidesPerView: 2,
-  slidesPerGroup: 2,
-  breakpoints: {
-    // 640: /* sm */ {},
-    768: /* md */ {
-      slidesPerView: 3,
-      slidesPerGroup: 3,
-      spaceBetween: 30,
-    },
-    1024: /* lg */ {
-      slidesPerView: 4,
-      slidesPerGroup: 4,
-      spaceBetween: 6,
-    },
-    1280: /* xl */ {
-      slidesPerView: 5,
-      slidesPerGroup: 5,
-      spaceBetween: 6,
-    },
-    // 1536: /* 2xl */ {},
-  },
-};
 
 const { t } = useI18n();
 const { getItemsTotal } = useCart();
@@ -174,13 +127,3 @@ watchEffect(() => {
   }
 });
 </script>
-
-<style scoped lang="scss">
-@media print {
-  .product {
-    @apply min-w-[1024px] w-full;
-
-    zoom: 0.7;
-  }
-}
-</style>

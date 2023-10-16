@@ -1,5 +1,6 @@
-import { promises as fs } from "fs";
-import path from "path";
+import { writeFile } from "fs/promises";
+import { resolve } from "path";
+import chalk from "chalk";
 import { createRouterMatcher } from "vue-router";
 import { mainRoutes } from "../client-app/router/routes";
 
@@ -18,16 +19,24 @@ function getRoutes(): string[] {
 
 async function createFile(): Promise<void> {
   const routes = getRoutes();
-  const filePath = path.resolve(__dirname, "../config/routes.json");
+  const filePath = resolve(__dirname, "../config/routes.json");
   const fileContent = JSON.stringify(routes, null, "  ");
 
-  console.log("Routes (RegExp):", routes);
+  console.log("Routes (regular expression):", routes);
 
-  await fs.writeFile(filePath, fileContent);
-
-  console.log(`The file "config/routes.json" has been created!`);
+  await writeFile(filePath, fileContent);
 }
 
-await createFile();
+try {
+  console.log("Generating routes...");
 
-process.exit();
+  await createFile();
+
+  console.log(chalk.green("Routes successfully generated!"));
+} catch (error) {
+  console.error(chalk.red("Routes generation failed!"));
+  throw error;
+} finally {
+  // Because of dependency hell we need to exit the process manually
+  process.exit();
+}

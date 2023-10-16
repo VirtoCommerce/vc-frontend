@@ -1,10 +1,8 @@
-import { eagerComputed } from "@vueuse/core";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
+import { computedEager } from "@vueuse/core";
 import { unref } from "vue";
 import { useThemeContext } from "./useThemeContext";
 import type { IUsePageSeoData } from "../types";
-import type { MaybeRef } from "@vueuse/core";
-import type { HeadAttrs } from "@vueuse/head";
 
 export function usePageHead(data: IUsePageSeoData) {
   const { themeContext } = useThemeContext();
@@ -14,13 +12,12 @@ export function usePageHead(data: IUsePageSeoData) {
     settings: { page_title_with_store_name, page_title_store_name_align, page_title_divider },
   } = themeContext.value;
 
-  const headObject: {
-    title?: MaybeRef<string>;
-    meta: HeadAttrs[];
-  } = { meta: [] };
+  return useHead({
+    title: computedEager(() => {
+      if (!data.title) {
+        return "";
+      }
 
-  if (data.hasOwnProperty("title")) {
-    headObject.title = eagerComputed(() => {
       const textOrChunks = unref(data.title);
       const titleChunks: string[] = [];
 
@@ -35,14 +32,12 @@ export function usePageHead(data: IUsePageSeoData) {
       }
 
       return titleChunks.filter(Boolean).join(page_title_divider);
-    });
-  }
-
-  if (data.meta) {
-    Object.entries(data.meta).forEach(([name, content]) =>
-      headObject.meta.push({ name, content: () => unref(content) ?? "" }),
-    );
-  }
-
-  return useHead(headObject);
+    }),
+    meta: () => {
+      if (!data.meta) {
+        return [];
+      }
+      return Object.entries(data.meta).map(([name, content]) => ({ name, content: unref(content) ?? "" }));
+    },
+  });
 }

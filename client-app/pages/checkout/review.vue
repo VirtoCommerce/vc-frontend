@@ -3,7 +3,7 @@
     <VcSectionWidget id="review-order" :title="$t('common.titles.review_order')" icon="clipboard-copy-1">
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
-        <template v-for="(group, vendorId) in lineItemsGroupedByVendor" :key="vendorId">
+        <template v-for="(group, vendorId) in selectedLineItemsGroupedByVendor" :key="vendorId">
           <div v-if="group.items.length" class="space-y-3">
             <!-- Vendor -->
             <div class="flex max-w-full flex-wrap gap-x-3">
@@ -17,7 +17,7 @@
       </div>
 
       <!-- Items not grouped by Vendor -->
-      <OrderLineItems v-else :items="cart!.items" />
+      <OrderLineItems v-else :items="selectedLineItems" />
 
       <div class="divide-y print:divide-y-0 lg:divide-y-0">
         <!-- Shipping details -->
@@ -121,10 +121,10 @@
 
           <VcButton
             :disabled="isDisabledOrderCreation"
-            :loading="creatingOrder"
+            :loading="loading"
             full-width
             class="mt-4 print:!hidden"
-            @click="createOrder"
+            @click="createOrderFromCart"
           >
             {{ $t("common.buttons.place_order") }}
           </VcButton>
@@ -148,39 +148,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useGoogleAnalytics } from "@/core/composables";
+import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
-const router = useRouter();
 const {
   cart,
   shipment,
   payment,
-  lineItemsGroupedByVendor,
+  selectedLineItems,
+  selectedLineItemsGroupedByVendor,
   availableShippingMethods,
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-  fetchFullCart,
 } = useCart();
 const {
+  loading,
   billingAddressEqualsShipping,
   comment,
   purchaseOrderNumber,
   isPurchaseOrderNumberEnabled,
-  canPayNow,
   isValidCheckout,
   createOrderFromCart,
 } = useCheckout();
 const { couponCode } = useCoupon();
-
-const creatingOrder = ref(false);
-
 const isDisabledOrderCreation = computed<boolean>(() => !isValidCheckout.value);
 
 const shippingMethodId = computed(
@@ -191,23 +185,6 @@ const billingAddress = computed<CartAddressType | undefined>(() =>
     ? shipment.value?.deliveryAddress
     : payment.value?.billingAddress,
 );
-
-const ga = useGoogleAnalytics();
-
-async function createOrder(): Promise<void> {
-  creatingOrder.value = true;
-
-  const order = await createOrderFromCart();
-
-  if (order) {
-    ga.placeOrder(order);
-    await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
-  }
-
-  await fetchFullCart();
-
-  creatingOrder.value = false;
-}
 
 function print() {
   window.print();

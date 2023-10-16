@@ -4,7 +4,6 @@ import type { StorybookConfig } from "@storybook/vue3-vite";
 
 const storybookConfig: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
-  staticDirs: ["../client-app/public"],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
@@ -15,27 +14,22 @@ const storybookConfig: StorybookConfig = {
     name: "@storybook/vue3-vite",
     options: {},
   },
-  typescript: {
-    check: false,
-  },
-  core: {
-    disableTelemetry: true,
-  },
   async viteFinal(storybookViteConfig, options) {
     const isDevelopment = options.configType === "DEVELOPMENT";
     const { config } = (await loadConfigFromFile(
       isDevelopment
         ? {
-            command: "serve",
-            mode: "development",
-          }
+          command: "serve",
+          mode: "development",
+        }
         : {
-            command: "build",
-            mode: "production",
-          },
+          command: "build",
+          mode: "production",
+        },
       resolve(__dirname, "../vite.config.ts"),
     ))!;
     return mergeConfig(storybookViteConfig, {
+      mode: "development",
       envPrefix: config.envPrefix,
       plugins: [splitVendorChunkPlugin()],
       resolve: config.resolve,

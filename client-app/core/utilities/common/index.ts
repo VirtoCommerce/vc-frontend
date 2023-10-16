@@ -73,6 +73,7 @@ export function dateToIsoDateString(date: Date | undefined) {
   return date?.toISOString().substring(0, lastDateSymbolIndex);
 }
 
+//todo add unit test
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
 }

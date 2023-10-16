@@ -1,25 +1,32 @@
 <template>
   <form @submit="onSubmit">
     <!-- Errors block -->
-    <VcAlert v-if="error" class="mb-4" color="danger" size="sm" variant="outline-dark" icon>
-      <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT_ERROR_CODE">
-        {{ $t("shared.account.sign_in_form.user_is_locked_out_alert") }}
+    <VcAlert
+      v-for="error in translatedErrors"
+      :key="error.code"
+      class="mb-4"
+      color="danger"
+      size="sm"
+      variant="outline-dark"
+      icon
+    >
+      <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT">
+        {{ error.translation }}
         <ContactAdministratorLink />.
       </span>
 
       <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="flex place-items-center justify-between">
         <span>
-          {{ $t("common.messages.password_expired") }}
+          {{ error.translation }}
         </span>
-
-        <!-- Keep the A tag to reiinitialize the app -->
+        <!-- Keep the A tag to reinitialize the app -->
         <a href="/change-password" class="text-sm font-semibold text-blue-700 hover:text-blue-500">
           {{ $t("common.buttons.set_new_password") }}
         </a>
       </span>
 
       <span v-else>
-        {{ $t("shared.account.sign_in_form.email_or_password_incorrect_alert") }}
+        {{ error.translation }}
       </span>
     </VcAlert>
 
@@ -81,6 +88,7 @@ import { reactive, ref, watch } from "vue";
 import { object, string } from "yup";
 import { getMe } from "@/core/api/graphql";
 import { mergeCart } from "@/core/api/graphql/cart";
+import { useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
@@ -99,7 +107,9 @@ const { cart, fetchShortCart } = useCart();
 const { signMeIn } = useUser();
 
 const loading = ref(false);
-const error = ref<IdentityErrorType>();
+
+const apiErrors = ref<IdentityErrorType[]>();
+const { translatedErrors } = useErrorsTranslator("shared.account.sign_in_form.errors.", apiErrors);
 
 const schema = toTypedSchema(
   object({
@@ -133,7 +143,7 @@ const onSubmit = handleSubmit(async () => {
       await mergeCart(user.id, cart.value!.id!);
       emit("succeeded");
     } else {
-      error.value = result.errors?.find((e) => !!e.code);
+      apiErrors.value = result.errors;
     }
   } catch (e) {
     Logger.error(useUser.name, e);
@@ -143,6 +153,6 @@ const onSubmit = handleSubmit(async () => {
 });
 
 watch(values, () => {
-  error.value = undefined;
+  apiErrors.value = undefined;
 });
 </script>

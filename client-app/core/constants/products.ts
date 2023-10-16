@@ -7,3 +7,5 @@ export const PRODUCT_SORTING_LIST = [
   { id: "createddate-descending", name: "Date, new to old" },
   { id: "createddate-ascending", name: "Date, old to new" },
 ];
+
+export const PRODUCT_OBJECT_TYPE = "CatalogProduct";

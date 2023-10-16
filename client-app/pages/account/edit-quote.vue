@@ -125,9 +125,9 @@ import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 interface IProps {
   quoteId: string;
@@ -189,7 +189,7 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
 const quoteChanged = computed<boolean>(
   () =>
     !isEqual(originalQuote.value, quote.value) ||
-    (comment.value && originalQuote.value?.comment !== comment.value && quoteItemsValid.value) ||
+    originalQuote.value?.comment !== comment.value ||
     (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value),
 );
 const quoteItemsValid = computed<boolean>(
@@ -241,7 +241,7 @@ function setBillingAddressEqualsShipping(): void {
 
 function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: QuoteAddressType): void {
   openPopup({
-    component: VcAddOrUpdateAddressModal,
+    component: AddOrUpdateAddressModal,
     props: {
       address: currentAddress,
 

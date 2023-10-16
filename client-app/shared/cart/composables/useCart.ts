@@ -1,5 +1,5 @@
-import { computedEager } from "@vueuse/core";
-import { keyBy, sumBy } from "lodash";
+import { computedEager, useDebounceFn } from "@vueuse/core";
+import { difference, keyBy, sumBy } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import {
   addBulkItemsCart,
@@ -12,6 +12,7 @@ import {
   changeCartComment,
   changeCartItemQuantity,
   changePurchaseOrderNumber,
+  clearCart as _clearCart,
   createQuoteFromCart as _createQuoteFromCart,
   getCart,
   rejectGiftItems,
@@ -22,6 +23,7 @@ import {
   removeShipment as _removeShipment,
   validateCoupon,
   GetCartFeldsType,
+  changeSelectedCartItems,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
@@ -30,7 +32,9 @@ import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { ClearCartModal } from "../components";
+import ClearCartModal from "../components/clear-cart-modal.vue";
+import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
+import { CartValidationErrors } from "../enums";
 import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
@@ -47,7 +51,9 @@ import type {
   ShippingMethodType,
 } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
-import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart";
+import type { ExtendedGiftItemType, OutputBulkItemType } from "@/shared/cart/types";
+
+const broadcast = useBroadcast();
 
 const loading = ref(false);
 const cart = shallowRef<CartType>();
@@ -58,9 +64,7 @@ const payment = computed<PaymentType | undefined>(() => cart.value?.payments?.[0
 const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value?.availableShippingMethods ?? []);
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.availablePaymentMethods ?? []);
 
-const lineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(cart.value?.items ?? []),
-);
+const lineItemsGroupedByVendor = computed(() => getLineItemsGroupedByVendor(cart.value?.items ?? []));
 
 const allItemsAreDigital = computed<boolean>(
   () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital),
@@ -76,8 +80,57 @@ const hasValidationErrors = computedEager<boolean>(
   () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
 );
 
+const hasOnlyUnselectedValidationError = computedEager<boolean>(
+  () =>
+    cart.value?.validationErrors?.length == 1 &&
+    cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
+);
+
+const selectedForCheckoutItemIds = computed(
+  () => cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ?? [],
+);
+
+const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[]): Promise<void> => {
+  const oldValue = selectedForCheckoutItemIds.value;
+
+  const newlySelectedLineItemIds = difference(newValue, oldValue);
+  const newlyUnselectedLineItemIds = difference(oldValue, newValue);
+
+  if (newlySelectedLineItemIds.length > 0 || newlyUnselectedLineItemIds.length > 0) {
+    loading.value = true;
+
+    try {
+      cart.value = await changeSelectedCartItems(newlySelectedLineItemIds, newlyUnselectedLineItemIds);
+      broadcast.emit(cartReloadEvent);
+    } catch (e) {
+      Logger.error(`${selectedItemIdsDebounced.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  _selectedItemIds.value = undefined;
+}, DEFAULT_DEBOUNCE_IN_MS);
+
+const _selectedItemIds = shallowRef<string[]>();
+const selectedItemIds = computed({
+  get: () => _selectedItemIds.value ?? selectedForCheckoutItemIds.value,
+  set: async (value) => {
+    _selectedItemIds.value = value;
+    await selectedItemIdsDebounced(value);
+  },
+});
+
+const selectedLineItems = computed(
+  () => cart.value?.items?.filter((item) => selectedItemIds.value.includes(item.id)) ?? [],
+);
+
+const selectedLineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
+  getLineItemsGroupedByVendor(selectedLineItems.value),
+);
+
 export function useCart() {
-  const broadcast = useBroadcast();
   const notifications = useNotifications();
   const { openPopup } = usePopup();
   const ga = useGoogleAnalytics();
@@ -102,6 +155,20 @@ export function useCart() {
       cart.value = await getCart();
     } catch (e) {
       Logger.error(`${useCart.name}.${fetchFullCart.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function clearCart(cartId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      cart.value = await _clearCart(cartId);
+      broadcast.emit(cartReloadEvent);
+    } catch (e) {
+      Logger.error(`${useCart.name}.${clearCart.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -137,12 +204,14 @@ export function useCart() {
     return result;
   }
 
-  async function addToCart(productId: string, qty: number): Promise<void> {
+  async function addToCart(productId: string, qty: number): Promise<CartType> {
     loading.value = true;
 
     try {
-      cart.value = await addItemToCart(productId, qty);
+      const updatedCart = await addItemToCart(productId, qty);
+      cart.value = updatedCart;
       broadcast.emit(cartReloadEvent);
+      return updatedCart;
     } catch (e) {
       Logger.error(`${useCart.name}.${addToCart.name}`, e);
       throw e;
@@ -222,12 +291,14 @@ export function useCart() {
     lineItemId: string,
     qty: number,
     options: ChangeCartItemQuantityOptionsType = {},
-  ): Promise<void> {
+  ): Promise<CartType> {
     loading.value = true;
 
     try {
-      cart.value = await changeCartItemQuantity(lineItemId, qty, options);
+      const updatedCart = await changeCartItemQuantity(lineItemId, qty, options);
+      cart.value = updatedCart;
       broadcast.emit(cartReloadEvent);
+      return updatedCart;
     } catch (e) {
       Logger.error(`${useCart.name}.${changeItemQuantity.name}`, e);
       throw e;
@@ -432,8 +503,8 @@ export function useCart() {
       component: ClearCartModal,
       props: {
         async onResult() {
+          await clearCart(cart.value!.id!);
           ga.clearCart(cart.value!);
-          await removeCart(cart.value!.id!);
         },
       },
     });
@@ -455,11 +526,15 @@ export function useCart() {
     payment,
     availableShippingMethods,
     availablePaymentMethods,
+    selectedItemIds,
     lineItemsGroupedByVendor,
+    selectedLineItems,
+    selectedLineItemsGroupedByVendor,
     allItemsAreDigital,
     addedGiftsByIds,
     availableExtendedGifts,
     hasValidationErrors,
+    hasOnlyUnselectedValidationError,
     getItemsTotal,
     fetchShortCart,
     fetchFullCart,
@@ -467,6 +542,7 @@ export function useCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
+    /** @deprecated Use {@link removeItems } */
     removeItem,
     removeItems,
     validateCartCoupon,
@@ -477,6 +553,8 @@ export function useCart() {
     removeShipment,
     updatePayment,
     updatePurchaseOrderNumber,
+    clearCart,
+    /** @deprecated Don't remove cart after order creation. Use {@link clearCart } for cart clearing */
     removeCart,
     createQuoteFromCart,
     addGiftsToCart,

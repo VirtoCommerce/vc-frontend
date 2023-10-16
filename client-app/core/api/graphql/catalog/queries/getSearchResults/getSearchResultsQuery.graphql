@@ -105,6 +105,17 @@ query GetSearchResults(
           formattedAmount
         }
       }
+      hasVariations
+      minVariationPrice {
+        actual {
+          amount
+          formattedAmount
+        }
+        list {
+          amount
+          formattedAmount
+        }
+      }
     }
   }
 }

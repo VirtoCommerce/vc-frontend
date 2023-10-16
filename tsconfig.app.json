@@ -1,14 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["client-app/**/*.ts", "client-app/**/*.vue", "config/*.json", "locales/*.json", "package.json"],
-  "exclude": ["artifacts", "assets", "content", "**/*.spec.ts", "**/*.stories.ts", "**/*.js"],
+  "include": ["client-app/**/*", "client-app/**/*.vue", "config/*.json", "locales/*.json", "package.json"],
+  "exclude": ["artifacts", "assets", "content", "storybook-static"],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
     "resolvePackageJsonExports": false,
     "paths": {
-      "@/*": ["client-app/*"]
+      "@/*": ["./client-app/*"],
+      // Workaround until https://github.com/unjs/unhead/issues/241 is fixed
+      "@unhead/vue/*": ["node_modules/@unhead/vue/dist/*"]
     },
     "types": ["@types/gtag.js"]
   }

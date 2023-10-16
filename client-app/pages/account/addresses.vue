@@ -193,9 +193,9 @@ import { AddressType } from "@/core/enums";
 import { useUserAddresses } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
+import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 const { t } = useI18n();
 const { countries, loadCountries } = useCountries();
@@ -250,14 +250,14 @@ const columns = computed<ITableColumn[]>(() => [
   },
 ]);
 
-const onPageChange = async (newPage: number) => {
+function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
-};
+}
 
 function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
   openPopup({
-    component: VcAddOrUpdateAddressModal,
+    component: AddOrUpdateAddressModal,
     props: {
       address,
       loading: addressesLoading,
@@ -300,7 +300,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await fetchAddresses();
 }
 
-async function removeAddress(address: MemberAddressType): Promise<void> {
+function removeAddress(address: MemberAddressType): void {
   const closeDeleteAddressDialog = openPopup({
     component: "VcConfirmationDialog",
     props: {

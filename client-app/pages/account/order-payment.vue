@@ -246,8 +246,8 @@ import {
   PaymentProcessingRedirection,
 } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
-import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
+import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 interface IProps {
   orderId: string;
@@ -293,7 +293,7 @@ function tryAgain() {
 
 function showEditAddressDialog() {
   openPopup({
-    component: VcAddOrUpdateAddressModal,
+    component: AddOrUpdateAddressModal,
     props: {
       address: payment.value?.billingAddress,
       async onResult(address: InputOrderAddressType) {

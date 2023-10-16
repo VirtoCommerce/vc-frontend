@@ -8,6 +8,8 @@ export * from "./mutations/addOrUpdateCartShipment";
 export * from "./mutations/changeCartComment";
 export * from "./mutations/changeCartItemQuantity";
 export * from "./mutations/changePurchaseOrderNumber";
+export * from "./mutations/changeSelectedCartItems";
+export * from "./mutations/clearCart";
 export * from "./mutations/mergeCart";
 export * from "./mutations/rejectGiftItems";
 export * from "./mutations/removeCart";

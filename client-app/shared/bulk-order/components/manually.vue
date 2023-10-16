@@ -35,7 +35,7 @@
               min="1"
               type="number"
               placeholder="0"
-              @update:model-value="$nextTick(() => (item.quantity = String(validateQuantity($event) || '')))"
+              @update:model-value="$nextTick(() => (item.quantity = String(validateQuantity(+$event!) || '')))"
               @keypress="onKeypress"
             />
           </div>

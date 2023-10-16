@@ -4,6 +4,7 @@ export { default as VcAddressSelection } from "./address-selection/vc-address-se
 export { default as VcAlert } from "./alert/vc-alert.vue";
 export { default as VcButtonSeeMoreLess } from "./button-see-more-less/vc-button-see-more-less.vue";
 export { default as VcCarousel } from "./carousel/vc-carousel.vue";
+export { default as VcChip } from "./chip/vc-chip.vue";
 export { default as VcCollapsibleContent } from "./collapsible-content/vc-collapsible-content.vue";
 export { default as VcCopyText } from "./copy-text/vc-copy-text.vue";
 export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";
@@ -20,6 +21,7 @@ export { default as VcLineItems } from "./line-items/vc-line-items.vue";
 export { default as VcList } from "./list/vc-list.vue";
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
 export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-text.vue";
+export { default as VcProductPrice } from "./product-price/vc-product-price.vue";
 export { default as VcQuantity } from "./quantity/vc-quantity.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
