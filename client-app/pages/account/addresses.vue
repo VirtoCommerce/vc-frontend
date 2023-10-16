@@ -193,9 +193,9 @@ import { AddressType } from "@/core/enums";
 import { useUserAddresses } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
+import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 const { t } = useI18n();
 const { countries, loadCountries } = useCountries();
@@ -257,7 +257,7 @@ function onPageChange(newPage: number): void {
 
 function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
   openPopup({
-    component: VcAddOrUpdateAddressModal,
+    component: AddOrUpdateAddressModal,
     props: {
       address,
       loading: addressesLoading,

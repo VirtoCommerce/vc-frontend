@@ -14,7 +14,6 @@ import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
-import { VcAddOrUpdateAddressModal } from "@/ui-kit/components";
 import { SelectAddressModal } from "../components";
 import type {
   CartAddressType,
@@ -26,6 +25,7 @@ import type {
   ShippingMethodType,
 } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 const loading = ref(false);
 const billingAddressEqualsShipping = ref(true);
@@ -255,7 +255,7 @@ export function useCheckout() {
     editableAddress?: MemberAddressType | CartAddressType,
   ): void {
     openPopup({
-      component: VcAddOrUpdateAddressModal,
+      component: AddOrUpdateAddressModal,
       props: {
         address: editableAddress,
 
