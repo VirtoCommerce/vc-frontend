@@ -197,6 +197,12 @@ module.exports = {
       }
     },
     {
+      files: ["client-app/ui-kit/*"],
+      rules: {
+        "no-console": ["warn", { allow: ["warn", "error"] }],
+      }
+    },
+    {
       files: ["scripts/*"],
       rules: {
         "no-console": "off",
@@ -221,6 +227,5 @@ module.exports = {
       },
       node: true,
     },
-  },
-  ignorePatterns: "client-app/core/api/graphql/types.ts"
+  }
 };

@@ -35049,7 +35049,7 @@
             "deprecationReason": null
           },
           {
-            "name": "specifiedByUrl",
+            "name": "specifiedByURL",
             "args": [],
             "type": {
               "kind": "SCALAR",

@@ -92,7 +92,7 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Build
@@ -105,10 +105,10 @@ jobs:
 
       - name: Packaging
         run: |
-          yarn compress ${{ github.event.repository.name }}-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+          yarn compress ${{ github.event.repository.name }}-${{ steps.image.outputs.prefix }}${{ env.VERSION_SUFFIX && '-' || '' }}${{ env.VERSION_SUFFIX }}
 
       - name: Publish to Blob
-        if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
         uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
         with:

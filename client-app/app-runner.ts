@@ -1,4 +1,4 @@
-import { createHead } from "@vueuse/head";
+import { createHead } from "@unhead/vue";
 import { createApp } from "vue";
 import VueSecureHTML from "vue-html-secure";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";

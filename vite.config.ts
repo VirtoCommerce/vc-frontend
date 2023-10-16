@@ -86,7 +86,13 @@ export default defineConfig(({ mode }): UserConfig => {
         },
         output: {
           entryFileNames: "[name].js",
-          assetFileNames: "[name][extname]",
+          assetFileNames: (assetInfo) => {
+            // This code will move flag-icons svg files to separate directory during build.
+            if (assetInfo.name?.endsWith(".svg")) {
+              return "static/icons/flag-icons/[name].svg";
+            }
+            return "[name][extname]";
+          },
         },
       },
     },

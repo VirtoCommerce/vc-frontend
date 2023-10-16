@@ -3,10 +3,9 @@
 .husky
 .vscode
 .idea
-node_modules
+artifacts
 assets
+node_modules
 storybook-static
-package.json
-tsconfig.json
 client-app/core/api/graphql/types.ts
 client-app/core/api/graphql/schema.json
