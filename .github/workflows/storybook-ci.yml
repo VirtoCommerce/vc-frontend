@@ -114,7 +114,7 @@ jobs:
 
       - name: Packaging
         run: |
-          yarn storybook:compress ${{ github.event.repository.name }}-storybook-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+          yarn storybook:compress ${{ github.event.repository.name }}-storybook-${{ steps.image.outputs.prefix }}${{ env.VERSION_SUFFIX && '-' || '' }}${{ env.VERSION_SUFFIX }}
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
