@@ -3,12 +3,12 @@ import { IS_CLIENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { globals } from "../globals";
 import { useAppContext } from "./useAppContext";
-import type { AnyLineItemType } from "../types";
 import type {
   Breadcrumb,
   CartType,
   CustomerOrderType,
   LineItemType,
+  OrderLineItemType,
   Product,
   VariationType,
 } from "@/core/api/graphql/types";
@@ -50,7 +50,7 @@ function productToGtagItem(item: Product | VariationType, index?: number): Gtag.
   };
 }
 
-function lineItemToGtagItem(item: LineItemType, index?: number): Gtag.Item {
+function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: number): Gtag.Item {
   const categories: Record<string, string> = getCategories(item.product?.breadcrumbs);
 
   return {
@@ -60,7 +60,7 @@ function lineItemToGtagItem(item: LineItemType, index?: number): Gtag.Item {
     affiliation: item.product?.vendor?.name,
     currency: globals.currencyCode,
     discount: item.discountAmount?.amount,
-    price: item.listPrice?.amount,
+    price: "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
     ...categories,
   };
@@ -89,8 +89,8 @@ function viewItemList(items: Product[], params?: EventParamsExtendedType): void 
   });
 }
 
-function selectItem(item: Product | AnyLineItemType, params?: EventParamsExtendedType): void {
-  const gtagItem = "productId" in item || "product" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
+function selectItem(item: Product | LineItemType, params?: EventParamsExtendedType): void {
+  const gtagItem = "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
 
   sendEvent("select_item", {
     ...params,

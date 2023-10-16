@@ -34,7 +34,7 @@
         :selected-item-ids="selectedItemIds"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
-        @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity, { reloadFullCart: true })"
+        @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity, { reloadFullCart: true })"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"

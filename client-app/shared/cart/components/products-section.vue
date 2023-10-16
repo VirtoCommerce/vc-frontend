@@ -57,7 +57,7 @@ import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types
 import type { LineItemsGroupByVendorType } from "@/core/types";
 
 interface IEmits {
-  (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;
+  (event: "change:itemQuantity", value: { itemId: string; quantity: number }): void;
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
   (event: "clear:cart"): void;
