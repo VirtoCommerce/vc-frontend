@@ -88,7 +88,7 @@ export default async () => {
   app.use(configPlugin, themeContext.value!.settings);
   app.use(uiKit);
 
-  if (isPageBuilderPreviewMode || window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {
+  if (isPageBuilderPreviewMode) {
     const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
