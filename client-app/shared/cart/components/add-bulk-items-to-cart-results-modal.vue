@@ -110,7 +110,6 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
 import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductsRoutes } from "@/core/composables";
@@ -137,7 +136,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const config = inject(configInjectionKey, {});
 
 const links = useProductsRoutes(props.items, { productIdProperty: "productId" });
-const { t } = useI18n();
+const { d, t } = useI18n();
 
 const groups = computed<GroupType[]>(() => {
   const result: GroupType[] = [];
@@ -191,7 +190,7 @@ function print() {
 
     <div class="p-2 border border-[--color-neutral-100] rounded text-xs">
       <div class="font-black">${t("common.labels.created_date")}</div>
-      <div class="mt-1">${moment().format("DD MMMM YYYY")}</div>
+      <div class="mt-1">${d(new Date())}</div>
     </div>
   </header>`;
 
