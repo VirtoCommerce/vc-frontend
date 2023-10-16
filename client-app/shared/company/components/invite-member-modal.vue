@@ -70,6 +70,7 @@ import { B2B_ROLES } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
+import { VcPopup } from "@/ui-kit/components";
 
 interface IEmits {
   (e: "result", succeed: boolean): void;
@@ -83,7 +84,7 @@ const MAX_EMAIL_LENGTH = 120;
 const emailsValidationPattern =
   /^([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+([,;]|\r|\r\n|\n))*([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+)$/;
 
-const popupComponent = shallowRef<any>(null);
+const popupComponent = shallowRef<InstanceType<typeof VcPopup> | null>(null);
 const loading = ref(false);
 const commonErrors = ref<string[]>([]);
 

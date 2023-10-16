@@ -1,3 +1,4 @@
+import { getMoney } from "@/ui-kit/mocks";
 import { VcLineItemTotal } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
@@ -14,12 +15,6 @@ const Template: StoryFn<typeof VcLineItemTotal> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  listTotal: {
-    amount: 2000,
-    formattedAmount: "$2000.00",
-  },
-  actualTotal: {
-    amount: 1000,
-    formattedAmount: "$1000.00",
-  },
+  listTotal: getMoney(2000),
+  actualTotal: getMoney(1000),
 };

@@ -250,10 +250,10 @@ const columns = computed<ITableColumn[]>(() => [
   },
 ]);
 
-const onPageChange = async (newPage: number) => {
+function onPageChange(newPage: number): void {
   window.scroll({ top: 0, behavior: "smooth" });
   page.value = newPage;
-};
+}
 
 function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
   openPopup({
@@ -300,7 +300,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await fetchAddresses();
 }
 
-async function removeAddress(address: MemberAddressType): Promise<void> {
+function removeAddress(address: MemberAddressType): void {
   const closeDeleteAddressDialog = openPopup({
     component: "VcConfirmationDialog",
     props: {

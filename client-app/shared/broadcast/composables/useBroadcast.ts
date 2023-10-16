@@ -10,14 +10,14 @@ export enum TabsType {
 }
 interface IUseBroadcastReturn {
   /** Add a listener function for the specified event. Automatic deletion on unmounting. */
-  on: <T>(event: InjectionEvent<T> | string, listener: (data: T) => void) => void;
+  on: <T>(event: InjectionEvent<T>, listener: (data: T) => void) => void;
 
   /** Remove the listener function for the specified event. */
-  off: <T>(event: InjectionEvent<T> | string, listener?: (data: T) => void) => void;
+  off: <T>(event: InjectionEvent<T>, listener?: (data: T) => void) => void;
 
   /** Send data to other browser tabs subscribed to the specified event. */
   emit: <T>(
-    event: InjectionEvent<T> | string,
+    event: InjectionEvent<T>,
     /** The data to be sent. This must be a JSON-serializable object. */
     data?: T,
     /**

@@ -1,4 +1,4 @@
-import { CodegenConfig } from "@graphql-codegen/cli";
+import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const graphQLCodegenSchemaConfig: CodegenConfig = {
   schema: `${process.env.APP_BACKEND_URL}/xapi/graphql`,

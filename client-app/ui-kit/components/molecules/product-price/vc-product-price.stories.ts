@@ -1,3 +1,4 @@
+import { getMoney } from "@/ui-kit/mocks";
 import { VcProductPrice } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
@@ -26,41 +27,25 @@ const Template: StoryFn<typeof VcProductPrice> = (args) => ({
   template: '<VcProductPrice v-bind="args" />',
 });
 
+const sharedArgs = {
+  actualPrice: getMoney(1599999999),
+  listPrice: getMoney(1799999999),
+};
+
 export const Basic = Template.bind({});
 Basic.args = {
-  actualPrice: {
-    amount: 1599999999,
-    formattedAmount: "$1,599,999,999.00",
-  },
-  listPrice: {
-    amount: 1799999999,
-    formattedAmount: "$1,799,999,999.00",
-  },
+  ...sharedArgs,
 };
 
 export const AlignEnd = Template.bind({});
 AlignEnd.args = {
-  actualPrice: {
-    amount: 1599999999,
-    formattedAmount: "$1,599,999,999.00",
-  },
-  listPrice: {
-    amount: 1799999999,
-    formattedAmount: "$1,799,999,999.00",
-  },
+  ...sharedArgs,
   align: "end",
 };
 
 export const SingleLine = Template.bind({});
 SingleLine.args = {
-  actualPrice: {
-    amount: 1599999999,
-    formattedAmount: "$1,599,999,999.00",
-  },
-  listPrice: {
-    amount: 1799999999,
-    formattedAmount: "$1,799,999,999.00",
-  },
+  ...sharedArgs,
   singleLine: true,
 };
 
@@ -70,22 +55,14 @@ export const Truncate: StoryFn<typeof VcProductPrice> = (args) => ({
   template: '<VcProductPrice class="text-lg w-20" v-bind="args" />',
 });
 Truncate.args = {
-  actualPrice: {
-    amount: 1599999999,
-    formattedAmount: "$1,599,999,999.00",
-  },
-  listPrice: {
-    amount: 1799999999,
-    formattedAmount: "$1,799,999,999.00",
-  },
+  ...sharedArgs,
   truncate: true,
 };
 
 export const VariationsPrice = Template.bind({});
 VariationsPrice.args = {
   listPrice: {
-    amount: 1599999999,
-    formattedAmount: "$1,599,999,999.00",
+    ...sharedArgs.listPrice,
   },
   hasVariations: true,
 };
@@ -96,36 +73,29 @@ export const UsageExamples: StoryFn<typeof VcProductPrice> = (args) => ({
   template: `<div class="space-y-2">
     <div>
       <span class="text-xs italic">class="text-sm"</span>
-      <VcProductPrice 
-        class="text-sm" 
+      <VcProductPrice
+        class="text-sm"
         v-bind="args"
       />
     </div>
 
     <div>
       <span class="text-xs italic">class="text-sm md:text-lg"</span>
-      <VcProductPrice 
-        class="text-sm md:text-lg" 
+      <VcProductPrice
+        class="text-sm md:text-lg"
         v-bind="args"
       />
     </div>
 
     <div>
       <span class="text-xs italic">class="text-lg md:text-2xl"</span>
-      <VcProductPrice 
-        class="text-lg md:text-2xl" 
+      <VcProductPrice
+        class="text-lg md:text-2xl"
         v-bind="args"
       />
     </div>
   </div>`,
 });
 UsageExamples.args = {
-  actualPrice: {
-    amount: 1599999999,
-    formattedAmount: "$1,599,999,999.00",
-  },
-  listPrice: {
-    amount: 1799999999,
-    formattedAmount: "$1,799,999,999.00",
-  },
+  ...sharedArgs,
 };

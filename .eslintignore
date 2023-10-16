@@ -1,8 +1,5 @@
-/*.js
-/*.ts
-client-app/core/api/graphql/types.ts
-node_modules
+artifacts
 assets
-scripts
+content
+node_modules
 storybook-static
-!.storybook

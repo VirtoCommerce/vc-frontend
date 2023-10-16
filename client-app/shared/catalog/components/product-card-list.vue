@@ -160,7 +160,7 @@ import DiscountBadge from "./discount-badge.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 
-defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
+defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
 const props = withDefaults(defineProps<IProps>(), {
   lazy: true,
