@@ -92,6 +92,12 @@ export default defineConfig(({ mode }): UserConfig => {
             }
             return "[name][extname]";
           },
+          manualChunks: (id) => {
+            // Force app-runner to have separate chunk to temporarely eliminate caveats of liquid-based hashing
+            if (id.includes("app-runner")) {
+              return "app-runner";
+            }
+          },
         },
       },
     },
