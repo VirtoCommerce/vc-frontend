@@ -9,6 +9,7 @@
     :class="[
       'vc-button',
       `vc-button--size--${size}`,
+      `vc-button--color--${color}`,
       `vc-button--${variant}--${color}`,
       {
         'vc-button--icon': !!icon,
@@ -63,7 +64,7 @@ export interface IEmits {
 interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "outline";
+  variant?: "solid" | "outline" | "solid-lightest";
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
   loading?: boolean;
@@ -225,6 +226,12 @@ const linkAttr = computed(() => {
   }
 
   @each $color in $colors {
+    &--color--#{$color} {
+      &:focus {
+        @apply outline-[--color-#{$color}-100];
+      }
+    }
+
     &--solid--#{$color} {
       @apply bg-[--color-#{$color}-500]
       border-[--color-#{$color}-500]
@@ -234,9 +241,13 @@ const linkAttr = computed(() => {
         @apply bg-[--color-#{$color}-700]
         border-[--color-#{$color}-700];
       }
+    }
 
-      &:focus {
-        @apply outline-[--color-#{$color}-100];
+    &--solid-lightest--#{$color} {
+      @apply bg-[--color-additional-50] text-[--color-#{$color}-600] border-[--color-additional-50];
+
+      &:hover {
+        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-800];
       }
     }
 
@@ -246,16 +257,12 @@ const linkAttr = computed(() => {
       &:hover {
         @apply text-[--color-#{$color}-700];
       }
-
-      &:focus {
-        @apply outline-[--color-#{$color}-100];
-      }
     }
   }
 
   &:disabled,
   #{$disabled} {
-    &[class*="--solid--"] {
+    &[class*="--solid-"] {
       @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }
 

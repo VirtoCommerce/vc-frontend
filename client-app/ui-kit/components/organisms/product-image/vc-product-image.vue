@@ -157,7 +157,7 @@ function slideChanged(swiper: SwiperInstance) {
   }
 
   &__slot {
-    @apply absolute inset-0 flex gap-0.5;
+    @apply absolute inset-0;
   }
 }
 </style>
