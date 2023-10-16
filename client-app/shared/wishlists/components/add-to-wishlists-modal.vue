@@ -119,7 +119,6 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment";
 import { computed, ref, inject, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics } from "@/core/composables";
@@ -144,7 +143,7 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const { t } = useI18n();
+const { d, t } = useI18n();
 const { closePopup } = usePopup();
 const {
   loading: loadingLists,
@@ -188,7 +187,7 @@ const listsOther = computed(() => {
 
 function addNewList() {
   newLists.value.push({
-    listName: `${t("shared.wishlists.add_to_wishlists_dialog.new_list")} ${moment().format("YYYY-MM-DD • hh:mm")}`,
+    listName: `${t("shared.wishlists.add_to_wishlists_dialog.new_list")} ${d(new Date())}`,
     errorMessage: "",
   });
 }

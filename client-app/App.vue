@@ -1,8 +1,9 @@
 <template>
-  <PageHead>
+  <Head>
     <link rel="icon" :href="$cfg.favicon_image" />
-    <body class="font-lato" />
-  </PageHead>
+  </Head>
+
+  <body class="font-lato" />
 
   <component :is="layout">
     <RouterView />
@@ -13,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
+import { Head } from "@unhead/vue/components";
 import { computedEager } from "@vueuse/core";
-import { Head as PageHead } from "@vueuse/head";
 import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";

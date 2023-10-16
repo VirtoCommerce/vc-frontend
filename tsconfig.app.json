@@ -8,7 +8,9 @@
     "baseUrl": ".",
     "resolvePackageJsonExports": false,
     "paths": {
-      "@/*": ["./client-app/*"]
+      "@/*": ["./client-app/*"],
+      // Workaround until https://github.com/unjs/unhead/issues/241 is fixed
+      "@unhead/vue/*": ["node_modules/@unhead/vue/dist/*"]
     },
     "types": ["@types/gtag.js"]
   }
