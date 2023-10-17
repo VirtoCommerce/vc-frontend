@@ -28,7 +28,7 @@
           :max-quantity="item.maxQuantity"
           :disabled="disabled"
           :readonly="readonly"
-          @update:model-value="$emit('change:itemQuantity', { item, quantity: $event })"
+          @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
         />
 
         <VcInStock
@@ -76,7 +76,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (event: "change:itemQuantity", value: { item: LineItemType; quantity: number }): void;
+  (event: "change:itemQuantity", value: { itemId: string; quantity: number }): void;
   (event: "remove:items", value: string[]): void;
   (event: "select:items", value: { itemIds: string[]; selected: boolean }): void;
 }
