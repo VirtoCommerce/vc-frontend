@@ -14,6 +14,5 @@ export interface IAppContext {
   readonly storeSettings: {
     readonly anonymousAccessEnabled: boolean;
     readonly googleAnalyticsEnabled: boolean;
-    readonly isPageBuilderPreviewMode: boolean;
   };
 }

@@ -53,9 +53,6 @@
     "storeSettings": {
       "anonymousAccessEnabled": {{ current_store.anonymous_users_allowed }},
       "googleAnalyticsEnabled": {{ google_analytics_enabled }}
-    {%- if is_page_builder_preview_mode == true -%},
-      "isPageBuilderPreviewMode": true
-    {% endif %}
     }
     {%- comment %}"themeSettings": {{ settings | json }}{% endcomment -%}
     {%- comment %}"localization": {{ '' | t }}{% endcomment -%}

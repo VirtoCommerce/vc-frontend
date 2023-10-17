@@ -10,8 +10,7 @@ const appContextString =
       `{
         "storeSettings": {
           "anonymousAccessEnabled": true,
-          "googleAnalyticsEnabled": true,
-          "isPageBuilderPreviewMode": false
+          "googleAnalyticsEnabled": true
         }
       }`;
 

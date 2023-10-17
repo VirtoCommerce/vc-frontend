@@ -1,7 +1,7 @@
 import { createHead } from "@unhead/vue";
 import { createApp } from "vue";
 import VueSecureHTML from "vue-html-secure";
-import { useAppContext, useCurrency, useLanguages, useThemeContext } from "@/core/composables";
+import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
@@ -17,9 +17,6 @@ import App from "./App.vue";
 export default async () => {
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
-  const {
-    storeSettings: { isPageBuilderPreviewMode },
-  } = useAppContext();
 
   if (!appElement) {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
@@ -88,7 +85,7 @@ export default async () => {
   app.use(configPlugin, themeContext.value!.settings);
   app.use(uiKit);
 
-  if (isPageBuilderPreviewMode) {
+  if (window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {
     const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
