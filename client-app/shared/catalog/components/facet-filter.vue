@@ -86,8 +86,8 @@ const searchKeyword = ref("");
 
 const searchFieldVisible = computed<boolean>(() => facet.value.values.length > SEARCH_FIELD_AMOUNT);
 const searchedValues = computed(() => {
-  const filtered = facet.value.values.filter(
-    (item) => item.label.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) >= 0,
+  const filtered = facet.value.values.filter((item) =>
+    item.label.toLowerCase().includes(searchKeyword.value.toLowerCase()),
   );
   // 1 - for fade at the bottom
   return isExpanded.value ? filtered : filtered.slice(0, SHOW_MORE_AMOUNT + 1);

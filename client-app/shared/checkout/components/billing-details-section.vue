@@ -112,7 +112,7 @@ const poNumber = useVModel(props, "purchaseOrderNumber", emit);
 
 const address = computed<CartAddressType | undefined>(() =>
   !!props.shipment && billingAddressEqualsShipping.value
-    ? props.shipment?.deliveryAddress
+    ? props.shipment.deliveryAddress
     : props.payment?.billingAddress,
 );
 

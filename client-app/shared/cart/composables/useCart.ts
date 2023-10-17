@@ -58,8 +58,8 @@ const broadcast = useBroadcast();
 const loading = ref(false);
 const cart = shallowRef<CartType>();
 
-const shipment = computed<ShipmentType | undefined>(() => cart.value?.shipments?.[0]);
-const payment = computed<PaymentType | undefined>(() => cart.value?.payments?.[0]);
+const shipment = computed<ShipmentType | undefined>(() => cart.value?.shipments[0]);
+const payment = computed<PaymentType | undefined>(() => cart.value?.payments[0]);
 
 const availableShippingMethods = computed<ShippingMethodType[]>(() => cart.value?.availableShippingMethods ?? []);
 const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.availablePaymentMethods ?? []);
@@ -67,7 +67,7 @@ const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.
 const lineItemsGroupedByVendor = computed(() => getLineItemsGroupedByVendor(cart.value?.items ?? []));
 
 const allItemsAreDigital = computed<boolean>(
-  () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital),
+  () => !!cart.value?.items.every((item) => item.productType === ProductType.Digital),
 );
 
 const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
@@ -77,17 +77,17 @@ const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
 );
 
 const hasValidationErrors = computedEager<boolean>(
-  () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
+  () => !!cart.value?.validationErrors.length || !!cart.value?.items.some((item) => item.validationErrors.length),
 );
 
 const hasOnlyUnselectedValidationError = computedEager<boolean>(
   () =>
-    cart.value?.validationErrors?.length == 1 &&
+    cart.value?.validationErrors.length == 1 &&
     cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
 );
 
 const selectedForCheckoutItemIds = computed(
-  () => cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ?? [],
+  () => cart.value?.items.filter((item) => item.selectedForCheckout).map((item) => item.id) ?? [],
 );
 
 const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[]): Promise<void> => {
@@ -123,7 +123,7 @@ const selectedItemIds = computed({
 });
 
 const selectedLineItems = computed(
-  () => cart.value?.items?.filter((item) => selectedItemIds.value.includes(item.id)) ?? [],
+  () => cart.value?.items.filter((item) => selectedItemIds.value.includes(item.id)) ?? [],
 );
 
 const selectedLineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<LineItemType>[]>(() =>
@@ -478,7 +478,7 @@ export function useCart() {
     loading.value = true;
 
     try {
-      quote = await _createQuoteFromCart(cart.value!.id!, comment);
+      quote = await _createQuoteFromCart(cart.value!.id, comment);
     } catch (e) {
       Logger.error(`${useCart.name}.${createQuoteFromCart.name}`, e);
     }
@@ -503,7 +503,7 @@ export function useCart() {
       component: ClearCartModal,
       props: {
         async onResult() {
-          await clearCart(cart.value!.id!);
+          await clearCart(cart.value!.id);
           ga.clearCart(cart.value!);
         },
       },
@@ -512,13 +512,13 @@ export function useCart() {
 
   // calculate total price of items in the cart for some set of products
   function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items?.length) {
+    if (!cart.value?.items.length) {
       return 0;
     }
 
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId!));
+    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
 
-    return sumBy(filteredItems, (x) => x.extendedPrice?.amount);
+    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
   }
 
   return {

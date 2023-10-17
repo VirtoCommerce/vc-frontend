@@ -23,7 +23,8 @@ export default async function (
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
   if (!appElement) {
-    return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
+    Logger.debug(`The element with the selector "${appSelector}" was not found.`);
+    return;
   }
 
   const { fetchUser } = useUser();
@@ -86,7 +87,7 @@ export default async function (
   app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value!.settings);
+  app.use(configPlugin, themeContext.value.settings);
   app.use(uiKit);
 
   getPlugins({ router }).forEach(({ plugin, options }) => app.use(plugin, options));

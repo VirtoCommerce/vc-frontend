@@ -58,7 +58,7 @@ export function setupBroadcastGlobalListeners() {
   on(unauthorizedErrorEvent, async () => {
     await fetchUser();
 
-    if (user.value?.forcePasswordChange || user.value?.passwordExpired || user.value?.lockedState) {
+    if (user.value.forcePasswordChange || user.value.passwordExpired || user.value.lockedState) {
       return;
     }
 

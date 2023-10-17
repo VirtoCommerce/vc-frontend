@@ -182,7 +182,7 @@ const showPaymentButton = computed<boolean>(
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
 
 async function reorderItems() {
-  const items = order.value!.items!.filter((item) => !item.isGift);
+  const items = order.value!.items.filter((item) => !item.isGift);
   const inputBulkItems = items.map<InputNewBulkItemType>((item) => ({ productSku: item.sku, quantity: item.quantity }));
 
   loadingAddItemsToCart.value = true;

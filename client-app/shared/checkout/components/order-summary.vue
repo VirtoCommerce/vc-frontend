@@ -118,14 +118,14 @@ const { currentCurrency } = useCurrency();
 const discountsCollapsed = ref(true);
 
 const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
-  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
+  return typeof discount.amount === "object" && discount.amount !== null ? discount.amount.amount : discount.amount;
 };
 
 const lineItemsDiscountTotal = computed(() =>
-  sumBy<LineItemType | OrderLineItemType>(props.cart.items, (item) => item.discountTotal?.amount || 0),
+  sumBy<LineItemType | OrderLineItemType>(props.cart.items, (item) => item.discountTotal.amount || 0),
 );
 
-const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);
+const hasDiscounts = computed(() => props.cart.discounts.length || lineItemsDiscountTotal.value > 0);
 </script>
 
 <style scoped lang="scss">

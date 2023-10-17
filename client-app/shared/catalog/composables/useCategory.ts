@@ -29,7 +29,7 @@ export function useCategory() {
     loading.value = true;
     try {
       const data = await getCategory(payload);
-      const parent = data.category && !data.category.parent ? rootCategory : data.category?.parent;
+      const parent = data.category && !data.category.parent ? rootCategory : data.category.parent;
 
       category.value = {
         ...(data.category ?? rootCategory),

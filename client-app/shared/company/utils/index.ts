@@ -5,7 +5,7 @@ import type { ContactDisplayStatusType, ExtendedContactType } from "@/shared/com
 export function getContactEmailAddresses(contact: ContactType): string[] {
   let emails: string[] = [];
 
-  if (contact.emails?.length) {
+  if (contact.emails.length) {
     emails = contact.emails;
   } else if (contact.securityAccounts?.[0]?.email) {
     emails = [contact.securityAccounts[0].email];

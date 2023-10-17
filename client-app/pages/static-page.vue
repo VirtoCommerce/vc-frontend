@@ -29,15 +29,15 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useStaticPage } from "@/shared/static-content";
 
 const template = useStaticPage();
-const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
+const templateName = computed(() => unref(template)?.settings.name || unref(template)?.settings.header || "");
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }]);
 
 usePageHead({
-  title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
+  title: computed(() => unref(template)?.settings.seoInfo?.pageTitle || unref(template)?.settings.name),
   meta: {
-    keywords: computed(() => unref(template)?.settings?.seoInfo?.metaKeywords),
-    description: computed(() => unref(template)?.settings?.seoInfo?.metaDescription),
+    keywords: computed(() => unref(template)?.settings.seoInfo?.metaKeywords),
+    description: computed(() => unref(template)?.settings.seoInfo?.metaDescription),
   },
 });
 

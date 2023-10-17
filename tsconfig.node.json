@@ -3,6 +3,7 @@
   "extends": "@tsconfig/node18/tsconfig.json",
   "include": ["client-app/core/constants", "client-app/router/routes", "*", "scripts/*", "package.json"],
   "compilerOptions": {
+    "allowJs": true,
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
