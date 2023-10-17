@@ -17,7 +17,7 @@
     (function() {
         var platformUrl = window.location.search.substr(1).split('&').find(q => q.startsWith('ep=')).substr(3);
 
-        var storeUrl = window.location.origin + '/themes/assets/index.html';
+        var storeUrl = window.location.origin;
         var frame = document.getElementById('preview-a');
         frame.src = storeUrl;
         var relativeUrl = (platformUrl.endsWith('/') ? '' : '/') + 'Modules/$(VirtoCommerce.PageBuilderModule)/Content/bridge/bridge.bundle.js';
