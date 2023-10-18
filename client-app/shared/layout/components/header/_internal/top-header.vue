@@ -1,13 +1,11 @@
 <template>
   <div
-    class="flex h-[39px] items-center justify-between bg-[color:var(--color-header-top-bg)] px-5 text-sm text-[color:var(--color-header-top-text)] xl:px-12"
+    class="flex h-[39px] items-center gap-x-5 bg-[color:var(--color-header-top-bg)] px-5 text-sm text-[color:var(--color-header-top-text)] xl:px-12"
   >
-    <div class="flex items-center space-x-6">
-      <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
-      <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" />
-    </div>
+    <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
+    <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" class="h-full" />
 
-    <div class="flex items-center text-13">
+    <div class="ms-auto flex items-center text-13">
       <!-- Call us block -->
       <div v-if="$cfg.support_phone_number" class="flex items-center">
         <VcIcon class="me-1.5 text-[--color-primary-500]" name="phone" size="sm" />
