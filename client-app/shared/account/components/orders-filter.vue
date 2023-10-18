@@ -64,7 +64,7 @@ const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } =
 const availableStatuses = config?.orders_statuses || [];
 
 function isSelectedStatus(status: string) {
-  return filterData.value.statuses.indexOf(status) !== -1;
+  return filterData.value.statuses.includes(status);
 }
 
 function onChange() {

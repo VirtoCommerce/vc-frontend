@@ -84,13 +84,13 @@ const { t } = useI18n();
 const { quote, billingAddress, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
 
 usePageHead({
-  title: t("pages.account.quote_details.title", [quote!.value?.number]),
+  title: t("pages.account.quote_details.title", [quote.value?.number]),
 });
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+  { title: t("pages.account.quote_details.title", [quote.value?.number]) },
 ]);
 
 watchEffect(async () => {

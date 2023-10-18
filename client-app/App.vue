@@ -42,7 +42,7 @@ const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Secure: markRaw(SecureLayout),
 };
 
-const layout = computedEager(() => layouts[route.meta?.layout ?? "Main"]);
+const layout = computedEager(() => layouts[route.meta.layout ?? "Main"]);
 
 router.beforeEach((to) => {
   // Hiding the drop-down list of search results

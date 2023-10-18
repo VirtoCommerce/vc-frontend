@@ -68,6 +68,8 @@ const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route);
 const preparedCount = computed<string>(() => numberToShortString(props.count));
 
+// Following vue-router typings
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 function click(navigate: () => Promise<void | NavigationFailure>) {
   if (isParent.value) {
     emit("select");

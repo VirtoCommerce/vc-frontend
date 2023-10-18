@@ -79,7 +79,7 @@ export function useUser() {
       component: PasswordExpirationModal,
 
       props: {
-        expiryInDays: user.value?.passwordExpiryInDays,
+        expiryInDays: user.value.passwordExpiryInDays,
 
         async onConfirm(): Promise<void> {
           if (userPasswordExpirationEntry) {
@@ -136,11 +136,11 @@ export function useUser() {
 
       const { hash, pathname, search } = location;
 
-      if ((user.value?.forcePasswordChange || user.value?.passwordExpired) && pathname !== "/change-password") {
+      if ((user.value.forcePasswordChange || user.value.passwordExpired) && pathname !== "/change-password") {
         location.href = `/change-password?returnUrl=${pathname + search + hash}`;
       }
 
-      if (user.value?.lockedState) {
+      if (user.value.lockedState) {
         broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
       }
     } catch (e) {
@@ -386,7 +386,7 @@ export function useUser() {
           throw new Error("User is missing.");
         }
 
-        return user.value!;
+        return user.value;
       },
 
       set() {

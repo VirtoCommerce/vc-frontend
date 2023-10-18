@@ -261,7 +261,7 @@ function next(index: number) {
   }
 
   if (listItems?.length) {
-    const focusItemIndex = index === listItems?.length - 1 ? 0 : index + 1;
+    const focusItemIndex = index === listItems.length - 1 ? 0 : index + 1;
     listItems[focusItemIndex].focus();
   }
 }
@@ -270,7 +270,7 @@ function prev(index: number) {
   const listItems = listElement.value?.children as HTMLElement[] | undefined;
 
   if (listItems?.length) {
-    const focusItemIndex = index === 0 ? listItems?.length - 1 : index - 1;
+    const focusItemIndex = index === 0 ? listItems.length - 1 : index - 1;
     listItems[focusItemIndex].focus();
   }
 }

@@ -26,7 +26,7 @@ export function useFulfillmentCenters() {
         description: description,
         shortDescription: shortDescription,
         address: `${address?.line1}, ${address?.city}, ${address?.countryName} ${
-          address?.postalCode ? address?.postalCode : ""
+          address?.postalCode ? address.postalCode : ""
         }`.trim(),
         phone: address?.phone,
       };

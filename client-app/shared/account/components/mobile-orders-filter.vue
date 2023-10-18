@@ -49,6 +49,6 @@ const isMobile = breakpoints.smaller("lg");
 const availableStatuses = config?.orders_statuses || [];
 
 function isSelectedStatus(status: string) {
-  return filterData.value.statuses.indexOf(status) !== -1;
+  return filterData.value.statuses.includes(status);
 }
 </script>

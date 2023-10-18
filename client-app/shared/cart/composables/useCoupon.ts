@@ -12,7 +12,7 @@ export function useCoupon() {
 
   const INVALID_COUPON_MESSAGE = t("common.messages.invalid_coupon");
 
-  const firstCouponInCart = computed<CouponType | undefined>(() => cart.value?.coupons?.[0]);
+  const firstCouponInCart = computed<CouponType | undefined>(() => cart.value?.coupons[0]);
   const isApplied = computed<boolean>(() => Boolean(firstCouponInCart.value?.isAppliedSuccessfully));
 
   function clearValidationError() {
