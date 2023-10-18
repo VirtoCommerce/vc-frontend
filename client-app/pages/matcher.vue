@@ -90,7 +90,7 @@ const seoInfo = computedAsync<ResultType | undefined>(
     }
 
     const result = await innerFetch<SlugInfoResultType>(
-      `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value!.cultureName}`,
+      `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value.cultureName}`,
     );
 
     if (result.contentItem?.type === "page") {

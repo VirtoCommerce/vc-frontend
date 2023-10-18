@@ -12,18 +12,15 @@ import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
-import type { Plugin } from "vue";
-import type { Router } from "vue-router";
 
 // eslint-disable-next-line no-restricted-exports
-export default async function (
-  getPlugins: (options: { router: Router }) => { plugin: Plugin; options: { router: Router } }[] = () => [],
-) {
+export default async () => {
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
   if (!appElement) {
-    return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
+    Logger.debug(`The element with the selector "${appSelector}" was not found.`);
+    return;
   }
 
   const { fetchUser } = useUser();
@@ -86,10 +83,16 @@ export default async function (
   app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value!.settings);
+  app.use(configPlugin, themeContext.value.settings);
   app.use(uiKit);
 
-  getPlugins({ router }).forEach(({ plugin, options }) => app.use(plugin, options));
+  if (window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {
+    const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
+      ?.default;
+    if (builderPreviewPlugin) {
+      app.use(builderPreviewPlugin, { router });
+    }
+  }
 
   // Register Page builder components globally
   Object.entries(templateBlocks).forEach(([name, component]) => app.component(name, component));
@@ -100,4 +103,4 @@ export default async function (
   await router.isReady();
 
   app.mount(appElement);
-}
+};

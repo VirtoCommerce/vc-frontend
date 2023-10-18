@@ -97,7 +97,7 @@ const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;
-  const lastIndex: number = props.images?.length ? props.images.length - 1 : 0;
+  const lastIndex: number = props.images.length ? props.images.length - 1 : 0;
 
   if (!activeIndex) {
     // first bullet active

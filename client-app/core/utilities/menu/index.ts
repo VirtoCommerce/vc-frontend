@@ -26,7 +26,7 @@ export function categoryToExtendedMenuLink(category: Category, isCatalogItem?: b
 
 export function getTranslatedMenuLink(menuLink: ExtendedMenuLinkType, i18n = globals.i18n): ExtendedMenuLinkType {
   if (menuLink.title) {
-    menuLink.title = i18n?.global.t(menuLink.title);
+    menuLink.title = i18n.global.t(menuLink.title);
   }
 
   if (menuLink.children?.length) {

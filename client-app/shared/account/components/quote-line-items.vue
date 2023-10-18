@@ -211,7 +211,7 @@ const extendedItems = computed<ExtendedLineItemType<QuoteItemType>[]>(() =>
 );
 
 const subtotal = computed<number>(() =>
-  sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity),
+  sumBy(props.items, (item: QuoteItemType) => item.selectedTierPrice!.price.amount * item.selectedTierPrice!.quantity),
 );
 </script>
 

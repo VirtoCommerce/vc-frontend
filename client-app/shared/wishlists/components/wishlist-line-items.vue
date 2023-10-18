@@ -53,7 +53,7 @@ defineProps<IProp>();
 function addToCartDisabled(item: PreparedLineItemType) {
   return (
     item.productType === ProductType.Physical &&
-    (!item.availabilityData?.isAvailable || !item.availabilityData?.isInStock)
+    (!item.availabilityData?.isAvailable || !item.availabilityData.isInStock)
   );
 }
 

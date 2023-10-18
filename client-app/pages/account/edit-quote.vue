@@ -166,13 +166,13 @@ const {
 const notifications = useNotifications();
 
 usePageHead({
-  title: t("pages.account.quote_details.title", [quote!.value?.number]),
+  title: t("pages.account.quote_details.title", [quote.value?.number]),
 });
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+  { title: t("pages.account.quote_details.title", [quote.value?.number]) },
 ]);
 
 const originalQuote = ref<QuoteType>();
@@ -194,8 +194,8 @@ const quoteChanged = computed<boolean>(
 );
 const quoteItemsValid = computed<boolean>(
   () =>
-    !!quote.value?.items?.length &&
-    every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0),
+    !!quote.value?.items.length &&
+    every(quote.value.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0),
 );
 const quoteValid = computed<boolean>(
   () =>
@@ -221,7 +221,7 @@ function accountAddressExists(address: AnyAddressType): boolean {
 }
 
 function onRemoveItem(item: QuoteItemType): void {
-  remove(quote.value!.items!, (i: QuoteItemType) => i.id === item.id);
+  remove(quote.value!.items, (i: QuoteItemType) => i.id === item.id);
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
@@ -303,8 +303,8 @@ async function saveChanges(): Promise<void> {
     await changeComment(quote.value!.id, comment.value!);
   }
 
-  await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
-    const quoteItem: QuoteItemType | undefined = quote.value!.items?.find(
+  await asyncForEach(originalQuote.value!.items, async (originalItem: QuoteItemType) => {
+    const quoteItem: QuoteItemType | undefined = quote.value!.items.find(
       (item: QuoteItemType) => item.id === originalItem.id,
     );
     if (quoteItem) {
@@ -317,7 +317,7 @@ async function saveChanges(): Promise<void> {
   });
 
   if (
-    quote.value!.addresses?.length &&
+    quote.value!.addresses.length &&
     (!isEqual(quote.value!.addresses, originalQuote.value!.addresses) ||
       (billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value))
   ) {

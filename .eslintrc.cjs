@@ -9,7 +9,7 @@ module.exports = {
   extends: [
     "eslint:recommended", // See rules: https://eslint.org/docs/latest/rules/
     "plugin:vue/vue3-recommended", // See rules: https://eslint.vuejs.org/rules
-    "plugin:@typescript-eslint/recommended-type-checked", // See rules: https://typescript-eslint.io/rules/
+    "plugin:@typescript-eslint/strict-type-checked", // See rules: https://typescript-eslint.io/rules/
     "@vue/eslint-config-typescript/recommended",
     "@vue/eslint-config-prettier",
     "@vue/prettier",
@@ -42,6 +42,7 @@ module.exports = {
     /**
      * Errors
      */
+    "@typescript-eslint/no-confusing-void-expression": ["error", { ignoreArrowShorthand: true }],
     "@typescript-eslint/no-shadow": "error",
     "curly": "error",
     "import/no-unresolved": "error",
@@ -77,14 +78,19 @@ module.exports = {
       { selector: "interface", format: ["PascalCase"], prefix: ["I"] },
       { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
     ],
+    "@typescript-eslint/no-dynamic-delete": "warn", // TODO: Switch to error
     "@typescript-eslint/no-floating-promises": "warn", // TODO: Switch to error
     "@typescript-eslint/no-misused-promises": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unnecessary-condition": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-argument": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-assignment": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-call": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-enum-comparison": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-member-access": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-return": "warn", // TODO: Switch to error
+    // It's ok to use assignments in enum member
+    // allowBitwiseExpressions option doesn't cover case when we use enum members inside enum member assignments
+    "@typescript-eslint/prefer-literal-enum-member": "off",
     "import/consistent-type-specifier-style": "warn",
     "import/no-cycle": "warn", // TODO: Switch to error
     "import/order": [
@@ -149,13 +155,12 @@ module.exports = {
      * Disabled
      */
     "@typescript-eslint/no-non-null-assertion": "off", // TODO: Remove (switch to error) after XAPI types refactoring
-    "@typescript-eslint/no-unnecessary-type-assertion": "off", // TODO: Remove (switch to error) at next PR with auto fix
     "@typescript-eslint/no-redundant-type-constituents": "off", // TODO: Investigate why there are false positives
     "@typescript-eslint/unbound-method": "off", // TODO: Investigate why there are false positives
+    "@typescript-eslint/unified-signatures": "off", // We use signatures only for emits and we prefer to separate them
     "sonarjs/no-duplicate-string": "off",
     "tailwindcss/no-custom-classname": "off",
     "vue/multi-word-component-names": "off",
-    //"vue/no-dupe-keys": "off", // TODO: Remove (switch to error). Does not work correctly with <script setup>
     "vue/require-default-prop": "off",
     "vuejs-accessibility/form-control-has-label": "off",
     "vuejs-accessibility/label-has-for": "off",
