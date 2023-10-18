@@ -11,14 +11,13 @@
       padding: 0;
   }
 </style>
-
-<iframe class="preview-frame" style="display: block; background: white;" id="preview-a" src="" title=""></iframe>
+<iframe class="preview-frame" style="display: block; background: white;" id="preview-a" src="" title="" data-view-mode="page-builder"></iframe>
 
 <script>
     (function() {
         var platformUrl = window.location.search.substr(1).split('&').find(q => q.startsWith('ep=')).substr(3);
 
-        var storeUrl = window.location.origin + '/themes/assets/builder-preview.html';
+        var storeUrl = window.location.origin;
         var frame = document.getElementById('preview-a');
         frame.src = storeUrl;
         var relativeUrl = (platformUrl.endsWith('/') ? '' : '/') + 'Modules/$(VirtoCommerce.PageBuilderModule)/Content/bridge/bridge.bundle.js';
