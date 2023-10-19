@@ -67,9 +67,9 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
   const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
   const actualPrice = "salePrice" in item ? item.salePrice : undefined;
   const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
-  const quantity = isQuoteItemType(item) ? Number(item.selectedTierPrice?.quantity) : item.quantity;
+  const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
   const inStockQuantity =
-    "inStockQuantity" in item ? item.inStockQuantity : Number(item.product?.availabilityData?.availableQuantity);
+    "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;
   const properties = Object.values(getPropertiesGroupedByName(item.product?.properties ?? []));
   const route = isVariation
     ? getProductRoute(item.product!.masterVariation!.id || "", item.product!.masterVariation!.slug)
