@@ -23,7 +23,7 @@ const props = defineProps<IProps>();
 const { cart } = useCart();
 
 const lineItemInCart = computed<LineItemType | undefined>(
-  () => cart.value?.items.find((item) => item.productId === props.productId),
+  () => cart.value?.items?.find((item) => item.productId === props.productId),
 );
 const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity || 0);
 </script>

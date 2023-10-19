@@ -30,18 +30,16 @@ export function createRouter(options: { base: string }) {
       !isAuthenticated.value && !to.meta.public && (to.meta.requiresAuth || !anonymousAccessEnabled);
 
     if (unauthorizedAccessIsDenied) {
-      next({
+      return next({
         name: "SignIn",
         // save the location we were at to come back later
         query: { returnUrl: to.fullPath },
       });
-      return;
     }
 
     // Protecting company routes
     if (to.meta.requiresOrganization && !organization.value) {
-      next({ name: "Account" });
-      return;
+      return next({ name: "Account" });
     }
 
     // Make Dashboard the default Home page for authorized users
@@ -57,11 +55,10 @@ export function createRouter(options: { base: string }) {
         "ConfirmInvitation",
       ).includes(to.name!)
     ) {
-      next(getReturnUrlValue() || { name: "Catalog" });
-      return;
+      return next(getReturnUrlValue() || { name: "Catalog" });
     }
 
-    next();
+    return next();
   });
 
   return router;

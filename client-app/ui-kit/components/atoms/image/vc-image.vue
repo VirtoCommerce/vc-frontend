@@ -61,7 +61,7 @@ function setFallback(): void {
     !originalEnabled.value &&
     props.sizeSuffix &&
     cfg?.image_thumbnails_enabled &&
-    cfg.image_thumbnails_original_fallback_enabled
+    cfg?.image_thumbnails_original_fallback_enabled
   ) {
     originalEnabled.value = true;
   } else if (!fallbackEnabled.value) {

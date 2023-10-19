@@ -39,5 +39,5 @@ export async function searchRelatedProducts({
     },
   });
 
-  return data.product.associations?.items ?? [];
+  return data.product?.associations?.items ?? [];
 }

@@ -13,10 +13,13 @@ export function useRelatedProducts() {
   const relatedProducts = shallowRef<Product[]>([]);
 
   const productsById = computed(() =>
-    relatedProducts.value.reduce<Record<string, { index: number; product: Product }>>((result, product, index) => {
-      result[product.id] = { index, product };
-      return result;
-    }, {}),
+    relatedProducts.value.reduce(
+      (result, product, index) => {
+        result[product.id] = { index, product };
+        return result;
+      },
+      {} as Record<string, { index: number; product: Product }>,
+    ),
   );
 
   async function fetchRelatedProducts(params: RelatedProductsSearchParamsType) {
