@@ -1,3 +1,5 @@
+[warn] --jsx-bracket-same-line is deprecated. [warn] Ignored unknown option --loglevel=error. Did you mean --log-level?
+[warn] Ignored unknown option --stdin.
 <template>
   <component :is="componentTag" ref="currentElement" class="vc-menu-item">
     <component
@@ -98,12 +100,10 @@ function getComponentTag() {
     return props.tag;
   }
 
-  if (currentElement.value && currentElement.value.parentElement) {
-    const parentTag = currentElement.value.parentElement.tagName.toLowerCase();
+  const parentTag = currentElement.value?.parentElement?.tagName.toLowerCase();
 
-    if (parentTag === "ul" || parentTag === "ol") {
-      return "li";
-    }
+  if (parentTag === "ul" || parentTag === "ol") {
+    return "li";
   }
 
   return "div";
