@@ -20,7 +20,7 @@
     </template>
 
     <template v-if="!disabled" #content>
-      <ul class="vc-dropdown-menu__list" :style="{ maxHeight }">
+      <ul class="vc-dropdown-menu__list" :style="{ maxHeight, width }">
         <slot name="content" />
       </ul>
     </template>
@@ -41,6 +41,7 @@ interface IProps {
   yOffset?: number | string;
   trigger?: "hover" | "click";
   disabled?: boolean;
+  width?: string;
 }
 
 defineEmits<IEmits>();
@@ -50,6 +51,7 @@ withDefaults(defineProps<IProps>(), {
   maxHeight: "12rem",
   yOffset: "4",
   trigger: "click",
+  width: "auto",
 });
 </script>
 

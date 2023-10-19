@@ -4,7 +4,7 @@
       {{ $t("shared.layout.currency_selector.label") }}
     </span>
 
-    <VcDropdownMenu placement="bottom-end" @toggle="toggle($event)">
+    <VcDropdownMenu placement="bottom-end" width="7.5rem" @toggle="toggle($event)">
       <template #trigger>
         <span class="flex items-center gap-x-1.5 text-sm text-[--color-accent-300] hover:text-[--color-accent-500]">
           <span class="uppercase">
@@ -16,23 +16,21 @@
       </template>
 
       <template #content>
-        <div class="w-28">
-          <VcMenuItem
-            v-for="item in supportedCurrencies"
-            :key="item.code"
-            :active="item.code === currentCurrency?.code"
-            color="secondary"
-            @click="item.code === currentCurrency?.code ? null : select(item.code)"
+        <VcMenuItem
+          v-for="item in supportedCurrencies"
+          :key="item.code"
+          :active="item.code === currentCurrency?.code"
+          color="secondary"
+          @click="item.code === currentCurrency?.code ? null : select(item.code)"
+        >
+          <span
+            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-[--color-additional-50]"
           >
-            <span
-              class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-[--color-additional-50]"
-            >
-              {{ item.symbol }}
-            </span>
+            {{ item.symbol }}
+          </span>
 
-            <span>{{ item.code }}</span>
-          </VcMenuItem>
-        </div>
+          <span>{{ item.code }}</span>
+        </VcMenuItem>
       </template>
     </VcDropdownMenu>
   </div>

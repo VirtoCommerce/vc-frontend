@@ -1,7 +1,7 @@
 <template>
-  <li class="vc-menu-item">
+  <component :is="componentTag" ref="currentElement" class="vc-menu-item">
     <component
-      :is="tag"
+      :is="innerTag"
       v-bind="attrs"
       :disabled="disabled"
       :title="title"
@@ -22,12 +22,12 @@
         <slot />
       </span>
     </component>
-  </li>
+  </component>
 </template>
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -45,6 +45,7 @@ interface IProps {
   disabled?: boolean;
   truncate?: boolean;
   nowrap?: boolean;
+  tag?: string;
 }
 
 defineEmits<IEmits>();
@@ -54,11 +55,13 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
+const currentElement = ref<HTMLElement>();
 const enabled = eagerComputed<boolean>(() => !props.disabled);
 const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+const componentTag = ref("div");
 
-const tag = computed(() => {
+const innerTag = computed(() => {
   if (isRouterLink.value) {
     return "router-link";
   }
@@ -75,19 +78,39 @@ const tag = computed(() => {
 });
 
 const attrs = computed(() => {
-  if (tag.value === "router-link") {
+  if (innerTag.value === "router-link") {
     return { to: props.to, target: props.target };
   }
 
-  if (tag.value === "a") {
+  if (innerTag.value === "a") {
     return { href: props.externalLink, target: props.target };
   }
 
-  if (tag.value === "button") {
+  if (innerTag.value === "button") {
     return { type: "button" };
   }
 
   return {};
+});
+
+function getComponentTag() {
+  if (props.tag) {
+    return props.tag;
+  }
+
+  if (currentElement.value && currentElement.value.parentElement) {
+    const parentTag = currentElement.value.parentElement.tagName.toLowerCase();
+
+    if (parentTag === "ul" || parentTag === "ol") {
+      return "li";
+    }
+  }
+
+  return "div";
+}
+
+onMounted(() => {
+  componentTag.value = getComponentTag();
 });
 </script>
 
