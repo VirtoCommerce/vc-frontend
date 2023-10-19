@@ -99,7 +99,8 @@ jobs:
         githubToken: ${{ env.GITHUB_TOKEN }}
         deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
         deployBranch: ${{ steps.deployConfig.outputs.deployBranch }}
-        artifactKey: ${{ inputs.artifactKey && inputs.artifactKey || steps.deployConfig.outputs.artifactKey }}
+        cmPath: ${{ inputs.cmPath || steps.deployConfig.outputs.cmPath }}
+        artifactKey: ${{ inputs.artifactKey || steps.deployConfig.outputs.artifactKey }}
         artifactUrl: ${{ inputs.artifactUrl }}
         taskNumber: ${{ inputs.jiraKeys }}
         forceCommit: ${{ inputs.forceCommit }}
