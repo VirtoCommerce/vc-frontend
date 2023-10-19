@@ -189,7 +189,7 @@ jobs:
     uses: ./.github/workflows/deploy-cloud.yml
     with:
       artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
-      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'qa' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit

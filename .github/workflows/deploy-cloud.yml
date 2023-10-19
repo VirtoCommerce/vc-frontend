@@ -20,7 +20,7 @@ on:
         required: true
         type: string
       environmentId:
-        description: 'Environment ID (dev, qa, prod)'
+        description: 'Environment ID (dev, qa)'
         default: 'dev'
         required: false
         type: string
@@ -53,7 +53,7 @@ on:
         required: true
         type: string
       environmentId:
-        description: 'Environment ID (dev, qa, prod)'
+        description: 'Environment ID (dev, qa)'
         default: 'dev'
         required: false
         type: string
