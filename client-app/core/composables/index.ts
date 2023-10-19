@@ -6,6 +6,7 @@ export * from "./useCountries";
 export * from "./useCurrency";
 export * from "./useErrorsTranslator";
 export * from "./useFetch";
+export * from "./useFieldValidationSchema";
 export * from "./useGoogleAnalytics";
 export * from "./useIdentityErrorTranslator";
 export * from "./useLanguages";

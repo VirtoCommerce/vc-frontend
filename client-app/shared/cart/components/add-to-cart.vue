@@ -58,7 +58,7 @@ import { useField } from "vee-validate";
 import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
-import { useCartValidationErrorTranslator, useGoogleAnalytics } from "@/core/composables";
+import { useCartValidationErrorTranslator, useFieldValidationSchema, useGoogleAnalytics } from "@/core/composables";
 import { PRODUCT_OBJECT_TYPE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
@@ -71,6 +71,7 @@ const props = defineProps<IProps>();
 
 const getValidationErrorTranslation = useCartValidationErrorTranslator();
 const notifications = useNotifications();
+const { mutateQuantityFieldSchema } = useFieldValidationSchema();
 
 interface IEmits {
   (event: "update:lineItem", lineItem: LineItemType): void;
@@ -109,36 +110,9 @@ const rules = computed(() =>
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
       .integer()
       .positive()
-      .withMutation((schema) => {
-        if (!!props.product.minQuantity && !!props.product.maxQuantity) {
-          return schema.test(
-            "minMaxValue",
-            t("shared.cart.add_to_cart.errors.min_max", [props.product.minQuantity, props.product.maxQuantity]),
-            (value) =>
-              !!value &&
-              !!props.product.minQuantity &&
-              !!props.product.maxQuantity &&
-              value >= props.product.minQuantity &&
-              value <= props.product.maxQuantity,
-          );
-        }
-
-        if (props.product.minQuantity) {
-          return schema.min(
-            props.product.minQuantity,
-            t("shared.cart.add_to_cart.errors.min", [props.product.minQuantity]),
-          );
-        }
-
-        if (props.product.maxQuantity) {
-          return schema.max(
-            props.product.maxQuantity,
-            t("shared.cart.add_to_cart.errors.max", [props.product.maxQuantity]),
-          );
-        }
-
-        return schema;
-      }),
+      .withMutation((schema) =>
+        mutateQuantityFieldSchema(schema, props.product.minQuantity, props.product.maxQuantity),
+      ),
   ),
 );
 
