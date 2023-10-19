@@ -37,9 +37,7 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField } from "vee-validate";
 import { computed, ref, watchEffect } from "vue";
-import { useI18n } from "vue-i18n";
-import { number } from "yup";
-import { useFieldValidationSchema } from "@/core/composables";
+import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "update:modelValue", value: number): void;
@@ -58,22 +56,15 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-const { t } = useI18n();
-const { mutateQuantityFieldSchema } = useFieldValidationSchema();
-
-const rules = computed(() =>
-  toTypedSchema(
-    number()
-      .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-      .integer()
-      .positive()
-      .withMutation((schema) => mutateQuantityFieldSchema(schema, props.minQuantity, props.maxQuantity)),
-  ),
-);
-
 let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>();
+const minQty = computed(() => props.minQuantity);
+const maxQty = computed(() => props.maxQuantity);
+
+const { quantitySchema } = useQuantityValidationSchema(minQty.value, maxQty.value);
+
+const rules = computed(() => toTypedSchema(quantitySchema.value));
 
 const { errorMessage, setValue, validate } = useField("quantity", rules, {
   initialValue: quantity.value,
