@@ -140,7 +140,7 @@ const onSubmit = handleSubmit(async () => {
 
     if (result.succeeded) {
       const user = await getMe();
-      await mergeCart(user.id, cart.value!.id);
+      await mergeCart(user.id, cart.value!.id!);
       emit("succeeded");
     } else {
       apiErrors.value = result.errors;

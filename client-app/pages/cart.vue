@@ -263,7 +263,7 @@ const isDisabledOrderCreation = computed<boolean>(
   () => loading.value || !isValidCheckout.value || isEmpty(selectedItemIds.value),
 );
 const cartContainsDeletedProducts = computed<boolean | undefined>(
-  () => cart.value?.items.some((item: LineItemType) => !item.product),
+  () => cart.value?.items?.some((item: LineItemType) => !item.product),
 );
 const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
@@ -275,7 +275,7 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  ga.removeItemsFromCart(cart.value!.items.filter((item) => itemIds.includes(item.id)));
+  ga.removeItemsFromCart(cart.value!.items!.filter((item) => itemIds.includes(item.id)));
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {

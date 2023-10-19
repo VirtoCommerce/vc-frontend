@@ -150,7 +150,7 @@ async function onChange() {
     ga.addItemToCart(props.product, inputQuantity);
   }
 
-  lineItem = clone(getLineItem(updatedCart.items));
+  lineItem = clone(getLineItem(updatedCart?.items));
 
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
@@ -161,7 +161,7 @@ async function onChange() {
           : "common.messages.fail_add_product_to_cart",
         {
           reason: updatedCart.validationErrors
-            .filter(
+            ?.filter(
               (validationError) =>
                 validationError.objectId === props.product.code && validationError.objectType === PRODUCT_OBJECT_TYPE,
             )

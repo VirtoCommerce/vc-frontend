@@ -38,10 +38,13 @@ export function useProducts(
   const pages = ref(1);
 
   const productsById = computed(() =>
-    products.value.reduce<Record<string, { index: number; product: Product }>>((result, product, index) => {
-      result[product.id] = { index, product };
-      return result;
-    }, {}),
+    products.value.reduce(
+      (result, product, index) => {
+        result[product.id] = { index, product };
+        return result;
+      },
+      {} as Record<string, { index: number; product: Product }>,
+    ),
   );
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {

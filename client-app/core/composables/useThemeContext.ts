@@ -26,7 +26,7 @@ export function useThemeContext() {
           throw new Error("Theme context is missing.");
         }
 
-        return themeContext.value;
+        return themeContext.value!;
       },
 
       set() {

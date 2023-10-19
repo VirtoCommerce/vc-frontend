@@ -6,7 +6,7 @@ export function getLineItemValidationErrorsGroupedBySKU(
 ): Record<string, ValidationErrorType[]> {
   const result: Record<string, ValidationErrorType[]> = {};
 
-  errors.forEach((error) => {
+  errors?.forEach((error) => {
     const sku = error.objectId!;
 
     result[sku] = result[sku] || [];
@@ -27,11 +27,11 @@ export function getItemsForAddBulkItemsToCartResultsPopup(
   });
 
   return inputItems.map<ItemForAddBulkItemsToCartResultsPopupType>((item) => ({
-    productId: item.productId,
-    name: item.name,
-    sku: item.sku,
-    quantity: item.quantity,
+    productId: item.productId!,
+    name: item.name!,
+    sku: item.sku!,
+    quantity: item.quantity!,
     slug: item.product?.slug,
-    errors: errorsGroupedBySKU[item.sku],
+    errors: errorsGroupedBySKU[item.sku!],
   }));
 }
