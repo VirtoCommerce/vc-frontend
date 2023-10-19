@@ -14,7 +14,6 @@
     "validate": "yarn validate:types && yarn validate:dependencies",
     "lint-staged": "lint-staged",
     "lint": "eslint . --ext .js,.ts,.vue --ignore-path .eslintignore",
-    "lint:errors": "yarn lint --quiet",
     "lint:fix": "yarn lint --fix",
     "prettier": "prettier --check client-app/",
     "prettier:fix": "yarn prettier --write",

@@ -23,10 +23,10 @@ const orderItemsGroupedByVendor = computed<LineItemsGroupByVendorType<OrderLineI
   getLineItemsGroupedByVendor(orderItems.value),
 );
 const allItemsAreDigital = computed<boolean>(
-  () => !!order.value?.items.every((item) => item.productType === ProductType.Digital),
+  () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
 );
-const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments[0]);
-const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
+const shipment = computed<OrderShipmentType | undefined>(() => order.value?.shipments?.[0]);
+const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 const deliveryAddress = computed<OrderAddressType | undefined>(() => shipment.value?.deliveryAddress);
 const billingAddress = computed<OrderAddressType | undefined>(() => payment.value?.billingAddress);
 

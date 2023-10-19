@@ -15,10 +15,10 @@ import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType
 const fetching = ref<boolean>(false);
 const quote = ref<QuoteType | undefined>();
 const billingAddress = computed<QuoteAddressType | undefined>(
-  () => quote.value?.addresses.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
+  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
 );
 const shippingAddress = computed<QuoteAddressType | undefined>(
-  () => quote.value?.addresses.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
+  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
 );
 
 export function useUserQuote() {
@@ -27,8 +27,8 @@ export function useUserQuote() {
   }
 
   function setQuoteAddress(newAddress: QuoteAddressType): void {
-    remove(quote.value!.addresses, (address: QuoteAddressType) => address.addressType === newAddress.addressType);
-    quote.value!.addresses.push(newAddress);
+    remove(quote.value!.addresses!, (address: QuoteAddressType) => address.addressType === newAddress.addressType);
+    quote.value!.addresses!.push(newAddress);
   }
 
   async function fetchQuote(paylod: QueryQuoteArgs): Promise<void> {

@@ -86,7 +86,7 @@ function saveLocaleAndReload(locale: string) {
   const splitPathname = pathname.split("/");
   const localeInPath = splitPathname[1];
   const indexOfRemainingPath = 2;
-  const path = supportedLocales.value.includes(localeInPath)
+  const path = supportedLocales.value?.includes(localeInPath)
     ? `/${splitPathname.slice(indexOfRemainingPath).join("/")}`
     : pathname;
 

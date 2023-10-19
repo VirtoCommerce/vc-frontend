@@ -20,5 +20,5 @@ export async function sendVerifyEmail(userId: string): Promise<boolean | undefin
     },
   });
 
-  return response.data?.sendVerifyEmail;
+  return response?.data?.sendVerifyEmail;
 }

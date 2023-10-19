@@ -19,8 +19,7 @@ export default async () => {
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
   if (!appElement) {
-    Logger.debug(`The element with the selector "${appSelector}" was not found.`);
-    return;
+    return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
 
   const { fetchUser } = useUser();
@@ -83,7 +82,7 @@ export default async () => {
   app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value.settings);
+  app.use(configPlugin, themeContext.value!.settings);
   app.use(uiKit);
 
   if (window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {

@@ -141,7 +141,7 @@ export function useCheckout() {
   );
 
   const allOrderItemsAreDigital = computed<boolean>(
-    () => !!placedOrder.value?.items.every((item) => item.productType === ProductType.Digital),
+    () => !!placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital),
   );
 
   function isExistAddress(address: AnyAddressType): boolean {
@@ -152,7 +152,7 @@ export function useCheckout() {
     await updateShipment(
       {
         id: shipment.value?.id,
-        price: method.price.amount,
+        price: method.price?.amount,
         shipmentMethodCode: method.code,
         shipmentMethodOption: method.optionName,
       },
@@ -182,7 +182,7 @@ export function useCheckout() {
     let cartReloadBroadcast = false;
 
     if (allItemsAreDigital.value && shipment.value) {
-      await removeShipment(shipment.value.id);
+      await removeShipment(shipment.value.id!);
       cartReloadBroadcast = true;
     }
 
@@ -227,7 +227,7 @@ export function useCheckout() {
   ): Promise<void> {
     if (
       addressType === AddressType.Billing &&
-      (!payment.value?.billingAddress || !isEqualAddresses(payment.value.billingAddress, inputAddress))
+      (!payment.value?.billingAddress || !isEqualAddresses(payment.value?.billingAddress, inputAddress))
     ) {
       await updatePayment(
         {
@@ -238,7 +238,7 @@ export function useCheckout() {
       );
     } else if (
       addressType === AddressType.Shipping &&
-      (!shipment.value?.deliveryAddress || !isEqualAddresses(shipment.value.deliveryAddress, inputAddress))
+      (!shipment.value?.deliveryAddress || !isEqualAddresses(shipment.value?.deliveryAddress, inputAddress))
     ) {
       await updateShipment(
         {
@@ -375,7 +375,7 @@ export function useCheckout() {
     // Update payment with required properties
     const filledPayment: InputPaymentType = {
       id: payment.value!.id,
-      amount: cart.value!.total.amount, // required
+      amount: cart.value!.total!.amount, // required
     };
 
     // Save shipping address as billing address
@@ -413,7 +413,7 @@ export function useCheckout() {
     await prepareOrderData();
 
     try {
-      placedOrder.value = await _createOrderFromCart(cart.value!.id);
+      placedOrder.value = await _createOrderFromCart(cart.value!.id!);
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
@@ -421,7 +421,7 @@ export function useCheckout() {
     if (placedOrder.value) {
       await fetchFullCart();
 
-      selectedItemIds.value = cart.value!.items.map((item) => item.id);
+      selectedItemIds.value = cart.value!.items!.map((item) => item.id);
 
       ga.placeOrder(placedOrder.value);
 

@@ -178,7 +178,7 @@ function getTableRowsHtml(items: ItemForAddBulkItemsToCartResultsPopupType[]) {
 }
 
 function print() {
-  const logo = config.logo_image;
+  const logo = config?.logo_image;
   const htmlStyle = document.documentElement.attributes.getNamedItem("style")?.textContent;
   const styleLinks = Array.from(document.head.querySelectorAll("link[rel=stylesheet], style"))
     .map((el) => el.outerHTML)
