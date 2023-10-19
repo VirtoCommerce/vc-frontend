@@ -8,11 +8,11 @@ on:
         default: 'argo.virtocommerce.cloud'
         type: string
       cmPath:
-        description: 'JSON configuration map file path'
+        description: 'JSON configuration map file path (with quotes)'
         required: false
         type: string
       artifactKey:
-        description: 'JSON configuration map property key'
+        description: 'JSON configuration map property key (with quotes)'
         required: false
         type: string
       artifactUrl:
@@ -41,11 +41,11 @@ on:
         default: 'argo.virtocommerce.cloud'
         type: string
       cmPath:
-        description: 'JSON configuration map file path'
+        description: 'JSON configuration map file path (with quotes)'
         required: false
         type: string
       artifactKey:
-        description: 'JSON configuration map property key'
+        description: 'JSON configuration map property key (with quotes)'
         required: false
         type: string
       artifactUrl:
@@ -106,12 +106,12 @@ jobs:
         forceCommit: ${{ inputs.forceCommit }}
 
     - name: Sleep for ${{ env.SLEEP_TIME }}
-      if: ${{ !inputs.forceCommit }}
+      if: ${{ inputs.forceCommit }}
       run: sleep ${{ env.SLEEP_TIME }}
       shell: bash
 
     - name: Wait for environment is up
-      if: ${{ !inputs.forceCommit }}
+      if: ${{ inputs.forceCommit }}
       timeout-minutes: 5
       uses: VirtoCommerce/vc-github-actions/vc-argocd-cli@master
       with:
