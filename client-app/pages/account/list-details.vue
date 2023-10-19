@@ -152,7 +152,7 @@ const wishlistItems = ref<LineItemType[]>([]);
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
-  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku].quantity)),
+  wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity)),
 );
 const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
@@ -179,7 +179,7 @@ async function addAllListItemsToCart(): Promise<void> {
   }
 
   const payload = wishlistItems.value.map<InputNewBulkItemType>((item) => ({
-    productSku: item.sku,
+    productSku: item.sku!,
     quantity: item.quantity,
   }));
 
@@ -199,9 +199,9 @@ async function addAllListItemsToCart(): Promise<void> {
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id!,
-    items: wishlistItems.value.map<InputUpdateWishlistLineItemType>((item) => ({
+    items: wishlistItems.value!.map<InputUpdateWishlistLineItemType>((item) => ({
       lineItemId: item.id,
-      quantity: item.quantity,
+      quantity: item.quantity!,
     })),
   };
   await updateItemsInWishlist(payload);
@@ -231,7 +231,7 @@ async function openSaveChangesModal(): Promise<boolean> {
 }
 
 function updateWishListItem(item: PreparedLineItemType, quantity: number): void {
-  const existItem = wishlistItems.value.find((i) => i.id === item.id);
+  const existItem = wishlistItems.value?.find((i) => i.id === item.id);
   if (existItem) {
     existItem.quantity = quantity;
   }
@@ -245,7 +245,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     return;
   }
 
-  const itemInCart: LineItemType | undefined = cart.value?.items.find(
+  const itemInCart: LineItemType | undefined = cart.value?.items?.find(
     (cartItem) => cartItem.productId === item.productId,
   );
 
