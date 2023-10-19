@@ -94,7 +94,7 @@ jobs:
         override: true
 
     - name: Deploy to ${{ steps.deployConfig.outputs.environmentName }}
-      uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+      uses: VirtoCommerce/vc-github-actions/create-deploy-pr@temp/create-pr
       with:
         githubToken: ${{ env.GITHUB_TOKEN }}
         deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
