@@ -52,7 +52,7 @@ Link.args = {
 
 export const ExternalLink = Template.bind({});
 ExternalLink.args = {
-  externalLink: "http://external.link",
+  externalLink: "https://google.com",
 };
 
 export const Disabled = Template.bind({});
