@@ -94,9 +94,9 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     countInCart,
     minQuantity: item.product?.minQuantity,
     maxQuantity:
+      item.product?.maxQuantity ||
       (<LineItemType>item).inStockQuantity ||
-      item.product?.availabilityData?.availableQuantity ||
-      item.product?.maxQuantity,
+      item.product?.availabilityData?.availableQuantity,
   };
 }
 

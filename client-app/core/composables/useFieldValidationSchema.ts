@@ -5,7 +5,6 @@ function mutateQuantityFieldSchema(schema: NumberSchema, minQuantity?: number, m
   const { t } = useI18n();
 
   if (minQuantity && maxQuantity) {
-    console.log(123);
     return schema.test(
       "minMaxValue",
       t("shared.cart.add_to_cart.errors.min_max", [minQuantity, maxQuantity]),
