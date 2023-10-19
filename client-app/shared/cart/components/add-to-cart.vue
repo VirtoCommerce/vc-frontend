@@ -96,8 +96,8 @@ const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quant
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(
-    Number(props.product.availabilityData?.availableQuantity) ?? MAX_VALUE,
-    props.product.maxQuantity ?? MAX_VALUE,
+    Number(props.product.availabilityData?.availableQuantity) || MAX_VALUE,
+    props.product.maxQuantity || MAX_VALUE,
   ),
 );
 
