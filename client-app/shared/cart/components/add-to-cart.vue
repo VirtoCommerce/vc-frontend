@@ -95,7 +95,10 @@ const inputElement = shallowRef<HTMLInputElement>();
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
-  Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, props.product.maxQuantity || MAX_VALUE),
+  Math.min(
+    Number(props.product.availabilityData?.availableQuantity) ?? MAX_VALUE,
+    props.product.maxQuantity ?? MAX_VALUE,
+  ),
 );
 
 const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
