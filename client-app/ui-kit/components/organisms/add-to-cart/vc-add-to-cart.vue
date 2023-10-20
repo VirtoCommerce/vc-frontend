@@ -85,7 +85,7 @@ const { quantitySchema } = useQuantityValidationSchema(minQty.value, maxQty.valu
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 
-const { errorMessage, validate, setValue } = useField("quantity", rules, { initialValue: quantity.value });
+const { errorMessage, validate, setValue } = useField("quantity", rules);
 
 async function onChange(): Promise<void> {
   setValue(quantity.value);

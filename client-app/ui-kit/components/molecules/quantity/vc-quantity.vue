@@ -66,9 +66,7 @@ const { quantitySchema } = useQuantityValidationSchema(minQty.value, maxQty.valu
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 
-const { errorMessage, setValue, validate } = useField("quantity", rules, {
-  initialValue: quantity.value,
-});
+const { errorMessage, setValue, validate } = useField("quantity", rules);
 
 function changeQuantity() {
   clearTimeout(timeoutIdOfQuantityChange);
