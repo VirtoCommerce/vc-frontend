@@ -138,7 +138,7 @@ jobs:
           tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' && 'dev-latest' || 'latest'}}
 
       - name: Parse Jira Keys from All Commits
-        uses: VirtoCommerce/vc-github-actions/get-jira-keys@fix/jira-keys-from-pr
+        uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
         if: always()
         id: jira_keys
         with:
