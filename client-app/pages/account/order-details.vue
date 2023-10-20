@@ -132,11 +132,15 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
-import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import {
+  AddBulkItemsToCartResultsModal,
+  getItemsForAddBulkItemsToCartResultsPopup,
+  getLineItemValidationErrorsGroupedBySKU,
+  useCart,
+} from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
-import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   orderId: string;
@@ -158,7 +162,7 @@ const {
   fetchFullOrder,
   clearOrder,
 } = useUserOrder();
-const { addBulkItemsToCart } = useCart();
+const { cart, addItemsToCart } = useCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
 
@@ -183,11 +187,17 @@ const showReorderButton = computed<boolean>(() => !!order.value && order.value.s
 
 async function reorderItems() {
   const items = order.value!.items!.filter((item) => !item.isGift);
-  const inputBulkItems = items.map<InputNewBulkItemType>((item) => ({ productSku: item.sku, quantity: item.quantity }));
 
   loadingAddItemsToCart.value = true;
 
-  const resultItems = await addBulkItemsToCart(inputBulkItems);
+  await addItemsToCart(items.map(({ productId, quantity }) => ({ productId, quantity })));
+
+  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
+  const resultItems = items.map(({ sku, quantity }) => ({
+    productSku: sku,
+    quantity,
+    errors: errorsGroupBySKU[sku],
+  }));
 
   openPopup({
     component: AddBulkItemsToCartResultsModal,
