@@ -1,49 +1,22 @@
 <template>
-  <div
-    v-if="discount"
-    class="absolute left-0 top-0 z-[2] flex items-center space-x-1.5 rounded-br rounded-tl bg-[color:var(--color-sale-badge-bg)] py-0.5 text-white"
-    :class="{
-      'h-7 px-2 lg:h-6 lg:px-1.5': size === 'md',
-      'h-5 px-1.5': size === 'sm',
-    }"
-  >
-    <svg v-if="isHot" class="h-3 w-2.5">
-      <use href="/static/images/fire-solid.svg#main" />
-    </svg>
-    <span
-      class="font-extrabold lg:text-11"
-      :class="{
-        'hidden lg:block': isHot && size === 'sm',
-        'text-10': !isHot && size === 'sm',
-        'text-13': size === 'md',
-      }"
-    >
-      {{ discount }} {{ $t("shared.catalog.discount_badge.off") }}
-    </span>
-  </div>
+  <VcBadge v-if="discount" color="danger" class="absolute left-0 top-0 z-[2]">
+    <VcIcon v-if="isHot" name="fire" />
+
+    <span>{{ discount }} {{ $t("shared.catalog.discount_badge.off") }}</span>
+  </VcBadge>
 </template>
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
 import type { PriceType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  price: {
-    type: Object as PropType<PriceType>,
-    required: true,
-  },
+interface IProps {
+  price: PriceType;
+  isHot?: boolean;
+  size?: "sm" | "md" | "lg";
+}
 
-  isHot: {
-    type: Boolean,
-    default: false,
-  },
-
-  size: {
-    type: String,
-    default: "md",
-  },
-});
+const props = defineProps<IProps>();
 
 const discount = computedEager<string | null>(() =>
   props.price.discountPercent >= 0.05 ? `${Math.round(props.price.discountPercent * 100)}%` : null,
