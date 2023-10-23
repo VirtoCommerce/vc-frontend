@@ -103,7 +103,7 @@ onClickOutside(
   () => {
     close();
   },
-  { ignore: [triggerNode] },
+  { ignore: [popoverNode] },
 );
 
 watch(isShown, (value: boolean) => emit("toggle", value));
