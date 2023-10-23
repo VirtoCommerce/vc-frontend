@@ -21,7 +21,7 @@
           :key="item.code"
           :active="item.code === currentCurrency?.code"
           color="secondary"
-          @click="item.code === currentCurrency?.code ? null : select(item.code)"
+          @click="select(item.code)"
         >
           <span
             class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-[--color-additional-50]"
@@ -49,6 +49,8 @@ function toggle(value: boolean) {
 }
 
 function select(code: string) {
-  saveCurrencyCodeAndReload(code);
+  if (currentCurrency.value?.code === code) {
+    saveCurrencyCodeAndReload(code);
+  }
 }
 </script>

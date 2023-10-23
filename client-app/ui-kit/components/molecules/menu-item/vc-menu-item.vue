@@ -56,10 +56,22 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const currentElement = ref<HTMLElement>();
+const parentTag = ref("");
 const enabled = eagerComputed<boolean>(() => !props.disabled);
 const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
-const componentTag = ref("div");
+
+const componentTag = computed(() => {
+  if (props.tag) {
+    return props.tag;
+  }
+
+  if (parentTag.value === "ul" || parentTag.value === "ol") {
+    return "li";
+  }
+
+  return "div";
+});
 
 const innerTag = computed(() => {
   if (isRouterLink.value) {
@@ -93,22 +105,8 @@ const attrs = computed(() => {
   return {};
 });
 
-function getComponentTag() {
-  if (props.tag) {
-    return props.tag;
-  }
-
-  const parentTag = currentElement.value?.parentElement?.tagName.toLowerCase();
-
-  if (parentTag === "ul" || parentTag === "ol") {
-    return "li";
-  }
-
-  return "div";
-}
-
 onMounted(() => {
-  componentTag.value = getComponentTag();
+  parentTag.value = currentElement.value?.parentElement?.tagName.toLowerCase() || "";
 });
 </script>
 
