@@ -48,11 +48,11 @@
           <AddToCart :product="product" />
 
           <div class="mt-2 flex">
-            <VcInStock
+            <InStock
               :is-in-stock="product.availabilityData?.isInStock"
               :is-digital="isDigital"
               :quantity="product.availabilityData?.availableQuantity"
-            ></VcInStock>
+            />
           </div>
         </div>
       </ProductPriceBlock>
@@ -65,7 +65,7 @@ import { computed } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
-import { ProductDetails, ProductPriceBlock } from "@/shared/catalog";
+import { ProductDetails, ProductPriceBlock, InStock } from "@/shared/catalog";
 import type { PageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 

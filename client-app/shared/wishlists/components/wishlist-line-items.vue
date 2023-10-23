@@ -14,14 +14,14 @@
           @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
         />
 
-        <VcInStock
+        <InStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
           :quantity="item.availabilityData?.availableQuantity"
           :is-digital="item.productType === ProductType.Digital"
         />
 
-        <VcCountInCart :product-id="item.productId" />
+        <CountInCart :product-id="item.productId" />
       </div>
     </template>
 
@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import { ProductType } from "@/core/enums";
+import { InStock, CountInCart } from "@/shared/catalog";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {

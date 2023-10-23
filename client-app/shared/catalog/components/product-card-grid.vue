@@ -196,13 +196,13 @@
       <slot name="cart-handler" />
 
       <div class="mt-1 flex items-center gap-1">
-        <VcInStock
+        <InStock
           :is-in-stock="product.availabilityData?.isInStock"
           :is-digital="isDigital"
           :quantity="product.availabilityData?.availableQuantity"
         />
 
-        <VcCountInCart :product-id="product.id" />
+        <CountInCart :product-id="product.id" />
       </div>
     </template>
   </div>
@@ -216,7 +216,9 @@ import { ProductType, PropertyType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
+import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
+import InStock from "./in-stock.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";

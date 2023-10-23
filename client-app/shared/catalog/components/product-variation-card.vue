@@ -48,7 +48,7 @@
           <div class="w-full">
             <AddToCart :product="variation" />
 
-            <VcInStock
+            <InStock
               :is-in-stock="!!variation.availabilityData?.isInStock"
               :is-digital="isDigital"
               :quantity="variation.availabilityData?.availableQuantity"
@@ -66,6 +66,7 @@ import { computed } from "vue";
 import { ProductType, PropertyType } from "@/core/enums";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
+import InStock from "./in-stock.vue";
 import VariationProperty from "./variation-property.vue";
 import Vendor from "./vendor.vue";
 import type { Product, VariationType } from "@/core/api/graphql/types";
