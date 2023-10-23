@@ -106,7 +106,7 @@ const attrs = computed(() => {
 });
 
 onMounted(() => {
-  parentTag.value = currentElement.value?.parentElement?.tagName.toLowerCase() || "";
+  parentTag.value = currentElement.value?.parentElement?.tagName.toLowerCase() ?? "";
 });
 </script>
 
