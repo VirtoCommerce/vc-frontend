@@ -57,7 +57,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const currentElement = ref<HTMLElement>();
 const parentTag = ref("");
-const enabled = eagerComputed<boolean>(() => !props.disabled);
+const enabled = eagerComputed<boolean>(() => !props.disabled && !props.active);
 const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
 
