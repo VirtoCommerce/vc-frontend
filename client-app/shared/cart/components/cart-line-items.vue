@@ -45,14 +45,14 @@
     <template #after-content="{ item }">
       <div class="flex flex-col gap-1">
         <VcAlert
-          v-for="(validationError, index) in validationErrorsByItemId[item.id]"
+          v-for="(validationError, index) in idErrors[item.id]"
           :key="index"
           color="danger"
           size="sm"
           variant="outline-dark"
           icon
         >
-          {{ validationError.errorMessage }}
+          {{ validationError.translation }}
         </VcAlert>
       </div>
     </template>
@@ -61,16 +61,17 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useCartValidationErrorTranslator } from "@/core/composables";
+import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
+import type { ErrorType } from "@/core/composables";
+import type { NamedValue } from "vue-i18n";
 
 interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   items?: LineItemType[];
-  /** @deprecated */
   validationErrors?: ValidationErrorType[];
   sharedSelectedItemIds?: string[];
 }
@@ -88,29 +89,21 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const preparedLineItems = computed(() => prepareLineItems(props.items));
-
-const getValidationErrorTranslation = useCartValidationErrorTranslator();
-
-const validationErrorsByItemId = computed<Record<string, ValidationErrorType[]>>(() => {
-  const result: Record<string, ValidationErrorType[]> = props.validationErrors.reduce(
-    (records, item) => {
-      if (item.objectId) {
-        const key = item.objectId;
-        const editedItem = { ...item, errorMessage: getValidationErrorTranslation(item) };
-
-        if (records[key]) {
-          records[key].push(editedItem);
-        } else {
-          records[key] = [editedItem];
-        }
-      }
-
-      return records;
-    },
-    {} as Record<string, ValidationErrorType[]>,
-  );
-
-  return result;
+const validationErrors = computed<ErrorType[]>(() => {
+  return props.validationErrors.map((el) => {
+    return {
+      id: el.objectId,
+      code: el.errorCode,
+      parameters: el.errorParameters?.reduce((acc, err) => {
+        acc[err.key] = err.value;
+        return acc;
+      }, {} as NamedValue),
+      description: el.errorMessage,
+    };
+  });
 });
+
+const { idErrors } = useErrorsTranslator("validation_error.", validationErrors);
+
+const preparedLineItems = computed(() => prepareLineItems(props.items));
 </script>
