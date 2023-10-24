@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSeoMeta } from "@unhead/vue";
 import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -72,12 +73,23 @@ const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { rootCategory } = useCategory();
 
+const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
+const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
+const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
+const seoImageUrl = computed(() => product.value?.imgSrc);
+
 usePageHead({
-  title: computed(() => product.value?.seoInfo?.pageTitle || product.value?.name),
+  title: seoTitle,
   meta: {
-    keywords: computed(() => product.value?.seoInfo?.metaKeywords),
-    description: computed(() => product.value?.seoInfo?.metaDescription),
+    keywords: seoKeywords,
+    description: seoDescription,
   },
+});
+
+useSeoMeta({
+  ogTitle: seoTitle,
+  ogDescription: seoDescription,
+  ogImage: seoImageUrl,
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
