@@ -16,11 +16,12 @@ type IdErrorsType = Record<string, TranslatedErrorType[]>;
 type ComputedTranslatedErrorsType = {
   translatedErrors: ComputedRef<TranslatedErrorType[]>;
   idErrors: ComputedRef<IdErrorsType>;
+  getTranslation: (error: ErrorType) => string | undefined;
 };
 
 export function useErrorsTranslator(
   keyInLocale: string,
-  errors: Ref<ErrorType[] | undefined> | ComputedRef<ErrorType[] | undefined>,
+  errors?: Ref<ErrorType[] | undefined> | ComputedRef<ErrorType[] | undefined>,
 ): ComputedTranslatedErrorsType {
   function getTranslation(error: ErrorType) {
     const translationKey = keyInLocale + error.code;
@@ -36,7 +37,7 @@ export function useErrorsTranslator(
 
   const translatedErrors = computed<TranslatedErrorType[]>(() => {
     return (
-      errors.value?.map((error: ErrorType) => {
+      errors?.value?.map((error: ErrorType) => {
         return {
           ...error,
           translation: getTranslation(error),
@@ -47,7 +48,7 @@ export function useErrorsTranslator(
 
   const idErrors = computed<IdErrorsType>(() => {
     return (
-      errors.value?.reduce((records, error) => {
+      errors?.value?.reduce((records, error) => {
         if (error.id) {
           const key = error.id;
           const translatedError = {
@@ -67,5 +68,5 @@ export function useErrorsTranslator(
     );
   });
 
-  return { translatedErrors, idErrors };
+  return { translatedErrors, idErrors, getTranslation };
 }
