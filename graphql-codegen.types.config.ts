@@ -17,6 +17,9 @@ const graphQLCodegenTypesConfig: CodegenConfig = {
       config: {
         skipTypename: true,
         maybeValue: "T",
+        scalars: {
+          Long: "number",
+        },
       },
     },
   },

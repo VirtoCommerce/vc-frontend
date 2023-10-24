@@ -195,7 +195,10 @@ const quoteChanged = computed<boolean>(
 const quoteItemsValid = computed<boolean>(
   () =>
     !!quote.value?.items?.length &&
-    every(quote.value?.items, (item: QuoteItemType) => item.selectedTierPrice?.quantity > 0),
+    every(
+      quote.value?.items,
+      (item: QuoteItemType) => !!item.selectedTierPrice?.quantity && item.selectedTierPrice.quantity > 0,
+    ),
 );
 const quoteValid = computed<boolean>(
   () =>

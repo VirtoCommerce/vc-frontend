@@ -3,8 +3,8 @@
     <VcInput
       v-model.number="quantity"
       :disabled="disabled"
-      :min="minQuantity"
-      :max="maxQuantity"
+      :min="minQty"
+      :max="maxQty"
       single-line-message
       center
       class="w-full"
@@ -17,7 +17,7 @@
         <VcButton
           :variant="isButtonOutlined ? 'outline' : 'solid'"
           :loading="loading"
-          :disabled="disabled"
+          :disabled="disabled || !!errorMessage"
           :title="buttonText"
           size="sm"
           class="w-28"
@@ -28,12 +28,29 @@
         </VcButton>
       </template>
     </VcInput>
+
+    <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
+      <template #trigger>
+        <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
+          {{ errorMessage }}
+        </div>
+      </template>
+
+      <template #content>
+        <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+          {{ errorMessage }}
+        </div>
+      </template>
+    </VcTooltip>
   </div>
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
+import { useField } from "vee-validate";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "update:modelValue", value: number): void;
@@ -55,17 +72,33 @@ const props = defineProps<IProps>();
 const { t } = useI18n();
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
+const minQty = computed(() => props.minQuantity);
+const maxQty = computed(() => props.maxQuantity);
 
 const buttonText = computed<string>(() =>
   props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
 
-const quantity = ref<number | undefined>(props.modelValue);
+const quantity = ref<number | undefined>();
 
-function onChange(): void {
+const { quantitySchema } = useQuantityValidationSchema(minQty.value, maxQty.value);
+
+const rules = computed(() => toTypedSchema(quantitySchema.value));
+
+const { errorMessage, validate, setValue } = useField("quantity", rules);
+
+async function onChange(): Promise<void> {
+  setValue(quantity.value);
+
   const newQuantity = Number(quantity.value);
 
   if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
+    return;
+  }
+
+  const { valid } = await validate();
+
+  if (!valid) {
     return;
   }
 
