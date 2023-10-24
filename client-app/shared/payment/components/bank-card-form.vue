@@ -1,7 +1,8 @@
 <template>
   <form class="flex flex-col gap-y-3" autocomplete="off">
     <VcInput
-      v-mask="'#### #### #### #### ###'"
+      v-maska
+      data-maska="#### #### #### #### ###"
       :model-value="cardNumber"
       :label="labels.number"
       :message="formErrors.number || errors.number"
@@ -30,7 +31,8 @@
     <div class="flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <VcInput
         v-model="expirationDate"
-        v-mask="'## / ##'"
+        v-maska
+        data-maska="## / ##"
         :label="labels.expirationDate"
         :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
         :message="expirationDateErrors"
@@ -48,7 +50,8 @@
 
       <VcInput
         v-model="securityCode"
-        v-mask="'####'"
+        v-maska
+        data-maska="####"
         :label="labels.securityCode"
         :message="formErrors.securityCode || errors.securityCode"
         :error="!!formErrors.securityCode || !!errors.securityCode"
@@ -73,6 +76,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
+import { vMaska } from "maska";
 import { useField, useForm } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";

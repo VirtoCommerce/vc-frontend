@@ -1,7 +1,5 @@
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { ApolloClient } from "apollo-client";
-import { onError } from "apollo-link-error";
-import { HttpLink } from "apollo-link-http";
+import { InMemoryCache, ApolloClient, HttpLink } from "@apollo/client/core";
+import { onError } from "@apollo/client/link/error";
 import {
   TabsType,
   forbiddenEvent,
@@ -12,7 +10,7 @@ import {
 } from "@/shared/broadcast";
 import { GraphQLErrorCode } from "./enums";
 import { hasErrorCode } from "./utils";
-import type { FetchPolicy } from "apollo-client";
+import type { FetchPolicy } from "@apollo/client/core";
 
 const fetchPolicy: FetchPolicy = "no-cache";
 
@@ -47,7 +45,6 @@ export const graphqlClient = new ApolloClient({
   // Provide required constructor fields
   link: errorHandler.concat(httpLink),
   cache: new InMemoryCache({
-    freezeResults: true,
     addTypename: false,
   }),
 

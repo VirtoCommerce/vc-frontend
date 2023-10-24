@@ -66,7 +66,7 @@
 
 <script setup lang="ts" generic="T extends string | number | null">
 import { computed, ref, watchEffect } from "vue";
-import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
+import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IEmits<T> {
   (event: "update:modelValue", value?: T): void;

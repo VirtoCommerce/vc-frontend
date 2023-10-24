@@ -1,6 +1,6 @@
-import chalk from "chalk";
 import { resolve } from "path";
 import AdmZip from "adm-zip";
+import chalk from "chalk";
 
 export function getArtifactFileName(defaultFileName?: string) {
   const customFileName = process.argv[2];
@@ -28,8 +28,7 @@ export async function compress(artifactFileName: string, add: (archive: AdmZip) 
     await archive.writeZipPromise(artifactPath);
 
     console.log(chalk.green("Successfully compressed!"));
-  }
-  catch (error) {
+  } catch (error) {
     console.error(chalk.red("Compression failed!"));
     throw error;
   }

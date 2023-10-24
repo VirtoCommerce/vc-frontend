@@ -34,7 +34,7 @@
         :selected-item-ids="selectedItemIds"
         :disabled="loading"
         :validation-errors="cart.validationErrors"
-        @change:item-quantity="changeItemQuantity($event.item.id, $event.quantity, { reloadFullCart: true })"
+        @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity, { reloadFullCart: true })"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"
@@ -154,7 +154,7 @@
             {{ $t("common.messages.quote_request") }}
           </p>
 
-          <VcButton :disabled="loading" :loading="creatingQuote" variant="outline" @click="createQuote">
+          <VcButton :disabled="loading" :loading="creatingQuote" full-width variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcCardWidget>

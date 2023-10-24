@@ -5,87 +5,89 @@ export type InputMaybe<T> = T;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  Date: any;
-  DateTime: any;
-  Decimal: any;
-  DynamicPropertyValue: any;
-  Long: any;
-  OptionalDecimal: any;
-  OptionalNullableDecimal: any;
-  OptionalString: any;
-  PropertyValue: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
+  DateTime: { input: any; output: any; }
+  Decimal: { input: any; output: any; }
+  DynamicPropertyValue: { input: any; output: any; }
+  Long: { input: any; output: any; }
+  OptionalDecimal: { input: any; output: any; }
+  OptionalNullableDecimal: { input: any; output: any; }
+  OptionalString: { input: any; output: any; }
+  PropertyValue: { input: any; output: any; }
 };
 
 export type AccountCreationResultType = {
   /** The errors that occurred during the operation. */
   errors?: Maybe<Array<Maybe<RegistrationErrorType>>>;
-  requireEmailVerification: Scalars['Boolean'];
-  succeeded: Scalars['Boolean'];
+  requireEmailVerification: Scalars['Boolean']['output'];
+  succeeded: Scalars['Boolean']['output'];
 };
 
 export type Asset = {
   /** Culture name */
-  cultureName?: Maybe<Scalars['String']>;
+  cultureName?: Maybe<Scalars['String']['output']>;
   /** Group of the asset. */
-  group?: Maybe<Scalars['String']>;
+  group?: Maybe<Scalars['String']['output']>;
   /** The unique ID of the asset. */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** MimeType of the asset. */
-  mimeType?: Maybe<Scalars['String']>;
+  mimeType?: Maybe<Scalars['String']['output']>;
   /** The name of the asset. */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** RelativeUrl of the asset. */
-  relativeUrl?: Maybe<Scalars['String']>;
+  relativeUrl?: Maybe<Scalars['String']['output']>;
   /** Size of the asset. */
-  size?: Maybe<Scalars['Long']>;
+  size?: Maybe<Scalars['Long']['output']>;
   /** Type id of the asset. */
-  typeId?: Maybe<Scalars['String']>;
+  typeId?: Maybe<Scalars['String']['output']>;
   /** Url of the asset. */
-  url?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type AuthorizePaymentResultType = {
-  errorMessage?: Maybe<Scalars['String']>;
-  isSuccess: Scalars['Boolean'];
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  isSuccess: Scalars['Boolean']['output'];
 };
 
 export type AvailabilityData = {
   /** Available quantity */
-  availableQuantity: Scalars['Long'];
+  availableQuantity: Scalars['Long']['output'];
   /** Inventories */
   inventories?: Maybe<Array<Maybe<InventoryInfo>>>;
   /** Is active */
-  isActive?: Maybe<Scalars['Boolean']>;
+  isActive?: Maybe<Scalars['Boolean']['output']>;
   /** Is available */
-  isAvailable?: Maybe<Scalars['Boolean']>;
+  isAvailable?: Maybe<Scalars['Boolean']['output']>;
   /** Is buyable */
-  isBuyable?: Maybe<Scalars['Boolean']>;
+  isBuyable?: Maybe<Scalars['Boolean']['output']>;
   /** Is estimated */
-  isEstimated?: Maybe<Scalars['Boolean']>;
+  isEstimated?: Maybe<Scalars['Boolean']['output']>;
   /** Is in stock */
-  isInStock?: Maybe<Scalars['Boolean']>;
+  isInStock?: Maybe<Scalars['Boolean']['output']>;
   /** Is track inventory */
-  isTrackInventory?: Maybe<Scalars['Boolean']>;
+  isTrackInventory?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type Breadcrumb = {
   /** Id of item the breadcrumb calculated for */
-  itemId: Scalars['String'];
+  itemId: Scalars['String']['output'];
   /** Semantic URL keyword */
-  semanticUrl?: Maybe<Scalars['String']>;
+  semanticUrl?: Maybe<Scalars['String']['output']>;
   /** Full path from catalog */
-  seoPath?: Maybe<Scalars['String']>;
+  seoPath?: Maybe<Scalars['String']['output']>;
   /** Name of current breadcrumb */
-  title: Scalars['String'];
+  title: Scalars['String']['output'];
   /** Catalog, category or product */
-  typeName?: Maybe<Scalars['String']>;
+  typeName?: Maybe<Scalars['String']['output']>;
 };
 
 export type BulkCartType = {
@@ -101,51 +103,51 @@ export type BulkWishlistType = {
 };
 
 export type CancelQuoteCommandType = {
-  comment: Scalars['String'];
-  quoteId: Scalars['String'];
+  comment: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type CartAddressType = {
   /** Address type */
-  addressType?: Maybe<Scalars['Int']>;
+  addressType?: Maybe<Scalars['Int']['output']>;
   /** City */
-  city?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']['output']>;
   /** Country code */
-  countryCode?: Maybe<Scalars['String']>;
+  countryCode?: Maybe<Scalars['String']['output']>;
   /** Country name */
-  countryName?: Maybe<Scalars['String']>;
+  countryName?: Maybe<Scalars['String']['output']>;
   /** Email */
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']['output']>;
   /** First name */
-  firstName?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']['output']>;
   /** Id */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Id */
-  key?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']['output']>;
   /** Last name */
-  lastName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']['output']>;
   /** Line1 */
-  line1?: Maybe<Scalars['String']>;
+  line1?: Maybe<Scalars['String']['output']>;
   /** Line2 */
-  line2?: Maybe<Scalars['String']>;
+  line2?: Maybe<Scalars['String']['output']>;
   /** Middle name */
-  middleName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']['output']>;
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Company name */
-  organization?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']['output']>;
   /** Outer id */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Phone */
-  phone?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']['output']>;
   /** Postal code */
-  postalCode: Scalars['String'];
+  postalCode: Scalars['String']['output'];
   /** Region id */
-  regionId?: Maybe<Scalars['String']>;
+  regionId?: Maybe<Scalars['String']['output']>;
   /** Region name */
-  regionName?: Maybe<Scalars['String']>;
+  regionName?: Maybe<Scalars['String']['output']>;
   /** Zip */
-  zip?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `Cart`. */
@@ -157,13 +159,13 @@ export type CartConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Cart`. */
 export type CartEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<CartType>;
 };
@@ -171,160 +173,160 @@ export type CartEdge = {
 export type CartShipmentItemType = {
   lineItem?: Maybe<LineItemType>;
   /** Quantity */
-  quantity?: Maybe<Scalars['Int']>;
+  quantity: Scalars['Int']['output'];
 };
 
 export type CartType = {
   /** Addresses */
-  addresses?: Maybe<Array<Maybe<CartAddressType>>>;
+  addresses: Array<CartAddressType>;
   /** Available Gifts */
-  availableGifts?: Maybe<Array<Maybe<GiftItemType>>>;
+  availableGifts: Array<GiftItemType>;
   /** Available payment methods */
-  availablePaymentMethods?: Maybe<Array<Maybe<PaymentMethodType>>>;
-  availableShippingMethods?: Maybe<Array<Maybe<ShippingMethodType>>>;
+  availablePaymentMethods: Array<PaymentMethodType>;
+  availableShippingMethods: Array<ShippingMethodType>;
   /** Shopping cart channel ID */
-  channelId?: Maybe<Scalars['String']>;
+  channelId?: Maybe<Scalars['String']['output']>;
   /** Shopping cart text comment */
-  comment?: Maybe<Scalars['String']>;
+  comment?: Maybe<Scalars['String']['output']>;
   /** Coupons */
-  coupons?: Maybe<Array<Maybe<CouponType>>>;
+  coupons: Array<CouponType>;
   /** Currency */
-  currency?: Maybe<CurrencyType>;
+  currency: CurrencyType;
   /** Shopping cart user ID */
-  customerId?: Maybe<Scalars['String']>;
+  customerId: Scalars['String']['output'];
   /** Shopping cart user name */
-  customerName?: Maybe<Scalars['String']>;
+  customerName?: Maybe<Scalars['String']['output']>;
   /** Total discount */
-  discountTotal?: Maybe<MoneyType>;
+  discountTotal: MoneyType;
   /** Total discount with tax */
-  discountTotalWithTax?: Maybe<MoneyType>;
+  discountTotalWithTax: MoneyType;
   /** Discounts */
-  discounts?: Maybe<Array<Maybe<DiscountType>>>;
+  discounts: Array<DiscountType>;
   /** Cart dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  dynamicProperties: Array<DynamicPropertyValueType>;
   /** Total extended price */
-  extendedPriceTotal?: Maybe<MoneyType>;
+  extendedPriceTotal: MoneyType;
   /** Total extended price with tax */
-  extendedPriceTotalWithTax?: Maybe<MoneyType>;
-  fee?: Maybe<MoneyType>;
+  extendedPriceTotalWithTax: MoneyType;
+  fee: MoneyType;
   /** Gifts */
-  gifts?: Maybe<Array<Maybe<GiftItemType>>>;
+  gifts: Array<GiftItemType>;
   /** Total handling */
-  handlingTotal?: Maybe<MoneyType>;
+  handlingTotal: MoneyType;
   /** Total handling with tax */
-  handlingTotalWithTax?: Maybe<MoneyType>;
+  handlingTotalWithTax: MoneyType;
   /** Has physical products */
-  hasPhysicalProducts?: Maybe<Scalars['Boolean']>;
+  hasPhysicalProducts?: Maybe<Scalars['Boolean']['output']>;
   /** Shopping cart ID */
-  id?: Maybe<Scalars['String']>;
+  id: Scalars['String']['output'];
   /** Displays whether the shopping cart is anonymous */
-  isAnonymous?: Maybe<Scalars['Boolean']>;
+  isAnonymous: Scalars['Boolean']['output'];
   /** Displays whether the shopping cart is recurring */
-  isRecuring?: Maybe<Scalars['Boolean']>;
+  isRecuring?: Maybe<Scalars['Boolean']['output']>;
   /**
    * Shows whether the cart is valid
    * @deprecated Deprecated, because of useless (no need to know validation state without details). Use validationErrors field.
    */
-  isValid?: Maybe<Scalars['Boolean']>;
+  isValid: Scalars['Boolean']['output'];
   /** Items */
-  items?: Maybe<Array<Maybe<LineItemType>>>;
+  items: Array<LineItemType>;
   /** Item count */
-  itemsCount?: Maybe<Scalars['Int']>;
+  itemsCount: Scalars['Int']['output'];
   /** Quantity of items */
-  itemsQuantity?: Maybe<Scalars['Int']>;
+  itemsQuantity: Scalars['Int']['output'];
   /** Shopping cart name */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Shopping cart organization ID */
-  organizationId?: Maybe<Scalars['String']>;
+  organizationId?: Maybe<Scalars['String']['output']>;
   /** Payment price */
-  paymentPrice?: Maybe<MoneyType>;
+  paymentPrice: MoneyType;
   /** Payment price with tax */
-  paymentPriceWithTax?: Maybe<MoneyType>;
+  paymentPriceWithTax: MoneyType;
   /** Total payment */
-  paymentTotal?: Maybe<MoneyType>;
+  paymentTotal: MoneyType;
   /** Total payment with tax */
-  paymentTotalWithTax?: Maybe<MoneyType>;
+  paymentTotalWithTax: MoneyType;
   /** Payments */
-  payments?: Maybe<Array<Maybe<PaymentType>>>;
+  payments: Array<PaymentType>;
   /** Purchase order number */
-  purchaseOrderNumber?: Maybe<Scalars['String']>;
+  purchaseOrderNumber?: Maybe<Scalars['String']['output']>;
   /** Shipments */
-  shipments?: Maybe<Array<Maybe<ShipmentType>>>;
+  shipments: Array<ShipmentType>;
   /** Shipping price */
-  shippingPrice?: Maybe<MoneyType>;
+  shippingPrice: MoneyType;
   /** Shipping price with tax */
-  shippingPriceWithTax?: Maybe<MoneyType>;
+  shippingPriceWithTax: MoneyType;
   /** Total shipping */
-  shippingTotal?: Maybe<MoneyType>;
+  shippingTotal: MoneyType;
   /** Total shipping with tax */
-  shippingTotalWithTax?: Maybe<MoneyType>;
+  shippingTotalWithTax: MoneyType;
   /** Shopping cart status */
-  status?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']['output']>;
   /** Shopping cart store ID */
-  storeId?: Maybe<Scalars['String']>;
+  storeId: Scalars['String']['output'];
   /** Shopping cart subtotal */
-  subTotal?: Maybe<MoneyType>;
+  subTotal: MoneyType;
   /** Subtotal discount */
-  subTotalDiscount?: Maybe<MoneyType>;
+  subTotalDiscount: MoneyType;
   /** Subtotal discount with tax */
-  subTotalDiscountWithTax?: Maybe<MoneyType>;
+  subTotalDiscountWithTax: MoneyType;
   /** Subtotal with tax */
-  subTotalWithTax?: Maybe<MoneyType>;
+  subTotalWithTax: MoneyType;
   /** Tax details */
-  taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
+  taxDetails: Array<TaxDetailType>;
   /** Tax percentage */
-  taxPercentRate?: Maybe<Scalars['Decimal']>;
+  taxPercentRate: Scalars['Decimal']['output'];
   /** Total tax */
-  taxTotal?: Maybe<MoneyType>;
+  taxTotal: MoneyType;
   /** Shipping tax type */
-  taxType?: Maybe<Scalars['String']>;
+  taxType: Scalars['String']['output'];
   /** Shopping cart total */
-  total?: Maybe<MoneyType>;
+  total: MoneyType;
   /** Shopping cart type */
-  type?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']['output']>;
   /** A set of errors in case the cart is invalid */
-  validationErrors?: Maybe<Array<Maybe<ValidationErrorType>>>;
+  validationErrors: Array<ValidationErrorType>;
   /** Shopping cart volumetric weight value */
-  volumetricWeight?: Maybe<Scalars['Decimal']>;
+  volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
   /** A set of temporary warnings for a cart user */
-  warnings?: Maybe<Array<Maybe<ValidationErrorType>>>;
+  warnings: Array<ValidationErrorType>;
   /** Shopping cart weight value */
-  weight?: Maybe<Scalars['Decimal']>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
   /** Shopping cart weight unit value */
-  weightUnit?: Maybe<Scalars['String']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type CartTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type CartTypeIsValidArgs = {
-  ruleSet?: InputMaybe<Scalars['String']>;
+  ruleSet?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type CartTypeValidationErrorsArgs = {
-  ruleSet?: InputMaybe<Scalars['String']>;
+  ruleSet?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CatalogDiscountType = {
   /** Discount amount */
-  amount?: Maybe<Scalars['Decimal']>;
+  amount: Scalars['Decimal']['output'];
   /** Discount amount with tax */
-  amountWithTax?: Maybe<Scalars['Decimal']>;
+  amountWithTax: Scalars['Decimal']['output'];
   /** Coupon */
-  coupon?: Maybe<Scalars['String']>;
+  coupon?: Maybe<Scalars['String']['output']>;
   /** Value of discount description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Discount amount in the specified currency */
-  moneyAmount?: Maybe<MoneyType>;
+  moneyAmount: MoneyType;
   /** Discount amount with tax in the specified currency */
-  moneyAmountWithTax?: Maybe<MoneyType>;
+  moneyAmountWithTax: MoneyType;
   promotion?: Maybe<Promotion>;
   /** Value of promotion id */
-  promotionId?: Maybe<Scalars['String']>;
+  promotionId?: Maybe<Scalars['String']['output']>;
 };
 
 export type Category = {
@@ -332,50 +334,50 @@ export type Category = {
   breadcrumbs?: Maybe<Array<Maybe<Breadcrumb>>>;
   childCategories?: Maybe<Array<Maybe<Category>>>;
   /** SKU of category. */
-  code: Scalars['String'];
+  code: Scalars['String']['output'];
   description?: Maybe<CategoryDescriptionType>;
   descriptions?: Maybe<Array<Maybe<CategoryDescriptionType>>>;
   /** Have a parent */
-  hasParent?: Maybe<Scalars['Boolean']>;
+  hasParent?: Maybe<Scalars['Boolean']['output']>;
   /** Id of category. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Images */
   images?: Maybe<Array<Maybe<ImageType>>>;
   /** The category image. */
-  imgSrc?: Maybe<Scalars['String']>;
+  imgSrc?: Maybe<Scalars['String']['output']>;
   /** Level in hierarchy */
-  level?: Maybe<Scalars['Int']>;
+  level?: Maybe<Scalars['Int']['output']>;
   /** Name of category. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** All parent categories ids relative to the requested catalog and concatenated with \ . E.g. (1/21/344) */
-  outline?: Maybe<Scalars['String']>;
+  outline?: Maybe<Scalars['String']['output']>;
   /** Outlines */
   outlines?: Maybe<Array<Maybe<OutlineType>>>;
   parent?: Maybe<Category>;
   /** Category path in to the requested catalog  (all parent categories names concatenated. E.g. (parent1/parent2)) */
-  path?: Maybe<Scalars['String']>;
+  path?: Maybe<Scalars['String']['output']>;
   /** The category priority. */
-  priority: Scalars['Int'];
+  priority: Scalars['Int']['output'];
   properties?: Maybe<Array<Maybe<Property>>>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** Request related slug for category */
-  slug?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type CategoryDescriptionArgs = {
-  type?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type CategoryDescriptionsArgs = {
-  type?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type CategoryPropertiesArgs = {
-  names?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  names?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 /** A connection from an object to a list of objects of type `Category`. */
@@ -387,37 +389,37 @@ export type CategoryConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type CategoryDescriptionType = {
   /** Description text. */
-  content: Scalars['String'];
+  content: Scalars['String']['output'];
   /** Description type. */
-  descriptionType: Scalars['String'];
+  descriptionType: Scalars['String']['output'];
   /** Description ID. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Description language code. */
-  languageCode: Scalars['String'];
+  languageCode: Scalars['String']['output'];
 };
 
 /** An edge in a connection from an object to another object of type `Category`. */
 export type CategoryEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<Category>;
 };
 
 export type ChangeQuoteCommentCommandType = {
-  comment: Scalars['String'];
-  quoteId: Scalars['String'];
+  comment: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type ChangeQuoteItemQuantityCommandType = {
-  lineItemId: Scalars['String'];
-  quantity: Scalars['Int'];
-  quoteId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
+  quantity: Scalars['Int']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type ChildCategoriesQueryResponseType = {
@@ -426,9 +428,9 @@ export type ChildCategoriesQueryResponseType = {
 
 export type CommonVendor = {
   /** Vendor ID */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Vendor name */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Vendor rating */
   rating?: Maybe<Rating>;
 };
@@ -442,21 +444,21 @@ export type ContactConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Contact`. */
 export type ContactEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<ContactType>;
 };
 
 export type ContactType = {
-  about: Scalars['String'];
+  about: Scalars['String']['output'];
   addresses?: Maybe<MemberAddressConnection>;
-  birthDate?: Maybe<Scalars['Date']>;
+  birthDate?: Maybe<Scalars['Date']['output']>;
   /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
   /** Default shipping address */
@@ -464,57 +466,57 @@ export type ContactType = {
   /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
   /** Emails */
-  emails: Array<Maybe<Scalars['String']>>;
-  firstName: Scalars['String'];
-  fullName: Scalars['String'];
-  groups: Array<Maybe<Scalars['String']>>;
-  id: Scalars['String'];
-  lastName: Scalars['String'];
+  emails: Array<Maybe<Scalars['String']['output']>>;
+  firstName: Scalars['String']['output'];
+  fullName: Scalars['String']['output'];
+  groups: Array<Maybe<Scalars['String']['output']>>;
+  id: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
   /** Member type */
-  memberType: Scalars['String'];
-  middleName?: Maybe<Scalars['String']>;
+  memberType: Scalars['String']['output'];
+  middleName?: Maybe<Scalars['String']['output']>;
   /** Name */
-  name?: Maybe<Scalars['String']>;
-  organizationId?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
+  organizationId?: Maybe<Scalars['String']['output']>;
   organizations?: Maybe<OrganizationConnection>;
-  organizationsIds: Array<Maybe<Scalars['String']>>;
+  organizationsIds: Array<Maybe<Scalars['String']['output']>>;
   /** Outer ID */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Phones */
-  phones: Array<Maybe<Scalars['String']>>;
+  phones: Array<Maybe<Scalars['String']['output']>>;
   securityAccounts?: Maybe<Array<Maybe<UserType>>>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
-  seoObjectType: Scalars['String'];
+  seoObjectType: Scalars['String']['output'];
   /** Status */
-  status?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type ContactTypeAddressesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type ContactTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type ContactTypeOrganizationsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  searchPhrase?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  searchPhrase?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type ContactTypeSeoInfoArgs = {
-  cultureName: Scalars['String'];
-  storeId: Scalars['String'];
+  cultureName: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 /** A connection from an object to a list of objects of type `Contract`. */
@@ -526,90 +528,90 @@ export type ContractConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Contract`. */
 export type ContractEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<ContractType>;
 };
 
 export type ContractType = {
-  code: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
+  code: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
   /** Contract dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  endDate?: Maybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  startDate?: Maybe<Scalars['DateTime']>;
-  status?: Maybe<Scalars['String']>;
-  storeId?: Maybe<Scalars['String']>;
-  vendorId?: Maybe<Scalars['String']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  storeId?: Maybe<Scalars['String']['output']>;
+  vendorId?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type ContractTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CountryRegionType = {
   /** Code of country region. For example 'AL'. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Name of country region. For example 'Alabama'. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
 };
 
 export type CountryType = {
   /** Code of country. For example 'USA'. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Name of country. For example 'United States of America'. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   regions?: Maybe<Array<Maybe<CountryRegionType>>>;
 };
 
 export type CouponType = {
   /** Coupon code */
-  code?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']['output']>;
   /** Is coupon was applied successfully */
-  isAppliedSuccessfully?: Maybe<Scalars['Boolean']>;
+  isAppliedSuccessfully: Scalars['Boolean']['output'];
 };
 
 export type CreateCustomerReviewCommandType = {
-  entityId: Scalars['String'];
-  entityName: Scalars['String'];
-  entityType: Scalars['String'];
-  rating: Scalars['Int'];
-  review: Scalars['String'];
-  storeId: Scalars['String'];
-  title: Scalars['String'];
-  userId: Scalars['String'];
-  userName: Scalars['String'];
+  entityId: Scalars['String']['input'];
+  entityName: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  rating: Scalars['Int']['input'];
+  review: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  userName: Scalars['String']['input'];
 };
 
 export type CreateQuoteFromCartCommandType = {
-  cartId: Scalars['String'];
-  comment: Scalars['String'];
+  cartId: Scalars['String']['input'];
+  comment: Scalars['String']['input'];
 };
 
 export type CurrencyType = {
   /** Currency code may be used ISO 4217 */
-  code: Scalars['String'];
+  code: Scalars['String']['output'];
   /** Currency custom formatting */
-  customFormatting?: Maybe<Scalars['String']>;
+  customFormatting?: Maybe<Scalars['String']['output']>;
   /** Exchange rate */
-  exchangeRate?: Maybe<Scalars['Decimal']>;
+  exchangeRate?: Maybe<Scalars['Decimal']['output']>;
   /** Symbol */
-  symbol?: Maybe<Scalars['String']>;
+  symbol?: Maybe<Scalars['String']['output']>;
 };
 
 export type CustomIdentityResultType = {
   /** The errors that occurred during the identity operation. */
   errors?: Maybe<Array<Maybe<IdentityErrorInfoType>>>;
-  succeeded: Scalars['Boolean'];
+  succeeded: Scalars['Boolean']['output'];
 };
 
 /** A connection from an object to a list of objects of type `CustomerOrder`. */
@@ -621,119 +623,119 @@ export type CustomerOrderConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `CustomerOrder`. */
 export type CustomerOrderEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<CustomerOrderType>;
 };
 
 export type CustomerOrderType = {
-  addresses: Array<Maybe<OrderAddressType>>;
+  addresses: Array<OrderAddressType>;
   /** Available payment methods */
-  availablePaymentMethods?: Maybe<Array<Maybe<OrderPaymentMethodType>>>;
-  cancelReason?: Maybe<Scalars['String']>;
-  cancelledDate?: Maybe<Scalars['DateTime']>;
-  channelId?: Maybe<Scalars['String']>;
-  comment?: Maybe<Scalars['String']>;
-  coupons?: Maybe<Array<Maybe<Scalars['String']>>>;
-  createdBy?: Maybe<Scalars['String']>;
-  createdDate: Scalars['DateTime'];
-  currency?: Maybe<CurrencyType>;
-  customerId: Scalars['String'];
-  customerName?: Maybe<Scalars['String']>;
-  discountAmount?: Maybe<MoneyType>;
-  discountTotal?: Maybe<MoneyType>;
-  discountTotalWithTax?: Maybe<MoneyType>;
-  discounts?: Maybe<Array<Maybe<OrderDiscountType>>>;
+  availablePaymentMethods: Array<OrderPaymentMethodType>;
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  channelId?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  coupons: Array<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
+  createdDate: Scalars['DateTime']['output'];
+  currency: CurrencyType;
+  customerId: Scalars['String']['output'];
+  customerName?: Maybe<Scalars['String']['output']>;
+  discountAmount: MoneyType;
+  discountTotal: MoneyType;
+  discountTotalWithTax: MoneyType;
+  discounts: Array<OrderDiscountType>;
   /** Customer order dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  employeeId?: Maybe<Scalars['String']>;
-  employeeName?: Maybe<Scalars['String']>;
-  fee?: Maybe<MoneyType>;
-  feeTotal: Scalars['Decimal'];
-  feeTotalWithTax: Scalars['Decimal'];
-  feeWithTax: Scalars['Decimal'];
-  id: Scalars['String'];
-  inPayments: Array<Maybe<PaymentInType>>;
-  isApproved: Scalars['Boolean'];
-  isCancelled: Scalars['Boolean'];
-  isPrototype: Scalars['Boolean'];
-  items: Array<Maybe<OrderLineItemType>>;
-  languageCode?: Maybe<Scalars['String']>;
-  modifiedBy?: Maybe<Scalars['String']>;
-  modifiedDate?: Maybe<Scalars['DateTime']>;
-  number: Scalars['String'];
-  objectType: Scalars['String'];
-  operationType: Scalars['String'];
-  organizationId?: Maybe<Scalars['String']>;
-  organizationName?: Maybe<Scalars['String']>;
-  outerId?: Maybe<Scalars['String']>;
-  parentOperationId?: Maybe<Scalars['String']>;
-  paymentDiscountTotal?: Maybe<MoneyType>;
-  paymentDiscountTotalWithTax?: Maybe<MoneyType>;
-  paymentSubTotal?: Maybe<MoneyType>;
-  paymentSubTotalWithTax?: Maybe<MoneyType>;
-  paymentTaxTotal?: Maybe<MoneyType>;
-  paymentTotal?: Maybe<MoneyType>;
-  paymentTotalWithTax?: Maybe<MoneyType>;
-  purchaseOrderNumber?: Maybe<Scalars['String']>;
-  shipments?: Maybe<Array<Maybe<OrderShipmentType>>>;
-  shippingDiscountTotal?: Maybe<MoneyType>;
-  shippingDiscountTotalWithTax?: Maybe<MoneyType>;
-  shippingSubTotal?: Maybe<MoneyType>;
-  shippingSubTotalWithTax?: Maybe<MoneyType>;
-  shippingTaxTotal?: Maybe<MoneyType>;
-  shippingTotal?: Maybe<MoneyType>;
-  shippingTotalWithTax?: Maybe<MoneyType>;
-  shoppingCartId?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  storeName?: Maybe<Scalars['String']>;
-  subTotal?: Maybe<MoneyType>;
-  subTotalDiscount?: Maybe<MoneyType>;
-  subTotalDiscountWithTax?: Maybe<MoneyType>;
-  subTotalTaxTotal?: Maybe<MoneyType>;
-  subTotalWithTax?: Maybe<MoneyType>;
-  subscriptionId?: Maybe<Scalars['String']>;
-  subscriptionNumber?: Maybe<Scalars['String']>;
-  taxDetails: Array<Maybe<OrderTaxDetailType>>;
-  taxPercentRate: Scalars['Decimal'];
-  taxTotal?: Maybe<MoneyType>;
-  taxType?: Maybe<Scalars['String']>;
-  total?: Maybe<MoneyType>;
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  employeeId?: Maybe<Scalars['String']['output']>;
+  employeeName?: Maybe<Scalars['String']['output']>;
+  fee: MoneyType;
+  feeTotal: Scalars['Decimal']['output'];
+  feeTotalWithTax: Scalars['Decimal']['output'];
+  feeWithTax: Scalars['Decimal']['output'];
+  id: Scalars['String']['output'];
+  inPayments: Array<PaymentInType>;
+  isApproved: Scalars['Boolean']['output'];
+  isCancelled: Scalars['Boolean']['output'];
+  isPrototype: Scalars['Boolean']['output'];
+  items: Array<OrderLineItemType>;
+  languageCode?: Maybe<Scalars['String']['output']>;
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  number: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  operationType: Scalars['String']['output'];
+  organizationId?: Maybe<Scalars['String']['output']>;
+  organizationName?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  parentOperationId?: Maybe<Scalars['String']['output']>;
+  paymentDiscountTotal: MoneyType;
+  paymentDiscountTotalWithTax: MoneyType;
+  paymentSubTotal: MoneyType;
+  paymentSubTotalWithTax: MoneyType;
+  paymentTaxTotal: MoneyType;
+  paymentTotal: MoneyType;
+  paymentTotalWithTax: MoneyType;
+  purchaseOrderNumber?: Maybe<Scalars['String']['output']>;
+  shipments: Array<OrderShipmentType>;
+  shippingDiscountTotal: MoneyType;
+  shippingDiscountTotalWithTax: MoneyType;
+  shippingSubTotal: MoneyType;
+  shippingSubTotalWithTax: MoneyType;
+  shippingTaxTotal: MoneyType;
+  shippingTotal: MoneyType;
+  shippingTotalWithTax: MoneyType;
+  shoppingCartId?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  storeId: Scalars['String']['output'];
+  storeName?: Maybe<Scalars['String']['output']>;
+  subTotal: MoneyType;
+  subTotalDiscount: MoneyType;
+  subTotalDiscountWithTax: MoneyType;
+  subTotalTaxTotal: MoneyType;
+  subTotalWithTax: MoneyType;
+  subscriptionId?: Maybe<Scalars['String']['output']>;
+  subscriptionNumber?: Maybe<Scalars['String']['output']>;
+  taxDetails: Array<OrderTaxDetailType>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
+  total: MoneyType;
 };
 
 
 export type CustomerOrderTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type CustomerOrderTypeInPaymentsArgs = {
-  after?: InputMaybe<Scalars['Int']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CustomerReview = {
-  createdDate: Scalars['DateTime'];
-  entityId: Scalars['String'];
-  entityName: Scalars['String'];
-  entityType: Scalars['String'];
-  id: Scalars['String'];
-  modifiedDate?: Maybe<Scalars['DateTime']>;
-  rating: Scalars['Int'];
-  review: Scalars['String'];
+  createdDate: Scalars['DateTime']['output'];
+  entityId: Scalars['String']['output'];
+  entityName: Scalars['String']['output'];
+  entityType: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  rating: Scalars['Int']['output'];
+  review: Scalars['String']['output'];
   reviewStatus?: Maybe<CustomerReviewStatus>;
-  storeId: Scalars['String'];
-  title: Scalars['String'];
-  userId: Scalars['String'];
-  userName: Scalars['String'];
+  storeId: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  userId: Scalars['String']['output'];
+  userName: Scalars['String']['output'];
 };
 
 /** A connection from an object to a list of objects of type `CustomerReview`. */
@@ -745,13 +747,13 @@ export type CustomerReviewConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `CustomerReview`. */
 export type CustomerReviewEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<CustomerReview>;
 };
@@ -764,13 +766,13 @@ export enum CustomerReviewStatus {
 
 export type DescriptionType = {
   /** Description text. */
-  content?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']['output']>;
   /** Description ID. */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Description language code. */
-  languageCode?: Maybe<Scalars['String']>;
+  languageCode?: Maybe<Scalars['String']['output']>;
   /** Description type. */
-  reviewType?: Maybe<Scalars['String']>;
+  reviewType?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `DictionaryItem`. */
@@ -782,56 +784,56 @@ export type DictionaryItemConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `DictionaryItem`. */
 export type DictionaryItemEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<DictionaryItemType>;
 };
 
 export type DictionaryItemType = {
   /** Id */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Localized dictionary item value */
-  label?: Maybe<Scalars['String']>;
+  label?: Maybe<Scalars['String']['output']>;
   /** Name */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
 };
 
 export type DiscountType = {
   /** Discount amount */
-  amount?: Maybe<Scalars['Decimal']>;
+  amount: Scalars['Decimal']['output'];
   /** Discount amount with tax */
-  amountWithTax?: Maybe<Scalars['Decimal']>;
+  amountWithTax: Scalars['Decimal']['output'];
   /** Coupon */
-  coupon?: Maybe<Scalars['String']>;
+  coupon?: Maybe<Scalars['String']['output']>;
   /** Value of discount description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Discount amount in the specified currency */
-  moneyAmount?: Maybe<MoneyType>;
+  moneyAmount: MoneyType;
   /** Discount amount with tax in the specified currency */
-  moneyAmountWithTax?: Maybe<MoneyType>;
+  moneyAmountWithTax: MoneyType;
   /** Value of promotion id */
-  promotionId?: Maybe<Scalars['String']>;
+  promotionId?: Maybe<Scalars['String']['output']>;
 };
 
 export type DynamicContentItemType = {
-  contentType: Scalars['String'];
-  description: Scalars['String'];
+  contentType: Scalars['String']['output'];
+  description: Scalars['String']['output'];
   /** Dynamic content dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  priority: Scalars['Int'];
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  priority: Scalars['Int']['output'];
 };
 
 
 export type DynamicContentItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
@@ -843,13 +845,13 @@ export type DynamicPropertyConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `DynamicProperty`. */
 export type DynamicPropertyEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<DynamicPropertyType>;
 };
@@ -857,33 +859,33 @@ export type DynamicPropertyEdge = {
 export type DynamicPropertyType = {
   dictionaryItems?: Maybe<DictionaryItemConnection>;
   /** The order for the dynamic property to display */
-  displayOrder?: Maybe<Scalars['Int']>;
+  displayOrder?: Maybe<Scalars['Int']['output']>;
   /** Id */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Is dynamic property value an array */
-  isArray?: Maybe<Scalars['Boolean']>;
+  isArray?: Maybe<Scalars['Boolean']['output']>;
   /** Is dynamic property value a dictionary */
-  isDictionary?: Maybe<Scalars['Boolean']>;
+  isDictionary?: Maybe<Scalars['Boolean']['output']>;
   /** Is dynamic property value multilingual */
-  isMultilingual?: Maybe<Scalars['Boolean']>;
+  isMultilingual?: Maybe<Scalars['Boolean']['output']>;
   /** Is dynamic property value required */
-  isRequired?: Maybe<Scalars['Boolean']>;
+  isRequired?: Maybe<Scalars['Boolean']['output']>;
   /** Localized property name */
-  label?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
+  label?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
   /** Object type */
-  objectType: Scalars['String'];
+  objectType: Scalars['String']['output'];
   /** Value type */
-  valueType: Scalars['String'];
+  valueType: Scalars['String']['output'];
 };
 
 
 export type DynamicPropertyTypeDictionaryItemsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type DynamicPropertyValueType = {
@@ -892,69 +894,69 @@ export type DynamicPropertyValueType = {
   /** Associated dynamic property */
   dynamicProperty?: Maybe<DynamicPropertyType>;
   /** Property name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Property value */
-  value?: Maybe<Scalars['DynamicPropertyValue']>;
+  value?: Maybe<Scalars['DynamicPropertyValue']['output']>;
   /** Value type */
-  valueType?: Maybe<Scalars['String']>;
+  valueType: Scalars['String']['output'];
 };
 
 export type ErrorParameterType = {
   /** key */
-  key: Scalars['String'];
+  key: Scalars['String']['output'];
   /** Value */
-  value: Scalars['String'];
+  value: Scalars['String']['output'];
 };
 
 export type EvaluateDynamicContentResultType = {
   items?: Maybe<Array<Maybe<DynamicContentItemType>>>;
-  totalCount: Scalars['Int'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Facet = {
   /** Three facet types: Terms, Range, and Filter */
   facetType?: Maybe<FacetTypes>;
   /** Localized name of the facet. */
-  label: Scalars['String'];
+  label: Scalars['String']['output'];
   /** The key/name  of the facet. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
 };
 
 export type FacetRangeType = {
   /** Amount of products for which the values in a field fall into the specified range */
-  count?: Maybe<Scalars['Long']>;
+  count?: Maybe<Scalars['Long']['output']>;
   /** The range’s lower endpoint in number format, 0 represents infinity */
-  from?: Maybe<Scalars['Long']>;
+  from?: Maybe<Scalars['Long']['output']>;
   /** The range’s lower endpoint in string format, empty string represents infinity */
-  fromStr?: Maybe<Scalars['String']>;
+  fromStr?: Maybe<Scalars['String']['output']>;
   /** The flag indicates that From exclusive */
-  includeFrom: Scalars['Boolean'];
+  includeFrom: Scalars['Boolean']['output'];
   /** The flag indicates that To exclusive */
-  includeTo: Scalars['Boolean'];
+  includeTo: Scalars['Boolean']['output'];
   /** is selected state */
-  isSelected?: Maybe<Scalars['Boolean']>;
+  isSelected?: Maybe<Scalars['Boolean']['output']>;
   /** Localization label */
-  label?: Maybe<Scalars['String']>;
+  label?: Maybe<Scalars['String']['output']>;
   /** Maximum value among all values contained within the range */
-  max?: Maybe<Scalars['Long']>;
+  max?: Maybe<Scalars['Long']['output']>;
   /** Minimum value among all values contained within the range */
-  min?: Maybe<Scalars['Long']>;
+  min?: Maybe<Scalars['Long']['output']>;
   /** The range’s upper endpoint in number format, 0 represents infinity */
-  to?: Maybe<Scalars['Long']>;
+  to?: Maybe<Scalars['Long']['output']>;
   /** The range’s upper endpoint in string format, empty string represents infinity */
-  toStr?: Maybe<Scalars['String']>;
+  toStr?: Maybe<Scalars['String']['output']>;
   /** Sum of all values contained in the range */
-  total?: Maybe<Scalars['Long']>;
+  total?: Maybe<Scalars['Long']['output']>;
 };
 
 export type FacetTermType = {
   /** count */
-  count?: Maybe<Scalars['Long']>;
+  count?: Maybe<Scalars['Long']['output']>;
   /** is selected state */
-  isSelected?: Maybe<Scalars['Boolean']>;
-  label: Scalars['String'];
+  isSelected?: Maybe<Scalars['Boolean']['output']>;
+  label: Scalars['String']['output'];
   /** term */
-  term?: Maybe<Scalars['String']>;
+  term?: Maybe<Scalars['String']['output']>;
 };
 
 export enum FacetTypes {
@@ -965,56 +967,56 @@ export enum FacetTypes {
 
 export type FilterFacet = Facet & {
   /** The number of products matching the value specified in the filter facet expression */
-  count: Scalars['Int'];
+  count: Scalars['Int']['output'];
   /** The three types of facets. Terms, Range, Filter */
   facetType?: Maybe<FacetTypes>;
   /** Localized name of the facet. */
-  label: Scalars['String'];
+  label: Scalars['String']['output'];
   /** The key/name  of the facet. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
 };
 
 export type FulfillmentCenterAddressType = {
   /** Address type */
-  addressType?: Maybe<Scalars['Int']>;
+  addressType?: Maybe<Scalars['Int']['output']>;
   /** City */
-  city?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']['output']>;
   /** Country code */
-  countryCode?: Maybe<Scalars['String']>;
+  countryCode?: Maybe<Scalars['String']['output']>;
   /** Country name */
-  countryName?: Maybe<Scalars['String']>;
+  countryName?: Maybe<Scalars['String']['output']>;
   /** Email */
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']['output']>;
   /** First name */
-  firstName?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']['output']>;
   /** Id */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Id */
-  key?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']['output']>;
   /** Last name */
-  lastName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']['output']>;
   /** Line1 */
-  line1?: Maybe<Scalars['String']>;
+  line1?: Maybe<Scalars['String']['output']>;
   /** Line2 */
-  line2?: Maybe<Scalars['String']>;
+  line2?: Maybe<Scalars['String']['output']>;
   /** Middle name */
-  middleName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']['output']>;
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Company name */
-  organization?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']['output']>;
   /** Outer id */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Phone */
-  phone?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']['output']>;
   /** Postal code */
-  postalCode: Scalars['String'];
+  postalCode: Scalars['String']['output'];
   /** Region id */
-  regionId?: Maybe<Scalars['String']>;
+  regionId?: Maybe<Scalars['String']['output']>;
   /** Region name */
-  regionName?: Maybe<Scalars['String']>;
+  regionName?: Maybe<Scalars['String']['output']>;
   /** Zip */
-  zip?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `FulfillmentCenter`. */
@@ -1026,13 +1028,13 @@ export type FulfillmentCenterConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `FulfillmentCenter`. */
 export type FulfillmentCenterEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<FulfillmentCenterType>;
 };
@@ -1041,536 +1043,536 @@ export type FulfillmentCenterType = {
   /** Fulfillment Center address. */
   address?: Maybe<FulfillmentCenterAddressType>;
   /** Fulfillment Center descripion. */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Fulfillment Center geo location. */
-  geoLocation?: Maybe<Scalars['String']>;
+  geoLocation?: Maybe<Scalars['String']['output']>;
   /** Fulfillment Center ID. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Fulfillment Center name. */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Nearest Fulfillment Centers */
   nearest?: Maybe<Array<Maybe<FulfillmentCenterType>>>;
   /** Fulfillment Center outerId. */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Fulfillment Center short description. */
-  shortDescription?: Maybe<Scalars['String']>;
+  shortDescription?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type FulfillmentCenterTypeNearestArgs = {
-  take?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type GiftItemType = {
   /** Product category ID */
-  categoryId?: Maybe<Scalars['String']>;
+  categoryId?: Maybe<Scalars['String']['output']>;
   /** Artificial ID for this value object */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Value of reward image absolute URL */
-  imageUrl?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']['output']>;
   /** Line item ID in case there is a gift in the cart. If there is no gift, it stays null */
-  lineItemId?: Maybe<Scalars['String']>;
+  lineItemId?: Maybe<Scalars['String']['output']>;
   /** Measurement unit */
-  measureUnit?: Maybe<Scalars['String']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
   /** Name of the reward */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   product?: Maybe<Product>;
   /** Product ID */
-  productId?: Maybe<Scalars['String']>;
+  productId?: Maybe<Scalars['String']['output']>;
   /** Promotion ID */
-  promotionId: Scalars['String'];
+  promotionId: Scalars['String']['output'];
   /** Number of gifts in the reward */
-  quantity: Scalars['Int'];
+  quantity: Scalars['Int']['output'];
 };
 
 export type IdentityErrorInfoType = {
   /** Error code */
-  code: Scalars['String'];
+  code: Scalars['String']['output'];
   /** Error description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Error parameter */
-  parameter?: Maybe<Scalars['String']>;
+  parameter?: Maybe<Scalars['String']['output']>;
 };
 
 export type IdentityErrorType = {
-  code?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
 };
 
 export type IdentityResultType = {
   /** The errors that occurred during the identity operation. */
   errors?: Maybe<Array<Maybe<IdentityErrorType>>>;
-  succeeded: Scalars['Boolean'];
+  succeeded: Scalars['Boolean']['output'];
 };
 
 export type ImageType = {
   /** Culture name */
-  cultureName?: Maybe<Scalars['String']>;
+  cultureName?: Maybe<Scalars['String']['output']>;
   /** Image group */
-  group?: Maybe<Scalars['String']>;
+  group?: Maybe<Scalars['String']['output']>;
   /** Image ID */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Image name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Image relative URL */
-  relativeUrl?: Maybe<Scalars['String']>;
+  relativeUrl?: Maybe<Scalars['String']['output']>;
   /** Sort order */
-  sortOrder?: Maybe<Scalars['Int']>;
+  sortOrder?: Maybe<Scalars['Int']['output']>;
   /** Image URL */
-  url?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type InitializePaymentResultType = {
-  actionHtmlForm?: Maybe<Scalars['String']>;
-  actionRedirectUrl?: Maybe<Scalars['String']>;
-  errorMessage?: Maybe<Scalars['String']>;
-  isSuccess: Scalars['Boolean'];
-  orderId?: Maybe<Scalars['String']>;
-  orderNumber?: Maybe<Scalars['String']>;
-  paymentActionType?: Maybe<Scalars['String']>;
-  paymentId?: Maybe<Scalars['String']>;
-  paymentMethodCode?: Maybe<Scalars['String']>;
+  actionHtmlForm?: Maybe<Scalars['String']['output']>;
+  actionRedirectUrl?: Maybe<Scalars['String']['output']>;
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  isSuccess: Scalars['Boolean']['output'];
+  orderId?: Maybe<Scalars['String']['output']>;
+  orderNumber?: Maybe<Scalars['String']['output']>;
+  paymentActionType?: Maybe<Scalars['String']['output']>;
+  paymentId?: Maybe<Scalars['String']['output']>;
+  paymentMethodCode?: Maybe<Scalars['String']['output']>;
   publicParameters?: Maybe<Array<Maybe<KeyValueType>>>;
-  storeId?: Maybe<Scalars['String']>;
+  storeId?: Maybe<Scalars['String']['output']>;
 };
 
 export type InputAddBulkItemsType = {
-  cartId?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
   /** Bulk cart items */
   cartItems: Array<InputMaybe<InputNewBulkItemType>>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddCouponType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
   /** Coupon code */
-  couponCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  couponCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddGiftItemsType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** IDs of gift rewards to add to the cart */
-  ids: Array<InputMaybe<Scalars['String']>>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  ids: Array<InputMaybe<Scalars['String']['input']>>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddItemType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
   /** Comment */
-  comment?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  comment?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
   /** Price */
-  price?: InputMaybe<Scalars['Decimal']>;
+  price?: InputMaybe<Scalars['Decimal']['input']>;
   /** Product ID */
-  productId: Scalars['String'];
+  productId: Scalars['String']['input'];
   /** Quantity */
-  quantity: Scalars['Int'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  quantity: Scalars['Int']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddItemsType = {
-  cartId?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
   /** Cart items */
   cartItems: Array<InputMaybe<InputNewCartItemType>>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddOrUpdateCartAddressType = {
   /** Address */
   address: InputAddressType;
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddOrUpdateCartPaymentType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Payment */
   payment: InputPaymentType;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddOrUpdateCartShipmentType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Shipment */
   shipment: InputShipmentType;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputAddOrUpdateOrderPaymentType = {
   /** Order ID */
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
   /** Payment */
   payment: InputOrderPaymentType;
 };
 
 export type InputAddWishlistBulkItemType = {
   /** Wish list ids */
-  listIds: Array<InputMaybe<Scalars['String']>>;
+  listIds: Array<InputMaybe<Scalars['String']['input']>>;
   /** Product id to add */
-  productId: Scalars['String'];
+  productId: Scalars['String']['input'];
   /** Product quantity to add */
-  quantity?: InputMaybe<Scalars['Int']>;
+  quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputAddWishlistItemType = {
   /** Wish list id */
-  listId: Scalars['String'];
+  listId: Scalars['String']['input'];
   /** Product id to add */
-  productId: Scalars['String'];
+  productId: Scalars['String']['input'];
   /** Product quantity to add */
-  quantity?: InputMaybe<Scalars['Int']>;
+  quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputAddressType = {
-  addressType?: InputMaybe<Scalars['Int']>;
+  addressType?: InputMaybe<Scalars['Int']['input']>;
   /** City */
-  city?: InputMaybe<Scalars['OptionalString']>;
+  city?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Country code */
-  countryCode?: InputMaybe<Scalars['OptionalString']>;
+  countryCode?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Country */
-  countryName?: InputMaybe<Scalars['OptionalString']>;
+  countryName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Email */
-  email?: InputMaybe<Scalars['OptionalString']>;
+  email?: InputMaybe<Scalars['OptionalString']['input']>;
   /** First name */
-  firstName?: InputMaybe<Scalars['OptionalString']>;
+  firstName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** ID */
-  id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   /** ID */
-  key?: InputMaybe<Scalars['OptionalString']>;
+  key?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Last name */
-  lastName?: InputMaybe<Scalars['OptionalString']>;
+  lastName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Line1 */
-  line1?: InputMaybe<Scalars['OptionalString']>;
+  line1?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Line2 */
-  line2?: InputMaybe<Scalars['OptionalString']>;
+  line2?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Middle name */
-  middleName?: InputMaybe<Scalars['OptionalString']>;
+  middleName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Name */
-  name?: InputMaybe<Scalars['OptionalString']>;
+  name?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Company name */
-  organization?: InputMaybe<Scalars['OptionalString']>;
+  organization?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Outer ID */
-  outerId?: InputMaybe<Scalars['OptionalString']>;
+  outerId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Phone */
-  phone?: InputMaybe<Scalars['OptionalString']>;
+  phone?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Postal code */
-  postalCode?: InputMaybe<Scalars['OptionalString']>;
+  postalCode?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Region ID */
-  regionId?: InputMaybe<Scalars['OptionalString']>;
+  regionId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Region */
-  regionName?: InputMaybe<Scalars['OptionalString']>;
+  regionName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Zip */
-  zip?: InputMaybe<Scalars['OptionalString']>;
+  zip?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
 export type InputApplicationUserLoginType = {
-  loginProvider: Scalars['String'];
-  providerKey: Scalars['String'];
+  loginProvider: Scalars['String']['input'];
+  providerKey: Scalars['String']['input'];
 };
 
 export type InputAssignPermissionScopeType = {
-  scope: Scalars['String'];
-  type: Scalars['String'];
+  scope: Scalars['String']['input'];
+  type: Scalars['String']['input'];
 };
 
 export type InputAssignPermissionType = {
   assignedScopes?: InputMaybe<Array<InputMaybe<InputAssignPermissionScopeType>>>;
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 export type InputAssignRoleType = {
-  concurrencyStamp?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
+  concurrencyStamp?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  name: Scalars['String']['input'];
   permissions: Array<InputMaybe<InputAssignPermissionType>>;
 };
 
 export type InputAuthorizePaymentType = {
   /** Order Id */
-  orderId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
   /** Input parameters */
   parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
   /** Payment Id */
-  paymentId: Scalars['String'];
+  paymentId: Scalars['String']['input'];
 };
 
 export type InputChangeAllCartItemsSelectedType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangeCartItemCommentType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
   /** Comment */
-  comment: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  comment: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Line item Id */
-  lineItemId: Scalars['String'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangeCartItemPriceType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Line item Id */
-  lineItemId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
   /** Price */
-  price: Scalars['Decimal'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  price: Scalars['Decimal']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangeCartItemQuantityType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Line item Id */
-  lineItemId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
   /** Quantity */
-  quantity: Scalars['Int'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  quantity: Scalars['Int']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangeCartItemSelectedType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Line item Id */
-  lineItemId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
   /** Is item selected for checkout */
-  selectedForCheckout: Scalars['Boolean'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  selectedForCheckout: Scalars['Boolean']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangeCartItemsSelectedType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** List of line item Ids */
-  lineItemIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  lineItemIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangeCommentType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
   /** Comment */
-  comment?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  comment?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangeOrderStatusType = {
   /** Order ID */
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
   /** Order status */
-  status: Scalars['String'];
+  status: Scalars['String']['input'];
 };
 
 export type InputChangeOrganizationContactRoleType = {
   /** Role IDs or names to be assigned to the user */
-  roleIds?: InputMaybe<Array<Scalars['String']>>;
+  roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** User identifier to be changed */
-  userId?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputChangePasswordType = {
   /** New password according with system security policy */
-  newPassword: Scalars['String'];
+  newPassword: Scalars['String']['input'];
   /** Old user password */
-  oldPassword: Scalars['String'];
+  oldPassword: Scalars['String']['input'];
   /** User identifier */
-  userId: Scalars['String'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputChangePurchaseOrderNumber = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Purchase Order Number */
-  purchaseOrderNumber?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  purchaseOrderNumber?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputClearCartType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputClearPaymentsType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputClearShipmentsType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputConfirmEmailType = {
   /** Confirm email token */
-  token: Scalars['String'];
+  token: Scalars['String']['input'];
   /** User identifier */
-  userId: Scalars['String'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputCreateApplicationUserType = {
   /** Username of the creator */
-  createdBy?: InputMaybe<Scalars['String']>;
+  createdBy?: InputMaybe<Scalars['String']['input']>;
   /** Date of user creation */
-  createdDate?: InputMaybe<Scalars['DateTime']>;
+  createdDate?: InputMaybe<Scalars['DateTime']['input']>;
   /** User Email */
-  email: Scalars['String'];
+  email: Scalars['String']['input'];
   /** User ID */
-  id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   /** Can user be locked out */
-  lockoutEnabled?: InputMaybe<Scalars['Boolean']>;
+  lockoutEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** End date of lockout */
-  lockoutEnd?: InputMaybe<Scalars['DateTime']>;
+  lockoutEnd?: InputMaybe<Scalars['DateTime']['input']>;
   /** External logins */
   logins?: InputMaybe<Array<InputMaybe<InputApplicationUserLoginType>>>;
   /** Id of the associated Member */
-  memberId?: InputMaybe<Scalars['String']>;
+  memberId?: InputMaybe<Scalars['String']['input']>;
   /** User password (nullable, for external logins) */
-  password?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']['input']>;
   /** Password expiration date */
-  passwordExpired?: InputMaybe<Scalars['Boolean']>;
+  passwordExpired?: InputMaybe<Scalars['Boolean']['input']>;
   /** User phone number */
-  phoneNumber?: InputMaybe<Scalars['String']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
   /** Is user phone number confirmed */
-  phoneNumberConfirmed?: InputMaybe<Scalars['Boolean']>;
+  phoneNumberConfirmed?: InputMaybe<Scalars['Boolean']['input']>;
   /** User photo URL */
-  photoUrl?: InputMaybe<Scalars['String']>;
+  photoUrl?: InputMaybe<Scalars['String']['input']>;
   /** List of user roles */
   roles?: InputMaybe<Array<InputMaybe<InputAssignRoleType>>>;
   /** Associated Store Id */
-  storeId?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
   /** Is Two Factor Authentication enabled */
-  twoFactorEnabled?: InputMaybe<Scalars['Boolean']>;
+  twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** User name */
-  userName: Scalars['String'];
+  userName: Scalars['String']['input'];
   /** User type (Manager, Customer) */
-  userType: Scalars['String'];
+  userType: Scalars['String']['input'];
 };
 
 export type InputCreateContactType = {
-  about?: InputMaybe<Scalars['String']>;
+  about?: InputMaybe<Scalars['String']['input']>;
   addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
-  defaultLanguage?: InputMaybe<Scalars['String']>;
+  defaultLanguage?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  emails?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  firstName: Scalars['String'];
-  fullName?: InputMaybe<Scalars['String']>;
-  groups?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  id?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  memberType?: InputMaybe<Scalars['String']>;
-  middleName?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  organizations?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  phones?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  photoUrl?: InputMaybe<Scalars['String']>;
-  salutation?: InputMaybe<Scalars['String']>;
-  timeZone?: InputMaybe<Scalars['String']>;
+  emails?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  firstName: Scalars['String']['input'];
+  fullName?: InputMaybe<Scalars['String']['input']>;
+  groups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  lastName: Scalars['String']['input'];
+  memberType?: InputMaybe<Scalars['String']['input']>;
+  middleName?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  organizations?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  photoUrl?: InputMaybe<Scalars['String']['input']>;
+  salutation?: InputMaybe<Scalars['String']['input']>;
+  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputCreateOrderFromCartType = {
   /** Cart ID */
-  cartId?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputCreateOrganizationType = {
   addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  emails?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  groups?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  id?: InputMaybe<Scalars['String']>;
-  memberType?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  phones?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  emails?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  groups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  memberType?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export type InputCreateUserType = {
@@ -1580,423 +1582,427 @@ export type InputCreateUserType = {
 
 export type InputCreateWishlistType = {
   /** Culture name */
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Currency code */
-  currencyCode?: InputMaybe<Scalars['String']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** List name */
-  listName?: InputMaybe<Scalars['String']>;
+  listName?: InputMaybe<Scalars['String']['input']>;
   /** Store ID */
-  storeId: Scalars['String'];
+  storeId: Scalars['String']['input'];
   /** Owner ID */
-  userId: Scalars['String'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputDeleteContactType = {
-  contactId: Scalars['String'];
+  contactId: Scalars['String']['input'];
 };
 
 export type InputDeleteMemberAddressType = {
   addresses: Array<InputMaybe<InputMemberAddressType>>;
-  memberId: Scalars['String'];
+  memberId: Scalars['String']['input'];
 };
 
 export type InputDeleteUserType = {
-  userNames: Array<InputMaybe<Scalars['String']>>;
+  userNames: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
 export type InputDynamicPropertyValueType = {
   /** Culture name ("en-US") for multilingual property */
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Language ("en-US") for multilingual property */
-  locale?: InputMaybe<Scalars['String']>;
+  locale?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic property name */
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
   /** Dynamic property value. ID must be passed for dictionary item */
-  value?: InputMaybe<Scalars['DynamicPropertyValue']>;
+  value?: InputMaybe<Scalars['DynamicPropertyValue']['input']>;
 };
 
 export type InputInitializePaymentType = {
   /** Order Id */
-  orderId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
   /** Payment Id */
-  paymentId: Scalars['String'];
+  paymentId: Scalars['String']['input'];
 };
 
 export type InputInviteUserType = {
+  /** Customer order Id to be associated with this user. */
+  customerOrderId?: InputMaybe<Scalars['String']['input']>;
   /** Emails which will receive invites */
-  emails: Array<Scalars['String']>;
+  emails: Array<Scalars['String']['input']>;
   /** Optional message to include into email with instructions which invites persons will see */
-  message?: InputMaybe<Scalars['String']>;
+  message?: InputMaybe<Scalars['String']['input']>;
   /** ID of organization where contact will be added for user */
-  organizationId: Scalars['String'];
+  organizationId?: InputMaybe<Scalars['String']['input']>;
   /** Role IDs or names to be assigned to the invited user */
-  roleIds?: InputMaybe<Array<Scalars['String']>>;
+  roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
   /** ID of store which will send invites */
-  storeId: Scalars['String'];
+  storeId: Scalars['String']['input'];
   /** Optional URL suffix: you may provide here relative URL to your page which handle registration by invite */
-  urlSuffix?: InputMaybe<Scalars['String']>;
+  urlSuffix?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputKeyValueType = {
   /** Dictionary key */
-  key: Scalars['String'];
+  key: Scalars['String']['input'];
   /** Dictionary value */
-  value?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputLockUnlockOrganizationContactType = {
-  userId?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputMemberAddressType = {
-  addressType?: InputMaybe<Scalars['Int']>;
+  addressType?: InputMaybe<Scalars['Int']['input']>;
   /** City */
-  city: Scalars['String'];
+  city: Scalars['String']['input'];
   /** Country code */
-  countryCode: Scalars['String'];
+  countryCode: Scalars['String']['input'];
   /** Country name */
-  countryName?: InputMaybe<Scalars['String']>;
+  countryName?: InputMaybe<Scalars['String']['input']>;
   /** Description */
-  description?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   /** Email */
-  email?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']['input']>;
   /** First name */
-  firstName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   /** key */
-  key?: InputMaybe<Scalars['String']>;
+  key?: InputMaybe<Scalars['String']['input']>;
   /** Last name */
-  lastName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
   /** Line1 */
-  line1: Scalars['String'];
+  line1: Scalars['String']['input'];
   /** Line2 */
-  line2?: InputMaybe<Scalars['String']>;
+  line2?: InputMaybe<Scalars['String']['input']>;
   /** Middle name */
-  middleName?: InputMaybe<Scalars['String']>;
+  middleName?: InputMaybe<Scalars['String']['input']>;
   /** Name */
-  name?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']['input']>;
   /** Company name */
-  organization?: InputMaybe<Scalars['String']>;
+  organization?: InputMaybe<Scalars['String']['input']>;
   /** Outer id */
-  outerId?: InputMaybe<Scalars['String']>;
+  outerId?: InputMaybe<Scalars['String']['input']>;
   /** Phone */
-  phone?: InputMaybe<Scalars['String']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
   /** Postal code */
-  postalCode: Scalars['String'];
+  postalCode: Scalars['String']['input'];
   /** Region id */
-  regionId?: InputMaybe<Scalars['String']>;
+  regionId?: InputMaybe<Scalars['String']['input']>;
   /** Region name */
-  regionName?: InputMaybe<Scalars['String']>;
+  regionName?: InputMaybe<Scalars['String']['input']>;
   /** Zip */
-  zip?: InputMaybe<Scalars['String']>;
+  zip?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputMergeCartType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Second cart Id */
-  secondCartId: Scalars['String'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  secondCartId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputMoveWishlistItemType = {
   /** Destination List ID */
-  destinationListId: Scalars['String'];
+  destinationListId: Scalars['String']['input'];
   /** Line item ID to move */
-  lineItemId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
   /** Source List ID */
-  listId: Scalars['String'];
+  listId: Scalars['String']['input'];
 };
 
 export type InputNewBulkItemType = {
   /** Product SKU */
-  productSku: Scalars['String'];
+  productSku: Scalars['String']['input'];
   /** Product quantity */
-  quantity?: InputMaybe<Scalars['Int']>;
+  quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputNewCartItemType = {
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
   /** Product Id */
-  productId: Scalars['String'];
+  productId: Scalars['String']['input'];
   /** Product quantity */
-  quantity?: InputMaybe<Scalars['Int']>;
+  quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputOrderAddressType = {
-  addressType?: InputMaybe<Scalars['Int']>;
+  addressType?: InputMaybe<Scalars['Int']['input']>;
   /** City */
-  city?: InputMaybe<Scalars['OptionalString']>;
+  city?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Country code */
-  countryCode?: InputMaybe<Scalars['OptionalString']>;
+  countryCode?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Country name */
-  countryName?: InputMaybe<Scalars['OptionalString']>;
+  countryName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Email */
-  email?: InputMaybe<Scalars['OptionalString']>;
+  email?: InputMaybe<Scalars['OptionalString']['input']>;
   /** First name */
-  firstName?: InputMaybe<Scalars['OptionalString']>;
+  firstName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** ID */
-  id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
   /** Id */
-  key?: InputMaybe<Scalars['OptionalString']>;
+  key?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Last name */
-  lastName?: InputMaybe<Scalars['OptionalString']>;
+  lastName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Line1 */
-  line1?: InputMaybe<Scalars['OptionalString']>;
+  line1?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Line2 */
-  line2?: InputMaybe<Scalars['OptionalString']>;
+  line2?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Middle name */
-  middleName?: InputMaybe<Scalars['OptionalString']>;
+  middleName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Name */
-  name?: InputMaybe<Scalars['OptionalString']>;
+  name?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Company name */
-  organization?: InputMaybe<Scalars['OptionalString']>;
+  organization?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Outer id */
-  outerId?: InputMaybe<Scalars['OptionalString']>;
+  outerId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Phone */
-  phone?: InputMaybe<Scalars['OptionalString']>;
+  phone?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Postal code */
-  postalCode?: InputMaybe<Scalars['OptionalString']>;
+  postalCode?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Region id */
-  regionId?: InputMaybe<Scalars['OptionalString']>;
+  regionId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Region name */
-  regionName?: InputMaybe<Scalars['OptionalString']>;
+  regionName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Zip */
-  zip?: InputMaybe<Scalars['OptionalString']>;
+  zip?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
 export type InputOrderBankCardInfoType = {
-  bankCardCVV2: Scalars['String'];
-  bankCardMonth: Scalars['Int'];
-  bankCardNumber: Scalars['String'];
-  bankCardType: Scalars['String'];
-  bankCardYear: Scalars['Int'];
-  cardholderName: Scalars['String'];
+  bankCardCVV2: Scalars['String']['input'];
+  bankCardMonth: Scalars['Int']['input'];
+  bankCardNumber: Scalars['String']['input'];
+  bankCardType: Scalars['String']['input'];
+  bankCardYear: Scalars['Int']['input'];
+  cardholderName: Scalars['String']['input'];
 };
 
 export type InputOrderPaymentType = {
-  amount?: InputMaybe<Scalars['OptionalDecimal']>;
+  amount?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   billingAddress?: InputMaybe<InputOrderAddressType>;
   /** Text comment */
-  comment?: InputMaybe<Scalars['OptionalString']>;
-  currency?: InputMaybe<Scalars['OptionalString']>;
+  comment?: InputMaybe<Scalars['OptionalString']['input']>;
+  currency?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
   /** Payment ID */
-  id?: InputMaybe<Scalars['OptionalString']>;
+  id?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Payment outer ID value */
-  outerId?: InputMaybe<Scalars['OptionalString']>;
+  outerId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Payment gateway code value */
-  paymentGatewayCode?: InputMaybe<Scalars['OptionalString']>;
-  price?: InputMaybe<Scalars['OptionalDecimal']>;
+  paymentGatewayCode?: InputMaybe<Scalars['OptionalString']['input']>;
+  price?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   /** Payment vendor ID value */
-  vendorId?: InputMaybe<Scalars['OptionalString']>;
+  vendorId?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
 export type InputPaymentType = {
-  amount?: InputMaybe<Scalars['OptionalDecimal']>;
+  amount?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   billingAddress?: InputMaybe<InputAddressType>;
   /** Text comment */
-  comment?: InputMaybe<Scalars['OptionalString']>;
-  currency?: InputMaybe<Scalars['OptionalString']>;
+  comment?: InputMaybe<Scalars['OptionalString']['input']>;
+  currency?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
   /** Payment ID */
-  id?: InputMaybe<Scalars['OptionalString']>;
+  id?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Payment outer ID value */
-  outerId?: InputMaybe<Scalars['OptionalString']>;
+  outerId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Payment gateway code value */
-  paymentGatewayCode?: InputMaybe<Scalars['OptionalString']>;
-  price?: InputMaybe<Scalars['OptionalDecimal']>;
-  purpose?: InputMaybe<Scalars['OptionalString']>;
-  vendorId?: InputMaybe<Scalars['OptionalString']>;
+  paymentGatewayCode?: InputMaybe<Scalars['OptionalString']['input']>;
+  price?: InputMaybe<Scalars['OptionalDecimal']['input']>;
+  purpose?: InputMaybe<Scalars['OptionalString']['input']>;
+  vendorId?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
 export type InputPersonalDataType = {
-  email?: InputMaybe<Scalars['String']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  fullName?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  middleName?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  fullName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  middleName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputProcessOrderPaymentType = {
   /** Credit card details */
   bankCardInfo?: InputMaybe<InputOrderBankCardInfoType>;
   /** Order ID */
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
   /** Payment ID */
-  paymentId: Scalars['String'];
+  paymentId: Scalars['String']['input'];
 };
 
 export type InputQuoteAddressType = {
-  addressType?: InputMaybe<Scalars['Int']>;
-  city: Scalars['String'];
-  countryCode?: InputMaybe<Scalars['String']>;
-  countryName: Scalars['String'];
-  email?: InputMaybe<Scalars['String']>;
-  firstName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  key?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  line1?: InputMaybe<Scalars['String']>;
-  line2?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
+  addressType?: InputMaybe<Scalars['Int']['input']>;
+  city: Scalars['String']['input'];
+  countryCode?: InputMaybe<Scalars['String']['input']>;
+  countryName: Scalars['String']['input'];
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
+  key?: InputMaybe<Scalars['String']['input']>;
+  lastName: Scalars['String']['input'];
+  line1?: InputMaybe<Scalars['String']['input']>;
+  line2?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
   /** Company name */
-  organization?: InputMaybe<Scalars['String']>;
-  outerId?: InputMaybe<Scalars['String']>;
-  phone?: InputMaybe<Scalars['String']>;
-  postalCode?: InputMaybe<Scalars['String']>;
-  regionId?: InputMaybe<Scalars['String']>;
-  regionName?: InputMaybe<Scalars['String']>;
+  organization?: InputMaybe<Scalars['String']['input']>;
+  outerId?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  postalCode?: InputMaybe<Scalars['String']['input']>;
+  regionId?: InputMaybe<Scalars['String']['input']>;
+  regionName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputRegisterAccountType = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-  username: Scalars['String'];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  username: Scalars['String']['input'];
 };
 
 export type InputRegisterByInvitationType = {
+  /** Customer order Id to be associated with this user. */
+  customerOrderId?: InputMaybe<Scalars['String']['input']>;
   /** First name of person */
-  firstName: Scalars['String'];
+  firstName: Scalars['String']['input'];
   /** Last name of person */
-  lastName: Scalars['String'];
+  lastName: Scalars['String']['input'];
   /** Password */
-  password: Scalars['String'];
+  password: Scalars['String']['input'];
   /** Phone */
-  phone?: InputMaybe<Scalars['String']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
   /** Invitation token */
-  token: Scalars['String'];
+  token: Scalars['String']['input'];
   /** ID of use created for invited email */
-  userId: Scalars['String'];
+  userId: Scalars['String']['input'];
   /** Username */
-  username: Scalars['String'];
+  username: Scalars['String']['input'];
 };
 
 export type InputRegisterContactType = {
-  about?: InputMaybe<Scalars['String']>;
+  about?: InputMaybe<Scalars['String']['input']>;
   address?: InputMaybe<InputMemberAddressType>;
-  birthdate?: InputMaybe<Scalars['Date']>;
+  birthdate?: InputMaybe<Scalars['Date']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  middleName?: InputMaybe<Scalars['String']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  middleName?: InputMaybe<Scalars['String']['input']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputRegisterOrganizationType = {
   address?: InputMaybe<InputMemberAddressType>;
-  description?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
 };
 
 export type InputRejectGiftItemsType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Ids of gift lineItems to reject from cart */
-  ids: Array<InputMaybe<Scalars['String']>>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  ids: Array<InputMaybe<Scalars['String']['input']>>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputRemoveCartAddressType = {
   /** Address Id */
-  addressId: Scalars['String'];
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  addressId: Scalars['String']['input'];
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputRemoveCartType = {
   /** Cart Id */
-  cartId: Scalars['String'];
+  cartId: Scalars['String']['input'];
   /** User Id */
-  userId: Scalars['String'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputRemoveCouponType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
   /** Coupon code */
-  couponCode?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  couponCode?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputRemoveItemType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Line item Id */
-  lineItemId: Scalars['String'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputRemoveItemsType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Array of line item Id */
-  lineItemIds: Array<InputMaybe<Scalars['String']>>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  lineItemIds: Array<InputMaybe<Scalars['String']['input']>>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputRemoveMemberFromOrganizationType = {
-  contactId?: InputMaybe<Scalars['String']>;
-  organizationId?: InputMaybe<Scalars['String']>;
+  contactId?: InputMaybe<Scalars['String']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputRemoveShipmentType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Shipment Id */
-  shipmentId?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  shipmentId?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputRemoveWishlistItemType = {
   /** Line item ID to remove */
-  lineItemId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
   /** List ID */
-  listId: Scalars['String'];
+  listId: Scalars['String']['input'];
 };
 
 export type InputRemoveWishlistType = {
   /** List ID */
-  listId: Scalars['String'];
+  listId: Scalars['String']['input'];
 };
 
 export type InputRenameWishlistType = {
   /** List ID */
-  listId: Scalars['String'];
+  listId: Scalars['String']['input'];
   /** New List name */
-  listName?: InputMaybe<Scalars['String']>;
+  listName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputRequestRegistrationType = {
@@ -2005,220 +2011,220 @@ export type InputRequestRegistrationType = {
   /** Creating contact */
   contact: InputRegisterContactType;
   /** Notification language code */
-  languageCode?: InputMaybe<Scalars['String']>;
+  languageCode?: InputMaybe<Scalars['String']['input']>;
   /** company type */
   organization?: InputMaybe<InputRegisterOrganizationType>;
   /** Store ID */
-  storeId: Scalars['String'];
+  storeId: Scalars['String']['input'];
 };
 
 export type InputResetPasswordByTokenType = {
   /** New password according with system security policy */
-  newPassword: Scalars['String'];
+  newPassword: Scalars['String']['input'];
   /** User password reset token */
-  token: Scalars['String'];
+  token: Scalars['String']['input'];
   /** User identifier */
-  userId: Scalars['String'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputSendVerifyEmailType = {
-  email?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']['input']>;
   /** Notification language code */
-  languageCode?: InputMaybe<Scalars['String']>;
+  languageCode?: InputMaybe<Scalars['String']['input']>;
   /** Store ID */
-  storeId: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputShipmentType = {
   /** Text comment */
-  comment?: InputMaybe<Scalars['OptionalString']>;
+  comment?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Currency value */
-  currency?: InputMaybe<Scalars['OptionalString']>;
+  currency?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Delivery address */
   deliveryAddress?: InputMaybe<InputAddressType>;
   /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
   /** Fulfillment center iD */
-  fulfillmentCenterId?: InputMaybe<Scalars['OptionalString']>;
+  fulfillmentCenterId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Height value */
-  height?: InputMaybe<Scalars['OptionalNullableDecimal']>;
+  height?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
   /** Shipment ID */
-  id?: InputMaybe<Scalars['OptionalString']>;
+  id?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Length value */
-  length?: InputMaybe<Scalars['OptionalNullableDecimal']>;
+  length?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
   /** Measurement unit value */
-  measureUnit?: InputMaybe<Scalars['OptionalString']>;
+  measureUnit?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Price value */
-  price?: InputMaybe<Scalars['OptionalDecimal']>;
+  price?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   /** Shipping method code */
-  shipmentMethodCode?: InputMaybe<Scalars['OptionalString']>;
+  shipmentMethodCode?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Shipping method option */
-  shipmentMethodOption?: InputMaybe<Scalars['OptionalString']>;
+  shipmentMethodOption?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Vendor ID */
-  vendorId?: InputMaybe<Scalars['OptionalString']>;
+  vendorId?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Volumetric weight value */
-  volumetricWeight?: InputMaybe<Scalars['OptionalNullableDecimal']>;
+  volumetricWeight?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
   /** Weight value */
-  weight?: InputMaybe<Scalars['OptionalNullableDecimal']>;
+  weight?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
   /** Weight unit value */
-  weightUnit?: InputMaybe<Scalars['OptionalString']>;
+  weightUnit?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Width value */
-  width?: InputMaybe<Scalars['OptionalNullableDecimal']>;
+  width?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
 };
 
 export type InputUpdateApplicationUserType = {
   /** Failed login attempts for the current user */
-  accessFailedCount?: InputMaybe<Scalars['Int']>;
+  accessFailedCount?: InputMaybe<Scalars['Int']['input']>;
   /** User Email */
-  email: Scalars['String'];
+  email: Scalars['String']['input'];
   /** User ID */
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
   /** Can user be locked out */
-  lockoutEnabled?: InputMaybe<Scalars['Boolean']>;
+  lockoutEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** End date of lockout */
-  lockoutEnd?: InputMaybe<Scalars['DateTime']>;
+  lockoutEnd?: InputMaybe<Scalars['DateTime']['input']>;
   /** Id of the associated Memeber */
-  memberId?: InputMaybe<Scalars['String']>;
+  memberId?: InputMaybe<Scalars['String']['input']>;
   /** Password Hash */
-  passwordHash?: InputMaybe<Scalars['String']>;
+  passwordHash?: InputMaybe<Scalars['String']['input']>;
   /** User phone number */
-  phoneNumber?: InputMaybe<Scalars['String']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
   /** Is user phone number confirmed */
-  phoneNumberConfirmed?: InputMaybe<Scalars['Boolean']>;
+  phoneNumberConfirmed?: InputMaybe<Scalars['Boolean']['input']>;
   /** User photo URL */
-  photoUrl?: InputMaybe<Scalars['String']>;
+  photoUrl?: InputMaybe<Scalars['String']['input']>;
   /** List of user roles */
   roles?: InputMaybe<Array<InputMaybe<InputAssignRoleType>>>;
   /** SecurityStamp */
-  securityStamp: Scalars['String'];
+  securityStamp: Scalars['String']['input'];
   /** Associated Store Id */
-  storeId?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
   /** Is Two Factor Authentication enabled */
-  twoFactorEnabled?: InputMaybe<Scalars['Boolean']>;
+  twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** User name */
-  userName: Scalars['String'];
+  userName: Scalars['String']['input'];
   /** User type (Manager, Customer) */
-  userType: Scalars['String'];
+  userType: Scalars['String']['input'];
 };
 
 export type InputUpdateCartDynamicPropertiesType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputUpdateCartItemDynamicPropertiesType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
   /** Line item Id */
-  lineItemId: Scalars['String'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputUpdateCartPaymentDynamicPropertiesType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
   /** Payment Id */
-  paymentId: Scalars['String'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  paymentId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputUpdateCartShipmentDynamicPropertiesType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
   /** Shipment Id */
-  shipmentId: Scalars['String'];
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  shipmentId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InputUpdateContactType = {
-  about?: InputMaybe<Scalars['String']>;
+  about?: InputMaybe<Scalars['String']['input']>;
   addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
-  defaultLanguage?: InputMaybe<Scalars['String']>;
+  defaultLanguage?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  emails?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  firstName: Scalars['String'];
-  fullName?: InputMaybe<Scalars['String']>;
-  groups?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  id: Scalars['String'];
-  lastName: Scalars['String'];
-  memberType?: InputMaybe<Scalars['String']>;
-  middleName?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  organizations?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  phones?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  photoUrl?: InputMaybe<Scalars['String']>;
-  salutation?: InputMaybe<Scalars['String']>;
-  timeZone?: InputMaybe<Scalars['String']>;
+  emails?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  firstName: Scalars['String']['input'];
+  fullName?: InputMaybe<Scalars['String']['input']>;
+  groups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  id: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  memberType?: InputMaybe<Scalars['String']['input']>;
+  middleName?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  organizations?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  photoUrl?: InputMaybe<Scalars['String']['input']>;
+  salutation?: InputMaybe<Scalars['String']['input']>;
+  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputUpdateMemberAddressType = {
   addresses: Array<InputMaybe<InputMemberAddressType>>;
-  memberId: Scalars['String'];
+  memberId: Scalars['String']['input'];
 };
 
 export type InputUpdateMemberDynamicPropertiesType = {
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  memberId: Scalars['String'];
+  memberId: Scalars['String']['input'];
 };
 
 export type InputUpdateOrderDynamicPropertiesType = {
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  orderId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputUpdateOrderItemDynamicPropertiesType = {
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  lineItemId?: InputMaybe<Scalars['String']>;
-  orderId?: InputMaybe<Scalars['String']>;
+  lineItemId?: InputMaybe<Scalars['String']['input']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputUpdateOrderPaymentDynamicPropertiesType = {
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  orderId?: InputMaybe<Scalars['String']>;
-  paymentId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
+  paymentId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputUpdateOrderShipmentDynamicPropertiesType = {
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  orderId?: InputMaybe<Scalars['String']>;
-  shipmentId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
+  shipmentId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputUpdateOrganizationType = {
   addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  emails?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  groups?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  id: Scalars['String'];
-  memberType?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  phones?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  emails?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  groups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  id: Scalars['String']['input'];
+  memberType?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export type InputUpdatePersonalDataType = {
@@ -2227,13 +2233,13 @@ export type InputUpdatePersonalDataType = {
 
 export type InputUpdateRoleInnerType = {
   /** Concurrency Stamp */
-  concurrencyStamp?: InputMaybe<Scalars['String']>;
+  concurrencyStamp?: InputMaybe<Scalars['String']['input']>;
   /** Role description */
-  description?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   /** Role ID */
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
   /** Role name */
-  name: Scalars['String'];
+  name: Scalars['String']['input'];
   /** List of Role permissions */
   permissions: Array<InputMaybe<InputAssignPermissionType>>;
 };
@@ -2252,164 +2258,164 @@ export type InputUpdateWishlistItemsType = {
   /** Bulk wishlist items */
   items: Array<InputMaybe<InputUpdateWishlistLineItemType>>;
   /** Wish list id */
-  listId: Scalars['String'];
+  listId: Scalars['String']['input'];
 };
 
 export type InputUpdateWishlistLineItemType = {
   /** Line Item Id to update */
-  lineItemId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
   /** Product quantity to add */
-  quantity: Scalars['Int'];
+  quantity: Scalars['Int']['input'];
 };
 
 export type InputValidateCouponType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
   /** Coupon */
-  coupon: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  coupon: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type InventoryInfo = {
   /** Allow backorder */
-  allowBackorder?: Maybe<Scalars['Boolean']>;
+  allowBackorder?: Maybe<Scalars['Boolean']['output']>;
   /** Allow preorder */
-  allowPreorder?: Maybe<Scalars['Boolean']>;
+  allowPreorder?: Maybe<Scalars['Boolean']['output']>;
   /** Backorder availability date */
-  backorderAvailabilityDate?: Maybe<Scalars['DateTime']>;
-  fulfillmentCenterId: Scalars['String'];
-  fulfillmentCenterName: Scalars['String'];
+  backorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
+  fulfillmentCenterId: Scalars['String']['output'];
+  fulfillmentCenterName: Scalars['String']['output'];
   /** Inventory in stock quantity */
-  inStockQuantity?: Maybe<Scalars['Long']>;
+  inStockQuantity?: Maybe<Scalars['Long']['output']>;
   /** Preorder availability date */
-  preorderAvailabilityDate?: Maybe<Scalars['DateTime']>;
+  preorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
   /** Inventory reserved quantity */
-  reservedQuantity?: Maybe<Scalars['Long']>;
+  reservedQuantity?: Maybe<Scalars['Long']['output']>;
 };
 
 export type KeyValueType = {
   /** Dictionary key */
-  key: Scalars['String'];
+  key: Scalars['String']['output'];
   /** Dictionary value */
-  value?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']['output']>;
 };
 
 export type LineItemType = {
   /** Catalog ID value */
-  catalogId?: Maybe<Scalars['String']>;
+  catalogId: Scalars['String']['output'];
   /** Category ID value */
-  categoryId?: Maybe<Scalars['String']>;
+  categoryId?: Maybe<Scalars['String']['output']>;
   /** Line item create date */
-  createdDate?: Maybe<Scalars['DateTime']>;
+  createdDate: Scalars['DateTime']['output'];
   /** Discount amount */
-  discountAmount?: Maybe<MoneyType>;
+  discountAmount: MoneyType;
   /** Discount amount with tax */
-  discountAmountWithTax?: Maybe<MoneyType>;
+  discountAmountWithTax: MoneyType;
   /** Total discount */
-  discountTotal?: Maybe<MoneyType>;
+  discountTotal: MoneyType;
   /** Total discount with tax */
-  discountTotalWithTax?: Maybe<MoneyType>;
+  discountTotalWithTax: MoneyType;
   /** Discounts */
-  discounts?: Maybe<Array<Maybe<DiscountType>>>;
+  discounts: Array<DiscountType>;
   /** Cart line item dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   /** Extended price */
-  extendedPrice?: Maybe<MoneyType>;
+  extendedPrice: MoneyType;
   /** Extended price with tax */
-  extendedPriceWithTax?: Maybe<MoneyType>;
+  extendedPriceWithTax: MoneyType;
   /** Line item fulfillment center ID value */
-  fulfillmentCenterId?: Maybe<Scalars['String']>;
+  fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
   /** Line item fulfillment center name value */
-  fulfillmentCenterName?: Maybe<Scalars['String']>;
+  fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
   /** Height value */
-  height?: Maybe<Scalars['Decimal']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
   /** Line item ID */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Value of line item image absolute URL */
-  imageUrl?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']['output']>;
   /** In stock quantity */
-  inStockQuantity?: Maybe<Scalars['Int']>;
+  inStockQuantity: Scalars['Int']['output'];
   /** flag of line item is a gift */
-  isGift?: Maybe<Scalars['Boolean']>;
+  isGift: Scalars['Boolean']['output'];
   /** Shows whether this is read-only */
-  isReadOnly?: Maybe<Scalars['Boolean']>;
+  isReadOnly: Scalars['Boolean']['output'];
   /** Shows whether the line item is recurring */
-  isReccuring?: Maybe<Scalars['Boolean']>;
+  isReccuring: Scalars['Boolean']['output'];
   /** Shows whether this is valid */
-  isValid?: Maybe<Scalars['Boolean']>;
+  isValid: Scalars['Boolean']['output'];
   /** Culture name in the ISO 3166-1 alpha-3 format */
-  languageCode?: Maybe<Scalars['String']>;
+  languageCode?: Maybe<Scalars['String']['output']>;
   /** Length value */
-  length?: Maybe<Scalars['Decimal']>;
+  length?: Maybe<Scalars['Decimal']['output']>;
   /** List price */
-  listPrice?: Maybe<MoneyType>;
+  listPrice: MoneyType;
   /** List price with tax */
-  listPriceWithTax?: Maybe<MoneyType>;
+  listPriceWithTax: MoneyType;
   /** Measurement unit value */
-  measureUnit?: Maybe<Scalars['String']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
   /** Line item name value */
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String']['output'];
   /** Line item comment */
-  note?: Maybe<Scalars['String']>;
+  note?: Maybe<Scalars['String']['output']>;
   /** Line item quantity value */
-  objectType?: Maybe<Scalars['String']>;
+  objectType: Scalars['String']['output'];
   /** Placed price */
-  placedPrice?: Maybe<MoneyType>;
+  placedPrice: MoneyType;
   /** Placed price with tax */
-  placedPriceWithTax?: Maybe<MoneyType>;
+  placedPriceWithTax: MoneyType;
   product?: Maybe<Product>;
   /** Product ID value */
-  productId?: Maybe<Scalars['String']>;
+  productId: Scalars['String']['output'];
   /** Product outer Id */
-  productOuterId?: Maybe<Scalars['String']>;
+  productOuterId?: Maybe<Scalars['String']['output']>;
   /** Product type: Physical, Digital, or Subscription */
-  productType?: Maybe<Scalars['String']>;
+  productType?: Maybe<Scalars['String']['output']>;
   /** Line item quantity value */
-  quantity?: Maybe<Scalars['Int']>;
+  quantity: Scalars['Int']['output'];
   /** Requirement for line item shipping */
-  requiredShipping?: Maybe<Scalars['Boolean']>;
+  requiredShipping: Scalars['Boolean']['output'];
   /** Sale price */
-  salePrice?: Maybe<MoneyType>;
+  salePrice: MoneyType;
   /** Sale price with tax */
-  salePriceWithTax?: Maybe<MoneyType>;
+  salePriceWithTax: MoneyType;
   /** Shows whether the line item is selected for buying */
-  selectedForCheckout?: Maybe<Scalars['Boolean']>;
+  selectedForCheckout: Scalars['Boolean']['output'];
   /** Line item shipping method code value */
-  shipmentMethodCode?: Maybe<Scalars['String']>;
+  shipmentMethodCode?: Maybe<Scalars['String']['output']>;
   /** Product SKU value */
-  sku?: Maybe<Scalars['String']>;
+  sku: Scalars['String']['output'];
   /** Tax details */
-  taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
+  taxDetails: Array<TaxDetailType>;
   /** Total shipping tax amount value */
-  taxPercentRate?: Maybe<Scalars['Decimal']>;
+  taxPercentRate: Scalars['Decimal']['output'];
   /** Tax total */
-  taxTotal?: Maybe<MoneyType>;
+  taxTotal: MoneyType;
   /** Shipping tax type value */
-  taxType?: Maybe<Scalars['String']>;
+  taxType?: Maybe<Scalars['String']['output']>;
   /** Value of line item thumbnail image absolute URL */
-  thumbnailImageUrl?: Maybe<Scalars['String']>;
+  thumbnailImageUrl?: Maybe<Scalars['String']['output']>;
   /** Validation errors */
-  validationErrors?: Maybe<Array<Maybe<ValidationErrorType>>>;
+  validationErrors: Array<ValidationErrorType>;
   vendor?: Maybe<CommonVendor>;
   /** Volumetric weight value */
-  volumetricWeight?: Maybe<Scalars['Decimal']>;
+  volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
   /** Warehouse location */
-  warehouseLocation?: Maybe<Scalars['String']>;
+  warehouseLocation?: Maybe<Scalars['String']['output']>;
   /** Shopping cart weight value */
-  weight?: Maybe<Scalars['Decimal']>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
   /** Weight unit value */
-  weightUnit?: Maybe<Scalars['String']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
   /** Width value */
-  width?: Maybe<Scalars['Decimal']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
 };
 
 
 export type LineItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 /** A connection from an object to a list of objects of type `MemberAddress`. */
@@ -2421,61 +2427,61 @@ export type MemberAddressConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `MemberAddress`. */
 export type MemberAddressEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<MemberAddressType>;
 };
 
 export type MemberAddressType = {
-  addressType?: Maybe<Scalars['Int']>;
+  addressType?: Maybe<Scalars['Int']['output']>;
   /** City */
-  city?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']['output']>;
   /** Country code */
-  countryCode?: Maybe<Scalars['String']>;
+  countryCode?: Maybe<Scalars['String']['output']>;
   /** Country name */
-  countryName?: Maybe<Scalars['String']>;
+  countryName?: Maybe<Scalars['String']['output']>;
   /** Description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Email */
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']['output']>;
   /** First name */
-  firstName?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']['output']>;
   /** Id */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Is default address or not */
-  isDefault: Scalars['Boolean'];
+  isDefault: Scalars['Boolean']['output'];
   /** Id */
-  key?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']['output']>;
   /** Last name */
-  lastName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']['output']>;
   /** Line1 */
-  line1?: Maybe<Scalars['String']>;
+  line1?: Maybe<Scalars['String']['output']>;
   /** Line2 */
-  line2?: Maybe<Scalars['String']>;
+  line2?: Maybe<Scalars['String']['output']>;
   /** Middle name */
-  middleName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']['output']>;
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Company name */
-  organization?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']['output']>;
   /** Outer id */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Phone */
-  phone?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']['output']>;
   /** Postal code */
-  postalCode: Scalars['String'];
+  postalCode: Scalars['String']['output'];
   /** Region id */
-  regionId?: Maybe<Scalars['String']>;
+  regionId?: Maybe<Scalars['String']['output']>;
   /** Region name */
-  regionName?: Maybe<Scalars['String']>;
+  regionName?: Maybe<Scalars['String']['output']>;
   /** Zip */
-  zip?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']['output']>;
 };
 
 export type MemberType = {
@@ -2487,84 +2493,84 @@ export type MemberType = {
   /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
   /** Emails */
-  emails: Array<Maybe<Scalars['String']>>;
-  groups: Array<Maybe<Scalars['String']>>;
-  id: Scalars['String'];
+  emails: Array<Maybe<Scalars['String']['output']>>;
+  groups: Array<Maybe<Scalars['String']['output']>>;
+  id: Scalars['String']['output'];
   /** Member type */
-  memberType: Scalars['String'];
+  memberType: Scalars['String']['output'];
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Outer ID */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Phones */
-  phones: Array<Maybe<Scalars['String']>>;
+  phones: Array<Maybe<Scalars['String']['output']>>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
-  seoObjectType: Scalars['String'];
+  seoObjectType: Scalars['String']['output'];
   /** Status */
-  status?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type MemberTypeAddressesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type MemberTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type MemberTypeSeoInfoArgs = {
-  cultureName: Scalars['String'];
-  storeId: Scalars['String'];
+  cultureName: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 export type MenuLinkListType = {
   items?: Maybe<Array<Maybe<MenuLinkType>>>;
   /** Menu name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Menu outer ID */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
 };
 
 export type MenuLinkType = {
   /** Menu item object ID */
-  associatedObjectId?: Maybe<Scalars['String']>;
+  associatedObjectId?: Maybe<Scalars['String']['output']>;
   /** Menu item object name */
-  associatedObjectName?: Maybe<Scalars['String']>;
+  associatedObjectName?: Maybe<Scalars['String']['output']>;
   /** Menu item type name */
-  associatedObjectType?: Maybe<Scalars['String']>;
+  associatedObjectType?: Maybe<Scalars['String']['output']>;
   childItems?: Maybe<Array<Maybe<MenuLinkType>>>;
   /** Menu item outerID */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Menu item priority */
-  priority?: Maybe<Scalars['Int']>;
+  priority?: Maybe<Scalars['Int']['output']>;
   /** Menu item title */
-  title?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']['output']>;
   /** Menu item url */
-  url?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 export type MoneyType = {
   /** A decimal with the amount rounded to the significant number of decimal digits. */
-  amount: Scalars['Decimal'];
+  amount: Scalars['Decimal']['output'];
   /** Currency type */
-  currency?: Maybe<CurrencyType>;
+  currency: CurrencyType;
   /** Number of decimal digits for the associated currency. */
-  decimalDigits: Scalars['Int'];
+  decimalDigits: Scalars['Int']['output'];
   /** Formatted amount. */
-  formattedAmount: Scalars['String'];
+  formattedAmount: Scalars['String']['output'];
   /** Formatted amount without currency. */
-  formattedAmountWithoutCurrency: Scalars['String'];
+  formattedAmountWithoutCurrency: Scalars['String']['output'];
   /** Formatted amount without point. */
-  formattedAmountWithoutPoint: Scalars['String'];
+  formattedAmountWithoutPoint: Scalars['String']['output'];
   /** Formatted amount without point and currency. */
-  formattedAmountWithoutPointAndCurrency: Scalars['String'];
+  formattedAmountWithoutPointAndCurrency: Scalars['String']['output'];
 };
 
 export type Mutations = {
@@ -2587,7 +2593,7 @@ export type Mutations = {
   changeCartItemQuantity?: Maybe<CartType>;
   changeCartItemSelected?: Maybe<CartType>;
   changeComment?: Maybe<CartType>;
-  changeOrderStatus?: Maybe<Scalars['Boolean']>;
+  changeOrderStatus?: Maybe<Scalars['Boolean']['output']>;
   changeOrganizationContactRole?: Maybe<CustomIdentityResultType>;
   changePassword?: Maybe<CustomIdentityResultType>;
   changePurchaseOrderNumber?: Maybe<CartType>;
@@ -2604,7 +2610,7 @@ export type Mutations = {
   createQuoteFromCart?: Maybe<QuoteType>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
-  deleteContact?: Maybe<Scalars['Boolean']>;
+  deleteContact?: Maybe<Scalars['Boolean']['output']>;
   deleteMemberAddresses?: Maybe<MemberType>;
   deleteUsers?: Maybe<IdentityResultType>;
   initializePayment?: Maybe<InitializePaymentResultType>;
@@ -2617,7 +2623,7 @@ export type Mutations = {
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
-  removeCart?: Maybe<Scalars['Boolean']>;
+  removeCart?: Maybe<Scalars['Boolean']['output']>;
   removeCartAddress?: Maybe<CartType>;
   removeCartItem?: Maybe<CartType>;
   removeCartItems?: Maybe<CartType>;
@@ -2625,14 +2631,14 @@ export type Mutations = {
   removeMemberFromOrganization?: Maybe<ContactType>;
   removeQuoteItem?: Maybe<QuoteType>;
   removeShipment?: Maybe<CartType>;
-  removeWishlist?: Maybe<Scalars['Boolean']>;
+  removeWishlist?: Maybe<Scalars['Boolean']['output']>;
   removeWishlistItem?: Maybe<WishlistType>;
   renameWishlist?: Maybe<WishlistType>;
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
   selectAllCartItems?: Maybe<CartType>;
   selectCartItems?: Maybe<CartType>;
-  sendVerifyEmail?: Maybe<Scalars['Boolean']>;
+  sendVerifyEmail?: Maybe<Scalars['Boolean']['output']>;
   submitQuoteRequest?: Maybe<QuoteType>;
   unSelectAllCartItems?: Maybe<CartType>;
   unSelectCartItems?: Maybe<CartType>;
@@ -2654,7 +2660,7 @@ export type Mutations = {
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   updateWishListItems?: Maybe<WishlistType>;
-  validateCoupon?: Maybe<Scalars['Boolean']>;
+  validateCoupon?: Maybe<Scalars['Boolean']['output']>;
 };
 
 
@@ -3089,303 +3095,304 @@ export type MutationsValidateCouponArgs = {
 
 export type OrderAddressType = {
   /** Address type */
-  addressType?: Maybe<Scalars['Int']>;
+  addressType?: Maybe<Scalars['Int']['output']>;
   /** City */
-  city?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']['output']>;
   /** Country code */
-  countryCode?: Maybe<Scalars['String']>;
+  countryCode?: Maybe<Scalars['String']['output']>;
   /** Country name */
-  countryName?: Maybe<Scalars['String']>;
+  countryName?: Maybe<Scalars['String']['output']>;
   /** Email */
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']['output']>;
   /** First name */
-  firstName?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']['output']>;
   /** Id */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Id */
-  key?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']['output']>;
   /** Last name */
-  lastName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']['output']>;
   /** Line1 */
-  line1?: Maybe<Scalars['String']>;
+  line1?: Maybe<Scalars['String']['output']>;
   /** Line2 */
-  line2?: Maybe<Scalars['String']>;
+  line2?: Maybe<Scalars['String']['output']>;
   /** Middle name */
-  middleName?: Maybe<Scalars['String']>;
+  middleName?: Maybe<Scalars['String']['output']>;
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Company name */
-  organization?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']['output']>;
   /** Outer id */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Phone */
-  phone?: Maybe<Scalars['String']>;
+  phone?: Maybe<Scalars['String']['output']>;
   /** Postal code */
-  postalCode: Scalars['String'];
+  postalCode: Scalars['String']['output'];
   /** Region id */
-  regionId?: Maybe<Scalars['String']>;
+  regionId?: Maybe<Scalars['String']['output']>;
   /** Region name */
-  regionName?: Maybe<Scalars['String']>;
+  regionName?: Maybe<Scalars['String']['output']>;
   /** Zip */
-  zip?: Maybe<Scalars['String']>;
+  zip?: Maybe<Scalars['String']['output']>;
 };
 
 export type OrderDiscountType = {
   /** Order discount amount */
-  amount?: Maybe<MoneyType>;
-  coupon?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  promotionId?: Maybe<Scalars['String']>;
+  amount: MoneyType;
+  coupon?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  promotionId?: Maybe<Scalars['String']['output']>;
 };
 
 export type OrderLineItemType = {
-  cancelReason?: Maybe<Scalars['String']>;
-  cancelledDate?: Maybe<Scalars['DateTime']>;
-  catalogId: Scalars['String'];
-  categoryId?: Maybe<Scalars['String']>;
-  comment?: Maybe<Scalars['String']>;
-  currency?: Maybe<CurrencyType>;
-  discountAmount?: Maybe<MoneyType>;
-  discountAmountWithTax?: Maybe<MoneyType>;
-  discountTotal?: Maybe<MoneyType>;
-  discountTotalWithTax?: Maybe<MoneyType>;
-  discounts: Array<Maybe<OrderDiscountType>>;
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  catalogId: Scalars['String']['output'];
+  categoryId?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  currency: CurrencyType;
+  discountAmount: MoneyType;
+  discountAmountWithTax: MoneyType;
+  discountTotal: MoneyType;
+  discountTotalWithTax: MoneyType;
+  discounts: Array<OrderDiscountType>;
   /** Customer order Line item dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  extendedPrice?: Maybe<MoneyType>;
-  extendedPriceWithTax?: Maybe<MoneyType>;
-  fulfillmentCenterId?: Maybe<Scalars['String']>;
-  fulfillmentCenterName?: Maybe<Scalars['String']>;
-  fulfillmentLocationCode?: Maybe<Scalars['String']>;
-  height?: Maybe<Scalars['Decimal']>;
-  id: Scalars['String'];
-  imageUrl?: Maybe<Scalars['String']>;
-  isCancelled: Scalars['Boolean'];
-  isGift?: Maybe<Scalars['Boolean']>;
-  length?: Maybe<Scalars['Decimal']>;
-  measureUnit?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  objectType: Scalars['String'];
-  outerId?: Maybe<Scalars['String']>;
-  placedPrice?: Maybe<MoneyType>;
-  placedPriceWithTax?: Maybe<MoneyType>;
-  price?: Maybe<MoneyType>;
-  priceId?: Maybe<Scalars['String']>;
-  priceWithTax?: Maybe<MoneyType>;
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  extendedPrice: MoneyType;
+  extendedPriceWithTax: MoneyType;
+  fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+  fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+  fulfillmentLocationCode?: Maybe<Scalars['String']['output']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
+  id: Scalars['String']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  isCancelled: Scalars['Boolean']['output'];
+  isGift?: Maybe<Scalars['Boolean']['output']>;
+  length?: Maybe<Scalars['Decimal']['output']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  outerId?: Maybe<Scalars['String']['output']>;
+  placedPrice: MoneyType;
+  placedPriceWithTax: MoneyType;
+  price: MoneyType;
+  priceId?: Maybe<Scalars['String']['output']>;
+  priceWithTax: MoneyType;
   product?: Maybe<Product>;
-  productId: Scalars['String'];
-  productOuterId?: Maybe<Scalars['String']>;
-  productType?: Maybe<Scalars['String']>;
-  quantity: Scalars['Int'];
-  reserveQuantity: Scalars['Int'];
-  shippingMethodCode?: Maybe<Scalars['String']>;
-  sku: Scalars['String'];
-  status?: Maybe<Scalars['String']>;
-  taxDetails: Array<Maybe<OrderTaxDetailType>>;
-  taxPercentRate: Scalars['Decimal'];
-  taxTotal?: Maybe<MoneyType>;
-  taxType?: Maybe<Scalars['String']>;
+  productId: Scalars['String']['output'];
+  productOuterId?: Maybe<Scalars['String']['output']>;
+  productType?: Maybe<Scalars['String']['output']>;
+  quantity: Scalars['Int']['output'];
+  reserveQuantity: Scalars['Int']['output'];
+  shippingMethodCode?: Maybe<Scalars['String']['output']>;
+  sku: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
+  taxDetails: Array<OrderTaxDetailType>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
   vendor?: Maybe<CommonVendor>;
-  weight?: Maybe<Scalars['Decimal']>;
-  weightUnit?: Maybe<Scalars['String']>;
-  width?: Maybe<Scalars['Decimal']>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
 };
 
 
 export type OrderLineItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type OrderPaymentMethodType = {
-  code: Scalars['String'];
-  currency?: Maybe<CurrencyType>;
-  description?: Maybe<Scalars['String']>;
-  discountAmount?: Maybe<MoneyType>;
-  discountAmountWithTax?: Maybe<MoneyType>;
-  isActive: Scalars['Boolean'];
-  isAvailableForPartial: Scalars['Boolean'];
-  logoUrl?: Maybe<Scalars['String']>;
-  paymentMethodGroupType?: Maybe<Scalars['Int']>;
-  paymentMethodType?: Maybe<Scalars['Int']>;
-  price?: Maybe<MoneyType>;
-  priceWithTax?: Maybe<MoneyType>;
-  priority: Scalars['Int'];
-  storeId: Scalars['String'];
-  taxDetails?: Maybe<Array<Maybe<OrderTaxDetailType>>>;
-  taxPercentRate: Scalars['Decimal'];
-  taxTotal?: Maybe<MoneyType>;
-  taxType?: Maybe<Scalars['String']>;
-  total?: Maybe<MoneyType>;
-  totalWithTax?: Maybe<MoneyType>;
-  typeName: Scalars['String'];
+  code: Scalars['String']['output'];
+  currency: CurrencyType;
+  description?: Maybe<Scalars['String']['output']>;
+  discountAmount: MoneyType;
+  discountAmountWithTax: MoneyType;
+  isActive: Scalars['Boolean']['output'];
+  isAvailableForPartial: Scalars['Boolean']['output'];
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  paymentMethodGroupType: Scalars['Int']['output'];
+  paymentMethodType: Scalars['Int']['output'];
+  price: MoneyType;
+  priceWithTax: MoneyType;
+  priority: Scalars['Int']['output'];
+  storeId?: Maybe<Scalars['String']['output']>;
+  taxDetails?: Maybe<Array<OrderTaxDetailType>>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
+  total: MoneyType;
+  totalWithTax: MoneyType;
+  typeName: Scalars['String']['output'];
 };
 
 export type OrderShipmentItemType = {
-  barCode?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  barCode?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
   lineItem?: Maybe<OrderLineItemType>;
-  lineItemId: Scalars['String'];
-  outerId?: Maybe<Scalars['String']>;
-  quantity: Scalars['Int'];
-  status?: Maybe<Scalars['String']>;
+  lineItemId?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  quantity: Scalars['Int']['output'];
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 export type OrderShipmentPackageType = {
-  barCode?: Maybe<Scalars['String']>;
-  height?: Maybe<Scalars['Decimal']>;
-  id: Scalars['String'];
-  items: Array<Maybe<OrderShipmentItemType>>;
-  length?: Maybe<Scalars['Decimal']>;
-  measureUnit: Scalars['String'];
-  packageType?: Maybe<Scalars['String']>;
-  weight?: Maybe<Scalars['Decimal']>;
-  weightUnit: Scalars['String'];
-  width?: Maybe<Scalars['Decimal']>;
+  barCode?: Maybe<Scalars['String']['output']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
+  id: Scalars['String']['output'];
+  items: Array<OrderShipmentItemType>;
+  length?: Maybe<Scalars['Decimal']['output']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
+  packageType?: Maybe<Scalars['String']['output']>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
 };
 
 export type OrderShipmentType = {
-  cancelReason?: Maybe<Scalars['String']>;
-  cancelledDate?: Maybe<Scalars['DateTime']>;
-  comment?: Maybe<Scalars['String']>;
-  currency?: Maybe<CurrencyType>;
-  customerOrderId?: Maybe<Scalars['String']>;
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  currency: CurrencyType;
+  customerOrderId?: Maybe<Scalars['String']['output']>;
   deliveryAddress?: Maybe<OrderAddressType>;
-  deliveryDate?: Maybe<Scalars['DateTime']>;
-  discountAmount?: Maybe<MoneyType>;
-  discountAmountWithTax?: Maybe<MoneyType>;
-  discounts: Array<Maybe<OrderDiscountType>>;
+  deliveryDate?: Maybe<Scalars['DateTime']['output']>;
+  discountAmount: MoneyType;
+  discountAmountWithTax: MoneyType;
+  discounts: Array<OrderDiscountType>;
   /** Customer order Shipment dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  employeeId?: Maybe<Scalars['String']>;
-  employeeName?: Maybe<Scalars['String']>;
-  fulfillmentCenterId?: Maybe<Scalars['String']>;
-  fulfillmentCenterName?: Maybe<Scalars['String']>;
-  height?: Maybe<Scalars['Decimal']>;
-  id: Scalars['String'];
-  inPayments: Array<Maybe<PaymentInType>>;
-  isApproved: Scalars['Boolean'];
-  isCancelled: Scalars['Boolean'];
-  items: Array<Maybe<OrderShipmentItemType>>;
-  length?: Maybe<Scalars['Decimal']>;
-  measureUnit?: Maybe<Scalars['String']>;
-  number: Scalars['String'];
-  objectType: Scalars['String'];
-  operationType: Scalars['String'];
-  organizationId?: Maybe<Scalars['String']>;
-  organizationName?: Maybe<Scalars['String']>;
-  outerId?: Maybe<Scalars['String']>;
-  packages: Array<Maybe<OrderShipmentPackageType>>;
-  parentOperationId?: Maybe<Scalars['String']>;
-  price?: Maybe<MoneyType>;
-  priceWithTax?: Maybe<MoneyType>;
-  shipmentMethodCode?: Maybe<Scalars['String']>;
-  shipmentMethodOption?: Maybe<Scalars['String']>;
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  employeeId?: Maybe<Scalars['String']['output']>;
+  employeeName?: Maybe<Scalars['String']['output']>;
+  fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
+  fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
+  id: Scalars['String']['output'];
+  inPayments: Array<PaymentInType>;
+  isApproved: Scalars['Boolean']['output'];
+  isCancelled: Scalars['Boolean']['output'];
+  items: Array<OrderShipmentItemType>;
+  length?: Maybe<Scalars['Decimal']['output']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
+  number: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  operationType: Scalars['String']['output'];
+  organizationId?: Maybe<Scalars['String']['output']>;
+  organizationName?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  packages: Array<OrderShipmentPackageType>;
+  parentOperationId?: Maybe<Scalars['String']['output']>;
+  price: MoneyType;
+  priceWithTax: MoneyType;
+  shipmentMethodCode?: Maybe<Scalars['String']['output']>;
+  shipmentMethodOption?: Maybe<Scalars['String']['output']>;
   shippingMethod?: Maybe<OrderShippingMethodType>;
-  status?: Maybe<Scalars['String']>;
-  taxDetails: Array<Maybe<OrderTaxDetailType>>;
-  taxPercentRate: Scalars['Decimal'];
-  taxTotal?: Maybe<MoneyType>;
-  taxType?: Maybe<Scalars['String']>;
-  total?: Maybe<MoneyType>;
-  totalWithTax?: Maybe<MoneyType>;
-  trackingNumber?: Maybe<Scalars['String']>;
-  trackingUrl?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']['output']>;
+  taxDetails: Array<OrderTaxDetailType>;
+  taxPercentRate: Scalars['Decimal']['output'];
+  taxTotal: MoneyType;
+  taxType?: Maybe<Scalars['String']['output']>;
+  total: MoneyType;
+  totalWithTax: MoneyType;
+  trackingNumber?: Maybe<Scalars['String']['output']>;
+  trackingUrl?: Maybe<Scalars['String']['output']>;
   vendor?: Maybe<CommonVendor>;
-  weight?: Maybe<Scalars['Decimal']>;
-  weightUnit?: Maybe<Scalars['String']>;
-  width?: Maybe<Scalars['Decimal']>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
 };
 
 
 export type OrderShipmentTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type OrderShippingMethodType = {
-  code: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  isActive: Scalars['Boolean'];
-  logoUrl?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  priority: Scalars['Int'];
-  storeId: Scalars['String'];
-  taxType?: Maybe<Scalars['String']>;
-  typeName: Scalars['String'];
+  code: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  isActive: Scalars['Boolean']['output'];
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  priority: Scalars['Int']['output'];
+  storeId?: Maybe<Scalars['String']['output']>;
+  taxType?: Maybe<Scalars['String']['output']>;
+  typeName?: Maybe<Scalars['String']['output']>;
 };
 
 export type OrderTaxDetailType = {
-  amount?: Maybe<MoneyType>;
-  name: Scalars['String'];
-  rate?: Maybe<MoneyType>;
+  amount: MoneyType;
+  name: Scalars['String']['output'];
+  rate: MoneyType;
 };
 
 /** Organization info */
 export type Organization = {
   addresses?: Maybe<MemberAddressConnection>;
   /** Business category */
-  businessCategory?: Maybe<Scalars['String']>;
+  businessCategory?: Maybe<Scalars['String']['output']>;
   contacts?: Maybe<ContactConnection>;
   /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
   /** Default shipping address */
   defaultShippingAddress?: Maybe<MemberAddressType>;
   /** Description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
   /** Emails */
-  emails: Array<Maybe<Scalars['String']>>;
-  groups: Array<Maybe<Scalars['String']>>;
-  id: Scalars['String'];
+  emails: Array<Maybe<Scalars['String']['output']>>;
+  groups: Array<Maybe<Scalars['String']['output']>>;
+  id: Scalars['String']['output'];
   /** Member type */
-  memberType: Scalars['String'];
+  memberType: Scalars['String']['output'];
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Outer ID */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Owner id */
-  ownerId?: Maybe<Scalars['String']>;
+  ownerId?: Maybe<Scalars['String']['output']>;
   /** Parent id */
-  parentId?: Maybe<Scalars['String']>;
+  parentId?: Maybe<Scalars['String']['output']>;
   /** Phones */
-  phones: Array<Maybe<Scalars['String']>>;
+  phones: Array<Maybe<Scalars['String']['output']>>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
-  seoObjectType: Scalars['String'];
+  seoObjectType: Scalars['String']['output'];
   /** Status */
-  status?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 
 /** Organization info */
 export type OrganizationAddressesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Organization info */
 export type OrganizationContactsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  searchPhrase?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  searchPhrase?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Organization info */
 export type OrganizationDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Organization info */
 export type OrganizationSeoInfoArgs = {
-  cultureName: Scalars['String'];
-  storeId: Scalars['String'];
+  cultureName: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 /** A connection from an object to a list of objects of type `Organization`. */
@@ -3397,23 +3404,23 @@ export type OrganizationConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Organization`. */
 export type OrganizationEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<Organization>;
 };
 
 export type OutlineItemType = {
-  id: Scalars['String'];
-  name?: Maybe<Scalars['String']>;
+  id: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
   /** SEO info */
   seoInfos?: Maybe<Array<Maybe<SeoInfo>>>;
-  seoObjectType?: Maybe<Scalars['String']>;
+  seoObjectType?: Maybe<Scalars['String']['output']>;
 };
 
 export type OutlineType = {
@@ -3430,13 +3437,13 @@ export type PageConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Page`. */
 export type PageEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<PageType>;
 };
@@ -3444,20 +3451,20 @@ export type PageEdge = {
 /** Information about pagination in a connection. */
 export type PageInfo = {
   /** When paginating forwards, the cursor to continue. */
-  endCursor?: Maybe<Scalars['String']>;
+  endCursor?: Maybe<Scalars['String']['output']>;
   /** When paginating forwards, are there more items? */
-  hasNextPage: Scalars['Boolean'];
+  hasNextPage: Scalars['Boolean']['output'];
   /** When paginating backwards, are there more items? */
-  hasPreviousPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean']['output'];
   /** When paginating backwards, the cursor to continue. */
-  startCursor?: Maybe<Scalars['String']>;
+  startCursor?: Maybe<Scalars['String']['output']>;
 };
 
 export type PageType = {
   /** Page title */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Page relative url */
-  relativeUrl?: Maybe<Scalars['String']>;
+  relativeUrl?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `PaymentIn`. */
@@ -3469,167 +3476,167 @@ export type PaymentInConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `PaymentIn`. */
 export type PaymentInEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<PaymentInType>;
 };
 
 export type PaymentInType = {
-  authorizedDate?: Maybe<Scalars['DateTime']>;
+  authorizedDate?: Maybe<Scalars['DateTime']['output']>;
   billingAddress?: Maybe<OrderAddressType>;
-  cancelReason?: Maybe<Scalars['String']>;
-  cancelledDate?: Maybe<Scalars['DateTime']>;
-  capturedDate?: Maybe<Scalars['DateTime']>;
-  comment?: Maybe<Scalars['String']>;
-  createdBy?: Maybe<Scalars['String']>;
-  createdDate: Scalars['DateTime'];
-  currency?: Maybe<CurrencyType>;
-  customerId: Scalars['String'];
-  customerName?: Maybe<Scalars['String']>;
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  capturedDate?: Maybe<Scalars['DateTime']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
+  createdDate: Scalars['DateTime']['output'];
+  currency: CurrencyType;
+  customerId: Scalars['String']['output'];
+  customerName?: Maybe<Scalars['String']['output']>;
   /** Customer order Payment dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  gatewayCode?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  incomingDate?: Maybe<Scalars['DateTime']>;
-  isApproved: Scalars['Boolean'];
-  isCancelled: Scalars['Boolean'];
-  modifiedBy?: Maybe<Scalars['String']>;
-  modifiedDate?: Maybe<Scalars['DateTime']>;
-  number: Scalars['String'];
-  objectType: Scalars['String'];
-  operationType: Scalars['String'];
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  gatewayCode?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  incomingDate?: Maybe<Scalars['DateTime']['output']>;
+  isApproved: Scalars['Boolean']['output'];
+  isCancelled: Scalars['Boolean']['output'];
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  number: Scalars['String']['output'];
+  objectType: Scalars['String']['output'];
+  operationType: Scalars['String']['output'];
   /** Associated Order */
   order: CustomerOrderType;
-  orderId?: Maybe<Scalars['String']>;
-  organizationId?: Maybe<Scalars['String']>;
-  organizationName?: Maybe<Scalars['String']>;
-  outerId?: Maybe<Scalars['String']>;
-  parentOperationId?: Maybe<Scalars['String']>;
+  orderId?: Maybe<Scalars['String']['output']>;
+  organizationId?: Maybe<Scalars['String']['output']>;
+  organizationName?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  parentOperationId?: Maybe<Scalars['String']['output']>;
   paymentMethod?: Maybe<OrderPaymentMethodType>;
-  price?: Maybe<MoneyType>;
-  purpose?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
-  sum?: Maybe<MoneyType>;
-  tax?: Maybe<MoneyType>;
-  transactions?: Maybe<Array<Maybe<PaymentTransactionType>>>;
+  price: MoneyType;
+  purpose?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  sum: MoneyType;
+  tax: MoneyType;
+  transactions: Array<PaymentTransactionType>;
   vendor?: Maybe<CommonVendor>;
-  voidedDate?: Maybe<Scalars['DateTime']>;
+  voidedDate?: Maybe<Scalars['DateTime']['output']>;
 };
 
 
 export type PaymentInTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PaymentMethodType = {
   /** Value of payment gateway code */
-  code?: Maybe<Scalars['String']>;
+  code: Scalars['String']['output'];
   /** Currency */
-  currency?: Maybe<CurrencyType>;
+  currency: CurrencyType;
   /** Payment method description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Discount amount */
-  discountAmount?: Maybe<MoneyType>;
+  discountAmount: MoneyType;
   /** Discount amount with tax */
-  discountAmountWithTax?: Maybe<MoneyType>;
+  discountAmountWithTax: MoneyType;
   /** Is payment method available for partial payments */
-  isAvailableForPartial?: Maybe<Scalars['Boolean']>;
+  isAvailableForPartial: Scalars['Boolean']['output'];
   /** Value of payment method logo absolute URL */
-  logoUrl?: Maybe<Scalars['String']>;
+  logoUrl?: Maybe<Scalars['String']['output']>;
   /** Value of payment method name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Value of payment group type */
-  paymentMethodGroupType?: Maybe<Scalars['String']>;
+  paymentMethodGroupType: Scalars['String']['output'];
   /** Value of payment method type */
-  paymentMethodType?: Maybe<Scalars['String']>;
+  paymentMethodType: Scalars['String']['output'];
   /** Price */
-  price?: Maybe<MoneyType>;
+  price: MoneyType;
   /** Price with tax */
-  priceWithTax?: Maybe<MoneyType>;
+  priceWithTax: MoneyType;
   /** Value of payment method priority */
-  priority?: Maybe<Scalars['Int']>;
+  priority: Scalars['Int']['output'];
   /** Tax details */
-  taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
+  taxDetails?: Maybe<Array<TaxDetailType>>;
   /** Tax percent rate */
-  taxPercentRate?: Maybe<Scalars['Decimal']>;
+  taxPercentRate: Scalars['Decimal']['output'];
   /** Tax total */
-  taxTotal?: Maybe<MoneyType>;
+  taxTotal: MoneyType;
   /** Tax type */
-  taxType?: Maybe<Scalars['String']>;
+  taxType?: Maybe<Scalars['String']['output']>;
   /** Total */
-  total?: Maybe<MoneyType>;
+  total: MoneyType;
   /** Total with tax */
-  totalWithTax?: Maybe<MoneyType>;
+  totalWithTax: MoneyType;
 };
 
 export type PaymentTransactionType = {
-  amount?: Maybe<MoneyType>;
-  gatewayIpAddress: Scalars['String'];
-  id: Scalars['String'];
-  isProcessed: Scalars['Boolean'];
-  note: Scalars['String'];
-  processAttemptCount: Scalars['Int'];
-  processError?: Maybe<Scalars['String']>;
-  processedDate?: Maybe<Scalars['DateTime']>;
-  requestData: Scalars['String'];
-  responseCode: Scalars['String'];
-  responseData: Scalars['String'];
-  status: Scalars['String'];
-  type: Scalars['String'];
+  amount: MoneyType;
+  gatewayIpAddress?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  isProcessed: Scalars['Boolean']['output'];
+  note?: Maybe<Scalars['String']['output']>;
+  processAttemptCount: Scalars['Int']['output'];
+  processError?: Maybe<Scalars['String']['output']>;
+  processedDate?: Maybe<Scalars['DateTime']['output']>;
+  requestData?: Maybe<Scalars['String']['output']>;
+  responseCode?: Maybe<Scalars['String']['output']>;
+  responseData?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type PaymentType = {
   /** Amount */
-  amount?: Maybe<MoneyType>;
+  amount: MoneyType;
   /** Billing address */
   billingAddress?: Maybe<CartAddressType>;
   /** Text comment */
-  comment?: Maybe<Scalars['String']>;
+  comment?: Maybe<Scalars['String']['output']>;
   /** Currency */
-  currency?: Maybe<CurrencyType>;
+  currency: CurrencyType;
   /** Discount amount */
-  discountAmount?: Maybe<MoneyType>;
+  discountAmount: MoneyType;
   /** Discount amount with tax */
-  discountAmountWithTax?: Maybe<MoneyType>;
+  discountAmountWithTax: MoneyType;
   /** Discounts */
-  discounts?: Maybe<Array<Maybe<DiscountType>>>;
+  discounts: Array<Maybe<DiscountType>>;
   /** Cart payment dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  dynamicProperties: Array<DynamicPropertyValueType>;
   /** Payment Id */
-  id?: Maybe<Scalars['String']>;
+  id: Scalars['String']['output'];
   /** Value of payment outer id */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Value of payment gateway code */
-  paymentGatewayCode?: Maybe<Scalars['String']>;
+  paymentGatewayCode?: Maybe<Scalars['String']['output']>;
   /** Price */
-  price?: Maybe<MoneyType>;
+  price: MoneyType;
   /** Price with tax */
-  priceWithTax?: Maybe<MoneyType>;
-  purpose?: Maybe<Scalars['String']>;
+  priceWithTax: MoneyType;
+  purpose?: Maybe<Scalars['String']['output']>;
   /** Tax details */
-  taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
+  taxDetails: Array<TaxDetailType>;
   /** Tax percent rate */
-  taxPercentRate?: Maybe<Scalars['Decimal']>;
+  taxPercentRate: Scalars['Decimal']['output'];
   /** Tax total */
-  taxTotal?: Maybe<MoneyType>;
+  taxTotal: MoneyType;
   /** Tax type */
-  taxType?: Maybe<Scalars['String']>;
+  taxType?: Maybe<Scalars['String']['output']>;
   /** Total */
-  total?: Maybe<MoneyType>;
+  total: MoneyType;
   /** Total with tax */
-  totalWithTax?: Maybe<MoneyType>;
+  totalWithTax: MoneyType;
   vendor?: Maybe<CommonVendor>;
 };
 
 
 export type PaymentTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PriceType = {
@@ -3638,52 +3645,52 @@ export type PriceType = {
   /** Actual price with tax */
   actualWithTax?: Maybe<MoneyType>;
   /** Currency */
-  currency?: Maybe<Scalars['String']>;
+  currency?: Maybe<Scalars['String']['output']>;
   /** Discount amount */
   discountAmount?: Maybe<MoneyType>;
   /** Discount amount with tax */
   discountAmountWithTax?: Maybe<MoneyType>;
-  discountPercent?: Maybe<Scalars['Decimal']>;
+  discountPercent?: Maybe<Scalars['Decimal']['output']>;
   /** Discounts */
   discounts?: Maybe<Array<Maybe<CatalogDiscountType>>>;
   /** End date */
-  endDate?: Maybe<Scalars['DateTime']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
   /** Price list */
   list?: Maybe<MoneyType>;
   /** Price list with tax */
   listWithTax?: Maybe<MoneyType>;
   /** The product min qty */
-  minQuantity?: Maybe<Scalars['Int']>;
+  minQuantity?: Maybe<Scalars['Int']['output']>;
   /** The product price list */
-  pricelistId?: Maybe<Scalars['String']>;
+  pricelistId?: Maybe<Scalars['String']['output']>;
   /** Sale price */
   sale?: Maybe<MoneyType>;
   /** Sale price with tax */
   saleWithTax?: Maybe<MoneyType>;
   /** Start date */
-  startDate?: Maybe<Scalars['DateTime']>;
+  startDate?: Maybe<Scalars['DateTime']['output']>;
   /** Tier prices */
   tierPrices?: Maybe<Array<Maybe<TierPriceType>>>;
   /**
    * Valid from
    * @deprecated startDate
    */
-  validFrom?: Maybe<Scalars['DateTime']>;
+  validFrom?: Maybe<Scalars['DateTime']['output']>;
   /**
    * Valid until
    * @deprecated endDate
    */
-  validUntil?: Maybe<Scalars['DateTime']>;
+  validUntil?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type ProcessPaymentRequestResultType = {
-  errorMessage?: Maybe<Scalars['String']>;
-  htmlForm?: Maybe<Scalars['String']>;
-  isSuccess: Scalars['Boolean'];
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  htmlForm?: Maybe<Scalars['String']['output']>;
+  isSuccess: Scalars['Boolean']['output'];
   /** New payment status */
-  newPaymentStatus?: Maybe<Scalars['String']>;
-  outerId?: Maybe<Scalars['String']>;
-  redirectUrl?: Maybe<Scalars['String']>;
+  newPaymentStatus?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  redirectUrl?: Maybe<Scalars['String']['output']>;
 };
 
 /** Products are the sellable goods in an e-commerce project. */
@@ -3694,39 +3701,41 @@ export type Product = {
   /** Product availability data */
   availabilityData?: Maybe<AvailabilityData>;
   /** Get brandName for product. */
-  brandName?: Maybe<Scalars['String']>;
+  brandName?: Maybe<Scalars['String']['output']>;
   /** Breadcrumbs */
   breadcrumbs?: Maybe<Array<Maybe<Breadcrumb>>>;
   /** The unique ID of the catalog */
-  catalogId?: Maybe<Scalars['String']>;
+  catalogId?: Maybe<Scalars['String']['output']>;
   category?: Maybe<Category>;
   /** The product SKU. */
-  code: Scalars['String'];
+  code: Scalars['String']['output'];
   description?: Maybe<DescriptionType>;
   descriptions?: Maybe<Array<Maybe<DescriptionType>>>;
-  hasVariations?: Maybe<Scalars['Boolean']>;
+  /** Global Trade Item Number */
+  gtin?: Maybe<Scalars['String']['output']>;
+  hasVariations?: Maybe<Scalars['Boolean']['output']>;
   /** The unique ID of the product. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Product images */
   images?: Maybe<Array<Maybe<ImageType>>>;
   /** The product main image URL. */
-  imgSrc?: Maybe<Scalars['String']>;
+  imgSrc?: Maybe<Scalars['String']['output']>;
   /** Product added at least in one wishlist */
-  inWishlist: Scalars['Boolean'];
+  inWishlist: Scalars['Boolean']['output'];
   keyProperties?: Maybe<Array<Maybe<Property>>>;
   masterVariation?: Maybe<VariationType>;
   /** Max. quantity */
-  maxQuantity?: Maybe<Scalars['Int']>;
+  maxQuantity?: Maybe<Scalars['Int']['output']>;
   /** Min. quantity */
-  minQuantity?: Maybe<Scalars['Int']>;
+  minQuantity?: Maybe<Scalars['Int']['output']>;
   /** Minimim product variation price */
   minVariationPrice?: Maybe<PriceType>;
   /** The name of the product. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** The outer identifier */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** All parent categories ids relative to the requested catalog and concatenated with \ . E.g. (1/21/344) */
-  outline?: Maybe<Scalars['String']>;
+  outline?: Maybe<Scalars['String']['output']>;
   /** Outlines */
   outlines?: Maybe<Array<Maybe<OutlineType>>>;
   /** Product price */
@@ -3734,12 +3743,12 @@ export type Product = {
   /** Product prices */
   prices?: Maybe<Array<Maybe<PriceType>>>;
   /** The type of product */
-  productType?: Maybe<Scalars['String']>;
+  productType?: Maybe<Scalars['String']['output']>;
   properties?: Maybe<Array<Maybe<Property>>>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** Request related slug for product */
-  slug?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']['output']>;
   variations?: Maybe<Array<Maybe<VariationType>>>;
   /** Product vendor */
   vendor?: Maybe<CommonVendor>;
@@ -3749,52 +3758,52 @@ export type Product = {
 
 /** Products are the sellable goods in an e-commerce project. */
 export type ProductAssociationsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  group?: InputMaybe<Scalars['String']>;
-  query?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Products are the sellable goods in an e-commerce project. */
 export type ProductDescriptionArgs = {
-  type?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Products are the sellable goods in an e-commerce project. */
 export type ProductDescriptionsArgs = {
-  type?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Products are the sellable goods in an e-commerce project. */
 export type ProductKeyPropertiesArgs = {
-  take?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
 /** Products are the sellable goods in an e-commerce project. */
 export type ProductPropertiesArgs = {
-  names?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  names?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
 /** Products are the sellable goods in an e-commerce project. */
 export type ProductVideosArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** product association. */
 export type ProductAssociation = {
-  associatedObjectId?: Maybe<Scalars['String']>;
-  associatedObjectType?: Maybe<Scalars['String']>;
-  priority?: Maybe<Scalars['Int']>;
+  associatedObjectId?: Maybe<Scalars['String']['output']>;
+  associatedObjectType?: Maybe<Scalars['String']['output']>;
+  priority?: Maybe<Scalars['Int']['output']>;
   product?: Maybe<Product>;
-  quantity?: Maybe<Scalars['Int']>;
-  tags?: Maybe<Array<Maybe<Scalars['String']>>>;
-  type?: Maybe<Scalars['String']>;
+  quantity?: Maybe<Scalars['Int']['output']>;
+  tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `ProductAssociation`. */
@@ -3806,13 +3815,13 @@ export type ProductAssociationConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `ProductAssociation`. */
 export type ProductAssociationEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<ProductAssociation>;
 };
@@ -3832,59 +3841,59 @@ export type ProductConnection = {
   /** Term facets */
   term_facets?: Maybe<Array<Maybe<TermFacet>>>;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Product`. */
 export type ProductEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<Product>;
 };
 
 export type ProductSuggestionsQueryResponseType = {
-  suggestions?: Maybe<Array<Maybe<Scalars['String']>>>;
+  suggestions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 /** Represents promotion object */
 export type Promotion = {
   /** Promotion description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** The unique ID of the promotion. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** The name of the promotion */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Promotion type */
-  type?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 /** Products attributes. */
 export type Property = {
   /** The display order of the property. */
-  displayOrder?: Maybe<Scalars['Int']>;
+  displayOrder?: Maybe<Scalars['Int']['output']>;
   /** Is property hidden. */
-  hidden: Scalars['Boolean'];
+  hidden: Scalars['Boolean']['output'];
   /** The unique ID of the product. */
-  id?: Maybe<Scalars['String']>;
-  label?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
+  label?: Maybe<Scalars['String']['output']>;
   /** Is property has multiple values. */
-  multivalue: Scalars['Boolean'];
+  multivalue: Scalars['Boolean']['output'];
   /** The name of the property. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   propertyDictItems?: Maybe<PropertyDictionaryItemConnection>;
-  type?: Maybe<Scalars['String']>;
-  value?: Maybe<Scalars['PropertyValue']>;
-  valueId?: Maybe<Scalars['String']>;
+  type?: Maybe<Scalars['String']['output']>;
+  value?: Maybe<Scalars['PropertyValue']['output']>;
+  valueId?: Maybe<Scalars['String']['output']>;
   /** ValueType of the property. */
-  valueType?: Maybe<Scalars['String']>;
+  valueType?: Maybe<Scalars['String']['output']>;
 };
 
 
 /** Products attributes. */
 export type PropertyPropertyDictItemsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** A connection from an object to a list of objects of type `Property`. */
@@ -3896,17 +3905,17 @@ export type PropertyConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** Represents property dictionary item */
 export type PropertyDictionaryItem = {
   /** The unique ID of the property dictionary item. */
-  id: Scalars['String'];
+  id: Scalars['String']['output'];
   /** Value order. */
-  sortOrder: Scalars['Int'];
+  sortOrder: Scalars['Int']['output'];
   /** Value alias. */
-  value?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `PropertyDictionaryItem`. */
@@ -3918,13 +3927,13 @@ export type PropertyDictionaryItemConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `PropertyDictionaryItem`. */
 export type PropertyDictionaryItemEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<PropertyDictionaryItem>;
 };
@@ -3932,7 +3941,7 @@ export type PropertyDictionaryItemEdge = {
 /** An edge in a connection from an object to another object of type `Property`. */
 export type PropertyEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<Property>;
 };
@@ -3950,8 +3959,8 @@ export type Query = {
   carts?: Maybe<CartConnection>;
   categories?: Maybe<CategoryConnection>;
   category?: Maybe<Category>;
-  checkEmailUniqueness?: Maybe<Scalars['Boolean']>;
-  checkUsernameUniqueness?: Maybe<Scalars['Boolean']>;
+  checkEmailUniqueness?: Maybe<Scalars['Boolean']['output']>;
+  checkUsernameUniqueness?: Maybe<Scalars['Boolean']['output']>;
   childCategories?: Maybe<ChildCategoriesQueryResponseType>;
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
@@ -3982,7 +3991,7 @@ export type Query = {
   quote?: Maybe<QuoteType>;
   quotes?: Maybe<QuoteConnection>;
   regions?: Maybe<Array<Maybe<CountryRegionType>>>;
-  requestPasswordReset?: Maybe<Scalars['Boolean']>;
+  requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
   slugInfo?: Maybe<SlugInfoResponseType>;
   user?: Maybe<UserType>;
@@ -3994,396 +4003,396 @@ export type Query = {
 
 
 export type QueryCartArgs = {
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode: Scalars['String'];
-  storeId: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryCartsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryCategoriesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  categoryIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  facet?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  fuzzy?: InputMaybe<Scalars['Boolean']>;
-  fuzzyLevel?: InputMaybe<Scalars['Int']>;
-  query?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  categoryIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  fuzzy?: InputMaybe<Scalars['Boolean']['input']>;
+  fuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryCategoryArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  storeId: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryCheckEmailUniquenessArgs = {
-  email: Scalars['String'];
+  email: Scalars['String']['input'];
 };
 
 
 export type QueryCheckUsernameUniquenessArgs = {
-  username: Scalars['String'];
+  username: Scalars['String']['input'];
 };
 
 
 export type QueryChildCategoriesArgs = {
-  categoryId?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  maxLevel?: InputMaybe<Scalars['Int']>;
-  onlyActive?: InputMaybe<Scalars['Boolean']>;
-  productFilter?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  maxLevel?: InputMaybe<Scalars['Int']['input']>;
+  onlyActive?: InputMaybe<Scalars['Boolean']['input']>;
+  productFilter?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryContactArgs = {
-  id: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryContactsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  searchPhrase?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  searchPhrase?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryContractArgs = {
-  id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryCustomerReviewsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  entityId: Scalars['String'];
-  entityType: Scalars['String'];
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  keyword?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
+  after?: InputMaybe<Scalars['String']['input']>;
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
 };
 
 
 export type QueryDynamicPropertiesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  objectType?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  objectType?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryDynamicPropertyArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  idOrName: Scalars['String'];
-  objectType?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  idOrName: Scalars['String']['input'];
+  objectType?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryEvaluateDynamicContentArgs = {
-  categoryId?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  placeName?: InputMaybe<Scalars['String']>;
-  productId?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  tags?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  toDate?: InputMaybe<Scalars['DateTime']>;
-  userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  placeName?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  toDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
 export type QueryFulfillmentCenterArgs = {
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
 };
 
 
 export type QueryFulfillmentCentersArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  fulfillmentCenterIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  query?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  fulfillmentCenterIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryMenuArgs = {
-  cultureName: Scalars['String'];
-  name: Scalars['String'];
-  storeId: Scalars['String'];
+  cultureName: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 
 export type QueryMenusArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  keyword?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
 };
 
 
 export type QueryOrderArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  number?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  number?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryOrdersArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryOrganizationArgs = {
-  id: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryOrganizationContractsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  endDate?: InputMaybe<Scalars['DateTime']>;
-  first?: InputMaybe<Scalars['Int']>;
-  organizationId: Scalars['String'];
-  startDate?: InputMaybe<Scalars['DateTime']>;
-  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  storeId?: InputMaybe<Scalars['String']>;
-  vendorId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  organizationId: Scalars['String']['input'];
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  vendorId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryOrganizationOrdersArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  organizationId?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  organizationId?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryOrganizationsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  searchPhrase?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  searchPhrase?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryPagesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  keyword: Scalars['String'];
-  storeId: Scalars['String'];
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 
 export type QueryPaymentsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryProductArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  storeId: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryProductSuggestionsArgs = {
-  query?: InputMaybe<Scalars['String']>;
-  size?: InputMaybe<Scalars['Int']>;
-  storeId: Scalars['String'];
+  query?: InputMaybe<Scalars['String']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  storeId: Scalars['String']['input'];
 };
 
 
 export type QueryProductsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  facet?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  fuzzy?: InputMaybe<Scalars['Boolean']>;
-  fuzzyLevel?: InputMaybe<Scalars['Int']>;
-  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  query?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  fuzzy?: InputMaybe<Scalars['Boolean']['input']>;
+  fuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
+  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryPropertiesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  storeId: Scalars['String'];
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  storeId: Scalars['String']['input'];
   types?: InputMaybe<Array<InputMaybe<PropertyType>>>;
 };
 
 
 export type QueryPropertyArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
 };
 
 
 export type QueryQuoteArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryQuotesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  keyword?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryRegionsArgs = {
-  countryId: Scalars['String'];
+  countryId: Scalars['String']['input'];
 };
 
 
 export type QueryRequestPasswordResetArgs = {
-  loginOrEmail: Scalars['String'];
-  urlSuffix?: InputMaybe<Scalars['String']>;
+  loginOrEmail: Scalars['String']['input'];
+  urlSuffix?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryRoleArgs = {
-  roleName: Scalars['String'];
+  roleName: Scalars['String']['input'];
 };
 
 
 export type QuerySlugInfoArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  slug?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  slug?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryUserArgs = {
-  email?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  loginProvider?: InputMaybe<Scalars['String']>;
-  providerKey?: InputMaybe<Scalars['String']>;
-  userName?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  loginProvider?: InputMaybe<Scalars['String']['input']>;
+  providerKey?: InputMaybe<Scalars['String']['input']>;
+  userName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryValidatePasswordArgs = {
-  password: Scalars['String'];
+  password: Scalars['String']['input'];
 };
 
 
 export type QueryVendorArgs = {
-  id: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
+  id: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryWishlistArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
-  listId: Scalars['String'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  listId: Scalars['String']['input'];
 };
 
 
 export type QueryWishlistsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QuoteAddressType = {
-  addressType?: Maybe<Scalars['Int']>;
-  city: Scalars['String'];
-  countryCode?: Maybe<Scalars['String']>;
-  countryName: Scalars['String'];
-  email?: Maybe<Scalars['String']>;
-  firstName: Scalars['String'];
+  addressType?: Maybe<Scalars['Int']['output']>;
+  city: Scalars['String']['output'];
+  countryCode?: Maybe<Scalars['String']['output']>;
+  countryName: Scalars['String']['output'];
+  email?: Maybe<Scalars['String']['output']>;
+  firstName: Scalars['String']['output'];
   /** ID */
-  id?: Maybe<Scalars['String']>;
-  key?: Maybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  line1?: Maybe<Scalars['String']>;
-  line2?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
+  key?: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
+  line1?: Maybe<Scalars['String']['output']>;
+  line2?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Company name */
-  organization?: Maybe<Scalars['String']>;
-  outerId?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  postalCode?: Maybe<Scalars['String']>;
-  regionId?: Maybe<Scalars['String']>;
-  regionName?: Maybe<Scalars['String']>;
+  organization?: Maybe<Scalars['String']['output']>;
+  outerId?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
+  postalCode?: Maybe<Scalars['String']['output']>;
+  regionId?: Maybe<Scalars['String']['output']>;
+  regionName?: Maybe<Scalars['String']['output']>;
 };
 
 export type QuoteAttachmentType = {
-  mimeType?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  size: Scalars['Long'];
-  url: Scalars['String'];
+  mimeType?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  size: Scalars['Long']['output'];
+  url: Scalars['String']['output'];
 };
 
 /** A connection from an object to a list of objects of type `Quote`. */
@@ -4395,196 +4404,196 @@ export type QuoteConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Quote`. */
 export type QuoteEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<QuoteType>;
 };
 
 export type QuoteItemType = {
-  catalogId: Scalars['String'];
-  categoryId?: Maybe<Scalars['String']>;
-  comment?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  imageUrl?: Maybe<Scalars['String']>;
-  listPrice?: Maybe<MoneyType>;
-  name: Scalars['String'];
+  catalogId: Scalars['String']['output'];
+  categoryId?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  listPrice: MoneyType;
+  name: Scalars['String']['output'];
   product?: Maybe<Product>;
-  productId: Scalars['String'];
-  proposalPrices?: Maybe<Array<Maybe<QuoteTierPriceType>>>;
-  salePrice?: Maybe<MoneyType>;
+  productId: Scalars['String']['output'];
+  proposalPrices: Array<QuoteTierPriceType>;
+  salePrice: MoneyType;
   selectedTierPrice?: Maybe<QuoteTierPriceType>;
-  sku: Scalars['String'];
-  taxType?: Maybe<Scalars['String']>;
+  sku: Scalars['String']['output'];
+  taxType?: Maybe<Scalars['String']['output']>;
 };
 
 export type QuoteShipmentMethodType = {
-  currency?: Maybe<CurrencyType>;
-  logoUrl?: Maybe<Scalars['String']>;
-  optionName?: Maybe<Scalars['String']>;
-  price?: Maybe<MoneyType>;
-  shipmentMethodCode?: Maybe<Scalars['String']>;
-  typeName?: Maybe<Scalars['String']>;
+  currency: CurrencyType;
+  logoUrl?: Maybe<Scalars['String']['output']>;
+  optionName?: Maybe<Scalars['String']['output']>;
+  price: MoneyType;
+  shipmentMethodCode: Scalars['String']['output'];
+  typeName?: Maybe<Scalars['String']['output']>;
 };
 
 export type QuoteTaxDetailType = {
-  amount?: Maybe<MoneyType>;
-  name?: Maybe<Scalars['String']>;
-  rate?: Maybe<MoneyType>;
+  amount: MoneyType;
+  name?: Maybe<Scalars['String']['output']>;
+  rate: MoneyType;
 };
 
 export type QuoteTierPriceType = {
-  price?: Maybe<MoneyType>;
-  quantity: Scalars['Long'];
+  price: MoneyType;
+  quantity: Scalars['Long']['output'];
 };
 
 export type QuoteTotalsType = {
-  adjustmentQuoteExlTax?: Maybe<MoneyType>;
-  discountTotal?: Maybe<MoneyType>;
-  grandTotalExlTax?: Maybe<MoneyType>;
-  grandTotalInclTax?: Maybe<MoneyType>;
-  originalSubTotalExlTax?: Maybe<MoneyType>;
-  shippingTotal?: Maybe<MoneyType>;
-  subTotalExlTax?: Maybe<MoneyType>;
-  taxTotal?: Maybe<MoneyType>;
+  adjustmentQuoteExlTax: MoneyType;
+  discountTotal: MoneyType;
+  grandTotalExlTax: MoneyType;
+  grandTotalInclTax: MoneyType;
+  originalSubTotalExlTax: MoneyType;
+  shippingTotal: MoneyType;
+  subTotalExlTax: MoneyType;
+  taxTotal: MoneyType;
 };
 
 export type QuoteType = {
-  addresses?: Maybe<Array<Maybe<QuoteAddressType>>>;
-  attachments?: Maybe<Array<Maybe<QuoteAttachmentType>>>;
-  cancelReason?: Maybe<Scalars['String']>;
-  cancelledDate?: Maybe<Scalars['DateTime']>;
-  channelId?: Maybe<Scalars['String']>;
-  comment?: Maybe<Scalars['String']>;
-  coupon?: Maybe<Scalars['String']>;
-  createdBy?: Maybe<Scalars['String']>;
-  createdDate: Scalars['DateTime'];
-  currency?: Maybe<CurrencyType>;
-  customerId?: Maybe<Scalars['String']>;
-  customerName?: Maybe<Scalars['String']>;
+  addresses: Array<QuoteAddressType>;
+  attachments: Array<QuoteAttachmentType>;
+  cancelReason?: Maybe<Scalars['String']['output']>;
+  cancelledDate?: Maybe<Scalars['DateTime']['output']>;
+  channelId?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  coupon?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
+  createdDate: Scalars['DateTime']['output'];
+  currency: CurrencyType;
+  customerId?: Maybe<Scalars['String']['output']>;
+  customerName?: Maybe<Scalars['String']['output']>;
   /** Quote dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  employeeId?: Maybe<Scalars['String']>;
-  employeeName?: Maybe<Scalars['String']>;
-  enableNotification: Scalars['Boolean'];
-  expirationDate?: Maybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  innerComment?: Maybe<Scalars['String']>;
-  isAnonymous: Scalars['Boolean'];
-  isCancelled: Scalars['Boolean'];
-  isLocked: Scalars['Boolean'];
-  items?: Maybe<Array<Maybe<QuoteItemType>>>;
-  languageCode?: Maybe<Scalars['String']>;
-  manualRelDiscountAmount?: Maybe<MoneyType>;
-  manualShippingTotal?: Maybe<MoneyType>;
-  manualSubTotal?: Maybe<MoneyType>;
-  modifiedBy?: Maybe<Scalars['String']>;
-  modifiedDate?: Maybe<Scalars['DateTime']>;
-  number: Scalars['String'];
-  objectType?: Maybe<Scalars['String']>;
-  organizationId?: Maybe<Scalars['String']>;
-  organizationName?: Maybe<Scalars['String']>;
-  reminderDate?: Maybe<Scalars['DateTime']>;
+  dynamicProperties: Array<DynamicPropertyValueType>;
+  employeeId?: Maybe<Scalars['String']['output']>;
+  employeeName?: Maybe<Scalars['String']['output']>;
+  enableNotification: Scalars['Boolean']['output'];
+  expirationDate?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['String']['output'];
+  innerComment?: Maybe<Scalars['String']['output']>;
+  isAnonymous: Scalars['Boolean']['output'];
+  isCancelled: Scalars['Boolean']['output'];
+  isLocked: Scalars['Boolean']['output'];
+  items: Array<QuoteItemType>;
+  languageCode?: Maybe<Scalars['String']['output']>;
+  manualRelDiscountAmount: MoneyType;
+  manualShippingTotal: MoneyType;
+  manualSubTotal: MoneyType;
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  number: Scalars['String']['output'];
+  objectType?: Maybe<Scalars['String']['output']>;
+  organizationId?: Maybe<Scalars['String']['output']>;
+  organizationName?: Maybe<Scalars['String']['output']>;
+  reminderDate?: Maybe<Scalars['DateTime']['output']>;
   shipmentMethod?: Maybe<QuoteShipmentMethodType>;
-  status?: Maybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  tag?: Maybe<Scalars['String']>;
-  taxDetails?: Maybe<Array<Maybe<QuoteTaxDetailType>>>;
-  totals?: Maybe<QuoteTotalsType>;
+  status?: Maybe<Scalars['String']['output']>;
+  storeId: Scalars['String']['output'];
+  tag?: Maybe<Scalars['String']['output']>;
+  taxDetails: Array<QuoteTaxDetailType>;
+  totals: QuoteTotalsType;
 };
 
 
 export type QuoteTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RangeFacet = Facet & {
   /** The three types of facets. Terms, Range, Filter */
   facetType?: Maybe<FacetTypes>;
   /** Localized name of the facet. */
-  label: Scalars['String'];
+  label: Scalars['String']['output'];
   /** The key/name  of the facet. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Ranges */
   ranges?: Maybe<Array<Maybe<FacetRangeType>>>;
 };
 
 export type Rating = {
   /** Total count of customer reviews */
-  reviewCount: Scalars['Int'];
+  reviewCount: Scalars['Int']['output'];
   /** Average rating */
-  value: Scalars['Decimal'];
+  value: Scalars['Decimal']['output'];
 };
 
 export type RefreshCartType = {
-  cartId?: InputMaybe<Scalars['String']>;
-  cartName?: InputMaybe<Scalars['String']>;
-  cartType?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type RegisterAccountType = {
-  createdBy?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  id: Scalars['String'];
-  status?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
+  createdBy?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  status?: Maybe<Scalars['String']['output']>;
+  username: Scalars['String']['output'];
 };
 
 export type RegisterContactType = {
-  about?: Maybe<Scalars['String']>;
+  about?: Maybe<Scalars['String']['output']>;
   address?: Maybe<MemberAddressType>;
-  birthdate?: Maybe<Scalars['Date']>;
-  createdBy?: Maybe<Scalars['String']>;
+  birthdate?: Maybe<Scalars['Date']['output']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
   /** Contact's dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  firstName: Scalars['String'];
-  id: Scalars['String'];
-  lastName: Scalars['String'];
-  middleName?: Maybe<Scalars['String']>;
-  phoneNumber?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
+  firstName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+  middleName?: Maybe<Scalars['String']['output']>;
+  phoneNumber?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type RegisterContactTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RegisterOrganizationType = {
   address?: Maybe<MemberAddressType>;
-  createdBy?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Contact's dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  ownerId?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['String']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  ownerId?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 
 export type RegisterOrganizationTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RegistrationErrorType = {
-  code?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  parameter?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  parameter?: Maybe<Scalars['String']['output']>;
 };
 
 export type RemoveQuoteItemCommandType = {
-  lineItemId: Scalars['String'];
-  quoteId: Scalars['String'];
+  lineItemId: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type RequestRegistrationType = {
@@ -4599,123 +4608,123 @@ export type RequestRegistrationType = {
 };
 
 export type RoleType = {
-  description?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  normalizedName: Scalars['String'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  normalizedName: Scalars['String']['output'];
   /** Permissions in Role */
-  permissions: Array<Maybe<Scalars['String']>>;
+  permissions: Array<Maybe<Scalars['String']['output']>>;
 };
 
 export type SeoInfo = {
-  id?: Maybe<Scalars['String']>;
-  imageAltDescription?: Maybe<Scalars['String']>;
-  isActive?: Maybe<Scalars['Boolean']>;
-  languageCode?: Maybe<Scalars['String']>;
-  metaDescription?: Maybe<Scalars['String']>;
-  metaKeywords?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  objectId?: Maybe<Scalars['String']>;
-  objectType?: Maybe<Scalars['String']>;
-  pageTitle?: Maybe<Scalars['String']>;
-  semanticUrl?: Maybe<Scalars['String']>;
-  storeId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
+  imageAltDescription?: Maybe<Scalars['String']['output']>;
+  isActive?: Maybe<Scalars['Boolean']['output']>;
+  languageCode?: Maybe<Scalars['String']['output']>;
+  metaDescription?: Maybe<Scalars['String']['output']>;
+  metaKeywords?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  objectId?: Maybe<Scalars['String']['output']>;
+  objectType?: Maybe<Scalars['String']['output']>;
+  pageTitle?: Maybe<Scalars['String']['output']>;
+  semanticUrl?: Maybe<Scalars['String']['output']>;
+  storeId?: Maybe<Scalars['String']['output']>;
 };
 
 export type ShipmentType = {
   /** Text comment */
-  comment?: Maybe<Scalars['String']>;
+  comment?: Maybe<Scalars['String']['output']>;
   /** Currency */
-  currency?: Maybe<CurrencyType>;
+  currency: CurrencyType;
   /** Delivery address */
   deliveryAddress?: Maybe<CartAddressType>;
   /** Discount amount */
-  discountAmount?: Maybe<MoneyType>;
+  discountAmount: MoneyType;
   /** Discount amount with tax */
-  discountAmountWithTax?: Maybe<MoneyType>;
+  discountAmountWithTax: MoneyType;
   /** Discounts */
-  discounts?: Maybe<Array<Maybe<DiscountType>>>;
+  discounts: Array<DiscountType>;
   /** Cart shipment dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  dynamicProperties: Array<DynamicPropertyValueType>;
   /** Fulfillment center id */
-  fulfillmentCenterId?: Maybe<Scalars['String']>;
+  fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
   /** Value of height */
-  height?: Maybe<Scalars['Decimal']>;
+  height?: Maybe<Scalars['Decimal']['output']>;
   /** Shipment Id */
-  id?: Maybe<Scalars['String']>;
+  id: Scalars['String']['output'];
   /** Items */
-  items?: Maybe<Array<Maybe<CartShipmentItemType>>>;
+  items: Array<CartShipmentItemType>;
   /** Value of length */
-  length?: Maybe<Scalars['Decimal']>;
+  length?: Maybe<Scalars['Decimal']['output']>;
   /** Value of measurement units */
-  measureUnit?: Maybe<Scalars['String']>;
+  measureUnit?: Maybe<Scalars['String']['output']>;
   /** Price */
-  price?: Maybe<MoneyType>;
+  price: MoneyType;
   /** Price with tax */
-  priceWithTax?: Maybe<MoneyType>;
+  priceWithTax: MoneyType;
   /** Shipment method code */
-  shipmentMethodCode?: Maybe<Scalars['String']>;
+  shipmentMethodCode?: Maybe<Scalars['String']['output']>;
   /** Shipment method option */
-  shipmentMethodOption?: Maybe<Scalars['String']>;
+  shipmentMethodOption?: Maybe<Scalars['String']['output']>;
   shippingMethod?: Maybe<ShippingMethodType>;
   /** Tax details */
-  taxDetails?: Maybe<Array<Maybe<TaxDetailType>>>;
+  taxDetails: Array<TaxDetailType>;
   /** Tax percent rate */
-  taxPercentRate?: Maybe<Scalars['Decimal']>;
+  taxPercentRate: Scalars['Decimal']['output'];
   /** Tax total */
-  taxTotal?: Maybe<MoneyType>;
+  taxTotal: MoneyType;
   /** Tax type */
-  taxType?: Maybe<Scalars['String']>;
+  taxType?: Maybe<Scalars['String']['output']>;
   /** Total */
-  total?: Maybe<MoneyType>;
+  total: MoneyType;
   /** Total with tax */
-  totalWithTax?: Maybe<MoneyType>;
+  totalWithTax: MoneyType;
   vendor?: Maybe<CommonVendor>;
   /** Value of volumetric weight */
-  volumetricWeight?: Maybe<Scalars['Decimal']>;
+  volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
   /** Value of weight */
-  weight?: Maybe<Scalars['Decimal']>;
+  weight?: Maybe<Scalars['Decimal']['output']>;
   /** Value of weight unit */
-  weightUnit?: Maybe<Scalars['String']>;
+  weightUnit?: Maybe<Scalars['String']['output']>;
   /** Value of width */
-  width?: Maybe<Scalars['Decimal']>;
+  width?: Maybe<Scalars['Decimal']['output']>;
 };
 
 
 export type ShipmentTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ShippingMethodType = {
   /** Value of shipping gateway code */
-  code?: Maybe<Scalars['String']>;
+  code: Scalars['String']['output'];
   /** Currency */
-  currency?: Maybe<CurrencyType>;
+  currency: CurrencyType;
   /** Shipping method description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Discount amount */
-  discountAmount?: Maybe<MoneyType>;
+  discountAmount: MoneyType;
   /** Discount amount with tax */
-  discountAmountWithTax?: Maybe<MoneyType>;
-  id?: Maybe<Scalars['String']>;
+  discountAmountWithTax: MoneyType;
+  id: Scalars['String']['output'];
   /** Value of shipping method logo absolute URL */
-  logoUrl?: Maybe<Scalars['String']>;
+  logoUrl?: Maybe<Scalars['String']['output']>;
   /** Shipping method name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Value of shipping method option description */
-  optionDescription?: Maybe<Scalars['String']>;
+  optionDescription?: Maybe<Scalars['String']['output']>;
   /** Value of shipping method option name */
-  optionName?: Maybe<Scalars['String']>;
+  optionName?: Maybe<Scalars['String']['output']>;
   /** Price */
-  price?: Maybe<MoneyType>;
+  price: MoneyType;
   /** Price with tax */
-  priceWithTax?: Maybe<MoneyType>;
+  priceWithTax: MoneyType;
   /** Value of shipping method priority */
-  priority?: Maybe<Scalars['Int']>;
+  priority: Scalars['Int']['output'];
   /** Total */
-  total?: Maybe<MoneyType>;
+  total: MoneyType;
   /** Total with tax */
-  totalWithTax?: Maybe<MoneyType>;
+  totalWithTax: MoneyType;
 };
 
 export type SlugInfoResponseType = {
@@ -4724,28 +4733,28 @@ export type SlugInfoResponseType = {
 };
 
 export type SubmitQuoteCommandType = {
-  comment: Scalars['String'];
-  quoteId: Scalars['String'];
+  comment: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type TaxDetailType = {
   /** Amount */
-  amount?: Maybe<MoneyType>;
+  amount: MoneyType;
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Price */
-  price?: Maybe<MoneyType>;
+  price: MoneyType;
   /** Rate */
-  rate?: Maybe<MoneyType>;
+  rate: MoneyType;
 };
 
 export type TermFacet = Facet & {
   /** Three facet types: Terms, Range, and Filter */
   facetType?: Maybe<FacetTypes>;
   /** Localized name of the facet. */
-  label: Scalars['String'];
+  label: Scalars['String']['output'];
   /** The key/name  of the facet. */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Terms */
   terms?: Maybe<Array<Maybe<FacetTermType>>>;
 };
@@ -4756,62 +4765,62 @@ export type TierPriceType = {
   /** Price with tax */
   priceWithTax?: Maybe<MoneyType>;
   /** Quantity */
-  quantity?: Maybe<Scalars['Long']>;
+  quantity?: Maybe<Scalars['Long']['output']>;
 };
 
 export type UpdateQuoteAddressesCommandType = {
   addresses: Array<InputMaybe<InputQuoteAddressType>>;
-  quoteId: Scalars['String'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type UserType = {
-  accessFailedCount: Scalars['Int'];
+  accessFailedCount: Scalars['Int']['output'];
   /** The associated contact info */
   contact?: Maybe<ContactType>;
-  createdBy?: Maybe<Scalars['String']>;
-  createdDate?: Maybe<Scalars['DateTime']>;
-  email?: Maybe<Scalars['String']>;
-  emailConfirmed: Scalars['Boolean'];
+  createdBy?: Maybe<Scalars['String']['output']>;
+  createdDate?: Maybe<Scalars['DateTime']['output']>;
+  email?: Maybe<Scalars['String']['output']>;
+  emailConfirmed: Scalars['Boolean']['output'];
   /** Make this user change their password when they sign in next time */
-  forcePasswordChange?: Maybe<Scalars['Boolean']>;
-  id: Scalars['String'];
-  isAdministrator: Scalars['Boolean'];
+  forcePasswordChange?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['String']['output'];
+  isAdministrator: Scalars['Boolean']['output'];
   /** Account locked state */
-  lockedState?: Maybe<Scalars['Boolean']>;
-  lockoutEnabled: Scalars['Boolean'];
-  lockoutEnd?: Maybe<Scalars['DateTime']>;
-  memberId?: Maybe<Scalars['String']>;
-  modifiedBy?: Maybe<Scalars['String']>;
-  modifiedDate?: Maybe<Scalars['DateTime']>;
-  normalizedEmail?: Maybe<Scalars['String']>;
-  normalizedUserName?: Maybe<Scalars['String']>;
+  lockedState?: Maybe<Scalars['Boolean']['output']>;
+  lockoutEnabled: Scalars['Boolean']['output'];
+  lockoutEnd?: Maybe<Scalars['DateTime']['output']>;
+  memberId?: Maybe<Scalars['String']['output']>;
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  normalizedEmail?: Maybe<Scalars['String']['output']>;
+  normalizedUserName?: Maybe<Scalars['String']['output']>;
   operator?: Maybe<UserType>;
-  passwordExpired: Scalars['Boolean'];
+  passwordExpired: Scalars['Boolean']['output'];
   /** Password expiry in days */
-  passwordExpiryInDays?: Maybe<Scalars['Int']>;
+  passwordExpiryInDays?: Maybe<Scalars['Int']['output']>;
   /** Account permissions */
-  permissions?: Maybe<Array<Maybe<Scalars['String']>>>;
-  phoneNumber?: Maybe<Scalars['String']>;
-  phoneNumberConfirmed: Scalars['Boolean'];
-  photoUrl?: Maybe<Scalars['String']>;
+  permissions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  phoneNumber?: Maybe<Scalars['String']['output']>;
+  phoneNumberConfirmed: Scalars['Boolean']['output'];
+  photoUrl?: Maybe<Scalars['String']['output']>;
   roles?: Maybe<Array<Maybe<RoleType>>>;
-  securityStamp: Scalars['String'];
-  storeId?: Maybe<Scalars['String']>;
-  twoFactorEnabled: Scalars['Boolean'];
-  userName: Scalars['String'];
-  userType?: Maybe<Scalars['String']>;
+  securityStamp: Scalars['String']['output'];
+  storeId?: Maybe<Scalars['String']['output']>;
+  twoFactorEnabled: Scalars['Boolean']['output'];
+  userName: Scalars['String']['output'];
+  userType?: Maybe<Scalars['String']['output']>;
 };
 
 export type ValidationErrorType = {
   /** Error code */
-  errorCode?: Maybe<Scalars['String']>;
+  errorCode?: Maybe<Scalars['String']['output']>;
   /** Error msg */
-  errorMessage?: Maybe<Scalars['String']>;
+  errorMessage?: Maybe<Scalars['String']['output']>;
   errorParameters?: Maybe<Array<Maybe<ErrorParameterType>>>;
   /** Object id */
-  objectId?: Maybe<Scalars['String']>;
+  objectId?: Maybe<Scalars['String']['output']>;
   /** Object type */
-  objectType?: Maybe<Scalars['String']>;
+  objectType?: Maybe<Scalars['String']['output']>;
 };
 
 export type VariationType = {
@@ -4820,17 +4829,17 @@ export type VariationType = {
   /** Availability data */
   availabilityData?: Maybe<AvailabilityData>;
   /** SKU of variation. */
-  code?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']['output']>;
   /** Id of variation. */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Product images */
   images?: Maybe<Array<Maybe<ImageType>>>;
   /** Max. quantity. */
-  maxQuantity?: Maybe<Scalars['Int']>;
+  maxQuantity?: Maybe<Scalars['Int']['output']>;
   /** Min. quantity. */
-  minQuantity?: Maybe<Scalars['Int']>;
+  minQuantity?: Maybe<Scalars['Int']['output']>;
   /** Name of variation. */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Outlines */
   outlines?: Maybe<Array<Maybe<OutlineType>>>;
   /** Product price */
@@ -4838,10 +4847,10 @@ export type VariationType = {
   /** Product prices */
   prices?: Maybe<Array<Maybe<PriceType>>>;
   /** The type of product */
-  productType?: Maybe<Scalars['String']>;
+  productType?: Maybe<Scalars['String']['output']>;
   properties?: Maybe<Array<Maybe<Property>>>;
   /** Request related slug for product */
-  slug?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
   vendor?: Maybe<CommonVendor>;
 };
@@ -4849,7 +4858,7 @@ export type VariationType = {
 /** Vendor Info */
 export type Vendor = {
   /** About vendor */
-  about?: Maybe<Scalars['String']>;
+  about?: Maybe<Scalars['String']['output']>;
   addresses?: Maybe<MemberAddressConnection>;
   /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
@@ -4858,56 +4867,56 @@ export type Vendor = {
   /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
   /** Emails */
-  emails: Array<Maybe<Scalars['String']>>;
-  groups: Array<Maybe<Scalars['String']>>;
+  emails: Array<Maybe<Scalars['String']['output']>>;
+  groups: Array<Maybe<Scalars['String']['output']>>;
   /** Icon URL */
-  iconUrl?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  iconUrl?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
   /** Member type */
-  memberType: Scalars['String'];
+  memberType: Scalars['String']['output'];
   /** Name */
-  name?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
   /** Outer ID */
-  outerId?: Maybe<Scalars['String']>;
+  outerId?: Maybe<Scalars['String']['output']>;
   /** Phones */
-  phones: Array<Maybe<Scalars['String']>>;
+  phones: Array<Maybe<Scalars['String']['output']>>;
   /** Vendor rating */
   rating?: Maybe<Rating>;
   /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
   /** SEO object type */
-  seoObjectType: Scalars['String'];
+  seoObjectType: Scalars['String']['output'];
   /** Site URL */
-  siteUrl?: Maybe<Scalars['String']>;
+  siteUrl?: Maybe<Scalars['String']['output']>;
   /** Status */
-  status?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['String']['output']>;
 };
 
 
 /** Vendor Info */
 export type VendorAddressesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Vendor Info */
 export type VendorDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Vendor Info */
 export type VendorRatingArgs = {
-  storeId?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 /** Vendor Info */
 export type VendorSeoInfoArgs = {
-  cultureName: Scalars['String'];
-  storeId: Scalars['String'];
+  cultureName: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 /** A connection from an object to a list of objects of type `Video`. */
@@ -4919,40 +4928,40 @@ export type VideoConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Video`. */
 export type VideoEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<VideoType>;
 };
 
 export type VideoType = {
   /** Video URL */
-  contentUrl?: Maybe<Scalars['String']>;
+  contentUrl?: Maybe<Scalars['String']['output']>;
   /** Culture name */
-  cultureName?: Maybe<Scalars['String']>;
+  cultureName?: Maybe<Scalars['String']['output']>;
   /** Video description */
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   /** Video duration */
-  duration?: Maybe<Scalars['String']>;
+  duration?: Maybe<Scalars['String']['output']>;
   /** Embeded video URL */
-  embedUrl?: Maybe<Scalars['String']>;
+  embedUrl?: Maybe<Scalars['String']['output']>;
   /** Video name */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** ID of the object video is attached to */
-  ownerId?: Maybe<Scalars['String']>;
+  ownerId?: Maybe<Scalars['String']['output']>;
   /** Type of the object video is attached to (Product, Category) */
-  ownerType?: Maybe<Scalars['String']>;
+  ownerType?: Maybe<Scalars['String']['output']>;
   /** Sort order */
-  sortOrder: Scalars['Int'];
+  sortOrder: Scalars['Int']['output'];
   /** Video thumbnial URL */
-  thumbnailUrl?: Maybe<Scalars['String']>;
+  thumbnailUrl?: Maybe<Scalars['String']['output']>;
   /** Video upload date */
-  uploadDate?: Maybe<Scalars['DateTime']>;
+  uploadDate?: Maybe<Scalars['DateTime']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `Wishlist`. */
@@ -4964,13 +4973,13 @@ export type WishlistConnection = {
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Wishlist`. */
 export type WishlistEdge = {
   /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+  cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<WishlistType>;
 };
@@ -4979,19 +4988,19 @@ export type WishlistType = {
   /** Currency */
   currency?: Maybe<CurrencyType>;
   /** Shopping cart user ID */
-  customerId?: Maybe<Scalars['String']>;
+  customerId?: Maybe<Scalars['String']['output']>;
   /** Shopping cart user name */
-  customerName?: Maybe<Scalars['String']>;
+  customerName?: Maybe<Scalars['String']['output']>;
   /** Shopping cart ID */
-  id?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']['output']>;
   /** Items */
   items?: Maybe<Array<Maybe<LineItemType>>>;
   /** Item count */
-  itemsCount?: Maybe<Scalars['Int']>;
+  itemsCount?: Maybe<Scalars['Int']['output']>;
   /** Shopping cart name */
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   /** Shopping cart store ID */
-  storeId?: Maybe<Scalars['String']>;
+  storeId?: Maybe<Scalars['String']['output']>;
 };
 
 export type AddWishlistMutationVariables = Exact<{
@@ -5135,14 +5144,14 @@ export type UpdateWishListItemsMutationVariables = Exact<{
 export type UpdateWishListItemsMutation = { updateWishListItems?: { id?: string } };
 
 export type CheckEmailUniquenessQueryVariables = Exact<{
-  email: Scalars['String'];
+  email: Scalars['String']['input'];
 }>;
 
 
 export type CheckEmailUniquenessQuery = { checkEmailUniqueness?: boolean };
 
 export type CheckUsernameUniquenessQueryVariables = Exact<{
-  username: Scalars['String'];
+  username: Scalars['String']['input'];
 }>;
 
 
@@ -5154,47 +5163,47 @@ export type GetDefaultShippingAddressQueryVariables = Exact<{ [key: string]: nev
 export type GetDefaultShippingAddressQuery = { me?: { contact?: { defaultShippingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number } } } };
 
 export type GetMeQueryVariables = Exact<{
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
 export type GetMeQuery = { me?: { id: string, memberId?: string, userName: string, email?: string, emailConfirmed: boolean, photoUrl?: string, phoneNumber?: string, permissions?: Array<string>, isAdministrator: boolean, passwordExpired: boolean, passwordExpiryInDays?: number, forcePasswordChange?: boolean, lockedState?: boolean, contact?: { firstName: string, lastName: string, fullName: string, organizationId?: string, organizations?: { items?: Array<{ id: string, name?: string }> } }, operator?: { userName: string, contact?: { fullName: string } } } };
 
 export type GetMyAddressesQueryVariables = Exact<{
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
 export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number }> } } } };
 
 export type GetWishlistQueryVariables = Exact<{
-  listId: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
+  listId: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetWishlistQuery = { wishlist?: { name: string, id?: string, items?: Array<{ id: string, name?: string, imageUrl?: string, sku?: string, productId?: string, quantity?: number, productType?: string, salePrice?: { amount: any, formattedAmount: string }, listPrice?: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images?: Array<{ url?: string }>, vendor?: { id: string, name: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } } }> } };
+export type GetWishlistQuery = { wishlist?: { name: string, id?: string, items?: Array<{ id: string, name: string, imageUrl?: string, sku: string, productId: string, quantity: number, productType?: string, salePrice: { amount: any, formattedAmount: string }, listPrice: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images?: Array<{ url?: string }>, vendor?: { id: string, name: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } } }> } };
 
 export type GetWishlistsQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id?: string, name: string, items?: Array<{ id: string, productId?: string }> }> } };
+export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id?: string, name: string, items?: Array<{ id: string, productId: string }> }> } };
 
 export type RequestPasswordResetQueryVariables = Exact<{
-  loginOrEmail: Scalars['String'];
-  urlSuffix: Scalars['String'];
+  loginOrEmail: Scalars['String']['input'];
+  urlSuffix: Scalars['String']['input'];
 }>;
 
 
@@ -5205,108 +5214,108 @@ export type AddBulkItemsCartMutationVariables = Exact<{
 }>;
 
 
-export type AddBulkItemsCartMutation = { addBulkItemsCart?: { cart?: { id?: string, itemsQuantity?: number, items?: Array<{ id: string, sku?: string, quantity?: number, productId?: string, extendedPrice?: { amount: any } }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> }, errors?: Array<{ objectId?: string, errorCode?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type AddBulkItemsCartMutation = { addBulkItemsCart?: { cart?: { id: string, itemsQuantity: number, items: Array<{ id: string, sku: string, quantity: number, productId: string, extendedPrice: { amount: any } }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> }, errors?: Array<{ objectId?: string, errorCode?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type AddCouponMutationVariables = Exact<{
   command: InputAddCouponType;
 }>;
 
 
-export type AddCouponMutation = { addCoupon?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type AddCouponMutation = { addCoupon?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type AddGiftItemsMutationVariables = Exact<{
   command: InputAddGiftItemsType;
 }>;
 
 
-export type AddGiftItemsMutation = { addGiftItems?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type AddGiftItemsMutation = { addGiftItems?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type AddItemMutationVariables = Exact<{
   command: InputAddItemType;
 }>;
 
 
-export type AddItemMutation = { addItem?: { id?: string, itemsQuantity?: number, items?: Array<{ id: string, sku?: string, quantity?: number, productId?: string, extendedPrice?: { amount: any } }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type AddItemMutation = { addItem?: { id: string, itemsQuantity: number, items: Array<{ id: string, sku: string, quantity: number, productId: string, extendedPrice: { amount: any } }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type AddItemsCartMutationVariables = Exact<{
   command: InputAddItemsType;
 }>;
 
 
-export type AddItemsCartMutation = { addItemsCart?: { id?: string, itemsQuantity?: number, items?: Array<{ id: string, sku?: string, quantity?: number, productId?: string, extendedPrice?: { amount: any } }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type AddItemsCartMutation = { addItemsCart?: { id: string, itemsQuantity: number, items: Array<{ id: string, sku: string, quantity: number, productId: string, extendedPrice: { amount: any } }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type AddOrUpdateCartPaymentMutationVariables = Exact<{
   command: InputAddOrUpdateCartPaymentType;
 }>;
 
 
-export type AddOrUpdateCartPaymentMutation = { addOrUpdateCartPayment?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type AddOrUpdateCartPaymentMutation = { addOrUpdateCartPayment?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type AddOrUpdateCartShipmentMutationVariables = Exact<{
   command: InputAddOrUpdateCartShipmentType;
 }>;
 
 
-export type AddOrUpdateCartShipmentMutation = { addOrUpdateCartShipment?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type AddOrUpdateCartShipmentMutation = { addOrUpdateCartShipment?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type ChangeCartCommentMutationVariables = Exact<{
   command: InputChangeCommentType;
 }>;
 
 
-export type ChangeCartCommentMutation = { changeComment?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type ChangeCartCommentMutation = { changeComment?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type ChangeFullCartItemQuantityMutationVariables = Exact<{
   command: InputChangeCartItemQuantityType;
 }>;
 
 
-export type ChangeFullCartItemQuantityMutation = { changeCartItemQuantity?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type ChangeFullCartItemQuantityMutation = { changeCartItemQuantity?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type ChangeShortCartItemQuantityMutationVariables = Exact<{
   command: InputChangeCartItemQuantityType;
 }>;
 
 
-export type ChangeShortCartItemQuantityMutation = { changeCartItemQuantity?: { id?: string, itemsQuantity?: number, items?: Array<{ id: string, sku?: string, quantity?: number, productId?: string, extendedPrice?: { amount: any } }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type ChangeShortCartItemQuantityMutation = { changeCartItemQuantity?: { id: string, itemsQuantity: number, items: Array<{ id: string, sku: string, quantity: number, productId: string, extendedPrice: { amount: any } }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type ChangePurchaseOrderNumberMutationVariables = Exact<{
   command?: InputMaybe<InputChangePurchaseOrderNumber>;
 }>;
 
 
-export type ChangePurchaseOrderNumberMutation = { changePurchaseOrderNumber?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type ChangePurchaseOrderNumberMutation = { changePurchaseOrderNumber?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type ChangeSelectedCartItemsMutationVariables = Exact<{
   selectCartItemsCommand: InputChangeCartItemsSelectedType;
   unselectCartItemsCommand: InputChangeCartItemsSelectedType;
-  withSelected: Scalars['Boolean'];
-  withUnselected: Scalars['Boolean'];
+  withSelected: Scalars['Boolean']['input'];
+  withUnselected: Scalars['Boolean']['input'];
 }>;
 
 
-export type ChangeSelectedCartItemsMutation = { selectCartItems?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> }, unSelectCartItems?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type ChangeSelectedCartItemsMutation = { selectCartItems?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> }, unSelectCartItems?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type ClearCartMutationVariables = Exact<{
   command: InputClearCartType;
 }>;
 
 
-export type ClearCartMutation = { clearCart?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type ClearCartMutation = { clearCart?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type MergeCartMutationVariables = Exact<{
   command: InputMergeCartType;
 }>;
 
 
-export type MergeCartMutation = { mergeCart?: { id?: string } };
+export type MergeCartMutation = { mergeCart?: { id: string } };
 
 export type RejectGiftItemsMutationVariables = Exact<{
   command: InputRejectGiftItemsType;
 }>;
 
 
-export type RejectGiftItemsMutation = { rejectGiftItems?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type RejectGiftItemsMutation = { rejectGiftItems?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type RemoveCartMutationVariables = Exact<{
   command: InputRemoveCartType;
@@ -5320,28 +5329,28 @@ export type RemoveCartItemMutationVariables = Exact<{
 }>;
 
 
-export type RemoveCartItemMutation = { removeCartItem?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type RemoveCartItemMutation = { removeCartItem?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type RemoveCartItemsMutationVariables = Exact<{
   command: InputRemoveItemsType;
 }>;
 
 
-export type RemoveCartItemsMutation = { removeCartItems?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type RemoveCartItemsMutation = { removeCartItems?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type RemoveCouponMutationVariables = Exact<{
   command: InputRemoveCouponType;
 }>;
 
 
-export type RemoveCouponMutation = { removeCoupon?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type RemoveCouponMutation = { removeCoupon?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type RemoveShipmentMutationVariables = Exact<{
   command: InputRemoveShipmentType;
 }>;
 
 
-export type RemoveShipmentMutation = { removeShipment?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type RemoveShipmentMutation = { removeShipment?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type ValidateCouponMutationVariables = Exact<{
   command: InputValidateCouponType;
@@ -5351,93 +5360,93 @@ export type ValidateCouponMutationVariables = Exact<{
 export type ValidateCouponMutation = { validateCoupon?: boolean };
 
 export type GetFullCartQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetFullCartQuery = { cart?: { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type GetFullCartQuery = { cart?: { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type GetShortCartQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetShortCartQuery = { cart?: { id?: string, itemsQuantity?: number, items?: Array<{ id: string, sku?: string, quantity?: number, productId?: string, extendedPrice?: { amount: any } }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
+export type GetShortCartQuery = { cart?: { id: string, itemsQuantity: number, items: Array<{ id: string, sku: string, quantity: number, productId: string, extendedPrice: { amount: any } }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> } };
 
 export type GetProductQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
+  storeId: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
 }>;
 
 
 export type GetProductQuery = { product?: { name: string, id: string, code: string, slug?: string, outline?: string, hasVariations?: boolean, minQuantity?: number, maxQuantity?: number, imgSrc?: string, inWishlist: boolean, productType?: string, images?: Array<{ url?: string }>, assets?: Array<{ name?: string, url?: string }>, breadcrumbs?: Array<{ itemId: string, typeName?: string, title: string, seoPath?: string }>, description?: { content?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, variations?: Array<{ id?: string, name?: string, minQuantity?: number, maxQuantity?: number, code?: string, productType?: string, images?: Array<{ url?: string }>, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } }>, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { discountPercent?: any, actual?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } }, seoInfo?: { pageTitle?: string, metaKeywords?: string, metaDescription?: string } } };
 
 export type GetSearchResultsQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  query: Scalars['String'];
-  filter?: InputMaybe<Scalars['String']>;
-  withProducts: Scalars['Boolean'];
-  withCategories: Scalars['Boolean'];
-  withPages: Scalars['Boolean'];
-  withSuggestions: Scalars['Boolean'];
-  productsAfter?: InputMaybe<Scalars['String']>;
-  productsFirst?: InputMaybe<Scalars['Int']>;
-  productsSort?: InputMaybe<Scalars['String']>;
-  productsFuzzy?: InputMaybe<Scalars['Boolean']>;
-  productsFuzzyLevel?: InputMaybe<Scalars['Int']>;
-  categoriesAfter?: InputMaybe<Scalars['String']>;
-  categoriesFirst?: InputMaybe<Scalars['Int']>;
-  categoriesSort?: InputMaybe<Scalars['String']>;
-  categoriesFuzzy?: InputMaybe<Scalars['Boolean']>;
-  categoriesFuzzyLevel?: InputMaybe<Scalars['Int']>;
-  pagesFirst?: InputMaybe<Scalars['Int']>;
-  pagesAfter?: InputMaybe<Scalars['String']>;
-  suggestionsSize?: InputMaybe<Scalars['Int']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  query: Scalars['String']['input'];
+  filter?: InputMaybe<Scalars['String']['input']>;
+  withProducts: Scalars['Boolean']['input'];
+  withCategories: Scalars['Boolean']['input'];
+  withPages: Scalars['Boolean']['input'];
+  withSuggestions: Scalars['Boolean']['input'];
+  productsAfter?: InputMaybe<Scalars['String']['input']>;
+  productsFirst?: InputMaybe<Scalars['Int']['input']>;
+  productsSort?: InputMaybe<Scalars['String']['input']>;
+  productsFuzzy?: InputMaybe<Scalars['Boolean']['input']>;
+  productsFuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
+  categoriesAfter?: InputMaybe<Scalars['String']['input']>;
+  categoriesFirst?: InputMaybe<Scalars['Int']['input']>;
+  categoriesSort?: InputMaybe<Scalars['String']['input']>;
+  categoriesFuzzy?: InputMaybe<Scalars['Boolean']['input']>;
+  categoriesFuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
+  pagesFirst?: InputMaybe<Scalars['Int']['input']>;
+  pagesAfter?: InputMaybe<Scalars['String']['input']>;
+  suggestionsSize?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
 export type GetSearchResultsQuery = { productSuggestions?: { suggestions?: Array<string> }, pages?: { totalCount?: number, items?: Array<{ name?: string, relativeUrl?: string }> }, categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, seoInfo?: { semanticUrl?: string } }> }, products?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string, slug?: string, imgSrc?: string, hasVariations?: boolean, vendor?: { id: string, name: string }, availabilityData?: { availableQuantity: any }, price?: { actual?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, discountAmount?: { amount: any, formattedAmount: string } }, minVariationPrice?: { actual?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string } } }> } };
 
 export type SearchProductsQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  userId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<Scalars['String']>;
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
-  query?: InputMaybe<Scalars['String']>;
-  fuzzy?: InputMaybe<Scalars['Boolean']>;
-  fuzzyLevel?: InputMaybe<Scalars['Int']>;
-  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>>;
-  withFacets: Scalars['Boolean'];
-  withImages: Scalars['Boolean'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  fuzzy?: InputMaybe<Scalars['Boolean']['input']>;
+  fuzzyLevel?: InputMaybe<Scalars['Int']['input']>;
+  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
+  withFacets: Scalars['Boolean']['input'];
+  withImages: Scalars['Boolean']['input'];
 }>;
 
 
-export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, inWishlist: boolean, productType?: string, hasVariations?: boolean, slug?: string, outline?: string, imgSrc?: string, vendor?: { id: string, name: string }, variations?: Array<{ id?: string, price?: { list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } } }>, images?: Array<{ url?: string }>, description?: { content?: string, id?: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { discountPercent?: any, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }, minVariationPrice?: { actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }>, term_facets?: Array<{ name: string, label: string, terms?: Array<{ label: string, term?: string, count?: any, isSelected?: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges?: Array<{ label?: string, count?: any, from?: any, to?: any, includeFrom: boolean, includeTo: boolean, isSelected?: boolean }> }> } };
+export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, inWishlist: boolean, productType?: string, hasVariations?: boolean, slug?: string, outline?: string, imgSrc?: string, vendor?: { id: string, name: string }, variations?: Array<{ id?: string, price?: { list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } } }>, images?: Array<{ url?: string }>, description?: { content?: string, id?: string }, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any }, price?: { discountPercent?: any, actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountAmount?: { amount: any, formattedAmount: string }, sale?: { amount: any, formattedAmount: string }, list?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }, minVariationPrice?: { actual?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }>, term_facets?: Array<{ name: string, label: string, terms?: Array<{ label: string, term?: string, count?: any, isSelected?: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges?: Array<{ label?: string, count?: any, from?: any, to?: any, includeFrom: boolean, includeTo: boolean, isSelected?: boolean }> }> } };
 
 export type SearchRelatedProductsQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  currencyCode: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  group?: InputMaybe<Scalars['String']>;
-  query?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  group?: InputMaybe<Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -5449,18 +5458,18 @@ export type GetCountriesQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetCountriesQuery = { countries?: Array<{ id: string, name: string, regions?: Array<{ id: string, name: string }> }> };
 
 export type GetMenuQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  cultureName: Scalars['String'];
-  name: Scalars['String'];
+  storeId: Scalars['String']['input'];
+  cultureName: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 }>;
 
 
 export type GetMenuQuery = { menu?: { items?: Array<{ title?: string, url?: string, childItems?: Array<{ title?: string, url?: string }> }> } };
 
 export type GetMenusQueryVariables = Exact<{
-  storeId: Scalars['String'];
-  cultureName?: InputMaybe<Scalars['String']>;
-  keyword?: InputMaybe<Scalars['String']>;
+  storeId: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -5472,46 +5481,46 @@ export type CartAddressFieldsFragment = { id?: string, name?: string, organizati
 
 export type CurrencyFieldsFragment = { code: string, symbol?: string };
 
-export type FullCartFieldsFragment = { id?: string, itemsQuantity?: number, purchaseOrderNumber?: string, comment?: string, availableGifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods?: Array<{ id?: string, code?: string, logoUrl?: string, optionName?: string, optionDescription?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, availablePaymentMethods?: Array<{ code?: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType?: string }>, items?: Array<{ id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts?: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons?: Array<{ code?: string, isAppliedSuccessfully?: boolean }>, discounts?: Array<{ description?: string, amount?: any, coupon?: string }>, shipments?: Array<{ id?: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, payments?: Array<{ id?: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency?: { code: string, symbol?: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, warnings?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> };
+export type FullCartFieldsFragment = { id: string, itemsQuantity: number, purchaseOrderNumber?: string, comment?: string, availableGifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string }>, availableShippingMethods: Array<{ id: string, code: string, logoUrl?: string, optionName?: string, optionDescription?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, availablePaymentMethods: Array<{ code: string, name?: string, description?: string, logoUrl?: string, paymentMethodGroupType: string }>, items: Array<{ id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> }>, gifts: Array<{ id: string, imageUrl?: string, name: string, lineItemId?: string, quantity: number }>, coupons: Array<{ code?: string, isAppliedSuccessfully: boolean }>, discounts: Array<{ description?: string, amount: any, coupon?: string }>, shipments: Array<{ id: string, shipmentMethodCode?: string, shipmentMethodOption?: string, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, payments: Array<{ id: string, paymentGatewayCode?: string, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, currency: { code: string, symbol?: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, warnings: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> };
 
-export type FullOrderFieldsFragment = { comment?: string, purchaseOrderNumber?: string, id: string, number: string, createdDate: any, status?: string, currency?: { code: string, symbol?: string }, shipments?: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl?: string, typeName: string }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, inPayments: Array<{ id: string, number: string, isApproved: boolean, gatewayCode?: string, paymentMethod?: { logoUrl?: string, code: string, typeName: string, paymentMethodType?: number, paymentMethodGroupType?: number }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, availablePaymentMethods?: Array<{ code: string, logoUrl?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts?: Array<{ coupon?: string, description?: string, promotionId?: string, amount?: { amount: any, formattedAmount: string, currency?: { code: string } } }>, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } };
+export type FullOrderFieldsFragment = { comment?: string, purchaseOrderNumber?: string, id: string, number: string, createdDate: any, status?: string, currency: { code: string, symbol?: string }, shipments: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl?: string, typeName?: string }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, inPayments: Array<{ id: string, number: string, isApproved: boolean, gatewayCode?: string, paymentMethod?: { logoUrl?: string, code: string, typeName: string, paymentMethodType: number, paymentMethodGroupType: number }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, availablePaymentMethods: Array<{ code: string, logoUrl?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, amount: { amount: any, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } };
 
-export type LineItemFieldsFragment = { id: string, name?: string, sku?: string, quantity?: number, inStockQuantity?: number, imageUrl?: string, selectedForCheckout?: boolean, productId?: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, salePrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> };
+export type LineItemFieldsFragment = { id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { isActive?: boolean, isAvailable?: boolean, isBuyable?: boolean, isInStock?: boolean, availableQuantity: any } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> };
 
 export type MemberAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number };
 
-export type MoneyFieldsFragment = { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } };
+export type MoneyFieldsFragment = { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } };
 
 export type OrderAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number };
 
-export type OrderLineItemFieldsFragment = { id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } };
+export type OrderLineItemFieldsFragment = { id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } };
 
 export type PropertyFieldsFragment = { name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string };
 
 export type QuoteAddressFieldsFragment = { firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string };
 
-export type QuoteLineItemFieldsFragment = { id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, selectedTierPrice?: { quantity: any, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }, product?: { id: string, slug?: string, brandName?: string, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { availableQuantity: any, isInStock?: boolean } } };
+export type QuoteLineItemFieldsFragment = { id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, selectedTierPrice?: { quantity: any, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }, product?: { id: string, slug?: string, brandName?: string, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { availableQuantity: any, isInStock?: boolean } } };
 
-export type ShortCartFieldsFragment = { id?: string, itemsQuantity?: number, items?: Array<{ id: string, sku?: string, quantity?: number, productId?: string, extendedPrice?: { amount: any } }>, validationErrors?: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> };
+export type ShortCartFieldsFragment = { id: string, itemsQuantity: number, items: Array<{ id: string, sku: string, quantity: number, productId: string, extendedPrice: { amount: any } }>, validationErrors: Array<{ errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> }> };
 
-export type ShortOrderFieldsFragment = { id: string, number: string, createdDate: any, status?: string, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts?: Array<{ coupon?: string, description?: string, promotionId?: string, amount?: { amount: any, formattedAmount: string, currency?: { code: string } } }>, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } };
+export type ShortOrderFieldsFragment = { id: string, number: string, createdDate: any, status?: string, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, amount: { amount: any, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } };
 
 export type ValidationErrorFieldsFragment = { errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> };
 
 export type GetFulfillmentCenterQueryVariables = Exact<{
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
 }>;
 
 
 export type GetFulfillmentCenterQuery = { fulfillmentCenter?: { id: string, name?: string, description?: string, shortDescription?: string, address?: { city?: string, countryCode?: string, countryName?: string, line1?: string, line2?: string, postalCode: string, zip?: string, phone?: string } } };
 
 export type GetFulfillmentCentersQueryVariables = Exact<{
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  query?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  fulfillmentCenterIds?: InputMaybe<Array<InputMaybe<Scalars['String']>> | InputMaybe<Scalars['String']>>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  fulfillmentCenterIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
 }>;
 
 
@@ -5529,37 +5538,37 @@ export type CreateOrderFromCartMutationVariables = Exact<{
 }>;
 
 
-export type CreateOrderFromCartMutation = { createOrderFromCart?: { comment?: string, purchaseOrderNumber?: string, id: string, number: string, createdDate: any, status?: string, currency?: { code: string, symbol?: string }, shipments?: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl?: string, typeName: string }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, inPayments: Array<{ id: string, number: string, isApproved: boolean, gatewayCode?: string, paymentMethod?: { logoUrl?: string, code: string, typeName: string, paymentMethodType?: number, paymentMethodGroupType?: number }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, availablePaymentMethods?: Array<{ code: string, logoUrl?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts?: Array<{ coupon?: string, description?: string, promotionId?: string, amount?: { amount: any, formattedAmount: string, currency?: { code: string } } }>, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } } };
+export type CreateOrderFromCartMutation = { createOrderFromCart?: { comment?: string, purchaseOrderNumber?: string, id: string, number: string, createdDate: any, status?: string, currency: { code: string, symbol?: string }, shipments: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl?: string, typeName?: string }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, inPayments: Array<{ id: string, number: string, isApproved: boolean, gatewayCode?: string, paymentMethod?: { logoUrl?: string, code: string, typeName: string, paymentMethodType: number, paymentMethodGroupType: number }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, availablePaymentMethods: Array<{ code: string, logoUrl?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, amount: { amount: any, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } } };
 
 export type GetFullOrderQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-  number?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  number?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetFullOrderQuery = { order?: { comment?: string, purchaseOrderNumber?: string, id: string, number: string, createdDate: any, status?: string, currency?: { code: string, symbol?: string }, shipments?: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl?: string, typeName: string }, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, inPayments: Array<{ id: string, number: string, isApproved: boolean, gatewayCode?: string, paymentMethod?: { logoUrl?: string, code: string, typeName: string, paymentMethodType?: number, paymentMethodGroupType?: number }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, availablePaymentMethods?: Array<{ code: string, logoUrl?: string, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }>, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts?: Array<{ coupon?: string, description?: string, promotionId?: string, amount?: { amount: any, formattedAmount: string, currency?: { code: string } } }>, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } } };
+export type GetFullOrderQuery = { order?: { comment?: string, purchaseOrderNumber?: string, id: string, number: string, createdDate: any, status?: string, currency: { code: string, symbol?: string }, shipments: Array<{ shipmentMethodCode?: string, shipmentMethodOption?: string, shippingMethod?: { logoUrl?: string, typeName?: string }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, deliveryAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, inPayments: Array<{ id: string, number: string, isApproved: boolean, gatewayCode?: string, paymentMethod?: { logoUrl?: string, code: string, typeName: string, paymentMethodType: number, paymentMethodGroupType: number }, billingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number } }>, availablePaymentMethods: Array<{ code: string, logoUrl?: string, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }>, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, amount: { amount: any, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } } };
 
 export type GetShortOrderQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-  number?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  number?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetShortOrderQuery = { order?: { id: string, number: string, createdDate: any, status?: string, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, placedPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts?: Array<{ coupon?: string, description?: string, promotionId?: string, amount?: { amount: any, formattedAmount: string, currency?: { code: string } } }>, discountTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, shippingTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, taxTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, subTotal?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } } };
+export type GetShortOrderQuery = { order?: { id: string, number: string, createdDate: any, status?: string, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id?: string, slug?: string }, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }> }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, amount: { amount: any, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } } };
 
 export type GetOrdersQueryVariables = Exact<{
-  filter?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
-export type GetOrdersQuery = { orders?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, status?: string, number: string, customerId: string, purchaseOrderNumber?: string, currency?: { code: string }, total?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, inPayments: Array<{ number: string }> }> } };
+export type GetOrdersQuery = { orders?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, status?: string, number: string, customerId: string, purchaseOrderNumber?: string, currency: { code: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, inPayments: Array<{ number: string }> }> } };
 
 export type ChangeOrganizationContactRoleMutationVariables = Exact<{
   command: InputChangeOrganizationContactRoleType;
@@ -5597,23 +5606,23 @@ export type UpdateOrganizationMutationVariables = Exact<{
 export type UpdateOrganizationMutation = { updateOrganization?: { id: string } };
 
 export type GetOrganizationAddressesQueryVariables = Exact<{
-  id: Scalars['String'];
-  userId?: InputMaybe<Scalars['String']>;
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
+  id: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
 export type GetOrganizationAddressesQuery = { organization?: { addresses?: { totalCount?: number, items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number }> } } };
 
 export type GetOrganizationContactsQueryVariables = Exact<{
-  id: Scalars['String'];
-  userId: Scalars['String'];
-  first?: InputMaybe<Scalars['Int']>;
-  after?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  searchPhrase?: InputMaybe<Scalars['String']>;
+  id: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  searchPhrase?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -5676,26 +5685,26 @@ export type UpdateQuoteAddressesMutationVariables = Exact<{
 export type UpdateQuoteAddressesMutation = { updateQuoteAddresses?: { id: string } };
 
 export type GetQuoteQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-  storeId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, items?: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } }, selectedTierPrice?: { quantity: any, price?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } }, product?: { id: string, slug?: string, brandName?: string, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { availableQuantity: any, isInStock?: boolean } } }>, addresses?: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals?: { grandTotalInclTax?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } } } };
+export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, selectedTierPrice?: { quantity: any, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } }, product?: { id: string, slug?: string, brandName?: string, properties?: Array<{ name: string, value?: any, type?: string, hidden: boolean, valueType?: string, label?: string }>, availabilityData?: { availableQuantity: any, isInStock?: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } } } };
 
 export type GetQuotesQueryVariables = Exact<{
-  storeId?: InputMaybe<Scalars['String']>;
-  cultureName?: InputMaybe<Scalars['String']>;
-  currencyCode?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
-  sort?: InputMaybe<Scalars['String']>;
-  keyword?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  after?: InputMaybe<Scalars['String']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetQuotesQuery = { quotes?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, customerId?: string, number: string, status?: string, totals?: { grandTotalInclTax?: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency?: { code: string, symbol?: string } } } }> } };
+export type GetQuotesQuery = { quotes?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, customerId?: string, number: string, status?: string, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } } }> } };

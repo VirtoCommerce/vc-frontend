@@ -82,11 +82,22 @@ export default defineConfig(({ mode }): UserConfig => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, "index.html"),
-          builder: path.resolve(__dirname, "builder-preview.html"),
         },
         output: {
           entryFileNames: "[name].js",
-          assetFileNames: "[name][extname]",
+          assetFileNames: (assetInfo) => {
+            // This code will move flag-icons svg files to separate directory during build.
+            if (assetInfo.name?.endsWith(".svg")) {
+              return "static/icons/flag-icons/[name].svg";
+            }
+            return "[name][extname]";
+          },
+          manualChunks: (id) => {
+            // Force app-runner to have separate chunk to temporarely eliminate caveats of liquid-based hashing
+            if (id.includes("app-runner")) {
+              return "app-runner";
+            }
+          },
         },
       },
     },

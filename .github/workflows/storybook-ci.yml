@@ -1,28 +1,24 @@
-# v1.0.0.vcst
+# v1.0.1.vcst
 name: Storybook CI
 
 on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev, demo]
+      [master, dev]
     paths-ignore:
-      - '.github/**'
-      - 'docs/**'
-      - 'build/**'
+      - '.idea'
+      - '.vscode'
       - 'README.md'
       - 'LICENSE'
-      - '**/argoDeploy.json'
   pull_request:
     branches:
-      [master, dev, demo]
+      [master, dev]
     paths-ignore:
-      - '.github/**'
-      - 'docs/**'
-      - 'build/**'
+      - '.idea'
+      - '.vscode'
       - 'README.md'
       - 'LICENSE'
-      - '**/argoDeploy.json'
 
 jobs:
   ci:
@@ -35,7 +31,6 @@ jobs:
       CLOUD_INSTANCE_BASE_URL: ${{secrets.CLOUD_INSTANCE_BASE_URL}}
       CLIENT_ID: ${{secrets.CLIENT_ID}}
       CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
-      SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
       VERSION_SUFFIX: ''
@@ -98,12 +93,6 @@ jobs:
         env:
           YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
       - name: Build
         run: |
           yarn storybook:build
@@ -114,10 +103,10 @@ jobs:
 
       - name: Packaging
         run: |
-          yarn storybook:compress ${{ github.event.repository.name }}-storybook-${{ steps.image.outputs.prefix }}-${{ env.VERSION_SUFFIX }}
+          yarn storybook:compress ${{ github.event.repository.name }}-storybook-${{ steps.image.outputs.prefix }}${{ env.VERSION_SUFFIX && '-' || '' }}${{ env.VERSION_SUFFIX }}
 
       - name: Publish to Blob
-        if: ${{ github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
         uses: VirtoCommerce/vc-github-actions/publish-blob-release@master
         with:
@@ -143,10 +132,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          push: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
+          push: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
           context: .
           file: .storybook/Dockerfile
-          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.ref == 'refs/heads/dev' && 'dev-latest' || 'latest'}}
+          tags: ${{ steps.urls.outputs.DOCKER_URL }}${{ env.DOCKER_TAG }},${{ steps.urls.outputs.DOCKER_URL }}${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' && 'dev-latest' || 'latest'}}
 
       - name: Parse Jira Keys from All Commits
         uses: VirtoCommerce/vc-github-actions/get-jira-keys@master
@@ -183,12 +172,14 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy-cloud:
-    if: ${{ (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/demo' || github.ref == 'refs/heads/master') && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch') }}
+    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:
-      parameterName: 'custom.app1.image.tag'
-      parameterValue: ${{ needs.ci.outputs.tag }}
-      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}
+      cmPath: 'storybook/image.json'
+      artifactKey: 'Tag'
+      artifactUrl: ${{ needs.ci.outputs.tag }}
+      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'qa' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit

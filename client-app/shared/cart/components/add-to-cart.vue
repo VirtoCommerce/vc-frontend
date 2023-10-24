@@ -59,10 +59,10 @@ import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { useCartValidationErrorTranslator, useGoogleAnalytics } from "@/core/composables";
+import { PRODUCT_OBJECT_TYPE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { useCart } from "../composables/useCart";
-import { CartValidationErrors } from "../enums";
 import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<IEmits>();
@@ -187,7 +187,10 @@ async function onChange() {
           : "common.messages.fail_add_product_to_cart",
         {
           reason: updatedCart.validationErrors
-            ?.filter((validationError) => validationError.errorCode != CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED)
+            ?.filter(
+              (validationError) =>
+                validationError.objectId === props.product.code && validationError.objectType === PRODUCT_OBJECT_TYPE,
+            )
             .map(getValidationErrorTranslation)
             .join(" "),
         },

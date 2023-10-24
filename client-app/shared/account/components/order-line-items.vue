@@ -32,7 +32,7 @@ import { prepareLineItems } from "@/core/utilities";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 interface IProps {
-  items?: (OrderLineItemType | LineItemType)[];
+  items?: OrderLineItemType[] | LineItemType[];
 }
 
 const props = withDefaults(defineProps<IProps>(), {

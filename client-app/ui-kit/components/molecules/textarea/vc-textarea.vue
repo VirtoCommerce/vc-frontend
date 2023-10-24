@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { useAttrsOnly, useComponentId, useListeners } from "@/core/composables";
+import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 interface IEmits {
   (event: "update:modelValue", value: string): void;
