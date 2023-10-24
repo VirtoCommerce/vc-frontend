@@ -49,7 +49,7 @@ function toggle(value: boolean) {
 }
 
 function select(code: string) {
-  if (currentCurrency.value?.code === code) {
+  if (currentCurrency.value?.code !== code) {
     saveCurrencyCodeAndReload(code);
   }
 }
