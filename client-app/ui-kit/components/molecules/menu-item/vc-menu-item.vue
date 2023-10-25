@@ -1,0 +1,207 @@
+<template>
+  <component :is="componentTag" ref="currentElement" class="vc-menu-item">
+    <component
+      :is="innerTag"
+      v-bind="attrs"
+      :disabled="disabled"
+      :title="title"
+      :class="[
+        'vc-menu-item__inner',
+        `vc-menu-item__inner--size--${size}`,
+        `vc-menu-item__inner--color--${color}`,
+        {
+          'vc-menu-item__inner--active': active,
+          'vc-menu-item__inner--disabled': disabled,
+          'vc-menu-item__inner--truncate': truncate,
+          'vc-menu-item__inner--nowrap': nowrap,
+        },
+      ]"
+      @click="enabled ? $emit('click', $event) : null"
+    >
+      <span class="vc-menu-item__content">
+        <slot />
+      </span>
+    </component>
+  </component>
+</template>
+
+<script setup lang="ts">
+import { eagerComputed } from "@vueuse/core";
+import { ref, computed, onMounted } from "vue";
+import type { RouteLocationRaw } from "vue-router";
+
+interface IEmits {
+  (event: "click", value: MouseEvent): void;
+}
+
+interface IProps {
+  color?: VcMenuItemColorType;
+  size?: "sm" | "md" | "lg";
+  to?: RouteLocationRaw | null;
+  externalLink?: string;
+  target?: "_self" | "_blank";
+  title?: string;
+  active?: boolean;
+  disabled?: boolean;
+  truncate?: boolean;
+  nowrap?: boolean;
+  tag?: string;
+}
+
+defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  color: "primary",
+  size: "md",
+});
+
+const currentElement = ref<HTMLElement>();
+const parentTag = ref("");
+const enabled = eagerComputed<boolean>(() => !props.disabled && !props.active);
+const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
+const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
+
+const componentTag = computed(() => {
+  if (props.tag) {
+    return props.tag;
+  }
+
+  if (parentTag.value === "ul" || parentTag.value === "ol") {
+    return "li";
+  }
+
+  return "div";
+});
+
+const innerTag = computed(() => {
+  if (isRouterLink.value) {
+    return "router-link";
+  }
+
+  if (isExternalLink.value) {
+    return "a";
+  }
+
+  if (props.active) {
+    return "span";
+  }
+
+  return "button";
+});
+
+const attrs = computed(() => {
+  if (innerTag.value === "router-link") {
+    return { to: props.to, target: props.target };
+  }
+
+  if (innerTag.value === "a") {
+    return { href: props.externalLink, target: props.target };
+  }
+
+  if (innerTag.value === "button") {
+    return { type: "button" };
+  }
+
+  return {};
+});
+
+onMounted(() => {
+  parentTag.value = currentElement.value?.parentElement?.tagName.toLowerCase() ?? "";
+});
+</script>
+
+<style lang="scss">
+.vc-menu-item {
+  $colors: primary, secondary, success, info, warning, danger, neutral;
+
+  $active: "";
+  $truncate: "";
+
+  @apply block list-none select-none;
+
+  &__inner {
+    @apply block w-full text-left rounded-[inherit];
+
+    &:not(:disabled) {
+      @apply bg-[--color-additional-50] text-[--color-neutral-950];
+    }
+
+    &--active {
+      $active: &;
+
+      @apply font-bold;
+    }
+
+    &--truncate {
+      $truncate: &;
+    }
+
+    &--nowrap {
+      @apply whitespace-nowrap #{!important};
+    }
+
+    &--size {
+      &--sm {
+        --content-height: 1rem;
+
+        @apply gap-2 px-2 py-2.5 text-sm/[1rem];
+      }
+
+      &--md {
+        --content-height: 1.25rem;
+
+        @apply gap-2 p-3 text-sm/[1rem];
+      }
+
+      &--lg {
+        --content-height: 2rem;
+
+        @apply gap-1.5 px-3 py-2 text-sm/[1rem];
+      }
+    }
+
+    @each $color in $colors {
+      &--color--#{$color} {
+        --vc-icon-color: var(--color-#{$color}-600);
+
+        &:hover {
+          @apply bg-[--color-#{$color}-50];
+        }
+
+        &#{$active} {
+          @apply bg-[--color-#{$color}-100];
+        }
+      }
+    }
+
+    &:disabled,
+    &--disabled {
+      --vc-icon-color: var(--color-neutral-400);
+
+      @apply bg-[--color-additional-50] text-[--color-neutral-400] cursor-not-allowed;
+    }
+  }
+
+  &__content {
+    --vc-icon-size: var(--content-height);
+
+    @apply grow flex items-center gap-[inherit] min-h-[var(--content-height)];
+
+    #{$truncate} & {
+      @apply truncate;
+    }
+
+    & > * {
+      @apply text-left;
+
+      #{$truncate} & {
+        @apply truncate;
+      }
+    }
+  }
+
+  .vc-icon {
+    @apply flex-none;
+  }
+}
+</style>

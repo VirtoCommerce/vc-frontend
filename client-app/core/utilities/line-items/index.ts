@@ -53,9 +53,9 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
       displayProperties: Object.values(getPropertiesGroupedByName(item.product?.properties ?? [])).slice(0, 3),
       minQuantity: item.product?.minQuantity,
       maxQuantity:
-        (<LineItemType>item).inStockQuantity ||
-        item.product?.availabilityData?.availableQuantity ||
-        item.product?.maxQuantity,
+        item.product?.maxQuantity ??
+        (<LineItemType>item).inStockQuantity ??
+        item.product?.availabilityData?.availableQuantity,
     },
   };
 }
@@ -94,9 +94,9 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     countInCart,
     minQuantity: item.product?.minQuantity,
     maxQuantity:
-      (<LineItemType>item).inStockQuantity ||
-      item.product?.availabilityData?.availableQuantity ||
-      item.product?.maxQuantity,
+      item.product?.maxQuantity ??
+      (<LineItemType>item).inStockQuantity ??
+      item.product?.availabilityData?.availableQuantity,
   };
 }
 

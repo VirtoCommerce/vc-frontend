@@ -67,7 +67,10 @@ const availablePaymentMethods = computed<PaymentMethodType[]>(() => cart.value?.
 const lineItemsGroupedByVendor = computed(() => getLineItemsGroupedByVendor(cart.value?.items ?? []));
 
 const allItemsAreDigital = computed<boolean>(
-  () => !!cart.value?.items?.every((item) => item.productType === ProductType.Digital),
+  () =>
+    !!cart.value?.items
+      ?.filter((item) => item.selectedForCheckout)
+      .every((item) => item.productType === ProductType.Digital),
 );
 
 const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));

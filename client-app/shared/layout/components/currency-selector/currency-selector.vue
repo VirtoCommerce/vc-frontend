@@ -1,84 +1,56 @@
 <template>
-  <div v-on-click-outside="() => open && hideList()" class="relative select-none text-[13px]">
-    <button
-      type="button"
-      class="relative flex appearance-none items-center gap-x-1.5 py-3 leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
-      @click="toggle"
-    >
-      <span class="text-white">
-        {{ $t("shared.layout.currency_selector.label") }}
-      </span>
+  <div class="flex items-stretch gap-x-1.5">
+    <span class="self-center text-sm text-[--color-additional-50]">
+      {{ $t("shared.layout.currency_selector.label") }}
+    </span>
 
-      <span class="uppercase">
-        {{ currentCurrency?.code }}
-      </span>
+    <VcDropdownMenu placement="bottom-end" width="7.5rem" @toggle="toggle($event)">
+      <template #trigger>
+        <span class="flex items-center gap-x-1.5 text-[--color-accent-300] hover:text-[--color-accent-500]">
+          <span class="uppercase">
+            {{ currentCurrency?.code }}
+          </span>
 
-      <VcIcon
-        class="text-[--color-accent-200] [--vc-icon-size:1rem] lg:text-[--color-primary-500] lg:[--vc-icon-size:0.625rem]"
-        :name="open ? 'chevron-up' : 'chevron-down'"
-      />
-    </button>
+          <VcIcon class="text-[--color-primary-500]" size="xxs" :name="open ? 'chevron-up' : 'chevron-down'" />
+        </span>
+      </template>
 
-    <transition name="slide-fade-top">
-      <div v-show="open" class="absolute right-0 z-30 max-h-56 overflow-hidden rounded border bg-white shadow-lg">
-        <ul ref="listElement" class="max-h-56 divide-y overflow-auto">
-          <li
-            v-for="item in supportedCurrencies"
-            :key="item.code"
-            :class="[
-              item.code === currentCurrency?.code
-                ? 'cursor-default bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]'
-                : 'cursor-pointer',
-            ]"
-            class="flex items-center p-2.5 pr-3 font-normal text-black hover:bg-gray-100"
-            @click="item.code === currentCurrency?.code ? null : select(item.code)"
+      <template #content>
+        <VcMenuItem
+          v-for="item in supportedCurrencies"
+          :key="item.code"
+          :active="item.code === currentCurrency?.code"
+          color="secondary"
+          @click="select(item.code)"
+        >
+          <span
+            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-[--color-additional-50]"
           >
-            <span
-              class="mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded-[50%] bg-[color:var(--color-primary)] text-base font-bold text-white"
-            >
-              {{ item.symbol }}
-            </span>
+            {{ item.symbol }}
+          </span>
 
-            <span :class="{ 'font-bold text-black': item.code === currentCurrency?.code }">
-              {{ item.code }}
-            </span>
-          </li>
-        </ul>
-      </div>
-    </transition>
+          <span>{{ item.code }}</span>
+        </VcMenuItem>
+      </template>
+    </VcDropdownMenu>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from "vue";
+import { ref } from "vue";
 import { useCurrency } from "@/core/composables";
 
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
 
 const open = ref(false);
-const listElement = shallowRef<HTMLElement | null>(null);
 
-function hideList() {
-  const HIDE_TIMEOUT = 350;
-  open.value = false;
-
-  setTimeout(() => {
-    if (listElement.value) {
-      listElement.value.scrollTop = 0;
-    }
-  }, HIDE_TIMEOUT);
-}
-
-function toggle() {
-  if (open.value) {
-    hideList();
-  } else {
-    open.value = true;
-  }
+function toggle(value: boolean) {
+  open.value = value;
 }
 
 function select(code: string) {
-  saveCurrencyCodeAndReload(code);
-  hideList();
+  if (currentCurrency.value?.code !== code) {
+    saveCurrencyCodeAndReload(code);
+  }
 }
 </script>
