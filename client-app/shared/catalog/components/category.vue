@@ -416,6 +416,7 @@ const { height: fHeight, top: fTop } = useElementBounding(filtersElement);
 const seoTitle = computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name);
 const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
+const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 
 usePageHead({
   title: seoTitle,
@@ -428,6 +429,7 @@ usePageHead({
 useSeoMeta({
   ogTitle: seoTitle,
   ogDescription: seoDescription,
+  ogImage: seoImageUrl,
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
