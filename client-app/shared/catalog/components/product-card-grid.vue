@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full flex-col rounded bg-white p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg lg:px-5 lg:pb-3.5 lg:pt-5"
+    class="flex w-full flex-col rounded bg-white p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg xs:p-4 lg:px-5 lg:pb-3.5 lg:pt-5"
   >
     <!-- Product image -->
     <div class="relative flex flex-col items-center justify-center pb-[87%]">
@@ -182,7 +182,7 @@
 
       <router-link
         :to="link"
-        class="mt-2 flex items-center gap-1 py-1 text-14 text-[color:var(--color-link)] lg:mt-5 lg:text-11"
+        class="mt-2.5 flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-[1.35rem] lg:text-11"
         target="_blank"
       >
         <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
