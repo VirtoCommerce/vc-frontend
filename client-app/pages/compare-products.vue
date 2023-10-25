@@ -35,7 +35,7 @@
         </div>
 
         <div class="mb-5 flex grow items-start justify-between lg:mb-0">
-          <VcCheckbox v-model="showOnlyDifferences" class="mt-2" @change="onShowOnlyDifferencesChange">
+          <VcCheckbox v-model="showOnlyDifferences" class="mt-2">
             {{ $t("pages.compare.header_block.differences_checkbox_label") }}
           </VcCheckbox>
 
@@ -46,14 +46,14 @@
       </div>
 
       <!-- Main block -->
-      <div class="w-full bg-[--color-additional-50] pt-5 shadow lg:rounded">
+      <div class="w-full bg-[--color-additional-50] shadow lg:rounded">
         <div
           ref="cardsElement"
-          class="hide-scrollbar sticky top-[-6.25rem] z-10 max-w-full overflow-x-auto bg-[--color-additional-50] lg:top-[-7.25rem]"
+          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t bg-[--color-additional-50] shadow-lg lg:top-[-8.25rem]"
         >
           <!-- Product cards block -->
           <div
-            class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] px-5 pb-1 lg:pb-5 lg:ps-[11rem]"
+            class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] p-5 empty:hidden lg:ps-[11rem]"
           >
             <ProductCardCompare
               v-for="product in products"
@@ -65,13 +65,13 @@
           </div>
         </div>
 
-        <div ref="propertiesElement" class="relative w-full overflow-x-auto pb-5">
+        <div ref="propertiesElement" class="relative w-full overflow-x-auto py-5 lg:pt-0">
           <!-- Properties block -->
           <div class="float-left min-w-full space-y-5 lg:space-y-0">
             <div
               v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
               :key="index"
-              class="flex gap-[1.125rem] px-5 lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:py-2 lg:even:bg-[--color-neutral-50]"
+              class="flex gap-[1.125rem] px-5 lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:py-2 lg:odd:bg-[--color-neutral-50]"
             >
               <div class="hidden w-[8.5rem] shrink-0 pl-1 text-sm font-black lg:block">{{ prop.label }}</div>
 
@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import _ from "lodash";
-import { ref, watch, watchEffect, onMounted } from "vue";
+import { ref, computed, watch, watchEffect, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { getPropertyValue } from "@/core/utilities";
@@ -126,16 +126,13 @@ const { openPopup, closePopup } = usePopup();
 const showOnlyDifferences = ref(false);
 
 const properties = ref<ICompareProductProperties>({});
-const propertiesDiffs = ref<ICompareProductProperties>({});
 
 const cardsElement = ref<HTMLElement | null>(null);
 const propertiesElement = ref<HTMLElement | null>(null);
 
-function onShowOnlyDifferencesChange() {
-  if (showOnlyDifferences.value && productsIds.value.length > 1) {
-    propertiesDiffs.value = _.pickBy(properties.value, (prop) => _.uniq(prop.values).length !== 1);
-  }
-}
+const propertiesDiffs = computed<ICompareProductProperties>(() => {
+  return _.pickBy(properties.value, (prop) => _.uniq(prop.values).length !== 1);
+});
 
 async function refreshProducts() {
   await fetchProducts({ productIds: productsIds.value });
@@ -144,6 +141,8 @@ async function refreshProducts() {
 }
 
 function getProperties() {
+  properties.value = {};
+
   if (!products.value.length) {
     return;
   }
@@ -164,7 +163,7 @@ function getProperties() {
       values: _.map(products.value, (product) => {
         const property = _.find(product.properties, ["name", name]);
 
-        return property ? getPropertyValue(property) : "-";
+        return property ? getPropertyValue(property) : "\u2013";
       }),
     };
   });
@@ -188,8 +187,8 @@ function openClearListModal() {
 
 watch(
   () => productsIds.value,
-  () => {
-    refreshProducts();
+  async () => {
+    await refreshProducts();
   },
   { immediate: true },
 );
