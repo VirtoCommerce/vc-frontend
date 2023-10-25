@@ -315,7 +315,6 @@ async function canChangeRoute() {
 onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
 watchEffect(async () => {
   clearList();
   await fetchWishList(props.listId);
