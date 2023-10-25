@@ -195,7 +195,7 @@
     <template v-else>
       <slot name="cart-handler" />
 
-      <div class="mt-1 flex items-center gap-1">
+      <div class="mt-1 flex flex-wrap items-center gap-1">
         <InStock
           :is-in-stock="product.availabilityData?.isInStock"
           :is-digital="isDigital"
