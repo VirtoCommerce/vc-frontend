@@ -1,31 +1,31 @@
 <template>
-  <VcTooltip :y-offset="4" :x-offset="0" :placement="placement" trigger="click">
+  <VcDropdownMenu :y-offset="4" :x-offset="0" :placement="placement">
     <template #trigger>
       <VcButton icon="cog" color="secondary" variant="outline" size="xs" />
     </template>
 
     <template #content>
-      <div
-        class="flex select-none flex-col divide-y rounded bg-[--color-additional-50] text-sm font-bold text-[--color-accent-600] shadow-xl"
-      >
-        <button type="button" class="flex items-center gap-2.5 whitespace-nowrap p-3" @click="editAddress">
-          <VcIcon class="text-[--color-primary-500]" name="pencil" size="sm" />
-          {{ $t("common.buttons.edit") }}
-        </button>
+      <VcMenuItem color="secondary" @click="editAddress">
+        <VcIcon name="pencil" />
 
-        <button
-          type="button"
-          :disabled="address.isDefault"
-          :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
-          class="flex items-center gap-2.5 whitespace-nowrap p-3 disabled:text-[--color-neutral-400]"
-          @click="deleteAddress"
-        >
-          <VcIcon :class="{ 'text-[--color-danger-500]': !address.isDefault }" name="delete-2" size="sm" />
-          {{ $t("common.buttons.delete") }}
-        </button>
-      </div>
+        <span>{{ $t("common.buttons.edit") }}</span>
+      </VcMenuItem>
+
+      <VcMenuItem
+        :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
+        :disabled="address.isDefault"
+        color="secondary"
+        @click="deleteAddress"
+      >
+        <VcIcon
+          :class="address.isDefault ? 'text-[--color-neutral-400]' : 'text-[--color-danger-500]'"
+          name="delete-2"
+        />
+
+        <span>{{ $t("common.buttons.delete") }}</span>
+      </VcMenuItem>
     </template>
-  </VcTooltip>
+  </VcDropdownMenu>
 </template>
 
 <script setup lang="ts">

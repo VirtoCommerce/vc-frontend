@@ -15,7 +15,7 @@
       <slot name="trigger" />
     </div>
 
-    <div v-show="isShown" :id="`popover-${$.uid}`" ref="popoverNode">
+    <div v-show="isShown" :id="`popover-${$.uid}`" ref="popoverNode" :style="{ zIndex }">
       <slot name="content" :close="close" />
     </div>
   </div>
@@ -25,19 +25,20 @@
 import { bottom, createPopper } from "@popperjs/core";
 import { onClickOutside } from "@vueuse/core";
 import { ref, shallowRef, onUnmounted, watch } from "vue";
-import type { Instance, Placement, PositioningStrategy } from "@popperjs/core";
+import type { Instance, PositioningStrategy } from "@popperjs/core";
 
 interface IEmits {
   (event: "toggle", value: boolean): void;
 }
 
 interface IProps {
-  placement?: Placement;
+  placement?: VcPopoverPlacement;
   strategy?: PositioningStrategy;
   xOffset?: number | string;
   yOffset?: number | string;
   trigger?: "hover" | "click";
   disabled?: boolean;
+  zIndex?: number | string;
 }
 
 const emit = defineEmits<IEmits>();
@@ -48,6 +49,7 @@ const props = withDefaults(defineProps<IProps>(), {
   xOffset: 0,
   yOffset: 0,
   trigger: "hover",
+  zIndex: 50,
 });
 
 const triggerNode = shallowRef<HTMLElement | null>(null);

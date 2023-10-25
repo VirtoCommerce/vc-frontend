@@ -201,6 +201,7 @@
 
                 <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
                   <CompanyInfoDropdownMenu
+                    class="inline-block"
                     :address="address"
                     @edit="openAddOrUpdateCompanyAddressModal(address)"
                     @delete="openDeleteAddressModal(address)"
