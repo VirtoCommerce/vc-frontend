@@ -133,7 +133,7 @@
                 </div>
 
                 <div v-if="userCanEditOrganization" class="absolute right-4 top-3">
-                  <CompanyInfoDropdownMenu
+                  <AddressDropdownMenu
                     :address="item"
                     placement="left-start"
                     @edit="openAddOrUpdateCompanyAddressModal(item)"
@@ -200,7 +200,7 @@
                 </td>
 
                 <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
-                  <CompanyInfoDropdownMenu
+                  <AddressDropdownMenu
                     class="inline-block"
                     :address="address"
                     @edit="openAddOrUpdateCompanyAddressModal(address)"
@@ -233,13 +233,8 @@ import { useI18n } from "vue-i18n";
 import { string } from "yup";
 import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
-import { useUser } from "@/shared/account";
-import {
-  CompanyInfoDropdownMenu,
-  AddOrUpdateCompanyAddressModal,
-  useOrganization,
-  useOrganizationAddresses,
-} from "@/shared/company";
+import { AddressDropdownMenu, useUser } from "@/shared/account";
+import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";

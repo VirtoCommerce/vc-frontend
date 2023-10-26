@@ -33,13 +33,13 @@ import { toRefs } from "vue";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 
 interface IEmit {
-  (event: "edit", address: MemberAddressType): void;
-  (event: "delete", address: MemberAddressType): void;
+  (event: "edit"): void;
+  (event: "delete"): void;
 }
 
 export interface IProps {
   address: MemberAddressType;
-  placement?: VcTooltipPlacement;
+  placement?: VcDropdownMenuPlacement;
 }
 
 const emit = defineEmits<IEmit>();
@@ -51,13 +51,13 @@ const props = withDefaults(defineProps<IProps>(), {
 const { address, placement } = toRefs(props);
 
 const editAddress = () => {
-  emit("edit", address.value);
+  emit("edit");
 };
 
 const deleteAddress = () => {
   if (address.value.isDefault) {
     return;
   }
-  emit("delete", address.value);
+  emit("delete");
 };
 </script>

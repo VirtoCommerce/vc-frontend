@@ -256,7 +256,7 @@
             </td>
 
             <td v-if="userCanEditOrganization" class="px-5 text-right">
-              <CompanyMembersDropdownMenu
+              <MembersDropdownMenu
                 v-if="contact.id !== user.memberId"
                 :contact-status="contact.status"
                 class="inline-block"
@@ -303,7 +303,7 @@
             </div>
 
             <div v-if="userCanEditOrganization" class="w-7 flex-none">
-              <CompanyMembersDropdownMenu
+              <MembersDropdownMenu
                 v-if="item.extended.id !== user.memberId"
                 :contact-status="item.extended.status"
                 placement="left-start"
@@ -341,10 +341,10 @@ import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { PageToolbarBlock, useUser } from "@/shared/account";
 import {
-  CompanyMembersDropdownMenu,
   EditCustomerRoleModal,
   FilterFacet,
   InviteMemberModal,
+  MembersDropdownMenu,
   RoleIcon,
   useOrganizationContacts,
   useOrganizationContactsFilterFacets,

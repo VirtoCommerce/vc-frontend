@@ -28,14 +28,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Placement } from "@popperjs/core";
-
 interface IEmits {
   (event: "toggle", value: boolean): void;
 }
 
 interface IProps {
-  placement?: Placement;
+  placement?: VcDropdownMenuPlacement;
   maxHeight?: string;
   xOffset?: number | string;
   yOffset?: number | string;
