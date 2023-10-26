@@ -2,21 +2,29 @@
   <span
     :class="[
       'vc-badge',
-      `vc-badge--size--${size}`,
+      `vc-badge--size--${size}${$slots.default ? '' : '--dot'}`,
       `vc-badge--${variant}--${color}`,
-      { 'vc-badge--truncate': truncate },
+      {
+        'vc-badge--rounded': rounded,
+        'vc-badge--truncate': truncate,
+        'vc-badge--nowrap': nowrap,
+      },
     ]"
   >
-    <slot />
+    <span v-if="$slots.default" class="vc-badge__content">
+      <slot />
+    </span>
   </span>
 </template>
 
 <script setup lang="ts">
 interface IProps {
   color?: VcBadgeColorType;
-  size?: "xs" | "sm" | "md";
+  size?: "sm" | "md" | "lg";
   variant?: VcBadgeVariantType;
+  rounded?: boolean;
   truncate?: boolean;
+  nowrap?: boolean;
 }
 
 withDefaults(defineProps<IProps>(), {
@@ -30,24 +38,48 @@ withDefaults(defineProps<IProps>(), {
 .vc-badge {
   $colors: primary, secondary, neutral, info, success, warning, danger;
 
-  @apply inline-block border rounded-full font-bold text-center;
+  $truncate: "";
+
+  @apply flex-none inline-flex align-top border rounded-sm font-bold text-center;
 
   &--size {
-    &--xs {
-      @apply px-1 text-xxs;
-    }
-
     &--sm {
-      @apply py-0.5 px-2 text-xs;
+      --vc-icon-size: 0.625rem;
+
+      @apply min-w-[1rem] gap-0.5 px-0.5 text-xxs;
+
+      &--dot {
+        @apply w-1.5 h-1.5;
+      }
     }
 
     &--md {
-      @apply py-[3px] px-3 text-sm;
+      --vc-icon-size: 0.75rem;
+
+      @apply min-w-[1.125rem] gap-1 px-0.5 text-xs;
+
+      &--dot {
+        @apply w-2 h-2;
+      }
+    }
+
+    &--lg {
+      --vc-icon-size: 0.875rem;
+
+      @apply min-w-[1.375rem] gap-1 px-1 text-sm;
+
+      &--dot {
+        @apply w-2.5 h-2.5;
+      }
     }
   }
 
+  &--rounded {
+    @apply rounded-full;
+  }
+
   &--truncate {
-    @apply truncate max-w-full;
+    $truncate: &;
   }
 
   @each $color in $colors {
@@ -73,6 +105,26 @@ withDefaults(defineProps<IProps>(), {
       @apply bg-[color:var(--color-#{$color}-50)]
       border-[color:var(--color-#{$color}-500)]
       text-[color:var(--color-#{$color}-800)];
+    }
+  }
+
+  &__content {
+    @apply grow;
+
+    &:has(.vc-icon) {
+      @apply inline-flex items-center gap-[inherit];
+    }
+
+    #{$truncate} & {
+      @apply truncate;
+    }
+
+    & > * {
+      @apply text-left;
+
+      #{$truncate} & {
+        @apply truncate;
+      }
     }
   }
 }

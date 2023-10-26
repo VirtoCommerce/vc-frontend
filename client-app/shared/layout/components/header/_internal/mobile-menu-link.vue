@@ -28,15 +28,9 @@
         <slot v-bind="{ isActive, isExactActive }" />
       </span>
 
-      <!-- Badge -->
-      <VcTransitionScale mode="out-in">
-        <span
-          v-if="count"
-          class="flex h-6 items-center rounded-full border border-[--color-primary-500] px-2 text-sm font-bold text-[--color-additional-50] transition-transform"
-        >
-          {{ preparedCount }}
-        </span>
-      </VcTransitionScale>
+      <VcBadge v-if="count" variant="solid-light" color="info" size="lg" rounded>
+        {{ preparedCount }}
+      </VcBadge>
 
       <VcIcon v-if="isParent" class="ml-auto text-[--color-primary-500]" name="chevron-right" />
     </component>
