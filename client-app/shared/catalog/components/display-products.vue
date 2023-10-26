@@ -1,8 +1,6 @@
 <template>
   <div
-    :class="
-      viewMode === 'list' ? '-mx-5 divide-y lg:divide-y-0 lg:mx-0 lg:space-y-3.5' : 'grid gap-6 lg:gap-5 ' + cssColumns
-    "
+    :class="viewMode === 'list' ? '-mx-5 divide-y lg:divide-y-0 lg:mx-0 lg:space-y-3.5' : 'grid gap-5 ' + cssColumns"
   >
     <template v-if="loading">
       <component :is="skeletonComponent" v-for="i in itemsPerPage" :key="i" />

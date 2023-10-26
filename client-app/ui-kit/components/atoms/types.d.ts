@@ -18,7 +18,6 @@ declare module "@vue/runtime-core" {
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCheckbox: typeof Components.VcCheckbox;
     VcContainer: typeof Components.VcContainer;
-    VcCountInCart: typeof Components.VcCountInCart;
     VcDateSelector: typeof Components.VcDateSelector;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
@@ -28,7 +27,6 @@ declare module "@vue/runtime-core" {
     VcIcon: typeof Components.VcIcon;
     VcHexagonIcon: typeof Components.VcHexagonIcon;
     VcImage: typeof Components.VcImage;
-    VcInStock: typeof Components.VcInStock;
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
     VcLineItemProperty: typeof Components.VcLineItemProperty;

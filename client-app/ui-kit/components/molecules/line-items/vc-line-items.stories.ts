@@ -50,7 +50,7 @@ const TemplateQuantityAndTotal: StoryFn<typeof VcLineItems> = (args) => ({
           @change="$emit('change:itemQuantity', { item, quantity: $event })"
         />
 
-        <VcInStock :quantity="item.inStockQuantity" is-in-stock />
+        <VcChip variant="outline-dark" color="neutral">10 in Cart</VcChip>
       </div>
 
       <VcLineItemTotal :list-total="item.extendedPrice" />

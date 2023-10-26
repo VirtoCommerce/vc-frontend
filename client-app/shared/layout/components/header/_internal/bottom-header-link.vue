@@ -14,14 +14,10 @@
           <use :href="link.icon" />
         </svg>
 
-        <!-- Badge -->
         <VcTransitionScale mode="out-in">
-          <span
-            v-if="count"
-            class="absolute -right-3 -top-2 rounded-full border border-[color:var(--color-primary)] bg-white px-1.5 py-0.5 text-11 font-extrabold leading-3 text-[color:var(--color-header-bottom-link)] transition-transform"
-          >
+          <VcBadge v-if="count" class="absolute -right-3 -top-2 transition-transform" variant="outline" rounded>
             {{ preparedCount }}
-          </span>
+          </VcBadge>
         </VcTransitionScale>
       </span>
 
