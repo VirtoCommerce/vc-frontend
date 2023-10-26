@@ -59,6 +59,7 @@ withDefaults(defineProps<IProps>(), {
   color: "primary",
   variant: "solid",
   size: "md",
+  nowrap: true,
 });
 </script>
 
