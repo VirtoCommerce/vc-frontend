@@ -107,7 +107,12 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import { useCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
+import {
+  useCart,
+  getItemsForAddBulkItemsToCartResultsPopup,
+  getLineItemValidationErrorsGroupedBySKU,
+  AddBulkItemsToCartResultsModal,
+} from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
@@ -120,7 +125,6 @@ import {
 } from "@/shared/wishlists";
 import { VcConfirmationDialog } from "@/ui-kit/components";
 import type {
-  InputNewBulkItemType,
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
@@ -139,7 +143,7 @@ const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateItemsInWishlist } = useWishlists();
-const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
+const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
@@ -178,12 +182,16 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
-  const payload = wishlistItems.value.map<InputNewBulkItemType>((item) => ({
-    productSku: item.sku!,
-    quantity: item.quantity,
-  }));
+  const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
+  await addItemsToCart(items);
 
-  const resultItems = await addBulkItemsToCart(payload);
+  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
+
+  const resultItems = wishlistItems.value.map(({ sku, quantity }) => ({
+    productSku: sku,
+    quantity,
+    errors: errorsGroupBySKU[sku],
+  }));
 
   ga.addItemsToCart(wishlistItems.value);
 
@@ -199,10 +207,12 @@ async function addAllListItemsToCart(): Promise<void> {
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id!,
-    items: wishlistItems.value!.map<InputUpdateWishlistLineItemType>((item) => ({
-      lineItemId: item.id,
-      quantity: item.quantity!,
-    })),
+    items: wishlistItems
+      .value!.filter((el) => !!el.product)
+      .map<InputUpdateWishlistLineItemType>((item) => ({
+        lineItemId: item.id,
+        quantity: item.quantity!,
+      })),
   };
   await updateItemsInWishlist(payload);
 }

@@ -38,12 +38,15 @@
               <VcIcon class="text-[--color-primary-500]" name="cart" :size="28" />
 
               <VcTransitionScale mode="out-in">
-                <span
+                <VcBadge
                   v-if="cart?.itemsQuantity"
-                  class="absolute -right-3 -top-2.5 rounded-full border border-[color:var(--color-primary)] bg-white px-1.5 py-0.5 text-11 font-extrabold leading-3 text-[color:var(--color-header-bottom-link)] transition-transform"
+                  variant="outline"
+                  size="sm"
+                  class="absolute -right-2 -top-2.5 transition-transform"
+                  rounded
                 >
                   {{ preparedCartItemsQuantity }}
-                </span>
+                </VcBadge>
               </VcTransitionScale>
             </span>
           </router-link>

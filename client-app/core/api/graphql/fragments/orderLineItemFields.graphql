@@ -25,6 +25,9 @@ fragment orderLineItemFields on OrderLineItemType {
   extendedPrice {
     ...moneyFields
   }
+  price {
+    ...moneyFields
+  }
   placedPrice {
     ...moneyFields
   }

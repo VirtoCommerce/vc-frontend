@@ -81,12 +81,15 @@
 
           <template #append>
             <transition :name="isMobile ? 'fade' : 'slide-fade-right'">
-              <span
+              <VcBadge
                 v-if="numberOfFacetsApplied"
-                class="absolute -left-2.5 -top-2.5 box-content inline-block h-5 w-5 rounded-full border border-[--color-primary-500] bg-[--color-additional-50] text-13 text-[--color-primary-500] lg:relative lg:left-auto lg:top-auto lg:ml-2 lg:border-0 lg:bg-[--color-primary-500] lg:text-[--color-additional-50]"
+                :color="contactsLoading ? 'neutral' : 'primary'"
+                :variant="isMobile ? 'outline' : 'solid'"
+                class="ms-2"
+                rounded
               >
                 {{ numberOfFacetsApplied }}
-              </span>
+              </VcBadge>
             </transition>
           </template>
         </VcButton>

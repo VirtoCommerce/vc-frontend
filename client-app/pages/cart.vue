@@ -154,7 +154,7 @@
             {{ $t("common.messages.quote_request") }}
           </p>
 
-          <VcButton :disabled="loading" :loading="creatingQuote" variant="outline" @click="createQuote">
+          <VcButton :disabled="loading" :loading="creatingQuote" full-width variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcCardWidget>
