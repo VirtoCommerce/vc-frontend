@@ -123,7 +123,9 @@ const subtotal = computed<number>(() =>
 );
 
 const itemIds = computed(() => map(props.items, "id"));
-const selectedItemIds = computed(() => intersection(props.sharedSelectedItemIds, itemIds.value));
+const selectedItemIds = computed(() =>
+  props.sharedSelectedItemIds ? intersection(props.sharedSelectedItemIds, itemIds.value) : itemIds.value,
+);
 const isAllItemsSelected = computed(() => selectedItemIds.value.length === props.items.length);
 
 function selectSingleItem(itemId: string, value: boolean) {
