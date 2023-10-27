@@ -74,7 +74,7 @@
       </template>
 
       <template #sidebar>
-        <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
+        <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
             <!-- Promotion code -->
             <VcActionInput
@@ -213,6 +213,7 @@ const {
   shipment,
   payment,
   selectedItemIds,
+  selectedLineItems,
   lineItemsGroupedByVendor,
   availableExtendedGifts,
   availableShippingMethods,
