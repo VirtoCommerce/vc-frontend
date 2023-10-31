@@ -128,7 +128,6 @@ import type {
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
-  Product,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -185,25 +184,10 @@ async function addAllListItemsToCart(): Promise<void> {
   const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
   await addItemsToCart(items);
 
-  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
-
-  const resultItems = wishlistItems.value.map(({ sku, quantity }) => ({
-    productSku: sku,
-    quantity,
-    errors: errorsGroupBySKU[sku],
-  }));
-
   ga.addItemsToCart(wishlistItems.value);
 
-  openPopup({
-    component: AddBulkItemsToCartResultsModal,
-    props: {
-      listName: list.value.name,
-      items: getItemsForAddBulkItemsToCartResultsPopup(wishlistItems.value, resultItems),
-    },
-  });
+  showResultModal(wishlistItems.value);
 }
-
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id!,
@@ -240,6 +224,24 @@ async function openSaveChangesModal(): Promise<boolean> {
   });
 }
 
+function showResultModal(items: LineItemType[]) {
+  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
+
+  const resultItems = items.map(({ sku, quantity }) => ({
+    productSku: sku,
+    quantity,
+    errors: errorsGroupBySKU[sku],
+  }));
+
+  openPopup({
+    component: AddBulkItemsToCartResultsModal,
+    props: {
+      listName: list.value?.name,
+      items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
+    },
+  });
+}
+
 function updateWishListItem(item: PreparedLineItemType, quantity: number): void {
   const existItem = wishlistItems.value?.find((i) => i.id === item.id);
   if (existItem) {
@@ -248,10 +250,11 @@ function updateWishListItem(item: PreparedLineItemType, quantity: number): void 
 }
 
 async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
-  const product: Product | undefined = wishlistItems.value.find((listItem) => listItem.productId === item.productId)
-    ?.product;
+  const lineItem: LineItemType | undefined = wishlistItems.value.find(
+    (listItem) => listItem.productId === item.productId,
+  );
 
-  if (!product) {
+  if (!lineItem?.product) {
     return;
   }
 
@@ -262,10 +265,12 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   if (itemInCart) {
     await changeItemQuantity(itemInCart.id, quantity);
   } else {
-    await addToCart(product.id, quantity);
+    await addToCart(lineItem.product.id, quantity);
 
-    ga.addItemToCart(product, quantity);
+    ga.addItemToCart(lineItem.product, quantity);
   }
+
+  showResultModal([lineItem]);
 }
 
 function openDeleteProductModal(values: string[]): void {
