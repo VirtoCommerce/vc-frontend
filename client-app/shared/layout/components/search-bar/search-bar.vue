@@ -213,7 +213,6 @@ async function searchAndShowDropdownResults(): Promise<void> {
   hideSearchDropdown();
 
   if (
-    loading.value ||
     searchPhrase.value === "" ||
     searchPhrase.value.trim().length > MAX_LENGTH ||
     searchPhrase.value.trim().length < MIN_LENGTH
