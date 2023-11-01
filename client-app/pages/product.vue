@@ -51,7 +51,6 @@ import { useCart } from "@/shared/cart";
 import { useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
-import type { Breadcrumb } from "@/core/api/graphql/types";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -93,12 +92,8 @@ useSeoMeta({
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const firstItem: Breadcrumb = { itemId: rootCategory.id, title: rootCategory.name, seoPath: rootCategory.slug };
-  const items = product.value
-    ? product.value.breadcrumbs ?? [{ itemId: product.value.id, title: product.value.name }]
-    : [];
-
-  return buildBreadcrumbs([firstItem].concat(items)) ?? [];
+  const rootBreadcrumb: IBreadcrumb = { title: rootCategory.name, route: rootCategory.slug };
+  return [rootBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
 });
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {

@@ -11,14 +11,28 @@ export function useCategory() {
 
   const { catalogId, i18n, router } = globals;
 
+  const catalogUrl = router.resolve({ name: "Catalog" }).fullPath.slice(1);
+
   const rootCategory: Readonly<Category> = {
     id: catalogId,
     name: i18n.global.t("pages.catalog.title"),
-    slug: router.resolve({ name: "Catalog" }).fullPath.slice(1),
+    slug: catalogUrl,
     code: "",
     priority: 0,
     breadcrumbs: [],
+    childCategories: [],
+    descriptions: [],
+    hasParent: false,
+    images: [],
+    level: 0,
+    outlines: [],
+    properties: [],
     seoInfo: {
+      id: "",
+      isActive: true,
+      objectId: catalogId,
+      objectType: "Catalog",
+      semanticUrl: catalogUrl,
       pageTitle: i18n.global.t("pages.catalog.meta.title"),
       metaKeywords: i18n.global.t("pages.catalog.meta.keywords"),
       metaDescription: i18n.global.t("pages.catalog.meta.description"),

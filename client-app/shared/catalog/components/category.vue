@@ -331,7 +331,7 @@ import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
 import ProductsFiltersSidebar from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
-import type { Breadcrumb, Product } from "@/core/api/graphql/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
 import type { StyleValue } from "vue";
@@ -433,12 +433,8 @@ useSeoMeta({
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const firstItem: Breadcrumb = { itemId: rootCategory.id, title: rootCategory.name, seoPath: rootCategory.slug };
-  const items = currentCategory.value
-    ? currentCategory.value.breadcrumbs ?? [{ itemId: currentCategory.value.id, title: currentCategory.value.name }]
-    : [];
-
-  return buildBreadcrumbs([firstItem].concat(items)) ?? [];
+  const rootBreadcrumb: IBreadcrumb = { title: rootCategory.name, route: rootCategory.slug };
+  return [rootBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
 });
 
 const searchParams = computedEager<ProductsSearchParams>(() => ({
