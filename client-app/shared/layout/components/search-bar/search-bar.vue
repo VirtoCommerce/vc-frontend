@@ -204,7 +204,7 @@ const isExistResults = computed(
   () => categories.value.length || products.value.length || suggestions.value.length || pages.value.length,
 );
 
-async function searchAndShowDropdownResults() {
+async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
@@ -250,6 +250,7 @@ async function searchAndShowDropdownResults() {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 
+  ga.search(params.keyword);
   await searchResults(params);
 
   if (!isApplied.value) {
@@ -279,7 +280,7 @@ function goToSearchResultsPage() {
   if (searchPhrase.value.trim()) {
     hideSearchDropdown();
     const route = getSearchRoute(searchPhrase.value);
-    router.push(route);
+    void router.push(route);
   }
 }
 
@@ -290,13 +291,13 @@ function reset() {
 
 const searchProductsDebounced = useDebounceFn(() => {
   if (!isApplied.value) {
-    searchAndShowDropdownResults();
+    void searchAndShowDropdownResults();
   }
 }, SEARCH_BAR_DEBOUNCE_TIME);
 
 function onSearchPhraseChanged() {
   hideSearchDropdown();
-  searchProductsDebounced();
+  void searchProductsDebounced();
 }
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
