@@ -16,56 +16,54 @@
     </VcLabel>
 
     <div v-on-click-outside="hideList" class="vc-select__container">
-      <button
-        v-if="!autocomplete"
-        type="button"
-        :disabled="disabled"
+      <div
+        role="button"
         class="vc-select__button"
+        :disabled="disabled"
         @click="toggle"
         @keyup.esc="open && toggle()"
         @keydown.down.prevent="next(-1)"
       >
-        <span class="vc-select__button-content">
-          <slot v-if="selected" name="selected" v-bind="{ item: selected, error }">
-            <VcSelectItem>
-              <VcSelectItemText :error="error">
-                {{ selectedText }}
-              </VcSelectItemText>
-            </VcSelectItem>
-          </slot>
+        <template v-if="!autocomplete">
+          <span class="vc-select__button-content">
+            <slot v-if="selected" name="selected" v-bind="{ item: selected, error }">
+              <VcSelectItem>
+                <VcSelectItemText :error="error">
+                  {{ selectedText }}
+                </VcSelectItemText>
+              </VcSelectItem>
+            </slot>
 
-          <slot v-else-if="$slots.placeholder || placeholder" name="placeholder" v-bind="{ error }">
-            <VcSelectItem>
-              <VcSelectItemText placeholder :error="error">
-                {{ placeholder }}
-              </VcSelectItemText>
-            </VcSelectItem>
-          </slot>
-        </span>
+            <slot v-else-if="$slots.placeholder || placeholder" name="placeholder" v-bind="{ error }">
+              <VcSelectItem>
+                <VcSelectItemText placeholder :error="error">
+                  {{ placeholder }}
+                </VcSelectItemText>
+              </VcSelectItem>
+            </slot>
+          </span>
 
-        <VcIcon class="vc-select__icon" name="chevron-down" size="xs" />
-      </button>
-
-      <VcInput
-        v-else
-        v-model="search"
-        :required="required"
-        :size="size"
-        :placeholder="selectedText || placeholder"
-        :disabled="disabled"
-        :readonly="readonly"
-        :error="error"
-        truncate
-        @click="!open && toggle()"
-        @keyup.enter="!open && toggle()"
-        @keyup.esc="open && toggle()"
-        @keydown.down.prevent="next(-1)"
-        @input="onFilter"
-      >
-        <template #append>
           <VcIcon class="vc-select__icon" name="chevron-down" size="xs" />
         </template>
-      </VcInput>
+
+        <VcInput
+          v-else
+          v-model="search"
+          class="vc-select__input"
+          :required="required"
+          :size="size"
+          :placeholder="selectedText || placeholder"
+          :disabled="disabled"
+          :readonly="readonly"
+          :error="error"
+          truncate
+          @input="onFilter"
+        >
+          <template #append>
+            <VcIcon class="vc-select__icon" name="chevron-down" size="xs" />
+          </template>
+        </VcInput>
+      </div>
 
       <transition :leave-active-class="`transition duration-${transitionDuration} ease-in`" leave-to-class="opacity-0">
         <div v-if="open" class="vc-select__dropdown">
@@ -367,6 +365,10 @@ function prev(index: number) {
     #{$error} & {
       @apply text-[color:var(--color-danger)];
     }
+  }
+
+  &__input {
+    @apply w-full;
   }
 
   &__icon {

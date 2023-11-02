@@ -3,8 +3,6 @@
     <link rel="icon" :href="$cfg.favicon_image" />
   </Head>
 
-  <body class="font-lato" />
-
   <component :is="layout">
     <RouterView />
   </component>

@@ -13,7 +13,7 @@
     />
 
     <template #sidebar>
-      <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <VcButton :to="{ name: 'Review', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
             {{ $t("common.buttons.review_order") }}
@@ -41,8 +41,16 @@ import { computed } from "vue";
 import { useCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, shipment, payment, hasValidationErrors, availablePaymentMethods, allItemsAreDigital } =
-  useCart();
+const {
+  loading,
+  cart,
+  selectedLineItems,
+  shipment,
+  payment,
+  hasValidationErrors,
+  availablePaymentMethods,
+  allItemsAreDigital,
+} = useCart();
 const {
   purchaseOrderNumber,
   billingAddressEqualsShipping,

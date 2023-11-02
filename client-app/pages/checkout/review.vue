@@ -22,7 +22,7 @@
       <div class="divide-y print:divide-y-0 lg:divide-y-0">
         <!-- Shipping details -->
         <div v-if="!allItemsAreDigital" class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-8">
-          <div class="lg:w-3/5">
+          <div class="print:break-inside-avoid lg:w-3/5">
             <VcLabel>
               {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
             </VcLabel>
@@ -58,7 +58,7 @@
 
         <!-- Payment details -->
         <div class="mb-2 mt-6 flex flex-col gap-6 pt-5 md:mt-8 lg:flex-row lg:gap-8 lg:pt-0">
-          <div class="lg:w-3/5">
+          <div class="print:break-inside-avoid lg:w-3/5">
             <VcLabel>
               {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
             </VcLabel>
@@ -105,7 +105,7 @@
     <OrderCommentSection v-if="comment" :comment="comment" readonly />
 
     <template #sidebar>
-      <OrderSummary :cart="cart!" :no-shipping="allItemsAreDigital" footnote>
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Promotion code -->
           <transition name="slide-fade-top" mode="in-out" appear>
