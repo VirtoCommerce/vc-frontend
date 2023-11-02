@@ -47,7 +47,7 @@
       </template>
     </VcTooltip>
 
-    <div v-else-if="reservedSpace" class="h-2.5 lg:h-4"></div>
+    <div v-else-if="reservedSpace" class="h-4"></div>
   </div>
 </template>
 

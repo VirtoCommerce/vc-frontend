@@ -38,6 +38,6 @@
   }
 
   &__subtotal {
-    @apply w-full justify-between break-before-avoid-page;
+    @apply w-full justify-between break-inside-avoid;
   }
 }

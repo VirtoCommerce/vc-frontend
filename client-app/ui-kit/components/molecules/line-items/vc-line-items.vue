@@ -115,10 +115,17 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const subtotal = computed<number>(() => sumBy(props.items, (item: PreparedLineItemType) => item.extendedPrice?.amount));
+const subtotal = computed<number>(() =>
+  sumBy(
+    props.items.filter((item) => selectedItemIds.value.includes(item.id)),
+    (item) => item.extendedPrice?.amount,
+  ),
+);
 
 const itemIds = computed(() => map(props.items, "id"));
-const selectedItemIds = computed(() => intersection(props.sharedSelectedItemIds, itemIds.value));
+const selectedItemIds = computed(() =>
+  props.sharedSelectedItemIds ? intersection(props.sharedSelectedItemIds, itemIds.value) : itemIds.value,
+);
 const isAllItemsSelected = computed(() => selectedItemIds.value.length === props.items.length);
 
 function selectSingleItem(itemId: string, value: boolean) {
