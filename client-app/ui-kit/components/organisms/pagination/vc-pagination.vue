@@ -59,7 +59,8 @@ interface IEmits {
 interface IProps {
   page?: number;
   pages?: number;
-  scrollToTop?: boolean;
+  scrollTarget?: HTMLElement | undefined;
+  scrollOffset?: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -67,7 +68,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   page: 1,
   pages: 0,
-  scrollToTop: true,
+  scrollOffset: 20,
 });
 
 const visiblePages = computed(() => {
@@ -106,13 +107,18 @@ const visiblePages = computed(() => {
   return pages;
 });
 
+function scrollToTop() {
+  if (props.scrollTarget) {
+    const topPosition = props.scrollTarget.getBoundingClientRect().top + window.pageYOffset - props.scrollOffset;
+    window.scrollTo({ top: topPosition, behavior: "smooth" });
+  }
+}
+
 const setPage = (page: number) => {
   if (page) {
     emit("update:page", page);
 
-    if (props.scrollToTop) {
-      window.scroll({ top: 0, behavior: "smooth" });
-    }
+    scrollToTop();
   }
 };
 </script>
