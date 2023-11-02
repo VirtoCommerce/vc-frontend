@@ -71,13 +71,7 @@
               @remove:items="openDeleteProductModal"
             />
 
-            <VcPagination
-              v-if="pagesCount > 1"
-              v-model:page="page"
-              :pages="pagesCount"
-              class="self-start"
-              @update:page="onUpdatePage()"
-            />
+            <VcPagination v-if="pagesCount > 1" v-model:page="page" :pages="pagesCount" />
           </div>
         </template>
 
@@ -299,13 +293,6 @@ function openDeleteProductModal(values: string[]): void {
       },
     });
   }
-}
-
-/**
- * Scroll after page change.
- */
-function onUpdatePage(): void {
-  window.scroll({ top: 0, behavior: "smooth" });
 }
 
 async function canChangeRoute() {

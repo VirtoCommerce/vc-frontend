@@ -12,7 +12,6 @@ declare module "@vue/runtime-core" {
     VcAddressLine: typeof Components.VcAddressLine;
     VcBadge: typeof Components.VcBadge;
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
-    VcButton: typeof Components.VcButton;
     VcCard: typeof Components.VcCard;
     VcCardWidget: typeof Components.VcCardWidget;
     VcCardSkeleton: typeof Components.VcCardSkeleton;
@@ -33,7 +32,6 @@ declare module "@vue/runtime-core" {
     VcListItem: typeof Components.VcListItem;
     VcLoader: typeof Components.VcLoader;
     VcMarkdownRender: typeof Components.VcMarkdownRender;
-    VcPagination: typeof Components.VcPagination;
     VcPopover: typeof Components.VcPopover;
     VcPopupSidebar: typeof Components.VcPopupSidebar;
     VcPriceDisplay: typeof Components.VcPriceDisplay;
