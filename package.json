@@ -23,7 +23,7 @@
     "generate:graphql": "yarn generate:graphql:schema && yarn generate:graphql:types",
     "generate:routes": "vite-node --mode production scripts/generate-routes.ts",
     "generate:dependency-graph": "depcruise client-app --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
-    "storybook:dev": "yarn generate:certificates && storybook dev --docs --port 6006 --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
+    "storybook:dev": "yarn generate:certificates && storybook dev --docs --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "storybook build --docs",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
     "postinstall": "husky install"
