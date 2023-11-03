@@ -59,7 +59,7 @@ interface IEmits {
 interface IProps {
   page?: number;
   pages?: number;
-  scrollTarget?: HTMLElement | undefined;
+  scrollTarget?: HTMLElement;
   scrollOffset?: number;
 }
 
@@ -109,7 +109,7 @@ const visiblePages = computed(() => {
 
 function scrollToTop() {
   if (props.scrollTarget) {
-    const topPosition = props.scrollTarget.getBoundingClientRect().top + window.pageYOffset - props.scrollOffset;
+    const topPosition = props.scrollTarget.getBoundingClientRect().top + window.scrollY - props.scrollOffset;
     window.scrollTo({ top: topPosition, behavior: "smooth" });
   }
 }
