@@ -90,7 +90,7 @@ const maxQuantity = computed(() => props.product.maxQuantity);
 const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
-const { getTranslation } = useErrorsTranslator("validation_error.");
+const { getTranslation } = useErrorsTranslator("validation_error");
 const { quantitySchema } = useQuantityValidationSchema(minQuantity.value, maxQuantity.value);
 
 const loading = ref(false);
