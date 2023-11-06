@@ -104,7 +104,7 @@ const validationErrors = computed<ErrorType[]>(() => {
   });
 });
 
-const { idErrors } = useErrorsTranslator("validation_error.", validationErrors);
+const { idErrors } = useErrorsTranslator("validation_error", validationErrors);
 
 const preparedLineItems = computed(() => prepareLineItems(props.items));
 </script>

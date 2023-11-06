@@ -24,7 +24,7 @@ export function useErrorsTranslator(
   errors?: Ref<ErrorType[] | undefined> | ComputedRef<ErrorType[] | undefined>,
 ): ComputedTranslatedErrorsType {
   function getTranslation(error: ErrorType) {
-    const translationKey = keyInLocale + error.code;
+    const translationKey = `${keyInLocale}.${error.code}`;
 
     /**
      * `t` function has overload where second parameter can be array or object.
