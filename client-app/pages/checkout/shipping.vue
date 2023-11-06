@@ -11,7 +11,7 @@
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
 
     <template #sidebar>
-      <OrderSummary :cart="cart!" footnote>
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
         <template #footer>
           <VcButton :to="{ name: 'Billing', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
             {{ $t("common.buttons.go_to_billing") }}
@@ -39,7 +39,7 @@ import { computed } from "vue";
 import { useCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, shipment, hasValidationErrors, availableShippingMethods } = useCart();
+const { loading, cart, selectedLineItems, shipment, hasValidationErrors, availableShippingMethods } = useCart();
 const { comment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(

@@ -78,7 +78,14 @@ module.exports = {
       { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
     ],
     "@typescript-eslint/no-floating-promises": "warn", // TODO: Switch to error
-    "@typescript-eslint/no-misused-promises": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-misused-promises": [
+      "warn",
+      {
+        "checksVoidReturn": {
+          "arguments": false,
+        }
+      }
+    ], // TODO: Switch to error
     "@typescript-eslint/no-unsafe-argument": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-assignment": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-call": "warn", // TODO: Switch to error

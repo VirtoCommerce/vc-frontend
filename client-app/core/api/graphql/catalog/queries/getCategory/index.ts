@@ -33,6 +33,9 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
             name
             slug
         }
+        images {
+            url
+        }
     }`
     : "";
 

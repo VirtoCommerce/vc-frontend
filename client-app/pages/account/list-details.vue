@@ -107,7 +107,12 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import { useCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
+import {
+  useCart,
+  getItemsForAddBulkItemsToCartResultsPopup,
+  getLineItemValidationErrorsGroupedBySKU,
+  AddBulkItemsToCartResultsModal,
+} from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
@@ -117,10 +122,9 @@ import {
   DeleteWishlistProductModal,
   WishlistLineItems,
   WishlistProductItemSkeleton,
+  SaveWishlistChangesModal,
 } from "@/shared/wishlists";
-import { VcConfirmationDialog } from "@/ui-kit/components";
 import type {
-  InputNewBulkItemType,
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
@@ -139,7 +143,7 @@ const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateItemsInWishlist } = useWishlists();
-const { loading: cartLoading, cart, addBulkItemsToCart, addToCart, changeItemQuantity } = useCart();
+const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
@@ -178,12 +182,16 @@ async function addAllListItemsToCart(): Promise<void> {
     return;
   }
 
-  const payload = wishlistItems.value.map<InputNewBulkItemType>((item) => ({
-    productSku: item.sku!,
-    quantity: item.quantity,
-  }));
+  const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
+  await addItemsToCart(items);
 
-  const resultItems = await addBulkItemsToCart(payload);
+  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
+
+  const resultItems = wishlistItems.value.map(({ sku, quantity }) => ({
+    productSku: sku,
+    quantity,
+    errors: errorsGroupBySKU[sku],
+  }));
 
   ga.addItemsToCart(wishlistItems.value);
 
@@ -212,12 +220,8 @@ async function updateItems() {
 async function openSaveChangesModal(): Promise<boolean> {
   return await new Promise<boolean>((resolve) => {
     const closeDialog = openPopup({
-      component: VcConfirmationDialog,
+      component: SaveWishlistChangesModal,
       props: {
-        variant: "info",
-        noIcon: true,
-        title: t("pages.account.list_details.save_changes"),
-        text: t("pages.account.list_details.save_changes_message"),
         onConfirm: async () => {
           closeDialog();
           await updateItems();
@@ -225,7 +229,7 @@ async function openSaveChangesModal(): Promise<boolean> {
         },
         onClose: () => {
           wishlistItems.value = cloneDeep(list.value!.items!);
-          resolve(false);
+          resolve(true);
         },
       },
     });

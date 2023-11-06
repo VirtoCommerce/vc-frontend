@@ -59,6 +59,7 @@ withDefaults(defineProps<IProps>(), {
   color: "primary",
   variant: "solid",
   size: "md",
+  nowrap: true,
 });
 </script>
 
@@ -79,7 +80,7 @@ withDefaults(defineProps<IProps>(), {
     $truncate: &;
   }
 
-  &--nowrap {
+  &--nowrap:not(#{$truncate}) {
     @apply w-auto whitespace-nowrap #{!important};
   }
 

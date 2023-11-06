@@ -28,7 +28,6 @@
       <!-- View Table -->
       <VcTable
         :loading="addressesLoading"
-        :item-actions-builder="itemActionsBuilder"
         :columns="columns"
         :sort="sort"
         :items="paginatedAddresses"
@@ -38,7 +37,7 @@
         @header-click="applySorting"
       >
         <template #mobile-item="itemData">
-          <div class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
+          <div class="relative grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
             <div class="flex flex-col">
               <span class="text-sm text-gray-400">
                 {{ $t("common.labels.recipient_name") }}
@@ -80,6 +79,14 @@
                 {{ itemData.item.email }}
               </span>
             </div>
+
+            <AddressDropdownMenu
+              class="absolute right-4 top-3"
+              :address="itemData.item"
+              placement="left-start"
+              @edit="openAddOrUpdateAddressModal(itemData.item)"
+              @delete="removeAddress(itemData.item)"
+            />
           </div>
         </template>
 
@@ -131,28 +138,14 @@
             <td class="overflow-hidden text-ellipsis p-5">
               {{ address.email }}
             </td>
-            <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
-            <td class="p-5 text-center">
-              <div class="inline-block space-x-2">
-                <!-- todo: use VcButton -->
-                <button
-                  type="button"
-                  class="inline-flex rounded p-1.5 shadow hover:bg-[--color-neutral-100]"
-                  :title="$t('common.buttons.edit')"
-                  @click="openAddOrUpdateAddressModal(address)"
-                >
-                  <VcIcon class="text-[--color-primary-500]" name="pencil" size="xs" />
-                </button>
 
-                <button
-                  type="button"
-                  class="inline-flex rounded p-1.5 shadow hover:bg-[--color-neutral-100]"
-                  :title="$t('common.buttons.delete')"
-                  @click="removeAddress(address)"
-                >
-                  <VcIcon class="text-[--color-danger-500]" name="delete-mini" size="xs" />
-                </button>
-              </div>
+            <td class="p-5 text-end">
+              <AddressDropdownMenu
+                class="inline-block"
+                :address="address"
+                @edit="openAddOrUpdateAddressModal(address)"
+                @delete="removeAddress(address)"
+              />
             </td>
           </tr>
         </template>
@@ -190,7 +183,7 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
-import { useUserAddresses } from "@/shared/account";
+import { AddressDropdownMenu, useUserAddresses } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -243,11 +236,6 @@ const columns = computed<ITableColumn[]>(() => [
     title: t("common.labels.email"),
     sortable: true,
   },
-  {
-    id: "actions",
-    title: t("common.labels.actions"),
-    align: "center",
-  },
 ]);
 
 function onPageChange(newPage: number): void {
@@ -268,30 +256,6 @@ function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
       },
     },
   });
-}
-
-function itemActionsBuilder() {
-  const actions: SlidingActionsItem[] = [
-    {
-      icon: "pencil",
-      title: t("common.buttons.edit"),
-      classes: "bg-[--color-neutral-500]",
-      clickHandler(address: MemberAddressType) {
-        openAddOrUpdateAddressModal(address);
-      },
-    },
-    {
-      icon: "trash",
-      title: t("common.buttons.delete"),
-      left: true,
-      classes: "bg-[--color-danger-500]",
-      clickHandler(address: MemberAddressType) {
-        removeAddress(address);
-      },
-    },
-  ];
-
-  return actions;
 }
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
