@@ -249,7 +249,6 @@ async function searchAndShowDropdownResults(): Promise<void> {
     params.pages = { itemsPerPage: DEFAULT_PAGE_SIZE };
   }
 
-  ga.search(params.keyword);
   await searchResults(params);
 
   if (!isApplied.value) {
@@ -276,10 +275,12 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 }
 
 function goToSearchResultsPage() {
-  if (searchPhrase.value.trim()) {
+  const searchTerm = searchPhrase.value.trim();
+
+  if (searchTerm) {
     hideSearchDropdown();
-    const route = getSearchRoute(searchPhrase.value);
-    void router.push(route);
+    void router.push(getSearchRoute(searchTerm));
+    ga.search(searchTerm);
   }
 }
 
