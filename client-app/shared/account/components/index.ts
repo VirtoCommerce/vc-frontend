@@ -1,6 +1,7 @@
 export { default as AccountNavigation } from "./account-navigation.vue";
 export { default as AccountNavigationLink } from "./account-navigation-link.vue";
 export { default as AccountShell } from "./account-shell.vue";
+export { default as AddressDropdownMenu } from "./address-dropdown-menu.vue";
 export { default as ChangePasswordForm } from "./change-password-form.vue";
 export { default as CheckoutDefaultsSuccessDialog } from "./checkout-default-success-dialog.vue";
 export { default as ForgotPasswordForm } from "./forgot-password-form.vue";

@@ -28,14 +28,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Placement } from "@popperjs/core";
-
 interface IEmits {
   (event: "toggle", value: boolean): void;
 }
 
 interface IProps {
-  placement?: Placement;
+  placement?: VcDropdownMenuPlacement;
   maxHeight?: string;
   xOffset?: number | string;
   yOffset?: number | string;
@@ -78,7 +76,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__list {
-    @apply overflow-y-auto rounded bg-[--color-additional-50] shadow-xl;
+    @apply overflow-y-auto rounded bg-[--color-additional-50] shadow-xl divide-y;
 
     & > *:first-child {
       @apply rounded-t;

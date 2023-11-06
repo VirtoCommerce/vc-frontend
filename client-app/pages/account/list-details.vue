@@ -122,8 +122,8 @@ import {
   DeleteWishlistProductModal,
   WishlistLineItems,
   WishlistProductItemSkeleton,
+  SaveWishlistChangesModal,
 } from "@/shared/wishlists";
-import { VcConfirmationDialog } from "@/ui-kit/components";
 import type {
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
@@ -220,12 +220,8 @@ async function updateItems() {
 async function openSaveChangesModal(): Promise<boolean> {
   return await new Promise<boolean>((resolve) => {
     const closeDialog = openPopup({
-      component: VcConfirmationDialog,
+      component: SaveWishlistChangesModal,
       props: {
-        variant: "info",
-        noIcon: true,
-        title: t("pages.account.list_details.save_changes"),
-        text: t("pages.account.list_details.save_changes_message"),
         onConfirm: async () => {
           closeDialog();
           await updateItems();
@@ -233,7 +229,7 @@ async function openSaveChangesModal(): Promise<boolean> {
         },
         onClose: () => {
           wishlistItems.value = cloneDeep(list.value!.items!);
-          resolve(false);
+          resolve(true);
         },
       },
     });

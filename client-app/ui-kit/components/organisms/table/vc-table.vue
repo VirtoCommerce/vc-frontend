@@ -1,29 +1,17 @@
 <template>
   <!-- Mobile table view -->
-  <template v-if="isMobile && $slots['mobile-item']">
+  <div v-if="isMobile && $slots['mobile-item']">
     <!-- Mobile skeleton view -->
-    <div v-if="loading">
-      <slot name="mobile-skeleton" />
-    </div>
+    <slot v-if="loading" name="mobile-skeleton" />
 
     <!-- Mobile empty view -->
-    <div v-else-if="!items.length">
-      <slot name="mobile-empty" />
-    </div>
+    <slot v-else-if="!items.length" name="mobile-empty" />
 
     <!-- Mobile item view -->
-    <div v-else class="overflow-x-hidden">
-      <VcSlidingActions
-        v-for="item in items"
-        :key="item.id"
-        :input-object="item"
-        :actions-builder="itemActionsBuilder"
-        @click="$emit('itemClick', item)"
-      >
-        <slot name="mobile-item" :item="item" />
-      </VcSlidingActions>
-    </div>
-  </template>
+    <template v-else>
+      <slot v-for="item in items" :key="item.id" name="mobile-item" :item="item" />
+    </template>
+  </div>
 
   <!-- Desktop table view -->
   <table v-else :class="[layout, 'w-full text-left text-sm']">

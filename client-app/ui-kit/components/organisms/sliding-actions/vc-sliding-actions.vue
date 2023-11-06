@@ -33,6 +33,8 @@ const props = defineProps({
   },
 });
 
+console.warn("[UIKit][warn] VcSlidingActions is deprecated, use VcDropdownMenu instead.");
+
 const threshold = 10;
 const maxWidth = 80;
 
