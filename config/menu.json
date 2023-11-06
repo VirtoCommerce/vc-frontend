@@ -78,6 +78,11 @@
             "icon": "/static/images/dashboard/icons/profile.svg#main"
           },
           {
+            "route": { "name": "ChangePassword" },
+            "title": "shared.layout.header.mobile.account_menu.change_password",
+            "icon": "/static/images/dashboard/icons/pass.svg#main"
+          },
+          {
             "id": "addresses",
             "route": { "name": "Addresses" },
             "title": "shared.layout.header.mobile.account_menu.addresses",
