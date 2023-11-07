@@ -97,7 +97,7 @@ jobs:
 
       - name: Unit Tests
         run: |
-          yarn test:unit
+          yarn test:unit run
 
       - name: BUILD_STATE::successful
         if: success()
