@@ -25,7 +25,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     parser: "@typescript-eslint/parser",
-    project: ["./tsconfig.app.json", "./tsconfig.node.json"],
+    project: ["./tsconfig.vitest.json", "./tsconfig.app.json", "./tsconfig.node.json"],
     sourceType: "module",
     tsconfigRootDir: __dirname,
   },
@@ -230,7 +230,7 @@ module.exports = {
     "import/resolver": {
       typescript: {
         alwaysTryTypes: true,
-        project: ["./tsconfig.app.json", "./tsconfig.node.json"],
+        project: ["./tsconfig.vitest.json", "./tsconfig.app.json", "./tsconfig.node.json"],
       },
       node: true,
     },
