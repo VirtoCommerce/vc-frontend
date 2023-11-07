@@ -7,10 +7,12 @@ export function getMoney(amount: number, culture = "en-US", currencyCode = "USD"
 
   const formattedAmountWithoutPoint = new Intl.NumberFormat(culture, {
     ...currencyFormat.resolvedOptions(),
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
 
   const formattedAmountWithoutPointAndCurrency = new Intl.NumberFormat(culture, {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
 

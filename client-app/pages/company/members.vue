@@ -214,7 +214,6 @@
         :sort="sort"
         :pages="pages"
         :page="page"
-        :item-actions-builder="itemActionsBuilder"
         layout="table-fixed"
         @header-click="applySorting"
         @page-changed="changePage"
@@ -257,41 +256,14 @@
             </td>
 
             <td v-if="userCanEditOrganization" class="px-5 text-right">
-              <VcActionDropdownMenu v-if="contact.id !== user.memberId">
-                <button
-                  type="button"
-                  class="flex items-center whitespace-nowrap p-3"
-                  @click="openEditCustomerRoleModal(contact)"
-                >
-                  <VcIcon name="pencil" class="mr-2 text-[--color-warning-500]" />
-                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.edit_role") }}</span>
-                </button>
-
-                <button
-                  v-if="contact.status === ContactStatus.Locked"
-                  type="button"
-                  class="flex items-center whitespace-nowrap p-3"
-                  @click="openLockOrUnlockModal(contact, true)"
-                >
-                  <VcIcon name="check" class="mr-2 text-[--color-success-500]" />
-                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.unblock_user") }}</span>
-                </button>
-
-                <button
-                  v-else
-                  type="button"
-                  class="flex items-center whitespace-nowrap p-3"
-                  @click="openLockOrUnlockModal(contact)"
-                >
-                  <VcIcon name="ban" class="mr-2 text-[--color-neutral-900]" />
-                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.block_user") }}</span>
-                </button>
-
-                <button type="button" class="flex items-center whitespace-nowrap p-3" @click="openDeleteModal(contact)">
-                  <VcIcon name="x" class="mr-2 text-[--color-danger-500]" />
-                  <span class="text-15 font-medium">{{ $t("pages.company.members.buttons.delete") }}</span>
-                </button>
-              </VcActionDropdownMenu>
+              <MembersDropdownMenu
+                v-if="contact.id !== user.memberId"
+                :contact-status="contact.status"
+                class="inline-block"
+                @edit="openEditCustomerRoleModal(contact)"
+                @remove="openDeleteModal(contact)"
+                @lock-or-unlock="openLockOrUnlockModal(contact, $event)"
+              />
             </td>
           </tr>
         </template>
@@ -309,8 +281,8 @@
         </template>
 
         <template #mobile-item="{ item }">
-          <div class="flex items-center border-b">
-            <div class="py-4.5 pl-6">
+          <div class="flex items-center border-b px-5">
+            <div class="py-4.5">
               <RoleIcon :role-id="item.extended.roles[0]?.id" />
             </div>
 
@@ -324,10 +296,21 @@
               </div>
             </div>
 
-            <div class="py-4.5 pr-6">
+            <div class="py-4.5 pr-3">
               <div class="w-20 rounded-sm px-2.5 py-0.5 text-center" :class="item.extended.displayStatus.cssStyles">
                 {{ $t(item.extended.displayStatus.localeLabel) }}
               </div>
+            </div>
+
+            <div v-if="userCanEditOrganization" class="w-7 flex-none">
+              <MembersDropdownMenu
+                v-if="item.extended.id !== user.memberId"
+                :contact-status="item.extended.status"
+                placement="left-start"
+                @edit="openEditCustomerRoleModal(item)"
+                @remove="openDeleteModal(item)"
+                @lock-or-unlock="openLockOrUnlockModal(item, $event)"
+              />
             </div>
           </div>
         </template>
@@ -358,10 +341,10 @@ import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { PageToolbarBlock, useUser } from "@/shared/account";
 import {
-  ContactStatus,
   EditCustomerRoleModal,
   FilterFacet,
   InviteMemberModal,
+  MembersDropdownMenu,
   RoleIcon,
   useOrganizationContacts,
   useOrganizationContactsFilterFacets,
@@ -611,51 +594,6 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
       },
     },
   });
-}
-
-function itemActionsBuilder(item: ExtendedContactType) {
-  const actions: SlidingActionsItem[] = [];
-
-  if (checkPermissions(XApiPermissions.CanEditOrganization) && item.id !== user.value.memberId) {
-    actions.push(
-      item.status === ContactStatus.Locked
-        ? {
-            icon: "check-bold",
-            title: t("pages.company.members.buttons.unblock_user"),
-            classes: "bg-[--color-success-500]",
-            clickHandler(contact: ExtendedContactType) {
-              openLockOrUnlockModal(contact, true);
-            },
-          }
-        : {
-            icon: "ban",
-            title: t("pages.company.members.buttons.block_user"),
-            classes: "bg-[--color-secondary-900]",
-            clickHandler(contact: ExtendedContactType) {
-              openLockOrUnlockModal(contact);
-            },
-          },
-      {
-        icon: "pencil",
-        title: t("pages.company.members.buttons.edit_role"),
-        classes: "bg-[--color-secondary-500]",
-        clickHandler(contact: ExtendedContactType) {
-          openEditCustomerRoleModal(contact);
-        },
-      },
-      {
-        icon: "trash",
-        title: t("pages.company.members.buttons.delete"),
-        left: true,
-        classes: "bg-[--color-danger-500]",
-        clickHandler(contact: ExtendedContactType) {
-          openDeleteModal(contact);
-        },
-      },
-    );
-  }
-
-  return actions;
 }
 
 onClickOutside(

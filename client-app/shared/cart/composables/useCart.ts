@@ -16,8 +16,6 @@ import {
   createQuoteFromCart as _createQuoteFromCart,
   getCart,
   rejectGiftItems,
-  removeCart as _removeCart,
-  removeCartItem,
   removeCartItems,
   removeCoupon,
   removeShipment as _removeShipment,
@@ -178,35 +176,6 @@ export function useCart() {
     }
   }
 
-  async function removeCart(
-    cartId: string,
-    options: {
-      /** @default true */
-      reloadCart?: boolean;
-    } = {},
-  ): Promise<boolean> {
-    const { reloadCart = true } = options;
-    let result = false;
-
-    loading.value = true;
-
-    try {
-      result = await _removeCart(cartId);
-      broadcast.emit(cartReloadEvent);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${removeCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-
-    if (reloadCart) {
-      await fetchFullCart();
-    }
-
-    return result;
-  }
-
   async function addToCart(productId: string, qty: number): Promise<CartType> {
     loading.value = true;
 
@@ -256,20 +225,6 @@ export function useCart() {
       }));
     } catch (e) {
       Logger.error(`${useCart.name}.${addBulkItemsToCart.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  async function removeItem(lineItemId: string): Promise<void> {
-    loading.value = true;
-
-    try {
-      cart.value = await removeCartItem(lineItemId);
-      broadcast.emit(cartReloadEvent);
-    } catch (e) {
-      Logger.error(`${useCart.name}.${removeItem.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -545,8 +500,6 @@ export function useCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
-    /** @deprecated Use {@link removeItems } */
-    removeItem,
     removeItems,
     validateCartCoupon,
     addCartCoupon,
@@ -557,8 +510,6 @@ export function useCart() {
     updatePayment,
     updatePurchaseOrderNumber,
     clearCart,
-    /** @deprecated Don't remove cart after order creation. Use {@link clearCart } for cart clearing */
-    removeCart,
     createQuoteFromCart,
     addGiftsToCart,
     removeGiftsFromCart,
