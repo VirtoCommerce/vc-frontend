@@ -913,7 +913,8 @@
         "meta": {
           "title": "@:pages.account.change_password.title"
         },
-        "title": "Change Password"
+        "title": "Change Password",
+        "success_message": "@:pages.change_password.success_message"
       },
       "orders": {
         "meta": {

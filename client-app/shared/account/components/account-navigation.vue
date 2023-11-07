@@ -106,7 +106,7 @@ const isListDetails = eagerComputed(() => route.name === "ListDetails");
 
 watchEffect(() => {
   if (isListDetails.value) {
-    fetchWishlists();
+    void fetchWishlists();
   }
 });
 </script>

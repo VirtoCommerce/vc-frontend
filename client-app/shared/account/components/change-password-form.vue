@@ -129,6 +129,6 @@ const onSubmit = handleSubmit(async (data) => {
 });
 
 if (!passwordRequirements.value) {
-  fetchPasswordRequirements();
+  void fetchPasswordRequirements();
 }
 </script>
