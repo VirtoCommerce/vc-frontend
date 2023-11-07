@@ -8,6 +8,7 @@ declare module "@vue/runtime-core" {
     VcConfirmationDialog: typeof Components.VcConfirmationDialog;
     VcPopup: typeof Components.VcPopup;
     VcProductImage: typeof Components.VcProductImage;
+    /** @deprecated Use {@link VcDropdownMenu} instead. */
     VcSlidingActions: typeof Components.VcSlidingActions;
     VcTable: typeof Components.VcTable;
     TableStatusBadge: typeof Components.TableStatusBadge;
