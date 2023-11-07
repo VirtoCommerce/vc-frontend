@@ -21,6 +21,6 @@ describe("setGlobals", () => {
 
     setGlobals(globalVariables);
 
-    expect(globalVariables).toEqual(globalVariables);
+    expect(globals).toEqual(globalVariables);
   });
 });
