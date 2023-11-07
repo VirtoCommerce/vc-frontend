@@ -60,8 +60,8 @@
           "icon": "/static/images/checkout/cart.svg#main"
         },
         {
-          "id": "contact",
-          "route": "/contact",
+          "id": "contacts",
+          "route": "/contacts",
           "title": "shared.layout.header.menu.contact_us",
           "icon": "/static/images/dashboard/icons/contact.svg#main"
         }

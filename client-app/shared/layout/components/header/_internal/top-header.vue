@@ -30,7 +30,7 @@
 
         <span class="mx-2 h-1 w-1 rounded-full bg-[color:var(--color-primary)]" />
 
-        <TopHeaderLink to="/contact">
+        <TopHeaderLink to="/contacts">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
@@ -92,7 +92,7 @@
 
       <!-- Unauthorized menu items -->
       <template v-else>
-        <TopHeaderLink to="/contact">
+        <TopHeaderLink to="/contacts">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 

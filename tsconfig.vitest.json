@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.app.json",
+  "exclude": ["artifacts", "assets", "content", "storybook-static"],
+  "compilerOptions": {
+    "composite": true,
+    "lib": [],
+    "types": ["@types/gtag.js", "node", "jsdom"]
+  }
+}
