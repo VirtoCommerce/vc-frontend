@@ -30,7 +30,7 @@
           @click="setPage(page - 1)"
         >
           <VcIcon name="chevron-left" />
-          <span>Previous</span>
+          <span>{{ $t("ui_kit.pagination.previous") }}</span>
         </VcButton>
 
         <VcButton
@@ -41,7 +41,7 @@
           :disabled="page === pages"
           @click="setPage(page + 1)"
         >
-          <span>Next</span>
+          <span>{{ $t("ui_kit.pagination.next") }}</span>
           <VcIcon name="chevron-right" />
         </VcButton>
       </div>
@@ -83,24 +83,24 @@ const visiblePages = computed(() => {
       pages.push(i);
     }
 
-    pages.push(0);
+    pages.push(NaN);
     pages.push(props.pages);
   } else if (props.page >= props.pages - 4) {
     pages.push(1);
-    pages.push(0);
+    pages.push(NaN);
 
     for (let i = props.pages - 6; i <= props.pages; i++) {
       pages.push(i);
     }
   } else {
     pages.push(1);
-    pages.push(0);
+    pages.push(NaN);
 
     for (let i = props.page - 2; i <= props.page + 2; i++) {
       pages.push(i);
     }
 
-    pages.push(0);
+    pages.push(NaN);
     pages.push(props.pages);
   }
 
