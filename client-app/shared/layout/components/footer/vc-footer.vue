@@ -33,7 +33,7 @@
           ></div>
           <div class="flex flex-col space-y-1">
             <FooterLink v-t="'shared.layout.footer.catalog_request_link'" to="/catalog-request"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.contact_us_link'" to="/contact-us"></FooterLink>
+            <FooterLink v-t="'shared.layout.footer.contact_us_link'" to="/contacts"></FooterLink>
             <FooterLink v-t="'shared.layout.footer.feedback_link'" to="/feedback"></FooterLink>
             <FooterLink v-t="'shared.layout.footer.find_a_branch_link'" to="/find-a-branch"></FooterLink>
           </div>
