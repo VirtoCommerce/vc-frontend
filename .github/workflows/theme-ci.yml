@@ -95,6 +95,10 @@ jobs:
         run: |
           yarn build
 
+      - name: Unit Tests
+        run: |
+          yarn test:unit
+
       - name: BUILD_STATE::successful
         if: success()
         run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
