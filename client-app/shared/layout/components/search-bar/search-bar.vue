@@ -96,7 +96,7 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  ga.selectItem(product);
+                  ga.selectItem(product, { search_term: searchPhrase.trim() });
                 "
               />
             </div>
