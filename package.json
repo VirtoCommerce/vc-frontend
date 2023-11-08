@@ -12,6 +12,7 @@
     "validate:types": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "validate:dependencies": "depcruise client-app",
     "validate": "yarn validate:types && yarn validate:dependencies",
+    "commitlint": "commitlint --edit",
     "lint-staged": "lint-staged",
     "lint": "eslint . --ext .js,.ts,.vue --ignore-path .eslintignore",
     "lint:fix": "yarn lint --fix",
