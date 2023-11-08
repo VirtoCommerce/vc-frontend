@@ -147,6 +147,23 @@
       "currency_selector": {
         "label": "Devise :"
       }
+    },
+    "account": {
+      "navigation": {
+        "links": {
+          "dashboard": "@:common.links.dashboard",
+          "profile": "@:common.links.profile",
+          "change_password": "@:common.links.change_password",
+          "addresses": "@:common.links.addresses",
+          "orders": "@:common.links.orders",
+          "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members",
+          "quote_requests": "@:common.links.quote_requests"
+        }
+      }
     }
   }
 }
