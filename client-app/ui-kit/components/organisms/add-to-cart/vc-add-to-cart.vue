@@ -41,7 +41,7 @@ import { useQuantityValidationSchema } from "@/ui-kit/composables";
 interface IEmits {
   (event: "update:modelValue", value: number): void;
   (event: "update:cartItemQuantity", quantity: number): void;
-  (event: "validationError", errorMessage?: string): void;
+  (event: "update:validation", value: { isValid: true } | { isValid: false; errorMessage: string }): void;
 }
 
 interface IProps {
@@ -78,9 +78,9 @@ async function validateFields(): Promise<void> {
   const { valid } = await validate();
 
   if (!valid && errorMessage.value) {
-    emit("validationError", errorMessage.value);
+    emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
   } else {
-    emit("validationError", undefined);
+    emit("update:validation", { isValid: true });
   }
 }
 
