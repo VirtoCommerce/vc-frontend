@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField } from "vee-validate";
-import { computed, onMounted, ref, watch, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
@@ -106,21 +106,12 @@ function onFocusOut() {
   }
 }
 
-onMounted(async () => {
-  setValue(quantity.value);
-
-  await validateFields();
-});
-
-watch(
-  () => quantity.value,
-  async (value) => {
-    setValue(value);
-    await validateFields();
-  },
-);
-
 watchEffect(() => {
   quantity.value = props.modelValue;
+});
+
+watchEffect(async () => {
+  setValue(quantity.value);
+  await validateFields();
 });
 </script>
