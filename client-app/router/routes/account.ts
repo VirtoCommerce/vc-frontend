@@ -18,7 +18,7 @@ const ViewQuote = () => import("@/pages/account/view-quote.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
-  { path: "change-password", name: "ChangePassword", component: ChangePassword },
+  { path: "change-password", name: "ChangePasswordAccount", component: ChangePassword },
   { path: "profile", name: "Profile", component: Profile },
   {
     path: "addresses",

@@ -17,7 +17,7 @@
       />
 
       <AccountNavigationLink
-        :to="{ name: 'ChangePassword' }"
+        :to="{ name: 'ChangePasswordAccount' }"
         :text="$t('shared.account.navigation.links.change_password')"
         class="pass-icon"
       />
