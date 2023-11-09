@@ -14,7 +14,6 @@ declare module "@vue/runtime-core" {
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
     VcButton: typeof Components.VcButton;
     VcCard: typeof Components.VcCard;
-    VcCardWidget: typeof Components.VcCardWidget;
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCheckbox: typeof Components.VcCheckbox;
     VcContainer: typeof Components.VcContainer;

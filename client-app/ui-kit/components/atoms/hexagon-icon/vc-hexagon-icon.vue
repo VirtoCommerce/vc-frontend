@@ -1,22 +1,27 @@
 <template>
-  <div class="vc-hexagon">
-    <VcIcon :name="icon" />
-  </div>
+  <span class="vc-hexagon-icon" :style="style">
+    <VcIcon class="vc-hexagon-icon__icon" :name="icon" />
+  </span>
 </template>
 
 <script setup lang="ts">
-defineProps({
-  icon: {
-    type: String,
-    default: "",
-    required: true,
-  },
-});
+import { computed } from "vue";
+
+interface IProps {
+  size?: number;
+  icon: string;
+}
+
+const props = defineProps<IProps>();
+
+const style = computed(() => (props.size ? { width: `${props.size}px` } : {}));
 </script>
 
 <style lang="scss">
-.vc-hexagon {
-  @apply flex items-center justify-center w-10 h-10 bg-gray-300 text-[color:var(--color-white)];
+.vc-hexagon-icon {
+  --hexagon-size: var(--vc-hexagon-icon-size, 2.5rem);
+
+  @apply flex items-center justify-center w-[--hexagon-size] bg-[--color-neutral-200] text-[--color-additional-50] aspect-square;
 
   clip-path: polygon(
     45% 1.33975%,
@@ -62,5 +67,9 @@ defineProps({
     8.93111% 22.33956%,
     10.35898% 21.33975%
   );
+
+  &__icon {
+    @apply w-[62%] h-[62%] #{!important};
+  }
 }
 </style>

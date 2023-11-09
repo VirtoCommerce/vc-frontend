@@ -6,7 +6,6 @@ export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
 export { default as VcButton } from "./button/vc-button.vue";
 export { default as VcCard } from "./card/vc-card.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
-export { default as VcCardWidget } from "./card-widget/vc-card-widget.vue";
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcContainer } from "./container/vc-container.vue";
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
