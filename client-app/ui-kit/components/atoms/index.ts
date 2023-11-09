@@ -3,7 +3,6 @@ export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcAddressLine } from "./address-line/vc-address-line.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
-export { default as VcButton } from "./button/vc-button.vue";
 export { default as VcCard } from "./card/vc-card.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
 export { default as VcCardWidget } from "./card-widget/vc-card-widget.vue";
@@ -24,7 +23,6 @@ export { default as VcLineItemProperty } from "./line-item-property/vc-line-item
 export { default as VcListItem } from "./list-item/vc-list-item.vue";
 export { default as VcLoader } from "./loader/vc-loader.vue";
 export { default as VcMarkdownRender } from "./markdown-render/vc-markdown-render.vue";
-export { default as VcPagination } from "./pagination/vc-pagination.vue";
 export { default as VcPopover } from "./popover/vc-popover.vue";
 export { default as VcPopupSidebar } from "./popup-sidebar/vc-popup-sidebar.vue";
 export { default as VcPriceDisplay } from "./price-display/vc-price-display.vue";

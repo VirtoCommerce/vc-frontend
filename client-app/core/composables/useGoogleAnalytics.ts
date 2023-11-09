@@ -238,6 +238,12 @@ function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType):
   });
 }
 
+function search(searchTerm: string): void {
+  sendEvent("search", {
+    search_term: searchTerm,
+  });
+}
+
 export function useGoogleAnalytics() {
   return {
     isAvailableGtag,
@@ -258,5 +264,6 @@ export function useGoogleAnalytics() {
     addPaymentInfo,
     purchase,
     placeOrder,
+    search,
   };
 }

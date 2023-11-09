@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <div class="mt-5 w-full">
+      <div ref="listElement" class="mt-5 w-full">
         <!-- Skeletons -->
         <template v-if="listLoading">
           <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 lg:mx-0">
@@ -75,8 +75,8 @@
               v-if="pagesCount > 1"
               v-model:page="page"
               :pages="pagesCount"
-              class="self-start"
-              @update:page="onUpdatePage()"
+              :scroll-target="listElement"
+              :scroll-offset="60"
             />
           </div>
         </template>
@@ -152,6 +152,7 @@ usePageHead({
 const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
+const listElement = ref<HTMLElement | undefined>();
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -300,13 +301,6 @@ function openDeleteProductModal(values: string[]): void {
       },
     });
   }
-}
-
-/**
- * Scroll after page change.
- */
-function onUpdatePage(): void {
-  window.scroll({ top: 0, behavior: "smooth" });
 }
 
 async function canChangeRoute() {

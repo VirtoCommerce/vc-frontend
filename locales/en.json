@@ -1315,6 +1315,12 @@
       "message": "@:common.messages.blocked"
     }
   },
+  "ui_kit": {
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
   "identity_error": {
     "DuplicateEmail": "Email {0} is already taken",
     "DuplicateUserName": "Username {0} is already taken",
