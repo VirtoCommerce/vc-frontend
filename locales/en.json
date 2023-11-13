@@ -224,7 +224,7 @@
       "remove_products": "Remove products",
       "change_role": "Change role",
       "save_changes": "Save Changes",
-      "password_expired": "Password is about to expired"
+      "password_expired": "Password is about to expire"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
