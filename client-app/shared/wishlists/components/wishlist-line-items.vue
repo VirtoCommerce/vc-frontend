@@ -12,6 +12,7 @@
           :disabled="addToCartDisabled(item)"
           @update:model-value="changeItemQuantity(item, $event)"
           @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
+          @update:validation="setValidationStatus(item, $event)"
         />
 
         <InStock
@@ -25,17 +26,29 @@
       </div>
     </template>
 
-    <!-- Line item Alerts
-    <template #after-content>
-      <VcAlert color="danger" size="sm" variant="outline-dark" icon>Line item error</VcAlert>
+    <template #after-content="{ item }">
+      <div v-if="validationErrors.length" class="flex flex-col gap-1">
+        <template v-for="(validationError, index) in validationErrors" :key="index">
+          <VcAlert
+            v-if="validationError.objectId === item.id && !!validationError.errorMessage"
+            color="danger"
+            size="sm"
+            variant="outline-dark"
+            icon
+          >
+            {{ validationError.errorMessage }}
+          </VcAlert>
+        </template>
+      </div>
     </template>
-    -->
   </VcLineItems>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { ProductType } from "@/core/enums";
 import { InStock, CountInCart } from "@/shared/catalog";
+import type { ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
@@ -51,6 +64,8 @@ interface IProp {
 const emit = defineEmits<IEmits>();
 defineProps<IProp>();
 
+const validationErrors = ref<ValidationErrorType[]>([]);
+
 function addToCartDisabled(item: PreparedLineItemType) {
   return (
     item.productType === ProductType.Physical &&
@@ -64,5 +79,29 @@ function changeCartItemQuantity(item: PreparedLineItemType, quantity: number): v
 
 function changeItemQuantity(item: PreparedLineItemType, quantity: number): void {
   emit("update:listItem", item, quantity);
+}
+
+function setValidationStatus(
+  item: PreparedLineItemType,
+  status: { isValid: true } | { isValid: false; errorMessage: string },
+): void {
+  const existingValidationError = validationErrors.value.find((error) => error.objectId === item.id);
+
+  if (!existingValidationError && !status.isValid) {
+    validationErrors.value.push({
+      objectId: item.id,
+      errorMessage: status.errorMessage,
+    });
+    return;
+  }
+
+  if (existingValidationError && !status.isValid) {
+    existingValidationError.errorMessage = status.errorMessage;
+    return;
+  }
+
+  if (existingValidationError && status.isValid) {
+    validationErrors.value = validationErrors.value.filter((error) => error.objectId !== item.id);
+  }
 }
 </script>
