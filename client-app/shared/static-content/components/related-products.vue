@@ -2,7 +2,7 @@
   <!-- Related products section -->
   <div v-show="relatedProducts.length" class="mt-5 flex flex-col print:hidden lg:flex-row">
     <div class="-mx-5 print:mx-0 print:grow lg:mx-0 lg:w-full xl:w-9/12 xl:pe-8">
-      <VcSectionWidget :title="$t('pages.product.related_product_section_title')" icon="cube">
+      <VcWidget :title="$t('pages.product.related_product_section_title')" prepend-icon="cube" size="lg">
         <div v-if="isMobile" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4 px-2">
           <ProductCardRelated
             v-for="(item, index) in relatedProducts.slice(0, 4)"
@@ -13,14 +13,14 @@
           />
         </div>
 
-        <VcCarousel v-else class="-mt-3" :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
+        <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
           <template #slide="{ slide: item }">
             <div class="h-full px-2 py-3">
               <ProductCardRelated class="h-full" :product="item" @link-click="ga.selectItem(item)" />
             </div>
           </template>
         </VcCarousel>
-      </VcSectionWidget>
+      </VcWidget>
     </div>
 
     <div class="hidden flex-none xl:block xl:w-3/12"></div>

@@ -27,7 +27,7 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcSectionWidget id="products" :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
+      <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="cube" size="lg">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
@@ -45,7 +45,7 @@
 
         <!-- Items not grouped by Vendor -->
         <OrderLineItems v-else :items="orderItems" />
-      </VcSectionWidget>
+      </VcWidget>
 
       <AcceptedGifts v-if="giftItems.length" :items="giftItems" />
 
@@ -53,7 +53,7 @@
 
       <template #sidebar>
         <!-- Order Data Widget -->
-        <VcCardWidget :title="$t('common.titles.order_data')" class="order-first" hide-mobile-title>
+        <VcWidget :title="$t('common.titles.order_data')" class="order-first">
           <div class="flex flex-col gap-1.5 text-sm">
             <p v-if="order.createdDate">
               <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
@@ -64,7 +64,7 @@
               <OrderStatus class="min-w-[7.785rem] print:min-w-0" :status="order.status" />
             </p>
           </div>
-        </VcCardWidget>
+        </VcWidget>
 
         <!-- Order summary -->
         <OrderSummary
@@ -85,12 +85,12 @@
         </OrderSummary>
 
         <!-- Billing Address Widget -->
-        <VcCardWidget v-if="billingAddress" :title="$t('common.titles.billing_address')" icon="truck">
+        <VcWidget v-if="billingAddress" :title="$t('common.titles.billing_address')">
           <VcAddressInfo :address="billingAddress" class="text-15" />
-        </VcCardWidget>
+        </VcWidget>
 
         <!-- Shipping Method Card -->
-        <VcCardWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')" icon="truck">
+        <VcWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')">
           <div class="flex items-center gap-4 text-15">
             <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12 print:hidden" lazy />
 
@@ -99,26 +99,22 @@
               ({{ shipment.price?.formattedAmount }})
             </span>
           </div>
-        </VcCardWidget>
+        </VcWidget>
 
         <!-- Shipping Address Card -->
-        <VcCardWidget
-          v-if="!allItemsAreDigital && deliveryAddress"
-          :title="$t('common.titles.shipping_address')"
-          icon="truck"
-        >
+        <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
           <VcAddressInfo :address="deliveryAddress" class="text-15" />
-        </VcCardWidget>
+        </VcWidget>
 
         <!-- Payment Method section -->
-        <VcCardWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')" icon="document-text">
+        <VcWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')">
           <div class="flex items-center gap-4 text-15">
             <VcImage :src="payment.paymentMethod.logoUrl" class="h-12 w-12 print:hidden" lazy />
             <span class="min-w-0 break-words">
               {{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}
             </span>
           </div>
-        </VcCardWidget>
+        </VcWidget>
       </template>
     </VcLayoutWithRightSidebar>
   </div>

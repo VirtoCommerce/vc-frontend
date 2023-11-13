@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget :title="$t('shared.checkout.accepted_gifts.title')" icon="gift">
+  <VcWidget :title="$t('shared.checkout.accepted_gifts.title')" prepend-icon="gift" size="lg">
     <div class="divide-y rounded border">
       <div class="flex items-center px-6 py-2 text-sm font-bold">
         <div v-t="'shared.checkout.accepted_gifts.gift_label'" class="grow"></div>
@@ -25,7 +25,7 @@
         <div class="hidden xl:block xl:w-[6.5rem]"></div>
       </div>
     </div>
-  </VcSectionWidget>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">

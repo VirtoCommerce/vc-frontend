@@ -19,10 +19,10 @@
   <VcContainer v-else class="relative z-0">
     <VcLoaderOverlay :visible="loading" fixed-spinner />
 
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-5 hidden md:mx-0 lg:block" />
+    <VcBreadcrumbs :items="breadcrumbs" class="mx-6 hidden md:mx-0 lg:block" />
 
     <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-5 mb-5 print:mx-0 lg:mx-0">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 print:mx-0 lg:mx-0">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
@@ -145,7 +145,7 @@
         </OrderSummary>
 
         <!-- Create quote widget -->
-        <VcCardWidget
+        <VcWidget
           v-if="$cfg.quotes_enabled && isAuthenticated"
           :title="$t('common.titles.quote_request')"
           class="print:hidden"
@@ -157,7 +157,7 @@
           <VcButton :disabled="loading" :loading="creatingQuote" full-width variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
-        </VcCardWidget>
+        </VcWidget>
       </template>
     </VcLayoutWithRightSidebar>
 

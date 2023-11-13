@@ -10,11 +10,7 @@
 
     <div class="border-y bg-white shadow-md-x lg:space-y-6 lg:border-0 lg:bg-transparent lg:shadow-none">
       <!-- Quote comment -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.remarks')"
-        icon="document-text"
-        content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
-      >
+      <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
           :label="$t('pages.account.quote_details.remarks_field_label')"
@@ -24,18 +20,14 @@
           no-resize
           counter
         />
-      </VcSectionWidget>
+      </VcWidget>
 
       <!-- Quote products -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.products')"
-        icon="cube"
-        content-classes="px-6 pt-3 pb-0 md:pb-7 md:px-7"
-      >
+      <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube">
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
-      </VcSectionWidget>
+      </VcWidget>
 
-      <VcSectionWidget :title="$t('pages.account.quote_details.shipping_address')" icon="truck">
+      <VcWidget :title="$t('pages.account.quote_details.shipping_address')" prepend-icon="truck" size="lg">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
@@ -52,10 +44,10 @@
             "
           />
         </div>
-      </VcSectionWidget>
+      </VcWidget>
 
       <!-- Quote billing address -->
-      <VcSectionWidget :title="$t('pages.account.quote_details.billing_address')" icon="cash">
+      <VcWidget :title="$t('pages.account.quote_details.billing_address')" prepend-icon="cash" size="lg">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
@@ -88,7 +80,7 @@
             "
           />
         </div>
-      </VcSectionWidget>
+      </VcWidget>
 
       <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
         <VcButton

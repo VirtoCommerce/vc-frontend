@@ -26,7 +26,7 @@ defineProps({
 
 <style lang="scss">
 .vc-layout-with-right-sidebar {
-  @apply flex flex-col;
+  @apply flex flex-col gap-5;
 
   @media (min-width: theme("screens.lg")) {
     @apply flex-row items-start gap-x-6;
@@ -55,6 +55,10 @@ defineProps({
       @media (min-width: theme("screens.lg")) {
         @apply sticky top-[6.5rem];
       }
+    }
+
+    & > * {
+      @apply mx-6 lg:mx-0;
     }
   }
 }

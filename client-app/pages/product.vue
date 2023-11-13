@@ -5,7 +5,7 @@
   >
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-    <div class="mx-auto max-w-screen-2xl px-5 print:!px-0 lg:px-12">
+    <div class="mx-auto max-w-screen-2xl px-6 print:!px-0 lg:px-12">
       <!-- Breadcrumbs -->
       <VcBreadcrumbs class="mb-3 hidden print:block lg:block" :items="breadcrumbs" />
 

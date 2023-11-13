@@ -18,7 +18,7 @@
       <slot name="header-container" v-bind="{ collapsible, collapsed: _collapsed }">
         <span class="vc-widget__header">
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
-            <slot name="prepend-icon">
+            <slot name="prepend">
               <span v-if="prependIcon" class="vc-widget__icon">
                 <VcHexagonIcon :icon="prependIcon" />
               </span>
@@ -28,7 +28,7 @@
               {{ title }}
             </span>
 
-            <slot name="append-icon" v-bind="{ collapsible, collapsed: _collapsed }">
+            <slot name="append" v-bind="{ collapsible, collapsed: _collapsed }">
               <span v-if="collapsible" class="vc-widget__icon">
                 <VcIcon
                   :class="['vc-widget__append-icon', { 'vc-widget__append-icon--rotate': _collapsed }]"
@@ -130,12 +130,14 @@ watchEffect(() => {
     &--lg {
       $sizeLG: &;
 
-      --padding-x: 1.75rem;
+      --padding-x: 1.5rem;
       --header-height: 3.875rem;
 
       @apply rounded-none divide-none;
 
-      @media (min-width: theme("screens.md")) {
+      @media (min-width: theme("screens.lg")) {
+        --padding-x: 1.75rem;
+
         @apply rounded;
       }
     }
@@ -146,16 +148,20 @@ watchEffect(() => {
   }
 
   &__header-container {
-    @apply flex items-center w-full empty:hidden;
+    @apply flex items-center w-full empty:hidden border-b;
 
     &,
     & > * {
       @apply rounded-t-[inherit];
     }
+
+    #{$sizeLG} & {
+      @apply border-b-0;
+    }
   }
 
   &__header {
-    @apply flex min-h-[--header-height] px-[--padding-x] w-full text-start font-bold uppercase border-b;
+    @apply flex min-h-[--header-height] px-[--padding-x] w-full text-start;
 
     #{$sizeXS} & {
       --vc-hexagon-icon-size: calc(var(--header-height) - 0.75rem);
@@ -178,7 +184,7 @@ watchEffect(() => {
     #{$sizeLG} & {
       --vc-hexagon-icon-size: calc(var(--header-height) - 1.25rem);
 
-      @apply gap-2 py-4 text-xl border-b-0;
+      @apply gap-2 py-4 text-xl;
     }
 
     #{$collapsed} & {
@@ -191,7 +197,7 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--vc-hexagon-icon-size] grow;
+    @apply flex flex-col justify-center min-h-[--vc-hexagon-icon-size] grow font-bold uppercase;
   }
 
   &__slot {
@@ -199,8 +205,10 @@ watchEffect(() => {
 
     #{$sizeLG} & {
       @apply pt-0;
+    }
 
-      &:first-child {
+    *:first-child > & {
+      #{$sizeLG} & {
         @apply pt-5;
       }
     }
@@ -215,7 +223,7 @@ watchEffect(() => {
   }
 
   &__footer-container {
-    @apply rounded-b-[inherit] empty:hidden;
+    @apply rounded-b-[inherit] border-t empty:hidden;
 
     & > * {
       @apply rounded-b-[inherit];
@@ -223,7 +231,7 @@ watchEffect(() => {
   }
 
   &__footer {
-    @apply py-4 px-[--padding-x] border-t;
+    @apply py-4 px-[--padding-x];
   }
 }
 </style>

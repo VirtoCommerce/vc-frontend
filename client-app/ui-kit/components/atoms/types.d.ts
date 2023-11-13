@@ -13,6 +13,7 @@ declare module "@vue/runtime-core" {
     VcBadge: typeof Components.VcBadge;
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
     VcButton: typeof Components.VcButton;
+    /** @deprecated use {@link VcWidget} instead. */
     VcCard: typeof Components.VcCard;
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCheckbox: typeof Components.VcCheckbox;
@@ -20,6 +21,7 @@ declare module "@vue/runtime-core" {
     VcDateSelector: typeof Components.VcDateSelector;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
+    /** @deprecated use {@link VcWidget} instead. */
     VcFilterCard: typeof Components.VcFilterCard;
     VcFilterCardSkeleton: typeof Components.VcFilterCardSkeleton;
     VcInputDetails: typeof Components.VcInputDetails;
@@ -41,8 +43,6 @@ declare module "@vue/runtime-core" {
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
-    VcSection: typeof Components.VcSection;
-    VcSectionWidget: typeof Components.VcSectionWidget;
     VcSelectItem: typeof Components.VcSelectItem;
     VcSelectItemImage: typeof Components.VcSelectItemImage;
     VcSelectItemText: typeof Components.VcSelectItemText;

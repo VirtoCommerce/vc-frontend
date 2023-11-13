@@ -10,19 +10,24 @@
 
     <VcLayoutWithRightSidebar>
       <!-- Quote products -->
-      <VcSectionWidget :title="$t('pages.account.quote_details.products')" icon="cube" hide-desktop-title>
+      <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
         <QuoteLineItems :items="quote.items!" readonly />
-      </VcSectionWidget>
+      </VcWidget>
 
       <!-- Quote comment -->
-      <VcSectionWidget v-if="quote.comment" :title="$t('pages.account.quote_details.remarks')" icon="document-text">
+      <VcWidget
+        v-if="quote.comment"
+        :title="$t('pages.account.quote_details.remarks')"
+        prepend-icon="document-text"
+        size="lg"
+      >
         <div class="text-15 font-medium">
           {{ quote.comment }}
         </div>
-      </VcSectionWidget>
+      </VcWidget>
 
       <template #sidebar>
-        <VcCardWidget :title="$t('pages.account.quote_details.quote_summary')" icon="cash">
+        <VcWidget :title="$t('pages.account.quote_details.quote_summary')">
           <div class="flex justify-between text-base">
             <span v-t="'pages.account.quote_details.total'" class="font-bold" />
 
@@ -30,13 +35,9 @@
               <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
             </span>
           </div>
-        </VcCardWidget>
+        </VcWidget>
 
-        <VcCardWidget
-          :title="$t('pages.account.quote_details.quote_data')"
-          class="-order-1 lg:order-none"
-          hide-mobile-title
-        >
+        <VcWidget :title="$t('pages.account.quote_details.quote_data')" class="-order-1 lg:order-none">
           <div class="space-y-1">
             <div class="flex text-base">
               <span class="mr-2 font-bold">{{ $t("pages.account.quote_details.created") }}:</span>
@@ -52,15 +53,15 @@
               </span>
             </div>
           </div>
-        </VcCardWidget>
+        </VcWidget>
 
-        <VcCardWidget v-if="shippingAddress" :title="$t('pages.account.quote_details.shipping_address')" icon="cube">
+        <VcWidget v-if="shippingAddress" :title="$t('pages.account.quote_details.shipping_address')">
           <VcAddressInfo :address="shippingAddress!" />
-        </VcCardWidget>
+        </VcWidget>
 
-        <VcCardWidget v-if="billingAddress" :title="$t('pages.account.quote_details.billing_address')" icon="cash">
+        <VcWidget v-if="billingAddress" :title="$t('pages.account.quote_details.billing_address')">
           <VcAddressInfo :address="billingAddress!" />
-        </VcCardWidget>
+        </VcWidget>
       </template>
     </VcLayoutWithRightSidebar>
   </div>

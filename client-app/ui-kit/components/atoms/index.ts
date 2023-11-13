@@ -32,8 +32,6 @@ export { default as VcProductTitle } from "./product-title/vc-product-title.vue"
 export { default as VcProperty } from "./property/vc-property.vue";
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
-export { default as VcSection } from "./section/vc-section.vue";
-export { default as VcSectionWidget } from "./section-widget/vc-section-widget.vue";
 export { default as VcSelectItem } from "./select-item/vc-select-item.vue";
 export { default as VcSelectItemImage } from "./select-item-image/vc-select-item-image.vue";
 export { default as VcSelectItemText } from "./select-item-text/vc-select-item-text.vue";
