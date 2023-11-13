@@ -96,7 +96,7 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  ga.selectItem(product);
+                  ga.selectItem(product, { search_term: searchPhrase.trim() });
                 "
               />
             </div>
@@ -204,7 +204,7 @@ const isExistResults = computed(
   () => categories.value.length || products.value.length || suggestions.value.length || pages.value.length,
 );
 
-async function searchAndShowDropdownResults() {
+async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
   const { search_product_phrase_suggestions_enabled, search_static_content_suggestions_enabled } =
@@ -213,7 +213,6 @@ async function searchAndShowDropdownResults() {
   hideSearchDropdown();
 
   if (
-    loading.value ||
     searchPhrase.value === "" ||
     searchPhrase.value.trim().length > MAX_LENGTH ||
     searchPhrase.value.trim().length < MIN_LENGTH
@@ -276,10 +275,12 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 }
 
 function goToSearchResultsPage() {
-  if (searchPhrase.value.trim()) {
+  const searchTerm = searchPhrase.value.trim();
+
+  if (searchTerm) {
     hideSearchDropdown();
-    const route = getSearchRoute(searchPhrase.value);
-    router.push(route);
+    void router.push(getSearchRoute(searchTerm));
+    ga.search(searchTerm);
   }
 }
 
@@ -290,13 +291,13 @@ function reset() {
 
 const searchProductsDebounced = useDebounceFn(() => {
   if (!isApplied.value) {
-    searchAndShowDropdownResults();
+    void searchAndShowDropdownResults();
   }
 }, SEARCH_BAR_DEBOUNCE_TIME);
 
 function onSearchPhraseChanged() {
   hideSearchDropdown();
-  searchProductsDebounced();
+  void searchProductsDebounced();
 }
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));

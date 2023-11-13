@@ -8,6 +8,7 @@ declare module "@vue/runtime-core" {
     VcAddressForm: typeof Components.VcAddressForm;
     VcAddressSelection: typeof Components.VcAddressSelection;
     VcAlert: typeof Components.VcAlert;
+    VcButton: typeof Components.VcButton;
     VcButtonSeeMoreLess: typeof Components.VcButtonSeeMoreLess;
     VcCarousel: typeof Components.VcCarousel;
     VcChip: typeof Components.VcChip;
