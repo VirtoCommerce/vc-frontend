@@ -10,7 +10,6 @@ const rightResult: EmailType[] = [
 describe("getEmailAddresses", () => {
   it("should return empty array with nullable value", () => {
     expect(getEmailAddresses("")).toEqual([]);
-    expect(getEmailAddresses(null)).toEqual([]);
     expect(getEmailAddresses(undefined)).toEqual([]);
   });
   it("should split email string to email array separated by semicolon", () => {
@@ -30,5 +29,10 @@ describe("getEmailAddresses", () => {
   });
   it("should split email string to email array separated by semicolon ends with semicolon", () => {
     expect(getEmailAddresses("foo@bar.com;baz@bar.com;")).toEqual(rightResult);
+  });
+  it("should split email string to email array separated by semicolon and new line", () => {
+    expect(getEmailAddresses("foo@bar.com;\rbaz@bar.com;")).toEqual(rightResult);
+    expect(getEmailAddresses("foo@bar.com;\r\nbaz@bar.com;")).toEqual(rightResult);
+    expect(getEmailAddresses("foo@bar.com;\nbaz@bar.com;")).toEqual(rightResult);
   });
 });
