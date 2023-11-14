@@ -90,7 +90,7 @@ const validationSchema = toTypedSchema(
   }),
 );
 
-const { errors, meta, handleSubmit } = useForm({
+const { errors, meta, handleSubmit, resetForm } = useForm({
   validationSchema,
   initialValues: {
     oldPassword: "",
@@ -116,6 +116,7 @@ const onSubmit = handleSubmit(async (data) => {
   });
 
   if (result.succeeded) {
+    resetForm();
     emit("succeeded");
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
@@ -129,6 +130,6 @@ const onSubmit = handleSubmit(async (data) => {
 });
 
 if (!passwordRequirements.value) {
-  fetchPasswordRequirements();
+  void fetchPasswordRequirements();
 }
 </script>

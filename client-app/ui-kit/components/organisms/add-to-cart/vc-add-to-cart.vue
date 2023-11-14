@@ -28,20 +28,6 @@
         </VcButton>
       </template>
     </VcInput>
-
-    <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
-      <template #trigger>
-        <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
-          {{ errorMessage }}
-        </div>
-      </template>
-
-      <template #content>
-        <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
-          {{ errorMessage }}
-        </div>
-      </template>
-    </VcTooltip>
   </div>
 </template>
 
@@ -55,6 +41,7 @@ import { useQuantityValidationSchema } from "@/ui-kit/composables";
 interface IEmits {
   (event: "update:modelValue", value: number): void;
   (event: "update:cartItemQuantity", quantity: number): void;
+  (event: "update:validation", value: { isValid: true } | { isValid: false; errorMessage: string }): void;
 }
 
 interface IProps {
@@ -87,6 +74,16 @@ const rules = computed(() => toTypedSchema(quantitySchema.value));
 
 const { errorMessage, validate, setValue } = useField("quantity", rules);
 
+async function validateFields(): Promise<void> {
+  const { valid } = await validate();
+
+  if (!valid && errorMessage.value) {
+    emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
+  } else {
+    emit("update:validation", { isValid: true });
+  }
+}
+
 async function onChange(): Promise<void> {
   setValue(quantity.value);
 
@@ -96,11 +93,7 @@ async function onChange(): Promise<void> {
     return;
   }
 
-  const { valid } = await validate();
-
-  if (!valid) {
-    return;
-  }
+  await validateFields();
 
   emit("update:modelValue", newQuantity);
 }
@@ -115,5 +108,10 @@ function onFocusOut() {
 
 watchEffect(() => {
   quantity.value = props.modelValue;
+});
+
+watchEffect(async () => {
+  setValue(quantity.value);
+  await validateFields();
 });
 </script>

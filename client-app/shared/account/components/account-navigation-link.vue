@@ -33,6 +33,9 @@ defineProps({
 .profile-icon > div {
   mask: url(/static/images/dashboard/icons/profile.svg) no-repeat center / contain;
 }
+.pass-icon > div {
+  mask: url(/static/images/dashboard/icons/pass.svg) no-repeat center / contain;
+}
 .addresses-icon > div {
   mask: url(/static/images/dashboard/icons/building.svg) no-repeat center / contain;
 }

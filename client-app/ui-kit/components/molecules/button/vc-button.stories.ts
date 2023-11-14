@@ -1,4 +1,5 @@
-import { VcButton, VcIcon } from "..";
+import { VcButton } from "..";
+import { VcIcon } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 const SIZES = ["xs", "sm", "md", "lg"];
@@ -7,7 +8,7 @@ const VARIANTS = ["solid", "outline", "solid-lightest"];
 const TYPES = ["button", "reset", "submit"];
 
 export default {
-  title: "Components/Atoms/VcButton",
+  title: "Components/Molecules/VcButton",
   component: VcButton,
   argTypes: {
     size: {

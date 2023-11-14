@@ -2,6 +2,7 @@ export { default as VcAddressForm } from "./address-form/vc-address-form.vue";
 export { default as VcAddressInfo } from "./address-info/vc-address-info.vue";
 export { default as VcAddressSelection } from "./address-selection/vc-address-selection.vue";
 export { default as VcAlert } from "./alert/vc-alert.vue";
+export { default as VcButton } from "./button/vc-button.vue";
 export { default as VcButtonSeeMoreLess } from "./button-see-more-less/vc-button-see-more-less.vue";
 export { default as VcCarousel } from "./carousel/vc-carousel.vue";
 export { default as VcChip } from "./chip/vc-chip.vue";

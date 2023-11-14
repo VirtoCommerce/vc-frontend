@@ -13,6 +13,12 @@
     />
 
     <AccountNavigationLink
+      :to="{ name: 'ChangePasswordAccount' }"
+      :text="$t('shared.account.navigation.links.change_password')"
+      class="pass-icon"
+    />
+
+    <AccountNavigationLink
       v-if="!isCorporateMember"
       :to="{ name: 'Addresses' }"
       :text="$t('shared.account.navigation.links.addresses')"
@@ -90,7 +96,7 @@ const isListDetails = eagerComputed(() => route.name === "ListDetails");
 
 watchEffect(() => {
   if (isListDetails.value) {
-    fetchWishlists();
+    void fetchWishlists();
   }
 });
 </script>

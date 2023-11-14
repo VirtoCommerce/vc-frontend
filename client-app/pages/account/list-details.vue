@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <div class="mt-5 w-full">
+      <div ref="listElement" class="mt-5 w-full">
         <!-- Skeletons -->
         <template v-if="listLoading">
           <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 lg:mx-0">
@@ -75,8 +75,8 @@
               v-if="pagesCount > 1"
               v-model:page="page"
               :pages="pagesCount"
-              class="self-start"
-              @update:page="onUpdatePage()"
+              :scroll-target="listElement"
+              :scroll-offset="60"
             />
           </div>
         </template>
@@ -128,7 +128,6 @@ import type {
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
-  Product,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -153,6 +152,7 @@ usePageHead({
 const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
+const listElement = ref<HTMLElement | undefined>();
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -185,25 +185,10 @@ async function addAllListItemsToCart(): Promise<void> {
   const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
   await addItemsToCart(items);
 
-  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
-
-  const resultItems = wishlistItems.value.map(({ sku, quantity }) => ({
-    productSku: sku,
-    quantity,
-    errors: errorsGroupBySKU[sku],
-  }));
-
   ga.addItemsToCart(wishlistItems.value);
 
-  openPopup({
-    component: AddBulkItemsToCartResultsModal,
-    props: {
-      listName: list.value.name,
-      items: getItemsForAddBulkItemsToCartResultsPopup(wishlistItems.value, resultItems),
-    },
-  });
+  showResultModal(wishlistItems.value);
 }
-
 async function updateItems() {
   const payload: InputUpdateWishlistItemsType = {
     listId: list.value!.id!,
@@ -236,6 +221,24 @@ async function openSaveChangesModal(): Promise<boolean> {
   });
 }
 
+function showResultModal(items: LineItemType[]) {
+  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
+
+  const resultItems = items.map(({ sku, quantity }) => ({
+    productSku: sku,
+    quantity,
+    errors: errorsGroupBySKU[sku],
+  }));
+
+  openPopup({
+    component: AddBulkItemsToCartResultsModal,
+    props: {
+      listName: list.value?.name,
+      items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
+    },
+  });
+}
+
 function updateWishListItem(item: PreparedLineItemType, quantity: number): void {
   const existItem = wishlistItems.value?.find((i) => i.id === item.id);
   if (existItem) {
@@ -244,10 +247,11 @@ function updateWishListItem(item: PreparedLineItemType, quantity: number): void 
 }
 
 async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
-  const product: Product | undefined = wishlistItems.value.find((listItem) => listItem.productId === item.productId)
-    ?.product;
+  const lineItem: LineItemType | undefined = wishlistItems.value.find(
+    (listItem) => listItem.productId === item.productId,
+  );
 
-  if (!product) {
+  if (!lineItem?.product) {
     return;
   }
 
@@ -258,10 +262,12 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   if (itemInCart) {
     await changeItemQuantity(itemInCart.id, quantity);
   } else {
-    await addToCart(product.id, quantity);
+    await addToCart(lineItem.product.id, quantity);
 
-    ga.addItemToCart(product, quantity);
+    ga.addItemToCart(lineItem.product, quantity);
   }
+
+  showResultModal([lineItem]);
 }
 
 function openDeleteProductModal(values: string[]): void {
@@ -295,13 +301,6 @@ function openDeleteProductModal(values: string[]): void {
       },
     });
   }
-}
-
-/**
- * Scroll after page change.
- */
-function onUpdatePage(): void {
-  window.scroll({ top: 0, behavior: "smooth" });
 }
 
 async function canChangeRoute() {

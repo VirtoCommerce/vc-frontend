@@ -34,7 +34,6 @@ declare module "@vue/runtime-core" {
     VcListItem: typeof Components.VcListItem;
     VcLoader: typeof Components.VcLoader;
     VcMarkdownRender: typeof Components.VcMarkdownRender;
-    VcPagination: typeof Components.VcPagination;
     VcPopover: typeof Components.VcPopover;
     VcPopupSidebar: typeof Components.VcPopupSidebar;
     VcPriceDisplay: typeof Components.VcPriceDisplay;
