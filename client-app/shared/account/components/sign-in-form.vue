@@ -109,7 +109,7 @@ const { signMeIn } = useUser();
 const loading = ref(false);
 
 const apiErrors = ref<IdentityErrorType[]>();
-const { translatedErrors } = useErrorsTranslator("shared.account.sign_in_form.errors.", apiErrors);
+const { translatedErrors } = useErrorsTranslator("shared.account.sign_in_form.errors", apiErrors);
 
 const schema = toTypedSchema(
   object({
