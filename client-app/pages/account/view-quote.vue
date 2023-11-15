@@ -10,7 +10,7 @@
 
     <VcLayoutWithRightSidebar>
       <!-- Quote products -->
-      <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
+      <VcWidget size="lg">
         <QuoteLineItems :items="quote.items!" readonly />
       </VcWidget>
 

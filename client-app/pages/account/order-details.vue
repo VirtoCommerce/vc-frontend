@@ -27,7 +27,7 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="cube" size="lg">
+      <VcWidget id="products" size="lg">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
