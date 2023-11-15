@@ -1,5 +1,4 @@
 // https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-
 const validEmailPattern =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
@@ -34,9 +33,13 @@ function prepareEmailsString(value?: string): string {
   return result;
 }
 
-export function getInvalidEmails(emails: EmailType[] = []) {
+export function getInvalidEmails(emails: EmailType[] = []): string {
   return emails
     .filter((el) => !el.isValid)
     .map((el) => el.value)
     .join(", ");
+}
+
+export function normalizeEmails(emails: EmailType[] = []): string[] {
+  return [...new Set(emails.filter((el) => el.isValid).map((email) => email.value.toLowerCase()))];
 }

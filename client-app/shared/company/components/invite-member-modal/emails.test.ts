@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getInvalidEmails, parseEmails } from "./emails";
+import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
 import type { EmailType } from "./emails";
 
 const rightResult: EmailType[] = [
@@ -14,7 +14,7 @@ const resultWithInvalid: EmailType[] = [
 ];
 
 describe("emails", () => {
-  describe("parseEmails should split email string to email array", () => {
+  describe("parseEmails should split email string to EmailType array", () => {
     it("should return empty array with nullable value", () => {
       expect(parseEmails("")).toEqual([]);
       expect(parseEmails(undefined)).toEqual([]);
@@ -53,6 +53,16 @@ describe("emails", () => {
   describe("getInvalidEmails", () => {
     it("should return string with invalid emails", () => {
       expect(getInvalidEmails(resultWithInvalid)).toEqual("baz.bar.com, baz#bar.com");
+    });
+  });
+
+  describe("normalizeEmails", () => {
+    it("should return string array of valid emails", () => {
+      expect(normalizeEmails(parseEmails("foo@bar.com; baz@bar.com;"))).toEqual(["foo@bar.com", "baz@bar.com"]);
+      expect(normalizeEmails(parseEmails("foo@bar.com; baz{ invalid }bar.com;"))).toEqual(["foo@bar.com"]);
+    });
+    it("convert emails to lowercase", () => {
+      expect(normalizeEmails(parseEmails("Foo@bar.com; Baz@bar.com;"))).toEqual(["foo@bar.com", "baz@bar.com"]);
     });
   });
 });

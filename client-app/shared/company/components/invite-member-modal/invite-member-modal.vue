@@ -71,7 +71,7 @@ import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { VcPopup } from "@/ui-kit/components";
-import { getInvalidEmails, parseEmails } from "./emails";
+import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
 
 interface IEmits {
   (e: "result", succeed: boolean): void;
@@ -104,10 +104,6 @@ const { errors, meta, handleSubmit } = useForm({
     emails: "",
   },
 });
-
-function normalizeEmails(emailAddresses: string[]): string[] {
-  return [...new Set(emailAddresses.map((email: string) => email.toLowerCase()))];
-}
 
 const { value: roleId } = useField<string>("roleId", toTypedSchema(string().required()));
 const { value: message } = useField<string>("message", toTypedSchema(string().max(1000)));
@@ -154,11 +150,7 @@ const send = handleSubmit(async (data) => {
     urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
     organizationId: organization.value!.id,
     roleIds: [data.roleId],
-    emails: normalizeEmails(
-      parseEmails(data.emails)
-        .filter((el) => el.isValid, [])
-        .map((el) => el.value),
-    ),
+    emails: normalizeEmails(parseEmails(data.emails)),
     message: data.message.trim(),
   });
 
