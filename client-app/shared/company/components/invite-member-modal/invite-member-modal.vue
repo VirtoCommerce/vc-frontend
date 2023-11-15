@@ -71,7 +71,7 @@ import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { VcPopup } from "@/ui-kit/components";
-import { getEmailAddresses } from "./emails";
+import { parseEmails } from "./emails";
 
 interface IEmits {
   (e: "result", succeed: boolean): void;
@@ -120,7 +120,7 @@ const { value: emails } = useField<string>(
         "emails-quantity",
         t("shared.account.invite_member_dialog.emails_quantity_exceeded", { maxValue: MAX_INVITED_CONTACTS_COUNT }),
         (value: string | undefined) => {
-          const emailAddresses = getEmailAddresses(value);
+          const emailAddresses = parseEmails(value);
           return emailAddresses.length <= MAX_INVITED_CONTACTS_COUNT;
         },
       )
@@ -128,7 +128,7 @@ const { value: emails } = useField<string>(
         "email-length",
         t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: MAX_EMAIL_LENGTH }),
         (value: string | undefined) => {
-          const emailAddresses = getEmailAddresses(value);
+          const emailAddresses = parseEmails(value);
           return emailAddresses.every((emailAddress) => emailAddress.value.length <= MAX_EMAIL_LENGTH);
         },
       )
@@ -137,13 +137,13 @@ const { value: emails } = useField<string>(
         ({ value }) => {
           return (
             "invalid emails: " +
-            getEmailAddresses(value as string)
+            parseEmails(value as string)
               .filter((el) => !el.isValid)
               .map((el) => el.value)
               .join("; ")
           );
         },
-        (value) => getEmailAddresses(value).every((el) => el.isValid),
+        (value) => parseEmails(value).every((el) => el.isValid),
       ),
   ),
 );
@@ -160,7 +160,7 @@ const send = handleSubmit(async (data) => {
     organizationId: organization.value!.id,
     roleIds: [data.roleId],
     emails: normalizeEmails(
-      getEmailAddresses(data.emails)
+      parseEmails(data.emails)
         .filter((el) => el.isValid, [])
         .map((el) => el.value),
     ),

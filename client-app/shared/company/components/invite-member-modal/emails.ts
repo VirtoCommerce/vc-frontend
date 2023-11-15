@@ -10,7 +10,7 @@ export type EmailType = {
   isValid: boolean;
 };
 
-export function getEmailAddresses(value?: string): EmailType[] {
+export function parseEmails(value?: string): EmailType[] {
   if (!value) {
     return [];
   }
