@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: use VcWidget instead -->
   <VcCard
     :header-classes="headerClasses"
     :content-classes="contentClasses"
