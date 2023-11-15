@@ -1,6 +1,6 @@
 <template>
-  <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
-    <div class="mx-5 flex flex-col gap-3 lg:mx-0">
+  <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
+    <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <h2 class="text-26 font-bold uppercase tracking-wide lg:text-3xl lg:leading-8">
@@ -8,7 +8,7 @@
       </h2>
     </div>
 
-    <div class="border-y bg-white shadow-md-x lg:space-y-6 lg:border-0 lg:bg-transparent lg:shadow-none">
+    <div class="-mx-4.5 space-y-5 lg:mx-0 lg:space-y-6">
       <!-- Quote comment -->
       <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
         <VcTextarea
@@ -23,7 +23,7 @@
       </VcWidget>
 
       <!-- Quote products -->
-      <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube">
+      <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
       </VcWidget>
 
@@ -81,21 +81,21 @@
           />
         </div>
       </VcWidget>
+    </div>
 
-      <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
-        <VcButton
-          :disabled="!quoteChanged || fetching"
-          class="flex-1 lg:min-w-[208px] lg:flex-none"
-          variant="outline"
-          @click="saveChanges"
-        >
-          {{ $t("pages.account.quote_details.save_changes") }}
-        </VcButton>
+    <div class="flex flex-wrap gap-5 py-7 lg:justify-end">
+      <VcButton
+        :disabled="!quoteChanged || fetching"
+        class="flex-1 lg:min-w-[208px] lg:flex-none"
+        variant="outline"
+        @click="saveChanges"
+      >
+        {{ $t("pages.account.quote_details.save_changes") }}
+      </VcButton>
 
-        <VcButton :disabled="!quoteValid || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
-          {{ $t("pages.account.quote_details.submit") }}
-        </VcButton>
-      </div>
+      <VcButton :disabled="!quoteValid || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
+        {{ $t("pages.account.quote_details.submit") }}
+      </VcButton>
     </div>
   </div>
 

@@ -28,6 +28,11 @@ const Template: StoryFn<typeof VcWidget> = (args) => ({
 
 export const Basic = Template.bind({});
 
+export const NoShadow = Template.bind({});
+NoShadow.args = {
+  noShadow: true,
+};
+
 export const Header = Template.bind({});
 Header.args = {
   title: "Widget title",

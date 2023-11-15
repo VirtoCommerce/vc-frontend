@@ -5,7 +5,7 @@
       `vc-widget--size--${size}`,
       {
         'vc-widget--collapsed': _collapsed,
-        'vc-widget--shadow': shadow,
+        'vc-widget--no-shadow': noShadow,
       },
     ]"
   >
@@ -73,14 +73,13 @@ export interface IProps {
   appendIcon?: string;
   collapsible?: boolean;
   collapsed?: boolean;
-  shadow?: boolean;
+  noShadow?: boolean;
   fullSizeContent?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
-  shadow: true,
 });
 
 const _collapsed = ref(false);
@@ -105,7 +104,7 @@ watchEffect(() => {
   $sizeMD: "";
   $sizeLG: "";
 
-  @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] text-[--color-neutral-950] rounded divide-y;
+  @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] text-[--color-neutral-950] rounded divide-y shadow-md;
 
   &--size {
     &--xs {
@@ -135,15 +134,11 @@ watchEffect(() => {
     &--lg {
       $sizeLG: &;
 
-      --padding-x: 1.5rem;
+      --padding-x: 1.25rem;
       --padding-y: 1rem;
       --header-height: 3.875rem;
 
       @apply divide-none;
-
-      @media (min-width: theme("screens.lg")) {
-        --padding-x: 1.75rem;
-      }
     }
   }
 
@@ -151,8 +146,8 @@ watchEffect(() => {
     $collapsed: &;
   }
 
-  &--shadow {
-    @apply shadow-md;
+  &--no-shadow {
+    @apply shadow-none;
   }
 
   &__header-container {

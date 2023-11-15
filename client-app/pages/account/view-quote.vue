@@ -1,6 +1,6 @@
 <template>
-  <div v-if="quote" class="lg:!gap-y-7">
-    <div class="mx-5 flex flex-col gap-3 lg:mx-0">
+  <div v-if="quote" class="!gap-y-5 lg:!gap-y-6">
+    <div class="mx-6 flex flex-col gap-3 lg:mx-0">
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <h2 class="text-3xl font-bold uppercase lg:text-28">
