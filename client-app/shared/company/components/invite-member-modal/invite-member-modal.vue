@@ -32,6 +32,7 @@
         :error="!!errors.emails"
         :rows="2"
         required
+        @input="clearApiErrors"
       />
 
       <VcTextarea
@@ -181,4 +182,8 @@ const send = handleSubmit(async (data) => {
     });
   }
 });
+
+function clearApiErrors(): void {
+  commonErrors.value = [];
+}
 </script>
