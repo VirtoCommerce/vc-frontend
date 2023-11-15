@@ -403,7 +403,8 @@
         "send_button": "@:common.buttons.send",
         "invite_successfully_text": "The invite has been successfully sent",
         "emails_quantity_exceeded": "You can invite up to {maxValue} users at once",
-        "email_length_exceeded": "The maximum length of an email address is {maxValue} characters"
+        "email_length_exceeded": "The maximum length of an email address is {maxValue} characters",
+        "invalid_emails": "Incorrect email addresses: {invalidEmails}"
       },
       "profile_update_success_dialog": {
         "title": "Profile update",

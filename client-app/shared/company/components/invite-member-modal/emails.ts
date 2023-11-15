@@ -17,10 +17,13 @@ export function parseEmails(value?: string): EmailType[] {
   return prepareEmailsString(value)
     .split(splitPattern)
     .filter((el) => !!el)
-    .map((el) => ({
-      value: el,
-      isValid: validEmailPattern.test(el),
-    }));
+    .map((el) => {
+      const email = el.trim();
+      return {
+        value: email,
+        isValid: validEmailPattern.test(email),
+      };
+    });
 }
 
 function prepareEmailsString(value?: string): string {
@@ -29,4 +32,11 @@ function prepareEmailsString(value?: string): string {
     result = result.slice(0, -1);
   }
   return result;
+}
+
+export function getInvalidEmails(emails: EmailType[] = []) {
+  return emails
+    .filter((el) => !el.isValid)
+    .map((el) => el.value)
+    .join(", ");
 }

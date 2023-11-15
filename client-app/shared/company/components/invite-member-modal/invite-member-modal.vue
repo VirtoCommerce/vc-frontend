@@ -71,7 +71,7 @@ import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { VcPopup } from "@/ui-kit/components";
-import { parseEmails } from "./emails";
+import { getInvalidEmails, parseEmails } from "./emails";
 
 interface IEmits {
   (e: "result", succeed: boolean): void;
@@ -119,7 +119,7 @@ const { value: emails } = useField<string>(
       .test(
         "emails-quantity",
         t("shared.account.invite_member_dialog.emails_quantity_exceeded", { maxValue: MAX_INVITED_CONTACTS_COUNT }),
-        (value: string | undefined) => {
+        (value) => {
           const emailAddresses = parseEmails(value);
           return emailAddresses.length <= MAX_INVITED_CONTACTS_COUNT;
         },
@@ -127,22 +127,17 @@ const { value: emails } = useField<string>(
       .test(
         "email-length",
         t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: MAX_EMAIL_LENGTH }),
-        (value: string | undefined) => {
+        (value) => {
           const emailAddresses = parseEmails(value);
           return emailAddresses.every((emailAddress) => emailAddress.value.length <= MAX_EMAIL_LENGTH);
         },
       )
       .test(
         "every-valid",
-        ({ value }) => {
-          return (
-            "invalid emails: " +
-            parseEmails(value as string)
-              .filter((el) => !el.isValid)
-              .map((el) => el.value)
-              .join("; ")
-          );
-        },
+        ({ value }) =>
+          t("shared.account.invite_member_dialog.invalid_emails", {
+            invalidEmails: getInvalidEmails(parseEmails(value as string)),
+          }),
         (value) => parseEmails(value).every((el) => el.isValid),
       ),
   ),
