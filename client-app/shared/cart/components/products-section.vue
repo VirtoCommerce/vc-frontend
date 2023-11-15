@@ -81,13 +81,3 @@ withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 </script>
-
-<style scoped lang="scss">
-@media print {
-  #products {
-    :deep(.vc-section-widget__title) {
-      @apply hidden;
-    }
-  }
-}
-</style>

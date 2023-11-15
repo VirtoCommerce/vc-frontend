@@ -5,6 +5,7 @@
       `vc-widget--size--${size}`,
       {
         'vc-widget--collapsed': _collapsed,
+        'vc-widget--shadow': shadow,
       },
     ]"
   >
@@ -18,29 +19,28 @@
       <slot name="header-container" v-bind="{ collapsible, collapsed: _collapsed }">
         <span class="vc-widget__header">
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
-            <slot name="prepend">
-              <span v-if="prependIcon" class="vc-widget__icon">
-                <VcHexagonIcon :icon="prependIcon" />
-              </span>
-            </slot>
+            <span v-if="prependIcon || $slots.prepend" class="vc-widget__prepend-append">
+              <slot name="prepend">
+                <VcHexagonIcon v-if="prependIcon" :icon="prependIcon" />
+              </slot>
+            </span>
 
             <span class="vc-widget__title">
               {{ title }}
             </span>
 
-            <slot name="append" v-bind="{ collapsible, collapsed: _collapsed }">
-              <span v-if="collapsible" class="vc-widget__icon">
+            <span v-if="collapsible || appendIcon || $slots.append" class="vc-widget__prepend-append">
+              <slot name="append" v-bind="{ collapsible, collapsed: _collapsed }">
                 <VcIcon
+                  v-if="collapsible"
                   :class="['vc-widget__append-icon', { 'vc-widget__append-icon--rotate': _collapsed }]"
                   name="chevron-up"
                   size="sm"
                 />
-              </span>
 
-              <span v-else-if="appendIcon" class="vc-widget__icon">
-                <VcIcon class="vc-widget__append-icon" :name="appendIcon" size="sm" />
-              </span>
-            </slot>
+                <VcIcon v-else-if="appendIcon" class="vc-widget__append-icon" :name="appendIcon" size="sm" />
+              </slot>
+            </span>
           </slot>
         </span>
       </slot>
@@ -73,12 +73,14 @@ export interface IProps {
   appendIcon?: string;
   collapsible?: boolean;
   collapsed?: boolean;
+  shadow?: boolean;
   fullSizeContent?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
+  shadow: true,
 });
 
 const _collapsed = ref(false);
@@ -103,13 +105,14 @@ watchEffect(() => {
   $sizeMD: "";
   $sizeLG: "";
 
-  @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] text-[--color-neutral-950] rounded shadow-md;
+  @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] text-[--color-neutral-950] rounded divide-y;
 
   &--size {
     &--xs {
       $sizeXS: &;
 
       --padding-x: 1rem;
+      --padding-y: 0.25rem;
       --header-height: 2.375rem;
     }
 
@@ -117,6 +120,7 @@ watchEffect(() => {
       $sizeSM: &;
 
       --padding-x: 1rem;
+      --padding-y: 0.5rem;
       --header-height: 2.625rem;
     }
 
@@ -124,6 +128,7 @@ watchEffect(() => {
       $sizeMD: &;
 
       --padding-x: 1.5rem;
+      --padding-y: 0.5rem;
       --header-height: 3.125rem;
     }
 
@@ -131,14 +136,13 @@ watchEffect(() => {
       $sizeLG: &;
 
       --padding-x: 1.5rem;
+      --padding-y: 1rem;
       --header-height: 3.875rem;
 
-      @apply rounded-none divide-none;
+      @apply divide-none;
 
       @media (min-width: theme("screens.lg")) {
         --padding-x: 1.75rem;
-
-        @apply rounded;
       }
     }
   }
@@ -147,57 +151,55 @@ watchEffect(() => {
     $collapsed: &;
   }
 
+  &--shadow {
+    @apply shadow-md;
+  }
+
   &__header-container {
-    @apply flex items-center w-full empty:hidden border-b;
+    @apply flex items-center min-h-[--header-height] w-full empty:hidden;
 
     &,
     & > * {
       @apply rounded-t-[inherit];
     }
-
-    #{$sizeLG} & {
-      @apply border-b-0;
-    }
   }
 
   &__header {
-    @apply flex min-h-[--header-height] px-[--padding-x] w-full text-start;
+    @apply flex items-start px-[--padding-x] py-[--padding-y] w-full text-start;
 
     #{$sizeXS} & {
-      --vc-hexagon-icon-size: calc(var(--header-height) - 0.75rem);
+      --title-min-h: calc(var(--header-height) - 0.75rem);
 
-      @apply gap-1.5 py-1 text-sm;
+      @apply gap-1.5 text-sm;
     }
 
     #{$sizeSM} & {
-      --vc-hexagon-icon-size: calc(var(--header-height) - 0.75rem);
+      --title-min-h: calc(var(--header-height) - 0.75rem);
 
-      @apply gap-2 py-2 text-base;
+      @apply gap-2 text-base;
     }
 
     #{$sizeMD} & {
-      --vc-hexagon-icon-size: calc(var(--header-height) - 1rem);
+      --title-min-h: calc(var(--header-height) - 1rem);
 
-      @apply gap-2 py-2 text-xl;
+      @apply gap-2 text-xl;
     }
 
     #{$sizeLG} & {
-      --vc-hexagon-icon-size: calc(var(--header-height) - 1.25rem);
+      --title-min-h: calc(var(--header-height) - 1.25rem);
 
-      @apply gap-2 py-4 text-xl;
+      @apply gap-2 text-xl;
     }
 
-    #{$collapsed} & {
-      @apply border-b-0;
-    }
+    --vc-hexagon-icon-size: var(--title-min-h);
   }
 
-  &__icon {
-    @apply flex-none flex items-center;
+  &__prepend-append {
+    @apply flex-none flex items-center min-h-[--title-min-h];
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--vc-hexagon-icon-size] grow font-bold uppercase;
+    @apply flex flex-col justify-center min-h-[--title-min-h] grow font-bold uppercase;
   }
 
   &__slot {
@@ -223,7 +225,7 @@ watchEffect(() => {
   }
 
   &__footer-container {
-    @apply rounded-b-[inherit] border-t empty:hidden;
+    @apply rounded-b-[inherit] empty:hidden;
 
     & > * {
       @apply rounded-b-[inherit];

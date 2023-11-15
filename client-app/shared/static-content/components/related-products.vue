@@ -1,7 +1,7 @@
 <template>
   <!-- Related products section -->
   <div v-show="relatedProducts.length" class="mt-5 flex flex-col print:hidden lg:flex-row">
-    <div class="-mx-5 print:mx-0 print:grow lg:mx-0 lg:w-full xl:w-9/12 xl:pe-8">
+    <div class="-mx-4.5 print:mx-0 print:grow lg:mx-0 lg:w-full xl:w-9/12 xl:pe-8">
       <VcWidget :title="$t('pages.product.related_product_section_title')" prepend-icon="cube" size="lg">
         <div v-if="isMobile" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4 px-2">
           <ProductCardRelated

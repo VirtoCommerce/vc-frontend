@@ -4,12 +4,8 @@
     class="mt-5 flex flex-col print:flex-row print:space-x-6 lg:flex-row lg:space-x-8"
     :class="{ 'mb-6': !relatedProducts.length }"
   >
-    <div class="-mx-6 print:mx-0 print:grow md:mx-0 lg:w-8/12 xl:w-9/12">
-      <ProductDetails
-        :product="product"
-        :section="model"
-        class="rounded-none border shadow-sm print:border-none print:shadow-none md:rounded"
-      />
+    <div class="-mx-4.5 print:mx-0 print:grow lg:mx-0 lg:w-8/12 xl:w-9/12">
+      <ProductDetails :product="product" :section="model" class="print:border-none print:shadow-none" />
     </div>
 
     <div

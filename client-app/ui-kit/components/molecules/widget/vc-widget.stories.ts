@@ -63,9 +63,10 @@ export const FooterContainer: StoryFn<typeof VcWidget> = (args) => ({
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     <template #footer-container>
-      <div class="flex bg-[--color-neutral-800] text-[--color-additional-50] divide-x">
+      <div class="flex divide-x">
         <div class="grow p-2 text-center">Text 1</div>
         <div class="grow p-2 text-center">Text 2</div>
+        <div class="grow p-2 text-center">Text 3</div>
       </div>
     </template>
   </VcWidget>`,
