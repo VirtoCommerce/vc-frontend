@@ -53,6 +53,7 @@ describe("emails", () => {
 
     it("removes extra spaces", () => {
       expect(parseEmails("   foo@bar.com ;   baz@bar.com  ;  ")).toEqual(rightResult);
+      expect(parseEmails("   foo@bar.com ;    \n  baz@bar.com  ;")).toEqual(rightResult);
     });
 
     it("returns empty array if no value provided", () => {
