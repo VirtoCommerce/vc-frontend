@@ -1,0 +1,170 @@
+<template>
+  <div v-if="pages > 1" class="vc-pagination">
+    <div class="vc-pagination__container">
+      <div class="vc-pagination__pages">
+        <component
+          :is="item > 0 && page !== item ? 'button' : 'span'"
+          v-for="(item, index) in visiblePages"
+          :key="index"
+          :type="item > 0 && page !== item ? 'button' : null"
+          :class="[
+            'vc-pagination__page',
+            {
+              'vc-pagination__page--active': item && page === item,
+              'vc-pagination__page--ellipsis': item === 0,
+            },
+          ]"
+          @click="setPage(item)"
+        >
+          {{ item || "..." }}
+        </component>
+      </div>
+
+      <div class="vc-pagination__nav">
+        <VcButton
+          class="vc-pagination__button vc-pagination__button--prev"
+          color="secondary"
+          variant="outline"
+          size="sm"
+          :disabled="page === 1"
+          @click="setPage(page - 1)"
+        >
+          <VcIcon name="chevron-left" />
+          <span>{{ $t("ui_kit.pagination.previous") }}</span>
+        </VcButton>
+
+        <VcButton
+          class="vc-pagination__button vc-pagination__button--next"
+          color="secondary"
+          variant="outline"
+          size="sm"
+          :disabled="page === pages"
+          @click="setPage(page + 1)"
+        >
+          <span>{{ $t("ui_kit.pagination.next") }}</span>
+          <VcIcon name="chevron-right" />
+        </VcButton>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+
+interface IEmits {
+  (event: "update:page", page: number): void;
+}
+
+interface IProps {
+  page?: number;
+  pages?: number;
+  scrollTarget?: HTMLElement;
+  scrollOffset?: number;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  page: 1,
+  pages: 0,
+  scrollOffset: 20,
+});
+
+const visiblePages = computed(() => {
+  if (props.pages <= 9) {
+    return Array.from({ length: props.pages }, (_, i) => i + 1);
+  }
+
+  const pages = [];
+
+  if (props.page <= 5) {
+    for (let i = 1; i <= 7; i++) {
+      pages.push(i);
+    }
+
+    pages.push(NaN);
+    pages.push(props.pages);
+  } else if (props.page >= props.pages - 4) {
+    pages.push(1);
+    pages.push(NaN);
+
+    for (let i = props.pages - 6; i <= props.pages; i++) {
+      pages.push(i);
+    }
+  } else {
+    pages.push(1);
+    pages.push(NaN);
+
+    for (let i = props.page - 2; i <= props.page + 2; i++) {
+      pages.push(i);
+    }
+
+    pages.push(NaN);
+    pages.push(props.pages);
+  }
+
+  return pages;
+});
+
+function scrollToTop() {
+  if (props.scrollTarget) {
+    const topPosition = props.scrollTarget.getBoundingClientRect().top + window.scrollY - props.scrollOffset;
+    window.scrollTo({ top: topPosition, behavior: "smooth" });
+  }
+}
+
+const setPage = (page: number) => {
+  if (page) {
+    emit("update:page", page);
+
+    scrollToTop();
+  }
+};
+</script>
+
+<style lang="scss">
+.vc-pagination {
+  @apply flex mx-auto flex-col items-center lg:mx-0 lg:flex-row lg:gap-3;
+
+  &__container {
+    @apply lg:contents;
+  }
+
+  &__pages {
+    @apply flex flex-wrap justify-center;
+  }
+
+  &__page {
+    @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded text-xs font-bold;
+
+    &[type="button"] {
+      @apply bg-[--color-additional-50] text-[--color-neutral-950];
+    }
+
+    &:hover {
+      @apply bg-[--color-primary-50];
+    }
+
+    &--active {
+      @apply bg-[--color-primary-500] text-[--color-additional-50] pointer-events-none;
+    }
+
+    &--ellipsis {
+      @apply text-[--color-neutral-400] pointer-events-none;
+    }
+  }
+
+  &__nav {
+    @apply flex gap-8 justify-between mt-1.5 lg:contents;
+  }
+
+  &__button {
+    @apply min-w-[6.5rem];
+
+    &--prev {
+      @apply -order-1;
+    }
+  }
+}
+</style>

@@ -95,6 +95,10 @@ jobs:
         run: |
           yarn build
 
+      - name: Unit Tests
+        run: |
+          yarn test:unit run
+
       - name: BUILD_STATE::successful
         if: success()
         run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
@@ -136,7 +140,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.blobRelease.outputs.packageUrl }}
+          asset_path: artifacts/${{ steps.blobRelease.outputs.blobId }}
           asset_name: ${{ steps.blobRelease.outputs.blobId }}
           asset_content_type: application/zip
 

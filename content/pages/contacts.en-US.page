@@ -1,0 +1,22 @@
+{
+  "settings": {
+    "type": "settings",
+    "permalink": "/contacts",
+    "name": "Contacts",
+    "header": "Contacts",
+    "hideBreadcrumbs": true
+  },
+  "content": [
+    {
+      "heading": "h2",
+      "type": "text",
+      "id": "textiMh0",
+      "title": "Hello dear customer,",
+      "text": {
+        "markdown": "If you require assistance, please feel free to contact the administrator at your convenience via the following contacts:\n<br>phone number: [+1 800 980 52 88](tel:+18009805288) <br> email: [contact@virtoway.com](mailto:contact@virtoway.com)\n\nThank you!",
+        "html": "<p>If you require assistance, please feel free to contact the administrator at your convenience via the following contacts:\n<br>phone number: <a href=\"tel:+18009805288\">+1 800 980 52 88</a> <br> email: <a href=\"mailto:contact@virtoway.com\">contact@virtoway.com</a></p>\n<p>Thank you!</p>\n"
+      },
+      "background": null
+    }
+  ]
+}

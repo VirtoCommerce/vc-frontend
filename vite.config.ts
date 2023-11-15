@@ -33,7 +33,11 @@ export default defineConfig(({ mode }): UserConfig => {
     base: isDevelopment ? "/" : "/themes/assets/",
     publicDir: "./client-app/public",
     plugins: [
-      mkcert(),
+      mkcert({
+        savePath: "./.certificates",
+        keyFileName: "private.pem",
+        certFileName: "public.pem",
+      }),
       vue(),
       graphql(),
       isDevelopment

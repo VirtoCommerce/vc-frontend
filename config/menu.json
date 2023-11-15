@@ -60,8 +60,8 @@
           "icon": "/static/images/checkout/cart.svg#main"
         },
         {
-          "id": "contact",
-          "route": "/contact",
+          "id": "contacts",
+          "route": "/contacts",
           "title": "shared.layout.header.menu.contact_us",
           "icon": "/static/images/dashboard/icons/contact.svg#main"
         }
@@ -76,6 +76,11 @@
             "route": { "name": "Profile" },
             "title": "shared.layout.header.mobile.account_menu.profile",
             "icon": "/static/images/dashboard/icons/profile.svg#main"
+          },
+          {
+            "route": { "name": "ChangePassword" },
+            "title": "shared.layout.header.mobile.account_menu.change_password",
+            "icon": "/static/images/dashboard/icons/pass.svg#main"
           },
           {
             "id": "addresses",

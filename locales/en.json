@@ -192,6 +192,7 @@
       "dashboard": "Dashboard",
       "account": "Account",
       "profile": "Profile",
+      "change_password": "Change Password",
       "addresses": "Addresses",
       "orders": "Orders",
       "lists": "Lists",
@@ -223,7 +224,7 @@
       "remove_products": "Remove products",
       "change_role": "Change role",
       "save_changes": "Save Changes",
-      "password_expired": "Password is about to expired"
+      "password_expired": "Password is about to expire"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -273,6 +274,7 @@
           "account_menu": {
             "dashboard": "@:common.links.dashboard",
             "profile": "@:common.links.profile",
+            "change_password": "@:common.links.change_password",
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
@@ -347,6 +349,7 @@
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
+          "change_password": "@:common.links.change_password",
           "addresses": "@:common.links.addresses",
           "orders": "@:common.links.orders",
           "lists": "@:common.links.lists",
@@ -906,6 +909,13 @@
           "title": "Bulk order pad"
         }
       },
+      "change_password": {
+        "meta": {
+          "title": "@:pages.account.change_password.title"
+        },
+        "title": "Change Password",
+        "success_message": "@:pages.change_password.success_message"
+      },
       "orders": {
         "meta": {
           "title": "@:pages.account.orders.title"
@@ -1305,6 +1315,12 @@
       "message": "@:common.messages.blocked"
     }
   },
+  "ui_kit": {
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
   "identity_error": {
     "DuplicateEmail": "Email {0} is already taken",
     "DuplicateUserName": "Username {0} is already taken",
@@ -1333,7 +1349,7 @@
     "required_unique_chars": "At least one unique character | Minimum {0} unique characters"
   },
   "validation_error": {
-    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed.",
+    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed. Available quantity: {availQty}",
     "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
     "CART_PRODUCT_INACTIVE": "The product is inactive.",
     "PRODUCT_PRICE_INVALID": "Price is invalid.",

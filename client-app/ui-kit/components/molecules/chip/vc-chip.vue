@@ -80,7 +80,7 @@ withDefaults(defineProps<IProps>(), {
     $truncate: &;
   }
 
-  &--nowrap {
+  &--nowrap:not(#{$truncate}) {
     @apply w-auto whitespace-nowrap #{!important};
   }
 

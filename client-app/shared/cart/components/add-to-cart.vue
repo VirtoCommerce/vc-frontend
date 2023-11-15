@@ -47,7 +47,7 @@
       </template>
     </VcTooltip>
 
-    <div v-else-if="reservedSpace" class="h-2.5 lg:h-4"></div>
+    <div v-else-if="reservedSpace" class="h-4"></div>
   </div>
 </template>
 
@@ -57,19 +57,19 @@ import { clone } from "lodash";
 import { useField } from "vee-validate";
 import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useCartValidationErrorTranslator, useGoogleAnalytics } from "@/core/composables";
+import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
 import { PRODUCT_OBJECT_TYPE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 import { useCart } from "../composables/useCart";
 import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
+import type { NamedValue } from "vue-i18n";
 
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const getValidationErrorTranslation = useCartValidationErrorTranslator();
 const notifications = useNotifications();
 
 interface IEmits {
@@ -90,6 +90,7 @@ const maxQuantity = computed(() => props.product.maxQuantity);
 const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
+const { getTranslation } = useErrorsTranslator("validation_error");
 const { quantitySchema } = useQuantityValidationSchema(minQuantity.value, maxQuantity.value);
 
 const loading = ref(false);
@@ -158,7 +159,16 @@ async function onChange() {
               (validationError) =>
                 validationError.objectId === props.product.code && validationError.objectType === PRODUCT_OBJECT_TYPE,
             )
-            .map(getValidationErrorTranslation)
+            .map((el) => {
+              return getTranslation({
+                code: el.errorCode,
+                parameters: el.errorParameters?.reduce((acc, err) => {
+                  acc[err.key] = err.value;
+                  return acc;
+                }, {} as NamedValue),
+                description: el.errorMessage,
+              });
+            })
             .join(" "),
         },
       ),
