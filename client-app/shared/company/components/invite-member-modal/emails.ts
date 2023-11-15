@@ -9,21 +9,13 @@ export type EmailType = {
   isValid: boolean;
 };
 
-function prepareEmailsString(value?: string): string {
-  let result = value?.trim() ?? "";
-  if (result.at(-1)?.match(/[,;]/)) {
-    result = result.slice(0, -1);
-  }
-
-  return result;
-}
-
 export function parseEmails(value?: string): EmailType[] {
   if (!value) {
     return [];
   }
 
-  return prepareEmailsString(value)
+  return value
+    .trim()
     .split(splitPattern)
     .filter((el) => !!el)
     .map((el) => {
