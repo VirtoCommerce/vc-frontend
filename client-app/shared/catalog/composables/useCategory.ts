@@ -48,7 +48,7 @@ export function useCategory() {
       category.value = {
         ...(data.category ?? rootCategory),
         parent,
-        childCategories: data.childCategories.childCategories,
+        childCategories: data.childCategories.childCategories ?? [],
       };
     } catch (e) {
       Logger.error(`${useCategory.name}.${fetchCategory.name}`, e);
