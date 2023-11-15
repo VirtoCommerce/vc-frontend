@@ -1,6 +1,5 @@
 export * from "./useAppContext";
 export * from "./useBreadcrumbs";
-export * from "./useCartValidationErrorTranslator";
 export * from "./useCategoriesRoutes";
 export * from "./useCountries";
 export * from "./useCurrency";

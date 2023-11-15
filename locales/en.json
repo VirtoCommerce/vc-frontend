@@ -1349,7 +1349,7 @@
     "required_unique_chars": "At least one unique character | Minimum {0} unique characters"
   },
   "validation_error": {
-    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed.",
+    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed. Available quantity: {availQty}",
     "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
     "CART_PRODUCT_INACTIVE": "The product is inactive.",
     "PRODUCT_PRICE_INVALID": "Price is invalid.",
