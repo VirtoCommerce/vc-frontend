@@ -9,10 +9,20 @@ export type EmailType = {
   isValid: boolean;
 };
 
+function prepareEmailsString(value?: string): string {
+  let result = value?.trim() ?? "";
+  if (result.at(-1)?.match(/[,;]/)) {
+    result = result.slice(0, -1);
+  }
+
+  return result;
+}
+
 export function parseEmails(value?: string): EmailType[] {
   if (!value) {
     return [];
   }
+
   return prepareEmailsString(value)
     .split(splitPattern)
     .filter((el) => !!el)
@@ -23,14 +33,6 @@ export function parseEmails(value?: string): EmailType[] {
         isValid: validEmailPattern.test(email),
       };
     });
-}
-
-function prepareEmailsString(value?: string): string {
-  let result = value?.trim() ?? "";
-  if (result.at(-1)?.match(/[,;]/)) {
-    result = result.slice(0, -1);
-  }
-  return result;
 }
 
 export function getInvalidEmails(emails: EmailType[] = []): string {

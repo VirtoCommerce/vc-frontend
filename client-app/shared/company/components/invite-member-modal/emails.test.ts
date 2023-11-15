@@ -14,54 +14,66 @@ const resultWithInvalid: EmailType[] = [
 ];
 
 describe("emails", () => {
-  describe("parseEmails should split email string to EmailType array", () => {
-    it("should return empty array with nullable value", () => {
-      expect(parseEmails("")).toEqual([]);
-      expect(parseEmails(undefined)).toEqual([]);
+  describe("parseEmails", () => {
+    describe("parses emails separated by:", () => {
+      it("semicolon", () => {
+        expect(parseEmails("foo@bar.com;baz@bar.com")).toEqual(rightResult);
+      });
+
+      it("comma", () => {
+        expect(parseEmails("foo@bar.com,baz@bar.com")).toEqual(rightResult);
+      });
+
+      it("semicolon with space", () => {
+        expect(parseEmails("foo@bar.com; baz@bar.com")).toEqual(rightResult);
+      });
+
+      it("comma with space", () => {
+        expect(parseEmails("foo@bar.com, baz@bar.com")).toEqual(rightResult);
+      });
+
+      it("comma ends with comma", () => {
+        expect(parseEmails("foo@bar.com,baz@bar.com,")).toEqual(rightResult);
+      });
+
+      it("semicolon ends with semicolon", () => {
+        expect(parseEmails("foo@bar.com;baz@bar.com;")).toEqual(rightResult);
+      });
+
+      it("semicolon and new line", () => {
+        expect(parseEmails("foo@bar.com;\rbaz@bar.com;")).toEqual(rightResult);
+        expect(parseEmails("foo@bar.com;\r\nbaz@bar.com;")).toEqual(rightResult);
+        expect(parseEmails("foo@bar.com;\nbaz@bar.com;")).toEqual(rightResult);
+      });
     });
-    it("separated by semicolon", () => {
-      expect(parseEmails("foo@bar.com;baz@bar.com")).toEqual(rightResult);
-    });
-    it("separated by comma", () => {
-      expect(parseEmails("foo@bar.com,baz@bar.com")).toEqual(rightResult);
-    });
-    it("separated by semicolon with space", () => {
-      expect(parseEmails("foo@bar.com; baz@bar.com")).toEqual(rightResult);
-    });
-    it("separated by comma with space", () => {
-      expect(parseEmails("foo@bar.com, baz@bar.com")).toEqual(rightResult);
-    });
-    it("separated by comma ends with comma", () => {
-      expect(parseEmails("foo@bar.com,baz@bar.com,")).toEqual(rightResult);
-    });
-    it("separated by semicolon ends with semicolon", () => {
-      expect(parseEmails("foo@bar.com;baz@bar.com;")).toEqual(rightResult);
-    });
-    it("separated by semicolon and new line", () => {
-      expect(parseEmails("foo@bar.com;\rbaz@bar.com;")).toEqual(rightResult);
-      expect(parseEmails("foo@bar.com;\r\nbaz@bar.com;")).toEqual(rightResult);
-      expect(parseEmails("foo@bar.com;\nbaz@bar.com;")).toEqual(rightResult);
-    });
-    it("include invalid emails", () => {
+
+    it("includes invalid emails", () => {
       expect(parseEmails("foo@bar.com; baz.bar.com; baz#bar.com;")).toEqual(resultWithInvalid);
     });
-    it("remove extra spaces", () => {
+
+    it("removes extra spaces", () => {
       expect(parseEmails("   foo@bar.com ;   baz@bar.com  ;  ")).toEqual(rightResult);
+    });
+
+    it("returns empty array if no value provided", () => {
+      expect(parseEmails("")).toEqual([]);
+      expect(parseEmails()).toEqual([]);
     });
   });
 
   describe("getInvalidEmails", () => {
-    it("should return string with invalid emails", () => {
+    it("returns string with invalid emails", () => {
       expect(getInvalidEmails(resultWithInvalid)).toEqual("baz.bar.com, baz#bar.com");
     });
   });
 
   describe("normalizeEmails", () => {
-    it("should return string array of valid emails", () => {
+    it("returns string array of valid emails", () => {
       expect(normalizeEmails(parseEmails("foo@bar.com; baz@bar.com;"))).toEqual(["foo@bar.com", "baz@bar.com"]);
       expect(normalizeEmails(parseEmails("foo@bar.com; baz{ invalid }bar.com;"))).toEqual(["foo@bar.com"]);
     });
-    it("convert emails to lowercase", () => {
+
+    it("converts emails to lowercase", () => {
       expect(normalizeEmails(parseEmails("Foo@bar.com; Baz@bar.com;"))).toEqual(["foo@bar.com", "baz@bar.com"]);
     });
   });
