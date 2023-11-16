@@ -44,7 +44,7 @@
             class="grow"
             @click="openListSettingsModal"
           >
-            {{ $t("shared.wishlists.list_card.list_settings_button") }}
+            {{ $t("shared.wishlists.list_details.list_settings_button") }}
           </VcButton>
         </div>
       </div>

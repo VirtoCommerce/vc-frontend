@@ -680,8 +680,8 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Product count",
-        "list_settings_button": "List settings",
-        "remove_list_button": "Remove list"
+        "list_edit_button": "Edit",
+        "remove_list_button": "Delete"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",

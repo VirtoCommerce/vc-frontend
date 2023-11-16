@@ -14,25 +14,8 @@
       <span class="ml-1 text-sm font-black">{{ list.items!.length }}</span>
     </div>
 
-    <div class="hidden shrink-0 gap-x-3 px-6 md:flex">
-      <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
-      <button
-        type="button"
-        class="flex rounded p-1.5 text-gray-700 shadow hover:bg-gray-100"
-        :title="$t('shared.wishlists.list_card.list_settings_button')"
-        @click="$emit('settings')"
-      >
-        <VcIcon name="cog" :size="16" />
-      </button>
-
-      <button
-        type="button"
-        class="flex rounded p-1.5 text-[color:var(--color-danger)] shadow hover:bg-gray-100"
-        :title="$t('shared.wishlists.list_card.remove_list_button')"
-        @click="$emit('remove')"
-      >
-        <VcIcon name="delete-mini" :size="16" />
-      </button>
+    <div class="absolute right-0 top-5 px-5 md:relative md:right-auto md:top-auto">
+      <WishlistDropdownMenu @edit="$emit('settings')" @remove="$emit('remove')" />
     </div>
   </div>
 </template>
@@ -40,6 +23,7 @@
 <script setup lang="ts">
 import type { WishlistType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
+import WishlistDropdownMenu from "@/shared/wishlists/components/wishlist-dropdown-menu.vue";
 
 defineEmits(["settings", "remove"]);
 
