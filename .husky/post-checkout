@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-test -d node_modules/.cache && rm -r node_modules/.cache
+if [ -d "node_modules/.cache" ]; then
+  rm -r node_modules/.cache
+fi
