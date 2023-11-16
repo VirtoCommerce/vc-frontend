@@ -16,7 +16,14 @@ import {
 import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { TabsType, pageReloadEvent, useBroadcast, userLockedEvent, userReloadEvent } from "@/shared/broadcast";
+import {
+  TabsType,
+  pageReloadEvent,
+  useBroadcast,
+  userLockedEvent,
+  userReloadEvent,
+  passwordExpiredEvent,
+} from "@/shared/broadcast";
 import { usePopup } from "@/shared/popup";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
@@ -134,10 +141,8 @@ export function useUser() {
         broadcast.emit(userReloadEvent);
       }
 
-      const { hash, pathname, search } = location;
-
-      if ((user.value?.forcePasswordChange || user.value?.passwordExpired) && pathname !== "/change-password") {
-        location.href = `/change-password?returnUrl=${pathname + search + hash}`;
+      if (user.value?.forcePasswordChange || user.value?.passwordExpired) {
+        broadcast.emit(passwordExpiredEvent);
       }
 
       if (user.value?.lockedState) {

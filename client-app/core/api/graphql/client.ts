@@ -6,6 +6,7 @@ import {
   unauthorizedErrorEvent,
   unhandledErrorEvent,
   userLockedEvent,
+  passwordExpiredEvent,
   useBroadcast,
 } from "@/shared/broadcast";
 import { GraphQLErrorCode } from "./enums";
@@ -23,6 +24,7 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
   const forbidden = hasErrorCode(graphQLErrors, GraphQLErrorCode.Forbidden);
   const unhandledError = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled);
   const userLockedError = hasErrorCode(graphQLErrors, GraphQLErrorCode.UserLocked);
+  const passwordExpired = hasErrorCode(graphQLErrors, GraphQLErrorCode.PasswordExpired);
 
   if (networkError || unhandledError) {
     broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
@@ -38,6 +40,10 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
 
   if (forbidden) {
     broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
+  }
+
+  if (passwordExpired) {
+    broadcast.emit(passwordExpiredEvent, undefined, TabsType.CURRENT);
   }
 });
 
