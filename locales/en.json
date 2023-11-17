@@ -681,7 +681,9 @@
       "list_card": {
         "product_count_label": "Product count",
         "list_edit_button": "Edit",
-        "remove_list_button": "Delete"
+        "remove_list_button": "Delete",
+        "make_private_button": "Make private",
+        "share_with_organisation_button": "Share with organisation"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",

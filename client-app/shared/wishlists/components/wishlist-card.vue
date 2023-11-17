@@ -15,17 +15,22 @@
     </div>
 
     <div class="absolute right-0 top-0 h-full p-5 md:relative">
-      <WishlistDropdownMenu @edit="$emit('settings')" @remove="$emit('remove')" />
+      <WishlistDropdownMenu
+        :current-scope="list.scope"
+        @set-scope="$emit('setScope')"
+        @edit="$emit('settings')"
+        @remove="$emit('remove')"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import type { WishlistType } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
-import WishlistDropdownMenu from "@/shared/wishlists/components/wishlist-dropdown-menu.vue";
 
-defineEmits(["settings", "remove"]);
+defineEmits(["settings", "remove", "setScope"]);
 
 defineProps({
   list: {
