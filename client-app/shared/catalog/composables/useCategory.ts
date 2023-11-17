@@ -4,6 +4,7 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
 import type { Category } from "@/core/api/graphql/types";
+import type { RouteLocationRaw } from "vue-router";
 
 export function useCategory() {
   const loading = ref(false);
@@ -11,15 +12,33 @@ export function useCategory() {
 
   const { catalogId, i18n, router } = globals;
 
-  const rootCategory: Readonly<Category> = {
+  const catalogName = i18n.global.t("pages.catalog.title");
+  const catalogRoute: RouteLocationRaw = { name: "Catalog" };
+  const catalogUrl = router.resolve(catalogRoute).fullPath.slice(1);
+  const catalogBreadcrumb: IBreadcrumb = { title: catalogName, route: catalogRoute };
+
+  // FIXME: Don't use fake XAPI object
+  const catalog: Readonly<Category> = {
     id: catalogId,
-    name: i18n.global.t("pages.catalog.title"),
-    slug: router.resolve({ name: "Catalog" }).fullPath.slice(1),
+    name: catalogName,
+    slug: catalogUrl,
     code: "",
     priority: 0,
     breadcrumbs: [],
+    childCategories: [],
+    descriptions: [],
+    hasParent: false,
+    images: [],
+    level: 0,
+    outlines: [],
+    properties: [],
     seoInfo: {
-      pageTitle: i18n.global.t("pages.catalog.meta.title"),
+      id: "",
+      isActive: true,
+      objectId: catalogId,
+      objectType: "Catalog",
+      semanticUrl: catalogUrl,
+      pageTitle: catalogName,
       metaKeywords: i18n.global.t("pages.catalog.meta.keywords"),
       metaDescription: i18n.global.t("pages.catalog.meta.description"),
     },
@@ -29,12 +48,12 @@ export function useCategory() {
     loading.value = true;
     try {
       const data = await getCategory(payload);
-      const parent = data.category && !data.category.parent ? rootCategory : data.category?.parent;
+      const parent = data.category && !data.category.parent ? catalog : data.category?.parent;
 
       category.value = {
-        ...(data.category ?? rootCategory),
+        ...(data.category ?? catalog),
         parent,
-        childCategories: data.childCategories.childCategories,
+        childCategories: data.childCategories.childCategories ?? [],
       };
     } catch (e) {
       Logger.error(`${useCategory.name}.${fetchCategory.name}`, e);
@@ -45,7 +64,10 @@ export function useCategory() {
   }
 
   return {
-    rootCategory,
+    catalogBreadcrumb,
+    catalog,
+    /** @deprecated Use {@link catalog} instead. */
+    rootCategory: catalog,
     fetchCategory,
     loading: readonly(loading),
     category: computed(() => category.value),

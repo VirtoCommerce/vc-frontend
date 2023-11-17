@@ -51,7 +51,6 @@ import { useCart } from "@/shared/cart";
 import { useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
-import type { Breadcrumb } from "@/core/api/graphql/types";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -71,7 +70,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
-const { rootCategory } = useCategory();
+const { catalogBreadcrumb } = useCategory();
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
@@ -93,12 +92,7 @@ useSeoMeta({
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const firstItem: Breadcrumb = { itemId: rootCategory.id, title: rootCategory.name, seoPath: rootCategory.slug };
-  const items = product.value
-    ? product.value.breadcrumbs ?? [{ itemId: product.value.id, title: product.value.name }]
-    : [];
-
-  return buildBreadcrumbs([firstItem].concat(items)) ?? [];
+  return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
 });
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
