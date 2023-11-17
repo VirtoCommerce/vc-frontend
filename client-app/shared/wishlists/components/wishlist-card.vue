@@ -14,7 +14,7 @@
       <span class="ml-1 text-sm font-black">{{ list.items!.length }}</span>
     </div>
 
-    <div class="absolute right-0 top-5 px-5 md:relative md:right-auto md:top-auto">
+    <div class="absolute right-0 top-0 h-full p-5 md:relative">
       <WishlistDropdownMenu @edit="$emit('settings')" @remove="$emit('remove')" />
     </div>
   </div>
