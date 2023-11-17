@@ -34,10 +34,10 @@ Carousel.args = {
   imgSrc: "/static/images/product/product-1.webp",
   alt: "Product",
   images: [
-    { url: "/static/images/product/product-1.webp" },
-    { url: "/static/images/product/product-2.webp" },
-    { url: "/static/images/product/product-3.webp" },
-    { url: "/static/images/product/product-4.webp" },
-    { url: "/static/images/product/product-5.webp" },
+    { id: "1", url: "/static/images/product/product-1.webp", sortOrder: 1 },
+    { id: "2", url: "/static/images/product/product-2.webp", sortOrder: 2 },
+    { id: "3", url: "/static/images/product/product-3.webp", sortOrder: 3 },
+    { id: "4", url: "/static/images/product/product-4.webp", sortOrder: 4 },
+    { id: "5", url: "/static/images/product/product-5.webp", sortOrder: 5 },
   ],
 };

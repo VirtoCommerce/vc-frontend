@@ -331,7 +331,7 @@ import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
 import ProductsFiltersSidebar from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
-import type { Breadcrumb, Product } from "@/core/api/graphql/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
 import type { StyleValue } from "vue";
@@ -363,7 +363,7 @@ const {
 } = useProducts({
   withFacets: true,
 });
-const { loading: loadingCategory, category: currentCategory, rootCategory, fetchCategory } = useCategory();
+const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
 
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
@@ -433,12 +433,7 @@ useSeoMeta({
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const firstItem: Breadcrumb = { itemId: rootCategory.id, title: rootCategory.name, seoPath: rootCategory.slug };
-  const items = currentCategory.value
-    ? currentCategory.value.breadcrumbs ?? [{ itemId: currentCategory.value.id, title: currentCategory.value.name }]
-    : [];
-
-  return buildBreadcrumbs([firstItem].concat(items)) ?? [];
+  return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
 });
 
 const searchParams = computedEager<ProductsSearchParams>(() => ({
