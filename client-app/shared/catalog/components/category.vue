@@ -363,7 +363,7 @@ const {
 } = useProducts({
   withFacets: true,
 });
-const { loading: loadingCategory, category: currentCategory, rootCategory, fetchCategory } = useCategory();
+const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
 
 const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
@@ -433,8 +433,7 @@ useSeoMeta({
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const rootBreadcrumb: IBreadcrumb = { title: rootCategory.name, route: rootCategory.slug };
-  return [rootBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
+  return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
 });
 
 const searchParams = computedEager<ProductsSearchParams>(() => ({

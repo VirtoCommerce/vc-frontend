@@ -70,7 +70,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
-const { rootCategory } = useCategory();
+const { catalogBreadcrumb } = useCategory();
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
@@ -92,8 +92,7 @@ useSeoMeta({
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  const rootBreadcrumb: IBreadcrumb = { title: rootCategory.name, route: rootCategory.slug };
-  return [rootBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
+  return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
 });
 
 const variationsCartTotalAmount = eagerComputed<number>(() => {
