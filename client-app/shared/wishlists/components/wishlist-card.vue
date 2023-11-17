@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex flex-col border-y bg-white pb-4 pt-4.5 shadow-sm md:flex-row md:items-center md:py-0 lg:rounded lg:border-x"
+    class="relative flex flex-col border-t bg-white pb-4 pt-4.5 shadow-sm last:border-b md:flex-row md:items-center md:py-0 lg:rounded lg:border"
   >
     <router-link
       :to="{ name: 'ListDetails', params: { listId: list.id } }"
