@@ -1482,6 +1482,17 @@ export type InputChangePurchaseOrderNumber = {
   userId: Scalars['String']['input'];
 };
 
+export type InputChangeWishlistType = {
+  /** List description */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** List ID */
+  listId: Scalars['String']['input'];
+  /** New List name */
+  listName?: InputMaybe<Scalars['String']['input']>;
+  /** List scope (private or organization) */
+  scope?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputClearCartType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
@@ -1605,8 +1616,12 @@ export type InputCreateWishlistType = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Currency code */
   currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** List description */
+  description?: InputMaybe<Scalars['String']['input']>;
   /** List name */
   listName?: InputMaybe<Scalars['String']['input']>;
+  /** List scope (private or organization) */
+  scope?: InputMaybe<Scalars['String']['input']>;
   /** Store ID */
   storeId: Scalars['String']['input'];
   /** Owner ID */
@@ -2619,6 +2634,7 @@ export type Mutations = {
   changePurchaseOrderNumber?: Maybe<CartType>;
   changeQuoteComment?: Maybe<QuoteType>;
   changeQuoteItemQuantity?: Maybe<QuoteType>;
+  changeWishlist?: Maybe<WishlistType>;
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
@@ -2653,6 +2669,7 @@ export type Mutations = {
   removeShipment?: Maybe<CartType>;
   removeWishlist?: Maybe<Scalars['Boolean']['output']>;
   removeWishlistItem?: Maybe<WishlistType>;
+  /** @deprecated Obsolete. Use 'changeWishlist' instead. */
   renameWishlist?: Maybe<WishlistType>;
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
@@ -2806,6 +2823,11 @@ export type MutationsChangeQuoteCommentArgs = {
 
 export type MutationsChangeQuoteItemQuantityArgs = {
   command: ChangeQuoteItemQuantityCommandType;
+};
+
+
+export type MutationsChangeWishlistArgs = {
+  command: InputChangeWishlistType;
 };
 
 
@@ -5040,6 +5062,8 @@ export type WishlistType = {
   customerId?: Maybe<Scalars['String']['output']>;
   /** Shopping cart user name */
   customerName?: Maybe<Scalars['String']['output']>;
+  /** Wishlist description */
+  description?: Maybe<Scalars['String']['output']>;
   /** Shopping cart ID */
   id?: Maybe<Scalars['String']['output']>;
   /** Items */
@@ -5048,6 +5072,8 @@ export type WishlistType = {
   itemsCount?: Maybe<Scalars['Int']['output']>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
+  /** Possile values: private, organization */
+  scope?: Maybe<Scalars['String']['output']>;
   /** Shopping cart store ID */
   storeId?: Maybe<Scalars['String']['output']>;
 };
@@ -5248,7 +5274,7 @@ export type GetWishlistsQueryVariables = Exact<{
 }>;
 
 
-export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id?: string, name: string, items?: Array<{ id: string, productId: string }> }> } };
+export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id?: string, name: string, scope?: string, items?: Array<{ id: string, productId: string }> }> } };
 
 export type RequestPasswordResetQueryVariables = Exact<{
   loginOrEmail: Scalars['String']['input'];
