@@ -9,7 +9,11 @@
 
         <span>{{ $t("shared.wishlists.list_card.list_edit_button") }}</span>
       </VcMenuItem>
-      <VcMenuItem v-if="scopeButton" :color="scopeButton.color" @click="$emit('setScope', scopeButton.scope)">
+      <VcMenuItem
+        v-if="isCorporateMember && scopeButton"
+        :color="scopeButton.color"
+        @click="$emit('setScope', scopeButton.scope)"
+      >
         <VcIcon :name="scopeButton.icon" />
 
         <span class="whitespace-nowrap">{{ $t(scopeButton.localePath) }}</span>
@@ -26,13 +30,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { useUser } from "@/shared/account";
+
+defineEmits<IEmit>();
+
+const props = defineProps<IProps>();
+
+const { isCorporateMember } = useUser();
 
 export type ScopeColorsType = "secondary" | "info";
 
 type ScopeButtonType = { scope: WishlistScopeType; icon: string; color: ScopeColorsType; localePath: string };
-
-defineEmits<IEmit>();
-const props = defineProps<IProps>();
 
 const changeScopeButtons: { [key in WishlistScopeType]: ScopeButtonType } = {
   [WishlistScopeType.Private]: {
