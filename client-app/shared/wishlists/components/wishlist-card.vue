@@ -17,7 +17,7 @@
     <div class="absolute right-0 top-0 h-full p-5 md:relative">
       <WishlistDropdownMenu
         :current-scope="list.scope"
-        @set-scope="$emit('setScope')"
+        @set-scope="$emit('setScope', $event)"
         @edit="$emit('settings')"
         @remove="$emit('remove')"
       />
