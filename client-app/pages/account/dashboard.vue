@@ -62,9 +62,6 @@
 
       <VcWidget :title="$t('pages.account.dashboard.orders_status_card.title')" class="h-48 lg:w-0 lg:grow" />
     </div>
-
-    <!-- Commented due to acceptance criteria, will be used in future
-    <VcWidget title="Users" class="h-52"></VcWidget> -->
   </div>
 </template>
 
@@ -79,11 +76,3 @@ usePageHead({
   title: t("pages.account.dashboard.meta.title"),
 });
 </script>
-
-<style scoped>
-.polygons-bg {
-  background-image: url(/static/images/account/addresses-bg.svg);
-  background-repeat: no-repeat;
-  background-position: right;
-}
-</style>

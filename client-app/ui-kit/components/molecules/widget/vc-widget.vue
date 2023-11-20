@@ -11,7 +11,7 @@
   >
     <component
       :is="collapsible ? 'button' : 'div'"
-      v-if="title || $slots.header"
+      v-if="title || $slots.header || $slots['header-container']"
       :type="collapsible ? 'button' : null"
       class="vc-widget__header-container"
       @click="toggleCollapse()"
@@ -67,14 +67,13 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 
-export interface IProps {
+interface IProps {
   title?: string;
   prependIcon?: string;
   appendIcon?: string;
   collapsible?: boolean;
   collapsed?: boolean;
   noShadow?: boolean;
-  fullSizeContent?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -99,44 +98,43 @@ watchEffect(() => {
 .vc-widget {
   $collapsed: "";
 
-  $sizeXS: "";
-  $sizeSM: "";
-  $sizeMD: "";
   $sizeLG: "";
 
-  @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] text-[--color-neutral-950] rounded divide-y shadow-md;
+  @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] text-[--color-neutral-950] text-base rounded divide-y shadow-md;
 
   &--size {
     &--xs {
-      $sizeXS: &;
-
-      --padding-x: 1rem;
-      --padding-y: 0.25rem;
-      --header-height: 2.375rem;
+      --p-x: theme("padding.4");
+      --header-p-y: theme("padding.1");
+      --header-gap: theme("gap.[1.5]");
+      --title-text: theme("fontSize.sm");
+      --title-min-h: 1.625rem;
     }
 
     &--sm {
-      $sizeSM: &;
-
-      --padding-x: 1rem;
-      --padding-y: 0.5rem;
-      --header-height: 2.625rem;
+      --p-x: theme("padding.4");
+      --header-p-y: theme("padding.2");
+      --header-gap: theme("gap.2");
+      --title-text: theme("fontSize.base");
+      --title-min-h: 1.875rem;
     }
 
     &--md {
-      $sizeMD: &;
-
-      --padding-x: 1.5rem;
-      --padding-y: 0.5rem;
-      --header-height: 3.125rem;
+      --p-x: theme("padding.6");
+      --header-p-y: theme("padding.2");
+      --header-gap: theme("gap.2");
+      --title-text: theme("fontSize.xl");
+      --title-min-h: 2.125rem;
     }
 
     &--lg {
       $sizeLG: &;
 
-      --padding-x: 1.25rem;
-      --padding-y: 1rem;
-      --header-height: 3.875rem;
+      --p-x: theme("padding.5");
+      --header-p-y: theme("padding.4");
+      --header-gap: theme("gap.2");
+      --title-text: theme("fontSize.xl");
+      --title-min-h: 2.625rem;
 
       @apply divide-none;
     }
@@ -151,7 +149,7 @@ watchEffect(() => {
   }
 
   &__header-container {
-    @apply flex items-center min-h-[--header-height] w-full empty:hidden;
+    @apply w-full empty:hidden;
 
     &,
     & > * {
@@ -160,45 +158,23 @@ watchEffect(() => {
   }
 
   &__header {
-    @apply flex items-start px-[--padding-x] py-[--padding-y] w-full text-start;
-
-    #{$sizeXS} & {
-      --title-min-h: calc(var(--header-height) - 0.75rem);
-
-      @apply gap-1.5 text-sm;
-    }
-
-    #{$sizeSM} & {
-      --title-min-h: calc(var(--header-height) - 0.75rem);
-
-      @apply gap-2 text-base;
-    }
-
-    #{$sizeMD} & {
-      --title-min-h: calc(var(--header-height) - 1rem);
-
-      @apply gap-2 text-xl;
-    }
-
-    #{$sizeLG} & {
-      --title-min-h: calc(var(--header-height) - 1.25rem);
-
-      @apply gap-2 text-xl;
-    }
-
     --vc-hexagon-icon-size: var(--title-min-h);
+
+    @apply flex items-start gap-[--header-gap] px-[--p-x] py-[--header-p-y] w-full text-start;
   }
 
   &__prepend-append {
+    --vc-icon-size: 1.25rem;
+
     @apply flex-none flex items-center min-h-[--title-min-h];
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--title-min-h] grow font-bold uppercase;
+    @apply flex flex-col justify-center min-h-[--title-min-h] grow text-[length:--title-text] font-bold uppercase;
   }
 
   &__slot {
-    @apply pt-4 pb-5 px-[--padding-x];
+    @apply pt-4 pb-5 px-[--p-x];
 
     #{$sizeLG} & {
       @apply pt-0;
@@ -228,7 +204,7 @@ watchEffect(() => {
   }
 
   &__footer {
-    @apply py-4 px-[--padding-x];
+    @apply py-4 px-[--p-x];
   }
 }
 </style>

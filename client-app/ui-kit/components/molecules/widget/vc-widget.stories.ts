@@ -33,15 +33,21 @@ NoShadow.args = {
   noShadow: true,
 };
 
-export const Header = Template.bind({});
-Header.args = {
+export const Title = Template.bind({});
+Title.args = {
   title: "Widget title",
 };
 
-export const Icon = Template.bind({});
-Icon.args = {
+export const PrependIcon = Template.bind({});
+PrependIcon.args = {
   title: "Widget title",
   prependIcon: "academic-cap",
+};
+
+export const AppendIcon = Template.bind({});
+AppendIcon.args = {
+  title: "Widget title",
+  appendIcon: "check-circle",
 };
 
 export const Collapsible = Template.bind({});
@@ -50,23 +56,102 @@ Collapsible.args = {
   collapsible: true,
 };
 
-export const Footer: StoryFn<typeof VcWidget> = (args) => ({
+export const Collapsed = Template.bind({});
+Collapsed.args = {
+  title: "Widget title",
+  collapsible: true,
+  collapsed: true,
+};
+
+export const CollapsibleCustomIcon: StoryFn<typeof VcWidget> = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     Widget text
-    <template #footer>Footer text</template>
+
+    <template #append="{ collapsed }">
+      <VcIcon :name="collapsed ? 'arrow-down' : 'arrow-up'" />
+    </template>
   </VcWidget>`,
 });
-Footer.args = {
+CollapsibleCustomIcon.args = {
   title: "Widget title",
   collapsible: true,
 };
 
-export const FooterContainer: StoryFn<typeof VcWidget> = (args) => ({
+export const PrependSlot: StoryFn<typeof VcWidget> = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
+    <template #prepend>
+      <VcIcon class="text-[--color-danger-500]" name="cake" size="sm" />
+    </template>
+
+    Widget text
+  </VcWidget>`,
+});
+PrependSlot.args = {
+  title: "Widget title",
+};
+
+export const AppendSlot: StoryFn<typeof VcWidget> = (args) => ({
+  components: { VcWidget },
+  setup: () => ({ args }),
+  template: `<VcWidget v-bind="args">
+    Widget text
+
+    <template #append>
+      <span class="flex items-center gap-1">
+        <a class="text-[--color-accent-600] text-sm underline" href="#">Link</a>
+        <VcIcon class="text-[--color-accent-600]" name="arrow-right" size="xs" />
+      </span>
+    </template>
+  </VcWidget>`,
+});
+AppendSlot.args = {
+  title: "Widget title",
+};
+
+export const HeaderSlot: StoryFn<typeof VcWidget> = (args) => ({
+  components: { VcWidget },
+  setup: () => ({ args }),
+  template: `<VcWidget v-bind="args">
+    <template #header>Header text</template>
+
+    Widget text
+  </VcWidget>`,
+});
+
+export const HeaderContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
+  components: { VcWidget },
+  setup: () => ({ args }),
+  template: `<VcWidget v-bind="args">
+    <template #header-container>
+      <div class="p-4 bg-[--color-info-500] text-[--color-additional-50]">
+        Header Container
+      </div>
+    </template>
+
+    Widget text
+  </VcWidget>`,
+});
+
+export const FooterSlot: StoryFn<typeof VcWidget> = (args) => ({
+  components: { VcWidget },
+  setup: () => ({ args }),
+  template: `<VcWidget v-bind="args">
+    Widget text
+
+    <template #footer>Footer text</template>
+  </VcWidget>`,
+});
+
+export const FooterContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
+  components: { VcWidget },
+  setup: () => ({ args }),
+  template: `<VcWidget v-bind="args">
+    Widget text
+
     <template #footer-container>
       <div class="flex divide-x">
         <div class="grow p-2 text-center">Text 1</div>
@@ -76,7 +161,3 @@ export const FooterContainer: StoryFn<typeof VcWidget> = (args) => ({
     </template>
   </VcWidget>`,
 });
-FooterContainer.args = {
-  title: "Widget title",
-  collapsible: true,
-};
