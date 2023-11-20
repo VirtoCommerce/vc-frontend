@@ -9,7 +9,7 @@ import { computed } from "vue";
 
 interface IProps {
   size?: number;
-  icon: string;
+  icon?: string;
 }
 
 const props = defineProps<IProps>();
