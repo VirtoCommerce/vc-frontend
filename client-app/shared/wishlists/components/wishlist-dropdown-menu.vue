@@ -25,24 +25,24 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { WishlistScopeType } from "@/core/api/graphql/types";
 
-export type ScopeType = "private" | "organization";
 export type ScopeColorsType = "secondary" | "info";
 
-type ScopeButtonType = { scope: ScopeType; icon: string; color: ScopeColorsType; localePath: string };
+type ScopeButtonType = { scope: WishlistScopeType; icon: string; color: ScopeColorsType; localePath: string };
 
 defineEmits<IEmit>();
 const props = defineProps<IProps>();
 
-const changeScopeButtons: { [key in ScopeType]: ScopeButtonType } = {
-  private: {
-    scope: "private",
+const changeScopeButtons: { [key in WishlistScopeType]: ScopeButtonType } = {
+  [WishlistScopeType.Private]: {
+    scope: WishlistScopeType.Private,
     icon: "lock-closed",
     color: "secondary",
     localePath: "shared.wishlists.list_card.make_private_button",
   },
-  organization: {
-    scope: "organization",
+  [WishlistScopeType.Organization]: {
+    scope: WishlistScopeType.Organization,
     icon: "users",
     color: "info",
     localePath: "shared.wishlists.list_card.share_with_organisation_button",
@@ -52,19 +52,19 @@ const changeScopeButtons: { [key in ScopeType]: ScopeButtonType } = {
 interface IEmit {
   (event: "edit"): void;
   (event: "remove"): void;
-  (event: "setScope", scope: ScopeType): void;
+  (event: "setScope", scope: WishlistScopeType): void;
 }
 
 interface IProps {
-  currentScope?: string;
+  currentScope?: WishlistScopeType;
 }
 
 const scopeButton = computed<ScopeButtonType | undefined>(() => {
-  if (props.currentScope === "private") {
-    return changeScopeButtons["organization"];
+  if (props.currentScope === WishlistScopeType.Private) {
+    return changeScopeButtons[WishlistScopeType.Organization];
   }
-  if (props.currentScope === "organization") {
-    return changeScopeButtons["private"];
+  if (props.currentScope === WishlistScopeType.Organization) {
+    return changeScopeButtons[WishlistScopeType.Private];
   }
   return undefined;
 });
