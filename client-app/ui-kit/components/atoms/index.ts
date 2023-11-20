@@ -5,6 +5,7 @@ export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
 export { default as VcCard } from "./card/vc-card.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
+export { default as VcCardWidget } from "./card-widget/vc-card-widget.vue";
 export { default as VcCheckbox } from "./checkbox/vc-checkbox.vue";
 export { default as VcContainer } from "./container/vc-container.vue";
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
@@ -30,6 +31,8 @@ export { default as VcProductTitle } from "./product-title/vc-product-title.vue"
 export { default as VcProperty } from "./property/vc-property.vue";
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
+export { default as VcSection } from "./section/vc-section.vue";
+export { default as VcSectionWidget } from "./section-widget/vc-section-widget.vue";
 export { default as VcSelectItem } from "./select-item/vc-select-item.vue";
 export { default as VcSelectItemImage } from "./select-item-image/vc-select-item-image.vue";
 export { default as VcSelectItemText } from "./select-item-text/vc-select-item-text.vue";
