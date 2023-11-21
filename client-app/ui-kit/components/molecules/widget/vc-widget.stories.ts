@@ -136,6 +136,23 @@ export const HeaderContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
   </VcWidget>`,
 });
 
+export const DefaultContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
+  components: { VcWidget },
+  setup: () => ({ args }),
+  template: `<VcWidget v-bind="args">
+    <template #default-container>
+      <div class="py-1 px-3 bg-[--color-neutral-100]">
+        Default Container
+      </div>
+      <div class="flex border-t divide-x" v-for="item in [1, 2, 3]">
+        <div class="py-1 px-3">{{ item }}</div>
+        <div class="grow py-1 px-3">Text</div>
+        <div class="grow-[2] py-1 px-3">Text</div>
+      </div>
+    </template>
+  </VcWidget>`,
+});
+
 export const FooterSlot: StoryFn<typeof VcWidget> = (args) => ({
   components: { VcWidget },
   setup: () => ({ args }),
@@ -154,9 +171,9 @@ export const FooterContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
 
     <template #footer-container>
       <div class="flex divide-x">
-        <div class="grow p-2 text-center">Text 1</div>
-        <div class="grow p-2 text-center">Text 2</div>
-        <div class="grow p-2 text-center">Text 3</div>
+        <div class="grow p-2 text-center rounded-bl bg-[--color-danger-100]">Text 1</div>
+        <div class="grow p-2 text-center bg-[--color-warning-100]">Text 2</div>
+        <div class="grow p-2 text-center rounded-br bg-[--color-success-100]">Text 3</div>
       </div>
     </template>
   </VcWidget>`,

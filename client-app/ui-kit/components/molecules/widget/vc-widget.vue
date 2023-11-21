@@ -54,7 +54,7 @@
       </slot>
     </div>
 
-    <div v-show="!_collapsed" class="vc-widget__footer-container">
+    <div v-if="$slots.footer || $slots['footer-container']" v-show="!_collapsed" class="vc-widget__footer-container">
       <slot name="footer-container">
         <div v-if="$slots.footer" class="vc-widget__footer">
           <slot name="footer" />
@@ -149,18 +149,22 @@ watchEffect(() => {
   }
 
   &__header-container {
-    @apply w-full empty:hidden;
+    @apply w-full text-start empty:hidden;
 
     &,
     & > * {
-      @apply rounded-t-[inherit];
+      @apply rounded-t;
+
+      #{$collapsed} & {
+        @apply rounded-b;
+      }
     }
   }
 
   &__header {
     --vc-hexagon-icon-size: var(--title-min-h);
 
-    @apply flex items-start gap-[--header-gap] px-[--p-x] py-[--header-p-y] w-full text-start;
+    @apply flex items-start gap-[--header-gap] px-[--p-x] py-[--header-p-y] w-full;
   }
 
   &__prepend-append {
@@ -196,10 +200,10 @@ watchEffect(() => {
   }
 
   &__footer-container {
-    @apply rounded-b-[inherit] empty:hidden;
+    @apply rounded-b empty:hidden;
 
     & > * {
-      @apply rounded-b-[inherit];
+      @apply rounded-b;
     }
   }
 
