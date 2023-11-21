@@ -119,43 +119,4 @@ async function save(closeHandle: () => void): Promise<void> {
 
   closeHandle();
 }
-
-/*
-import { toTypedSchema } from "@vee-validate/yup";
-import { useField, useForm } from "vee-validate";
-import { computed } from "vue";
-import { string } from "yup";
-import { useWishlists } from "../composables/useWishlists";
-import type { WishlistType } from "@/core/api/graphql/types";
-
-interface IProps {
-  list?: WishlistType;
-}
-
-const props = defineProps<IProps>();
-
-useForm({ initialValues: { listName: props.list?.name || "" } });
-
-const { loading, createWishlist, renameWishlist } = useWishlists();
-const { value: listName, meta, errors } = useField<string>("listName", toTypedSchema(string().required().max(25)));
-
-const isEditMode = computed(() => !!props.list);
-
-async function save(closingHandle: () => void) {
-  if (!listName.value || errors.value.length) {
-    return;
-  }
-
-  if (isEditMode.value) {
-    await renameWishlist({
-      listId: props.list!.id!,
-      listName: listName.value.trim(),
-    });
-  } else {
-    await createWishlist(listName.value.trim());
-  }
-
-  closingHandle();
-}
-*/
 </script>
