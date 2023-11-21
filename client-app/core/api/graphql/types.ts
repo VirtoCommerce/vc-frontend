@@ -116,6 +116,8 @@ export type CartAddressType = {
   countryCode?: Maybe<Scalars['String']['output']>;
   /** Country name */
   countryName?: Maybe<Scalars['String']['output']>;
+  /** Description */
+  description?: Maybe<Scalars['String']['output']>;
   /** Email */
   email?: Maybe<Scalars['String']['output']>;
   /** First name */
@@ -208,7 +210,14 @@ export type CartType = {
   extendedPriceTotal: MoneyType;
   /** Total extended price with tax */
   extendedPriceTotalWithTax: MoneyType;
+  /** Shopping cart fee */
   fee: MoneyType;
+  /** Total fee */
+  feeTotal: MoneyType;
+  /** Total fee with tax */
+  feeTotalWithTax: MoneyType;
+  /** Shopping cart fee with tax */
+  feeWithTax: MoneyType;
   /** Gifts */
   gifts: Array<GiftItemType>;
   /** Total handling */
@@ -657,9 +666,9 @@ export type CustomerOrderType = {
   employeeId?: Maybe<Scalars['String']['output']>;
   employeeName?: Maybe<Scalars['String']['output']>;
   fee: MoneyType;
-  feeTotal: Scalars['Decimal']['output'];
-  feeTotalWithTax: Scalars['Decimal']['output'];
-  feeWithTax: Scalars['Decimal']['output'];
+  feeTotal: MoneyType;
+  feeTotalWithTax: MoneyType;
+  feeWithTax: MoneyType;
   id: Scalars['String']['output'];
   inPayments: Array<PaymentInType>;
   isApproved: Scalars['Boolean']['output'];
@@ -1284,6 +1293,12 @@ export type InputAddWishlistItemType = {
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type InputAddWishlistItemsType = {
+  listId: Scalars['String']['input'];
+  /** List items */
+  listItems: Array<InputNewWishlistItemType>;
+};
+
 export type InputAddressType = {
   addressType?: InputMaybe<Scalars['Int']['input']>;
   /** City */
@@ -1292,6 +1307,8 @@ export type InputAddressType = {
   countryCode?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Country */
   countryName?: InputMaybe<Scalars['OptionalString']['input']>;
+  /** Description */
+  description?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Email */
   email?: InputMaybe<Scalars['OptionalString']['input']>;
   /** First name */
@@ -1482,6 +1499,17 @@ export type InputChangePurchaseOrderNumber = {
   userId: Scalars['String']['input'];
 };
 
+export type InputChangeWishlistType = {
+  /** List description */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** List ID */
+  listId: Scalars['String']['input'];
+  /** New List name */
+  listName?: InputMaybe<Scalars['String']['input']>;
+  /** List scope (private or organization) */
+  scope?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputClearCartType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
@@ -1605,8 +1633,12 @@ export type InputCreateWishlistType = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Currency code */
   currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** List description */
+  description?: InputMaybe<Scalars['String']['input']>;
   /** List name */
   listName?: InputMaybe<Scalars['String']['input']>;
+  /** List scope (private or organization) */
+  scope?: InputMaybe<Scalars['String']['input']>;
   /** Store ID */
   storeId: Scalars['String']['input'];
   /** Owner ID */
@@ -1745,6 +1777,13 @@ export type InputNewBulkItemType = {
 
 export type InputNewCartItemType = {
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
+  /** Product Id */
+  productId: Scalars['String']['input'];
+  /** Product quantity */
+  quantity?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type InputNewWishlistItemType = {
   /** Product Id */
   productId: Scalars['String']['input'];
   /** Product quantity */
@@ -2606,6 +2645,7 @@ export type Mutations = {
   addOrUpdateOrderPayment?: Maybe<CustomerOrderType>;
   addWishlistBulkItem?: Maybe<BulkWishlistType>;
   addWishlistItem?: Maybe<WishlistType>;
+  addWishlistItems?: Maybe<WishlistType>;
   authorizePayment?: Maybe<AuthorizePaymentResultType>;
   cancelQuoteRequest?: Maybe<QuoteType>;
   changeCartItemComment?: Maybe<CartType>;
@@ -2619,6 +2659,7 @@ export type Mutations = {
   changePurchaseOrderNumber?: Maybe<CartType>;
   changeQuoteComment?: Maybe<QuoteType>;
   changeQuoteItemQuantity?: Maybe<QuoteType>;
+  changeWishlist?: Maybe<WishlistType>;
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
@@ -2653,6 +2694,7 @@ export type Mutations = {
   removeShipment?: Maybe<CartType>;
   removeWishlist?: Maybe<Scalars['Boolean']['output']>;
   removeWishlistItem?: Maybe<WishlistType>;
+  /** @deprecated Obsolete. Use 'changeWishlist' instead. */
   renameWishlist?: Maybe<WishlistType>;
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
@@ -2744,6 +2786,11 @@ export type MutationsAddWishlistItemArgs = {
 };
 
 
+export type MutationsAddWishlistItemsArgs = {
+  command: InputAddWishlistItemsType;
+};
+
+
 export type MutationsAuthorizePaymentArgs = {
   command: InputAuthorizePaymentType;
 };
@@ -2806,6 +2853,11 @@ export type MutationsChangeQuoteCommentArgs = {
 
 export type MutationsChangeQuoteItemQuantityArgs = {
   command: ChangeQuoteItemQuantityCommandType;
+};
+
+
+export type MutationsChangeWishlistArgs = {
+  command: InputChangeWishlistType;
 };
 
 
@@ -3285,6 +3337,8 @@ export type OrderShipmentType = {
   dynamicProperties: Array<DynamicPropertyValueType>;
   employeeId?: Maybe<Scalars['String']['output']>;
   employeeName?: Maybe<Scalars['String']['output']>;
+  fee: MoneyType;
+  feeWithTax: MoneyType;
   fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
   fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
   height?: Maybe<Scalars['Decimal']['output']>;
@@ -4695,6 +4749,10 @@ export type ShipmentType = {
   discounts: Array<DiscountType>;
   /** Cart shipment dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
+  /** Fee */
+  fee: MoneyType;
+  /** Fee with tax */
+  feeWithTax: MoneyType;
   /** Fulfillment center id */
   fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
   /** Value of height */
@@ -5033,6 +5091,13 @@ export type WishlistEdge = {
   node?: Maybe<WishlistType>;
 };
 
+export enum WishlistScopeType {
+  /** Organization scope */
+  Organization = 'Organization',
+  /** Private scope */
+  Private = 'Private'
+}
+
 export type WishlistType = {
   /** Currency */
   currency?: Maybe<CurrencyType>;
@@ -5040,6 +5105,8 @@ export type WishlistType = {
   customerId?: Maybe<Scalars['String']['output']>;
   /** Shopping cart user name */
   customerName?: Maybe<Scalars['String']['output']>;
+  /** Wishlist description */
+  description?: Maybe<Scalars['String']['output']>;
   /** Shopping cart ID */
   id?: Maybe<Scalars['String']['output']>;
   /** Items */
@@ -5048,6 +5115,8 @@ export type WishlistType = {
   itemsCount?: Maybe<Scalars['Int']['output']>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
+  /** Wishlist scope */
+  scope?: Maybe<WishlistScopeType>;
   /** Shopping cart store ID */
   storeId?: Maybe<Scalars['String']['output']>;
 };
@@ -5079,6 +5148,13 @@ export type ChangePasswordMutationVariables = Exact<{
 
 
 export type ChangePasswordMutation = { changePassword?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
+
+export type ChangeWishlistMutationVariables = Exact<{
+  command: InputChangeWishlistType;
+}>;
+
+
+export type ChangeWishlistMutation = { changeWishlist?: { id?: string } };
 
 export type ConfirmEmailMutationVariables = Exact<{
   command: InputConfirmEmailType;
@@ -5142,13 +5218,6 @@ export type RegisterByInvitationMutationVariables = Exact<{
 
 
 export type RegisterByInvitationMutation = { registerByInvitation?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
-
-export type RenameWishlistMutationVariables = Exact<{
-  command: InputRenameWishlistType;
-}>;
-
-
-export type RenameWishlistMutation = { renameWishlist?: { id?: string } };
 
 export type ResetPasswordByTokenMutationVariables = Exact<{
   command?: InputMaybe<InputResetPasswordByTokenType>;

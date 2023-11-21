@@ -4,6 +4,8 @@
 query GetWishlist($listId: String!, $cultureName: String) {
   wishlist(listId: $listId, cultureName: $cultureName) {
     name
+    description
+    scope
     id
     items {
       id
