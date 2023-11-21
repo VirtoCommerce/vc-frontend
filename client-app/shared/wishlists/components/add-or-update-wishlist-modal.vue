@@ -19,11 +19,11 @@
       />
     </div>
 
-    <div class="px-6 pb-6">
+    <div :class="{ 'border-b': !isCorporateMember }" class="px-6 pb-6">
       <VcTextarea v-model="description" :label="$t('common.labels.description')" :disabled="loading" rows="4" />
     </div>
 
-    <div class="border-b px-6 pb-6">
+    <div v-if="isCorporateMember" class="border-b px-6 pb-6">
       <VcCheckbox v-model="isPrivate">
         {{ $t("common.labels.private_list") }}
       </VcCheckbox>
@@ -55,6 +55,7 @@ import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
 import { bool, object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
+import { useUser } from "@/shared/account";
 import { useWishlists } from "../composables/useWishlists";
 import type { WishlistType } from "@/core/api/graphql/types";
 
@@ -69,6 +70,7 @@ const listDescription = computed<string | undefined>(() => props.list?.descripti
 const listIsPrivate = computed<boolean>(() => !props.list?.scope || props.list?.scope === WishlistScopeType.Private);
 
 const { loading, createWishlist, updateWishlist } = useWishlists();
+const { isCorporateMember } = useUser();
 
 const validationSchema = toTypedSchema(
   object({
@@ -100,7 +102,7 @@ async function save(closeHandle: () => void): Promise<void> {
     return;
   }
 
-  const scope = isPrivate.value ? WishlistScopeType.Private : WishlistScopeType.Organization;
+  const scope = !props.list?.scope || isPrivate.value ? WishlistScopeType.Private : WishlistScopeType.Organization;
 
   if (isEditMode.value) {
     await updateWishlist({
