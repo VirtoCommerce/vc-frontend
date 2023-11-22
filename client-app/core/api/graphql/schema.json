@@ -29662,6 +29662,17 @@
                 "deprecationReason": null
               },
               {
+                "name": "custom",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "id",
                 "type": {
                   "kind": "NON_NULL",
@@ -29787,6 +29798,17 @@
               },
               {
                 "name": "currencyCode",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "custom",
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",

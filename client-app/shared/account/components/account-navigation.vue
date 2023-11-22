@@ -42,7 +42,11 @@
       />
 
       <template v-if="isListDetails">
-        <div v-for="list in lists" :key="list.id" class="ml-8 flex items-center space-x-2 px-3 text-sm">
+        <div
+          v-for="list in lists"
+          :key="list.id"
+          class="ml-8 flex items-center space-x-2 overflow-hidden text-ellipsis px-3 text-sm"
+        >
           <VcIcon class="flex-none text-[--color-primary-500]" name="minus" />
 
           <router-link
@@ -104,9 +108,9 @@ const { lists, fetchWishlists } = useWishlists();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");
 
-watchEffect(() => {
+watchEffect(async () => {
   if (isListDetails.value) {
-    void fetchWishlists();
+    await fetchWishlists();
   }
 });
 </script>

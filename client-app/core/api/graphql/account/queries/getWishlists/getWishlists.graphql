@@ -19,6 +19,7 @@ query GetWishlists(
     items {
       id
       name
+      description
       scope
       items {
         id
