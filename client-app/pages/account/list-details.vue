@@ -313,9 +313,9 @@ onBeforeRouteUpdate(canChangeRoute);
 watchEffect(async () => {
   clearList();
   await fetchWishList(props.listId);
-
-  wishlistItems.value = cloneDeep(list.value?.items) || [];
 });
+
+watchEffect(() => (wishlistItems.value = cloneDeep(list.value?.items) || []));
 
 /**
  * Send Google Analytics event for related products.
