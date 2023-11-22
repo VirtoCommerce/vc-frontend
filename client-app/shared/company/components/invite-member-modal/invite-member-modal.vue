@@ -32,6 +32,7 @@
         :error="!!errors.emails"
         :rows="2"
         required
+        @input="clearApiErrors"
       />
 
       <VcTextarea
@@ -71,6 +72,7 @@ import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { VcPopup } from "@/ui-kit/components";
+import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
 
 interface IEmits {
   (e: "result", succeed: boolean): void;
@@ -80,9 +82,6 @@ const emit = defineEmits<IEmits>();
 
 const MAX_INVITED_CONTACTS_COUNT = 200;
 const MAX_EMAIL_LENGTH = 120;
-
-const emailsValidationPattern =
-  /^([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+([,;]|\r|\r\n|\n))*([a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]{2,})+)$/;
 
 const popupComponent = shallowRef<InstanceType<typeof VcPopup> | null>(null);
 const loading = ref(false);
@@ -107,14 +106,6 @@ const { errors, meta, handleSubmit } = useForm({
   },
 });
 
-function getEmailAddresses(value: string | undefined): string[] {
-  return value?.split(/[,;]|\r|\r\n|\n/g) || [];
-}
-
-function normalizeEmails(emailAddresses: string[]): string[] {
-  return [...new Set(emailAddresses.map((email: string) => email.toLowerCase()))];
-}
-
 const { value: roleId } = useField<string>("roleId", toTypedSchema(string().required()));
 const { value: message } = useField<string>("message", toTypedSchema(string().max(1000)));
 const { value: emails } = useField<string>(
@@ -125,20 +116,27 @@ const { value: emails } = useField<string>(
       .test(
         "emails-quantity",
         t("shared.account.invite_member_dialog.emails_quantity_exceeded", { maxValue: MAX_INVITED_CONTACTS_COUNT }),
-        (value: string | undefined) => {
-          const emailAddresses: string[] = getEmailAddresses(value);
+        (value) => {
+          const emailAddresses = parseEmails(value);
           return emailAddresses.length <= MAX_INVITED_CONTACTS_COUNT;
         },
       )
       .test(
         "email-length",
         t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: MAX_EMAIL_LENGTH }),
-        (value: string | undefined) => {
-          const emailAddresses: string[] = getEmailAddresses(value);
-          return emailAddresses.every((emailAddress: string) => emailAddress.length <= MAX_EMAIL_LENGTH);
+        (value) => {
+          const emailAddresses = parseEmails(value);
+          return emailAddresses.every((emailAddress) => emailAddress.value.length <= MAX_EMAIL_LENGTH);
         },
       )
-      .matches(emailsValidationPattern, t("common.messages.invalid_value")),
+      .test(
+        "every-valid",
+        ({ value }) =>
+          t("shared.account.invite_member_dialog.invalid_emails", {
+            invalidEmails: getInvalidEmails(parseEmails(value as string)),
+          }),
+        (value) => parseEmails(value).every((el) => el.isValid),
+      ),
   ),
 );
 
@@ -153,7 +151,7 @@ const send = handleSubmit(async (data) => {
     urlSuffix: router.resolve({ name: "ConfirmInvitation" }).path,
     organizationId: organization.value!.id,
     roleIds: [data.roleId],
-    emails: normalizeEmails(getEmailAddresses(data.emails)),
+    emails: normalizeEmails(parseEmails(data.emails)),
     message: data.message.trim(),
   });
 
@@ -184,4 +182,8 @@ const send = handleSubmit(async (data) => {
     });
   }
 });
+
+function clearApiErrors(): void {
+  commonErrors.value = [];
+}
 </script>
