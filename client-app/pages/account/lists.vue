@@ -70,7 +70,7 @@ import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { loading, lists, fetchWishlists } = useWishlists();
+const { loading, lists, fetchWishlists, updateWishlist } = useWishlists();
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
@@ -112,8 +112,10 @@ function openDeleteListModal(list: WishlistType) {
 }
 
 function setScope(scope: WishlistScopeType, id?: string) {
-  console.log(scope, id);
-  fetchWishlists();
+  if (!id) {
+    return;
+  }
+  void updateWishlist({ listId: id, scope: scope });
 }
 
 fetchWishlists();
