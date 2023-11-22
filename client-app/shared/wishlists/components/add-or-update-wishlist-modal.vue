@@ -25,7 +25,7 @@
 
     <div v-if="isCorporateMember" class="border-b px-6 pb-6">
       <VcCheckbox v-model="isPrivate">
-        {{ $t("common.labels.private_list") }}
+        {{ $t("shared.wishlists.add_or_update_wishlist_dialog.private_list") }}
       </VcCheckbox>
     </div>
 

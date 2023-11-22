@@ -114,8 +114,7 @@
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
-      "ends_to": "End: {0}",
-      "private_list": "Private list"
+      "ends_to": "End: {0}"
     },
     "prefixes": {
       "please": "Please"
@@ -721,7 +720,8 @@
         "list_name_placeholder": "Please enter name",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
-        "cancel_button": "@:common.buttons.cancel"
+        "cancel_button": "@:common.buttons.cancel",
+        "private_list": "Private list"
       },
       "delete_wishlist_dialog": {
         "title": "Confirm Delete",
