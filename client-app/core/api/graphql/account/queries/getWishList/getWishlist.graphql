@@ -1,6 +1,4 @@
-#import "../../../fragments/propertyFields.graphql"
-#import "../../../fragments/availabilityDataFields.graphql"
-#import "../../../fragments/lineItemFields.graphql"
+#import "../../../fragments/wishlistLineItemFields.graphql"
 
 query GetWishlist($listId: String!, $cultureName: String) {
   wishlist(listId: $listId, cultureName: $cultureName) {
@@ -9,7 +7,7 @@ query GetWishlist($listId: String!, $cultureName: String) {
     scope
     id
     items {
-      ...lineItemFields
+      ...wishlistLineItemFields
     }
   }
 }

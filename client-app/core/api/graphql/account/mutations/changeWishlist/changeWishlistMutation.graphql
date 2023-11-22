@@ -1,4 +1,4 @@
-#import "../../../fragments/lineItemFields.graphql"
+#import "../../../fragments/wishlistLineItemFields.graphql"
 
 mutation ChangeWishlist($command: InputChangeWishlistType!) {
   changeWishlist(command: $command) {
@@ -7,7 +7,7 @@ mutation ChangeWishlist($command: InputChangeWishlistType!) {
     description
     scope
     items {
-      ...lineItemFields
+      ...wishlistLineItemFields
     }
   }
 }
