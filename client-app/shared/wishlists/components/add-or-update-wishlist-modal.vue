@@ -84,7 +84,7 @@ const { errors, meta } = useForm({
   validationSchema,
   initialValues: {
     name: listName.value,
-    description: listDescription.value || "",
+    description: listDescription.value ?? "",
     isPrivate: listIsPrivate.value,
   },
   validateOnMount: false,

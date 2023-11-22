@@ -315,7 +315,7 @@ watchEffect(async () => {
   await fetchWishList(props.listId);
 });
 
-watchEffect(() => (wishlistItems.value = cloneDeep(list.value?.items) || []));
+watchEffect(() => (wishlistItems.value = cloneDeep(list.value?.items) ?? []));
 
 /**
  * Send Google Analytics event for related products.
