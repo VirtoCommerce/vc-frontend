@@ -9,7 +9,6 @@ import {
   getWishlists,
   updateWishlistItems,
 } from "@/core/api/graphql/account";
-import { WishlistScopeType } from "@/core/api/graphql/types";
 import { SortDirection } from "@/core/enums";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {
@@ -24,8 +23,6 @@ import type { Ref } from "vue";
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
-
-const DEFAULT_WISHLIST_NAME = "My wish list";
 
 export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(payload: CreateWishlistPayloadType): Promise<string | undefined> {
@@ -50,7 +47,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     loading.value = true;
 
     try {
-      await changeWishlist(payload);
+      list.value = await changeWishlist(payload);
     } catch (e) {
       Logger.error(`${useWishlists.name}.${updateWishlist.name}`, e);
       throw e;
@@ -63,19 +60,13 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     }
   }
 
-  async function fetchWishlists() {
+  async function fetchWishlists(): Promise<void> {
     loading.value = true;
 
     try {
       const searchParams = { itemsPerPage: 9999, sort: `name:${SortDirection.Ascending}` };
 
       lists.value = (await getWishlists(searchParams)).items || [];
-
-      if (!lists.value.length) {
-        // create default list
-        await createWishlist({ listName: DEFAULT_WISHLIST_NAME, scope: WishlistScopeType.Private });
-        lists.value = (await getWishlists(searchParams)).items || [];
-      }
     } catch (e) {
       Logger.error(`${useWishlists.name}.${fetchWishlists.name}`, e);
       throw e;
