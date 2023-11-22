@@ -102,7 +102,7 @@ async function save(closeHandle: () => void): Promise<void> {
     return;
   }
 
-  const scope = !props.list?.scope || isPrivate.value ? WishlistScopeType.Private : WishlistScopeType.Organization;
+  const scope = isPrivate.value ? WishlistScopeType.Private : WishlistScopeType.Organization;
 
   if (isEditMode.value) {
     await updateWishlist({
