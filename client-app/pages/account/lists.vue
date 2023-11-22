@@ -30,7 +30,7 @@
         v-for="list in lists"
         :key="list.id"
         :list="list"
-        @set-scope="setScope($event, list.id)"
+        @set-scope="setScope(list.id!, $event)"
         @settings="openListSettingsModal(list)"
         @remove="openDeleteListModal(list)"
       />
@@ -111,11 +111,8 @@ function openDeleteListModal(list: WishlistType) {
   });
 }
 
-function setScope(scope: WishlistScopeType, id?: string) {
-  if (!id) {
-    return;
-  }
-  void updateWishlist({ listId: id, scope: scope });
+function setScope(listId: string, scope: WishlistScopeType) {
+  void updateWishlist({ listId, scope });
 }
 
 fetchWishlists();
