@@ -684,7 +684,11 @@
         "list_edit_button": "Edit",
         "remove_list_button": "Delete",
         "make_private_button": "Make private",
-        "share_with_organisation_button": "Share with organisation"
+        "share_with_organisation_button": "Share with organisation",
+        "status": {
+          "shared": "Shared",
+          "private": "Private"
+        }
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",

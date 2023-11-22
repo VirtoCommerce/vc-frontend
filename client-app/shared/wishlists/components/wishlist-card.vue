@@ -17,10 +17,9 @@
     <div v-if="isCorporateMember && scopeStatus" class="flex items-center gap-1 pl-6 md:pl-0 md:pr-1">
       <VcIcon size="sm" :class="scopeStatus.colorClass" :name="scopeStatus.icon" />
       <span class="text-base">
-        {{ scopeStatus.text }}
+        {{ $t(scopeStatus.localePath) }}
       </span>
     </div>
-    <!--  [--vc-icon-color:var(--color-${scopeStatus.color}-500);]  -->
 
     <div class="absolute right-0 top-0 h-full p-5 md:relative">
       <WishlistDropdownMenu
@@ -55,19 +54,19 @@ const { isCorporateMember } = useUser();
 type ScopeType = {
   icon: string;
   colorClass: string;
-  text: string;
+  localePath: string;
 };
 
 const scopes: Record<WishlistScopeType, ScopeType> = {
   [WishlistScopeType.Organization]: {
     colorClass: "text-[--color-accent-500]",
     icon: "users",
-    text: "Shared",
+    localePath: "shared.wishlists.list_card.status.shared",
   },
   [WishlistScopeType.Private]: {
     colorClass: "text-[--color-secondary-500]",
     icon: "lock-closed",
-    text: "Private",
+    localePath: "shared.wishlists.list_card.status.private",
   },
 };
 
