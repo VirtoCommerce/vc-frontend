@@ -30,19 +30,16 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
-import { useUser } from "@/shared/account";
 
 defineEmits<IEmit>();
 
 const props = defineProps<IProps>();
 
-const { isCorporateMember } = useUser();
-
 export type ScopeColorsType = "secondary" | "info";
 
 type ScopeButtonType = { scope: WishlistScopeType; icon: string; color: ScopeColorsType; localePath: string };
 
-const changeScopeButtons: { [key in WishlistScopeType]: ScopeButtonType } = {
+const changeScopeButtons: Record<WishlistScopeType, ScopeButtonType> = {
   [WishlistScopeType.Private]: {
     scope: WishlistScopeType.Private,
     icon: "lock-closed",
@@ -65,6 +62,7 @@ interface IEmit {
 
 interface IProps {
   currentScope?: WishlistScopeType;
+  isCorporateMember: boolean;
 }
 
 const scopeButton = computed<ScopeButtonType | undefined>(() => {
