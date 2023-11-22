@@ -71,8 +71,11 @@ const scopes: Record<WishlistScopeType, ScopeType> = {
 };
 
 const scopeStatus = computed(() => {
-  if (props.list.scope && props.list.scope in WishlistScopeType) {
-    return scopes[props.list.scope];
+  if (props.list.scope === WishlistScopeType.Private) {
+    return scopes[WishlistScopeType.Private];
+  }
+  if (props.list.scope === WishlistScopeType.Organization) {
+    return scopes[WishlistScopeType.Organization];
   }
   return undefined;
 });
