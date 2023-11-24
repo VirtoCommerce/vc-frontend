@@ -30,7 +30,7 @@
         v-for="list in lists"
         :key="list.id"
         :list="list"
-        @set-scope="setScope(list.id!, $event)"
+        @set-scope="setScope(list.id, $event)"
         @settings="openListSettingsModal(list)"
         @remove="openDeleteListModal(list)"
       />
