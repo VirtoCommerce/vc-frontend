@@ -50,7 +50,7 @@ import type { WishlistType } from "@/core/api/graphql/types";
 interface IEmits {
   (event: "settings"): void;
   (event: "remove"): void;
-  (event: "setScope"): void;
+  (event: "setScope", scope: WishlistScopeType): void;
 }
 
 interface IProps {

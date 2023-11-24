@@ -9,15 +9,26 @@
 
         <span>{{ $t("shared.wishlists.list_card.list_edit_button") }}</span>
       </VcMenuItem>
-      <VcMenuItem
-        v-if="isCorporateMember && scopeButton"
-        :color="scopeButton.color"
-        @click="$emit('setScope', scopeButton.scope)"
-      >
-        <VcIcon :name="scopeButton.icon" />
 
-        <span class="whitespace-nowrap">{{ $t(scopeButton.localePath) }}</span>
-      </VcMenuItem>
+      <template v-if="isCorporateMember && currentScope">
+        <VcMenuItem
+          v-if="currentScope === WishlistScopeType.Private"
+          color="secondary"
+          @click="$emit('setScope', WishlistScopeType.Organization)"
+        >
+          <VcIcon name="users" class="text-[--color-accent-500]" />
+          <span class="whitespace-nowrap">{{ $t("shared.wishlists.list_card.share_button") }}</span>
+        </VcMenuItem>
+        <VcMenuItem
+          v-else-if="currentScope === WishlistScopeType.Organization"
+          color="secondary"
+          @click="$emit('setScope', WishlistScopeType.Private)"
+        >
+          <VcIcon name="lock-closed" class="text-[--color-secondary-500]" />
+          <span class="whitespace-nowrap">{{ $t("shared.wishlists.list_card.make_private_button") }}</span>
+        </VcMenuItem>
+      </template>
+
       <VcMenuItem color="secondary" @click="$emit('remove')">
         <VcIcon name="delete-2" class="text-[--color-danger-500]" />
 
@@ -28,31 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
-
-defineEmits<IEmit>();
-
-const props = defineProps<IProps>();
-
-export type ScopeColorsType = "secondary" | "info";
-
-type ScopeButtonType = { scope: WishlistScopeType; icon: string; color: ScopeColorsType; localePath: string };
-
-const changeScopeButtons: Record<WishlistScopeType, ScopeButtonType> = {
-  [WishlistScopeType.Private]: {
-    scope: WishlistScopeType.Private,
-    icon: "lock-closed",
-    color: "secondary",
-    localePath: "shared.wishlists.list_card.make_private_button",
-  },
-  [WishlistScopeType.Organization]: {
-    scope: WishlistScopeType.Organization,
-    icon: "users",
-    color: "info",
-    localePath: "shared.wishlists.list_card.share_with_organisation_button",
-  },
-};
 
 interface IEmit {
   (event: "edit"): void;
@@ -65,13 +52,7 @@ interface IProps {
   isCorporateMember: boolean;
 }
 
-const scopeButton = computed<ScopeButtonType | undefined>(() => {
-  if (props.currentScope === WishlistScopeType.Private) {
-    return changeScopeButtons[WishlistScopeType.Organization];
-  }
-  if (props.currentScope === WishlistScopeType.Organization) {
-    return changeScopeButtons[WishlistScopeType.Private];
-  }
-  return undefined;
-});
+defineEmits<IEmit>();
+
+defineProps<IProps>();
 </script>
