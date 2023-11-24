@@ -14,11 +14,19 @@
       <span class="ml-1 text-sm font-black">{{ list.items!.length }}</span>
     </div>
 
-    <div v-if="isCorporateMember && scopeStatus" class="flex items-center gap-1 pl-6 md:pl-0 md:pr-1">
-      <VcIcon size="sm" :class="scopeStatus.colorClass" :name="scopeStatus.icon" />
-      <span class="text-base">
-        {{ $t(scopeStatus.localePath) }}
-      </span>
+    <div v-if="isCorporateMember && list.scope" class="flex items-center gap-1 pl-6 md:pl-0 md:pr-1">
+      <template v-if="list.scope === WishlistScopeType.Private">
+        <VcIcon size="sm" class="text-[--color-secondary-500]" name="lock-closed" />
+        <span class="text-base">
+          {{ $t("shared.wishlists.list_card.status.private") }}
+        </span>
+      </template>
+      <template v-else-if="list.scope === WishlistScopeType.Organization">
+        <VcIcon size="sm" class="text-[--color-accent-500]" name="users" />
+        <span class="text-base">
+          {{ $t("shared.wishlists.list_card.status.shared") }}
+        </span>
+      </template>
     </div>
 
     <div class="absolute right-0 top-0 h-full p-5 md:relative">
@@ -34,49 +42,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account";
 import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import type { WishlistType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
-defineEmits(["settings", "remove", "setScope"]);
 
-const props = defineProps({
-  list: {
-    type: Object as PropType<WishlistType>,
-    required: true,
-  },
-});
+interface IEmits {
+  (event: "settings"): void;
+  (event: "remove"): void;
+  (event: "setScope"): void;
+}
+
+interface IProps {
+  list: WishlistType;
+}
+
+defineEmits<IEmits>();
+
+defineProps<IProps>();
 
 const { isCorporateMember } = useUser();
-
-type ScopeType = {
-  icon: string;
-  colorClass: string;
-  localePath: string;
-};
-
-const scopes: Record<WishlistScopeType, ScopeType> = {
-  [WishlistScopeType.Organization]: {
-    colorClass: "text-[--color-accent-500]",
-    icon: "users",
-    localePath: "shared.wishlists.list_card.status.shared",
-  },
-  [WishlistScopeType.Private]: {
-    colorClass: "text-[--color-secondary-500]",
-    icon: "lock-closed",
-    localePath: "shared.wishlists.list_card.status.private",
-  },
-};
-
-const scopeStatus = computed(() => {
-  if (props.list.scope === WishlistScopeType.Private) {
-    return scopes[WishlistScopeType.Private];
-  }
-  if (props.list.scope === WishlistScopeType.Organization) {
-    return scopes[WishlistScopeType.Organization];
-  }
-  return undefined;
-});
 </script>
