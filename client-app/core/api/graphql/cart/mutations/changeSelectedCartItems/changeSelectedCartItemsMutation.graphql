@@ -1,4 +1,4 @@
-#import "../../../fragments/fullCartFields.graphql"
+#import "../../fragments/fullCart.graphql"
 
 mutation ChangeSelectedCartItems(
   $selectCartItemsCommand: InputChangeCartItemsSelectedType!
@@ -7,9 +7,9 @@ mutation ChangeSelectedCartItems(
   $withUnselected: Boolean!
 ) {
   selectCartItems(command: $selectCartItemsCommand) @include(if: $withSelected) {
-    ...fullCartFields @skip(if: $withUnselected)
+    ...fullCart @skip(if: $withUnselected)
   }
   unSelectCartItems(command: $unselectCartItemsCommand) @include(if: $withUnselected) {
-    ...fullCartFields
+    ...fullCart
   }
 }

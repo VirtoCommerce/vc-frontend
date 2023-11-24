@@ -1,4 +1,4 @@
-fragment cartAddressFields on CartAddressType {
+fragment cartAddress on CartAddressType {
   id
   name
   organization

@@ -1,0 +1,67 @@
+#import "../../common/fragments/currency.graphql"
+#import "../../common/fragments/money.graphql"
+#import "./cartAddress.graphql"
+#import "./coupon.graphql"
+#import "./discount.graphql"
+#import "./fullLineItem.graphql"
+#import "./gift.graphql"
+#import "./payment.graphql"
+#import "./paymentMethod.graphql"
+#import "./shortCart.graphql"
+#import "./shipment.graphql"
+#import "./shippingMethod.graphql"
+#import "./validationError.graphql"
+
+fragment fullCart on CartType {
+  ...shortCart
+  purchaseOrderNumber
+  comment
+  availableGifts {
+    ...gift
+  }
+  availableShippingMethods {
+    ...shippingMethod
+  }
+  availablePaymentMethods {
+    ...paymentMethod
+  }
+  items {
+    ...fullLineItem
+  }
+  gifts {
+    ...gift
+  }
+  coupons {
+    ...coupon
+  }
+  discounts {
+    ...discount
+  }
+  shipments {
+    ...shipment
+  }
+  payments {
+    ...payment
+  }
+  currency {
+    ...currency
+  }
+  total {
+    ...money
+  }
+  discountTotal {
+    ...money
+  }
+  subTotal {
+    ...money
+  }
+  shippingTotal {
+    ...money
+  }
+  taxTotal {
+    ...money
+  }
+  warnings {
+    ...validationError
+  }
+}

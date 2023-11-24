@@ -1,5 +1,5 @@
-#import "./propertyFields.graphql"
-#import "./availabilityDataFields.graphql"
+#import "../catalog/fragments/property.graphql"
+#import "../catalog/fragments/availabilityData.graphql"
 
 fragment wishlistLineItemFields on LineItemType {
   id
@@ -34,10 +34,10 @@ fragment wishlistLineItemFields on LineItemType {
       name
     }
     availabilityData {
-      ...availabilityDataFields
+      ...availabilityData
     }
     properties {
-      ...propertyFields
+      ...property
     }
     price {
       actual {
