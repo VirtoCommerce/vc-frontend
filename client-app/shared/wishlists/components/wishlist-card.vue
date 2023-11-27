@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex flex-col border-y bg-white pb-4 pt-4.5 shadow-sm md:flex-row md:items-center md:py-0 lg:rounded lg:border-x"
+    class="relative flex flex-col border-t bg-white pb-4 pt-4.5 shadow-sm last:border-b md:flex-row md:items-center md:py-0 lg:rounded lg:border"
   >
     <router-link
       :to="{ name: 'ListDetails', params: { listId: list.id } }"
@@ -9,44 +9,57 @@
       {{ list.name }}
     </router-link>
 
-    <div class="mt-1.5 shrink-0 px-6 text-13 font-bold md:mt-0 md:text-base">
+    <div class="mt-1.5 shrink-0 px-6 text-base font-bold md:mt-0 md:text-base">
       {{ $t("shared.wishlists.list_card.product_count_label") }}:
       <span class="ml-1 text-sm font-black">{{ list.items!.length }}</span>
     </div>
 
-    <div class="hidden shrink-0 gap-x-3 px-6 md:flex">
-      <!-- todo: https://virtocommerce.atlassian.net/browse/ST-2256 -->
-      <button
-        type="button"
-        class="flex rounded p-1.5 text-gray-700 shadow hover:bg-gray-100"
-        :title="$t('shared.wishlists.list_card.list_settings_button')"
-        @click="$emit('settings')"
-      >
-        <VcIcon name="cog" :size="16" />
-      </button>
+    <div v-if="isCorporateMember && list.scope" class="flex items-center gap-1 pl-6 md:pl-0 md:pr-1">
+      <template v-if="list.scope === WishlistScopeType.Private">
+        <VcIcon size="sm" class="text-[--color-secondary-500]" name="lock-closed" />
+        <span class="text-base">
+          {{ $t("shared.wishlists.list_card.status.private") }}
+        </span>
+      </template>
+      <template v-else-if="list.scope === WishlistScopeType.Organization">
+        <VcIcon size="sm" class="text-[--color-accent-500]" name="users" />
+        <span class="text-base">
+          {{ $t("shared.wishlists.list_card.status.shared") }}
+        </span>
+      </template>
+    </div>
 
-      <button
-        type="button"
-        class="flex rounded p-1.5 text-[color:var(--color-danger)] shadow hover:bg-gray-100"
-        :title="$t('shared.wishlists.list_card.remove_list_button')"
-        @click="$emit('remove')"
-      >
-        <VcIcon name="delete-mini" :size="16" />
-      </button>
+    <div class="absolute right-0 top-0 h-full p-5 md:relative">
+      <WishlistDropdownMenu
+        :current-scope="list.scope"
+        :is-corporate-member="isCorporateMember"
+        @set-scope="$emit('setScope', $event)"
+        @edit="$emit('settings')"
+        @remove="$emit('remove')"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { WishlistScopeType } from "@/core/api/graphql/types";
+import { useUser } from "@/shared/account";
+import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import type { WishlistType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-defineEmits(["settings", "remove"]);
+interface IEmits {
+  (event: "settings"): void;
+  (event: "remove"): void;
+  (event: "setScope", scope: WishlistScopeType): void;
+}
 
-defineProps({
-  list: {
-    type: Object as PropType<WishlistType>,
-    required: true,
-  },
-});
+interface IProps {
+  list: WishlistType;
+}
+
+defineEmits<IEmits>();
+
+defineProps<IProps>();
+
+const { isCorporateMember } = useUser();
 </script>

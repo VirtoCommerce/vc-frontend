@@ -5110,7 +5110,7 @@ export type WishlistType = {
   /** Wishlist description */
   description?: Maybe<Scalars['String']['output']>;
   /** Shopping cart ID */
-  id?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
   /** Items */
   items?: Maybe<Array<Maybe<LineItemType>>>;
   /** Item count */
@@ -5128,21 +5128,21 @@ export type AddWishlistMutationVariables = Exact<{
 }>;
 
 
-export type AddWishlistMutation = { createWishlist?: { id?: string } };
+export type AddWishlistMutation = { createWishlist?: { id: string } };
 
 export type AddWishlistBulkItemMutationVariables = Exact<{
   command: InputAddWishlistBulkItemType;
 }>;
 
 
-export type AddWishlistBulkItemMutation = { addWishlistBulkItem?: { wishlists?: Array<{ id?: string }> } };
+export type AddWishlistBulkItemMutation = { addWishlistBulkItem?: { wishlists?: Array<{ id: string }> } };
 
 export type AddWishlistItemMutationVariables = Exact<{
   command: InputAddWishlistItemType;
 }>;
 
 
-export type AddWishlistItemMutation = { addWishlistItem?: { id?: string } };
+export type AddWishlistItemMutation = { addWishlistItem?: { id: string } };
 
 export type ChangePasswordMutationVariables = Exact<{
   command?: InputMaybe<InputChangePasswordType>;
@@ -5156,7 +5156,7 @@ export type ChangeWishlistMutationVariables = Exact<{
 }>;
 
 
-export type ChangeWishlistMutation = { changeWishlist?: { id?: string, name: string, description?: string, scope?: WishlistScopeType, itemsCount?: number } };
+export type ChangeWishlistMutation = { changeWishlist?: { id: string, name: string, description?: string, scope?: WishlistScopeType, items?: Array<{ id: string, name: string, imageUrl?: string, sku: string, productId: string, quantity: number, productType?: string, salePrice: { amount: any, formattedAmount: string }, listPrice: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images: Array<{ url: string }>, vendor?: { id: string, name: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, price: { actual: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } } }> } };
 
 export type ConfirmEmailMutationVariables = Exact<{
   command: InputConfirmEmailType;
@@ -5198,7 +5198,7 @@ export type DeleteWishlistItemMutationVariables = Exact<{
 }>;
 
 
-export type DeleteWishlistItemMutation = { removeWishlistItem?: { id?: string } };
+export type DeleteWishlistItemMutation = { removeWishlistItem?: { id: string } };
 
 export type InviteUserMutationVariables = Exact<{
   command: InputInviteUserType;
@@ -5261,7 +5261,7 @@ export type UpdateWishListItemsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWishListItemsMutation = { updateWishListItems?: { id?: string } };
+export type UpdateWishListItemsMutation = { updateWishListItems?: { id: string } };
 
 export type CheckEmailUniquenessQueryVariables = Exact<{
   email: Scalars['String']['input'];
@@ -5306,7 +5306,7 @@ export type GetWishlistQueryVariables = Exact<{
 }>;
 
 
-export type GetWishlistQuery = { wishlist?: { name: string, description?: string, scope?: WishlistScopeType, id?: string, items?: Array<{ id: string, name: string, imageUrl?: string, sku: string, productId: string, quantity: number, productType?: string, salePrice: { amount: any, formattedAmount: string }, listPrice: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images: Array<{ url: string }>, vendor?: { id: string, name: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, price: { actual: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } } }> } };
+export type GetWishlistQuery = { wishlist?: { name: string, description?: string, scope?: WishlistScopeType, id: string, items?: Array<{ id: string, name: string, imageUrl?: string, sku: string, productId: string, quantity: number, productType?: string, salePrice: { amount: any, formattedAmount: string }, listPrice: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images: Array<{ url: string }>, vendor?: { id: string, name: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, price: { actual: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } } }> } };
 
 export type GetWishlistsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
@@ -5319,7 +5319,7 @@ export type GetWishlistsQueryVariables = Exact<{
 }>;
 
 
-export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id?: string, name: string, description?: string, scope?: WishlistScopeType, items?: Array<{ id: string, productId: string }> }> } };
+export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id: string, name: string, description?: string, scope?: WishlistScopeType, items?: Array<{ id: string, productId: string }> }> } };
 
 export type RequestPasswordResetQueryVariables = Exact<{
   loginOrEmail: Scalars['String']['input'];
@@ -5612,6 +5612,8 @@ export type ShortCartFieldsFragment = { id: string, itemsQuantity: number, items
 export type ShortOrderFieldsFragment = { id: string, number: string, createdDate: any, status?: string, items: Array<{ id: string, imageUrl?: string, isGift?: boolean, name: string, productId: string, productType?: string, quantity: number, sku: string, outerId?: string, product?: { id: string, brandName?: string, slug?: string, masterVariation?: { id: string, slug?: string }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }> }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } } }>, discounts: Array<{ coupon?: string, description?: string, promotionId?: string, amount: { amount: any, formattedAmount: string, currency: { code: string } } }>, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, shippingTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, taxTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, subTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol?: string } } };
 
 export type ValidationErrorFieldsFragment = { errorCode?: string, errorMessage?: string, objectId?: string, objectType?: string, errorParameters?: Array<{ key: string, value: string }> };
+
+export type WishlistLineItemFieldsFragment = { id: string, name: string, imageUrl?: string, sku: string, productId: string, quantity: number, productType?: string, salePrice: { amount: any, formattedAmount: string }, listPrice: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images: Array<{ url: string }>, vendor?: { id: string, name: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, price: { actual: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } } };
 
 export type GetFulfillmentCenterQueryVariables = Exact<{
   id: Scalars['String']['input'];

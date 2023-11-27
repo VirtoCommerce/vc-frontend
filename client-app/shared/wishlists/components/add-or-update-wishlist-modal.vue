@@ -87,7 +87,7 @@ const { errors, meta } = useForm({
     description: listDescription.value ?? "",
     isPrivate: listIsPrivate.value,
   },
-  validateOnMount: false,
+  validateOnMount: true,
 });
 
 const { value: name } = useField<string | undefined>("name");
