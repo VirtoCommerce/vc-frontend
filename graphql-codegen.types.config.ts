@@ -35,11 +35,13 @@ const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
         "typescript-operations",
       ],
       config: {
-        skipTypename: true,
+        dedupeFragments: true,
         maybeValue: "T",
         scalars: {
           Long: "number",
         },
+        skipTypename: true,
+        useTypeImports: true,
       },
     },
   },
