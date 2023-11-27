@@ -19,6 +19,7 @@
     "prettier": "prettier --check client-app/",
     "prettier:fix": "yarn prettier --write",
     "test:unit": "vitest",
+    "test:typing": "vitest typecheck",
     "generate:certificates": "vite-node --mode production scripts/generate-certificates",
     "generate:graphql:schema": "graphql-codegen --config graphql-codegen.schema.config.ts --require ./scripts/graphql-codegen.js",
     "generate:graphql:types": "graphql-codegen --config graphql-codegen.types.config.ts --require ./scripts/graphql-codegen.js",

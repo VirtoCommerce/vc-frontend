@@ -97,7 +97,11 @@ jobs:
 
       - name: Unit Tests
         run: |
-          yarn test:unit run
+          yarn test:unit --run
+
+      - name: Typing Tests
+        run: |
+          yarn test:typing --run
 
       - name: BUILD_STATE::successful
         if: success()
