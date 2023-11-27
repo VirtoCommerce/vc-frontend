@@ -64,6 +64,8 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+console.warn("[UIKit][warn] VcImageGallery is deprecated, use Swiper instead.");
+
 const mainImageElement = ref<HTMLElement | null>(null);
 const activeSrc = ref("");
 
