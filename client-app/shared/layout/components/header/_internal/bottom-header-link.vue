@@ -16,7 +16,7 @@
 
         <VcTransitionScale mode="out-in">
           <VcBadge v-if="count" class="absolute -right-3 -top-2 transition-transform" variant="outline" rounded>
-            {{ preparedCount }}
+            {{ $n(count, "decimal", { notation: "compact" }) }}
           </VcBadge>
         </VcTransitionScale>
       </span>
@@ -29,8 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { numberToShortString } from "@/core/utilities";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
 interface IProps {
@@ -42,9 +40,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<IProps>(), {
+withDefaults(defineProps<IProps>(), {
   count: 0,
 });
-
-const preparedCount = computed<string>(() => numberToShortString(props.count));
 </script>
