@@ -45,7 +45,7 @@
                   class="absolute -right-2 -top-2.5 transition-transform"
                   rounded
                 >
-                  {{ preparedCartItemsQuantity }}
+                  {{ $n(cart.itemsQuantity, "decimal", { notation: "compact" }) }}
                 </VcBadge>
               </VcTransitionScale>
             </span>
@@ -95,7 +95,6 @@ import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core"
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import { numberToShortString } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
@@ -115,8 +114,6 @@ const { cart } = useCart();
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
 );
-
-const preparedCartItemsQuantity = computed<string>(() => numberToShortString(cart.value?.itemsQuantity ?? 0));
 
 const searchPageLink = computed<RouteLocationRaw>(() => ({
   name: "Search",
