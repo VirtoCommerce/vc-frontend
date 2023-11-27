@@ -219,7 +219,7 @@ async function createLists() {
   }
 
   await asyncForEach(newLists.value, async (newList) => {
-    const newListId = await createWishlist(newList.listName);
+    const newListId = await createWishlist({ listName: newList.listName });
 
     if (newListId) {
       selectedListsOtherIds.value.push(newListId);

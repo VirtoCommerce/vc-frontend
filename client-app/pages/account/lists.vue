@@ -25,27 +25,15 @@
     </div>
 
     <!-- Lists -->
-    <div v-else-if="lists.length" class="flex flex-col overflow-x-hidden lg:gap-y-3 lg:overflow-x-visible">
-      <template v-if="isMobile">
-        <VcSlidingActions
-          v-for="list in lists"
-          :key="list.id"
-          :input-object="list"
-          :actions-builder="itemActionsBuilder"
-        >
-          <WishlistCard :list="list" />
-        </VcSlidingActions>
-      </template>
-
-      <template v-else>
-        <WishlistCard
-          v-for="list in lists"
-          :key="list.id"
-          :list="list"
-          @settings="openListSettingsModal(list)"
-          @remove="openDeleteListModal(list)"
-        />
-      </template>
+    <div v-else-if="lists.length" class="lg:space-y-3">
+      <WishlistCard
+        v-for="list in lists"
+        :key="list.id"
+        :list="list"
+        @set-scope="setScope(list.id, $event)"
+        @settings="openListSettingsModal(list)"
+        @remove="openDeleteListModal(list)"
+      />
     </div>
 
     <!-- Empty -->
@@ -64,7 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
@@ -79,13 +66,11 @@ import {
   WishlistCard,
   WishlistCardSkeleton,
 } from "@/shared/wishlists";
-import type { WishlistType } from "@/core/api/graphql/types";
+import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 const { openPopup } = usePopup();
-const { loading, lists, fetchWishlists } = useWishlists();
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
+const { loading, lists, fetchWishlists, updateWishlist } = useWishlists();
 
 usePageHead({
   title: t("pages.account.lists.meta.title"),
@@ -126,28 +111,8 @@ function openDeleteListModal(list: WishlistType) {
   });
 }
 
-function itemActionsBuilder() {
-  const actions: SlidingActionsItem[] = [
-    {
-      icon: "trash",
-      title: t("common.buttons.delete"),
-      left: true,
-      classes: "bg-[--color-danger-500]",
-      clickHandler(list: WishlistType) {
-        openDeleteListModal(list);
-      },
-    },
-    {
-      icon: "cog",
-      title: t("common.buttons.settings"),
-      classes: "bg-[--color-neutral-500]",
-      clickHandler(list: WishlistType) {
-        openListSettingsModal(list);
-      },
-    },
-  ];
-
-  return actions;
+function setScope(listId: string, scope: WishlistScopeType) {
+  void updateWishlist({ listId, scope });
 }
 
 fetchWishlists();

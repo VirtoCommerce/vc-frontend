@@ -22,3 +22,4 @@ export const unauthorizedErrorEvent = "unauthorized_error" as InjectionEvent<voi
 export const unhandledErrorEvent = "unhandled_error" as InjectionEvent<void>;
 export const openReturnUrl = "open_return_url" as InjectionEvent<void>;
 export const forbiddenEvent = "forbidden" as InjectionEvent<void>;
+export const passwordExpiredEvent = "password_expired" as InjectionEvent<void>;

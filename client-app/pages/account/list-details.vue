@@ -44,7 +44,7 @@
             class="grow"
             @click="openListSettingsModal"
           >
-            {{ $t("shared.wishlists.list_card.list_settings_button") }}
+            {{ $t("shared.wishlists.list_details.list_settings_button") }}
           </VcButton>
         </div>
       </div>
@@ -313,9 +313,9 @@ onBeforeRouteUpdate(canChangeRoute);
 watchEffect(async () => {
   clearList();
   await fetchWishList(props.listId);
-
-  wishlistItems.value = cloneDeep(list.value?.items) || [];
 });
+
+watchEffect(() => (wishlistItems.value = cloneDeep(list.value?.items) ?? []));
 
 /**
  * Send Google Analytics event for related products.
