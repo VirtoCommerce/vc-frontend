@@ -1,6 +1,6 @@
-#import "../../../fragments/propertyFields.graphql"
-#import "../../../fragments/availabilityDataFields.graphql"
-#import "../../../fragments/moneyFields.graphql"
+#import "../../../common/fragments/money.graphql"
+#import "../../fragments/property.graphql"
+#import "../../fragments/availabilityData.graphql"
 
 query SearchProducts(
   $storeId: String!
@@ -49,10 +49,10 @@ query SearchProducts(
         id
         price {
           list {
-            ...moneyFields
+            ...money
           }
           actual {
-            ...moneyFields
+            ...money
           }
         }
       }
@@ -67,11 +67,11 @@ query SearchProducts(
         content
       }
       availabilityData {
-        ...availabilityDataFields
+        ...availabilityData
       }
       price {
         actual {
-          ...moneyFields
+          ...money
         }
         discountAmount {
           amount
@@ -82,17 +82,17 @@ query SearchProducts(
           formattedAmount
         }
         list {
-          ...moneyFields
+          ...money
         }
         discountPercent
       }
       minVariationPrice {
         actual {
-          ...moneyFields
+          ...money
         }
       }
       properties {
-        ...propertyFields
+        ...property
       }
     }
     term_facets @include(if: $withFacets) {

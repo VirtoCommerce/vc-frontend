@@ -1,4 +1,4 @@
-fragment availabilityDataFields on AvailabilityData {
+fragment availabilityData on AvailabilityData {
   isActive
   isAvailable
   isBuyable

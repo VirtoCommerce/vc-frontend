@@ -1,5 +1,5 @@
-#import "./moneyFields.graphql"
-#import "./currencyFields.graphql"
+#import "../common/fragments/money.graphql"
+#import "../common/fragments/currency.graphql"
 #import "./shortOrderFields.graphql"
 #import "./orderAddressFields.graphql"
 
@@ -8,7 +8,7 @@ fragment fullOrderFields on CustomerOrderType {
   comment
   purchaseOrderNumber
   currency {
-    ...currencyFields
+    ...currency
   }
   shipments {
     shipmentMethodCode
@@ -18,7 +18,7 @@ fragment fullOrderFields on CustomerOrderType {
       typeName
     }
     price {
-      ...moneyFields
+      ...money
     }
     deliveryAddress {
       ...orderAddressFields
@@ -44,7 +44,7 @@ fragment fullOrderFields on CustomerOrderType {
     code
     logoUrl
     price {
-      ...moneyFields
+      ...money
     }
   }
 }

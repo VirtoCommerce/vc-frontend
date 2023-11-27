@@ -1,0 +1,8 @@
+fragment commonVendor on CommonVendor {
+  id
+  name
+  rating {
+    value
+    reviewCount
+  }
+}

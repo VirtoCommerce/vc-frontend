@@ -1,4 +1,4 @@
-fragment propertyFields on Property {
+fragment property on Property {
   name
   value
   type

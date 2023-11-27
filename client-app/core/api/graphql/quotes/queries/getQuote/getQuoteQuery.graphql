@@ -1,7 +1,6 @@
-#import "../../../fragments/moneyFields.graphql"
+#import "../../../common/fragments/money.graphql"
 #import "../../../fragments/quoteLineItemFields.graphql"
 #import "../../../fragments/quoteAddressFields.graphql"
-#import "../../../fragments/moneyFields.graphql"
 
 query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: String, $cultureName: String) {
   quote(id: $id, storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
@@ -21,7 +20,7 @@ query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: St
     }
     totals {
       grandTotalInclTax {
-        ...moneyFields
+        ...money
       }
     }
   }
