@@ -1,0 +1,71 @@
+<template>
+  <button
+    type="button"
+    :disabled="disabled"
+    :class="[
+      'vc-nav-button',
+      `vc-nav-button--size--${size}`,
+      {
+        'vc-nav-button--disabled': disabled,
+      },
+    ]"
+    @click="$emit('click', $event)"
+  >
+    <VcIcon :name="`chevron-${direction}`" />
+  </button>
+</template>
+
+<script setup lang="ts">
+export interface IEmits {
+  (event: "click", value: MouseEvent): void;
+}
+
+interface IProps {
+  size?: "xs" | "sm" | "md";
+  direction?: "left" | "right" | "up" | "down";
+  disabled?: boolean;
+}
+
+defineEmits<IEmits>();
+
+withDefaults(defineProps<IProps>(), {
+  size: "md",
+  direction: "right",
+  disabled: false,
+});
+</script>
+
+<style lang="scss">
+.vc-nav-button {
+  @apply flex-none flex items-center justify-center rounded-full shadow-xl bg-[--color-additional-50] text-[--color-primary-500];
+
+  &--size {
+    &--xs {
+      --vc-icon-size: 0.875rem;
+
+      @apply w-7 h-7;
+    }
+
+    &--sm {
+      --vc-icon-size: 1rem;
+
+      @apply w-9 h-9;
+    }
+
+    &--md {
+      --vc-icon-size: 1.5rem;
+
+      @apply w-14 h-14;
+    }
+  }
+
+  &:hover {
+    @apply text-[--color-primary-700];
+  }
+
+  &:disabled,
+  &--disabled {
+    @apply text-[--color-neutral-300];
+  }
+}
+</style>

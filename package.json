@@ -47,7 +47,7 @@
     "lodash": "^4.17.21",
     "marked": "^9.1.1",
     "maska": "^2.1.10",
-    "swiper": "^8.4.7",
+    "swiper": "11.0.4",
     "tw-elements": "^1.0.0",
     "vee-validate": "^4.11.8",
     "vue": "^3.3.4",

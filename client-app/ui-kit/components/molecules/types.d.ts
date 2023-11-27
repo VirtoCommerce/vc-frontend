@@ -30,6 +30,7 @@ declare module "@vue/runtime-core" {
     VcLoaderWithText: typeof Components.VcLoaderWithText;
     VcLayoutWithRightSidebar: typeof Components.VcLayoutWithRightSidebar;
     VcMenuItem: typeof Components.VcMenuItem;
+    VcNavButton: typeof Components.VcNavButton;
     VcProductPrice: typeof Components.VcProductPrice;
     VcQuantity: typeof Components.VcQuantity;
     VcSelect: typeof Components.VcSelect;

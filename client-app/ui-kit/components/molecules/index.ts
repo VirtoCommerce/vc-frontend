@@ -24,6 +24,7 @@ export { default as VcList } from "./list/vc-list.vue";
 export { default as VcLoaderOverlay } from "./loader-overlay/vc-loader-overlay.vue";
 export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-text.vue";
 export { default as VcMenuItem } from "./menu-item/vc-menu-item.vue";
+export { default as VcNavButton } from "./nav-button/vc-nav-button.vue";
 export { default as VcProductPrice } from "./product-price/vc-product-price.vue";
 export { default as VcQuantity } from "./quantity/vc-quantity.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
