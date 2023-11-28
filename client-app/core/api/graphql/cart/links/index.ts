@@ -14,17 +14,13 @@ const queryNames = [
 ];
 
 const mutationNames = [
-  OperationNames.Mutation.AddBulkItemsCart,
   OperationNames.Mutation.AddCoupon,
   OperationNames.Mutation.AddGiftItems,
-  OperationNames.Mutation.AddItemsCart,
-  OperationNames.Mutation.AddItem,
   OperationNames.Mutation.AddOrUpdateCartPayment,
   OperationNames.Mutation.AddOrUpdateCartShipment,
   OperationNames.Mutation.ChangeCartComment,
   OperationNames.Mutation.ChangeFullCartItemQuantity,
   OperationNames.Mutation.ChangePurchaseOrderNumber,
-  OperationNames.Mutation.ChangeShortCartItemQuantity,
   OperationNames.Mutation.ClearCart,
   OperationNames.Mutation.MergeCart,
   OperationNames.Mutation.RejectGiftItems,
