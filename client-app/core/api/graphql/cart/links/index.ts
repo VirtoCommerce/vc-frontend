@@ -39,10 +39,10 @@ const fullCartMutationNames = [
   OperationNames.Mutation.ValidateCoupon,
 ];
 
-const operationNames = queryNames.concat(fullCartMutationNames).concat(shortCartMutationNames);
+const broadcastOperationNames = fullCartMutationNames;
 
 const broadcastLink = split(
-  (operation) => fullCartMutationNames.includes(operation.operationName),
+  (operation) => broadcastOperationNames.includes(operation.operationName),
   new ApolloLink((operation, forward) => {
     const broadcast = useBroadcast();
     return forward(operation).map((data) => {
@@ -52,10 +52,12 @@ const broadcastLink = split(
   }),
 );
 
+const batchOperationNames = queryNames.concat(shortCartMutationNames);
+
 // BatchHttpLink is used to batch multiple operations into one request
 const batchLink = from([
   split(
-    (operation) => operationNames.includes(operation.operationName),
+    (operation) => batchOperationNames.includes(operation.operationName),
     new BatchHttpLink({
       uri: API_URL,
       batchInterval: DEFAULT_DEBOUNCE_IN_MS,
