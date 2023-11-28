@@ -13,7 +13,14 @@ const queryNames = [
   OperationNames.Mutation.ValidateCoupon,
 ];
 
-const mutationNames = [
+const shortCartMutationNames = [
+  OperationNames.Mutation.AddBulkItemsCart,
+  OperationNames.Mutation.AddItem,
+  OperationNames.Mutation.AddItemsCart,
+  OperationNames.Mutation.ChangeShortCartItemQuantity,
+];
+
+const fullCartMutationNames = [
   OperationNames.Mutation.AddCoupon,
   OperationNames.Mutation.AddGiftItems,
   OperationNames.Mutation.AddOrUpdateCartPayment,
@@ -32,10 +39,10 @@ const mutationNames = [
   OperationNames.Mutation.ValidateCoupon,
 ];
 
-const operationNames = queryNames.concat(mutationNames);
+const operationNames = queryNames.concat(fullCartMutationNames).concat(shortCartMutationNames);
 
 const broadcastLink = split(
-  (operation) => mutationNames.includes(operation.operationName),
+  (operation) => fullCartMutationNames.includes(operation.operationName),
   new ApolloLink((operation, forward) => {
     const broadcast = useBroadcast();
     return forward(operation).map((data) => {
