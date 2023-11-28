@@ -54,7 +54,7 @@ function _useShortCart() {
       return 0;
     }
 
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId!));
+    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
 
     return sumBy(filteredItems, (x) => x.extendedPrice?.amount);
   }

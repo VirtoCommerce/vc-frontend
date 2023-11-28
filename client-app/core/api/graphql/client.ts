@@ -13,7 +13,7 @@ const fetchPolicy: FetchPolicy = "no-cache";
  *
  * **IMPORTANT!** Because of cache usage, query deduplication and `@vue/apollo-composable` usage,
  * you can't just replace {@link graphqlClient} with {@link apolloClient} in your code.
- * Look at TODO for more information.
+ * Look at https://github.com/VirtoCommerce/vc-theme-b2b-vue/pull/868 for more information.
  */
 export const graphqlClient = new ApolloClient({
   ...options,

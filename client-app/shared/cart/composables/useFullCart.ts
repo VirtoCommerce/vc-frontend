@@ -1,5 +1,5 @@
 import { computedEager, createSharedComposable, useDebounceFn } from "@vueuse/core";
-import { difference, keyBy, sumBy } from "lodash";
+import { difference, keyBy } from "lodash";
 import { computed, shallowRef } from "vue";
 import {
   useAddCouponMutation,
@@ -61,7 +61,7 @@ export function _useFullCart() {
   const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
 
   const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
-    (cart.value?.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
+    (cart.value?.availableGifts ?? []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
   );
 
   const hasValidationErrors = computedEager(
@@ -225,17 +225,6 @@ export function _useFullCart() {
     });
   }
 
-  // calculate total price of items in the cart for some set of products
-  function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items?.length) {
-      return 0;
-    }
-
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId!));
-
-    return sumBy(filteredItems, (x) => x.extendedPrice?.amount);
-  }
-
   return {
     cart,
     shipment,
@@ -251,7 +240,6 @@ export function _useFullCart() {
     availableExtendedGifts,
     hasValidationErrors,
     hasOnlyUnselectedValidationError,
-    getItemsTotal,
     load,
     refetch,
     forceFetch,
