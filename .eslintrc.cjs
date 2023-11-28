@@ -179,6 +179,13 @@ module.exports = {
       files: ["*.ts"],
       excludedFiles: ["./*.js", "./*.ts", "**/components/**/index.ts", "*.stories.ts", "shims-*.d.ts"],
       rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            name: "@apollo/client",
+            message: "@apollo/client is for React only. Please import from @apollo/client/* or @vue/apollo-composable"
+          }
+        ],
         "no-restricted-exports": [
           "warn",
           {
