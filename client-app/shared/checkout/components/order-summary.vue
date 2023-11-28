@@ -1,5 +1,7 @@
 <template>
   <VcCardWidget id="order-summary" :title="$t('common.titles.order_summary')" icon="truck">
+    <VcLoaderOverlay :visible="changing" />
+
     <slot name="header" />
 
     <!-- Totals block -->
@@ -95,6 +97,7 @@
 import { sumBy } from "lodash";
 import { computed, ref } from "vue";
 import { useCurrency, useLanguages } from "@/core/composables";
+import { useFullCart } from "@/shared/cart";
 import type {
   CartType,
   CustomerOrderType,
@@ -115,6 +118,7 @@ const props = defineProps<IProps>();
 
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
+const { changing } = useFullCart();
 
 const discountsCollapsed = ref(true);
 

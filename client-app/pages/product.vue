@@ -47,7 +47,7 @@ import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { buildBreadcrumbs } from "@/core/utilities";
-import { useCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 import { useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useTemplate } from "@/shared/static-content";
@@ -63,7 +63,7 @@ interface IProps {
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
-const { getItemsTotal } = useCart();
+const { getItemsTotal } = useShortCart();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const breakpoints = useBreakpoints(breakpointsTailwind);

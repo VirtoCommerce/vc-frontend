@@ -33,9 +33,12 @@ const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
         },
         "typescript",
         "typescript-operations",
+        "typed-document-node",
+        "named-operations-object",
       ],
       config: {
         dedupeFragments: true,
+        identifierName: "OperationNames",
         maybeValue: "T",
         scalars: {
           Long: "number",

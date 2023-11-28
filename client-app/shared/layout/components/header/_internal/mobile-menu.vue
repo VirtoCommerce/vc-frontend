@@ -231,7 +231,7 @@ import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { useCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
@@ -244,7 +244,7 @@ interface IEmits {
 defineEmits<IEmits>();
 
 const { t } = useI18n();
-const { cart } = useCart();
+const { cart } = useShortCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();

@@ -1,4 +1,4 @@
-import { useDebounceFn } from "@vueuse/core";
+import { createSharedComposable, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
@@ -8,8 +8,7 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
-import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
-import { useCart, DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
+import { useFullCart, DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
@@ -27,15 +26,7 @@ import type {
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
-const loading = ref(false);
-const billingAddressEqualsShipping = ref(true);
-const placedOrder = shallowRef<CustomerOrderType | null>(null);
-
-const _comment = ref<string>();
-const _purchaseOrderNumber = ref<string>();
-
-export function useCheckout() {
-  const broadcast = useBroadcast();
+function _useCheckout() {
   const ga = useGoogleAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
@@ -54,6 +45,7 @@ export function useCheckout() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(user.value.contact?.organizationId || "");
   const {
+    refetch: refetchCart,
     cart,
     selectedItemIds,
     shipment,
@@ -62,41 +54,45 @@ export function useCheckout() {
     availablePaymentMethods,
     hasValidationErrors,
     allItemsAreDigital,
-    fetchFullCart,
     updateShipment,
     removeShipment,
     updatePayment,
     changeComment,
     updatePurchaseOrderNumber,
-  } = useCart();
+  } = useFullCart();
+
+  const loading = ref(false);
+  const billingAddressEqualsShipping = ref(true);
+  const placedOrder = shallowRef<CustomerOrderType | null>(null);
+
+  const _comment = ref<string>();
+  const _purchaseOrderNumber = ref<string>();
 
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.comment !== value) {
       await changeComment(value);
     }
-    _comment.value = undefined;
   }, DEFAULT_DEBOUNCE_IN_MS);
 
   const updatePurchaseOrderNumberDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.purchaseOrderNumber !== value) {
       await updatePurchaseOrderNumber(value);
     }
-    _purchaseOrderNumber.value = undefined;
   }, DEFAULT_DEBOUNCE_IN_MS);
 
   const comment = computed({
     get: () => _comment.value ?? cart.value?.comment ?? "",
-    set: async (value: string) => {
+    set: (value: string) => {
       _comment.value = value;
-      await changeCommentDebounced(value);
+      void changeCommentDebounced(value);
     },
   });
 
   const purchaseOrderNumber = computed({
     get: () => _purchaseOrderNumber.value ?? cart.value?.purchaseOrderNumber ?? "",
-    set: async (value: string) => {
+    set: (value: string) => {
       _purchaseOrderNumber.value = value;
-      await updatePurchaseOrderNumberDebounced(value);
+      void updatePurchaseOrderNumberDebounced(value);
     },
   });
 
@@ -148,28 +144,22 @@ export function useCheckout() {
     return addresses.value.some((item) => isEqualAddresses(item, address));
   }
 
-  async function setShippingMethod(method: ShippingMethodType, options = { withBroadcast: true }): Promise<void> {
-    await updateShipment(
-      {
-        id: shipment.value?.id,
-        price: method.price?.amount,
-        shipmentMethodCode: method.code,
-        shipmentMethodOption: method.optionName,
-      },
-      options,
-    );
+  async function setShippingMethod(method: ShippingMethodType): Promise<void> {
+    await updateShipment({
+      id: shipment.value?.id,
+      price: method.price?.amount,
+      shipmentMethodCode: method.code,
+      shipmentMethodOption: method.optionName,
+    });
 
     ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
-  async function setPaymentMethod(method: PaymentMethodType, options = { withBroadcast: true }): Promise<void> {
-    await updatePayment(
-      {
-        id: payment.value?.id,
-        paymentGatewayCode: method.code,
-      },
-      options,
-    );
+  async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
+    await updatePayment({
+      id: payment.value?.id,
+      paymentGatewayCode: method.code,
+    });
 
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
@@ -179,11 +169,8 @@ export function useCheckout() {
     const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
     const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
 
-    let cartReloadBroadcast = false;
-
     if (allItemsAreDigital.value && shipment.value) {
-      await removeShipment(shipment.value.id!);
-      cartReloadBroadcast = true;
+      await removeShipment(shipment.value.id);
     }
 
     if (
@@ -193,17 +180,11 @@ export function useCheckout() {
       shippingMethodId &&
       defaultShippingMethod
     ) {
-      await setShippingMethod(defaultShippingMethod, { withBroadcast: false });
-      cartReloadBroadcast = true;
+      await setShippingMethod(defaultShippingMethod);
     }
 
     if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
-      await setPaymentMethod(defaultPaymentMethod, { withBroadcast: false });
-      cartReloadBroadcast = true;
-    }
-
-    if (cartReloadBroadcast) {
-      broadcast.emit(cartReloadEvent);
+      await setPaymentMethod(defaultPaymentMethod);
     }
   }
 
@@ -211,10 +192,9 @@ export function useCheckout() {
     placedOrder.value = null;
     loading.value = true;
 
-    await fetchFullCart();
     await setCheckoutDefaults();
 
-    fetchAddresses();
+    void fetchAddresses();
 
     ga.beginCheckout(cart.value!);
 
@@ -229,24 +209,18 @@ export function useCheckout() {
       addressType === AddressType.Billing &&
       (!payment.value?.billingAddress || !isEqualAddresses(payment.value?.billingAddress, inputAddress))
     ) {
-      await updatePayment(
-        {
-          id: payment.value?.id,
-          billingAddress: inputAddress,
-        },
-        { withBroadcast: true },
-      );
+      await updatePayment({
+        id: payment.value?.id,
+        billingAddress: inputAddress,
+      });
     } else if (
       addressType === AddressType.Shipping &&
       (!shipment.value?.deliveryAddress || !isEqualAddresses(shipment.value?.deliveryAddress, inputAddress))
     ) {
-      await updateShipment(
-        {
-          id: shipment.value?.id,
-          deliveryAddress: inputAddress,
-        },
-        { withBroadcast: true },
-      );
+      await updateShipment({
+        id: shipment.value?.id,
+        deliveryAddress: inputAddress,
+      });
     }
   }
 
@@ -375,7 +349,7 @@ export function useCheckout() {
     // Update payment with required properties
     const filledPayment: InputPaymentType = {
       id: payment.value!.id,
-      amount: cart.value!.total!.amount, // required
+      amount: cart.value!.total.amount, // required
     };
 
     // Save shipping address as billing address
@@ -400,7 +374,7 @@ export function useCheckout() {
 
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
-      saveNewAddresses({
+      void saveNewAddresses({
         shippingAddress: !allItemsAreDigital.value ? shipment.value!.deliveryAddress : undefined,
         billingAddress: payment.value!.billingAddress,
       });
@@ -413,15 +387,15 @@ export function useCheckout() {
     await prepareOrderData();
 
     try {
-      placedOrder.value = await _createOrderFromCart(cart.value!.id!);
+      placedOrder.value = await _createOrderFromCart(cart.value!.id);
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
     if (placedOrder.value) {
-      await fetchFullCart();
+      await refetchCart();
 
-      selectedItemIds.value = cart.value!.items!.map((item) => item.id);
+      selectedItemIds.value = cart.value!.items.map((item) => item.id);
 
       ga.placeOrder(placedOrder.value);
 
@@ -433,8 +407,6 @@ export function useCheckout() {
         single: true,
       });
     }
-
-    broadcast.emit(cartReloadEvent);
 
     loading.value = false;
 
@@ -466,3 +438,5 @@ export function useCheckout() {
     allItemsAreDigital: readonly(allOrderItemsAreDigital),
   };
 }
+
+export const useCheckout = createSharedComposable(_useCheckout);

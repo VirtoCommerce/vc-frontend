@@ -1,4 +1,4 @@
-import { useCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart";
 import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
@@ -79,7 +79,7 @@ export const mainRoutes: RouteRecordRaw[] = [
     redirect: { name: checkoutRoutes[0].name },
     meta: { layout: "Secure" },
     beforeEnter(to, from, next) {
-      const { allItemsAreDigital } = useCart();
+      const { allItemsAreDigital } = useFullCart();
       /**
        * NOTE: Allow proceeding to checkout only from cart.
        * Refreshing page will redirect to the cart. At any of the steps.

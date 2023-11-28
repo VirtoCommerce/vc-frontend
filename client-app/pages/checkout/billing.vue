@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
 const {
@@ -50,7 +50,7 @@ const {
   hasValidationErrors,
   availablePaymentMethods,
   allItemsAreDigital,
-} = useCart();
+} = useFullCart();
 const {
   purchaseOrderNumber,
   billingAddressEqualsShipping,

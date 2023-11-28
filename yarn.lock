@@ -2318,6 +2318,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-codegen/named-operations-object@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@graphql-codegen/named-operations-object@npm:3.0.0"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": ^3.0.0
+    change-case-all: 1.0.15
+    tslib: ~2.6.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+    graphql-tag: ^2.0.0
+  checksum: 612941127a510f6a4c9b8beb1737d4adfed741bfcbf13a0086f29bc0bdb95b565059c55af80dc51f0b3f7abeed07cec8483777c8c21927fb93da46002b4e5938
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/plugin-helpers@npm:^3.0.0":
+  version: 3.1.2
+  resolution: "@graphql-codegen/plugin-helpers@npm:3.1.2"
+  dependencies:
+    "@graphql-tools/utils": ^9.0.0
+    change-case-all: 1.0.15
+    common-tags: 1.8.2
+    import-from: 4.0.0
+    lodash: ~4.17.0
+    tslib: ~2.4.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 4d0c615738570681b5ffd3c07305a35d6aa3e5fd87c9199c0a670b95529ab865b1df978ce584d5b415107a567ac484e56a48db129a6d1d2eb8a254fbd3260e39
+  languageName: node
+  linkType: hard
+
 "@graphql-codegen/plugin-helpers@npm:^5.0.0, @graphql-codegen/plugin-helpers@npm:^5.0.1":
   version: 5.0.1
   resolution: "@graphql-codegen/plugin-helpers@npm:5.0.1"
@@ -2344,6 +2374,21 @@ __metadata:
   peerDependencies:
     graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 5950b57b383c14476080108d8ef7ebe569446ac20fbf54371ecc051392c80ef4b28b16b33fcb06faa892213bed90fc72940bc46a9852e0f02491491811e6a47e
+  languageName: node
+  linkType: hard
+
+"@graphql-codegen/typed-document-node@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "@graphql-codegen/typed-document-node@npm:5.0.1"
+  dependencies:
+    "@graphql-codegen/plugin-helpers": ^5.0.0
+    "@graphql-codegen/visitor-plugin-common": 4.0.1
+    auto-bind: ~4.0.0
+    change-case-all: 1.0.15
+    tslib: ~2.5.0
+  peerDependencies:
+    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: d1e9d88b0d7796de034769d1c7c02be16cbc3710c00a198e4431034d51c7fb8f56c4ba418ff53c9647898649d07eb9c26fb09f11111d79fa1cc83b34decb6e69
   languageName: node
   linkType: hard
 
@@ -2736,6 +2781,18 @@ __metadata:
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
   checksum: 9158b53ef6057a2c17605b78eae9dcac0d546f4d214355dd9f505c83a6f459fe6bf24c5e6a849589411d645da68a05200cbbe9129f2eb467afe89274df1032cc
+  languageName: node
+  linkType: hard
+
+"@graphql-tools/utils@npm:^9.0.0":
+  version: 9.2.1
+  resolution: "@graphql-tools/utils@npm:9.2.1"
+  dependencies:
+    "@graphql-typed-document-node/core": ^3.1.1
+    tslib: ^2.4.0
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 94ed12df5f49e5c338322ffd931236a687a3d5c443bf499f9baab5d4fcd9792234111142be8aa506a01ca2e82732996c4e1d8f6159ff9cc7fdc5c97f63e55226
   languageName: node
   linkType: hard
 
@@ -5807,6 +5864,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vue/apollo-composable@npm:^4.0.0-beta.11":
+  version: 4.0.0-beta.11
+  resolution: "@vue/apollo-composable@npm:4.0.0-beta.11"
+  dependencies:
+    throttle-debounce: ^5.0.0
+    ts-essentials: ^9.4.0
+    vue-demi: ^0.14.6
+  peerDependencies:
+    "@apollo/client": ^3.4.13
+    "@vue/composition-api": ^1.0.0
+    graphql: ">=15"
+    vue: ^2.6.0 || ^3.1.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+  checksum: c68771158d1362804c14ad872943b4f549b3f3842de7b9ba2ef21a11e012c7dd71ce7bbc8bed5fbd79ee26a402efee2263e9985b1cac9da0a0a1a8ec3ef66a6c
+  languageName: node
+  linkType: hard
+
 "@vue/compiler-core@npm:3.3.4":
   version: 3.3.4
   resolution: "@vue/compiler-core@npm:3.3.4"
@@ -6398,6 +6474,15 @@ __metadata:
     normalize-path: ^3.0.0
     picomatch: ^2.0.4
   checksum: 3e044fd6d1d26545f235a9fe4d7a534e2029d8e59fa7fd9f2a6eb21230f6b5380ea1eaf55136e60cbf8e613544b3b766e7a6fa2102e2a3a117505466e3025dc2
+  languageName: node
+  linkType: hard
+
+"apollo3-cache-persist@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "apollo3-cache-persist@npm:0.14.1"
+  peerDependencies:
+    "@apollo/client": ^3.2.5
+  checksum: 9f286707c9ecc628c0a44117e5ed67ccdb2a5befe28029aba69724595c2ddacfe47c43271d7607a4046cb5167f25da5f81c27579413c95254dfdb91039e9fc1c
   languageName: node
   linkType: hard
 
@@ -15297,6 +15382,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"throttle-debounce@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "throttle-debounce@npm:5.0.0"
+  checksum: aa8bf25828b4f8645ce863589de05d6807ea3debc147ce7d89624638ff8a16792d6d0baa0f8a32a260f0b163444d74020c6087b713ae561fde594b97b6e51f28
+  languageName: node
+  linkType: hard
+
 "through2@npm:^2.0.3":
   version: 2.0.5
   resolution: "through2@npm:2.0.5"
@@ -15485,6 +15577,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-essentials@npm:^9.4.0":
+  version: 9.4.1
+  resolution: "ts-essentials@npm:9.4.1"
+  peerDependencies:
+    typescript: ">=4.1.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 3a7404b88549a005eb19881348905bc76faec2438f1997a9cccb8ecdaaef481b88896fea91353c14435f6d4354259a1c527c438b353353c9de526a9c593ab7d0
+  languageName: node
+  linkType: hard
+
 "ts-interface-checker@npm:^0.1.9":
   version: 0.1.13
   resolution: "ts-interface-checker@npm:0.1.13"
@@ -15594,10 +15698,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.6.0, tslib@npm:^2.6.1":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.6.0, tslib@npm:^2.6.1, tslib@npm:~2.6.0":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
+  languageName: node
+  linkType: hard
+
+"tslib@npm:~2.4.0":
+  version: 2.4.1
+  resolution: "tslib@npm:2.4.1"
+  checksum: 19480d6e0313292bd6505d4efe096a6b31c70e21cf08b5febf4da62e95c265c8f571f7b36fcc3d1a17e068032f59c269fab3459d6cd3ed6949eafecf64315fca
   languageName: node
   linkType: hard
 
@@ -16179,6 +16290,8 @@ __metadata:
     "@graphql-codegen/add": ^5.0.0
     "@graphql-codegen/cli": ^5.0.0
     "@graphql-codegen/introspection": ^4.0.0
+    "@graphql-codegen/named-operations-object": ^3.0.0
+    "@graphql-codegen/typed-document-node": ^5.0.0
     "@graphql-codegen/typescript": ^4.0.1
     "@graphql-codegen/typescript-operations": ^4.0.1
     "@headlessui/vue": ^1.7.16
@@ -16206,12 +16319,14 @@ __metadata:
     "@vee-validate/rules": ^4.11.8
     "@vee-validate/yup": ^4.11.8
     "@vitejs/plugin-vue": ^4.3.4
+    "@vue/apollo-composable": ^4.0.0-beta.11
     "@vue/eslint-config-prettier": ^8.0.0
     "@vue/eslint-config-typescript": ^12.0.0
     "@vue/tsconfig": ^0.4.0
     "@vueuse/components": ^10.5.0
     "@vueuse/core": ^10.5.0
     adm-zip: ^0.5.10
+    apollo3-cache-persist: ^0.14.1
     autoprefixer: ^10.4.16
     chalk: ^5.3.0
     dependency-cruiser: ^14.1.1
@@ -16626,7 +16741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-demi@npm:>=0.14.6":
+"vue-demi@npm:>=0.14.6, vue-demi@npm:^0.14.6":
   version: 0.14.6
   resolution: "vue-demi@npm:0.14.6"
   peerDependencies:

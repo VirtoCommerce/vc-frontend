@@ -38,12 +38,12 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead } from "@/core/composables";
-import { useCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
 const route = useRoute();
 const { t } = useI18n();
-const { loading: loadingCart, allItemsAreDigital } = useCart();
+const { loading: loadingCart, allItemsAreDigital, forceFetch } = useFullCart();
 const { loading: loadingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
 
 const stepIDsWithEmptyLayout = ["CheckoutPaymentResult", "CheckoutCompleted"];
@@ -107,9 +107,10 @@ usePageHead({
   title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
 });
 
-invoke(async () => {
+void invoke(async () => {
   // Initialize on the first step
   if (currentStepIndex.value === 1) {
+    await forceFetch();
     await initialize();
   }
 });

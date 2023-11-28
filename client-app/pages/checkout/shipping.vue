@@ -36,10 +36,10 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, selectedLineItems, shipment, hasValidationErrors, availableShippingMethods } = useCart();
+const { loading, cart, selectedLineItems, shipment, hasValidationErrors, availableShippingMethods } = useFullCart();
 const { comment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 
 const isDisabledNextStep = computed<boolean>(

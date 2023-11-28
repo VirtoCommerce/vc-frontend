@@ -150,7 +150,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
-import { useCart, useCoupon } from "@/shared/cart";
+import { useFullCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
@@ -164,7 +164,7 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-} = useCart();
+} = useFullCart();
 const {
   loading,
   billingAddressEqualsShipping,

@@ -1,6 +1,9 @@
 import { createHead } from "@unhead/vue";
-import { createApp } from "vue";
+import { DefaultApolloClient } from "@vue/apollo-composable";
+import { createApp, h, provide } from "vue";
 import VueSecureHTML from "vue-html-secure";
+import { apolloClient } from "@/core/api/graphql";
+import { configureApolloClient } from "@/core/api/graphql/config";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -21,6 +24,8 @@ export default async () => {
   if (!appElement) {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
+
+  await configureApolloClient();
 
   const { fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
@@ -68,12 +73,20 @@ export default async () => {
   /**
    * Create and mount application
    */
-  const app = createApp(App, {
-    /**
-     * Passing data-* attributes to the application props
-     */
-    ...appElement.dataset,
-  });
+  const app = createApp(
+    {
+      setup() {
+        provide(DefaultApolloClient, apolloClient);
+      },
+      render: () => h(App),
+    },
+    {
+      /**
+       * Passing data-* attributes to the application props
+       */
+      ...appElement.dataset,
+    },
+  );
 
   // Plugins
   app.use(head);

@@ -1,21 +1,20 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./clearCartMutation.graphql";
-import type { CartType, ClearCartMutation, MutationsClearCartArgs } from "@/core/api/graphql/types";
+import { useApolloClient } from "@vue/apollo-composable";
+import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
+import { useMutation } from "@/core/api/graphql/composables";
+import { ClearCartDocument } from "@/core/api/graphql/types";
+import type { CartIdFragment, CartType } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
+export function useClearCartMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  const { resolveClient } = useApolloClient();
+  const result = useMutation(ClearCartDocument, useCartMutationVariables(cart));
+  result.onDone(() => resolveClient().cache.gc());
+  return result;
+}
+
+/** @deprecated Use {@link useClearCartMutation} instead. */
 export async function clearCart(cartId: string): Promise<CartType> {
-  const { storeId, userId } = globals;
-
-  const { data } = await graphqlClient.mutate<ClearCartMutation, MutationsClearCartArgs>({
-    mutation: mutationDocument,
-    variables: {
-      command: {
-        cartId,
-        storeId,
-        userId,
-      },
-    },
-  });
-
-  return data!.clearCart as CartType;
+  const { mutate } = useClearCartMutation({ id: cartId });
+  const result = await mutate();
+  return result!.data!.clearCart as CartType;
 }

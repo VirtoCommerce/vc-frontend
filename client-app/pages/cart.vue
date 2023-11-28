@@ -17,7 +17,7 @@
   </VcEmptyPage>
 
   <VcContainer v-else class="relative z-0">
-    <VcLoaderOverlay :visible="loading" fixed-spinner />
+    <VcLoaderOverlay :visible="loadingCart || creatingQuote" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="mx-5 hidden md:mx-0 lg:block" />
 
@@ -32,9 +32,9 @@
         :items="cart.items"
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :selected-item-ids="selectedItemIds"
-        :disabled="loading"
+        :disabled="loadingCart"
         :validation-errors="cart.validationErrors"
-        @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity, { reloadFullCart: true })"
+        @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity)"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"
@@ -43,7 +43,7 @@
       <GiftsSection
         v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
         :gifts="availableExtendedGifts"
-        :disabled="loading"
+        :disabled="loadingCart"
         @toggle:gift="toggleGift"
       />
 
@@ -53,7 +53,7 @@
           v-if="!allItemsAreDigital"
           :methods="availableShippingMethods"
           :shipment="shipment"
-          :disabled="loading"
+          :disabled="loadingCart"
           @change:address="onDeliveryAddressChange"
           @change:method="setShippingMethod"
         />
@@ -65,12 +65,12 @@
           :methods="availablePaymentMethods"
           :payment="payment"
           :shipment="allItemsAreDigital ? undefined : shipment"
-          :disabled="loading"
+          :disabled="loadingCart"
           @change:address="onChangeBillingAddress"
           @change:method="setPaymentMethod"
         />
 
-        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" :disabled="loading" />
+        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" :disabled="loadingCart" />
       </template>
 
       <template #sidebar>
@@ -84,7 +84,7 @@
               :placeholder="$t('common.placeholders.promotion_code')"
               :applied="couponIsApplied"
               :error-message="couponValidationError"
-              :disabled="loading"
+              :disabled="loadingCart"
               class="mt-4"
               @apply="applyCoupon"
               @deny="removeCoupon"
@@ -154,7 +154,7 @@
             {{ $t("common.messages.quote_request") }}
           </p>
 
-          <VcButton :disabled="loading" :loading="creatingQuote" full-width variant="outline" @click="createQuote">
+          <VcButton :disabled="loadingCart" :loading="creatingQuote" full-width variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcCardWidget>
@@ -169,7 +169,7 @@
         <VcButton
           variant="outline"
           prepend-icon="trash"
-          :disabled="loading"
+          :disabled="loadingCart"
           @click="handleRemoveItems(selectedItemIds)"
         >
           {{ $t("common.buttons.remove_selected") }}
@@ -188,7 +188,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
-import { GiftsSection, ProductsSection, useCart, useCoupon } from "@/shared/cart";
+import { GiftsSection, ProductsSection, useFullCart, useCoupon } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
 import {
   BillingDetailsSection,
@@ -221,13 +221,14 @@ const {
   hasValidationErrors,
   hasOnlyUnselectedValidationError,
   allItemsAreDigital,
-  fetchFullCart,
+  forceFetch,
+  refetch,
   changeItemQuantity,
   removeItems,
   toggleGift,
   openClearCartModal,
   createQuoteFromCart,
-} = useCart();
+} = useFullCart();
 const {
   loading: loadingCheckout,
   comment,
@@ -316,15 +317,14 @@ async function createQuote(): Promise<void> {
     });
   }
 
-  await fetchFullCart();
+  await refetch();
 
   creatingQuote.value = false;
 }
 
-invoke(async () => {
-  if (config.checkout_multistep_enabled) {
-    await fetchFullCart();
-  } else {
+void invoke(async () => {
+  await forceFetch();
+  if (!config.checkout_multistep_enabled) {
     await initCheckout();
   }
 

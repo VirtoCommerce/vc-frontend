@@ -1,7 +1,7 @@
 #import "../../fragments/fullCart.graphql"
 
-mutation AddCoupon($command: InputAddCouponType!) {
+mutation AddCoupon($command: InputAddCouponType!, $skipQuery: Boolean!) {
   addCoupon(command: $command) {
-    ...fullCart
+    ...fullCart @skip(if: $skipQuery)
   }
 }

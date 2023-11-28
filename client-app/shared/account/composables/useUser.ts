@@ -1,6 +1,7 @@
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
+import { apolloClient } from "@/core/api/graphql";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -195,6 +196,7 @@ export function useUser() {
       const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
 
       if (result.succeeded) {
+        apolloClient.cache.gc();
         broadcast.emit(pageReloadEvent);
       }
 
@@ -270,6 +272,7 @@ export function useUser() {
     try {
       loading.value = true;
       await innerFetch("/storefrontapi/account/logout");
+      apolloClient.cache.gc();
       if (options.reloadPage) {
         broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
       }

@@ -1,0 +1,42 @@
+import { onError } from "@apollo/client/link/error";
+import { GraphQLErrorCode } from "@/core/api/graphql/enums";
+import { hasErrorCode } from "@/core/api/graphql/utils";
+import {
+  TabsType,
+  forbiddenEvent,
+  unauthorizedErrorEvent,
+  unhandledErrorEvent,
+  userLockedEvent,
+  passwordExpiredEvent,
+  useBroadcast,
+} from "@/shared/broadcast";
+
+export const errorHandlerLink = onError(({ networkError, graphQLErrors }) => {
+  const broadcast = useBroadcast();
+
+  const unauthorized = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unauthorized);
+  const forbidden = hasErrorCode(graphQLErrors, GraphQLErrorCode.Forbidden);
+  const unhandledError = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled);
+  const userLockedError = hasErrorCode(graphQLErrors, GraphQLErrorCode.UserLocked);
+  const passwordExpired = hasErrorCode(graphQLErrors, GraphQLErrorCode.PasswordExpired);
+
+  if (networkError || unhandledError) {
+    broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
+  }
+
+  if (unauthorized) {
+    broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
+  }
+
+  if (forbidden) {
+    broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
+  }
+
+  if (userLockedError) {
+    broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
+  }
+
+  if (passwordExpired) {
+    broadcast.emit(passwordExpiredEvent, undefined, TabsType.CURRENT);
+  }
+});

@@ -1,9 +1,6 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import getFullCartQuery from "./getFullCartQuery.graphql";
-import getShortCartQuery from "./getShortCartQuery.graphql";
-import type { CartType, Query, QueryCartArgs } from "@/core/api/graphql/types";
-import type { DocumentNode } from "graphql";
+import { useGetFullCartQuery } from "@/core/api/graphql/cart/queries/getFullCart";
+import { useGetShortCartQuery } from "@/core/api/graphql/cart/queries/getShortCart";
+import type { CartType } from "@/core/api/graphql/types";
 
 export enum GetCartFeldsType {
   Full,
@@ -15,28 +12,17 @@ export type GetCartOptionsType = {
   fields?: GetCartFeldsType;
 };
 
-export async function getCart(options: GetCartOptionsType = {}): Promise<CartType> {
-  const { fields = GetCartFeldsType.Full } = options;
-  const { storeId, userId, cultureName, currencyCode } = globals;
+/** @deprecated Use {@link useGetShortCartQuery} or {@link useGetFullCartQuery} instead. */
+export async function getCart(options?: GetCartOptionsType): Promise<CartType> {
+  const { load, refetch } = options?.fields == GetCartFeldsType.Short ? useGetShortCartQuery() : useGetFullCartQuery();
 
-  let query: DocumentNode;
-  switch (fields) {
-    case GetCartFeldsType.Full:
-      query = getFullCartQuery;
-      break;
-    case GetCartFeldsType.Short:
-      query = getShortCartQuery;
-      break;
+  let result: CartType;
+  const loaded = await load();
+  if (loaded) {
+    result = loaded.cart! as CartType;
+  } else {
+    const refetched = await refetch();
+    result = refetched!.data.cart! as CartType;
   }
-  const { data } = await graphqlClient.query<Required<Pick<Query, "cart">>, QueryCartArgs>({
-    query,
-    variables: {
-      storeId,
-      userId,
-      cultureName,
-      currencyCode,
-    },
-  });
-
-  return data.cart;
+  return result;
 }

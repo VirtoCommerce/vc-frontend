@@ -1,7 +1,7 @@
 #import "../../fragments/fullCart.graphql"
 
-mutation RejectGiftItems($command: InputRejectGiftItemsType!) {
+mutation RejectGiftItems($command: InputRejectGiftItemsType!, $skipQuery: Boolean!) {
   rejectGiftItems(command: $command) {
-    ...fullCart
+    ...fullCart @skip(if: $skipQuery)
   }
 }

@@ -1,23 +1,21 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./addItemsCartMutation.graphql";
-import type { CartType, InputNewCartItemType, Mutations, MutationsAddItemsCartArgs } from "@/core/api/graphql/types";
+import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
+import { useMutation } from "@/core/api/graphql/composables";
+import { AddItemsCartDocument, OperationNames } from "@/core/api/graphql/types";
+import type { CartType, InputNewCartItemType, CartIdFragment } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
+export function useAddItemsCartMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  return useMutation(
+    AddItemsCartDocument,
+    useCartMutationVariables(cart, {
+      refetchQueries: [OperationNames.Query.GetFullCart],
+    }),
+  );
+}
+
+/** @deprecated Use {@link useAddItemsCartMutation} instead. */
 export async function addItemsCart(items: InputNewCartItemType[]): Promise<CartType> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
-
-  const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "addItemsCart">>, MutationsAddItemsCartArgs>({
-    mutation: mutationDocument,
-    variables: {
-      command: {
-        storeId,
-        userId,
-        cultureName,
-        currencyCode,
-        cartItems: items,
-      },
-    },
-  });
-
-  return data!.addItemsCart;
+  const { mutate } = useAddItemsCartMutation();
+  const result = await mutate({ command: { cartItems: items } });
+  return result!.data!.addItemsCart as CartType;
 }

@@ -136,7 +136,7 @@ import {
   AddBulkItemsToCartResultsModal,
   getItemsForAddBulkItemsToCartResultsPopup,
   getLineItemValidationErrorsGroupedBySKU,
-  useCart,
+  useShortCart,
 } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -162,7 +162,7 @@ const {
   fetchFullOrder,
   clearOrder,
 } = useUserOrder();
-const { cart, addItemsToCart } = useCart();
+const { cart, addItemsToCart } = useShortCart();
 const { openPopup } = usePopup();
 const { t } = useI18n();
 

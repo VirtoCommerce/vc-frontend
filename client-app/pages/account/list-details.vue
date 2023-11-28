@@ -108,10 +108,10 @@ import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import {
-  useCart,
   getItemsForAddBulkItemsToCartResultsPopup,
   getLineItemValidationErrorsGroupedBySKU,
   AddBulkItemsToCartResultsModal,
+  useShortCart,
 } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -142,7 +142,7 @@ const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateItemsInWishlist } = useWishlists();
-const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useCart();
+const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
@@ -255,9 +255,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     return;
   }
 
-  const itemInCart: LineItemType | undefined = cart.value?.items?.find(
-    (cartItem) => cartItem.productId === item.productId,
-  );
+  const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
 
   if (itemInCart) {
     await changeItemQuantity(itemInCart.id, quantity);
