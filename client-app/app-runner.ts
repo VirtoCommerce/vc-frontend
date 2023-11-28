@@ -2,8 +2,7 @@ import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import VueSecureHTML from "vue-html-secure";
-import { apolloClient } from "@/core/api/graphql";
-import { configureApolloClient } from "@/core/api/graphql/config";
+import { apolloClient, cachePersistor } from "@/core/api/graphql";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -25,7 +24,7 @@ export default async () => {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
 
-  await configureApolloClient();
+  await cachePersistor.restore();
 
   const { fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();

@@ -1,9 +1,9 @@
 import { computed, toValue, unref } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
-import type { IAllGlobalVariables, OptionsParameter } from "@/core/api/graphql/composables";
+import type { IAllGlobalVariables } from "@/core/api/graphql/composables";
 import type { CartIdFragment } from "@/core/api/graphql/types";
 import type { UseMutationOptions } from "@vue/apollo-composable";
-import type { MaybeRef, Ref } from "vue";
+import type { MaybeRef, MaybeRefOrGetter, Ref } from "vue";
 
 export interface ICartVariables extends IAllGlobalVariables {
   cartId?: string;
@@ -19,7 +19,7 @@ export interface ICartMutationVariables extends ICartSkippableQueryVariables {
   command: ICartVariables;
 }
 
-export type CartMutationOptionsType<TResult> = Omit<OptionsParameter<TResult, ICartMutationVariables>, "variables">;
+export type CartMutationOptionsType<TResult> = Omit<UseMutationOptions<TResult, ICartMutationVariables>, "variables">;
 
 export function useCartQueryVariables(): Ref<ICartQueryVariables> {
   return computed(() => ({
@@ -30,7 +30,7 @@ export function useCartQueryVariables(): Ref<ICartQueryVariables> {
 
 export function useCartMutationVariables<TResult>(
   cart?: MaybeRef<CartIdFragment | undefined>,
-  options: CartMutationOptionsType<TResult> = {},
+  options: MaybeRefOrGetter<CartMutationOptionsType<TResult>> = {},
 ): Ref<UseMutationOptions<TResult, ICartMutationVariables>> {
   return computed(() => ({
     variables: {

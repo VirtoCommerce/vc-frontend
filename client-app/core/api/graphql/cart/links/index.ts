@@ -39,7 +39,7 @@ const fullCartMutationNames = [
   OperationNames.Mutation.ValidateCoupon,
 ];
 
-const broadcastOperationNames = fullCartMutationNames;
+const broadcastOperationNames = shortCartMutationNames.concat(fullCartMutationNames);
 
 const broadcastLink = split(
   (operation) => broadcastOperationNames.includes(operation.operationName),
@@ -52,7 +52,7 @@ const broadcastLink = split(
   }),
 );
 
-const batchOperationNames = queryNames.concat(shortCartMutationNames);
+const batchOperationNames = queryNames.concat(fullCartMutationNames);
 
 // BatchHttpLink is used to batch multiple operations into one request
 const batchLink = from([
