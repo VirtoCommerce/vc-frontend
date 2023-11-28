@@ -24,7 +24,7 @@ export default async () => {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
 
-  await cachePersistor.restore();
+  await cachePersistor?.restore();
 
   const { fetchUser } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
