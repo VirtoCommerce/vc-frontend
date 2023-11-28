@@ -1,4 +1,4 @@
-import { createSharedComposable } from "@vueuse/core";
+import { createGlobalState, createSharedComposable } from "@vueuse/core";
 import { sumBy } from "lodash";
 import { computed } from "vue";
 import {
@@ -12,9 +12,18 @@ import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { InputNewBulkItemType, InputNewCartItemType, ShortCartFragment } from "@/core/api/graphql/types";
 import type { OutputBulkItemType } from "@/shared/cart/types";
 
-function _useShortCart() {
-  const { result: query, load, refetch, loading: queryLoading } = useGetShortCartQuery();
+const useGlobalShortCart = createGlobalState(() => {
+  const { result: query, loading } = useGetShortCartQuery();
   const cart = computed(() => query.value?.cart);
+
+  return {
+    cart,
+    loading,
+  };
+});
+
+function _useShortCart() {
+  const { cart, loading } = useGlobalShortCart();
 
   const { mutate: _addToCart, loading: addToCartLoading } = useAddItemToCartMutation();
   async function addToCart(productId: string, quantity: number): Promise<ShortCartFragment | undefined> {
@@ -61,16 +70,14 @@ function _useShortCart() {
 
   return {
     cart,
-    load,
-    refetch,
     addToCart,
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
     getItemsTotal,
-    loading: computed(
+    loading,
+    changing: computed(
       () =>
-        queryLoading.value ||
         addToCartLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||

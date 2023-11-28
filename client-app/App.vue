@@ -18,7 +18,6 @@ import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations } from "@/core/composables";
-import { useShortCart } from "@/shared/cart";
 import { NotificationsHost } from "@/shared/notification";
 import { PopupHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
@@ -32,8 +31,6 @@ const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { fetchMenus } = useNavigations();
-
-const { load: loadCart } = useShortCart();
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
@@ -53,8 +50,6 @@ router.beforeEach((to) => {
 });
 
 void fetchMenus();
-
-void loadCart();
 
 onMounted(setupBroadcastGlobalListeners);
 </script>

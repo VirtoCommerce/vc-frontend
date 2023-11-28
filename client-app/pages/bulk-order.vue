@@ -96,7 +96,7 @@ const tabs = [
 ];
 
 const router = useRouter();
-const { loading: loadingCart, addBulkItemsToCart } = useShortCart();
+const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
 
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
@@ -113,7 +113,7 @@ async function addItems(items: InputNewBulkItemType[]) {
   incorrectData.value = false;
   SKUsWithErrors.value = [];
 
-  if (!items.length || loadingCart.value) {
+  if (!items.length || loadingCart.value || cartChanging.value) {
     return;
   }
 

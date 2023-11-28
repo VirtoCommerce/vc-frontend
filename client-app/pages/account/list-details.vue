@@ -142,7 +142,14 @@ const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openPopup } = usePopup();
 const { loading: listLoading, list, fetchWishList, clearList, updateItemsInWishlist } = useWishlists();
-const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useShortCart();
+const {
+  loading: cartLoading,
+  changing: cartChanging,
+  cart,
+  addItemsToCart,
+  addToCart,
+  changeItemQuantity,
+} = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
@@ -158,7 +165,7 @@ const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
   wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity)),
 );
-const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
+const loading = computed<boolean>(() => listLoading.value || cartLoading.value || cartChanging.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
 const pagedListItems = computed<PreparedLineItemType[]>(() =>
   preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
