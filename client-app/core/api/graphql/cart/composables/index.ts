@@ -1,1 +1,1 @@
-export * from "./useCartMutationVariables";
+export * from "./useCartVariables";

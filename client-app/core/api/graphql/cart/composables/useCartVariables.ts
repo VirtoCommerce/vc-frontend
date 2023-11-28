@@ -9,12 +9,24 @@ export interface ICartVariables extends IAllGlobalVariables {
   cartId?: string;
 }
 
-export interface ICartMutationVariables {
-  command: ICartVariables;
+export interface ICartSkippableQueryVariables {
   skipQuery: boolean;
 }
 
+export interface ICartQueryVariables extends ICartVariables, ICartSkippableQueryVariables {}
+
+export interface ICartMutationVariables extends ICartSkippableQueryVariables {
+  command: ICartVariables;
+}
+
 export type CartMutationOptionsType<TResult> = Omit<OptionsParameter<TResult, ICartMutationVariables>, "variables">;
+
+export function useCartQueryVariables(): Ref<ICartQueryVariables> {
+  return computed(() => ({
+    ...unref(useAllGlobalVariables()),
+    skipQuery: false,
+  }));
+}
 
 export function useCartMutationVariables<TResult>(
   cart?: MaybeRef<CartIdFragment | undefined>,
@@ -23,7 +35,7 @@ export function useCartMutationVariables<TResult>(
   return computed(() => ({
     variables: {
       command: {
-        ...useAllGlobalVariables(),
+        ...unref(useAllGlobalVariables()),
         cartId: unref(cart)?.id,
       },
       skipQuery: false,

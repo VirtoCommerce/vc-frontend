@@ -24,7 +24,6 @@ const mutationNames = [
   OperationNames.Mutation.ChangeCartComment,
   OperationNames.Mutation.ChangeFullCartItemQuantity,
   OperationNames.Mutation.ChangePurchaseOrderNumber,
-  OperationNames.Mutation.ChangeSelectedCartItems,
   OperationNames.Mutation.ChangeShortCartItemQuantity,
   OperationNames.Mutation.ClearCart,
   OperationNames.Mutation.MergeCart,
@@ -32,6 +31,8 @@ const mutationNames = [
   OperationNames.Mutation.RemoveCartItems,
   OperationNames.Mutation.RemoveCoupon,
   OperationNames.Mutation.RemoveShipment,
+  OperationNames.Mutation.SelectCartItems,
+  OperationNames.Mutation.UnselectCartItems,
   OperationNames.Mutation.ValidateCoupon,
 ];
 

@@ -2,22 +2,23 @@ import { computedEager, createSharedComposable, useDebounceFn } from "@vueuse/co
 import { difference, keyBy, sumBy } from "lodash";
 import { computed, shallowRef } from "vue";
 import {
-  useGetFullCartQuery,
-  useChangeSelectedCartItemsMutation,
-  useClearCartMutation,
-  useRemoveCartItemsMutation,
-  useChangeFullCartItemQuantityMutation,
-  useValidateCouponMutation,
   useAddCouponMutation,
-  useRemoveCouponMutation,
-  useChangeCartCommentMutation,
-  useChangePurchaseOrderNumberMutation,
-  useAddOrUpdateCartShipmentMutation,
-  useRemoveShipmentMutation,
-  useAddOrUpdateCartPaymentMutation,
   useAddGiftItemsMutation,
-  useRejectGiftItemsMutation,
+  useAddOrUpdateCartPaymentMutation,
+  useAddOrUpdateCartShipmentMutation,
+  useChangeCartCommentMutation,
+  useChangeFullCartItemQuantityMutation,
+  useChangePurchaseOrderNumberMutation,
+  useClearCartMutation,
   useCreateQuoteFromCartMutation,
+  useGetFullCartQuery,
+  useRejectGiftItemsMutation,
+  useRemoveCartItemsMutation,
+  useRemoveCouponMutation,
+  useRemoveShipmentMutation,
+  useSelectCartItemsMutation,
+  useUnselectCartItemsMutation,
+  useValidateCouponMutation,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType } from "@/core/enums";
@@ -77,8 +78,8 @@ export function _useFullCart() {
     () => cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ?? [],
   );
 
-  const { mutate: _changeSelectedCartItems, loading: changeSelectedCartItemsLoading } =
-    useChangeSelectedCartItemsMutation(cart);
+  const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
+  const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);
   const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[]): Promise<void> => {
     const oldValue = selectedForCheckoutItemIds.value;
 
@@ -87,12 +88,18 @@ export function _useFullCart() {
 
     const hasNewlySelected = newlySelectedLineItemIds.length > 0;
     const hasNewlyUnselected = newlyUnselectedLineItemIds.length > 0;
-    if (hasNewlySelected || hasNewlyUnselected) {
-      await _changeSelectedCartItems({
-        selectCartItemsCommand: { lineItemIds: newlySelectedLineItemIds },
-        unselectCartItemsCommand: { lineItemIds: newlyUnselectedLineItemIds },
-        withSelected: hasNewlySelected,
-        withUnselected: hasNewlyUnselected,
+    if (hasNewlySelected) {
+      await _selectCartItems({
+        command: {
+          lineItemIds: newlySelectedLineItemIds,
+        },
+      });
+    }
+    if (hasNewlyUnselected) {
+      await _unselectCartItemsMutation({
+        command: {
+          lineItemIds: newlyUnselectedLineItemIds,
+        },
       });
     }
   }, DEFAULT_DEBOUNCE_IN_MS);
@@ -267,7 +274,8 @@ export function _useFullCart() {
     loading,
     changing: computed(
       () =>
-        changeSelectedCartItemsLoading.value ||
+        selectCartItemsLoading.value ||
+        unselectCartItemsLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
         changeItemQuantityLoading.value ||
