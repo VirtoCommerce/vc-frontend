@@ -37,5 +37,6 @@ declare module "@vue/runtime-core" {
     VcTextarea: typeof Components.VcTextarea;
     VcRating: typeof Components.VcRating;
     VcVendor: typeof Components.VcVendor;
+    VcWidget: typeof Components.VcWidget;
   }
 }

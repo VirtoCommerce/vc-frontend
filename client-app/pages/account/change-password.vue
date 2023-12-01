@@ -1,11 +1,12 @@
 <template>
   <div>
-    <div class="mx-5 flex items-center justify-between lg:mx-0">
+    <div class="mx-6 flex items-center justify-between lg:mx-0">
       <h2 v-t="'pages.account.change_password.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
-    <VcCard :with-header="false">
+
+    <VcWidget size="lg" class="mx-1.5 lg:mx-0">
       <ChangePasswordForm class="lg:w-1/2" @succeeded="onSucceeded" />
-    </VcCard>
+    </VcWidget>
   </div>
 </template>
 

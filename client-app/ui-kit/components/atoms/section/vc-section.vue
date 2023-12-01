@@ -22,4 +22,6 @@ defineProps({
     default: "",
   },
 });
+
+console.warn("[UIKit][warn] VcSection is deprecated, use VcWidget instead.");
 </script>

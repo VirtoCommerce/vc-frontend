@@ -12,14 +12,18 @@ declare module "@vue/runtime-core" {
     VcAddressLine: typeof Components.VcAddressLine;
     VcBadge: typeof Components.VcBadge;
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
+    VcButton: typeof Components.VcButton;
+    /** @deprecated use {@link VcWidget} instead. */
     VcCard: typeof Components.VcCard;
-    VcCardWidget: typeof Components.VcCardWidget;
     VcCardSkeleton: typeof Components.VcCardSkeleton;
+    /** @deprecated use {@link VcWidget} instead. */
+    VcCardWidget: typeof Components.VcCardWidget;
     VcCheckbox: typeof Components.VcCheckbox;
     VcContainer: typeof Components.VcContainer;
     VcDateSelector: typeof Components.VcDateSelector;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
+    /** @deprecated use {@link VcWidget} instead. */
     VcFilterCard: typeof Components.VcFilterCard;
     VcFilterCardSkeleton: typeof Components.VcFilterCardSkeleton;
     VcInputDetails: typeof Components.VcInputDetails;
@@ -40,7 +44,9 @@ declare module "@vue/runtime-core" {
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
+    /** @deprecated use {@link VcWidget} instead. */
     VcSection: typeof Components.VcSection;
+    /** @deprecated use {@link VcWidget} instead. */
     VcSectionWidget: typeof Components.VcSectionWidget;
     VcSelectItem: typeof Components.VcSelectItem;
     VcSelectItemImage: typeof Components.VcSelectItemImage;
