@@ -137,6 +137,10 @@ watchEffect(() => {
       --title-min-h: 2.625rem;
 
       @apply divide-none;
+
+      @media (min-width: theme("screens.lg")) {
+        --p-x: theme("padding.7");
+      }
     }
   }
 
