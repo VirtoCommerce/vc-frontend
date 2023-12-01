@@ -65,7 +65,6 @@ query SearchProducts(
       }
       description(type: "QuickReview") {
         content
-        id
       }
       availabilityData {
         ...availabilityDataFields

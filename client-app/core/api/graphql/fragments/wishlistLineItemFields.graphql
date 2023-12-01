@@ -1,0 +1,61 @@
+#import "./propertyFields.graphql"
+#import "./availabilityDataFields.graphql"
+
+fragment wishlistLineItemFields on LineItemType {
+  id
+  name
+  imageUrl
+  sku
+  productId
+  quantity
+  salePrice {
+    amount
+    formattedAmount
+  }
+  listPrice {
+    amount
+    formattedAmount
+  }
+  productType
+  product {
+    name
+    id
+    code
+    slug
+    outline
+    minQuantity
+    maxQuantity
+    imgSrc
+    images {
+      url
+    }
+    vendor {
+      id
+      name
+    }
+    availabilityData {
+      ...availabilityDataFields
+    }
+    properties {
+      ...propertyFields
+    }
+    price {
+      actual {
+        amount
+        formattedAmount
+      }
+      discountAmount {
+        amount
+        formattedAmount
+      }
+      sale {
+        amount
+        formattedAmount
+      }
+      list {
+        amount
+        formattedAmount
+      }
+    }
+  }
+}

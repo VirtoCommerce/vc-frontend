@@ -1,5 +1,0 @@
-mutation RenameWishlist($command: InputRenameWishlistType!) {
-  renameWishlist(command: $command) {
-    id
-  }
-}

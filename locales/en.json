@@ -396,14 +396,15 @@
         "title": "Invite member",
         "role_label": "Role",
         "role_placeholder": "Select role",
-        "emails_label": "Input the email addresses of people you want to invite",
+        "emails_label": "Enter email addresses of people you want to invite",
         "emails_placeholder": "Use commas, semicolons, or line breaks to separate multiple entries",
         "message_label": "Message",
         "cancel_button": "@:common.buttons.cancel",
         "send_button": "@:common.buttons.send",
         "invite_successfully_text": "The invite has been successfully sent",
         "emails_quantity_exceeded": "You can invite up to {maxValue} users at once",
-        "email_length_exceeded": "The maximum length of an email address is {maxValue} characters"
+        "email_length_exceeded": "The maximum length of an email address is {maxValue} characters",
+        "invalid_emails": "Incorrect email addresses: {invalidEmails}"
       },
       "profile_update_success_dialog": {
         "title": "Profile update",
@@ -680,8 +681,14 @@
     "wishlists": {
       "list_card": {
         "product_count_label": "Product count",
-        "list_settings_button": "List settings",
-        "remove_list_button": "Remove list"
+        "list_edit_button": "Edit",
+        "remove_list_button": "Delete",
+        "make_private_button": "Make private",
+        "share_button": "Share",
+        "status": {
+          "shared": "Shared",
+          "private": "Private"
+        }
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
@@ -720,7 +727,8 @@
         "list_name_placeholder": "Please enter name",
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
-        "cancel_button": "@:common.buttons.cancel"
+        "cancel_button": "@:common.buttons.cancel",
+        "private_list": "Private list"
       },
       "delete_wishlist_dialog": {
         "title": "Confirm Delete",

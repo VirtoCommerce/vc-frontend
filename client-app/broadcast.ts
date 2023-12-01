@@ -13,6 +13,7 @@ import {
   unhandledErrorEvent,
   userLockedEvent,
   forbiddenEvent,
+  passwordExpiredEvent,
 } from "@/shared/broadcast";
 import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
@@ -82,6 +83,13 @@ export function setupBroadcastGlobalListeners() {
   });
 
   on(forbiddenEvent, () => {
-    router.push({ name: "NoAccess" });
+    void router.push({ name: "NoAccess" });
+  });
+
+  on(passwordExpiredEvent, () => {
+    const { hash, pathname, search } = location;
+    if (pathname !== "/change-password") {
+      location.href = `/change-password?returnUrl=${pathname + search + hash}`;
+    }
   });
 }

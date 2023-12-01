@@ -1,11 +1,11 @@
 #import "../../../fragments/wishlistLineItemFields.graphql"
 
-query GetWishlist($listId: String!, $cultureName: String) {
-  wishlist(listId: $listId, cultureName: $cultureName) {
+mutation ChangeWishlist($command: InputChangeWishlistType!) {
+  changeWishlist(command: $command) {
+    id
     name
     description
     scope
-    id
     items {
       ...wishlistLineItemFields
     }
