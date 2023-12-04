@@ -5,9 +5,9 @@
       <h2 v-t="'pages.account.dashboard.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
-    <VcCard :title="$t('pages.account.dashboard.last_orders_card.title')" full-width-content shadow>
-      <template #header-button>
-        <VcButton :to="{ name: 'Orders' }" variant="outline" size="xs" class="flex-none lg:!hidden">
+    <VcWidget :title="$t('pages.account.dashboard.last_orders_card.title')">
+      <template #append>
+        <VcButton class="lg:!hidden" :to="{ name: 'Orders' }" variant="outline" size="xs">
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
         </VcButton>
 
@@ -21,11 +21,13 @@
         </router-link>
       </template>
 
-      <Orders :items-per-page="4" />
-    </VcCard>
+      <template #default-container>
+        <Orders :items-per-page="4" />
+      </template>
+    </VcWidget>
 
-    <div class="mx-5 flex flex-col gap-y-5 md:mx-0 lg:flex-row lg:gap-x-5 lg:gap-y-0">
-      <VcCard :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-1/2" shadow>
+    <div class="flex flex-col gap-y-5 lg:flex-row lg:gap-x-5 lg:gap-y-0">
+      <VcWidget :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-0 lg:grow">
         <div class="flex content-center space-x-9 lg:space-x-4">
           <VcImage
             src="/static/images/dashboard/spend-chart.svg"
@@ -56,17 +58,10 @@
             </div>
           </div>
         </div>
-      </VcCard>
+      </VcWidget>
 
-      <VcCard
-        :title="$t('pages.account.dashboard.orders_status_card.title')"
-        class="h-52 lg:h-auto lg:w-1/2"
-        shadow
-      ></VcCard>
+      <VcWidget :title="$t('pages.account.dashboard.orders_status_card.title')" class="h-48 lg:w-0 lg:grow" />
     </div>
-
-    <!-- Commented due to acceptance criteria, will be used in future
-    <VcCard title="Users" class="h-52 mx-5 md:mx-0" shadow></VcCard> -->
   </div>
 </template>
 
@@ -81,11 +76,3 @@ usePageHead({
   title: t("pages.account.dashboard.meta.title"),
 });
 </script>
-
-<style scoped>
-.polygons-bg {
-  background-image: url(/static/images/account/addresses-bg.svg);
-  background-repeat: no-repeat;
-  background-position: right;
-}
-</style>

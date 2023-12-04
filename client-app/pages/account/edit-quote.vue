@@ -1,6 +1,6 @@
 <template>
-  <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
-    <div class="mx-5 flex flex-col gap-3 lg:mx-0">
+  <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
+    <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <h2 class="text-26 font-bold uppercase tracking-wide lg:text-3xl lg:leading-8">
@@ -8,13 +8,9 @@
       </h2>
     </div>
 
-    <div class="border-y bg-white shadow-md-x lg:space-y-6 lg:border-0 lg:bg-transparent lg:shadow-none">
+    <div class="-mx-4.5 space-y-5 lg:mx-0 lg:space-y-6">
       <!-- Quote comment -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.remarks')"
-        icon="document-text"
-        content-classes="px-6 pb-1 pt-2 lg:px-7 lg:pb-2"
-      >
+      <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
           :label="$t('pages.account.quote_details.remarks_field_label')"
@@ -24,18 +20,14 @@
           no-resize
           counter
         />
-      </VcSectionWidget>
+      </VcWidget>
 
       <!-- Quote products -->
-      <VcSectionWidget
-        :title="$t('pages.account.quote_details.products')"
-        icon="cube"
-        content-classes="px-6 pt-3 pb-0 md:pb-7 md:px-7"
-      >
+      <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
         <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
-      </VcSectionWidget>
+      </VcWidget>
 
-      <VcSectionWidget :title="$t('pages.account.quote_details.shipping_address')" icon="truck">
+      <VcWidget :title="$t('pages.account.quote_details.shipping_address')" prepend-icon="truck" size="lg">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
@@ -52,10 +44,10 @@
             "
           />
         </div>
-      </VcSectionWidget>
+      </VcWidget>
 
       <!-- Quote billing address -->
-      <VcSectionWidget :title="$t('pages.account.quote_details.billing_address')" icon="cash">
+      <VcWidget :title="$t('pages.account.quote_details.billing_address')" prepend-icon="cash" size="lg">
         <h4 class="text-md font-bold leading-5">
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
@@ -88,22 +80,22 @@
             "
           />
         </div>
-      </VcSectionWidget>
+      </VcWidget>
+    </div>
 
-      <div class="flex flex-wrap gap-5 px-6 py-7 lg:justify-end lg:p-0">
-        <VcButton
-          :disabled="!quoteChanged || fetching"
-          class="flex-1 lg:min-w-[208px] lg:flex-none"
-          variant="outline"
-          @click="saveChanges"
-        >
-          {{ $t("pages.account.quote_details.save_changes") }}
-        </VcButton>
+    <div class="flex flex-wrap gap-5 py-7 lg:justify-end">
+      <VcButton
+        :disabled="!quoteChanged || fetching"
+        class="flex-1 lg:min-w-[208px] lg:flex-none"
+        variant="outline"
+        @click="saveChanges"
+      >
+        {{ $t("pages.account.quote_details.save_changes") }}
+      </VcButton>
 
-        <VcButton :disabled="!quoteValid || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
-          {{ $t("pages.account.quote_details.submit") }}
-        </VcButton>
-      </div>
+      <VcButton :disabled="!quoteValid || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
+        {{ $t("pages.account.quote_details.submit") }}
+      </VcButton>
     </div>
   </div>
 

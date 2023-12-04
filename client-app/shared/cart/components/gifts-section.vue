@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget :title="$t('shared.cart.gifts_section.title')" icon="gift">
+  <VcWidget :title="$t('shared.cart.gifts_section.title')" prepend-icon="gift" size="lg">
     <div class="divide-y rounded border">
       <div v-for="gift in gifts" :key="gift.id" class="flex items-center px-6 py-3">
         <VcCheckbox
@@ -11,30 +11,30 @@
 
         <VcImage :src="gift.imageUrl" class="mr-4 h-[60px] w-[60px] shrink-0 rounded border" lazy />
 
-        <span class="grow text-sm font-bold lg:text-13">
+        <span class="grow text-sm font-bold">
           {{ gift.name }}
         </span>
       </div>
     </div>
-  </VcSectionWidget>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
 import type { ExtendedGiftItemType } from "@/shared/cart";
 
-interface Props {
+interface IProps {
   disabled?: boolean;
   gifts?: ExtendedGiftItemType[];
 }
 
-interface Emits {
+interface IEmits {
   /** Emitted when a gift needs to be added or removed from the shopping cart */
   (event: "toggle:gift", value: ExtendedGiftItemType): void;
 }
 
-defineEmits<Emits>();
+defineEmits<IEmits>();
 
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<IProps>(), {
   gifts: () => [],
 });
 </script>

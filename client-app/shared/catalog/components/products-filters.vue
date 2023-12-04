@@ -1,6 +1,7 @@
 <template>
   <div class="space-y-4 lg:space-y-5">
     <!-- Search results -->
+    <!-- TODO: use VcWidget instead -->
     <VcFilterCard v-if="withLocalSearch" :title="$t('pages.catalog.search_card.title')">
       <div class="flex items-center gap-2.5">
         <VcInput
@@ -27,6 +28,7 @@
 
     <template v-if="isMobile">
       <!-- In Stock -->
+      <!-- TODO: use VcWidget instead -->
       <VcFilterCard>
         <VcCheckbox v-model="localFilters.inStock" :disabled="loading" @change="onFilterChanged">
           {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
@@ -34,6 +36,7 @@
       </VcFilterCard>
 
       <!-- Branch availability -->
+      <!-- TODO: use VcWidget instead -->
       <VcFilterCard>
         <button type="button" @click.prevent="onOpenBranches">
           <VcCheckbox :model-value="!!localFilters.branches.length" :disabled="loading">

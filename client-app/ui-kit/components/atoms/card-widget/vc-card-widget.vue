@@ -34,6 +34,8 @@ export interface IProps {
 }
 
 defineProps<IProps>();
+
+console.warn("[UIKit][warn] VcCardWidget is deprecated, use VcWidget instead.");
 </script>
 
 <style lang="scss">

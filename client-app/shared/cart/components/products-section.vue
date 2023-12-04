@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget id="products" :title="$t('shared.cart.products_section.title')" icon="cube" hide-desktop-title>
+  <VcWidget id="products" size="lg">
     <!-- Items grouped by Vendor -->
     <div v-if="grouped" class="space-y-5 md:space-y-7">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
@@ -48,7 +48,7 @@
         {{ $t("common.buttons.clear_cart") }}
       </VcButton>
     </div>
-  </VcSectionWidget>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
@@ -81,13 +81,3 @@ withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 </script>
-
-<style scoped lang="scss">
-@media print {
-  #products {
-    :deep(.vc-section-widget__title) {
-      @apply hidden;
-    }
-  }
-}
-</style>
