@@ -29,7 +29,7 @@
       </span>
 
       <VcBadge v-if="count" variant="solid-light" color="info" size="lg" rounded>
-        {{ preparedCount }}
+        {{ $n(count, "decimal", { notation: "compact" }) }}
       </VcBadge>
 
       <VcIcon v-if="isParent" class="ml-auto text-[--color-primary-500]" name="chevron-right" />
@@ -39,7 +39,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { numberToShortString } from "@/core/utilities";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { NavigationFailure } from "vue-router";
 
@@ -60,7 +59,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const isParent = computed<boolean>(() => !!props.link.children?.length);
 const isLink = computed<boolean>(() => !!props.link.route);
-const preparedCount = computed<string>(() => numberToShortString(props.count));
 
 function click(navigate: () => Promise<void | NavigationFailure>) {
   if (isParent.value) {
