@@ -18,7 +18,7 @@ withDefaults(defineProps<IProps>(), {
   --swiper-pagination-bullet-inactive-opacity: 1;
   --swiper-pagination-bullet-inactive-color: var(--color-additional-50);
 
-  @apply flex justify-center flex-wrap;
+  @apply flex justify-center flex-wrap gap-y-1;
 
   &--size {
     &--xs {
