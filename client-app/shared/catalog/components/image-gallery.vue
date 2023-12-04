@@ -129,7 +129,7 @@ const showThumbs = computed(() => isDesktop.value && props.images?.length > 1);
 const showPagination = computed(() => !isDesktop.value && props.images?.length > 1);
 
 function setActiveIndex() {
-  activeIndex.value = imagesSwiper.value?.realIndex || 0;
+  activeIndex.value = imagesSwiper.value?.realIndex ?? 0;
 }
 
 onMounted(async () => {
