@@ -5,114 +5,120 @@
   >
     <div class="mx-auto max-w-screen-2xl px-5 2xl:px-18">
       <!-- Breadcrumbs -->
-      <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+      <VcBreadcrumbs v-if="isBreadcrumbsShown" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
       <div class="flex items-stretch lg:gap-6">
-        <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar
-          v-if="isMobile"
-          :is-visible="mobileSidebarVisible"
-          class="flex w-70 flex-col px-5 pt-5"
-          @hide="hideMobileSidebar()"
-        >
-          <div class="relative mb-6 mt-0.5 pr-6">
-            <div class="break-words pt-1 text-26 font-semibold">
-              {{ $t("common.buttons.filters") }}
+        <template v-if="!hideFacets">
+          <!-- Mobile sidebar back cover -->
+          <VcPopupSidebar
+            v-if="isMobile"
+            :is-visible="mobileSidebarVisible"
+            class="flex w-70 flex-col px-5 pt-5"
+            @hide="hideMobileSidebar()"
+          >
+            <div class="relative mb-6 mt-0.5 pr-6">
+              <div class="break-words pt-1 text-26 font-semibold">
+                {{ $t("common.buttons.filters") }}
+              </div>
+
+              <button type="button" class="absolute right-1 top-2.5" @click="hideMobileSidebar()">
+                <svg class="h-5 w-5 text-[color:var(--color-primary)]">
+                  <use href="/static/images/delete.svg#main" />
+                </svg>
+              </button>
             </div>
-
-            <button type="button" class="absolute right-1 top-2.5" @click="hideMobileSidebar()">
-              <svg class="h-5 w-5 text-[color:var(--color-primary)]">
-                <use href="/static/images/delete.svg#main" />
-              </svg>
-            </button>
-          </div>
-
-          <ProductsFiltersSidebar
-            class="grow"
-            :keyword="keywordQueryParam"
-            :filters="mobileFilters"
-            :loading="loading || facetsLoading"
-            @search="
-              onSearchStart($event);
-              hideMobileSidebar();
-            "
-            @change="updateMobileFilters($event)"
-            @open-branches="openBranchesDialog(true)"
-          />
-
-          <div class="z-100 sticky bottom-0 -mx-5 mt-4 h-24 bg-white p-5 shadow-t-md">
-            <div class="flex space-x-4">
-              <VcButton
-                class="flex-1"
-                variant="outline"
-                :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
-                @click="
-                  resetFacetFilters();
-                  hideMobileSidebar();
-                "
-              >
-                {{ $t("common.buttons.reset") }}
-              </VcButton>
-
-              <VcButton
-                class="flex-1"
-                :disabled="!isMobileFilterDirty"
-                @click="
-                  applyFilters(mobileFilters);
-                  hideMobileSidebar();
-                "
-              >
-                {{ $t("common.buttons.apply") }}
-              </VcButton>
-            </div>
-          </div>
-        </VcPopupSidebar>
-
-        <!-- Sidebar -->
-        <div v-else class="relative flex w-60 shrink-0 items-start">
-          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
-            <CategorySelector
-              v-if="!isSearchPage"
-              :category="currentCategory"
-              :loading="!currentCategory && loadingCategory"
-            />
 
             <ProductsFiltersSidebar
+              class="grow"
               :keyword="keywordQueryParam"
-              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-              :loading="loading"
-              @search="onSearchStart($event)"
-              @change="applyFilters($event)"
+              :filters="mobileFilters"
+              :loading="loading || facetsLoading"
+              @search="
+                onSearchStart($event);
+                hideMobileSidebar();
+              "
+              @change="updateMobileFilters($event)"
+              @open-branches="openBranchesDialog(true)"
             />
-          </div>
-        </div>
 
+            <div class="z-100 sticky bottom-0 -mx-5 mt-4 h-24 bg-white p-5 shadow-t-md">
+              <div class="flex space-x-4">
+                <VcButton
+                  class="flex-1"
+                  variant="outline"
+                  :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
+                  @click="
+                    resetFacetFilters();
+                    hideMobileSidebar();
+                  "
+                >
+                  {{ $t("common.buttons.reset") }}
+                </VcButton>
+
+                <VcButton
+                  class="flex-1"
+                  :disabled="!isMobileFilterDirty"
+                  @click="
+                    applyFilters(mobileFilters);
+                    hideMobileSidebar();
+                  "
+                >
+                  {{ $t("common.buttons.apply") }}
+                </VcButton>
+              </div>
+            </div>
+          </VcPopupSidebar>
+
+          <!-- Sidebar -->
+          <div v-else class="relative flex w-60 shrink-0 items-start">
+            <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
+              <CategorySelector
+                v-if="!isSearchPage"
+                :category="currentCategory"
+                :loading="!currentCategory && loadingCategory"
+              />
+
+              <ProductsFiltersSidebar
+                :keyword="keywordQueryParam"
+                :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+                :loading="loading"
+                @search="onSearchStart($event)"
+                @change="applyFilters($event)"
+              />
+            </div>
+          </div>
+        </template>
         <!-- Content -->
         <div ref="contentElement" class="grow">
           <div class="flex">
             <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
-              <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
-                <template #keyword>
-                  <strong>{{ searchParams.keyword }}</strong>
-                </template>
-              </i18n-t>
+              <template v-if="title">
+                {{ title }}
+              </template>
+              <template v-else>
+                <i18n-t v-if="!isSearchPage" keypath="pages.search.header" tag="span">
+                  <template #keyword>
+                    <strong>{{ searchParams.keyword }}</strong>
+                  </template>
+                </i18n-t>
 
-              <!-- Skeleton -->
-              <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-gray-200 md:w-64">
-                &nbsp;
-              </span>
+                <!-- Skeleton -->
+                <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-gray-200 md:w-64">
+                  &nbsp;
+                </span>
 
-              <span v-else>
-                {{ currentCategory?.name }}
-              </span>
+                <span v-else>
+                  {{ currentCategory?.name }}
+                </span>
 
-              <sup
-                v-if="!loading"
-                class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
-              >
-                <b class="font-extrabold">{{ total }}</b>
-                {{ $t("pages.catalog.products_found_message", total) }}
-              </sup>
+                <sup
+                  v-if="!loading"
+                  class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
+                >
+                  <b class="font-extrabold">{{ total }}</b>
+                  {{ $t("pages.catalog.products_found_message", total) }}
+                </sup>
+              </template>
             </h2>
           </div>
 
@@ -339,6 +345,9 @@ import type { StyleValue } from "vue";
 interface IProps {
   categoryId?: string;
   isSearchPage?: boolean;
+  hideBreadcrumbs?: boolean;
+  hideFacets?: boolean;
+  title?: string;
 }
 
 const props = defineProps<IProps>();
@@ -417,6 +426,9 @@ const seoTitle = computed(() => currentCategory.value?.seoInfo?.pageTitle || cur
 const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
+const isBreadcrumbsShown = computed(() => {
+  return !props.hideBreadcrumbs && !props.isSearchPage;
+});
 
 usePageHead({
   title: seoTitle,

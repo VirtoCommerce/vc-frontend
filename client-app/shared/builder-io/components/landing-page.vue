@@ -17,6 +17,7 @@ import { getContent, RenderContent, isPreviewing } from "@builder.io/sdk-vue/vue
 import { onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
+import { Category } from "@/shared/catalog";
 
 const router = useRouter();
 const { themeContext } = useThemeContext();
@@ -50,6 +51,28 @@ async function tryLoadContent(urlPath: string) {
 }
 
 const getRegisteredComponents = () => {
-  return [];
+  return [
+    {
+      component: Category,
+      name: "VirtoCommerce Catalog",
+      inputs: [
+        {
+          name: "title",
+          type: "string",
+          defaultValue: "Catalog",
+        },
+        {
+          name: "hideBreadcrumbs",
+          type: "boolean",
+          defaultValue: false,
+        },
+        {
+          name: "hideFacets",
+          type: "boolean",
+          defaultValue: false,
+        },
+      ],
+    },
+  ];
 };
 </script>
