@@ -56,13 +56,15 @@ export function getFilterExpressionFromFacets(facets: MaybeRef<FacetItemType[]>)
   return result.join(" ");
 }
 
-export function getFilterExpressionFromFacetRange(facetRange: FacetRangeType): string {
+export function getFilterExpressionFromFacetRange(
+  facetRange: Pick<FacetRangeType, "from" | "to" | "includeFrom" | "includeTo">,
+): string {
   const { from, to, includeFrom, includeTo } = facetRange;
 
   const firstBracket = includeFrom ? "[" : "(";
   const lastBracket = includeTo ? "]" : ")";
 
-  const fromStr = from ? `${from} ` : "";
+  const fromStr = `${from} `;
   const toStr = to ? ` ${to}` : "";
 
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;

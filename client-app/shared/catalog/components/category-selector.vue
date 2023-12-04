@@ -4,6 +4,7 @@
     <div v-for="i in 6" :key="i" class="mb-1.5 ml-6 h-4 bg-[--color-neutral-50]">&nbsp;</div>
   </VcFilterCardSkeleton>
 
+  <!-- TODO: use VcWidget instead -->
   <VcFilterCard v-else :full-width-content="!category?.childCategories?.length">
     <template v-if="!!parentCategory" #header>
       <router-link

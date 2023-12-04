@@ -1,11 +1,11 @@
 <template>
   <!-- Mobile filters -->
   <div v-if="isMobile" class="flex flex-col gap-4 lg:gap-5">
-    <VcCard
+    <VcWidget
       v-if="availableStatuses.length"
       :title="$t('shared.account.orders-filter.status-label')"
-      is-collapsible
-      shadow
+      size="sm"
+      collapsible
     >
       <div class="flex flex-col space-y-4">
         <VcCheckbox
@@ -18,9 +18,9 @@
           {{ status.code }}
         </VcCheckbox>
       </div>
-    </VcCard>
+    </VcWidget>
 
-    <VcCard :title="$t('shared.account.orders-filter.created-date-label')" shadow>
+    <VcWidget :title="$t('shared.account.orders-filter.created-date-label')" size="sm">
       <div class="flex flex-col space-y-3">
         <div>
           <VcDateSelector v-model="filterData.startDate" :label="$t('shared.account.orders-filter.start-date-label')" />
@@ -29,7 +29,7 @@
           <VcDateSelector v-model="filterData.endDate" :label="$t('shared.account.orders-filter.end-date-label')" />
         </div>
       </div>
-    </VcCard>
+    </VcWidget>
   </div>
 </template>
 

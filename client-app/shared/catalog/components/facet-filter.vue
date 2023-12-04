@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: use VcWidget instead -->
   <VcFilterCard is-collapsible :title="facet.label" is-collapsed>
     <div :class="['py-1', { 'fade-bottom': hasFade }]">
       <VcInput
