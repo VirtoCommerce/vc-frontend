@@ -51,6 +51,9 @@ export function createI18n(locale: string, currency: string, fallback?: { locale
     missingWarn: false,
     numberFormats: {
       [locale]: {
+        decimal: {
+          style: "decimal",
+        },
         currency: {
           style: "currency",
           notation: "standard",
