@@ -11,7 +11,7 @@
           :modules="modules"
           :thumbs="{ swiper: thumbsSwiper }"
           :breakpoints="{
-            1280: {
+            [xlScreenWidth]: {
               pagination: false,
             },
           }"
@@ -109,6 +109,7 @@ const THUMBS_PER_VIEW = 4;
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isDesktop = breakpoints.greaterOrEqual("xl");
+const xlScreenWidth = BREAKPOINTS.xl.match(/\d+/)![0];
 
 const activeIndex = ref(0);
 

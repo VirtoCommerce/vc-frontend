@@ -44,6 +44,11 @@ Left.args = {
   direction: "left",
 };
 
+export const Right = Template.bind({});
+Right.args = {
+  direction: "right",
+};
+
 export const Up = Template.bind({});
 Up.args = {
   direction: "up",
