@@ -1,4 +1,3 @@
-export { default as VcActionDropdownMenu } from "./action-dropdown-menu/vc-action-dropdown-menu.vue";
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
 export { default as VcAddressLine } from "./address-line/vc-address-line.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
