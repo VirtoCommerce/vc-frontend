@@ -8,21 +8,32 @@ export function useQuantityValidationSchema(payload: {
   maxQuantity?: number;
   availableQuantity?: number;
 }) {
-  const maxLimit = 999999;
-
   const { t } = useI18n();
+
+  const maxLimit = 999999;
 
   const quantitySchema = computed<NumberSchema>(() =>
     number()
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
       .integer()
       .positive()
-      .max(maxLimit, t("shared.cart.add_to_cart.errors.max", [maxLimit]))
       .withMutation((schema) => {
-        if (payload.availableQuantity && payload.minQuantity && payload.availableQuantity < payload.minQuantity) {
+        if (
+          payload.minQuantity &&
+          payload.maxQuantity &&
+          payload.availableQuantity &&
+          (payload.availableQuantity < payload.minQuantity || payload.availableQuantity < payload.maxQuantity)
+        ) {
           return schema.min(
             payload.minQuantity,
             t("shared.cart.add_to_cart.errors.min_not_available", [payload.minQuantity]),
+          );
+        }
+
+        if (payload.availableQuantity && !payload.maxQuantity) {
+          return schema.max(
+            payload.availableQuantity,
+            t("shared.cart.add_to_cart.errors.max", [payload.availableQuantity]),
           );
         }
 
@@ -42,7 +53,7 @@ export function useQuantityValidationSchema(payload: {
           return schema.max(payload.maxQuantity, t("shared.cart.add_to_cart.errors.max", [payload.maxQuantity]));
         }
 
-        return schema;
+        return schema.max(maxLimit, t("shared.cart.add_to_cart.errors.max", [maxLimit]));
       }),
   );
 
