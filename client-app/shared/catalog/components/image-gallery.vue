@@ -92,6 +92,7 @@ import { Pagination, Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { ref, onMounted, computed, getCurrentInstance } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
+import { extractNumberFromString } from "@/core/utilities";
 import type { ImageType } from "@/core/api/graphql/types";
 import type SwiperCore from "swiper";
 
@@ -109,7 +110,7 @@ const THUMBS_PER_VIEW = 4;
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isDesktop = breakpoints.greaterOrEqual("xl");
-const xlScreenWidth = BREAKPOINTS.xl.match(/\d+/)![0];
+const xlScreenWidth = extractNumberFromString(BREAKPOINTS.xl);
 
 const activeIndex = ref(0);
 
