@@ -28,9 +28,14 @@ const Template: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
 
 export const Basic = Template.bind({});
 
-export const Footer = Template.bind({});
-Footer.args = {
-  footer: true,
+export const Head = Template.bind({});
+Head.args = {
+  head: true,
+};
+
+export const Foot = Template.bind({});
+Foot.args = {
+  foot: true,
 };
 
 export const HeaderSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
@@ -46,7 +51,7 @@ export const HeaderSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
   </VcWidgetSkeleton>`,
 });
 
-export const Slot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
+export const DefaultSlot: StoryFn<typeof VcWidgetSkeleton> = (args) => ({
   components: { VcWidgetSkeleton },
   setup: () => ({ args }),
   template: `<VcWidgetSkeleton v-bind="args">

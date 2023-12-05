@@ -8,7 +8,7 @@
       },
     ]"
   >
-    <div v-if="header || $slots.header || $slots['header-container']" class="vc-widget-skeleton__header-container">
+    <div v-if="head || $slots.header || $slots['header-container']" class="vc-widget-skeleton__header-container">
       <slot name="header-container">
         <div class="vc-widget-skeleton__header">
           <slot name="header">
@@ -28,7 +28,7 @@
       </slot>
     </div>
 
-    <div v-if="footer || $slots.footer || $slots['footer-container']" class="vc-widget-skeleton__footer-container">
+    <div v-if="foot || $slots.footer || $slots['footer-container']" class="vc-widget-skeleton__footer-container">
       <slot name="footer-container">
         <div class="vc-widget-skeleton__footer">
           <slot name="footer">
@@ -42,16 +42,14 @@
 
 <script setup lang="ts">
 interface IProps {
-  header?: boolean;
-  footer?: boolean;
+  head?: boolean;
+  foot?: boolean;
   noShadow?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
 withDefaults(defineProps<IProps>(), {
-  header: true,
   size: "md",
-  footer: false,
 });
 </script>
 
@@ -143,6 +141,16 @@ withDefaults(defineProps<IProps>(), {
 
   &__slot {
     @apply pt-4 pb-5 px-[--p-x];
+
+    #{$sizeLG} & {
+      @apply pt-0;
+    }
+
+    *:first-child > & {
+      #{$sizeLG} & {
+        @apply pt-5;
+      }
+    }
   }
 
   &__footer-container {
