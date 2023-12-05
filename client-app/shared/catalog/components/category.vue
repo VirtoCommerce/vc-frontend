@@ -1,7 +1,12 @@
 <template>
   <div
-    class="grow bg-gray-100 pb-16 pt-4 shadow-inner lg:pt-6"
-    :class="{ 'polygon-gray-bg': !products.length && !loading }"
+    class="grow pb-16 pt-4 shadow-inner lg:pt-6"
+    :style="{ backgroundImage: 'url(' + backgroundImage + ')' }"
+    :class="{
+      'polygon-gray-bg': !products.length && !loading,
+      'bg-gray-100': !backgroundImage,
+      'bg-contain': !!backgroundImage,
+    }"
   >
     <div class="mx-auto max-w-screen-2xl px-5 2xl:px-18">
       <!-- Breadcrumbs -->
@@ -215,7 +220,7 @@
           </div>
 
           <!-- Filters chips -->
-          <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+          <div v-if="isExistSelectedFacets && !hideFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
             <template v-for="facet in facets">
               <template v-for="filterItem in facet.values">
                 <VcChip
@@ -348,6 +353,8 @@ interface IProps {
   hideBreadcrumbs?: boolean;
   hideFacets?: boolean;
   title?: string;
+  backgroundImage?: string;
+  initQuery?: string;
 }
 
 const props = defineProps<IProps>();
@@ -392,7 +399,7 @@ const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
 });
 
 const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
-  defaultValue: "",
+  defaultValue: props.initQuery?.replace(/\+/g, " ") || "",
 });
 
 const isMobile = breakpoints.smaller("lg");

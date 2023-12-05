@@ -71,6 +71,17 @@ const getRegisteredComponents = () => {
           type: "boolean",
           defaultValue: false,
         },
+        {
+          name: "backgroundImage",
+          type: "file",
+          allowedFileTypes: ["jpeg", "jpg", "png", "svg"],
+          required: false,
+        },
+        {
+          name: "initQuery",
+          type: "string",
+          defaultValue: "",
+        },
       ],
     },
   ];
