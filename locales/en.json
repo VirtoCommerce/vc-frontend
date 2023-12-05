@@ -488,7 +488,8 @@
           "enter_correct_number_message": "Please enter a valid number",
           "min": "Min order {0} item(s)",
           "max": "Max order {0} item(s)",
-          "min_max": "Order from {0} to {1} item(s)"
+          "min_max": "Order from {0} to {1} item(s)",
+          "min_not_available": "Min order {0} item(s) is not available in stock"
         }
       },
       "products_section": {

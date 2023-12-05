@@ -84,6 +84,7 @@ interface IProps {
 // Define max qty available to add
 const MAX_VALUE = 999999999;
 
+const availableQuantity = computed(() => props.product.availabilityData?.availableQuantity);
 const minQuantity = computed(() => props.product.minQuantity);
 const maxQuantity = computed(() => props.product.maxQuantity);
 
@@ -91,7 +92,11 @@ const { cart, addToCart, changeItemQuantity } = useCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { getTranslation } = useErrorsTranslator("validation_error");
-const { quantitySchema } = useQuantityValidationSchema(minQuantity.value, maxQuantity.value);
+const { quantitySchema } = useQuantityValidationSchema({
+  availableQuantity: availableQuantity.value,
+  minQuantity: minQuantity.value,
+  maxQuantity: maxQuantity.value,
+});
 
 const loading = ref(false);
 const inputElement = shallowRef<HTMLInputElement>();

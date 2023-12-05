@@ -62,7 +62,7 @@ const quantity = ref<number | undefined>();
 const minQty = computed(() => props.minQuantity);
 const maxQty = computed(() => props.maxQuantity);
 
-const { quantitySchema } = useQuantityValidationSchema(minQty.value, maxQty.value);
+const { quantitySchema } = useQuantityValidationSchema({ minQuantity: minQty.value, maxQuantity: maxQty.value });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 

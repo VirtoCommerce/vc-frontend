@@ -51,6 +51,7 @@ interface IProps {
   minQuantity?: number;
   maxQuantity?: number;
   countInCart?: number;
+  availableQuantity?: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -61,6 +62,7 @@ const { t } = useI18n();
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 const minQty = computed(() => props.minQuantity);
 const maxQty = computed(() => props.maxQuantity);
+const availableQuantity = computed(() => props.availableQuantity);
 
 const buttonText = computed<string>(() =>
   props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
@@ -68,7 +70,11 @@ const buttonText = computed<string>(() =>
 
 const quantity = ref<number | undefined>();
 
-const { quantitySchema } = useQuantityValidationSchema(minQty.value, maxQty.value);
+const { quantitySchema } = useQuantityValidationSchema({
+  minQuantity: minQty.value,
+  maxQuantity: maxQty.value,
+  availableQuantity: availableQuantity.value,
+});
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 
