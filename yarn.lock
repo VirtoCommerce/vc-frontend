@@ -6477,15 +6477,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apollo3-cache-persist@npm:^0.14.1":
-  version: 0.14.1
-  resolution: "apollo3-cache-persist@npm:0.14.1"
-  peerDependencies:
-    "@apollo/client": ^3.2.5
-  checksum: 9f286707c9ecc628c0a44117e5ed67ccdb2a5befe28029aba69724595c2ddacfe47c43271d7607a4046cb5167f25da5f81c27579413c95254dfdb91039e9fc1c
-  languageName: node
-  linkType: hard
-
 "app-root-dir@npm:^1.0.2":
   version: 1.0.2
   resolution: "app-root-dir@npm:1.0.2"
@@ -16326,7 +16317,6 @@ __metadata:
     "@vueuse/components": ^10.5.0
     "@vueuse/core": ^10.5.0
     adm-zip: ^0.5.10
-    apollo3-cache-persist: ^0.14.1
     autoprefixer: ^10.4.16
     chalk: ^5.3.0
     dependency-cruiser: ^14.1.1
