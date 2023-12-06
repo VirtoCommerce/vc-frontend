@@ -134,8 +134,8 @@ export default {
           break;
         }
         case "navigate": {
-          const url = event.data.url?.startsWith("/") ? event.data.url : "/" + event.data.url;
-          options.router.push(url);
+          // const url = event.data.url?.startsWith("/") ? event.data.url : "/" + event.data.url;
+          // options.router.push(url);
           break;
         }
         case "settings":
@@ -143,7 +143,7 @@ export default {
           break;
       }
     });
-    options.router.push("/");
+    options.router.push("/empty-page");
     window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
   },
 };
