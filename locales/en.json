@@ -685,6 +685,7 @@
         "remove_list_button": "Delete",
         "make_private_button": "Make private",
         "share_button": "Share",
+        "saved": "Saved",
         "status": {
           "shared": "Shared",
           "private": "Private"

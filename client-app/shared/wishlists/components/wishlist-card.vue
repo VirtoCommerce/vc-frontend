@@ -1,35 +1,47 @@
 <template>
   <div
-    class="relative flex flex-col border-t bg-white pb-4 pt-4.5 shadow-sm last:border-b md:flex-row md:items-center md:py-0 lg:rounded lg:border"
+    class="relative rounded bg-[--color-additional-50] p-4 text-sm shadow-md md:flex md:items-center md:gap-6 md:px-5"
   >
-    <router-link
-      :to="{ name: 'ListDetails', params: { listId: list.id } }"
-      class="grow truncate px-6 text-17 font-extrabold text-[color:var(--color-link)] before:absolute before:inset-0 hover:text-[color:var(--color-link-hover)] md:py-5 md:text-base md:before:hidden"
-    >
-      {{ list.name }}
-    </router-link>
+    <div class="flex items-center gap-2 pe-10 md:contents">
+      <router-link
+        :to="{ name: 'ListDetails', params: { listId: list.id } }"
+        class="truncate text-base font-bold text-[--color-accent-600]"
+      >
+        {{ list.name }}
+      </router-link>
 
-    <div class="mt-1.5 shrink-0 px-6 text-base font-bold md:mt-0 md:text-base">
-      {{ $t("shared.wishlists.list_card.product_count_label") }}:
-      <span class="ml-1 text-sm font-black">{{ list.items!.length }}</span>
+      <VcBadge class="md:-ms-4 md:me-auto" variant="outline-dark" color="info" size="lg" rounded>
+        {{ list.items!.length }}
+      </VcBadge>
     </div>
 
-    <div v-if="isCorporateMember && list.scope" class="flex items-center gap-1 pl-6 md:pl-0 md:pr-1">
-      <template v-if="list.scope === WishlistScopeType.Private">
-        <VcIcon size="sm" class="text-[--color-secondary-500]" name="lock-closed" />
-        <span class="text-base">
-          {{ $t("shared.wishlists.list_card.status.private") }}
-        </span>
-      </template>
-      <template v-else-if="list.scope === WishlistScopeType.Organization">
-        <VcIcon size="sm" class="text-[--color-accent-500]" name="users" />
-        <span class="text-base">
-          {{ $t("shared.wishlists.list_card.status.shared") }}
-        </span>
-      </template>
+    <div v-if="list.description" class="truncate pe-10 md:max-w-[30%] md:pe-0">{{ list.description }}</div>
+
+    <div class="flex items-center pt-4 md:contents">
+      <!--
+      <div class="md:whitespace-nowrap">{{ $t("shared.wishlists.list_card.saved") }} <b>02.03.2023</b></div>
+      -->
+
+      <div v-if="isCorporateMember && list.scope" class="ms-auto flex items-center gap-1.5 md:ms-0">
+        <template v-if="list.scope === WishlistScopeType.Private">
+          <VcIcon :size="16" class="text-[--color-secondary-500]" name="lock-closed" />
+
+          <span>
+            {{ $t("shared.wishlists.list_card.status.private") }}
+          </span>
+        </template>
+
+        <template v-else-if="list.scope === WishlistScopeType.Organization">
+          <VcIcon :size="16" class="text-[--color-accent-500]" name="users" />
+
+          <span>
+            {{ $t("shared.wishlists.list_card.status.shared") }}
+          </span>
+        </template>
+      </div>
     </div>
 
-    <div class="absolute right-0 top-0 h-full p-5 md:relative">
+    <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">
       <WishlistDropdownMenu
         :current-scope="list.scope"
         :is-corporate-member="isCorporateMember"
