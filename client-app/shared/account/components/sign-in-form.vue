@@ -86,12 +86,12 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
 import { reactive, ref, watch } from "vue";
 import { object, string } from "yup";
-//import { getMe } from "@/core/api/graphql";
-//import { mergeCart } from "@/core/api/graphql/cart";
+import { getMe } from "@/core/api/graphql";
+import { useMergeCartMutation } from "@/core/api/graphql/cart";
 import { useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { Logger } from "@/core/utilities";
-//import { useCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 import { ContactAdministratorLink } from "@/shared/common";
 import { useUser } from "../composables/useUser";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -103,7 +103,8 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
-//const { cart, fetchShortCart } = useCart();
+const { cart } = useShortCart();
+const { mutate: mergeCart } = useMergeCartMutation();
 const { signMeIn } = useUser();
 
 const loading = ref(false);
@@ -132,15 +133,10 @@ const onSubmit = handleSubmit(async () => {
   loading.value = true;
 
   try {
-    // if (!cart.value) {
-    //   await fetchShortCart();
-    // }
-
     const result = await signMeIn(model);
-
     if (result.succeeded) {
-      //const user = await getMe();
-      //await mergeCart(user.id, cart.value!.id!);
+      const user = await getMe();
+      await mergeCart({ command: { userId: user.id, secondCartId: cart.value!.id } });
       emit("succeeded");
     } else {
       apiErrors.value = result.errors;
