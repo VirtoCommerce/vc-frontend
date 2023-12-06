@@ -29,7 +29,6 @@ const fullCartMutationNames = [
   OperationNames.Mutation.ChangeFullCartItemQuantity,
   OperationNames.Mutation.ChangePurchaseOrderNumber,
   OperationNames.Mutation.ClearCart,
-  OperationNames.Mutation.MergeCart,
   OperationNames.Mutation.RejectGiftItems,
   OperationNames.Mutation.RemoveCartItems,
   OperationNames.Mutation.RemoveCoupon,
