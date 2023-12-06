@@ -1,6 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <VcSectionWidget id="review-order" :title="$t('common.titles.review_order')" icon="clipboard-copy-1">
+    <VcWidget id="review-order" :title="$t('common.titles.review_order')" prepend-icon="clipboard-copy-1" size="lg">
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
         <template v-for="(group, vendorId) in selectedLineItemsGroupedByVendor" :key="vendorId">
@@ -98,7 +98,7 @@
           </div>
         </div>
       </div>
-    </VcSectionWidget>
+    </VcWidget>
 
     <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" />
 
@@ -138,11 +138,11 @@
       </OrderSummary>
 
       <!-- Order actions -->
-      <VcCardWidget :title="$t('common.titles.other_actions')" class="print:hidden">
+      <VcWidget :title="$t('common.titles.other_actions')" class="print:hidden">
         <VcButton full-width variant="outline" prepend-icon="printer" @click="print()">
           {{ $t("common.buttons.print_order") }}
         </VcButton>
-      </VcCardWidget>
+      </VcWidget>
     </template>
   </VcLayoutWithRightSidebar>
 </template>

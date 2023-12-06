@@ -42,6 +42,7 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
 }
 
+/** @deprecated Use $n(value, "decimal", { notation: "compact" }) */
 export function numberToShortString(num: number): string {
   if (num < 1000) {
     return num.toString();

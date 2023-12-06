@@ -19,15 +19,12 @@
 
 <script setup lang="ts">
 import { computedAsync, computedEager } from "@vueuse/core";
-import { onBeforeUnmount, ref, watchEffect } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, ref, watchEffect } from "vue";
 import { useFetch, useLanguages, useNavigations } from "@/core/composables";
 import { LandingPage } from "@/shared/builder-io";
 import { useStaticPage } from "@/shared/static-content";
 import type { PageTemplate } from "@/shared/static-content";
 import NotFound from "@/pages/404.vue";
-import Category from "@/pages/category.vue";
-import Product from "@/pages/product.vue";
-import StaticPage from "@/pages/static-page.vue";
 
 type EntityInfoType = {
   id: string;
@@ -68,6 +65,10 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   pathMatch: () => [],
 });
+
+const Category = defineAsyncComponent(() => import("@/pages/category.vue"));
+const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
+const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 
 const { innerFetch } = useFetch();
 const { currentLanguage } = useLanguages();

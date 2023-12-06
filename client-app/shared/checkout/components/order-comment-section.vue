@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget :title="$t('common.titles.order_comment')" icon="document-text">
+  <VcWidget :title="$t('common.titles.order_comment')" prepend-icon="document-text" size="lg">
     <p v-if="readonly">{{ comment }}</p>
 
     <VcTextarea
@@ -11,7 +11,7 @@
       :rows="4"
       counter
     />
-  </VcSectionWidget>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">

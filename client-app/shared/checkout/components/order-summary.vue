@@ -1,5 +1,5 @@
 <template>
-  <VcCardWidget id="order-summary" :title="$t('common.titles.order_summary')" icon="truck">
+  <VcWidget id="order-summary" :title="$t('common.titles.order_summary')">
     <slot name="header" />
 
     <!-- Totals block -->
@@ -88,7 +88,7 @@
         {{ $t("common.messages.checkout_pricing_warning") }}
       </slot>
     </div>
-  </VcCardWidget>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">

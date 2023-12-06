@@ -32,6 +32,8 @@ export interface IProps {
 }
 
 defineProps<IProps>();
+
+console.warn("[UIKit][warn] VcSectionWidget is deprecated, use VcWidget instead.");
 </script>
 
 <style lang="scss">

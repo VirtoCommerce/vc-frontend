@@ -89,12 +89,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { defineAsyncComponent, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useFetch, usePageHead } from "@/core/composables";
 import { LoginFormSection } from "@/shared/layout";
 import { useStaticPage } from "@/shared/static-content";
-import StaticPage from "@/pages/static-page.vue";
 
 const { innerFetch } = useFetch();
 const { t } = useI18n();
@@ -106,6 +105,8 @@ usePageHead({
     description: t("pages.home.meta.description"),
   },
 });
+
+const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const template: any = ref(null);

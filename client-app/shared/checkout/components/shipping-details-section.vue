@@ -1,5 +1,5 @@
 <template>
-  <VcSectionWidget :title="$t('shared.checkout.shipping_details_section.title')" icon="truck">
+  <VcWidget :title="$t('shared.checkout.shipping_details_section.title')" prepend-icon="truck" size="lg">
     <div class="flex flex-col gap-6 lg:flex-row lg:gap-8">
       <div class="lg:w-3/5">
         <VcLabel required>
@@ -54,7 +54,7 @@
         </template>
       </VcSelect>
     </div>
-  </VcSectionWidget>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
