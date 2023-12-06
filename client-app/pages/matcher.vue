@@ -90,6 +90,13 @@ const seoInfo = computedAsync<ResultType | undefined>(
       return undefined;
     }
 
+    const isPreview = window?.frameElement?.getAttribute("data-view-mode") === "page-builder";
+
+    if (isPreview) {
+      const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
+      useStaticPage(page);
+      return { page };
+    }
     const result = await innerFetch<SlugInfoResultType>(
       `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value!.cultureName}`,
     );
