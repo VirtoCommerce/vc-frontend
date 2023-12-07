@@ -164,7 +164,7 @@ onMounted(async () => {
   }
 
   &__img {
-    @apply relative w-full h-full rounded object-cover object-center cursor-zoom-in;
+    @apply relative w-full h-full rounded object-center object-contain cursor-zoom-in;
   }
 
   &__badges {
@@ -184,7 +184,7 @@ onMounted(async () => {
   }
 
   &__thumb {
-    @apply border rounded aspect-square cursor-pointer;
+    @apply border rounded aspect-square object-center object-contain cursor-pointer;
 
     &--active {
       @apply border-[--color-primary-500] outline outline-1 outline-[--color-primary-500];
