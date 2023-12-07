@@ -53,7 +53,6 @@
 
       <Swiper
         class="image-gallery__thumbs"
-        :space-between="14"
         :slides-per-view="THUMBS_PER_VIEW"
         :slides-per-group="THUMBS_PER_VIEW"
         :modules="modules"
@@ -66,12 +65,12 @@
         watch-slides-progress
         @swiper="setThumbsSwiper"
       >
-        <SwiperSlide v-for="(image, index) in images" :key="index">
+        <SwiperSlide v-for="(image, index) in images" :key="index" class="image-gallery__thumb">
           <VcImage
             :class="[
-              'image-gallery__thumb',
+              'image-gallery__thumb-img',
               {
-                'image-gallery__thumb--active': activeIndex === index,
+                'image-gallery__thumb-img--active': activeIndex === index,
               },
             ]"
             :src="image.url"
@@ -176,7 +175,7 @@ onMounted(async () => {
   }
 
   &__thumbs-container {
-    @apply flex justify-between items-center gap-4 mt-5;
+    @apply flex justify-between items-center gap-2.5 mt-3.5;
   }
 
   &__thumbs {
@@ -184,7 +183,11 @@ onMounted(async () => {
   }
 
   &__thumb {
-    @apply border rounded aspect-square object-center object-contain cursor-pointer;
+    @apply p-1.5 aspect-square cursor-pointer;
+  }
+
+  &__thumb-img {
+    @apply border rounded-sm w-full h-full object-center object-contain;
 
     &--active {
       @apply border-[--color-primary-500] outline outline-1 outline-[--color-primary-500];
