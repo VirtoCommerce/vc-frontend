@@ -90,9 +90,7 @@ const seoInfo = computedAsync<ResultType | undefined>(
       return undefined;
     }
 
-    const isPreview = window?.frameElement?.getAttribute("data-view-mode") === "page-builder";
-
-    if (isPreview) {
+    if (seoUrl.value === "__page-builder-preview__") {
       const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
       useStaticPage(page);
       return { page };
