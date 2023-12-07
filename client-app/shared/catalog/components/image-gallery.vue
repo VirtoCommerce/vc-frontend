@@ -175,11 +175,11 @@ onMounted(async () => {
   }
 
   &__thumbs-container {
-    @apply flex justify-between items-center gap-2.5 mt-3.5;
+    @apply flex justify-between items-center mt-3.5;
   }
 
   &__thumbs {
-    @apply p-px;
+    @apply p-px w-[77%];
   }
 
   &__thumb {
