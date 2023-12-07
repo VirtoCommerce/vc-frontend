@@ -96,7 +96,7 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  ga.selectItem(product, { search_term: searchPhrase.trim() });
+                  ga.selectItem(product, { search_term: trimmedSearchPhrase });
                 "
               />
             </div>
@@ -120,7 +120,7 @@
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
             <template #keyword>
-              <strong>{{ searchPhrase.trim() }}</strong>
+              <strong>{{ trimmedSearchPhrase }}</strong>
             </template>
           </i18n-t>
         </div>
