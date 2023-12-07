@@ -180,8 +180,11 @@ const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase
 const categoriesRoutes = useCategoriesRoutes(categories);
 
 const searchPhrase = ref("");
+const trimmedSearchPhrase = computed(() => {
+  return searchPhrase.value.trim();
+});
 
-const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhrase.value.trim());
+const isApplied = computed<boolean>(() => searchPhraseInUrl.value === trimmedSearchPhrase.value);
 
 const { bottom } = useElementBounding(searchBarElement);
 
@@ -212,11 +215,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
   hideSearchDropdown();
 
-  if (
-    searchPhrase.value.trim() === "" ||
-    searchPhrase.value.trim().length > MAX_LENGTH ||
-    searchPhrase.value.trim().length < MIN_LENGTH
-  ) {
+  if (trimmedSearchPhrase.value.length > MAX_LENGTH || trimmedSearchPhrase.value.length < MIN_LENGTH) {
     return;
   }
 
@@ -231,7 +230,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
         .join(" ");
 
   const params: GetSearchResultsParamsType = {
-    keyword: searchPhrase.value.trim(),
+    keyword: trimmedSearchPhrase.value,
     filter: filterExpression,
     categories: {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
@@ -260,7 +259,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
    */
   if (products.value.length) {
     ga.viewItemList(products.value, {
-      item_list_name: `Search phrase "${searchPhrase.value.trim()}"`,
+      item_list_name: `Search phrase "${trimmedSearchPhrase.value}"`,
     });
   }
 }
@@ -275,12 +274,10 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 }
 
 function goToSearchResultsPage() {
-  const searchTerm = searchPhrase.value.trim();
-
-  if (searchTerm) {
+  if (trimmedSearchPhrase.value) {
     hideSearchDropdown();
-    void router.push(getSearchRoute(searchTerm));
-    ga.search(searchTerm);
+    void router.push(getSearchRoute(trimmedSearchPhrase.value));
+    ga.search(trimmedSearchPhrase.value);
   }
 }
 
