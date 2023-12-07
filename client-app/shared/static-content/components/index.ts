@@ -14,6 +14,98 @@ import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
+export const builderIOComponents: Array<BuilderIOComponentType> = [
+  {
+    component: Slider,
+    name: "Slider",
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Slider",
+      },
+      {
+        name: "slides",
+        type: "list",
+        subFields: [
+          {
+            id: "image",
+            name: "image",
+            type: "file",
+            allowedFileTypes: ["jpeg", "jpg", "png", "svg"],
+          },
+          {
+            name: "title",
+            id: "title",
+            label: "Title",
+            type: "string",
+          },
+          {
+            name: "text",
+            id: "text",
+            type: "string",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Products",
+    component: ProductsBlock,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Products Block",
+      },
+      {
+        name: "query",
+        type: "string",
+      },
+    ],
+  },
+  {
+    component: Features,
+    name: "Features",
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Features title",
+      },
+      {
+        name: "subtitle",
+        type: "string",
+        defaultValue: "Features subtitle",
+      },
+      {
+        name: "columns",
+        type: "list",
+        subFields: [
+          {
+            name: "image",
+            type: "file",
+            allowedFileTypes: ["jpeg", "jpg", "png", "svg"],
+          },
+          {
+            name: "title",
+            type: "string",
+          },
+          {
+            name: "text",
+            type: "string",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+type BuilderIOComponentType = {
+  component: Component;
+  inputs: Array<object>;
+  name: string;
+};
 export const templateBlocks: { [key: string]: Component } = {
   "call-to-action-with-image": CallToActionWithImage,
   "call-to-action": CallToAction,

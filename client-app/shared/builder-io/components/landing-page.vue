@@ -18,6 +18,7 @@ import { onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
 import { Category } from "@/shared/catalog";
+import { builderIOComponents } from "@/shared/static-content";
 
 const router = useRouter();
 const { themeContext } = useThemeContext();
@@ -84,6 +85,7 @@ const getRegisteredComponents = () => {
         },
       ],
     },
+    ...builderIOComponents,
   ];
 };
 </script>

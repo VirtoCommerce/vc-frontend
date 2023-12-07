@@ -1,8 +1,8 @@
 <template>
-  <div class="py-10 lg:py-24" :class="model.background">
+  <div class="py-10 lg:py-24" :class="background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-      <h2 class="mb-2 text-center text-3xl font-bold lg:mb-4 lg:text-4xl">{{ model.title }}</h2>
-      <div class="text-center lg:text-lg">{{ model.subtitle }}</div>
+      <h2 class="mb-2 text-center text-3xl font-bold lg:mb-4 lg:text-4xl">{{ title }}</h2>
+      <div class="text-center lg:text-lg">{{ subtitle }}</div>
 
       <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
         <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
@@ -25,24 +25,23 @@ import { useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
 
-const props = defineProps({
-  model: {
-    type: Object,
-    required: true,
-  },
+interface IProps {
+  id: string;
+  background?: string;
+  title?: string;
+  subtitle?: string;
+  count?: number;
+  query?: string;
+}
 
-  settings: {
-    type: Object,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
 const { products, fetchProducts } = useProducts();
 const productsRoutes = useProductsRoutes(products);
 
 watchEffect(async () => {
   await fetchProducts({
-    itemsPerPage: props.model.count || 4,
-    keyword: props.model.query,
+    itemsPerPage: props.count || 4,
+    filter: props.query,
   });
 });
 </script>
