@@ -53,7 +53,6 @@ const broadcastLink = split(
 
 const batchOperationNames = queryNames.concat(fullCartMutationNames);
 
-// BatchHttpLink is used to batch multiple operations into one request
 const batchLink = from([
   split(
     (operation) => batchOperationNames.includes(operation.operationName),
@@ -71,7 +70,7 @@ const batchLink = from([
       // shortCart @skip (if @skipQuery)
       // fullCart - only this query will be executed
       fetch: (input, init) => {
-        if (init && typeof init.body == "string") {
+        if (typeof init?.body == "string") {
           const operations = JSON.parse(init.body) as Operation[];
           operations
             .filter(canSkipQuery)
