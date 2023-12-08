@@ -9,6 +9,7 @@ export enum ContactStatus {
   Rejected = "Rejected",
   Locked = "Locked",
   Deleted = "Deleted",
+  Invited = "Invited",
 }
 
 export type ContactDisplayStatusType = {
