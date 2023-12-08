@@ -40,5 +40,6 @@ declare module "@vue/runtime-core" {
     VcRating: typeof Components.VcRating;
     VcVendor: typeof Components.VcVendor;
     VcWidget: typeof Components.VcWidget;
+    VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;
   }
 }
