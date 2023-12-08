@@ -1,7 +1,7 @@
 <template>
   <div ref="searchBarElement" class="relative flex grow items-stretch">
     <VcInput
-      v-model.trim="searchPhrase"
+      v-model="searchPhrase"
       :maxlength="MAX_LENGTH"
       class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
@@ -96,7 +96,7 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  ga.selectItem(product, { search_term: searchPhrase.trim() });
+                  ga.selectItem(product, { search_term: trimmedSearchPhrase });
                 "
               />
             </div>
@@ -120,7 +120,7 @@
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
             <template #keyword>
-              <strong>{{ searchPhrase }}</strong>
+              <strong>{{ trimmedSearchPhrase }}</strong>
             </template>
           </i18n-t>
         </div>
@@ -180,8 +180,11 @@ const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase
 const categoriesRoutes = useCategoriesRoutes(categories);
 
 const searchPhrase = ref("");
+const trimmedSearchPhrase = computed(() => {
+  return searchPhrase.value.trim();
+});
 
-const isApplied = computed<boolean>(() => searchPhraseInUrl.value === searchPhrase.value);
+const isApplied = computed<boolean>(() => searchPhraseInUrl.value === trimmedSearchPhrase.value);
 
 const { bottom } = useElementBounding(searchBarElement);
 
@@ -212,11 +215,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
   hideSearchDropdown();
 
-  if (
-    searchPhrase.value === "" ||
-    searchPhrase.value.trim().length > MAX_LENGTH ||
-    searchPhrase.value.trim().length < MIN_LENGTH
-  ) {
+  if (trimmedSearchPhrase.value.length > MAX_LENGTH || trimmedSearchPhrase.value.length < MIN_LENGTH) {
     return;
   }
 
@@ -231,7 +230,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
         .join(" ");
 
   const params: GetSearchResultsParamsType = {
-    keyword: searchPhrase.value,
+    keyword: trimmedSearchPhrase.value,
     filter: filterExpression,
     categories: {
       itemsPerPage: CATEGORIES_ITEMS_PER_COLUMN * COLUMNS,
@@ -260,7 +259,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
    */
   if (products.value.length) {
     ga.viewItemList(products.value, {
-      item_list_name: `Search phrase "${searchPhrase.value}"`,
+      item_list_name: `Search phrase "${trimmedSearchPhrase.value}"`,
     });
   }
 }
@@ -275,12 +274,10 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 }
 
 function goToSearchResultsPage() {
-  const searchTerm = searchPhrase.value.trim();
-
-  if (searchTerm) {
+  if (trimmedSearchPhrase.value) {
     hideSearchDropdown();
-    void router.push(getSearchRoute(searchTerm));
-    ga.search(searchTerm);
+    void router.push(getSearchRoute(trimmedSearchPhrase.value));
+    ga.search(trimmedSearchPhrase.value);
   }
 }
 
