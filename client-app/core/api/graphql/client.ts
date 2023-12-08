@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client/core";
 import { cache, httpLink, link, options } from "@/core/api/graphql/config";
-import { errorHandlerLink } from "@/core/api/graphql/error-handler";
+import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import type { FetchPolicy } from "@apollo/client/core";
 
 const fetchPolicy: FetchPolicy = "no-cache";

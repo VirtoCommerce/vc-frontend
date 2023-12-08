@@ -1,7 +1,7 @@
 import { HttpLink, from } from "@apollo/client/core";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { cartLink } from "@/core/api/graphql/cart/links";
-import { errorHandlerLink } from "@/core/api/graphql/config/errors";
+import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import { API_URL } from "@/core/api/graphql/consts";
 
 export const httpLink = new HttpLink({ uri: API_URL });
