@@ -20,7 +20,6 @@
             clickable: true,
             el: `#${componentId} [data-nav-pagination]`,
           }"
-          update-on-window-resize
           data-te-lightbox-init
           @swiper="setImagesSwiper"
           @slide-change="setActiveIndex"
@@ -48,7 +47,7 @@
 
     <VcCarouselPagination v-if="showPagination" class="image-gallery__pagination" data-nav-pagination size="sm" />
 
-    <div v-if="showThumbs" class="image-gallery__thumbs-container">
+    <div v-show="showThumbs" class="image-gallery__thumbs-container">
       <VcNavButton size="xs" direction="left" data-nav-prev />
 
       <Swiper
@@ -60,8 +59,7 @@
           prevEl: `#${componentId} [data-nav-prev]`,
           nextEl: `#${componentId} [data-nav-next]`,
         }"
-        :loop="images.length > THUMBS_PER_VIEW"
-        update-on-window-resize
+        :loop="showThumbs && images.length > THUMBS_PER_VIEW"
         watch-slides-progress
         @swiper="setThumbsSwiper"
       >
