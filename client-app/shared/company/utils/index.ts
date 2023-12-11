@@ -53,7 +53,8 @@ export function convertToExtendedContact(contact: ContactType, fullNameFallback:
 
   return {
     ...contact,
-    fullName: contact.status ? contactFullName : fullNameFallback,
+    fullName:
+      contact.status && contact.status !== ContactStatus.Invited.toString() ? contactFullName : fullNameFallback,
     extended: {
       roles: getContactRoles(contact),
       emails: getContactEmailAddresses(contact),
