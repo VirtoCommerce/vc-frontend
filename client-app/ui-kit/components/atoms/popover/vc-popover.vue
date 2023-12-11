@@ -49,7 +49,7 @@ const props = withDefaults(defineProps<IProps>(), {
   xOffset: 0,
   yOffset: 0,
   trigger: "hover",
-  zIndex: 50,
+  zIndex: 1,
 });
 
 const triggerNode = shallowRef<HTMLElement | null>(null);

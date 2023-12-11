@@ -9,6 +9,7 @@
     :placement="placement"
     :x-offset="xOffset"
     :y-offset="yOffset"
+    :z-index="zIndex"
     :trigger="trigger"
     :disabled="disabled"
     @toggle="$emit('toggle', $event)"
@@ -40,6 +41,7 @@ interface IProps {
   trigger?: "hover" | "click";
   disabled?: boolean;
   width?: string;
+  zIndex?: number | string;
 }
 
 defineEmits<IEmits>();
@@ -50,6 +52,7 @@ withDefaults(defineProps<IProps>(), {
   yOffset: "4",
   trigger: "click",
   width: "auto",
+  zIndex: 1,
 });
 </script>
 
