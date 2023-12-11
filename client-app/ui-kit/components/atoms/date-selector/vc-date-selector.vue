@@ -45,7 +45,7 @@ const formatDate = computed(() => {
 });
 
 function change(event: Event): void {
-  // We treat date as 00:00:00 UTC
+  // We treat date as UTC+00:00
   const newValue: string = (event.target as HTMLInputElement).value;
   const dateValue = newValue ? new Date(Date.parse(newValue)) : undefined;
   emit("update:modelValue", dateValue);
