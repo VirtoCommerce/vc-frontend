@@ -37,16 +37,15 @@ const formatDate = computed(() => {
     return "";
   }
 
-  const date = new Date(props.modelValue.getTime() + 60000 * props.modelValue.getTimezoneOffset());
-
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
+  const year = props.modelValue.getUTCFullYear();
+  const month = (props.modelValue.getUTCMonth() + 1).toString().padStart(2, "0");
+  const day = props.modelValue.getUTCDate().toString().padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 });
 
 function change(event: Event): void {
+  // We treat date as 00:00:00 UTC
   const newValue: string = (event.target as HTMLInputElement).value;
   const dateValue = newValue ? new Date(Date.parse(newValue)) : undefined;
   emit("update:modelValue", dateValue);
