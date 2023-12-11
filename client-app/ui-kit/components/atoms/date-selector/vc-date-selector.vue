@@ -37,9 +37,11 @@ const formatDate = computed(() => {
     return "";
   }
 
-  const year = props.modelValue.getFullYear();
-  const month = (props.modelValue.getMonth() + 1).toString().padStart(2, "0");
-  const day = props.modelValue.getDate().toString().padStart(2, "0");
+  const date = new Date(props.modelValue.getTime() + 60000 * props.modelValue.getTimezoneOffset());
+
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
 
   return `${year}-${month}-${day}`;
 });
