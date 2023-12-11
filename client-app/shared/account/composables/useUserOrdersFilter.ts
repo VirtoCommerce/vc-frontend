@@ -27,7 +27,7 @@ export function useUserOrdersFilter() {
       }
     }
     if (appliedFilterData.value.startDate) {
-      const formattedDate = d(appliedFilterData.value.startDate);
+      const formattedDate = d(appliedFilterData.value.startDate, { timeZone: "UTC" });
       items.push({
         fieldName: "startDate",
         value: appliedFilterData.value.startDate,
@@ -35,7 +35,7 @@ export function useUserOrdersFilter() {
       });
     }
     if (appliedFilterData.value.endDate) {
-      const formattedDate = d(appliedFilterData.value.endDate);
+      const formattedDate = d(appliedFilterData.value.endDate, { timeZone: "UTC" });
       items.push({
         fieldName: "endDate",
         value: appliedFilterData.value.endDate,
