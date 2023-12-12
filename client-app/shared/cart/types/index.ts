@@ -1,11 +1,11 @@
-import type { GiftItemType, ValidationErrorType } from "@/core/api/graphql/types";
+import type { GiftItemType } from "@/core/api/graphql/types";
 
 export type ExtendedGiftItemType = GiftItemType & { isAddedInCart?: boolean };
 
 export type OutputBulkItemType = {
   productSku: string;
   quantity?: number;
-  errors?: ValidationErrorType[];
+  isAddedToCart?: boolean;
 };
 
 /** @todo Rename */
@@ -15,5 +15,5 @@ export type ItemForAddBulkItemsToCartResultsPopupType = {
   quantity: number;
   sku: string;
   slug?: string;
-  errors?: ValidationErrorType[];
+  isAddedToCart: boolean;
 };
