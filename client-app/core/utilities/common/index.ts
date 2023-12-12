@@ -68,7 +68,10 @@ export function numberToShortString(num: number): string {
   return (num / sizes[index].value).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1") + sizes[index].suffix;
 }
 
-// convert Date value to string with format 'yyyy-MM-dd'
+/**
+ * Сonvert Date value to string with format 'yyyy-MM-dd'
+ * @deprecated Use full ISO 8601 format instead.
+ */
 export function dateToIsoDateString(date: Date | undefined) {
   const lastDateSymbolIndex = 10;
   return date?.toISOString().substring(0, lastDateSymbolIndex);
