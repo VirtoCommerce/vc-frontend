@@ -4935,10 +4935,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node18@npm:^18.2.2":
-  version: 18.2.2
-  resolution: "@tsconfig/node18@npm:18.2.2"
-  checksum: 1c4b04b570e33de14bf518492e077079db2dcfba738c8d40c6ff916d94c9410246f4cb56f0802d9771423862140bf714c35d4a5f6cec2446d851cf61d3f8f9df
+"@tsconfig/node20@npm:^20.1.2":
+  version: 20.1.2
+  resolution: "@tsconfig/node20@npm:20.1.2"
+  checksum: fc126e15f0817bd328c15bd6be7972f01ef4d55ceb493c7a83ccb9dd545e39f218711f330e3df4072b116b11180c07943da2b2bfcd7adc58414cb586db52a4c8
   languageName: node
   linkType: hard
 
@@ -5301,10 +5301,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.17.0":
-  version: 18.17.14
-  resolution: "@types/node@npm:18.17.14"
-  checksum: f96ce1e588426a26cf82440193084f8bbab47bfb3c2e668cf174095f99ce808a20654b2137448c7e88cfd7b6c2b8521ffb6f714f521b3502ac595a0df0bff679
+"@types/node@npm:^20.10.4":
+  version: 20.10.4
+  resolution: "@types/node@npm:20.10.4"
+  dependencies:
+    undici-types: ~5.26.4
+  checksum: 054b296417e771ab524bea63cf3289559c6bdf290d45428f7cc68e9b00030ff7a0ece47b8c99a26b4f47a443919813bcf42beadff2f0bea7d8125fa541d92eb0
   languageName: node
   linkType: hard
 
@@ -15820,6 +15822,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"undici-types@npm:~5.26.4":
+  version: 5.26.5
+  resolution: "undici-types@npm:5.26.5"
+  checksum: 3192ef6f3fd5df652f2dc1cd782b49d6ff14dc98e5dced492aa8a8c65425227da5da6aafe22523c67f035a272c599bb89cfe803c1db6311e44bed3042fc25487
+  languageName: node
+  linkType: hard
+
 "unhead@npm:1.7.4":
   version: 1.7.4
   resolution: "unhead@npm:1.7.4"
@@ -16175,14 +16184,14 @@ __metadata:
     "@storybook/testing-library": ^0.2.2
     "@storybook/vue3": ^7.4.6
     "@storybook/vue3-vite": 7.4.6
-    "@tsconfig/node18": ^18.2.2
+    "@tsconfig/node20": ^20.1.2
     "@types/adm-zip": ^0.5.2
     "@types/dompurify": ^3.0.3
     "@types/gtag.js": ^0.0.16
     "@types/jsdom": ^21.1.3
     "@types/lodash": ^4.14.199
     "@types/marked": ^6.0.0
-    "@types/node": ^18.17.0
+    "@types/node": ^20.10.4
     "@unhead/vue": ^1.7.4
     "@vee-validate/rules": ^4.11.8
     "@vee-validate/yup": ^4.11.8
