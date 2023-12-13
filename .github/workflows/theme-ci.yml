@@ -48,6 +48,10 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Enable corepack
+        run: |
+          corepack enable
+
       - name: Set RELEASE_STATUS
         if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
         run: |
