@@ -2,7 +2,7 @@ import { computed, readonly, ref, shallowRef } from "vue";
 import { getOrders } from "@/core/api/graphql/orders";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
-import { Logger, endDateToString, startDateToString } from "@/core/utilities";
+import { Logger, addTimeToEndDate, addTimeToStartDate } from "@/core/utilities";
 import { useUserOrdersFilter } from "./useUserOrdersFilter";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { OrdersFilterData } from "@/shared/account";
@@ -72,8 +72,8 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterData): str
     filterExpression += `status:${statuses.join(",")} `;
   }
 
-  const startDate = startDateToString(filterData.startDate);
-  const endDate = endDateToString(filterData.endDate);
+  const startDate = addTimeToStartDate(filterData.startDate);
+  const endDate = addTimeToEndDate(filterData.endDate);
   if (startDate || endDate) {
     filterExpression += `createddate:[${[startDate, "TO", endDate].join(" ").trim()}) `;
   }
