@@ -104,11 +104,7 @@
 
           <!-- Actions -->
           <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-gray-100 bg-white px-5 py-3">
-            <VcButton
-              :to="{ name: 'Search', query: { [QueryParamName.SearchPhrase]: searchPhrase } }"
-              size="sm"
-              @click="hideSearchDropdown()"
-            >
+            <VcButton size="sm" @click="goToSearchResultsPage">
               {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
             </VcButton>
           </section>
