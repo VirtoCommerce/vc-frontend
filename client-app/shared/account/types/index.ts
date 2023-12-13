@@ -57,8 +57,8 @@ export type UserPersonalData = {
 
 export type OrdersFilterData = {
   statuses: string[];
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
 };
 
 export type OrdersFilterChipsItem = {

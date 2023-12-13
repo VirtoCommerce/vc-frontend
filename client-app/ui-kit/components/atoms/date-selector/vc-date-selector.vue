@@ -4,50 +4,29 @@
     <span v-if="isRequired" class="text-[color:var(--color-danger)]">*</span>
   </div>
   <input
-    :value="formatDate"
+    :value="modelValue"
     :disabled="isDisabled"
     :name="name"
     class="box-border h-11 w-full min-w-0 appearance-none rounded border border-gray-300 bg-white p-3 text-base leading-none outline-none focus:border-gray-400"
     type="date"
-    @change="change"
+    @change="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
   />
   <div v-if="errorMessage" class="text-xs text-[color:var(--color-danger)]">{{ errorMessage }}</div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-
 const emit = defineEmits<{
-  (e: "update:modelValue", value: Date | undefined): void;
+  (e: "update:modelValue", value: string | undefined): void;
 }>();
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
 interface IProps {
   label?: string;
   name?: string;
   isRequired?: boolean;
   isDisabled?: boolean;
-  modelValue?: Date;
+  modelValue?: string;
   errorMessage?: string;
-}
-
-const formatDate = computed(() => {
-  if (!props.modelValue) {
-    return "";
-  }
-
-  const year = props.modelValue.getUTCFullYear();
-  const month = (props.modelValue.getUTCMonth() + 1).toString().padStart(2, "0");
-  const day = props.modelValue.getUTCDate().toString().padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-});
-
-function change(event: Event): void {
-  const newValue: string = (event.target as HTMLInputElement).value;
-  // We consider any date in the DD-MM-YYYY format as DD.MM.YYYYT00:00:00.000Z
-  const dateValue = newValue ? new Date(Date.parse(newValue)) : undefined;
-  emit("update:modelValue", dateValue);
 }
 </script>
