@@ -4,6 +4,7 @@
   "include": ["client-app/core/constants", "client-app/router/routes", "*", "scripts/*", "package.json"],
   "compilerOptions": {
     "composite": true,
+    "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "types": ["node", "@types/archiver", "vite/client"]
