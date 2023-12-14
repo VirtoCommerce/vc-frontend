@@ -67,22 +67,6 @@ export function useQuantityValidationSchema(payload: {
           });
         }
 
-        /*if (payload.minQuantity && payload.maxQuantity) {
-          return schema.test(
-            "minMaxValue",
-            t("shared.cart.add_to_cart.errors.min_max", [payload.minQuantity, payload.maxQuantity]),
-            (value) => !!value && value >= payload.minQuantity! && value <= payload.maxQuantity!,
-          );
-        }
-
-        if (payload.minQuantity) {
-          return schema.min(payload.minQuantity, t("shared.cart.add_to_cart.errors.min", [payload.minQuantity]));
-        }
-
-        if (payload.maxQuantity) {
-          return schema.max(payload.maxQuantity, t("shared.cart.add_to_cart.errors.max", [payload.maxQuantity]));
-        }*/
-
         return schema.max(maxLimit, t("shared.cart.add_to_cart.errors.max", [maxLimit]));
       }),
   );
