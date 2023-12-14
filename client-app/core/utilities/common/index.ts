@@ -70,7 +70,7 @@ export function numberToShortString(num: number): string {
 
 /**
  * Сonvert Date value to string with format 'yyyy-MM-dd'
- * @deprecated Use full ISO 8601 format instead.
+ * @deprecated Use {@link Date.toISOString} to convert into full ISO 8601 string instead.
  */
 export function dateToIsoDateString(date: Date | undefined) {
   const lastDateSymbolIndex = 10;
