@@ -5985,7 +5985,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/test-utils@npm:^2.4.3":
+"@vue/test-utils@npm:^2.4.1":
   version: 2.4.3
   resolution: "@vue/test-utils@npm:2.4.3"
   dependencies:
@@ -16321,7 +16321,7 @@ __metadata:
     "@vitejs/plugin-vue": ^4.3.4
     "@vue/eslint-config-prettier": ^8.0.0
     "@vue/eslint-config-typescript": ^12.0.0
-    "@vue/test-utils": ^2.4.3
+    "@vue/test-utils": ^2.4.1
     "@vue/tsconfig": ^0.4.0
     "@vueuse/components": ^10.5.0
     "@vueuse/core": ^10.5.0
