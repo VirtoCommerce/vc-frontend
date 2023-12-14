@@ -1017,6 +1017,10 @@
         "update_error_alert": "There was an error during profile update"
       },
       "quotes": {
+        "meta": {
+          "title": "@:pages.account.quotes.title",
+          "table_description": "requested quotes"
+        },
         "title": "Quote Requests",
         "no_quotes_message": "There are no quote requests yet",
         "quote_number_label": "Quote number",
