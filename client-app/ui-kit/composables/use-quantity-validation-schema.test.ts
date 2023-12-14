@@ -1,16 +1,9 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { mockI18n } from "../mocks";
 import { useQuantityValidationSchema } from ".";
 
 describe("use-quantity-validation-schema", () => {
-  vi.mock("vue-i18n", async () => {
-    const actualI18n = await vi.importActual("vue-i18n");
-    return {
-      ...{ actualI18n },
-      useI18n: vi.fn().mockReturnValue({
-        t: (key: string) => key,
-      }),
-    };
-  });
+  mockI18n();
 
   it("quantity is positive", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
