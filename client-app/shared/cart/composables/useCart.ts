@@ -150,6 +150,8 @@ export function _useFullCart() {
 
   const lineItemsGroupedByVendor = computed(() => groupByVendor(cart.value?.items ?? []));
 
+  const selectedForCheckoutItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout));
+
   const allItemsAreDigital = computed(
     () => selectedForCheckoutItems.value?.every((item) => item.productType === ProductType.Digital),
   );
@@ -176,8 +178,6 @@ export function _useFullCart() {
       cart.value?.validationErrors?.length == 1 &&
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
-
-  const selectedForCheckoutItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout));
 
   const selectedForCheckoutItemIds = computed(() => selectedForCheckoutItems.value?.map((item) => item.id) ?? []);
 
