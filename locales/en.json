@@ -1063,7 +1063,8 @@
     "company": {
       "info": {
         "meta": {
-          "title": "@:pages.company.info.title"
+          "title": "@:pages.company.info.title",
+          "table_description": "company addresses"
         },
         "title": "Company Info",
         "content_header": "Addresses",
