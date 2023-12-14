@@ -128,12 +128,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
-import {
-  AddBulkItemsToCartResultsModal,
-  getItemsForAddBulkItemsToCartResultsPopup,
-  getLineItemValidationErrorsGroupedBySKU,
-  useShortCart,
-} from "@/shared/cart";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
@@ -182,23 +177,16 @@ const showPaymentButton = computed<boolean>(
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
 
 async function reorderItems() {
-  const items = order.value!.items!.filter((item) => !item.isGift);
+  const items = order.value!.items.filter((item) => !item.isGift);
 
   loadingAddItemsToCart.value = true;
 
   await addItemsToCart(items.map(({ productId, quantity }) => ({ productId, quantity })));
 
-  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
-  const resultItems = items.map(({ sku, quantity }) => ({
-    productSku: sku,
-    quantity,
-    errors: errorsGroupBySKU[sku],
-  }));
-
   openPopup({
     component: AddBulkItemsToCartResultsModal,
     props: {
-      items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
+      items: getItemsForAddBulkItemsToCartResultsPopup(items, cart.value!),
       listName: t("pages.account.order_details.title", [order.value?.number]),
     },
   });
@@ -212,7 +200,7 @@ function print() {
 
 watchEffect(() => {
   clearOrder();
-  fetchFullOrder({ id: props.orderId });
+  void fetchFullOrder({ id: props.orderId });
 });
 </script>
 

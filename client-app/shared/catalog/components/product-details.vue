@@ -1,17 +1,21 @@
 <template>
   <VcWidget size="lg">
-    <div class="flex flex-col print:flex-row print:space-x-12 print:p-0 lg:flex-row lg:space-x-12">
-      <div class="mb-4 print:w-1/3 lg:mb-0 lg:w-1/4">
-        <VcImageGallery :product="product">
+    <div class="flex flex-col print:flex-row print:gap-12 print:p-0 lg:flex-row lg:gap-12">
+      <div class="mb-4 flex-none print:hidden lg:mb-0 lg:w-1/3">
+        <ImageGallery :images="product.images">
           <template #badges>
             <DiscountBadge :price="product.price!" />
           </template>
-        </VcImageGallery>
+        </ImageGallery>
 
-        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mt-8 inline-flex print:hidden" />
+        <AddToCompare v-if="$cfg.product_compare_enabled" :product="product" class="mt-8 inline-flex" />
       </div>
 
-      <div v-if="section?.blocks?.length" class="flex flex-col gap-5 print:w-2/3 lg:w-3/4">
+      <div class="hidden aspect-square w-1/3 flex-none print:block">
+        <VcImage :src="product.imgSrc" class="w-full rounded border" />
+      </div>
+
+      <div v-if="section?.blocks?.length" class="flex flex-col gap-5 print:w-2/3 lg:grow">
         <component
           :is="block.type"
           v-for="(block, index) in section.blocks"
@@ -27,6 +31,7 @@
 <script setup lang="ts">
 import { AddToCompare } from "@/shared/compare";
 import DiscountBadge from "./discount-badge.vue";
+import ImageGallery from "./image-gallery.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { PageContent } from "@/shared/static-content";
 

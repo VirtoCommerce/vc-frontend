@@ -55,7 +55,13 @@
         @page-changed="changePage"
       >
         <template #mobile-item="itemData">
-          <div class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
+          <div
+            class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6"
+            role="button"
+            tabindex="0"
+            @click="goToQuoteDetails(itemData.item)"
+            @keyup.enter="goToQuoteDetails(itemData.item)"
+          >
             <div class="flex flex-col">
               <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400" />
 

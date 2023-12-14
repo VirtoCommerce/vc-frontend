@@ -1,6 +1,8 @@
-import type { LineItemType, OrderLineItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { ItemForAddBulkItemsToCartResultsPopupType, OutputBulkItemType } from "@/shared/cart";
+import { ValidationErrorObjectType } from "@/core/enums";
+import type { ShortCartFragment, LineItemType, OrderLineItemType, ValidationErrorType } from "@/core/api/graphql/types";
+import type { ItemForAddBulkItemsToCartResultsPopupType } from "@/shared/cart";
 
+/** @deprecated No longer used. Add to cart mutations now return ID instead. */
 export function getLineItemValidationErrorsGroupedBySKU(
   errors: ValidationErrorType[] = [],
 ): Record<string, ValidationErrorType[]> {
@@ -18,20 +20,16 @@ export function getLineItemValidationErrorsGroupedBySKU(
 
 export function getItemsForAddBulkItemsToCartResultsPopup(
   inputItems: OrderLineItemType[] | LineItemType[],
-  resultItems: OutputBulkItemType[],
+  cart: ShortCartFragment,
 ): ItemForAddBulkItemsToCartResultsPopupType[] {
-  const errorsGroupedBySKU: Record<string, ValidationErrorType[] | undefined> = {};
-
-  resultItems.forEach((item) => {
-    errorsGroupedBySKU[item.productSku] = item.errors;
-  });
-
   return inputItems.map<ItemForAddBulkItemsToCartResultsPopupType>((item) => ({
-    productId: item.productId!,
-    name: item.name!,
-    sku: item.sku!,
-    quantity: item.quantity!,
+    productId: item.productId,
+    name: item.name,
+    sku: item.sku,
+    quantity: item.quantity,
     slug: item.product?.slug,
-    errors: errorsGroupedBySKU[item.sku!],
+    isAddedToCart: !cart.validationErrors.some(
+      (error) => error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
+    ),
   }));
 }

@@ -82,7 +82,7 @@
         </template>
 
         <!-- Empty list -->
-        <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')">
+        <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')" class="lg:mt-32">
           <template #icon>
             <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
           </template>
@@ -107,12 +107,7 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import {
-  getItemsForAddBulkItemsToCartResultsPopup,
-  getLineItemValidationErrorsGroupedBySKU,
-  AddBulkItemsToCartResultsModal,
-  useShortCart,
-} from "@/shared/cart";
+import { useShortCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePopup } from "@/shared/popup";
@@ -203,7 +198,7 @@ async function updateItems() {
       .value!.filter((el) => !!el.product)
       .map<InputUpdateWishlistLineItemType>((item) => ({
         lineItemId: item.id,
-        quantity: item.quantity!,
+        quantity: item.quantity,
       })),
   };
   await updateItemsInWishlist(payload);
@@ -229,19 +224,11 @@ async function openSaveChangesModal(): Promise<boolean> {
 }
 
 function showResultModal(items: LineItemType[]) {
-  const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(cart.value?.validationErrors);
-
-  const resultItems = items.map(({ sku, quantity }) => ({
-    productSku: sku,
-    quantity,
-    errors: errorsGroupBySKU[sku],
-  }));
-
   openPopup({
     component: AddBulkItemsToCartResultsModal,
     props: {
       listName: list.value?.name,
-      items: getItemsForAddBulkItemsToCartResultsPopup(items, resultItems),
+      items: getItemsForAddBulkItemsToCartResultsPopup(items, cart.value!),
     },
   });
 }

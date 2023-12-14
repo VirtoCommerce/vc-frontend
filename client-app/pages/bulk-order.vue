@@ -119,7 +119,7 @@ async function addItems(items: InputNewBulkItemType[]) {
 
   const resultItems = await addBulkItemsToCart(items);
 
-  SKUsWithErrors.value = resultItems.filter((item) => item.errors?.length).map((item) => item.productSku);
+  SKUsWithErrors.value = resultItems.filter((item) => !item.isAddedToCart).map((item) => item.productSku);
 
   if (SKUsWithErrors.value.length) {
     window.scrollTo({

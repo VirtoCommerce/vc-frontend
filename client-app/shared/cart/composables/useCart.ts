@@ -27,7 +27,7 @@ import {
   clearCart as deprecatedClearCart,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
-import { ProductType } from "@/core/enums";
+import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
@@ -35,7 +35,6 @@ import { usePopup } from "@/shared/popup";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
-import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
   InputNewBulkItemType,
@@ -78,12 +77,20 @@ export function useShortCart() {
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
     const result = await _addBulkItemsToCart({ command: { cartItems: items } });
 
-    const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(result?.data?.addBulkItemsCart?.errors);
+    const cartFragment = result?.data?.addBulkItemsCart?.cart;
 
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
       quantity,
-      errors: errorsGroupBySKU[productSku],
+      // Workaround as we don't know product IDs on bulk order
+      isAddedToCart: cartFragment?.items.some(
+        (item) =>
+          item.sku === productSku &&
+          !cartFragment?.validationErrors.some(
+            (error) =>
+              error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
+          ),
+      ),
     }));
   }
 
@@ -144,10 +151,7 @@ export function _useFullCart() {
   const lineItemsGroupedByVendor = computed(() => groupByVendor(cart.value?.items ?? []));
 
   const allItemsAreDigital = computed(
-    () =>
-      !!cart.value?.items
-        ?.filter((item) => item.selectedForCheckout)
-        .every((item) => item.productType === ProductType.Digital),
+    () => selectedForCheckoutItems.value?.every((item) => item.productType === ProductType.Digital),
   );
 
   const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
@@ -157,7 +161,14 @@ export function _useFullCart() {
   );
 
   const hasValidationErrors = computedEager(
-    () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
+    () =>
+      cart.value?.validationErrors?.some(
+        (error) =>
+          (error.objectType === ValidationErrorObjectType.CartProduct &&
+            selectedForCheckoutItems.value?.some((item) => item.productId === error.objectId)) ||
+          (error.objectType === ValidationErrorObjectType.LineItem &&
+            selectedForCheckoutItems.value?.some((item) => item.id === error.objectId)),
+      ) || selectedForCheckoutItems.value?.some((item) => item.validationErrors?.length),
   );
 
   const hasOnlyUnselectedValidationError = computedEager(
@@ -166,9 +177,9 @@ export function _useFullCart() {
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
 
-  const selectedForCheckoutItemIds = computed(
-    () => cart.value?.items?.filter((item) => item.selectedForCheckout).map((item) => item.id) ?? [],
-  );
+  const selectedForCheckoutItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout));
+
+  const selectedForCheckoutItemIds = computed(() => selectedForCheckoutItems.value?.map((item) => item.id) ?? []);
 
   const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);

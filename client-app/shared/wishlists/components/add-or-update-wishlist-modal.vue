@@ -20,7 +20,16 @@
     </div>
 
     <div :class="{ 'border-b': !isCorporateMember }" class="px-6 pb-6">
-      <VcTextarea v-model="description" :label="$t('common.labels.description')" :disabled="loading" rows="4" />
+      <VcTextarea
+        v-model="description"
+        :label="$t('common.labels.description')"
+        :disabled="loading"
+        :message="errors.description"
+        :error="!!errors.description && meta.dirty"
+        rows="4"
+        counter
+        :max-length="MAX_DESCRIPTION_LENGTH"
+      />
     </div>
 
     <div v-if="isCorporateMember" class="border-b px-6 pb-6">
@@ -72,10 +81,12 @@ const listIsPrivate = computed<boolean>(() => !props.list?.scope || props.list?.
 const { loading, createWishlist, updateWishlist } = useWishlists();
 const { isCorporateMember } = useUser();
 
+const MAX_DESCRIPTION_LENGTH = 250;
+
 const validationSchema = toTypedSchema(
   object({
     name: string().required().max(25),
-    description: string(),
+    description: string().max(MAX_DESCRIPTION_LENGTH),
     isPrivate: bool(),
   }),
 );
