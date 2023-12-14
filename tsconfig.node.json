@@ -7,6 +7,6 @@
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node", "@types/archiver", "vite/client"]
+    "types": ["node", "@types/adm-zip", "vite/client"]
   }
 }
