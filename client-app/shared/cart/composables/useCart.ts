@@ -33,7 +33,6 @@ import { usePopup } from "@/shared/popup";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
-import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
   CartType,
@@ -229,12 +228,18 @@ export function useCart() {
 
       cart.value = data.cart;
 
-      const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(data.errors);
-
       return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
         productSku,
         quantity,
-        errors: errorsGroupBySKU[productSku],
+        // Workaround as we don't know product IDs on bulk order
+        isAddedToCart: data.cart.items?.some(
+          (item) =>
+            item.sku === productSku &&
+            !data.cart.validationErrors.some(
+              (error) =>
+                error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
+            ),
+        ),
       }));
     } catch (e) {
       Logger.error(`${useCart.name}.${addBulkItemsToCart.name}`, e);
