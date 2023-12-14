@@ -126,10 +126,10 @@
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
-      "yarn lint:fix"
+      "eslint --fix"
     ],
     "*.{graphql,json}": [
-      "yarn prettier:fix"
+      "prettier --write"
     ]
   },
   "engines": {
