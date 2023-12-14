@@ -46,15 +46,15 @@
         />
 
         <VcAlert
-          v-for="error in commonErrors"
-          :key="error"
+          v-for="translatedError in translatedErrors"
+          :key="translatedError.code"
           color="danger"
           class="my-4 text-xs"
           size="sm"
           variant="solid-light"
           icon
         >
-          {{ error }}
+          {{ translatedError.translation }}
         </VcAlert>
 
         <!-- Form actions -->
@@ -79,7 +79,7 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
-import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -100,56 +100,38 @@ const validationSchema = toTypedSchema(
   }),
 );
 
-const initialValues = computed(() => ({
-  firstName: user.value.contact?.firstName,
-  lastName: user.value.contact?.lastName,
-  email: user.value.email,
-}));
-
 const { errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
   validationSchema,
-  initialValues,
+  initialValues: getFormValues(),
 });
+
+function getFormValues() {
+  return {
+    firstName: user.value.contact?.firstName,
+    lastName: user.value.contact?.lastName,
+    email: user.value.email,
+  };
+}
 
 const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");
 
-const commonErrors = ref<string[]>([]);
-const showErrors = (responseErrors: IdentityErrorType[]) => {
-  responseErrors.forEach((error) => {
-    const errorDescription = getIdentityErrorTranslation(error);
-
-    if (errorDescription) {
-      commonErrors.value.push(errorDescription);
-    }
-  });
-};
-
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
+const responseErrors = ref<IdentityErrorType[]>([]);
+const { translatedErrors } = useErrorsTranslator("identity_error", responseErrors);
 
 const onSubmit = handleSubmit(async (data) => {
-  const results: boolean[] = [];
-  commonErrors.value = [];
-  if (
-    (data.firstName && initialValues.value.firstName !== data.firstName) ||
-    (data.lastName && initialValues.value.lastName !== data.lastName)
-  ) {
-    const userDataUpdateResult = await updateUser({
-      firstName: data.firstName!,
-      lastName: data.lastName!,
-    });
+  responseErrors.value = [];
 
-    results.push(userDataUpdateResult.succeeded);
+  const response = await updateUser({
+    firstName: data.firstName,
+    lastName: data.lastName,
+  });
 
-    if (userDataUpdateResult.errors?.length) {
-      showErrors(userDataUpdateResult.errors);
-    }
-  }
+  responseErrors.value = response.errors ?? [];
 
-  if (results.every((item) => item)) {
-    resetForm();
-    commonErrors.value = [];
+  if (response.succeeded) {
+    resetForm({ values: getFormValues() });
     openPopup({
       component: ProfileUpdateSuccessDialog,
     });

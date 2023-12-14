@@ -45,7 +45,7 @@
             {{ $t("shared.wishlists.add_or_update_wishlist_dialog.cancel_button") }}
           </VcButton>
 
-          <VcButton :loading="loading" :disabled="!canSave" class="flex-1 sm:flex-none" @click="save(close)">
+          <VcButton :loading="loading" :disabled="!meta.valid" class="flex-1 sm:flex-none" @click="save(close)">
             {{
               isEditMode
                 ? $t("shared.wishlists.add_or_update_wishlist_dialog.save_button")
@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { bool, object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account";
@@ -73,10 +73,6 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
-
-const listName = computed<string | undefined>(() => props.list?.name);
-const listDescription = computed<string | undefined>(() => props.list?.description);
-const listIsPrivate = computed<boolean>(() => !props.list?.scope || props.list?.scope === WishlistScopeType.Private);
 
 const { loading, createWishlist, updateWishlist } = useWishlists();
 const { isCorporateMember } = useUser();
@@ -91,45 +87,46 @@ const validationSchema = toTypedSchema(
   }),
 );
 
-const { errors, meta } = useForm({
+const { errors, meta, resetForm } = useForm({
   validationSchema,
-  initialValues: {
-    name: listName.value,
-    description: listDescription.value ?? "",
-    isPrivate: listIsPrivate.value,
-  },
-  validateOnMount: true,
+  initialValues: getFormValues(),
 });
 
-const { value: name } = useField<string | undefined>("name");
+function getFormValues() {
+  return {
+    name: props.list?.name,
+    description: props.list?.description,
+    isPrivate: !props.list?.scope || props.list?.scope === WishlistScopeType.Private,
+  };
+}
+
+const { value: name } = useField<string>("name");
 const { value: description } = useField<string | undefined>("description");
-const { value: isPrivate } = useField<boolean | undefined>("isPrivate");
+const { value: isPrivate } = useField<boolean>("isPrivate");
 
 const isEditMode = computed<boolean>(() => !!props.list);
-const canSave = computed<boolean>(() => meta.value.dirty && meta.value.valid);
 
-async function save(closeHandle: () => void): Promise<void> {
-  if (!meta.value.valid) {
-    return;
-  }
+async function save(close: () => void): Promise<void> {
+  const payload = {
+    listName: name.value.trim(),
+    description: description.value?.trim(),
+    scope: isPrivate.value ? WishlistScopeType.Private : WishlistScopeType.Organization,
+  };
 
-  const scope = isPrivate.value ? WishlistScopeType.Private : WishlistScopeType.Organization;
-
-  if (isEditMode.value) {
+  if (props.list) {
     await updateWishlist({
-      listId: props.list!.id!,
-      listName: name.value?.trim(),
-      description: description.value?.trim(),
-      scope,
+      listId: props.list.id,
+      ...payload,
     });
   } else {
-    await createWishlist({
-      listName: name.value?.trim(),
-      description: description.value?.trim(),
-      scope,
-    });
+    await createWishlist(payload);
   }
 
-  closeHandle();
+  close();
 }
+
+watch(
+  () => props.list,
+  () => resetForm({ values: getFormValues() }),
+);
 </script>

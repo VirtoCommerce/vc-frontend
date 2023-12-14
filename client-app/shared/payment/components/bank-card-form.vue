@@ -77,8 +77,8 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { vMaska } from "maska";
-import { useField, useForm } from "vee-validate";
-import { computed, ref, watch } from "vue";
+import { useForm } from "vee-validate";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
@@ -104,8 +104,6 @@ interface IProps {
 
 const { t } = useI18n();
 
-const initialValues = ref<BankCardType>({ number: "", cardholderName: "", month: "", year: "", securityCode: "" });
-
 const labels = computed(() => {
   return {
     number: t("shared.payment.bank_card_form.number_label"),
@@ -129,23 +127,31 @@ const validationSchema = toTypedSchema(
     cardholderName: string().required().max(64).label(labels.value.cardholderName),
     month: monthYupSchema,
     year: string().when("month", ([month], schema) => {
-      return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
+      return monthYupSchema.isValidSync(month) ? schema.required().length(2).label(labels.value.yearLabel) : schema;
     }),
     securityCode: string().required().min(3).max(4).label(labels.value.securityCode),
   }),
 );
 
-const { values, meta, errors: formErrors } = useForm<BankCardType>({ validationSchema, initialValues });
+const {
+  values,
+  meta,
+  errors: formErrors,
+  defineField,
+  resetForm,
+} = useForm({
+  validationSchema,
+});
 
-const { value: number } = useField<string>("number", undefined, { syncVModel: false });
-const { value: cardholderName } = useField<string>("cardholderName", undefined, { syncVModel: false });
-const { value: month } = useField<string>("month", undefined, { syncVModel: false });
-const { value: year } = useField<string>("year", undefined, { syncVModel: false });
-const { value: securityCode } = useField<string>("securityCode", undefined, { syncVModel: false });
+const [number] = defineField("number");
+const [cardholderName] = defineField("cardholderName");
+const [month] = defineField("month");
+const [year] = defineField("year");
+const [securityCode] = defineField("securityCode");
 
 const expirationDate = computed({
-  get: () => (month.value.length > 1 || year.value ? `${month.value || "  "} / ${year.value}` : month.value),
-  set(value: string) {
+  get: () => `${month.value} / ${year.value}`,
+  set: (value: string) => {
     const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
     month.value = rawMonth;
     year.value = rawYear;
@@ -156,7 +162,7 @@ const expirationDateErrors = computed<string>(() =>
   [formErrors.value.month, formErrors.value.year, props.errors.month, props.errors.year].filter(Boolean).join(". "),
 );
 
-const cardNumber = computed<string | undefined>(() => (number.value ? number.value.match(/.{1,4}/g)?.join(" ") : ""));
+const cardNumber = computed<string | undefined>(() => number.value?.match(/.{1,4}/g)?.join(" "));
 
 function updateValue(value?: string): void {
   number.value = value ? value.replace(/ /g, "") : "";
@@ -168,8 +174,7 @@ function input() {
 
 watch(
   () => props.modelValue,
-  (value) => (initialValues.value = clone(value)),
-  { deep: true },
+  (value) => resetForm({ values: value }),
 );
 
 watch(
