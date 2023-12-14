@@ -866,8 +866,10 @@
     "account": {
       "addresses": {
         "meta": {
-          "title": "@:pages.account.addresses.addresses_title"
+          "title": "@:pages.account.addresses.title",
+          "table_description": "available addresses"
         },
+        "title": "Addresses",
         "new_address_title": "New address",
         "edit_address_title": "Edit address",
         "make_default_button": "Set as default",
