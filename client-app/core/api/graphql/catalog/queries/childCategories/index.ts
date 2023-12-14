@@ -36,7 +36,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
   `;
 }
 
-export async function getChildCategories(payload: QueryChildCategoriesArgs): Promise<Category[]> {
+export async function getChildCategories(payload: Omit<QueryChildCategoriesArgs, "storeId">): Promise<Category[]> {
   const { storeId, userId, cultureName, currencyCode } = globals;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "childCategories">>, QueryChildCategoriesArgs>({
