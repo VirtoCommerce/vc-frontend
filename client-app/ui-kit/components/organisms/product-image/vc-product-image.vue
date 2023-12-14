@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { Pagination, Navigation } from "swiper";
+import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { ref } from "vue";
 import type { ImageType } from "@/core/api/graphql/types";

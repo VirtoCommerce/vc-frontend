@@ -24,7 +24,7 @@ import {
   changeSelectedCartItems,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
-import { ProductType } from "@/core/enums";
+import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
@@ -33,7 +33,6 @@ import { usePopup } from "@/shared/popup";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
-import { getLineItemValidationErrorsGroupedBySKU } from "../utils";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
   CartType,
@@ -77,8 +76,21 @@ const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
   (cart.value?.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
 );
 
+const hasSelectedItemsWithValidationErrors = computed(
+  () =>
+    cart.value?.validationErrors?.some(
+      (error) =>
+        (error.objectType === ValidationErrorObjectType.CartProduct &&
+          cart.value?.items?.some((item) => item.selectedForCheckout && item.productId === error.objectId)) ||
+        (error.objectType === ValidationErrorObjectType.LineItem &&
+          cart.value?.items?.some((item) => item.selectedForCheckout && item.id === error.objectId)),
+    ),
+);
+
 const hasValidationErrors = computedEager<boolean>(
-  () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
+  () =>
+    (!!cart.value?.validationErrors?.length && hasSelectedItemsWithValidationErrors.value) ||
+    !!cart.value?.items?.some((item) => item.selectedForCheckout && item.validationErrors?.length),
 );
 
 const hasOnlyUnselectedValidationError = computedEager<boolean>(
@@ -216,12 +228,18 @@ export function useCart() {
 
       cart.value = data.cart;
 
-      const errorsGroupBySKU = getLineItemValidationErrorsGroupedBySKU(data.errors);
-
       return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
         productSku,
         quantity,
-        errors: errorsGroupBySKU[productSku],
+        // Workaround as we don't know product IDs on bulk order
+        isAddedToCart: data.cart.items?.some(
+          (item) =>
+            item.sku === productSku &&
+            !data.cart.validationErrors.some(
+              (error) =>
+                error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
+            ),
+        ),
       }));
     } catch (e) {
       Logger.error(`${useCart.name}.${addBulkItemsToCart.name}`, e);

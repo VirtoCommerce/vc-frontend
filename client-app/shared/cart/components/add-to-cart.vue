@@ -58,7 +58,7 @@ import { useField } from "vee-validate";
 import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
-import { PRODUCT_OBJECT_TYPE } from "@/core/constants";
+import { ValidationErrorObjectType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
@@ -157,7 +157,8 @@ async function onChange() {
           reason: updatedCart.validationErrors
             ?.filter(
               (validationError) =>
-                validationError.objectId === props.product.code && validationError.objectType === PRODUCT_OBJECT_TYPE,
+                validationError.objectId === props.product.id &&
+                validationError.objectType === ValidationErrorObjectType.CatalogProduct,
             )
             .map((el) => {
               return getTranslation({

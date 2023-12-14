@@ -91,3 +91,9 @@ export async function asyncForEach<T>(
     await callbackFn(array[i], i, array);
   }
 }
+
+export function extractNumberFromString(str: string): number {
+  const regex = /\d+/;
+  const match = regex.exec(str);
+  return match ? parseInt(match[0]) : 0;
+}

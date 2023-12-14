@@ -31,7 +31,7 @@
 
 <script setup lang="ts" generic="T">
 import _ from "lodash";
-import { Pagination, Navigation } from "swiper";
+import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { computed, getCurrentInstance } from "vue";
 import type { NavigationOptions, PaginationOptions } from "swiper/types";
