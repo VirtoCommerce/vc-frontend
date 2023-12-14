@@ -82,7 +82,7 @@
         </template>
 
         <!-- Empty list -->
-        <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')">
+        <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')" class="lg:mt-32">
           <template #icon>
             <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
           </template>

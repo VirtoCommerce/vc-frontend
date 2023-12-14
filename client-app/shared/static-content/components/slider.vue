@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core/index";
-import { Navigation } from "swiper";
+import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed } from "vue";
 import { BREAKPOINTS } from "@/core/constants";

@@ -24,7 +24,7 @@ import {
   changeSelectedCartItems,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
-import { ProductType } from "@/core/enums";
+import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
@@ -77,8 +77,21 @@ const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
   (cart.value?.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
 );
 
+const hasSelectedItemsWithValidationErrors = computed(
+  () =>
+    cart.value?.validationErrors?.some(
+      (error) =>
+        (error.objectType === ValidationErrorObjectType.CartProduct &&
+          cart.value?.items?.some((item) => item.selectedForCheckout && item.productId === error.objectId)) ||
+        (error.objectType === ValidationErrorObjectType.LineItem &&
+          cart.value?.items?.some((item) => item.selectedForCheckout && item.id === error.objectId)),
+    ),
+);
+
 const hasValidationErrors = computedEager<boolean>(
-  () => !!cart.value?.validationErrors?.length || !!cart.value?.items?.some((item) => item.validationErrors?.length),
+  () =>
+    (!!cart.value?.validationErrors?.length && hasSelectedItemsWithValidationErrors.value) ||
+    !!cart.value?.items?.some((item) => item.selectedForCheckout && item.validationErrors?.length),
 );
 
 const hasOnlyUnselectedValidationError = computedEager<boolean>(

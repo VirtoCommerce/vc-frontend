@@ -1,6 +1,6 @@
 {
   "name": "vc-theme-b2b-vue",
-  "version": "1.45.0",
+  "version": "1.46.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -48,7 +48,7 @@
     "lodash": "^4.17.21",
     "marked": "^9.1.1",
     "maska": "^2.1.10",
-    "swiper": "^8.4.7",
+    "swiper": "11.0.4",
     "tw-elements": "^1.0.0",
     "vee-validate": "^4.11.8",
     "vue": "^3.3.4",
@@ -87,6 +87,7 @@
     "@vitejs/plugin-vue": "^4.3.4",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/test-utils": "^2.4.3",
     "@vue/tsconfig": "^0.4.0",
     "adm-zip": "^0.5.10",
     "autoprefixer": "^10.4.16",

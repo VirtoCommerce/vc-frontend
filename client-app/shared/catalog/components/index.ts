@@ -5,6 +5,7 @@ export { default as CountInCart } from "./count-in-cart.vue";
 export { default as DiscountBadge } from "./discount-badge.vue";
 export { default as DisplayProducts } from "./display-products.vue";
 export { default as FacetFilter } from "./facet-filter.vue";
+export { default as ImageGallery } from "./image-gallery.vue";
 export { default as InStock } from "./in-stock.vue";
 export { default as ProductCardCompare } from "./product-card-compare.vue";
 export { default as ProductCardGrid } from "./product-card-grid.vue";
