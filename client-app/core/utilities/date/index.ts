@@ -1,7 +1,7 @@
 /**
- * Converts ISO 8601 date-only to full date
- * @param dateOnly ISO 8601 date without time
- * @returns ISO 8601 date with time
+ * Converts ISO 8601 date-only (YYYY-MM-DD) to full date (YYYY-MM-DDTHH:mm:ss.sssZ)
+ * @param dateOnly ISO 8601 date without time (YYYY-MM-DD)
+ * @returns ISO 8601 date with time (YYYY-MM-DDTHH:mm:ss.sssZ)
  */
 export function toStartDateFilterValue(dateOnly?: string): string | undefined {
   if (dateOnly) {
@@ -10,9 +10,9 @@ export function toStartDateFilterValue(dateOnly?: string): string | undefined {
 }
 
 /**
- * Adds one day and converts ISO 8610 date-only to full date
- * @param dateOnly ISO 8601 date without time
- * @returns ISO 8601 date with time + 1 day (so from [13 Dec to 14 Dec) means full day of 13 Dec)
+ * Adds one day and converts ISO 8610 date-only (YYYY-MM-DD) to full date (YYYY-MM-DDTHH:mm:ss.sssZ)
+ * @param dateOnly ISO 8601 date without time (YYYY-MM-DD)
+ * @returns ISO 8601 date with time (YYYY-MM-DDTHH:mm:ss.sssZ) + 1 day (so from [13 Dec to 14 Dec) means full day of 13 Dec)
  */
 export function toEndDateFilterValue(dateOnly?: string): string | undefined {
   if (dateOnly) {
