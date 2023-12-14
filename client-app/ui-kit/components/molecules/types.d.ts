@@ -17,6 +17,7 @@ declare module "@vue/runtime-core" {
     VcDropdownMenu: typeof Components.VcDropdownMenu;
     VcEmptyPage: typeof Components.VcEmptyPage;
     VcExpansionPanel: typeof Components.VcExpansionPanel;
+    /** @deprecated use Swiper instead. */
     VcImageGallery: typeof Components.VcImageGallery;
     VcInput: typeof Components.VcInput;
     VcItemPrice: typeof Components.VcItemPrice;
@@ -30,6 +31,7 @@ declare module "@vue/runtime-core" {
     VcLoaderWithText: typeof Components.VcLoaderWithText;
     VcLayoutWithRightSidebar: typeof Components.VcLayoutWithRightSidebar;
     VcMenuItem: typeof Components.VcMenuItem;
+    VcNavButton: typeof Components.VcNavButton;
     VcProductPrice: typeof Components.VcProductPrice;
     VcQuantity: typeof Components.VcQuantity;
     VcSelect: typeof Components.VcSelect;
@@ -38,5 +40,6 @@ declare module "@vue/runtime-core" {
     VcRating: typeof Components.VcRating;
     VcVendor: typeof Components.VcVendor;
     VcWidget: typeof Components.VcWidget;
+    VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;
   }
 }

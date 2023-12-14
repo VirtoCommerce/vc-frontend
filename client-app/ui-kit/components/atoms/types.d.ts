@@ -14,6 +14,7 @@ declare module "@vue/runtime-core" {
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     /** @deprecated use {@link VcWidget} instead. */
     VcCardWidget: typeof Components.VcCardWidget;
+    VcCarouselPagination: typeof Components.VcCarouselPagination;
     VcCheckbox: typeof Components.VcCheckbox;
     VcContainer: typeof Components.VcContainer;
     VcDateSelector: typeof Components.VcDateSelector;

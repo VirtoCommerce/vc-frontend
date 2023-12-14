@@ -413,7 +413,7 @@
       },
       "registration_success_dialog": {
         "title": "Registration",
-        "message": "Registration successfully complete!",
+        "message": "Registration successfully completed!",
         "ok_button": "@:common.buttons.home"
       },
       "reorder_info_popup": {
@@ -686,6 +686,7 @@
         "remove_list_button": "Delete",
         "make_private_button": "Make private",
         "share_button": "Share",
+        "saved": "Saved",
         "status": {
           "shared": "Shared",
           "private": "Private"

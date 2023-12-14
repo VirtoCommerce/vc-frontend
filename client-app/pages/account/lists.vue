@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="mx-5 lg:mx-0">
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between lg:mx-0">
+    <div class="flex items-center justify-between">
       <h2 class="text-3xl font-bold uppercase text-gray-800">
         {{ $t("shared.account.navigation.links.lists") }}
       </h2>
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Lists -->
-    <div v-else-if="lists.length" class="lg:space-y-3">
+    <div v-else-if="lists.length" class="space-y-3 md:space-y-2.5">
       <WishlistCard
         v-for="list in lists"
         :key="list.id"
