@@ -598,6 +598,9 @@
         "title": "Select payment method"
       },
       "select_address_dialog": {
+        "meta": {
+          "table_description": "available addresses"
+        },
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
@@ -929,7 +932,8 @@
       },
       "orders": {
         "meta": {
-          "title": "@:pages.account.orders.title"
+          "title": "@:pages.account.orders.title",
+          "table_description": "@:pages.account.orders.title"
         },
         "search_placeholder": "Enter keyword...",
         "title": "Orders",
