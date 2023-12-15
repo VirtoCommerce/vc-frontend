@@ -6,9 +6,9 @@ import type { MaybeRef } from "vue";
 import type { NumberSchema } from "yup";
 
 export function useQuantityValidationSchema(payload: {
-  minQuantity?: MaybeRef<number>;
-  maxQuantity?: MaybeRef<number>;
-  availableQuantity?: MaybeRef<number>;
+  minQuantity?: MaybeRef<number | undefined>;
+  maxQuantity?: MaybeRef<number | undefined>;
+  availableQuantity?: MaybeRef<number | undefined>;
 }) {
   const { t } = useI18n();
 
@@ -41,22 +41,22 @@ export function useQuantityValidationSchema(payload: {
         if (payload.availableQuantity && payload.minQuantity) {
           return schema.test(
             "minMaxValue",
-            t("shared.cart.add_to_cart.errors.min_max", [payload.minQuantity, payload.availableQuantity]),
-            (value) => !!value && value >= unref(payload.minQuantity!) && value <= unref(payload.availableQuantity!),
+            t("shared.cart.add_to_cart.errors.min_max", [unref(payload.minQuantity), unref(payload.availableQuantity)]),
+            (value) => !!value && value >= unref(payload.minQuantity)! && value <= unref(payload.availableQuantity)!,
           );
         }
 
         if (payload.availableQuantity && payload.maxQuantity && payload.availableQuantity >= payload.maxQuantity) {
           return schema.max(
-            unref(payload.maxQuantity!),
-            t("shared.cart.add_to_cart.errors.max", [payload.maxQuantity]),
+            unref(payload.maxQuantity)!,
+            t("shared.cart.add_to_cart.errors.max", [unref(payload.maxQuantity)]),
           );
         }
 
         if (payload.availableQuantity) {
           return schema.max(
-            unref(payload.availableQuantity!),
-            t("shared.cart.add_to_cart.errors.max", [payload.availableQuantity]),
+            unref(payload.availableQuantity)!,
+            t("shared.cart.add_to_cart.errors.max", [unref(payload.availableQuantity)]),
           );
         }
 
