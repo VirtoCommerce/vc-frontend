@@ -1086,7 +1086,8 @@
       },
       "members": {
         "meta": {
-          "title": "@:pages.company.members.title"
+          "title": "@:pages.company.members.title",
+          "table_description": "@:pages.company.members.title"
         },
         "title": "Company Members",
         "search_placeholder": "Search for users",
