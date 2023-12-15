@@ -603,7 +603,7 @@ function openBranchesDialog(fromMobileFilter: boolean) {
             inStock: mobileFilters.inStock,
           };
 
-          updateMobileFilters(newFilters);
+          void updateMobileFilters(newFilters);
         } else {
           savedBranches.value = branches;
         }
@@ -700,7 +700,7 @@ watch(
             .filter(Boolean)
             .join(" ");
 
-      fetchCategory({
+      void fetchCategory({
         categoryId,
         maxLevel: 1,
         onlyActive: true,

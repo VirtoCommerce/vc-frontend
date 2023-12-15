@@ -162,7 +162,7 @@ async function onChange() {
           reason: updatedCart.validationErrors
             ?.filter(
               (validationError) =>
-                validationError.objectId === props.product.code &&
+                validationError.objectId === props.product.id &&
                 validationError.objectType === ValidationErrorObjectType.CatalogProduct,
             )
             .map((el) => {
