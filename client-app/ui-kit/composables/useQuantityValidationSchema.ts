@@ -12,7 +12,7 @@ export function useQuantityValidationSchema(payload: {
 }) {
   const { t } = useI18n();
 
-  function setMinMaxForSchema(
+  function setMinMaxLimitsForSchema(
     schema: NumberSchema,
     minQuantity?: MaybeRef<number>,
     maxQuantity?: MaybeRef<number>,
@@ -62,7 +62,7 @@ export function useQuantityValidationSchema(payload: {
         }
 
         if (payload.minQuantity || payload.maxQuantity) {
-          return setMinMaxForSchema(schema, payload.minQuantity, payload.maxQuantity);
+          return setMinMaxLimitsForSchema(schema, payload.minQuantity, payload.maxQuantity);
         }
 
         return schema.max(
