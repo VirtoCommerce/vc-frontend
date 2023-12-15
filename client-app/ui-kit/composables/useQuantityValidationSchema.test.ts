@@ -9,6 +9,7 @@ describe("use-quantity-validation-schema", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
     expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(0)).toBeFalsy();
     expect(quantitySchema.value.isValidSync(-1)).toBeFalsy();
   });
 
@@ -16,11 +17,10 @@ describe("use-quantity-validation-schema", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
     expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
-    expect(quantitySchema.value.isValidSync(0)).toBeFalsy();
     expect(quantitySchema.value.isValidSync(1.5)).toBeFalsy();
   });
 
-  it("quantity is less than system linmit", () => {
+  it("quantity is less than system limit", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
     expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
