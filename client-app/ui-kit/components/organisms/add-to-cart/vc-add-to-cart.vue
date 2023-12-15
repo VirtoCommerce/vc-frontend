@@ -3,8 +3,8 @@
     <VcInput
       v-model.number="quantity"
       :disabled="disabled"
-      :min="minQty"
-      :max="maxQty"
+      :min="minQuantity"
+      :max="maxQuantity"
       single-line-message
       center
       class="w-full"
@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
+import { toRefs } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -59,10 +60,9 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
+const { minQuantity, maxQuantity, availableQuantity } = toRefs(props);
+
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
-const minQty = computed(() => props.minQuantity);
-const maxQty = computed(() => props.maxQuantity);
-const availableQuantity = computed(() => props.availableQuantity);
 
 const buttonText = computed<string>(() =>
   props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
@@ -71,9 +71,9 @@ const buttonText = computed<string>(() =>
 const quantity = ref<number | undefined>();
 
 const { quantitySchema } = useQuantityValidationSchema({
-  minQuantity: minQty.value,
-  maxQuantity: maxQty.value,
-  availableQuantity: availableQuantity.value,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
