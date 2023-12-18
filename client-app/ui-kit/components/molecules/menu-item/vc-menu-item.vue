@@ -150,7 +150,7 @@ onMounted(() => {
       &--md {
         --content-height: 1.25rem;
 
-        @apply gap-2 p-3 text-sm/[1rem];
+        @apply gap-2 px-3 py-2.5 text-sm/[1rem];
       }
 
       &--lg {

@@ -3,8 +3,9 @@
     <template #trigger>
       <VcButton icon="cog" color="secondary" variant="outline" size="xs" />
     </template>
+
     <template #content>
-      <VcMenuItem color="secondary" @click="$emit('edit')">
+      <VcMenuItem color="secondary" nowrap @click="$emit('edit')">
         <VcIcon name="pencil" />
 
         <span>{{ $t("shared.wishlists.list_card.list_edit_button") }}</span>
@@ -14,22 +15,27 @@
         <VcMenuItem
           v-if="currentScope === WishlistScopeType.Private"
           color="secondary"
+          nowrap
           @click="$emit('setScope', WishlistScopeType.Organization)"
         >
           <VcIcon name="users" class="text-[--color-accent-500]" />
-          <span class="whitespace-nowrap">{{ $t("shared.wishlists.list_card.share_button") }}</span>
+
+          <span>{{ $t("shared.wishlists.list_card.share_button") }}</span>
         </VcMenuItem>
+
         <VcMenuItem
           v-else-if="currentScope === WishlistScopeType.Organization"
           color="secondary"
+          nowrap
           @click="$emit('setScope', WishlistScopeType.Private)"
         >
-          <VcIcon name="lock-closed" class="text-[--color-secondary-500]" />
-          <span class="whitespace-nowrap">{{ $t("shared.wishlists.list_card.make_private_button") }}</span>
+          <VcIcon name="lock-closed" />
+
+          <span>{{ $t("shared.wishlists.list_card.make_private_button") }}</span>
         </VcMenuItem>
       </template>
 
-      <VcMenuItem color="secondary" @click="$emit('remove')">
+      <VcMenuItem color="secondary" nowrap @click="$emit('remove')">
         <VcIcon name="delete-2" class="text-[--color-danger-500]" />
 
         <span>{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>

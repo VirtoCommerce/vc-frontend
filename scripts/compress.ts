@@ -1,13 +1,6 @@
 import { resolve } from "path";
 import AdmZip from "adm-zip";
 import chalk from "chalk";
-
-export function getArtifactFileName(defaultFileName?: string) {
-  const customFileName = process.argv[2];
-
-  return customFileName ?? defaultFileName;
-}
-
 export async function compress(artifactFileName: string, add: (archive: AdmZip) => void) {
   const cwd = process.cwd();
 
