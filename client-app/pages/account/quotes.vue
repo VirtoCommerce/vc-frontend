@@ -160,9 +160,10 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
+import { Sort } from "@/core/types";
 import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
 import type { QuoteType } from "@/core/api/graphql/types";
+import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
@@ -233,7 +234,9 @@ async function resetKeyword(): Promise<void> {
 }
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
-  sortQueryParam.value = getSortingExpression(sortInfo);
+  // Workaround. Put Sort in vc-table then delete
+  const sortObj = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
+  sortQueryParam.value = sortObj.toString();
   sort.value = sortInfo;
   page.value = 1;
   await fetchQuotes();
@@ -242,7 +245,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 watch(
   () => sortQueryParam.value,
   async (value: string) => {
-    await applySorting(getSortInfoFromStringExpression(value));
+    await applySorting(Sort.fromString(value));
   },
   {
     immediate: true,
