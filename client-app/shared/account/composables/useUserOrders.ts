@@ -75,7 +75,15 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterData): str
   const startDateFilterValue = toStartDateFilterValue(filterData.startDate);
   const endDateFilterValue = toEndDateFilterValue(filterData.endDate);
   if (startDateFilterValue || endDateFilterValue) {
-    filterExpression += `createddate:[${[startDateFilterValue, "TO", endDateFilterValue].join(" ").trim()}) `;
+    let createdDateFilterValue = "";
+    if (startDateFilterValue) {
+      createdDateFilterValue += `"${startDateFilterValue}" `;
+    }
+    createdDateFilterValue += "TO";
+    if (endDateFilterValue) {
+      createdDateFilterValue += ` "${endDateFilterValue}"`;
+    }
+    filterExpression += `createddate:[${createdDateFilterValue})`;
   }
 
   filterExpression = filterExpression.trim();
