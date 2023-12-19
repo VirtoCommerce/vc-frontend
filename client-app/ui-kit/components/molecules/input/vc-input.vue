@@ -125,7 +125,11 @@ const inputValue = computed({
       return;
     }
 
-    emit("update:modelValue", (props.type === "number" ? Number(value) : value) as T);
+    if (props.type === "number") {
+      emit("update:modelValue", value !== undefined && value !== "" ? (Number(value) as T) : undefined);
+    } else {
+      emit("update:modelValue", value);
+    }
   },
 });
 

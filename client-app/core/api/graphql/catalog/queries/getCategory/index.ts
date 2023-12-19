@@ -70,7 +70,7 @@ function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 
 
 export type ExtendedQueryCategoryArgsType = QueryChildCategoriesArgs;
 
-export async function getCategory(payload: ExtendedQueryCategoryArgsType) {
+export async function getCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
   const { storeId, userId, cultureName, currencyCode } = globals;
   const queryDocument = getCategoryQueryDocument(payload.categoryId ?? "", payload.maxLevel);
 

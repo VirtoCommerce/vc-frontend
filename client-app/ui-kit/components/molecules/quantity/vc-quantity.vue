@@ -71,20 +71,18 @@ const { errorMessage, setValue, validate } = useField("quantity", rules);
 function changeQuantity() {
   clearTimeout(timeoutIdOfQuantityChange);
 
-  const newQuantity = Number(quantity.value);
-
-  if (props.maxQuantity && newQuantity > props.maxQuantity) {
-    quantity.value = props.modelValue;
-
-    return;
-  } else if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
+  if (!isQuantity(quantity.value) || quantity.value === props.modelValue) {
     return;
   }
 
-  emit("update:modelValue", newQuantity);
+  emit("update:modelValue", quantity.value);
 }
 
 async function onQuantityChanged(): Promise<void> {
+  if (!isQuantity(quantity.value)) {
+    return;
+  }
+
   setValue(quantity.value);
 
   const { valid } = await validate();
@@ -98,9 +96,7 @@ async function onQuantityChanged(): Promise<void> {
 }
 
 function onFocusOut() {
-  const newQuantity = Number(quantity.value);
-
-  if (isNaN(newQuantity) || newQuantity < 1) {
+  if (!isQuantity(quantity.value)) {
     quantity.value = props.modelValue;
   }
 }
@@ -109,6 +105,11 @@ function onKeydown(e: KeyboardEvent) {
   if (e.key.toLowerCase() === "e" || e.key === "-" || e.key === "." || e.key === ",") {
     e.preventDefault();
   }
+}
+
+function isQuantity(qty: unknown): qty is number {
+  const qtyAsNumber = Number(quantity.value);
+  return !isNaN(qtyAsNumber) && Number(qtyAsNumber) >= 1;
 }
 
 watchEffect(() => {

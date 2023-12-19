@@ -44,7 +44,7 @@ export function useCategory() {
     },
   };
 
-  async function fetchCategory(payload: ExtendedQueryCategoryArgsType) {
+  async function fetchCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
     loading.value = true;
     try {
       const data = await getCategory(payload);
