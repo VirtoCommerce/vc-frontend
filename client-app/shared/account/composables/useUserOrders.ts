@@ -83,7 +83,7 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterData): str
     if (endDateFilterValue) {
       createdDateFilterValue += ` "${endDateFilterValue}"`;
     }
-    filterExpression += `createddate:[${createdDateFilterValue})`;
+    filterExpression += `createddate:[${createdDateFilterValue}]`;
   }
 
   filterExpression = filterExpression.trim();
