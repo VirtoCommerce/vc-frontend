@@ -32,7 +32,7 @@ query GetSearchResults(
     totalCount
     items {
       name
-      relativeUrl
+      permalink
     }
   }
 
