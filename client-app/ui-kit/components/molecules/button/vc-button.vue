@@ -62,7 +62,7 @@ export interface IEmits {
 }
 
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
+  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
   size?: "xs" | "sm" | "md" | "lg";
   variant?: "solid" | "outline" | "solid-lightest";
   type?: "button" | "reset" | "submit";
@@ -126,7 +126,7 @@ const linkAttr = computed(() => {
 
 <style scoped lang="scss">
 .vc-button {
-  $colors: primary, secondary, success, info, neutral, warning, danger;
+  $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
   $prepend: "";
   $append: "";
@@ -244,10 +244,10 @@ const linkAttr = computed(() => {
     }
 
     &--solid-lightest--#{$color} {
-      @apply bg-[--color-additional-50] text-[--color-#{$color}-600] border-[--color-additional-50];
+      @apply bg-[--color-additional-50] text-[--color-#{$color}-500] border-[--color-additional-50];
 
       &:hover {
-        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-800];
+        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-700];
       }
     }
 

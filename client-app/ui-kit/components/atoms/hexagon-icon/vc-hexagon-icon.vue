@@ -8,13 +8,14 @@
 import { computed } from "vue";
 
 interface IProps {
-  size?: number;
+  size?: number | string;
   icon?: string;
 }
 
 const props = defineProps<IProps>();
 
-const style = computed(() => (props.size ? { width: `${props.size}px` } : {}));
+const width = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
+const style = computed(() => (props.size ? { width: width.value } : {}));
 </script>
 
 <style lang="scss">
