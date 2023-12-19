@@ -34,11 +34,7 @@ export function useQuantityValidationSchema(payload: {
       return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
     }
 
-    if (availableQuantity) {
-      return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
-    }
-
-    return schema;
+    return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
   }
 
   const quantitySchema = computed<NumberSchema>(() =>
