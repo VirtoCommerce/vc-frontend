@@ -13,7 +13,7 @@
     >
       <div class="flex grow">
         <VcInput
-          v-model.trim="keyword"
+          v-model="keyword"
           :disabled="fetching"
           :placeholder="$t('pages.account.quotes.search_placeholder')"
           maxlength="64"
