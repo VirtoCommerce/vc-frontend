@@ -14,7 +14,7 @@ export function useQuantityValidationSchema(payload: {
   const { availableQuantity, minQuantity, maxQuantity } = payload;
 
   function setAvailabilityForSchema(schema: NumberSchema): NumberSchema {
-    if (minQuantity && minQuantity <= availableQuantity) {
+    if (availableQuantity && minQuantity && minQuantity <= availableQuantity) {
       return schema.test(
         "minMaxValue",
         t("shared.cart.add_to_cart.errors.min_max", [minQuantity, availableQuantity]),
@@ -22,19 +22,23 @@ export function useQuantityValidationSchema(payload: {
       );
     }
 
-    if (minQuantity && minQuantity > availableQuantity) {
+    if (availableQuantity && minQuantity && minQuantity > availableQuantity) {
       return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.min_not_available", [availableQuantity]));
     }
 
-    if (maxQuantity && maxQuantity <= availableQuantity) {
+    if (availableQuantity && maxQuantity && maxQuantity <= availableQuantity) {
       return schema.max(maxQuantity, t("shared.cart.add_to_cart.errors.max", [maxQuantity]));
     }
 
-    if (maxQuantity && maxQuantity > availableQuantity) {
+    if (availableQuantity && maxQuantity && maxQuantity > availableQuantity) {
       return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
     }
 
-    return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
+    if (availableQuantity) {
+      return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
+    }
+
+    return schema;
   }
 
   const quantitySchema = computed<NumberSchema>(() =>
