@@ -14,31 +14,30 @@ export function useQuantityValidationSchema(payload: {
   const { availableQuantity, minQuantity, maxQuantity } = payload;
 
   function setAvailabilityForSchema(schema: NumberSchema): NumberSchema {
-    if (availableQuantity && minQuantity && minQuantity <= availableQuantity) {
+    if (minQuantity && minQuantity <= availableQuantity!) {
       return schema.test(
         "minMaxValue",
-        t("shared.cart.add_to_cart.errors.min_max", [minQuantity, availableQuantity]),
-        (value) => !!value && value >= minQuantity && value <= availableQuantity,
+        t("shared.cart.add_to_cart.errors.min_max", [minQuantity, availableQuantity!]),
+        (value) => !!value && value >= minQuantity && value <= availableQuantity!,
       );
     }
 
-    if (availableQuantity && minQuantity && minQuantity > availableQuantity) {
-      return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.min_not_available", [availableQuantity]));
+    if (minQuantity && minQuantity > availableQuantity!) {
+      return schema.max(
+        availableQuantity!,
+        t("shared.cart.add_to_cart.errors.min_not_available", [availableQuantity!]),
+      );
     }
 
-    if (availableQuantity && maxQuantity && maxQuantity <= availableQuantity) {
+    if (maxQuantity && maxQuantity <= availableQuantity!) {
       return schema.max(maxQuantity, t("shared.cart.add_to_cart.errors.max", [maxQuantity]));
     }
 
-    if (availableQuantity && maxQuantity && maxQuantity > availableQuantity) {
-      return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
+    if (maxQuantity && maxQuantity > availableQuantity!) {
+      return schema.max(availableQuantity!, t("shared.cart.add_to_cart.errors.max", [availableQuantity!]));
     }
 
-    if (availableQuantity) {
-      return schema.max(availableQuantity, t("shared.cart.add_to_cart.errors.max", [availableQuantity]));
-    }
-
-    return schema;
+    return schema.max(availableQuantity!, t("shared.cart.add_to_cart.errors.max", [availableQuantity!]));
   }
 
   const quantitySchema = computed<NumberSchema>(() =>
