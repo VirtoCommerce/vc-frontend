@@ -10,7 +10,7 @@
     >
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
         <VcInput
-          v-model.trim="firstName"
+          v-model="firstName"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
@@ -23,7 +23,7 @@
         />
 
         <VcInput
-          v-model.trim="lastName"
+          v-model="lastName"
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
@@ -94,8 +94,8 @@ usePageHead({
 
 const validationSchema = toTypedSchema(
   object({
-    firstName: string().required().max(64),
-    lastName: string().required().max(64),
+    firstName: string().trim().required().max(64),
+    lastName: string().trim().required().max(64),
     email: string(),
   }),
 );
@@ -129,16 +129,13 @@ const showErrors = (responseErrors: IdentityErrorType[]) => {
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const onSubmit = handleSubmit(async (data) => {
+  const trimmedFirstName = data.firstName.trim();
+  const trimmedLastName = data.lastName.trim();
+
   const results: boolean[] = [];
   commonErrors.value = [];
-  if (
-    (data.firstName && initialValues.value.firstName !== data.firstName) ||
-    (data.lastName && initialValues.value.lastName !== data.lastName)
-  ) {
-    const userDataUpdateResult = await updateUser({
-      firstName: data.firstName!,
-      lastName: data.lastName!,
-    });
+  if (initialValues.value.firstName !== trimmedFirstName || initialValues.value.lastName !== trimmedLastName) {
+    const userDataUpdateResult = await updateUser({ firstName: trimmedFirstName, lastName: trimmedLastName });
 
     results.push(userDataUpdateResult.succeeded);
 
