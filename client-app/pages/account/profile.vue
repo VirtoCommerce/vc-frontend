@@ -14,7 +14,7 @@
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
-          :maxlength="64"
+          :maxlength="MAX_NAME_LENGTH"
           :message="errors.firstName"
           :error="!!errors.firstName"
           name="firstName"
@@ -27,7 +27,7 @@
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :disabled="isSubmitting"
-          :maxlength="64"
+          :maxlength="MAX_NAME_LENGTH"
           :message="errors.lastName"
           :error="!!errors.lastName"
           name="lastName"
@@ -84,6 +84,8 @@ import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
+const MAX_NAME_LENGTH = 64;
+
 const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { openPopup } = usePopup();
@@ -94,8 +96,8 @@ usePageHead({
 
 const validationSchema = toTypedSchema(
   object({
-    firstName: string().trim().required().max(64),
-    lastName: string().trim().required().max(64),
+    firstName: string().trim().required().max(MAX_NAME_LENGTH),
+    lastName: string().trim().required().max(MAX_NAME_LENGTH),
     email: string(),
   }),
 );
