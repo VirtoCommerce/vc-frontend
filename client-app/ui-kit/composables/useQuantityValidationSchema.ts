@@ -50,8 +50,8 @@ export function useQuantityValidationSchema(payload: {
           availableQuantity &&
           minQuantity &&
           maxQuantity &&
-          availableQuantity > minQuantity &&
-          availableQuantity > maxQuantity
+          availableQuantity >= minQuantity &&
+          availableQuantity >= maxQuantity
         ) {
           return schema.test(
             "minMaxValue",
