@@ -18,7 +18,6 @@ export { default as ProductSkeletonGrid } from "./product-skeleton-grid.vue";
 export { default as ProductSkeletonList } from "./product-skeleton-list.vue";
 export { default as ProductTitledBlock } from "./product-titled-block.vue";
 export { default as ProductVariationCard } from "./product-variation-card.vue";
-export { default as ProductsFiltersSidebar } from "./products-filters.vue";
 export { default as VariationProperty } from "./variation-property.vue";
 export { default as Vendor } from "./vendor.vue";
 export { default as ViewMode } from "./view-mode.vue";

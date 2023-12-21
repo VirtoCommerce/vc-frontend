@@ -1141,10 +1141,6 @@
         "description": "Test catalog page description"
       },
       "title": "Catalog",
-      "search_card": {
-        "title": "Search within these results",
-        "search_button": "Go"
-      },
       "instock_filter_card": {
         "title": "In stock",
         "checkbox_label": "Show in stock",
