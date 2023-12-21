@@ -1,7 +1,6 @@
 <template>
   <div class="space-y-6">
     <ProductPriceBlock :product="product">
-      <!-- Price & Delivery (with variations) -->
       <template v-if="!!product.hasVariations">
         <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
           <span>
@@ -19,7 +18,6 @@
         </VcButton>
       </template>
 
-      <!-- Price & Delivery (without variations) -->
       <template v-else>
         <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
           <span>
@@ -46,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed } from "@vueuse/core";
 import { computed } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
@@ -66,7 +63,7 @@ const { getItemsTotal } = useCart();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
-const variationsCartTotalAmount = eagerComputed<number>(() => {
+const variationsCartTotalAmount = computed<number>(() => {
   if (!props.product) {
     return 0;
   }
