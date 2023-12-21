@@ -299,7 +299,7 @@ function openSelectAddressModal(addressType: AddressType): void {
 // Due API concurrency errors each query will be sended consecutively
 async function saveChanges(): Promise<void> {
   if (originalQuote.value?.comment !== trimmedComment.value) {
-    await changeComment(quote.value!.id, trimmedComment.value!);
+    await changeComment(quote.value!.id, trimmedComment.value);
   }
 
   await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
@@ -375,7 +375,7 @@ watchEffect(async () => {
   await fetchQuote({ id: props.quoteId });
 
   originalQuote.value = cloneDeep(quote.value);
-  comment.value = quote.value?.comment || "";
+  comment.value = quote.value?.comment ?? "";
   setBillingAddressEqualsShipping();
 });
 </script>
