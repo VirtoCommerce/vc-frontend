@@ -136,7 +136,7 @@ const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openPopup } = usePopup();
-const { loading: listLoading, list, fetchWishList, clearList, updateItemsInWishlist } = useWishlists();
+const { loading: listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -298,7 +298,6 @@ onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
-  clearList();
   await fetchWishList(props.listId);
 });
 
