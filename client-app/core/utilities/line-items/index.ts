@@ -61,7 +61,8 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
 }
 
 function prepareItemPrices(item: AnyLineItemType) {
-  const listPrice = "price" in item ? item.price : "listPrice" in item ? item.listPrice : undefined;
+  const price = "price" in item ? item.price : undefined;
+  const listPrice = price ?? ("listPrice" in item ? item.listPrice : undefined);
   const salePrice = "salePrice" in item ? item.salePrice : undefined;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
   const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
