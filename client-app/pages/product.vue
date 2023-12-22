@@ -30,7 +30,7 @@
           :related-products="relatedProducts"
           :model="item"
           :is-mobile="isMobile"
-          :product-with-variations="!!product.hasVariations"
+          :product-with-variations="hasVariations"
           :variations-cart-total-amount="variationsCartTotalAmount"
         />
       </template>
@@ -46,7 +46,7 @@ import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { buildBreadcrumbs } from "@/core/utilities";
+import { buildBreadcrumbs, productHasVariations } from "@/core/utilities";
 import { useCart } from "@/shared/cart";
 import { useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -76,6 +76,7 @@ const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.val
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
+const hasVariations = computed(() => productHasVariations(product.value));
 
 usePageHead({
   title: seoTitle,
@@ -106,10 +107,10 @@ const variationsCartTotalAmount = eagerComputed<number>(() => {
   return getItemsTotal(variationsIds);
 });
 
-watchEffect(() => {
+watchEffect(async () => {
   const productId = props.productId;
-  loadProduct(productId);
-  fetchRelatedProducts({ productId, itemsPerPage: 30 });
+  await loadProduct(productId);
+  await fetchRelatedProducts({ productId, itemsPerPage: 30 });
 });
 
 /**
