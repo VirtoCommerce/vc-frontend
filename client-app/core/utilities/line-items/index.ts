@@ -65,7 +65,8 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
   const isVariation = !!item.product?.masterVariation;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
   const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
-  const actualPrice = "salePrice" in item ? item.salePrice : undefined;
+  const salePrice = "salePrice" in item ? item.salePrice : undefined;
+  const actualPrice = placedPrice ?? salePrice;
   const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
   const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
   const inStockQuantity =
