@@ -12,7 +12,7 @@
       <h1 class="text-2xl font-bold uppercase md:text-4xl">{{ product.name }}</h1>
 
       <VcCopyText
-        v-if="!product.hasVariations"
+        v-if="!hasVariations"
         class="mt-1 text-sm"
         :text="product.code"
         :notification="$t('pages.product.sku_copied_message')"
