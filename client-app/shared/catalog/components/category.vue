@@ -9,26 +9,8 @@
 
       <div class="flex items-stretch lg:gap-6">
         <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar
-          v-if="isMobile"
-          :is-visible="mobileSidebarVisible"
-          class="flex w-70 flex-col px-5 pt-5"
-          @hide="hideMobileSidebar()"
-        >
-          <div class="relative mb-6 mt-0.5 pr-6">
-            <div class="break-words pt-1 text-26 font-semibold">
-              {{ $t("common.buttons.filters") }}
-            </div>
-
-            <button type="button" class="absolute right-1 top-2.5" @click="hideMobileSidebar()">
-              <svg class="h-5 w-5 text-[color:var(--color-primary)]">
-                <use href="/static/images/delete.svg#main" />
-              </svg>
-            </button>
-          </div>
-
+        <VcPopupSidebar v-if="isMobile" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
           <ProductsFiltersSidebar
-            class="grow"
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
@@ -40,32 +22,28 @@
             @open-branches="openBranchesDialog(true)"
           />
 
-          <div class="z-100 sticky bottom-0 -mx-5 mt-4 h-24 bg-white p-5 shadow-t-md">
-            <div class="flex space-x-4">
-              <VcButton
-                class="flex-1"
-                variant="outline"
-                :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
-                @click="
-                  resetFacetFilters();
-                  hideMobileSidebar();
-                "
-              >
-                {{ $t("common.buttons.reset") }}
-              </VcButton>
+          <template #footer>
+            <VcButton
+              variant="outline"
+              :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
+              @click="
+                resetFacetFilters();
+                hideMobileSidebar();
+              "
+            >
+              {{ $t("common.buttons.reset") }}
+            </VcButton>
 
-              <VcButton
-                class="flex-1"
-                :disabled="!isMobileFilterDirty"
-                @click="
-                  applyFilters(mobileFilters);
-                  hideMobileSidebar();
-                "
-              >
-                {{ $t("common.buttons.apply") }}
-              </VcButton>
-            </div>
-          </div>
+            <VcButton
+              :disabled="!isMobileFilterDirty"
+              @click="
+                applyFilters(mobileFilters);
+                hideMobileSidebar();
+              "
+            >
+              {{ $t("common.buttons.apply") }}
+            </VcButton>
+          </template>
         </VcPopupSidebar>
 
         <!-- Sidebar -->
