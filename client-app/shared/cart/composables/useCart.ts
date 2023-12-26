@@ -44,22 +44,14 @@ import type {
   InputPaymentType,
   InputShipmentType,
   QuoteType,
+  FullCartFragment,
+  CartAddressType,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 
-const useGlobalShortCart = createGlobalState(() => {
+export function useShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
   const cart = computed(() => query.value?.cart);
-
-  return {
-    cart,
-    refetch,
-    loading,
-  };
-});
-
-export function useShortCart() {
-  const { cart, refetch, loading } = useGlobalShortCart();
 
   const { mutate: _addToCart, loading: addToCartLoading } = useAddItemToCartMutation();
   async function addToCart(productId: string, quantity: number): Promise<ShortCartFragment | undefined> {
@@ -268,7 +260,29 @@ export function _useFullCart() {
   const { mutate: _addOrUpdateShipment, loading: addOrUpdateShipmentLoading } =
     useAddOrUpdateCartShipmentMutation(cart);
   async function updateShipment(newShipment: InputShipmentType): Promise<void> {
-    await _addOrUpdateShipment({ command: { shipment: newShipment } });
+    // Because of workaround above for backward-compatibility
+    const cartValue = cart?.value as FullCartFragment;
+
+    await _addOrUpdateShipment(
+      { command: { shipment: newShipment } },
+      {
+        // Update cache immediately, then it will be updated (or rolled back) after actual response from the server
+        optimisticResponse: {
+          addOrUpdateCartShipment: {
+            ...cartValue,
+            shipments: [
+              {
+                // We support only single shipment for now
+                ...cartValue.shipments[0],
+                ...newShipment,
+                // Cart address can be updated partially, but we don't use this feature yet
+                deliveryAddress: newShipment.deliveryAddress as CartAddressType,
+              },
+            ],
+          },
+        },
+      },
+    );
   }
 
   const { mutate: _removeShipment, loading: removeShipmentLoading } = useRemoveShipmentMutation(cart);
@@ -278,7 +292,29 @@ export function _useFullCart() {
 
   const { mutate: _addOrUpdatePayment, loading: addOrUpdatePaymentLoading } = useAddOrUpdateCartPaymentMutation(cart);
   async function updatePayment(newPayment: InputPaymentType): Promise<void> {
-    await _addOrUpdatePayment({ command: { payment: newPayment } });
+    // Because of workaround above for backward-compatibility
+    const cartValue = cart?.value as FullCartFragment;
+
+    await _addOrUpdatePayment(
+      { command: { payment: newPayment } },
+      {
+        // Update cache immediately, then it will be updated (or rolled back) after actual response from the server`
+        optimisticResponse: {
+          addOrUpdateCartPayment: {
+            ...cartValue,
+            payments: [
+              {
+                // We support only single payment for now
+                ...cartValue.payments[0],
+                ...newPayment,
+                // Cart address can be updated partially, but we don't use this feature yet
+                billingAddress: newPayment.billingAddress as CartAddressType,
+              },
+            ],
+          },
+        },
+      },
+    );
   }
 
   const { mutate: _addGiftItems, loading: addGiftItemsLoading } = useAddGiftItemsMutation(cart);
@@ -488,4 +524,4 @@ function _useCart() {
 }
 
 /** @deprecated Use {@link useSortCart} for adding products to cart and {@link useFullCart} for cart & checkout pages */
-export const useCart = createSharedComposable(_useCart);
+export const useCart = createGlobalState(_useCart);

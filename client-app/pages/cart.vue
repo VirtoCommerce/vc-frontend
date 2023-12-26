@@ -1,5 +1,5 @@
 <template>
-  <VcLoaderOverlay v-if="!initialized" no-bg />
+  <VcLoaderOverlay v-if="loadingCart || loadingCheckout" no-bg />
 
   <VcEmptyPage
     v-else-if="!cart?.items?.length"
@@ -180,7 +180,6 @@
 </template>
 
 <script setup lang="ts">
-import { invoke } from "@vueuse/core";
 import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -238,7 +237,7 @@ const {
   isValidPayment,
   isValidCheckout,
   isPurchaseOrderNumberEnabled,
-  initialize: initCheckout,
+  initialize,
   onDeliveryAddressChange,
   onBillingAddressChange,
   setShippingMethod,
@@ -254,7 +253,6 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
-const initialized = ref(false);
 const creatingQuote = ref(false);
 
 const loading = computed<boolean>(() => loadingCart.value || loadingCheckout.value || creatingQuote.value);
@@ -322,13 +320,8 @@ async function createQuote(): Promise<void> {
   creatingQuote.value = false;
 }
 
-void invoke(async () => {
+void (async () => {
   await forceFetch();
-  if (!config.checkout_multistep_enabled) {
-    await initCheckout();
-  }
-
-  initialized.value = true;
 
   /**
    * Send a Google Analytics shopping cart view event.
@@ -336,5 +329,9 @@ void invoke(async () => {
   if (cart.value) {
     ga.viewCart(cart.value);
   }
-});
+
+  if (!config.checkout_multistep_enabled) {
+    await initialize();
+  }
+})();
 </script>

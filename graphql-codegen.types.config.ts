@@ -42,6 +42,7 @@ const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
         maybeValue: "T",
         scalars: {
           Long: "number",
+          OptionalString: "string | undefined",
         },
         skipTypename: true,
         useTypeImports: true,

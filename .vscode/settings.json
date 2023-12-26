@@ -10,5 +10,6 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "virto-commerce",
     "projectKey": "VirtoCommerce_vc-theme-b2b-vue"
-  }
+  },
+  "vue.server.reverseConfigFilePriority": true
 }
