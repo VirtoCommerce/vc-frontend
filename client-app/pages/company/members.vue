@@ -335,7 +335,7 @@ import {
 } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
-import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
+import type { FacetItemType, FacetValueItemType, Sort } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
 
@@ -436,7 +436,7 @@ async function changePage(newPage: number) {
   await fetchContacts();
 }
 
-async function applySorting(sortInfo: ISortInfo): Promise<void> {
+async function applySorting(sortInfo: Sort): Promise<void> {
   sort.value = sortInfo;
   page.value = 1;
   await fetchContacts();
