@@ -287,6 +287,7 @@ import OrdersFilter from "./orders-filter.vue";
 import PageToolbarBlock from "./page-toolbar-block.vue";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { SortDirection } from "@/core/enums";
+import type { ISortInfo } from "@/core/types";
 
 export interface IProps {
   withSearch?: boolean;
@@ -370,7 +371,7 @@ async function changePage(newPage: number) {
   await loadOrders();
 }
 
-async function applySorting(sortInfo: Sort): Promise<void> {
+async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
   page.value = 1;
   await loadOrders();
