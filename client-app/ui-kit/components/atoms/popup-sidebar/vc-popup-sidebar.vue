@@ -33,7 +33,7 @@
           <slot />
         </div>
 
-        <div class="relative z-[1] flex flex-wrap gap-4 px-5 py-4 shadow-2xl *:flex-1">
+        <div class="relative z-[1] flex flex-wrap gap-4 px-5 py-4 shadow-2xl [&>*]:flex-1">
           <slot name="footer" />
         </div>
       </div>
