@@ -132,13 +132,8 @@ Loading.args = {
   loading: true,
 };
 
-export const MinWidthNumber = Template.bind({});
-MinWidthNumber.args = {
-  minWidth: 200,
-};
-
-export const MinWidthString = Template.bind({});
-MinWidthString.args = {
+export const MinWidth = Template.bind({});
+MinWidth.args = {
   minWidth: "12rem",
 };
 

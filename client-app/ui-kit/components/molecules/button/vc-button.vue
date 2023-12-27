@@ -61,6 +61,14 @@ export interface IEmits {
   (event: "click", value: MouseEvent): void;
 }
 
+interface IAttributes {
+  to?: RouteLocationRaw | null;
+  href?: string;
+  style?: {
+    minWidth?: string;
+  };
+}
+
 interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
   size?: "xs" | "sm" | "md" | "lg";
@@ -78,7 +86,7 @@ interface IProps {
   truncate?: boolean;
   fullWidth?: boolean;
   noWrap?: boolean;
-  minWidth?: number | string;
+  minWidth?: string;
 }
 
 defineEmits<IEmits>();
@@ -117,25 +125,23 @@ const componentTag = computed(() => {
 });
 
 const attrs = computed(() => {
+  const attributes: IAttributes = {};
+
   if (componentTag.value === "router-link") {
-    return { to: props.to };
+    attributes.to = props.to;
   }
 
   if (componentTag.value === "a") {
-    return { href: props.externalLink };
+    attributes.href = props.externalLink;
   }
 
   if (props.minWidth) {
-    const minWidth = typeof props.minWidth === "number" ? `${props.minWidth}px` : props.minWidth;
-
-    return {
-      style: {
-        minWidth,
-      },
+    attributes.style = {
+      minWidth: props.minWidth,
     };
   }
 
-  return {};
+  return attributes;
 });
 </script>
 
