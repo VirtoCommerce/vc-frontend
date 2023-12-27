@@ -6,7 +6,7 @@ import type { Ref } from "vue";
 
 export function useProduct() {
   const loading: Ref<boolean> = ref(true);
-  const product: Ref<Product | null> = ref(null);
+  const product: Ref<Product | undefined> = ref();
 
   async function loadProduct(id: string) {
     loading.value = true;
