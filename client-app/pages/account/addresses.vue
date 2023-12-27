@@ -33,6 +33,7 @@
         :items="paginatedAddresses"
         :pages="pages"
         :page="page"
+        :description="$t('pages.account.addresses.meta.table_description')"
         @page-changed="onPageChange"
         @header-click="applySorting"
       >
