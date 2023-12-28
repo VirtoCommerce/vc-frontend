@@ -710,12 +710,6 @@
         "is_required_validation_error": "The <b>List name</b> is required",
         "new_list": "New list"
       },
-      "added_to_wishlists_dialog": {
-        "title": "Item added to list | Item added to lists",
-        "sku_label": "@:common.labels.sku",
-        "continue_shopping_button": "@:common.buttons.continue_shopping",
-        "view_your_list_button": "View your list | View your lists"
-      },
       "unsuccessful_create_wishlist_dialog": {
         "message": "You have reached the maximum number of lists. Please delete one you do not use or reshuffle products to reuse an existing list.",
         "ok_button": "@:common.buttons.ok"
