@@ -25,6 +25,7 @@ import {
   useUnselectCartItemsMutation,
   useValidateCouponMutation,
   clearCart as deprecatedClearCart,
+  toOptimisticResponse,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
@@ -274,9 +275,12 @@ export function _useFullCart() {
               {
                 // We support only single shipment for now
                 ...cartValue.shipments[0],
-                ...newShipment,
+                ...toOptimisticResponse(newShipment, "ShipmentType"),
                 // Cart address can be updated partially, but we don't use this feature yet
-                deliveryAddress: newShipment.deliveryAddress as CartAddressType,
+                deliveryAddress: toOptimisticResponse(
+                  (newShipment.deliveryAddress as CartAddressType) ?? cartValue.shipments[0].deliveryAddress,
+                  "CartAddressType",
+                ),
               },
             ],
           },
