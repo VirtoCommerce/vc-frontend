@@ -14,10 +14,6 @@
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
-            @search="
-              onSearchStart($event);
-              hideMobileSidebar();
-            "
             @change="updateMobileFilters($event)"
             @open-branches="openBranchesDialog(true)"
           />
@@ -59,7 +55,6 @@
               :keyword="keywordQueryParam"
               :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
               :loading="loading"
-              @search="onSearchStart($event)"
               @change="applyFilters($event)"
             />
           </div>
@@ -459,14 +454,6 @@ function showMobileSidebar() {
 
 function hideMobileSidebar() {
   mobileSidebarVisible.value = false;
-}
-
-function onSearchStart(newKeyword: string) {
-  const searchText = newKeyword;
-
-  if (searchText !== keywordQueryParam.value && searchText.length <= 30) {
-    keywordQueryParam.value = searchText;
-  }
 }
 
 function applyFilters(newFilters: ProductsFilters) {

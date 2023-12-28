@@ -247,6 +247,8 @@ export type CartType = {
   name: Scalars['String']['output'];
   /** Shopping cart organization ID */
   organizationId?: Maybe<Scalars['String']['output']>;
+  /** Shopping cart organization name */
+  organizationName?: Maybe<Scalars['String']['output']>;
   /** Payment price */
   paymentPrice: MoneyType;
   /** Payment price with tax */
