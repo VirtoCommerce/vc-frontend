@@ -19,7 +19,7 @@
 
     <div class="flex items-center pt-4 md:contents">
       <div class="md:whitespace-nowrap">
-        {{ $t("shared.wishlists.list_card.saved") }} <b>{{ $d(list.modifiedDate) }}</b>
+        {{ $t("shared.wishlists.list_card.saved") }}: <b>{{ $d(list.modifiedDate) }}</b>
       </div>
 
       <div v-if="isCorporateMember && list.scope" class="ms-auto flex items-center gap-1.5 md:ms-0">
