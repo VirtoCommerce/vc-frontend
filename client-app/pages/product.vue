@@ -88,7 +88,7 @@ const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.val
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
-const hasVariations = computed(() => productHasVariations(product.value!));
+const hasVariations = computed(() => productHasVariations(product.value));
 
 usePageHead({
   title: seoTitle,
