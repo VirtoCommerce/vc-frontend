@@ -688,11 +688,7 @@
         "remove_list_button": "Delete",
         "make_private_button": "Make private",
         "share_button": "Share",
-        "saved": "Saved",
-        "status": {
-          "shared": "Shared",
-          "private": "Private"
-        }
+        "saved": "Saved"
       },
       "list_details": {
         "add_all_to_cart_button": "Add all to cart",
@@ -745,6 +741,10 @@
         "message": "Are you sure you want to remove “{productName}” from the list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
+      },
+      "status": {
+        "shared": "Shared",
+        "private": "Private"
       }
     }
   },
