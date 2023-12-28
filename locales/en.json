@@ -598,6 +598,9 @@
         "title": "Select payment method"
       },
       "select_address_dialog": {
+        "meta": {
+          "table_description": "available addresses"
+        },
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "save_button": "@:common.buttons.save",
@@ -866,8 +869,10 @@
     "account": {
       "addresses": {
         "meta": {
-          "title": "@:pages.account.addresses.addresses_title"
+          "title": "@:pages.account.addresses.title",
+          "table_description": "available addresses"
         },
+        "title": "Addresses",
         "new_address_title": "New address",
         "edit_address_title": "Edit address",
         "make_default_button": "Set as default",
@@ -927,7 +932,8 @@
       },
       "orders": {
         "meta": {
-          "title": "@:pages.account.orders.title"
+          "title": "@:pages.account.orders.title",
+          "table_description": "@:pages.account.orders.title"
         },
         "search_placeholder": "Enter keyword...",
         "title": "Orders",
@@ -1015,6 +1021,10 @@
         "update_error_alert": "There was an error during profile update"
       },
       "quotes": {
+        "meta": {
+          "title": "@:pages.account.quotes.title",
+          "table_description": "requested quotes"
+        },
         "title": "Quote Requests",
         "no_quotes_message": "There are no quote requests yet",
         "quote_number_label": "Quote number",
@@ -1057,7 +1067,8 @@
     "company": {
       "info": {
         "meta": {
-          "title": "@:pages.company.info.title"
+          "title": "@:pages.company.info.title",
+          "table_description": "company addresses"
         },
         "title": "Company Info",
         "content_header": "Addresses",
@@ -1079,7 +1090,8 @@
       },
       "members": {
         "meta": {
-          "title": "@:pages.company.members.title"
+          "title": "@:pages.company.members.title",
+          "table_description": "@:pages.company.members.title"
         },
         "title": "Company Members",
         "search_placeholder": "Search for users",
@@ -1141,10 +1153,6 @@
         "description": "Test catalog page description"
       },
       "title": "Catalog",
-      "search_card": {
-        "title": "Search within these results",
-        "search_button": "Go"
-      },
       "instock_filter_card": {
         "title": "In stock",
         "checkbox_label": "Show in stock",

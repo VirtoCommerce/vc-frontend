@@ -8,7 +8,7 @@ import type { Ref, ShallowRef } from "vue";
 
 export function useProduct() {
   const loading: Ref<boolean> = ref(true);
-  const product: ShallowRef<Product | null> = shallowRef(null);
+  const product: ShallowRef<Product | undefined> = shallowRef();
 
   const broadcast = useBroadcast();
 

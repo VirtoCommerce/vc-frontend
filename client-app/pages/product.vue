@@ -16,11 +16,7 @@
       </h1>
 
       <div class="mt-2 flex flex-wrap gap-5">
-        <VcCopyText
-          v-if="!product.hasVariations"
-          :text="product.code"
-          :notification="$t('pages.product.sku_copied_message')"
-        >
+        <VcCopyText v-if="!hasVariations" :text="product.code" :notification="$t('pages.product.sku_copied_message')">
           <span class="text-base text-[--color-secondary-900]">
             {{ $t("pages.product.sku_label") }}
             <span class="font-black">#{{ product.code }}</span>
@@ -67,7 +63,7 @@ import { useSeoMeta } from "@unhead/vue";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { buildBreadcrumbs } from "@/core/utilities";
+import { buildBreadcrumbs, productHasVariations } from "@/core/utilities";
 import { useProduct, useRelatedProducts, useCategory, ProductSidebar } from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 
@@ -92,6 +88,7 @@ const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.val
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
+const hasVariations = computed(() => productHasVariations(product.value!));
 
 usePageHead({
   title: seoTitle,
@@ -111,10 +108,10 @@ const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
 });
 
-watchEffect(() => {
+watchEffect(async () => {
   const productId = props.productId;
-  loadProduct(productId);
-  fetchRelatedProducts({ productId, itemsPerPage: 30 });
+  await loadProduct(productId);
+  await fetchRelatedProducts({ productId, itemsPerPage: 30 });
 });
 
 /**
