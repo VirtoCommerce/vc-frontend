@@ -21,6 +21,7 @@ query GetWishlists(
       name
       description
       scope
+      modifiedDate
       items {
         id
         productId

@@ -14,7 +14,7 @@
   </div>
 
   <!-- Desktop table view -->
-  <table v-else :class="[layout, 'w-full text-left text-sm']">
+  <table v-else :class="[layout, 'w-full text-left text-sm']" :aria-describedby="description">
     <slot name="header">
       <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-gray-200">
         <tr>
@@ -98,6 +98,7 @@ interface IProps {
   hideDefaultHeader?: boolean;
   hideDefaultFooter?: boolean;
   layout?: string;
+  description?: string;
 }
 
 const emit = defineEmits<IEmits>();
