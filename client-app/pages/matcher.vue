@@ -90,11 +90,6 @@ const seoInfo = computedAsync<ResultType | undefined>(
       return undefined;
     }
 
-    if (seoUrl.value === "__page-builder-preview__") {
-      const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
-      useStaticPage(page);
-      return { page };
-    }
     const result = await innerFetch<SlugInfoResultType>(
       `/storefrontapi/slug/${seoUrl.value}?culture=${currentLanguage.value!.cultureName}`,
     );

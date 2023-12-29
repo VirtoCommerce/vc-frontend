@@ -2,8 +2,10 @@ import { useFetch } from "@/core/composables";
 import { useStaticPage, useTemplate } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
+import type { PageTemplate } from "@/shared/static-content/types";
 import type { App } from "vue";
 import type { Router } from "vue-router";
+import StaticPage from "@/pages/static-page.vue";
 
 const { enrichRequest } = useFetch();
 
@@ -30,7 +32,7 @@ function updatePreview(data: any) {
   });
 
   if (!data.templateKey) {
-    useStaticPage(newTemplate);
+    useStaticPage(newTemplate, true);
   } else {
     useTemplate(data.templateKey, newTemplate);
   }
@@ -88,7 +90,7 @@ export function measureElement(element: any): {
 
 // eslint-disable-next-line no-restricted-exports
 export default {
-  install: (app: App, options: { router: Router }) => {
+  install: async (app: App, options: { router: Router }) => {
     const bodyEl = document.getElementsByTagName("body").item(0);
 
     if (bodyEl) {
@@ -141,7 +143,14 @@ export default {
           break;
       }
     });
-    options.router.push("/__page-builder-preview__");
+    const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
+    useStaticPage(page, true);
+    const routes = options.router.getRoutes();
+    const matcher = routes.find((x) => x.name === "Matcher")!;
+    options.router.removeRoute("Matcher");
+    options.router.addRoute({ path: "/designer-preview", name: "StaticPage", component: StaticPage, props: true });
+    options.router.addRoute(matcher);
+    await options.router.push("/designer-preview");
     window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
   },
 };
