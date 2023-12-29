@@ -300,6 +300,7 @@ onBeforeRouteUpdate(canChangeRoute);
 watchEffect(async () => {
   clearList();
   await fetchWishList(props.listId);
+  page.value = 1;
 });
 
 watchEffect(() => (wishlistItems.value = cloneDeep(list.value?.items) ?? []));
