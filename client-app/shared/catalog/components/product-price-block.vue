@@ -133,14 +133,12 @@ import { usePopup } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
 import type { Product } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-});
+interface IProps {
+  product: Product;
+}
+
+const props = defineProps<IProps>();
 
 const route = useRoute();
 

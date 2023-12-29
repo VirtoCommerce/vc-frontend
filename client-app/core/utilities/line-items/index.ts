@@ -61,13 +61,26 @@ export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLine
   };
 }
 
+function prepareItemPrices(item: AnyLineItemType) {
+  const price = "price" in item ? item.price : undefined;
+  const listPrice = price ?? ("listPrice" in item ? item.listPrice : undefined);
+  const salePrice = "salePrice" in item ? item.salePrice : undefined;
+  const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
+  const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
+  return {
+    listPrice,
+    salePrice,
+    placedPrice,
+    extendedPrice,
+    actualPrice: placedPrice ?? salePrice ?? listPrice,
+  };
+}
+
 export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
+  const { listPrice, extendedPrice, actualPrice } = prepareItemPrices(item);
+
   const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
-  const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
-  const listPrice = "listPrice" in item ? item.listPrice : placedPrice;
-  const actualPrice = "salePrice" in item ? item.salePrice : undefined;
-  const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
   const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
   const inStockQuantity =
     "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;

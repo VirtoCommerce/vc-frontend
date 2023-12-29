@@ -81,6 +81,7 @@
             :sort="sort"
             :pages="pages"
             :page="page"
+            :description="$t('pages.company.info.meta.table_description')"
             layout="table-auto"
             @header-click="applySorting"
             @page-changed="onPageChange"

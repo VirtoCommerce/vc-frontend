@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="fixed z-50 flex h-screen w-full flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
+    class="fixed z-50 flex h-full w-full flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
   >
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
