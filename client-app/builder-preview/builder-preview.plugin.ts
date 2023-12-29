@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+/* eslint-disable no-restricted-exports */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -30,7 +31,6 @@ async function updatePreview(data: any, options: { router: Router }) {
 
   const newTemplate = { ...template, content: [] };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   template.content.forEach((block: any) => {
     newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id });
     newTemplate.content.push(block);
@@ -50,12 +50,10 @@ async function updatePreview(data: any, options: { router: Router }) {
   templateUrl = undefined;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function updateSettings(app: App, settings: any) {
   const keys = Object.entries(settings);
 
   keys.forEach(([key, value]) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (app.config.globalProperties.$cfg as Record<string, any>)[key] = value;
   });
 
@@ -66,7 +64,6 @@ function updateSettings(app: App, settings: any) {
     });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function measureElement(element: any): {
   top?: number;
   left?: number;
@@ -80,7 +77,6 @@ export function measureElement(element: any): {
   let gleft = 0;
   let gtop = 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const moonwalk = function (_parent: any) {
     if (_parent) {
       gleft += _parent.offsetLeft;
@@ -102,7 +98,6 @@ export function measureElement(element: any): {
 
 let templateUrl: string | undefined;
 
-// eslint-disable-next-line no-restricted-exports
 export default {
   install: (app: App, options: { router: Router }) => {
     const bodyEl = document.getElementsByTagName("body").item(0);
