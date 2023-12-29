@@ -41,7 +41,7 @@
         :actual-price="item.actualPrice"
         :removable="removable"
         :selectable="selectable"
-        :selected="selectedItemIds?.includes(item.id)"
+        :selected="selectable && selectedItemIds?.includes(item.id)"
         @select="($event) => selectSingleItem(item.id, $event)"
         @remove="() => removeSingleItem(item.id)"
       >
