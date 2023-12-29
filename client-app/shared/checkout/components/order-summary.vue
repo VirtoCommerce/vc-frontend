@@ -52,6 +52,17 @@
                   />
                 </div>
               </li>
+
+              <li v-if="shippingDiscountTotal > 0">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm">{{ $t("common.labels.shipping") }}</span>
+                  <VcTotalDisplay
+                    :amount="-shippingDiscountTotal"
+                    :currency-code="currentCurrency.code"
+                    :culture-name="currentLanguage.cultureName"
+                  />
+                </div>
+              </li>
             </ul>
           </div>
         </template>
@@ -67,8 +78,8 @@
         <div v-if="!noShipping" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
           <span>
-            {{ cart.shippingTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="cart.shippingTotal!" />
+            {{ shippingPrice.amount > 0 ? "+" : "" }}
+            <VcPriceDisplay :value="shippingPrice" />
           </span>
         </div>
       </div>
@@ -96,12 +107,14 @@ import { sumBy } from "lodash";
 import { computed, ref } from "vue";
 import { useCurrency, useLanguages } from "@/core/composables";
 import type {
+  OrderShipmentType,
   CartType,
   CustomerOrderType,
   DiscountType,
   LineItemType,
   OrderDiscountType,
   OrderLineItemType,
+  ShipmentType,
 } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -129,7 +142,16 @@ const lineItemsDiscountTotal = computed(() =>
   ),
 );
 
-const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);
+// TODO: Change to shippingPrice when this property will be added to CustomerOrderType
+const shippingPrice = computed(() => props.cart.shipments?.[0].price);
+
+const shippingDiscountTotal = computed(() =>
+  sumBy<ShipmentType | OrderShipmentType>(props.cart.shipments, (shipment) => shipment.discountAmount?.amount),
+);
+
+const hasDiscounts = computed(
+  () => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0 || shippingDiscountTotal.value > 0,
+);
 </script>
 
 <style scoped lang="scss">

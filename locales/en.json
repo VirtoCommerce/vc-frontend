@@ -86,6 +86,7 @@
       "subtotal": "Subtotal",
       "discount": "Discount",
       "line_items": "Line items",
+      "shipping": "Shipping",
       "tax": "Tax",
       "shipping_cost": "Shipping cost",
       "status": "Status",
