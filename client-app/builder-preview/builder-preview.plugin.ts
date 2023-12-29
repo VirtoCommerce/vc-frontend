@@ -1,9 +1,17 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFetch } from "@/core/composables";
 import { useStaticPage, useTemplate } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
+import type { PageTemplate } from "@/shared/static-content/types";
 import type { App } from "vue";
 import type { Router } from "vue-router";
+import StaticPage from "@/pages/static-page.vue";
 
 const { enrichRequest } = useFetch();
 
@@ -14,8 +22,7 @@ enrichRequest((headers: Headers) => {
   return headers;
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function updatePreview(data: any) {
+async function updatePreview(data: any, options: { router: Router }) {
   const template = data.template;
   if (data.model) {
     template.content.push(data.model);
@@ -30,10 +37,17 @@ function updatePreview(data: any) {
   });
 
   if (!data.templateKey) {
-    useStaticPage(newTemplate);
+    if (templateUrl) {
+      await options.router.push("/designer-preview");
+    }
+    useStaticPage(newTemplate, true);
   } else {
+    if (templateUrl) {
+      await options.router.push(templateUrl);
+    }
     useTemplate(data.templateKey, newTemplate);
   }
+  templateUrl = undefined;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,6 +100,8 @@ export function measureElement(element: any): {
   return rect;
 }
 
+let templateUrl: string | undefined;
+
 // eslint-disable-next-line no-restricted-exports
 export default {
   install: (app: App, options: { router: Router }) => {
@@ -103,7 +119,7 @@ export default {
       bodyEl.appendChild(interactiveBlocker);
     }
 
-    window.addEventListener("message", (event: MessageEvent) => {
+    window.addEventListener("message", async (event: MessageEvent) => {
       if (event.origin !== document.location.origin || event.data.source !== "builder") {
         // note: it can be cause of some problems. investigate it.
         console.log("cancel message");
@@ -118,7 +134,7 @@ export default {
         case "changed":
         case "page":
         case "preview":
-          updatePreview(event.data);
+          await updatePreview(event.data, options);
           break;
 
         case "select": {
@@ -134,8 +150,8 @@ export default {
           break;
         }
         case "navigate": {
-          const url = event.data.url?.startsWith("/") ? event.data.url : "/" + event.data.url;
-          options.router.push(url);
+          // we will know about template it or not in the next message
+          templateUrl = event.data.url;
           break;
         }
         case "settings":
@@ -143,7 +159,13 @@ export default {
           break;
       }
     });
-    options.router.push("/");
+    const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
+    useStaticPage(page, true);
+    const routes = options.router.getRoutes();
+    const matcher = routes.find((x) => x.name === "Matcher")!;
+    options.router.removeRoute("Matcher");
+    options.router.addRoute({ path: "/designer-preview", name: "StaticPage", component: StaticPage, props: true });
+    options.router.addRoute(matcher);
     window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
   },
 };
