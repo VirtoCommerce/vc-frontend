@@ -26,6 +26,7 @@
                   {{ list.name }}
                 </span>
               </VcCheckbox>
+
               <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
             </li>
           </ul>
@@ -91,6 +92,7 @@
                 {{ list.name }}
               </span>
             </VcCheckbox>
+
             <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
           </li>
         </transition-group>
