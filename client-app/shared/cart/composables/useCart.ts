@@ -264,6 +264,8 @@ export function _useFullCart() {
     // Because of workaround above for backward-compatibility
     const cartValue = cart?.value as FullCartFragment;
 
+    const oldShipment = cartValue.shipments[0];
+
     await _addOrUpdateShipment(
       { command: { shipment: newShipment } },
       {
@@ -274,11 +276,12 @@ export function _useFullCart() {
             shipments: [
               {
                 // We support only single shipment for now
-                ...cartValue.shipments[0],
+                ...oldShipment,
                 ...toOptimisticResponse(newShipment, "ShipmentType"),
-                // Cart address can be updated partially, but we don't use this feature yet
                 deliveryAddress: toOptimisticResponse(
-                  (newShipment.deliveryAddress as CartAddressType) ?? cartValue.shipments[0].deliveryAddress,
+                  // Type mismatch is because cart address can be updated partially,
+                  // but we don't use this feature yet, so it's safe to cast
+                  (newShipment.deliveryAddress as CartAddressType) ?? oldShipment?.deliveryAddress,
                   "CartAddressType",
                 ),
               },
@@ -291,13 +294,29 @@ export function _useFullCart() {
 
   const { mutate: _removeShipment, loading: removeShipmentLoading } = useRemoveShipmentMutation(cart);
   async function removeShipment(shipmentId: string): Promise<void> {
-    await _removeShipment({ command: { shipmentId } });
+    // Because of workaround above for backward-compatibility
+    const cartValue = cart?.value as FullCartFragment;
+
+    await _removeShipment(
+      { command: { shipmentId } },
+      {
+        // Update cache immediately, then it will be updated (or rolled back) after actual response from the server
+        optimisticResponse: {
+          removeShipment: {
+            ...cartValue,
+            shipments: [],
+          },
+        },
+      },
+    );
   }
 
   const { mutate: _addOrUpdatePayment, loading: addOrUpdatePaymentLoading } = useAddOrUpdateCartPaymentMutation(cart);
   async function updatePayment(newPayment: InputPaymentType): Promise<void> {
     // Because of workaround above for backward-compatibility
     const cartValue = cart?.value as FullCartFragment;
+
+    const oldPayment = cartValue?.payments[0];
 
     await _addOrUpdatePayment(
       { command: { payment: newPayment } },
@@ -309,10 +328,15 @@ export function _useFullCart() {
             payments: [
               {
                 // We support only single payment for now
-                ...cartValue.payments[0],
-                ...newPayment,
+                ...oldPayment,
+                ...toOptimisticResponse(newPayment, "PaymentType"),
                 // Cart address can be updated partially, but we don't use this feature yet
-                billingAddress: newPayment.billingAddress as CartAddressType,
+                billingAddress: toOptimisticResponse(
+                  // Type mismatch is because cart address can be updated partially,
+                  // but we don't use this feature yet, so it's safe to cast
+                  (newPayment.billingAddress as CartAddressType) ?? oldPayment?.billingAddress,
+                  "CartAddressType",
+                ),
               },
             ],
           },

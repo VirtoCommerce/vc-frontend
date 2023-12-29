@@ -14,7 +14,8 @@ export function toOptimisticResponse<T extends { id?: string } | undefined>(data
       __typename,
     };
   }
-  return undefined as T;
+  // Because Maybe<T> is configued as T instead of T | null for GraphQL
+  return null as unknown as T;
 }
 
 export function getChildCategoriesTreeString(level: number): string {

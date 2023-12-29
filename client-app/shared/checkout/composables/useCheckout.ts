@@ -1,4 +1,4 @@
-import { createSharedComposable, useDebounceFn } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
@@ -26,7 +26,14 @@ import type {
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
-function _useCheckout() {
+const loading = ref(false);
+const billingAddressEqualsShipping = ref(true);
+const placedOrder = shallowRef<CustomerOrderType | null>(null);
+
+const _comment = ref<string>();
+const _purchaseOrderNumber = ref<string>();
+
+export function useCheckout() {
   const ga = useGoogleAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
@@ -60,13 +67,6 @@ function _useCheckout() {
     changeComment,
     updatePurchaseOrderNumber,
   } = useFullCart();
-
-  const loading = ref(false);
-  const billingAddressEqualsShipping = ref(true);
-  const placedOrder = shallowRef<CustomerOrderType | null>(null);
-
-  const _comment = ref<string>();
-  const _purchaseOrderNumber = ref<string>();
 
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.comment !== value) {
@@ -438,5 +438,3 @@ function _useCheckout() {
     allItemsAreDigital: readonly(allOrderItemsAreDigital),
   };
 }
-
-export const useCheckout = createSharedComposable(_useCheckout);

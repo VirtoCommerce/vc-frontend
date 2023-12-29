@@ -1,3 +1,4 @@
+import { useApolloClient } from "@vue/apollo-composable";
 import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
 import { useMutation } from "@/core/api/graphql/composables";
 import { AddOrUpdateCartPaymentDocument } from "@/core/api/graphql/types";
@@ -5,7 +6,10 @@ import type { CartIdFragment, CartType, InputPaymentType } from "@/core/api/grap
 import type { MaybeRef } from "vue";
 
 export function useAddOrUpdateCartPaymentMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
-  return useMutation(AddOrUpdateCartPaymentDocument, useCartMutationVariables(cart));
+  const { resolveClient } = useApolloClient();
+  const result = useMutation(AddOrUpdateCartPaymentDocument, useCartMutationVariables(cart));
+  result.onDone(() => resolveClient().cache.gc());
+  return result;
 }
 
 /** @deprecated Use {@link useAddOrUpdateCartPaymentMutation} instead. */
