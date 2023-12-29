@@ -62,9 +62,9 @@ export interface IEmits {
 }
 
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
+  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
   size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "outline" | "solid-lightest";
+  variant?: "solid" | "outline" | "solid-lightest" | "no-background";
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
   loading?: boolean;
@@ -126,7 +126,7 @@ const linkAttr = computed(() => {
 
 <style scoped lang="scss">
 .vc-button {
-  $colors: primary, secondary, success, info, neutral, warning, danger;
+  $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
   $prepend: "";
   $append: "";
@@ -176,7 +176,7 @@ const linkAttr = computed(() => {
   &__loader-icon {
     $loaderIcon: &;
 
-    @apply block rounded-full border-[--color-neutral-300] border-r-[--color-neutral-500] animate-spin;
+    @apply block rounded-full animate-spin;
   }
 
   &--size {
@@ -230,6 +230,10 @@ const linkAttr = computed(() => {
       &:focus {
         @apply outline-[--color-#{$color}-100];
       }
+
+      &:not([class*="--solid--"]) #{$loaderIcon} {
+        @apply border-[--color-#{$color}-100] border-r-[--color-#{$color}-500];
+      }
     }
 
     &--solid--#{$color} {
@@ -237,37 +241,56 @@ const linkAttr = computed(() => {
       border-[--color-#{$color}-500]
       text-[--color-additional-50];
 
-      &:hover {
+      &:hover:not(#{$loading}, #{$disabled}) {
         @apply bg-[--color-#{$color}-700]
         border-[--color-#{$color}-700];
+      }
+
+      & #{$loaderIcon} {
+        @apply border-[--color-#{$color}-200] border-r-[--color-additional-50];
       }
     }
 
     &--solid-lightest--#{$color} {
-      @apply bg-[--color-additional-50] text-[--color-#{$color}-600] border-[--color-additional-50];
+      @apply bg-[--color-additional-50] text-[--color-#{$color}-500] border-[--color-additional-50];
 
-      &:hover {
-        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-800];
+      &:hover:not(#{$loading}, #{$disabled}) {
+        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-700] border-[--color-#{$color}-50];
       }
     }
 
     &--outline--#{$color} {
       @apply bg-[--color-additional-50] text-[--color-#{$color}-500] border-current;
 
-      &:hover {
+      &:hover:not(#{$loading}, #{$disabled}) {
+        @apply text-[--color-#{$color}-700];
+      }
+    }
+
+    &--no-background--#{$color} {
+      @apply bg-transparent text-[--color-#{$color}-500] border-transparent;
+
+      &:hover:not(#{$loading}, #{$disabled}) {
         @apply text-[--color-#{$color}-700];
       }
     }
   }
 
-  &:disabled,
-  #{$disabled} {
+  &:disabled#{$disabled}:not(#{$loading}) {
     &[class*="--solid-"] {
       @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }
 
+    &[class*="--solid-lightest--"] {
+      @apply bg-[--color-neutral-50] border-[--color-neutral-50] text-[--color-neutral-400];
+    }
+
     &[class*="--outline--"] {
       @apply text-[--color-neutral-400] border-[--color-neutral-300];
+    }
+
+    &[class*="--no-background--"] {
+      @apply text-[--color-neutral-400];
     }
   }
 

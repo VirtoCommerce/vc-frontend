@@ -51,4 +51,14 @@ declare global {
     panels: Ref<Record<string, boolean>>;
     toggle: (panelId: string) => void;
   };
+
+  type VcFileType = {
+    name: string;
+    size: number;
+    type?: string;
+    icon?: string;
+    progress?: number;
+    isUploaded?: boolean;
+    errorMessage?: string;
+  };
 }
