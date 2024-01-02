@@ -58,7 +58,7 @@ declare global {
     type?: string;
     icon?: string;
     progress?: number;
-    isUploaded?: boolean;
+    status: "loading" | "success" | "error";
     errorMessage?: string;
   };
 }

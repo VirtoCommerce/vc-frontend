@@ -9,10 +9,10 @@
       @change="onFileChange"
     />
 
-    <div v-if="uploadedFiles.length" class="vc-file-uploader__list-container">
+    <div v-if="files?.length" class="vc-file-uploader__list-container">
       <ul class="vc-file-uploader__list">
-        <li v-for="(file, index) in uploadedFiles" :key="index">
-          <VcFile :file="file" removable @remove="removeFile(index)" />
+        <li v-for="(file, index) in files" :key="index">
+          <VcFile :file="file" removable @remove="$emit('removeFile', index)" />
         </li>
       </ul>
     </div>
@@ -39,7 +39,7 @@
     </button>
 
     <VcAlert
-      v-if="uploadedFiles.filter((file) => !!file.errorMessage).length || true"
+      v-if="files?.filter((file) => !!file.errorMessage).length"
       class="vc-file-uploader__alert"
       color="danger"
       variant="solid-light"
@@ -53,14 +53,28 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { FileType } from "./file-type.enum";
 
 interface IProps {
   maxFiles?: number;
   maxFileSize?: number;
   allowedFormats?: string[];
   view?: "horizontal" | "vertical";
+  files?: VcFileType[];
 }
+
+interface IEmits {
+  (
+    event: "addFile",
+    item: {
+      name: string;
+      size: number;
+      type: string;
+    },
+  ): void;
+  (event: "removeFile", index: number): void;
+}
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   maxFiles: 1,
@@ -69,8 +83,7 @@ const props = withDefaults(defineProps<IProps>(), {
   view: "horizontal",
 });
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
-const uploadedFiles = ref<VcFileType[]>([]);
+const fileInputRef = ref<HTMLInputElement>();
 
 function openFilePicker() {
   fileInputRef.value?.click();
@@ -80,39 +93,22 @@ function validateFile(file: File) {
   return !(props.maxFileSize && props.maxFileSize < file.size);
 }
 
-function getIcon(file: VcFileType): string {
-  let fileName: string;
-
-  if (!file.type || file.errorMessage) {
-    fileName = "error";
-  } else if (Object.values(FileType).includes(file.type as FileType)) {
-    fileName = file.type;
-  } else {
-    fileName = "file";
-  }
-
-  return `/static/icons/file/${fileName}.svg`;
-}
-
 function addFile(file: File) {
-  if (validateFile(file) && uploadedFiles.value.length < props.maxFiles) {
-    uploadedFiles.value.push({
+  if (validateFile(file) && props.files && props.files.length < props.maxFiles) {
+    emit("addFile", {
       name: file.name,
       size: file.size,
-      icon: getIcon(file),
       type: file.type,
-      progress: 0,
-      isUploaded: false,
     });
   }
 }
 
 function onFileChange(event: Event) {
-  const files = (event.target as HTMLInputElement).files;
+  const fileList = (event.target as HTMLInputElement).files;
 
-  if (files) {
-    for (let i = 0; i < files.length; i++) {
-      addFile(files[i]);
+  if (fileList) {
+    for (let i = 0; i < fileList.length; i++) {
+      addFile(fileList[i]);
     }
   }
 }
@@ -120,17 +116,13 @@ function onFileChange(event: Event) {
 function onFileDrop(event: DragEvent) {
   event.preventDefault();
 
-  const files = event.dataTransfer?.files;
+  const fileList = event.dataTransfer?.files;
 
-  if (files) {
-    for (let i = 0; i < files.length; i++) {
-      addFile(files[i]);
+  if (fileList) {
+    for (let i = 0; i < fileList.length; i++) {
+      addFile(fileList[i]);
     }
   }
-}
-
-function removeFile(index: number) {
-  uploadedFiles.value.splice(index, 1);
 }
 </script>
 

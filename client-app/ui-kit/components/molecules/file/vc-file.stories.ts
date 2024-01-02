@@ -20,5 +20,6 @@ Basic.args = {
     type: "application/pdf",
     icon: "application:pdf",
     progress: 45,
+    status: "loading",
   },
 };

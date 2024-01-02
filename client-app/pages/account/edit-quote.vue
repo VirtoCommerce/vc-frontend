@@ -1,7 +1,7 @@
 <template>
   <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
     <div class="gap-3">
-      <VcFileUploader />
+      <VcFileUploader :files="localFiles" @add-file="addFile" @remove-file="removeFile" />
     </div>
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
@@ -111,7 +111,7 @@ import { cloneDeep, every, isEqual, remove } from "lodash";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, usePageHead, useFileManager } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
@@ -133,6 +133,7 @@ const props = defineProps<IProps>();
 const router = useRouter();
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
+const { fetchFiles, localFiles, addFile, removeFile } = useFileManager();
 const { user, isAuthenticated, isCorporateMember } = useUser();
 const {
   addresses: personalAddresses,
@@ -377,4 +378,6 @@ watchEffect(async () => {
   comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 });
+
+fetchFiles();
 </script>

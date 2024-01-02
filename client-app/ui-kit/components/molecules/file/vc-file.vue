@@ -5,7 +5,7 @@
       :class="[
         'vc-file__icon',
         {
-          'vc-file__icon--loading': !file.isUploaded && file.progress! < 100,
+          'vc-file__icon--loading': file.status === 'loading',
         },
       ]"
     />
@@ -21,7 +21,7 @@
         </span>
       </span>
 
-      <template v-if="!file.isUploaded && file.progress! < 100">
+      <template v-if="file.status === 'loading'">
         <div class="vc-file__progress">
           <div class="vc-file__progress-value" :style="{ width: `${file.progress || 0}%` }"></div>
         </div>
@@ -29,7 +29,7 @@
         <span class="vc-file__message"> {{ file.progress }}% done </span>
       </template>
 
-      <span v-if="file.isUploaded" class="vc-file__message">Upload complete</span>
+      <span v-if="file.status === 'success'" class="vc-file__message">Upload complete</span>
 
       <span v-else-if="file.errorMessage" class="vc-file__message vc-file__message--error">
         {{ file.errorMessage }}
