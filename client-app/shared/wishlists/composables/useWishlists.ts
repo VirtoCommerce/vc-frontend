@@ -149,6 +149,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     }
   }
 
+  /** @deprecated */
   function clearList() {
     list.value = undefined;
   }
