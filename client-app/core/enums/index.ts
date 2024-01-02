@@ -1,5 +1,4 @@
 export * from "./address-type.enum";
-export * from "./file-type.enum";
 export * from "./identity-errors.enum";
 export * from "./permissions.enum";
 export * from "./product-type.enum";

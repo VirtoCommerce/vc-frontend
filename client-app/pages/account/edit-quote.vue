@@ -1,5 +1,8 @@
 <template>
   <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
+    <div class="gap-3">
+      <VcFileUploader />
+    </div>
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 

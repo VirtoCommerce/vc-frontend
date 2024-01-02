@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { FileType } from "@/core/enums";
+import { FileType } from "./file-type.enum";
 
 interface IProps {
   maxFiles?: number;
@@ -86,7 +86,7 @@ function getIcon(file: VcFileType): string {
   if (!file.type || file.errorMessage) {
     fileName = "error";
   } else if (Object.values(FileType).includes(file.type as FileType)) {
-    fileName = file.type.replace("/", ":");
+    fileName = file.type;
   } else {
     fileName = "file";
   }
