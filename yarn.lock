@@ -6401,6 +6401,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"apollo-upload-client@npm:^18.0.1":
+  version: 18.0.1
+  resolution: "apollo-upload-client@npm:18.0.1"
+  dependencies:
+    extract-files: ^13.0.0
+  peerDependencies:
+    "@apollo/client": ^3.8.0
+    graphql: 14 - 16
+  checksum: fa32478ef70eac0609e189dd06fe73469c992c6bb0f041f77c448e30ce48e8a484089f9f59bb9541b581a6fd64998ab3041acf2ee071e32432668ce636e0c561
+  languageName: node
+  linkType: hard
+
 "app-root-dir@npm:^1.0.2":
   version: 1.0.2
   resolution: "app-root-dir@npm:1.0.2"
@@ -9191,6 +9203,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"extract-files@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "extract-files@npm:13.0.0"
+  dependencies:
+    is-plain-obj: ^4.1.0
+  checksum: b6fa0eb69115416808b4e92bfdaf69895a50daf3b28320a1dd99bc8a3c9163ac0fa1c1f5494bff00c16bdc029f2b8a89b1b0b879e9a06d6148f6f6ec50305b7a
+  languageName: node
+  linkType: hard
+
 "extract-zip@npm:^1.6.6":
   version: 1.7.0
   resolution: "extract-zip@npm:1.7.0"
@@ -10742,6 +10763,13 @@ __metadata:
   version: 1.1.0
   resolution: "is-plain-obj@npm:1.1.0"
   checksum: 0ee04807797aad50859652a7467481816cbb57e5cc97d813a7dcd8915da8195dc68c436010bf39d195226cde6a2d352f4b815f16f26b7bf486a5754290629931
+  languageName: node
+  linkType: hard
+
+"is-plain-obj@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "is-plain-obj@npm:4.1.0"
+  checksum: 6dc45da70d04a81f35c9310971e78a6a3c7a63547ef782e3a07ee3674695081b6ca4e977fbb8efc48dae3375e0b34558d2bcd722aec9bddfa2d7db5b041be8ce
   languageName: node
   linkType: hard
 
@@ -16193,6 +16221,7 @@ __metadata:
     "@vueuse/components": ^10.5.0
     "@vueuse/core": ^10.5.0
     adm-zip: ^0.5.10
+    apollo-upload-client: ^18.0.1
     autoprefixer: ^10.4.16
     chalk: ^5.3.0
     dependency-cruiser: ^14.1.1

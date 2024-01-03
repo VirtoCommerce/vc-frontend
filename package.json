@@ -41,6 +41,7 @@
     "@vee-validate/yup": "^4.11.8",
     "@vueuse/components": "^10.5.0",
     "@vueuse/core": "^10.5.0",
+    "apollo-upload-client": "^18.0.1",
     "dompurify": "^3.0.6",
     "flag-icons": "^6.11.1",
     "graphql": "^16.8.1",
