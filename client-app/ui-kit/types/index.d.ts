@@ -55,10 +55,12 @@ declare global {
   type VcFileType = {
     name: string;
     size: number;
-    type?: string;
+    type: string;
     icon?: string;
     progress?: number;
-    status: "loading" | "success" | "error";
+    status?: "loading" | "success" | "error";
     errorMessage?: string;
+    url?: string;
+    file?: File;
   };
 }

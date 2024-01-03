@@ -1,49 +1,46 @@
 import { ref } from "vue";
-import { FileType } from "@/ui-kit/components/molecules/file-uploader/file-type.enum";
+import { FileType } from "@/core/enums";
 
-type FileInfoType = {
-  name: string;
-  size: number;
-  type: string;
-};
-
-type UploadedFileType = FileInfoType & { url: string };
-
-const stub: UploadedFileType[] = [
+const stub: VcFileType[] = [
   {
     name: "Contract.pdf",
-    type: "pdf",
+    type: "application/pdf",
     size: 1024,
     url: "/contract.pdf",
   },
   {
-    name: "Positions.xls",
-    type: "xls",
+    name: "Positions.zip",
+    type: "application/zip",
     size: 2048,
-    url: "/product.xls",
+    url: "/product.zip",
   },
   {
-    name: "Product photo.jpg",
-    type: "jpg",
+    name: "Product_photo.jpg",
+    type: "image/jpeg",
     size: 4096,
-    url: "/photo.jpg",
+    url: "https://vcst-dev-storefront.paas.govirto.com/static/images/common/logo.svg",
   },
 ];
 
 export function useFileManager() {
-  const uploadedFiles = ref<UploadedFileType[]>();
   const localFiles = ref<VcFileType[]>([]);
 
   function fetchFiles() {
     setTimeout(() => {
-      uploadedFiles.value = stub;
+      stub.forEach((el) => {
+        localFiles.value.push({
+          ...el,
+          icon: getIcon(el),
+        });
+      });
     }, 3000);
   }
 
-  function addFile(fileInfo: FileInfoType) {
+  function addFile(fileInfo: VcFileType) {
     const file: VcFileType = {
       ...fileInfo,
-      status: "loading",
+      icon: getIcon(fileInfo),
+      status: fileInfo.errorMessage ? "error" : "loading",
       progress: 0,
     };
     localFiles.value.push({
@@ -56,13 +53,13 @@ export function useFileManager() {
     localFiles.value.splice(index, 1);
   }
 
-  function getIcon(file: VcFileType): string {
+  function getIcon({ type, errorMessage }: Partial<Pick<VcFileType, "type" | "errorMessage">>): string {
     let fileName: string;
 
-    if (!file.type || file.errorMessage) {
+    if (!type || errorMessage) {
       fileName = "error";
-    } else if (Object.values(FileType).includes(file.type as FileType)) {
-      fileName = file.type;
+    } else if (Object.values(FileType).includes(type as FileType)) {
+      fileName = type;
     } else {
       fileName = "file";
     }

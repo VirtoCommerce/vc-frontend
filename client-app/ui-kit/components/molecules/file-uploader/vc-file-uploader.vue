@@ -12,7 +12,7 @@
     <div v-if="files?.length" class="vc-file-uploader__list-container">
       <ul class="vc-file-uploader__list">
         <li v-for="(file, index) in files" :key="index">
-          <VcFile :file="file" removable @remove="$emit('removeFile', index)" />
+          <VcFile :file="file" removable @remove="onRemove(file, index)" />
         </li>
       </ul>
     </div>
@@ -20,6 +20,7 @@
     <button
       type="button"
       class="vc-file-uploader__drop-container"
+      :class="{ 'vc-file-uploader__drop-container--disabled': isMaxFileQuantityReached }"
       @dragover.prevent
       @dragenter.prevent
       @drop="onFileDrop"
@@ -28,9 +29,14 @@
       <span class="vc-file-uploader__drop-area">
         <VcIcon class="vc-file-uploader__drop-icon" name="cloud-upload" size="lg" />
 
-        <span class="vc-file-uploader__desktop"> Drag and drop file here or</span>
-
-        <VcButton color="secondary" size="xs"> Browse your files </VcButton>
+        <!-- todo add plural for file/files -->
+        <span v-if="isMaxFileQuantityReached" class="vc-file-uploader__desktop"
+          >You can add maximum {{ maxFiles }} files</span
+        >
+        <template v-else>
+          <span class="vc-file-uploader__desktop"> Drag and drop file here or</span>
+          <VcButton color="secondary" size="xs"> Browse your files </VcButton>
+        </template>
       </span>
 
       <span class="vc-file-uploader__description">
@@ -52,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 interface IProps {
   maxFiles?: number;
@@ -63,14 +69,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (
-    event: "addFile",
-    item: {
-      name: string;
-      size: number;
-      type: string;
-    },
-  ): void;
+  (event: "addFile", item: VcFileType): void;
   (event: "removeFile", index: number): void;
 }
 
@@ -85,22 +84,35 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const fileInputRef = ref<HTMLInputElement>();
 
+const isMaxFileQuantityReached = computed(() => {
+  return props.files && props.files?.length >= props.maxFiles;
+});
+
 function openFilePicker() {
   fileInputRef.value?.click();
 }
 
-function validateFile(file: File) {
-  return !(props.maxFileSize && props.maxFileSize < file.size);
+function getErrorMessage(file: File): string | undefined {
+  if (props.allowedFormats.length && !props.allowedFormats.includes(file.type)) {
+    return "format not supported";
+  }
+  if (props.maxFileSize < file.size) {
+    return "file size over limit";
+  }
 }
 
 function addFile(file: File) {
-  if (validateFile(file) && props.files && props.files.length < props.maxFiles) {
-    emit("addFile", {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    });
-  }
+  const errorMessage = getErrorMessage(file);
+
+  const fileInfo: VcFileType = {
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    errorMessage,
+    file,
+  };
+
+  emit("addFile", fileInfo);
 }
 
 function onFileChange(event: Event) {
@@ -122,6 +134,30 @@ function onFileDrop(event: DragEvent) {
     for (let i = 0; i < fileList.length; i++) {
       addFile(fileList[i]);
     }
+  }
+}
+
+function onRemove(file: VcFileType, index: number) {
+  removeFileFromFileList(file);
+  emit("removeFile", index);
+}
+function removeFileFromFileList(file: VcFileType) {
+  if (!fileInputRef.value?.files || !file.file) {
+    return;
+  }
+  const inputFiles = Array.from(fileInputRef.value.files);
+
+  if (inputFiles.some((el) => el === file.file)) {
+    const index = inputFiles.findIndex((el) => el === file.file);
+    const dt = new DataTransfer();
+    for (let i = 0; i < inputFiles.length; i++) {
+      const existingFile = inputFiles[i];
+      if (index !== i) {
+        dt.items.add(existingFile);
+      }
+    }
+
+    fileInputRef.value.files = dt.files;
   }
 }
 </script>
@@ -169,6 +205,10 @@ function onFileDrop(event: DragEvent) {
 
   &__drop-container {
     @apply flex flex-col gap-2.5;
+
+    &--disabled {
+      @apply opacity-40 pointer-events-none;
+    }
 
     #{$horizontal} & {
       @apply order-first md:order-last md:self-stretch md:flex-1 md:shrink;

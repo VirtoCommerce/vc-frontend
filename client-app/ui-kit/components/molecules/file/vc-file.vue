@@ -12,7 +12,15 @@
 
     <span class="vc-file__details">
       <span class="vc-file__row">
-        <span class="vc-file__name">
+        <a
+          v-if="file.url"
+          class="text-[color:var(--color-link)] [word-break:break-word]"
+          :href="file.url"
+          target="_blank"
+        >
+          {{ file.name }}
+        </a>
+        <span v-else class="vc-file__name">
           {{ file.name }}
         </span>
 
