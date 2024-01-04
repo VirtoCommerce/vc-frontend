@@ -18,7 +18,7 @@ export function getPropertyValue(property: Property): string {
       return n(property.value);
 
     default:
-      return String(property.value);
+      return String(property.value ?? "-");
   }
 }
 
