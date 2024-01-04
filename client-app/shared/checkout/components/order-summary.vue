@@ -35,7 +35,7 @@
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ discount.description || discount.coupon }}</span>
                   <VcTotalDisplay
-                    :amount="-discount.amount"
+                    :amount="-getDiscountAmmount(discount)"
                     :currency-code="currentCurrency.code"
                     :culture-name="currentLanguage.cultureName"
                   />
@@ -113,6 +113,8 @@ import type {
   LineItemType,
   OrderLineItemType,
   ShipmentType,
+  DiscountType,
+  OrderDiscountType,
 } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -146,6 +148,10 @@ const shippingDiscountTotal = computed(() =>
 const hasDiscounts = computed(
   () => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0 || shippingDiscountTotal.value > 0,
 );
+
+function getDiscountAmmount(discount: DiscountType | OrderDiscountType): number {
+  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
+}
 </script>
 
 <style scoped lang="scss">
