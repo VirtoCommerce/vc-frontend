@@ -35,7 +35,7 @@
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ discount.description || discount.coupon }}</span>
                   <VcTotalDisplay
-                    :amount="-getDiscountAmmount(discount)"
+                    :amount="-discount.amount"
                     :currency-code="currentCurrency.code"
                     :culture-name="currentLanguage.cultureName"
                   />
@@ -78,7 +78,7 @@
         <div v-if="!noShipping" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
           <span>
-            {{ shippingPrice.amount > 0 ? "+" : "" }}
+            {{ shippingPrice?.amount > 0 ? "+" : "" }}
             <VcPriceDisplay :value="shippingPrice" />
           </span>
         </div>
@@ -110,9 +110,7 @@ import type {
   OrderShipmentType,
   CartType,
   CustomerOrderType,
-  DiscountType,
   LineItemType,
-  OrderDiscountType,
   OrderLineItemType,
   ShipmentType,
 } from "@/core/api/graphql/types";
@@ -131,14 +129,10 @@ const { currentCurrency } = useCurrency();
 
 const discountsCollapsed = ref(true);
 
-const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
-  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
-};
-
 const lineItemsDiscountTotal = computed(() =>
   sumBy<LineItemType | OrderLineItemType>(
     props.selectedItems ?? props.cart.items,
-    (item) => item.discountTotal?.amount || 0,
+    (item) => item.discountTotal?.amount ?? 0,
   ),
 );
 
