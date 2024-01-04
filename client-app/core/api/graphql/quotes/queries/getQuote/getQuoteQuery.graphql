@@ -13,6 +13,12 @@ query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: St
     comment
     isCancelled
     status
+    attachments {
+      name
+      url
+      mimeType
+      size
+    }
     items {
       ...quoteLineItemFields
     }

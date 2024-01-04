@@ -1,40 +1,36 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { FileType } from "@/core/enums";
+import type { Ref } from "vue";
 
 const stub: VcFileType[] = [
   {
     name: "Contract.pdf",
-    type: "application/pdf",
+    mimeType: "application/pdf",
     size: 1024,
     url: "/contract.pdf",
   },
   {
     name: "Positions.zip",
-    type: "application/zip",
+    mimeType: "application/zip",
     size: 2048,
     url: "/product.zip",
   },
   {
     name: "Product_photo.jpg",
-    type: "image/jpeg",
+    mimeType: "image/jpeg",
     size: 4096,
     url: "https://vcst-dev-storefront.paas.govirto.com/static/images/common/logo.svg",
   },
 ];
 
-export function useFileManager() {
-  const localFiles = ref<VcFileType[]>([]);
-
-  function fetchFiles() {
-    setTimeout(() => {
-      stub.forEach((el) => {
-        localFiles.value.push({
-          ...el,
-          icon: getIcon(el),
-        });
-      });
-    }, 3000);
-  }
+export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
+  setTimeout(() => {
+    attachments.value?.push(...stub);
+  }, 3000);
+  const addedFiles = ref<VcFileType[]>([]);
+  const localFiles = computed(() => {
+    return addedFiles.value.concat(attachments.value || []);
+  });
 
   function addFile(fileInfo: VcFileType) {
     const file: VcFileType = {
@@ -43,23 +39,31 @@ export function useFileManager() {
       status: fileInfo.errorMessage ? "error" : "loading",
       progress: 0,
     };
-    localFiles.value.push({
+    addedFiles.value.push({
       ...file,
       icon: getIcon(file),
     });
   }
 
   function removeFile(index: number) {
-    localFiles.value.splice(index, 1);
+    const file = localFiles.value.at(index);
+    if (!file) {
+      return;
+    }
+    if (file.file) {
+      addedFiles.value = addedFiles.value.filter((el) => el.file !== file.file);
+    } else {
+      attachments.value = attachments.value?.filter((el) => el.url !== file.url);
+    }
   }
 
-  function getIcon({ type, errorMessage }: Partial<Pick<VcFileType, "type" | "errorMessage">>): string {
+  function getIcon({ mimeType, errorMessage }: Partial<Pick<VcFileType, "mimeType" | "errorMessage">>): string {
     let fileName: string;
 
-    if (!type || errorMessage) {
+    if (!mimeType || errorMessage) {
       fileName = "error";
-    } else if (Object.values(FileType).includes(type as FileType)) {
-      fileName = type;
+    } else if (Object.values(FileType).includes(mimeType as FileType)) {
+      fileName = mimeType;
     } else {
       fileName = "file";
     }
@@ -68,7 +72,6 @@ export function useFileManager() {
   }
 
   return {
-    fetchFiles,
     addFile,
     removeFile,
     localFiles,

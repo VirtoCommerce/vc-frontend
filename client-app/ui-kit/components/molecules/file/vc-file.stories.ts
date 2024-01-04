@@ -17,7 +17,7 @@ Basic.args = {
   file: {
     name: "File-name.pdf",
     size: 11122233,
-    type: "application/pdf",
+    mimeType: "application/pdf",
     icon: "application/pdf",
     progress: 45,
     status: "loading",

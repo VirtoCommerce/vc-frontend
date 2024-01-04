@@ -53,9 +53,10 @@ declare global {
   };
 
   type VcFileType = {
-    name: string;
-    size: number;
-    type: string;
+    id?: string;
+    name?: string;
+    size?: number;
+    mimeType?: string;
     icon?: string;
     progress?: number;
     status?: "loading" | "success" | "error";

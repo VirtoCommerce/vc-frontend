@@ -107,7 +107,7 @@ function addFile(file: File) {
   const fileInfo: VcFileType = {
     name: file.name,
     size: file.size,
-    type: file.type,
+    mimeType: file.type,
     errorMessage,
     file,
   };

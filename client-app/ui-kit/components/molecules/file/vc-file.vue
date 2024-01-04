@@ -25,7 +25,9 @@
         </span>
 
         <span class="vc-file__size">
-          {{ $n(file.size, "decimal", { notation: "compact", style: "unit", unit: "byte", unitDisplay: "narrow" }) }}
+          {{
+            $n(file.size || 0, "decimal", { notation: "compact", style: "unit", unit: "byte", unitDisplay: "narrow" })
+          }}
         </span>
       </span>
 

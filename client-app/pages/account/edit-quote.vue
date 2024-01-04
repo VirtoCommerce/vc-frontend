@@ -133,7 +133,6 @@ const props = defineProps<IProps>();
 const router = useRouter();
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
-const { fetchFiles, localFiles, addFile, removeFile } = useFileManager();
 const { user, isAuthenticated, isCorporateMember } = useUser();
 const {
   addresses: personalAddresses,
@@ -150,6 +149,7 @@ const {
   quote,
   shippingAddress,
   billingAddress,
+  attachments,
   clearQuote,
   setQuoteAddress,
   fetchQuote,
@@ -160,6 +160,7 @@ const {
   submitQuote,
 } = useUserQuote();
 const notifications = useNotifications();
+const { addFile, removeFile, localFiles } = useFileManager(attachments);
 
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
@@ -378,6 +379,4 @@ watchEffect(async () => {
   comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 });
-
-fetchFiles();
 </script>

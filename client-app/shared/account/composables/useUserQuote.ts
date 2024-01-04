@@ -10,7 +10,13 @@ import {
 } from "@/core/api/graphql";
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
-import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/core/api/graphql/types";
+import type {
+  QueryQuoteArgs,
+  QuoteType,
+  QuoteAddressType,
+  InputQuoteAddressType,
+  QuoteAttachmentType,
+} from "@/core/api/graphql/types";
 
 const fetching = ref<boolean>(false);
 const quote = ref<QuoteType | undefined>();
@@ -20,6 +26,7 @@ const billingAddress = computed<QuoteAddressType | undefined>(
 const shippingAddress = computed<QuoteAddressType | undefined>(
   () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
 );
+const attachments = computed<QuoteAttachmentType[] | undefined>(() => quote.value?.attachments);
 
 export function useUserQuote() {
   function clearQuote(): void {
@@ -119,6 +126,7 @@ export function useUserQuote() {
     quote: computed(() => quote.value),
     billingAddress,
     shippingAddress,
+    attachments,
     clearQuote,
     setQuoteAddress,
     fetchQuote,
