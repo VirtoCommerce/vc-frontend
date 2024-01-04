@@ -35,7 +35,7 @@
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ discount.description || discount.coupon }}</span>
                   <VcTotalDisplay
-                    :amount="-getDiscountAmmount(discount)"
+                    :amount="-getDiscountAmount(discount)"
                     :currency-code="currentCurrency.code"
                     :culture-name="currentLanguage.cultureName"
                   />
@@ -149,7 +149,7 @@ const hasDiscounts = computed(
   () => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0 || shippingDiscountTotal.value > 0,
 );
 
-function getDiscountAmmount(discount: DiscountType | OrderDiscountType): number {
+function getDiscountAmount(discount: DiscountType | OrderDiscountType): number {
   return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
 }
 </script>
