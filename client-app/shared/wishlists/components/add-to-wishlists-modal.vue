@@ -11,7 +11,11 @@
           </div>
 
           <ul>
-            <li v-for="list in listsWithProduct" :key="list.id" class="px-6 py-4 sm:pb-3 sm:pt-4 last:sm:pb-7">
+            <li
+              v-for="list in listsWithProduct"
+              :key="list.id"
+              class="flex justify-between px-6 py-4 sm:pb-3 sm:pt-4 last:sm:pb-7"
+            >
               <VcCheckbox
                 model-value
                 :value="list.id"
@@ -22,6 +26,8 @@
                   {{ list.name }}
                 </span>
               </VcCheckbox>
+
+              <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
             </li>
           </ul>
         </template>
@@ -73,7 +79,11 @@
               </svg>
             </button>
           </li>
-          <li v-for="list in listsOther" :key="list.id" class="px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3">
+          <li
+            v-for="list in listsOther"
+            :key="list.id"
+            class="flex justify-between px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3"
+          >
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
                 class="line-clamp-1 text-base font-medium"
@@ -82,6 +92,8 @@
                 {{ list.name }}
               </span>
             </VcCheckbox>
+
+            <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
           </li>
         </transition-group>
       </template>
@@ -125,11 +137,13 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { WishlistInputType } from "@/shared/wishlists/types";
+import WishlistStatus from "@/shared/wishlists/components/wishlist-status.vue";
 
 interface IProps {
   product: ProductType;
@@ -145,6 +159,8 @@ const props = defineProps<IProps>();
 
 const { d, t } = useI18n();
 const { closePopup } = usePopup();
+const { isCorporateMember } = useUser();
+
 const {
   loading: loadingLists,
   lists,
