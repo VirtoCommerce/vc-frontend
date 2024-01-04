@@ -139,7 +139,9 @@ const lineItemsDiscountTotal = computed(() =>
 );
 
 // TODO: Change to shippingPrice when this property will be added to CustomerOrderType
-const shippingPrice = computed(() => props.cart.shipments?.[0]?.price);
+const shippingPrice = computed(() =>
+  "shippingPrice" in props.cart ? props.cart.shippingPrice : props.cart.shipments?.[0]?.price,
+);
 
 const shippingDiscountTotal = computed(() =>
   sumBy<ShipmentType | OrderShipmentType>(props.cart.shipments, (shipment) => shipment.discountAmount?.amount),
@@ -149,6 +151,7 @@ const hasDiscounts = computed(
   () => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0 || shippingDiscountTotal.value > 0,
 );
 
+// TODO: Need to remove this function because type of cart discount amount should be equal to order discount amount
 function getDiscountAmount(discount: DiscountType | OrderDiscountType): number {
   return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
 }
