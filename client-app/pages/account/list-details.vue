@@ -272,14 +272,12 @@ function openDeleteProductModal(values: string[]): void {
         listId: list.value?.id,
         listItem: item,
 
-        async onResult(): Promise<void> {
+        onResult(): void {
           const previousPagesCount = pagesCount.value;
 
           broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
 
-          await fetchWishList(props.listId);
-
-          wishlistItems.value = cloneDeep(list.value?.items || []);
+          wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
 
           /**
            * If you were on the last page, and after deleting the product
