@@ -167,7 +167,7 @@ function removeFileFromFileList(file: VcFileType) {
   $horizontal: &;
   $vertical: &;
 
-  @apply flex flex-col flex-wrap gap-x-6 gap-y-4;
+  @apply flex flex-col gap-x-6 gap-y-4;
 
   &--view {
     &--horizontal {

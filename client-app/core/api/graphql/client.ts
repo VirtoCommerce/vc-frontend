@@ -1,5 +1,6 @@
-import { InMemoryCache, ApolloClient, HttpLink } from "@apollo/client/core";
+import { InMemoryCache, ApolloClient } from "@apollo/client/core";
 import { onError } from "@apollo/client/link/error";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import {
   TabsType,
   forbiddenEvent,
@@ -15,7 +16,9 @@ import type { FetchPolicy } from "@apollo/client/core";
 
 const fetchPolicy: FetchPolicy = "no-cache";
 
-const httpLink = new HttpLink({ uri: `/xapi/graphql` });
+const link = createUploadLink({
+  uri: "/xapi/graphql",
+});
 
 const broadcast = useBroadcast();
 
@@ -49,7 +52,7 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
 
 export const graphqlClient = new ApolloClient({
   // Provide required constructor fields
-  link: errorHandler.concat(httpLink),
+  link: errorHandler.concat(link),
   cache: new InMemoryCache({
     addTypename: false,
   }),
