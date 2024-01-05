@@ -28,6 +28,14 @@ const shippingAddress = computed<QuoteAddressType | undefined>(
 );
 const attachments = computed<QuoteAttachmentType[] | undefined>(() => quote.value?.attachments);
 
+export function removeAttachmentByUrl(url: string) {
+  if (!quote.value) {
+    return;
+  }
+  // todo request fragment
+  quote.value.attachments = quote.value?.attachments.filter((el) => el.url !== url);
+}
+
 export function useUserQuote() {
   function clearQuote(): void {
     quote.value = undefined;
@@ -43,6 +51,26 @@ export function useUserQuote() {
 
     try {
       quote.value = await getQuote(paylod);
+      quote.value.attachments = [
+        {
+          name: "Contract.pdf",
+          mimeType: "application/pdf",
+          size: 1024,
+          url: "/contract.pdf",
+        },
+        {
+          name: "Positions.zip",
+          mimeType: "application/zip",
+          size: 2048,
+          url: "/product.zip",
+        },
+        {
+          name: "Product_photo.jpg",
+          mimeType: "image/jpeg",
+          size: 4096,
+          url: "https://vcst-dev-storefront.paas.govirto.com/static/images/common/logo.svg",
+        },
+      ];
     } catch (e) {
       Logger.error(`${useUserQuote.name}.${fetchQuote.name}`, e);
       throw e;
@@ -127,6 +155,7 @@ export function useUserQuote() {
     billingAddress,
     shippingAddress,
     attachments,
+    removeAttachmentByUrl,
     clearQuote,
     setQuoteAddress,
     fetchQuote,

@@ -1,7 +1,7 @@
 <template>
   <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
     <div class="gap-3">
-      <VcFileUploader :max-files="6" :files="localFiles" @add-file="addFile" @remove-file="removeFile" />
+      <VcFileUploader :max-files="6" :files="localFiles" @add-file="uploadFile" @remove-file="onFileRemove" />
     </div>
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
@@ -150,6 +150,7 @@ const {
   shippingAddress,
   billingAddress,
   attachments,
+  removeAttachmentByUrl,
   clearQuote,
   setQuoteAddress,
   fetchQuote,
@@ -160,7 +161,7 @@ const {
   submitQuote,
 } = useUserQuote();
 const notifications = useNotifications();
-const { addFile, removeFile, localFiles } = useFileManager(attachments);
+const { uploadFile, removeFile, localFiles } = useFileManager(attachments);
 
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
@@ -379,4 +380,11 @@ watchEffect(async () => {
   comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 });
+
+function onFileRemove(fileInfo: VcFileType) {
+  if (fileInfo.url) {
+    removeAttachmentByUrl(fileInfo.url);
+  }
+  removeFile(fileInfo);
+}
 </script>

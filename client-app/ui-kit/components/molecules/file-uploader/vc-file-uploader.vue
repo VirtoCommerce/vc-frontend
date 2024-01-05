@@ -12,7 +12,7 @@
     <div v-if="files?.length" class="vc-file-uploader__list-container">
       <ul class="vc-file-uploader__list">
         <li v-for="(file, index) in files" :key="index">
-          <VcFile :file="file" removable @remove="onRemove(file, index)" />
+          <VcFile :file="file" removable @remove="onRemove(file)" />
         </li>
       </ul>
     </div>
@@ -70,7 +70,7 @@ interface IProps {
 
 interface IEmits {
   (event: "addFile", item: VcFileType): void;
-  (event: "removeFile", index: number): void;
+  (event: "removeFile", item: VcFileType): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -137,9 +137,9 @@ function onFileDrop(event: DragEvent) {
   }
 }
 
-function onRemove(file: VcFileType, index: number) {
+function onRemove(file: VcFileType) {
   removeFileFromFileList(file);
-  emit("removeFile", index);
+  emit("removeFile", file);
 }
 function removeFileFromFileList(file: VcFileType) {
   if (!fileInputRef.value?.files || !file.file) {

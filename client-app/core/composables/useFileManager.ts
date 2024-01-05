@@ -1,59 +1,47 @@
-import { computed, ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { FileType } from "@/core/enums";
 import type { Ref } from "vue";
 
-const stub: VcFileType[] = [
-  {
-    name: "Contract.pdf",
-    mimeType: "application/pdf",
-    size: 1024,
-    url: "/contract.pdf",
-  },
-  {
-    name: "Positions.zip",
-    mimeType: "application/zip",
-    size: 2048,
-    url: "/product.zip",
-  },
-  {
-    name: "Product_photo.jpg",
-    mimeType: "image/jpeg",
-    size: 4096,
-    url: "https://vcst-dev-storefront.paas.govirto.com/static/images/common/logo.svg",
-  },
-];
-
 export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
-  setTimeout(() => {
-    attachments.value?.push(...stub);
-  }, 3000);
-  const addedFiles = ref<VcFileType[]>([]);
-  const localFiles = computed(() => {
-    return addedFiles.value.concat(attachments.value || []);
+  const localFiles = ref<VcFileType[]>([]);
+
+  watchEffect(() => {
+    addAllFilesInfo(attachments.value);
   });
 
-  function addFile(fileInfo: VcFileType) {
-    const file: VcFileType = {
+  function uploadFile(fileInfo: VcFileType) {
+    // upload file here
+    localFiles.value.push({
       ...fileInfo,
-      icon: getIcon(fileInfo),
-      status: fileInfo.errorMessage ? "error" : "loading",
       progress: 0,
-    };
-    addedFiles.value.push({
-      ...file,
-      icon: getIcon(file),
+      status: fileInfo.errorMessage ? "error" : "loading",
+      icon: getIcon(fileInfo),
     });
   }
 
-  function removeFile(index: number) {
-    const file = localFiles.value.at(index);
-    if (!file) {
+  function addAllFilesInfo(filesInfo?: VcFileType[]) {
+    if (!filesInfo) {
       return;
     }
-    if (file.file) {
-      addedFiles.value = addedFiles.value.filter((el) => el.file !== file.file);
-    } else {
-      attachments.value = attachments.value?.filter((el) => el.url !== file.url);
+    filesInfo.forEach((newEl) => {
+      if (!localFiles.value.some((el) => el.url === newEl.url)) {
+        addFileInfo(newEl);
+      }
+    });
+  }
+
+  function addFileInfo(fileInfo: VcFileType) {
+    localFiles.value.push({
+      ...fileInfo,
+      icon: getIcon(fileInfo),
+    });
+  }
+
+  function removeFile(fileInfo: VcFileType) {
+    if (fileInfo.url) {
+      localFiles.value = localFiles.value.filter((el) => el.url !== fileInfo.url);
+    } else if (fileInfo.file) {
+      localFiles.value = localFiles.value.filter((el) => el.file !== fileInfo.file);
     }
   }
 
@@ -72,8 +60,8 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   }
 
   return {
-    addFile,
-    removeFile,
     localFiles,
+    uploadFile,
+    removeFile,
   };
 }
