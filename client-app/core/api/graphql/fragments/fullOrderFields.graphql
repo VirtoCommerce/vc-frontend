@@ -20,6 +20,9 @@ fragment fullOrderFields on CustomerOrderType {
     price {
       ...moneyFields
     }
+    discountAmount {
+      ...moneyFields
+    }
     deliveryAddress {
       ...orderAddressFields
     }
