@@ -351,7 +351,7 @@ import {
   useOrganizationContactsFilterFacets,
 } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
@@ -392,7 +392,7 @@ const {
   resetFacets,
   resetFacetItem,
 } = useOrganizationContactsFilterFacets();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const notifications = useNotifications();
 
@@ -506,7 +506,7 @@ function hideFilters() {
 }
 
 function openInviteModal() {
-  openPopup({
+  openModal({
     component: InviteMemberModal,
     props: {
       onResult(succeed: boolean) {
@@ -519,8 +519,8 @@ function openInviteModal() {
 }
 
 function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean): void {
-  const closeLockOrUnlockModal = openPopup({
-    component: "VcConfirmationDialog",
+  const closeLockOrUnlockModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "info",
       iconVariant: "warning",
@@ -540,8 +540,8 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
 }
 
 function openDeleteModal(contact: ExtendedContactType): void {
-  const closeDeleteModal = openPopup({
-    component: "VcConfirmationDialog",
+  const closeDeleteModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "danger",
       iconVariant: "danger",
@@ -562,7 +562,7 @@ function openDeleteModal(contact: ExtendedContactType): void {
 }
 
 function openEditCustomerRoleModal(contact: ExtendedContactType): void {
-  const closeEditCustomerRoleModal = openPopup({
+  const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
       roles: B2B_ROLES,

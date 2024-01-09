@@ -1,1 +1,1 @@
-export * from "./usePopup";
+export * from "./useModal";

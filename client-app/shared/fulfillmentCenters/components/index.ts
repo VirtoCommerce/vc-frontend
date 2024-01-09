@@ -1,1 +1,1 @@
-export { default as BranchesDialog } from "./branches-dialog.vue";
+export { default as BranchesModal } from "./branches-modal.vue";

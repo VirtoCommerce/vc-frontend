@@ -80,13 +80,13 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
-import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
-import { usePopup } from "@/shared/popup";
+import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
+import { useModal } from "@/shared/popup";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 const { user, updateUser } = useUser();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 
 const apiErrors = ref<IdentityErrorType[]>();
 const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
@@ -138,8 +138,8 @@ const onSubmit = handleSubmit(async (data) => {
   if (results.every((item) => item)) {
     resetForm();
     apiErrors.value = [];
-    openPopup({
-      component: ProfileUpdateSuccessDialog,
+    openModal({
+      component: ProfileUpdateSuccessModal,
     });
   }
 });

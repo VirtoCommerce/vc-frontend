@@ -108,9 +108,9 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
-import { PasswordTips, RegistrationSuccessDialog, usePasswordRequirements, useUser } from "@/shared/account";
+import { PasswordTips, RegistrationSuccessModal, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 
 const commonErrors = ref<string[]>([]);
 
@@ -120,7 +120,7 @@ usePageHead({
   title: t("pages.confirm_invitation.meta.title"),
 });
 
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const { loading, registerByInvite } = useUser();
 const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
@@ -170,8 +170,8 @@ const onSubmit = handleSubmit(async (data) => {
   });
 
   if (result.succeeded) {
-    openPopup({
-      component: RegistrationSuccessDialog,
+    openModal({
+      component: RegistrationSuccessModal,
     });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {

@@ -197,7 +197,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import type { LineItemType } from "@/core/api/graphql/types";
 
 const config = inject(configInjectionKey, {});
@@ -206,7 +206,7 @@ const router = useRouter();
 const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const {
   loading: loadingCart,
   cart,
@@ -298,7 +298,7 @@ function onChangeBillingAddress() {
 // FIXME: Move to composable
 async function createQuote(): Promise<void> {
   if (cartContainsDeletedProducts.value) {
-    openPopup({
+    openModal({
       component: CartDeletedProductsModal,
     });
 

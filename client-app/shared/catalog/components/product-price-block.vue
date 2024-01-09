@@ -129,7 +129,7 @@ import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import { AddToWishlistsModal } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
 import type { Product } from "@/core/api/graphql/types";
@@ -151,7 +151,7 @@ const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 const isMobile = breakpoints.smaller("lg");
 
 const { isAuthenticated } = useUser();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 
 const pageUrl = computed(() => location.origin + route.fullPath);
 const shareProductPopoverShown = ref(false);
@@ -161,7 +161,7 @@ function openAddToListModal() {
     return;
   }
 
-  openPopup({
+  openModal({
     component: AddToWishlistsModal,
     props: {
       product: props.product,

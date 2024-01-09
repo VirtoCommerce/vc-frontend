@@ -139,7 +139,7 @@
                     size="sm"
                     variant="outline"
                     class="!hidden self-start md:!inline-flex"
-                    @click="showEditAddressDialog"
+                    @click="showEditAddressModal"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}
                   </VcButton>
@@ -150,7 +150,7 @@
                     size="sm"
                     icon="pencil"
                     variant="outline"
-                    @click="paymentMethodComponent?.loading || loading ? null : showEditAddressDialog()"
+                    @click="paymentMethodComponent?.loading || loading ? null : showEditAddressModal()"
                   />
                 </div>
               </div>
@@ -179,7 +179,7 @@
                     size="sm"
                     variant="outline"
                     class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
-                    @click="showChangePaymentMethodDialog"
+                    @click="showChangePaymentMethodModal"
                   >
                     {{ $t("pages.account.order_payment.edit_button") }}
                   </VcButton>
@@ -190,7 +190,7 @@
                     size="sm"
                     icon="pencil"
                     variant="outline"
-                    @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodDialog()"
+                    @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodModal()"
                   />
                 </div>
               </div>
@@ -245,7 +245,7 @@ import {
   PaymentProcessingManual,
   PaymentProcessingRedirection,
 } from "@/shared/payment";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
@@ -263,7 +263,7 @@ const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthoriz
 
 const { t } = useI18n();
 const { loading, order, fetchShortOrder, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
-const { openPopup, closePopup } = usePopup();
+const { openModal, closeModal } = useModal();
 const router = useRouter();
 
 usePageHead({
@@ -291,13 +291,13 @@ function tryAgain() {
   location.reload();
 }
 
-function showEditAddressDialog() {
-  openPopup({
+function showEditAddressModal() {
+  openModal({
     component: AddOrUpdateAddressModal,
     props: {
       address: payment.value?.billingAddress,
       async onResult(address: InputOrderAddressType) {
-        closePopup();
+        closeModal();
         changeAddressLoading.value = true;
 
         await addOrUpdatePayment({
@@ -314,8 +314,8 @@ function showEditAddressDialog() {
   });
 }
 
-function showChangePaymentMethodDialog(): void {
-  openPopup({
+function showChangePaymentMethodModal(): void {
+  openModal({
     component: SelectPaymentMethodModal,
     props: {
       currentMethodCode: payment.value?.gatewayCode,

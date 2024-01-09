@@ -24,7 +24,7 @@ import {
   userReloadEvent,
   passwordExpiredEvent,
 } from "@/shared/broadcast";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
   AccountCreationResultType,
@@ -62,7 +62,7 @@ interface IPasswordExpirationEntry {
 export function useUser() {
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
-  const { openPopup, closePopup } = usePopup();
+  const { openModal, closeModal } = useModal();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -82,7 +82,7 @@ export function useUser() {
       return;
     }
 
-    openPopup({
+    openModal({
       component: PasswordExpirationModal,
 
       props: {
@@ -93,7 +93,7 @@ export function useUser() {
             remove(changePasswordReminderDates.value, (entry) => entry.userId === userPasswordExpirationEntry.userId);
           }
 
-          closePopup();
+          closeModal();
 
           await globals.router.replace({ name: "ChangePassword" });
         },
@@ -111,7 +111,7 @@ export function useUser() {
             });
           }
 
-          closePopup();
+          closeModal();
         },
       },
     });

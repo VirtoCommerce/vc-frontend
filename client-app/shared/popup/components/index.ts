@@ -1,1 +1,1 @@
-export { default as PopupHost } from "./popup-host.vue";
+export { default as ModalHost } from "./modal-host.vue";

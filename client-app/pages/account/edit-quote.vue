@@ -116,7 +116,7 @@ import { QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/share
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
@@ -129,7 +129,7 @@ const props = defineProps<IProps>();
 
 const router = useRouter();
 const { t } = useI18n();
-const { openPopup, closePopup } = usePopup();
+const { openModal, closeModal } = useModal();
 const { user, isAuthenticated, isCorporateMember } = useUser();
 const {
   addresses: personalAddresses,
@@ -235,7 +235,7 @@ function setBillingAddressEqualsShipping(): void {
 }
 
 function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: QuoteAddressType): void {
-  openPopup({
+  openModal({
     component: AddOrUpdateAddressModal,
     props: {
       address: currentAddress,
@@ -244,7 +244,7 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
         const quoteAddress = convertToType<QuoteAddressType>({ ...updatedAddress, addressType });
 
         setQuoteAddress(quoteAddress);
-        closePopup();
+        closeModal();
 
         // Save address in account
         const addressToSave = { ...updatedAddress, addressType: AddressType.BillingAndShipping };
@@ -266,7 +266,7 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
 }
 
 function openSelectAddressModal(addressType: AddressType): void {
-  openPopup({
+  openModal({
     component: SelectAddressModal,
     props: {
       addresses: accountAddresses.value,
@@ -280,7 +280,7 @@ function openSelectAddressModal(addressType: AddressType): void {
 
         setQuoteAddress(quoteAddress);
         setBillingAddressEqualsShipping();
-        closePopup();
+        closeModal();
       },
 
       onAddNewAddress() {

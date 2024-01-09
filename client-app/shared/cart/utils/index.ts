@@ -18,7 +18,7 @@ export function getLineItemValidationErrorsGroupedBySKU(
   return result;
 }
 
-export function getItemsForAddBulkItemsToCartResultsPopup(
+export function getItemsForAddBulkItemsToCartResultsModal(
   inputItems: OrderLineItemType[] | LineItemType[],
   cart: CartType,
 ): ItemForAddBulkItemsToCartResultsPopupType[] {

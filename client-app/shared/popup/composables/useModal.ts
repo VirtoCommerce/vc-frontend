@@ -1,12 +1,12 @@
-import _ from "lodash";
+import { uniqueId } from "lodash";
 import { computed, markRaw, ref } from "vue";
 import type { ClosePopupHandle, IPopup } from "..";
 
 const stack = ref<IPopup[]>([]);
 
-export function usePopup() {
-  function openPopup(options: IPopup): ClosePopupHandle {
-    const id = options.id || _.uniqueId();
+export function useModal() {
+  function openModal(options: IPopup): ClosePopupHandle {
+    const id = options.id || uniqueId();
 
     stack.value.push({
       id,
@@ -14,10 +14,10 @@ export function usePopup() {
       component: typeof options.component === "string" ? options.component : markRaw(options.component),
     });
 
-    return () => closePopup(id);
+    return () => closeModal(id);
   }
 
-  function closePopup(id?: string) {
+  function closeModal(id?: string) {
     if (!id) {
       // Close last popup window
       stack.value.pop();
@@ -34,8 +34,8 @@ export function usePopup() {
   }
 
   return {
-    openPopup,
-    closePopup,
+    openModal,
+    closeModal,
     popupStack: computed(() => stack.value),
   };
 }

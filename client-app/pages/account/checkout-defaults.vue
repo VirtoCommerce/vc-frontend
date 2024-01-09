@@ -102,13 +102,13 @@ import { clone, isEqual } from "lodash";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { useUserCheckoutDefaults, CheckoutDefaultsSuccessDialog } from "@/shared/account";
+import { useUserCheckoutDefaults, CheckoutDefaultsSuccessModal } from "@/shared/account";
 import { useCart } from "@/shared/cart";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import type { CheckoutDefaults } from "@/shared/account";
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const { loading, availableShippingMethods, availablePaymentMethods, fetchFullCart } = useCart();
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 
@@ -126,8 +126,8 @@ function saveDefaults() {
 
   savedCheckoutDefaults.value = clone(localCheckoutDefaults.value);
 
-  openPopup({
-    component: CheckoutDefaultsSuccessDialog,
+  openModal({
+    component: CheckoutDefaultsSuccessModal,
   });
 }
 

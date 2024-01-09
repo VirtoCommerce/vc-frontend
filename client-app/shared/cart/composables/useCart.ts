@@ -29,7 +29,7 @@ import { globals } from "@/core/globals";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
@@ -145,7 +145,7 @@ const selectedLineItemsGroupedByVendor = computed<LineItemsGroupByVendorType<Lin
 
 export function useCart() {
   const notifications = useNotifications();
-  const { openPopup } = usePopup();
+  const { openModal } = useModal();
   const ga = useGoogleAnalytics();
 
   async function fetchShortCart(): Promise<void> {
@@ -475,7 +475,7 @@ export function useCart() {
   }
 
   function openClearCartModal() {
-    openPopup({
+    openModal({
       component: ClearCartModal,
       props: {
         async onResult() {

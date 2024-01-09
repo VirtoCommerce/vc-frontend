@@ -237,7 +237,7 @@ import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
@@ -267,7 +267,7 @@ const {
   addOrUpdateAddresses,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const notifications = useNotifications();
 
 const {
@@ -346,8 +346,8 @@ function openDeleteAddressModal(address: MemberAddressType): void {
     return;
   }
 
-  const closeDeleteAddressModal = openPopup({
-    component: "VcConfirmationDialog",
+  const closeDeleteAddressModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "danger",
       iconVariant: "danger",
@@ -381,7 +381,7 @@ function openDeleteAddressModal(address: MemberAddressType): void {
 }
 
 function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
-  const closeAddOrUpdateAddressModal = openPopup({
+  const closeAddOrUpdateAddressModal = openModal({
     component: AddOrUpdateCompanyAddressModal,
     props: {
       address,

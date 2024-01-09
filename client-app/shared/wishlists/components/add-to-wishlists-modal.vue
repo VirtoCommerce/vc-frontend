@@ -139,7 +139,7 @@ import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/popup";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { WishlistInputType } from "@/shared/wishlists/types";
@@ -158,7 +158,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { d, t } = useI18n();
-const { closePopup } = usePopup();
+const { closeModal } = useModal();
 const { isCorporateMember } = useUser();
 
 const {
@@ -290,7 +290,7 @@ async function save() {
 
   emit("result", !!listsWithProduct.value.length);
 
-  closePopup();
+  closeModal();
   loading.value = false;
 
   notifications.success({
