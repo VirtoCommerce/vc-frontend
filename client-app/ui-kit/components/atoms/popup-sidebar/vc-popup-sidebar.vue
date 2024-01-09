@@ -15,9 +15,27 @@
       <div
         v-if="isVisible"
         v-bind="$attrs"
-        class="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white transition-transform"
+        class="fixed inset-0 z-50 flex w-72 flex-col bg-[--color-additional-50] transition-transform"
       >
-        <slot />
+        <div class="relative z-[1] flex items-center justify-between gap-2 ps-5 shadow-sm">
+          <slot name="header" :hide="onHide">
+            <div class="text-2xl font-bold">
+              {{ $t("common.buttons.filters") }}
+            </div>
+
+            <button type="button" class="appearance-none px-5 py-4" @click="onHide">
+              <VcIcon class="text-[--color-danger-400]" name="x" />
+            </button>
+          </slot>
+        </div>
+
+        <div class="grow overflow-y-auto p-5">
+          <slot />
+        </div>
+
+        <div class="relative z-[1] flex flex-wrap gap-4 px-5 py-4 shadow-2xl [&>*]:flex-1">
+          <slot name="footer" />
+        </div>
       </div>
     </transition>
   </teleport>

@@ -1,45 +1,31 @@
 <template>
   <template v-if="withSearch">
     <!-- Mobile filters sidebar -->
-    <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <div class="relative">
-        <button type="button" class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <VcIcon class="text-[--color-danger-400]" name="x" />
-        </button>
-      </div>
+    <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+      <MobileOrdersFilter />
 
-      <div class="mb-6 pt-1 text-2xl font-semibold">
-        {{ $t("common.buttons.filters") }}
-      </div>
+      <template #footer>
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          variant="outline"
+          @click="
+            resetFilters();
+            hideFilters();
+          "
+        >
+          {{ $t("common.buttons.reset") }}
+        </VcButton>
 
-      <MobileOrdersFilter class="grow" />
-
-      <div class="sticky bottom-0 -mx-5 bg-[--color-additional-50] p-5 shadow-t-md">
-        <div class="flex gap-4">
-          <VcButton
-            :disabled="isFilterEmpty && !isFilterDirty"
-            class="flex-1"
-            variant="outline"
-            @click="
-              resetFilters();
-              hideFilters();
-            "
-          >
-            {{ $t("common.buttons.reset") }}
-          </VcButton>
-
-          <VcButton
-            :disabled="!isFilterDirty"
-            class="flex-1"
-            @click="
-              applyFilters();
-              hideFilters();
-            "
-          >
-            {{ $t("common.buttons.apply") }}
-          </VcButton>
-        </div>
-      </div>
+        <VcButton
+          :disabled="!isFilterDirty"
+          @click="
+            applyFilters();
+            hideFilters();
+          "
+        >
+          {{ $t("common.buttons.apply") }}
+        </VcButton>
+      </template>
     </VcPopupSidebar>
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
