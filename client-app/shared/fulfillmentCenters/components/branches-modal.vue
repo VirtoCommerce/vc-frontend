@@ -203,7 +203,7 @@ onMounted(() => {
 function searchFilter(item: IFulfillmentCenter) {
   const searchArr = searchInput.value.trim().split(" ");
   const includeNumber = searchArr.filter((value) => {
-    return item.name?.toLocaleLowerCase().includes(value) || item.address?.toLocaleLowerCase().includes(value);
+    return item.name?.toLocaleLowerCase().includes(value) ?? item.address?.toLocaleLowerCase().includes(value);
   }).length;
   return includeNumber === searchArr.length;
 }
@@ -213,7 +213,7 @@ function search(value: string) {
 }
 
 function isBranchSelected(index: number): boolean {
-  return selectedBranchesIds.value.includes(branches.value[index]?.id || "");
+  return selectedBranchesIds.value.includes(branches.value[index]?.id ?? "");
 }
 
 function clearSelection() {

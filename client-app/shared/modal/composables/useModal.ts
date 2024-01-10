@@ -6,7 +6,7 @@ const stack = ref<IModal[]>([]);
 
 export function useModal() {
   function openModal(options: IModal): CloseModalHandleType {
-    const id = options.id || uniqueId();
+    const id = options.id ?? uniqueId();
 
     stack.value.push({
       id,
