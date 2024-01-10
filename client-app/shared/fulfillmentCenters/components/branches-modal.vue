@@ -1,14 +1,14 @@
 <template>
-  <VcPopup :title="$t('shared.catalog.branches_dialog.title')" modal-width="sm:max-w-[59.625rem]" is-mobile-fullscreen>
+  <VcModal :title="$t('shared.catalog.branches_modal.title')" modal-width="sm:max-w-[59.625rem]" is-mobile-fullscreen>
     <!-- DESKTOP content BEGIN -->
     <div class="hidden border-b sm:flex">
       <div
         class="flex shrink-0 grow flex-col transition-all delay-100"
         :class="[selectedBranchesIds.length ? 'w-1/2' : 'w-full']"
       >
-        <div class="flex h-11 items-center bg-[color:var(--color-branch-dialog-bg)] py-2 pl-4 pr-3.5">
+        <div class="flex h-11 items-center bg-[color:var(--color-branch-modal-bg)] py-2 pl-4 pr-3.5">
           <div class="text-15">
-            {{ $t("shared.catalog.branches_dialog.all_branches") }}
+            {{ $t("shared.catalog.branches_modal.all_branches") }}
           </div>
 
           <BranchSearch class="ml-1.5 grow md:ml-6" :model-value="searchInput" @update:input="search($event)" />
@@ -36,10 +36,10 @@
         <div v-else class="flex h-[23.8rem] max-h-screen-60 grow flex-col items-center justify-center space-y-3">
           <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
 
-          <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
+          <div class="text-17">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
 
           <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
-            {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
+            {{ $t("shared.catalog.branches_modal.reset_search_button") }}
           </VcButton>
         </div>
         <!-- NO RESULTS content END -->
@@ -50,16 +50,16 @@
         class="flex shrink-0 flex-col overflow-hidden transition-all"
         :class="[selectedBranchesIds.length ? 'w-1/2 border-l' : 'w-0']"
       >
-        <div class="flex h-11 items-center justify-between bg-[color:var(--color-branch-dialog-bg)] py-2 pl-4 pr-3.5">
+        <div class="flex h-11 items-center justify-between bg-[color:var(--color-branch-modal-bg)] py-2 pl-4 pr-3.5">
           <div class="text-15">
-            {{ $t("shared.catalog.branches_dialog.selected_branches") }}
+            {{ $t("shared.catalog.branches_modal.selected_branches") }}
           </div>
           <div class="flex cursor-pointer items-center pl-2" @click="clearSelection">
             <svg class="text-primary" width="16" height="16">
               <use href="/static/images/clear.svg#main"></use>
             </svg>
             <div class="pl-2 text-sm font-bold text-[color:var(--color-link)]">
-              {{ $t("shared.catalog.branches_dialog.clear_selection") }}
+              {{ $t("shared.catalog.branches_modal.clear_selection") }}
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@
 
     <!-- MOBILE content BEGIN -->
     <div class="flex max-h-full grow flex-col sm:hidden">
-      <div class="flex min-h-[2.75rem] items-stretch bg-[color:var(--color-branch-dialog-bg)] px-6 text-15">
+      <div class="flex min-h-[2.75rem] items-stretch bg-[color:var(--color-branch-modal-bg)] px-6 text-15">
         <button
           type="button"
           class="mr-auto flex items-center py-2 font-bold"
@@ -92,7 +92,7 @@
           :disabled="!(showSelectedBranchesMobile && selectedBranchesIds.length) || !selectedBranchesIds.length"
           @click="toggleShowSelectedBranchesMobile(false)"
         >
-          {{ $t("shared.catalog.branches_dialog.all_branches") }}
+          {{ $t("shared.catalog.branches_modal.all_branches") }}
         </button>
 
         <template v-if="selectedBranchesIds.length">
@@ -103,7 +103,7 @@
             :disabled="showSelectedBranchesMobile"
             @click="toggleShowSelectedBranchesMobile(true)"
           >
-            {{ $t("shared.catalog.branches_dialog.selected_branches") }} ({{ selectedBranchesIds.length }})
+            {{ $t("shared.catalog.branches_modal.selected_branches") }} ({{ selectedBranchesIds.length }})
           </button>
 
           <button
@@ -138,9 +138,9 @@
       <!-- NO RESULTS content BEGIN -->
       <div v-else class="flex grow flex-col items-center justify-center space-y-3 pb-16">
         <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
-        <div class="text-17">{{ $t("shared.catalog.branches_dialog.no_results") }}</div>
+        <div class="text-17">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
         <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
-          {{ $t("shared.catalog.branches_dialog.reset_search_button") }}
+          {{ $t("shared.catalog.branches_modal.reset_search_button") }}
         </VcButton>
       </div>
       <!-- NO RESULTS content END -->
@@ -152,7 +152,7 @@
         class="sm:gap-auto relative -mx-6 -mt-4 flex grow items-center justify-between gap-5 bg-white px-10 pt-4 shadow-t-lgs sm:mt-0 sm:px-6 sm:pt-0 sm:shadow-none"
       >
         <VcButton color="secondary" variant="outline" class="flex-1 md:flex-none" @click="close">
-          {{ $t("shared.catalog.branches_dialog.cancel_button") }}
+          {{ $t("shared.catalog.branches_modal.cancel_button") }}
         </VcButton>
 
         <VcButton
@@ -163,16 +163,16 @@
             close();
           "
         >
-          {{ $t("shared.catalog.branches_dialog.ok_button") }}
+          {{ $t("shared.catalog.branches_modal.ok_button") }}
         </VcButton>
       </div>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch, onMounted } from "vue";
-import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
+import { useFulfillmentCenters } from "../composables";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
 import type { IFulfillmentCenter } from "@/shared/fulfillmentCenters";

@@ -114,7 +114,7 @@ import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import {
   useWishlists,
   AddOrUpdateWishlistModal,

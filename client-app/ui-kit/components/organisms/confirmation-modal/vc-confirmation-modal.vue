@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="title" :variant="variant" modal-width="sm:max-w-[30rem]" hide-actions @close="$emit('close')">
+  <VcModal :title="title" :variant="variant" modal-width="sm:max-w-[30rem]" hide-actions @close="$emit('close')">
     <template #default="{ close }">
       <div class="flex flex-row justify-center gap-x-4 px-6 py-10 lg:px-10">
         <div
@@ -34,7 +34,7 @@
         </VcButton>
       </div>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

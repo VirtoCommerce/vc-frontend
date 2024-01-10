@@ -239,13 +239,13 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder } from "@/shared/account";
 import { OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
+import { useModal } from "@/shared/modal";
 import {
   PaymentProcessingAuthorizeNet,
   PaymentActionType,
   PaymentProcessingManual,
   PaymentProcessingRedirection,
 } from "@/shared/payment";
-import { useModal } from "@/shared/popup";
 import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 

@@ -1,8 +1,8 @@
 import type { Component } from "vue";
 
-export type ClosePopupHandle = () => void;
+export type CloseModalHandleType = () => void;
 
-export interface IPopup {
+export interface IModal {
   id?: string;
   component: Component | "VcConfirmationModal";
   // FIXME: https://virtocommerce.atlassian.net/browse/ST-5119

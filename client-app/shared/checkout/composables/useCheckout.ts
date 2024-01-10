@@ -11,9 +11,9 @@ import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/acc
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useCart, DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
-import { useModal } from "@/shared/popup";
 import { SelectAddressModal } from "../components";
 import type {
   CartAddressType,

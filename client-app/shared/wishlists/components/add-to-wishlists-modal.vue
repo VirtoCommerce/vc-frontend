@@ -1,13 +1,13 @@
 <template>
-  <VcPopup :title="$t('shared.wishlists.add_to_wishlists_dialog.title')" modal-width="sm:max-w-xl" is-mobile-fullscreen>
+  <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" modal-width="sm:max-w-xl" is-mobile-fullscreen>
     <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
       <!-- Lists -->
       <template v-if="!loadingLists">
         <template v-if="listsWithProduct.length">
           <div
-            class="bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] px-6 py-3 text-15 font-bold leading-5 sm:py-2.5"
+            class="bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 text-15 font-bold leading-5 sm:py-2.5"
           >
-            {{ $t("shared.wishlists.add_to_wishlists_dialog.already_in_the_lists") }}
+            {{ $t("shared.wishlists.add_to_wishlists_modal.already_in_the_lists") }}
           </div>
 
           <ul>
@@ -32,9 +32,9 @@
           </ul>
         </template>
 
-        <div class="flex justify-between bg-[color:var(--color-add-wishlist-dialog-subtitle-bg)] px-6 py-3 sm:py-2.5">
+        <div class="flex justify-between bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 sm:py-2.5">
           <div class="text-15 font-bold">
-            {{ $t("shared.wishlists.add_to_wishlists_dialog.add_to_other_lists") }}
+            {{ $t("shared.wishlists.add_to_wishlists_modal.add_to_other_lists") }}
           </div>
           <button
             type="button"
@@ -49,7 +49,7 @@
             >
               <use href="/static/images/plus.svg#main" />
             </svg>
-            {{ $t("shared.wishlists.add_to_wishlists_dialog.add_new_list") }}
+            {{ $t("shared.wishlists.add_to_wishlists_modal.add_new_list") }}
           </button>
         </div>
 
@@ -74,7 +74,7 @@
               :error="!!input.errorMessage"
             />
             <button type="button" class="mt-3.5" @click="removeNewList(index)">
-              <svg class="text-[color:var(--color-add-wishlist-dialog-delete-icon)]" width="16" height="16">
+              <svg class="text-[color:var(--color-add-wishlist-modal-delete-icon)]" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>
             </button>
@@ -107,14 +107,14 @@
 
       <!-- Empty -->
       <div v-else-if="!listsOther.length && !listsWithProduct.length" class="bg-gray-50 px-6 py-10 text-center">
-        {{ $t("shared.wishlists.add_to_wishlists_dialog.empty_list") }}
+        {{ $t("shared.wishlists.add_to_wishlists_modal.empty_list") }}
       </div>
     </div>
 
     <template #actions="{ close }">
       <div class="sm:space-x-auto -mx-6 flex grow items-center justify-between space-x-5 px-6 pb-3 sm:pb-0">
         <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-          {{ $t("shared.wishlists.add_to_wishlists_dialog.cancel_button") }}
+          {{ $t("shared.wishlists.add_to_wishlists_modal.cancel_button") }}
         </VcButton>
 
         <VcButton
@@ -123,11 +123,11 @@
           class="flex-1 sm:flex-none"
           @click="save"
         >
-          {{ $t("shared.wishlists.add_to_wishlists_dialog.save_button") }}
+          {{ $t("shared.wishlists.add_to_wishlists_modal.save_button") }}
         </VcButton>
       </div>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
@@ -138,8 +138,8 @@ import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/co
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { useModal } from "@/shared/popup";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { WishlistInputType } from "@/shared/wishlists/types";
@@ -203,7 +203,7 @@ const listsOther = computed(() => {
 
 function addNewList() {
   newLists.value.push({
-    listName: `${t("shared.wishlists.add_to_wishlists_dialog.new_list")} ${d(new Date())}`,
+    listName: `${t("shared.wishlists.add_to_wishlists_modal.new_list")} ${d(new Date())}`,
     errorMessage: "",
   });
 }
@@ -269,7 +269,7 @@ async function removeProductFromWishlists() {
 async function save() {
   newLists.value.forEach((newList) => {
     if (!newList.listName.trim().length) {
-      newList.errorMessage = t("shared.wishlists.add_to_wishlists_dialog.is_required_validation_error");
+      newList.errorMessage = t("shared.wishlists.add_to_wishlists_modal.is_required_validation_error");
     } else {
       newList.errorMessage = "";
     }
@@ -296,7 +296,7 @@ async function save() {
   notifications.success({
     duration: DEFAULT_NOTIFICATION_DURATION,
     singleInGroup: true,
-    html: t("shared.wishlists.add_to_wishlists_dialog.notification_success"),
+    html: t("shared.wishlists.add_to_wishlists_modal.notification_success"),
   });
 }
 

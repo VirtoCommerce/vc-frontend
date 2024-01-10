@@ -57,7 +57,7 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import {
   AddOrUpdateWishlistModal,
   DeleteWishlistsModal,

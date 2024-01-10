@@ -104,7 +104,7 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useUserCheckoutDefaults, CheckoutDefaultsSuccessModal } from "@/shared/account";
 import { useCart } from "@/shared/cart";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import type { CheckoutDefaults } from "@/shared/account";
 
 const { t } = useI18n();

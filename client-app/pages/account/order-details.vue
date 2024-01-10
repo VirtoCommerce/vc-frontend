@@ -131,7 +131,7 @@ import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsModal, useCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 
 interface IProps {
   orderId: string;

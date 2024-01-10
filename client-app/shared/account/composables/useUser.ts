@@ -24,7 +24,7 @@ import {
   userReloadEvent,
   passwordExpiredEvent,
 } from "@/shared/broadcast";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
   AccountCreationResultType,

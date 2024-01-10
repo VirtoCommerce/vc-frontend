@@ -6,8 +6,8 @@ declare module "@vue/runtime-core" {
   export interface GlobalComponents {
     VcAddToCart: typeof Components.VcAddToCart;
     VcConfirmationModal: typeof Components.VcConfirmationModal;
+    VcModal: typeof Components.VcModal;
     VcPagination: typeof Components.VcPagination;
-    VcPopup: typeof Components.VcPopup;
     VcProductImage: typeof Components.VcProductImage;
     VcTable: typeof Components.VcTable;
     TableStatusBadge: typeof Components.TableStatusBadge;

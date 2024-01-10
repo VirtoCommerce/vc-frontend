@@ -110,7 +110,7 @@ import { object, ref as yupRef, string } from "yup";
 import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { PasswordTips, RegistrationSuccessModal, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 
 const commonErrors = ref<string[]>([]);
 

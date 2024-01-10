@@ -350,8 +350,8 @@ import {
   useOrganizationContacts,
   useOrganizationContactsFilterFacets,
 } from "@/shared/company";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { useModal } from "@/shared/popup";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
@@ -525,8 +525,8 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
       variant: "info",
       iconVariant: "warning",
       loading: contactsLoading,
-      title: isUnlock ? t("shared.company.unblock_member_dialog.title") : t("shared.company.block_member_dialog.title"),
-      text: isUnlock ? t("shared.company.unblock_member_dialog.text") : t("shared.company.block_member_dialog.text"),
+      title: isUnlock ? t("shared.company.unblock_member_modal.title") : t("shared.company.block_member_modal.title"),
+      text: isUnlock ? t("shared.company.unblock_member_modal.text") : t("shared.company.block_member_modal.text"),
       async onConfirm() {
         if (isUnlock) {
           await unlockContact(contact);
@@ -546,8 +546,8 @@ function openDeleteModal(contact: ExtendedContactType): void {
       variant: "danger",
       iconVariant: "danger",
       loading: contactsLoading,
-      title: t("shared.company.delete_member_dialog.title"),
-      text: t("shared.company.delete_member_dialog.text", {
+      title: t("shared.company.delete_member_modal.title"),
+      text: t("shared.company.delete_member_modal.text", {
         name: `${contact.fullName} (${contact.extended.emails[0]})`,
       }),
       async onConfirm() {

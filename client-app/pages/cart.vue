@@ -197,7 +197,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import type { LineItemType } from "@/core/api/graphql/types";
 
 const config = inject(configInjectionKey, {});

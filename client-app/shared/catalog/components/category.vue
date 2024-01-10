@@ -320,7 +320,7 @@ import {
 } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import { BranchesModal, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";

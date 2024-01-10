@@ -9,7 +9,7 @@ export type OutputBulkItemType = {
 };
 
 /** @todo Rename */
-export type ItemForAddBulkItemsToCartResultsPopupType = {
+export type ItemForAddBulkItemsToCartResultsModalType = {
   productId: string;
   name: string;
   quantity: number;

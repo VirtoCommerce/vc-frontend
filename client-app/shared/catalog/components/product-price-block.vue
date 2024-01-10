@@ -129,7 +129,7 @@ import { useRoute } from "vue-router";
 import { stringFormat } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import { AddToWishlistsModal } from "@/shared/wishlists";
 import { VcIcon } from "@/ui-kit/components";
 import type { Product } from "@/core/api/graphql/types";

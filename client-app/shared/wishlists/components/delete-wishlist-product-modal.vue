@@ -1,7 +1,7 @@
 <template>
-  <VcPopup :title="$t('shared.wishlists.delete_wishlist_product_dialog.title')" modal-width="max-w-lg" variant="danger">
+  <VcModal :title="$t('shared.wishlists.delete_wishlist_product_modal.title')" modal-width="max-w-lg" variant="danger">
     <i18n-t
-      keypath="shared.wishlists.delete_wishlist_product_dialog.message"
+      keypath="shared.wishlists.delete_wishlist_product_modal.message"
       scope="global"
       tag="p"
       class="border-b p-6 md:py-10"
@@ -14,15 +14,15 @@
     <template #actions="{ close }">
       <div class="flex grow justify-between space-x-4">
         <VcButton :loading="loading" color="danger" class="flex-1 sm:flex-none" @click="remove(close)">
-          {{ $t("shared.wishlists.delete_wishlist_product_dialog.delete_button") }}
+          {{ $t("shared.wishlists.delete_wishlist_product_modal.delete_button") }}
         </VcButton>
 
         <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-          {{ $t("shared.wishlists.delete_wishlist_product_dialog.cancel_button") }}
+          {{ $t("shared.wishlists.delete_wishlist_product_modal.cancel_button") }}
         </VcButton>
       </div>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

@@ -102,7 +102,7 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { getPropertyValue } from "@/core/utilities";
 import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import { VcConfirmationModal } from "@/ui-kit/components";
 
 interface ICompareProductProperties {

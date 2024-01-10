@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.checkout.select_address_dialog.title')" modal-width="max-w-5xl" is-mobile-fullscreen>
+  <VcModal :title="$t('shared.checkout.select_address_modal.title')" modal-width="max-w-5xl" is-mobile-fullscreen>
     <template #actions="{ close }">
       <VcButton
         v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
@@ -10,11 +10,11 @@
           close();
         "
       >
-        {{ $t("shared.checkout.select_address_dialog.add_address_button") }}
+        {{ $t("shared.checkout.select_address_modal.add_address_button") }}
       </VcButton>
 
       <VcButton color="secondary" variant="outline" class="!hidden min-w-[6rem] flex-none md:!block" @click="close">
-        {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
+        {{ $t("shared.checkout.select_address_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
@@ -28,8 +28,8 @@
       >
         {{
           isMobile
-            ? $t("shared.checkout.select_address_dialog.save_button")
-            : $t("shared.checkout.select_address_dialog.ok_button")
+            ? $t("shared.checkout.select_address_modal.save_button")
+            : $t("shared.checkout.select_address_modal.ok_button")
         }}
       </VcButton>
     </template>
@@ -39,7 +39,7 @@
       :items="paginatedAddresses"
       :pages="pages"
       :page="page"
-      :description="$t('shared.checkout.select_address_dialog.meta.table_description')"
+      :description="$t('shared.checkout.select_address_modal.meta.table_description')"
       @page-changed="onPageChange"
     >
       <template #mobile-item="itemData">
@@ -91,7 +91,7 @@
 
           <div v-else class="w-1/4">
             <button
-              v-t="'shared.checkout.select_address_dialog.select_button'"
+              v-t="'shared.checkout.select_address_modal.select_button'"
               type="button"
               class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
               @click="setAddress(itemData.item)"
@@ -102,7 +102,7 @@
 
       <template #mobile-empty>
         <div
-          v-t="'shared.checkout.select_address_dialog.no_addresses_message'"
+          v-t="'shared.checkout.select_address_modal.no_addresses_message'"
           class="flex items-center space-x-3 border-b border-gray-200 p-6"
         ></div>
       </template>
@@ -151,7 +151,7 @@
           </td>
           <td v-else class="p-5">
             <button
-              v-t="'shared.checkout.select_address_dialog.select_button'"
+              v-t="'shared.checkout.select_address_modal.select_button'"
               type="button"
               class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
               @click="setAddress(address)"
@@ -172,7 +172,7 @@
         <tr>
           <td colspan="5">
             <div class="flex items-center border-b border-gray-200 p-5">
-              <span v-t="'shared.checkout.select_address_dialog.no_addresses_message'" class="text-base"></span>
+              <span v-t="'shared.checkout.select_address_modal.no_addresses_message'" class="text-base"></span>
             </div>
           </td>
         </tr>
@@ -184,7 +184,7 @@
         </div>
       </template>
     </VcTable>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

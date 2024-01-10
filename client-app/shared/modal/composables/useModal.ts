@@ -1,11 +1,11 @@
 import { uniqueId } from "lodash";
 import { computed, markRaw, ref } from "vue";
-import type { ClosePopupHandle, IPopup } from "..";
+import type { CloseModalHandleType, IModal } from "..";
 
-const stack = ref<IPopup[]>([]);
+const stack = ref<IModal[]>([]);
 
 export function useModal() {
-  function openModal(options: IPopup): ClosePopupHandle {
+  function openModal(options: IModal): CloseModalHandleType {
     const id = options.id || uniqueId();
 
     stack.value.push({
@@ -19,7 +19,7 @@ export function useModal() {
 
   function closeModal(id?: string) {
     if (!id) {
-      // Close last popup window
+      // Close last modal
       stack.value.pop();
       return;
     }
@@ -36,6 +36,6 @@ export function useModal() {
   return {
     openModal,
     closeModal,
-    popupStack: computed(() => stack.value),
+    modalStack: computed(() => stack.value),
   };
 }

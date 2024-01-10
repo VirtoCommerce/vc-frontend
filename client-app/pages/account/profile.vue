@@ -81,7 +81,7 @@ import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
-import { useModal } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();

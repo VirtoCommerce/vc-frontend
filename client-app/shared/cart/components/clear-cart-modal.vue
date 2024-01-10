@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.cart.clear_cart_modal.title')">
+  <VcModal :title="$t('shared.cart.clear_cart_modal.title')">
     <template #actions="{ close }">
       <div class="mx-auto flex space-x-5">
         <VcButton
@@ -27,7 +27,7 @@
         {{ $t("shared.cart.clear_cart_modal.message") }}
       </span>
     </div>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

@@ -1,8 +1,8 @@
 <template>
-  <VcPopup :title="$t('shared.checkout.payment_method_dialog.title')">
+  <VcModal :title="$t('shared.checkout.payment_method_modal.title')">
     <template #actions="{ close }">
       <VcButton class="flex-1 lg:flex-none" variant="outline" color="secondary" @click="close">
-        {{ $t("shared.checkout.payment_method_dialog.cancel_button") }}
+        {{ $t("shared.checkout.payment_method_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
@@ -12,7 +12,7 @@
           close();
         "
       >
-        {{ $t("shared.checkout.payment_method_dialog.ok_button") }}
+        {{ $t("shared.checkout.payment_method_modal.ok_button") }}
       </VcButton>
     </template>
     <template v-for="method in availableMethods" :key="method.code">
@@ -30,12 +30,12 @@
           </div>
 
           <VcButton v-else variant="outline" size="sm" @click="setMethod(method)">
-            {{ $t("shared.checkout.payment_method_dialog.select_button") }}
+            {{ $t("shared.checkout.payment_method_modal.select_button") }}
           </VcButton>
         </div>
       </div>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

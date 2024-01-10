@@ -19,8 +19,8 @@ import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations, usePagesWithFullCartLoad } from "@/core/composables";
 import { useCart } from "@/shared/cart";
+import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
-import { ModalHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
 

@@ -22,7 +22,7 @@
         </div>
 
         <div v-if="branch.shortDescription" class="mt-2 flex items-start md:-mt-0.5">
-          <svg class="text-[color:var(--color-branch-dialog-clock)] md:mt-px" width="16" height="16">
+          <svg class="text-[color:var(--color-branch-modal-clock)] md:mt-px" width="16" height="16">
             <use href="/static/images/clock.svg#main"></use>
           </svg>
           <div
@@ -54,6 +54,6 @@ defineProps({
 
 <style lang="scss">
 .branch-item .closed {
-  @apply text-[color:var(--color-branch-dialog-closed)];
+  @apply text-[color:var(--color-branch-modal-closed)];
 }
 </style>
