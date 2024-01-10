@@ -62,7 +62,7 @@
         </template>
 
         <!-- List details -->
-        <template v-else-if="pagedListItems.length">
+        <template v-else-if="!listLoading && !!list?.items?.length">
           <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
             <WishlistLineItems
               :items="pagedListItems"
@@ -82,7 +82,11 @@
         </template>
 
         <!-- Empty list -->
-        <VcEmptyView v-else :text="$t('shared.wishlists.list_details.empty_list')" class="lg:mt-32">
+        <VcEmptyView
+          v-else-if="!listLoading && list?.items?.length === 0"
+          :text="$t('shared.wishlists.list_details.empty_list')"
+          class="lg:mt-32"
+        >
           <template #icon>
             <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
           </template>
@@ -136,7 +140,7 @@ const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openPopup } = usePopup();
-const { loading: listLoading, list, fetchWishList, clearList, updateItemsInWishlist } = useWishlists();
+const { loading: listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -273,9 +277,9 @@ function openDeleteProductModal(values: string[]): void {
 
           broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
 
-          await fetchWishList(props.listId);
+          wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
 
-          wishlistItems.value = cloneDeep(list.value?.items || []);
+          await fetchWishList(props.listId);
 
           /**
            * If you were on the last page, and after deleting the product
@@ -298,11 +302,10 @@ onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
-  clearList();
   await fetchWishList(props.listId);
+  page.value = 1;
+  wishlistItems.value = cloneDeep(list.value?.items) ?? [];
 });
-
-watchEffect(() => (wishlistItems.value = cloneDeep(list.value?.items) ?? []));
 
 /**
  * Send Google Analytics event for related products.

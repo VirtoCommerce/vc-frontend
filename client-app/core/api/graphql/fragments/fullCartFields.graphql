@@ -61,6 +61,9 @@ fragment fullCartFields on CartType {
     price {
       ...moneyFields
     }
+    discountAmount {
+      ...moneyFields
+    }
   }
   payments {
     id
@@ -79,6 +82,9 @@ fragment fullCartFields on CartType {
     ...moneyFields
   }
   subTotal {
+    ...moneyFields
+  }
+  shippingPrice {
     ...moneyFields
   }
   shippingTotal {

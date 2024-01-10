@@ -1,31 +1,5 @@
 <template>
   <div class="space-y-4 lg:space-y-5">
-    <!-- Search results -->
-    <!-- TODO: use VcWidget instead -->
-    <VcFilterCard v-if="withLocalSearch" :title="$t('pages.catalog.search_card.title')">
-      <div class="flex items-center gap-2.5">
-        <VcInput
-          v-model.trim="localKeyword"
-          size="sm"
-          maxlength="30"
-          :disabled="loading"
-          @keypress.enter="onSearchStart"
-        >
-          <template #append>
-            <button type="button" class="h-full px-3" :class="{ hidden: !localKeyword }" @click="reset">
-              <svg class="text-[color:var(--color-primary)]" height="12" width="12">
-                <use href="/static/images/delete.svg#main" />
-              </svg>
-            </button>
-          </template>
-        </VcInput>
-
-        <VcButton :disabled="loading || isAppliedKeyword" color="primary" variant="outline" @click="onSearchStart">
-          {{ $t("pages.catalog.search_card.search_button") }}
-        </VcButton>
-      </div>
-    </VcFilterCard>
-
     <template v-if="isMobile">
       <!-- In Stock -->
       <!-- TODO: use VcWidget instead -->
@@ -73,23 +47,20 @@
 </template>
 
 <script setup lang="ts">
-import { eagerComputed, useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { watch, ref, shallowReactive } from "vue";
+import { watch, shallowReactive } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFilters } from "@/shared/catalog";
 
 interface IEmits {
-  (event: "search", keyword: string): void;
   (event: "change", value: ProductsFilters): void;
   (event: "openBranches"): void;
 }
 
 interface IProps {
   loading?: boolean;
-  withLocalSearch?: boolean;
-  keyword?: string;
   filters: ProductsFilters;
 }
 
@@ -98,8 +69,6 @@ const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
-
-const localKeyword = ref("");
 const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, branches: [] });
 
 watch(
@@ -120,14 +89,6 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => props.keyword,
-  (newKeyword) => (localKeyword.value = newKeyword ?? ""),
-  { immediate: true },
-);
-
-const isAppliedKeyword = eagerComputed<boolean>(() => localKeyword.value === props.keyword);
-
 function onFilterChanged(): void {
   emit("change", localFilters);
 }
@@ -140,16 +101,7 @@ function onFacetFilterChanged(facet: FacetItemType): void {
   }
 }
 
-function onSearchStart(): void {
-  emit("search", localKeyword.value);
-}
-
 function onOpenBranches(): void {
   emit("openBranches");
-}
-
-function reset(): void {
-  localKeyword.value = "";
-  emit("search", "");
 }
 </script>
