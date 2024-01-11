@@ -29,18 +29,17 @@
       <span class="vc-file-uploader__drop-area">
         <VcIcon class="vc-file-uploader__drop-icon" name="cloud-upload" size="lg" />
 
-        <!-- todo add plural for file/files -->
-        <span v-if="isMaxFileQuantityReached" class="vc-file-uploader__desktop"
-          >You can add maximum {{ maxFiles }} files</span
-        >
+        <span v-if="isMaxFileQuantityReached" class="vc-file-uploader__desktop">{{
+          $t("ui_kit.file_uploader.maximum", maxFiles)
+        }}</span>
         <template v-else>
-          <span class="vc-file-uploader__desktop"> Drag and drop file here or</span>
-          <VcButton color="secondary" size="xs"> Browse your files </VcButton>
+          <span class="vc-file-uploader__desktop">{{ $t("ui_kit.file_uploader.drag_and_drop") }}</span>
+          <VcButton color="secondary" size="xs">{{ $t("ui_kit.file_uploader.browse") }}</VcButton>
         </template>
       </span>
 
       <span class="vc-file-uploader__description">
-        The files available for upload are in JPG, PNG, PDF, GIF formats, and their size should not exceed 6 Mb.
+        {{ $t("ui_kit.file_uploader.requirements", { format: fileFormats, size: "6 Mb" }) }}
       </span>
     </button>
 
@@ -52,13 +51,24 @@
       size="sm"
       icon
     >
-      Fix file upload errors to continue.
+      {{ $t("ui_kit.file_uploader.error") }}
     </VcAlert>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  maxFiles: 1,
+  maxFileSize: 6e6,
+  allowedFormats: () => [],
+  view: "horizontal",
+});
+
+const { t } = useI18n();
 
 interface IProps {
   maxFiles?: number;
@@ -73,19 +83,17 @@ interface IEmits {
   (event: "removeFile", item: VcFileType): void;
 }
 
-const emit = defineEmits<IEmits>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  maxFiles: 1,
-  maxFileSize: 6e6,
-  allowedFormats: () => [],
-  view: "horizontal",
-});
-
 const fileInputRef = ref<HTMLInputElement>();
 
 const isMaxFileQuantityReached = computed(() => {
   return props.files && props.files?.length >= props.maxFiles;
+});
+
+const fileFormats = computed(() => {
+  if (props.allowedFormats.length) {
+    return props.allowedFormats.join(", ");
+  }
+  return t("ui_kit.file_uploader.any_format");
 });
 
 function openFilePicker() {
@@ -138,10 +146,11 @@ function onFileDrop(event: DragEvent) {
 }
 
 function onRemove(file: VcFileType) {
-  removeFileFromFileList(file);
+  removeFileFromBrowser(file);
   emit("removeFile", file);
 }
-function removeFileFromFileList(file: VcFileType) {
+
+function removeFileFromBrowser(file: VcFileType) {
   if (!fileInputRef.value?.files || !file.file) {
     return;
   }
