@@ -29,7 +29,13 @@
 
       <div class="vc-line-item__content">
         <div class="vc-line-item__name">
-          <router-link v-if="!deleted && route" :to="route" :title="name" class="vc-line-item__name-link">
+          <router-link
+            v-if="!deleted && route"
+            :to="route"
+            :title="name"
+            target="_blank"
+            class="vc-line-item__name-link"
+          >
             {{ name }}
           </router-link>
 
