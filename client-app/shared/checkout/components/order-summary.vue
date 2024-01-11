@@ -37,7 +37,7 @@
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ discount.description || discount.coupon }}</span>
                   <VcTotalDisplay
-                    :amount="-getDiscountAmmount(discount)"
+                    :amount="-getDiscountAmount(discount)"
                     :currency-code="currentCurrency.code"
                     :culture-name="currentLanguage.cultureName"
                   />
@@ -49,6 +49,17 @@
                   <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
                   <VcTotalDisplay
                     :amount="-lineItemsDiscountTotal"
+                    :currency-code="currentCurrency.code"
+                    :culture-name="currentLanguage.cultureName"
+                  />
+                </div>
+              </li>
+
+              <li v-if="shippingDiscountTotal > 0">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm">{{ $t("common.labels.shipping") }}</span>
+                  <VcTotalDisplay
+                    :amount="-shippingDiscountTotal"
                     :currency-code="currentCurrency.code"
                     :culture-name="currentLanguage.cultureName"
                   />
@@ -69,8 +80,8 @@
         <div v-if="!noShipping" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
           <span>
-            {{ cart.shippingTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="cart.shippingTotal!" />
+            {{ shippingPrice?.amount > 0 ? "+" : "" }}
+            <VcPriceDisplay :value="shippingPrice" />
           </span>
         </div>
       </div>
@@ -99,12 +110,14 @@ import { computed, ref } from "vue";
 import { useCurrency, useLanguages } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import type {
+  OrderShipmentType,
   CartType,
   CustomerOrderType,
-  DiscountType,
   LineItemType,
-  OrderDiscountType,
   OrderLineItemType,
+  ShipmentType,
+  DiscountType,
+  OrderDiscountType,
 } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -122,18 +135,30 @@ const { changing } = useFullCart();
 
 const discountsCollapsed = ref(true);
 
-const getDiscountAmmount = (discount: DiscountType | OrderDiscountType) => {
-  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
-};
-
 const lineItemsDiscountTotal = computed(() =>
   sumBy<LineItemType | OrderLineItemType>(
     props.selectedItems ?? props.cart.items,
-    (item) => item.discountTotal?.amount || 0,
+    (item) => item.discountTotal?.amount ?? 0,
   ),
 );
 
-const hasDiscounts = computed(() => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0);
+// TODO: Change to shippingPrice when this property will be added to CustomerOrderType
+const shippingPrice = computed(() =>
+  "shippingPrice" in props.cart ? props.cart.shippingPrice : props.cart.shipments?.[0]?.price,
+);
+
+const shippingDiscountTotal = computed(() =>
+  sumBy<ShipmentType | OrderShipmentType>(props.cart.shipments, (shipment) => shipment.discountAmount?.amount),
+);
+
+const hasDiscounts = computed(
+  () => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0 || shippingDiscountTotal.value > 0,
+);
+
+// TODO: Need to remove this function because type of cart discount amount should be equal to order discount amount
+function getDiscountAmount(discount: DiscountType | OrderDiscountType): number {
+  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
+}
 </script>
 
 <style scoped lang="scss">

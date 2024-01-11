@@ -282,9 +282,9 @@ function openDeleteProductModal(values: string[]): void {
 
           broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
 
-          await fetchWishList(props.listId);
+          wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
 
-          wishlistItems.value = cloneDeep(list.value?.items || []);
+          await fetchWishList(props.listId);
 
           /**
            * If you were on the last page, and after deleting the product
@@ -308,6 +308,7 @@ onBeforeRouteUpdate(canChangeRoute);
 
 watchEffect(async () => {
   await fetchWishList(props.listId);
+  page.value = 1;
   wishlistItems.value = cloneDeep(list.value?.items) ?? [];
 });
 
