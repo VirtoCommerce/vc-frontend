@@ -48,10 +48,10 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   function getIcon({ mimeType, errorMessage }: Partial<Pick<VcFileType, "mimeType" | "errorMessage">>): string {
     let fileName: string;
 
-    if (!mimeType || errorMessage) {
+    if (errorMessage) {
       fileName = "error";
     } else if (Object.values(FileType).includes(mimeType as FileType)) {
-      fileName = mimeType;
+      fileName = mimeType || "file";
     } else {
       fileName = "file";
     }

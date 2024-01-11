@@ -5,4 +5,5 @@ export enum FileType {
   PDF = "application/pdf",
   XLS = "application/vnd.ms-excel",
   ZIP = "application/zip",
+  TXT = "text/plain",
 }

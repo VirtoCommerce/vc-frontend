@@ -1336,7 +1336,7 @@
       "maximum": "You can add maximum 1 file | You can add maximum {n} files",
       "drag_and_drop": "Drag and drop file here or",
       "browse": "Browse your files",
-      "requirements": "The files available for upload are in {format} formats, and their size should not exceed {size}.",
+      "requirements": "The files available for upload are in <strong>{format}</strong> formats, and their size should not exceed {size}.",
       "any_format": "any",
       "error": "Fix file upload errors to continue."
     }

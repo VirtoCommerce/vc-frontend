@@ -5,7 +5,7 @@
       type="file"
       class="vc-file-uploader__input"
       :multiple="maxFiles > 1"
-      :accept="allowedFormats.join(',')"
+      :accept="allowedFormats?.join(',')"
       @change="onFileChange"
     />
 
@@ -16,43 +16,45 @@
         </li>
       </ul>
     </div>
+    <div class="flex flex-col gap-2">
+      <button
+        type="button"
+        class="vc-file-uploader__drop-container"
+        :class="{ 'vc-file-uploader__drop-container--disabled': isMaxFileQuantityReached }"
+        @dragover.prevent
+        @dragenter.prevent
+        @drop="onFileDrop"
+        @click="openFilePicker"
+      >
+        <span class="vc-file-uploader__drop-area">
+          <VcIcon class="vc-file-uploader__drop-icon" name="cloud-upload" size="lg" />
 
-    <button
-      type="button"
-      class="vc-file-uploader__drop-container"
-      :class="{ 'vc-file-uploader__drop-container--disabled': isMaxFileQuantityReached }"
-      @dragover.prevent
-      @dragenter.prevent
-      @drop="onFileDrop"
-      @click="openFilePicker"
-    >
-      <span class="vc-file-uploader__drop-area">
-        <VcIcon class="vc-file-uploader__drop-icon" name="cloud-upload" size="lg" />
+          <span v-if="isMaxFileQuantityReached" class="vc-file-uploader__desktop">{{
+            $t("ui_kit.file_uploader.maximum", maxFiles)
+          }}</span>
+          <template v-else>
+            <span class="vc-file-uploader__desktop">{{ $t("ui_kit.file_uploader.drag_and_drop") }}</span>
+            <VcButton color="secondary" size="xs">{{ $t("ui_kit.file_uploader.browse") }}</VcButton>
+          </template>
+        </span>
 
-        <span v-if="isMaxFileQuantityReached" class="vc-file-uploader__desktop">{{
-          $t("ui_kit.file_uploader.maximum", maxFiles)
-        }}</span>
-        <template v-else>
-          <span class="vc-file-uploader__desktop">{{ $t("ui_kit.file_uploader.drag_and_drop") }}</span>
-          <VcButton color="secondary" size="xs">{{ $t("ui_kit.file_uploader.browse") }}</VcButton>
-        </template>
-      </span>
+        <span
+          v-html-safe="$t('ui_kit.file_uploader.requirements', { format: fileFormats, size: '6 Mb' })"
+          class="vc-file-uploader__description"
+        />
+      </button>
 
-      <span class="vc-file-uploader__description">
-        {{ $t("ui_kit.file_uploader.requirements", { format: fileFormats, size: "6 Mb" }) }}
-      </span>
-    </button>
-
-    <VcAlert
-      v-if="files?.filter((file) => !!file.errorMessage).length"
-      class="vc-file-uploader__alert"
-      color="danger"
-      variant="solid-light"
-      size="sm"
-      icon
-    >
-      {{ $t("ui_kit.file_uploader.error") }}
-    </VcAlert>
+      <VcAlert
+        v-if="files?.filter((file) => !!file.errorMessage).length"
+        class="vc-file-uploader__alert"
+        color="danger"
+        variant="solid-light"
+        size="sm"
+        icon
+      >
+        {{ $t("ui_kit.file_uploader.error") }}
+      </VcAlert>
+    </div>
   </div>
 </template>
 
@@ -64,7 +66,6 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   maxFiles: 1,
   maxFileSize: 6e6,
-  allowedFormats: () => [],
   view: "horizontal",
 });
 
@@ -73,7 +74,8 @@ const { t } = useI18n();
 interface IProps {
   maxFiles?: number;
   maxFileSize?: number;
-  allowedFormats?: string[];
+  accept?: string;
+  allowedFormats?: Readonly<string[]>;
   view?: "horizontal" | "vertical";
   files?: VcFileType[];
 }
@@ -90,8 +92,30 @@ const isMaxFileQuantityReached = computed(() => {
 });
 
 const fileFormats = computed(() => {
-  if (props.allowedFormats.length) {
-    return props.allowedFormats.join(", ");
+  const map: { [key: string]: string } = {
+    "application/msword": "doc",
+    "image/jpeg": "jpg, jpeg",
+    "image/png": "png",
+    "application/pdf": "pdf",
+    "application/vnd.ms-excel": "xls, xlsx",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xls, xlsx",
+    "application/zip": "zip",
+    "text/plain": "txt",
+    "application/x-zip-compressed": "zip",
+    "application/x-rar-compressed": "rar",
+    ".rar": "rar",
+  };
+  if (props.allowedFormats?.length) {
+    const readableFormats: string[] = [];
+
+    props.allowedFormats.forEach((el) => {
+      const format = map[el] || el;
+
+      if (!readableFormats.includes(format)) {
+        readableFormats.push(format);
+      }
+    });
+    return readableFormats.join(", ");
   }
   return t("ui_kit.file_uploader.any_format");
 });
@@ -101,12 +125,26 @@ function openFilePicker() {
 }
 
 function getErrorMessage(file: File): string | undefined {
-  if (props.allowedFormats.length && !props.allowedFormats.includes(file.type)) {
+  let fileType: string = file.type;
+  if (!fileType) {
+    fileType = getFileTypeFromName(file.name);
+  }
+  if (props.allowedFormats?.length && !props.allowedFormats.includes(fileType)) {
     return "format not supported";
   }
   if (props.maxFileSize < file.size) {
     return "file size over limit";
   }
+}
+
+//workaround for rar https://mimeapplication.net/x-rar-compressed
+function getFileTypeFromName(name: string): string {
+  const extension = name.split(".").at(-1);
+  const map: { [key: string]: string } = {
+    rar: "application/x-rar-compressed",
+  };
+
+  return extension && map[extension] ? map[extension] : "";
 }
 
 function addFile(file: File) {

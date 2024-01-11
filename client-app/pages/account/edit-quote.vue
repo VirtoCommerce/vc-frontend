@@ -1,7 +1,14 @@
 <template>
   <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
     <div class="gap-3">
-      <VcFileUploader :max-files="6" :files="localFiles" @add-file="uploadFile" @remove-file="onFileRemove" />
+      <VcFileUploader
+        :max-files="6"
+        :allowed-formats="FILE_FORMATS"
+        accept=".jpg, .jpeg, .png"
+        :files="localFiles"
+        @add-file="uploadFile"
+        @remove-file="onFileRemove"
+      />
     </div>
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
@@ -162,6 +169,16 @@ const {
 } = useUserQuote();
 const notifications = useNotifications();
 const { uploadFile, removeFile, localFiles } = useFileManager(attachments);
+
+const FILE_FORMATS = [
+  "text/plain",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/pdf",
+  "application/x-zip-compressed",
+  "application/x-rar-compressed",
+  ".rar",
+] as const;
 
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
