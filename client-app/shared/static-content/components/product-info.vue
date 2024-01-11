@@ -13,7 +13,7 @@
         <VcImage :src="product.imgSrc" class="w-full rounded border" />
       </div>
 
-      <div v-if="model?.blocks?.length" class="flex flex-col gap-6 print:mt-5 lg:grow">
+      <div v-if="model?.blocks?.length" class="mt-5 flex flex-col gap-6 print:mt-5 lg:mt-0 lg:grow">
         <component
           :is="block.type"
           v-for="(block, index) in model.blocks"
