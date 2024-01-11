@@ -50,6 +50,7 @@
         :items="quotes"
         :pages="pages"
         :page="page"
+        :description="$t('pages.account.quotes.meta.table_description')"
         @item-click="goToQuoteDetails"
         @header-click="applySorting"
         @page-changed="changePage"
@@ -160,9 +161,10 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import { getSortingExpression, getSortInfoFromStringExpression } from "@/core/utilities";
+import { Sort } from "@/core/types";
 import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
 import type { QuoteType } from "@/core/api/graphql/types";
+import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
@@ -170,7 +172,7 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
-  title: t("pages.account.quotes.title"),
+  title: t("pages.account.quotes.meta.title"),
 });
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
@@ -233,7 +235,9 @@ async function resetKeyword(): Promise<void> {
 }
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
-  sortQueryParam.value = getSortingExpression(sortInfo);
+  // Workaround. Put Sort in vc-table then delete
+  const sortObj = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
+  sortQueryParam.value = sortObj.toString();
   sort.value = sortInfo;
   page.value = 1;
   await fetchQuotes();
@@ -242,7 +246,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 watch(
   () => sortQueryParam.value,
   async (value: string) => {
-    await applySorting(getSortInfoFromStringExpression(value));
+    await applySorting(Sort.fromString(value));
   },
   {
     immediate: true,

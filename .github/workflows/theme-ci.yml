@@ -34,6 +34,7 @@ jobs:
       SONAR_TOKEN: ${{secrets.SONAR_TOKEN}}
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
       BLOB_SAS: ${{ secrets.BLOB_TOKEN }}
+      VERSION: ''
       VERSION_SUFFIX: ''
       BUILD_STATE: 'failed'
       RELEASE_STATUS: 'false'
@@ -79,6 +80,14 @@ jobs:
         run: |
           echo "VERSION_SUFFIX=${{ steps.image.outputs.suffix }}-${{ steps.image.outputs.SHA }}" >> $GITHUB_ENV
 
+      - name: Set VERSION
+        run: |
+          echo "VERSION=${{ steps.image.outputs.prefix }}${{ env.VERSION_SUFFIX && '-' || '' }}${{ env.VERSION_SUFFIX }}" >> $GITHUB_ENV
+
+      - name: Update package.json Version
+        run: |
+          yarn version ${{ env.VERSION }}
+
       - name: Install dependencies
         run: |
           yarn install
@@ -109,7 +118,7 @@ jobs:
 
       - name: Packaging
         run: |
-          yarn compress ${{ github.event.repository.name }}-${{ steps.image.outputs.prefix }}${{ env.VERSION_SUFFIX && '-' || '' }}${{ env.VERSION_SUFFIX }}
+          yarn compress
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}

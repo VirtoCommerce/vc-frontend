@@ -18,26 +18,11 @@
     <div v-if="list.description" class="truncate pe-10 md:max-w-[30%] md:pe-0">{{ list.description }}</div>
 
     <div class="flex items-center pt-4 md:contents">
-      <!-- remove "hidden" class to use -->
-      <div class="hidden md:whitespace-nowrap">{{ $t("shared.wishlists.list_card.saved") }} <b>02.03.2023</b></div>
-
-      <div v-if="isCorporateMember && list.scope" class="ms-auto flex items-center gap-1.5 md:ms-0">
-        <template v-if="list.scope === WishlistScopeType.Private">
-          <VcIcon :size="16" class="text-[--color-secondary-500]" name="lock-closed" />
-
-          <span>
-            {{ $t("shared.wishlists.list_card.status.private") }}
-          </span>
-        </template>
-
-        <template v-else-if="list.scope === WishlistScopeType.Organization">
-          <VcIcon :size="16" class="text-[--color-accent-500]" name="users" />
-
-          <span>
-            {{ $t("shared.wishlists.list_card.status.shared") }}
-          </span>
-        </template>
+      <div class="md:whitespace-nowrap">
+        {{ $t("shared.wishlists.list_card.saved") }}: <b>{{ $d(list.modifiedDate) }}</b>
       </div>
+
+      <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" class="ms-auto md:ms-0" />
     </div>
 
     <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">
@@ -53,10 +38,10 @@
 </template>
 
 <script setup lang="ts">
-import { WishlistScopeType } from "@/core/api/graphql/types";
 import { useUser } from "@/shared/account";
 import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
-import type { WishlistType } from "@/core/api/graphql/types";
+import WishlistStatus from "./wishlist-status.vue";
+import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "settings"): void;

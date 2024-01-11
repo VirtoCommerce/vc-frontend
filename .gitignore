@@ -63,7 +63,6 @@ dist-ssr
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
-!.yarn/versions
 
 # https certificates
 .certificates/*

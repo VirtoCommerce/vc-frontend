@@ -11,4 +11,7 @@ fragment shipment on ShipmentType {
   price {
     ...money
   }
+  discountAmount {
+    ...money
+  }
 }

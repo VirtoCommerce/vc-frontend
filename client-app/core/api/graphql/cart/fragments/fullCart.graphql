@@ -55,6 +55,9 @@ fragment fullCart on CartType {
   subTotal {
     ...money
   }
+  shippingPrice {
+    ...money
+  }
   shippingTotal {
     ...money
   }

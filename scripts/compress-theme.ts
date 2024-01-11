@@ -1,13 +1,13 @@
 import { resolve } from "path";
 import packageJson from "../package.json";
-import { getArtifactFileName, compress } from "./compress";
+import { compress } from "./compress";
 
 const cwd = process.cwd();
 
 const name = packageJson.name;
 const version = packageJson.version;
 
-const artifactFileName = getArtifactFileName(`${name}-${version}`);
+const artifactFileName = `${name}-${version}`;
 
 await compress(artifactFileName, (archive) => {
   const entries = [
