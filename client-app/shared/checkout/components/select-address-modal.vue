@@ -35,7 +35,14 @@
       </VcButton>
     </template>
 
-    <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @page-changed="onPageChange">
+    <VcTable
+      :columns="columns"
+      :items="paginatedAddresses"
+      :pages="pages"
+      :page="page"
+      :description="$t('shared.checkout.select_address_dialog.meta.table_description')"
+      @page-changed="onPageChange"
+    >
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 border-b border-gray-200 p-6">
           <div class="w-1/2 grow truncate">

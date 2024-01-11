@@ -6,6 +6,7 @@ query GetWishlist($listId: String!, $cultureName: String) {
     description
     scope
     id
+    modifiedDate
     items {
       ...wishlistLineItemFields
     }

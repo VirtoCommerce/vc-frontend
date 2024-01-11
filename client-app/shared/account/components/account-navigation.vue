@@ -41,14 +41,14 @@
       <div
         v-for="list in lists"
         :key="list.id"
-        class="ml-8 flex items-center space-x-2 overflow-hidden text-ellipsis px-3 text-sm"
+        class="ml-4 flex items-center space-x-2 overflow-hidden text-ellipsis px-3 text-sm"
       >
         <VcIcon class="flex-none text-[--color-primary-500]" name="minus" />
 
         <router-link
           :to="{ name: 'ListDetails', params: { listId: list.id } }"
-          class="cursor-pointer py-0.5 font-semibold text-gray-500 hover:text-black"
-          active-class="text-black"
+          class="line-clamp-2 cursor-pointer py-0.5 font-semibold text-gray-500 hover:text-black"
+          active-class="!text-black"
         >
           {{ list.name }}
         </router-link>
