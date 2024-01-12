@@ -3,8 +3,8 @@
     <div class="gap-3">
       <VcFileUploader
         :max-files="6"
-        :allowed-formats="FILE_FORMATS"
-        accept=".jpg, .jpeg, .png"
+        :allowed-formats="settings?.allowedExtensions"
+        :max-file-size="settings?.maxFileSize"
         :files="localFiles"
         @add-file="uploadFile"
         @remove-file="onFileRemove"
@@ -168,17 +168,8 @@ const {
   submitQuote,
 } = useUserQuote();
 const notifications = useNotifications();
-const { uploadFile, removeFile, localFiles } = useFileManager(attachments);
-
-const FILE_FORMATS = [
-  "text/plain",
-  "application/vnd.ms-excel",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "application/pdf",
-  "application/x-zip-compressed",
-  "application/x-rar-compressed",
-  ".rar",
-] as const;
+const { uploadFile, removeFile, localFiles, fetchSettings, settings } = useFileManager(attachments);
+void fetchSettings();
 
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),

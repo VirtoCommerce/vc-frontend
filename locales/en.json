@@ -1338,7 +1338,10 @@
       "browse": "Browse your files",
       "requirements": "The files available for upload are in <strong>{format}</strong> formats, and their size should not exceed {size}.",
       "any_format": "any",
-      "error": "Fix file upload errors to continue."
+      "errors": {
+        "alert": "Fix file upload errors to continue.",
+        "over_size": "File size over limit."
+      }
     }
   },
   "identity_error": {

@@ -2,15 +2,44 @@ import { ref, watchEffect } from "vue";
 import { FileType } from "@/core/enums";
 import type { Ref } from "vue";
 
+type SettingsType = {
+  scope: string;
+  maxFileSize: number;
+  allowedExtensions: string[];
+};
+
 export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   const localFiles = ref<VcFileType[]>([]);
+  const settings = ref<SettingsType>();
 
   watchEffect(() => {
     addAllFilesInfo(attachments.value);
   });
 
+  async function fetchSettings() {
+    const response = await fetch("/api/files/quote-attachments/options");
+    settings.value = (await response.json()) as SettingsType;
+  }
+
   function uploadFile(fileInfo: VcFileType) {
-    // upload file here
+    if (fileInfo.file && !fileInfo.errorMessage) {
+      const formData = new FormData();
+
+      formData.append("file", fileInfo.file);
+
+      fetch("/api/files/quote-attachments", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("File uploaded successfully:", data);
+        })
+        .catch((error) => {
+          console.error("Error uploading file:", error);
+        });
+    }
+
     localFiles.value.push({
       ...fileInfo,
       progress: 0,
@@ -63,5 +92,8 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
     localFiles,
     uploadFile,
     removeFile,
+
+    settings,
+    fetchSettings,
   };
 }

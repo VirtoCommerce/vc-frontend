@@ -39,7 +39,7 @@
         </span>
 
         <span
-          v-html-safe="$t('ui_kit.file_uploader.requirements', { format: fileFormats, size: '6 Mb' })"
+          v-html-safe="$t('ui_kit.file_uploader.requirements', { format: hintFormats, size: fileSizeHint })"
           class="vc-file-uploader__description"
         />
       </button>
@@ -52,7 +52,7 @@
         size="sm"
         icon
       >
-        {{ $t("ui_kit.file_uploader.error") }}
+        {{ $t("ui_kit.file_uploader.errors.alert") }}
       </VcAlert>
     </div>
   </div>
@@ -65,7 +65,7 @@ const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   maxFiles: 1,
-  maxFileSize: 6e6,
+  maxFileSize: 100e6,
   view: "horizontal",
 });
 
@@ -91,33 +91,15 @@ const isMaxFileQuantityReached = computed(() => {
   return props.files && props.files?.length >= props.maxFiles;
 });
 
-const fileFormats = computed(() => {
-  const map: { [key: string]: string } = {
-    "application/msword": "doc",
-    "image/jpeg": "jpg, jpeg",
-    "image/png": "png",
-    "application/pdf": "pdf",
-    "application/vnd.ms-excel": "xls, xlsx",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xls, xlsx",
-    "application/zip": "zip",
-    "text/plain": "txt",
-    "application/x-zip-compressed": "zip",
-    "application/x-rar-compressed": "rar",
-    ".rar": "rar",
-  };
+const hintFormats = computed(() => {
   if (props.allowedFormats?.length) {
-    const readableFormats: string[] = [];
-
-    props.allowedFormats.forEach((el) => {
-      const format = map[el] || el;
-
-      if (!readableFormats.includes(format)) {
-        readableFormats.push(format);
-      }
-    });
-    return readableFormats.join(", ");
+    return props.allowedFormats.map((el) => el.replace(/^\./, "").toUpperCase()).join(", ");
   }
   return t("ui_kit.file_uploader.any_format");
+});
+
+const fileSizeHint = computed(() => {
+  return `${bytesToMegabytes(props.maxFileSize)} Mb`;
 });
 
 function openFilePicker() {
@@ -125,26 +107,9 @@ function openFilePicker() {
 }
 
 function getErrorMessage(file: File): string | undefined {
-  let fileType: string = file.type;
-  if (!fileType) {
-    fileType = getFileTypeFromName(file.name);
-  }
-  if (props.allowedFormats?.length && !props.allowedFormats.includes(fileType)) {
-    return "format not supported";
-  }
   if (props.maxFileSize < file.size) {
-    return "file size over limit";
+    return t("ui_kit.file_uploader.errors.over_size");
   }
-}
-
-//workaround for rar https://mimeapplication.net/x-rar-compressed
-function getFileTypeFromName(name: string): string {
-  const extension = name.split(".").at(-1);
-  const map: { [key: string]: string } = {
-    rar: "application/x-rar-compressed",
-  };
-
-  return extension && map[extension] ? map[extension] : "";
 }
 
 function addFile(file: File) {
@@ -206,6 +171,14 @@ function removeFileFromBrowser(file: VcFileType) {
 
     fileInputRef.value.files = dt.files;
   }
+}
+
+function bytesToMegabytes(bytes: number): number | undefined {
+  if (isNaN(bytes)) {
+    return;
+  }
+
+  return Math.round((bytes / (1024 * 1024)) * 100) / 100;
 }
 </script>
 
