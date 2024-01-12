@@ -112,20 +112,18 @@
     </div>
 
     <template #actions="{ close }">
-      <div class="sm:space-x-auto -mx-6 flex grow items-center justify-between space-x-5 px-6 pb-3 sm:pb-0">
-        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-          {{ $t("shared.wishlists.add_to_wishlists_dialog.cancel_button") }}
-        </VcButton>
+      <VcButton color="secondary" variant="outline" @click="close">
+        {{ $t("shared.wishlists.add_to_wishlists_dialog.cancel_button") }}
+      </VcButton>
 
-        <VcButton
-          :loading="loading"
-          :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
-          class="flex-1 sm:flex-none"
-          @click="save"
-        >
-          {{ $t("shared.wishlists.add_to_wishlists_dialog.save_button") }}
-        </VcButton>
-      </div>
+      <VcButton
+        :loading="loading"
+        :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
+        class="ms-auto"
+        @click="save"
+      >
+        {{ $t("shared.wishlists.add_to_wishlists_dialog.save_button") }}
+      </VcButton>
     </template>
   </VcPopup>
 </template>
