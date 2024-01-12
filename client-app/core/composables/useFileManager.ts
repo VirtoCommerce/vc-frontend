@@ -8,6 +8,18 @@ type SettingsType = {
   allowedExtensions: string[];
 };
 
+type UploadRenounceType = {
+  error: unknown;
+  file: {
+    contentType: string;
+    id: string;
+    name: string;
+    scope: "quote-attachments";
+    url: string;
+  };
+  succeeded: boolean;
+};
+
 export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   const localFiles = ref<VcFileType[]>([]);
   const settings = ref<SettingsType>();
@@ -22,6 +34,12 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   }
 
   function uploadFile(fileInfo: VcFileType) {
+    const updatedFile: VcFileType = {
+      ...fileInfo,
+      progress: 0,
+      status: fileInfo.errorMessage ? "error" : "loading",
+      icon: getIcon(fileInfo),
+    };
     if (fileInfo.file && !fileInfo.errorMessage) {
       const formData = new FormData();
 
@@ -33,19 +51,19 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("File uploaded successfully:", data);
+          const currentFile = localFiles.value.find((file) => file.file === updatedFile.file);
+          if (!currentFile) {
+            return;
+          }
+          currentFile.progress = 100;
+          currentFile.url = (data as UploadRenounceType).file.url;
         })
         .catch((error) => {
           console.error("Error uploading file:", error);
         });
     }
 
-    localFiles.value.push({
-      ...fileInfo,
-      progress: 0,
-      status: fileInfo.errorMessage ? "error" : "loading",
-      icon: getIcon(fileInfo),
-    });
+    localFiles.value.push(updatedFile);
   }
 
   function addAllFilesInfo(filesInfo?: VcFileType[]) {
