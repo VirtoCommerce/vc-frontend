@@ -70,7 +70,7 @@ interface IAttributes {
 }
 
 interface IProps {
-  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger";
+  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
   size?: "xs" | "sm" | "md" | "lg";
   variant?: "solid" | "outline" | "solid-lightest";
   type?: "button" | "reset" | "submit";
@@ -149,7 +149,7 @@ const attrs = computed(() => {
 .vc-button {
   --min-w: var(--vc-button-min-width, auto);
 
-  $colors: primary, secondary, success, info, neutral, warning, danger;
+  $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
   $prepend: "";
   $append: "";
@@ -269,13 +269,10 @@ const attrs = computed(() => {
     }
 
     &--solid-lightest--#{$color} {
-      @apply bg-[--color-additional-50] 
-      text-[--color-#{$color}-600] 
-      border-[--color-additional-50];
+      @apply bg-[--color-additional-50] text-[--color-#{$color}-500] border-[--color-additional-50];
 
       &:hover {
-        @apply bg-[--color-#{$color}-50] 
-        text-[--color-#{$color}-800];
+        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-700];
       }
     }
 

@@ -3,7 +3,7 @@ import { PropertyValueType } from "../../enums";
 import type { PropertyType } from "../../enums";
 import type { Property } from "@/core/api/graphql/types";
 
-export function getPropertyValue(property: Property): string {
+export function getPropertyValue(property: Property): string | null | undefined {
   const { t, d, n } = globals.i18n.global;
 
   switch (property.valueType) {
@@ -18,7 +18,7 @@ export function getPropertyValue(property: Property): string {
       return n(property.value);
 
     default:
-      return String(property.value);
+      return property.value;
   }
 }
 
@@ -33,7 +33,7 @@ export function getPropertiesGroupedByName(items: Property[], type?: PropertyTyp
       return propertiesByName;
     }
 
-    const value: string = getPropertyValue(item);
+    const value: string | null | undefined = getPropertyValue(item);
 
     if (propertiesByName[item.name]) {
       propertiesByName[item.name].value += `, ${value}`;
