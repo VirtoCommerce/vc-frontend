@@ -6,6 +6,10 @@ import type { Property } from "@/core/api/graphql/types";
 export function getPropertyValue(property: Property): string | null | undefined {
   const { t, d, n } = globals.i18n.global;
 
+  if (!property.value) {
+    return;
+  }
+
   switch (property.valueType) {
     case PropertyValueType.Boolean:
       return property.value ? t("common.labels.true_property") : t("common.labels.false_property");
