@@ -1,9 +1,9 @@
 import { ref, watchEffect } from "vue";
+import { getFileUploadOptions } from "@/core/api/graphql/files";
 import { FileType } from "@/core/enums";
 import type { Ref } from "vue";
 
 type SettingsType = {
-  scope: string;
   maxFileSize: number;
   allowedExtensions: string[];
 };
@@ -29,8 +29,7 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   });
 
   async function fetchSettings() {
-    const response = await fetch("/api/files/quote-attachments/options");
-    settings.value = (await response.json()) as SettingsType;
+    settings.value = await getFileUploadOptions("quote-attachments");
   }
 
   function uploadFile(fileInfo: VcFileType) {

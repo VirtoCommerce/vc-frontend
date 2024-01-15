@@ -1,0 +1,6 @@
+query GetFileUploadOptions($scope: String) {
+  fileUploadOptions(scope: $scope) {
+    maxFileSize
+    allowedExtensions
+  }
+}
