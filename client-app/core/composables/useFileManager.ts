@@ -1,6 +1,7 @@
 import { ref, watchEffect } from "vue";
-import { getFileUploadOptions } from "@/core/api/graphql/files";
+import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
 import { FileType } from "@/core/enums";
+import { useNotifications } from "@/shared/notification";
 import type { Ref } from "vue";
 
 type SettingsType = {
@@ -9,7 +10,7 @@ type SettingsType = {
 };
 
 type UploadRenounceType = {
-  error: unknown;
+  error: string;
   file: {
     contentType: string;
     id: string;
@@ -23,6 +24,7 @@ type UploadRenounceType = {
 export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   const localFiles = ref<VcFileType[]>([]);
   const settings = ref<SettingsType>();
+  const notifications = useNotifications();
 
   watchEffect(() => {
     addAllFilesInfo(attachments.value);
@@ -32,37 +34,48 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
     settings.value = await getFileUploadOptions("quote-attachments");
   }
 
-  function uploadFile(fileInfo: VcFileType) {
+  async function uploadFile(fileInfo: VcFileType) {
     const updatedFile: VcFileType = {
       ...fileInfo,
       progress: 0,
       status: fileInfo.errorMessage ? "error" : "loading",
       icon: getIcon(fileInfo),
     };
+
+    localFiles.value.push(updatedFile);
+
     if (fileInfo.file && !fileInfo.errorMessage) {
       const formData = new FormData();
 
       formData.append("file", fileInfo.file);
 
-      fetch("/api/files/quote-attachments", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          const currentFile = localFiles.value.find((file) => file.file === updatedFile.file);
-          if (!currentFile) {
-            return;
-          }
-          currentFile.progress = 100;
-          currentFile.url = (data as UploadRenounceType).file.url;
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
+      try {
+        const response = await fetch("/api/files/quote-attachments", {
+          method: "POST",
+          body: formData,
         });
-    }
+        const data = (await response.json()) as UploadRenounceType;
 
-    localFiles.value.push(updatedFile);
+        const currentFile = localFiles.value.find((file) => file.file === updatedFile.file);
+        if (!currentFile) {
+          return;
+        }
+
+        if (data.error) {
+          currentFile.errorMessage = data.error;
+          return;
+        }
+
+        const { url, id } = data.file;
+
+        currentFile.progress = 100;
+        currentFile.url = url;
+        currentFile.id = id;
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
+    }
   }
 
   function addAllFilesInfo(filesInfo?: VcFileType[]) {
@@ -83,7 +96,18 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
     });
   }
 
-  function removeFile(fileInfo: VcFileType) {
+  async function removeFile(fileInfo: VcFileType) {
+    if (fileInfo.id) {
+      const res = await deleteFile(fileInfo.id);
+      if (!res) {
+        notifications.error({
+          text: "Error removing file",
+          duration: 15000,
+          single: true,
+        });
+        return;
+      }
+    }
     if (fileInfo.url) {
       localFiles.value = localFiles.value.filter((el) => el.url !== fileInfo.url);
     } else if (fileInfo.file) {

@@ -5653,6 +5653,13 @@ export type GetMenusQueryVariables = Exact<{
 
 export type GetMenusQuery = { menus: Array<{ name: string, items: Array<{ title: string, url: string, priority: number }> }> };
 
+export type DeleteFileMutationVariables = Exact<{
+  command: DeleteFileCommandType;
+}>;
+
+
+export type DeleteFileMutation = { deleteFile?: boolean };
+
 export type GetFileUploadOptionsQueryVariables = Exact<{
   scope?: InputMaybe<Scalars['String']['input']>;
 }>;
