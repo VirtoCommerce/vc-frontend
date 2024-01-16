@@ -20,10 +20,10 @@
 
     <div class="-mx-4.5 space-y-5 lg:mx-0 lg:space-y-6">
       <!-- Quote comment -->
-      <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
+      <VcWidget :title="$t('pages.account.quote_details.comment')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
-          :label="$t('pages.account.quote_details.remarks_field_label')"
+          :label="$t('pages.account.quote_details.comments_field_label')"
           :disabled="fetching"
           :max-length="1000"
           :rows="4"

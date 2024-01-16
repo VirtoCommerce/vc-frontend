@@ -17,7 +17,7 @@
       <!-- Quote comment -->
       <VcWidget
         v-if="quote.comment"
-        :title="$t('pages.account.quote_details.remarks')"
+        :title="$t('pages.account.quote_details.comment')"
         prepend-icon="document-text"
         size="lg"
       >

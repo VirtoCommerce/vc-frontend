@@ -1032,8 +1032,8 @@
       },
       "quote_details": {
         "title": "Quote Request #{0}",
-        "remarks": "Remarks",
-        "remarks_field_label": "Do you have a general remark for this Quote Request?",
+        "comment": "Comment",
+        "comments_field_label": "Do you have a general comments for this Quote Request?",
         "products": "Products",
         "shipping_address": "Shipping Address",
         "billing_address": "Billing Address",
