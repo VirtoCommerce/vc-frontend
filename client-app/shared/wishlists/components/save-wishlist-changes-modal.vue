@@ -11,12 +11,12 @@
       </p>
     </div>
 
-    <div class="flex flex-row justify-center gap-x-4 px-6 pb-10">
-      <VcButton color="secondary" variant="outline" class="w-36" @click="$emit('close')">
+    <div class="flex flex-wrap justify-center gap-4 px-6 pb-10">
+      <VcButton min-width="9rem" color="secondary" variant="outline" @click="$emit('close')">
         {{ $t("common.buttons.no") }}
       </VcButton>
 
-      <VcButton class="w-36" @click="$emit('confirm')">
+      <VcButton min-width="9rem" @click="$emit('confirm')">
         {{ $t("common.buttons.yes") }}
       </VcButton>
     </div>

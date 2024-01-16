@@ -1,7 +1,7 @@
 <template>
   <component
     :is="componentTag"
-    v-bind="linkAttr"
+    v-bind="attrs"
     :target="target"
     :type="type"
     :disabled="!enabled"
@@ -61,6 +61,14 @@ export interface IEmits {
   (event: "click", value: MouseEvent): void;
 }
 
+interface IAttributes {
+  to?: RouteLocationRaw | null;
+  href?: string;
+  style?: {
+    minWidth?: string;
+  };
+}
+
 interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
   size?: "xs" | "sm" | "md" | "lg";
@@ -78,6 +86,7 @@ interface IProps {
   truncate?: boolean;
   fullWidth?: boolean;
   noWrap?: boolean;
+  minWidth?: string;
 }
 
 defineEmits<IEmits>();
@@ -107,25 +116,39 @@ const componentTag = computed(() => {
   if (isRouterLink.value) {
     return "router-link";
   }
+
   if (isExternalLink.value) {
     return "a";
   }
+
   return "button";
 });
 
-const linkAttr = computed(() => {
+const attrs = computed(() => {
+  const attributes: IAttributes = {};
+
   if (componentTag.value === "router-link") {
-    return { to: props.to };
+    attributes.to = props.to;
   }
+
   if (componentTag.value === "a") {
-    return { href: props.externalLink };
+    attributes.href = props.externalLink;
   }
-  return {};
+
+  if (props.minWidth) {
+    attributes.style = {
+      minWidth: props.minWidth,
+    };
+  }
+
+  return attributes;
 });
 </script>
 
 <style scoped lang="scss">
 .vc-button {
+  --min-w: var(--vc-button-min-width, auto);
+
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
   $prepend: "";
@@ -138,8 +161,6 @@ const linkAttr = computed(() => {
   $noWrap: "";
 
   @apply relative inline-block rounded border-2 select-none text-center;
-
-  --vc-icon-size: var(--vc-button-line-height);
 
   &--truncate {
     $truncate: &;
@@ -179,11 +200,15 @@ const linkAttr = computed(() => {
     @apply block rounded-full animate-spin;
   }
 
+  &:not(#{$icon}) {
+    @apply min-w-[--min-w];
+  }
+
   &--size {
     &--xs {
-      --vc-button-line-height: 0.875rem;
+      --line-height: 0.875rem;
 
-      @apply px-2.5 py-1 text-xs/[--vc-button-line-height] font-bold;
+      @apply px-2.5 py-1 text-xs/[--line-height] font-bold;
 
       &#{$icon} {
         @apply px-1;
@@ -195,9 +220,9 @@ const linkAttr = computed(() => {
     }
 
     &--sm {
-      --vc-button-line-height: 1rem;
+      --line-height: 1rem;
 
-      @apply p-2 text-xs/[--vc-button-line-height] uppercase font-black;
+      @apply p-2 text-xs/[--line-height] uppercase font-black;
 
       & #{$loaderIcon} {
         @apply border-2 w-4 h-4;
@@ -205,9 +230,9 @@ const linkAttr = computed(() => {
     }
 
     &--md {
-      --vc-button-line-height: 1.25rem;
+      --line-height: 1.25rem;
 
-      @apply p-2.5 text-sm/[--vc-button-line-height] uppercase font-black;
+      @apply p-2.5 text-sm/[--line-height] uppercase font-black;
 
       & #{$loaderIcon} {
         @apply border-[3px] w-5 h-5;
@@ -215,9 +240,9 @@ const linkAttr = computed(() => {
     }
 
     &--lg {
-      --vc-button-line-height: 1.5rem;
+      --line-height: 1.5rem;
 
-      @apply p-3.5 text-base/[--vc-button-line-height] uppercase font-black;
+      @apply p-3.5 text-base/[--line-height] uppercase font-black;
 
       & #{$loaderIcon} {
         @apply border-[3px] w-6 h-6;
@@ -255,12 +280,14 @@ const linkAttr = computed(() => {
       @apply bg-[--color-additional-50] text-[--color-#{$color}-500] border-[--color-additional-50];
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-700] border-[--color-#{$color}-50];
+        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-700];
       }
     }
 
     &--outline--#{$color} {
-      @apply bg-[--color-additional-50] text-[--color-#{$color}-500] border-current;
+      @apply bg-[--color-additional-50]
+      text-[--color-#{$color}-500]
+      border-current;
 
       &:hover:not(#{$loading}, #{$disabled}) {
         @apply text-[--color-#{$color}-700];
@@ -277,7 +304,7 @@ const linkAttr = computed(() => {
   }
 
   &:disabled#{$disabled}:not(#{$loading}) {
-    &[class*="--solid-"] {
+    &[class*="--solid--"] {
       @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
     }
 
@@ -292,10 +319,16 @@ const linkAttr = computed(() => {
     &[class*="--no-background--"] {
       @apply text-[--color-neutral-400];
     }
+
+    &[class*="--solid-lightest--"] {
+      @apply bg-[--color-additional-50] text-[--color-neutral-400];
+    }
   }
 
   &__content {
     @apply grid grid-flow-col justify-center;
+
+    --vc-icon-size: var(--line-height);
 
     #{$loading} & {
       @apply invisible;
