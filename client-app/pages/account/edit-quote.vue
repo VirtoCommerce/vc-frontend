@@ -1,15 +1,5 @@
 <template>
   <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
-    <div class="gap-3">
-      <VcFileUploader
-        :max-files="6"
-        :allowed-formats="settings?.allowedExtensions"
-        :max-file-size="settings?.maxFileSize"
-        :files="localFiles"
-        @add-file="uploadFile"
-        @remove-file="onFileRemove"
-      />
-    </div>
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
@@ -29,6 +19,17 @@
           :rows="4"
           no-resize
           counter
+        />
+      </VcWidget>
+
+      <VcWidget :title="$t('pages.account.quote_details.files')" prepend-icon="document-add" size="lg">
+        <VcFileUploader
+          :max-files="6"
+          :allowed-formats="settings?.allowedExtensions"
+          :max-file-size="settings?.maxFileSize"
+          :files="localFiles"
+          @add-file="uploadFile"
+          @remove-file="onFileRemove"
         />
       </VcWidget>
 
