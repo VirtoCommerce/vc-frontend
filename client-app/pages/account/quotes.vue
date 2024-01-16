@@ -1,7 +1,15 @@
 <template>
   <div>
     <!-- Title block -->
-    <h2 v-t="'pages.account.quotes.title'" class="mx-5 text-3xl font-bold uppercase text-gray-800 lg:mx-0" />
+    <div class="mx-5 flex items-center justify-between lg:mx-0">
+      <h2 class="text-3xl font-bold uppercase text-gray-800">
+        {{ $t("pages.account.quotes.title") }}
+      </h2>
+
+      <VcButton v-show="!fetching" size="sm" variant="outline" prepend-icon="plus" @click="createQuote">
+        <span class="sm:inline">{{ $t("pages.account.quotes.create") }}</span>
+      </VcButton>
+    </div>
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
@@ -241,6 +249,10 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = sortInfo;
   page.value = 1;
   await fetchQuotes();
+}
+
+function createQuote() {
+  console.log("created");
 }
 
 watch(

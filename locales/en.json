@@ -1027,7 +1027,8 @@
         "status_label": "@:common.labels.status",
         "total_label": "@:common.labels.total",
         "search_placeholder": "Enter keyword...",
-        "no_results_message": "No results found"
+        "no_results_message": "No results found",
+        "create": "Create"
       },
       "quote_details": {
         "title": "Quote Request #{0}",
