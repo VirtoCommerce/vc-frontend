@@ -2,9 +2,9 @@
   <ProductTitledBlock
     v-if="!model.hidden && description"
     :title="model.title || $t('shared.catalog.product_details.description_block_title')"
-    image-src="/static/images/description.svg"
+    icon="document-text"
   >
-    <VcCollapsibleContent max-height="12rem">
+    <VcCollapsibleContent max-height="18.75rem" class="text-base text-[--color-neutral-600]">
       <VcMarkdownRender :src="description" />
     </VcCollapsibleContent>
   </ProductTitledBlock>

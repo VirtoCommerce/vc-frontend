@@ -8,20 +8,21 @@
 import { computed } from "vue";
 
 interface IProps {
-  size?: number;
+  size?: number | string;
   icon?: string;
 }
 
 const props = defineProps<IProps>();
 
-const style = computed(() => (props.size ? { width: `${props.size}px` } : {}));
+const width = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
+const style = computed(() => (props.size ? { width: width.value } : {}));
 </script>
 
 <style lang="scss">
 .vc-hexagon-icon {
   --hexagon-size: var(--vc-hexagon-icon-size, 2.5rem);
 
-  @apply flex items-center justify-center w-[--hexagon-size] bg-[--color-neutral-200] text-[--color-additional-50] aspect-square;
+  @apply flex items-center justify-center w-[--hexagon-size] bg-[--color-neutral-300] text-[--color-additional-50] aspect-square;
 
   clip-path: polygon(
     45% 1.33975%,
