@@ -1,0 +1,51 @@
+query GetStoreSettings($storeId: String!) {
+  store(storeId: $storeId) {
+    storeId
+    storeName
+    catalogId
+    storeUrl
+    defaultLanguage {
+      isInvariant
+      cultureName
+      nativeName
+      threeLetterLanguageName
+      threeLetterRegionName
+      twoLetterLanguageName
+      twoLetterRegionName
+    }
+    availableLanguages {
+      isInvariant
+      cultureName
+      nativeName
+      threeLetterLanguageName
+      threeLetterRegionName
+      twoLetterLanguageName
+      twoLetterRegionName
+    }
+    defaultCurrency {
+      code
+      symbol
+      exchangeRate
+      customFormatting
+      englishName
+    }
+    availableCurrencies {
+      code
+      symbol
+      exchangeRate
+      customFormatting
+      englishName
+    }
+    settings {
+      quotesEnabled
+      subscriptionEnabled
+      taxCalculationEnabled
+      anonymousUsersAllowed
+      isSpa
+      emailVerificationEnabled
+      emailVerificationRequired
+      createAnonymousOrderEnabled
+      seoLinkType
+    }
+  }
+}
