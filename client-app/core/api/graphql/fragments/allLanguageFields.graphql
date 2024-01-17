@@ -1,0 +1,9 @@
+fragment allLanguageFields on LanguageType {
+  isInvariant
+  cultureName
+  nativeName
+  threeLetterLanguageName
+  twoLetterLanguageName
+  twoLetterRegionName
+  threeLetterRegionName
+}

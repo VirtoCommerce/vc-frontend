@@ -7,10 +7,11 @@ export interface IThemeContext {
   storeName: string;
   catalogId: string;
   userId: string;
-  userName: string;
+  userName?: string;
   defaultLanguage: ILanguage;
   defaultCurrency: ICurrency;
   availableLanguages: ILanguage[];
   availableCurrencies: ICurrency[];
   settings: IThemeConfigPreset;
+  settingsFromPlatform: unknown;
 }

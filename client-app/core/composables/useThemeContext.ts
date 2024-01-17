@@ -1,21 +1,26 @@
 import { computed, ref } from "vue";
-import { IS_DEVELOPMENT } from "../constants";
+import { getStoreSettings } from "@/core/api/graphql/settings";
 import type { IThemeConfig, IThemeContext } from "../types";
 
 const themeContext = ref<IThemeContext>();
 
 export function useThemeContext() {
   async function fetchThemeContext() {
-    const result: IThemeContext = await (await fetch("/storefrontapi/theme/context")).json();
-
-    if (IS_DEVELOPMENT) {
-      // TODO: remove this when switching to SSR
-      const settings = (await import("../../../config/settings_data.json")) as IThemeConfig;
-
-      result.settings = typeof settings.current === "string" ? settings.presets[settings.current] : settings.current;
+    const data = await getStoreSettings("B2B-store");
+    if (!data) {
+      return;
     }
 
-    themeContext.value = result;
+    const allSettings = (await import("../../../config/settings_data.json")) as IThemeConfig;
+
+    const settings =
+      typeof allSettings.current === "string" ? allSettings.presets[allSettings.current] : allSettings.current;
+
+    themeContext.value = {
+      ...data,
+      settings,
+      settingsFromPlatform: data.settings,
+    };
   }
 
   return {

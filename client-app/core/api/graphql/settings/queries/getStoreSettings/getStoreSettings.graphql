@@ -1,40 +1,25 @@
+#import "../../../fragments/allCurrencyFields.graphql"
+#import "../../../fragments/allLanguageFields.graphql"
+
 query GetStoreSettings($storeId: String!) {
   store(storeId: $storeId) {
     storeId
     storeName
     catalogId
     storeUrl
+    userName
+    userId
     defaultLanguage {
-      isInvariant
-      cultureName
-      nativeName
-      threeLetterLanguageName
-      threeLetterRegionName
-      twoLetterLanguageName
-      twoLetterRegionName
+      ...allLanguageFields
     }
     availableLanguages {
-      isInvariant
-      cultureName
-      nativeName
-      threeLetterLanguageName
-      threeLetterRegionName
-      twoLetterLanguageName
-      twoLetterRegionName
+      ...allLanguageFields
     }
     defaultCurrency {
-      code
-      symbol
-      exchangeRate
-      customFormatting
-      englishName
+      ...allCurrencyFields
     }
     availableCurrencies {
-      code
-      symbol
-      exchangeRate
-      customFormatting
-      englishName
+      ...allCurrencyFields
     }
     settings {
       quotesEnabled
