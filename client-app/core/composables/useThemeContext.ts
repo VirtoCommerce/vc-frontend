@@ -1,26 +1,34 @@
 import { computed, ref } from "vue";
 import { getStoreSettings } from "@/core/api/graphql/settings";
-import type { IThemeConfig, IThemeContext } from "../types";
+import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
+import type { GetStoreSettingsQuery } from "@/core/api/graphql/types";
 
 const themeContext = ref<IThemeContext>();
 
 export function useThemeContext() {
-  async function fetchThemeContext() {
-    const data = await getStoreSettings("B2B-store");
-    if (!data) {
-      return;
-    }
+  function fetchThemeContext() {
+    let data: GetStoreSettingsQuery["store"];
+    let settings: IThemeConfigPreset;
 
-    const allSettings = (await import("../../../config/settings_data.json")) as IThemeConfig;
+    const context = getStoreSettings("B2B-store").then((res) => {
+      data = res;
+    });
+    const config = import("../../../config/settings_data.json").then((res) => {
+      const allSettings = res as IThemeConfig;
+      settings =
+        typeof allSettings.current === "string" ? allSettings.presets[allSettings.current] : allSettings.current;
+    });
 
-    const settings =
-      typeof allSettings.current === "string" ? allSettings.presets[allSettings.current] : allSettings.current;
-
-    themeContext.value = {
-      ...data,
-      settings,
-      settingsFromPlatform: data.settings,
-    };
+    return Promise.all([config, context]).then(() => {
+      if (!data) {
+        return;
+      }
+      themeContext.value = {
+        ...data,
+        settings,
+        settingsFromPlatform: data.settings,
+      };
+    });
   }
 
   return {
