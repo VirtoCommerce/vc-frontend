@@ -163,7 +163,7 @@ export function _useFullCart() {
             selectedForCheckoutItems.value?.some((item) => item.productId === error.objectId)) ||
           (error.objectType === ValidationErrorObjectType.LineItem &&
             selectedForCheckoutItems.value?.some((item) => item.id === error.objectId)),
-      ) || selectedForCheckoutItems.value?.some((item) => item.validationErrors?.length),
+      ) ?? selectedForCheckoutItems.value?.some((item) => item.validationErrors?.length),
   );
 
   const hasOnlyUnselectedValidationError = computedEager(
