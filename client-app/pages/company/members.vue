@@ -256,7 +256,7 @@
         <template #desktop-skeleton>
           <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
             <td class="py-2.5 pl-4 pr-0">
-              <div class="size-9 animate-pulse rounded-full bg-gray-200"></div>
+              <div class="h-9 w-9 animate-pulse rounded-full bg-gray-200"></div>
             </td>
 
             <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">

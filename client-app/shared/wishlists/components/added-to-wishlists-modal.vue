@@ -3,12 +3,12 @@
     <div class="max-h-[50vh] overflow-y-auto border-b px-6 py-8 lg:max-h-64">
       <div class="flex grow items-center">
         <router-link :to="link">
-          <div class="size-20 shrink-0 border border-gray-100">
+          <div class="h-20 w-20 shrink-0 border border-gray-100">
             <VcImage
               :src="product.imgSrc"
               :alt="product.name"
               size-suffix="sm"
-              class="size-full object-cover object-center"
+              class="h-full w-full object-cover object-center"
               lazy
             />
           </div>

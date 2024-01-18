@@ -4,7 +4,7 @@
   >
     <!-- Product image -->
     <div class="relative flex flex-col items-center justify-center pb-[87%]">
-      <div class="absolute top-0 size-full rounded">
+      <div class="absolute top-0 h-full w-full rounded">
         <template v-if="$cfg.image_carousel_in_product_card_enabled && product.images?.length">
           <Swiper
             :modules="[Pagination, Navigation]"
@@ -13,7 +13,7 @@
               prevEl: '.carousel-button-prev',
               lockClass: '!hidden',
             }"
-            class="size-full"
+            class="h-full w-full"
             rewind
             @swiper="swiperInstance = $event"
             @slide-change="slideChanged"
@@ -24,7 +24,7 @@
                 :alt="product.name"
                 size-suffix="md"
                 :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
-                class="size-full select-none rounded object-cover object-center"
+                class="h-full w-full select-none rounded object-cover object-center"
                 :lazy="lazy || index > 0"
                 @click="swiperInstance?.slideNext()"
               />
@@ -36,7 +36,7 @@
                 class="carousel-button-prev group absolute left-0 top-0 z-[2] hidden h-full cursor-pointer items-center pl-1 pr-5 md:flex"
               >
                 <span
-                  class="flex size-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
+                  class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <VcIcon class="text-[--color-neutral-400]" name="chevron-left" size="xs" />
                 </span>
@@ -47,7 +47,7 @@
                 class="carousel-button-next group absolute right-0 top-0 z-[2] hidden h-full cursor-pointer items-center pl-5 pr-1 md:flex"
               >
                 <span
-                  class="flex size-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
+                  class="flex h-6 w-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <VcIcon class="text-[--color-neutral-400]" name="chevron-right" size="xs" />
                 </span>
@@ -62,7 +62,7 @@
                   <span
                     v-if="index !== 1 || product.images.length !== 2"
                     :class="[
-                      'inline-block size-2 rounded-full border',
+                      'inline-block h-2 w-2 rounded-full border',
                       state
                         ? 'border-gray-400 bg-gray-400 outline outline-[1px] outline-white'
                         : 'box-border border-gray-400 bg-white',
@@ -79,7 +79,7 @@
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="size-full rounded object-cover object-center"
+          class="h-full w-full rounded object-cover object-center"
           :lazy="lazy"
         />
       </div>
@@ -139,7 +139,7 @@
           </div>
           <div class="flex items-center gap-1">
             <svg
-              class="size-3 shrink-0"
+              class="h-3 w-3 shrink-0"
               :class="{
                 'text-[color:var(--color-success)]': true,
                 'text-[color:var(--color-warning)]': false,
@@ -185,7 +185,7 @@
         class="mt-2.5 flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-[1.35rem] lg:text-11"
         target="_blank"
       >
-        <svg class="size-3 shrink-0 text-primary lg:size-2.5">
+        <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
           <use href="/static/images/link.svg#main"></use>
         </svg>
         <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>

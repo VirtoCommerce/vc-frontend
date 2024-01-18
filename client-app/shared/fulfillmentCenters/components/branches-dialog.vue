@@ -108,7 +108,7 @@
 
           <button
             type="button"
-            class="ml-2.5 flex size-7 items-center justify-center self-center rounded bg-white shadow-t-mds"
+            class="ml-2.5 flex h-7 w-7 items-center justify-center self-center rounded bg-white shadow-t-mds"
             @click="clearSelection"
           >
             <svg class="text-primary" width="16" height="16">

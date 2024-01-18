@@ -44,7 +44,7 @@
             @click="addNewList"
           >
             <svg
-              class="mr-2 size-3.5 text-[color:var(--color-primary)]"
+              class="mr-2 h-3.5 w-3.5 text-[color:var(--color-primary)]"
               :class="{ 'text-gray-400': creationButtonDisabled }"
             >
               <use href="/static/images/plus.svg#main" />
