@@ -148,24 +148,20 @@
     <!-- MOBILE content END -->
 
     <template #actions="{ close }">
-      <div
-        class="sm:gap-auto relative -mx-6 -mt-4 flex grow items-center justify-between gap-5 bg-white px-10 pt-4 shadow-t-lgs sm:mt-0 sm:px-6 sm:pt-0 sm:shadow-none"
-      >
-        <VcButton color="secondary" variant="outline" class="flex-1 md:flex-none" @click="close">
-          {{ $t("shared.catalog.branches_modal.cancel_button") }}
-        </VcButton>
+      <VcButton color="secondary" variant="outline" @click="close">
+        {{ $t("shared.catalog.branches_modal.cancel_button") }}
+      </VcButton>
 
-        <VcButton
-          :disabled="isSaveButtonDisabled"
-          class="!min-w-[9rem] flex-1 md:flex-none"
-          @click="
-            save();
-            close();
-          "
-        >
-          {{ $t("shared.catalog.branches_modal.ok_button") }}
-        </VcButton>
-      </div>
+      <VcButton
+        :disabled="isSaveButtonDisabled"
+        class="ms-auto"
+        @click="
+          save();
+          close();
+        "
+      >
+        {{ $t("shared.catalog.branches_modal.ok_button") }}
+      </VcButton>
     </template>
   </VcModal>
 </template>
@@ -176,15 +172,19 @@ import { useFulfillmentCenters } from "../composables";
 import BranchItem from "./branch-item.vue";
 import BranchSearch from "./branch-search.vue";
 import type { IFulfillmentCenter } from "@/shared/fulfillmentCenters";
-import type { PropType } from "vue";
 
-const emit = defineEmits(["save"]);
+interface IEmits {
+  (event: "save", value: string[]): void;
+}
 
-const props = defineProps({
-  selectedBranches: {
-    type: Array as PropType<string[]>,
-    default: () => [],
-  },
+interface IProps {
+  selectedBranches?: string[];
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  selectedBranches: () => [],
 });
 
 const { loadFulfillmentCenters, fulfillmentCenters } = useFulfillmentCenters();
@@ -194,9 +194,8 @@ const searchInput = ref<string>("");
 const branches = computed(() => fulfillmentCenters.value.filter((item) => searchFilter(item)));
 const selectedBranchesIds = ref<string[]>([]);
 
-loadFulfillmentCenters();
-
-onMounted(() => {
+onMounted(async () => {
+  await loadFulfillmentCenters();
   selectedBranchesIds.value = [...props.selectedBranches];
 });
 

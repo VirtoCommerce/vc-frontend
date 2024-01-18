@@ -12,15 +12,13 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <div class="flex grow justify-between space-x-4">
-        <VcButton :loading="loading" color="danger" class="flex-1 sm:flex-none" @click="remove(close)">
-          {{ $t("shared.wishlists.delete_wishlist_product_modal.delete_button") }}
-        </VcButton>
+      <VcButton :loading="loading" color="danger" @click="remove(close)">
+        {{ $t("shared.wishlists.delete_wishlist_product_modal.delete_button") }}
+      </VcButton>
 
-        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-          {{ $t("shared.wishlists.delete_wishlist_product_modal.cancel_button") }}
-        </VcButton>
-      </div>
+      <VcButton color="secondary" variant="outline" class="ms-auto" @click="close">
+        {{ $t("shared.wishlists.delete_wishlist_product_modal.cancel_button") }}
+      </VcButton>
     </template>
   </VcModal>
 </template>

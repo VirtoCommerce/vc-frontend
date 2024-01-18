@@ -59,15 +59,14 @@
               </div>
 
               <!-- Dialog actions -->
-              <div v-if="!hideActions" class="flex items-center justify-between space-x-4 px-6 py-4 sm:justify-end">
+              <div
+                v-if="!hideActions"
+                class="*:max-sm:flex-1 flex flex-wrap items-center justify-center gap-4 px-6 py-4 [--vc-button-min-width:9rem] sm:justify-end"
+              >
                 <slot name="actions" :close="close">
-                  <button
-                    type="button"
-                    class="inline-flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none sm:grow-0 sm:px-4"
-                    @click="close"
-                  >
+                  <VcButton variant="outline" @click="close">
                     {{ $t("common.buttons.close") }}
-                  </button>
+                  </VcButton>
                 </slot>
               </div>
             </div>

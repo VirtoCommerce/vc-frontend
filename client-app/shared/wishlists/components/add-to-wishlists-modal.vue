@@ -112,26 +112,24 @@
     </div>
 
     <template #actions="{ close }">
-      <div class="sm:space-x-auto -mx-6 flex grow items-center justify-between space-x-5 px-6 pb-3 sm:pb-0">
-        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-          {{ $t("shared.wishlists.add_to_wishlists_modal.cancel_button") }}
-        </VcButton>
+      <VcButton color="secondary" variant="outline" @click="close">
+        {{ $t("shared.wishlists.add_to_wishlists_modal.cancel_button") }}
+      </VcButton>
 
-        <VcButton
-          :loading="loading"
-          :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
-          class="flex-1 sm:flex-none"
-          @click="save"
-        >
-          {{ $t("shared.wishlists.add_to_wishlists_modal.save_button") }}
-        </VcButton>
-      </div>
+      <VcButton
+        :loading="loading"
+        :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
+        class="ms-auto"
+        @click="save"
+      >
+        {{ $t("shared.wishlists.add_to_wishlists_modal.save_button") }}
+      </VcButton>
     </template>
   </VcModal>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, toRef } from "vue";
+import { computed, ref, inject, toRef, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
@@ -300,7 +298,7 @@ async function save() {
   });
 }
 
-fetchWishlists();
+onMounted(async () => await fetchWishlists());
 </script>
 
 <style lang="scss">

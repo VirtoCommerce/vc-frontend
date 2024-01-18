@@ -1,12 +1,14 @@
 <template>
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
-      <button type="button" class="flex" :disabled="!isAuthenticated" @click="openAddToListModal">
-        <VcIcon
-          :class="[customClass, product.inWishlist ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
-          name="whishlist"
-        />
-      </button>
+      <slot :open-modal="openAddToListModal" :is-authenticated="isAuthenticated" :is-in-wishlist="product.inWishlist">
+        <button type="button" class="flex" :disabled="!isAuthenticated" @click="openAddToListModal">
+          <VcIcon
+            :class="[customClass, product.inWishlist ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
+            name="whishlist"
+          />
+        </button>
+      </slot>
     </template>
 
     <template #content>

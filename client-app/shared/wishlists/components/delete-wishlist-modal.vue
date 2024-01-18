@@ -12,15 +12,13 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <div class="flex grow justify-between space-x-4">
-        <VcButton :loading="loading" color="danger" class="flex-1 sm:flex-none" @click="remove(close)">
-          {{ $t("shared.wishlists.delete_wishlist_modal.delete_button") }}
-        </VcButton>
+      <VcButton :loading="loading" color="danger" @click="remove(close)">
+        {{ $t("shared.wishlists.delete_wishlist_modal.delete_button") }}
+      </VcButton>
 
-        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-          {{ $t("shared.wishlists.delete_wishlist_modal.cancel_button") }}
-        </VcButton>
-      </div>
+      <VcButton class="ms-auto" color="secondary" variant="outline" @click="close">
+        {{ $t("shared.wishlists.delete_wishlist_modal.cancel_button") }}
+      </VcButton>
     </template>
   </VcModal>
 </template>
@@ -28,14 +26,12 @@
 <script setup lang="ts">
 import { useWishlists } from "../composables";
 import type { WishlistType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  list: {
-    type: Object as PropType<WishlistType>,
-    required: true,
-  },
-});
+interface IProps {
+  list: WishlistType;
+}
+
+const props = defineProps<IProps>();
 
 const { loading, removeWishlist } = useWishlists();
 

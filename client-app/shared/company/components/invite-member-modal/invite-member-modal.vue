@@ -48,11 +48,11 @@
     </form>
 
     <template #actions="{ close }">
-      <VcButton :disabled="loading" class="w-full sm:w-auto" color="secondary" variant="outline" @click="close">
+      <VcButton :disabled="loading" color="secondary" variant="outline" @click="close">
         {{ $t("shared.account.invite_member_modal.cancel_button") }}
       </VcButton>
 
-      <VcButton :disabled="!meta.valid" :loading="loading" class="w-full sm:w-auto" @click="send">
+      <VcButton :disabled="!meta.valid" :loading="loading" @click="send">
         {{ $t("shared.account.invite_member_modal.send_button") }}
       </VcButton>
     </template>

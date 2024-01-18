@@ -3,8 +3,9 @@
     <template #actions="{ close }">
       <VcButton
         v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
-        class="me-auto flex-1 md:w-auto md:flex-none"
+        class="me-auto"
         variant="outline"
+        no-wrap
         @click="
           $emit('addNewAddress');
           close();
@@ -13,12 +14,12 @@
         {{ $t("shared.checkout.select_address_modal.add_address_button") }}
       </VcButton>
 
-      <VcButton color="secondary" variant="outline" class="!hidden min-w-[6rem] flex-none md:!block" @click="close">
+      <VcButton color="secondary" variant="outline" class="flex-none max-md:!hidden" @click="close">
         {{ $t("shared.checkout.select_address_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
-        class="min-w-[6rem] xs:flex-1 md:flex-none"
+        class="xs:flex-none"
         no-wrap
         :disabled="!selectedAddress"
         @click="

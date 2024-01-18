@@ -18,20 +18,18 @@
     </div>
 
     <template #actions="{ close }">
-      <div class="flex grow items-center justify-between gap-16">
-        <VcButton :disabled="loading" color="secondary" variant="outline" full-width @click="close">
-          {{ $t("common.buttons.cancel") }}
-        </VcButton>
+      <VcButton :disabled="loading" color="secondary" variant="outline" @click="close">
+        {{ $t("common.buttons.cancel") }}
+      </VcButton>
 
-        <VcButton
-          full-width
-          :disabled="selectedRoleId === currentRoleId"
-          :loading="loading"
-          @click="$emit('confirm', selectedRoleId)"
-        >
-          {{ $t("common.buttons.save") }}
-        </VcButton>
-      </div>
+      <VcButton
+        :disabled="selectedRoleId === currentRoleId"
+        :loading="loading"
+        class="ms-auto"
+        @click="$emit('confirm', selectedRoleId)"
+      >
+        {{ $t("common.buttons.save") }}
+      </VcButton>
     </template>
   </VcModal>
 </template>
