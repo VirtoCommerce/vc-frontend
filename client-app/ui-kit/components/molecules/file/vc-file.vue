@@ -90,10 +90,12 @@ function remove() {
 const icon = computed(() => {
   let fileName: string;
 
+  const contentType = props.file.mimeType || props.file.contentType;
+
   if (props.file.errorMessage) {
     fileName = "error";
-  } else if (Object.values(FileType).includes(props.file.mimeType as FileType)) {
-    fileName = props.file.mimeType || "file";
+  } else if (Object.values(FileType).includes(contentType as FileType)) {
+    fileName = contentType || "file";
   } else {
     fileName = "file";
   }
