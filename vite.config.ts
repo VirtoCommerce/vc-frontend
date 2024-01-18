@@ -1,4 +1,3 @@
-import fs from "fs";
 import { fileURLToPath, URL } from "node:url";
 import path from "path";
 import graphql from "@rollup/plugin-graphql";
@@ -23,10 +22,6 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
 export default defineConfig(({ command, mode }): UserConfig => {
   const isServe = command == "serve";
 
-  const certificatesPath = "./.certificates";
-  const keyFileName = "private.pem";
-  const certFileName = "public.pem";
-
   // https://stackoverflow.com/a/66389044
   process.env = {
     ...process.env,
@@ -39,9 +34,10 @@ export default defineConfig(({ command, mode }): UserConfig => {
     publicDir: "./client-app/public",
     plugins: [
       mkcert({
-        savePath: certificatesPath,
-        keyFileName,
-        certFileName,
+        force: true,
+        savePath: path.resolve(__dirname, ".certificates"),
+        keyFileName: "private.pem",
+        certFileName: "public.pem",
       }),
       vue(),
       graphql(),
@@ -115,10 +111,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
     },
     server: {
       port: 3000,
-      https: {
-        key: isServe ? fs.readFileSync(path.join(certificatesPath, keyFileName)) : undefined,
-        cert: isServe ? fs.readFileSync(path.join(certificatesPath, certFileName)) : undefined,
-      },
       proxy: {
         "^/(xapi|storefrontapi)": getProxy(process.env.APP_BACKEND_URL),
         // For login on behalf
