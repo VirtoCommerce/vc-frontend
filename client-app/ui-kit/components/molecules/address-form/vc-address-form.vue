@@ -148,8 +148,9 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
+import { clone } from "lodash";
 import { useField, useForm } from "vee-validate";
-import { computed, readonly, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { string as yupString } from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
 import type { CountryRegionType, CountryType, MemberAddressType } from "@/core/api/graphql/types";
@@ -175,21 +176,40 @@ const props = withDefaults(defineProps<IProps>(), {
   countries: () => [],
 });
 
-const emptyAddress = readonly<MemberAddressType>({
+const _emptyAddress: Readonly<MemberAddressType> = {
   isDefault: false,
-  // WTF:
+  firstName: "",
+  lastName: "",
+  email: "",
+  organization: "",
   postalCode: "",
-});
+  countryCode: "",
+  countryName: "",
+  regionId: "",
+  regionName: "",
+  city: "",
+  line1: "",
+  line2: "",
+  phone: "",
+};
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const { values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm({
-  initialValues: props.modelValue ?? emptyAddress,
-});
+const initialValues = ref<MemberAddressType>(clone(props.modelValue || _emptyAddress));
+
+const {
+  values,
+  meta,
+  errors,
+  handleSubmit,
+  setValues,
+  setErrors,
+  validate,
+  resetForm: reset,
+} = useForm({ initialValues });
 
 const slotsData = computed(() => ({
   setErrors,
   validate,
-  reset: resetForm,
+  reset,
   save,
   errors,
   values,
@@ -301,7 +321,9 @@ const save = handleSubmit((address) => {
 watch(
   () => props.modelValue,
   (value) => {
-    resetForm({ values: value ?? emptyAddress });
+    initialValues.value = clone(value || _emptyAddress);
+    setValues(initialValues.value);
   },
+  { deep: true },
 );
 </script>

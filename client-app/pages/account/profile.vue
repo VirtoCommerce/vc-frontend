@@ -46,15 +46,15 @@
         />
 
         <VcAlert
-          v-for="translatedError in translatedErrors"
-          :key="translatedError.code"
+          v-for="error in commonErrors"
+          :key="error"
           color="danger"
           class="my-4 text-xs"
           size="sm"
           variant="solid-light"
           icon
         >
-          {{ translatedError.translation }}
+          {{ error }}
         </VcAlert>
 
         <!-- Form actions -->
@@ -79,7 +79,7 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
-import { useErrorsTranslator, usePageHead } from "@/core/composables";
+import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -100,38 +100,56 @@ const validationSchema = toTypedSchema(
   }),
 );
 
+const initialValues = computed(() => ({
+  firstName: user.value.contact?.firstName,
+  lastName: user.value.contact?.lastName,
+  email: user.value.email,
+}));
+
 const { errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
   validationSchema,
-  initialValues: getFormValues(),
+  initialValues,
 });
-
-function getFormValues() {
-  return {
-    firstName: user.value.contact?.firstName,
-    lastName: user.value.contact?.lastName,
-    email: user.value.email,
-  };
-}
 
 const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");
 
-const responseErrors = ref<IdentityErrorType[]>([]);
-const { translatedErrors } = useErrorsTranslator("identity_error", responseErrors);
+const commonErrors = ref<string[]>([]);
+const showErrors = (responseErrors: IdentityErrorType[]) => {
+  responseErrors.forEach((error) => {
+    const errorDescription = getIdentityErrorTranslation(error);
+
+    if (errorDescription) {
+      commonErrors.value.push(errorDescription);
+    }
+  });
+};
+
+const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const onSubmit = handleSubmit(async (data) => {
-  responseErrors.value = [];
+  const results: boolean[] = [];
+  commonErrors.value = [];
+  if (
+    (data.firstName && initialValues.value.firstName !== data.firstName) ||
+    (data.lastName && initialValues.value.lastName !== data.lastName)
+  ) {
+    const userDataUpdateResult = await updateUser({
+      firstName: data.firstName!,
+      lastName: data.lastName!,
+    });
 
-  const response = await updateUser({
-    firstName: data.firstName,
-    lastName: data.lastName,
-  });
+    results.push(userDataUpdateResult.succeeded);
 
-  responseErrors.value = response.errors ?? [];
+    if (userDataUpdateResult.errors?.length) {
+      showErrors(userDataUpdateResult.errors);
+    }
+  }
 
-  if (response.succeeded) {
-    resetForm({ values: getFormValues() });
+  if (results.every((item) => item)) {
+    resetForm();
+    commonErrors.value = [];
     openPopup({
       component: ProfileUpdateSuccessDialog,
     });
