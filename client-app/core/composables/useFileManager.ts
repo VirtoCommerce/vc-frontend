@@ -33,7 +33,7 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
     settings.value = await getFileUploadOptions("quote-attachments");
   }
 
-  async function uploadFile(fileInfo: VcFileType) {
+  async function uploadFile(fileInfo: VcFileType): Promise<VcFileType | undefined> {
     const updatedFile: VcFileType = {
       ...fileInfo,
       progress: 0,
@@ -69,6 +69,7 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
         currentFile.progress = 100;
         currentFile.url = url;
         currentFile.id = id;
+        return currentFile;
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error);
@@ -93,7 +94,7 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
     });
   }
 
-  async function removeFile(fileInfo: VcFileType) {
+  async function removeFileApi(fileInfo: VcFileType) {
     if (fileInfo.id) {
       const res = await deleteFile(fileInfo.id);
       if (!res) {
@@ -105,6 +106,9 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
         return;
       }
     }
+  }
+
+  function removeFileLocally(fileInfo: VcFileType) {
     if (fileInfo.url) {
       localFiles.value = localFiles.value.filter((el) => el.url !== fileInfo.url);
     } else if (fileInfo.file) {
@@ -115,7 +119,8 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   return {
     localFiles,
     uploadFile,
-    removeFile,
+    removeFileApi,
+    removeFileLocally,
 
     settings,
     fetchSettings,

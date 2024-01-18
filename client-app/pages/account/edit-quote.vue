@@ -28,8 +28,8 @@
           :allowed-formats="settings?.allowedExtensions"
           :max-file-size="settings?.maxFileSize"
           :files="localFiles"
-          @add-file="uploadFile"
-          @remove-file="onFileRemove"
+          @add-file="onAddFile"
+          @remove-file="onRemoveFile"
         />
       </VcWidget>
 
@@ -123,7 +123,7 @@ import { useBreadcrumbs, usePageHead, useFileManager } from "@/core/composables"
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
-import { QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
+import { isFileAttached, QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
@@ -158,7 +158,6 @@ const {
   shippingAddress,
   billingAddress,
   attachments,
-  removeAttachmentByUrl,
   clearQuote,
   setQuoteAddress,
   fetchQuote,
@@ -167,10 +166,33 @@ const {
   updateAddresses,
   removeItem,
   submitQuote,
+  addFile: addFileToQuote,
+  removeFile: removeFileFromQuote,
 } = useUserQuote();
 const notifications = useNotifications();
-const { uploadFile, removeFile, localFiles, fetchSettings, settings } = useFileManager(attachments);
+const { uploadFile, removeFileApi, removeFileLocally, localFiles, fetchSettings, settings } =
+  useFileManager(attachments);
 void fetchSettings();
+
+async function onAddFile(fileInfo: VcFileType) {
+  const updatedFileInfo = await uploadFile(fileInfo);
+  if (!updatedFileInfo?.url) {
+    console.error("No url in file");
+    return;
+  }
+  await addFileToQuote(updatedFileInfo.url);
+}
+
+async function onRemoveFile(fileInfo: VcFileType) {
+  if (!isFileAttached(fileInfo.url)) {
+    await removeFileApi(fileInfo);
+  }
+  if (fileInfo.url) {
+    await removeFileFromQuote(fileInfo.url);
+  }
+
+  removeFileLocally(fileInfo);
+}
 
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
@@ -389,11 +411,4 @@ watchEffect(async () => {
   comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 });
-
-function onFileRemove(fileInfo: VcFileType) {
-  if (fileInfo.url) {
-    removeAttachmentByUrl(fileInfo.url);
-  }
-  removeFile(fileInfo);
-}
 </script>

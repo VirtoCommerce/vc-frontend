@@ -7,6 +7,7 @@ import {
   removeQuoteItem,
   updateQuoteAddresses,
   submitQuoteRequest,
+  updateQuoteAttachments,
 } from "@/core/api/graphql";
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
@@ -27,13 +28,46 @@ const shippingAddress = computed<QuoteAddressType | undefined>(
   () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
 );
 const attachments = computed<QuoteAttachmentType[] | undefined>(() => quote.value?.attachments);
+const attachmentsUrls = computed<string[]>(() => quote.value?.attachments.map((el) => el.url) || []);
 
-export function removeAttachmentByUrl(url: string) {
-  if (!quote.value) {
+export async function addFile(url: string) {
+  if (!quote.value?.id) {
     return;
   }
-  // todo request fragment
-  quote.value.attachments = quote.value?.attachments.filter((el) => el.url !== url);
+  try {
+    const res = await updateQuoteAttachments(quote.value.id, [...attachmentsUrls.value, url]);
+    if (!res?.attachments) {
+      console.error("Can't add attachments");
+      return;
+    }
+    quote.value.attachments = res.attachments;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export async function removeFile(url: string) {
+  if (!quote.value?.id) {
+    return;
+  }
+  try {
+    const reducedAttachments = attachmentsUrls.value.filter((el) => el !== url);
+    const res = await updateQuoteAttachments(quote.value?.id, reducedAttachments);
+    if (!res?.attachments) {
+      console.error("Can't remove attachments");
+      return;
+    }
+    quote.value.attachments = res.attachments;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function isFileAttached(url?: string) {
+  if (!url) {
+    return false;
+  }
+  return attachmentsUrls.value.includes(url);
 }
 
 export function useUserQuote() {
@@ -51,26 +85,6 @@ export function useUserQuote() {
 
     try {
       quote.value = await getQuote(paylod);
-      quote.value.attachments = [
-        {
-          name: "Contract.pdf",
-          mimeType: "application/pdf",
-          size: 1024,
-          url: "/contract.pdf",
-        },
-        {
-          name: "Positions.zip",
-          mimeType: "application/zip",
-          size: 2048,
-          url: "/product.zip",
-        },
-        {
-          name: "Product_photo.jpg",
-          mimeType: "image/jpeg",
-          size: 4096,
-          url: "https://vcst-dev-storefront.paas.govirto.com/static/images/common/logo.svg",
-        },
-      ];
     } catch (e) {
       Logger.error(`${useUserQuote.name}.${fetchQuote.name}`, e);
       throw e;
@@ -154,8 +168,6 @@ export function useUserQuote() {
     quote: computed(() => quote.value),
     billingAddress,
     shippingAddress,
-    attachments,
-    removeAttachmentByUrl,
     clearQuote,
     setQuoteAddress,
     fetchQuote,
@@ -164,5 +176,10 @@ export function useUserQuote() {
     removeItem,
     updateAddresses,
     submitQuote,
+
+    attachments,
+    isFileAttached,
+    addFile,
+    removeFile,
   };
 }

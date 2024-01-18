@@ -1,6 +1,5 @@
 import { ref, shallowRef } from "vue";
-import { getQuotes } from "@/core/api/graphql/quotes";
-import { createQuote } from "@/core/api/graphql/quotes/mutations/createQuote";
+import { getQuotes, createQuote } from "@/core/api/graphql/quotes";
 import { DEFAULT_SORT_INFO } from "@/core/constants";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
