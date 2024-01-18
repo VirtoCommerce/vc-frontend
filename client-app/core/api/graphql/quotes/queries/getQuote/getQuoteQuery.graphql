@@ -16,7 +16,7 @@ query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: St
     attachments {
       name
       url
-      mimeType
+      contentType
       size
     }
     items {

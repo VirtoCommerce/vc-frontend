@@ -1,0 +1,10 @@
+mutation UpdateQuoteAttachments($command: UpdateQuoteAttachmentsCommandType!) {
+  updateQuoteAttachments(command: $command) {
+    attachments {
+      name
+      url
+      contentType
+      size
+    }
+  }
+}
