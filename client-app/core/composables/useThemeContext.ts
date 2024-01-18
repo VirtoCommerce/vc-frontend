@@ -11,7 +11,7 @@ export function useThemeContext() {
     ]);
 
     if (!storeSettings || !themeSettings) {
-      return;
+      throw new Error("Can't get context");
     }
 
     const themeConfig =
