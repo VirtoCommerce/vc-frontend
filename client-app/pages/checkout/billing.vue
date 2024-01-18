@@ -15,9 +15,9 @@
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
-          <VcButton :to="{ name: 'Review', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
+          <ProceedTo :to="{ name: 'Review' }" :disabled="!isValidPayment">
             {{ $t("common.buttons.review_order") }}
-          </VcButton>
+          </ProceedTo>
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="!isValidPayment" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -37,7 +37,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
 
@@ -55,11 +54,8 @@ const {
   purchaseOrderNumber,
   billingAddressEqualsShipping,
   isValidPayment,
-  isValidCheckout,
   isPurchaseOrderNumberEnabled,
   onBillingAddressChange,
   setPaymentMethod,
 } = useCheckout();
-
-const isDisabledNextStep = computed<boolean>(() => loading.value || !isValidCheckout.value);
 </script>

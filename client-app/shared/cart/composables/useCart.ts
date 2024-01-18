@@ -1,6 +1,6 @@
 import { createGlobalState, createSharedComposable, computedEager, useDebounceFn, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy } from "lodash";
-import { computed, shallowRef } from "vue";
+import { computed, readonly, shallowRef } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -215,6 +215,8 @@ export function _useFullCart() {
 
   const selectedLineItemsGroupedByVendor = computed(() => groupByVendor(selectedLineItems.value));
 
+  const hasOnlyUnselectedLineItems = computed(() => selectedItemIds.value.length === 0);
+
   const { mutate: _clearCart, loading: clearCartLoading } = useClearCartMutation(cart);
   async function clearCart(): Promise<void> {
     await _clearCart();
@@ -402,6 +404,7 @@ export function _useFullCart() {
     lineItemsGroupedByVendor,
     selectedLineItems,
     selectedLineItemsGroupedByVendor,
+    hasOnlyUnselectedLineItems,
     allItemsAreDigital,
     addedGiftsByIds,
     availableExtendedGifts,
@@ -426,7 +429,7 @@ export function _useFullCart() {
     removeGiftsFromCart,
     toggleGift,
     openClearCartModal,
-    loading,
+    loading: readonly(loading),
     changing: computed(
       () =>
         selectCartItemsLoading.value ||

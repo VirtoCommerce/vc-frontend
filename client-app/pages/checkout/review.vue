@@ -119,15 +119,7 @@
             />
           </transition>
 
-          <VcButton
-            :disabled="isDisabledOrderCreation"
-            :loading="loading"
-            full-width
-            class="mt-4 print:!hidden"
-            @click="createOrderFromCart"
-          >
-            {{ $t("common.buttons.place_order") }}
-          </VcButton>
+          <PlaceOrder />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -151,7 +143,7 @@
 import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
-import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {
@@ -165,17 +157,8 @@ const {
   hasValidationErrors,
   allItemsAreDigital,
 } = useFullCart();
-const {
-  loading,
-  billingAddressEqualsShipping,
-  comment,
-  purchaseOrderNumber,
-  isPurchaseOrderNumberEnabled,
-  isValidCheckout,
-  createOrderFromCart,
-} = useCheckout();
+const { billingAddressEqualsShipping, comment, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
 const { couponCode } = useCoupon();
-const isDisabledOrderCreation = computed<boolean>(() => !isValidCheckout.value);
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,

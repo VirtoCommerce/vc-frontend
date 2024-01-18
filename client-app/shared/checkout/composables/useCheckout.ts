@@ -13,7 +13,6 @@ import { useOrganizationAddresses } from "@/shared/company";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
 import { usePopup } from "@/shared/popup";
-import { SelectAddressModal } from "../components";
 import type {
   CartAddressType,
   CustomerOrderType,
@@ -25,12 +24,15 @@ import type {
 } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
+import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 const loading = ref(false);
 const billingAddressEqualsShipping = ref(true);
 const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
+const commentChanging = ref(false);
 const _comment = ref<string>();
+const purchaseOrderNumberChanging = ref(false);
 const _purchaseOrderNumber = ref<string>();
 
 export function useCheckout() {
@@ -72,17 +74,20 @@ export function useCheckout() {
     if (cart.value?.comment !== value) {
       await changeComment(value);
     }
+    commentChanging.value = false;
   }, DEFAULT_DEBOUNCE_IN_MS);
 
   const updatePurchaseOrderNumberDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.purchaseOrderNumber !== value) {
       await updatePurchaseOrderNumber(value);
     }
+    purchaseOrderNumberChanging.value = false;
   }, DEFAULT_DEBOUNCE_IN_MS);
 
   const comment = computed({
     get: () => _comment.value ?? cart.value?.comment ?? "",
     set: (value: string) => {
+      commentChanging.value = true;
       _comment.value = value;
       void changeCommentDebounced(value);
     },
@@ -91,6 +96,7 @@ export function useCheckout() {
   const purchaseOrderNumber = computed({
     get: () => _purchaseOrderNumber.value ?? cart.value?.purchaseOrderNumber ?? "",
     set: (value: string) => {
+      purchaseOrderNumberChanging.value = true;
       _purchaseOrderNumber.value = value;
       void updatePurchaseOrderNumberDebounced(value);
     },
@@ -434,6 +440,7 @@ export function useCheckout() {
     setPaymentMethod,
     createOrderFromCart,
     loading: readonly(loading),
+    changing: computed(() => commentChanging.value || purchaseOrderNumberChanging.value),
     placedOrder: computed(() => placedOrder.value),
     allItemsAreDigital: readonly(allOrderItemsAreDigital),
   };
