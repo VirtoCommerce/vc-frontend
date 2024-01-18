@@ -17,19 +17,19 @@
         </p>
       </div>
 
-      <div class="flex flex-row justify-center gap-x-4 px-6 pb-10">
+      <div class="flex flex-wrap justify-center gap-4 px-6 pb-10">
         <VcButton
           v-if="!singleButton"
           :disabled="loading"
+          min-width="9rem"
           color="secondary"
           variant="outline"
-          class="w-36"
           @click="close"
         >
           {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton :loading="loading" class="w-36" @click="$emit('confirm')">
+        <VcButton :loading="loading" min-width="9rem" @click="$emit('confirm')">
           {{ $t("common.buttons.ok") }}
         </VcButton>
       </div>
