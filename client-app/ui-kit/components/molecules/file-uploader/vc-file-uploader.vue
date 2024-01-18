@@ -16,7 +16,7 @@
         </li>
       </ul>
     </div>
-    <div class="flex flex-col gap-2">
+    <div class="flex grow flex-col gap-2">
       <button
         type="button"
         class="vc-file-uploader__drop-container"
@@ -215,7 +215,7 @@ function bytesToMegabytes(bytes: number): number | undefined {
     @apply px-3 py-4 border border-[--color-neutral-200] rounded;
 
     #{$horizontal} & {
-      @apply md:flex-1 md:shrink;
+      @apply md:flex-1 md:shrink md:basis-1/2;
     }
   }
 
