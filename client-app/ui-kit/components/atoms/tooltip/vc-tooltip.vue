@@ -36,9 +36,7 @@ export interface IProps {
   xOffset?: number;
   yOffset?: number;
   trigger?: "hover" | "click";
-  //OPUS
   triggerCustomClasses?: string;
-  //!OPUS
 }
 
 const emit = defineEmits<IEmits>();
