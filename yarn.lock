@@ -6601,10 +6601,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-walk@npm:8.3.0":
-  version: 8.3.0
-  resolution: "acorn-walk@npm:8.3.0"
-  checksum: 24346e595f507b6e704a60d35f3c5e1aa9891d4fb6a3fc3d856503ab718cc26cabb5e3e1ff0ff8da6ec03d60a8226ebdb602805a94f970e7f797ea3b8b09437f
+"acorn-walk@npm:8.3.1":
+  version: 8.3.1
+  resolution: "acorn-walk@npm:8.3.1"
+  checksum: a23d2f7c6b6cad617f4c77f14dfeb062a239208d61753e9ba808d916c550add92b39535467d2e6028280761ac4f5a904cc9df21530b84d3f834e3edef74ddde5
   languageName: node
   linkType: hard
 
@@ -8472,15 +8472,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dependency-cruiser@npm:^15.5.0":
-  version: 15.5.0
-  resolution: "dependency-cruiser@npm:15.5.0"
+"dependency-cruiser@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "dependency-cruiser@npm:16.0.0"
   dependencies:
     acorn: "npm:8.11.2"
     acorn-jsx: "npm:5.3.2"
     acorn-jsx-walk: "npm:2.0.0"
     acorn-loose: "npm:8.4.0"
-    acorn-walk: "npm:8.3.0"
+    acorn-walk: "npm:8.3.1"
     ajv: "npm:8.12.0"
     chalk: "npm:5.3.0"
     commander: "npm:11.1.0"
@@ -8500,7 +8500,7 @@ __metadata:
     semver-try-require: "npm:6.2.3"
     teamcity-service-messages: "npm:0.1.14"
     tsconfig-paths-webpack-plugin: "npm:4.1.0"
-    watskeburt: "npm:2.0.2"
+    watskeburt: "npm:2.0.4"
     wrap-ansi: "npm:9.0.0"
   bin:
     depcruise: bin/dependency-cruise.mjs
@@ -8509,7 +8509,7 @@ __metadata:
     depcruise-wrap-stream-in-html: bin/wrap-stream-in-html.mjs
     dependency-cruise: bin/dependency-cruise.mjs
     dependency-cruiser: bin/dependency-cruise.mjs
-  checksum: cee94b0e4a1375fc9a3e8df01d9bf3032cb3ca6406f24701753ab9ccc79282580c646141c0b6502bfe24e76f53b7796288c03a6575e569ee5b527e4aa76f9ba7
+  checksum: 6b1009e8c5f6fe091cbc5f0eefc17dcb99aa32d27bda5144992d7b8820550903fb3d2ecf85bfdf4d6f1092bb0b2be642225e3571690f8ea2e309d96463871ded
   languageName: node
   linkType: hard
 
@@ -16782,7 +16782,7 @@ __metadata:
     adm-zip: "npm:^0.5.10"
     autoprefixer: "npm:^10.4.17"
     chalk: "npm:^5.3.0"
-    dependency-cruiser: "npm:^15.5.0"
+    dependency-cruiser: "npm:^16.0.0"
     dompurify: "npm:^3.0.8"
     eslint: "npm:^8.49.0"
     eslint-import-resolver-typescript: "npm:^3.6.1"
@@ -17309,12 +17309,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"watskeburt@npm:2.0.2":
-  version: 2.0.2
-  resolution: "watskeburt@npm:2.0.2"
+"watskeburt@npm:2.0.4":
+  version: 2.0.4
+  resolution: "watskeburt@npm:2.0.4"
   bin:
     watskeburt: dist/run-cli.js
-  checksum: 7f6d01d395d4b05cd1e66925da9073c73d5b0f91600924cb9bd183ab37d571c90b7372e382b1fb8063f8aaf325ab9e72b2456ca76626d2690bbc4ef4768ff23d
+  checksum: 507548f637ce2d38c4e62b36f96761ff813facdf39b2aeb9ef5be8f408ff4dbf0031a48608183eb4650a3d9038604d4f43b4c0d5e7d1fd9510cdbfddf3362785
   languageName: node
   linkType: hard
 
