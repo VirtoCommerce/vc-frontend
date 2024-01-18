@@ -2,6 +2,7 @@
   <div class="relative">
     <div
       ref="triggerNode"
+      :class="triggerCustomClasses"
       :aria-describedby="`popover-${$.uid}`"
       tabindex="0"
       @mouseenter="trigger === 'hover' && toggleTooltip(true)"
@@ -35,6 +36,9 @@ export interface IProps {
   xOffset?: number;
   yOffset?: number;
   trigger?: "hover" | "click";
+  //OPUS
+  triggerCustomClasses?: string;
+  //!OPUS
 }
 
 const emit = defineEmits<IEmits>();
