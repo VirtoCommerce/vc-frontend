@@ -57,7 +57,6 @@ declare global {
     name?: string;
     size?: number;
     mimeType?: string;
-    icon?: string;
     progress?: number;
     status?: "loading" | "success" | "error";
     errorMessage?: string;

@@ -1,6 +1,5 @@
 import { ref, watchEffect } from "vue";
 import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
-import { FileType } from "@/core/enums";
 import { useNotifications } from "@/shared/notification";
 import type { Ref } from "vue";
 
@@ -39,7 +38,6 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
       ...fileInfo,
       progress: 0,
       status: fileInfo.errorMessage ? "error" : "loading",
-      icon: getIcon(fileInfo),
     };
 
     localFiles.value.push(updatedFile);
@@ -92,7 +90,6 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
   function addFileInfo(fileInfo: VcFileType) {
     localFiles.value.push({
       ...fileInfo,
-      icon: getIcon(fileInfo),
     });
   }
 
@@ -113,20 +110,6 @@ export function useFileManager(attachments: Ref<VcFileType[] | undefined>) {
     } else if (fileInfo.file) {
       localFiles.value = localFiles.value.filter((el) => el.file !== fileInfo.file);
     }
-  }
-
-  function getIcon({ mimeType, errorMessage }: Partial<Pick<VcFileType, "mimeType" | "errorMessage">>): string {
-    let fileName: string;
-
-    if (errorMessage) {
-      fileName = "error";
-    } else if (Object.values(FileType).includes(mimeType as FileType)) {
-      fileName = mimeType || "file";
-    } else {
-      fileName = "file";
-    }
-
-    return `/static/icons/file/${fileName}.svg`;
   }
 
   return {

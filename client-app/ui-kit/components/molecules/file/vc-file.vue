@@ -1,7 +1,7 @@
 <template>
   <div class="vc-file">
     <VcImage
-      :src="file.icon"
+      :src="icon"
       :class="[
         'vc-file__icon',
         {
@@ -62,6 +62,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { FileType } from "@/core/enums";
+
 interface IEmits {
   (event: "reload", value: VcFileType): void;
   (event: "remove", value: VcFileType): void;
@@ -83,6 +86,20 @@ function reload() {
 function remove() {
   emit("remove", props.file);
 }
+
+const icon = computed(() => {
+  let fileName: string;
+
+  if (props.file.errorMessage) {
+    fileName = "error";
+  } else if (Object.values(FileType).includes(props.file.mimeType as FileType)) {
+    fileName = props.file.mimeType || "file";
+  } else {
+    fileName = "file";
+  }
+
+  return `/static/icons/file/${fileName}.svg`;
+});
 </script>
 
 <style lang="scss">
