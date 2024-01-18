@@ -11,7 +11,11 @@
           </div>
 
           <ul>
-            <li v-for="list in listsWithProduct" :key="list.id" class="px-6 py-4 sm:pb-3 sm:pt-4 last:sm:pb-7">
+            <li
+              v-for="list in listsWithProduct"
+              :key="list.id"
+              class="flex justify-between px-6 py-4 sm:pb-3 sm:pt-4 last:sm:pb-7"
+            >
               <VcCheckbox
                 model-value
                 :value="list.id"
@@ -22,6 +26,8 @@
                   {{ list.name }}
                 </span>
               </VcCheckbox>
+
+              <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
             </li>
           </ul>
         </template>
@@ -38,7 +44,7 @@
             @click="addNewList"
           >
             <svg
-              class="mr-2 h-3.5 w-3.5 text-[color:var(--color-primary)]"
+              class="mr-2 size-3.5 text-[color:var(--color-primary)]"
               :class="{ 'text-gray-400': creationButtonDisabled }"
             >
               <use href="/static/images/plus.svg#main" />
@@ -73,7 +79,11 @@
               </svg>
             </button>
           </li>
-          <li v-for="list in listsOther" :key="list.id" class="px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3">
+          <li
+            v-for="list in listsOther"
+            :key="list.id"
+            class="flex justify-between px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3"
+          >
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
                 class="line-clamp-1 text-base font-medium"
@@ -82,6 +92,8 @@
                 {{ list.name }}
               </span>
             </VcCheckbox>
+
+            <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
           </li>
         </transition-group>
       </template>
@@ -100,20 +112,18 @@
     </div>
 
     <template #actions="{ close }">
-      <div class="sm:space-x-auto -mx-6 flex grow items-center justify-between space-x-5 px-6 pb-3 sm:pb-0">
-        <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-          {{ $t("shared.wishlists.add_to_wishlists_dialog.cancel_button") }}
-        </VcButton>
+      <VcButton color="secondary" variant="outline" @click="close">
+        {{ $t("shared.wishlists.add_to_wishlists_dialog.cancel_button") }}
+      </VcButton>
 
-        <VcButton
-          :loading="loading"
-          :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
-          class="flex-1 sm:flex-none"
-          @click="save"
-        >
-          {{ $t("shared.wishlists.add_to_wishlists_dialog.save_button") }}
-        </VcButton>
-      </div>
+      <VcButton
+        :loading="loading"
+        :disabled="!newLists.length && !selectedListsOtherIds.length && !removedLists.length"
+        class="ms-auto"
+        @click="save"
+      >
+        {{ $t("shared.wishlists.add_to_wishlists_dialog.save_button") }}
+      </VcButton>
     </template>
   </VcPopup>
 </template>
@@ -125,11 +135,13 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { WishlistInputType } from "@/shared/wishlists/types";
+import WishlistStatus from "@/shared/wishlists/components/wishlist-status.vue";
 
 interface IProps {
   product: ProductType;
@@ -145,6 +157,8 @@ const props = defineProps<IProps>();
 
 const { d, t } = useI18n();
 const { closePopup } = usePopup();
+const { isCorporateMember } = useUser();
+
 const {
   loading: loadingLists,
   lists,

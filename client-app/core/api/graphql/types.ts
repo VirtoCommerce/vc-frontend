@@ -247,6 +247,8 @@ export type CartType = {
   name: Scalars['String']['output'];
   /** Shopping cart organization ID */
   organizationId?: Maybe<Scalars['String']['output']>;
+  /** Shopping cart organization name */
+  organizationName?: Maybe<Scalars['String']['output']>;
   /** Payment price */
   paymentPrice: MoneyType;
   /** Payment price with tax */
@@ -703,6 +705,7 @@ export type CustomerOrderType = {
   shippingTotalWithTax: MoneyType;
   shoppingCartId?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
   storeId: Scalars['String']['output'];
   storeName?: Maybe<Scalars['String']['output']>;
   subTotal: MoneyType;
@@ -2477,6 +2480,10 @@ export type LineItemTypeDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type LocalizedSettingResponseType = {
+  items?: Maybe<Array<Maybe<KeyValueType>>>;
+};
+
 /** A connection from an object to a list of objects of type `MemberAddress`. */
 export type MemberAddressConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -3259,6 +3266,7 @@ export type OrderLineItemType = {
   shippingMethodCode?: Maybe<Scalars['String']['output']>;
   sku: Scalars['String']['output'];
   status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
   taxDetails: Array<OrderTaxDetailType>;
   taxPercentRate: Scalars['Decimal']['output'];
   taxTotal: MoneyType;
@@ -3363,6 +3371,7 @@ export type OrderShipmentType = {
   shipmentMethodOption?: Maybe<Scalars['String']['output']>;
   shippingMethod?: Maybe<OrderShippingMethodType>;
   status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
   taxDetails: Array<OrderTaxDetailType>;
   taxPercentRate: Scalars['Decimal']['output'];
   taxTotal: MoneyType;
@@ -3598,6 +3607,7 @@ export type PaymentInType = {
   price: MoneyType;
   purpose?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
+  statusDisplayValue?: Maybe<Scalars['String']['output']>;
   sum: MoneyType;
   tax: MoneyType;
   transactions: Array<PaymentTransactionType>;
@@ -4079,12 +4089,15 @@ export type Query = {
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
   order?: Maybe<CustomerOrderType>;
+  orderLineItemStatuses?: Maybe<LocalizedSettingResponseType>;
+  orderStatuses?: Maybe<LocalizedSettingResponseType>;
   orders?: Maybe<CustomerOrderConnection>;
   organization?: Maybe<Organization>;
   organizationContracts?: Maybe<ContractConnection>;
   organizationOrders?: Maybe<CustomerOrderConnection>;
   organizations?: Maybe<OrganizationConnection>;
   pages?: Maybe<PageConnection>;
+  paymentStatuses?: Maybe<LocalizedSettingResponseType>;
   payments?: Maybe<PaymentInConnection>;
   product?: Maybe<Product>;
   productSuggestions?: Maybe<ProductSuggestionsQueryResponseType>;
@@ -4096,6 +4109,7 @@ export type Query = {
   regions: Array<CountryRegionType>;
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
+  shipmentStatuses?: Maybe<LocalizedSettingResponseType>;
   slugInfo?: Maybe<SlugInfoResponseType>;
   user?: Maybe<UserType>;
   validatePassword?: Maybe<CustomIdentityResultType>;
@@ -4171,7 +4185,7 @@ export type QueryChildCategoriesArgs = {
   maxLevel?: InputMaybe<Scalars['Int']['input']>;
   onlyActive?: InputMaybe<Scalars['Boolean']['input']>;
   productFilter?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -4272,6 +4286,16 @@ export type QueryOrderArgs = {
 };
 
 
+export type QueryOrderLineItemStatusesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryOrderStatusesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -4324,6 +4348,11 @@ export type QueryPagesArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   keyword: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
+};
+
+
+export type QueryPaymentStatusesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4426,6 +4455,11 @@ export type QueryRoleArgs = {
 };
 
 
+export type QueryShipmentStatusesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QuerySlugInfoArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
@@ -4465,6 +4499,7 @@ export type QueryWishlistsArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  scope?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
@@ -5115,6 +5150,8 @@ export type WishlistType = {
   items?: Maybe<Array<Maybe<LineItemType>>>;
   /** Item count */
   itemsCount?: Maybe<Scalars['Int']['output']>;
+  /** Wishlist modified date */
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
   /** Shopping cart name */
   name: Scalars['String']['output'];
   /** Wishlist scope */
@@ -5306,7 +5343,7 @@ export type GetWishlistQueryVariables = Exact<{
 }>;
 
 
-export type GetWishlistQuery = { wishlist?: { name: string, description?: string, scope?: WishlistScopeType, id: string, items?: Array<{ id: string, name: string, imageUrl?: string, sku: string, productId: string, quantity: number, productType?: string, salePrice: { amount: any, formattedAmount: string }, listPrice: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images: Array<{ url: string }>, vendor?: { id: string, name: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, price: { actual: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } } }> } };
+export type GetWishlistQuery = { wishlist?: { name: string, description?: string, scope?: WishlistScopeType, id: string, modifiedDate?: any, items?: Array<{ id: string, name: string, imageUrl?: string, sku: string, productId: string, quantity: number, productType?: string, salePrice: { amount: any, formattedAmount: string }, listPrice: { amount: any, formattedAmount: string }, product?: { name: string, id: string, code: string, slug?: string, outline?: string, minQuantity?: number, maxQuantity?: number, imgSrc?: string, images: Array<{ url: string }>, vendor?: { id: string, name: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, price: { actual: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } } }> } };
 
 export type GetWishlistsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
@@ -5319,7 +5356,7 @@ export type GetWishlistsQueryVariables = Exact<{
 }>;
 
 
-export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id: string, name: string, description?: string, scope?: WishlistScopeType, items?: Array<{ id: string, productId: string }> }> } };
+export type GetWishlistsQuery = { wishlists?: { items?: Array<{ id: string, name: string, description?: string, scope?: WishlistScopeType, modifiedDate?: any, items?: Array<{ id: string, productId: string }> }> } };
 
 export type RequestPasswordResetQueryVariables = Exact<{
   loginOrEmail: Scalars['String']['input'];
@@ -5522,7 +5559,7 @@ export type GetSearchResultsQueryVariables = Exact<{
 }>;
 
 
-export type GetSearchResultsQuery = { productSuggestions?: { suggestions?: Array<string> }, pages?: { totalCount?: number, items?: Array<{ name?: string, relativeUrl: string }> }, categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, seoInfo: { semanticUrl: string } }> }, products?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string, slug?: string, imgSrc?: string, hasVariations: boolean, vendor?: { id: string, name: string }, availabilityData: { availableQuantity: number }, price: { actual: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string } }, minVariationPrice?: { actual: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } }> } };
+export type GetSearchResultsQuery = { productSuggestions?: { suggestions?: Array<string> }, pages?: { totalCount?: number, items?: Array<{ name?: string, permalink?: string }> }, categories?: { totalCount?: number, items?: Array<{ id: string, name: string, slug?: string, seoInfo: { semanticUrl: string } }> }, products?: { totalCount?: number, items?: Array<{ id: string, name: string, code: string, slug?: string, imgSrc?: string, hasVariations: boolean, vendor?: { id: string, name: string }, availabilityData: { availableQuantity: number }, price: { actual: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string }, sale: { amount: any, formattedAmount: string }, discountAmount: { amount: any, formattedAmount: string } }, minVariationPrice?: { actual: { amount: any, formattedAmount: string }, list: { amount: any, formattedAmount: string } } }> } };
 
 export type SearchProductsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];

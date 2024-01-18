@@ -3,12 +3,12 @@
     <div class="max-h-[50vh] overflow-y-auto border-b px-6 py-8 lg:max-h-64">
       <div class="flex grow items-center">
         <router-link :to="link">
-          <div class="h-20 w-20 shrink-0 border border-gray-100">
+          <div class="size-20 shrink-0 border border-gray-100">
             <VcImage
               :src="product.imgSrc"
               :alt="product.name"
               size-suffix="sm"
-              class="h-full w-full object-cover object-center"
+              class="size-full object-cover object-center"
               lazy
             />
           </div>
@@ -33,13 +33,12 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton variant="outline" class="flex-1 sm:flex-none" @click="close">
+      <VcButton variant="outline" @click="close">
         {{ $t("shared.wishlists.added_to_wishlists_dialog.continue_shopping_button") }}
       </VcButton>
 
       <VcButton
         :to="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
-        class="flex-1 sm:flex-none"
         @click="close"
       >
         {{ $t("shared.wishlists.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}

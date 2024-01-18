@@ -1504,6 +1504,17 @@
             "deprecationReason": null
           },
           {
+            "name": "organizationName",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "paymentPrice",
             "args": [],
             "type": {
@@ -4997,6 +5008,17 @@
           },
           {
             "name": "status",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "statusDisplayValue",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -17763,6 +17785,31 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "LocalizedSettingResponseType",
+        "fields": [
+          {
+            "name": "items",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "KeyValueType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "SCALAR",
         "name": "Long",
         "fields": null,
@@ -21947,6 +21994,17 @@
             "deprecationReason": null
           },
           {
+            "name": "statusDisplayValue",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "taxDetails",
             "args": [],
             "type": {
@@ -23163,6 +23221,17 @@
           },
           {
             "name": "status",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "statusDisplayValue",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -24847,6 +24916,17 @@
           },
           {
             "name": "status",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "statusDisplayValue",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -28327,9 +28407,13 @@
               {
                 "name": "storeId",
                 "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -29126,6 +29210,52 @@
             "deprecationReason": null
           },
           {
+            "name": "orderLineItemStatuses",
+            "args": [
+              {
+                "name": "cultureName",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "LocalizedSettingResponseType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "orderStatuses",
+            "args": [
+              {
+                "name": "cultureName",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "LocalizedSettingResponseType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "orders",
             "args": [
               {
@@ -29553,6 +29683,29 @@
             "type": {
               "kind": "OBJECT",
               "name": "PageConnection",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "paymentStatuses",
+            "args": [
+              {
+                "name": "cultureName",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "LocalizedSettingResponseType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -30352,6 +30505,29 @@
             "deprecationReason": null
           },
           {
+            "name": "shipmentStatuses",
+            "args": [
+              {
+                "name": "cultureName",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "LocalizedSettingResponseType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "slugInfo",
             "args": [
               {
@@ -30618,6 +30794,17 @@
                 "type": {
                   "kind": "SCALAR",
                   "name": "Int",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "scope",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
                   "ofType": null
                 },
                 "defaultValue": null,
@@ -35617,6 +35804,17 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "modifiedDate",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
               "ofType": null
             },
             "isDeprecated": false,

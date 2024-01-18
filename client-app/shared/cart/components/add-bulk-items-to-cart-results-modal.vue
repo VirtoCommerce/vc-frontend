@@ -86,31 +86,28 @@
     </div>
 
     <template #actions="{ close }">
-      <div class="flex w-full flex-wrap gap-2">
-        <VcButton :to="{ name: 'Cart' }" class="w-full sm:me-auto sm:w-36" @click="close()">
-          {{ $t("common.buttons.view_cart") }}
-        </VcButton>
+      <VcButton :to="{ name: 'Cart' }" class="max-sm:!min-w-full sm:me-auto" @click="close()">
+        {{ $t("common.buttons.view_cart") }}
+      </VcButton>
 
-        <VcButton class="w-full sm:w-36" variant="outline" @click="print()">
-          {{ $t("common.buttons.print") }}
-        </VcButton>
+      <VcButton variant="outline" @click="print()">
+        {{ $t("common.buttons.print") }}
+      </VcButton>
 
-        <VcButton
-          class="w-full sm:w-36"
-          @click="
-            close();
-            $emit('confirm');
-          "
-        >
-          {{ $t("common.buttons.ok") }}
-        </VcButton>
-      </div>
+      <VcButton
+        @click="
+          close();
+          $emit('confirm');
+        "
+      >
+        {{ $t("common.buttons.ok") }}
+      </VcButton>
     </template>
   </VcPopup>
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed, inject, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductsRoutes } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -132,10 +129,11 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
+const { items } = toRefs(props);
 
 const config = inject(configInjectionKey, {});
 
-const links = useProductsRoutes(props.items, { productIdProperty: "productId" });
+const links = useProductsRoutes(items, { productIdProperty: "productId" });
 const { d, t } = useI18n();
 
 const groups = computed<GroupType[]>(() => {
@@ -144,10 +142,10 @@ const groups = computed<GroupType[]>(() => {
   const notAdded: ItemForAddBulkItemsToCartResultsPopupType[] = [];
 
   props.items.forEach((item) => {
-    if (item.errors?.length) {
-      notAdded.push(item);
-    } else {
+    if (item.isAddedToCart) {
       added.push(item);
+    } else {
+      notAdded.push(item);
     }
   });
 
@@ -162,10 +160,10 @@ const groups = computed<GroupType[]>(() => {
   return result;
 });
 
-function getTableRowsHtml(items: ItemForAddBulkItemsToCartResultsPopupType[]) {
+function getTableRowsHtml(groupedItems: ItemForAddBulkItemsToCartResultsPopupType[]) {
   let rows = "";
 
-  items.forEach((item: ItemForAddBulkItemsToCartResultsPopupType) => {
+  groupedItems.forEach((item: ItemForAddBulkItemsToCartResultsPopupType) => {
     rows += `
     <tr class="even:bg-[--color-neutral-50]">
       <td class="px-2.5 py-2">${item.name}</td>

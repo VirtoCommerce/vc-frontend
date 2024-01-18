@@ -1,81 +1,40 @@
 <template>
-  <div
-    v-if="product"
-    class="mt-5 flex flex-col print:flex-row print:space-x-6 lg:flex-row lg:space-x-8"
-    :class="{ 'mb-6': !relatedProducts.length }"
-  >
-    <div class="-mx-4.5 print:mx-0 print:grow lg:mx-0 lg:w-8/12 xl:w-9/12">
-      <ProductDetails :product="product" :section="model" class="print:border-none print:shadow-none" />
+  <VcWidget size="lg" class="max-md:-mx-4.5">
+    <div class="flex flex-col lg:flex-row lg:gap-8 print:flex-row print:gap-4">
+      <div class="flex-none lg:w-80 xl:w-[27.5rem] 2xl:w-[30rem] print:hidden">
+        <ImageGallery :images="product.images">
+          <template #badges>
+            <DiscountBadge :price="product.price!" />
+          </template>
+        </ImageGallery>
+      </div>
+
+      <div class="hidden aspect-square w-40 flex-none print:block">
+        <VcImage :src="product.imgSrc" class="w-full rounded border" />
+      </div>
+
+      <div v-if="model?.blocks?.length" class="mt-5 flex flex-col gap-6 lg:mt-0 lg:grow print:mt-5">
+        <component
+          :is="block.type"
+          v-for="(block, index) in model.blocks"
+          :key="block.id || index"
+          :model="block"
+          :product="product"
+        />
+      </div>
     </div>
-
-    <div
-      class="mt-6 flex-none print:!relative print:mt-0 print:!w-[16.5rem] lg:sticky lg:top-4 lg:mt-0 lg:h-full lg:w-4/12 xl:w-3/12"
-      :class="{ 'print:hidden': productWithVariations }"
-    >
-      <!-- Price & Delivery (with variations) -->
-      <ProductPriceBlock v-if="productWithVariations" :product="product">
-        <div class="flex items-baseline justify-between text-sm">
-          <div v-t="'pages.product.variations_total_label'" class="text-base font-extrabold"></div>
-
-          <div class="font-extrabold">
-            <!-- todo: extract a component for price and use it here -->
-            <span class="text-green-700">{{ currentCurrency.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}</span>
-          </div>
-        </div>
-
-        <div class="mt-7 print:hidden md:mt-5">
-          <VcButton :to="{ name: 'Cart' }" full-width>
-            {{ $t("pages.product.view_cart_button") }}
-          </VcButton>
-        </div>
-      </ProductPriceBlock>
-
-      <!-- Price & Delivery (without variations) -->
-      <ProductPriceBlock v-else :product="product">
-        <div class="flex items-baseline justify-between text-sm">
-          <div v-t="'pages.product.price_label'" class="text-base font-extrabold"></div>
-
-          <div>
-            <VcItemPrice :value="product.price" />
-          </div>
-        </div>
-
-        <div class="mt-7 print:hidden md:mt-5">
-          <AddToCart :product="product" />
-
-          <div class="mt-2 flex">
-            <InStock
-              :is-in-stock="product.availabilityData?.isInStock"
-              :is-digital="isDigital"
-              :quantity="product.availabilityData?.availableQuantity"
-            />
-          </div>
-        </div>
-      </ProductPriceBlock>
-    </div>
-  </div>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useCurrency } from "@/core/composables";
-import { ProductType } from "@/core/enums";
-import { AddToCart } from "@/shared/cart";
-import { ProductDetails, ProductPriceBlock, InStock } from "@/shared/catalog";
+import { ImageGallery, DiscountBadge } from "@/shared/catalog";
 import type { PageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
-  relatedProducts: Product[];
-  productWithVariations: boolean;
-  variationsCartTotalAmount: number;
   model: PageContent;
 }
 
-const props = defineProps<IProps>();
-
-const { currentCurrency } = useCurrency();
-
-const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
+defineProps<IProps>();
 </script>

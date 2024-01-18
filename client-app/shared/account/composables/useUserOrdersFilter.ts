@@ -1,5 +1,6 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import type { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
 import type { Ref } from "vue";
 
@@ -26,16 +27,19 @@ export function useUserOrdersFilter() {
         items.push({ fieldName: "statuses", value: status, label: status });
       }
     }
-    if (appliedFilterData.value.startDate) {
-      const formattedDate = d(appliedFilterData.value.startDate);
+
+    const startDateFilterValue = toStartDateFilterValue(appliedFilterData.value.startDate);
+    const endDateFilterValue = toEndDateFilterValue(appliedFilterData.value.endDate);
+    if (startDateFilterValue) {
+      const formattedDate = d(startDateFilterValue);
       items.push({
         fieldName: "startDate",
         value: appliedFilterData.value.startDate,
         label: t("common.labels.starts_from", [formattedDate]),
       });
     }
-    if (appliedFilterData.value.endDate) {
-      const formattedDate = d(appliedFilterData.value.endDate);
+    if (endDateFilterValue) {
+      const formattedDate = d(endDateFilterValue);
       items.push({
         fieldName: "endDate",
         value: appliedFilterData.value.endDate,

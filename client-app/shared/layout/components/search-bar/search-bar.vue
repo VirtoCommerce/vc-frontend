@@ -57,8 +57,8 @@
 
             <div class="flex gap-5 px-5 pb-3 pt-2.5 text-sm">
               <ul>
-                <li v-for="page in pages" :key="page.relativeUrl">
-                  <router-link :to="page.relativeUrl!" class="block py-1" @click="hideSearchDropdown">
+                <li v-for="(page, index) in pages" :key="index">
+                  <router-link :to="page.permalink!" class="block py-1" @click="hideSearchDropdown">
                     <span v-html-safe="page.name" />
                   </router-link>
                 </li>

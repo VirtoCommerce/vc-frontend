@@ -6,14 +6,14 @@
       <!-- Product image -->
       <router-link
         :to="link"
-        class="vc-product-card-list__img relative block h-[72px] w-[72px] xl:h-[86px] xl:w-[86px]"
+        class="vc-product-card-list__img relative block size-[72px] xl:size-[86px]"
         @click="$emit('linkClick', $event)"
       >
         <VcImage
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="h-full w-full rounded object-cover object-center"
+          class="size-full rounded object-cover object-center"
           :lazy="lazy"
         />
         <DiscountBadge :price="product.price!" size="sm" />
@@ -76,7 +76,7 @@
         </div>
         <div class="flex items-center gap-1">
           <svg
-            class="h-3 w-3 shrink-0"
+            class="size-3 shrink-0"
             :class="{
               'text-[color:var(--color-success)]': true,
               'text-[color:var(--color-warning)]': false,
@@ -105,11 +105,11 @@
     </div>
 
     <div class="vc-product-card-list__price mt-2 w-full sm:mt-0 2xl:pr-2">
-      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" class="md:flex-col md:gap-0" />
+      <VcItemPriceCatalog :has-variations="hasVariations" :value="price" class="md:flex-col md:gap-0" />
     </div>
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
-      <template v-if="product.hasVariations">
+      <template v-if="hasVariations">
         <VcButton
           :to="link"
           :target="target"
@@ -126,7 +126,7 @@
           class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
           target="_blank"
         >
-          <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
+          <svg class="size-3 shrink-0 text-primary lg:size-2.5">
             <use href="/static/images/link.svg#main"></use>
           </svg>
           <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
@@ -153,7 +153,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { ProductType, PropertyType } from "@/core/enums";
-import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -180,7 +180,8 @@ const isDigital = computed(() => props.product.productType === ProductType.Digit
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
-const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
+const hasVariations = computed(() => productHasVariations(props.product));
+const price = computed(() => (hasVariations.value ? props.product.minVariationPrice : props.product.price));
 </script>
 
 <style scoped lang="scss">

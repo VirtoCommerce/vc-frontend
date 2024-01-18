@@ -2,7 +2,7 @@ import { computed, readonly, ref, shallowRef } from "vue";
 import { getOrders } from "@/core/api/graphql/orders";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
-import { dateToIsoDateString, Logger } from "@/core/utilities";
+import { Logger, toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import { useUserOrdersFilter } from "./useUserOrdersFilter";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { OrdersFilterData } from "@/shared/account";
@@ -72,14 +72,18 @@ function getFilterExpression(keyword: string, filterData: OrdersFilterData): str
     filterExpression += `status:${statuses.join(",")} `;
   }
 
-  if (filterData.startDate && filterData.endDate) {
-    filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO ${dateToIsoDateString(
-      filterData.endDate,
-    )}] `;
-  } else if (filterData.startDate) {
-    filterExpression += `createddate:[${dateToIsoDateString(filterData.startDate)} TO] `;
-  } else if (filterData.endDate) {
-    filterExpression += `createddate:[TO ${dateToIsoDateString(filterData.endDate)}] `;
+  const startDateFilterValue = toStartDateFilterValue(filterData.startDate);
+  const endDateFilterValue = toEndDateFilterValue(filterData.endDate);
+  if (startDateFilterValue || endDateFilterValue) {
+    let createdDateFilterValue = "";
+    if (startDateFilterValue) {
+      createdDateFilterValue += `"${startDateFilterValue}" `;
+    }
+    createdDateFilterValue += "TO";
+    if (endDateFilterValue) {
+      createdDateFilterValue += ` "${endDateFilterValue}"`;
+    }
+    filterExpression += `createddate:[${createdDateFilterValue}]`;
   }
 
   filterExpression = filterExpression.trim();

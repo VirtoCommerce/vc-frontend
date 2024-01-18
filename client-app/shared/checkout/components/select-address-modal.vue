@@ -3,8 +3,9 @@
     <template #actions="{ close }">
       <VcButton
         v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
-        class="me-auto flex-1 md:w-auto md:flex-none"
+        class="me-auto"
         variant="outline"
+        no-wrap
         @click="
           $emit('addNewAddress');
           close();
@@ -13,12 +14,12 @@
         {{ $t("shared.checkout.select_address_dialog.add_address_button") }}
       </VcButton>
 
-      <VcButton color="secondary" variant="outline" class="!hidden min-w-[6rem] flex-none md:!block" @click="close">
+      <VcButton color="secondary" variant="outline" class="flex-none max-md:!hidden" @click="close">
         {{ $t("shared.checkout.select_address_dialog.cancel_button") }}
       </VcButton>
 
       <VcButton
-        class="min-w-[6rem] xs:flex-1 md:flex-none"
+        class="xs:flex-none"
         no-wrap
         :disabled="!selectedAddress"
         @click="
@@ -34,7 +35,14 @@
       </VcButton>
     </template>
 
-    <VcTable :columns="columns" :items="paginatedAddresses" :pages="pages" :page="page" @page-changed="onPageChange">
+    <VcTable
+      :columns="columns"
+      :items="paginatedAddresses"
+      :pages="pages"
+      :page="page"
+      :description="$t('shared.checkout.select_address_dialog.meta.table_description')"
+      @page-changed="onPageChange"
+    >
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 border-b border-gray-200 p-6">
           <div class="w-1/2 grow truncate">

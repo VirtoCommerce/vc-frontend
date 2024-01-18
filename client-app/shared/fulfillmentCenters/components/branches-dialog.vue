@@ -108,7 +108,7 @@
 
           <button
             type="button"
-            class="ml-2.5 flex h-7 w-7 items-center justify-center self-center rounded bg-white shadow-t-mds"
+            class="ml-2.5 flex size-7 items-center justify-center self-center rounded bg-white shadow-t-mds"
             @click="clearSelection"
           >
             <svg class="text-primary" width="16" height="16">
@@ -148,24 +148,20 @@
     <!-- MOBILE content END -->
 
     <template #actions="{ close }">
-      <div
-        class="sm:gap-auto relative -mx-6 -mt-4 flex grow items-center justify-between gap-5 bg-white px-10 pt-4 shadow-t-lgs sm:mt-0 sm:px-6 sm:pt-0 sm:shadow-none"
-      >
-        <VcButton color="secondary" variant="outline" class="flex-1 md:flex-none" @click="close">
-          {{ $t("shared.catalog.branches_dialog.cancel_button") }}
-        </VcButton>
+      <VcButton color="secondary" variant="outline" @click="close">
+        {{ $t("shared.catalog.branches_dialog.cancel_button") }}
+      </VcButton>
 
-        <VcButton
-          :disabled="isSaveButtonDisabled"
-          class="!min-w-[9rem] flex-1 md:flex-none"
-          @click="
-            save();
-            close();
-          "
-        >
-          {{ $t("shared.catalog.branches_dialog.ok_button") }}
-        </VcButton>
-      </div>
+      <VcButton
+        :disabled="isSaveButtonDisabled"
+        class="ms-auto"
+        @click="
+          save();
+          close();
+        "
+      >
+        {{ $t("shared.catalog.branches_dialog.ok_button") }}
+      </VcButton>
     </template>
   </VcPopup>
 </template>

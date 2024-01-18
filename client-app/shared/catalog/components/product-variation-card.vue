@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row space-x-2.5 rounded-sm border border-gray-100 p-5">
     <!-- image -->
-    <div class="h-12 w-12">
+    <div class="size-12">
       <div
         v-if="variation.images?.length"
         class="square relative -ml-2 -mt-2 flex flex-col items-center justify-center"
@@ -10,7 +10,7 @@
           :src="variation.images[0].url"
           :alt="variation.name"
           size-suffix="sm"
-          class="absolute top-0 h-full w-full rounded-sm object-cover object-center"
+          class="absolute top-0 size-full rounded-sm object-cover object-center"
           lazy
         />
       </div>
@@ -39,12 +39,12 @@
             v-if="$cfg.vendor_enabled && variation.vendor"
             :label="$t('shared.catalog.product_details.product_variation_card.vendor_label')"
           >
-            <Vendor :vendor="variation.vendor" with-rating />
+            <Vendor class="flex-wrap" :vendor="variation.vendor" with-rating />
           </VariationProperty>
         </div>
 
         <!-- Add to cart -->
-        <div class="flex flex-1 flex-row print:hidden xl:self-start">
+        <div class="flex flex-1 flex-row xl:self-start print:hidden">
           <div class="w-full">
             <AddToCart :product="variation" />
 

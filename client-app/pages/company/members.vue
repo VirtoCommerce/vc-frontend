@@ -16,47 +16,31 @@
     </div>
 
     <!-- Mobile filters sidebar -->
-    <VcPopupSidebar class="w-72 px-5 pt-6" :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <div class="relative">
-        <button type="button" class="absolute -right-3 appearance-none px-3 py-1" @click="hideFilters">
-          <VcIcon class="text-[--color-danger-400]" name="x" />
-        </button>
-      </div>
+    <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
+      <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
 
-      <div class="mb-6 pt-1 text-2xl font-semibold">
-        {{ $t("common.buttons.filters") }}
-      </div>
+      <template #footer>
+        <VcButton
+          :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+          variant="outline"
+          @click="
+            resetFilters();
+            hideFilters();
+          "
+        >
+          {{ $t("common.buttons.reset") }}
+        </VcButton>
 
-      <div class="flex grow flex-col gap-6">
-        <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
-      </div>
-
-      <div class="z-100 sticky bottom-0 -mx-5 mt-4 bg-white p-5 shadow-t-md">
-        <div class="flex gap-x-4">
-          <VcButton
-            :disabled="!numberOfFacetsApplied && !isFacetsDirty"
-            class="flex-1"
-            variant="outline"
-            @click="
-              resetFilters();
-              hideFilters();
-            "
-          >
-            {{ $t("common.buttons.reset") }}
-          </VcButton>
-
-          <VcButton
-            :disabled="!isFacetsDirty"
-            class="flex-1"
-            @click="
-              applyFilters();
-              hideFilters();
-            "
-          >
-            {{ $t("common.buttons.apply") }}
-          </VcButton>
-        </div>
-      </div>
+        <VcButton
+          :disabled="!isFacetsDirty"
+          @click="
+            applyFilters();
+            hideFilters();
+          "
+        >
+          {{ $t("common.buttons.apply") }}
+        </VcButton>
+      </template>
     </VcPopupSidebar>
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
@@ -214,6 +198,7 @@
         :sort="sort"
         :pages="pages"
         :page="page"
+        :description="$t('pages.company.members.meta.table_description')"
         layout="table-fixed"
         @header-click="applySorting"
         @page-changed="changePage"
@@ -271,7 +256,7 @@
         <template #desktop-skeleton>
           <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
             <td class="py-2.5 pl-4 pr-0">
-              <div class="h-9 w-9 animate-pulse rounded-full bg-gray-200"></div>
+              <div class="size-9 animate-pulse rounded-full bg-gray-200"></div>
             </td>
 
             <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
