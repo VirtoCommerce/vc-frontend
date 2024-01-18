@@ -6,7 +6,14 @@
         {{ $t("pages.account.quotes.title") }}
       </h2>
 
-      <VcButton v-show="!fetching" size="sm" variant="outline" prepend-icon="plus" @click="createQuote">
+      <VcButton
+        v-show="!fetching"
+        :loading="isAddingQuote"
+        size="sm"
+        variant="outline"
+        prepend-icon="plus"
+        @click="createQuote"
+      >
         <span class="sm:inline">{{ $t("pages.account.quotes.create") }}</span>
       </VcButton>
     </div>
@@ -183,7 +190,7 @@ usePageHead({
   title: t("pages.account.quotes.meta.title"),
 });
 
-const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
+const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes, createEmptyQuote } = useUserQuotes();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -251,8 +258,21 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await fetchQuotes();
 }
 
-function createQuote() {
-  console.log("created");
+const isAddingQuote = ref(false);
+
+async function createQuote() {
+  isAddingQuote.value = true;
+
+  const quoteId = await createEmptyQuote();
+
+  if (quoteId) {
+    await router.push({
+      name: "EditQuote",
+      params: { quoteId },
+    });
+  }
+
+  isAddingQuote.value = false;
 }
 
 watch(
@@ -265,5 +285,5 @@ watch(
   },
 );
 
-fetchQuotes();
+void fetchQuotes();
 </script>

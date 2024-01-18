@@ -1,7 +1,9 @@
 import { ref, shallowRef } from "vue";
 import { getQuotes } from "@/core/api/graphql/quotes";
+import { createQuote } from "@/core/api/graphql/quotes/mutations/createQuote";
 import { DEFAULT_SORT_INFO } from "@/core/constants";
 import { getSortingExpression, Logger } from "@/core/utilities";
+import { useNotifications } from "@/shared/notification";
 import type { QuoteType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { Ref } from "vue";
@@ -16,6 +18,8 @@ export function useUserQuotes() {
   const page: Ref<number> = ref(1);
   const keyword: Ref<string> = ref("");
   const sort: Ref<ISortInfo> = ref(DEFAULT_SORT_INFO);
+
+  const notifications = useNotifications();
 
   async function fetchQuotes(): Promise<void> {
     fetching.value = true;
@@ -40,6 +44,23 @@ export function useUserQuotes() {
     }
   }
 
+  async function createEmptyQuote(): Promise<string | undefined> {
+    try {
+      const res = await createQuote();
+
+      if (!res?.id) {
+        notifications.error({ text: "Can't create new quote" });
+        return;
+      }
+      return res.id;
+    } catch (e) {
+      notifications.error({ text: "Can't create new quote" });
+
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
+  }
+
   return {
     quotes,
     fetching,
@@ -49,5 +70,6 @@ export function useUserQuotes() {
     keyword,
     sort,
     fetchQuotes,
+    createEmptyQuote,
   };
 }
