@@ -20,8 +20,8 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }): UserConfig => {
-  const isDevelopment = mode === "development";
+export default defineConfig(({ command, mode }): UserConfig => {
+  const isServe = command == "serve";
 
   const certificatesPath = "./.certificates";
   const keyFileName = "private.pem";
@@ -35,7 +35,7 @@ export default defineConfig(({ mode }): UserConfig => {
 
   return {
     envPrefix: "APP_",
-    base: isDevelopment ? "/" : "/themes/assets/",
+    base: isServe ? "/" : "/themes/assets/",
     publicDir: "./client-app/public",
     plugins: [
       mkcert({
@@ -45,7 +45,7 @@ export default defineConfig(({ mode }): UserConfig => {
       }),
       vue(),
       graphql(),
-      isDevelopment
+      isServe
         ? checker({
             enableBuild: false,
             typescript: true,
@@ -116,8 +116,8 @@ export default defineConfig(({ mode }): UserConfig => {
     server: {
       port: 3000,
       https: {
-        key: fs.readFileSync(path.join(certificatesPath, keyFileName)),
-        cert: fs.readFileSync(path.join(certificatesPath, certFileName)),
+        key: isServe ? fs.readFileSync(path.join(certificatesPath, keyFileName)) : undefined,
+        cert: isServe ? fs.readFileSync(path.join(certificatesPath, certFileName)) : undefined,
       },
       proxy: {
         "^/(xapi|storefrontapi)": getProxy(process.env.APP_BACKEND_URL),
