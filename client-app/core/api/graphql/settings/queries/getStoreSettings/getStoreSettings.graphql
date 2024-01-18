@@ -7,8 +7,6 @@ query GetStoreSettings($storeId: String!) {
     storeName
     catalogId
     storeUrl
-    userName
-    userId
     defaultLanguage {
       ...allLanguageFields
     }

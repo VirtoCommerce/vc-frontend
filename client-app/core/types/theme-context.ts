@@ -6,8 +6,6 @@ export interface IThemeContext {
   storeId: string;
   storeName: string;
   catalogId: string;
-  userId: string;
-  userName?: string;
   defaultLanguage: ILanguage;
   defaultCurrency: ICurrency;
   availableLanguages: ILanguage[];

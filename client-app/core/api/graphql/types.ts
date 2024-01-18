@@ -603,6 +603,13 @@ export type CreateCustomerReviewCommandType = {
   userName: Scalars['String']['input'];
 };
 
+export type CreateQuoteCommandType = {
+  cultureName: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
 export type CreateQuoteFromCartCommandType = {
   cartId: Scalars['String']['input'];
   comment: Scalars['String']['input'];
@@ -2713,6 +2720,7 @@ export type Mutations = {
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
+  createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
@@ -2766,6 +2774,7 @@ export type Mutations = {
   updateOrganization?: Maybe<Organization>;
   updatePersonalData?: Maybe<IdentityResultType>;
   updateQuoteAddresses?: Maybe<QuoteType>;
+  updateQuoteAttachments?: Maybe<QuoteType>;
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   updateWishListItems?: Maybe<WishlistType>;
@@ -2945,6 +2954,11 @@ export type MutationsCreateOrderFromCartArgs = {
 
 export type MutationsCreateOrganizationArgs = {
   command: InputCreateOrganizationType;
+};
+
+
+export type MutationsCreateQuoteArgs = {
+  command: CreateQuoteCommandType;
 };
 
 
@@ -3200,6 +3214,11 @@ export type MutationsUpdatePersonalDataArgs = {
 
 export type MutationsUpdateQuoteAddressesArgs = {
   command: UpdateQuoteAddressesCommandType;
+};
+
+
+export type MutationsUpdateQuoteAttachmentsArgs = {
+  command: UpdateQuoteAttachmentsCommandType;
 };
 
 
@@ -5026,6 +5045,11 @@ export type UpdateQuoteAddressesCommandType = {
   quoteId: Scalars['String']['input'];
 };
 
+export type UpdateQuoteAttachmentsCommandType = {
+  quoteId: Scalars['String']['input'];
+  urls: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
 export type UserType = {
   accessFailedCount: Scalars['Int']['output'];
   /** The associated contact info */
@@ -5972,4 +5996,4 @@ export type GetStoreSettingsQueryVariables = Exact<{
 }>;
 
 
-export type GetStoreSettingsQuery = { store?: { storeId: string, storeName: string, catalogId: string, storeUrl?: string, userName?: string, userId: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }>, settings: { quotesEnabled: boolean, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, isSpa: boolean, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string } } };
+export type GetStoreSettingsQuery = { store?: { storeId: string, storeName: string, catalogId: string, storeUrl?: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }>, settings: { quotesEnabled: boolean, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, isSpa: boolean, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string } } };
