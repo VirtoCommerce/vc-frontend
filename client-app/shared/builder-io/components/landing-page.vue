@@ -47,7 +47,6 @@ async function tryLoadContent(urlPath: string) {
   } else {
     canShowContent.value = false;
   }
-  console.log(canShowContent.value);
 }
 
 const getRegisteredComponents = () => {
