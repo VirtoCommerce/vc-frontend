@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField } from "vee-validate";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, toRefs, watchEffect } from "vue";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
 interface IEmits {
@@ -59,10 +59,10 @@ const props = defineProps<IProps>();
 let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>();
-const minQty = computed(() => props.minQuantity);
-const maxQty = computed(() => props.maxQuantity);
 
-const { quantitySchema } = useQuantityValidationSchema({ minQuantity: minQty.value, maxQuantity: maxQty.value });
+const { minQuantity, maxQuantity } = toRefs(props);
+
+const { quantitySchema } = useQuantityValidationSchema({ minQuantity, maxQuantity });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 

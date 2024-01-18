@@ -71,9 +71,9 @@ const buttonText = computed<string>(() =>
 const quantity = ref<number | undefined>();
 
 const { quantitySchema } = useQuantityValidationSchema({
-  minQuantity: minQuantity?.value,
-  maxQuantity: maxQuantity?.value,
-  availableQuantity: availableQuantity?.value,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));

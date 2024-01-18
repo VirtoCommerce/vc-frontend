@@ -93,9 +93,9 @@ const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { getTranslation } = useErrorsTranslator("validation_error");
 const { quantitySchema } = useQuantityValidationSchema({
-  availableQuantity: availableQuantity.value,
-  minQuantity: minQuantity.value,
-  maxQuantity: maxQuantity.value,
+  availableQuantity,
+  minQuantity,
+  maxQuantity,
 });
 
 const loading = ref(false);

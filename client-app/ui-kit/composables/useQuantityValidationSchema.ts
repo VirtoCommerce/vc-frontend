@@ -2,42 +2,47 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { number } from "yup";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
+import type { Ref } from "vue";
 import type { NumberSchema } from "yup";
 
 export function useQuantityValidationSchema(payload: {
-  minQuantity?: number;
-  maxQuantity?: number;
-  availableQuantity?: number;
+  minQuantity?: Ref<number | undefined>;
+  maxQuantity?: Ref<number | undefined>;
+  availableQuantity?: Ref<number | undefined>;
 }) {
   const { t } = useI18n();
 
   const { availableQuantity, minQuantity, maxQuantity } = payload;
 
   function setAvailabilityForSchema(schema: NumberSchema): NumberSchema {
-    if (minQuantity && minQuantity <= availableQuantity!) {
+    if (availableQuantity?.value && minQuantity?.value && minQuantity.value <= availableQuantity.value) {
       return schema.test(
         "minMaxValue",
-        t("shared.cart.add_to_cart.errors.min_max", [minQuantity, availableQuantity!]),
-        (value) => !!value && value >= minQuantity && value <= availableQuantity!,
+        t("shared.cart.add_to_cart.errors.min_max", [minQuantity.value, availableQuantity.value]),
+        (value) => !!value && value >= minQuantity.value! && value <= availableQuantity.value!,
       );
     }
 
-    if (minQuantity && minQuantity > availableQuantity!) {
+    if (availableQuantity?.value && minQuantity?.value && minQuantity.value > availableQuantity.value) {
       return schema.max(
-        availableQuantity!,
-        t("shared.cart.add_to_cart.errors.min_not_available", [availableQuantity!]),
+        availableQuantity.value,
+        t("shared.cart.add_to_cart.errors.min_not_available", [availableQuantity.value]),
       );
     }
 
-    if (maxQuantity && maxQuantity <= availableQuantity!) {
-      return schema.max(maxQuantity, t("shared.cart.add_to_cart.errors.max", [maxQuantity]));
+    if (availableQuantity?.value && maxQuantity?.value && maxQuantity.value <= availableQuantity.value) {
+      return schema.max(maxQuantity.value, t("shared.cart.add_to_cart.errors.max", [maxQuantity.value]));
     }
 
-    if (maxQuantity && maxQuantity > availableQuantity!) {
-      return schema.max(availableQuantity!, t("shared.cart.add_to_cart.errors.max", [availableQuantity!]));
+    if (availableQuantity?.value && maxQuantity?.value && maxQuantity.value > availableQuantity.value) {
+      return schema.max(availableQuantity.value, t("shared.cart.add_to_cart.errors.max", [availableQuantity.value]));
     }
 
-    return schema.max(availableQuantity!, t("shared.cart.add_to_cart.errors.max", [availableQuantity!]));
+    if (availableQuantity?.value) {
+      return schema.max(availableQuantity.value, t("shared.cart.add_to_cart.errors.max", [availableQuantity.value]));
+    }
+
+    return schema.max(LINE_ITEM_QUANTITY_LIMIT, t("shared.cart.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]));
   }
 
   const quantitySchema = computed<NumberSchema>(() =>
@@ -47,37 +52,37 @@ export function useQuantityValidationSchema(payload: {
       .integer()
       .withMutation((schema) => {
         if (
-          availableQuantity &&
-          minQuantity &&
-          maxQuantity &&
-          availableQuantity >= minQuantity &&
-          availableQuantity >= maxQuantity
+          availableQuantity?.value &&
+          minQuantity?.value &&
+          maxQuantity?.value &&
+          availableQuantity.value >= minQuantity.value &&
+          availableQuantity.value >= maxQuantity.value
         ) {
           return schema.test(
             "minMaxValue",
-            t("shared.cart.add_to_cart.errors.min_max", [minQuantity, maxQuantity]),
-            (value) => !!value && value >= minQuantity && value <= maxQuantity,
+            t("shared.cart.add_to_cart.errors.min_max", [minQuantity.value, maxQuantity.value]),
+            (value) => !!value && value >= minQuantity.value! && value <= maxQuantity.value!,
           );
         }
 
-        if (availableQuantity) {
+        if (availableQuantity?.value) {
           return setAvailabilityForSchema(schema);
         }
 
-        if (minQuantity && maxQuantity) {
+        if (minQuantity?.value && maxQuantity?.value) {
           return schema.test(
             "minMaxValue",
-            t("shared.cart.add_to_cart.errors.min_max", [minQuantity, maxQuantity]),
-            (value) => !!value && value >= minQuantity && value <= maxQuantity,
+            t("shared.cart.add_to_cart.errors.min_max", [minQuantity.value, maxQuantity.value]),
+            (value) => !!value && value >= minQuantity.value! && value <= maxQuantity.value!,
           );
         }
 
-        if (minQuantity) {
-          return schema.min(minQuantity, t("shared.cart.add_to_cart.errors.max", [minQuantity]));
+        if (minQuantity?.value) {
+          return schema.min(minQuantity.value, t("shared.cart.add_to_cart.errors.max", [minQuantity.value]));
         }
 
-        if (maxQuantity) {
-          return schema.max(maxQuantity, t("shared.cart.add_to_cart.errors.max", [maxQuantity]));
+        if (maxQuantity?.value) {
+          return schema.max(maxQuantity.value, t("shared.cart.add_to_cart.errors.max", [maxQuantity.value]));
         }
 
         return schema.max(

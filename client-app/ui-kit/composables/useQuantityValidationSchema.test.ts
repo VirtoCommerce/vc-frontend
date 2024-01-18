@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { ref } from "vue";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { mockI18n } from "../mocks";
 import { useQuantityValidationSchema } from ".";
 
@@ -24,22 +26,22 @@ describe("use-quantity-validation-schema", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 
     expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
-    expect(quantitySchema.value.isValidSync(999999999)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(LINE_ITEM_QUANTITY_LIMIT + 1)).toBeFalsy();
   });
 
   it("available quantity only", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      availableQuantity: 5,
+      availableQuantity: ref(5),
     });
 
     expect(quantitySchema.value.isValidSync(5)).toBeTruthy();
     expect(quantitySchema.value.isValidSync(6)).toBeFalsy();
   });
 
-  it("available quantity and correct mininimum quantity", () => {
+  it("available quantity >= minimum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      availableQuantity: 5,
-      minQuantity: 2,
+      availableQuantity: ref(5),
+      minQuantity: ref(2),
     });
 
     expect(quantitySchema.value.isValidSync(3)).toBeTruthy();
@@ -47,30 +49,30 @@ describe("use-quantity-validation-schema", () => {
     expect(quantitySchema.value.isValidSync(6)).toBeFalsy();
   });
 
-  it("available quantity and incorrect minimum quantity", () => {
+  it("available quantity < minimum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      availableQuantity: 5,
-      minQuantity: 6,
+      availableQuantity: ref(5),
+      minQuantity: ref(6),
     });
 
     expect(quantitySchema.value.isValidSync(4)).toBeTruthy();
     expect(quantitySchema.value.isValidSync(6)).toBeFalsy();
   });
 
-  it("available quantity and correct maximum quantity", () => {
+  it("available quantity >= maximum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      availableQuantity: 5,
-      maxQuantity: 4,
+      availableQuantity: ref(5),
+      maxQuantity: ref(4),
     });
 
     expect(quantitySchema.value.isValidSync(4)).toBeTruthy();
     expect(quantitySchema.value.isValidSync(5)).toBeFalsy();
   });
 
-  it("available quantity and incorrect maximum quantity", () => {
+  it("available quantity < maximum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      availableQuantity: 5,
-      maxQuantity: 6,
+      availableQuantity: ref(5),
+      maxQuantity: ref(6),
     });
 
     expect(quantitySchema.value.isValidSync(5)).toBeTruthy();
@@ -79,7 +81,7 @@ describe("use-quantity-validation-schema", () => {
 
   it("minimum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      minQuantity: 2,
+      minQuantity: ref(2),
     });
 
     expect(quantitySchema.value.isValidSync(2)).toBeTruthy();
@@ -88,7 +90,7 @@ describe("use-quantity-validation-schema", () => {
 
   it("maximum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      maxQuantity: 2,
+      maxQuantity: ref(2),
     });
 
     expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
@@ -97,8 +99,8 @@ describe("use-quantity-validation-schema", () => {
 
   it("minimum and maximum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      minQuantity: 2,
-      maxQuantity: 3,
+      minQuantity: ref(2),
+      maxQuantity: ref(3),
     });
 
     expect(quantitySchema.value.isValidSync(2)).toBeTruthy();
@@ -109,13 +111,26 @@ describe("use-quantity-validation-schema", () => {
 
   it("available quantity, minimum quantity, maximum quantity", () => {
     const { quantitySchema } = useQuantityValidationSchema({
-      availableQuantity: 5,
-      minQuantity: 2,
-      maxQuantity: 3,
+      availableQuantity: ref(5),
+      minQuantity: ref(2),
+      maxQuantity: ref(3),
     });
 
     expect(quantitySchema.value.isValidSync(1)).toBeFalsy();
     expect(quantitySchema.value.isValidSync(2)).toBeTruthy();
     expect(quantitySchema.value.isValidSync(4)).toBeFalsy();
+  });
+
+  it("minimum quantity < available quantity < maximum quantity", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      availableQuantity: ref(5),
+      minQuantity: ref(4),
+      maxQuantity: ref(6),
+    });
+
+    expect(quantitySchema.value.isValidSync(1)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(4)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(5)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(6)).toBeFalsy();
   });
 });
