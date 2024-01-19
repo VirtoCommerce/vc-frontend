@@ -1,7 +1,7 @@
 #import "../../../fragments/allCurrencyFields.graphql"
 #import "../../../fragments/allLanguageFields.graphql"
 
-query GetStoreSettings($storeId: String!) {
+query GetStore($storeId: String!) {
   store(storeId: $storeId) {
     storeId
     storeName

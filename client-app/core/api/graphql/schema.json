@@ -31608,7 +31608,7 @@
         "name": "QuoteAttachmentType",
         "fields": [
           {
-            "name": "mimeType",
+            "name": "contentType",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -31617,6 +31617,17 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "mimeType",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": true,
+            "deprecationReason": "Use ContentType"
           },
           {
             "name": "name",

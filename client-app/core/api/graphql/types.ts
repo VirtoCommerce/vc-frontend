@@ -4611,6 +4611,8 @@ export type QuoteAddressType = {
 };
 
 export type QuoteAttachmentType = {
+  contentType?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use ContentType */
   mimeType?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   size: Scalars['Long']['output'];
@@ -5991,9 +5993,9 @@ export type GetQuotesQueryVariables = Exact<{
 
 export type GetQuotesQuery = { quotes?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, customerId?: string, number: string, status?: string, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } }> } };
 
-export type GetStoreSettingsQueryVariables = Exact<{
+export type GetStoreQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
 }>;
 
 
-export type GetStoreSettingsQuery = { store?: { storeId: string, storeName: string, catalogId: string, storeUrl?: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }>, settings: { quotesEnabled: boolean, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, isSpa: boolean, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string } } };
+export type GetStoreQuery = { store?: { storeId: string, storeName: string, catalogId: string, storeUrl?: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }>, settings: { quotesEnabled: boolean, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, isSpa: boolean, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string } } };

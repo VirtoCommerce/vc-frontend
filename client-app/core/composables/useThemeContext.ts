@@ -1,16 +1,16 @@
 import { computed, ref } from "vue";
-import { getStoreSettings } from "@/core/api/graphql/settings";
+import { getStore } from "@/core/api/graphql/settings";
 import type { IThemeConfig, IThemeContext } from "../types";
 const themeContext = ref<IThemeContext>();
 
 export function useThemeContext() {
   async function fetchThemeContext() {
-    const [storeSettings, themeSettings] = await Promise.all([
-      getStoreSettings("B2B-store"),
+    const [store, themeSettings] = await Promise.all([
+      getStore("B2B-store"),
       import("../../../config/settings_data.json") as Promise<IThemeConfig>,
     ]);
 
-    if (!storeSettings || !themeSettings) {
+    if (!store || !themeSettings) {
       throw new Error("Can't get context");
     }
 
@@ -18,9 +18,9 @@ export function useThemeContext() {
       typeof themeSettings.current === "string" ? themeSettings.presets[themeSettings.current] : themeSettings.current;
 
     themeContext.value = {
-      ...storeSettings,
+      ...store,
       settings: themeConfig,
-      settingsFromPlatform: storeSettings.settings,
+      settingsFromPlatform: store.settings,
     };
   }
 
