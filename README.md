@@ -194,6 +194,10 @@ cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cm
 yarn install
 ```
 
+#### If you use Visual Studio Code
+1. Setup recommended extensions
+2. Configure [Volar Takeover mode](https://vuejs.org/guide/typescript/overview#volar-takeover-mode)
+
 #### Compile and Hot-Reload for Development
 
 - Open the **.env** file in a text editor

@@ -1,12 +1,12 @@
 <template>
   <VcPopup :title="$t('shared.checkout.payment_method_dialog.title')">
     <template #actions="{ close }">
-      <VcButton class="flex-1 lg:flex-none" variant="outline" color="secondary" @click="close">
+      <VcButton variant="outline" color="secondary" @click="close">
         {{ $t("shared.checkout.payment_method_dialog.cancel_button") }}
       </VcButton>
 
       <VcButton
-        class="flex-1 lg:flex-none"
+        class="ms-auto"
         @click="
           $emit('result', selectedMethod);
           close();
@@ -15,6 +15,7 @@
         {{ $t("shared.checkout.payment_method_dialog.ok_button") }}
       </VcButton>
     </template>
+
     <template v-for="method in availableMethods" :key="method.code">
       <div class="flex items-center justify-between space-x-4 border-b border-gray-300 px-5 py-6 lg:py-4">
         <VcImage :src="method.logoUrl" class="h-10 w-10 object-center" lazy />
@@ -29,7 +30,7 @@
             <VcIcon :size="16" name="check-bold" />
           </div>
 
-          <VcButton v-else variant="outline" size="sm" @click="setMethod(method)">
+          <VcButton v-else variant="outline" size="sm" class="flex-none" @click="setMethod(method)">
             {{ $t("shared.checkout.payment_method_dialog.select_button") }}
           </VcButton>
         </div>

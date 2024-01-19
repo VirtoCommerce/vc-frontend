@@ -2,17 +2,19 @@
   <ProductTitledBlock
     v-if="showPropertiesBlock"
     :title="model.title || $t('shared.catalog.product_details.technical_specs_block_title')"
-    image-src="/static/images/technical_specs.svg"
+    icon="adjustments"
   >
-    <VcCollapsibleContent max-height="19rem">
-      <ProductProperty v-for="property in properties" :key="property.name" :label="property.label!" class="mb-4">
-        {{ property.value }}
-      </ProductProperty>
+    <VcCollapsibleContent max-height="12.5rem">
+      <div class="space-y-4">
+        <VcProperty v-for="property in properties" :key="property.name" :label="property.label!" class="text-base">
+          {{ property.value }}
+        </VcProperty>
 
-      <!-- Vendor -->
-      <ProductProperty v-if="showVendor" :label="$t('shared.catalog.product_details.vendor_label')" class="mb-4">
-        <Vendor :vendor="product.vendor!" with-rating />
-      </ProductProperty>
+        <!-- Vendor -->
+        <VcProperty v-if="showVendor" :label="$t('shared.catalog.product_details.vendor_label')" class="text-base">
+          <Vendor :vendor="product.vendor!" with-rating />
+        </VcProperty>
+      </div>
     </VcCollapsibleContent>
     <!-- Properties -->
   </ProductTitledBlock>
@@ -23,7 +25,7 @@ import { computed, inject } from "vue";
 import { PropertyType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { getPropertiesGroupedByName } from "@/core/utilities";
-import { ProductProperty, ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { ProductTitledBlock, Vendor } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {

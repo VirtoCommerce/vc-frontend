@@ -39,21 +39,17 @@
     </div>
 
     <template #actions="{ close }">
-      <div class="flex grow space-x-4 sm:justify-between sm:space-x-10">
-        <div class="flex grow justify-end gap-4">
-          <VcButton color="secondary" variant="outline" class="flex-1 sm:flex-none" @click="close">
-            {{ $t("shared.wishlists.add_or_update_wishlist_dialog.cancel_button") }}
-          </VcButton>
+      <VcButton color="secondary" variant="outline" @click="close">
+        {{ $t("shared.wishlists.add_or_update_wishlist_dialog.cancel_button") }}
+      </VcButton>
 
-          <VcButton :loading="loading" :disabled="!canSave" class="flex-1 sm:flex-none" @click="save(close)">
-            {{
-              isEditMode
-                ? $t("shared.wishlists.add_or_update_wishlist_dialog.save_button")
-                : $t("shared.wishlists.add_or_update_wishlist_dialog.create_button")
-            }}
-          </VcButton>
-        </div>
-      </div>
+      <VcButton :loading="loading" :disabled="!canSave" class="ms-auto" @click="save(close)">
+        {{
+          isEditMode
+            ? $t("shared.wishlists.add_or_update_wishlist_dialog.save_button")
+            : $t("shared.wishlists.add_or_update_wishlist_dialog.create_button")
+        }}
+      </VcButton>
     </template>
   </VcPopup>
 </template>

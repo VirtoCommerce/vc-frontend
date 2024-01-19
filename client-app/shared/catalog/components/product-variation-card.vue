@@ -39,7 +39,7 @@
             v-if="$cfg.vendor_enabled && variation.vendor"
             :label="$t('shared.catalog.product_details.product_variation_card.vendor_label')"
           >
-            <Vendor :vendor="variation.vendor" with-rating />
+            <Vendor class="flex-wrap" :vendor="variation.vendor" with-rating />
           </VariationProperty>
         </div>
 
