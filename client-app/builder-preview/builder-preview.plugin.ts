@@ -1,15 +1,9 @@
-/* eslint-disable no-console */
-/* eslint-disable no-restricted-exports */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFetch } from "@/core/composables";
 import { useStaticPage, useTemplate } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
-import type { PageTemplate } from "@/shared/static-content/types";
+import type { IThemeConfig } from "@/core/types";
+import type { PageContent, PageTemplate } from "@/shared/static-content/types";
 import type { App } from "vue";
 import type { Router } from "vue-router";
 import StaticPage from "@/pages/static-page.vue";
@@ -23,15 +17,26 @@ enrichRequest((headers: Headers) => {
   return headers;
 });
 
-async function updatePreview(data: any, options: { router: Router }) {
+declare type TransferDataType = {
+  template: PageTemplate;
+  model: PageContent;
+  templateKey?: string;
+  source?: string;
+  type?: string;
+  sectionId?: string;
+  url?: string;
+  settings?: IThemeConfig;
+};
+
+async function updatePreview(data: TransferDataType, options: { router: Router }) {
   const template = data.template;
   if (data.model) {
     template.content.push(data.model);
   }
 
-  const newTemplate = { ...template, content: [] };
+  const newTemplate = { ...template, content: <PageContent[]>[] };
 
-  template.content.forEach((block: any) => {
+  template.content.forEach((block: PageContent) => {
     newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id });
     newTemplate.content.push(block);
   });
@@ -50,11 +55,11 @@ async function updatePreview(data: any, options: { router: Router }) {
   templateUrl = undefined;
 }
 
-function updateSettings(app: App, settings: any) {
+function updateSettings(app: App, settings: IThemeConfig) {
   const keys = Object.entries(settings);
 
   keys.forEach(([key, value]) => {
-    (app.config.globalProperties.$cfg as Record<string, any>)[key] = value;
+    (app.config.globalProperties.$cfg as Record<string, unknown>)[key] = value;
   });
 
   keys
@@ -64,7 +69,7 @@ function updateSettings(app: App, settings: any) {
     });
 }
 
-export function measureElement(element: any): {
+export function measureElement(element: HTMLElement): {
   top?: number;
   left?: number;
   height?: number;
@@ -77,11 +82,11 @@ export function measureElement(element: any): {
   let gleft = 0;
   let gtop = 0;
 
-  const moonwalk = function (_parent: any) {
+  const moonwalk = function (_parent: HTMLElement | null) {
     if (_parent) {
       gleft += _parent.offsetLeft;
       gtop += _parent.offsetTop;
-      moonwalk(_parent.offsetParent);
+      moonwalk(<HTMLElement>_parent.offsetParent);
     } else {
       rect = {
         top: target.offsetTop + gtop,
@@ -92,12 +97,13 @@ export function measureElement(element: any): {
       return rect;
     }
   };
-  moonwalk(target.offsetParent);
+  moonwalk(<HTMLElement>target.offsetParent);
   return rect;
 }
 
 let templateUrl: string | undefined;
 
+// eslint-disable-next-line no-restricted-exports
 export default {
   install: (app: App, options: { router: Router }) => {
     const bodyEl = document.getElementsByTagName("body").item(0);
@@ -114,9 +120,10 @@ export default {
       bodyEl.appendChild(interactiveBlocker);
     }
 
-    window.addEventListener("message", async (event: MessageEvent) => {
+    window.addEventListener("message", async (event: MessageEvent<TransferDataType>) => {
       if (event.origin !== document.location.origin || event.data.source !== "builder") {
         // note: it can be cause of some problems. investigate it.
+        // eslint-disable-next-line no-console
         console.log("cancel message");
         return;
       }
@@ -150,7 +157,7 @@ export default {
           break;
         }
         case "settings":
-          updateSettings(app, event.data.settings);
+          updateSettings(app, event.data.settings!);
           break;
       }
     });
