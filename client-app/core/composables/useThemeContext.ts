@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { getStore } from "@/core/api/graphql/settings";
+import { getStore } from "@/core/api/graphql";
 import type { IThemeConfig, IThemeContext } from "../types";
 const themeContext = ref<IThemeContext>();
 
