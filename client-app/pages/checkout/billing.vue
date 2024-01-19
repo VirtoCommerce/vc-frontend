@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { useFullCart } from "@/shared/cart";
-import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
 const {
   loading,
