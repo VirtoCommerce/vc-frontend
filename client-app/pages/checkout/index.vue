@@ -24,7 +24,7 @@
       />
     </div>
 
-    <VcLoaderOverlay :visible="loadingCart || loadingCheckout" fixed-spinner />
+    <VcLoaderOverlay :visible="loadingCart || loadingCheckout || currentStepIndex == -1" fixed-spinner />
 
     <router-view />
   </VcContainer>
@@ -94,9 +94,9 @@ const steps = computed<IStepsItem[]>(() => {
 
   return result;
 });
-const currentStepId = computed<string>(() => route.name as string);
-const currentStepIndex = computed<number>(() => steps.value.findIndex((step) => step.id === currentStepId.value));
-const pageTitle = computed<string>(() => steps.value[currentStepIndex.value]?.text ?? "<UNKNOWN__FOR_DEV_MODE>");
+const currentStepId = computed(() => route.name as string);
+const currentStepIndex = computed(() => steps.value.findIndex((step) => step.id === currentStepId.value));
+const pageTitle = computed(() => steps.value[currentStepIndex.value]?.text);
 
 usePageHead({
   title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
