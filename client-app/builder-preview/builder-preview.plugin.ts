@@ -2,8 +2,11 @@ import { useFetch } from "@/core/composables";
 import { useStaticPage, useTemplate } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
+import type { IThemeConfig } from "@/core/types";
+import type { PageContent, PageTemplate } from "@/shared/static-content/types";
 import type { App } from "vue";
 import type { Router } from "vue-router";
+import StaticPage from "@/pages/static-page.vue";
 
 const { enrichRequest } = useFetch();
 
@@ -14,35 +17,49 @@ enrichRequest((headers: Headers) => {
   return headers;
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function updatePreview(data: any) {
+declare type TransferDataType = {
+  template: PageTemplate;
+  model: PageContent;
+  templateKey?: string;
+  source?: string;
+  type?: string;
+  sectionId?: string;
+  url?: string;
+  settings?: IThemeConfig;
+};
+
+async function updatePreview(data: TransferDataType, options: { router: Router }) {
   const template = data.template;
   if (data.model) {
     template.content.push(data.model);
   }
 
-  const newTemplate = { ...template, content: [] };
+  const newTemplate = { ...template, content: <PageContent[]>[] };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  template.content.forEach((block: any) => {
+  template.content.forEach((block: PageContent) => {
     newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id });
     newTemplate.content.push(block);
   });
 
   if (!data.templateKey) {
-    useStaticPage(newTemplate);
+    if (templateUrl) {
+      await options.router.push("/designer-preview");
+    }
+    useStaticPage(newTemplate, true);
   } else {
+    if (templateUrl) {
+      await options.router.push(templateUrl);
+    }
     useTemplate(data.templateKey, newTemplate);
   }
+  templateUrl = undefined;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function updateSettings(app: App, settings: any) {
+function updateSettings(app: App, settings: IThemeConfig) {
   const keys = Object.entries(settings);
 
   keys.forEach(([key, value]) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (app.config.globalProperties.$cfg as Record<string, any>)[key] = value;
+    (app.config.globalProperties.$cfg as Record<string, unknown>)[key] = value;
   });
 
   keys
@@ -52,8 +69,7 @@ function updateSettings(app: App, settings: any) {
     });
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function measureElement(element: any): {
+export function measureElement(element: HTMLElement): {
   top?: number;
   left?: number;
   height?: number;
@@ -66,12 +82,11 @@ export function measureElement(element: any): {
   let gleft = 0;
   let gtop = 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const moonwalk = function (_parent: any) {
+  const moonwalk = function (_parent: HTMLElement | null) {
     if (_parent) {
       gleft += _parent.offsetLeft;
       gtop += _parent.offsetTop;
-      moonwalk(_parent.offsetParent);
+      moonwalk(<HTMLElement>_parent.offsetParent);
     } else {
       rect = {
         top: target.offsetTop + gtop,
@@ -82,9 +97,11 @@ export function measureElement(element: any): {
       return rect;
     }
   };
-  moonwalk(target.offsetParent);
+  moonwalk(<HTMLElement>target.offsetParent);
   return rect;
 }
+
+let templateUrl: string | undefined;
 
 // eslint-disable-next-line no-restricted-exports
 export default {
@@ -103,9 +120,10 @@ export default {
       bodyEl.appendChild(interactiveBlocker);
     }
 
-    window.addEventListener("message", (event: MessageEvent) => {
+    window.addEventListener("message", async (event: MessageEvent<TransferDataType>) => {
       if (event.origin !== document.location.origin || event.data.source !== "builder") {
         // note: it can be cause of some problems. investigate it.
+        // eslint-disable-next-line no-console
         console.log("cancel message");
         return;
       }
@@ -118,7 +136,7 @@ export default {
         case "changed":
         case "page":
         case "preview":
-          updatePreview(event.data);
+          await updatePreview(event.data, options);
           break;
 
         case "select": {
@@ -134,16 +152,22 @@ export default {
           break;
         }
         case "navigate": {
-          const url = event.data.url?.startsWith("/") ? event.data.url : "/" + event.data.url;
-          options.router.push(url);
+          // we will know about template it or not in the next message
+          templateUrl = event.data.url;
           break;
         }
         case "settings":
-          updateSettings(app, event.data.settings);
+          updateSettings(app, event.data.settings!);
           break;
       }
     });
-    options.router.push("/");
+    const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
+    useStaticPage(page, true);
+    const routes = options.router.getRoutes();
+    const matcher = routes.find((x) => x.name === "Matcher")!;
+    options.router.removeRoute("Matcher");
+    options.router.addRoute({ path: "/designer-preview", name: "StaticPage", component: StaticPage, props: true });
+    options.router.addRoute(matcher);
     window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
   },
 };
