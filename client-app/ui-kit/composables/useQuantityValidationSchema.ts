@@ -24,9 +24,10 @@ export function useQuantityValidationSchema(payload: {
     }
 
     if (availableQuantity?.value && minQuantity?.value && minQuantity.value > availableQuantity.value) {
-      return schema.max(
-        availableQuantity.value,
+      return schema.test(
+        "incorrectMinValue",
         t("shared.cart.add_to_cart.errors.min_not_available", [availableQuantity.value]),
+        () => false,
       );
     }
 

@@ -55,7 +55,8 @@ describe("use-quantity-validation-schema", () => {
       minQuantity: ref(6),
     });
 
-    expect(quantitySchema.value.isValidSync(4)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(0)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(4)).toBeFalsy();
     expect(quantitySchema.value.isValidSync(6)).toBeFalsy();
   });
 

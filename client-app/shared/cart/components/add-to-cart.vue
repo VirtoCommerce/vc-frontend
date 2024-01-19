@@ -117,7 +117,10 @@ const rules = computed(() => toTypedSchema(quantitySchema.value));
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
-const { errorMessage, validate, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
+const { errorMessage, validate, setValue } = useField("quantity", rules, {
+  initialValue: enteredQuantity,
+  validateOnMount: true,
+});
 
 /**
  * Process button click to add/update cart line item.
