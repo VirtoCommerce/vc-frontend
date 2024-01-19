@@ -1,1 +1,1 @@
-export * from "./queries/getStoreSettings";
+export * from "./queries/getStore";
