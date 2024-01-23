@@ -222,22 +222,7 @@
             </td>
 
             <td class="px-4 py-3 text-center">
-              <VcTooltip>
-                <template #trigger>
-                  <img
-                    width="20"
-                    height="20"
-                    :src="contact.extended.displayStatus.iconUrl"
-                    :alt="$t(contact.extended.displayStatus.localeLabel)"
-                  />
-                </template>
-
-                <template #content>
-                  <div class="rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
-                    {{ $t(contact.extended.displayStatus.localeLabel) }}
-                  </div>
-                </template>
-              </VcTooltip>
+              <MemberStatus :status="contact.status" />
             </td>
 
             <td v-if="userCanEditOrganization" class="px-5 text-right">
@@ -282,9 +267,7 @@
             </div>
 
             <div class="py-4.5 pr-3">
-              <div class="w-20 rounded-sm px-2.5 py-0.5 text-center" :class="item.extended.displayStatus.cssStyles">
-                {{ $t(item.extended.displayStatus.localeLabel) }}
-              </div>
+              <MemberStatus :status="item.status" />
             </div>
 
             <div v-if="userCanEditOrganization" class="w-7 flex-none">
@@ -329,6 +312,7 @@ import {
   EditCustomerRoleModal,
   FilterFacet,
   InviteMemberModal,
+  MemberStatus,
   MembersDropdownMenu,
   RoleIcon,
   useOrganizationContacts,
