@@ -23,6 +23,7 @@
         :items="methods"
         :disabled="disabled"
         size="auto"
+        item-size="lg"
         class="lg:w-2/5"
         required
       >
@@ -45,12 +46,9 @@
         </template>
 
         <template #item="{ item }">
-          <VcSelectItem bordered>
-            <VcSelectItemImage :src="item.logoUrl" />
-            <VcSelectItemText>
-              {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
-            </VcSelectItemText>
-          </VcSelectItem>
+          <VcImage class="h-8 w-8" :src="item.logoUrl" />
+
+          {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
         </template>
       </VcSelect>
     </div>

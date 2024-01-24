@@ -12,10 +12,10 @@
       @click="trigger === 'click' && toggle(!isShown)"
       @keyup="trigger === 'click' && toggle(!isShown)"
     >
-      <slot name="trigger" />
+      <slot name="trigger" :open="open" :close="close" :opened="isShown" />
     </div>
 
-    <div v-show="isShown" :id="`popover-${$.uid}`" ref="popoverNode" :style="{ zIndex }">
+    <div v-show="isShown" :id="`popover-${$.uid}`" ref="popoverNode" :style="{ zIndex, width }">
       <slot name="content" :close="close" />
     </div>
   </div>
@@ -39,6 +39,7 @@ interface IProps {
   trigger?: "hover" | "click";
   disabled?: boolean;
   zIndex?: number | string;
+  width?: string;
 }
 
 const emit = defineEmits<IEmits>();

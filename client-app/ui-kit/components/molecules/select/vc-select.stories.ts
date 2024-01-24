@@ -1,5 +1,4 @@
 import { VcSelect } from "..";
-import { VcSelectItem, VcSelectItemImage, VcSelectItemText } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -32,7 +31,7 @@ export default {
 const Template: StoryFn<typeof VcSelect> = (args) => ({
   components: { VcSelect },
   setup: () => ({ args }),
-  template: '<VcSelect v-bind="args" />',
+  template: '<VcSelect v-bind="args" class="mb-32" />',
 });
 
 export const Basic = Template.bind({});
@@ -55,6 +54,20 @@ Required.args = {
   required: true,
 };
 
+export const Readonly = Template.bind({});
+Readonly.args = {
+  ...Common.args,
+  modelValue: "Belgium",
+  readonly: true,
+};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Common.args,
+  modelValue: "Belgium",
+  disabled: true,
+};
+
 export const ErrorState = Template.bind({});
 ErrorState.args = {
   ...Required.args,
@@ -71,53 +84,10 @@ Autocomplete.args = {
   autocomplete: true,
 };
 
-export const Custom: StoryFn<typeof VcSelect> = (args) => ({
-  components: { VcSelect, VcSelectItem, VcSelectItemImage, VcSelectItemText },
-  setup: () => ({ args }),
-  template: `<VcSelect v-bind="args">
-    <template #placeholder>
-      <VcSelectItem>
-        <VcSelectItemImage src="/static/icons/placeholders/select-payment.svg" class="bg-gray-100/80" />
-        <VcSelectItemText>
-          {{ $t("common.placeholders.select_payment_method") }}
-        </VcSelectItemText>
-      </VcSelectItem>
-    </template>
-
-    <template #selected="{ item }">
-      <VcSelectItem>
-        <VcSelectItemImage :src="item.logoUrl" />
-        <VcSelectItemText>{{ item.optionName }}</VcSelectItemText>
-      </VcSelectItem>
-    </template>
-
-    <template #item="{ item }">
-      <VcSelectItem bordered>
-        <VcSelectItemImage :src="item.logoUrl" />
-        <VcSelectItemText>{{ item.optionName }}</VcSelectItemText>
-      </VcSelectItem>
-    </template>
-  </VcSelect>`,
-});
-
-Custom.args = {
-  required: true,
-  label: "Payment method",
-  size: "auto",
-  items: [
-    {
-      id: "FixedRate_Ground",
-      code: "FixedRate",
-      logoUrl:
-        "https://github.com/VirtoCommerce/vc-module-core/raw/master/src/VirtoCommerce.CoreModule.Web/Content/logoVC.png",
-      optionName: "Ground",
-    },
-    {
-      id: "FixedRate_Air",
-      code: "FixedRate",
-      logoUrl:
-        "https://github.com/VirtoCommerce/vc-module-core/raw/master/src/VirtoCommerce.CoreModule.Web/Content/logoVC.png",
-      optionName: "Air",
-    },
-  ],
+export const MultipleSelect = Template.bind({});
+MultipleSelect.args = {
+  ...Required.args,
+  modelValue: ["Belgium", "India"],
+  placeholder: "Select multiple",
+  multiple: true,
 };
