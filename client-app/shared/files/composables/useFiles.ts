@@ -36,7 +36,7 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
     const filesToValidate = files.value.filter((fileInfo) => fileInfo.status === "new");
 
     filesToValidate.forEach((fileToValidate) => {
-      if (files.value.some((file) => file.name === fileToValidate.name)) {
+      if (files.value.some((file) => file.name === fileToValidate.name && file !== fileToValidate)) {
         fileToValidate.progress = undefined;
         fileToValidate.errorMessage = t("file_error.ALREADY_EXISTS");
         fileToValidate.status = "error";
