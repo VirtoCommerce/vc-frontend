@@ -21,7 +21,7 @@ export interface IFailedFileUpload {
   name: string;
   errorCode: string;
   errorMessage: string;
-  errorParameter: string;
+  errorParameter?: unknown;
 }
 
 export type FileUploadResultType = ISuccessfulFileUpload | IFailedFileUpload;

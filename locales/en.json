@@ -1337,7 +1337,7 @@
       "maximum": "You can add maximum 1 file | You can add maximum {n} files",
       "drag_and_drop": "Drag and drop file here or",
       "browse": "Browse your files",
-      "requirements": "The files available for upload are in <strong>{format}</strong> formats, and their size should not exceed {size}.",
+      "requirements": "The files available for upload are in {format} formats, and their size should not exceed {size}.",
       "any_format": "any",
       "errors": {
         "alert": "Fix file upload errors to continue.",
@@ -1386,12 +1386,12 @@
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
   },
   "file_error": {
-    "ALREADY_EXISTS": "Cannot upload file with the same name",
-    "INVALID_CONTENT": "Cannot read file",
-    "EXCEPTION": "Internal server error",
+    "ALREADY_EXISTS": "Cannot upload file with the same name.",
+    "INVALID_CONTENT": "Cannot read file.",
+    "EXCEPTION": "Failure while uploading file. Please try again.",
     "INVALID_SCOPE": "Unknown scope '{0}'",
-    "INVALID_EXTENSION": "Allowed file extensions: {0}",
-    "INVALID_SIZE": "Maximum allowed file size: {0}",
-    "CANNOT_DELETE": "Cannot delete file"
+    "INVALID_EXTENSION": "File is not in one of allowed formats {0}.",
+    "INVALID_SIZE": "File size exceeds the allowed {0}.",
+    "CANNOT_DELETE": "Failure while deleting file."
   }
 }

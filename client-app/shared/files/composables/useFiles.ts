@@ -3,13 +3,14 @@ import { useI18n } from "vue-i18n";
 import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
 import { useErrorsTranslator, useFetch } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
+import { getFileSize } from "@/ui-kit";
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
 import type { MaybeRef, Ref } from "vue";
 
 export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
-  const { getTranslation } = useErrorsTranslator("file_error");
+  const { getTranslation: getErrorTranlation } = useErrorsTranslator("file_error");
   const { innerFetch } = useFetch();
-  const { t } = useI18n();
+  const { t, n } = useI18n();
 
   const defaultOptions = {
     maxFileCount: 5,
@@ -37,15 +38,16 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
 
     filesToValidate.forEach((fileToValidate) => {
       if (files.value.some((file) => file.name === fileToValidate.name && file !== fileToValidate)) {
-        fileToValidate.progress = undefined;
-        fileToValidate.errorMessage = t("file_error.ALREADY_EXISTS");
-        fileToValidate.status = "error";
+        setError(fileToValidate, getErrorMessage("ALREADY_EXISTS"));
       }
 
       if (options.value.maxFileSize < fileToValidate.size) {
-        fileToValidate.progress = undefined;
-        fileToValidate.errorMessage = t("file_error.INVALID_SIZE", { maxSize: options.value.maxFileSize });
-        fileToValidate.status = "error";
+        setError(fileToValidate, getErrorMessage("INVALID_SIZE", options.value.maxFileSize));
+      }
+
+      const extension = fileToValidate.name.split(".").pop()!;
+      if (options.value.allowedExtensions.length && !options.value.allowedExtensions.includes(extension)) {
+        setError(fileToValidate, getErrorMessage("INVALID_EXTENSION", options.value.allowedExtensions));
       }
     });
   }
@@ -68,18 +70,13 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
       const uploadedFile = filesToUpload.find((fileInfo) => fileInfo.name === result.name);
 
       if (uploadedFile) {
-        uploadedFile.progress = 100;
-
-        uploadedFile.status = result.succeeded ? "success" : "error";
         if (result.succeeded) {
           uploadedFile.id = result.id;
           uploadedFile.url = result.url;
+          uploadedFile.progress = 100;
+          uploadedFile.status = "success";
         } else {
-          uploadedFile.errorMessage = getTranslation({
-            code: result.errorCode,
-            description: result.errorMessage,
-            parameters: [result.errorParameter],
-          });
+          setError(uploadedFile, getErrorMessage(result.errorCode, result.errorParameter, result.errorMessage));
         }
       }
     });
@@ -103,8 +100,39 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
       }
     });
 
-    const f = files.value.filter((file) => file.status !== "removed");
-    files.value = f;
+    files.value = files.value.filter((file) => file.status !== "removed");
+  }
+
+  function setError(file: FileType, errorMessage: string | undefined) {
+    file.progress = undefined;
+    file.errorMessage = errorMessage;
+    file.status = "error";
+  }
+
+  function getErrorMessage(errorCode: string, errorParameter?: unknown, errorMessage?: string): string | undefined {
+    let parameters: string[];
+    if (errorCode === "INVALID_SIZE") {
+      const fileSize = getFileSize(errorParameter as number);
+      parameters = [
+        n(fileSize.value, {
+          key: "decimal",
+          notation: "compact",
+          style: "unit",
+          unit: fileSize.unit,
+          unitDisplay: "narrow",
+        }),
+      ];
+    } else if (errorCode === "INVALID_EXTENSION") {
+      parameters = [(errorParameter as string[]).map((el) => el.replace(/^\./, "").toUpperCase()).join(", ")];
+    } else {
+      parameters = [errorParameter as string];
+    }
+
+    return getErrorTranlation({
+      code: errorCode,
+      description: errorMessage,
+      parameters: parameters,
+    });
   }
 
   return {

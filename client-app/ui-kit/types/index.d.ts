@@ -92,7 +92,6 @@ declare global {
 
   interface IFileFailure extends IFile {
     status: "error";
-    progress: 100;
     errorMessage: string;
   }
 
