@@ -6,7 +6,7 @@
       class="vc-file-uploader__input"
       :multiple="maxFileCount > 1"
       :accept="allowedExtensions?.join(',')"
-      @change="onFileChange"
+      @input="onFileChange"
     />
 
     <div v-if="files?.length" class="vc-file-uploader__list-container">
@@ -113,8 +113,12 @@ function openFilePicker() {
 }
 
 function onFileChange(event: Event) {
-  const fileList = (event.target as HTMLInputElement).files;
-  addFiles(Array.from(fileList!));
+  const input = event.target as HTMLInputElement;
+  const fileList = input.files;
+  const files = Array.from(fileList!);
+  // Cleanup input value to allow reupload
+  input.value = "";
+  addFiles(files);
 }
 
 function onFileDrop(event: DragEvent) {
