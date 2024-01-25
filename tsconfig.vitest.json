@@ -3,7 +3,7 @@
   "exclude": ["artifacts", "assets", "content", "storybook-static"],
   "compilerOptions": {
     "composite": true,
-    "lib": [],
+    "lib": ["ES2022"],
     "types": ["@types/gtag.js", "node", "jsdom"]
   }
 }

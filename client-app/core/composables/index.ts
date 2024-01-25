@@ -5,7 +5,6 @@ export * from "./useCountries";
 export * from "./useCurrency";
 export * from "./useErrorsTranslator";
 export * from "./useFetch";
-export * from "./useFileManager";
 export * from "./useGoogleAnalytics";
 export * from "./useIdentityErrorTranslator";
 export * from "./useLanguages";

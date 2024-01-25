@@ -1,4 +1,4 @@
-import { graphqlClient } from "../../../client";
+import { graphqlClient } from "@/core/api/graphql/client";
 import updateQuoteAttachmentsDocument from "./updateQuoteAttachments.graphql";
 import type { UpdateQuoteAttachmentsMutation, UpdateQuoteAttachmentsMutationVariables } from "@/core/api/graphql/types";
 

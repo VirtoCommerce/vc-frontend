@@ -32,6 +32,11 @@ export type AccountCreationResultType = {
   succeeded: Scalars['Boolean']['output'];
 };
 
+export type AddQuoteAttachmentsCommandType = {
+  quoteId: Scalars['String']['input'];
+  urls: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
 export type Asset = {
   /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
@@ -789,6 +794,11 @@ export enum CustomerReviewStatus {
 
 export type DeleteFileCommandType = {
   id: Scalars['String']['input'];
+};
+
+export type DeleteQuoteAttachmentsCommandType = {
+  quoteId: Scalars['String']['input'];
+  urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
 export type DescriptionType = {
@@ -2695,6 +2705,7 @@ export type Mutations = {
   addOrUpdateCartPayment?: Maybe<CartType>;
   addOrUpdateCartShipment?: Maybe<CartType>;
   addOrUpdateOrderPayment?: Maybe<CustomerOrderType>;
+  addQuoteAttachments?: Maybe<QuoteType>;
   addWishlistBulkItem?: Maybe<BulkWishlistType>;
   addWishlistItem?: Maybe<WishlistType>;
   addWishlistItems?: Maybe<WishlistType>;
@@ -2727,6 +2738,7 @@ export type Mutations = {
   deleteContact?: Maybe<Scalars['Boolean']['output']>;
   deleteFile?: Maybe<Scalars['Boolean']['output']>;
   deleteMemberAddresses?: Maybe<MemberType>;
+  deleteQuoteAttachments?: Maybe<QuoteType>;
   deleteUsers?: Maybe<IdentityResultType>;
   initializePayment?: Maybe<InitializePaymentResultType>;
   inviteUser?: Maybe<CustomIdentityResultType>;
@@ -2829,6 +2841,11 @@ export type MutationsAddOrUpdateCartShipmentArgs = {
 
 export type MutationsAddOrUpdateOrderPaymentArgs = {
   command: InputAddOrUpdateOrderPaymentType;
+};
+
+
+export type MutationsAddQuoteAttachmentsArgs = {
+  command: AddQuoteAttachmentsCommandType;
 };
 
 
@@ -2989,6 +3006,11 @@ export type MutationsDeleteFileArgs = {
 
 export type MutationsDeleteMemberAddressesArgs = {
   command: InputDeleteMemberAddressType;
+};
+
+
+export type MutationsDeleteQuoteAttachmentsArgs = {
+  command: DeleteQuoteAttachmentsCommandType;
 };
 
 
@@ -4175,6 +4197,7 @@ export type Query = {
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
   quote?: Maybe<QuoteType>;
+  quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
   quotes?: Maybe<QuoteConnection>;
   regions: Array<CountryRegionType>;
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
@@ -4614,7 +4637,7 @@ export type QuoteAttachmentType = {
   contentType?: Maybe<Scalars['String']['output']>;
   /** @deprecated Use ContentType */
   mimeType?: Maybe<Scalars['String']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
   size: Scalars['Long']['output'];
   url: Scalars['String']['output'];
 };
@@ -5753,6 +5776,8 @@ export type GetMenusQueryVariables = Exact<{
 
 export type GetMenusQuery = { menus: Array<{ name: string, items: Array<{ title: string, url: string, priority: number }> }> };
 
+export type FileUploadOptionsFragment = { maxFileSize: number, allowedExtensions: Array<string> };
+
 export type DeleteFileMutationVariables = Exact<{
   command: DeleteFileCommandType;
 }>;
@@ -5936,6 +5961,8 @@ export type InitializePaymentMutationVariables = Exact<{
 
 export type InitializePaymentMutation = { initializePayment?: { isSuccess: boolean, errorMessage?: string, actionHtmlForm?: string, actionRedirectUrl?: string, paymentActionType?: string, publicParameters?: Array<{ key: string, value?: string }> } };
 
+export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
+
 export type ChangeQuoteCommentMutationVariables = Exact<{
   command: ChangeQuoteCommentCommandType;
 }>;
@@ -5990,7 +6017,7 @@ export type UpdateQuoteAttachmentsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateQuoteAttachmentsMutation = { updateQuoteAttachments?: { attachments: Array<{ name?: string, url: string, contentType?: string, size: number }> } };
+export type UpdateQuoteAttachmentsMutation = { updateQuoteAttachments?: { id: string } };
 
 export type GetQuoteQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
@@ -6001,7 +6028,7 @@ export type GetQuoteQueryVariables = Exact<{
 }>;
 
 
-export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name?: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
+export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
 
 export type GetQuotesQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;

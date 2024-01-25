@@ -13,7 +13,7 @@
     <span class="vc-file__details">
       <span class="vc-file__row">
         <a
-          v-if="file.url"
+          v-if="file.status === 'success'"
           class="text-[color:var(--color-link)] [word-break:break-word]"
           :href="file.url"
           target="_blank"
@@ -26,22 +26,27 @@
 
         <span class="vc-file__size">
           {{
-            $n(file.size || 0, "decimal", { notation: "compact", style: "unit", unit: "byte", unitDisplay: "narrow" })
+            $n(fileSize.value, "decimal", {
+              notation: "compact",
+              style: "unit",
+              unit: fileSize.unit,
+              unitDisplay: "narrow",
+            })
           }}
         </span>
       </span>
 
       <template v-if="file.status === 'loading'">
         <div class="vc-file__progress">
-          <div class="vc-file__progress-value" :style="{ width: `${file.progress || 0}%` }"></div>
+          <div class="vc-file__progress-value" :style="{ width: `${file.progress}%` }"></div>
         </div>
 
         <span class="vc-file__message"> {{ file.progress }}% done </span>
       </template>
 
-      <span v-if="file.status === 'success'" class="vc-file__message">Upload complete</span>
+      <span v-else-if="file.status === 'success'" class="vc-file__message">Upload complete</span>
 
-      <span v-else-if="file.errorMessage" class="vc-file__message vc-file__message--error">
+      <span v-else-if="file.status === 'error'" class="vc-file__message vc-file__message--error">
         {{ file.errorMessage }}
       </span>
     </span>
@@ -63,15 +68,16 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { FileType } from "@/core/enums";
+import { ContentType } from "@/core/enums";
+import { getFileSize } from "@/ui-kit/utilities";
 
 interface IEmits {
-  (event: "reload", value: VcFileType): void;
-  (event: "remove", value: VcFileType): void;
+  (event: "reload", value: FileType): void;
+  (event: "remove", value: FileType): void;
 }
 
 interface IProps {
-  file: VcFileType;
+  file: FileType;
   reloadable?: boolean;
   removable?: boolean;
 }
@@ -90,11 +96,11 @@ function remove() {
 const icon = computed(() => {
   let fileName: string;
 
-  const contentType = props.file.mimeType || props.file.contentType;
+  const contentType = props.file.contentType;
 
-  if (props.file.errorMessage) {
+  if (props.file.status === "error") {
     fileName = "error";
-  } else if (Object.values(FileType).includes(contentType as FileType)) {
+  } else if (Object.values(ContentType).includes(contentType as ContentType)) {
     fileName = contentType || "file";
   } else {
     fileName = "file";
@@ -102,6 +108,8 @@ const icon = computed(() => {
 
   return `/static/icons/file/${fileName}.svg`;
 });
+
+const fileSize = computed(() => getFileSize(props.file.size));
 </script>
 
 <style lang="scss">

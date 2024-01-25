@@ -1,4 +1,4 @@
-import { graphqlClient } from "@/core/api/graphql";
+import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
 import createQuoteDocument from "./createQuote.graphql";
 import type { CreateQuoteMutation, CreateQuoteMutationVariables } from "@/core/api/graphql/types";

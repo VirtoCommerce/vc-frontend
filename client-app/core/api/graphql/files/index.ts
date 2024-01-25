@@ -1,2 +1,3 @@
-export * from "./deleteFile";
-export * from "./getFileUploadOptions";
+export * from "./mutations/deleteFile";
+
+export * from "./queries/getFileUploadOptions";

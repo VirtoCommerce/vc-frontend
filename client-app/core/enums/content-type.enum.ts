@@ -1,4 +1,4 @@
-export enum FileType {
+export enum ContentType {
   DOC = "application/msword",
   JPG = "image/jpeg",
   PNG = "image/png",
