@@ -7,7 +7,7 @@ import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
 import type { MaybeRef, Ref } from "vue";
 
 export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
-  const { getTranslation } = useErrorsTranslator("file_upload_error");
+  const { getTranslation } = useErrorsTranslator("file_error");
   const { innerFetch } = useFetch();
   const { t } = useI18n();
 
@@ -38,7 +38,7 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
     filesToValidate.forEach((file) => {
       if (options.value.maxFileSize < file.size) {
         file.progress = undefined;
-        file.errorMessage = t("file_upload_error.INVALID_SIZE", { maxSize: options.value.maxFileSize });
+        file.errorMessage = t("file_error.INVALID_SIZE", { maxSize: options.value.maxFileSize });
         file.status = "error";
       }
     });
@@ -90,7 +90,7 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
 
       fileToRemove.status = succeeded ? "removed" : "error";
       if (!succeeded) {
-        fileToRemove.errorMessage = t("file_upload_error.CANNOT_DELETE");
+        fileToRemove.errorMessage = t("file_error.CANNOT_DELETE");
       }
     });
 
