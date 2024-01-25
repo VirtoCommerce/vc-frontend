@@ -46,6 +46,7 @@ interface IProps {
   truncate?: boolean;
   nowrap?: boolean;
   tag?: string;
+  clickable?: boolean;
 }
 
 defineOptions({
@@ -57,6 +58,7 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
+  clickable: true,
 });
 
 const currentElement = ref<HTMLElement>();
@@ -86,7 +88,11 @@ const innerTag = computed(() => {
     return "a";
   }
 
-  return "button";
+  if (props.clickable) {
+    return "button";
+  }
+
+  return "span";
 });
 
 const attrs = computed(() => {
@@ -164,13 +170,13 @@ onMounted(() => {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
+        &#{$active} {
+          @apply bg-[--color-#{$color}-100];
+        }
+
         &:hover,
         &:focus {
           @apply bg-[--color-#{$color}-50] outline-none;
-        }
-
-        &#{$active} {
-          @apply bg-[--color-#{$color}-100];
         }
       }
     }

@@ -11,7 +11,7 @@
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="address"
             :disabled="disabled"
-            class="min-h-[4.625rem] px-3 py-1.5"
+            class="min-h-[4.5rem] px-3 py-1.5"
             @change="$emit('change:address')"
           />
         </div>
@@ -28,25 +28,26 @@
         required
       >
         <template #placeholder>
-          <VcSelectItem>
-            <VcSelectItemImage src="/static/icons/placeholders/select-shipping.svg" class="bg-gray-100/80" />
-            <VcSelectItemText>
-              {{ $t("common.placeholders.select_delivery_method") }}
-            </VcSelectItemText>
-          </VcSelectItem>
+          <div class="flex items-center gap-3 p-3 text-sm">
+            <VcImage
+              class="h-12 w-12 rounded-sm bg-[--color-neutral-100]"
+              src="/static/icons/placeholders/select-shipping.svg"
+            />
+
+            {{ $t("common.placeholders.select_delivery_method") }}
+          </div>
         </template>
 
         <template #selected="{ item }">
-          <VcSelectItem>
-            <VcSelectItemImage :src="item.logoUrl" />
-            <VcSelectItemText>
-              {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
-            </VcSelectItemText>
-          </VcSelectItem>
+          <div class="flex items-center gap-3 p-3 text-sm">
+            <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+
+            {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+          </div>
         </template>
 
         <template #item="{ item }">
-          <VcImage class="h-8 w-8" :src="item.logoUrl" />
+          <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
 
           {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
         </template>

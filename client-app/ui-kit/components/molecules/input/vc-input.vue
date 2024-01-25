@@ -41,6 +41,12 @@
         class="vc-input__input"
       />
 
+      <div v-if="clearable && inputValue" class="vc-input__decorator">
+        <button type="button" tabindex="-1" class="vc-input__clear" @click.stop="clear">
+          <VcIcon name="delete-mini" :size="16" />
+        </button>
+      </div>
+
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
         <button
           :disabled="disabled"
@@ -97,6 +103,7 @@ export interface IProps<T> {
   truncate?: boolean;
   type?: "text" | "password" | "number" | "email";
   size?: "sm" | "md" | "auto";
+  clearable?: boolean;
 }
 
 defineOptions({
@@ -142,6 +149,10 @@ const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ?
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
   inputType.value = isPasswordVisible.value ? "text" : "password";
+}
+
+function clear() {
+  emit("update:modelValue", undefined);
 }
 
 watchEffect(() => {
@@ -290,6 +301,10 @@ watchEffect(() => {
     #{$error} & {
       @apply text-[color:var(--color-danger)];
     }
+  }
+
+  &__clear {
+    @apply flex items-center p-3 text-[--color-primary-500];
   }
 
   &__bg {

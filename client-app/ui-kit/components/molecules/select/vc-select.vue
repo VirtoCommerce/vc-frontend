@@ -3,11 +3,11 @@
     :id="componentId"
     :class="[
       'vc-select',
-      `vc-select--size--${size}`,
       {
         'vc-select--readonly': readonly,
         'vc-select--disabled': disabled,
         'vc-select--error': error,
+        'vc-select--autocomplete': autocomplete,
       },
     ]"
   >
@@ -15,61 +15,47 @@
       {{ label }}
     </VcLabel>
 
-    <VcDropdownMenu placement="bottom" width="100%" :disabled="!enabled">
-      <template #trigger="{ opened }">
+    <VcDropdownMenu placement="bottom" width="100%" :disabled="!enabled" @toggle="toggle">
+      <template #trigger="{ opened, open }">
         <div
+          v-if="$slots.selected || $slots.placeholder"
+          tabindex="0"
           role="button"
-          :class="[
-            'vc-select__button',
-            {
-              'vc-select__button--opened': opened,
-            },
-          ]"
-          :disabled="disabled"
+          class="vc-select__button"
+          @keydown.down.prevent="next(-1)"
         >
-          <template v-if="!autocomplete">
-            <span class="vc-select__button-content">
-              <slot v-if="selected" name="selected" v-bind="{ item: selected, error }">
-                <VcSelectItem>
-                  <VcSelectItemText :error="error">
-                    {{ selectedText }}
-                  </VcSelectItemText>
-                </VcSelectItem>
-              </slot>
+          <div class="vc-select__button-content">
+            <slot v-if="selected" name="selected" v-bind="{ item: selected, error }" />
 
-              <slot v-else-if="$slots.placeholder || placeholder" name="placeholder" v-bind="{ error }">
-                <VcSelectItem>
-                  <VcSelectItemText placeholder :error="error">
-                    {{ placeholder }}
-                  </VcSelectItemText>
-                </VcSelectItem>
-              </slot>
-            </span>
+            <slot v-else-if="!selected && $slots.placeholder" name="placeholder" v-bind="{ error }" />
+          </div>
 
+          <VcIcon class="vc-select__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
+        </div>
+
+        <VcInput
+          v-else
+          v-model="search"
+          class="vc-select__input"
+          :required="required"
+          :size="size"
+          :placeholder="placeholderText"
+          :disabled="disabled"
+          :readonly="readonly || !autocomplete"
+          :error="error"
+          :clearable="clearable"
+          truncate
+          @keydown.down.prevent="next(-1)"
+          @keyup.stop
+          @focus="!opened && open()"
+          @click.stop="!opened && open()"
+          @input="onFilter"
+          @update:model-value="clear"
+        >
+          <template #append>
             <VcIcon class="vc-select__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
           </template>
-
-          <VcInput
-            v-else
-            v-model="search"
-            class="vc-select__input"
-            :required="required"
-            :size="size"
-            :placeholder="selectedText || placeholder"
-            :disabled="disabled"
-            :readonly="readonly"
-            :error="error"
-            truncate
-            @keydown.down.prevent="next(-1)"
-            @keyup.stop
-            @input="onFilter"
-            @click="opened && $event.stopPropagation()"
-          >
-            <template #append>
-              <VcIcon class="vc-select__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
-            </template>
-          </VcInput>
-        </div>
+        </VcInput>
       </template>
 
       <template v-if="enabled" #content="{ close }">
@@ -79,12 +65,8 @@
           :active="isActiveItem(item)"
           :aria-selected="isActiveItem(item)"
           role="option"
-          :size="itemSize"
+          size="md"
           @click="
-            select(item);
-            !multiple && close();
-          "
-          @keyup.enter="
             select(item);
             !multiple && close();
           "
@@ -115,17 +97,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { union, lowerCase, isEqual } from "lodash";
 import { computed, ref } from "vue";
 import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {
+  modelValue?: object | string | Array<object | string>;
   label?: string;
   required?: boolean;
   disabled?: boolean;
   readonly?: boolean;
-  modelValue?: object | string | Array<object | string>;
   items: any[];
   size?: "sm" | "md" | "auto";
   itemSize?: "sm" | "md" | "lg";
@@ -138,6 +119,7 @@ interface IProps {
   autocomplete?: boolean;
   singleLineMessage?: boolean;
   multiple?: boolean;
+  clearable?: boolean;
 }
 
 interface IEmits {
@@ -153,6 +135,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const componentId = useComponentId("select");
+const isShown = ref(false);
 const filterValue = ref("");
 const filtering = ref<boolean>(false);
 
@@ -169,6 +152,13 @@ function isActiveItem(item: any) {
   return props.modelValue.some((selectedItem) => isEqual(getItemValue(selectedItem), itemValue));
 }
 
+const placeholderText = computed(() => {
+  if (Array.isArray(props.modelValue) && props.modelValue.length) {
+    return `${props.modelValue.length} items selected`;
+  }
+
+  return selectedText.value ?? props.placeholder;
+});
 const enabled = computed<boolean>(() => !props.readonly && !props.disabled);
 const selected = computed(() => {
   return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
@@ -176,6 +166,15 @@ const selected = computed(() => {
 
 const search = computed({
   get() {
+    if (
+      ((!isShown.value && props.autocomplete) || !props.autocomplete) &&
+      props.multiple &&
+      Array.isArray(props.modelValue) &&
+      props.modelValue.length
+    ) {
+      return `${props.modelValue.length} items selected`;
+    }
+
     if (!filtering.value) {
       return selectedText.value;
     }
@@ -213,8 +212,8 @@ function select(item?: any) {
     return;
   }
 
-  if (props.multiple) {
-    let newValues = Array.isArray(props.modelValue) ? [...props.modelValue] : [];
+  if (props.multiple && Array.isArray(props.modelValue)) {
+    let newValues = [...props.modelValue];
 
     const existingIndex = newValues.findIndex((existingItem) =>
       isEqual(getItemValue(existingItem), getItemValue(item)),
@@ -229,19 +228,18 @@ function select(item?: any) {
     emit("update:modelValue", newValues);
     emit("change", newValues);
   } else {
+    filtering.value = false;
     emit("update:modelValue", item);
     emit("change", item);
   }
 }
 
-function getItemElements() {
+function getItemsElements() {
   return Array.from(document.querySelectorAll(`#${componentId} [role='option'] [tabindex='0']`));
 }
 
 function next(index: number) {
-  const elements = getItemElements();
-
-  console.log("next", index);
+  const elements = getItemsElements();
 
   if (elements?.length) {
     const focusItemIndex = index === elements?.length - 1 ? 0 : index + 1;
@@ -254,7 +252,7 @@ function next(index: number) {
 }
 
 function prev(index: number) {
-  const elements = getItemElements();
+  const elements = getItemsElements();
 
   if (elements?.length) {
     const focusItemIndex = index === 0 ? elements?.length - 1 : index - 1;
@@ -265,34 +263,40 @@ function prev(index: number) {
     }
   }
 }
+
+function toggle(value: boolean) {
+  isShown.value = value;
+
+  if (!isShown.value) {
+    filterValue.value = "";
+  }
+}
+
+function clear(value: any) {
+  if (value === undefined) {
+    if (
+      ((!isShown.value && props.autocomplete) || !props.autocomplete) &&
+      props.multiple &&
+      Array.isArray(props.modelValue) &&
+      props.modelValue.length
+    ) {
+      emit("update:modelValue", []);
+    } else if (!props.multiple) {
+      emit("update:modelValue", undefined);
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">
 .vc-select {
-  $sizeSm: "";
-  $sizeMd: "";
-  $sizeAuto: "";
-
   $disabled: "";
   $readonly: "";
+  $autocomplete: "";
   $opened: "";
   $error: "";
 
   @apply flex flex-col;
-
-  &--size {
-    &--sm {
-      $sizeSm: &;
-    }
-
-    &--md {
-      $sizeMd: &;
-    }
-
-    &--auto {
-      $sizeAuto: &;
-    }
-  }
 
   &--disabled {
     $disabled: &;
@@ -300,6 +304,10 @@ function prev(index: number) {
 
   &--readonly {
     $readonly: &;
+  }
+
+  &--autocomplete {
+    $autocomplete: &;
   }
 
   &--error {
@@ -313,16 +321,9 @@ function prev(index: number) {
   &__button {
     @apply relative flex items-center w-full rounded border bg-white appearance-none text-left;
 
-    #{$sizeSm} & {
-      @apply h-9 text-sm;
-    }
-
-    #{$sizeMd} & {
-      @apply h-11 text-sm;
-    }
-
-    #{$sizeAuto} & {
-      @apply h-auto text-sm;
+    #{$disabled} &,
+    &:disabled {
+      @apply bg-gray-50 cursor-not-allowed pointer-events-none;
     }
 
     #{$disabled} &,
@@ -346,10 +347,6 @@ function prev(index: number) {
 
   &__button-content {
     @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
-
-    #{$sizeAuto} & {
-      @apply overflow-y-visible;
-    }
 
     #{$error} & {
       @apply text-[color:var(--color-danger)];
@@ -378,23 +375,6 @@ function prev(index: number) {
 
   &__list {
     @apply overflow-auto max-h-60;
-  }
-
-  &__item {
-    @apply w-full cursor-pointer;
-
-    &:hover {
-      @apply bg-gray-100;
-    }
-
-    &:focus {
-      @apply outline outline-offset-[-3px] outline-[3px] outline-[color:var(--color-primary-light)];
-    }
-
-    &--active,
-    &--active:hover {
-      @apply bg-[color:var(--color-primary-light)] cursor-default;
-    }
   }
 }
 </style>

@@ -13,6 +13,7 @@
           class="mb-4"
           required
           :maxlength="64"
+          clearable
         />
 
         <VcInput
@@ -24,6 +25,7 @@
           class="mb-4"
           required
           :maxlength="64"
+          clearable
         />
 
         <VcInput
@@ -69,7 +71,7 @@
 
         <div class="flex flex-col xl:flex-row xl:flex-wrap">
           <VcSelect
-            v-model="country"
+            v-model="_countries"
             text-field="name"
             :message="errors.countryCode"
             :error="!!errors.countryCode"
@@ -79,7 +81,7 @@
             :placeholder="$t('common.placeholders.select_country')"
             class="mb-4 w-full xl:w-7/12"
             required
-            autocomplete
+            clearable
           />
 
           <VcInput
@@ -219,6 +221,8 @@ const slotsData = computed(() => ({
   pending: meta.value.pending,
   touched: meta.value.touched,
 }));
+
+const _countries = ref([]);
 
 const emailRules = computed(() => {
   let rules = yupString().max(64).email().nullable();

@@ -31,7 +31,7 @@ export default {
 const Template: StoryFn<typeof VcSelect> = (args) => ({
   components: { VcSelect },
   setup: () => ({ args }),
-  template: '<VcSelect v-bind="args" class="mb-32" />',
+  template: `<VcSelect v-bind="args" class="mb-32" />`,
 });
 
 export const Basic = Template.bind({});
@@ -50,28 +50,24 @@ Common.args = {
 export const Required = Template.bind({});
 Required.args = {
   ...Common.args,
-  modelValue: "Belgium",
   required: true,
 };
 
 export const Readonly = Template.bind({});
 Readonly.args = {
   ...Common.args,
-  modelValue: "Belgium",
   readonly: true,
 };
 
 export const Disabled = Template.bind({});
 Disabled.args = {
   ...Common.args,
-  modelValue: "Belgium",
   disabled: true,
 };
 
 export const ErrorState = Template.bind({});
 ErrorState.args = {
   ...Required.args,
-  modelValue: "Belgium",
   error: true,
   message: "Error message",
 };
@@ -79,7 +75,6 @@ ErrorState.args = {
 export const Autocomplete = Template.bind({});
 Autocomplete.args = {
   ...Required.args,
-  modelValue: "",
   placeholder: "Search item",
   autocomplete: true,
 };
@@ -87,7 +82,6 @@ Autocomplete.args = {
 export const MultipleSelect = Template.bind({});
 MultipleSelect.args = {
   ...Required.args,
-  modelValue: ["Belgium", "India"],
-  placeholder: "Select multiple",
+  placeholder: "Select multiple items",
   multiple: true,
 };
