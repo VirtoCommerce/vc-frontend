@@ -1,23 +1,20 @@
 <template>
-  <VcPopup :title="$t('shared.cart.clear_cart_modal.title')">
+  <VcPopup :title="$t('shared.cart.clear_cart_modal.title')" modal-width="sm:max-w-[30rem]">
     <template #actions="{ close }">
-      <div class="mx-auto flex space-x-5">
-        <VcButton
-          class="mx-auto"
-          color="secondary"
-          variant="outline"
-          @click="
-            $emit('result');
-            close();
-          "
-        >
-          {{ $t("common.buttons.yes") }}
-        </VcButton>
+      <VcButton
+        color="secondary"
+        variant="outline"
+        @click="
+          $emit('result');
+          close();
+        "
+      >
+        {{ $t("common.buttons.yes") }}
+      </VcButton>
 
-        <VcButton class="mx-auto" @click="close()">
-          {{ $t("common.buttons.no") }}
-        </VcButton>
-      </div>
+      <VcButton class="ms-auto" @click="close()">
+        {{ $t("common.buttons.no") }}
+      </VcButton>
     </template>
 
     <div class="flex items-center justify-center gap-4 px-5 py-10">

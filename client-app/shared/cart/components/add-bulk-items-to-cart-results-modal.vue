@@ -86,25 +86,22 @@
     </div>
 
     <template #actions="{ close }">
-      <div class="flex w-full flex-wrap gap-2">
-        <VcButton :to="{ name: 'Cart' }" class="w-full sm:me-auto sm:w-36" @click="close()">
-          {{ $t("common.buttons.view_cart") }}
-        </VcButton>
+      <VcButton :to="{ name: 'Cart' }" class="max-sm:!min-w-full sm:me-auto" @click="close()">
+        {{ $t("common.buttons.view_cart") }}
+      </VcButton>
 
-        <VcButton class="w-full sm:w-36" variant="outline" @click="print()">
-          {{ $t("common.buttons.print") }}
-        </VcButton>
+      <VcButton variant="outline" @click="print()">
+        {{ $t("common.buttons.print") }}
+      </VcButton>
 
-        <VcButton
-          class="w-full sm:w-36"
-          @click="
-            close();
-            $emit('confirm');
-          "
-        >
-          {{ $t("common.buttons.ok") }}
-        </VcButton>
-      </div>
+      <VcButton
+        @click="
+          close();
+          $emit('confirm');
+        "
+      >
+        {{ $t("common.buttons.ok") }}
+      </VcButton>
     </template>
   </VcPopup>
 </template>

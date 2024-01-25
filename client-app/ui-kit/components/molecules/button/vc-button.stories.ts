@@ -132,6 +132,11 @@ Loading.args = {
   loading: true,
 };
 
+export const MinWidth = Template.bind({});
+MinWidth.args = {
+  minWidth: "12rem",
+};
+
 export const Truncate: StoryFn<typeof VcButton> = (args) => ({
   components: { VcButton },
   setup: () => ({ args }),
