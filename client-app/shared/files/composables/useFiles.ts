@@ -35,11 +35,17 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
   function validateFiles(): void {
     const filesToValidate = files.value.filter((fileInfo) => fileInfo.status === "new");
 
-    filesToValidate.forEach((file) => {
-      if (options.value.maxFileSize < file.size) {
-        file.progress = undefined;
-        file.errorMessage = t("file_error.INVALID_SIZE", { maxSize: options.value.maxFileSize });
-        file.status = "error";
+    filesToValidate.forEach((fileToValidate) => {
+      if (files.value.some((file) => file.name === fileToValidate.name)) {
+        fileToValidate.progress = undefined;
+        fileToValidate.errorMessage = t("file_error.ALREADY_EXISTS");
+        fileToValidate.status = "error";
+      }
+
+      if (options.value.maxFileSize < fileToValidate.size) {
+        fileToValidate.progress = undefined;
+        fileToValidate.errorMessage = t("file_error.INVALID_SIZE", { maxSize: options.value.maxFileSize });
+        fileToValidate.status = "error";
       }
     });
   }
@@ -80,7 +86,10 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
   }
 
   async function removeFiles(payload: FileType[]) {
-    const filesToRemove = files.value.filter((file) => payload.some((payloadFile) => payloadFile.name === file.name));
+    const filesToRemove = files.value.filter((file) =>
+      // Because of possible duplicates
+      payload.some((payloadFile) => payloadFile.name === file.name && payloadFile.status === file.status),
+    );
 
     await asyncForEach(filesToRemove, async (fileToRemove) => {
       let succeeded: boolean | undefined = true;

@@ -1386,11 +1386,12 @@
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
   },
   "file_error": {
+    "ALREADY_EXISTS": "Cannot upload file with the same name",
     "INVALID_CONTENT": "Cannot read file",
     "EXCEPTION": "Internal server error",
     "INVALID_SCOPE": "Unknown scope '{0}'",
     "INVALID_EXTENSION": "Allowed file extensions: {0}",
     "INVALID_SIZE": "Maximum allowed file size: {0}",
-    "CANNOT_DELETE": "Can not delete file"
+    "CANNOT_DELETE": "Cannot delete file"
   }
 }
