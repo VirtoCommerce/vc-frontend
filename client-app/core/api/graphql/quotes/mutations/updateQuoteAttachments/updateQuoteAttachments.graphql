@@ -1,5 +1,0 @@
-mutation UpdateQuoteAttachments($command: UpdateQuoteAttachmentsCommandType!) {
-  updateQuoteAttachments(command: $command) {
-    id
-  }
-}
