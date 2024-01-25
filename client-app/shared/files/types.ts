@@ -4,7 +4,7 @@ export interface IFileOptions {
   allowedExtensions: string[];
 }
 
-export interface IFile {
+export interface ISuccessfulFileUpload {
   id: string;
   scope: string;
   name: string;
@@ -13,9 +13,6 @@ export interface IFile {
   url: string;
   ownerId: string;
   ownerType: string;
-}
-
-export interface ISuccessfulFileUpload extends IFile {
   succeeded: true;
 }
 
