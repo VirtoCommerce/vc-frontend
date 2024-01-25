@@ -13,7 +13,7 @@
     <span class="vc-file__details">
       <span class="vc-file__row">
         <a
-          v-if="file.status === 'success'"
+          v-if="file.status === 'success' || file.status === 'existing'"
           class="text-[color:var(--color-link)] [word-break:break-word]"
           :href="file.url"
           target="_blank"
