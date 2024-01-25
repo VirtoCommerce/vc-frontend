@@ -319,10 +319,6 @@ const attrs = computed(() => {
     &[class*="--no-background--"] {
       @apply text-[--color-neutral-400];
     }
-
-    &[class*="--solid-lightest--"] {
-      @apply bg-[--color-additional-50] text-[--color-neutral-400];
-    }
   }
 
   &__content {
