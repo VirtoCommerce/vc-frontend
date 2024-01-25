@@ -100,8 +100,8 @@ const icon = computed(() => {
 
   if (props.file.status === "error") {
     fileName = "error";
-  } else if (Object.values(ContentType).includes(contentType as ContentType)) {
-    fileName = contentType || "file";
+  } else if (Object.keys(ContentType).includes(contentType as ContentType)) {
+    fileName = ContentType[contentType as ContentType] || "file";
   } else {
     fileName = "file";
   }
