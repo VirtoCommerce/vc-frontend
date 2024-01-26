@@ -5961,6 +5961,8 @@ export type InitializePaymentMutationVariables = Exact<{
 
 export type InitializePaymentMutation = { initializePayment?: { isSuccess: boolean, errorMessage?: string, actionHtmlForm?: string, actionRedirectUrl?: string, paymentActionType?: string, publicParameters?: Array<{ key: string, value?: string }> } };
 
+export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
+
 export type ChangeQuoteCommentMutationVariables = Exact<{
   command: ChangeQuoteCommentCommandType;
 }>;
@@ -5974,6 +5976,13 @@ export type ChangeQuoteItemQuantityMutationVariables = Exact<{
 
 
 export type ChangeQuoteItemQuantityMutation = { changeQuoteItemQuantity?: { id: string } };
+
+export type CreateQuoteMutationVariables = Exact<{
+  command: CreateQuoteCommandType;
+}>;
+
+
+export type CreateQuoteMutation = { createQuote?: { id: string } };
 
 export type CreateQuoteFromCartMutationVariables = Exact<{
   command: CreateQuoteFromCartCommandType;
@@ -6003,6 +6012,13 @@ export type UpdateQuoteAddressesMutationVariables = Exact<{
 
 export type UpdateQuoteAddressesMutation = { updateQuoteAddresses?: { id: string } };
 
+export type UpdateQuoteAttachmentsMutationVariables = Exact<{
+  command: UpdateQuoteAttachmentsCommandType;
+}>;
+
+
+export type UpdateQuoteAttachmentsMutation = { updateQuoteAttachments?: { id: string } };
+
 export type GetQuoteQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
@@ -6012,7 +6028,7 @@ export type GetQuoteQueryVariables = Exact<{
 }>;
 
 
-export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
+export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
 
 export type GetQuotesQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;

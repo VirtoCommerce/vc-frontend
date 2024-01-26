@@ -1,7 +1,22 @@
 <template>
   <div>
     <!-- Title block -->
-    <h2 v-t="'pages.account.quotes.title'" class="mx-5 text-3xl font-bold uppercase text-gray-800 lg:mx-0" />
+    <div class="mx-5 flex items-center justify-between lg:mx-0">
+      <h2 class="text-3xl font-bold uppercase text-gray-800">
+        {{ $t("pages.account.quotes.title") }}
+      </h2>
+
+      <VcButton
+        v-show="!fetching"
+        :loading="isAddingQuote"
+        size="sm"
+        variant="outline"
+        prepend-icon="plus"
+        @click="createQuote"
+      >
+        <span class="sm:inline">{{ $t("pages.account.quotes.create") }}</span>
+      </VcButton>
+    </div>
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
@@ -175,7 +190,7 @@ usePageHead({
   title: t("pages.account.quotes.meta.title"),
 });
 
-const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
+const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes, createEmptyQuote } = useUserQuotes();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -243,6 +258,23 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await fetchQuotes();
 }
 
+const isAddingQuote = ref(false);
+
+async function createQuote() {
+  isAddingQuote.value = true;
+
+  const quoteId = await createEmptyQuote();
+
+  if (quoteId) {
+    await router.push({
+      name: "EditQuote",
+      params: { quoteId },
+    });
+  }
+
+  isAddingQuote.value = false;
+}
+
 watch(
   () => sortQueryParam.value,
   async (value: string) => {
@@ -253,5 +285,5 @@ watch(
   },
 );
 
-fetchQuotes();
+void fetchQuotes();
 </script>

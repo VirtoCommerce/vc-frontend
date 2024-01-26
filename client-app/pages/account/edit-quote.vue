@@ -10,16 +10,20 @@
 
     <div class="-mx-4.5 space-y-5 lg:mx-0 lg:space-y-6">
       <!-- Quote comment -->
-      <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
+      <VcWidget :title="$t('pages.account.quote_details.comment')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
-          :label="$t('pages.account.quote_details.remarks_field_label')"
+          :label="$t('pages.account.quote_details.comments_field_label')"
           :disabled="fetching"
           :max-length="1000"
           :rows="4"
           no-resize
           counter
         />
+      </VcWidget>
+
+      <VcWidget :title="$t('pages.account.quote_details.files')" prepend-icon="document-add" size="lg">
+        <Files v-model:files="attachments" scope="quote-attachments" />
       </VcWidget>
 
       <!-- Quote products -->
@@ -115,6 +119,7 @@ import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities"
 import { QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
+import { Files } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
@@ -146,6 +151,7 @@ const {
   quote,
   shippingAddress,
   billingAddress,
+  attachments,
   clearQuote,
   setQuoteAddress,
   fetchQuote,
@@ -154,6 +160,7 @@ const {
   updateAddresses,
   removeItem,
   submitQuote,
+  updateAttachments,
 } = useUserQuote();
 const notifications = useNotifications();
 
@@ -182,7 +189,10 @@ const quoteChanged = computed<boolean>(
   () =>
     !isEqual(originalQuote.value, quote.value) ||
     originalQuote.value?.comment !== comment.value ||
-    (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value),
+    (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
+    attachments.value.some((attachment) => attachment.status === "success") ||
+    attachments.value.filter((attachment) => attachment.status === "existing").length !==
+      originalQuote.value?.attachments.length,
 );
 const quoteItemsValid = computed<boolean>(
   () =>
@@ -192,11 +202,15 @@ const quoteItemsValid = computed<boolean>(
       (item: QuoteItemType) => !!item.selectedTierPrice?.quantity && item.selectedTierPrice.quantity > 0,
     ),
 );
+const quoteAttachmentsValid = computed(() => {
+  return attachments.value.every((attachment) => attachment.status === "existing");
+});
 const quoteValid = computed<boolean>(
   () =>
     !!shippingAddress.value &&
     (!!billingAddress.value || billingAddressEqualsShipping.value) &&
-    (!!comment.value || quoteItemsValid.value),
+    (!!comment.value || quoteItemsValid.value) &&
+    quoteAttachmentsValid.value,
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
@@ -294,6 +308,13 @@ function openSelectAddressModal(addressType: AddressType): void {
 
 // Due API concurrency errors each query will be sended consecutively
 async function saveChanges(): Promise<void> {
+  const updatedAttachments = attachments.value.filter(
+    (attachment) => attachment.status === "success" || attachment.status === "existing",
+  ) as (IUploadedFile | IExistingFile)[];
+  if (updatedAttachments.length) {
+    await updateAttachments(quote.value!.id, updatedAttachments);
+  }
+
   if (originalQuote.value?.comment !== comment.value) {
     await changeComment(quote.value!.id, comment.value!);
   }
