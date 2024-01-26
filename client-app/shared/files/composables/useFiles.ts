@@ -29,8 +29,8 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
     }
   }
 
-  function addFiles(payload: INewFile[]): void {
-    files.value.push(...payload);
+  function addFiles(filesToAdd: INewFile[]): void {
+    files.value.push(...filesToAdd);
   }
 
   function validateFiles(): void {
@@ -45,8 +45,8 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
         setError(fileToValidate, getErrorMessage("INVALID_SIZE", options.value.maxFileSize));
       }
 
-      const extension = fileToValidate.name.split(".").pop()!;
-      if (options.value.allowedExtensions.length && !options.value.allowedExtensions.includes(extension)) {
+      const extension = /(\.[^.]+)?$/.exec(fileToValidate.name)?.[1];
+      if (options.value.allowedExtensions.length && extension && !options.value.allowedExtensions.includes(extension)) {
         setError(fileToValidate, getErrorMessage("INVALID_EXTENSION", options.value.allowedExtensions));
       }
     });
@@ -82,12 +82,7 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
     });
   }
 
-  async function removeFiles(payload: FileType[]) {
-    const filesToRemove = files.value.filter((file) =>
-      // Because of possible duplicates
-      payload.some((payloadFile) => payloadFile.name === file.name && payloadFile.status === file.status),
-    );
-
+  async function removeFiles(filesToRemove: FileType[]) {
     await asyncForEach(filesToRemove, async (fileToRemove) => {
       let succeeded: boolean | undefined = true;
       if (fileToRemove.status === "success") {
