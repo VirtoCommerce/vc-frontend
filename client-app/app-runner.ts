@@ -1,6 +1,5 @@
 import { createHead } from "@unhead/vue";
 import { createApp } from "vue";
-import VueSecureHTML from "vue-html-secure";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -79,7 +78,6 @@ export default async () => {
   app.use(head);
   app.use(i18n);
   app.use(router);
-  app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);
