@@ -1,5 +1,6 @@
 import { vOnClickOutside } from "@vueuse/components";
 import { vMaska } from "maska";
+import VueSecureHTML from "vue-html-secure";
 import * as UIKitComponents from "@/ui-kit/components";
 import type { MaskaDetail } from "maska";
 import type { App, FunctionDirective, Plugin } from "vue";
@@ -21,6 +22,8 @@ export const uiKit: Plugin = {
     // Components
     // Register UI Kit components globally
     Object.entries(UIKitComponents).forEach(([name, component]) => app.component(name, component));
+
+    app.use(VueSecureHTML);
   },
 };
 

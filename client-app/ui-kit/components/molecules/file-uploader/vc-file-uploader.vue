@@ -67,14 +67,6 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getFileSize } from "@/ui-kit/utilities";
 
-const emit = defineEmits<IEmits>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  view: "horizontal",
-});
-
-const { t, n } = useI18n();
-
 interface IProps {
   maxFileCount: number;
   maxFileSize: number;
@@ -87,6 +79,14 @@ interface IEmits {
   (event: "addFiles", items: INewFile[]): void;
   (event: "removeFiles", items: FileType[]): void;
 }
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  view: "horizontal",
+});
+
+const { t, n } = useI18n();
 
 const fileInputRef = ref<HTMLInputElement>();
 
