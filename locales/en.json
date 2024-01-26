@@ -1333,10 +1333,14 @@
       "previous": "Previous",
       "next": "Next"
     },
+    "file": {
+      "uploading": "Uploading...",
+      "uploaded": "Upload completed"
+    },
     "file_uploader": {
       "drag_and_drop": "Drag and drop file here or",
       "browse": "Browse your files",
-      "requirements": "The files available for upload are in {format} formats, and their size should not exceed {size}.",
+      "requirements": "The files available for upload are in {format} formats. Each file should not exceed {size}.",
       "any_format": "any",
       "errors": {
         "fix_to_continue": "Fix file upload errors to continue.",
