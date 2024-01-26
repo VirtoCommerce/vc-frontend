@@ -1334,14 +1334,13 @@
       "next": "Next"
     },
     "file_uploader": {
-      "maximum": "You can add maximum 1 file | You can add maximum {n} files",
       "drag_and_drop": "Drag and drop file here or",
       "browse": "Browse your files",
       "requirements": "The files available for upload are in {format} formats, and their size should not exceed {size}.",
       "any_format": "any",
       "errors": {
-        "alert": "Fix file upload errors to continue.",
-        "over_size": "File size over limit."
+        "fix_to_continue": "Fix file upload errors to continue.",
+        "maximum_number_of_files": "You have uploaded the maximum number of files possible. Futher uploads are not possible."
       }
     }
   },

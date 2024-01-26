@@ -129,7 +129,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__row {
-    @apply flex gap-2;
+    @apply flex gap-2 justify-between;
   }
 
   &__name {

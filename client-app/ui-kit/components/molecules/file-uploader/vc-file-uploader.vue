@@ -16,45 +16,49 @@
         </li>
       </ul>
     </div>
-    <div class="flex grow flex-col gap-2">
-      <button
-        type="button"
-        class="vc-file-uploader__drop-container"
-        :class="{ 'vc-file-uploader__drop-container--disabled': isMaxFileQuantityReached }"
-        @dragover.prevent
-        @dragenter.prevent
-        @drop="onFileDrop"
-        @click="openFilePicker"
-      >
-        <span class="vc-file-uploader__drop-area">
-          <VcIcon class="vc-file-uploader__drop-icon" name="cloud-upload" size="lg" />
 
-          <span v-if="isMaxFileQuantityReached" class="vc-file-uploader__desktop">{{
-            $t("ui_kit.file_uploader.maximum", maxFileCount)
-          }}</span>
-          <template v-else>
-            <span class="vc-file-uploader__desktop">{{ $t("ui_kit.file_uploader.drag_and_drop") }}</span>
-            <VcButton color="secondary" size="xs">{{ $t("ui_kit.file_uploader.browse") }}</VcButton>
-          </template>
-        </span>
+    <button
+      type="button"
+      class="vc-file-uploader__drop-container"
+      :class="{ 'vc-file-uploader__drop-container--disabled': isMaxFileQuantityReached }"
+      @dragover.prevent
+      @dragenter.prevent
+      @drop="onFileDrop"
+      @click="openFilePicker"
+    >
+      <span class="vc-file-uploader__drop-area">
+        <VcIcon class="vc-file-uploader__drop-icon" name="cloud-upload" size="lg" />
+        <span class="vc-file-uploader__desktop">{{ $t("ui_kit.file_uploader.drag_and_drop") }}</span>
+        <VcButton color="secondary" size="xs">{{ $t("ui_kit.file_uploader.browse") }}</VcButton>
+      </span>
 
-        <span
-          v-html-safe="$t('ui_kit.file_uploader.requirements', { format: formatsHint, size: fileSizeHint })"
-          class="vc-file-uploader__description"
-        />
-      </button>
+      <span
+        v-html-safe="$t('ui_kit.file_uploader.requirements', { format: formatsHint, size: fileSizeHint })"
+        class="vc-file-uploader__description"
+      />
+    </button>
 
-      <VcAlert
-        v-if="files?.filter((file) => !!file.errorMessage).length"
-        class="vc-file-uploader__alert"
-        color="danger"
-        variant="solid-light"
-        size="sm"
-        icon
-      >
-        {{ $t("ui_kit.file_uploader.errors.alert") }}
-      </VcAlert>
-    </div>
+    <VcAlert
+      v-if="isMaxFileQuantityReached"
+      class="vc-file-uploader__alert"
+      color="warning"
+      variant="solid-light"
+      size="sm"
+      icon
+    >
+      {{ $t("ui_kit.file_uploader.errors.maximum_number_of_files") }}
+    </VcAlert>
+
+    <VcAlert
+      v-if="files.some((file) => file.status === 'error')"
+      class="vc-file-uploader__alert"
+      color="danger"
+      variant="solid-light"
+      size="sm"
+      icon
+    >
+      {{ $t("ui_kit.file_uploader.errors.fix_to_continue") }}
+    </VcAlert>
   </div>
 </template>
 
@@ -158,7 +162,7 @@ function removeFiles(items: FileType[]) {
   $horizontal: &;
   $vertical: &;
 
-  @apply flex flex-col gap-x-6 gap-y-4;
+  @apply flex flex-col gap-x-6 gap-y-4 flex-wrap;
 
   &--view {
     &--horizontal {
@@ -186,7 +190,7 @@ function removeFiles(items: FileType[]) {
     @apply px-3 py-4 border border-[--color-neutral-200] rounded;
 
     #{$horizontal} & {
-      @apply md:flex-1 md:shrink md:basis-1/2;
+      @apply md:flex-1 md:shrink;
     }
   }
 
