@@ -14,7 +14,7 @@
       <span class="vc-file__row">
         <a
           v-if="file.status === 'success' || file.status === 'existing'"
-          class="text-[color:var(--color-link)] [word-break:break-word]"
+          class="vc-file__link"
           :href="file.url"
           target="_blank"
         >
@@ -132,7 +132,12 @@ const fileSize = computed(() => getFileSize(props.file.size));
     @apply flex gap-2 justify-between;
   }
 
-  &__name {
+  &__link {
+    @apply text-[color:var(--color-link)];
+  }
+
+  &__name,
+  &__link {
     @apply grow line-clamp-2 break-words text-sm font-bold;
   }
 
