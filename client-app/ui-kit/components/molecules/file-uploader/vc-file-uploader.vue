@@ -20,7 +20,7 @@
     <button
       type="button"
       class="vc-file-uploader__drop-container"
-      :class="{ 'vc-file-uploader__drop-container--disabled': isMaxFileQuantityReached }"
+      :class="{ 'vc-file-uploader__drop-container--disabled': hasMaxFileCount }"
       @dragover.prevent
       @dragenter.prevent
       @drop="onFileDrop"
@@ -39,7 +39,7 @@
     </button>
 
     <VcAlert
-      v-if="isMaxFileQuantityReached"
+      v-if="hasMaxFileCountError"
       class="vc-file-uploader__alert"
       color="warning"
       variant="solid-light"
@@ -90,8 +90,14 @@ interface IEmits {
 
 const fileInputRef = ref<HTMLInputElement>();
 
-const isMaxFileQuantityReached = computed(() => {
-  return props.files && props.files?.length >= props.maxFileCount;
+const hasMaxFileCount = computed<boolean>(() => props.files.length >= props.maxFileCount);
+
+const _hasMaxFileCountError = ref<boolean>();
+const hasMaxFileCountError = computed<boolean | undefined>({
+  get: () => {
+    return _hasMaxFileCountError.value || hasMaxFileCount.value;
+  },
+  set: (value) => (_hasMaxFileCountError.value = value),
 });
 
 const formatsHint = computed(() => {
@@ -133,10 +139,14 @@ function onFileDrop(event: DragEvent) {
 }
 
 function onRemove(files: FileType[]) {
+  hasMaxFileCountError.value = undefined;
+
   removeFiles(files);
 }
 
 function addFiles(items: File[]) {
+  hasMaxFileCountError.value = props.files.length + items.length >= props.maxFileCount;
+
   emit(
     "addFiles",
     items.map((item) => {

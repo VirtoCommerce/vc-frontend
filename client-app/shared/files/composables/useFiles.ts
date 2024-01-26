@@ -29,8 +29,13 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
     }
   }
 
-  function addFiles(filesToAdd: INewFile[]): void {
+  function addFiles(filesToAdd: INewFile[]): boolean {
+    if (files.value.length + filesToAdd.length > options.value.maxFileCount) {
+      return false;
+    }
+
     files.value.push(...filesToAdd);
+    return true;
   }
 
   function validateFiles(): void {
