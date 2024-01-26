@@ -190,9 +190,10 @@ const quoteChanged = computed<boolean>(
     !isEqual(originalQuote.value, quote.value) ||
     originalQuote.value?.comment !== comment.value ||
     (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
-    attachments.value.some((attachment) => attachment.status === "success") ||
-    attachments.value.filter((attachment) => attachment.status === "existing").length !==
-      originalQuote.value?.attachments.length,
+    ((attachments.value.some((attachment) => attachment.status === "success") ||
+      attachments.value.filter((attachment) => attachment.status === "existing").length !==
+        originalQuote.value?.attachments.length) &&
+      quoteAttachmentsValid.value),
 );
 const quoteItemsValid = computed<boolean>(
   () =>
