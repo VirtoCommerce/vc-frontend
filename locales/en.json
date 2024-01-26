@@ -1332,6 +1332,16 @@
     "pagination": {
       "previous": "Previous",
       "next": "Next"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Drag and drop file here or",
+      "browse": "Browse your files",
+      "requirements": "The files available for upload are in {format} formats, and their size should not exceed {size}.",
+      "any_format": "any",
+      "errors": {
+        "fix_to_continue": "Fix file upload errors to continue.",
+        "maximum_number_of_files": "You have uploaded the maximum number of files possible. Futher uploads are not possible."
+      }
     }
   },
   "identity_error": {
@@ -1373,5 +1383,14 @@
     "LINE_ITEM_NOT_FOUND": "Line item not found.",
     "LINE_ITEM_IS_READ_ONLY": "Line item is read only.",
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
+  },
+  "file_error": {
+    "ALREADY_EXISTS": "Cannot upload file with the same name.",
+    "INVALID_CONTENT": "Cannot read file.",
+    "EXCEPTION": "Failure while uploading file. Please try again.",
+    "INVALID_SCOPE": "Unknown scope '{0}'",
+    "INVALID_EXTENSION": "File is not in one of allowed formats {0}.",
+    "INVALID_SIZE": "File size exceeds the allowed {0}.",
+    "CANNOT_DELETE": "Failure while deleting file."
   }
 }

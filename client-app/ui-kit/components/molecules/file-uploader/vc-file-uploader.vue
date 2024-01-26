@@ -1,0 +1,246 @@
+<template>
+  <div :class="['vc-file-uploader', `vc-file-uploader--view--${view}`]">
+    <input
+      ref="fileInputRef"
+      type="file"
+      class="vc-file-uploader__input"
+      :multiple="maxFileCount > 1"
+      :accept="allowedExtensions?.join(',')"
+      @input="onFileChange"
+    />
+
+    <div v-if="files?.length" class="vc-file-uploader__list-container">
+      <ul class="vc-file-uploader__list">
+        <li v-for="(file, index) in files" :key="index">
+          <VcFile :file="file" removable @remove="onRemove([file])" />
+        </li>
+      </ul>
+    </div>
+
+    <button
+      type="button"
+      class="vc-file-uploader__drop-container"
+      :class="{ 'vc-file-uploader__drop-container--disabled': isMaxFileQuantityReached }"
+      @dragover.prevent
+      @dragenter.prevent
+      @drop="onFileDrop"
+      @click="openFilePicker"
+    >
+      <span class="vc-file-uploader__drop-area">
+        <VcIcon class="vc-file-uploader__drop-icon" name="cloud-upload" size="lg" />
+        <span class="vc-file-uploader__desktop">{{ $t("ui_kit.file_uploader.drag_and_drop") }}</span>
+        <VcButton color="secondary" size="xs">{{ $t("ui_kit.file_uploader.browse") }}</VcButton>
+      </span>
+
+      <span
+        v-html-safe="$t('ui_kit.file_uploader.requirements', { format: formatsHint, size: fileSizeHint })"
+        class="vc-file-uploader__description"
+      />
+    </button>
+
+    <VcAlert
+      v-if="isMaxFileQuantityReached"
+      class="vc-file-uploader__alert"
+      color="warning"
+      variant="solid-light"
+      size="sm"
+      icon
+    >
+      {{ $t("ui_kit.file_uploader.errors.maximum_number_of_files") }}
+    </VcAlert>
+
+    <VcAlert
+      v-if="files.some((file) => file.status === 'error')"
+      class="vc-file-uploader__alert"
+      color="danger"
+      variant="solid-light"
+      size="sm"
+      icon
+    >
+      {{ $t("ui_kit.file_uploader.errors.fix_to_continue") }}
+    </VcAlert>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { getFileSize } from "@/ui-kit/utilities";
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  view: "horizontal",
+});
+
+const { t, n } = useI18n();
+
+interface IProps {
+  maxFileCount: number;
+  maxFileSize: number;
+  allowedExtensions: Readonly<string[]>;
+  view?: "horizontal" | "vertical";
+  files: FileType[];
+}
+
+interface IEmits {
+  (event: "addFiles", items: INewFile[]): void;
+  (event: "removeFiles", items: FileType[]): void;
+}
+
+const fileInputRef = ref<HTMLInputElement>();
+
+const isMaxFileQuantityReached = computed(() => {
+  return props.files && props.files?.length >= props.maxFileCount;
+});
+
+const formatsHint = computed(() => {
+  if (props.allowedExtensions?.length) {
+    return props.allowedExtensions.map((el) => el.replace(/^\./, "").toUpperCase()).join(", ");
+  }
+  return t("ui_kit.file_uploader.any_format");
+});
+
+const fileSizeHint = computed(() => {
+  const maxFileSize = getFileSize(props.maxFileSize);
+  return n(maxFileSize.value, {
+    key: "decimal",
+    notation: "compact",
+    style: "unit",
+    unit: maxFileSize.unit,
+    unitDisplay: "narrow",
+  });
+});
+
+function openFilePicker() {
+  fileInputRef.value?.click();
+}
+
+function onFileChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const fileList = input.files;
+  const files = Array.from(fileList!);
+  // Cleanup input value to allow reupload
+  input.value = "";
+  addFiles(files);
+}
+
+function onFileDrop(event: DragEvent) {
+  event.preventDefault();
+
+  const fileList = event.dataTransfer?.files;
+  addFiles(Array.from(fileList!));
+}
+
+function onRemove(files: FileType[]) {
+  removeFiles(files);
+}
+
+function addFiles(items: File[]) {
+  emit(
+    "addFiles",
+    items.map((item) => {
+      return {
+        name: item.name,
+        size: item.size,
+        contentType: item.type,
+        progress: 0,
+        status: "new",
+        file: item,
+      };
+    }),
+  );
+}
+
+function removeFiles(items: FileType[]) {
+  emit("removeFiles", items);
+}
+</script>
+
+<style lang="scss">
+.vc-file-uploader {
+  $horizontal: &;
+  $vertical: &;
+
+  @apply flex flex-col gap-x-6 gap-y-4 flex-wrap;
+
+  &--view {
+    &--horizontal {
+      $horizontal: &;
+
+      @media (min-width: theme("screens.md")) {
+        @apply flex-row items-start;
+      }
+    }
+
+    &--vertical {
+      $vertical: &;
+
+      @media (min-width: theme("screens.md")) {
+        @apply flex-col;
+      }
+    }
+  }
+
+  &__input {
+    @apply hidden;
+  }
+
+  &__list-container {
+    @apply px-3 py-4 border border-[--color-neutral-200] rounded;
+
+    #{$horizontal} & {
+      @apply md:flex-1 md:shrink;
+    }
+  }
+
+  &__list {
+    @apply space-y-4;
+  }
+
+  &__drop-container {
+    @apply flex flex-col gap-2.5;
+
+    &--disabled {
+      @apply opacity-40 pointer-events-none;
+    }
+
+    #{$horizontal} & {
+      @apply order-first md:order-last md:self-stretch md:flex-1 md:shrink;
+    }
+
+    #{$vertical} & {
+      @apply order-first;
+    }
+  }
+
+  &__drop-area {
+    @apply flex-1 flex flex-col justify-center items-center gap-2 w-full rounded border border-dashed border-[--color-secondary-200] p-5;
+    @apply bg-[--color-secondary-50] #{!important};
+  }
+
+  &__drop-icon {
+    @apply text-[--color-accent-500];
+  }
+
+  &__desktop {
+    @apply hidden;
+
+    @media (hover: hover) {
+      @apply block text-sm text-[--color-neutral-900];
+
+      & > span {
+        @apply text-[--color-accent-500] font-bold;
+      }
+    }
+  }
+
+  &__description {
+    @apply text-xs text-[--color-neutral-500] text-start;
+  }
+
+  &__alert {
+    @apply order-last w-full;
+  }
+}
+</style>

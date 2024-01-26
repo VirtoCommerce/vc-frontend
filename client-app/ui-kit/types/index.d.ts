@@ -1,3 +1,4 @@
+import type { fileSizeUnits } from "@/ui-kit/constants";
 import type { SwiperOptions } from "swiper";
 import type { Ref } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -51,4 +52,57 @@ declare global {
     panels: Ref<Record<string, boolean>>;
     toggle: (panelId: string) => void;
   };
+
+  type FileSizeUnitsType = (typeof fileSizeUnits)[number];
+
+  interface IFileSize {
+    value: number;
+    unit: FileSizeUnitsType;
+  }
+
+  interface IFile {
+    id?: string;
+    name: string;
+    contentType?: string;
+    size: number;
+    url?: string;
+    status: string;
+    progress?: number;
+    errorMessage?: string;
+    file?: File;
+  }
+
+  interface INewFile extends IFile {
+    status: "new";
+    progress: 0;
+    file: File;
+  }
+
+  interface IUploadingFile extends IFile {
+    status: "loading";
+    progress: number;
+  }
+
+  interface IUploadedFile extends IFile {
+    status: "success";
+    progress: 100;
+    id: string;
+    url: string;
+  }
+
+  interface IFileFailure extends IFile {
+    status: "error";
+    errorMessage: string;
+  }
+
+  interface IExistingFile extends IFile {
+    status: "existing";
+    url: string;
+  }
+
+  interface IRemovedFile extends IFile {
+    status: "removed";
+  }
+
+  type FileType = INewFile | IUploadingFile | IUploadedFile | IFileFailure | IExistingFile | IRemovedFile;
 }
