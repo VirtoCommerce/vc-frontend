@@ -228,9 +228,13 @@ function select(item?: any) {
     emit("update:modelValue", newValues);
     emit("change", newValues);
   } else {
+    const newValue = getItemValue(item);
     filtering.value = false;
-    emit("update:modelValue", item);
-    emit("change", item);
+
+    if (newValue !== props.modelValue) {
+      emit("update:modelValue", newValue);
+      emit("change", newValue);
+    }
   }
 }
 
