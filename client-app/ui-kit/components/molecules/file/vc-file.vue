@@ -36,15 +36,9 @@
         </span>
       </span>
 
-      <template v-if="file.status === 'loading'">
-        <div class="vc-file__progress">
-          <div class="vc-file__progress-value" :style="{ width: `${file.progress}%` }"></div>
-        </div>
+      <span v-if="file.status === 'loading'" class="vc-file__message">{{ $t("ui_kit.file.uploading") }}</span>
 
-        <span class="vc-file__message"> {{ file.progress }}% done </span>
-      </template>
-
-      <span v-else-if="file.status === 'success'" class="vc-file__message">Upload complete</span>
+      <span v-else-if="file.status === 'success'" class="vc-file__message">{{ $t("ui_kit.file.uploaded") }}</span>
 
       <span v-else-if="file.status === 'error'" class="vc-file__message vc-file__message--error">
         {{ file.errorMessage }}
