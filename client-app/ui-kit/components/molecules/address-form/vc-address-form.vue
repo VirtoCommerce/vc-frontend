@@ -13,7 +13,6 @@
           class="mb-4"
           required
           :maxlength="64"
-          clearable
         />
 
         <VcInput
@@ -25,7 +24,6 @@
           class="mb-4"
           required
           :maxlength="64"
-          clearable
         />
 
         <VcInput
@@ -81,7 +79,7 @@
             :placeholder="$t('common.placeholders.select_country')"
             class="mb-4 w-full xl:w-7/12"
             required
-            clearable
+            autocomplete
           />
 
           <VcInput

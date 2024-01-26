@@ -1,6 +1,7 @@
 <template>
   <div>
     <div
+      v-if="!disableTriggerEvents"
       ref="triggerNode"
       :aria-describedby="`popover-${$.uid}`"
       tabindex="0"
@@ -9,14 +10,18 @@
       @mouseleave="trigger === 'hover' && close()"
       @focus="trigger === 'hover' && open()"
       @blur="trigger === 'hover' && close()"
-      @click="trigger === 'click' && toggle(!isShown)"
-      @keyup="trigger === 'click' && toggle(!isShown)"
+      @click="trigger === 'click' && toggle()"
+      @keyup="trigger === 'click' && toggle()"
     >
-      <slot name="trigger" :open="open" :close="close" :opened="isShown" />
+      <slot name="trigger" v-bind="{ toggle, open, close, opened: isShown }" />
+    </div>
+
+    <div v-else ref="triggerNode" :aria-describedby="`popover-${$.uid}`">
+      <slot name="trigger" v-bind="{ toggle, open, close, opened: isShown }" />
     </div>
 
     <div v-show="isShown" :id="`popover-${$.uid}`" ref="popoverNode" :style="{ zIndex, width }">
-      <slot name="content" :close="close" />
+      <slot name="content" v-bind="{ close }" />
     </div>
   </div>
 </template>
@@ -40,6 +45,7 @@ interface IProps {
   disabled?: boolean;
   zIndex?: number | string;
   width?: string;
+  disableTriggerEvents?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -74,31 +80,29 @@ function create(): void {
   });
 }
 
-function toggle(show: boolean): void {
+function toggle(): void {
   if (props.disabled) {
     return;
   }
 
-  isShown.value = show;
-
   if (isShown.value) {
-    create();
+    close();
   } else {
-    popoverInstance?.destroy();
-    popoverInstance = null;
+    open();
   }
 }
 
 function open(): void {
-  if (!isShown.value) {
-    toggle(true);
-  }
+  isShown.value = true;
+
+  create();
 }
 
 function close(): void {
-  if (isShown.value) {
-    toggle(false);
-  }
+  isShown.value = false;
+
+  popoverInstance?.destroy();
+  popoverInstance = null;
 }
 
 onClickOutside(

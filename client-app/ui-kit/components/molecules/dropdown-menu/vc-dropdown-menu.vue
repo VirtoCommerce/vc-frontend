@@ -13,11 +13,12 @@
     :width="width"
     :trigger="trigger"
     :disabled="disabled"
+    :disable-trigger-events="disableTriggerEvents"
     @toggle="$emit('toggle', $event)"
   >
-    <template #trigger="{ open, close, opened }">
+    <template #trigger="{ toggle, open, close, opened }">
       <div class="vc-dropdown-menu__trigger">
-        <slot name="trigger" v-bind="{ open, close, opened }" />
+        <slot name="trigger" v-bind="{ toggle, open, close, opened }" />
       </div>
     </template>
 
@@ -43,6 +44,7 @@ interface IProps {
   disabled?: boolean;
   width?: string;
   zIndex?: number | string;
+  disableTriggerEvents?: boolean;
 }
 
 defineEmits<IEmits>();

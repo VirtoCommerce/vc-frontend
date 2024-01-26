@@ -13,6 +13,10 @@
       },
     ]"
     v-bind="attrs"
+    tabindex="-1"
+    role="button"
+    @keyup="handleContainerClick"
+    @click="handleContainerClick"
   >
     <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
@@ -25,6 +29,7 @@
 
       <input
         :id="componentId"
+        ref="inputElement"
         v-model="inputValue"
         v-bind="listeners"
         :type="inputType"
@@ -41,7 +46,7 @@
         class="vc-input__input"
       />
 
-      <div v-if="clearable && inputValue" class="vc-input__decorator">
+      <div v-if="clearable && inputValue && !disabled && !readonly" class="vc-input__decorator">
         <button type="button" tabindex="-1" class="vc-input__clear" @click.stop="clear">
           <VcIcon name="delete-mini" :size="16" />
         </button>
@@ -121,6 +126,7 @@ const componentId = useComponentId("input");
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
+const inputElement = ref<HTMLElement>();
 const inputType = ref("");
 const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);
@@ -151,8 +157,16 @@ function togglePasswordVisibility() {
   inputType.value = isPasswordVisible.value ? "text" : "password";
 }
 
+function handleContainerClick() {
+  if (inputElement.value) {
+    inputElement.value.focus();
+    inputElement.value.click();
+  }
+}
+
 function clear() {
   emit("update:modelValue", undefined);
+  inputElement.value?.focus();
 }
 
 watchEffect(() => {
@@ -280,8 +294,9 @@ watchEffect(() => {
       @apply outline-none;
     }
 
+    #{$disabled} &,
     &:disabled {
-      @apply text-gray-400;
+      @apply text-[--color-neutral-400] cursor-not-allowed;
     }
 
     &::placeholder {

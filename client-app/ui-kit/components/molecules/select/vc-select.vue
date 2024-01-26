@@ -8,6 +8,7 @@
         'vc-select--disabled': disabled,
         'vc-select--error': error,
         'vc-select--autocomplete': autocomplete,
+        'vc-select--opened': isShown,
       },
     ]"
   >
@@ -15,13 +16,15 @@
       {{ label }}
     </VcLabel>
 
-    <VcDropdownMenu placement="bottom" width="100%" :disabled="!enabled" @toggle="toggle">
-      <template #trigger="{ opened, open }">
+    <VcDropdownMenu placement="bottom" width="100%" :disabled="!enabled" disable-trigger-events @toggle="toggled">
+      <template #trigger="{ opened, open, toggle }">
         <div
           v-if="$slots.selected || $slots.placeholder"
           tabindex="0"
           role="button"
           class="vc-select__button"
+          @click="toggle"
+          @keydown.enter="toggle"
           @keydown.down.prevent="next(-1)"
         >
           <div class="vc-select__button-content">
@@ -46,9 +49,8 @@
           :clearable="clearable"
           truncate
           @keydown.down.prevent="next(-1)"
-          @keyup.stop
-          @focus="!opened && open()"
-          @click.stop="!opened && open()"
+          @focus="open"
+          @click="(autocomplete && open) || (!autocomplete && toggle)"
           @input="onFilter"
           @update:model-value="clear"
         >
@@ -74,7 +76,7 @@
           @keydown.up.prevent="prev(index)"
           @keydown.down.prevent="next(index)"
         >
-          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" />
+          <VcCheckbox v-if="multiple" :model-value="isActiveItem(item)" tabindex="-1" />
 
           <slot name="item" v-bind="{ item, index }">
             {{ getItemText(item) }}
@@ -268,7 +270,7 @@ function prev(index: number) {
   }
 }
 
-function toggle(value: boolean) {
+function toggled(value: boolean) {
   isShown.value = value;
 
   if (!isShown.value) {
@@ -292,7 +294,7 @@ function clear(value: any) {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-select {
   $disabled: "";
   $readonly: "";
@@ -312,6 +314,10 @@ function clear(value: any) {
 
   &--autocomplete {
     $autocomplete: &;
+  }
+
+  &--opened {
+    $opened: &;
   }
 
   &--error {
@@ -358,14 +364,22 @@ function clear(value: any) {
   }
 
   &__input {
-    @apply w-full;
+    @apply w-full cursor-pointer;
+
+    & input {
+      @apply cursor-pointer;
+
+      #{$opened} & {
+        @apply cursor-auto;
+      }
+    }
   }
 
   &__icon {
-    @apply shrink-0 mr-3 text-[color:var(--color-body-text)];
+    @apply shrink-0 mr-3 text-[--color-neutral-900];
 
     #{$disabled} & {
-      @apply text-gray-300;
+      @apply text-[--color-neutral-400];
     }
 
     #{$readonly} & {
