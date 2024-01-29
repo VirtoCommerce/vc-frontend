@@ -268,6 +268,11 @@ watchEffect(() => {
       @apply rounded-r-none;
     }
 
+    #{$disabled} &,
+    &:disabled {
+      @apply cursor-not-allowed;
+    }
+
     &:nth-last-child(-n + 2) > * {
       @apply rounded-l-none;
     }
@@ -278,7 +283,7 @@ watchEffect(() => {
   }
 
   &__input {
-    @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] text-15 leading-none w-full min-w-0;
+    @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
 
     &:autofill {
       &:disabled {
@@ -296,12 +301,12 @@ watchEffect(() => {
 
     #{$disabled} &,
     &:disabled {
-      @apply text-[--color-neutral-400] cursor-not-allowed;
+      @apply text-[--color-neutral-600] cursor-not-allowed;
     }
 
     &::placeholder {
       #{$error} & {
-        @apply opacity-80 text-[color:var(--color-danger)];
+        @apply opacity-80 text-[--color-danger-500];
       }
     }
 
@@ -314,7 +319,7 @@ watchEffect(() => {
     }
 
     #{$error} & {
-      @apply text-[color:var(--color-danger)];
+      @apply text-[--color-danger-500];
     }
   }
 
@@ -323,19 +328,19 @@ watchEffect(() => {
   }
 
   &__bg {
-    @apply content-[''] z-[-1] absolute inset-0 bg-white border rounded;
+    @apply content-[''] z-[-1] absolute inset-0 bg-[--color-additional-50] border rounded;
 
     input:focus ~ & {
-      @apply ring ring-[color:var(--color-primary-light)];
+      @apply ring ring-[--color-primary-100];
     }
 
     #{$disabled} &,
     input:disabled ~ & {
-      @apply bg-gray-50;
+      @apply bg-[--color-neutral-50];
     }
 
     #{$error} & {
-      @apply border-[color:var(--color-danger)];
+      @apply border-[--color-danger-500];
     }
 
     #{$noBorder} & {
@@ -344,7 +349,11 @@ watchEffect(() => {
   }
 
   &__password-icon {
-    @apply h-full px-3 text-[color:var(--color-primary)] disabled:text-gray-300;
+    @apply h-full px-3 text-[--color-primary-500];
+
+    #{$disabled} & {
+      @apply text-[--color-neutral-300] cursor-not-allowed;
+    }
   }
 }
 </style>

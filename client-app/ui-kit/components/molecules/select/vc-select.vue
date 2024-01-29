@@ -329,16 +329,11 @@ function clear(value: any) {
   }
 
   &__button {
-    @apply relative flex items-center w-full rounded border bg-white appearance-none text-left;
+    @apply relative flex items-center w-full rounded border bg-[--color-additional-50] appearance-none text-left;
 
     #{$disabled} &,
     &:disabled {
-      @apply bg-gray-50 cursor-not-allowed pointer-events-none;
-    }
-
-    #{$disabled} &,
-    &:disabled {
-      @apply bg-gray-50 cursor-not-allowed pointer-events-none;
+      @apply bg-[--color-neutral-500] cursor-not-allowed pointer-events-none;
     }
 
     #{$readonly} & {
@@ -346,7 +341,7 @@ function clear(value: any) {
     }
 
     #{$error} & {
-      @apply border-[color:var(--color-danger)];
+      @apply border-[--color-danger-500];
     }
 
     &--opened,
@@ -359,7 +354,7 @@ function clear(value: any) {
     @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
 
     #{$error} & {
-      @apply text-[color:var(--color-danger)];
+      @apply text-[--color-danger-500];
     }
   }
 
@@ -388,7 +383,7 @@ function clear(value: any) {
   }
 
   &__dropdown {
-    @apply z-10 overflow-hidden absolute mt-1 w-full bg-white rounded border border-gray-200 shadow-lg;
+    @apply z-10 overflow-hidden absolute mt-1 w-full bg-[--color-additional-50] rounded border border-[--color-neutral-100] shadow-lg;
   }
 
   &__list {
