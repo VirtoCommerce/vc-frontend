@@ -46,14 +46,22 @@
           :disabled="disabled"
           :readonly="readonly || !autocomplete"
           :error="error"
-          :clearable="clearable"
           truncate
           @keydown.down.prevent="next(-1)"
           @focus="open"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
-          @update:model-value="clear"
         >
           <template #append>
+            <button
+              v-if="clearable && (filterValue || (selectedText && !isShown))"
+              type="button"
+              tabindex="-1"
+              class="vc-select__clear"
+              @click="clear"
+            >
+              <VcIcon name="delete-mini" :size="16" />
+            </button>
+
             <VcIcon class="vc-select__icon" :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
           </template>
         </VcInput>
@@ -273,18 +281,18 @@ function toggled(value: boolean) {
   }
 }
 
-function clear(value: any) {
-  if (value === undefined) {
-    if (
-      ((!isShown.value && props.autocomplete) || !props.autocomplete) &&
-      props.multiple &&
-      Array.isArray(props.modelValue) &&
-      props.modelValue.length
-    ) {
-      emit("update:modelValue", []);
-    } else if (!props.multiple) {
-      emit("update:modelValue", undefined);
-    }
+function clear() {
+  if (
+    ((!isShown.value && props.autocomplete) || !props.autocomplete) &&
+    props.multiple &&
+    Array.isArray(props.modelValue) &&
+    props.modelValue.length
+  ) {
+    emit("update:modelValue", []);
+  } else if (filterValue.value) {
+    filterValue.value = "";
+  } else if (!props.multiple && !isShown.value) {
+    emit("update:modelValue", undefined);
   }
 }
 </script>
@@ -363,6 +371,10 @@ function clear(value: any) {
         @apply cursor-auto;
       }
     }
+  }
+
+  &__clear {
+    @apply flex items-center p-3 text-[--color-primary-500];
   }
 
   &__icon {

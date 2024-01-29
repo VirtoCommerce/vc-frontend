@@ -56,7 +56,7 @@ export default {
 const Template: StoryFn<typeof VcInput> = (args) => ({
   components: { VcInput },
   setup: () => ({ args }),
-  template: '<VcInput v-bind="args" />',
+  template: '<VcInput v-bind="args" v-model="args.modelValue" />',
 });
 
 export const Basic = Template.bind({});

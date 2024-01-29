@@ -69,6 +69,12 @@ Disabled.args = {
   disabled: true,
 };
 
+export const Clearable = Template.bind({});
+Clearable.args = {
+  ...Common.args,
+  clearable: true,
+};
+
 export const ErrorState = Template.bind({});
 ErrorState.args = {
   ...Required.args,
@@ -95,4 +101,40 @@ export const MultipleSelectAutocomplete = Template.bind({});
 MultipleSelectAutocomplete.args = {
   ...MultipleSelect.args,
   autocomplete: true,
+};
+
+export const MultipleSelectAutocompleteClearable = Template.bind({});
+MultipleSelectAutocompleteClearable.args = {
+  ...MultipleSelectAutocomplete.args,
+  clearable: true,
+};
+
+export const Custom: StoryFn<typeof VcSelect> = (args) => ({
+  components: { VcSelect },
+  setup: () => ({ args }),
+  template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">
+    <template #placeholder>
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="w-8 h-8 rounded-full bg-[--color-neutral-200]"></div>
+        Select an item
+      </div>
+    </template>
+
+    <template #selected="{ item }">
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="flex items-center justify-center w-8 h-8 rounded-full text-[--color-additional-50] bg-[--color-danger-500]">{{ item[0] }}</div>
+
+        {{ item }}
+      </div>
+    </template>
+
+    <template #item="{ item }">
+      <div class="flex items-center justify-center w-8 h-8 rounded-full text-[--color-additional-50] bg-[--color-info-500]">{{ item[0] }}</div>
+
+      {{ item }}
+    </template>
+  </VcSelect>`,
+});
+Custom.args = {
+  items: ["Albania", "Belgium", "China", "India"],
 };
