@@ -101,6 +101,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { union, lowerCase, isEqual } from "lodash";
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useComponentId } from "@/ui-kit/composables";
 
 interface IProps {
@@ -136,7 +137,9 @@ const props = withDefaults(defineProps<IProps>(), {
   itemSize: "sm",
 });
 
+const { t } = useI18n();
 const componentId = useComponentId("select");
+
 const isShown = ref(false);
 const filterValue = ref("");
 const filtering = ref<boolean>(false);
@@ -144,40 +147,39 @@ const filtering = ref<boolean>(false);
 const getItemText = (item: any) => (props.textField && item ? item[props.textField] : item);
 const getItemValue = (item: any) => (props.valueField && item ? item[props.valueField] : item);
 
-function isActiveItem(item: any) {
-  const itemValue = getItemValue(item);
+const selectedText = computed(() => {
+  if (Array.isArray(props.modelValue)) {
+    if (props.modelValue.length) {
+      return t("ui_kit.select.items_selected", [props.modelValue.length]);
+    }
 
-  if (!Array.isArray(props.modelValue)) {
-    return itemValue === props.modelValue;
+    return null;
   }
 
-  return props.modelValue.some((selectedItem) => isEqual(getItemValue(selectedItem), itemValue));
-}
+  if (props.textField && selected.value) {
+    return selected.value[props.textField];
+  }
+
+  return selected.value;
+});
 
 const placeholderText = computed(() => {
   if (Array.isArray(props.modelValue) && props.modelValue.length) {
-    return `${props.modelValue.length} items selected`;
+    return t("ui_kit.select.items_selected", [props.modelValue.length]);
   }
 
   return selectedText.value ?? props.placeholder;
 });
+
 const enabled = computed<boolean>(() => !props.readonly && !props.disabled);
+
 const selected = computed(() => {
   return props.valueField ? props.items.find((item) => item[props.valueField!] === props.modelValue) : props.modelValue;
 });
 
 const search = computed({
   get() {
-    if (
-      ((!isShown.value && props.autocomplete) || !props.autocomplete) &&
-      props.multiple &&
-      Array.isArray(props.modelValue) &&
-      props.modelValue.length
-    ) {
-      return `${props.modelValue.length} items selected`;
-    }
-
-    if (!filtering.value) {
+    if (!filtering.value && !isShown.value) {
       return selectedText.value;
     }
 
@@ -201,13 +203,19 @@ const filteredItems = computed(() => {
   return union(first, items);
 });
 
+function isActiveItem(item: any) {
+  const itemValue = getItemValue(item);
+
+  if (!Array.isArray(props.modelValue)) {
+    return itemValue === props.modelValue;
+  }
+
+  return props.modelValue.some((selectedItem) => isEqual(getItemValue(selectedItem), itemValue));
+}
+
 function onFilter() {
   filtering.value = true;
 }
-
-const selectedText = computed(() =>
-  props.textField && selected.value ? selected.value[props.textField] : selected.value,
-);
 
 function select(item?: any) {
   if (!enabled.value) {

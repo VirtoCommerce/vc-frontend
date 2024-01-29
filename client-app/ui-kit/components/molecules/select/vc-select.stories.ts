@@ -15,7 +15,7 @@ export default {
         },
       },
     },
-    modelValue: { table: { type: { summary: "object|string" } } },
+    modelValue: { table: { type: { summary: "object|string|array" } } },
   },
   args: {
     readonly: false,
@@ -28,10 +28,14 @@ export default {
   },
 } as Meta<typeof VcSelect>;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 const Template: StoryFn<typeof VcSelect> = (args) => ({
   components: { VcSelect },
   setup: () => ({ args }),
-  template: `<VcSelect v-bind="args" class="mb-32" />`,
+  template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32" />`,
 });
 
 export const Basic = Template.bind({});
@@ -82,6 +86,13 @@ Autocomplete.args = {
 export const MultipleSelect = Template.bind({});
 MultipleSelect.args = {
   ...Required.args,
+  modelValue: [],
   placeholder: "Select multiple items",
   multiple: true,
+};
+
+export const MultipleSelectAutocomplete = Template.bind({});
+MultipleSelectAutocomplete.args = {
+  ...MultipleSelect.args,
+  autocomplete: true,
 };

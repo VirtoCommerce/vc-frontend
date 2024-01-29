@@ -1332,6 +1332,9 @@
     "pagination": {
       "previous": "Previous",
       "next": "Next"
+    },
+    "select": {
+      "items_selected": "{0} items selected"
     }
   },
   "identity_error": {
