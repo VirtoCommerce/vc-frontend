@@ -89,7 +89,7 @@
 
     <div class="flex flex-wrap gap-5 py-7 lg:justify-end">
       <VcButton
-        :disabled="!quoteChanged || fetching"
+        :disabled="!canSaveChanges || fetching"
         class="flex-1 lg:min-w-[208px] lg:flex-none"
         variant="outline"
         @click="saveChanges"
@@ -185,7 +185,7 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
     ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
     : personalAddresses.value;
 });
-const quoteChanged = computed<boolean>(
+const canSaveChanges = computed<boolean>(
   () =>
     !isEqual(originalQuote.value, quote.value) ||
     originalQuote.value?.comment !== comment.value ||
@@ -193,7 +193,7 @@ const quoteChanged = computed<boolean>(
     ((attachments.value.some((attachment) => attachment.status === "success") ||
       attachments.value.filter((attachment) => attachment.status === "existing").length !==
         originalQuote.value?.attachments.length) &&
-      quoteAttachmentsValid.value),
+      attachments.value.every((attachment) => attachment.status !== "error")),
 );
 const quoteItemsValid = computed<boolean>(
   () =>
@@ -359,7 +359,7 @@ async function saveChanges(): Promise<void> {
 }
 
 async function submit(): Promise<void> {
-  if (quoteChanged.value) {
+  if (canSaveChanges.value) {
     await saveChanges();
   }
 
