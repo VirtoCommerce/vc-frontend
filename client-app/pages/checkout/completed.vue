@@ -27,12 +27,12 @@
             <VcButton
               :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }"
               prepend-icon="document-text"
-              class="flex-1"
+              class="!flex flex-1 items-center justify-center"
             >
               {{ $t("common.buttons.show_order") }}
             </VcButton>
 
-            <VcButton to="/" class="flex-1">
+            <VcButton to="/" class="!flex flex-1 items-center justify-center">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

@@ -277,8 +277,8 @@ const attrs = computed(() => {
     }
 
     &--outline--#{$color} {
-      @apply bg-[--color-additional-50] 
-      text-[--color-#{$color}-500] 
+      @apply bg-[--color-additional-50]
+      text-[--color-#{$color}-500]
       border-current;
 
       &:hover {
@@ -330,6 +330,7 @@ const attrs = computed(() => {
 
   &__prepend {
     $prepend: &;
+    @apply my-auto;
 
     &:empty {
       @apply hidden;
@@ -338,6 +339,7 @@ const attrs = computed(() => {
 
   &__append {
     $append: &;
+    @apply my-auto;
 
     &:empty {
       @apply hidden;
