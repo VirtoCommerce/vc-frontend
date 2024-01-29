@@ -8,7 +8,7 @@
       "environmentId": "dev",
       "environmentName": "Development",
       "environmentType": "staging",
-      "environmentUrl": "https://vcst-dev-storefront.paas.govirto.com/"
+      "environmentUrl": "https://vcst-dev-storefront.govirto.com/"
   },
   "qa": {
       "deployAppName": "vcst-qa",
@@ -16,6 +16,6 @@
       "environmentId": "qa",
       "environmentName": "QA",
       "environmentType": "testing",
-      "environmentUrl": "https://vcst-qa-storefront.paas.govirto.com/"
+      "environmentUrl": "https://vcst-qa-storefront.govirto.com/"
   }
 }

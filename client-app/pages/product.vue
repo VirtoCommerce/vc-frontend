@@ -1,39 +1,57 @@
 <template>
+  <!-- 
+    TODO: update VcContainer and use it
+    https://virtocommerce.atlassian.net/browse/ST-5628
+  -->
   <div
     v-if="product && template"
-    class="bg-[--color-neutral-50] pb-8 pt-7 print:w-full print:min-w-[1024px] print:bg-[--color-additional-50] print:[zoom:0.7]"
+    class="grow bg-[--color-neutral-50] p-6 print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7] md:pb-9 lg:px-8 2xl:px-12"
   >
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
-
-    <div class="mx-auto max-w-screen-2xl px-6 print:!px-0 lg:px-12">
+    <div class="mx-auto max-w-[87.75rem]">
       <!-- Breadcrumbs -->
-      <VcBreadcrumbs class="mb-3 hidden print:block lg:block" :items="breadcrumbs" />
+      <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
-      <h1 class="text-2xl font-bold uppercase md:text-4xl">{{ product.name }}</h1>
+      <h1 class="text-2xl font-bold uppercase sm:text-3xl md:text-4xl">
+        {{ product.name }}
+      </h1>
 
-      <VcCopyText
-        v-if="!product.hasVariations"
-        class="mt-1 text-sm"
-        :text="product.code"
-        :notification="$t('pages.product.sku_copied_message')"
+      <div class="mt-2 flex flex-wrap gap-5">
+        <VcCopyText v-if="!hasVariations" :text="product.code" :notification="$t('pages.product.sku_copied_message')">
+          <span class="text-base text-[--color-secondary-900]">
+            {{ $t("pages.product.sku_label") }}
+            <span class="font-black">#{{ product.code }}</span>
+          </span>
+        </VcCopyText>
+      </div>
+
+      <!-- 
+        TODO: create VcLayoutWithSidebar component
+        https://virtocommerce.atlassian.net/browse/ST-5629
+      -->
+      <div
+        class="mt-5 flex flex-col gap-6 print:flex-row print:gap-4 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6"
       >
-        <span class="mr-1">{{ $t("pages.product.sku_label") }}</span>
-        <span class="font-extrabold">{{ product.code }}</span>
-      </VcCopyText>
+        <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
+          <template v-for="item in template.content">
+            <component
+              :is="item.type"
+              v-if="!item.hidden"
+              :key="item.id"
+              :product="product"
+              :related-products="relatedProducts"
+              :model="item"
+            />
+          </template>
+        </div>
 
-      <template v-for="item in template.content">
-        <component
-          :is="item.type"
-          v-if="!item.hidden"
-          :key="item.id"
+        <ProductSidebar
+          :class="[
+            'flex-none md:sticky md:top-[4.5rem] md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
+            { 'print:hidden': !!product.hasVariations },
+          ]"
           :product="product"
-          :related-products="relatedProducts"
-          :model="item"
-          :is-mobile="isMobile"
-          :product-with-variations="!!product.hasVariations"
-          :variations-cart-total-amount="variationsCartTotalAmount"
         />
-      </template>
+      </div>
     </div>
   </div>
 
@@ -42,14 +60,11 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { breakpointsTailwind, eagerComputed, useBreakpoints } from "@vueuse/core";
 import { computed, defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { buildBreadcrumbs } from "@/core/utilities";
-import { useCart } from "@/shared/cart";
-import { useProduct, useRelatedProducts, useCategory } from "@/shared/catalog";
-import { BackButtonInHeader } from "@/shared/layout";
+import { buildBreadcrumbs, productHasVariations } from "@/core/utilities";
+import { useProduct, useRelatedProducts, useCategory, ProductSidebar } from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -63,11 +78,8 @@ interface IProps {
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
-const { getItemsTotal } = useCart();
 const { product, loading, loadProduct } = useProduct();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
@@ -76,6 +88,7 @@ const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.val
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
+const hasVariations = computed(() => productHasVariations(product.value));
 
 usePageHead({
   title: seoTitle,
@@ -95,21 +108,10 @@ const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
 });
 
-const variationsCartTotalAmount = eagerComputed<number>(() => {
-  if (!product.value) {
-    return 0;
-  }
-
-  const variationsIds = product.value.variations!.map((variation) => variation.id!);
-  variationsIds.push(product.value.id);
-
-  return getItemsTotal(variationsIds);
-});
-
-watchEffect(() => {
+watchEffect(async () => {
   const productId = props.productId;
-  loadProduct(productId);
-  fetchRelatedProducts({ productId, itemsPerPage: 30 });
+  await loadProduct(productId);
+  await fetchRelatedProducts({ productId, itemsPerPage: 30 });
 });
 
 /**

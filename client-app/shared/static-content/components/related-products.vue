@@ -1,59 +1,85 @@
 <template>
   <!-- Related products section -->
-  <div v-show="relatedProducts.length" class="mt-5 flex flex-col print:hidden lg:flex-row">
-    <div class="-mx-4.5 print:mx-0 print:grow lg:mx-0 lg:w-full xl:w-9/12 xl:pe-8">
-      <VcWidget :title="$t('pages.product.related_product_section_title')" prepend-icon="cube" size="lg">
-        <div v-if="isMobile" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4 px-2">
-          <ProductCardRelated
-            v-for="(item, index) in relatedProducts.slice(0, 4)"
-            :key="index"
-            :product="item"
-            class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-3*1.75rem)/4)]"
-            @link-click="ga.selectItem(item)"
-          />
-        </div>
-
-        <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
-          <template #slide="{ slide: item }">
-            <div class="h-full px-2 py-3">
-              <ProductCardRelated class="h-full" :product="item" @link-click="ga.selectItem(item)" />
-            </div>
-          </template>
-        </VcCarousel>
-      </VcWidget>
+  <VcWidget
+    v-if="relatedProducts.length"
+    :title="$t('pages.product.related_product_section_title')"
+    prepend-icon="cube"
+    size="lg"
+    class="order-last print:hidden max-md:-mx-4.5"
+  >
+    <div v-if="lg" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4">
+      <ProductCardRelated
+        v-for="(item, index) in mobileProducts"
+        :key="index"
+        :product="item"
+        class="w-[calc((100%-1.75rem)/2)] sm:w-[calc((100%-2*1.75rem)/3)] md:w-[calc((100%-1.75rem)/2)]"
+        @link-click="ga.selectItem(item)"
+      />
     </div>
 
-    <div class="hidden flex-none xl:block xl:w-3/12"></div>
-  </div>
+    <VcCarousel v-else :slides="relatedProducts" :options="relatedProductsCarouselOptions" navigation>
+      <template #slide="{ slide: item }">
+        <div class="h-full px-4 py-3 xl:px-3">
+          <ProductCardRelated class="h-full" :product="item" @link-click="ga.selectItem(item)" />
+        </div>
+      </template>
+    </VcCarousel>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
+import { computed } from "vue";
 import { useGoogleAnalytics } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
+import { extractNumberFromString } from "@/core/utilities";
 import { ProductCardRelated } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   relatedProducts: Product[];
 }
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const ga = useGoogleAnalytics();
 
-const isMobile = breakpoints.smaller("lg");
+const sm = breakpoints.smaller("sm");
+const md = breakpoints.smaller("md");
+const lg = breakpoints.smaller("lg");
+
+const lgScreenWidth = extractNumberFromString(BREAKPOINTS.lg);
+const xlScreenWidth = extractNumberFromString(BREAKPOINTS.xl);
+
+const mobileProductsNumber = computed(() => {
+  if (sm.value) {
+    return 4;
+  }
+
+  if (md.value) {
+    return 3;
+  }
+
+  if (lg.value) {
+    return 2;
+  }
+
+  return 4;
+});
+
+const mobileProducts = computed(() => props.relatedProducts.slice(0, mobileProductsNumber.value));
 
 const relatedProductsCarouselOptions: CarouselOptions = {
-  spaceBetween: 8,
   slidesPerView: 4,
   slidesPerGroup: 4,
   breakpoints: {
-    1024: {
-      spaceBetween: 0,
+    [lgScreenWidth]: {
+      slidesPerView: 3,
+      slidesPerGroup: 3,
     },
-    1500: {
-      spaceBetween: 8,
+    [xlScreenWidth]: {
+      slidesPerView: 4,
+      slidesPerGroup: 4,
     },
   },
 };

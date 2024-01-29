@@ -46,15 +46,15 @@
         />
 
         <VcAlert
-          v-for="error in commonErrors"
-          :key="error"
+          v-for="error in translatedErrors"
+          :key="error.code"
           color="danger"
           class="my-4 text-xs"
           size="sm"
           variant="solid-light"
           icon
         >
-          {{ error }}
+          {{ error.translation }}
         </VcAlert>
 
         <!-- Form actions -->
@@ -79,7 +79,7 @@ import { useField, useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
-import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessDialog, useUser } from "@/shared/account";
 import { usePopup } from "@/shared/popup";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -89,6 +89,9 @@ const MAX_NAME_LENGTH = 64;
 const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { openPopup } = usePopup();
+
+const apiErrors = ref<IdentityErrorType[]>();
+const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
@@ -117,38 +120,23 @@ const { value: firstName } = useField<string>("firstName");
 const { value: lastName } = useField<string>("lastName");
 const { value: email } = useField<string>("email");
 
-const commonErrors = ref<string[]>([]);
-const showErrors = (responseErrors: IdentityErrorType[]) => {
-  responseErrors.forEach((error) => {
-    const errorDescription = getIdentityErrorTranslation(error);
-
-    if (errorDescription) {
-      commonErrors.value.push(errorDescription);
-    }
-  });
-};
-
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
-
 const onSubmit = handleSubmit(async (data) => {
   const trimmedFirstName = data.firstName.trim();
   const trimmedLastName = data.lastName.trim();
 
   const results: boolean[] = [];
-  commonErrors.value = [];
+  apiErrors.value = [];
   if (initialValues.value.firstName !== trimmedFirstName || initialValues.value.lastName !== trimmedLastName) {
     const userDataUpdateResult = await updateUser({ firstName: trimmedFirstName, lastName: trimmedLastName });
 
     results.push(userDataUpdateResult.succeeded);
 
-    if (userDataUpdateResult.errors?.length) {
-      showErrors(userDataUpdateResult.errors);
-    }
+    apiErrors.value = userDataUpdateResult.errors;
   }
 
   if (results.every((item) => item)) {
     resetForm();
-    commonErrors.value = [];
+    apiErrors.value = [];
     openPopup({
       component: ProfileUpdateSuccessDialog,
     });

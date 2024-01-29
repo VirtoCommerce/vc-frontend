@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col gap-2 bg-[--color-additional-50] lg:gap-4 lg:rounded lg:border lg:border-[--color-neutral-100] lg:p-5 lg:pb-1 lg:shadow-md"
+    class="flex flex-col gap-2 bg-[--color-additional-50] xl:gap-4 xl:rounded xl:border xl:border-[--color-neutral-100] xl:p-5 xl:pb-1 xl:shadow-md"
   >
     <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name">
       <div

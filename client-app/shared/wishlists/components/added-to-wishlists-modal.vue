@@ -33,13 +33,12 @@
     </div>
 
     <template #actions="{ close }">
-      <VcButton variant="outline" class="flex-1 sm:flex-none" @click="close">
+      <VcButton variant="outline" @click="close">
         {{ $t("shared.wishlists.added_to_wishlists_dialog.continue_shopping_button") }}
       </VcButton>
 
       <VcButton
         :to="listIds.length === 1 ? { name: 'ListDetails', params: { listId: listIds[0] } } : { name: 'Lists' }"
-        class="flex-1 sm:flex-none"
         @click="close"
       >
         {{ $t("shared.wishlists.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}

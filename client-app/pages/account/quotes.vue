@@ -50,6 +50,7 @@
         :items="quotes"
         :pages="pages"
         :page="page"
+        :description="$t('pages.account.quotes.meta.table_description')"
         @item-click="goToQuoteDetails"
         @header-click="applySorting"
         @page-changed="changePage"
@@ -171,7 +172,7 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
-  title: t("pages.account.quotes.title"),
+  title: t("pages.account.quotes.meta.title"),
 });
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();

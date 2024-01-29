@@ -1,8 +1,9 @@
 <template>
-  <div class="flex flex-col">
-    <div class="mb-4 flex items-center">
-      <VcImage :src="imageSrc" :alt="title" lazy />
-      <h2 class="ml-2 text-xl font-extrabold uppercase">{{ title }}</h2>
+  <div class="space-y-4">
+    <div class="flex items-center gap-2">
+      <VcHexagonIcon :icon="icon" />
+
+      <h2 class="text-xl font-bold uppercase text-[--color-neutral-950]">{{ title }}</h2>
     </div>
 
     <slot />
@@ -11,7 +12,7 @@
 
 <script setup lang="ts">
 interface IProps {
-  imageSrc: string;
+  icon: string;
   title: string;
 }
 
