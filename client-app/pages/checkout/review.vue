@@ -46,12 +46,11 @@
             readonly
           >
             <template #selected="{ item }">
-              <VcSelectItem class="print:px-0 print:py-1.5">
-                <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
-                <VcSelectItemText>
-                  {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
-                </VcSelectItemText>
-              </VcSelectItem>
+              <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
+                <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+
+                {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+              </div>
             </template>
           </VcSelect>
         </div>
@@ -82,10 +81,11 @@
               readonly
             >
               <template #selected="{ item }">
-                <VcSelectItem class="print:px-0 print:py-1.5">
-                  <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
-                  <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
-                </VcSelectItem>
+                <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
+                  <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+
+                  {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+                </div>
               </template>
             </VcSelect>
 
