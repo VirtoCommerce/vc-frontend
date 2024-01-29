@@ -1340,11 +1340,12 @@
     "file_uploader": {
       "drag_and_drop": "Drag and drop file here or",
       "browse": "Browse your files",
-      "requirements": "The files available for upload are in {format} formats. Each file should not exceed {size}.",
+      "requirements": "The files available for upload are in {formats} formats. Each file should not exceed {fileSize}. Maximum {maxFileCount} files allowed.",
       "any_format": "any",
       "errors": {
         "fix_to_continue": "Fix file upload errors to continue.",
-        "maximum_number_of_files": "You have uploaded the maximum number of files possible. Futher uploads are not possible."
+        "has_max_file_count": "You have uploaded the maximum number of files possible. Futher uploads are not possible.",
+        "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
       }
     }
   },
