@@ -47,6 +47,9 @@ const attachments = computed<FileType[]>({
 export function useUserQuote() {
   function clearQuote(): void {
     quote.value = undefined;
+  }
+
+  function clearAttachments() {
     _attachments.value = undefined;
   }
 
@@ -162,6 +165,7 @@ export function useUserQuote() {
     shippingAddress,
     attachments,
     clearQuote,
+    clearAttachments,
     setQuoteAddress,
     fetchQuote,
     changeComment,

@@ -153,6 +153,7 @@ const {
   billingAddress,
   attachments,
   clearQuote,
+  clearAttachments,
   setQuoteAddress,
   fetchQuote,
   changeComment,
@@ -349,6 +350,8 @@ async function saveChanges(): Promise<void> {
 
   await fetchQuote({ id: props.quoteId });
 
+  clearAttachments();
+
   notifications.success({
     duration: DEFAULT_NOTIFICATION_DURATION,
     singleInGroup: true,
@@ -388,6 +391,7 @@ onMounted(() => {
 
 watchEffect(async () => {
   clearQuote();
+  clearAttachments();
 
   await fetchAddresses();
   await fetchQuote({ id: props.quoteId });
