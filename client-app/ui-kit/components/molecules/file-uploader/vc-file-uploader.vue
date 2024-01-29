@@ -33,20 +33,31 @@
       </span>
 
       <span
-        v-html-safe="$t('ui_kit.file_uploader.requirements', { format: formatsHint, size: fileSizeHint })"
+        v-html-safe="
+          $t('ui_kit.file_uploader.requirements', {
+            formats: formatsHint,
+            fileSize: fileSizeHint,
+            maxFileCount,
+          })
+        "
         class="vc-file-uploader__description"
       />
     </button>
 
     <VcAlert
-      v-if="hasMaxFileCountError"
+      v-if="hasMaxFileCount || triedMoreThanMaxFileCount"
       class="vc-file-uploader__alert"
-      color="warning"
+      :color="triedMoreThanMaxFileCount ? 'danger' : 'warning'"
       variant="solid-light"
       size="sm"
       icon
     >
-      {{ $t("ui_kit.file_uploader.errors.maximum_number_of_files") }}
+      <template v-if="hasMaxFileCount">
+        {{ $t("ui_kit.file_uploader.errors.has_max_file_count") }}
+      </template>
+      <template v-if="triedMoreThanMaxFileCount">
+        {{ $t("ui_kit.file_uploader.errors.tried_more_than_max_file_count") }}
+      </template>
     </VcAlert>
 
     <VcAlert
@@ -92,13 +103,7 @@ const fileInputRef = ref<HTMLInputElement>();
 
 const hasMaxFileCount = computed<boolean>(() => props.files.length >= props.maxFileCount);
 
-const _hasMaxFileCountError = ref<boolean>();
-const hasMaxFileCountError = computed<boolean | undefined>({
-  get: () => {
-    return _hasMaxFileCountError.value || hasMaxFileCount.value;
-  },
-  set: (value) => (_hasMaxFileCountError.value = value),
-});
+const triedMoreThanMaxFileCount = ref<boolean>();
 
 const formatsHint = computed(() => {
   if (props.allowedExtensions?.length) {
@@ -139,13 +144,13 @@ function onFileDrop(event: DragEvent) {
 }
 
 function onRemove(files: FileType[]) {
-  hasMaxFileCountError.value = undefined;
+  triedMoreThanMaxFileCount.value = undefined;
 
   removeFiles(files);
 }
 
 function addFiles(items: File[]) {
-  hasMaxFileCountError.value = props.files.length + items.length >= props.maxFileCount;
+  triedMoreThanMaxFileCount.value = props.files.length + items.length > props.maxFileCount;
 
   emit(
     "addFiles",
