@@ -17,7 +17,7 @@
     </VcLabel>
 
     <VcDropdownMenu placement="bottom" width="100%" :disabled="!enabled" disable-trigger-events @toggle="toggled">
-      <template #trigger="{ opened, open, toggle }">
+      <template #trigger="{ open, toggle }">
         <div
           v-if="$slots.selected || $slots.placeholder"
           tabindex="0"
@@ -33,7 +33,7 @@
             <slot v-else-if="!selected && $slots.placeholder" name="placeholder" v-bind="{ error }" />
           </div>
 
-          <VcIcon class="vc-select__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
+          <VcIcon class="vc-select__icon" :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
         </div>
 
         <VcInput
@@ -51,11 +51,10 @@
           @keydown.down.prevent="next(-1)"
           @focus="open"
           @click="(autocomplete && open) || (!autocomplete && toggle)"
-          @input="onFilter"
           @update:model-value="clear"
         >
           <template #append>
-            <VcIcon class="vc-select__icon" :name="opened ? 'chevron-up' : 'chevron-down'" size="xs" />
+            <VcIcon class="vc-select__icon" :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
           </template>
         </VcInput>
       </template>
@@ -83,7 +82,7 @@
           </slot>
         </VcMenuItem>
 
-        <VcMenuItem v-if="filtering && !filteredItems.length" disabled>
+        <VcMenuItem v-if="filterValue && !filteredItems.length" disabled>
           {{ $t("common.messages.no_results") }}
         </VcMenuItem>
       </template>
@@ -142,7 +141,6 @@ const componentId = useComponentId("select");
 
 const isShown = ref(false);
 const filterValue = ref("");
-const filtering = ref<boolean>(false);
 
 const getItemText = (item: any) => (props.textField && item ? item[props.textField] : item);
 const getItemValue = (item: any) => (props.valueField && item ? item[props.valueField] : item);
@@ -163,13 +161,7 @@ const selectedText = computed(() => {
   return selected.value;
 });
 
-const placeholderText = computed(() => {
-  if (Array.isArray(props.modelValue) && props.modelValue.length) {
-    return t("ui_kit.select.items_selected", [props.modelValue.length]);
-  }
-
-  return selectedText.value ?? props.placeholder;
-});
+const placeholderText = computed(() => selectedText.value ?? props.placeholder);
 
 const enabled = computed<boolean>(() => !props.readonly && !props.disabled);
 
@@ -179,11 +171,11 @@ const selected = computed(() => {
 
 const search = computed({
   get() {
-    if (!filtering.value && !isShown.value) {
-      return selectedText.value;
+    if (props.autocomplete && isShown.value) {
+      return filterValue.value;
     }
 
-    return filterValue.value;
+    return selectedText.value;
   },
   set(value) {
     filterValue.value = value;
@@ -191,7 +183,7 @@ const search = computed({
 });
 
 const filteredItems = computed(() => {
-  if (!filtering.value) {
+  if (!filterValue.value) {
     return props.items;
   }
 
@@ -211,10 +203,6 @@ function isActiveItem(item: any) {
   }
 
   return props.modelValue.some((selectedItem) => isEqual(getItemValue(selectedItem), itemValue));
-}
-
-function onFilter() {
-  filtering.value = true;
 }
 
 function select(item?: any) {
@@ -239,7 +227,6 @@ function select(item?: any) {
     emit("change", newValues);
   } else {
     const newValue = getItemValue(item);
-    filtering.value = false;
 
     if (newValue !== props.modelValue) {
       emit("update:modelValue", newValue);
