@@ -69,7 +69,7 @@
 
         <div class="flex flex-col xl:flex-row xl:flex-wrap">
           <VcSelect
-            v-model="_countries"
+            v-model="country"
             text-field="name"
             :message="errors.countryCode"
             :error="!!errors.countryCode"
@@ -219,8 +219,6 @@ const slotsData = computed(() => ({
   pending: meta.value.pending,
   touched: meta.value.touched,
 }));
-
-const _countries = ref([]);
 
 const emailRules = computed(() => {
   let rules = yupString().max(64).email().nullable();
