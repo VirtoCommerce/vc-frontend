@@ -15,7 +15,7 @@ export function useQuantityValidationSchema(payload: {
   const { availableQuantity, minQuantity, maxQuantity } = payload;
 
   function setAvailabilityForSchema(schema: NumberSchema): NumberSchema {
-    if (availableQuantity?.value && minQuantity?.value && minQuantity.value <= availableQuantity.value) {
+    if (availableQuantity?.value && minQuantity?.value && minQuantity.value < availableQuantity.value) {
       return schema.test(
         "minMaxValue",
         t("shared.cart.add_to_cart.errors.min_max", [minQuantity.value, availableQuantity.value]),
@@ -26,8 +26,16 @@ export function useQuantityValidationSchema(payload: {
     if (availableQuantity?.value && minQuantity?.value && minQuantity.value > availableQuantity.value) {
       return schema.test(
         "incorrectMinValue",
-        t("shared.cart.add_to_cart.errors.min_not_available", [availableQuantity.value]),
+        t("shared.cart.add_to_cart.errors.min_not_available", [minQuantity.value]),
         () => false,
+      );
+    }
+
+    if (availableQuantity?.value && minQuantity?.value && minQuantity.value === availableQuantity.value) {
+      return schema.test(
+        "minValueEqualsAvailableQty",
+        t("shared.cart.add_to_cart.errors.min", [minQuantity.value]),
+        (value) => !!value && value >= minQuantity.value! && value <= availableQuantity.value!,
       );
     }
 
