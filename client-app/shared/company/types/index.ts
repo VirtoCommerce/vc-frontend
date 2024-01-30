@@ -22,6 +22,5 @@ export type ExtendedContactType = ContactType & {
   extended: {
     emails: string[];
     roles: RoleType[];
-    displayStatus: ContactDisplayStatusType;
   };
 };

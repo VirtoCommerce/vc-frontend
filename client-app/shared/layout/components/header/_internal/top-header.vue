@@ -2,8 +2,8 @@
   <div
     class="flex h-[39px] items-center gap-x-5 bg-[color:var(--color-header-top-bg)] px-5 text-sm text-[color:var(--color-header-top-text)] xl:px-12"
   >
-    <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
-    <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" class="h-full" />
+    <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+    <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 
     <div class="ms-auto flex items-center">
       <!-- Call us block -->

@@ -22,7 +22,7 @@ export default async () => {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
 
-  const { fetchUser } = useUser();
+  const { fetchUser, user } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
@@ -55,7 +55,7 @@ export default async () => {
     router,
     storeId: themeContext.value.storeId,
     catalogId: themeContext.value.catalogId,
-    userId: themeContext.value.userId,
+    userId: user.value.id,
     cultureName: currentLanguage.value.cultureName,
     currencyCode: currentCurrency.value.code,
   });
