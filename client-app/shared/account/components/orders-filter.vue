@@ -1,18 +1,21 @@
 <template>
   <div class="flex flex-col justify-between lg:justify-start">
     <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-14 lg:space-y-0">
-      <div v-if="availableStatuses.length" class="flex flex-col space-y-4">
+      <div v-if="!!facets" class="flex max-w-32 flex-col space-y-4">
         <div class="font-bold uppercase lg:normal-case lg:text-gray-400">
           {{ $t("shared.account.orders-filter.status-label") }}
         </div>
         <VcCheckbox
-          v-for="status in availableStatuses"
-          :key="status.code"
+          v-for="facet in facets"
+          :key="facet.term"
           v-model="filterData.statuses"
-          :value="status.code"
-          :class="{ 'font-bold': isSelectedStatus(status.code), 'text-gray-500': !isSelectedStatus(status.code) }"
+          :value="facet.term"
+          :class="{ 'font-bold': isSelectedStatus(facet.term), 'text-gray-500': !isSelectedStatus(facet.term) }"
         >
-          {{ status.code }}
+          <div class="flex w-full max-w-full gap-1">
+            <div class="min-w-0 truncate">{{ facet.label }}</div>
+            <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
+          </div>
         </VcCheckbox>
       </div>
       <div class="flex flex-col space-y-3">
@@ -47,9 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
-import { configInjectionKey } from "@/core/injection-keys";
-import { useUserOrdersFilter } from "../composables";
+import { useUserOrders, useUserOrdersFilter } from "../composables";
 
 interface IEmits {
   (event: "change"): void;
@@ -57,11 +58,8 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 
-const config = inject(configInjectionKey);
-
+const { facets } = useUserOrders({});
 const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
-
-const availableStatuses = config?.orders_statuses || [];
 
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;

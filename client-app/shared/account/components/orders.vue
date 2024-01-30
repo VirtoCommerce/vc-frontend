@@ -279,10 +279,11 @@
 import { breakpointsTailwind, useBreakpoints, onClickOutside, useElementVisibility } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
+import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { Sort } from "@/core/types";
-import { useUserOrdersFilter, useUserOrders, DEFAULT_ORDERS_PER_PAGE } from "@/shared/account/composables";
+import { useUserOrdersFilter, useUserOrders } from "@/shared/account/composables";
 import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
@@ -304,9 +305,10 @@ const props = withDefaults(defineProps<IProps>(), {
 const { itemsPerPage } = toRefs(props);
 
 const { t } = useI18n();
+const route = useRoute();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { loading: ordersLoading, orders, loadOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
+const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
 
 const {
   appliedFilterData,
@@ -370,19 +372,19 @@ const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderA
 async function changePage(newPage: number) {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
-  await loadOrders();
+  await fetchOrders();
 }
 
 async function applySorting(sortInfo: ISortInfo): Promise<void> {
   sort.value = new Sort(sortInfo.column, sortInfo.direction as SortDirection);
   page.value = 1;
-  await loadOrders();
+  await fetchOrders();
 }
 
 async function applyKeyword() {
   keyword.value = localKeyword.value;
   page.value = 1;
-  await loadOrders();
+  await fetchOrders();
 }
 
 async function resetKeyword() {
@@ -428,11 +430,15 @@ onMounted(() => {
   resetFilters();
 });
 
+watch(route, (value) => {
+  appliedFilterData.value.statuses = value.query.status ? [value.query.status.toString()] : [];
+});
+
 watch(
   appliedFilterData,
-  () => {
+  async () => {
     page.value = 1;
-    loadOrders();
+    await fetchOrders();
   },
   { deep: true },
 );
