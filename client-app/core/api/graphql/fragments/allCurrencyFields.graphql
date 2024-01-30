@@ -1,0 +1,8 @@
+fragment allCurrencyFields on CurrencyType {
+  code
+  symbol
+  exchangeRate
+  customFormatting
+  englishName
+  cultureName
+}

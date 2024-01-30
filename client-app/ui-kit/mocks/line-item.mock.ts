@@ -93,7 +93,7 @@ const propertiesMock: Property[] = [
 export const prepatedLineItemMock1: PreparedLineItemType = {
   id: "52ae03eb-2bf9-4361-9e36-c53f75fe0438",
   name: "Eyebolt, 3/8-16,3/4In, Turned Wire, PK10",
-  imageUrl: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/7829d/5ZE93/5ZE93.jpg",
+  imageUrl: "https://vcst-dev.govirto.com/cms-content/assets/catalog/7829d/5ZE93/5ZE93.jpg",
   inStockQuantity: 199,
   listPrice: getMoney(8.85),
   extendedPrice: getMoney(4062.15),
@@ -105,7 +105,7 @@ export const prepatedLineItemMock1: PreparedLineItemType = {
 export const preparedLineItemMock2: PreparedLineItemType = {
   id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
   name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
-  imageUrl: "https://vcst-dev.paas.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01.jpg",
+  imageUrl: "https://vcst-dev.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01.jpg",
   inStockQuantity: 25,
   listPrice: getMoney(57.25),
   actualPrice: getMoney(57.25),

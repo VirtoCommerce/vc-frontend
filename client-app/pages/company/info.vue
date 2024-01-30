@@ -9,7 +9,7 @@
       <!-- Company name block -->
       <div class="flex items-end gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput
-          v-model.trim="organizationName"
+          v-model="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
           :disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
           :message="errors[0]"
@@ -275,7 +275,7 @@ const {
   errors,
   value: organizationName,
   resetField: resetOrganizationField,
-} = useField<string>("organizationName", toTypedSchema(string().required().max(64)));
+} = useField<string>("organizationName", toTypedSchema(string().trim().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
 const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
@@ -337,7 +337,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 async function saveOrganizationName(): Promise<void> {
   await updateOrganization({
     id: organizationId.value,
-    name: organizationName.value,
+    name: organizationName.value.trim(),
   });
 }
 

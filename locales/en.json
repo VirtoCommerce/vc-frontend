@@ -1118,6 +1118,7 @@
         "statuses": {
           "active": "Active",
           "inactive": "Inactive",
+          "invited": "Invited",
           "blocked": "Blocked"
         }
       }
