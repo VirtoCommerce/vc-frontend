@@ -70,7 +70,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       (isDefined(initialValue) && attachedFiles.value.length !== toValue(initialValue).length),
   );
 
-  const attachedOrUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
+  const attachedAndUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
   const allFilesAttachedOrUploaded = computedEager(() =>
     files.value.every((file) => isAttached(file) || isUploaded(file)),
   );
@@ -114,7 +114,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
     const formData = new FormData();
 
-    uploadingFiles.forEach((file) => formData.append("file", file.file!));
+    uploadingFiles.forEach((file) => formData.append("file", file.file));
 
     const data = await innerFetch<FileUploadResultType[]>(`/api/files/${unref(scope)}`, "POST", formData, null);
 
@@ -133,7 +133,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   async function removeFiles(filesToRemove: FileType[]) {
     await asyncForEach(filesToRemove, async (fileToRemove) => {
-      if (isUploaded(fileToRemove) && !(await deleteFile(fileToRemove.id!))) {
+      if (isUploaded(fileToRemove) && !(await deleteFile(fileToRemove.id))) {
         toFailed(fileToRemove, t("file_error.CANNOT_DELETE"));
       } else {
         toRemoved(fileToRemove);
@@ -181,7 +181,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
     modifiedFiles,
     anyFilesModified,
 
-    attachedOrUploadedFiles,
+    attachedAndUploadedFiles,
     allFilesAttachedOrUploaded,
 
     options,
