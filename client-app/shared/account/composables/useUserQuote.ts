@@ -11,6 +11,7 @@ import {
 } from "@/core/api/graphql";
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
+import { toAttached } from "@/ui-kit";
 import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/core/api/graphql/types";
 
 const fetching = ref<boolean>(false);
@@ -24,33 +25,17 @@ const shippingAddress = computed<QuoteAddressType | undefined>(
   () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
 );
 
-const _attachments = ref<FileType[]>();
+const attachments = computed(() => quote.value?.attachments ?? []);
 
-const attachments = computed<FileType[]>({
-  get: () => {
-    _attachments.value ??=
-      quote.value?.attachments.map((attachment) => {
-        const file: FileType = {
-          name: attachment.name,
-          contentType: attachment.contentType,
-          size: attachment.size,
-          status: "existing",
-          url: attachment.url,
-        };
-        return file;
-      }) ?? [];
-    return _attachments.value;
-  },
-  set: (value) => (_attachments.value = value),
-});
+const attachedFiles = computed(() =>
+  attachments.value.map((attachment) =>
+    toAttached(attachment.name, attachment.size, attachment.contentType, attachment.url),
+  ),
+);
 
 export function useUserQuote() {
   function clearQuote(): void {
     quote.value = undefined;
-  }
-
-  function clearAttachments() {
-    _attachments.value = undefined;
   }
 
   function setQuoteAddress(newAddress: QuoteAddressType): void {
@@ -73,7 +58,7 @@ export function useUserQuote() {
 
   async function updateAttachments(
     quoteId: string,
-    updatedAttachments: (IUploadedFile | IExistingFile)[],
+    updatedAttachments: (IUploadedFile | IAttachedFile)[],
   ): Promise<void> {
     fetching.value = true;
 
@@ -164,8 +149,8 @@ export function useUserQuote() {
     billingAddress,
     shippingAddress,
     attachments,
+    attachedFiles,
     clearQuote,
-    clearAttachments,
     setQuoteAddress,
     fetchQuote,
     changeComment,

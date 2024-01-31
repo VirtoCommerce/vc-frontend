@@ -23,7 +23,7 @@
       </VcWidget>
 
       <VcWidget :title="$t('pages.account.quote_details.files')" prepend-icon="document-add" size="lg">
-        <Files v-model:files="attachments" scope="quote-attachments" />
+        <VcFileUploader v-bind="fileOptions" :files="files" @add-files="onAddFiles" @remove-files="onRemoveFiles" />
       </VcWidget>
 
       <!-- Quote products -->
@@ -97,7 +97,7 @@
         {{ $t("pages.account.quote_details.save_changes") }}
       </VcButton>
 
-      <VcButton :disabled="!quoteValid || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
+      <VcButton :disabled="!canSubmit || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
         {{ $t("pages.account.quote_details.submit") }}
       </VcButton>
     </div>
@@ -119,7 +119,7 @@ import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities"
 import { QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
-import { Files } from "@/shared/files";
+import { useFiles } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
@@ -151,9 +151,8 @@ const {
   quote,
   shippingAddress,
   billingAddress,
-  attachments,
+  attachedFiles,
   clearQuote,
-  clearAttachments,
   setQuoteAddress,
   fetchQuote,
   changeComment,
@@ -163,6 +162,19 @@ const {
   submitQuote,
   updateAttachments,
 } = useUserQuote();
+const {
+  files,
+  attachedOrUploadedFiles,
+  anyFilesModified,
+  allFilesAttachedOrUploaded,
+  hasFailedFiles,
+  addFiles,
+  validateFiles,
+  uploadFiles,
+  removeFiles,
+  fetchOptions: fetchFileOptions,
+  options: fileOptions,
+} = useFiles("quote-attachments", attachedFiles);
 const notifications = useNotifications();
 
 usePageHead({
@@ -191,10 +203,7 @@ const canSaveChanges = computed<boolean>(
     !isEqual(originalQuote.value, quote.value) ||
     originalQuote.value?.comment !== comment.value ||
     (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
-    ((attachments.value.some((attachment) => attachment.status === "success") ||
-      attachments.value.filter((attachment) => attachment.status === "existing").length !==
-        originalQuote.value?.attachments.length) &&
-      attachments.value.every((attachment) => attachment.status !== "error")),
+    (anyFilesModified.value && allFilesAttachedOrUploaded.value && !hasFailedFiles.value),
 );
 const quoteItemsValid = computed<boolean>(
   () =>
@@ -204,15 +213,12 @@ const quoteItemsValid = computed<boolean>(
       (item: QuoteItemType) => !!item.selectedTierPrice?.quantity && item.selectedTierPrice.quantity > 0,
     ),
 );
-const quoteAttachmentsValid = computed(() => {
-  return attachments.value.every((attachment) => attachment.status === "existing");
-});
-const quoteValid = computed<boolean>(
+const canSubmit = computed<boolean>(
   () =>
     !!shippingAddress.value &&
     (!!billingAddress.value || billingAddressEqualsShipping.value) &&
     (!!comment.value || quoteItemsValid.value) &&
-    quoteAttachmentsValid.value,
+    !anyFilesModified.value,
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
@@ -308,13 +314,20 @@ function openSelectAddressModal(addressType: AddressType): void {
   });
 }
 
+async function onAddFiles(items: INewFile[]) {
+  addFiles(items);
+  validateFiles();
+  await uploadFiles();
+}
+
+async function onRemoveFiles(items: FileType[]) {
+  await removeFiles(items);
+}
+
 // Due API concurrency errors each query will be sended consecutively
 async function saveChanges(): Promise<void> {
-  const updatedAttachments = attachments.value.filter(
-    (attachment) => attachment.status === "success" || attachment.status === "existing",
-  ) as (IUploadedFile | IExistingFile)[];
-  if (updatedAttachments.length) {
-    await updateAttachments(quote.value!.id, updatedAttachments);
+  if (anyFilesModified.value) {
+    await updateAttachments(quote.value!.id, attachedOrUploadedFiles.value);
   }
 
   if (originalQuote.value?.comment !== comment.value) {
@@ -349,8 +362,6 @@ async function saveChanges(): Promise<void> {
   }
 
   await fetchQuote({ id: props.quoteId });
-
-  clearAttachments();
 
   notifications.success({
     duration: DEFAULT_NOTIFICATION_DURATION,
@@ -391,10 +402,8 @@ onMounted(() => {
 
 watchEffect(async () => {
   clearQuote();
-  clearAttachments();
 
-  await fetchAddresses();
-  await fetchQuote({ id: props.quoteId });
+  await Promise.all([fetchFileOptions(), fetchAddresses(), fetchQuote({ id: props.quoteId })]);
 
   originalQuote.value = cloneDeep(quote.value);
   comment.value = quote.value?.comment;
