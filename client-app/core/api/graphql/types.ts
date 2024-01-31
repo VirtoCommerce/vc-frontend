@@ -5792,6 +5792,10 @@ export type GetFileUploadOptionsQueryVariables = Exact<{
 
 export type GetFileUploadOptionsQuery = { fileUploadOptions?: { maxFileSize: number, allowedExtensions: Array<string> } };
 
+export type AllCurrencyFieldsFragment = { code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string };
+
+export type AllLanguageFieldsFragment = { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string };
+
 export type AvailabilityDataFieldsFragment = { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number };
 
 export type CartAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, phone?: string, email?: string, addressType?: number };
@@ -6027,3 +6031,10 @@ export type GetQuotesQueryVariables = Exact<{
 
 
 export type GetQuotesQuery = { quotes?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, customerId?: string, number: string, status?: string, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } }> } };
+
+export type GetStoreQueryVariables = Exact<{
+  storeId: Scalars['String']['input'];
+}>;
+
+
+export type GetStoreQuery = { store?: { storeId: string, storeName: string, catalogId: string, storeUrl?: string, defaultLanguage: { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }, availableLanguages: Array<{ isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string }>, defaultCurrency: { code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }, availableCurrencies: Array<{ code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string }>, settings: { quotesEnabled: boolean, subscriptionEnabled: boolean, taxCalculationEnabled: boolean, anonymousUsersAllowed: boolean, isSpa: boolean, emailVerificationEnabled: boolean, emailVerificationRequired: boolean, createAnonymousOrderEnabled: boolean, seoLinkType: string } } };
