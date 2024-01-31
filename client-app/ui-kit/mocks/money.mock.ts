@@ -29,8 +29,8 @@ export function getMoney(amount: number, culture = "en-US", currencyCode = "USD"
       code: currencyCode,
       exchangeRate: 1,
       symbol: currencyFormat.formatToParts().find((part) => part.type === "currency")?.value || "",
-      englishName: "",
       cultureName: "",
+      englishName: "",
     },
   };
 }

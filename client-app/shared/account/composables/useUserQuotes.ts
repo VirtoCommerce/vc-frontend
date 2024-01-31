@@ -29,7 +29,7 @@ export function useUserQuotes() {
       const response = await getQuotes({
         first: itemsPerPage.value,
         after: String((page.value - 1) * itemsPerPage.value),
-        keyword: keyword.value,
+        keyword: keyword.value.trim(),
         sort: sortingExpression,
       });
 

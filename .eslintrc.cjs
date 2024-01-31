@@ -155,6 +155,7 @@ module.exports = {
     /**
      * Disabled
      */
+    "sonarjs/cognitive-complexity": "off",
     "@typescript-eslint/no-non-null-assertion": "off", // TODO: Remove (switch to error) after XAPI types refactoring
     "@typescript-eslint/no-unnecessary-type-assertion": "off", // TODO: Remove (switch to error) at next PR with auto fix
     "@typescript-eslint/no-redundant-type-constituents": "off", // TODO: Investigate why there are false positives

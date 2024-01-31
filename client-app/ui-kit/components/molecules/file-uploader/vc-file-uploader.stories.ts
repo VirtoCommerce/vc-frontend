@@ -34,7 +34,7 @@ Basic.args = {
       name: "Archive.zip",
       size: 5 * 1024 * 1024,
       contentType: "application/zip",
-      status: "existing",
+      status: "attached",
       url: "Fake.pdf",
     },
     {
@@ -42,7 +42,8 @@ Basic.args = {
       size: 1 * 1024,
       contentType: "application/pdf",
       progress: 100,
-      status: "success",
+      status: "uploaded",
+      file: new File([], "Document.pdf"),
       id: "UUID",
       url: "Fake.pdf",
     },
@@ -51,7 +52,8 @@ Basic.args = {
       size: 256,
       contentType: "application/csv",
       progress: 45,
-      status: "loading",
+      status: "uploading",
+      file: new File([], "Document.pdf"),
     },
     {
       name: "App.exe",

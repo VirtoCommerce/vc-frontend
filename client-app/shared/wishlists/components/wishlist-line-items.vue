@@ -8,6 +8,7 @@
           :model-value="item.quantity"
           :min-quantity="item.minQuantity"
           :max-quantity="item.maxQuantity"
+          :available-quantity="item.inStockQuantity"
           :count-in-cart="item.countInCart"
           :disabled="addToCartDisabled(item)"
           @update:model-value="changeItemQuantity(item, $event)"

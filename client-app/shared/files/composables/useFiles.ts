@@ -1,22 +1,41 @@
-import { ref, unref } from "vue";
+import { computedEager, isDefined, syncRefs, toValue } from "@vueuse/core";
+import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
 import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
 import { useErrorsTranslator, useFetch } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
-import { getFileSize } from "@/ui-kit";
+import {
+  getBytes,
+  getFileSize,
+  isAttached,
+  isFailed,
+  isNewfile,
+  isRemoved,
+  isUploaded,
+  toFailed,
+  toRemoved,
+  toUploaded,
+  toUploading,
+} from "@/ui-kit";
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
-import type { MaybeRef, Ref } from "vue";
+import type { MaybeRef, WatchSource } from "vue";
 
-export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
+/**
+ * File management
+ * @param scope Scope files belongs to.
+ * @param initialValue One way syncronization source if files is attached to some object. Files state will be reset if attachments change.
+ */
+export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
   const { getTranslation: getErrorTranlation } = useErrorsTranslator("file_error");
   const { innerFetch } = useFetch();
   const { t, n } = useI18n();
 
   const defaultOptions = {
     maxFileCount: 5,
-    maxFileSize: 1 * 1024 * 1024, // 100 MB
+    maxFileSize: getBytes({ value: 1, unit: "megabyte" }),
     allowedExtensions: [],
   };
+
   const options = ref<IFileOptions>(defaultOptions);
 
   async function fetchOptions() {
@@ -29,6 +48,32 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
     }
   }
 
+  const files = ref<FileType[]>([]);
+  if (initialValue) {
+    syncRefs(initialValue, files);
+  }
+
+  const newFiles = computed(() => files.value.filter(isNewfile));
+  const hasNewFiles = computedEager(() => newFiles.value.length > 0);
+
+  const failedFiles = computed(() => files.value.filter(isFailed));
+  const hasFailedFiles = computedEager(() => failedFiles.value.length > 0);
+
+  const attachedFiles = computed(() => files.value.filter(isAttached));
+  const uploadedFiles = computed(() => files.value.filter(isUploaded));
+
+  const modifiedFiles = computed(() => files.value.filter((file) => !isAttached(file)));
+  const anyFilesModified = computedEager(
+    () =>
+      modifiedFiles.value.length > 0 ||
+      (isDefined(initialValue) && attachedFiles.value.length !== toValue(initialValue).length),
+  );
+
+  const attachedOrUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
+  const allFilesAttachedOrUploaded = computedEager(() =>
+    files.value.every((file) => isAttached(file) || isUploaded(file)),
+  );
+
   function addFiles(filesToAdd: INewFile[]): boolean {
     if (files.value.length + filesToAdd.length > options.value.maxFileCount) {
       return false;
@@ -39,49 +84,47 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
   }
 
   function validateFiles(): void {
-    const filesToValidate = files.value.filter((fileInfo) => fileInfo.status === "new");
+    if (!hasNewFiles.value) {
+      return;
+    }
 
-    filesToValidate.forEach((fileToValidate) => {
-      if (files.value.some((file) => file.name === fileToValidate.name && file !== fileToValidate)) {
-        setError(fileToValidate, getErrorMessage("ALREADY_EXISTS"));
+    newFiles.value.forEach((newFile) => {
+      if (files.value.some((file) => file.name === newFile.name && file !== newFile)) {
+        toFailed(newFile, getErrorMessage("ALREADY_EXISTS"));
       }
 
-      if (options.value.maxFileSize < fileToValidate.size) {
-        setError(fileToValidate, getErrorMessage("INVALID_SIZE", options.value.maxFileSize));
+      if (options.value.maxFileSize < newFile.size) {
+        toFailed(newFile, getErrorMessage("INVALID_SIZE", options.value.maxFileSize));
       }
 
-      const extension = /(\.[^.]+)?$/.exec(fileToValidate.name)?.[1];
+      const extension = /(\.[^.]+)?$/.exec(newFile.name)?.[1];
       if (options.value.allowedExtensions.length && extension && !options.value.allowedExtensions.includes(extension)) {
-        setError(fileToValidate, getErrorMessage("INVALID_EXTENSION", options.value.allowedExtensions));
+        toFailed(newFile, getErrorMessage("INVALID_EXTENSION", options.value.allowedExtensions));
       }
     });
   }
 
   async function uploadFiles(): Promise<void> {
-    const filesToUpload = files.value.filter((fileInfo) => fileInfo.status === "new");
+    if (!hasNewFiles.value) {
+      return;
+    }
 
-    filesToUpload.forEach((fileInfo) => {
-      fileInfo.status = "loading";
-      fileInfo.progress = 0;
-    });
+    const uploadingFiles = newFiles.value.map(toUploading);
 
     const formData = new FormData();
 
-    filesToUpload.forEach((file) => formData.append("file", file.file!));
+    uploadingFiles.forEach((file) => formData.append("file", file.file!));
 
     const data = await innerFetch<FileUploadResultType[]>(`/api/files/${unref(scope)}`, "POST", formData, null);
 
     data.forEach((result) => {
-      const uploadedFile = filesToUpload.find((fileInfo) => fileInfo.name === result.name);
+      const uploadedFile = uploadingFiles.find((fileInfo) => fileInfo.name === result.name);
 
       if (uploadedFile) {
         if (result.succeeded) {
-          uploadedFile.id = result.id;
-          uploadedFile.url = result.url;
-          uploadedFile.progress = 100;
-          uploadedFile.status = "success";
+          toUploaded(uploadedFile, result.id, result.url);
         } else {
-          setError(uploadedFile, getErrorMessage(result.errorCode, result.errorParameter, result.errorMessage));
+          toFailed(uploadedFile, getErrorMessage(result.errorCode, result.errorParameter, result.errorMessage));
         }
       }
     });
@@ -89,24 +132,14 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
 
   async function removeFiles(filesToRemove: FileType[]) {
     await asyncForEach(filesToRemove, async (fileToRemove) => {
-      let succeeded: boolean | undefined = true;
-      if (fileToRemove.status === "success") {
-        succeeded = await deleteFile(fileToRemove.id!);
-      }
-
-      fileToRemove.status = succeeded ? "removed" : "error";
-      if (!succeeded) {
-        fileToRemove.errorMessage = t("file_error.CANNOT_DELETE");
+      if (isUploaded(fileToRemove) && !(await deleteFile(fileToRemove.id!))) {
+        toFailed(fileToRemove, t("file_error.CANNOT_DELETE"));
+      } else {
+        toRemoved(fileToRemove);
       }
     });
 
-    files.value = files.value.filter((file) => file.status !== "removed");
-  }
-
-  function setError(file: FileType, errorMessage: string | undefined) {
-    file.progress = undefined;
-    file.errorMessage = errorMessage;
-    file.status = "error";
+    files.value = files.value.filter((file) => !isRemoved(file));
   }
 
   function getErrorMessage(errorCode: string, errorParameter?: unknown, errorMessage?: string): string | undefined {
@@ -137,11 +170,26 @@ export function useFiles(scope: MaybeRef<string>, files: Ref<FileType[]>) {
 
   return {
     files,
+
+    failedFiles,
+    hasFailedFiles,
+
+    attachedFiles,
+    uploadedFiles,
+
+    modifiedFiles,
+    anyFilesModified,
+
+    attachedOrUploadedFiles,
+    allFilesAttachedOrUploaded,
+
     options,
+
     addFiles,
     validateFiles,
     uploadFiles,
     removeFiles,
+
     fetchOptions,
   };
 }

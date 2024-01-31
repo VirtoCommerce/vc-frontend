@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getFileSize } from "./file-size";
+import { getFileSize, getBytes } from "./file-size";
 
 describe("getFileSize", () => {
   it("should return file size in bytes when value isn't provided", () => {
@@ -45,5 +45,42 @@ describe("getFileSize", () => {
   it("should return file size in terabytes when corresponding value in bytes are provided", () => {
     const result = getFileSize(1 * Math.pow(1024, 4));
     expect(result).toEqual({ value: 1, unit: "terabyte" });
+  });
+});
+
+describe("getBytes", () => {
+  it("should return 0 bytes when value isn't provided", () => {
+    const result = getBytes();
+    expect(result).toEqual(0);
+  });
+
+  it("should return file size in bytes when value in bytes is provided", () => {
+    const result = getBytes({ value: 1, unit: "byte" });
+    expect(result).toEqual(1);
+  });
+
+  it("should return file size in bytes when value in kilobytes is provided", () => {
+    const result = getBytes({ value: 1, unit: "kilobyte" });
+    expect(result).toEqual(Math.pow(1024, 1));
+  });
+
+  it("should return file size in bytes when fractional value in kilobytes is provided", () => {
+    const result = getBytes({ value: 1.25, unit: "kilobyte" });
+    expect(result).toEqual(Math.pow(1024, 1) + 256);
+  });
+
+  it("should return file size in bytes when value in megabytes is provided", () => {
+    const result = getBytes({ value: 1, unit: "megabyte" });
+    expect(result).toEqual(Math.pow(1024, 2));
+  });
+
+  it("should return file size in bytes when value in gigabytes is provided", () => {
+    const result = getBytes({ value: 1, unit: "gigabyte" });
+    expect(result).toEqual(Math.pow(1024, 3));
+  });
+
+  it("should return file size in bytes when value in terabytes is provided", () => {
+    const result = getBytes({ value: 1, unit: "terabyte" });
+    expect(result).toEqual(Math.pow(1024, 4));
   });
 });
