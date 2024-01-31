@@ -7,6 +7,8 @@
             <DiscountBadge :price="product.price!" />
           </template>
         </ImageGallery>
+
+        <ProductVideos class="mt-8 lg:mt-3" :videos="product.videos" />
       </div>
 
       <div class="hidden aspect-square w-40 flex-none print:block">
@@ -27,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ImageGallery, DiscountBadge } from "@/shared/catalog";
+import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
 import type { PageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 
