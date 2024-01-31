@@ -113,6 +113,7 @@ export default defineConfig(({ mode }): UserConfig => {
       https: true,
       proxy: {
         "^/(xapi|storefrontapi)": getProxy(process.env.APP_BACKEND_URL),
+        "^/connect/token": getProxy(process.env.APP_PLATFORM),
         // For login on behalf
         "^/account/impersonate/.+": getProxy(process.env.APP_BACKEND_URL, {
           autoRewrite: true,

@@ -194,6 +194,19 @@ export function useUser() {
 
       const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
 
+      const token = await innerFetch(
+        "/connect/token",
+        "POST",
+        new URLSearchParams({
+          grant_type: "password",
+          scope: "offline_access",
+          username: payload.email,
+          password: payload.password,
+        }),
+        "application/x-www-form-urlencoded",
+      );
+      console.log(token);
+
       if (result.succeeded) {
         broadcast.emit(pageReloadEvent);
       }
