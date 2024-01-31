@@ -25,6 +25,7 @@ import type { MaybeRef, WatchSource } from "vue";
  * @param scope Scope files belongs to.
  * @param initialValue One way syncronization source if files is attached to some object. Files state will be reset if attachments change.
  */
+// eslint-disable-next-line sonarjs/cognitive-complexity
 export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
   const { getTranslation: getErrorTranlation } = useErrorsTranslator("file_error");
   const { innerFetch } = useFetch();
