@@ -35,7 +35,7 @@
       <div
         v-for="facet in facets"
         :key="facet.term"
-        class="ml-4 flex items-center space-x-2 overflow-hidden text-ellipsis px-3 text-sm"
+        class="flex items-center space-x-1 overflow-hidden text-ellipsis px-3 text-sm"
       >
         <VcIcon class="flex-none text-[--color-primary-500]" name="minus" />
 

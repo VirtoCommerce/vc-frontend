@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col justify-between lg:justify-start">
-    <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-14 lg:space-y-0">
-      <div v-if="!!facets" class="flex max-w-32 flex-col space-y-4">
+    <div class="flex flex-col gap-4 space-y-8 lg:flex-row lg:space-y-0">
+      <div v-if="!!facets" class="flex w-48 flex-col space-y-4">
         <div class="font-bold uppercase lg:normal-case lg:text-gray-400">
           {{ $t("shared.account.orders-filter.status-label") }}
         </div>
