@@ -164,7 +164,7 @@ const {
 } = useUserQuote();
 const {
   files,
-  attachedOrUploadedFiles,
+  attachedAndUploadedFiles,
   anyFilesModified,
   allFilesAttachedOrUploaded,
   hasFailedFiles,
@@ -327,7 +327,7 @@ async function onRemoveFiles(items: FileType[]) {
 // Due API concurrency errors each query will be sended consecutively
 async function saveChanges(): Promise<void> {
   if (anyFilesModified.value) {
-    await updateAttachments(quote.value!.id, attachedOrUploadedFiles.value);
+    await updateAttachments(quote.value!.id, attachedAndUploadedFiles.value);
   }
 
   if (originalQuote.value?.comment !== comment.value) {
