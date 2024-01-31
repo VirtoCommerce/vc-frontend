@@ -15,10 +15,11 @@ const Template: StoryFn<typeof VcFile> = (args) => ({
 export const Basic = Template.bind({});
 Basic.args = {
   file: {
-    name: "File-name.pdf",
+    name: "Document.pdf",
     size: 11122233,
     contentType: "application/pdf",
     progress: 45,
-    status: "loading",
+    status: "uploading",
+    file: new File([], "Document.pdf"),
   },
 };

@@ -5,19 +5,14 @@
       :class="[
         'vc-file__icon',
         {
-          'vc-file__icon--loading': file.status === 'loading',
+          'vc-file__icon--loading': isUploading(file),
         },
       ]"
     />
 
     <span class="vc-file__details">
       <span class="vc-file__row">
-        <a
-          v-if="file.status === 'success' || file.status === 'existing'"
-          class="vc-file__link"
-          :href="file.url"
-          target="_blank"
-        >
+        <a v-if="isAttached(file) || isUploaded(file)" class="vc-file__link" :href="file.url" target="_blank">
           {{ file.name }}
         </a>
         <span v-else class="vc-file__name">
@@ -36,11 +31,11 @@
         </span>
       </span>
 
-      <span v-if="file.status === 'loading'" class="vc-file__message">{{ $t("ui_kit.file.uploading") }}</span>
+      <span v-if="isUploading(file)" class="vc-file__message">{{ $t("ui_kit.file.uploading") }}</span>
 
-      <span v-else-if="file.status === 'success'" class="vc-file__message">{{ $t("ui_kit.file.uploaded") }}</span>
+      <span v-else-if="isUploaded(file)" class="vc-file__message">{{ $t("ui_kit.file.uploaded") }}</span>
 
-      <span v-else-if="file.status === 'error'" class="vc-file__message vc-file__message--error">
+      <span v-else-if="isFailed(file)" class="vc-file__message vc-file__message--error">
         {{ file.errorMessage }}
       </span>
     </span>
@@ -63,7 +58,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { ContentType } from "@/core/enums";
-import { getFileSize } from "@/ui-kit/utilities";
+import { getFileSize, isAttached, isFailed, isUploading, isUploaded } from "@/ui-kit/utilities";
 
 interface IEmits {
   (event: "reload", value: FileType): void;
@@ -92,7 +87,7 @@ const icon = computed(() => {
 
   const contentType = props.file.contentType;
 
-  if (props.file.status === "error") {
+  if (isFailed(props.file)) {
     fileName = "error";
   } else if (Object.keys(ContentType).includes(contentType as ContentType)) {
     fileName = ContentType[contentType as ContentType] || "file";

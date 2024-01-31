@@ -61,7 +61,7 @@
     </VcAlert>
 
     <VcAlert
-      v-if="files.some((file) => file.status === 'error')"
+      v-if="files.some(isFailed)"
       class="vc-file-uploader__alert"
       color="danger"
       variant="solid-light"
@@ -76,7 +76,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { getFileSize } from "@/ui-kit/utilities";
+import { getFileSize, isFailed } from "@/ui-kit/utilities";
 
 interface IProps {
   maxFileCount: number;

@@ -72,37 +72,37 @@ declare global {
     file?: File;
   }
 
+  interface IAttachedFile extends IFile {
+    status: "attached";
+    url: string;
+  }
+
   interface INewFile extends IFile {
     status: "new";
     progress: 0;
     file: File;
   }
 
-  interface IUploadingFile extends IFile {
-    status: "loading";
+  interface IUploadingFile extends INewFile {
+    status: "uploading";
     progress: number;
   }
 
-  interface IUploadedFile extends IFile {
-    status: "success";
+  interface IUploadedFile extends IUploadingFile {
+    status: "uploaded";
     progress: 100;
     id: string;
     url: string;
   }
 
-  interface IFileFailure extends IFile {
+  interface IFailedFile extends IFile {
     status: "error";
     errorMessage: string;
-  }
-
-  interface IExistingFile extends IFile {
-    status: "existing";
-    url: string;
   }
 
   interface IRemovedFile extends IFile {
     status: "removed";
   }
 
-  type FileType = INewFile | IUploadingFile | IUploadedFile | IFileFailure | IExistingFile | IRemovedFile;
+  type FileType = INewFile | IUploadingFile | IUploadedFile | IFailedFile | IAttachedFile | IRemovedFile;
 }

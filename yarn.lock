@@ -16111,6 +16111,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"utility-types@npm:^3.11.0":
+  version: 3.11.0
+  resolution: "utility-types@npm:3.11.0"
+  checksum: 35a4866927bbea5d037726744028d05c6e37772ded2aabaca21480ce9380185436aef586ead525e327c7f3c640b1a3287769a12ef269c7b165a2ddd50ea6ad61
+  languageName: node
+  linkType: hard
+
 "utils-merge@npm:1.0.1":
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
@@ -16237,6 +16244,7 @@ __metadata:
     tailwindcss: 3.4.0
     tw-elements: ^1.0.0
     typescript: ~5.2.0
+    utility-types: ^3.11.0
     vee-validate: ^4.11.8
     vite: ^4.4.11
     vite-node: ^0.34.7

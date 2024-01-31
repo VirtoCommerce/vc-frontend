@@ -50,6 +50,7 @@
     "maska": "^2.1.10",
     "swiper": "11.0.4",
     "tw-elements": "^1.0.0",
+    "utility-types": "^3.11.0",
     "vee-validate": "^4.11.8",
     "vue": "^3.3.4",
     "vue-html-secure": "^1.0.10",
