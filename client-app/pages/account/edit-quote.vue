@@ -10,10 +10,10 @@
 
     <div class="-mx-4.5 space-y-5 lg:mx-0 lg:space-y-6">
       <!-- Quote comment -->
-      <VcWidget :title="$t('pages.account.quote_details.comment')" prepend-icon="document-text" size="lg">
+      <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
-          :label="$t('pages.account.quote_details.comments_field_label')"
+          :label="$t('pages.account.quote_details.remarks_field_label')"
           :disabled="fetching"
           :max-length="1000"
           :rows="4"
@@ -22,7 +22,12 @@
         />
       </VcWidget>
 
-      <VcWidget :title="$t('pages.account.quote_details.files')" prepend-icon="document-add" size="lg">
+      <VcWidget
+        v-if="$cfg.files_enabled"
+        :title="$t('pages.account.quote_details.files')"
+        prepend-icon="document-add"
+        size="lg"
+      >
         <VcFileUploader v-bind="fileOptions" :files="files" @add-files="onAddFiles" @remove-files="onRemoveFiles" />
       </VcWidget>
 
@@ -109,14 +114,15 @@
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, every, isEqual, remove } from "lodash";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, inject, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
+import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
-import { QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
+import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useFiles } from "@/shared/files";
@@ -132,6 +138,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const config = inject(configInjectionKey, {});
 const router = useRouter();
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
@@ -167,14 +174,13 @@ const {
   attachedAndUploadedFiles,
   anyFilesModified,
   allFilesAttachedOrUploaded,
-  hasFailedFiles,
   addFiles,
   validateFiles,
   uploadFiles,
   removeFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
-} = useFiles("quote-attachments", attachedFiles);
+} = useFiles(config.quotes_files_scope ?? DEFAULT_QUOTE_FILES_SCOPE, attachedFiles);
 const notifications = useNotifications();
 
 usePageHead({
@@ -200,10 +206,11 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
 });
 const canSaveChanges = computed<boolean>(
   () =>
-    !isEqual(originalQuote.value, quote.value) ||
-    originalQuote.value?.comment !== comment.value ||
-    (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
-    (anyFilesModified.value && allFilesAttachedOrUploaded.value && !hasFailedFiles.value),
+    (!isEqual(originalQuote.value, quote.value) ||
+      originalQuote.value?.comment !== comment.value ||
+      (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
+      anyFilesModified.value) &&
+    allFilesAttachedOrUploaded.value,
 );
 const quoteItemsValid = computed<boolean>(
   () =>

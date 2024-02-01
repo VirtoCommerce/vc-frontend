@@ -11,7 +11,7 @@ import {
 } from "@/core/api/graphql";
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
-import { toAttached } from "@/ui-kit/utilities";
+import { toAttachedFile } from "@/ui-kit/utilities";
 import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/core/api/graphql/types";
 
 const fetching = ref<boolean>(false);
@@ -29,7 +29,7 @@ const attachments = computed(() => quote.value?.attachments ?? []);
 
 const attachedFiles = computed(() =>
   attachments.value.map((attachment) =>
-    toAttached(attachment.name, attachment.size, attachment.contentType, attachment.url),
+    toAttachedFile(attachment.name, attachment.size, attachment.contentType, attachment.url),
   ),
 );
 
