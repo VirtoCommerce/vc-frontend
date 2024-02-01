@@ -279,7 +279,7 @@
 import { breakpointsTailwind, useBreakpoints, onClickOutside, useElementVisibility } from "@vueuse/core";
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { Sort } from "@/core/types";
@@ -305,7 +305,6 @@ const props = withDefaults(defineProps<IProps>(), {
 const { itemsPerPage } = toRefs(props);
 
 const { t } = useI18n();
-const route = useRoute();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
@@ -428,10 +427,6 @@ onClickOutside(
 
 onMounted(() => {
   resetFilters();
-});
-
-watch(route, (value) => {
-  appliedFilterData.value.statuses = value.query.status ? [value.query.status.toString()] : [];
 });
 
 watch(
