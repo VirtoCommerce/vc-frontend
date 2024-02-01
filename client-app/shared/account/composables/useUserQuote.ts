@@ -11,7 +11,7 @@ import {
 } from "@/core/api/graphql";
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
-import { toAttached } from "@/ui-kit";
+import { toAttached } from "@/ui-kit/utilities";
 import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/core/api/graphql/types";
 
 const fetching = ref<boolean>(false);
