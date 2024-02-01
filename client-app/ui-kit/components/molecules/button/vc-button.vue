@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 export interface IEmits {
@@ -79,7 +79,9 @@ interface IProps {
   to?: RouteLocationRaw | null;
   externalLink?: string;
   target?: "_self" | "_blank";
+  /* @deprecated use default slot instead. */
   prependIcon?: string;
+  /* @deprecated use default slot instead. */
   appendIcon?: string;
   icon?: boolean | string;
   title?: string;
@@ -142,6 +144,16 @@ const attrs = computed(() => {
   }
 
   return attributes;
+});
+
+onMounted(() => {
+  if (props.prependIcon) {
+    console.warn("[UIKit][VcButton][warn] `prependIcon` prop is deprecated. Please use default slot instead.");
+  }
+
+  if (props.appendIcon) {
+    console.warn("[UIKit][VcButton][warn] `appendIcon` prop is deprecated. Please use default slot instead.");
+  }
 });
 </script>
 
@@ -303,7 +315,7 @@ const attrs = computed(() => {
   }
 
   &__content {
-    @apply grid grid-flow-col justify-center;
+    @apply grid grid-flow-col justify-center place-items-center h-full;
 
     --vc-icon-size: var(--line-height);
 
@@ -313,6 +325,8 @@ const attrs = computed(() => {
   }
 
   &__slot {
+    @apply max-w-full;
+
     word-break: break-word;
 
     #{$truncate} & {
