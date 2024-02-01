@@ -1,7 +1,8 @@
 export interface ICurrency {
   code: string;
+  symbol: string;
   cultureName: string;
   englishName: string;
-  exchangeRate: number;
-  symbol: string;
+  exchangeRate: unknown;
+  customFormatting?: string;
 }
