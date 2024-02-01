@@ -4,18 +4,18 @@ import { useI18n } from "vue-i18n";
 import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
 import { useErrorsTranslator, useFetch } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
+import { DEFAULT_FILE_MAX_COUNT, DEFAULT_FILE_MAX_SIZE } from "@/shared/files/constants";
 import {
-  getBytes,
   getFileSize,
-  isAttached,
-  isFailed,
+  isAttachedFile,
+  isFailedFile,
   isNewfile,
-  isRemoved,
-  isUploaded,
-  toFailed,
-  toRemoved,
-  toUploaded,
-  toUploading,
+  isRemovedFile,
+  isUploadedFile,
+  toFailedFile,
+  toRemovedFile,
+  toUploadedFile,
+  toUploadingFile,
 } from "@/ui-kit";
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
 import type { MaybeRef, WatchSource } from "vue";
@@ -32,8 +32,8 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const { t, n } = useI18n();
 
   const defaultOptions = {
-    maxFileCount: 5,
-    maxFileSize: getBytes({ value: 1, unit: "megabyte" }),
+    maxFileCount: DEFAULT_FILE_MAX_COUNT,
+    maxFileSize: DEFAULT_FILE_MAX_SIZE,
     allowedExtensions: [],
   };
 
@@ -57,13 +57,13 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const newFiles = computed(() => files.value.filter(isNewfile));
   const hasNewFiles = computedEager(() => newFiles.value.length > 0);
 
-  const failedFiles = computed(() => files.value.filter(isFailed));
+  const failedFiles = computed(() => files.value.filter(isFailedFile));
   const hasFailedFiles = computedEager(() => failedFiles.value.length > 0);
 
-  const attachedFiles = computed(() => files.value.filter(isAttached));
-  const uploadedFiles = computed(() => files.value.filter(isUploaded));
+  const attachedFiles = computed(() => files.value.filter(isAttachedFile));
+  const uploadedFiles = computed(() => files.value.filter(isUploadedFile));
 
-  const modifiedFiles = computed(() => files.value.filter((file) => !isAttached(file)));
+  const modifiedFiles = computed(() => files.value.filter((file) => !isAttachedFile(file)));
   const anyFilesModified = computedEager(
     () =>
       modifiedFiles.value.length > 0 ||
@@ -72,7 +72,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   const attachedAndUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
   const allFilesAttachedOrUploaded = computedEager(() =>
-    files.value.every((file) => isAttached(file) || isUploaded(file)),
+    files.value.every((file) => isAttachedFile(file) || isUploadedFile(file)),
   );
 
   function addFiles(filesToAdd: INewFile[]): boolean {
@@ -91,16 +91,16 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
     newFiles.value.forEach((newFile) => {
       if (files.value.some((file) => file.name === newFile.name && file !== newFile)) {
-        toFailed(newFile, getErrorMessage("ALREADY_EXISTS"));
+        toFailedFile(newFile, getErrorMessage("ALREADY_EXISTS"));
       }
 
       if (options.value.maxFileSize < newFile.size) {
-        toFailed(newFile, getErrorMessage("INVALID_SIZE", options.value.maxFileSize));
+        toFailedFile(newFile, getErrorMessage("INVALID_SIZE", options.value.maxFileSize));
       }
 
       const extension = /(\.[^.]+)?$/.exec(newFile.name)?.[1];
       if (options.value.allowedExtensions.length && extension && !options.value.allowedExtensions.includes(extension)) {
-        toFailed(newFile, getErrorMessage("INVALID_EXTENSION", options.value.allowedExtensions));
+        toFailedFile(newFile, getErrorMessage("INVALID_EXTENSION", options.value.allowedExtensions));
       }
     });
   }
@@ -110,7 +110,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       return;
     }
 
-    const uploadingFiles = newFiles.value.map(toUploading);
+    const uploadingFiles = newFiles.value.map(toUploadingFile);
 
     const formData = new FormData();
 
@@ -123,9 +123,9 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
       if (uploadedFile) {
         if (result.succeeded) {
-          toUploaded(uploadedFile, result.id, result.url);
+          toUploadedFile(uploadedFile, result.id, result.url);
         } else {
-          toFailed(uploadedFile, getErrorMessage(result.errorCode, result.errorParameter, result.errorMessage));
+          toFailedFile(uploadedFile, getErrorMessage(result.errorCode, result.errorParameter, result.errorMessage));
         }
       }
     });
@@ -133,14 +133,14 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   async function removeFiles(filesToRemove: FileType[]) {
     await asyncForEach(filesToRemove, async (fileToRemove) => {
-      if (isUploaded(fileToRemove) && !(await deleteFile(fileToRemove.id))) {
-        toFailed(fileToRemove, t("file_error.CANNOT_DELETE"));
+      if (isUploadedFile(fileToRemove) && !(await deleteFile(fileToRemove.id))) {
+        toFailedFile(fileToRemove, t("file_error.CANNOT_DELETE"));
       } else {
-        toRemoved(fileToRemove);
+        toRemovedFile(fileToRemove);
       }
     });
 
-    files.value = files.value.filter((file) => !isRemoved(file));
+    files.value = files.value.filter((file) => !isRemovedFile(file));
   }
 
   function getErrorMessage(errorCode: string, errorParameter?: unknown, errorMessage?: string): string | undefined {

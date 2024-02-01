@@ -7,11 +7,16 @@ function mutate<TTarget extends IFile, TSource extends IFile>(
   return Object.assign(target, source) as Assign<TTarget, TSource>;
 }
 
-export function isAttached(file: FileType): file is IAttachedFile {
+export function isAttachedFile(file: FileType): file is IAttachedFile {
   return file.status === "attached";
 }
 
-export function toAttached(name: string, size: number, contentType: string | undefined, url: string): IAttachedFile {
+export function toAttachedFile(
+  name: string,
+  size: number,
+  contentType: string | undefined,
+  url: string,
+): IAttachedFile {
   return {
     name,
     size,
@@ -36,21 +41,21 @@ export function toNewFile(file: File): INewFile {
   };
 }
 
-export function isUploading(file: FileType): file is IUploadingFile {
+export function isUploadingFile(file: FileType): file is IUploadingFile {
   return file.status === "uploading";
 }
 
-export function toUploading(file: INewFile): IUploadingFile {
+export function toUploadingFile(file: INewFile): IUploadingFile {
   return mutate<INewFile, IUploadingFile>(file, {
     status: "uploading",
   });
 }
 
-export function isUploaded(file: FileType): file is IUploadedFile {
+export function isUploadedFile(file: FileType): file is IUploadedFile {
   return file.status === "uploaded";
 }
 
-export function toUploaded(file: IUploadingFile, id: string, url: string): IUploadedFile {
+export function toUploadedFile(file: IUploadingFile, id: string, url: string): IUploadedFile {
   return mutate<IUploadingFile, IUploadedFile>(file, {
     status: "uploaded",
     progress: 100,
@@ -59,22 +64,22 @@ export function toUploaded(file: IUploadingFile, id: string, url: string): IUplo
   });
 }
 
-export function isFailed(file: FileType): file is IFailedFile {
+export function isFailedFile(file: FileType): file is IFailedFile {
   return file.status === "error";
 }
 
-export function toFailed(file: FileType, errorMessage?: string): IFailedFile {
+export function toFailedFile(file: FileType, errorMessage?: string): IFailedFile {
   return mutate<FileType, IFailedFile>(file, {
     status: "error",
     errorMessage,
   });
 }
 
-export function isRemoved(file: FileType): file is IRemovedFile {
+export function isRemovedFile(file: FileType): file is IRemovedFile {
   return file.status === "removed";
 }
 
-export function toRemoved(file: FileType): IRemovedFile {
+export function toRemovedFile(file: FileType): IRemovedFile {
   return mutate<FileType, IRemovedFile>(file, {
     status: "removed",
   });

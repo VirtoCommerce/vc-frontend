@@ -9,6 +9,8 @@
       "catalog_menu_link_list_name": "catalog-menu",
       "catalog_empty_categories_enabled": false,
 
+      "files_enabled": true,
+
       "quotes_enabled": true,
 
       "product_compare_enabled": true,
@@ -340,7 +342,10 @@
       "catalog_menu_link_list_name": "catalog-menu",
       "catalog_empty_categories_enabled": false,
 
+      "files_enabled": true,
+
       "quotes_enabled": true,
+      "quotes_files_scope": "quote_attachments",
 
       "product_compare_enabled": true,
       "product_compare_limit": 5,
