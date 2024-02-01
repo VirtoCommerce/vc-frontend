@@ -603,13 +603,6 @@ export type CreateCustomerReviewCommandType = {
   userName: Scalars['String']['input'];
 };
 
-export type CreateQuoteCommandType = {
-  cultureName: Scalars['String']['input'];
-  currencyCode: Scalars['String']['input'];
-  storeId: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
-};
-
 export type CreateQuoteFromCartCommandType = {
   cartId: Scalars['String']['input'];
   comment: Scalars['String']['input'];
@@ -640,10 +633,16 @@ export type CustomIdentityResultType = {
 export type CustomerOrderConnection = {
   /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<CustomerOrderEdge>>>;
+  /** Filter facets */
+  filter_facets: Array<FilterFacet>;
   /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<CustomerOrderType>>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
+  /** Range facets */
+  range_facets: Array<RangeFacet>;
+  /** Term facets */
+  term_facets: Array<TermFacet>;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
@@ -786,10 +785,6 @@ export enum CustomerReviewStatus {
   New = 'NEW',
   Rejected = 'REJECTED'
 }
-
-export type DeleteFileCommandType = {
-  id: Scalars['String']['input'];
-};
 
 export type DescriptionType = {
   /** Description text. */
@@ -1011,12 +1006,6 @@ export enum FacetTypes {
   Range = 'RANGE',
   Terms = 'TERMS'
 }
-
-export type FileUploadScopeOptionsType = {
-  allowedExtensions: Array<Maybe<Scalars['String']['output']>>;
-  maxFileSize: Scalars['Long']['output'];
-  scope: Scalars['String']['output'];
-};
 
 export type FilterFacet = Facet & {
   /** The number of products matching the value specified in the filter facet expression */
@@ -2720,12 +2709,10 @@ export type Mutations = {
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
-  createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
   deleteContact?: Maybe<Scalars['Boolean']['output']>;
-  deleteFile?: Maybe<Scalars['Boolean']['output']>;
   deleteMemberAddresses?: Maybe<MemberType>;
   deleteUsers?: Maybe<IdentityResultType>;
   initializePayment?: Maybe<InitializePaymentResultType>;
@@ -2774,7 +2761,6 @@ export type Mutations = {
   updateOrganization?: Maybe<Organization>;
   updatePersonalData?: Maybe<IdentityResultType>;
   updateQuoteAddresses?: Maybe<QuoteType>;
-  updateQuoteAttachments?: Maybe<QuoteType>;
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   updateWishListItems?: Maybe<WishlistType>;
@@ -2957,11 +2943,6 @@ export type MutationsCreateOrganizationArgs = {
 };
 
 
-export type MutationsCreateQuoteArgs = {
-  command: CreateQuoteCommandType;
-};
-
-
 export type MutationsCreateQuoteFromCartArgs = {
   command: CreateQuoteFromCartCommandType;
 };
@@ -2979,11 +2960,6 @@ export type MutationsCreateWishlistArgs = {
 
 export type MutationsDeleteContactArgs = {
   command: InputDeleteContactType;
-};
-
-
-export type MutationsDeleteFileArgs = {
-  command: DeleteFileCommandType;
 };
 
 
@@ -3214,11 +3190,6 @@ export type MutationsUpdatePersonalDataArgs = {
 
 export type MutationsUpdateQuoteAddressesArgs = {
   command: UpdateQuoteAddressesCommandType;
-};
-
-
-export type MutationsUpdateQuoteAttachmentsArgs = {
-  command: UpdateQuoteAttachmentsCommandType;
 };
 
 
@@ -4152,7 +4123,6 @@ export type Query = {
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
   evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
-  fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
   me?: Maybe<UserType>;
@@ -4321,11 +4291,6 @@ export type QueryEvaluateDynamicContentArgs = {
 };
 
 
-export type QueryFileUploadOptionsArgs = {
-  scope?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type QueryFulfillmentCenterArgs = {
   id: Scalars['String']['input'];
 };
@@ -4375,6 +4340,7 @@ export type QueryOrderStatusesArgs = {
 export type QueryOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -4403,6 +4369,7 @@ export type QueryOrganizationContractsArgs = {
 export type QueryOrganizationOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   organizationId?: InputMaybe<Scalars['String']['input']>;
@@ -4435,6 +4402,7 @@ export type QueryPaymentStatusesArgs = {
 export type QueryPaymentsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -4611,8 +4579,6 @@ export type QuoteAddressType = {
 };
 
 export type QuoteAttachmentType = {
-  contentType?: Maybe<Scalars['String']['output']>;
-  /** @deprecated Use ContentType */
   mimeType?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   size: Scalars['Long']['output'];
@@ -4979,10 +4945,6 @@ export type StoreResponseType = {
   storeName: Scalars['String']['output'];
   /** Store URL */
   storeUrl?: Maybe<Scalars['String']['output']>;
-  /** User ID */
-  userId: Scalars['String']['output'];
-  /** Username */
-  userName?: Maybe<Scalars['String']['output']>;
 };
 
 export type StoreSettingsType = {
@@ -5045,11 +5007,6 @@ export type TierPriceType = {
 export type UpdateQuoteAddressesCommandType = {
   addresses: Array<InputMaybe<InputQuoteAddressType>>;
   quoteId: Scalars['String']['input'];
-};
-
-export type UpdateQuoteAttachmentsCommandType = {
-  quoteId: Scalars['String']['input'];
-  urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
 export type UserType = {
