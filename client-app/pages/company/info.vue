@@ -7,7 +7,7 @@
 
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
-      <div class="flex items-end gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+      <div class="flex items-start gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput
           v-model="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
@@ -24,13 +24,11 @@
           v-if="userCanEditOrganization"
           :loading="loadingOrganization || loadingUser"
           :disabled="!meta.valid || !meta.dirty"
-          :icon="isMobile"
-          class="flex-none"
+          :icon="isMobile ? 'save-v2' : ''"
+          class="mt-[1.375rem] flex-none"
           @click="saveOrganizationName"
         >
-          <VcIcon name="save-v2" class="lg:!hidden" />
-
-          <span>{{ $t("common.buttons.save") }}</span>
+          {{ $t("common.buttons.save") }}
         </VcButton>
       </div>
 
