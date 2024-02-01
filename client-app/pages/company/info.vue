@@ -24,7 +24,7 @@
           v-if="userCanEditOrganization"
           :loading="loadingOrganization || loadingUser"
           :disabled="!meta.valid || !meta.dirty"
-          :icon="isMobile ? 'save-v2' : ''"
+          :icon="companyNameSaveIcon"
           class="mt-[1.375rem] flex-none"
           @click="saveOrganizationName"
         >
@@ -282,6 +282,8 @@ const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPer
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
+
+const companyNameSaveIcon = computed(() => (isMobile.value ? "save-v2" : ""));
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
