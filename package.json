@@ -30,7 +30,7 @@
     "storybook:dev": "yarn generate:certificates && storybook dev --docs --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "storybook build --docs",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
-    "postinstall": "husky install"
+    "postinstall": "husky"
   },
   "dependencies": {
     "@apollo/client": "^3.9.1",
