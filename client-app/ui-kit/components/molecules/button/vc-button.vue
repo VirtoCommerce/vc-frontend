@@ -303,7 +303,7 @@ const attrs = computed(() => {
   }
 
   &__content {
-    @apply grid grid-flow-col justify-center place-items-center h-full;
+    @apply grid grid-flow-col justify-center;
 
     --vc-icon-size: var(--line-height);
 
