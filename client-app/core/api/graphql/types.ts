@@ -645,10 +645,16 @@ export type CustomIdentityResultType = {
 export type CustomerOrderConnection = {
   /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<CustomerOrderEdge>>>;
+  /** Filter facets */
+  filter_facets: Array<FilterFacet>;
   /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<CustomerOrderType>>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
+  /** Range facets */
+  range_facets: Array<RangeFacet>;
+  /** Term facets */
+  term_facets: Array<TermFacet>;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
@@ -2790,6 +2796,7 @@ export type Mutations = {
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   updateWishListItems?: Maybe<WishlistType>;
+  /** @deprecated Use 'validateCoupon' query instead. */
   validateCoupon?: Maybe<Scalars['Boolean']['output']>;
 };
 
@@ -4206,6 +4213,7 @@ export type Query = {
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
   user?: Maybe<UserType>;
+  validateCoupon?: Maybe<Scalars['Boolean']['output']>;
   validatePassword?: Maybe<CustomIdentityResultType>;
   vendor?: Maybe<Vendor>;
   wishlist?: Maybe<WishlistType>;
@@ -4398,6 +4406,7 @@ export type QueryOrderStatusesArgs = {
 export type QueryOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -4426,6 +4435,7 @@ export type QueryOrganizationContractsArgs = {
 export type QueryOrganizationOrdersArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   organizationId?: InputMaybe<Scalars['String']['input']>;
@@ -4458,6 +4468,7 @@ export type QueryPaymentStatusesArgs = {
 export type QueryPaymentsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
   filter?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
@@ -4579,6 +4590,18 @@ export type QueryUserArgs = {
   loginProvider?: InputMaybe<Scalars['String']['input']>;
   providerKey?: InputMaybe<Scalars['String']['input']>;
   userName?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryValidateCouponArgs = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  coupon: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
@@ -5002,10 +5025,6 @@ export type StoreResponseType = {
   storeName: Scalars['String']['output'];
   /** Store URL */
   storeUrl?: Maybe<Scalars['String']['output']>;
-  /** User ID */
-  userId: Scalars['String']['output'];
-  /** Username */
-  userName?: Maybe<Scalars['String']['output']>;
 };
 
 export type StoreSettingsType = {
@@ -5888,10 +5907,11 @@ export type GetOrdersQueryVariables = Exact<{
   userId?: InputMaybe<Scalars['String']['input']>;
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+  facet?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetOrdersQuery = { orders?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, status?: string, number: string, customerId: string, purchaseOrderNumber?: string, currency: { code: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, inPayments: Array<{ number: string }> }> } };
+export type GetOrdersQuery = { orders?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, status?: string, number: string, customerId: string, purchaseOrderNumber?: string, currency: { code: string }, total: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, inPayments: Array<{ number: string }> }>, term_facets: Array<{ name: string, terms: Array<{ term: string, label: string, count: number }> }> } };
 
 export type ChangeOrganizationContactRoleMutationVariables = Exact<{
   command: InputChangeOrganizationContactRoleType;
