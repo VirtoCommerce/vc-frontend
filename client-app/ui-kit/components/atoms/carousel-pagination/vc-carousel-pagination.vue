@@ -29,13 +29,6 @@ withDefaults(defineProps<IProps>(), {
 
     &--sm {
       --swiper-pagination-bullet-size: 0.75rem;
-      --swiper-pagination-bullet-horizontal-gap: 0.375rem;
-      --outline-width: 2px;
-    }
-
-    &--md {
-      --swiper-pagination-bullet-size: 1rem;
-      --swiper-pagination-bullet-horizontal-gap: 0.5rem;
       --outline-width: 2px;
     }
   }
