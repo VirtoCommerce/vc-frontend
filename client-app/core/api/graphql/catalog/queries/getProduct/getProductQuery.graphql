@@ -114,7 +114,6 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     videos {
       items {
         name
-        description
         thumbnailUrl
         embedUrl
       }
