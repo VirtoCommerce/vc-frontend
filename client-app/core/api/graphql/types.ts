@@ -6001,13 +6001,6 @@ export type ChangeQuoteItemQuantityMutationVariables = Exact<{
 
 export type ChangeQuoteItemQuantityMutation = { changeQuoteItemQuantity?: { id: string } };
 
-export type CreateQuoteMutationVariables = Exact<{
-  command: CreateQuoteCommandType;
-}>;
-
-
-export type CreateQuoteMutation = { createQuote?: { id: string } };
-
 export type CreateQuoteFromCartMutationVariables = Exact<{
   command: CreateQuoteFromCartCommandType;
 }>;
