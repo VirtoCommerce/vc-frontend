@@ -111,5 +111,12 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       metaKeywords
       metaDescription
     }
+    videos {
+      items {
+        name
+        thumbnailUrl
+        embedUrl
+      }
+    }
   }
 }

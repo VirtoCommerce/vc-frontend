@@ -1,0 +1,17 @@
+<template>
+  <VcPopup :title="video.name" hide-actions>
+    <div class="p-4">
+      <iframe class="aspect-video w-full" :title="video.name" :src="`${video.embedUrl}?&autoplay=1`" allow="autoplay" />
+    </div>
+  </VcPopup>
+</template>
+
+<script setup lang="ts">
+import type { VideoType } from "@/core/api/graphql/types";
+
+interface IProps {
+  video: VideoType;
+}
+
+defineProps<IProps>();
+</script>
