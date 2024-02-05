@@ -28,7 +28,7 @@
           {{ $t("shared.layout.header.top_header.link_dashboard") }}
         </TopHeaderLink>
 
-        <span class="mx-2 h-1 w-1 rounded-full bg-[color:var(--color-primary)]" />
+        <span class="mx-2 size-1 rounded-full bg-[color:var(--color-primary)]" />
 
         <TopHeaderLink to="/contacts">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
@@ -102,7 +102,7 @@
           {{ $t("shared.layout.header.link_sign_in") }}
         </TopHeaderLink>
 
-        <span class="mx-3 h-1 w-1 rounded-full bg-[color:var(--color-primary)]" />
+        <span class="mx-3 size-1 rounded-full bg-[color:var(--color-primary)]" />
 
         <TopHeaderLink to="/sign-up">
           {{ $t("shared.layout.header.link_register_now") }}

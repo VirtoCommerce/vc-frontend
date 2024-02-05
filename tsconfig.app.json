@@ -12,12 +12,11 @@
   ],
   "compilerOptions": {
     "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "baseUrl": ".",
     "resolvePackageJsonExports": false,
     "paths": {
-      "@/*": ["./client-app/*"],
-      // Workaround until https://github.com/unjs/unhead/issues/241 is fixed
-      "@unhead/vue/*": ["node_modules/@unhead/vue/dist/*"]
+      "@/*": ["./client-app/*"]
     },
     "types": ["@types/gtag.js"]
   }

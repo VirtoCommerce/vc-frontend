@@ -332,6 +332,8 @@ const attrs = computed(() => {
   }
 
   &__slot {
+    @apply max-w-full;
+
     word-break: break-word;
 
     #{$truncate} & {
