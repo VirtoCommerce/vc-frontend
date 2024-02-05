@@ -150,7 +150,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
 - Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
 - Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
-- Install [Node](https://nodejs.org/en/download/) v.16.X
+- Install [Node](https://nodejs.org/en/download/) (of corresponding to `package.json` version)
 - Install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable) package manager
   ```
   npm install --global yarn
@@ -192,7 +192,7 @@ git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-storefron
 # Change the current directory
 cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default
 ```
-#### Enable corepack
+#### Enable [corepack](https://yarnpkg.com/corepack)
 ```bash
 corepack enable
 ```
