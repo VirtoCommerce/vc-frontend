@@ -46,6 +46,9 @@ import type {
   UserPersonalData,
 } from "@/shared/account";
 
+const accessToken = useLocalStorage("access_token", "");
+const refreshToken = useLocalStorage("refresh_token", "");
+
 const loading = ref(false);
 const user = ref<UserType>();
 
@@ -194,7 +197,12 @@ export function useUser() {
 
       const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
 
-      const token = await innerFetch(
+      type OAuthType = {
+        access_token: string;
+        refresh_token: string;
+      };
+
+      const tokens: OAuthType = await innerFetch(
         "/connect/token",
         "POST",
         new URLSearchParams({
@@ -205,7 +213,9 @@ export function useUser() {
         }),
         "application/x-www-form-urlencoded",
       );
-      console.log(token);
+
+      accessToken.value = tokens.access_token;
+      refreshToken.value = tokens.refresh_token;
 
       if (result.succeeded) {
         broadcast.emit(pageReloadEvent);
@@ -280,6 +290,8 @@ export function useUser() {
   }
 
   async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
+    accessToken.value = "";
+    refreshToken.value = "";
     try {
       loading.value = true;
       await innerFetch("/storefrontapi/account/logout");

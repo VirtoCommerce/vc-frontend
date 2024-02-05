@@ -1,5 +1,9 @@
 import { InMemoryCache, ApolloClient, HttpLink } from "@apollo/client/core";
+import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import { useLocalStorage } from "@vueuse/core";
+// todo check dependency cycle via useNavigations
+import { useFetch } from "@/core/composables";
 import {
   TabsType,
   forbiddenEvent,
@@ -12,6 +16,10 @@ import {
 import { GraphQLErrorCode } from "./enums";
 import { hasErrorCode } from "./utils";
 import type { FetchPolicy } from "@apollo/client/core";
+const { innerFetch } = useFetch();
+
+const accessToken = useLocalStorage("access_token", "");
+const refreshToken = useLocalStorage("refresh_token", "");
 
 const fetchPolicy: FetchPolicy = "no-cache";
 
@@ -47,9 +55,45 @@ const errorHandler = onError(({ networkError, graphQLErrors }) => {
   }
 });
 
+const authTokenizer = setContext(async (_, { headers }) => {
+  const token = (await getAccessTokenPromise()) as string;
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    headers: {
+      ...headers,
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+function getAccessTokenPromise() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(accessToken.value);
+    }, 3000);
+  });
+}
+
+// eslint-disable-next-line
+async function updateToken() {
+  const tokens = await innerFetch(
+    "/connect/token",
+    "POST",
+    new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: refreshToken.value,
+    }),
+    "application/x-www-form-urlencoded",
+  );
+
+  console.log(tokens);
+}
+
+// setTimeout(updateToken, 3000);
+
 export const graphqlClient = new ApolloClient({
   // Provide required constructor fields
-  link: errorHandler.concat(httpLink),
+  link: errorHandler.concat(authTokenizer).concat(httpLink),
   cache: new InMemoryCache({
     addTypename: false,
   }),
