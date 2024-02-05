@@ -24,10 +24,10 @@ module.exports = {
       from: {
         orphan: true,
         pathNot: [
-          '(^|/)\.[^/]+\.(js|cjs|mjs|ts|json)$',                // dot files
-          '\.d\.ts$',                                           // TypeScript declaration files
-          '(^|/)tsconfig\.json$',                               // TypeScript config
-          '(^|/)(babel|webpack)\.config\.(js|cjs|mjs|ts|json)$' // other configs
+          '(^|/)[.][^/]+[.](js|cjs|mjs|ts|json)$', // dot files
+          '[.]d[.]ts$',                            // TypeScript declaration files
+          '(^|/)tsconfig[.]json$',                 // TypeScript config
+          '(^|/)(babel|webpack)[.]config[.](js|cjs|mjs|ts|json)$' // other configs
         ]
       },
       to: {},
@@ -123,6 +123,9 @@ module.exports = {
         dependencyTypesNot: ["type-only"]
       }
     },
+
+    /* rules you might want to tweak for your specific situation: */
+
     {
       name: 'not-to-spec',
       comment:
@@ -132,7 +135,7 @@ module.exports = {
       severity: 'error',
       from: {},
       to: {
-        path: '\.(spec|test)\.(js|mjs|cjs|ts|ls|coffee|litcoffee|coffee\.md)$'
+        path: '[.](spec|test)[.](js|mjs|cjs|ts|ls|coffee|litcoffee|coffee[.]md)$'
       }
     },
     {
@@ -146,11 +149,19 @@ module.exports = {
         'from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration',
       from: {
         path: '^(client-app)',
-        pathNot: '\.(spec|test|test-d|mock)\.(js|mjs|cjs|ts|ls|coffee|litcoffee|coffee\.md)$'
+        pathNot: '[.](spec|test|test-d|mock)[.](js|mjs|cjs|ts|ls|coffee|litcoffee|coffee[.]md)$'
       },
       to: {
         dependencyTypes: [
-          'npm-dev'
+          'npm-dev',
+        ],
+        // type only dependencies are not a problem as they don't end up in the
+        // production code or are ignored by the runtime.
+        dependencyTypesNot: [
+          'type-only'
+        ],
+        pathNot: [
+          'node_modules/@types/'
         ]
       }
     },
@@ -189,14 +200,13 @@ module.exports = {
     doNotFollow: {
       path: 'node_modules'
     },
-    tsPreCompilationDeps: false,
     tsConfig: {
       fileName: 'tsconfig.app.json'
     },
     enhancedResolveOptions: {
       exportsFields: ["exports"],
       conditionNames: ["import", "require", "node", "default"],
-      mainFields: ["main", "types", "typings"],
+      mainFields: ["module", "main", "types", "typings"],
     },
     reporterOptions: {
       dot: {
@@ -211,3 +221,4 @@ module.exports = {
     }
   }
 };
+// generated: dependency-cruiser@16.0.0 on 2024-01-18T18:07:53.520Z

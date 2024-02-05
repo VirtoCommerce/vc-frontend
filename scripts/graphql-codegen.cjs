@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 
 // Support self-signed certificate of vc-storefront
-process.env.NODE_TLS_REJECT_UNAUTHORIZED="0"
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // Read environment variables from both .env and .env.local
 dotenv.config();
