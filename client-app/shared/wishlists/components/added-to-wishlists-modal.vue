@@ -1,14 +1,14 @@
 <template>
-  <VcPopup :title="$t('shared.wishlists.added_to_wishlists_dialog.title', listIds.length)" variant="success">
+  <VcModal :title="$t('shared.wishlists.added_to_wishlists_dialog.title', listIds.length)" variant="success">
     <div class="max-h-[50vh] overflow-y-auto border-b px-6 py-8 lg:max-h-64">
       <div class="flex grow items-center">
         <router-link :to="link">
-          <div class="h-20 w-20 shrink-0 border border-gray-100">
+          <div class="size-20 shrink-0 border border-gray-100">
             <VcImage
               :src="product.imgSrc"
               :alt="product.name"
               size-suffix="sm"
-              class="h-full w-full object-cover object-center"
+              class="size-full object-cover object-center"
               lazy
             />
           </div>
@@ -44,7 +44,7 @@
         {{ $t("shared.wishlists.added_to_wishlists_dialog.view_your_list_button", listIds.length) }}
       </VcButton>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
