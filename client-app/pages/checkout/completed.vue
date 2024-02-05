@@ -22,17 +22,19 @@
 
         <div class="max-w-md text-center text-19 lg:text-left">
           <strong v-t="{ path: 'pages.checkout_complete.subtitle', args: [placedOrder?.number] }" class="mb-4 block" />
+
           <span v-t="'pages.checkout_complete.text'" />
-          <div class="mt-10 flex flex-col justify-center gap-6 xs:flex-row">
-            <VcButton
-              :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }"
-              prepend-icon="document-text"
-              class="flex-1"
-            >
-              {{ $t("common.buttons.show_order") }}
+
+          <div class="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-4 lg:justify-start">
+            <VcButton :to="{ name: 'OrderDetails', params: { orderId: placedOrder?.id } }" min-width="10rem">
+              <VcIcon name="document-text" />
+
+              <span>
+                {{ $t("common.buttons.show_order") }}
+              </span>
             </VcButton>
 
-            <VcButton to="/" class="flex-1">
+            <VcButton to="/" min-width="10rem">
               {{ $t("common.buttons.home") }}
             </VcButton>
           </div>

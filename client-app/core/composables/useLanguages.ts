@@ -13,7 +13,7 @@ const savedLocale = useLocalStorage<string>("locale", "");
 
 const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
-const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availLanguages);
+const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 
 const currentLocale = computed<string>(() => {

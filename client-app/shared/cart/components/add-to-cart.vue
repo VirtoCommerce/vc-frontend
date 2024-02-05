@@ -84,6 +84,7 @@ interface IProps {
 // Define max qty available to add
 const MAX_VALUE = 999999999;
 
+const availableQuantity = computed(() => props.product.availabilityData?.availableQuantity);
 const minQuantity = computed(() => props.product.minQuantity);
 const maxQuantity = computed(() => props.product.maxQuantity);
 
@@ -91,7 +92,11 @@ const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { getTranslation } = useErrorsTranslator("validation_error");
-const { quantitySchema } = useQuantityValidationSchema(minQuantity.value, maxQuantity.value);
+const { quantitySchema } = useQuantityValidationSchema({
+  availableQuantity,
+  minQuantity,
+  maxQuantity,
+});
 
 const loading = ref(false);
 const inputElement = shallowRef<HTMLInputElement>();
@@ -112,7 +117,10 @@ const rules = computed(() => toTypedSchema(quantitySchema.value));
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
-const { errorMessage, validate, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
+const { errorMessage, validate, setValue } = useField("quantity", rules, {
+  initialValue: enteredQuantity,
+  validateOnMount: true,
+});
 
 /**
  * Process button click to add/update cart line item.
