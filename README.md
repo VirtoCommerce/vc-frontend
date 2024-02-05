@@ -190,12 +190,14 @@ dotnet run --no-build
 ```
 
 ### Setup current theme
+
 ```bash
 # Clone repo into the folder where storefront is installed
 # `store-code` can be found in the platform running locally. More -> Shops -> Shop Name -> Code
 git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default"
 # Change the current directory
 cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default
+# Install dependencies
 yarn install
 ```
 
