@@ -3,7 +3,7 @@ import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 import type { StorybookConfig } from "@storybook/vue3-vite";
 
 const config: StorybookConfig = {
-  stories: ["../client-app/**/*.stories.@(js|ts)"],
+  stories: ["../client-app/**/*.stories.ts"],
   addons: [
     "@storybook/addon-viewport",
     "@storybook/addon-links",
