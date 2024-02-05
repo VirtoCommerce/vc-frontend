@@ -1,6 +1,5 @@
 import { createHead } from "@unhead/vue";
 import { createApp } from "vue";
-import VueSecureHTML from "vue-html-secure";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -22,7 +21,7 @@ export default async () => {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
 
-  const { fetchUser } = useUser();
+  const { fetchUser, user } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
@@ -55,7 +54,7 @@ export default async () => {
     router,
     storeId: themeContext.value.storeId,
     catalogId: themeContext.value.catalogId,
-    userId: themeContext.value.userId,
+    userId: user.value.id,
     cultureName: currentLanguage.value.cultureName,
     currencyCode: currentCurrency.value.code,
   });
@@ -79,7 +78,6 @@ export default async () => {
   app.use(head);
   app.use(i18n);
   app.use(router);
-  app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);

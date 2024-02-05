@@ -17,6 +17,8 @@ declare module "@vue/runtime-core" {
     VcDropdownMenu: typeof Components.VcDropdownMenu;
     VcEmptyPage: typeof Components.VcEmptyPage;
     VcExpansionPanel: typeof Components.VcExpansionPanel;
+    VcFileUploader: typeof Components.VcFileUploader;
+    VcFile: typeof Components.VcFile;
     /** @deprecated use Swiper instead. */
     VcImageGallery: typeof Components.VcImageGallery;
     VcInput: typeof Components.VcInput;

@@ -1,0 +1,3 @@
+mutation DeleteFile($command: DeleteFileCommandType!) {
+  deleteFile(command: $command)
+}

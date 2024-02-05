@@ -1,0 +1,34 @@
+#import "../../../fragments/allCurrencyFields.graphql"
+#import "../../../fragments/allLanguageFields.graphql"
+
+query GetStore($storeId: String!) {
+  store(storeId: $storeId) {
+    storeId
+    storeName
+    catalogId
+    storeUrl
+    defaultLanguage {
+      ...allLanguageFields
+    }
+    availableLanguages {
+      ...allLanguageFields
+    }
+    defaultCurrency {
+      ...allCurrencyFields
+    }
+    availableCurrencies {
+      ...allCurrencyFields
+    }
+    settings {
+      quotesEnabled
+      subscriptionEnabled
+      taxCalculationEnabled
+      anonymousUsersAllowed
+      isSpa
+      emailVerificationEnabled
+      emailVerificationRequired
+      createAnonymousOrderEnabled
+      seoLinkType
+    }
+  }
+}

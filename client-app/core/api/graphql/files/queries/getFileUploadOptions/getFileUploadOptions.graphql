@@ -1,0 +1,7 @@
+#import "../../fragments/fileUploadOptions.graphql"
+
+query GetFileUploadOptions($scope: String) {
+  fileUploadOptions(scope: $scope) {
+    ...fileUploadOptions
+  }
+}
