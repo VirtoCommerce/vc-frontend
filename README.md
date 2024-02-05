@@ -152,10 +152,16 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
 - Install [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api) module.
 - Install [Node](https://nodejs.org/en/download/) (of corresponding to `package.json` version)
-- Install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable) package manager
+- Enable [corepack](https://yarnpkg.com/corepack)
+  ```bash
+  corepack enable
   ```
-  npm install --global yarn
-  ```
+- If you have installed `yarn` globally, uninstall it:
+  - via npm
+    ```bash
+    npm uninstall --global yarn
+    ```
+  - or through your native Operation System installation tools.
 
 ### Install the `vc-storefront`
 
@@ -184,21 +190,12 @@ dotnet run --no-build
 ```
 
 ### Setup current theme
-#### Clone repository
-
 ```bash
 # Clone repo into the folder where storefront is installed
 # `store-code` can be found in the platform running locally. More -> Shops -> Shop Name -> Code
 git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default"
 # Change the current directory
 cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default
-```
-#### Enable [corepack](https://yarnpkg.com/corepack)
-```bash
-corepack enable
-```
-#### Install dependencies
-```bash
 yarn install
 ```
 
