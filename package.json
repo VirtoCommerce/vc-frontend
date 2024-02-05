@@ -1,6 +1,6 @@
 {
   "name": "vc-theme-b2b-vue",
-  "version": "1.49.0",
+  "version": "1.50.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -51,6 +51,7 @@
     "maska": "^2.1.11",
     "swiper": "11.0.5",
     "tw-elements": "^1.1.0",
+    "utility-types": "^3.11.0",
     "vee-validate": "~4.11.8",
     "vue": "~3.4.15",
     "vue-html-secure": "^1.0.10",

@@ -8,7 +8,7 @@
         @keydown="openVideoModal(video)"
         @click="openVideoModal(video)"
       >
-        <VcImage class="h-full w-full rounded-sm object-cover object-center opacity-60" :src="video.thumbnailUrl" />
+        <VcImage class="size-full rounded-sm object-cover object-center opacity-60" :src="video.thumbnailUrl" />
 
         <div
           class="absolute inset-0 flex items-center justify-center text-[--color-additional-50] hover:text-[--color-primary-500]"

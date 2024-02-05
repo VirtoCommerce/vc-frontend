@@ -12,7 +12,7 @@
       <!-- Quote comment -->
       <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
         <VcTextarea
-          v-model="comment"
+          v-model.trim="comment"
           :label="$t('pages.account.quote_details.remarks_field_label')"
           :disabled="fetching"
           :max-length="1000"
@@ -20,6 +20,15 @@
           no-resize
           counter
         />
+      </VcWidget>
+
+      <VcWidget
+        v-if="$cfg.files_enabled"
+        :title="$t('pages.account.quote_details.files')"
+        prepend-icon="document-add"
+        size="lg"
+      >
+        <VcFileUploader v-bind="fileOptions" :files="files" @add-files="onAddFiles" @remove-files="onRemoveFiles" />
       </VcWidget>
 
       <!-- Quote products -->
@@ -85,7 +94,7 @@
 
     <div class="flex flex-wrap gap-5 py-7 lg:justify-end">
       <VcButton
-        :disabled="!quoteChanged || fetching"
+        :disabled="!canSaveChanges || fetching"
         class="flex-1 lg:min-w-[208px] lg:flex-none"
         variant="outline"
         @click="saveChanges"
@@ -93,7 +102,7 @@
         {{ $t("pages.account.quote_details.save_changes") }}
       </VcButton>
 
-      <VcButton :disabled="!quoteValid || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
+      <VcButton :disabled="!canSubmit || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
         {{ $t("pages.account.quote_details.submit") }}
       </VcButton>
     </div>
@@ -105,16 +114,18 @@
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, every, isEqual, remove } from "lodash";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, inject, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
+import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
-import { QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
+import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
+import { useFiles } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import { usePopup } from "@/shared/popup";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
@@ -127,6 +138,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const config = inject(configInjectionKey, {});
 const router = useRouter();
 const { t } = useI18n();
 const { openPopup, closePopup } = usePopup();
@@ -146,6 +158,7 @@ const {
   quote,
   shippingAddress,
   billingAddress,
+  attachedFiles,
   clearQuote,
   setQuoteAddress,
   fetchQuote,
@@ -154,7 +167,20 @@ const {
   updateAddresses,
   removeItem,
   submitQuote,
+  updateAttachments,
 } = useUserQuote();
+const {
+  files,
+  attachedAndUploadedFiles,
+  anyFilesModified,
+  allFilesAttachedOrUploaded,
+  addFiles,
+  validateFiles,
+  uploadFiles,
+  removeFiles,
+  fetchOptions: fetchFileOptions,
+  options: fileOptions,
+} = useFiles(config.quotes_files_scope ?? DEFAULT_QUOTE_FILES_SCOPE, attachedFiles);
 const notifications = useNotifications();
 
 usePageHead({
@@ -169,11 +195,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 
 const originalQuote = ref<QuoteType>();
 const billingAddressEqualsShipping = ref<boolean>(true);
-const comment = ref<string>("");
-
-const trimmedComment = computed(() => {
-  return comment.value.trim();
-});
+const comment = ref<string>();
 
 const accountAddresses = computed<AnyAddressType[]>(() => {
   const { firstName, lastName } = user.value.contact ?? {};
@@ -182,11 +204,13 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
     ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
     : personalAddresses.value;
 });
-const quoteChanged = computed<boolean>(
+const canSaveChanges = computed<boolean>(
   () =>
-    !isEqual(originalQuote.value, quote.value) ||
-    originalQuote.value?.comment !== trimmedComment.value ||
-    (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value),
+    (!isEqual(originalQuote.value, quote.value) ||
+      originalQuote.value?.comment !== comment.value ||
+      (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
+      anyFilesModified.value) &&
+    allFilesAttachedOrUploaded.value,
 );
 const quoteItemsValid = computed<boolean>(
   () =>
@@ -196,11 +220,12 @@ const quoteItemsValid = computed<boolean>(
       (item: QuoteItemType) => !!item.selectedTierPrice?.quantity && item.selectedTierPrice.quantity > 0,
     ),
 );
-const quoteValid = computed<boolean>(
+const canSubmit = computed<boolean>(
   () =>
     !!shippingAddress.value &&
     (!!billingAddress.value || billingAddressEqualsShipping.value) &&
-    (!!trimmedComment.value || quoteItemsValid.value),
+    (!!comment.value || quoteItemsValid.value) &&
+    !anyFilesModified.value,
 );
 
 const userHasAddresses = computedEager<boolean>(() => !!accountAddresses.value.length);
@@ -296,10 +321,24 @@ function openSelectAddressModal(addressType: AddressType): void {
   });
 }
 
+async function onAddFiles(items: INewFile[]) {
+  addFiles(items);
+  validateFiles();
+  await uploadFiles();
+}
+
+async function onRemoveFiles(items: FileType[]) {
+  await removeFiles(items);
+}
+
 // Due API concurrency errors each query will be sended consecutively
 async function saveChanges(): Promise<void> {
-  if (originalQuote.value?.comment !== trimmedComment.value) {
-    await changeComment(quote.value!.id, trimmedComment.value);
+  if (anyFilesModified.value) {
+    await updateAttachments(quote.value!.id, attachedAndUploadedFiles.value);
+  }
+
+  if (originalQuote.value?.comment !== comment.value) {
+    await changeComment(quote.value!.id, comment.value!);
   }
 
   await asyncForEach(originalQuote.value!.items!, async (originalItem: QuoteItemType) => {
@@ -341,11 +380,11 @@ async function saveChanges(): Promise<void> {
 }
 
 async function submit(): Promise<void> {
-  if (quoteChanged.value) {
+  if (canSaveChanges.value) {
     await saveChanges();
   }
 
-  await submitQuote(quote.value!.id, trimmedComment.value);
+  await submitQuote(quote.value!.id, comment.value || "");
 
   router.replace({ name: "Quotes" });
 }
@@ -371,11 +410,10 @@ onMounted(() => {
 watchEffect(async () => {
   clearQuote();
 
-  await fetchAddresses();
-  await fetchQuote({ id: props.quoteId });
+  await Promise.all([fetchFileOptions(), fetchAddresses(), fetchQuote({ id: props.quoteId })]);
 
   originalQuote.value = cloneDeep(quote.value);
-  comment.value = quote.value?.comment ?? "";
+  comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 });
 </script>
