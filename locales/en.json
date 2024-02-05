@@ -1050,6 +1050,7 @@
         "save_changes_notification_success": "The quote request has been successfully saved",
         "select_shipping_address": "Select a shipping address",
         "select_billing_address": "Select a billing address",
+        "files": "Files",
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",
