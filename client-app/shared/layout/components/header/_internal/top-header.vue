@@ -2,8 +2,8 @@
   <div
     class="flex h-[39px] items-center gap-x-5 bg-[color:var(--color-header-top-bg)] px-5 text-sm text-[color:var(--color-header-top-text)] xl:px-12"
   >
-    <LanguageSelector v-if="$context.availLanguages && $context.availLanguages.length > 1" />
-    <CurrencySelector v-if="$context.availCurrencies && $context.availCurrencies.length > 1" class="h-full" />
+    <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
+    <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 
     <div class="ms-auto flex items-center">
       <!-- Call us block -->
@@ -28,7 +28,7 @@
           {{ $t("shared.layout.header.top_header.link_dashboard") }}
         </TopHeaderLink>
 
-        <span class="mx-2 h-1 w-1 rounded-full bg-[color:var(--color-primary)]" />
+        <span class="mx-2 size-1 rounded-full bg-[color:var(--color-primary)]" />
 
         <TopHeaderLink to="/contacts">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
@@ -102,7 +102,7 @@
           {{ $t("shared.layout.header.link_sign_in") }}
         </TopHeaderLink>
 
-        <span class="mx-3 h-1 w-1 rounded-full bg-[color:var(--color-primary)]" />
+        <span class="mx-3 size-1 rounded-full bg-[color:var(--color-primary)]" />
 
         <TopHeaderLink to="/sign-up">
           {{ $t("shared.layout.header.link_register_now") }}

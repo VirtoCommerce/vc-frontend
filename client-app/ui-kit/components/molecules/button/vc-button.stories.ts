@@ -3,8 +3,8 @@ import { VcIcon } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 const SIZES = ["xs", "sm", "md", "lg"];
-const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger"];
-const VARIANTS = ["solid", "outline", "solid-lightest"];
+const COLORS = ["primary", "secondary", "success", "info", "neutral", "warning", "danger", "accent"];
+const VARIANTS = ["solid", "outline", "solid-lightest", "no-background"];
 const TYPES = ["button", "reset", "submit"];
 
 export default {

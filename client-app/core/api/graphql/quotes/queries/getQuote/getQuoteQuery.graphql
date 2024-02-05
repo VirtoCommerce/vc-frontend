@@ -1,3 +1,4 @@
+#import "../../fragments/quoteAttachment.graphql"
 #import "../../../common/fragments/money.graphql"
 #import "../../../fragments/quoteLineItemFields.graphql"
 #import "../../../fragments/quoteAddressFields.graphql"
@@ -12,6 +13,9 @@ query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: St
     comment
     isCancelled
     status
+    attachments {
+      ...quoteAttachment
+    }
     items {
       ...quoteLineItemFields
     }

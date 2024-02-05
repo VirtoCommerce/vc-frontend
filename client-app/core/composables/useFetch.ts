@@ -14,13 +14,21 @@ export function useFetch() {
   const error = shallowRef<Error | undefined>();
   const statusCode = shallowRef<number | null>();
 
-  function innerFetch<TResult, TBody = unknown>(url: string, method = "GET", body?: TBody): Promise<TResult> {
+  function innerFetch<TResult, TPayload = unknown>(
+    url: string,
+    method = "GET",
+    payload?: TPayload,
+    contentType: string | null = "application/json",
+  ): Promise<TResult> {
     const headers = new Headers();
-    headers.append("Content-Type", "application/json");
+    if (contentType) {
+      headers.append("Content-Type", contentType);
+    }
 
     innerRequestEnricher(headers);
 
-    const reqInit: RequestInit = { headers, method, body: body ? JSON.stringify(body) : null };
+    const body = contentType === "application/json" && payload ? JSON.stringify(payload) : (payload as BodyInit);
+    const reqInit: RequestInit = { headers, method, body };
     const request = new Request(unref(url), reqInit);
 
     return new Promise((resolve, reject) => {

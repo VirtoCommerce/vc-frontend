@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { clone } from "lodash";
-import { computed, ref, shallowRef, watch, watchEffect } from "vue";
+import { computed, onMounted, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
@@ -189,8 +189,6 @@ async function pay(opaqueData: Accept.OpaqueData) {
   } else {
     emit("fail", errorMessage);
   }
-
-  bankCardData.value = clone(emptyBankCardData);
 }
 
 function sendPaymentData() {
@@ -221,13 +219,15 @@ defineExpose({
   isValidBankCard,
 });
 
-initPayment();
+onMounted(async () => {
+  await initPayment();
+});
 
 watch(bankCardData, () => (bankCardErrors.value = {}));
 
-watchEffect(() => {
+watchEffect(async () => {
   if (scriptURL.value) {
-    loadAcceptJS();
+    await loadAcceptJS();
   }
 });
 </script>
