@@ -1,22 +1,26 @@
 <template>
-  <div v-if="initialized" class="flex flex-col xl:flex-row">
-    <BankCardForm
-      v-model="bankCardData"
-      v-model:valid="isValidBankCard"
-      :errors="bankCardErrors"
-      :disabled="loading"
-      class="xl:w-2/3"
-      @submit="sendPaymentData"
-    />
-    <VcButton
-      :disabled="!isValidBankCard || disabled"
-      :loading="loading"
-      class="flex-1 md:order-first md:flex-none"
-      @click="sendPaymentData"
-    >
-      {{ $t("shared.payment.skyflow.pay_now_button") }}
-    </VcButton>
-  </div>
+  <template v-if="initialized">
+    <div class="flex flex-col xl:flex-row">
+      <BankCardForm
+        v-model="bankCardData"
+        v-model:valid="isValidBankCard"
+        :errors="bankCardErrors"
+        :disabled="loading"
+        class="xl:w-2/3"
+        @submit="sendPaymentData"
+      />
+    </div>
+    <div class="mt-6">
+      <VcButton
+        :disabled="!isValidBankCard || disabled"
+        :loading="loading"
+        class="flex-1 md:order-first md:flex-none"
+        @click="sendPaymentData"
+      >
+        {{ $t("shared.payment.skyflow.pay_now_button") }}
+      </VcButton>
+    </div>
+  </template>
   <VcLoaderWithText v-else />
 </template>
 

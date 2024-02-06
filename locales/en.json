@@ -237,7 +237,8 @@
     "methods": {
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual"
+        "DefaultManualPaymentMethod": "Manual",
+        "SkyflowPaymentMethod": "Bank card (Skyflow)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
@@ -671,6 +672,7 @@
         }
       },
       "skyflow": {
+        "pay_now_button": "Pay Now",
         "errors": {
           "number": "Please provide a valid credit card number",
           "month": "Please provide a valid expiration month",

@@ -165,7 +165,7 @@
                 <div class="min-w-0 truncate">
                   <VcImage
                     :src="payment?.paymentMethod?.logoUrl"
-                    class="mr-3.5 inline-block h-8 w-8 object-center md:h-9 md:w-9"
+                    class="mr-3.5 inline-block size-8 object-center md:size-9"
                     lazy
                   />
 
@@ -207,10 +207,17 @@
                 />
 
                 <PaymentProcessingAuthorizeNet
-                  v-else-if="paymentMethodType === PaymentActionType.PreparedForm"
+                  v-else-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
                   ref="paymentMethodComponent"
                   :order="order"
                   :disabled="loading"
+                  @success="success = true"
+                  @fail="failure = true"
+                />
+
+                <PaymentProcessingSkyflow
+                  v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
+                  :order="order"
                   @success="success = true"
                   @fail="failure = true"
                 />
@@ -248,6 +255,7 @@ import {
 } from "@/shared/payment";
 import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
+import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 interface IProps {
   orderId: string;
@@ -286,6 +294,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 const executed = computed<boolean>(() => success.value || failure.value);
 const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
+const paymentTypeName = computed<string | undefined>(() => payment.value?.paymentMethod?.typeName);
 
 function tryAgain() {
   location.reload();
