@@ -22,7 +22,7 @@
     <VcBreadcrumbs :items="breadcrumbs" class="mx-6 hidden md:mx-0 lg:block" />
 
     <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 print:mx-0 lg:mx-0">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 lg:mx-0 print:mx-0">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
@@ -175,7 +175,7 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import type { LineItemType } from "@/core/api/graphql/types";
 
 const config = inject(configInjectionKey, {});
@@ -184,7 +184,7 @@ const router = useRouter();
 const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const {
   loading: loadingCart,
   cart,
@@ -267,7 +267,7 @@ function onChangeBillingAddress() {
 // FIXME: Move to composable
 async function createQuote(): Promise<void> {
   if (cartContainsDeletedProducts.value) {
-    openPopup({
+    openModal({
       component: CartDeletedProductsModal,
     });
 

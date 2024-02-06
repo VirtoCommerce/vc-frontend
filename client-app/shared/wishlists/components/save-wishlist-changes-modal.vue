@@ -1,5 +1,5 @@
 <template>
-  <VcPopup
+  <VcModal
     :title="$t('pages.account.list_details.save_changes')"
     variant="info"
     modal-width="sm:max-w-[30rem]"
@@ -20,7 +20,7 @@
         {{ $t("common.buttons.yes") }}
       </VcButton>
     </div>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

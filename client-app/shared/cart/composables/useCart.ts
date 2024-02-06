@@ -31,8 +31,8 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor } from "@/core/utilities";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
@@ -126,7 +126,7 @@ export function useShortCart() {
 
 export function _useFullCart() {
   const notifications = useNotifications();
-  const { openPopup } = usePopup();
+  const { openModal } = useModal();
   const ga = useGoogleAnalytics();
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
@@ -386,7 +386,7 @@ export function _useFullCart() {
   }
 
   function openClearCartModal() {
-    openPopup({
+    openModal({
       component: ClearCartModal,
       props: {
         async onResult() {

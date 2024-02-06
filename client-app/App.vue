@@ -7,7 +7,7 @@
     <RouterView />
   </component>
 
-  <PopupHost />
+  <ModalHost />
   <NotificationsHost />
 </template>
 
@@ -18,8 +18,8 @@ import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations } from "@/core/composables";
+import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
-import { PopupHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
 

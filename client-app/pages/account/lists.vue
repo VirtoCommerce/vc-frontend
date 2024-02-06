@@ -57,7 +57,7 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import {
   AddOrUpdateWishlistModal,
   DeleteWishlistsModal,
@@ -69,7 +69,7 @@ import {
 import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const { loading, lists, fetchWishlists, updateWishlist } = useWishlists();
 
 usePageHead({
@@ -83,18 +83,18 @@ const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
 
 function openCreateListModal() {
   if (creationButtonDisabled.value) {
-    openPopup({
+    openModal({
       component: UnsuccessfulCreateWishlistModal,
     });
   } else {
-    openPopup({
+    openModal({
       component: AddOrUpdateWishlistModal,
     });
   }
 }
 
 function openListSettingsModal(list: WishlistType) {
-  openPopup({
+  openModal({
     component: AddOrUpdateWishlistModal,
     props: {
       list,
@@ -103,7 +103,7 @@ function openListSettingsModal(list: WishlistType) {
 }
 
 function openDeleteListModal(list: WishlistType) {
-  openPopup({
+  openModal({
     component: DeleteWishlistsModal,
     props: {
       list,

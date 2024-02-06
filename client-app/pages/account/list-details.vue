@@ -111,10 +111,10 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import { useShortCart, getItemsForAddBulkItemsToCartResultsPopup, AddBulkItemsToCartResultsModal } from "@/shared/cart";
+import { useShortCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import {
   useWishlists,
   AddOrUpdateWishlistModal,
@@ -139,7 +139,7 @@ const props = defineProps<IProps>();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const { loading: listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
@@ -175,7 +175,7 @@ const isDirty = computed<boolean>(() => !isEqual(list.value?.items, wishlistItem
 const isMobile = breakpoints.smaller("lg");
 
 function openListSettingsModal(): void {
-  openPopup({
+  openModal({
     component: AddOrUpdateWishlistModal,
     props: {
       list: list.value,
@@ -210,11 +210,11 @@ async function updateItems() {
 
 async function openSaveChangesModal(): Promise<boolean> {
   return await new Promise<boolean>((resolve) => {
-    const closeDialog = openPopup({
+    const closeModal = openModal({
       component: SaveWishlistChangesModal,
       props: {
         onConfirm: async () => {
-          closeDialog();
+          closeModal();
           await updateItems();
           resolve(true);
         },
@@ -228,11 +228,11 @@ async function openSaveChangesModal(): Promise<boolean> {
 }
 
 function showResultModal(items: LineItemType[]) {
-  openPopup({
+  openModal({
     component: AddBulkItemsToCartResultsModal,
     props: {
       listName: list.value?.name,
-      items: getItemsForAddBulkItemsToCartResultsPopup(items, cart.value!),
+      items: getItemsForAddBulkItemsToCartResultsModal(items, cart.value!),
     },
   });
 }
@@ -271,7 +271,7 @@ function openDeleteProductModal(values: string[]): void {
   const item = list.value?.items?.find((i) => values.includes(i.id));
 
   if (item) {
-    openPopup({
+    openModal({
       component: DeleteWishlistProductModal,
       props: {
         listId: list.value?.id,
