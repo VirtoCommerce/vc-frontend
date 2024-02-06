@@ -139,17 +139,23 @@ module.exports = {
           950: "var(--color-additional-950)",
         },
 
+        /**
+         * @deprecated
+         */
         link: {
           DEFAULT: "var(--color-link, #00739E)",
           hover: "var(--color-link-hover, #00678D)",
         },
 
+        /**
+         * @deprecated
+         */
         tooltip: {
           DEFAULT: "#4D4D4D",
         },
 
         /**
-         * Custom colors
+         * @deprecated
          */
         red: {
           50: "#FFFFFF",
@@ -164,6 +170,9 @@ module.exports = {
           900: "#690000",
         },
 
+        /**
+         * @deprecated
+         */
         gray: {
           550: "#A3AFCD",
         },
