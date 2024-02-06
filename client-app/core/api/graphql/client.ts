@@ -1,9 +1,7 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client/core";
-import { cache, httpLink, link, options } from "@/core/api/graphql/config";
-import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
-import type { FetchPolicy } from "@apollo/client/core";
+import { cache, deprecatedLink, link, options } from "@/core/api/graphql/config";
 
-const fetchPolicy: FetchPolicy = "no-cache";
+const fetchPolicy = "no-cache";
 
 /**
  * Non-cached version of Apollo Client
@@ -18,7 +16,7 @@ const fetchPolicy: FetchPolicy = "no-cache";
  */
 export const graphqlClient = new ApolloClient({
   ...options,
-  link: errorHandlerLink.concat(httpLink),
+  link: deprecatedLink,
 
   cache: new InMemoryCache({
     addTypename: false,

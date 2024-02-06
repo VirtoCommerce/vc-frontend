@@ -4,7 +4,10 @@ import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
 import { API_URL } from "@/core/api/graphql/consts";
 
-export const httpLink = new HttpLink({ uri: API_URL });
+const httpLink = new HttpLink({ uri: API_URL });
+const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
+
+export const deprecatedLink = from([sharedLink, httpLink]);
 
 // https://www.apollographql.com/docs/react/api/link/introduction/#composing-a-link-chain
 // Tree:
@@ -14,8 +17,7 @@ export const httpLink = new HttpLink({ uri: API_URL });
 //          ↓               ↓
 // (conditional links) → httpLink
 export const link = from([
-  removeTypenameFromVariables(),
-  errorHandlerLink,
+  sharedLink,
   // Add conditional links here
   cartLink,
   httpLink,

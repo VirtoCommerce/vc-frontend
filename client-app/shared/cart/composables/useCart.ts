@@ -1,5 +1,5 @@
 import { createGlobalState, createSharedComposable, computedEager, useDebounceFn, useLastChanged } from "@vueuse/core";
-import { sumBy, difference, keyBy } from "lodash";
+import { sumBy, difference, keyBy, without } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
   useGetShortCartQuery,
@@ -227,6 +227,8 @@ export function _useFullCart() {
 
   const { mutate: _removeItems, loading: removeItemsLoading } = useRemoveCartItemsMutation(cart);
   async function removeItems(lineItemIds: string[]): Promise<void> {
+    selectedItemIds.value = without(selectedItemIds.value, ...lineItemIds);
+
     await _removeItems({ command: { lineItemIds } });
   }
 
