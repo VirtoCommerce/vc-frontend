@@ -33,14 +33,14 @@
     "postinstall": "husky"
   },
   "dependencies": {
-    "@apollo/client": "^3.9.1",
+    "@apollo/client": "^3.9.2",
     "@builder.io/sdk-vue": "^0.3.1",
     "@headlessui/vue": "^1.7.17",
     "@popperjs/core": "^2.11.8",
     "@unhead/vue": "^1.8.10",
     "@vee-validate/rules": "~4.11.8",
     "@vee-validate/yup": "~4.11.8",
-    "@vue/apollo-composable": "^4.0.0",
+    "@vue/apollo-composable": "^4.0.1",
     "@vueuse/components": "^10.7.2",
     "@vueuse/core": "^10.7.2",
     "dompurify": "^3.0.8",
