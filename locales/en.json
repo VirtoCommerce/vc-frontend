@@ -670,6 +670,16 @@
           "incorrect_payment_method": "Incorrect payment method"
         }
       },
+      "skyflow": {
+        "errors": {
+          "number": "Please provide a valid credit card number",
+          "month": "Please provide a valid expiration month",
+          "year": "Please provide a valid expiration year",
+          "expiration_date": "Expiration date must be in the future",
+          "security_code": "Please provide a valid security code",
+          "cardholder_name": "Please provide a valid cardholder name"
+        }
+      },
       "manual": {
         "text": "The payment method you selected does not support online payment. Please select another method or "
       },
