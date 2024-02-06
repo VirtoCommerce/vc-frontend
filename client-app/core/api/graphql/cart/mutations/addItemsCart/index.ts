@@ -1,6 +1,7 @@
 import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
 import { useMutation } from "@/core/api/graphql/composables";
 import { AddItemsCartDocument, OperationNames } from "@/core/api/graphql/types";
+import { filterActiveQuerieNames } from "@/core/api/graphql/utils";
 import type { CartType, InputNewCartItemType, CartIdFragment } from "@/core/api/graphql/types";
 import type { MaybeRef } from "vue";
 
@@ -8,7 +9,7 @@ export function useAddItemsCartMutation(cart?: MaybeRef<CartIdFragment | undefin
   return useMutation(
     AddItemsCartDocument,
     useCartMutationVariables(cart, {
-      refetchQueries: [OperationNames.Query.GetFullCart],
+      refetchQueries: () => filterActiveQuerieNames([OperationNames.Query.GetFullCart]),
     }),
   );
 }

@@ -1,5 +1,5 @@
 import { useRouter } from "vue-router";
-import { apolloClient } from "@/core/api/graphql";
+import { apolloClient, filterActiveQuerieNames } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
@@ -50,7 +50,7 @@ export function setupBroadcastGlobalListeners() {
       await router.replace({ name: "Cart" });
     } else {
       await apolloClient.refetchQueries({
-        include: [OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart],
+        include: filterActiveQuerieNames([OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),
       });
     }
   });

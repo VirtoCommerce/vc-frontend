@@ -1,9 +1,14 @@
 import { isDefined } from "@vueuse/core";
-import type { GraphQLErrorCode } from "./enums";
-import type { GraphQLError } from "graphql";
+import { intersection } from "lodash";
+import { apolloClient } from "@/core/api/graphql/client";
 
-export function hasErrorCode(graphQLErrors: ReadonlyArray<GraphQLError> | undefined, errorCode: GraphQLErrorCode) {
-  return graphQLErrors?.some((graphQLError) => graphQLError.extensions.code === errorCode);
+export function filterActiveQuerieNames(queryNames: string[]) {
+  const activeQueryNames = Array.from(apolloClient.getObservableQueries().values())
+    .filter((query) => !!query.queryName)
+    .map((query) => query.queryName!);
+  const t = intersection(activeQueryNames, queryNames);
+  console.log(t);
+  return t;
 }
 
 export function toOptimisticResponse<T extends { id?: string } | undefined>(data: T, __typename: string): T {

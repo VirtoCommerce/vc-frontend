@@ -1,10 +1,11 @@
 import { useMutation } from "@/core/api/graphql/composables";
 import { CreateQuoteFromCartDocument, OperationNames } from "@/core/api/graphql/types";
+import { filterActiveQuerieNames } from "@/core/api/graphql/utils";
 import type { QuoteType } from "@/core/api/graphql/types";
 
 export function useCreateQuoteFromCartMutation() {
   return useMutation(CreateQuoteFromCartDocument, {
-    refetchQueries: [OperationNames.Query.GetFullCart],
+    refetchQueries: () => filterActiveQuerieNames([OperationNames.Query.GetFullCart]),
   });
 }
 

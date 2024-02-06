@@ -1,6 +1,5 @@
 import { onError } from "@apollo/client/link/error";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
-import { hasErrorCode } from "@/core/api/graphql/utils";
 import {
   TabsType,
   forbiddenEvent,
@@ -10,6 +9,11 @@ import {
   passwordExpiredEvent,
   useBroadcast,
 } from "@/shared/broadcast";
+import type { GraphQLError } from "graphql";
+
+export function hasErrorCode(graphQLErrors: ReadonlyArray<GraphQLError> | undefined, errorCode: GraphQLErrorCode) {
+  return graphQLErrors?.some((graphQLError) => graphQLError.extensions.code === errorCode);
+}
 
 export const errorHandlerLink = onError(({ networkError, graphQLErrors }) => {
   const broadcast = useBroadcast();
