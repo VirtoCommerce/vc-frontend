@@ -1,6 +1,6 @@
 import { createGlobalState, createSharedComposable, computedEager, useDebounceFn, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy } from "lodash";
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -202,7 +202,7 @@ export function _useFullCart() {
     selectCartItemsLoading.value = false;
   }, DEFAULT_DEBOUNCE_IN_MS);
 
-  const _selectedItemIds = shallowRef<string[]>();
+  const _selectedItemIds = ref<string[]>();
   const selectedItemIds = computed({
     get: () => _selectedItemIds.value ?? selectedForCheckoutItemIds.value,
     set: (value) => {
@@ -218,7 +218,7 @@ export function _useFullCart() {
 
   const selectedLineItemsGroupedByVendor = computed(() => groupByVendor(selectedLineItems.value));
 
-  const hasOnlyUnselectedLineItems = computed(() => selectedItemIds.value.length === 0);
+  const hasOnlyUnselectedLineItems = computedEager(() => selectedItemIds.value.length === 0);
 
   const { mutate: _clearCart, loading: clearCartLoading } = useClearCartMutation(cart);
   async function clearCart(): Promise<void> {
