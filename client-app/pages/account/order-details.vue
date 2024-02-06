@@ -128,10 +128,10 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
-import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsPopup, useCart } from "@/shared/cart";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsModal, useCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 
 interface IProps {
   orderId: string;
@@ -154,7 +154,7 @@ const {
   clearOrder,
 } = useUserOrder();
 const { cart, addItemsToCart } = useCart();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const { t } = useI18n();
 
 usePageHead({
@@ -183,10 +183,10 @@ async function reorderItems() {
 
   await addItemsToCart(items.map(({ productId, quantity }) => ({ productId, quantity })));
 
-  openPopup({
+  openModal({
     component: AddBulkItemsToCartResultsModal,
     props: {
-      items: getItemsForAddBulkItemsToCartResultsPopup(items, cart.value!),
+      items: getItemsForAddBulkItemsToCartResultsModal(items, cart.value!),
       listName: t("pages.account.order_details.title", [order.value?.number]),
     },
   });

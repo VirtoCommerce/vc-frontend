@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('common.titles.password_expired')" variant="warn" is-persistent>
+  <VcModal :title="$t('common.titles.password_expired')" variant="warn" is-persistent>
     <template #actions>
       <VcButton @click="$emit('confirm')">
         {{ $t("common.buttons.set_new_password") }}
@@ -17,7 +17,7 @@
         {{ $t("common.messages.password_about_expire", { value: expiryInDays }) }}
       </span>
     </div>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

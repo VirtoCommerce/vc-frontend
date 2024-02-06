@@ -318,8 +318,8 @@ import {
   useOrganizationContacts,
   useOrganizationContactsFilterFacets,
 } from "@/shared/company";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { ExtendedContactType } from "@/shared/company";
 import type { INotification } from "@/shared/notification";
@@ -360,7 +360,7 @@ const {
   resetFacets,
   resetFacetItem,
 } = useOrganizationContactsFilterFacets();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const notifications = useNotifications();
 
@@ -474,7 +474,7 @@ function hideFilters() {
 }
 
 function openInviteModal() {
-  openPopup({
+  openModal({
     component: InviteMemberModal,
     props: {
       onResult(succeed: boolean) {
@@ -487,14 +487,14 @@ function openInviteModal() {
 }
 
 function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean): void {
-  const closeLockOrUnlockModal = openPopup({
-    component: "VcConfirmationDialog",
+  const closeLockOrUnlockModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "info",
       iconVariant: "warning",
       loading: contactsLoading,
-      title: isUnlock ? t("shared.company.unblock_member_dialog.title") : t("shared.company.block_member_dialog.title"),
-      text: isUnlock ? t("shared.company.unblock_member_dialog.text") : t("shared.company.block_member_dialog.text"),
+      title: isUnlock ? t("shared.company.unblock_member_modal.title") : t("shared.company.block_member_modal.title"),
+      text: isUnlock ? t("shared.company.unblock_member_modal.text") : t("shared.company.block_member_modal.text"),
       async onConfirm() {
         if (isUnlock) {
           await unlockContact(contact);
@@ -508,14 +508,14 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
 }
 
 function openDeleteModal(contact: ExtendedContactType): void {
-  const closeDeleteModal = openPopup({
-    component: "VcConfirmationDialog",
+  const closeDeleteModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "danger",
       iconVariant: "danger",
       loading: contactsLoading,
-      title: t("shared.company.delete_member_dialog.title"),
-      text: t("shared.company.delete_member_dialog.text", {
+      title: t("shared.company.delete_member_modal.title"),
+      text: t("shared.company.delete_member_modal.text", {
         name: `${contact.fullName} (${contact.extended.emails[0]})`,
       }),
       async onConfirm() {
@@ -530,7 +530,7 @@ function openDeleteModal(contact: ExtendedContactType): void {
 }
 
 function openEditCustomerRoleModal(contact: ExtendedContactType): void {
-  const closeEditCustomerRoleModal = openPopup({
+  const closeEditCustomerRoleModal = openModal({
     component: EditCustomerRoleModal,
     props: {
       roles: B2B_ROLES,
