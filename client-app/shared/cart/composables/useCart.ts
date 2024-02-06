@@ -1,6 +1,6 @@
 import { createGlobalState, createSharedComposable, computedEager, useDebounceFn, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy } from "lodash";
-import { computed, readonly, shallowRef } from "vue";
+import { computed, readonly, ref, shallowRef } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -145,8 +145,8 @@ export function _useFullCart() {
 
   const selectedForCheckoutItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout));
 
-  const allItemsAreDigital = computed(
-    () => selectedForCheckoutItems.value?.every((item) => item.productType === ProductType.Digital),
+  const allItemsAreDigital = computed(() =>
+    selectedForCheckoutItems.value?.every((item) => item.productType === ProductType.Digital),
   );
 
   const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
@@ -174,6 +174,7 @@ export function _useFullCart() {
 
   const selectedForCheckoutItemIds = computed(() => selectedForCheckoutItems.value?.map((item) => item.id) ?? []);
 
+  const selectedItemIdsChanging = ref(false);
   const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);
   const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[]): Promise<void> => {
@@ -198,12 +199,14 @@ export function _useFullCart() {
         },
       });
     }
+    selectCartItemsLoading.value = false;
   }, DEFAULT_DEBOUNCE_IN_MS);
 
   const _selectedItemIds = shallowRef<string[]>();
   const selectedItemIds = computed({
     get: () => _selectedItemIds.value ?? selectedForCheckoutItemIds.value,
     set: (value) => {
+      selectCartItemsLoading.value = true;
       _selectedItemIds.value = value;
       void selectedItemIdsDebounced(value);
     },
@@ -432,6 +435,7 @@ export function _useFullCart() {
     loading: readonly(loading),
     changing: computed(
       () =>
+        selectedItemIdsChanging.value ||
         selectCartItemsLoading.value ||
         unselectCartItemsLoading.value ||
         clearCartLoading.value ||
