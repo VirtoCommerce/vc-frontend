@@ -102,8 +102,8 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { getPropertyValue } from "@/core/utilities";
 import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
-import { usePopup } from "@/shared/popup";
-import { VcConfirmationDialog } from "@/ui-kit/components";
+import { useModal } from "@/shared/modal";
+import { VcConfirmationModal } from "@/ui-kit/components";
 
 interface ICompareProductProperties {
   [key: string]: { label: string; values: string[] };
@@ -123,7 +123,7 @@ const ga = useGoogleAnalytics();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
-const { openPopup, closePopup } = usePopup();
+const { openModal, closeModal } = useModal();
 
 const showOnlyDifferences = ref(false);
 
@@ -172,8 +172,8 @@ function getProperties() {
 }
 
 function openClearListModal() {
-  openPopup({
-    component: VcConfirmationDialog,
+  openModal({
+    component: VcConfirmationModal,
     props: {
       variant: "danger",
       title: t("shared.compare.clear_list_modal.title"),
@@ -181,7 +181,7 @@ function openClearListModal() {
       noIcon: true,
       onConfirm() {
         clearCompareList();
-        closePopup();
+        closeModal();
       },
     },
   });

@@ -1,7 +1,7 @@
 <template>
-  <VcPopup
-    ref="popupComponent"
-    :title="$t('shared.account.invite_member_dialog.title')"
+  <VcModal
+    ref="modalComponent"
+    :title="$t('shared.account.invite_member_modal.title')"
     modal-width="sm:max-w-[38rem]"
     is-mobile-fullscreen
   >
@@ -13,8 +13,8 @@
       <VcSelect
         v-model="roleId"
         :items="roles"
-        :label="$t('shared.account.invite_member_dialog.role_label')"
-        :placeholder="$t('shared.account.invite_member_dialog.role_placeholder')"
+        :label="$t('shared.account.invite_member_modal.role_label')"
+        :placeholder="$t('shared.account.invite_member_modal.role_placeholder')"
         :disabled="loading"
         :error="!!errors.roleId"
         :message="errors.roleId"
@@ -25,8 +25,8 @@
 
       <VcTextarea
         v-model="emails"
-        :label="$t('shared.account.invite_member_dialog.emails_label')"
-        :placeholder="$t('shared.account.invite_member_dialog.emails_placeholder')"
+        :label="$t('shared.account.invite_member_modal.emails_label')"
+        :placeholder="$t('shared.account.invite_member_modal.emails_placeholder')"
         :disabled="loading"
         :message="errors.emails"
         :error="!!errors.emails"
@@ -37,7 +37,7 @@
 
       <VcTextarea
         v-model="message"
-        :label="$t('shared.account.invite_member_dialog.message_label')"
+        :label="$t('shared.account.invite_member_modal.message_label')"
         :placeholder="$t('common.placeholders.enter_value')"
         :disabled="loading"
         :max-length="1000"
@@ -49,14 +49,14 @@
 
     <template #actions="{ close }">
       <VcButton :disabled="loading" color="secondary" variant="outline" @click="close">
-        {{ $t("shared.account.invite_member_dialog.cancel_button") }}
+        {{ $t("shared.account.invite_member_modal.cancel_button") }}
       </VcButton>
 
       <VcButton :disabled="!meta.valid" :loading="loading" @click="send">
-        {{ $t("shared.account.invite_member_dialog.send_button") }}
+        {{ $t("shared.account.invite_member_modal.send_button") }}
       </VcButton>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
@@ -71,7 +71,7 @@ import { B2B_ROLES } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
-import { VcPopup } from "@/ui-kit/components";
+import { VcModal } from "@/ui-kit/components";
 import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
 
 interface IEmits {
@@ -83,7 +83,7 @@ const emit = defineEmits<IEmits>();
 const MAX_INVITED_CONTACTS_COUNT = 200;
 const MAX_EMAIL_LENGTH = 120;
 
-const popupComponent = shallowRef<InstanceType<typeof VcPopup> | null>(null);
+const modalComponent = shallowRef<InstanceType<typeof VcModal> | null>(null);
 const loading = ref(false);
 const commonErrors = ref<string[]>([]);
 
@@ -115,7 +115,7 @@ const { value: emails } = useField<string>(
       .required()
       .test(
         "emails-quantity",
-        t("shared.account.invite_member_dialog.emails_quantity_exceeded", { maxValue: MAX_INVITED_CONTACTS_COUNT }),
+        t("shared.account.invite_member_modal.emails_quantity_exceeded", { maxValue: MAX_INVITED_CONTACTS_COUNT }),
         (value) => {
           const emailAddresses = parseEmails(value);
           return emailAddresses.length <= MAX_INVITED_CONTACTS_COUNT;
@@ -123,7 +123,7 @@ const { value: emails } = useField<string>(
       )
       .test(
         "email-length",
-        t("shared.account.invite_member_dialog.email_length_exceeded", { maxValue: MAX_EMAIL_LENGTH }),
+        t("shared.account.invite_member_modal.email_length_exceeded", { maxValue: MAX_EMAIL_LENGTH }),
         (value) => {
           const emailAddresses = parseEmails(value);
           return emailAddresses.every((emailAddress) => emailAddress.value.length <= MAX_EMAIL_LENGTH);
@@ -132,7 +132,7 @@ const { value: emails } = useField<string>(
       .test(
         "every-valid",
         ({ value }) =>
-          t("shared.account.invite_member_dialog.invalid_emails", {
+          t("shared.account.invite_member_modal.invalid_emails", {
             invalidEmails: getInvalidEmails(parseEmails(value as string)),
           }),
         (value) => parseEmails(value).every((el) => el.isValid),
@@ -160,10 +160,10 @@ const send = handleSubmit(async (data) => {
   if (result.succeeded) {
     emit("result", true);
 
-    popupComponent.value?.close();
+    modalComponent.value?.close();
 
     notifications.success({
-      text: t("shared.account.invite_member_dialog.invite_successfully_text"),
+      text: t("shared.account.invite_member_modal.invite_successfully_text"),
       duration: 10000,
       single: true,
     });

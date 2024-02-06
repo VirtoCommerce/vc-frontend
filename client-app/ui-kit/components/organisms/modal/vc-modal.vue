@@ -61,7 +61,7 @@
               <!-- Dialog actions -->
               <div
                 v-if="!hideActions"
-                class="flex flex-wrap items-center justify-center gap-4 px-6 py-4 [--vc-button-min-width:9rem] *:max-sm:flex-1 sm:justify-end"
+                class="*:max-sm:flex-1 flex flex-wrap items-center justify-center gap-4 px-6 py-4 [--vc-button-min-width:9rem] sm:justify-end"
               >
                 <slot name="actions" :close="close">
                   <VcButton variant="outline" @click="close">
