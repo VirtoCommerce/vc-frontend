@@ -8,7 +8,7 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
-import { useFullCart, DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
+import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
@@ -105,14 +105,14 @@ export function useCheckout() {
       await changeComment(value);
     }
     commentChanging.value = false;
-  }, DEFAULT_DEBOUNCE_IN_MS);
+  }, EXTENDED_DEBOUNCE_IN_MS);
 
   const updatePurchaseOrderNumberDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.purchaseOrderNumber !== value) {
       await updatePurchaseOrderNumber(value);
     }
     purchaseOrderNumberChanging.value = false;
-  }, DEFAULT_DEBOUNCE_IN_MS);
+  }, EXTENDED_DEBOUNCE_IN_MS);
 
   const comment = computed({
     get: () => _comment.value ?? cart.value?.comment ?? "",

@@ -33,7 +33,7 @@ import { groupByVendor } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
-import { DEFAULT_DEBOUNCE_IN_MS } from "../constants";
+import { EXTENDED_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
@@ -198,7 +198,7 @@ export function _useFullCart() {
       });
     }
     selectCartItemsLoading.value = false;
-  }, DEFAULT_DEBOUNCE_IN_MS);
+  }, EXTENDED_DEBOUNCE_IN_MS);
 
   const _selectedItemIds = ref<string[]>();
   const selectedItemIds = computed({
