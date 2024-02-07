@@ -52,6 +52,7 @@ export function setupBroadcastGlobalListeners() {
       await apolloClient.refetchQueries({
         include: filterActiveQuerieNames([OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),
       });
+      apolloClient.cache.gc();
     }
   });
   on(unauthorizedErrorEvent, async () => {
