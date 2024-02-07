@@ -1,13 +1,16 @@
 import { computed, ref } from "vue";
 import { getStore } from "@/core/api/graphql";
+import { useFetch } from "./useFetch";
 import type { IThemeConfig, IThemeContext } from "../types";
 const themeContext = ref<IThemeContext>();
 
 export function useThemeContext() {
+  const { innerFetch } = useFetch();
+
   async function fetchThemeContext() {
     const [store, themeSettings] = await Promise.all([
       getStore("B2B-store"),
-      import("../../../config/settings_data.json") as Promise<IThemeConfig>,
+      innerFetch<IThemeConfig>("../../../config/settings_data.json"),
     ]);
 
     if (!store || !themeSettings) {
