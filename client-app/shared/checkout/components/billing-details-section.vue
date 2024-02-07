@@ -90,9 +90,8 @@ interface IProps {
 
 defineProps<IProps>();
 
-const { availablePaymentMethods } = useFullCart();
+const { allItemsAreDigital, availablePaymentMethods } = useFullCart();
 const {
-  allItemsAreDigital,
   billingAddressEqualsShipping,
   billingAddress,
   paymentMethod,

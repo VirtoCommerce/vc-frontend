@@ -5,7 +5,7 @@
         <div class="min-w-0 truncate">
           <VcImage
             :src="payment?.paymentMethod?.logoUrl"
-            class="mr-3.5 inline-block h-8 w-8 object-center md:h-9 md:w-9"
+            class="mr-3.5 inline-block size-8 object-center md:size-9"
             lazy
           />
 
@@ -34,15 +34,19 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { ProductType } from "@/core/enums";
 import { OrderSummary, useCheckout } from "@/shared/checkout";
 import { PaymentActionType, PaymentProcessingAuthorizeNet, PaymentProcessingRedirection } from "@/shared/payment";
 import type { PaymentInType } from "@/core/api/graphql/types";
 
 const router = useRouter();
-const { placedOrder, allItemsAreDigital } = useCheckout();
+const { placedOrder } = useCheckout();
 
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
+const allItemsAreDigital = computed<boolean>(() =>
+  placedOrder.value!.items?.every((item) => item.productType === ProductType.Digital),
+);
 
 async function onPaymentResult(success: boolean) {
   await router.replace({
