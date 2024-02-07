@@ -173,7 +173,7 @@ export function _useFullCart() {
 
   const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);
-  const selectedItemIdsDebounced = async (newValue: string[]): Promise<void> => {
+  const selectItemIds = async (newValue: string[]): Promise<void> => {
     const oldValue = selectedItemIds.value;
 
     const newlySelectedLineItemIds = difference(newValue, oldValue);
@@ -201,7 +201,7 @@ export function _useFullCart() {
   const selectedItemIds = computed({
     get: () => _selectedItemIds.value ?? selectedForCheckoutItemIds.value,
     set: (value) => {
-      void selectedItemIdsDebounced(value);
+      void selectItemIds(value);
       _selectedItemIds.value = value;
     },
   });
