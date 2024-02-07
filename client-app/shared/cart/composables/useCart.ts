@@ -1,4 +1,4 @@
-import { createGlobalState, createSharedComposable, computedEager, useDebounceFn, useLastChanged } from "@vueuse/core";
+import { createGlobalState, createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy, without } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
@@ -33,7 +33,6 @@ import { groupByVendor } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
-import { EXTENDED_DEBOUNCE_IN_MS } from "../constants";
 import { CartValidationErrors } from "../enums";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
@@ -172,11 +171,10 @@ export function _useFullCart() {
 
   const selectedForCheckoutItemIds = computed(() => selectedForCheckoutItems.value?.map((item) => item.id) ?? []);
 
-  const selectedItemIdsChanging = ref(false);
   const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);
-  const selectedItemIdsDebounced = useDebounceFn(async (newValue: string[]): Promise<void> => {
-    const oldValue = selectedForCheckoutItemIds.value;
+  const selectedItemIdsDebounced = async (newValue: string[]): Promise<void> => {
+    const oldValue = selectedItemIds.value;
 
     const newlySelectedLineItemIds = difference(newValue, oldValue);
     const newlyUnselectedLineItemIds = difference(oldValue, newValue);
@@ -197,16 +195,14 @@ export function _useFullCart() {
         },
       });
     }
-    selectCartItemsLoading.value = false;
-  }, EXTENDED_DEBOUNCE_IN_MS);
+  };
 
   const _selectedItemIds = ref<string[]>();
   const selectedItemIds = computed({
     get: () => _selectedItemIds.value ?? selectedForCheckoutItemIds.value,
     set: (value) => {
-      selectCartItemsLoading.value = true;
-      _selectedItemIds.value = value;
       void selectedItemIdsDebounced(value);
+      _selectedItemIds.value = value;
     },
   });
 
@@ -378,7 +374,6 @@ export function _useFullCart() {
     loading: readonly(loading),
     changing: computed(
       () =>
-        selectedItemIdsChanging.value ||
         selectCartItemsLoading.value ||
         unselectCartItemsLoading.value ||
         clearCartLoading.value ||
