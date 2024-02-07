@@ -153,29 +153,6 @@ module.exports = {
         tooltip: {
           DEFAULT: "#4D4D4D",
         },
-
-        /**
-         * @deprecated
-         */
-        red: {
-          50: "#FFFFFF",
-          100: "#FFEDED",
-          200: "#FFC4C4",
-          300: "#FF9C9C",
-          400: "#FF7373",
-          500: "#FF4A4A",
-          600: "#FF1212",
-          700: "#D90000",
-          800: "#A10000",
-          900: "#690000",
-        },
-
-        /**
-         * @deprecated
-         */
-        gray: {
-          550: "#A3AFCD",
-        },
       },
 
       boxShadow: {
