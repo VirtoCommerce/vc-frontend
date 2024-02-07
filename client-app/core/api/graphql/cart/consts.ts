@@ -1,12 +1,5 @@
 import { OperationNames } from "@/core/api/graphql/types";
 
-export const QUERY_NAMES = [
-  OperationNames.Query.GetFullCart,
-  OperationNames.Query.GetShortCart,
-  // validateCoupon doesn't modify anything and should be a query
-  OperationNames.Mutation.ValidateCoupon,
-];
-
 export const SHORT_CART_MUTATION_NAMES = [
   OperationNames.Mutation.AddBulkItemsCart,
   OperationNames.Mutation.AddItem,

@@ -1,6 +1,6 @@
 import { from, split } from "@apollo/client/core";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
-import { FULL_CART_MUTATION_NAMES, QUERY_NAMES } from "@/core/api/graphql/cart/consts";
+import { FULL_CART_MUTATION_NAMES } from "@/core/api/graphql/cart/consts";
 import { API_URL } from "@/core/api/graphql/consts";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import type { FetchResult, NextLink, Operation, Observable } from "@apollo/client/core";
@@ -9,8 +9,6 @@ import type { BatchHandler } from "@apollo/client/link/batch";
 function canSkipQuery(operation: Operation): operation is Operation & { variables: { skipQuery: boolean } } {
   return "skipQuery" in operation.variables;
 }
-
-const batchOperationNames = QUERY_NAMES.concat(FULL_CART_MUTATION_NAMES);
 
 class BatchCartLink extends BatchHttpLink {
   constructor(fetchParams?: BatchHttpLink.Options) {
@@ -40,7 +38,7 @@ class BatchCartLink extends BatchHttpLink {
 
 export const batchLink = from([
   split(
-    (operation) => batchOperationNames.includes(operation.operationName),
+    (operation) => FULL_CART_MUTATION_NAMES.includes(operation.operationName),
     new BatchCartLink({
       uri: API_URL,
       batchInterval: DEFAULT_DEBOUNCE_IN_MS,
