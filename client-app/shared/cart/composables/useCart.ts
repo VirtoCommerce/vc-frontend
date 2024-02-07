@@ -25,7 +25,6 @@ import {
   useUnselectCartItemsMutation,
   useValidateCouponMutation,
   clearCart as deprecatedClearCart,
-  toOptimisticResponse,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
@@ -46,7 +45,6 @@ import type {
   InputShipmentType,
   QuoteType,
   FullCartFragment,
-  CartAddressType,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 
@@ -268,35 +266,7 @@ export function _useFullCart() {
   const { mutate: _addOrUpdateShipment, loading: addOrUpdateShipmentLoading } =
     useAddOrUpdateCartShipmentMutation(cart);
   async function updateShipment(newShipment: InputShipmentType): Promise<void> {
-    // Because of workaround above for backward-compatibility
-    const cartValue = cart?.value as FullCartFragment;
-
-    const oldShipment = cartValue.shipments[0];
-
-    await _addOrUpdateShipment(
-      { command: { shipment: newShipment } },
-      {
-        // Update cache immediately, then it will be updated (or rolled back) after actual response from the server
-        optimisticResponse: {
-          addOrUpdateCartShipment: {
-            ...cartValue,
-            shipments: [
-              {
-                // We support only single shipment for now
-                ...oldShipment,
-                ...toOptimisticResponse(newShipment, "ShipmentType"),
-                deliveryAddress: toOptimisticResponse(
-                  // Type mismatch is because cart address can be updated partially,
-                  // but we don't use this feature yet, so it's safe to cast
-                  (newShipment.deliveryAddress as CartAddressType) ?? oldShipment?.deliveryAddress,
-                  "CartAddressType",
-                ),
-              },
-            ],
-          },
-        },
-      },
-    );
+    await _addOrUpdateShipment({ command: { shipment: newShipment } });
   }
 
   const { mutate: _removeShipment, loading: removeShipmentLoading } = useRemoveShipmentMutation(cart);
@@ -320,36 +290,7 @@ export function _useFullCart() {
 
   const { mutate: _addOrUpdatePayment, loading: addOrUpdatePaymentLoading } = useAddOrUpdateCartPaymentMutation(cart);
   async function updatePayment(newPayment: InputPaymentType): Promise<void> {
-    // Because of workaround above for backward-compatibility
-    const cartValue = cart?.value as FullCartFragment;
-
-    const oldPayment = cartValue?.payments[0];
-
-    await _addOrUpdatePayment(
-      { command: { payment: newPayment } },
-      {
-        // Update cache immediately, then it will be updated (or rolled back) after actual response from the server`
-        optimisticResponse: {
-          addOrUpdateCartPayment: {
-            ...cartValue,
-            payments: [
-              {
-                // We support only single payment for now
-                ...oldPayment,
-                ...toOptimisticResponse(newPayment, "PaymentType"),
-                // Cart address can be updated partially, but we don't use this feature yet
-                billingAddress: toOptimisticResponse(
-                  // Type mismatch is because cart address can be updated partially,
-                  // but we don't use this feature yet, so it's safe to cast
-                  (newPayment.billingAddress as CartAddressType) ?? oldPayment?.billingAddress,
-                  "CartAddressType",
-                ),
-              },
-            ],
-          },
-        },
-      },
-    );
+    await _addOrUpdatePayment({ command: { payment: newPayment } });
   }
 
   const { mutate: _addGiftItems, loading: addGiftItemsLoading } = useAddGiftItemsMutation(cart);

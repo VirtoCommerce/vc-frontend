@@ -1,12 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <ShippingDetailsSection
-      :methods="availableShippingMethods"
-      :shipment="shipment"
-      :disabled="loading"
-      @change:address="onDeliveryAddressChange"
-      @change:method="setShippingMethod"
-    />
+    <ShippingDetailsSection :disabled="loading" />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
 
@@ -38,6 +32,6 @@
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, selectedLineItems, shipment, hasValidationErrors, availableShippingMethods } = useFullCart();
-const { comment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
+const { loading, cart, selectedLineItems, hasValidationErrors } = useFullCart();
+const { comment, isValidShipment } = useCheckout();
 </script>

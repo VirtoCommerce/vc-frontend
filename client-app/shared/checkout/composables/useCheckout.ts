@@ -30,8 +30,15 @@ const loading = ref(false);
 const billingAddressEqualsShipping = ref(true);
 const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
+const _deliveryAddress = ref<CartAddressType | InputAddressType>();
+const _shipmentMethod = ref<ShippingMethodType>();
+
+const _billingAddress = ref<CartAddressType | InputAddressType>();
+const _paymentMethod = ref<PaymentMethodType>();
+
 const commentChanging = ref(false);
 const _comment = ref<string>();
+
 const purchaseOrderNumberChanging = ref(false);
 const _purchaseOrderNumber = ref<string>();
 
@@ -69,6 +76,29 @@ export function useCheckout() {
     changeComment,
     updatePurchaseOrderNumber,
   } = useFullCart();
+
+  const deliveryAddress = computed(() => _deliveryAddress.value ?? shipment.value?.deliveryAddress);
+  const billingAddress = computed(() =>
+    !allItemsAreDigital.value && billingAddressEqualsShipping.value && deliveryAddress.value
+      ? deliveryAddress.value
+      : _billingAddress.value ?? payment.value?.billingAddress,
+  );
+  const shipmentMethod = computed(() => {
+    let result = _shipmentMethod.value;
+    if (!_shipmentMethod.value && shipment.value) {
+      result = availableShippingMethods.value.find(
+        (item) => item.id === shipment.value!.shipmentMethodCode + "_" + shipment.value!.shipmentMethodOption,
+      );
+    }
+    return result;
+  });
+  const paymentMethod = computed(() => {
+    let result = _paymentMethod.value;
+    if (!_paymentMethod.value && payment.value) {
+      result = availablePaymentMethods.value.find((item) => item.code === payment.value!.paymentGatewayCode);
+    }
+    return result;
+  });
 
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.comment !== value) {
@@ -151,21 +181,25 @@ export function useCheckout() {
   }
 
   async function setShippingMethod(method: ShippingMethodType): Promise<void> {
+    _shipmentMethod.value = method;
     await updateShipment({
       id: shipment.value?.id,
       price: method.price?.amount,
       shipmentMethodCode: method.code,
       shipmentMethodOption: method.optionName,
     });
+    _shipmentMethod.value = undefined;
 
     ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
+    _paymentMethod.value = method;
     await updatePayment({
       id: payment.value?.id,
       paymentGatewayCode: method.code,
     });
+    _paymentMethod.value = undefined;
 
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
@@ -215,18 +249,22 @@ export function useCheckout() {
       addressType === AddressType.Billing &&
       (!payment.value?.billingAddress || !isEqualAddresses(payment.value?.billingAddress, inputAddress))
     ) {
+      _billingAddress.value = inputAddress;
       await updatePayment({
         id: payment.value?.id,
         billingAddress: inputAddress,
       });
+      _billingAddress.value = undefined;
     } else if (
       addressType === AddressType.Shipping &&
       (!shipment.value?.deliveryAddress || !isEqualAddresses(shipment.value?.deliveryAddress, inputAddress))
     ) {
+      _deliveryAddress.value = inputAddress;
       await updateShipment({
         id: shipment.value?.id,
         deliveryAddress: inputAddress,
       });
+      _deliveryAddress.value = undefined;
     }
   }
 
@@ -313,23 +351,22 @@ export function useCheckout() {
     shippingAddress?: CartAddressType;
     billingAddress?: CartAddressType;
   }): MemberAddressType[] {
-    const { shippingAddress, billingAddress } = payload;
     const newAddresses: MemberAddressType[] = [];
 
-    if (shippingAddress && !isExistAddress(shippingAddress)) {
+    if (payload.shippingAddress && !isExistAddress(payload.shippingAddress)) {
       newAddresses.push({
-        ...shippingAddress,
+        ...payload.shippingAddress,
         isDefault: false,
         addressType: AddressType.BillingAndShipping,
       });
     }
     if (
-      billingAddress &&
-      !isExistAddress(billingAddress) &&
-      (!shippingAddress || !isEqualAddresses(shippingAddress, billingAddress))
+      payload.billingAddress &&
+      !isExistAddress(payload.billingAddress) &&
+      (!payload.shippingAddress || !isEqualAddresses(payload.shippingAddress, payload.billingAddress))
     ) {
       newAddresses.push({
-        ...billingAddress,
+        ...payload.billingAddress,
         isDefault: false,
         addressType: AddressType.BillingAndShipping,
       });
@@ -420,6 +457,10 @@ export function useCheckout() {
   }
 
   return {
+    deliveryAddress,
+    shipmentMethod,
+    billingAddress,
+    paymentMethod,
     comment,
     billingAddressEqualsShipping,
     purchaseOrderNumber,

@@ -1,6 +1,6 @@
 <template>
   <VcContainer>
-    <div class="px-5 print:px-0 lg:px-0">
+    <div class="px-5 lg:px-0 print:px-0">
       <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5 print:mb-0">
         {{ pageTitle }}
       </VcTypography>
@@ -19,12 +19,12 @@
         "
         :current-step-index="currentStepIndex"
         :start-step-index="0"
-        :disabled="loadingCheckout"
+        :disabled="loading || changing"
         class="mb-5"
       />
     </div>
 
-    <VcLoaderOverlay :visible="loadingCart || loadingCheckout || currentStepIndex == -1" fixed-spinner />
+    <VcLoaderOverlay :visible="loading || currentStepIndex == -1" fixed-spinner />
 
     <router-view />
   </VcContainer>
@@ -41,8 +41,11 @@ import { useCheckout } from "@/shared/checkout";
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
-const { loading: loadingCart, allItemsAreDigital, forceFetch } = useFullCart();
-const { loading: loadingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
+const { loading: loadingCart, changing: changingCart, allItemsAreDigital, forceFetch } = useFullCart();
+const { loading: loadingCheckout, changing: changingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
+
+const loading = computed(() => loadingCart.value || loadingCheckout.value);
+const changing = computed(() => changingCart.value || changingCheckout.value);
 
 const steps = computed<IStepsItem[]>(() => {
   const result: IStepsItem[] = [

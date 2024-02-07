@@ -1,1 +1,1 @@
-export const DEFAULT_DEBOUNCE_IN_MS = 2000;
+export const DEFAULT_DEBOUNCE_IN_MS = 300;

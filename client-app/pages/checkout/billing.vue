@@ -1,16 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <BillingDetailsSection
-      v-model:address-equals-shipping-address="billingAddressEqualsShipping"
-      v-model:purchase-order-number="purchaseOrderNumber"
-      :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
-      :methods="availablePaymentMethods"
-      :payment="payment"
-      :shipment="allItemsAreDigital ? undefined : shipment"
-      :disabled="loading"
-      @change:address="onBillingAddressChange"
-      @change:method="setPaymentMethod"
-    />
+    <BillingDetailsSection :disabled="loading" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -40,22 +30,6 @@
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
-const {
-  loading,
-  cart,
-  selectedLineItems,
-  shipment,
-  payment,
-  hasValidationErrors,
-  availablePaymentMethods,
-  allItemsAreDigital,
-} = useFullCart();
-const {
-  purchaseOrderNumber,
-  billingAddressEqualsShipping,
-  isValidPayment,
-  isPurchaseOrderNumberEnabled,
-  onBillingAddressChange,
-  setPaymentMethod,
-} = useCheckout();
+const { loading, cart, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
+const { isValidPayment } = useCheckout();
 </script>
