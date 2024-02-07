@@ -47,24 +47,9 @@
 
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
-        <ShippingDetailsSection
-          v-if="!allItemsAreDigital"
-          :methods="availableShippingMethods"
-          :shipment="shipment"
-          @change:address="onDeliveryAddressChange"
-          @change:method="setShippingMethod"
-        />
+        <ShippingDetailsSection v-if="!allItemsAreDigital" />
 
-        <BillingDetailsSection
-          v-model:address-equals-shipping-address="billingAddressEqualsShipping"
-          v-model:purchase-order-number="purchaseOrderNumber"
-          :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
-          :methods="availablePaymentMethods"
-          :payment="payment"
-          :shipment="allItemsAreDigital ? undefined : shipment"
-          @change:address="onChangeBillingAddress"
-          @change:method="setPaymentMethod"
-        />
+        <BillingDetailsSection />
 
         <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
       </template>
@@ -188,15 +173,11 @@ const { openModal } = useModal();
 const {
   loading: loadingCart,
   cart,
-  shipment,
-  payment,
   selectedItemIds,
   selectedLineItems,
   lineItemsGroupedByVendor,
   hasOnlyUnselectedLineItems,
   availableExtendedGifts,
-  availableShippingMethods,
-  availablePaymentMethods,
   hasValidationErrors,
   hasOnlyUnselectedValidationError,
   allItemsAreDigital,
@@ -208,20 +189,7 @@ const {
   openClearCartModal,
   createQuoteFromCart,
 } = useFullCart();
-const {
-  loading: loadingCheckout,
-  comment,
-  purchaseOrderNumber,
-  billingAddressEqualsShipping,
-  isValidShipment,
-  isValidPayment,
-  isPurchaseOrderNumberEnabled,
-  initialize,
-  onDeliveryAddressChange,
-  onBillingAddressChange,
-  setShippingMethod,
-  setPaymentMethod,
-} = useCheckout();
+const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
@@ -253,14 +221,6 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
     selectedItemIds.value = without(selectedItemIds.value, ...value.itemIds);
   } else {
     selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
-  }
-}
-
-function onChangeBillingAddress() {
-  if (!allItemsAreDigital.value && billingAddressEqualsShipping.value) {
-    onDeliveryAddressChange();
-  } else {
-    onBillingAddressChange();
   }
 }
 

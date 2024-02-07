@@ -1,6 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <BillingDetailsSection :disabled="loading" />
+    <BillingDetailsSection />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -30,6 +30,6 @@
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
+const { cart, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
 const { isValidPayment } = useCheckout();
 </script>
