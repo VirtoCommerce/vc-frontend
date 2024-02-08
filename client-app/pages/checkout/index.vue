@@ -24,7 +24,7 @@
       />
     </div>
 
-    <VcLoaderOverlay :visible="loading || currentStepIndex == -1" fixed-spinner />
+    <VcLoaderOverlay :visible="loading || !currentStepId" fixed-spinner />
 
     <router-view />
   </VcContainer>
@@ -106,8 +106,10 @@ usePageHead({
 });
 
 void (async () => {
-  await forceFetch();
-  await initialize();
-  await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
+  if (currentStepIndex.value === 1) {
+    await forceFetch();
+    await initialize();
+    await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
+  }
 })();
 </script>

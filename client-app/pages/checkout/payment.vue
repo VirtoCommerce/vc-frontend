@@ -42,6 +42,8 @@ import type { PaymentInType } from "@/core/api/graphql/types";
 const router = useRouter();
 const { placedOrder } = useCheckout();
 
+console.log(placedOrder.value);
+
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 const allItemsAreDigital = computed<boolean>(() =>
