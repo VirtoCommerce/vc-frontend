@@ -7,9 +7,9 @@
 
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
-      <div class="flex items-end gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+      <div class="flex items-start gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput
-          v-model.trim="organizationName"
+          v-model="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
           :disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
           :message="errors[0]"
@@ -24,13 +24,11 @@
           v-if="userCanEditOrganization"
           :loading="loadingOrganization || loadingUser"
           :disabled="!meta.valid || !meta.dirty"
-          :icon="isMobile"
-          class="flex-none"
+          :icon="companyNameSaveIcon"
+          class="mt-[1.375rem] flex-none"
           @click="saveOrganizationName"
         >
-          <VcIcon name="save-v2" class="lg:!hidden" />
-
-          <span>{{ $t("common.buttons.save") }}</span>
+          {{ $t("common.buttons.save") }}
         </VcButton>
       </div>
 
@@ -236,8 +234,8 @@ import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
@@ -267,7 +265,7 @@ const {
   addOrUpdateAddresses,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const notifications = useNotifications();
 
 const {
@@ -275,7 +273,7 @@ const {
   errors,
   value: organizationName,
   resetField: resetOrganizationField,
-} = useField<string>("organizationName", toTypedSchema(string().required().max(64)));
+} = useField<string>("organizationName", toTypedSchema(string().trim().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
 const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
@@ -284,6 +282,8 @@ const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPer
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
+
+const companyNameSaveIcon = computed(() => (isMobile.value ? "save-v2" : ""));
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
@@ -337,7 +337,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 async function saveOrganizationName(): Promise<void> {
   await updateOrganization({
     id: organizationId.value,
-    name: organizationName.value,
+    name: organizationName.value.trim(),
   });
 }
 
@@ -346,8 +346,8 @@ function openDeleteAddressModal(address: MemberAddressType): void {
     return;
   }
 
-  const closeDeleteAddressModal = openPopup({
-    component: "VcConfirmationDialog",
+  const closeDeleteAddressModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "danger",
       iconVariant: "danger",
@@ -381,7 +381,7 @@ function openDeleteAddressModal(address: MemberAddressType): void {
 }
 
 function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
-  const closeAddOrUpdateAddressModal = openPopup({
+  const closeAddOrUpdateAddressModal = openModal({
     component: AddOrUpdateCompanyAddressModal,
     props: {
       address,

@@ -1,21 +1,19 @@
 <template>
   <!-- Mobile filters -->
   <div v-if="isMobile" class="flex flex-col gap-4 lg:gap-5">
-    <VcWidget
-      v-if="availableStatuses.length"
-      :title="$t('shared.account.orders-filter.status-label')"
-      size="sm"
-      collapsible
-    >
+    <VcWidget v-if="!!facets" :title="$t('shared.account.orders-filter.status-label')" size="sm" collapsible>
       <div class="flex flex-col space-y-4">
         <VcCheckbox
-          v-for="status in availableStatuses"
-          :key="status.code"
+          v-for="facet in facets"
+          :key="facet.term"
           v-model="filterData.statuses"
-          :value="status.code"
-          :class="{ 'font-bold': isSelectedStatus(status.code), 'text-gray-500': !isSelectedStatus(status.code) }"
+          :value="facet.term"
+          :class="[{ 'font-bold': isSelectedStatus(facet.term), 'text-gray-500': !isSelectedStatus(facet.term) }]"
         >
-          {{ status.code }}
+          <div class="flex gap-1">
+            <div class="min-w-0 grow truncate">{{ facet.label }}</div>
+            <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
+          </div>
         </VcCheckbox>
       </div>
     </VcWidget>
@@ -35,18 +33,13 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { inject } from "vue";
-import { configInjectionKey } from "@/core/injection-keys";
-import { useUserOrdersFilter } from "../composables";
+import { useUserOrders, useUserOrdersFilter } from "../composables";
 
-const config = inject(configInjectionKey);
-
+const { facets } = useUserOrders({});
 const { filterData } = useUserOrdersFilter();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
-
-const availableStatuses = config?.orders_statuses || [];
 
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;

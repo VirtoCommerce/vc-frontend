@@ -24,7 +24,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";
 import type { Product } from "@/core/api/graphql/types";
 
@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const { t } = useI18n();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const { isAuthenticated } = useUser();
 const broadcast = useBroadcast();
 
@@ -59,7 +59,7 @@ function openAddToListModal() {
     return;
   }
 
-  openPopup({
+  openModal({
     component: AddToWishlistsModal,
     props: {
       product: props.product,

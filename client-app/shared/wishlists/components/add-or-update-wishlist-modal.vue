@@ -1,17 +1,17 @@
 <template>
-  <VcPopup
+  <VcModal
     :title="
       isEditMode
-        ? $t('shared.wishlists.add_or_update_wishlist_dialog.edit_mode_title')
-        : $t('shared.wishlists.add_or_update_wishlist_dialog.title')
+        ? $t('shared.wishlists.add_or_update_wishlist_modal.edit_mode_title')
+        : $t('shared.wishlists.add_or_update_wishlist_modal.title')
     "
     modal-width="max-w-xl"
   >
     <div class="px-6 pb-6 pt-5">
       <VcInput
         v-model="name"
-        :label="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_label')"
-        :placeholder="$t('shared.wishlists.add_or_update_wishlist_dialog.list_name_placeholder')"
+        :label="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_label')"
+        :placeholder="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_placeholder')"
         :disabled="loading"
         :message="errors.name"
         :error="!!errors.name && meta.dirty"
@@ -34,24 +34,24 @@
 
     <div v-if="isCorporateMember" class="border-b px-6 pb-6">
       <VcCheckbox v-model="isPrivate">
-        {{ $t("shared.wishlists.add_or_update_wishlist_dialog.private_list") }}
+        {{ $t("shared.wishlists.add_or_update_wishlist_modal.private_list") }}
       </VcCheckbox>
     </div>
 
     <template #actions="{ close }">
       <VcButton color="secondary" variant="outline" @click="close">
-        {{ $t("shared.wishlists.add_or_update_wishlist_dialog.cancel_button") }}
+        {{ $t("shared.wishlists.add_or_update_wishlist_modal.cancel_button") }}
       </VcButton>
 
       <VcButton :loading="loading" :disabled="!canSave" class="ms-auto" @click="save(close)">
         {{
           isEditMode
-            ? $t("shared.wishlists.add_or_update_wishlist_dialog.save_button")
-            : $t("shared.wishlists.add_or_update_wishlist_dialog.create_button")
+            ? $t("shared.wishlists.add_or_update_wishlist_modal.save_button")
+            : $t("shared.wishlists.add_or_update_wishlist_modal.create_button")
         }}
       </VcButton>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

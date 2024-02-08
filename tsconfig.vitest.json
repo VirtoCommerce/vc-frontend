@@ -3,6 +3,7 @@
   "exclude": ["artifacts", "assets", "content", "storybook-static"],
   "compilerOptions": {
     "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vitest.tsbuildinfo",
     "lib": [],
     "types": ["@types/gtag.js", "node", "jsdom"]
   }

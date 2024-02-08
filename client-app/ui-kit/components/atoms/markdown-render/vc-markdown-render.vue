@@ -13,7 +13,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const markdown = computed(() => DOMPurify.sanitize(marked(props.src), { USE_PROFILES: { html: true } }));
+const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, { USE_PROFILES: { html: true } }));
 </script>
 
 <style lang="scss">
