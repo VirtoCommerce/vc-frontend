@@ -78,8 +78,8 @@ async function initPayment() {
   skyflowTableName = getParameter("tableName");
 
   skyflowClient = Skyflow.init({
-    vaultID: getParameter("vaultId"),
-    vaultURL: getParameter("vaultUrl"),
+    vaultID: getParameter("vaultID"),
+    vaultURL: getParameter("vaultURL"),
     getBearerToken: () => Promise.resolve(getParameter("accessToken")),
     options: {
       logLevel: Skyflow.LogLevel,
