@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('common.titles.remove_products')" variant="danger">
+  <VcModal :title="$t('common.titles.remove_products')" variant="danger">
     <template #actions="{ close }">
       <VcButton class="mx-auto" @click="close()">
         {{ $t("common.buttons.ok") }}
@@ -13,7 +13,7 @@
         {{ $t("common.messages.cart_contains_deleted_products") }}
       </span>
     </div>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts"></script>

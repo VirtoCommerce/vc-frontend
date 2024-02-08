@@ -1,10 +1,10 @@
 <template>
-  <VcPopup
+  <VcModal
     :title="
       $t(
         !address
-          ? 'shared.company.add_or_update_address_dialog.create_title'
-          : 'shared.company.add_or_update_address_dialog.edit_title',
+          ? 'shared.company.add_or_update_address_modal.create_title'
+          : 'shared.company.add_or_update_address_modal.edit_title',
       )
     "
     hide-actions
@@ -12,7 +12,7 @@
   >
     <template #default="{ close }">
       <h3 class="mx-6 mt-5 text-2xl font-extrabold uppercase">
-        {{ $t("shared.company.add_or_update_address_dialog.address_title") }}
+        {{ $t("shared.company.add_or_update_address_modal.address_title") }}
       </h3>
 
       <VcAddressForm
@@ -37,7 +37,7 @@
         </template>
       </VcAddressForm>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

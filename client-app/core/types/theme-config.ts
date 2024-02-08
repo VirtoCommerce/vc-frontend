@@ -15,7 +15,10 @@ export interface IThemeConfigPreset {
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
+  files_enabled?: boolean;
+
   quotes_enabled?: boolean;
+  quotes_files_scope?: string;
 
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
@@ -106,10 +109,10 @@ export interface IThemeConfigPreset {
   color_link_hover?: string;
   color_body_bg?: string;
   color_body_text?: string;
-  color_popup_danger_bg?: string;
-  color_popup_success_bg?: string;
-  color_popup_warning_bg?: string;
-  color_popup_info_bg?: string;
+  color_modal_danger_bg?: string;
+  color_modal_success_bg?: string;
+  color_modal_warning_bg?: string;
+  color_modal_info_bg?: string;
   color_alert_danger_bg?: string;
   color_alert_success_bg?: string;
   color_alert_warning_bg?: string;

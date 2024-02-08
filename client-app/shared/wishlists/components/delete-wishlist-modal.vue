@@ -1,8 +1,8 @@
 <template>
-  <VcPopup :title="$t('shared.wishlists.delete_wishlist_dialog.title')" modal-width="max-w-lg" variant="danger">
+  <VcModal :title="$t('shared.wishlists.delete_wishlist_modal.title')" modal-width="max-w-lg" variant="danger">
     <i18n-t
       class="border-b p-6 md:py-10"
-      keypath="shared.wishlists.delete_wishlist_dialog.message"
+      keypath="shared.wishlists.delete_wishlist_modal.message"
       tag="p"
       scope="global"
     >
@@ -13,27 +13,25 @@
 
     <template #actions="{ close }">
       <VcButton :loading="loading" color="danger" @click="remove(close)">
-        {{ $t("shared.wishlists.delete_wishlist_dialog.delete_button") }}
+        {{ $t("shared.wishlists.delete_wishlist_modal.delete_button") }}
       </VcButton>
 
       <VcButton class="ms-auto" color="secondary" variant="outline" @click="close">
-        {{ $t("shared.wishlists.delete_wishlist_dialog.cancel_button") }}
+        {{ $t("shared.wishlists.delete_wishlist_modal.cancel_button") }}
       </VcButton>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
-import { useWishlists } from "@/shared/wishlists";
+import { useWishlists } from "../composables";
 import type { WishlistType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  list: {
-    type: Object as PropType<WishlistType>,
-    required: true,
-  },
-});
+interface IProps {
+  list: WishlistType;
+}
+
+const props = defineProps<IProps>();
 
 const { loading, removeWishlist } = useWishlists();
 

@@ -11,9 +11,9 @@ import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/acc
 import { cartReloadEvent, useBroadcast } from "@/shared/broadcast";
 import { useCart, DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useOrganizationAddresses } from "@/shared/company";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { PaymentMethodGroupType } from "@/shared/payment";
-import { usePopup } from "@/shared/popup";
 import { SelectAddressModal } from "../components";
 import type {
   CartAddressType,
@@ -39,7 +39,7 @@ export function useCheckout() {
   const ga = useGoogleAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
-  const { openPopup, closePopup } = usePopup();
+  const { openModal, closeModal } = useModal();
   const router = useRouter();
   const { user, isAuthenticated, isCorporateMember } = useUser();
   const { getUserCheckoutDefaults } = useUserCheckoutDefaults();
@@ -254,13 +254,13 @@ export function useCheckout() {
     addressType: AddressType,
     editableAddress?: MemberAddressType | CartAddressType,
   ): void {
-    openPopup({
+    openModal({
       component: AddOrUpdateAddressModal,
       props: {
         address: editableAddress,
 
         async onResult(address: MemberAddressType) {
-          closePopup();
+          closeModal();
 
           const inputAddress: InputAddressType = {
             ...omit(address, ["id", "isDefault", "description"]),
@@ -274,7 +274,7 @@ export function useCheckout() {
   }
 
   function openSelectAddressModal(addressType: AddressType): void {
-    openPopup({
+    openModal({
       component: SelectAddressModal,
 
       props: {

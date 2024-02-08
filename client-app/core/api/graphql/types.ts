@@ -32,6 +32,11 @@ export type AccountCreationResultType = {
   succeeded: Scalars['Boolean']['output'];
 };
 
+export type AddQuoteAttachmentsCommandType = {
+  quoteId: Scalars['String']['input'];
+  urls: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
 export type Asset = {
   /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
@@ -603,6 +608,13 @@ export type CreateCustomerReviewCommandType = {
   userName: Scalars['String']['input'];
 };
 
+export type CreateQuoteCommandType = {
+  cultureName: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
 export type CreateQuoteFromCartCommandType = {
   cartId: Scalars['String']['input'];
   comment: Scalars['String']['input'];
@@ -785,6 +797,15 @@ export enum CustomerReviewStatus {
   New = 'NEW',
   Rejected = 'REJECTED'
 }
+
+export type DeleteFileCommandType = {
+  id: Scalars['String']['input'];
+};
+
+export type DeleteQuoteAttachmentsCommandType = {
+  quoteId: Scalars['String']['input'];
+  urls: Array<InputMaybe<Scalars['String']['input']>>;
+};
 
 export type DescriptionType = {
   /** Description text. */
@@ -1006,6 +1027,12 @@ export enum FacetTypes {
   Range = 'RANGE',
   Terms = 'TERMS'
 }
+
+export type FileUploadScopeOptionsType = {
+  allowedExtensions: Array<Maybe<Scalars['String']['output']>>;
+  maxFileSize: Scalars['Long']['output'];
+  scope: Scalars['String']['output'];
+};
 
 export type FilterFacet = Facet & {
   /** The number of products matching the value specified in the filter facet expression */
@@ -2684,6 +2711,7 @@ export type Mutations = {
   addOrUpdateCartPayment?: Maybe<CartType>;
   addOrUpdateCartShipment?: Maybe<CartType>;
   addOrUpdateOrderPayment?: Maybe<CustomerOrderType>;
+  addQuoteAttachments?: Maybe<QuoteType>;
   addWishlistBulkItem?: Maybe<BulkWishlistType>;
   addWishlistItem?: Maybe<WishlistType>;
   addWishlistItems?: Maybe<WishlistType>;
@@ -2709,11 +2737,14 @@ export type Mutations = {
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
+  createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
   deleteContact?: Maybe<Scalars['Boolean']['output']>;
+  deleteFile?: Maybe<Scalars['Boolean']['output']>;
   deleteMemberAddresses?: Maybe<MemberType>;
+  deleteQuoteAttachments?: Maybe<QuoteType>;
   deleteUsers?: Maybe<IdentityResultType>;
   initializePayment?: Maybe<InitializePaymentResultType>;
   inviteUser?: Maybe<CustomIdentityResultType>;
@@ -2761,9 +2792,11 @@ export type Mutations = {
   updateOrganization?: Maybe<Organization>;
   updatePersonalData?: Maybe<IdentityResultType>;
   updateQuoteAddresses?: Maybe<QuoteType>;
+  updateQuoteAttachments?: Maybe<QuoteType>;
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   updateWishListItems?: Maybe<WishlistType>;
+  /** @deprecated Use 'validateCoupon' query instead. */
   validateCoupon?: Maybe<Scalars['Boolean']['output']>;
 };
 
@@ -2815,6 +2848,11 @@ export type MutationsAddOrUpdateCartShipmentArgs = {
 
 export type MutationsAddOrUpdateOrderPaymentArgs = {
   command: InputAddOrUpdateOrderPaymentType;
+};
+
+
+export type MutationsAddQuoteAttachmentsArgs = {
+  command: AddQuoteAttachmentsCommandType;
 };
 
 
@@ -2943,6 +2981,11 @@ export type MutationsCreateOrganizationArgs = {
 };
 
 
+export type MutationsCreateQuoteArgs = {
+  command: CreateQuoteCommandType;
+};
+
+
 export type MutationsCreateQuoteFromCartArgs = {
   command: CreateQuoteFromCartCommandType;
 };
@@ -2963,8 +3006,18 @@ export type MutationsDeleteContactArgs = {
 };
 
 
+export type MutationsDeleteFileArgs = {
+  command: DeleteFileCommandType;
+};
+
+
 export type MutationsDeleteMemberAddressesArgs = {
   command: InputDeleteMemberAddressType;
+};
+
+
+export type MutationsDeleteQuoteAttachmentsArgs = {
+  command: DeleteQuoteAttachmentsCommandType;
 };
 
 
@@ -3190,6 +3243,11 @@ export type MutationsUpdatePersonalDataArgs = {
 
 export type MutationsUpdateQuoteAddressesArgs = {
   command: UpdateQuoteAddressesCommandType;
+};
+
+
+export type MutationsUpdateQuoteAttachmentsArgs = {
+  command: UpdateQuoteAttachmentsCommandType;
 };
 
 
@@ -4123,6 +4181,7 @@ export type Query = {
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
   evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
+  fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
   me?: Maybe<UserType>;
@@ -4145,6 +4204,7 @@ export type Query = {
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
   quote?: Maybe<QuoteType>;
+  quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
   quotes?: Maybe<QuoteConnection>;
   regions: Array<CountryRegionType>;
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
@@ -4153,6 +4213,7 @@ export type Query = {
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
   user?: Maybe<UserType>;
+  validateCoupon?: Maybe<Scalars['Boolean']['output']>;
   validatePassword?: Maybe<CustomIdentityResultType>;
   vendor?: Maybe<Vendor>;
   wishlist?: Maybe<WishlistType>;
@@ -4288,6 +4349,11 @@ export type QueryEvaluateDynamicContentArgs = {
   tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   toDate?: InputMaybe<Scalars['DateTime']['input']>;
   userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+};
+
+
+export type QueryFileUploadOptionsArgs = {
+  scope?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4527,6 +4593,18 @@ export type QueryUserArgs = {
 };
 
 
+export type QueryValidateCouponArgs = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  coupon: Scalars['String']['input'];
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+
 export type QueryValidatePasswordArgs = {
   password: Scalars['String']['input'];
 };
@@ -4579,8 +4657,10 @@ export type QuoteAddressType = {
 };
 
 export type QuoteAttachmentType = {
+  contentType?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use ContentType */
   mimeType?: Maybe<Scalars['String']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
   size: Scalars['Long']['output'];
   url: Scalars['String']['output'];
 };
@@ -5007,6 +5087,11 @@ export type TierPriceType = {
 export type UpdateQuoteAddressesCommandType = {
   addresses: Array<InputMaybe<InputQuoteAddressType>>;
   quoteId: Scalars['String']['input'];
+};
+
+export type UpdateQuoteAttachmentsCommandType = {
+  quoteId: Scalars['String']['input'];
+  urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
 export type UserType = {
@@ -5710,6 +5795,22 @@ export type GetMenusQueryVariables = Exact<{
 
 export type GetMenusQuery = { menus: Array<{ name: string, items: Array<{ title: string, url: string, priority: number }> }> };
 
+export type FileUploadOptionsFragment = { maxFileSize: number, allowedExtensions: Array<string> };
+
+export type DeleteFileMutationVariables = Exact<{
+  command: DeleteFileCommandType;
+}>;
+
+
+export type DeleteFileMutation = { deleteFile?: boolean };
+
+export type GetFileUploadOptionsQueryVariables = Exact<{
+  scope?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetFileUploadOptionsQuery = { fileUploadOptions?: { maxFileSize: number, allowedExtensions: Array<string> } };
+
 export type AllCurrencyFieldsFragment = { code: string, symbol: string, exchangeRate: any, customFormatting?: string, englishName: string, cultureName: string };
 
 export type AllLanguageFieldsFragment = { isInvariant: boolean, cultureName: string, nativeName: string, threeLetterLanguageName: string, twoLetterLanguageName: string, twoLetterRegionName: string, threeLetterRegionName: string };
@@ -5884,6 +5985,8 @@ export type InitializePaymentMutationVariables = Exact<{
 
 export type InitializePaymentMutation = { initializePayment?: { isSuccess: boolean, errorMessage?: string, actionHtmlForm?: string, actionRedirectUrl?: string, paymentActionType?: string, publicParameters?: Array<{ key: string, value?: string }> } };
 
+export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
+
 export type ChangeQuoteCommentMutationVariables = Exact<{
   command: ChangeQuoteCommentCommandType;
 }>;
@@ -5926,6 +6029,13 @@ export type UpdateQuoteAddressesMutationVariables = Exact<{
 
 export type UpdateQuoteAddressesMutation = { updateQuoteAddresses?: { id: string } };
 
+export type UpdateQuoteAttachmentsMutationVariables = Exact<{
+  command: UpdateQuoteAttachmentsCommandType;
+}>;
+
+
+export type UpdateQuoteAttachmentsMutation = { updateQuoteAttachments?: { id: string } };
+
 export type GetQuoteQueryVariables = Exact<{
   id?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
@@ -5935,7 +6045,7 @@ export type GetQuoteQueryVariables = Exact<{
 }>;
 
 
-export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
+export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
 
 export type GetQuotesQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;

@@ -8,7 +8,7 @@
         @keydown="openVideoModal(video)"
         @click="openVideoModal(video)"
       >
-        <VcImage class="h-full w-full rounded-sm object-cover object-center opacity-60" :src="video.thumbnailUrl" />
+        <VcImage class="size-full rounded-sm object-cover object-center opacity-60" :src="video.thumbnailUrl" />
 
         <div
           class="absolute inset-0 flex items-center justify-center text-[--color-additional-50] hover:text-[--color-primary-500]"
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import VideoModal from "./video-modal.vue";
 import type { VideoConnection, VideoType } from "@/core/api/graphql/types";
 
@@ -31,10 +31,10 @@ interface IProps {
 
 defineProps<IProps>();
 
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 
 function openVideoModal(video: VideoType) {
-  openPopup({
+  openModal({
     component: VideoModal,
     props: {
       video,

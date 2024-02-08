@@ -7,18 +7,30 @@ import {
   removeQuoteItem,
   updateQuoteAddresses,
   submitQuoteRequest,
+  updateQuoteAttachments,
 } from "@/core/api/graphql";
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
+import { toAttachedFile } from "@/ui-kit/utilities";
 import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/core/api/graphql/types";
 
 const fetching = ref<boolean>(false);
+
 const quote = ref<QuoteType | undefined>();
-const billingAddress = computed<QuoteAddressType | undefined>(
-  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
+
+const billingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
 );
-const shippingAddress = computed<QuoteAddressType | undefined>(
-  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
+const shippingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
+);
+
+const attachments = computed(() => quote.value?.attachments ?? []);
+
+const attachedFiles = computed(() =>
+  attachments.value.map((attachment) =>
+    toAttachedFile(attachment.name, attachment.size, attachment.contentType, attachment.url),
+  ),
 );
 
 export function useUserQuote() {
@@ -38,6 +50,23 @@ export function useUserQuote() {
       quote.value = await getQuote(paylod);
     } catch (e) {
       Logger.error(`${useUserQuote.name}.${fetchQuote.name}`, e);
+      throw e;
+    } finally {
+      fetching.value = false;
+    }
+  }
+
+  async function updateAttachments(
+    quoteId: string,
+    updatedAttachments: (IUploadedFile | IAttachedFile)[],
+  ): Promise<void> {
+    fetching.value = true;
+
+    const urls = updatedAttachments.map((attachment) => attachment.url);
+    try {
+      await updateQuoteAttachments(quoteId, urls);
+    } catch (e) {
+      Logger.error(`${useUserQuote.name}.${updateAttachments.name}`, e);
       throw e;
     } finally {
       fetching.value = false;
@@ -119,6 +148,8 @@ export function useUserQuote() {
     quote: computed(() => quote.value),
     billingAddress,
     shippingAddress,
+    attachments,
+    attachedFiles,
     clearQuote,
     setQuoteAddress,
     fetchQuote,
@@ -126,6 +157,7 @@ export function useUserQuote() {
     changeItemQuantity,
     removeItem,
     updateAddresses,
+    updateAttachments,
     submitQuote,
   };
 }
