@@ -6,14 +6,14 @@
       <!-- Product image -->
       <router-link
         :to="link"
-        class="vc-product-card-list__img relative block h-[72px] w-[72px] xl:h-[86px] xl:w-[86px]"
+        class="vc-product-card-list__img relative block size-[72px] xl:size-[86px]"
         @click="$emit('linkClick', $event)"
       >
         <VcImage
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="h-full w-full rounded object-cover object-center"
+          class="size-full rounded object-cover object-center"
           :lazy="lazy"
         />
         <DiscountBadge :price="product.price!" size="sm" />
@@ -76,7 +76,7 @@
         </div>
         <div class="flex items-center gap-1">
           <svg
-            class="h-3 w-3 shrink-0"
+            class="size-3 shrink-0"
             :class="{
               'text-[color:var(--color-success)]': true,
               'text-[color:var(--color-warning)]': false,
@@ -126,7 +126,7 @@
           class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
           target="_blank"
         >
-          <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
+          <svg class="size-3 shrink-0 text-primary lg:size-2.5">
             <use href="/static/images/link.svg#main"></use>
           </svg>
           <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>

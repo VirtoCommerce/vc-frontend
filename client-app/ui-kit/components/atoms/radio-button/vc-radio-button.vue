@@ -1,7 +1,7 @@
 <template>
   <label class="inline-flex cursor-pointer flex-row items-center space-x-2">
     <input
-      class="h-6 w-6 cursor-pointer appearance-none rounded-full border-2 border-gray-300 bg-white checked:border-8 checked:border-[color:var(--color-primary)] focus:outline-none"
+      class="size-6 cursor-pointer appearance-none rounded-full border-2 border-gray-300 bg-white checked:border-8 checked:border-[color:var(--color-primary)] focus:outline-none"
       type="radio"
       :value="value"
       :checked="checked"

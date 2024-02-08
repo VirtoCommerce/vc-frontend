@@ -33,14 +33,14 @@
           <div class="vc-quote-line-items__product contents md:flex md:w-full md:gap-3">
             <!--  IMAGE -->
             <div
-              class="vc-quote-line-items__img h-16 w-16 shrink-0 md:h-[60px] md:w-[60px]"
+              class="vc-quote-line-items__img size-16 shrink-0 md:size-[60px]"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <VcImage
                 :src="item.imageUrl"
                 :alt="item.name"
                 size-suffix="sm"
-                class="h-full w-full object-cover object-center"
+                class="size-full object-cover object-center"
                 lazy
               />
             </div>
@@ -157,10 +157,10 @@
           >
             <button
               type="button"
-              class="flex h-[26px] w-[26px] items-center justify-center rounded-full border bg-white text-[color:var(--color-danger)] hover:bg-gray-100 md:h-7 md:w-7 md:rounded md:border-2"
+              class="flex size-[26px] items-center justify-center rounded-full border bg-white text-[color:var(--color-danger)] hover:bg-gray-100 md:size-7 md:rounded md:border-2"
               @click="$emit('remove:item', item)"
             >
-              <svg class="h-3.5 w-3.5">
+              <svg class="size-3.5">
                 <use href="/static/images/delete.svg#main"></use>
               </svg>
             </button>
