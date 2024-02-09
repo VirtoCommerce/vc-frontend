@@ -1,8 +1,8 @@
 <template>
-  <VcPopup :title="$t('shared.checkout.payment_method_dialog.title')">
+  <VcModal :title="$t('shared.checkout.payment_method_modal.title')">
     <template #actions="{ close }">
       <VcButton variant="outline" color="secondary" @click="close">
-        {{ $t("shared.checkout.payment_method_dialog.cancel_button") }}
+        {{ $t("shared.checkout.payment_method_modal.cancel_button") }}
       </VcButton>
 
       <VcButton
@@ -12,7 +12,7 @@
           close();
         "
       >
-        {{ $t("shared.checkout.payment_method_dialog.ok_button") }}
+        {{ $t("shared.checkout.payment_method_modal.ok_button") }}
       </VcButton>
     </template>
 
@@ -31,39 +31,38 @@
           </div>
 
           <VcButton v-else variant="outline" size="sm" class="flex-none" @click="setMethod(method)">
-            {{ $t("shared.checkout.payment_method_dialog.select_button") }}
+            {{ $t("shared.checkout.payment_method_modal.select_button") }}
           </VcButton>
         </div>
       </div>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { PaymentMethodType } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-defineEmits(["result"]);
+interface IEmits {
+  (event: "result", value?: PaymentMethodType): void;
+}
 
-const props = defineProps({
-  currentMethodCode: {
-    type: String,
-    default: undefined,
-  },
+defineEmits<IEmits>();
 
-  availableMethods: {
-    type: Array as PropType<PaymentMethodType[]>,
-    default: () => [],
-  },
-
-  onResult: {
-    type: Function,
-    default: undefined,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  availableMethods: () => [],
 });
 
-const currentMethod = props.availableMethods.find((item) => item.code === props.currentMethodCode);
+interface IProps {
+  currentMethodCode?: string;
+  availableMethods?: PaymentMethodType[];
+  onResult?: () => undefined;
+}
+
+const availableMethods = computed(() => props.availableMethods);
+const currentMethodCode = computed(() => props.currentMethodCode);
+
+const currentMethod = availableMethods.value.find((item) => item.code === currentMethodCode.value);
 const selectedMethod = ref(currentMethod);
 
 function setMethod(method: PaymentMethodType): void {

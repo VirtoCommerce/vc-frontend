@@ -5124,15 +5124,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/marked@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@types/marked@npm:6.0.0"
-  dependencies:
-    marked: "npm:*"
-  checksum: 1a831af52413b1a208c91539d3bdda9be83d5451dc094c3cbc07e3e07186970673b9ec3ad5edd6c136b1249875c41e22c39eacb3c00ea7c59d0873c35c273035
-  languageName: node
-  linkType: hard
-
 "@types/mdx@npm:^2.0.0":
   version: 2.0.10
   resolution: "@types/mdx@npm:2.0.10"
@@ -11651,15 +11642,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:*":
-  version: 11.1.1
-  resolution: "marked@npm:11.1.1"
-  bin:
-    marked: bin/marked.js
-  checksum: 77137491bb9610ceaa42a2f487ea00ec13836f19c3d41cabb80f16b283461a1d14285de42725c09d8a2fb029ae10633b07e76afc76113c8067e68eaedfdf8bf6
-  languageName: node
-  linkType: hard
-
 "marked@npm:^11.2.0":
   version: 11.2.0
   resolution: "marked@npm:11.2.0"
@@ -15974,7 +15956,6 @@ __metadata:
     "@types/gtag.js": "npm:^0.0.18"
     "@types/jsdom": "npm:^21.1.6"
     "@types/lodash": "npm:^4.14.202"
-    "@types/marked": "npm:^6.0.0"
     "@types/node": "npm:~20.11.15"
     "@unhead/vue": "npm:^1.8.10"
     "@vee-validate/rules": "npm:~4.11.8"

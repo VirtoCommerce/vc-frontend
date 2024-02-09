@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import VideoModal from "./video-modal.vue";
 import type { VideoConnection, VideoType } from "@/core/api/graphql/types";
 
@@ -31,10 +31,10 @@ interface IProps {
 
 defineProps<IProps>();
 
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 
 function openVideoModal(video: VideoType) {
-  openPopup({
+  openModal({
     component: VideoModal,
     props: {
       video,
