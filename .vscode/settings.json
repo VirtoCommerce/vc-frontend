@@ -6,6 +6,13 @@
   },
   "i18n-ally.localesPaths": ["locales"],
   "i18n-ally.keystyle": "nested",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell",
+      "args": ["-ExecutionPolicy", "RemoteSigned"]
+    }
+  },
   "typescript.tsdk": "./node_modules/typescript/lib",
   "sonarlint.connectedMode.project": {
     "connectionId": "virto-commerce",
