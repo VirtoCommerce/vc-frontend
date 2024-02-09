@@ -15,7 +15,10 @@ export interface IThemeConfigPreset {
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
+  files_enabled?: boolean;
+
   quotes_enabled?: boolean;
+  quotes_files_scope?: string;
 
   bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
