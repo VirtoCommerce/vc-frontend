@@ -1,9 +1,9 @@
 <template>
-  <VcPopup :title="video.name" hide-actions>
+  <VcModal :title="video.name" hide-actions>
     <div class="p-4">
       <iframe class="aspect-video w-full" :title="video.name" :src="`${video.embedUrl}?&autoplay=1`" allow="autoplay" />
     </div>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">

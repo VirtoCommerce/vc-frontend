@@ -5,9 +5,9 @@ declare module "@vue/runtime-core" {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
     VcAddToCart: typeof Components.VcAddToCart;
-    VcConfirmationDialog: typeof Components.VcConfirmationDialog;
+    VcConfirmationModal: typeof Components.VcConfirmationModal;
+    VcModal: typeof Components.VcModal;
     VcPagination: typeof Components.VcPagination;
-    VcPopup: typeof Components.VcPopup;
     VcProductImage: typeof Components.VcProductImage;
     VcTable: typeof Components.VcTable;
     TableStatusBadge: typeof Components.TableStatusBadge;

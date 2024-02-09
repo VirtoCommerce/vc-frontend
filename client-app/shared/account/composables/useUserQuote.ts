@@ -18,11 +18,11 @@ const fetching = ref<boolean>(false);
 
 const quote = ref<QuoteType | undefined>();
 
-const billingAddress = computed<QuoteAddressType | undefined>(
-  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
+const billingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
 );
-const shippingAddress = computed<QuoteAddressType | undefined>(
-  () => quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
+const shippingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
 );
 
 const attachments = computed(() => quote.value?.attachments ?? []);

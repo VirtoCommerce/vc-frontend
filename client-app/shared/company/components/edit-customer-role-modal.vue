@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('common.titles.change_role')" modal-width="max-w-md">
+  <VcModal :title="$t('common.titles.change_role')" modal-width="max-w-md">
     <div class="space-y-4 p-6">
       <div v-for="role in roles" :key="role.id" class="flex items-start gap-2">
         <div class="pt-0.5">
@@ -31,12 +31,11 @@
         {{ $t("common.buttons.save") }}
       </VcButton>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { VcPopup, VcRadioButton } from "@/ui-kit/components";
 import RoleIcon from "./role-icon.vue";
 import type { ExtendedRoleType } from "@/core/types";
 

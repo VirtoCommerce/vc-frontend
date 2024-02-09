@@ -15,7 +15,7 @@
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
             @change="updateMobileFilters($event)"
-            @open-branches="openBranchesDialog(true)"
+            @open-branches="openBranchesModal(true)"
           />
 
           <template #footer>
@@ -126,8 +126,8 @@
             <div
               v-if="!isMobile"
               class="order-3 ml-4 flex items-center xl:ml-6"
-              @click.prevent="openBranchesDialog(false)"
-              @keyup.enter.prevent="openBranchesDialog(false)"
+              @click.prevent="openBranchesModal(false)"
+              @keyup.enter.prevent="openBranchesModal(false)"
             >
               <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
                 <template #trigger>
@@ -297,8 +297,8 @@ import {
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
-import { BranchesDialog, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
-import { usePopup } from "@/shared/popup";
+import { BranchesModal, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
+import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
@@ -319,7 +319,7 @@ const props = defineProps<IProps>();
 const { catalogId, currencyCode } = globals;
 
 const { themeContext } = useThemeContext();
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const ga = useGoogleAnalytics();
 const {
@@ -555,9 +555,9 @@ async function loadMoreProducts() {
   });
 }
 
-function openBranchesDialog(fromMobileFilter: boolean) {
-  openPopup({
-    component: BranchesDialog,
+function openBranchesModal(fromMobileFilter: boolean) {
+  openModal({
+    component: BranchesModal,
     props: {
       selectedBranches: fromMobileFilter ? mobileFilters.branches : savedBranches.value,
       onSave(branches: string[]) {
