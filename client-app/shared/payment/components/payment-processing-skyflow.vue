@@ -7,7 +7,7 @@
         :errors="bankCardErrors"
         :disabled="loading"
         class="xl:w-2/3"
-        @submit="sendPaymentData"
+        @submit="pay"
       />
     </div>
     <div class="mt-6">
@@ -15,7 +15,7 @@
         :disabled="!isValidBankCard || disabled"
         :loading="loading"
         class="flex-1 md:order-first md:flex-none"
-        @click="sendPaymentData"
+        @click="pay"
       >
         {{ $t("shared.payment.skyflow.pay_now_button") }}
       </VcButton>
@@ -29,12 +29,22 @@ import { clone } from "lodash";
 import Skyflow from "skyflow-js";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { initializePayment } from "@/core/api/graphql";
+import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import BankCardForm from "../components/bank-card-form.vue";
-import type { CustomerOrderType } from "@/core/api/graphql/types";
+import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
+
+type FieldsType = { [key: string]: string };
+type SkyflowResponseType = {
+  records: [
+    {
+      fields: FieldsType;
+      table: string;
+    },
+  ];
+};
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
@@ -70,42 +80,47 @@ const initialized = ref(false);
 let skyflowClient: Skyflow, skyflowTableName: string;
 
 async function initPayment() {
-  const data = await initializePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0]!.id,
-  });
+  try {
+    const { publicParameters, errorMessage } = await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0]!.id,
+    });
 
-  skyflowTableName = getParameter("tableName");
-
-  skyflowClient = Skyflow.init({
-    vaultID: getParameter("vaultID"),
-    vaultURL: getParameter("vaultURL"),
-    getBearerToken: () => Promise.resolve(getParameter("accessToken")),
-    options: {
-      logLevel: Skyflow.LogLevel,
-      env: Skyflow.Env,
-    },
-  });
-
-  function getParameter(name: string): string {
-    const param = data.publicParameters?.find((el) => el.key === name);
-    if (!param?.value) {
-      throw new Error(`Missed parameter ${name}`);
+    if (errorMessage) {
+      console.error(errorMessage);
+      return;
     }
 
-    return param.value;
-  }
+    if (!publicParameters) {
+      console.error("Skyflow module parameters are not provided");
+      return;
+    }
 
-  initialized.value = true;
+    skyflowTableName = getParameter(publicParameters, "tableName");
+
+    skyflowClient = Skyflow.init({
+      vaultID: getParameter(publicParameters, "vaultID"),
+      vaultURL: getParameter(publicParameters, "vaultURL"),
+      getBearerToken: () => Promise.resolve(getParameter(publicParameters, "accessToken")),
+      options: {
+        logLevel: Skyflow.LogLevel,
+        env: Skyflow.Env,
+      },
+    });
+
+    initialized.value = true;
+  } catch (e) {
+    console.error(e);
+  }
 }
-async function sendPaymentData() {
+async function pay() {
   loading.value = true;
 
   if (!isValidBankCard.value || !skyflowClient || !skyflowTableName) {
     return;
   }
 
-  const res: unknown = await skyflowClient.insert({
+  const res = (await skyflowClient.insert({
     records: [
       {
         table: skyflowTableName,
@@ -118,15 +133,20 @@ async function sendPaymentData() {
         },
       },
     ],
+  })) as SkyflowResponseType;
+
+  if (!res?.records) {
+    throw new Error("Skyflow error");
+  }
+
+  const newRes = await authorizePayment({
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0]!.id,
+    parameters: objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType),
   });
 
-  /* todo
-      handle skyflow errors
-      send records.skyflow_id to back
-      handle errors
-  */
+  console.log(newRes);
 
-  console.log(res);
   showErrors([]);
   ga.purchase(props.order);
 
@@ -172,4 +192,20 @@ function showErrors(messages: { code: string; text: string }[]) {
 onMounted(async () => {
   await initPayment();
 });
+
+function getParameter(data: KeyValueType[], key: string): string {
+  const param = data.find((el) => el.key === key);
+  if (!param?.value) {
+    throw new Error(`Missed parameter ${key}`);
+  }
+
+  return param.value;
+}
+
+function objectToKeyValue(object: { [key: string]: string }): KeyValueType[] {
+  return Object.keys(object).map((key) => ({
+    key,
+    value: object[key],
+  }));
+}
 </script>
