@@ -1,5 +1,10 @@
 import { computed, readonly, ref, shallowRef, unref } from "vue";
-import { deleteMemberAddresses, updateMemberAddresses } from "@/core/api/graphql/account";
+import {
+  addAddressToFavorites,
+  deleteMemberAddresses,
+  removeAddressFromFavorites,
+  updateMemberAddresses,
+} from "@/core/api/graphql/account";
 import { getOrganizationAddresses } from "@/core/api/graphql/organization";
 import { SORT_DESCENDING } from "@/core/constants";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
@@ -91,11 +96,51 @@ export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
     await updateAddresses(updatedAddresses);
   }
 
+  async function addAddressToFavorite(addressId: string): Promise<void> {
+    if (!addressId) {
+      return;
+    }
+
+    loading.value = true;
+
+    try {
+      await addAddressToFavorites(addressId);
+    } catch (e) {
+      Logger.error(`${useOrganizationAddresses.name}.${addAddressToFavorite.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await fetchAddresses();
+  }
+
+  async function removeAddressFromFavorite(addressId: string): Promise<void> {
+    if (!addressId) {
+      return;
+    }
+
+    loading.value = true;
+
+    try {
+      await removeAddressFromFavorites(addressId);
+    } catch (e) {
+      Logger.error(`${useOrganizationAddresses.name}.${removeAddressFromFavorites.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+
+    await fetchAddresses();
+  }
+
   return {
     sort,
     fetchAddresses,
     removeAddresses,
     addOrUpdateAddresses,
+    addAddressToFavorite,
+    removeAddressFromFavorite,
     loading: readonly(loading),
     addresses: computed(() => addresses.value),
   };

@@ -172,6 +172,32 @@
 
             <template #desktop-body>
               <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
+                <td class="cursor-pointer px-4 py-3 text-center">
+                  <VcTooltip class="ml-1 !block" placement="bottom-start" strategy="fixed">
+                    <template #trigger>
+                      <VcIcon
+                        :class="{
+                          'text-[--color-neutral-400]': !address.isFavorite,
+                          'text-[--color-primary-500]': address.isFavorite,
+                        }"
+                        name="star"
+                        size="md"
+                        @click="toggleFavoriteAddress(address.isFavorite, address.id)"
+                      />
+                    </template>
+
+                    <template #content>
+                      <div
+                        v-html-safe="
+                          address.isFavorite
+                            ? $t('pages.company.info.remove_from_favorite')
+                            : $t('pages.company.info.add_to_favorite')
+                        "
+                        class="w-44 rounded-sm px-3.5 py-1.5 text-11 font-light shadow-sm-x-y"
+                      ></div>
+                    </template>
+                  </VcTooltip>
+                </td>
                 <td class="overflow-hidden text-ellipsis px-5 py-3">
                   <span>{{ address.line1 }}</span>
                   <template v-if="address.city">, {{ address.city }}</template>
@@ -263,6 +289,8 @@ const {
   fetchAddresses,
   removeAddresses,
   addOrUpdateAddresses,
+  addAddressToFavorite,
+  removeAddressFromFavorite,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
 const { openModal } = useModal();
@@ -287,6 +315,11 @@ const companyNameSaveIcon = computed(() => (isMobile.value ? "save-v2" : ""));
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
+    {
+      id: "isFavorite",
+      sortable: false,
+      classes: "w-14",
+    },
     {
       id: "line1",
       title: t("pages.company.info.labels.address"),
@@ -404,6 +437,12 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
 }
 
 fetchAddresses();
+
+async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
+  if (addressId) {
+    isFavoriteAddress ? await removeAddressFromFavorite(addressId) : await addAddressToFavorite(addressId);
+  }
+}
 
 watch(
   () => organization.value!.name!,

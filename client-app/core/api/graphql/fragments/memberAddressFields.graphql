@@ -13,6 +13,7 @@ fragment memberAddressFields on MemberAddressType {
   regionName
   postalCode
   isDefault
+  isFavorite
   phone
   email
   description

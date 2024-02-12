@@ -32,6 +32,10 @@ export type AccountCreationResultType = {
   succeeded: Scalars['Boolean']['output'];
 };
 
+export type AddAddressToFavoritesCommandType = {
+  addressId: Scalars['String']['input'];
+};
+
 export type AddQuoteAttachmentsCommandType = {
   quoteId: Scalars['String']['input'];
   urls: Array<InputMaybe<Scalars['String']['input']>>;
@@ -1580,6 +1584,25 @@ export type InputClearShipmentsType = {
   userId: Scalars['String']['input'];
 };
 
+export type InputCloneWishlistType = {
+  /** Culture name */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** List description */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** Source List ID */
+  listId: Scalars['String']['input'];
+  /** List name */
+  listName?: InputMaybe<Scalars['String']['input']>;
+  /** List scope (private or organization) */
+  scope?: InputMaybe<Scalars['String']['input']>;
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** Owner ID */
+  userId: Scalars['String']['input'];
+};
+
 export type InputConfirmEmailType = {
   /** Confirm email token */
   token: Scalars['String']['input'];
@@ -2583,6 +2606,8 @@ export type MemberAddressType = {
   id?: Maybe<Scalars['String']['output']>;
   /** Is default address or not */
   isDefault: Scalars['Boolean']['output'];
+  /** Is favorite address or not */
+  isFavorite: Scalars['Boolean']['output'];
   /** Id */
   key?: Maybe<Scalars['String']['output']>;
   /** Last name */
@@ -2701,6 +2726,7 @@ export type MoneyType = {
 };
 
 export type Mutations = {
+  addAddressToFavorites?: Maybe<Scalars['Boolean']['output']>;
   addBulkItemsCart?: Maybe<BulkCartType>;
   addCartAddress?: Maybe<CartType>;
   addCoupon?: Maybe<CartType>;
@@ -2732,6 +2758,7 @@ export type Mutations = {
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
+  cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
@@ -2756,6 +2783,7 @@ export type Mutations = {
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
+  removeAddressFromFavorites?: Maybe<Scalars['Boolean']['output']>;
   removeCart?: Maybe<Scalars['Boolean']['output']>;
   removeCartAddress?: Maybe<CartType>;
   removeCartItem?: Maybe<CartType>;
@@ -2798,6 +2826,11 @@ export type Mutations = {
   updateWishListItems?: Maybe<WishlistType>;
   /** @deprecated Use 'validateCoupon' query instead. */
   validateCoupon?: Maybe<Scalars['Boolean']['output']>;
+};
+
+
+export type MutationsAddAddressToFavoritesArgs = {
+  command: AddAddressToFavoritesCommandType;
 };
 
 
@@ -2956,6 +2989,11 @@ export type MutationsClearShipmentsArgs = {
 };
 
 
+export type MutationsCloneWishlistArgs = {
+  command: InputCloneWishlistType;
+};
+
+
 export type MutationsConfirmEmailArgs = {
   command: InputConfirmEmailType;
 };
@@ -3068,6 +3106,11 @@ export type MutationsRegisterByInvitationArgs = {
 
 export type MutationsRejectGiftItemsArgs = {
   command: InputRejectGiftItemsType;
+};
+
+
+export type MutationsRemoveAddressFromFavoritesArgs = {
+  command: RemoveAddressFromFavoritesCommandType;
 };
 
 
@@ -4859,6 +4902,10 @@ export type RegistrationErrorType = {
   code?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   parameter?: Maybe<Scalars['String']['output']>;
+};
+
+export type RemoveAddressFromFavoritesCommandType = {
+  addressId: Scalars['String']['input'];
 };
 
 export type RemoveQuoteItemCommandType = {

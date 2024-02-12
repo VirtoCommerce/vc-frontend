@@ -263,7 +263,7 @@ export function useCheckout() {
           closeModal();
 
           const inputAddress: InputAddressType = {
-            ...omit(address, ["id", "isDefault", "description"]),
+            ...omit(address, ["id", "isDefault", "description", "isFavorite"]),
             addressType,
           };
 
@@ -289,7 +289,7 @@ export function useCheckout() {
           }
 
           const inputAddress: InputAddressType = {
-            ...omit(address, ["id", "isDefault", "description"]),
+            ...omit(address, ["id", "isDefault", "description", "isFavorite"]),
             addressType,
           };
 
@@ -340,6 +340,7 @@ export function useCheckout() {
       newAddresses.push({
         ...shippingAddress,
         isDefault: false,
+        isFavorite: false,
         addressType: AddressType.BillingAndShipping,
       });
     }
@@ -351,6 +352,7 @@ export function useCheckout() {
       newAddresses.push({
         ...billingAddress,
         isDefault: false,
+        isFavorite: false,
         addressType: AddressType.BillingAndShipping,
       });
     }
