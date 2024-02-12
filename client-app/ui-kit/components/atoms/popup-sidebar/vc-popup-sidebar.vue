@@ -2,7 +2,7 @@
   <teleport to="body">
     <!-- Sidebar back cover -->
     <transition name="fade">
-      <div v-if="isVisible" class="fixed inset-0 z-50 h-full w-full bg-gray-900/30" @click="onHide" />
+      <div v-if="isVisible" class="fixed inset-0 z-50 size-full bg-gray-900/30" @click="onHide" />
     </transition>
 
     <!-- Sidebar content -->

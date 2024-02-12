@@ -3,7 +3,7 @@
     <!-- Top footer -->
     <div
       v-if="!compact"
-      class="hidden bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)] print:!hidden md:block"
+      class="hidden bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)] md:block print:!hidden"
     >
       <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
         <!-- Logo column -->
@@ -75,7 +75,7 @@
 
     <!-- Bottom footer -->
     <div
-      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] print:flex-row print:bg-[color:var(--color-white)] print:px-0 print:text-[color:var(--color-black)] md:flex-row md:px-12"
+      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] md:flex-row md:px-12 print:flex-row print:bg-[color:var(--color-white)] print:px-0 print:text-[color:var(--color-black)]"
     >
       <span>
         {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
