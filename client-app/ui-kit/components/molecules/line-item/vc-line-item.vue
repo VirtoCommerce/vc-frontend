@@ -179,7 +179,7 @@ watchEffect(() => {
   }
 
   &__img {
-    @apply shrink-0 w-16 h-16 rounded border;
+    @apply shrink-0 w-16 h-16 rounded border object-contain object-center;
 
     @media (min-width: theme("screens.lg")) {
       @apply w-12 h-12;
