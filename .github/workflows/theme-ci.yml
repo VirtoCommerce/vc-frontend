@@ -94,7 +94,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yarn install --immutable
+          yarn install
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
