@@ -4,12 +4,11 @@
     <div v-for="i in 6" :key="i" class="mb-1.5 ml-6 h-4 bg-[--color-neutral-50]">&nbsp;</div>
   </VcFilterCardSkeleton>
 
-  <!-- TODO: use VcWidget instead -->
-  <VcFilterCard v-else :full-width-content="!category?.childCategories?.length">
-    <template v-if="!!parentCategory" #header>
+  <VcWidget v-else size="xs">
+    <template v-if="!!parentCategory" #header-container>
       <router-link
         :to="getCategoryRoute(parentCategory!)"
-        class="-mx-1.5 flex grow items-center gap-1.5 rounded-sm px-1.5 py-0.5 hover:bg-[--color-neutral-50]"
+        class="flex grow items-center gap-1.5 rounded-sm px-3 py-1 hover:bg-[--color-neutral-50]"
       >
         <VcIcon class="text-[--color-primary-500]" name="chevron-left" size="xs" />
 
@@ -35,7 +34,7 @@
         </router-link>
       </div>
     </template>
-  </VcFilterCard>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">

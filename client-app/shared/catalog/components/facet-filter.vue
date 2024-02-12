@@ -1,7 +1,6 @@
 <template>
-  <!-- TODO: use VcWidget instead -->
-  <VcFilterCard is-collapsible :title="facet.label" is-collapsed>
-    <div :class="['py-1', { 'fade-bottom': hasFade }]">
+  <VcWidget size="xs" collapsible :title="facet.label" collapsed>
+    <div :class="{ 'fade-bottom': hasFade }">
       <VcInput
         v-if="searchFieldVisible"
         v-model.trim="searchKeyword"
@@ -33,10 +32,12 @@
       </div>
     </div>
 
-    <template v-if="isShowMoreVisible" #footer>
-      <VcButtonSeeMoreLess v-model="isExpanded" />
+    <template v-if="isShowMoreVisible" #footer-container>
+      <div class="px-2 py-0.5">
+        <VcButtonSeeMoreLess v-model="isExpanded" />
+      </div>
     </template>
-  </VcFilterCard>
+  </VcWidget>
 </template>
 
 <script lang="ts" setup>
@@ -44,8 +45,6 @@ import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueu
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef } from "vue";
 import type { FacetItemType } from "@/core/types";
-import VcFilterCard from "@/ui-kit/components/atoms/filter-card/vc-filter-card.vue";
-import VcButtonSeeMoreLess from "@/ui-kit/components/molecules/button-see-more-less/vc-button-see-more-less.vue";
 
 interface IEmits {
   (event: "update:facet", facet: FacetItemType): void;
