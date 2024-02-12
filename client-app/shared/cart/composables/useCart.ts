@@ -47,9 +47,21 @@ import type {
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 
-export function useShortCart() {
+function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
   const cart = computed(() => query.value?.cart);
+
+  return {
+    cart,
+    refetch,
+    loading,
+  };
+}
+
+const useSharedShortCart = createSharedComposable(_useSharedShortCart);
+
+export function useShortCart() {
+  const { cart, refetch, loading } = useSharedShortCart();
 
   const { mutate: _addToCart, loading: addToCartLoading } = useAddItemToCartMutation();
   async function addToCart(productId: string, quantity: number): Promise<ShortCartFragment | undefined> {

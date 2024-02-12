@@ -111,8 +111,8 @@ usePageHead({
 });
 
 void (async () => {
+  await forceFetch();
   if (route.name === "Checkout") {
-    await forceFetch();
     await initialize();
     await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
   }
