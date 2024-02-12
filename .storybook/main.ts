@@ -2,11 +2,13 @@ import { resolve } from "path";
 import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 import type { StorybookConfig } from "@storybook/vue3-vite";
 
-const storybookConfig: StorybookConfig = {
+const config: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
   addons: [
+    "@storybook/addon-viewport",
     "@storybook/addon-links",
     "@storybook/addon-essentials",
+    "@storybook/addon-actions",
     "@storybook/addon-a11y",
     "@storybook/addon-interactions",
   ],
@@ -19,13 +21,13 @@ const storybookConfig: StorybookConfig = {
     const { config } = (await loadConfigFromFile(
       isDevelopment
         ? {
-          command: "serve",
-          mode: "development",
-        }
+            command: "serve",
+            mode: "development",
+          }
         : {
-          command: "build",
-          mode: "production",
-        },
+            command: "build",
+            mode: "production",
+          },
       resolve(__dirname, "../vite.config.ts"),
     ))!;
     return mergeConfig(storybookViteConfig, {
@@ -45,4 +47,4 @@ const storybookConfig: StorybookConfig = {
     autodocs: true,
   },
 };
-export default storybookConfig;
+export default config;
