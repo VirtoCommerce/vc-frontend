@@ -20,6 +20,7 @@ declare module "@vue/runtime-core" {
     VcDateSelector: typeof Components.VcDateSelector;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
+    /** @deprecated use {@link VcWidgetSkeleton} instead. */
     VcFilterCardSkeleton: typeof Components.VcFilterCardSkeleton;
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
