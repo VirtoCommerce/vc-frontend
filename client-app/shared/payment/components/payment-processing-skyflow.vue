@@ -28,10 +28,8 @@
 import { clone } from "lodash";
 import Skyflow from "skyflow-js";
 import { onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
-import { Logger } from "@/core/utilities";
 import BankCardForm from "../components/bank-card-form.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
@@ -46,7 +44,6 @@ type SkyflowResponseType = {
   ];
 };
 
-const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const emptyBankCardData: BankCardType = {
@@ -63,12 +60,6 @@ const bankCardErrors = ref<BankCardErrorsType>({});
 
 const loading = ref(false);
 const ga = useGoogleAnalytics();
-const { t } = useI18n();
-
-interface IEmits {
-  (event: "success"): void;
-  (event: "fail", message?: string | null): void;
-}
 
 interface IProps {
   order: CustomerOrderType;
@@ -127,8 +118,7 @@ async function pay() {
         fields: {
           cardholder_name: bankCardData.value.cardholderName,
           card_number: bankCardData.value.number,
-          expiry_month: bankCardData.value.month,
-          expiry_year: bankCardData.value.year,
+          card_expiration: `20${bankCardData.value.year}-${bankCardData.value.month}`,
           cvv: bankCardData.value.securityCode,
         },
       },
@@ -147,46 +137,9 @@ async function pay() {
 
   console.log(newRes);
 
-  showErrors([]);
   ga.purchase(props.order);
 
   loading.value = false;
-}
-
-//todo add correct codes
-function showErrors(messages: { code: string; text: string }[]) {
-  messages.forEach(({ code, text }) => {
-    switch (code) {
-      case "number":
-        bankCardErrors.value.number = t("shared.payment.skyflow.errors.number");
-        break;
-
-      case "month":
-        bankCardErrors.value.month = t("shared.payment.skyflow.errors.month");
-        break;
-
-      case "year":
-        bankCardErrors.value.year = t("shared.payment.skyflow.errors.year");
-        break;
-
-      case "exp_year":
-        bankCardErrors.value.year = t("shared.payment.skyflow.errors.expiration_date");
-        break;
-
-      case "security_code":
-        bankCardErrors.value.securityCode = t("shared.payment.skyflow.errors.security_code");
-        break;
-
-      case "cardholder_name":
-        bankCardErrors.value.cardholderName = t("shared.payment.skyflow.errors.cardholder_name");
-        break;
-
-      default:
-        emit("fail", text);
-    }
-
-    Logger.error(`[Skyflow][${code}]: ${text}`);
-  });
 }
 
 onMounted(async () => {
