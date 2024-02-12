@@ -8,7 +8,7 @@
       </div>
 
       <div v-for="gift in items" :key="gift.id" class="flex items-center px-6 py-3">
-        <VcImage :src="gift.imageUrl" class="mr-4 h-[60px] w-[60px] shrink-0 rounded border" lazy />
+        <VcImage :src="gift.imageUrl" class="mr-4 size-[60px] shrink-0 rounded border" lazy />
 
         <span class="grow text-sm font-bold lg:text-13">
           {{ gift.name }}

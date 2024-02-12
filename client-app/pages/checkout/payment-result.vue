@@ -26,14 +26,14 @@
           v-if="isPaymentSuccess"
           name="check-circle"
           size="md"
-          class="hidden h-12 w-12 shrink-0 text-[color:var(--color-success)] lg:flex"
+          class="hidden size-12 shrink-0 text-[color:var(--color-success)] lg:flex"
         />
 
         <VcIcon
           v-else
           name="x-circle"
           size="md"
-          class="hidden h-12 w-12 shrink-0 text-[color:var(--color-danger)] lg:flex"
+          class="hidden size-12 shrink-0 text-[color:var(--color-danger)] lg:flex"
         />
 
         <div class="max-w-md text-center text-19 lg:text-left">
