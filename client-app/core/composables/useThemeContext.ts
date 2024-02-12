@@ -27,7 +27,7 @@ export function useThemeContext() {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
       return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
     } else {
-      return await innerFetch<IThemeConfigPreset>("themes/settings.json");
+      return await innerFetch<IThemeConfigPreset>("/themes/settings.json");
     }
   }
 
