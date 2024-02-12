@@ -6,17 +6,7 @@
       </VcTypography>
 
       <VcSteps
-        :steps="
-          currentStepId === 'CheckoutPayment'
-            ? [
-                {
-                  icon: 'arrow-bold',
-                  route: { name: 'OrderDetails', params: { orderId: placedOrder?.id }, replace: true },
-                  text: $t('common.buttons.back_to_order_details'),
-                },
-              ]
-            : steps
-        "
+        :steps="steps"
         :current-step-index="currentStepIndex"
         :start-step-index="0"
         :disabled="loading || changing"
@@ -31,69 +21,84 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computedEager } from "@vueuse/core";
+import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
+import { configInjectionKey } from "@/core/injection-keys";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
+
+const config = inject(configInjectionKey, {});
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const { loading: loadingCart, changing: changingCart, allItemsAreDigital, forceFetch } = useFullCart();
-const { loading: loadingCheckout, changing: changingCheckout, placedOrder, canPayNow, initialize } = useCheckout();
+const {
+  loading: loadingCheckout,
+  changing: changingCheckout,
+  placedOrder,
+  allOrderItemsAreDigital,
+  canPayNow,
+  initialize,
+} = useCheckout();
 
-const loading = computed(() => loadingCart.value || loadingCheckout.value);
-const changing = computed(() => changingCart.value || changingCheckout.value);
+const loading = computedEager(() => loadingCart.value || loadingCheckout.value);
+const changing = computedEager(() => changingCart.value || changingCheckout.value);
 
 const steps = computed<IStepsItem[]>(() => {
-  const result: IStepsItem[] = [
-    {
+  const result: IStepsItem[] = [];
+
+  if (placedOrder.value) {
+    result.push({
+      icon: "arrow-bold",
+      route: { name: "OrderDetails", params: { orderId: placedOrder.value.id }, replace: true },
+      text: t("common.buttons.back_to_order_details"),
+    });
+  } else {
+    result.push({
       icon: "arrow-bold",
       route: { name: "Cart", replace: true },
       text: t("common.buttons.back_to_cart"),
-    },
-    {
-      id: "Shipping",
-      route: { name: "Shipping", replace: true },
-      text: t("pages.checkout.steps.shipping"),
-    },
-    {
-      id: "Billing",
-      route: { name: "Billing", replace: true },
-      text: t("pages.checkout.steps.billing"),
-    },
-    {
-      id: "Review",
-      text: t("pages.checkout.steps.review"),
-    },
-    {
-      id: "CheckoutCompleted",
-      text: t("pages.checkout.steps.completed"),
-    },
-  ];
-
-  if (allItemsAreDigital.value) {
-    // Remove "Shipping" step
-    result.splice(1, 1);
+    });
   }
 
-  if (canPayNow.value) {
-    // Replace the last step "Completed" with the payment steps.
-    result.splice(
-      -1,
-      1,
+  if (config.checkout_multistep_enabled) {
+    result.push(
       {
-        id: "CheckoutPayment",
-        text: t("pages.checkout.steps.payment"),
+        id: "Shipping",
+        route: { name: "Shipping", replace: true },
+        text: t("pages.checkout.steps.shipping"),
+        disabled: !!placedOrder.value,
+        hidden: allOrderItemsAreDigital.value ?? allItemsAreDigital.value,
       },
       {
-        id: "CheckoutPaymentResult",
-        text: t("pages.checkout.steps.completed"),
+        id: "Billing",
+        route: { name: "Billing", replace: true },
+        text: t("pages.checkout.steps.billing"),
+        disabled: !!placedOrder.value,
+      },
+      {
+        id: "Review",
+        text: t("pages.checkout.steps.review"),
+        disabled: !!placedOrder.value,
       },
     );
   }
+
+  result.push(
+    {
+      id: "CheckoutPayment",
+      text: t("pages.checkout.steps.payment"),
+      hidden: !canPayNow.value,
+    },
+    {
+      id: "CheckoutPaymentResult",
+      text: t("pages.checkout.steps.completed"),
+    },
+  );
 
   return result;
 });
@@ -106,7 +111,7 @@ usePageHead({
 });
 
 void (async () => {
-  if (currentStepIndex.value === 1) {
+  if (route.name === "Checkout") {
     await forceFetch();
     await initialize();
     await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });

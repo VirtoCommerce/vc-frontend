@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
-import { AddressType } from "@/core/enums";
+import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
@@ -147,7 +147,7 @@ export function useCheckout() {
   );
 
   const selectedPaymentMethodGroupType = computed<string | undefined>(() => {
-    const paymentMethodCode = payment.value?.paymentGatewayCode || placedOrder.value?.inPayments[0].paymentMethod?.code;
+    const paymentMethodCode = placedOrder.value?.inPayments[0].paymentMethod?.code ?? payment.value?.paymentGatewayCode;
     return availablePaymentMethods.value.find((item) => item.code === paymentMethodCode)?.paymentMethodGroupType;
   });
 
@@ -170,6 +170,10 @@ export function useCheckout() {
     () =>
       !!selectedPaymentMethodGroupType.value &&
       selectedPaymentMethodGroupType.value === PaymentMethodGroupType[PaymentMethodGroupType.Manual],
+  );
+
+  const allOrderItemsAreDigital = computed(() =>
+    placedOrder.value?.items?.every((item) => item.productType === ProductType.Digital),
   );
 
   function isExistAddress(address: AnyAddressType): boolean {
@@ -209,18 +213,22 @@ export function useCheckout() {
       await removeShipment(shipment.value.id);
     }
 
-    if (
-      !allItemsAreDigital.value &&
-      !shipment.value?.shipmentMethodCode &&
-      !shipment.value?.shipmentMethodOption &&
-      shippingMethodId &&
-      defaultShippingMethod
-    ) {
-      await setShippingMethod(defaultShippingMethod);
+    // Create at initialization to prevent duplication due to lack of id
+
+    if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
+      if (shippingMethodId && defaultShippingMethod) {
+        await setShippingMethod(defaultShippingMethod);
+      } else {
+        await updateShipment({});
+      }
     }
 
-    if (!payment.value?.paymentGatewayCode && paymentMethodCode && defaultPaymentMethod) {
-      await setPaymentMethod(defaultPaymentMethod);
+    if (!payment.value?.paymentGatewayCode) {
+      if (paymentMethodCode && defaultPaymentMethod) {
+        await setPaymentMethod(defaultPaymentMethod);
+      } else {
+        await updatePayment({});
+      }
     }
   }
 
@@ -479,5 +487,6 @@ export function useCheckout() {
     loading: readonly(loading),
     changing: computed(() => commentChanging.value || purchaseOrderNumberChanging.value),
     placedOrder: computed(() => placedOrder.value),
+    allOrderItemsAreDigital,
   };
 }
