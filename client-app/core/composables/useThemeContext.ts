@@ -2,30 +2,33 @@ import { computed, ref } from "vue";
 import { getStore } from "@/core/api/graphql";
 import { IS_DEVELOPMENT } from "../constants";
 import { useFetch } from "./useFetch";
-import type { IThemeConfig, IThemeContext } from "../types";
+import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 const themeContext = ref<IThemeContext>();
 
 export function useThemeContext() {
   const { innerFetch } = useFetch();
 
   async function fetchThemeContext() {
-    const [store, themeSettings] = await Promise.all([
-      getStore("B2B-store"),
-      innerFetch<IThemeConfig>(IS_DEVELOPMENT ? "../../../config/settings_data.json" : "themes/settings.json"),
-    ]);
+    const [store, themeSettings] = await Promise.all([getStore("B2B-store"), fetchThemeSettings()]);
 
     if (!store || !themeSettings) {
       throw new Error("Can't get context");
     }
 
-    const themeConfig =
-      typeof themeSettings.current === "string" ? themeSettings.presets[themeSettings.current] : themeSettings.current;
-
     themeContext.value = {
       ...store,
-      settings: themeConfig,
-      settingsFromPlatform: store.settings,
+      settings: themeSettings,
+      storeSettings: store.settings,
     };
+  }
+
+  async function fetchThemeSettings() {
+    if (IS_DEVELOPMENT) {
+      const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
+      return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
+    } else {
+      return await innerFetch<IThemeConfigPreset>("themes/settings.json");
+    }
   }
 
   return {
