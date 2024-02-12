@@ -92,6 +92,6 @@ export function useNotifications() {
     error,
     close,
     clear,
-    stack: computed(() => stack.value),
+    stack: computed(() => /* https://github.com/vuejs/core/issues/8036 */ stack.value.slice()),
   };
 }

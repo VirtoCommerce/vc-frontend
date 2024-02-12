@@ -27,8 +27,8 @@
     "generate:graphql": "yarn generate:graphql:schema && yarn generate:graphql:types",
     "generate:routes": "vite-node --mode production scripts/generate-routes.ts",
     "generate:dependency-graph": "depcruise client-app --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
-    "storybook:dev": "yarn generate:certificates && storybook dev --docs --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
-    "storybook:build": "storybook build --docs",
+    "storybook:dev": "yarn generate:certificates && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
+    "storybook:build": "storybook build",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
     "postinstall": "husky"
   },
@@ -77,7 +77,10 @@
     "@storybook/addon-essentials": "^7.6.12",
     "@storybook/addon-interactions": "^7.6.12",
     "@storybook/addon-links": "^7.6.12",
+    "@storybook/addon-viewport": "^7.6.12",
     "@storybook/cli": "^7.6.12",
+    "@storybook/preview-api": "^7.6.12",
+    "@storybook/test": "^7.6.12",
     "@storybook/testing-library": "^0.2.2",
     "@storybook/vue3": "^7.6.12",
     "@storybook/vue3-vite": "^7.6.12",
@@ -87,7 +90,6 @@
     "@types/gtag.js": "^0.0.18",
     "@types/jsdom": "^21.1.6",
     "@types/lodash": "^4.14.202",
-    "@types/marked": "^6.0.0",
     "@types/node": "~20.11.15",
     "@vitejs/plugin-vue": "~5.0.3",
     "@vue/eslint-config-prettier": "^8.0.0",
@@ -139,5 +141,5 @@
   "engines": {
     "node": ">=20.11.0 <21.0.0"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.0"
 }
