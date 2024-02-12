@@ -10,7 +10,7 @@
       <slot />
       <template v-if="!$slots.default">
         <div v-for="i in 5" :key="i" class="mt-3 flex first:mt-1 last:mb-2">
-          <div class="inline-block h-5 w-5 bg-gray-100"></div>
+          <div class="inline-block size-5 bg-gray-100"></div>
           <div class="ml-2 grow bg-gray-100 text-sm">&nbsp;</div>
         </div>
       </template>

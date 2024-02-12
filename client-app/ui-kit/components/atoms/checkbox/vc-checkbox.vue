@@ -12,7 +12,7 @@
           ? `border-gray-200 ${checked ? 'bg-gray-300' : 'bg-gray-50'}`
           : `border-gray-300 bg-white checked:bg-[color:var(--color-primary)]`,
       ]"
-      class="form-tick h-5 w-5 shrink-0 cursor-pointer appearance-none rounded border-2 checked:border-transparent disabled:cursor-not-allowed"
+      class="form-tick size-5 shrink-0 cursor-pointer appearance-none rounded border-2 checked:border-transparent disabled:cursor-not-allowed"
       @change="change"
     />
 

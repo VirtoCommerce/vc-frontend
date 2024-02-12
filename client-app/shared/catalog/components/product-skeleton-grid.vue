@@ -4,13 +4,13 @@
   >
     <!-- Product image -->
     <div class="relative flex flex-col items-center justify-center pb-[87%]">
-      <div class="absolute top-0 h-full w-full rounded bg-gray-100"></div>
+      <div class="absolute top-0 size-full rounded bg-gray-100"></div>
 
       <div
         class="absolute -right-4 -top-4 z-[2] flex flex-col gap-2 rounded-3xl bg-white px-2 py-3.5 lg:-right-3 lg:px-1.5 lg:py-2"
       >
-        <div class="h-6 w-6 rounded-full bg-gray-100 lg:h-4 lg:w-4"></div>
-        <div class="h-6 w-6 rounded-full bg-gray-100 lg:h-4 lg:w-4"></div>
+        <div class="size-6 rounded-full bg-gray-100 lg:size-4"></div>
+        <div class="size-6 rounded-full bg-gray-100 lg:size-4"></div>
       </div>
     </div>
 

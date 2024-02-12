@@ -4,15 +4,13 @@
   >
     <div class="vc-product-skeleton-list__mobile-left sm:contents">
       <!-- Product image -->
-      <div
-        class="vc-product-skeleton-list__img relative block h-[72px] w-[72px] bg-gray-100 xl:h-[86px] xl:w-[86px]"
-      ></div>
+      <div class="vc-product-skeleton-list__img relative block size-[72px] bg-gray-100 xl:size-[86px]"></div>
 
       <div
         class="vc-product-skeleton-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-3 lg:gap-3"
       >
-        <div class="h-5 w-5 rounded-full bg-gray-100 lg:h-4 lg:w-4"></div>
-        <div class="h-5 w-5 rounded-full bg-gray-100 lg:h-4 lg:w-4"></div>
+        <div class="size-5 rounded-full bg-gray-100 lg:size-4"></div>
+        <div class="size-5 rounded-full bg-gray-100 lg:size-4"></div>
       </div>
     </div>
 
