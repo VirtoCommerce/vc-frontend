@@ -105,7 +105,7 @@ watchEffect(() => {
   &--size {
     &--xs {
       --p-x: theme("padding.4");
-      --header-p-y: theme("padding.1");
+      --header-p-y: theme("padding.[1.5]");
       --header-gap: theme("gap.[1.5]");
       --title-text: theme("fontSize.sm");
       --title-min-h: 1.625rem;
@@ -113,7 +113,7 @@ watchEffect(() => {
 
     &--sm {
       --p-x: theme("padding.4");
-      --header-p-y: theme("padding.2");
+      --header-p-y: theme("padding.[1.5]");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.base");
       --title-min-h: 1.875rem;
