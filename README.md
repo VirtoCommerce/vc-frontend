@@ -152,7 +152,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
 - Install [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api) module.
 - Install [Node.js](https://nodejs.org/en/download/) (of corresponding to `package.json` version)
-- Enable [corepack](https://yarnpkg.com/corepack)
+- Enable [corepack](https://yarnpkg.com/corepack) (run as administrator on Windows)
   ```bash
   corepack enable
   ```

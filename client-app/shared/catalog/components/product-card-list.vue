@@ -38,7 +38,7 @@
         <router-link
           :to="link"
           :target="target"
-          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 lg:h-[60px] 2xl:pr-2"
+          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
           {{ product.name }}
@@ -207,16 +207,16 @@ const price = computed(() => (hasVariations.value ? props.product.minVariationPr
     grid-template-areas:
       "img name price add-to-cart"
       "img properties price add-to-cart"
-      "img buttons price add-to-cart"
-      "img . price add-to-cart";
+      "img . price add-to-cart"
+      "img buttons price add-to-cart";
   }
 
   @media (min-width: theme("screens.xl")) {
     grid-template-columns: 86px 1fr 1fr 200px 207px;
     grid-template-areas:
       "img name properties price add-to-cart"
-      "img buttons properties price add-to-cart"
-      "img . properties price add-to-cart";
+      "img . properties price add-to-cart"
+      "img buttons properties price add-to-cart";
   }
 
   &__mobile-left {
