@@ -28,11 +28,15 @@
 import { clone } from "lodash";
 import Skyflow from "skyflow-js";
 import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
+import { useNotifications } from "@/shared/notification";
 import BankCardForm from "../components/bank-card-form.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
+
+const props = defineProps<IProps>();
 
 type FieldsType = { [key: string]: string };
 type SkyflowResponseType = {
@@ -44,7 +48,8 @@ type SkyflowResponseType = {
   ];
 };
 
-const props = defineProps<IProps>();
+const { t } = useI18n();
+const notifications = useNotifications();
 
 const emptyBankCardData: BankCardType = {
   cardholderName: "",
@@ -78,11 +83,13 @@ async function initPayment() {
     });
 
     if (errorMessage) {
+      showErrorNotification();
       console.error(errorMessage);
       return;
     }
 
     if (!publicParameters) {
+      showErrorNotification();
       console.error("Skyflow module parameters are not provided");
       return;
     }
@@ -101,6 +108,7 @@ async function initPayment() {
 
     initialized.value = true;
   } catch (e) {
+    showErrorNotification();
     console.error(e);
   }
 }
@@ -126,7 +134,8 @@ async function pay() {
   })) as SkyflowResponseType;
 
   if (!res?.records) {
-    throw new Error("Skyflow error");
+    showErrorNotification();
+    console.error("Skyflow data saving error");
   }
 
   const newRes = await authorizePayment({
@@ -140,6 +149,14 @@ async function pay() {
   ga.purchase(props.order);
 
   loading.value = false;
+}
+
+function showErrorNotification() {
+  notifications.error({
+    duration: 5000,
+    single: true,
+    text: t("shared.payment.skyflow.errors.payment_failed"),
+  });
 }
 
 onMounted(async () => {

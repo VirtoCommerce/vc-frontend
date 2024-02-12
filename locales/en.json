@@ -674,12 +674,7 @@
       "skyflow": {
         "pay_now_button": "Pay Now",
         "errors": {
-          "number": "Please provide a valid credit card number",
-          "month": "Please provide a valid expiration month",
-          "year": "Please provide a valid expiration year",
-          "expiration_date": "Expiration date must be in the future",
-          "security_code": "Please provide a valid security code",
-          "cardholder_name": "Please provide a valid cardholder name"
+          "payment_failed": "Payment failed. Check your data and try again."
         }
       },
       "manual": {
