@@ -17,7 +17,7 @@ const requestedAddressesQuantity = 9999;
 const loading = ref(false);
 const addresses = shallowRef<MemberAddressType[]>([]);
 const sort = ref<ISortInfo>({
-  column: "createdDate",
+  column: "isFavorite",
   direction: SORT_DESCENDING,
 });
 
