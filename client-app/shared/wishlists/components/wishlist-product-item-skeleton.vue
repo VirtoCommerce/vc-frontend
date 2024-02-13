@@ -3,7 +3,7 @@
     <!-- Name and image -->
     <div class="flex grow items-center">
       <!-- Product image -->
-      <div class="mr-4 h-16 w-16 border border-gray-100 bg-gray-100"></div>
+      <div class="mr-4 size-16 border border-gray-100 bg-gray-100"></div>
 
       <div class="grow">
         <!-- Product title -->
@@ -30,7 +30,7 @@
 
     <!-- Actions -->
     <div class="ml-auto shrink-0">
-      <div class="h-7 w-7 bg-gray-100"></div>
+      <div class="size-7 bg-gray-100"></div>
     </div>
   </div>
 </template>

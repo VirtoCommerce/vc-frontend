@@ -22,7 +22,7 @@
     <VcBreadcrumbs :items="breadcrumbs" class="mx-6 hidden md:mx-0 lg:block" />
 
     <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 print:mx-0 lg:mx-0">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 lg:mx-0 print:mx-0">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
@@ -263,8 +263,8 @@ const isDisabledNextStep = computed<boolean>(
 const isDisabledOrderCreation = computed<boolean>(
   () => loading.value || !isValidCheckout.value || isEmpty(selectedItemIds.value),
 );
-const cartContainsDeletedProducts = computed<boolean | undefined>(
-  () => cart.value?.items?.some((item: LineItemType) => !item.product),
+const cartContainsDeletedProducts = computed<boolean | undefined>(() =>
+  cart.value?.items?.some((item: LineItemType) => !item.product),
 );
 const isShowIncompleteDataWarning = computed<boolean>(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,

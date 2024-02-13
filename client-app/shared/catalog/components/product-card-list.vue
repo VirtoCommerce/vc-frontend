@@ -6,14 +6,14 @@
       <!-- Product image -->
       <router-link
         :to="link"
-        class="vc-product-card-list__img relative block h-[72px] w-[72px] xl:h-[86px] xl:w-[86px]"
+        class="vc-product-card-list__img relative block size-[72px] xl:size-[86px]"
         @click="$emit('linkClick', $event)"
       >
         <VcImage
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="h-full w-full rounded object-cover object-center"
+          class="size-full rounded object-cover object-center"
           :lazy="lazy"
         />
         <DiscountBadge :price="product.price!" size="sm" />
@@ -38,7 +38,7 @@
         <router-link
           :to="link"
           :target="target"
-          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 lg:h-[60px] 2xl:pr-2"
+          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
           {{ product.name }}
@@ -76,7 +76,7 @@
         </div>
         <div class="flex items-center gap-1">
           <svg
-            class="h-3 w-3 shrink-0"
+            class="size-3 shrink-0"
             :class="{
               'text-[color:var(--color-success)]': true,
               'text-[color:var(--color-warning)]': false,
@@ -126,7 +126,7 @@
           class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
           target="_blank"
         >
-          <svg class="h-3 w-3 shrink-0 text-primary lg:h-2.5 lg:w-2.5">
+          <svg class="size-3 shrink-0 text-primary lg:size-2.5">
             <use href="/static/images/link.svg#main"></use>
           </svg>
           <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
@@ -207,16 +207,16 @@ const price = computed(() => (hasVariations.value ? props.product.minVariationPr
     grid-template-areas:
       "img name price add-to-cart"
       "img properties price add-to-cart"
-      "img buttons price add-to-cart"
-      "img . price add-to-cart";
+      "img . price add-to-cart"
+      "img buttons price add-to-cart";
   }
 
   @media (min-width: theme("screens.xl")) {
     grid-template-columns: 86px 1fr 1fr 200px 207px;
     grid-template-areas:
       "img name properties price add-to-cart"
-      "img buttons properties price add-to-cart"
-      "img . properties price add-to-cart";
+      "img . properties price add-to-cart"
+      "img buttons properties price add-to-cart";
   }
 
   &__mobile-left {

@@ -1,6 +1,6 @@
 <template>
   <router-link :to="to" class="icon flex items-center p-2.5">
-    <div class="mr-2.5 h-5 w-5"></div>
+    <div class="mr-2.5 size-5"></div>
     <span class="text-13 font-bold text-gray-500">{{ text }}</span>
   </router-link>
 </template>
