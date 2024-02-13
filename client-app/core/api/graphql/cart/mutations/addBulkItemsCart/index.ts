@@ -1,15 +1,17 @@
+import { useApolloClient } from "@vue/apollo-composable";
 import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
 import { useMutation } from "@/core/api/graphql/composables";
 import { AddBulkItemsCartDocument, OperationNames } from "@/core/api/graphql/types";
-import { filterActiveQuerieNames } from "@/core/api/graphql/utils";
+import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import type { BulkCartType, InputNewBulkItemType, CartIdFragment } from "@/core/api/graphql/types";
 import type { MaybeRef } from "vue";
 
 export function useAddBulkItemsCartMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  const { client } = useApolloClient();
   return useMutation(
     AddBulkItemsCartDocument,
     useCartMutationVariables(cart, {
-      refetchQueries: () => filterActiveQuerieNames([OperationNames.Query.GetFullCart]),
+      refetchQueries: () => filterActiveQueryNames(client, [OperationNames.Query.GetFullCart]),
     }),
   );
 }

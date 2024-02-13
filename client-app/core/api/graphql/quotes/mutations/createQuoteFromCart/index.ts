@@ -1,11 +1,13 @@
+import { useApolloClient } from "@vue/apollo-composable";
 import { useMutation } from "@/core/api/graphql/composables";
 import { CreateQuoteFromCartDocument, OperationNames } from "@/core/api/graphql/types";
-import { filterActiveQuerieNames } from "@/core/api/graphql/utils";
+import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import type { QuoteType } from "@/core/api/graphql/types";
 
 export function useCreateQuoteFromCartMutation() {
+  const { client } = useApolloClient();
   return useMutation(CreateQuoteFromCartDocument, {
-    refetchQueries: () => filterActiveQuerieNames([OperationNames.Query.GetFullCart]),
+    refetchQueries: () => filterActiveQueryNames(client, [OperationNames.Query.GetFullCart]),
   });
 }
 

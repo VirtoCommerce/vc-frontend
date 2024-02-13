@@ -1,5 +1,6 @@
+import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
-import { apolloClient, filterActiveQuerieNames } from "@/core/api/graphql";
+import { filterActiveQueryNames } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
@@ -28,6 +29,7 @@ export function setupBroadcastGlobalListeners() {
 
   installed = true;
 
+  const { client } = useApolloClient();
   const router = useRouter();
   const { on } = useBroadcast();
   const notifications = useNotifications();
@@ -49,10 +51,10 @@ export function setupBroadcastGlobalListeners() {
     if (route.matched.some((item) => item.name === "Checkout")) {
       await router.replace({ name: "Cart" });
     } else {
-      await apolloClient.refetchQueries({
-        include: filterActiveQuerieNames([OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),
+      await client.refetchQueries({
+        include: filterActiveQueryNames(client, [OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),
       });
-      apolloClient.cache.gc();
+      client.cache.gc();
     }
   });
   on(unauthorizedErrorEvent, async () => {
