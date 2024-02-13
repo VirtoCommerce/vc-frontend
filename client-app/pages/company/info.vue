@@ -173,12 +173,12 @@
             <template #desktop-body>
               <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
                 <td class="cursor-pointer px-4 py-3 text-center">
-                  <VcTooltip class="ml-1 !block" placement="bottom-start" strategy="fixed">
+                  <VcTooltip class="ml-1" placement="bottom-start" strategy="fixed">
                     <template #trigger>
                       <VcIcon
                         :class="{
-                          'text-[--color-neutral-400]': !address.isFavorite,
-                          'text-[--color-primary-500]': address.isFavorite,
+                          'text-neutral-400': !address.isFavorite,
+                          'text-primary-500': address.isFavorite,
                         }"
                         name="star"
                         size="md"
@@ -193,8 +193,8 @@
                             ? $t('pages.company.info.remove_from_favorite')
                             : $t('pages.company.info.add_to_favorite')
                         "
-                        class="w-44 rounded-sm px-3.5 py-1.5 text-11 font-light shadow-sm-x-y"
-                      ></div>
+                        class="w-44 rounded-sm bg-white px-3.5 py-1.5 text-xs font-light shadow-sm"
+                      />
                     </template>
                   </VcTooltip>
                 </td>
