@@ -198,14 +198,13 @@
                     </template>
 
                     <template #content>
-                      <div
-                        class="w-44 rounded-sm bg-white px-3.5 py-1.5 text-xs font-light shadow-sm"
-                        v-html="
+                      <div class="w-44 rounded-sm bg-white px-3.5 py-1.5 text-xs font-light shadow-sm">
+                        {{
                           address.isFavorite
-                            ? $t('pages.company.info.remove_from_favorites')
-                            : $t('pages.company.info.add_to_favorites')
-                        "
-                      />
+                            ? $t("pages.company.info.remove_from_favorites")
+                            : $t("pages.company.info.add_to_favorites")
+                        }}
+                      </div>
                     </template>
                   </VcTooltip>
                 </td>
