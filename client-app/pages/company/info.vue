@@ -131,8 +131,9 @@
                   </span>
                 </div>
 
-                <div v-if="userCanEditOrganization" class="absolute right-4 top-3 flex flex-col items-center">
+                <div class="absolute right-4 top-3 flex flex-col items-center">
                   <AddressDropdownMenu
+                    v-if="userCanEditOrganization"
                     :address="item"
                     placement="left-start"
                     class="flex items-center"
@@ -143,9 +144,9 @@
                     :class="{
                       'text-neutral-400': !item.isFavorite,
                       'text-primary-500': item.isFavorite,
+                      'mt-2': userCanEditOrganization,
                     }"
                     name="star"
-                    class="mt-2"
                     size="md"
                     @click="toggleFavoriteAddress(item.isFavorite, item.id)"
                   />
