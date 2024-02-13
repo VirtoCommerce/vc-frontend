@@ -97,10 +97,6 @@ export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   }
 
   async function addAddressToFavorite(addressId: string): Promise<void> {
-    if (!addressId) {
-      return;
-    }
-
     loading.value = true;
 
     try {
@@ -116,10 +112,6 @@ export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
   }
 
   async function removeAddressFromFavorite(addressId: string): Promise<void> {
-    if (!addressId) {
-      return;
-    }
-
     loading.value = true;
 
     try {

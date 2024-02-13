@@ -199,12 +199,12 @@
 
                     <template #content>
                       <div
-                        v-html-safe="
-                          address.isFavorite
-                            ? $t('pages.company.info.remove_from_favorite')
-                            : $t('pages.company.info.add_to_favorite')
-                        "
                         class="w-44 rounded-sm bg-white px-3.5 py-1.5 text-xs font-light shadow-sm"
+                        v-html="
+                          address.isFavorite
+                            ? $t('pages.company.info.remove_from_favorites')
+                            : $t('pages.company.info.add_to_favorites')
+                        "
                       />
                     </template>
                   </VcTooltip>
