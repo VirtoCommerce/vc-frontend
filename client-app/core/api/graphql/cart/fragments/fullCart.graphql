@@ -64,7 +64,4 @@ fragment fullCart on CartType {
   taxTotal {
     ...money
   }
-  warnings {
-    ...validationError
-  }
 }
