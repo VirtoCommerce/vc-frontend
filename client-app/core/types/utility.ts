@@ -1,30 +1,9 @@
+import type { DeepPartial, DeepRequired } from "utility-types";
+
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/ban-types */
-type _DeepPartial<T> = T extends Function
-  ? T
-  : T extends Array<infer E>
-    ? Array<_DeepPartial<E>>
-    : T extends object
-      ? DeepPartial<T>
-      : T | undefined;
-
-export type DeepPartial<T> = { [K in keyof T]?: _DeepPartial<T[K]> };
-
-type _DeepRequired<T> = T extends Function
-  ? T
-  : T extends Array<infer E>
-    ? Array<DeepRequired<E>>
-    : T extends object
-      ? DeepRequired<T>
-      : T | undefined;
-
-export type DeepRequired<T> = { [K in keyof T]-?: _DeepRequired<T[K]> };
-
-type _DeepOmitByType<T, U extends DeepPartial<T>> = T extends Function
-  ? U extends Function
-    ? T
-    : never
-  : T extends Array<infer E>
+type _DeepOmitByType<T, U extends DeepPartial<T>> =
+  T extends Array<infer E>
     ? U extends Array<infer UE>
       ? UE extends DeepPartial<E>
         ? Array<_DeepOmitByType<E, UE>>

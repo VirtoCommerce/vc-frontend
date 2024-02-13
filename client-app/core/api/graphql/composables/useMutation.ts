@@ -1,9 +1,10 @@
 import { useMutation as _useMutation } from "@vue/apollo-composable";
 import { merge } from "lodash";
 import { toValue } from "vue";
-import type { DeepOmitByType, DeepPartial } from "@/core/types/utility";
+import type { DeepOmitByType } from "@/core/types/utility";
 import type { DocumentNode, OperationVariables, TypedDocumentNode } from "@apollo/client/core";
 import type { MutateFunction, UseMutationOptions, UseMutationReturn } from "@vue/apollo-composable";
+import type { DeepPartial } from "utility-types";
 import type { MaybeRefOrGetter } from "vue";
 
 // Workaround for variables deep merge

@@ -1,4 +1,4 @@
-import { computed, unref } from "vue";
+import { computed, toValue } from "vue";
 import { useAllGlobalVariables, useMutation } from "@/core/api/graphql/composables";
 import { MergeCartDocument } from "@/core/api/graphql/types";
 
@@ -6,7 +6,7 @@ export function useMergeCartMutation() {
   return useMutation(
     MergeCartDocument,
     computed(() => {
-      const { storeId, cultureName, currencyCode } = unref(useAllGlobalVariables());
+      const { storeId, cultureName, currencyCode } = toValue(useAllGlobalVariables());
       return {
         variables: {
           command: {
