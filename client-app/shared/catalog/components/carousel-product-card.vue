@@ -7,7 +7,7 @@
           :src="product.imgSrc"
           :alt="product.name"
           size-suffix="md"
-          class="absolute top-0 h-full w-full object-cover object-center"
+          class="absolute top-0 size-full object-cover object-center"
           lazy
         />
       </div>
