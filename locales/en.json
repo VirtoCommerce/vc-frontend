@@ -645,9 +645,9 @@
     },
     "payment": {
       "bank_card_form": {
-        "number_label": "Card number",
-        "cardholder_name_label": "Cardholder name",
-        "expiration_date_label": "Expiration date",
+        "number_label": "Card Number",
+        "cardholder_name_label": "Cardholder Name",
+        "expiration_date_label": "Expiration Date",
         "expiration_date_placeholder": "MM / YY",
         "month_label": "Month",
         "month_placeholder": "MM",

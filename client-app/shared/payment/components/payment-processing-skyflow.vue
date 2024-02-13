@@ -152,20 +152,31 @@ const isButtonDisabled = computed(() => {
 });
 
 function createForm() {
+  const global = {
+    "@import":
+      'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Condensed:wght@700&display=swap")',
+  };
+
+  const dangerColor = "#FF4A4A";
+  const borderColor = "#e5e7eb";
+  const fontFamily = "Lato, sans-serif";
+
   const containerOptions = {
     layout: [1, 1, 2],
     styles: {
       base: {
-        fontFamily: "Lato, sans-serif",
+        fontFamily,
         width: "100%",
-        gap: "12px",
+        gap: "24px",
         margin: "4px 0",
       },
     },
     errorTextStyles: {
       base: {
-        color: "#FF4A4A",
+        fontFamily,
+        color: dangerColor,
       },
+      global,
     },
   };
 
@@ -174,30 +185,29 @@ function createForm() {
   const collectStylesOptions = {
     inputStyles: {
       base: {
-        fontFamily: "inherit",
+        fontFamily,
         fontStyle: "normal",
         fontWeight: 400,
         fontSize: "0.9375rem",
         lineHeight: "1",
         borderRadius: "3px",
-        border: "1px solid #e5e7eb",
+        border: `1px solid ${borderColor}`,
         padding: "0.75rem",
       },
-      global: {
-        "@import":
-          'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Condensed:wght@700&display=swap")',
-      },
+      global,
     },
     labelStyles: {
       base: {
+        fontFamily,
         fontSize: "0.9375rem",
         fontWeight: 700,
         lineHeight: "1.25rem",
         marginBottom: "0.125rem",
       },
-    },
-    errorTextStyles: {
-      base: {},
+      requiredAsterisk: {
+        color: dangerColor,
+      },
+      global,
     },
   };
 
@@ -213,40 +223,56 @@ function createForm() {
       },
       {
         enableCardIcon: false,
+        required: true,
       },
     )
     .on(Skyflow.EventName.CHANGE, updateValidationStatus);
 
   container
-    .create({
-      table: skyflowTableName,
-      column: "cardholder_name",
-      ...collectStylesOptions,
-      label: t("shared.payment.bank_card_form.cardholder_name_label"),
-      type: Skyflow.ElementType.CARDHOLDER_NAME,
-    })
+    .create(
+      {
+        table: skyflowTableName,
+        column: "cardholder_name",
+        ...collectStylesOptions,
+        label: t("shared.payment.bank_card_form.cardholder_name_label"),
+        type: Skyflow.ElementType.CARDHOLDER_NAME,
+      },
+      {
+        required: true,
+      },
+    )
     .on(Skyflow.EventName.CHANGE, updateValidationStatus);
 
   container
-    .create({
-      table: skyflowTableName,
-      column: "card_expiration",
-      ...collectStylesOptions,
-      placeholder: "MM / DD",
-      label: t("shared.payment.bank_card_form.expiration_date_label"),
-      type: Skyflow.ElementType.EXPIRATION_DATE,
-    })
+    .create(
+      {
+        table: skyflowTableName,
+        column: "card_expiration",
+        ...collectStylesOptions,
+        placeholder: t("shared.payment.bank_card_form.expiration_date_placeholder"),
+        label: t("shared.payment.bank_card_form.expiration_date_label"),
+        type: Skyflow.ElementType.EXPIRATION_DATE,
+      },
+      {
+        required: true,
+      },
+    )
     .on(Skyflow.EventName.CHANGE, updateValidationStatus);
 
   container
-    .create({
-      table: skyflowTableName,
-      column: "cvv",
-      ...collectStylesOptions,
-      placeholder: "111",
-      label: t("shared.payment.bank_card_form.security_code_label"),
-      type: Skyflow.ElementType.CVV,
-    })
+    .create(
+      {
+        table: skyflowTableName,
+        column: "cvv",
+        ...collectStylesOptions,
+        placeholder: "111",
+        label: t("shared.payment.bank_card_form.security_code_label"),
+        type: Skyflow.ElementType.CVV,
+      },
+      {
+        required: true,
+      },
+    )
     .on(Skyflow.EventName.CHANGE, updateValidationStatus);
 
   container.mount("#composableContainer");
