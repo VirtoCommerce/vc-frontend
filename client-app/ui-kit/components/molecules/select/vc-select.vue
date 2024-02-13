@@ -17,7 +17,7 @@
     </VcLabel>
 
     <VcDropdownMenu placement="bottom" width="100%" :disabled="!enabled" disable-trigger-events @toggle="toggled">
-      <template #trigger="{ open, toggle }">
+      <template #trigger="{ open, close, toggle }">
         <div
           v-if="$slots.selected || $slots.placeholder"
           tabindex="0"
@@ -62,7 +62,9 @@
               <VcIcon name="delete-mini" :size="16" />
             </button>
 
-            <VcIcon class="vc-select__icon" :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
+            <button type="button" tabindex="-1" class="vc-select__arrow" @click="handleArrowClick($event, close)">
+              <VcIcon :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
+            </button>
           </template>
         </VcInput>
       </template>
@@ -295,6 +297,13 @@ function clear() {
     emit("update:modelValue", undefined);
   }
 }
+
+function handleArrowClick(event: MouseEvent, close: () => void) {
+  if (isShown.value) {
+    event.stopPropagation();
+    close();
+  }
+}
 </script>
 
 <style lang="scss">
@@ -332,11 +341,11 @@ function clear() {
   }
 
   &__button {
-    @apply relative flex items-center w-full rounded border bg-[--color-additional-50] appearance-none text-left;
+    @apply relative flex items-center w-full rounded border bg-additional-50 appearance-none text-left;
 
     #{$disabled} &,
     &:disabled {
-      @apply bg-[--color-neutral-500] cursor-not-allowed pointer-events-none;
+      @apply bg-neutral cursor-not-allowed pointer-events-none;
     }
 
     #{$readonly} & {
@@ -344,12 +353,12 @@ function clear() {
     }
 
     #{$error} & {
-      @apply border-[--color-danger-500];
+      @apply border-danger;
     }
 
     &--opened,
     &:focus {
-      @apply outline-none ring-[3px] ring-[--color-primary-100];
+      @apply outline-none ring-[3px] ring-primary-100;
     }
   }
 
@@ -357,7 +366,7 @@ function clear() {
     @apply grow overflow-y-hidden flex flex-col justify-center min-w-0 h-full;
 
     #{$error} & {
-      @apply text-[--color-danger-500];
+      @apply text-danger;
     }
   }
 
@@ -374,14 +383,30 @@ function clear() {
   }
 
   &__clear {
-    @apply flex items-center p-3 text-[--color-primary-500];
+    @apply flex items-center h-full px-1.5 text-primary;
+
+    &:hover {
+      @apply text-primary-600;
+    }
+  }
+
+  &__arrow {
+    @apply flex items-center h-full pe-3 ps-1.5 text-neutral-900;
+
+    &:hover {
+      @apply text-neutral;
+    }
+
+    #{$disabled} & {
+      @apply text-neutral;
+    }
   }
 
   &__icon {
-    @apply shrink-0 mr-3 text-[--color-neutral-900];
+    @apply shrink-0 mr-3 text-neutral-900;
 
     #{$disabled} & {
-      @apply text-[--color-neutral-400];
+      @apply text-neutral-400;
     }
 
     #{$readonly} & {
@@ -390,7 +415,7 @@ function clear() {
   }
 
   &__dropdown {
-    @apply z-10 overflow-hidden absolute mt-1 w-full bg-[--color-additional-50] rounded border border-[--color-neutral-100] shadow-lg;
+    @apply z-10 overflow-hidden absolute mt-1 w-full bg-additional-50 rounded border border-neutral-100 shadow-lg;
   }
 
   &__list {
