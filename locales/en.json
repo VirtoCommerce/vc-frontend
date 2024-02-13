@@ -673,6 +673,7 @@
       },
       "skyflow": {
         "pay_now_button": "Pay Now",
+
         "errors": {
           "payment_failed": "Payment failed. Check your data and try again."
         }

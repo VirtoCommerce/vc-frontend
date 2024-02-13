@@ -1,10 +1,11 @@
 <template>
   <template v-if="initialized">
     <div class="flex flex-col xl:flex-row">
-      <div id="composableContainer"></div>
+      <div id="composableContainer" class="flex grow"></div>
+      <CardLabels class="mt-6" />
     </div>
     <div class="mt-6">
-      <VcButton :disabled="disabled" :loading="loading" class="flex-1 md:order-first md:flex-none" @click="pay">
+      <VcButton :disabled="isButtonDisabled" :loading="loading" class="flex-1 md:order-first md:flex-none" @click="pay">
         {{ $t("shared.payment.skyflow.pay_now_button") }}
       </VcButton>
     </div>
@@ -14,36 +15,36 @@
 
 <script setup lang="ts">
 import Skyflow from "skyflow-js";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
+import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
+import type { IInsertResponse } from "skyflow-js/types/utils/common";
+import CardLabels from "@/shared/payment/components/card-labels.vue";
 
+interface IProps {
+  order: CustomerOrderType;
+}
+
+interface IEmits {
+  (event: "success"): void;
+  (event: "fail", message?: string | null): void;
+}
+
+const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 type FieldsType = { [key: string]: string };
-type SkyflowResponseType = {
-  records: [
-    {
-      fields: FieldsType;
-      table: string;
-    },
-  ];
-};
 
 const { t } = useI18n();
 const notifications = useNotifications();
 
 const loading = ref(false);
 const ga = useGoogleAnalytics();
-
-interface IProps {
-  order: CustomerOrderType;
-  disabled?: boolean;
-}
 
 const initialized = ref(false);
 
@@ -58,13 +59,12 @@ async function initPayment() {
 
     if (errorMessage) {
       showErrorNotification();
-      console.error(errorMessage);
+      emit("fail");
       return;
     }
 
     if (!publicParameters) {
-      showErrorNotification();
-      console.error("Skyflow module parameters are not provided");
+      emit("fail");
       return;
     }
 
@@ -82,22 +82,19 @@ async function initPayment() {
 
     initialized.value = true;
   } catch (e) {
-    showErrorNotification();
-    console.error(e);
+    emit("fail");
   }
 }
+
 async function pay() {
   loading.value = true;
 
   const res = (await composableContainer.collect({
     tokens: true,
-  })) as SkyflowResponseType;
-
-  console.log("skyflow response", res);
+  })) as IInsertResponse;
 
   if (!res?.records) {
-    showErrorNotification();
-    console.error("Skyflow data saving error");
+    emit("fail");
   }
 
   const newRes = await authorizePayment({
@@ -106,9 +103,15 @@ async function pay() {
     parameters: objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType),
   });
 
-  console.log("XAPI authorizePayment response", newRes);
+  Logger.info("[authorizePayment]", newRes);
 
   ga.purchase(props.order);
+
+  if (newRes.isSuccess) {
+    emit("success");
+  } else {
+    showErrorNotification();
+  }
 
   loading.value = false;
 }
@@ -126,20 +129,43 @@ onMounted(async () => {
   createForm();
 });
 
+type ElementType =
+  | typeof Skyflow.ElementType.CARD_NUMBER
+  | typeof Skyflow.ElementType.CARDHOLDER_NAME
+  | typeof Skyflow.ElementType.EXPIRATION_DATE
+  | typeof Skyflow.ElementType.CVV;
+
+const validStatus = ref<{ [key in ElementType]: boolean }>({
+  [Skyflow.ElementType.CARD_NUMBER]: false,
+  [Skyflow.ElementType.CARDHOLDER_NAME]: false,
+  [Skyflow.ElementType.EXPIRATION_DATE]: false,
+  [Skyflow.ElementType.CVV]: false,
+});
+
+function updateValidationStatus(state: { elementType: ElementType; isValid: boolean }) {
+  if (state.elementType in validStatus.value) {
+    validStatus.value[state.elementType] = state.isValid;
+  }
+}
+
+const isButtonDisabled = computed(() => {
+  return Object.values(validStatus.value).some((el) => !el);
+});
+
 function createForm() {
   const containerOptions = {
     layout: [1, 1, 2],
     styles: {
       base: {
-        border: "1px solid #eae8ee",
-        padding: "10px 16px",
-        borderRadius: "4px",
-        margin: "12px 4px",
+        fontFamily: "Lato, sans-serif",
+        width: "100%",
+        gap: "12px",
+        margin: "4px 0",
       },
     },
     errorTextStyles: {
       base: {
-        color: "red",
+        color: "#FF4A4A",
       },
     },
   };
@@ -149,65 +175,89 @@ function createForm() {
   const collectStylesOptions = {
     inputStyles: {
       base: {
-        fontFamily: "Inter",
+        fontFamily: "inherit",
         fontStyle: "normal",
         fontWeight: 400,
-        fontSize: "14px",
-        lineHeight: "21px",
-        width: "200px",
+        fontSize: "0.9375rem",
+        lineHeight: "1",
+        borderRadius: "3px",
+        border: "1px solid #e5e7eb",
+        padding: "0.75rem",
+      },
+      global: {
+        "@import":
+          'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Condensed:wght@700&display=swap")',
       },
     },
-    labelStyles: {},
+    labelStyles: {
+      base: {
+        fontSize: "0.9375rem",
+        fontWeight: 700,
+        lineHeight: "1.25rem",
+        marginBottom: "0.125rem",
+      },
+    },
     errorTextStyles: {
       base: {},
     },
   };
 
-  container.create(
-    {
-      table: skyflowTableName,
-      column: "card_number",
-      ...collectStylesOptions,
-      placeholder: "Card Number",
-      type: Skyflow.ElementType.CARD_NUMBER,
-    },
-    {
-      enableCardIcon: false,
-    },
-  );
-
-  container.create({
-    table: skyflowTableName,
-    column: "cardholder_name",
-    ...collectStylesOptions,
-    placeholder: "Cardholder Name",
-    type: Skyflow.ElementType.CARDHOLDER_NAME,
-  });
-
-  container.create({
-    table: skyflowTableName,
-    column: "card_expiration",
-    ...collectStylesOptions,
-    placeholder: "expiration date",
-    type: Skyflow.ElementType.EXPIRATION_DATE,
-  });
-
-  container.create({
-    table: skyflowTableName,
-    column: "cvv",
-    ...collectStylesOptions,
-    placeholder: "CVV",
-    type: Skyflow.ElementType.CVV,
-    validations: [
+  container
+    .create(
       {
-        type: Skyflow.ValidationRuleType.LENGTH_MATCH_RULE,
-        params: {
-          min: 3,
-          error: "cvv must be min 3 digits",
-        },
+        table: skyflowTableName,
+        column: "card_number",
+        ...collectStylesOptions,
+        placeholder: "1111 1111 1111 1111",
+        label: t("shared.payment.bank_card_form.number_label"),
+        type: Skyflow.ElementType.CARD_NUMBER,
       },
-    ],
-  });
+      {
+        enableCardIcon: false,
+      },
+    )
+    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
+
+  container
+    .create({
+      table: skyflowTableName,
+      column: "cardholder_name",
+      ...collectStylesOptions,
+      label: t("shared.payment.bank_card_form.cardholder_name_label"),
+      type: Skyflow.ElementType.CARDHOLDER_NAME,
+    })
+    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
+
+  container
+    .create({
+      table: skyflowTableName,
+      column: "card_expiration",
+      ...collectStylesOptions,
+      placeholder: "MM / DD",
+      label: t("shared.payment.bank_card_form.expiration_date_label"),
+      type: Skyflow.ElementType.EXPIRATION_DATE,
+    })
+    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
+
+  container
+    .create({
+      table: skyflowTableName,
+      column: "cvv",
+      ...collectStylesOptions,
+      placeholder: "111",
+      label: t("shared.payment.bank_card_form.security_code_label"),
+      type: Skyflow.ElementType.CVV,
+      validations: [
+        {
+          type: Skyflow.ValidationRuleType.LENGTH_MATCH_RULE,
+          params: {
+            min: 3,
+            error: "cvv must be min 3 digits",
+          },
+        },
+      ],
+    })
+    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
 
   // Step 3
   container.mount("#composableContainer");
