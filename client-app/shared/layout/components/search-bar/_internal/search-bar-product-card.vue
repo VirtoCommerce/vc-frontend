@@ -3,14 +3,14 @@
     <!-- Product image -->
     <router-link
       :to="link"
-      class="h-[4.75rem] w-[4.75rem] shrink-0 border border-gray-200 p-1"
+      class="size-[4.75rem] shrink-0 border border-gray-200 p-1"
       @click="$emit('linkClick', $event)"
     >
       <VcImage
         :src="product.imgSrc"
         :alt="product.name"
         size-suffix="sm"
-        class="h-full w-full object-cover object-center"
+        class="size-full object-cover object-center"
         lazy
       />
     </router-link>

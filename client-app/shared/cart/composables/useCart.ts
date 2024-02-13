@@ -76,15 +76,14 @@ const availableExtendedGifts = computed<ExtendedGiftItemType[]>(() =>
   (cart.value?.availableGifts || []).map((gift) => ({ ...gift, isAddedInCart: !!addedGiftsByIds.value[gift.id] })),
 );
 
-const hasSelectedItemsWithValidationErrors = computed(
-  () =>
-    cart.value?.validationErrors?.some(
-      (error) =>
-        (error.objectType === ValidationErrorObjectType.CartProduct &&
-          cart.value?.items?.some((item) => item.selectedForCheckout && item.productId === error.objectId)) ||
-        (error.objectType === ValidationErrorObjectType.LineItem &&
-          cart.value?.items?.some((item) => item.selectedForCheckout && item.id === error.objectId)),
-    ),
+const hasSelectedItemsWithValidationErrors = computed(() =>
+  cart.value?.validationErrors?.some(
+    (error) =>
+      (error.objectType === ValidationErrorObjectType.CartProduct &&
+        cart.value?.items?.some((item) => item.selectedForCheckout && item.productId === error.objectId)) ||
+      (error.objectType === ValidationErrorObjectType.LineItem &&
+        cart.value?.items?.some((item) => item.selectedForCheckout && item.id === error.objectId)),
+  ),
 );
 
 const hasValidationErrors = computedEager<boolean>(

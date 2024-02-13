@@ -11,5 +11,5 @@ export interface IThemeContext {
   availableLanguages: ILanguage[];
   availableCurrencies: ICurrency[];
   settings: IThemeConfigPreset;
-  settingsFromPlatform: unknown;
+  storeSettings: unknown;
 }
