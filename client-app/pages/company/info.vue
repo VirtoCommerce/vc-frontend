@@ -131,12 +131,23 @@
                   </span>
                 </div>
 
-                <div v-if="userCanEditOrganization" class="absolute right-4 top-3">
+                <div v-if="userCanEditOrganization" class="absolute right-4 top-3 flex flex-col items-center">
                   <AddressDropdownMenu
                     :address="item"
                     placement="left-start"
+                    class="flex items-center"
                     @edit="openAddOrUpdateCompanyAddressModal(item)"
                     @delete="openDeleteAddressModal(item)"
+                  />
+                  <VcIcon
+                    :class="{
+                      'text-neutral-400': !item.isFavorite,
+                      'text-primary-500': item.isFavorite,
+                    }"
+                    name="star"
+                    class="mt-2"
+                    size="md"
+                    @click="toggleFavoriteAddress(item.isFavorite, item.id)"
                   />
                 </div>
               </div>
