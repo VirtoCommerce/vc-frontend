@@ -118,7 +118,7 @@ export function useUserQuote() {
     try {
       const inputAddresses: InputQuoteAddressType[] = addresses.map<InputQuoteAddressType>(
         (address: QuoteAddressType) =>
-          convertToType<InputQuoteAddressType>(omit(address, ["id", "isDefault", "description"])),
+          convertToType<InputQuoteAddressType>(omit(address, ["id", "isDefault", "description", "isFavorite"])),
       );
 
       await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });
