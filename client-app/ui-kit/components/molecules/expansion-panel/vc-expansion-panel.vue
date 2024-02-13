@@ -1,5 +1,5 @@
 <template>
-  <VcWidget :collapsed="!isExpanded" :title="title" collapsible @toggle-collapse="toggle()">
+  <VcWidget :collapsed="!isExpanded" :title="title" collapsible @toggle-collapse="toggle">
     <template #prepend>
       <slot name="icon" />
     </template>
