@@ -105,10 +105,9 @@ async function pay() {
 
   Logger.info("[authorizePayment]", newRes);
 
-  ga.purchase(props.order);
-
   if (newRes.isSuccess) {
     emit("success");
+    ga.purchase(props.order);
   } else {
     showErrorNotification();
   }
