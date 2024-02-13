@@ -11,7 +11,7 @@
             :src="item.product.imgSrc"
             :alt="item.product.name"
             size-suffix="md"
-            class="h-full w-full select-none space-x-4 rounded object-cover object-center"
+            class="size-full select-none space-x-4 rounded object-cover object-center"
           />
           <div class="flex flex-row space-x-4">
             <div class="grow truncate">{{ item.product.name }}</div>

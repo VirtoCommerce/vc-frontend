@@ -9,7 +9,7 @@
           @change="$emit('toggle:gift', gift)"
         />
 
-        <VcImage :src="gift.imageUrl" class="mr-4 h-[60px] w-[60px] shrink-0 rounded border" lazy />
+        <VcImage :src="gift.imageUrl" class="mr-4 size-[60px] shrink-0 rounded border" lazy />
 
         <span class="grow text-sm font-bold">
           {{ gift.name }}

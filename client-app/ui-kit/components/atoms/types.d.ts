@@ -9,8 +9,6 @@ declare module "@vue/runtime-core" {
     VcBadge: typeof Components.VcBadge;
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
     VcButton: typeof Components.VcButton;
-    /** @deprecated use {@link VcWidget} instead. */
-    VcCard: typeof Components.VcCard;
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     /** @deprecated use {@link VcWidget} instead. */
     VcCardWidget: typeof Components.VcCardWidget;
