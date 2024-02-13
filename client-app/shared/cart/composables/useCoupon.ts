@@ -15,6 +15,10 @@ export function useCoupon() {
   const firstCouponInCart = computed<CouponType | undefined>(() => cart.value?.coupons?.[0]);
   const isApplied = computed<boolean>(() => Boolean(firstCouponInCart.value?.isAppliedSuccessfully));
 
+  const trimmedCoupon = computed(() => {
+    return couponCode.value.trim();
+  });
+
   function clearValidationError() {
     validationError.value = "";
   }
@@ -22,17 +26,25 @@ export function useCoupon() {
   async function applyCoupon() {
     clearValidationError();
 
-    const validationResult = await validateCartCoupon(couponCode.value);
+    if (!trimmedCoupon.value) {
+      return;
+    }
+
+    const validationResult = await validateCartCoupon(trimmedCoupon.value);
 
     if (validationResult) {
-      await addCartCoupon(couponCode.value);
+      await addCartCoupon(trimmedCoupon.value);
     } else {
       validationError.value = INVALID_COUPON_MESSAGE;
     }
   }
 
   async function removeCoupon() {
-    await removeCartCoupon(couponCode.value);
+    if (!trimmedCoupon.value) {
+      return;
+    }
+
+    await removeCartCoupon(trimmedCoupon.value);
   }
 
   watchEffect(() => {
