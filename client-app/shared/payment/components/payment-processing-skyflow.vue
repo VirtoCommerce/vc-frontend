@@ -246,19 +246,9 @@ function createForm() {
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
       type: Skyflow.ElementType.CVV,
-      validations: [
-        {
-          type: Skyflow.ValidationRuleType.LENGTH_MATCH_RULE,
-          params: {
-            min: 3,
-            error: "cvv must be min 3 digits",
-          },
-        },
-      ],
     })
     .on(Skyflow.EventName.CHANGE, updateValidationStatus);
 
-  // Step 3
   container.mount("#composableContainer");
 
   composableContainer = container;
