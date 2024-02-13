@@ -1,22 +1,10 @@
 <template>
   <template v-if="initialized">
     <div class="flex flex-col xl:flex-row">
-      <BankCardForm
-        v-model="bankCardData"
-        v-model:valid="isValidBankCard"
-        :errors="bankCardErrors"
-        :disabled="loading"
-        class="xl:w-2/3"
-        @submit="pay"
-      />
+      <div id="composableContainer"></div>
     </div>
     <div class="mt-6">
-      <VcButton
-        :disabled="!isValidBankCard || disabled"
-        :loading="loading"
-        class="flex-1 md:order-first md:flex-none"
-        @click="pay"
-      >
+      <VcButton :disabled="disabled" :loading="loading" class="flex-1 md:order-first md:flex-none" @click="pay">
         {{ $t("shared.payment.skyflow.pay_now_button") }}
       </VcButton>
     </div>
@@ -25,16 +13,14 @@
 </template>
 
 <script setup lang="ts">
-import { clone } from "lodash";
 import Skyflow from "skyflow-js";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { useNotifications } from "@/shared/notification";
-import BankCardForm from "../components/bank-card-form.vue";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
-import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
+import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 
 const props = defineProps<IProps>();
 
@@ -51,18 +37,6 @@ type SkyflowResponseType = {
 const { t } = useI18n();
 const notifications = useNotifications();
 
-const emptyBankCardData: BankCardType = {
-  cardholderName: "",
-  number: "",
-  month: "",
-  year: "",
-  securityCode: "",
-};
-
-const bankCardData = ref<BankCardType>(clone(emptyBankCardData));
-const isValidBankCard = ref(false);
-const bankCardErrors = ref<BankCardErrorsType>({});
-
 const loading = ref(false);
 const ga = useGoogleAnalytics();
 
@@ -73,7 +47,7 @@ interface IProps {
 
 const initialized = ref(false);
 
-let skyflowClient: Skyflow, skyflowTableName: string;
+let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;
 
 async function initPayment() {
   try {
@@ -101,8 +75,8 @@ async function initPayment() {
       vaultURL: getParameter(publicParameters, "vaultURL"),
       getBearerToken: () => Promise.resolve(getParameter(publicParameters, "accessToken")),
       options: {
-        logLevel: Skyflow.LogLevel,
-        env: Skyflow.Env,
+        logLevel: Skyflow.LogLevel.ERROR,
+        env: Skyflow.Env.DEV,
       },
     });
 
@@ -115,23 +89,11 @@ async function initPayment() {
 async function pay() {
   loading.value = true;
 
-  if (!isValidBankCard.value || !skyflowClient || !skyflowTableName) {
-    return;
-  }
-
-  const res = (await skyflowClient.insert({
-    records: [
-      {
-        table: skyflowTableName,
-        fields: {
-          cardholder_name: bankCardData.value.cardholderName,
-          card_number: bankCardData.value.number,
-          card_expiration: `20${bankCardData.value.year}-${bankCardData.value.month}`,
-          cvv: bankCardData.value.securityCode,
-        },
-      },
-    ],
+  const res = (await composableContainer.collect({
+    tokens: true,
   })) as SkyflowResponseType;
+
+  console.log("skyflow response", res);
 
   if (!res?.records) {
     showErrorNotification();
@@ -144,7 +106,7 @@ async function pay() {
     parameters: objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType),
   });
 
-  console.log(newRes);
+  console.log("XAPI authorizePayment response", newRes);
 
   ga.purchase(props.order);
 
@@ -161,7 +123,97 @@ function showErrorNotification() {
 
 onMounted(async () => {
   await initPayment();
+  createForm();
 });
+
+function createForm() {
+  const containerOptions = {
+    layout: [1, 1, 2],
+    styles: {
+      base: {
+        border: "1px solid #eae8ee",
+        padding: "10px 16px",
+        borderRadius: "4px",
+        margin: "12px 4px",
+      },
+    },
+    errorTextStyles: {
+      base: {
+        color: "red",
+      },
+    },
+  };
+
+  const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions) as ComposableContainer;
+
+  const collectStylesOptions = {
+    inputStyles: {
+      base: {
+        fontFamily: "Inter",
+        fontStyle: "normal",
+        fontWeight: 400,
+        fontSize: "14px",
+        lineHeight: "21px",
+        width: "200px",
+      },
+    },
+    labelStyles: {},
+    errorTextStyles: {
+      base: {},
+    },
+  };
+
+  container.create(
+    {
+      table: skyflowTableName,
+      column: "card_number",
+      ...collectStylesOptions,
+      placeholder: "Card Number",
+      type: Skyflow.ElementType.CARD_NUMBER,
+    },
+    {
+      enableCardIcon: false,
+    },
+  );
+
+  container.create({
+    table: skyflowTableName,
+    column: "cardholder_name",
+    ...collectStylesOptions,
+    placeholder: "Cardholder Name",
+    type: Skyflow.ElementType.CARDHOLDER_NAME,
+  });
+
+  container.create({
+    table: skyflowTableName,
+    column: "card_expiration",
+    ...collectStylesOptions,
+    placeholder: "expiration date",
+    type: Skyflow.ElementType.EXPIRATION_DATE,
+  });
+
+  container.create({
+    table: skyflowTableName,
+    column: "cvv",
+    ...collectStylesOptions,
+    placeholder: "CVV",
+    type: Skyflow.ElementType.CVV,
+    validations: [
+      {
+        type: Skyflow.ValidationRuleType.LENGTH_MATCH_RULE,
+        params: {
+          min: 3,
+          error: "cvv must be min 3 digits",
+        },
+      },
+    ],
+  });
+
+  // Step 3
+  container.mount("#composableContainer");
+
+  composableContainer = container;
+}
 
 function getParameter(data: KeyValueType[], key: string): string {
   const param = data.find((el) => el.key === key);
