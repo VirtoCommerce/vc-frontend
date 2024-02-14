@@ -19,10 +19,10 @@
       <!-- Items not grouped by Vendor -->
       <OrderLineItems v-else :items="selectedLineItems" />
 
-      <div class="divide-y print:divide-y-0 lg:divide-y-0">
+      <div class="divide-y lg:divide-y-0 print:divide-y-0">
         <!-- Shipping details -->
         <div v-if="!allItemsAreDigital" class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-8">
-          <div class="print:break-inside-avoid lg:w-3/5">
+          <div class="lg:w-3/5 print:break-inside-avoid">
             <VcLabel>
               {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
             </VcLabel>
@@ -58,7 +58,7 @@
 
         <!-- Payment details -->
         <div class="mb-2 mt-6 flex flex-col gap-6 pt-5 md:mt-8 lg:flex-row lg:gap-8 lg:pt-0">
-          <div class="print:break-inside-avoid lg:w-3/5">
+          <div class="lg:w-3/5 print:break-inside-avoid">
             <VcLabel>
               {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
             </VcLabel>
@@ -119,15 +119,7 @@
             />
           </transition>
 
-          <VcButton
-            :disabled="isDisabledOrderCreation"
-            :loading="loading"
-            full-width
-            class="mt-4 print:!hidden"
-            @click="createOrderFromCart"
-          >
-            {{ $t("common.buttons.place_order") }}
-          </VcButton>
+          <PlaceOrder />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -150,8 +142,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
-import { useCart, useCoupon } from "@/shared/cart";
-import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { useFullCart, useCoupon } from "@/shared/cart";
+import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {
@@ -164,18 +156,9 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-} = useCart();
-const {
-  loading,
-  billingAddressEqualsShipping,
-  comment,
-  purchaseOrderNumber,
-  isPurchaseOrderNumberEnabled,
-  isValidCheckout,
-  createOrderFromCart,
-} = useCheckout();
+} = useFullCart();
+const { billingAddressEqualsShipping, comment, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
 const { couponCode } = useCoupon();
-const isDisabledOrderCreation = computed<boolean>(() => !isValidCheckout.value);
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,

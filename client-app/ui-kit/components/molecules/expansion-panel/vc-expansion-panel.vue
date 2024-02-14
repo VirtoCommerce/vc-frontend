@@ -1,37 +1,17 @@
 <template>
-  <!-- TODO: use VcWidget instead -->
-  <VcCard
-    :header-classes="headerClasses"
-    :content-classes="contentClasses"
-    :is-collapsed="!isExpanded"
-    :full-width-content="fullWidthContent"
-    :shadow="shadow"
-    is-collapsible
-  >
-    <template #header>
-      <slot name="header" v-bind="{ isExpanded, toggle }">
-        <slot name="header-content" v-bind="{ isExpanded }">
-          <span class="grow text-sm font-bold">
-            {{ title }}
-          </span>
-        </slot>
-
-        <slot name="header-button" v-bind="{ isExpanded, toggle }">
-          <button
-            type="button"
-            class="-my-2 -mr-3 ml-2 appearance-none px-3 py-2 before:absolute before:inset-0"
-            @click="toggle"
-          >
-            <VcIcon :name="isExpanded ? 'chevron-up' : 'chevron-down'" size="sm" class="text-[--color-primary-500]" />
-          </button>
-        </slot>
-      </slot>
+  <VcWidget :collapsed="!isExpanded" :title="title" collapsible @toggle-collapse="toggle">
+    <template #prepend>
+      <slot name="icon" />
     </template>
 
-    <template #default>
+    <template #title>
+      <slot name="header-content" />
+    </template>
+
+    <template #default-container>
       <slot />
     </template>
-  </VcCard>
+  </VcWidget>
 </template>
 
 <script setup lang="ts">
@@ -42,18 +22,12 @@ import { getCurrentInstance, inject, onBeforeUnmount, ref, watchEffect } from "v
  * This component is used together with the parent component `VcExpansionPanels` or independently.
  */
 
-const props = defineProps({
-  title: String,
-  headerClasses: String,
-  contentClasses: String,
-  shadow: Boolean,
-  fullWidthContent: Boolean,
+interface IProps {
+  title?: string;
+  expanded?: boolean;
+}
 
-  expanded: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = defineProps<IProps>();
 
 const instance = getCurrentInstance();
 const panelId = `panel_${instance?.uid}`;

@@ -10,7 +10,6 @@ export * from "./useIdentityErrorTranslator";
 export * from "./useLanguages";
 export * from "./useNavigations";
 export * from "./usePageHead";
-export * from "./usePagesWithFullCartLoad";
 export * from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
 export * from "./useThemeContext";

@@ -1,5 +1,8 @@
+import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
-import { usePagesWithFullCartLoad } from "@/core/composables";
+import { filterActiveQueryNames } from "@/core/api/graphql";
+import { OperationNames } from "@/core/api/graphql/types";
+import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -15,9 +18,7 @@ import {
   forbiddenEvent,
   passwordExpiredEvent,
 } from "@/shared/broadcast";
-import { useCart } from "@/shared/cart";
 import { useNotifications } from "@/shared/notification";
-import { DEFAULT_NOTIFICATION_DURATION } from "./core/constants";
 
 let installed = false;
 
@@ -28,12 +29,11 @@ export function setupBroadcastGlobalListeners() {
 
   installed = true;
 
+  const { client } = useApolloClient();
   const router = useRouter();
   const { on } = useBroadcast();
   const notifications = useNotifications();
   const { fetchUser, signMeOut, user } = useUser();
-  const { pagesWithFullCartLoad } = usePagesWithFullCartLoad();
-  const { fetchShortCart, fetchFullCart } = useCart();
 
   on(pageReloadEvent, () => location.reload());
   on(userReloadEvent, () => fetchUser());
@@ -50,10 +50,11 @@ export function setupBroadcastGlobalListeners() {
 
     if (route.matched.some((item) => item.name === "Checkout")) {
       await router.replace({ name: "Cart" });
-    } else if (pagesWithFullCartLoad.has(route.name!)) {
-      await fetchFullCart();
     } else {
-      await fetchShortCart();
+      await client.refetchQueries({
+        include: filterActiveQueryNames(client, [OperationNames.Query.GetFullCart, OperationNames.Query.GetShortCart]),
+      });
+      client.cache.gc();
     }
   });
   on(unauthorizedErrorEvent, async () => {

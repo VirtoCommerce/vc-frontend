@@ -47,7 +47,7 @@
 import { computed } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
-import { AddToCart, useCart } from "@/shared/cart";
+import { AddToCart, useShortCart } from "@/shared/cart";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -59,7 +59,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { currentCurrency } = useCurrency();
-const { getItemsTotal } = useCart();
+const { getItemsTotal } = useShortCart();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

@@ -11,15 +11,18 @@ import type { RouteLocationRaw } from "vue-router";
 
 export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
 
-export type LineItemsGroupByVendorType<T extends LineItemType | OrderLineItemType> = {
+/** @deprecated Use {@link VendorGroupType} instead. */
+export type LineItemsGroupByVendorType<T extends LineItemType | OrderLineItemType> = VendorGroupType<T>;
+
+export type VendorGroupType<T extends LineItemType | OrderLineItemType> = {
   items: T[];
   vendor?: CommonVendor;
 };
 
-export type LineItemsGroupsByVendorType<T extends LineItemType | OrderLineItemType> = Record<
-  string,
-  LineItemsGroupByVendorType<T>
->;
+/** @deprecated {@link VendorGroupByVendorIdType} instead. */
+export type LineItemsGroupsByVendorType<T extends LineItemType | OrderLineItemType> = VendorGroupByVendorIdType<T>;
+
+export type VendorGroupByVendorIdType<T extends LineItemType | OrderLineItemType> = Record<string, VendorGroupType<T>>;
 
 /** @deprecated Use {@link PreparedLineItemType} */
 export type ExtendedLineItemType<T extends AnyLineItemType> = T & {

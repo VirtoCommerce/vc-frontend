@@ -1,25 +1,21 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./validateCouponMutation.graphql";
-import type { Mutations, MutationsValidateCouponArgs } from "@/core/api/graphql/types";
+import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
+import { useMutation } from "@/core/api/graphql/composables";
+import { ValidateCouponDocument } from "@/core/api/graphql/types";
+import type { CartIdFragment } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
+export function useValidateCouponMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  return useMutation(ValidateCouponDocument, useCartMutationVariables(cart));
+}
+
+/** @deprecated Use {@link useValidateCouponMutation} instead. */
 export async function validateCoupon(coupon: string): Promise<boolean> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
+  const { mutate } = useValidateCouponMutation();
 
-  const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "validateCoupon">>, MutationsValidateCouponArgs>(
-    {
-      mutation: mutationDocument,
-      variables: {
-        command: {
-          storeId,
-          userId,
-          cultureName,
-          currencyCode,
-          coupon,
-        },
-      },
+  const result = await mutate({
+    command: {
+      coupon,
     },
-  );
-
-  return data!.validateCoupon;
+  });
+  return result!.data!.validateCoupon!;
 }

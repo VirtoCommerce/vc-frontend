@@ -12,8 +12,6 @@ on:
       - 'README.md'
       - 'LICENSE'
   pull_request:
-    branches:
-      [master, dev]
     paths-ignore:
       - '.idea'
       - '.vscode'

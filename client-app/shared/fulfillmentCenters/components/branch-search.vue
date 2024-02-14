@@ -4,7 +4,7 @@
       class="flex h-11 grow items-center rounded border border-[color:var(--color-branch-modal-input-border)] bg-white pl-4 pr-2.5 sm:h-auto sm:pr-0.5"
     >
       <input
-        class="h-full w-full bg-transparent text-sm outline-none placeholder:text-[color:var(--color-branch-modal-input-text)] sm:h-7 sm:text-xs"
+        class="size-full bg-transparent text-sm outline-none placeholder:text-[color:var(--color-branch-modal-input-text)] sm:h-7 sm:text-xs"
         type="text"
         :placeholder="$t('shared.catalog.branches_modal.search_input_placeholder')"
         :value="modelValue"
@@ -17,7 +17,7 @@
         @click="emit('update:input', '')"
       >
         <svg
-          class="h-3 w-3 text-[color:var(--color-primary)] sm:h-2.5 sm:w-2.5"
+          class="size-3 text-[color:var(--color-primary)] sm:size-2.5"
           :class="{
             'text-[color:var(--color-branch-modal-input-reset-icon)]': !modelValue.length,
           }"

@@ -95,7 +95,7 @@ import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core"
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import { useCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
@@ -109,7 +109,7 @@ const headerElement = ref(null);
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
-const { cart } = useCart();
+const { cart } = useShortCart();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

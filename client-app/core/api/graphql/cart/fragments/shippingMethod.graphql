@@ -1,0 +1,12 @@
+#import "../../common/fragments/money.graphql"
+
+fragment shippingMethod on ShippingMethodType {
+  id
+  code
+  logoUrl
+  optionName
+  optionDescription
+  price {
+    ...money
+  }
+}

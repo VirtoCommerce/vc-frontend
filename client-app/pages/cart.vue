@@ -1,5 +1,5 @@
 <template>
-  <VcLoaderOverlay v-if="!initialized" no-bg />
+  <VcLoaderOverlay v-if="loading" no-bg />
 
   <VcEmptyPage
     v-else-if="!cart?.items?.length"
@@ -17,12 +17,12 @@
   </VcEmptyPage>
 
   <VcContainer v-else class="relative z-0">
-    <VcLoaderOverlay :visible="loading" fixed-spinner />
+    <VcLoaderOverlay :visible="creatingQuote" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="mx-6 hidden md:mx-0 lg:block" />
 
     <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 print:mx-0 lg:mx-0">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 lg:mx-0 print:mx-0">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
@@ -32,9 +32,8 @@
         :items="cart.items"
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :selected-item-ids="selectedItemIds"
-        :disabled="loading"
         :validation-errors="cart.validationErrors"
-        @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity, { reloadFullCart: true })"
+        @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity)"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"
@@ -43,34 +42,16 @@
       <GiftsSection
         v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
         :gifts="availableExtendedGifts"
-        :disabled="loading"
         @toggle:gift="toggleGift"
       />
 
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
-        <ShippingDetailsSection
-          v-if="!allItemsAreDigital"
-          :methods="availableShippingMethods"
-          :shipment="shipment"
-          :disabled="loading"
-          @change:address="onDeliveryAddressChange"
-          @change:method="setShippingMethod"
-        />
+        <ShippingDetailsSection v-if="!allItemsAreDigital" />
 
-        <BillingDetailsSection
-          v-model:address-equals-shipping-address="billingAddressEqualsShipping"
-          v-model:purchase-order-number="purchaseOrderNumber"
-          :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
-          :methods="availablePaymentMethods"
-          :payment="payment"
-          :shipment="allItemsAreDigital ? undefined : shipment"
-          :disabled="loading"
-          @change:address="onChangeBillingAddress"
-          @change:method="setPaymentMethod"
-        />
+        <BillingDetailsSection />
 
-        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" :disabled="loading" />
+        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
       </template>
 
       <template #sidebar>
@@ -84,35 +65,21 @@
               :placeholder="$t('common.placeholders.promotion_code')"
               :applied="couponIsApplied"
               :error-message="couponValidationError"
-              :disabled="loading"
               class="mt-4"
               @apply="applyCoupon"
               @deny="removeCoupon"
               @update:model-value="clearCouponValidationError"
             />
 
-            <!-- Go to checkout button (Multistep checkout) -->
-            <VcButton
+            <ProceedTo
               v-if="$cfg.checkout_multistep_enabled"
               :to="{ name: 'Checkout' }"
-              :disabled="isDisabledNextStep"
-              full-width
-              class="mt-4"
+              :disabled="hasOnlyUnselectedLineItems"
             >
               {{ $t("common.buttons.go_to_checkout") }}
-            </VcButton>
+            </ProceedTo>
 
-            <!-- Place order button (Single page checkout) -->
-            <VcButton
-              v-else
-              :disabled="isDisabledOrderCreation"
-              :loading="loadingCheckout"
-              full-width
-              class="mt-4"
-              @click="createOrderFromCart"
-            >
-              {{ $t("common.buttons.place_order") }}
-            </VcButton>
+            <PlaceOrder v-else />
 
             <template v-if="!$cfg.checkout_multistep_enabled">
               <transition name="slide-fade-top" mode="out-in" appear>
@@ -154,7 +121,7 @@
             {{ $t("common.messages.quote_request") }}
           </p>
 
-          <VcButton :disabled="loading" :loading="creatingQuote" full-width variant="outline" @click="createQuote">
+          <VcButton :loading="creatingQuote" full-width variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcWidget>
@@ -166,12 +133,7 @@
         v-if="!isEmpty(selectedItemIds)"
         class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden"
       >
-        <VcButton
-          variant="outline"
-          prepend-icon="trash"
-          :disabled="loading"
-          @click="handleRemoveItems(selectedItemIds)"
-        >
+        <VcButton variant="outline" prepend-icon="trash" @click="handleRemoveItems(selectedItemIds)">
           {{ $t("common.buttons.remove_selected") }}
         </VcButton>
       </div>
@@ -180,7 +142,6 @@
 </template>
 
 <script setup lang="ts">
-import { invoke } from "@vueuse/core";
 import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -188,12 +149,14 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
-import { GiftsSection, ProductsSection, useCart, useCoupon } from "@/shared/cart";
+import { GiftsSection, ProductsSection, useFullCart, useCoupon } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
 import {
   BillingDetailsSection,
   OrderCommentSection,
   OrderSummary,
+  PlaceOrder,
+  ProceedTo,
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
@@ -210,40 +173,23 @@ const { openModal } = useModal();
 const {
   loading: loadingCart,
   cart,
-  shipment,
-  payment,
   selectedItemIds,
   selectedLineItems,
   lineItemsGroupedByVendor,
+  hasOnlyUnselectedLineItems,
   availableExtendedGifts,
-  availableShippingMethods,
-  availablePaymentMethods,
   hasValidationErrors,
   hasOnlyUnselectedValidationError,
   allItemsAreDigital,
-  fetchFullCart,
+  forceFetch,
+  refetch,
   changeItemQuantity,
   removeItems,
   toggleGift,
   openClearCartModal,
   createQuoteFromCart,
-} = useCart();
-const {
-  loading: loadingCheckout,
-  comment,
-  purchaseOrderNumber,
-  billingAddressEqualsShipping,
-  isValidShipment,
-  isValidPayment,
-  isValidCheckout,
-  isPurchaseOrderNumberEnabled,
-  initialize: initCheckout,
-  onDeliveryAddressChange,
-  onBillingAddressChange,
-  setShippingMethod,
-  setPaymentMethod,
-  createOrderFromCart,
-} = useCheckout();
+} = useFullCart();
+const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
@@ -253,20 +199,11 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
-const initialized = ref(false);
 const creatingQuote = ref(false);
 
-const loading = computed<boolean>(() => loadingCart.value || loadingCheckout.value || creatingQuote.value);
-const isDisabledNextStep = computed<boolean>(
-  () => loading.value || hasValidationErrors.value || isEmpty(selectedItemIds.value),
-);
-const isDisabledOrderCreation = computed<boolean>(
-  () => loading.value || !isValidCheckout.value || isEmpty(selectedItemIds.value),
-);
-const cartContainsDeletedProducts = computed<boolean | undefined>(
-  () => cart.value?.items?.some((item: LineItemType) => !item.product),
-);
-const isShowIncompleteDataWarning = computed<boolean>(
+const loading = computed(() => loadingCart.value || loadingCheckout.value);
+const cartContainsDeletedProducts = computed(() => cart.value?.items?.some((item: LineItemType) => !item.product));
+const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
 
@@ -284,14 +221,6 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
     selectedItemIds.value = without(selectedItemIds.value, ...value.itemIds);
   } else {
     selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
-  }
-}
-
-function onChangeBillingAddress() {
-  if (!allItemsAreDigital.value && billingAddressEqualsShipping.value) {
-    onDeliveryAddressChange();
-  } else {
-    onBillingAddressChange();
   }
 }
 
@@ -316,19 +245,13 @@ async function createQuote(): Promise<void> {
     });
   }
 
-  await fetchFullCart();
+  await refetch();
 
   creatingQuote.value = false;
 }
 
-invoke(async () => {
-  if (config.checkout_multistep_enabled) {
-    await fetchFullCart();
-  } else {
-    await initCheckout();
-  }
-
-  initialized.value = true;
+void (async () => {
+  await forceFetch();
 
   /**
    * Send a Google Analytics shopping cart view event.
@@ -336,5 +259,9 @@ invoke(async () => {
   if (cart.value) {
     ga.viewCart(cart.value);
   }
-});
+
+  if (!config.checkout_multistep_enabled) {
+    await initialize();
+  }
+})();
 </script>

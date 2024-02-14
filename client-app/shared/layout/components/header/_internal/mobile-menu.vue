@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="fixed z-50 flex h-full w-full flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
+    class="fixed z-50 flex size-full flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
   >
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
@@ -134,9 +134,9 @@
           <!-- Account -->
           <div class="mb-4 mt-2 flex flex-row gap-4 text-xl">
             <div
-              class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-[--color-accent-300]"
+              class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-[--color-accent-300]"
             >
-              <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="h-12 w-12" lazy />
+              <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-12" lazy />
               <VcIcon v-else name="user" />
             </div>
 
@@ -231,7 +231,7 @@ import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { useCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
@@ -244,7 +244,7 @@ interface IEmits {
 defineEmits<IEmits>();
 
 const { t } = useI18n();
-const { cart } = useCart();
+const { cart } = useShortCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();

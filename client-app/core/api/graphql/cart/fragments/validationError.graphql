@@ -1,0 +1,10 @@
+fragment validationError on ValidationErrorType {
+  errorCode
+  errorMessage
+  errorParameters {
+    key
+    value
+  }
+  objectId
+  objectType
+}

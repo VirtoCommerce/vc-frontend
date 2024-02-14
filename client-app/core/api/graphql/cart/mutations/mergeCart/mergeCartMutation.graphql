@@ -1,5 +1,7 @@
+#import "../../fragments/shortCart.graphql"
+
 mutation MergeCart($command: InputMergeCartType!) {
   mergeCart(command: $command) {
-    id
+    ...shortCart
   }
 }

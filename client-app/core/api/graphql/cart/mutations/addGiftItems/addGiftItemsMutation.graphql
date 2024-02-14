@@ -1,7 +1,7 @@
-#import "../../../fragments/fullCartFields.graphql"
+#import "../../fragments/fullCart.graphql"
 
-mutation AddGiftItems($command: InputAddGiftItemsType!) {
+mutation AddGiftItems($command: InputAddGiftItemsType!, $skipQuery: Boolean!) {
   addGiftItems(command: $command) {
-    ...fullCartFields
+    ...fullCart @skip(if: $skipQuery)
   }
 }

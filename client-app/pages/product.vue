@@ -1,11 +1,11 @@
 <template>
-  <!-- 
+  <!--
     TODO: update VcContainer and use it
     https://virtocommerce.atlassian.net/browse/ST-5628
   -->
   <div
     v-if="product && template"
-    class="grow bg-[--color-neutral-50] p-6 print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7] md:pb-9 lg:px-8 2xl:px-12"
+    class="grow bg-[--color-neutral-50] p-6 md:pb-9 lg:px-8 2xl:px-12 print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
   >
     <div class="mx-auto max-w-[87.75rem]">
       <!-- Breadcrumbs -->
@@ -24,12 +24,12 @@
         </VcCopyText>
       </div>
 
-      <!-- 
+      <!--
         TODO: create VcLayoutWithSidebar component
         https://virtocommerce.atlassian.net/browse/ST-5629
       -->
       <div
-        class="mt-5 flex flex-col gap-6 print:flex-row print:gap-4 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6"
+        class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6 print:flex-row print:gap-4"
       >
         <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
           <template v-for="item in template.content">

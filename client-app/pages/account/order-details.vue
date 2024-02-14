@@ -5,7 +5,7 @@
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
     <!-- Title block -->
-    <div class="mx-7 flex flex-col gap-2.5 print:mx-0 lg:mx-0 lg:flex-row lg:justify-between">
+    <div class="mx-7 flex flex-col gap-2.5 lg:mx-0 lg:flex-row lg:justify-between print:mx-0">
       <VcTypography tag="h1" variant="h2" weight="bold">
         {{ $t("pages.account.order_details.title", [order?.number]) }}
       </VcTypography>
@@ -92,7 +92,7 @@
         <!-- Shipping Method Card -->
         <VcWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')">
           <div class="flex items-center gap-4 text-15">
-            <VcImage :src="shipment.shippingMethod?.logoUrl" class="h-12 w-12 print:hidden" lazy />
+            <VcImage :src="shipment.shippingMethod?.logoUrl" class="size-12 print:hidden" lazy />
 
             <span class="min-w-0 break-words">
               {{ $t(`common.methods.delivery_by_id.${shipment.shipmentMethodCode}_${shipment.shipmentMethodOption}`) }}
@@ -109,7 +109,7 @@
         <!-- Payment Method section -->
         <VcWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')">
           <div class="flex items-center gap-4 text-15">
-            <VcImage :src="payment.paymentMethod.logoUrl" class="h-12 w-12 print:hidden" lazy />
+            <VcImage :src="payment.paymentMethod.logoUrl" class="size-12 print:hidden" lazy />
             <span class="min-w-0 break-words">
               {{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}
             </span>
@@ -128,7 +128,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
-import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsModal, useCart } from "@/shared/cart";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -153,7 +153,7 @@ const {
   fetchFullOrder,
   clearOrder,
 } = useUserOrder();
-const { cart, addItemsToCart } = useCart();
+const { cart, addItemsToCart } = useShortCart();
 const { openModal } = useModal();
 const { t } = useI18n();
 

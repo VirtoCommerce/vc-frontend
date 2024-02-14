@@ -9,22 +9,23 @@
         <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
-            :address="address"
+            :address="deliveryAddress"
             :disabled="disabled"
             class="min-h-[4.625rem] px-3 py-1.5"
-            @change="$emit('change:address')"
+            @change="onDeliveryAddressChange"
           />
         </div>
       </div>
 
       <VcSelect
-        v-model="method"
+        :model-value="shipmentMethod"
         :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
-        :items="methods"
+        :items="availableShippingMethods"
         :disabled="disabled"
         size="auto"
         class="lg:w-2/5"
         required
+        @change="(value) => setShippingMethod(value)"
       >
         <template #placeholder>
           <VcSelectItem>
@@ -58,30 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import type { CartAddressType, ShipmentType, ShippingMethodType } from "@/core/api/graphql/types";
-
-interface IEmits {
-  (event: "change:address"): void;
-  (event: "change:method", method: ShippingMethodType): void;
-}
+import { useFullCart } from "@/shared/cart";
+import { useCheckout } from "@/shared/checkout/composables";
 
 interface IProps {
-  methods: ShippingMethodType[];
-  shipment?: ShipmentType;
   disabled?: boolean;
 }
 
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
-const address = computed<CartAddressType | undefined>(() => props.shipment?.deliveryAddress);
-
-const method = computed<ShippingMethodType | undefined>({
-  get: () =>
-    props.methods.find(
-      (item) => item.id === props.shipment?.shipmentMethodCode + "_" + props.shipment?.shipmentMethodOption,
-    ),
-  set: (value?: ShippingMethodType) => value && emit("change:method", value),
-});
+const { availableShippingMethods } = useFullCart();
+const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 </script>
