@@ -1,7 +1,7 @@
 #import "../../fragments/fullCart.graphql"
 
-mutation ChangePurchaseOrderNumber($command: InputChangePurchaseOrderNumber) {
+mutation ChangePurchaseOrderNumber($command: InputChangePurchaseOrderNumber, $skipQuery: Boolean!) {
   changePurchaseOrderNumber(command: $command) {
-    ...fullCart
+    ...fullCart @skip(if: $skipQuery)
   }
 }

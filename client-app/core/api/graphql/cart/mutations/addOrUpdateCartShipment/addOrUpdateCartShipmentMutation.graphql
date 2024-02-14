@@ -1,7 +1,7 @@
 #import "../../fragments/fullCart.graphql"
 
-mutation AddOrUpdateCartShipment($command: InputAddOrUpdateCartShipmentType!) {
+mutation AddOrUpdateCartShipment($command: InputAddOrUpdateCartShipmentType!, $skipQuery: Boolean!) {
   addOrUpdateCartShipment(command: $command) {
-    ...fullCart
+    ...fullCart @skip(if: $skipQuery)
   }
 }

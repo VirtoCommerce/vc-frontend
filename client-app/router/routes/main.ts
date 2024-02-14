@@ -1,4 +1,3 @@
-import { useCart } from "@/shared/cart";
 import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
@@ -22,7 +21,6 @@ const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Cart = () => import("@/pages/cart.vue");
-const Checkout = () => import("@/pages/checkout/index.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
@@ -71,29 +69,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/cart", name: "Cart", component: Cart },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
-  {
-    path: "/checkout",
-    name: "Checkout",
-    component: Checkout,
-    children: checkoutRoutes,
-    redirect: { name: checkoutRoutes[0].name },
-    meta: { layout: "Secure" },
-    beforeEnter(to, from, next) {
-      const { allItemsAreDigital } = useCart();
-      /**
-       * NOTE: Allow proceeding to checkout only from cart.
-       * Refreshing page will redirect to the cart. At any of the steps.
-       * If all products are digital, then skip the "Shipping" step.
-       */
-      if (from.name !== "Cart") {
-        next({ name: "Cart", replace: true });
-      } else if (allItemsAreDigital.value && to.name === "Shipping") {
-        next({ name: "Billing" });
-      } else {
-        next();
-      }
-    },
-  },
+  ...checkoutRoutes,
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   { path: "/product/:productId", name: "Product", component: Product, props: true },

@@ -1,7 +1,0 @@
-#import "../../fragments/fullCart.graphql"
-
-mutation ChangeFullCartItemQuantity($command: InputChangeCartItemQuantityType!) {
-  changeCartItemQuantity(command: $command) {
-    ...fullCart
-  }
-}

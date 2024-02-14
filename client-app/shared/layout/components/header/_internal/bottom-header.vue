@@ -84,7 +84,7 @@ import { computed, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useNavigations } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { useCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
 import BottomHeaderLink from "./bottom-header-link.vue";
@@ -93,7 +93,7 @@ import type { StyleValue } from "vue";
 
 const router = useRouter();
 const { organization } = useUser();
-const { cart } = useCart();
+const { cart } = useShortCart();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
 

@@ -75,7 +75,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
-import { useCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
@@ -96,7 +96,7 @@ const tabs = [
 ];
 
 const router = useRouter();
-const { loading: loadingCart, addBulkItemsToCart } = useCart();
+const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
 
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
@@ -113,7 +113,7 @@ async function addItems(items: InputNewBulkItemType[]) {
   incorrectData.value = false;
   SKUsWithErrors.value = [];
 
-  if (!items.length || loadingCart.value) {
+  if (!items.length || loadingCart.value || cartChanging.value) {
     return;
   }
 

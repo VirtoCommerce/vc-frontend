@@ -60,10 +60,10 @@ import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
+import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
-import { useCart } from "../composables/useCart";
-import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
+import type { Product, ShortCartFragment, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
 import type { NamedValue } from "vue-i18n";
 
 const emit = defineEmits<IEmits>();
@@ -73,7 +73,7 @@ const props = defineProps<IProps>();
 const notifications = useNotifications();
 
 interface IEmits {
-  (event: "update:lineItem", lineItem: LineItemType): void;
+  (event: "update:lineItem", lineItem: ShortLineItemFragment): void;
 }
 
 interface IProps {
@@ -88,7 +88,7 @@ const availableQuantity = computed(() => props.product.availabilityData?.availab
 const minQuantity = computed(() => props.product.minQuantity);
 const maxQuantity = computed(() => props.product.maxQuantity);
 
-const { cart, addToCart, changeItemQuantity } = useCart();
+const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { getTranslation } = useErrorsTranslator("validation_error");
@@ -136,7 +136,7 @@ async function onChange() {
 
   let lineItem = getLineItem(cart.value?.items);
 
-  let updatedCart;
+  let updatedCart: ShortCartFragment | undefined;
 
   const isAlreadyExistsInTheCart = !!lineItem;
   if (isAlreadyExistsInTheCart) {
@@ -162,7 +162,7 @@ async function onChange() {
           ? "common.messages.fail_to_change_quantity_in_cart"
           : "common.messages.fail_add_product_to_cart",
         {
-          reason: updatedCart.validationErrors
+          reason: updatedCart?.validationErrors
             ?.filter(
               (validationError) =>
                 validationError.objectId === props.product.id &&
@@ -191,7 +191,7 @@ async function onChange() {
   loading.value = false;
 }
 
-function getLineItem(items?: LineItemType[]): LineItemType | undefined {
+function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
   return items?.find((item) => item.productId === props.product.id);
 }
 
