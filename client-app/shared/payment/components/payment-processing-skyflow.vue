@@ -91,8 +91,8 @@ async function pay() {
   });
 
   if (isSuccess) {
-    emit("success");
     ga.purchase(props.order);
+    emit("success");
   } else {
     emit("fail");
   }
