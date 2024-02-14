@@ -1,0 +1,7 @@
+fragment gift on GiftItemType {
+  id
+  imageUrl
+  name
+  lineItemId
+  quantity
+}

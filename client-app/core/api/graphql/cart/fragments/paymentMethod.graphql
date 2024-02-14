@@ -1,0 +1,7 @@
+fragment paymentMethod on PaymentMethodType {
+  code
+  name
+  description
+  logoUrl
+  paymentMethodGroupType
+}

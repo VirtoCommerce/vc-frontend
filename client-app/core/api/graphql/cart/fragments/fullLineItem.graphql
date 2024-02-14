@@ -1,0 +1,38 @@
+#import "../../common/fragments/money.graphql"
+#import "../../common/fragments/commonVendor.graphql"
+#import "./shortLineItem.graphql"
+#import "./fullLineItemProduct.graphql"
+#import "./validationError.graphql"
+
+fragment fullLineItem on LineItemType {
+  ...shortLineItem
+  name
+  inStockQuantity
+  imageUrl
+  selectedForCheckout
+  productType
+  product {
+    ...fullLineItemProduct
+  }
+  vendor {
+    ...commonVendor
+  }
+  extendedPrice {
+    ...money
+  }
+  placedPrice {
+    ...money
+  }
+  listPrice {
+    ...money
+  }
+  salePrice {
+    ...money
+  }
+  discountTotal {
+    ...money
+  }
+  validationErrors {
+    ...validationError
+  }
+}

@@ -1,4 +1,4 @@
-fragment validationErrorFields on ValidationErrorType {
+fragment validationError on ValidationErrorType {
   errorCode
   errorMessage
   errorParameters {
