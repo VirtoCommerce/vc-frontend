@@ -136,10 +136,10 @@
                     v-if="userCanEditOrganization"
                     :address="item"
                     placement="left-start"
-                    class="flex items-center"
                     @edit="openAddOrUpdateCompanyAddressModal(item)"
                     @delete="openDeleteAddressModal(item)"
                   />
+
                   <VcIcon
                     :class="{
                       'text-neutral-400': !item.isFavorite,
