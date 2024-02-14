@@ -6,33 +6,27 @@
   >
     <div class="flex-1 gap-y-5 p-6 md:border-b">
       <VcExpansionPanels class="flex flex-col gap-y-4">
-        <VcExpansionPanel
-          v-for="(group, index) in groups"
-          :key="group.name"
-          :expanded="!index && groups.length === 1"
-          header-classes="px-4 py-5"
-          full-width-content
-        >
-          <template #header-content>
-            <div class="flex min-w-0 grow items-center gap-x-2.5">
-              <VcIcon v-if="group.name === 'added'" class="text-[--color-success-500]" name="check-circle" />
-              <VcIcon v-else-if="group.name === 'not_added'" class="text-[--color-danger-500]" name="x-circle" />
+        <VcExpansionPanel v-for="(group, index) in groups" :key="group.name" :expanded="!index && groups.length === 1">
+          <template #icon>
+            <VcIcon v-if="group.name === 'added'" class="text-[--color-success-500]" name="check-circle" />
+            <VcIcon v-else-if="group.name === 'not_added'" class="text-[--color-danger-500]" name="x-circle" />
+          </template>
 
-              <span class="truncate text-15 font-bold">
+          <template #header-content>
+            <div class="flex items-center gap-x-2.5">
+              <span class="truncate text-sm font-bold normal-case">
                 {{ $t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`) }}
               </span>
 
-              <span
-                class="rounded-full border border-[color:var(--color-primary)] px-2 py-0.5 text-11 font-extrabold leading-3"
-              >
+              <VcBadge class="flex-none" variant="outline" rounded>
                 {{ group.items.length }}
-              </span>
+              </VcBadge>
             </div>
           </template>
 
           <div class="max-h-80 overflow-y-auto rounded-[inherit] md:max-h-72">
             <ul class="w-full md:table">
-              <li class="top-0 hidden bg-gray-50 text-15 font-extrabold md:sticky md:table-row">
+              <li class="top-0 hidden bg-gray-50 text-sm font-extrabold md:sticky md:table-row">
                 <div class="table-cell border-b px-4 py-2.5">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </div>
@@ -49,10 +43,10 @@
               <li
                 v-for="item in group.items"
                 :key="item.sku"
-                class="flex flex-wrap border-b px-4 py-2.5 last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-gray-50"
+                class="flex flex-wrap border-b px-4 py-2.5 text-sm last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-gray-50"
               >
                 <div class="flex w-3/5 flex-col pr-3 md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle">
-                  <span class="text-13 text-gray-400 md:hidden">
+                  <span class="text-gray-400 md:hidden">
                     {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                   </span>
                   <span class="font-semibold">{{ item.sku }}</span>
@@ -73,7 +67,7 @@
                 <div
                   class="flex w-2/5 flex-col md:table-cell md:w-auto md:px-4 md:py-2.5 md:text-right md:align-middle"
                 >
-                  <span class="text-13 text-gray-400 md:hidden">
+                  <span class="text-gray-400 md:hidden">
                     {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
                   </span>
                   <span class="font-bold">{{ $n(item.quantity) }}</span>
