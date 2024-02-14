@@ -41,10 +41,9 @@ const props = defineProps<IProps>();
 type FieldsType = { [key: string]: string };
 
 const { t } = useI18n();
-
-const loading = ref(false);
 const ga = useGoogleAnalytics();
 
+const loading = ref(false);
 const cardContainer = ref(null);
 
 let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;

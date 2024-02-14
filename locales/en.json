@@ -672,11 +672,7 @@
         }
       },
       "skyflow": {
-        "pay_now_button": "Pay Now",
-
-        "errors": {
-          "payment_failed": "Payment failed. Check your data and try again."
-        }
+        "pay_now_button": "Pay Now"
       },
       "manual": {
         "text": "The payment method you selected does not support online payment. Please select another method or "
