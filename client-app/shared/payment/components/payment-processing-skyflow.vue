@@ -1,7 +1,7 @@
 <template>
   <div v-show="initialized">
     <div class="flex flex-col xl:flex-row">
-      <div id="composableContainer" class="flex grow"></div>
+      <div ref="cardContainer" class="flex grow"></div>
       <CardLabels class="mt-6" />
     </div>
     <div class="mt-6">
@@ -14,14 +14,13 @@
 </template>
 
 <script setup lang="ts">
+import { useCssVar } from "@vueuse/core";
 import Skyflow from "skyflow-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import { Logger } from "@/core/utilities";
-import { useNotifications } from "@/shared/notification";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertResponse } from "skyflow-js/types/utils/common";
@@ -42,10 +41,11 @@ const props = defineProps<IProps>();
 type FieldsType = { [key: string]: string };
 
 const { t } = useI18n();
-const notifications = useNotifications();
 
 const loading = ref(false);
 const ga = useGoogleAnalytics();
+
+const cardContainer = ref(null);
 
 let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;
 
@@ -85,30 +85,20 @@ async function pay() {
     emit("fail");
   }
 
-  const newRes = await authorizePayment({
+  const { isSuccess } = await authorizePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0]!.id,
     parameters: objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType),
   });
 
-  Logger.info("[authorizePayment]", newRes);
-
-  if (newRes.isSuccess) {
+  if (isSuccess) {
     emit("success");
     ga.purchase(props.order);
   } else {
-    showErrorNotification();
+    emit("fail");
   }
 
   loading.value = false;
-}
-
-function showErrorNotification() {
-  notifications.error({
-    duration: 5000,
-    single: true,
-    text: t("shared.payment.skyflow.errors.payment_failed"),
-  });
 }
 
 onMounted(async () => {
@@ -154,9 +144,10 @@ function createForm() {
     "@import": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
   };
 
-  const dangerColor = "#FF4A4A";
-  const borderColor = "#e5e7eb";
   const fontFamily = "Lato, sans-serif";
+  const errorColor = useCssVar("--color-danger", cardContainer).value;
+  const borderColor = useCssVar("--color-neutral-200", cardContainer).value;
+  const focusOutlineColor = useCssVar("--color-primary-200", cardContainer).value;
 
   const containerOptions = {
     layout: [1, 1, 2],
@@ -171,7 +162,7 @@ function createForm() {
     errorTextStyles: {
       base: {
         fontFamily,
-        color: dangerColor,
+        color: errorColor,
       },
       global,
     },
@@ -195,6 +186,11 @@ function createForm() {
         lineHeight: "1",
         borderRadius: "3px",
         border: `1px solid ${borderColor}`,
+        "&:focus": {
+          border: "1px solid transparent",
+          outline: `3px solid ${focusOutlineColor}`,
+          outlineOffset: "-3px",
+        },
         padding: "0.75rem",
       },
       global,
@@ -208,7 +204,7 @@ function createForm() {
         marginBottom: "0.125rem",
       },
       requiredAsterisk: {
-        color: dangerColor,
+        color: errorColor,
       },
       global,
     },
@@ -275,7 +271,7 @@ function createForm() {
     el.on(Skyflow.EventName.READY, setReadyState);
   });
 
-  container.mount("#composableContainer");
+  container.mount(cardContainer.value);
 
   composableContainer = container;
 }
