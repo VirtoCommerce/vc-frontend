@@ -56,13 +56,7 @@ async function initPayment() {
       paymentId: props.order.inPayments[0]!.id,
     });
 
-    if (errorMessage) {
-      showErrorNotification();
-      emit("fail");
-      return;
-    }
-
-    if (!publicParameters) {
+    if (errorMessage || !publicParameters) {
       emit("fail");
       return;
     }
@@ -157,8 +151,7 @@ const initialized = computed(() => {
 
 function createForm() {
   const global = {
-    "@import":
-      'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Condensed:wght@700&display=swap")',
+    "@import": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
   };
 
   const dangerColor = "#FF4A4A";
