@@ -1584,25 +1584,6 @@ export type InputClearShipmentsType = {
   userId: Scalars['String']['input'];
 };
 
-export type InputCloneWishlistType = {
-  /** Culture name */
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** Currency code */
-  currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** List description */
-  description?: InputMaybe<Scalars['String']['input']>;
-  /** Source List ID */
-  listId: Scalars['String']['input'];
-  /** List name */
-  listName?: InputMaybe<Scalars['String']['input']>;
-  /** List scope (private or organization) */
-  scope?: InputMaybe<Scalars['String']['input']>;
-  /** Store ID */
-  storeId: Scalars['String']['input'];
-  /** Owner ID */
-  userId: Scalars['String']['input'];
-};
-
 export type InputConfirmEmailType = {
   /** Confirm email token */
   token: Scalars['String']['input'];
@@ -2758,7 +2739,6 @@ export type Mutations = {
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
-  cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
@@ -2986,11 +2966,6 @@ export type MutationsClearPaymentsArgs = {
 
 export type MutationsClearShipmentsArgs = {
   command: InputClearShipmentsType;
-};
-
-
-export type MutationsCloneWishlistArgs = {
-  command: InputCloneWishlistType;
 };
 
 
@@ -5384,6 +5359,13 @@ export type WishlistType = {
   storeId?: Maybe<Scalars['String']['output']>;
 };
 
+export type AddAddressToFavoritesMutationVariables = Exact<{
+  command: AddAddressToFavoritesCommandType;
+}>;
+
+
+export type AddAddressToFavoritesMutation = { addAddressToFavorites?: boolean };
+
 export type AddWishlistMutationVariables = Exact<{
   command: InputCreateWishlistType;
 }>;
@@ -5482,6 +5464,13 @@ export type RegisterByInvitationMutationVariables = Exact<{
 
 export type RegisterByInvitationMutation = { registerByInvitation?: { succeeded: boolean, errors?: Array<{ code: string, description?: string, parameter?: string }> } };
 
+export type RemoveAddressFromFavoritesMutationVariables = Exact<{
+  command: RemoveAddressFromFavoritesCommandType;
+}>;
+
+
+export type RemoveAddressFromFavoritesMutation = { removeAddressFromFavorites?: boolean };
+
 export type ResetPasswordByTokenMutationVariables = Exact<{
   command?: InputMaybe<InputResetPasswordByTokenType>;
 }>;
@@ -5541,7 +5530,7 @@ export type CheckUsernameUniquenessQuery = { checkUsernameUniqueness?: boolean }
 export type GetDefaultShippingAddressQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetDefaultShippingAddressQuery = { me?: { contact?: { defaultShippingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number } } } };
+export type GetDefaultShippingAddressQuery = { me?: { contact?: { defaultShippingAddress?: { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, isFavorite: boolean, phone?: string, email?: string, description?: string, addressType?: number } } } };
 
 export type GetMeQueryVariables = Exact<{
   after?: InputMaybe<Scalars['String']['input']>;
@@ -5559,7 +5548,7 @@ export type GetMyAddressesQueryVariables = Exact<{
 }>;
 
 
-export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number }> } } } };
+export type GetMyAddressesQuery = { me?: { contact?: { addresses?: { items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, isFavorite: boolean, phone?: string, email?: string, description?: string, addressType?: number }> } } } };
 
 export type GetWishlistQueryVariables = Exact<{
   listId: Scalars['String']['input'];
@@ -5874,7 +5863,7 @@ export type FullOrderFieldsFragment = { comment?: string, purchaseOrderNumber?: 
 
 export type LineItemFieldsFragment = { id: string, name: string, sku: string, quantity: number, inStockQuantity: number, imageUrl?: string, selectedForCheckout: boolean, productId: string, productType?: string, product?: { id: string, slug?: string, minQuantity?: number, maxQuantity?: number, masterVariation?: { id: string, slug?: string }, properties: Array<{ name: string, value?: any, type: string, hidden: boolean, valueType: string, label: string }>, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number } }, vendor?: { id: string, name: string, rating?: { value: any, reviewCount: number } }, extendedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, placedPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, listPrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, salePrice: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, validationErrors: Array<{ errorCode?: string, errorMessage?: string, errorParameters?: Array<{ key: string, value: string }> }> };
 
-export type MemberAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number };
+export type MemberAddressFieldsFragment = { id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, isFavorite: boolean, phone?: string, email?: string, description?: string, addressType?: number };
 
 export type MoneyFieldsFragment = { amount: any, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } };
 
@@ -6004,7 +5993,7 @@ export type GetOrganizationAddressesQueryVariables = Exact<{
 }>;
 
 
-export type GetOrganizationAddressesQuery = { organization?: { addresses?: { totalCount?: number, items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, phone?: string, email?: string, description?: string, addressType?: number }> } } };
+export type GetOrganizationAddressesQuery = { organization?: { addresses?: { totalCount?: number, items?: Array<{ id?: string, name?: string, organization?: string, firstName?: string, lastName?: string, line1?: string, line2?: string, city?: string, countryCode?: string, countryName?: string, regionId?: string, regionName?: string, postalCode: string, isDefault: boolean, isFavorite: boolean, phone?: string, email?: string, description?: string, addressType?: number }> } } };
 
 export type GetOrganizationContactsQueryVariables = Exact<{
   id: Scalars['String']['input'];

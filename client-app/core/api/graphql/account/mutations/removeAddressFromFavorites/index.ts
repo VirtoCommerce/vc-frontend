@@ -1,12 +1,12 @@
 import { graphqlClient } from "../../../client";
 import removeAddressFromFavoritesMutation from "./removeAddressFromFavoritesMutation.graphql";
 import type {
-  RemoveAddressFromFavoritesCommandType,
-  MutationsRemoveAddressFromFavoritesArgs,
+  RemoveAddressFromFavoritesMutation,
+  RemoveAddressFromFavoritesMutationVariables,
 } from "@/core/api/graphql/types";
 
 export async function removeAddressFromFavorites(addressId: string): Promise<void> {
-  await graphqlClient.mutate<RemoveAddressFromFavoritesCommandType, MutationsRemoveAddressFromFavoritesArgs>({
+  await graphqlClient.mutate<RemoveAddressFromFavoritesMutation, RemoveAddressFromFavoritesMutationVariables>({
     mutation: removeAddressFromFavoritesMutation,
     variables: {
       command: {
