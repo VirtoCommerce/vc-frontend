@@ -1,16 +1,16 @@
 <template>
-  <template v-if="initialized">
+  <div v-show="initialized">
     <div class="flex flex-col xl:flex-row">
       <div id="composableContainer" class="flex grow"></div>
       <CardLabels class="mt-6" />
     </div>
     <div class="mt-6">
-      <VcButton :disabled="isButtonDisabled" :loading="loading" class="flex-1 md:order-first md:flex-none" @click="pay">
+      <VcButton :disabled="hasInvalid" :loading="loading" class="flex-1 md:order-first md:flex-none" @click="pay">
         {{ $t("shared.payment.skyflow.pay_now_button") }}
       </VcButton>
     </div>
-  </template>
-  <VcLoaderWithText v-else />
+  </div>
+  <VcLoaderWithText v-if="!initialized" />
 </template>
 
 <script setup lang="ts">
@@ -19,6 +19,7 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
@@ -45,8 +46,6 @@ const notifications = useNotifications();
 
 const loading = ref(false);
 const ga = useGoogleAnalytics();
-
-const initialized = ref(false);
 
 let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;
 
@@ -75,12 +74,9 @@ async function initPayment() {
       vaultURL: getParameter(publicParameters, "vaultURL"),
       getBearerToken: () => Promise.resolve(getParameter(publicParameters, "accessToken")),
       options: {
-        logLevel: Skyflow.LogLevel.ERROR,
-        env: Skyflow.Env.DEV,
+        env: IS_DEVELOPMENT ? Skyflow.Env.DEV : Skyflow.Env.PROD,
       },
     });
-
-    initialized.value = true;
   } catch (e) {
     emit("fail");
   }
@@ -89,9 +85,7 @@ async function initPayment() {
 async function pay() {
   loading.value = true;
 
-  const res = (await composableContainer.collect({
-    tokens: true,
-  })) as IInsertResponse;
+  const res = (await composableContainer.collect()) as IInsertResponse;
 
   if (!res?.records) {
     emit("fail");
@@ -134,21 +128,31 @@ type ElementType =
   | typeof Skyflow.ElementType.EXPIRATION_DATE
   | typeof Skyflow.ElementType.CVV;
 
-const validStatus = ref<{ [key in ElementType]: boolean }>({
-  [Skyflow.ElementType.CARD_NUMBER]: false,
-  [Skyflow.ElementType.CARDHOLDER_NAME]: false,
-  [Skyflow.ElementType.EXPIRATION_DATE]: false,
-  [Skyflow.ElementType.CVV]: false,
+const formElementsStatus = ref<{
+  [key in ElementType]: {
+    valid: boolean;
+    ready: boolean;
+  };
+}>({
+  [Skyflow.ElementType.CARD_NUMBER]: { valid: false, ready: false },
+  [Skyflow.ElementType.CARDHOLDER_NAME]: { valid: false, ready: false },
+  [Skyflow.ElementType.EXPIRATION_DATE]: { valid: false, ready: false },
+  [Skyflow.ElementType.CVV]: { valid: false, ready: false },
 });
 
-function updateValidationStatus(state: { elementType: ElementType; isValid: boolean }) {
-  if (state.elementType in validStatus.value) {
-    validStatus.value[state.elementType] = state.isValid;
-  }
+function updateValidationStatus({ elementType, isValid }: { elementType: ElementType; isValid: boolean }) {
+  formElementsStatus.value[elementType].valid = isValid;
+}
+function setReadyState({ elementType }: { elementType: ElementType }) {
+  formElementsStatus.value[elementType].ready = true;
 }
 
-const isButtonDisabled = computed(() => {
-  return Object.values(validStatus.value).some((el) => !el);
+const hasInvalid = computed(() => {
+  return Object.values(formElementsStatus.value).some((el) => !el.valid);
+});
+
+const initialized = computed(() => {
+  return Object.values(formElementsStatus.value).every((el) => el.ready);
 });
 
 function createForm() {
@@ -182,6 +186,12 @@ function createForm() {
 
   const container = skyflowClient.container(Skyflow.ContainerType.COMPOSABLE, containerOptions) as ComposableContainer;
 
+  container.on(Skyflow.EventName.SUBMIT, () => {
+    if (!hasInvalid.value) {
+      void pay();
+    }
+  });
+
   const collectStylesOptions = {
     inputStyles: {
       base: {
@@ -211,69 +221,66 @@ function createForm() {
     },
   };
 
-  container
-    .create(
-      {
-        table: skyflowTableName,
-        column: "card_number",
-        ...collectStylesOptions,
-        placeholder: "1111 1111 1111 1111",
-        label: t("shared.payment.bank_card_form.number_label"),
-        type: Skyflow.ElementType.CARD_NUMBER,
-      },
-      {
-        enableCardIcon: false,
-        required: true,
-      },
-    )
-    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
+  const cardName = container.create(
+    {
+      table: skyflowTableName,
+      column: "card_number",
+      ...collectStylesOptions,
+      placeholder: "1111 1111 1111 1111",
+      label: t("shared.payment.bank_card_form.number_label"),
+      type: Skyflow.ElementType.CARD_NUMBER,
+    },
+    {
+      enableCardIcon: false,
+      required: true,
+    },
+  );
 
-  container
-    .create(
-      {
-        table: skyflowTableName,
-        column: "cardholder_name",
-        ...collectStylesOptions,
-        label: t("shared.payment.bank_card_form.cardholder_name_label"),
-        type: Skyflow.ElementType.CARDHOLDER_NAME,
-      },
-      {
-        required: true,
-      },
-    )
-    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
+  const cardholderName = container.create(
+    {
+      table: skyflowTableName,
+      column: "cardholder_name",
+      ...collectStylesOptions,
+      label: t("shared.payment.bank_card_form.cardholder_name_label"),
+      type: Skyflow.ElementType.CARDHOLDER_NAME,
+    },
+    {
+      required: true,
+    },
+  );
 
-  container
-    .create(
-      {
-        table: skyflowTableName,
-        column: "card_expiration",
-        ...collectStylesOptions,
-        placeholder: t("shared.payment.bank_card_form.expiration_date_placeholder"),
-        label: t("shared.payment.bank_card_form.expiration_date_label"),
-        type: Skyflow.ElementType.EXPIRATION_DATE,
-      },
-      {
-        required: true,
-      },
-    )
-    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
+  const cardExpiration = container.create(
+    {
+      table: skyflowTableName,
+      column: "card_expiration",
+      ...collectStylesOptions,
+      placeholder: t("shared.payment.bank_card_form.expiration_date_placeholder"),
+      label: t("shared.payment.bank_card_form.expiration_date_label"),
+      type: Skyflow.ElementType.EXPIRATION_DATE,
+    },
+    {
+      required: true,
+    },
+  );
 
-  container
-    .create(
-      {
-        table: skyflowTableName,
-        column: "cvv",
-        ...collectStylesOptions,
-        placeholder: "111",
-        label: t("shared.payment.bank_card_form.security_code_label"),
-        type: Skyflow.ElementType.CVV,
-      },
-      {
-        required: true,
-      },
-    )
-    .on(Skyflow.EventName.CHANGE, updateValidationStatus);
+  const CVV = container.create(
+    {
+      table: skyflowTableName,
+      column: "cvv",
+      ...collectStylesOptions,
+      placeholder: "111",
+      label: t("shared.payment.bank_card_form.security_code_label"),
+      type: Skyflow.ElementType.CVV,
+    },
+    {
+      required: true,
+    },
+  );
+
+  [cardName, cardholderName, cardExpiration, CVV].forEach((el) => {
+    el.on(Skyflow.EventName.CHANGE, updateValidationStatus);
+    el.on(Skyflow.EventName.READY, setReadyState);
+  });
 
   container.mount("#composableContainer");
 
