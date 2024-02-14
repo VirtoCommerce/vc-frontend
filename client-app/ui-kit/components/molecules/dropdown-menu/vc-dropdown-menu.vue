@@ -63,7 +63,7 @@ withDefaults(defineProps<IProps>(), {
 .vc-dropdown-menu {
   $disabled: "";
 
-  @apply relative select-none;
+  @apply select-none;
 
   &--disabled {
     $disabled: &;

@@ -16,7 +16,14 @@
       {{ label }}
     </VcLabel>
 
-    <VcDropdownMenu placement="bottom" width="100%" :disabled="!enabled" disable-trigger-events @toggle="toggled">
+    <VcDropdownMenu
+      class="vc-select__container"
+      placement="bottom"
+      width="100%"
+      :disabled="!enabled"
+      disable-trigger-events
+      @toggle="toggled"
+    >
       <template #trigger="{ open, close, toggle }">
         <div
           v-if="$slots.selected || $slots.placeholder"
@@ -337,7 +344,7 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   }
 
   &__container {
-    @apply relative select-none;
+    @apply relative;
   }
 
   &__button {
