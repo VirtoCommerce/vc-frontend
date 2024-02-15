@@ -1,0 +1,3 @@
+mutation AddAddressToFavorites($command: AddAddressToFavoritesCommandType!) {
+  addAddressToFavorites(command: $command)
+}
