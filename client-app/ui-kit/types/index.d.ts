@@ -38,6 +38,8 @@ declare global {
     text: string;
     icon?: string;
     route?: RouteLocationRaw;
+    disabled?: boolean;
+    hidden?: boolean;
   }
 
   interface ITableColumn {

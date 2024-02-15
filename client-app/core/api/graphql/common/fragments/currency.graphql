@@ -1,0 +1,4 @@
+fragment currency on CurrencyType {
+  code
+  symbol
+}

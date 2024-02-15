@@ -1,26 +1,20 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./removeCartItemsMutation.graphql";
-import type { CartType, Mutations, MutationsRemoveCartItemsArgs } from "@/core/api/graphql/types";
+import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
+import { useMutation } from "@/core/api/graphql/composables";
+import { RemoveCartItemsDocument } from "@/core/api/graphql/types";
+import type { CartIdFragment, CartType } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
+export function useRemoveCartItemsMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  return useMutation(RemoveCartItemsDocument, useCartMutationVariables(cart));
+}
+
+/** @deprecated Use {@link useRemoveCartItemsMutation} instead. */
 export async function removeCartItems(lineItemIds: string[]): Promise<CartType> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
-
-  const { data } = await graphqlClient.mutate<
-    Required<Pick<Mutations, "removeCartItems">>,
-    MutationsRemoveCartItemsArgs
-  >({
-    mutation: mutationDocument,
-    variables: {
-      command: {
-        storeId,
-        userId,
-        cultureName,
-        currencyCode,
-        lineItemIds,
-      },
+  const { mutate } = useRemoveCartItemsMutation();
+  const result = await mutate({
+    command: {
+      lineItemIds,
     },
   });
-
-  return data!.removeCartItems;
+  return result!.data!.removeCartItems as CartType;
 }

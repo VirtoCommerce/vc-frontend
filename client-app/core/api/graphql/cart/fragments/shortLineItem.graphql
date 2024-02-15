@@ -1,0 +1,9 @@
+fragment shortLineItem on LineItemType {
+  id
+  sku
+  quantity
+  productId
+  extendedPrice {
+    amount
+  }
+}

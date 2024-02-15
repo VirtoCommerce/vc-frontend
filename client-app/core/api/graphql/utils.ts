@@ -1,8 +1,15 @@
-import type { GraphQLErrorCode } from "./enums";
-import type { GraphQLError } from "graphql";
+import { intersection } from "lodash";
+import type { ApolloClient } from "@apollo/client/core";
 
-export function hasErrorCode(graphQLErrors: ReadonlyArray<GraphQLError> | undefined, errorCode: GraphQLErrorCode) {
-  return graphQLErrors?.some((graphQLError) => graphQLError.extensions.code === errorCode);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function filterActiveQueryNames<TCacheShape = any>(
+  apolloClient: ApolloClient<TCacheShape>,
+  queryNames: string[],
+) {
+  const activeQueryNames = Array.from(apolloClient.getObservableQueries().values())
+    .filter((query) => !!query.queryName)
+    .map((query) => query.queryName!);
+  return intersection(activeQueryNames, queryNames);
 }
 
 export function getChildCategoriesTreeString(level: number): string {

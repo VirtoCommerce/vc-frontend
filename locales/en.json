@@ -1337,6 +1337,9 @@
       "previous": "Previous",
       "next": "Next"
     },
+    "select": {
+      "items_selected": "{0} items selected"
+    },
     "file": {
       "uploading": "Uploading...",
       "uploaded": "Upload completed"

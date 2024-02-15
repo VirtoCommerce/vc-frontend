@@ -3,7 +3,9 @@
     <slot name="header" />
 
     <!-- Totals block -->
-    <div>
+    <div class="relative">
+      <VcLoaderOverlay :visible="changing" />
+
       <div class="mb-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.subtotal") }}</span>
         <span><VcPriceDisplay :value="cart.subTotal!" /></span>
@@ -106,6 +108,8 @@
 import { sumBy } from "lodash";
 import { computed, ref } from "vue";
 import { useCurrency, useLanguages } from "@/core/composables";
+import { useFullCart } from "@/shared/cart";
+import { useCheckout } from "@/shared/checkout/composables";
 import type {
   OrderShipmentType,
   CartType,
@@ -128,6 +132,10 @@ const props = defineProps<IProps>();
 
 const { currentLanguage } = useLanguages();
 const { currentCurrency } = useCurrency();
+const { changing: cartChanging } = useFullCart();
+const { changing: checkoutChanging } = useCheckout();
+
+const changing = computed(() => cartChanging.value || checkoutChanging.value);
 
 const discountsCollapsed = ref(true);
 

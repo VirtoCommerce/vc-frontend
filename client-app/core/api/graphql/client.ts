@@ -1,63 +1,27 @@
-import { InMemoryCache, ApolloClient, HttpLink } from "@apollo/client/core";
-import { onError } from "@apollo/client/link/error";
-import {
-  TabsType,
-  forbiddenEvent,
-  unauthorizedErrorEvent,
-  unhandledErrorEvent,
-  userLockedEvent,
-  passwordExpiredEvent,
-  useBroadcast,
-} from "@/shared/broadcast";
-import { GraphQLErrorCode } from "./enums";
-import { hasErrorCode } from "./utils";
-import type { FetchPolicy } from "@apollo/client/core";
+import { ApolloClient, InMemoryCache } from "@apollo/client/core";
+import { cache, deprecatedLink, link, options } from "@/core/api/graphql/config";
 
-const fetchPolicy: FetchPolicy = "no-cache";
+const fetchPolicy = "no-cache";
 
-const httpLink = new HttpLink({ uri: `/xapi/graphql` });
-
-const broadcast = useBroadcast();
-
-const errorHandler = onError(({ networkError, graphQLErrors }) => {
-  const unauthorized = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unauthorized);
-  const forbidden = hasErrorCode(graphQLErrors, GraphQLErrorCode.Forbidden);
-  const unhandledError = hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled);
-  const userLockedError = hasErrorCode(graphQLErrors, GraphQLErrorCode.UserLocked);
-  const passwordExpired = hasErrorCode(graphQLErrors, GraphQLErrorCode.PasswordExpired);
-
-  if (networkError || unhandledError) {
-    broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
-  }
-
-  if (unauthorized) {
-    broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
-  }
-
-  if (userLockedError) {
-    broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
-  }
-
-  if (forbidden) {
-    broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
-  }
-
-  if (passwordExpired) {
-    broadcast.emit(passwordExpiredEvent, undefined, TabsType.CURRENT);
-  }
-});
-
+/**
+ * Non-cached version of Apollo Client
+ *
+ * @deprecated
+ *
+ * Use {@link apolloClient} instead.
+ *
+ * **IMPORTANT!** Because of cache usage, query deduplication and `@vue/apollo-composable` usage,
+ * you can't just replace {@link graphqlClient} with {@link apolloClient} in your code.
+ * Look at https://github.com/VirtoCommerce/vc-theme-b2b-vue/pull/868 for more information.
+ */
 export const graphqlClient = new ApolloClient({
-  // Provide required constructor fields
-  link: errorHandler.concat(httpLink),
+  ...options,
+  link: deprecatedLink,
+
   cache: new InMemoryCache({
     addTypename: false,
   }),
 
-  // Provide some optional constructor fields
-  name: "x-api-graphql-client",
-  connectToDevTools: true,
-  assumeImmutableResults: true,
   queryDeduplication: false,
 
   defaultOptions: {
@@ -65,4 +29,13 @@ export const graphqlClient = new ApolloClient({
     query: { fetchPolicy },
     mutate: { fetchPolicy },
   },
+});
+
+/**
+ * Default (cached) version of Apollo Client
+ */
+export const apolloClient = new ApolloClient({
+  ...options,
+  link,
+  cache,
 });

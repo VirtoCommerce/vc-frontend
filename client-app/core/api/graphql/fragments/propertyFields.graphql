@@ -1,8 +1,0 @@
-fragment propertyFields on Property {
-  name
-  value
-  type
-  hidden
-  valueType
-  label
-}

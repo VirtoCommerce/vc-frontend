@@ -1,0 +1,7 @@
+#import "../../fragments/fullCart.graphql"
+
+mutation UnselectCartItems($command: InputChangeCartItemsSelectedType!, $skipQuery: Boolean!) {
+  unSelectCartItems(command: $command) {
+    ...fullCart @skip(if: $skipQuery)
+  }
+}

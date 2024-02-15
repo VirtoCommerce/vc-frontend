@@ -1,23 +1,16 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./changeCartCommentMutation.graphql";
-import type { CartType, Mutations, MutationsChangeCommentArgs } from "@/core/api/graphql/types";
+import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
+import { useMutation } from "@/core/api/graphql/composables";
+import { ChangeCartCommentDocument } from "@/core/api/graphql/types";
+import type { CartIdFragment, CartType } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
+export function useChangeCartCommentMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  return useMutation(ChangeCartCommentDocument, useCartMutationVariables(cart));
+}
+
+/** @deprecated Use {@link useChangeCartCommentMutation} instead. */
 export async function changeCartComment(comment: string): Promise<CartType> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
-
-  const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "changeComment">>, MutationsChangeCommentArgs>({
-    mutation: mutationDocument,
-    variables: {
-      command: {
-        storeId,
-        userId,
-        cultureName,
-        currencyCode,
-        comment,
-      },
-    },
-  });
-
-  return data!.changeComment;
+  const { mutate } = useChangeCartCommentMutation();
+  const result = await mutate({ command: { comment } });
+  return result!.data!.changeComment as CartType;
 }

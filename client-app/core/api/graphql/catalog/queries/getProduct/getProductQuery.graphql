@@ -1,5 +1,5 @@
-#import "../../../fragments/propertyFields.graphql"
-#import "../../../fragments/availabilityDataFields.graphql"
+#import "../../fragments/property.graphql"
+#import "../../fragments/availabilityData.graphql"
 
 query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String, $id: String!) {
   product(storeId: $storeId, id: $id, currencyCode: $currencyCode, cultureName: $cultureName) {
@@ -31,7 +31,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       content
     }
     properties {
-      ...propertyFields
+      ...property
     }
     variations {
       id
@@ -44,7 +44,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       code
       productType
       properties {
-        ...propertyFields
+        ...property
       }
       vendor {
         id
@@ -55,7 +55,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
         }
       }
       availabilityData {
-        ...availabilityDataFields
+        ...availabilityData
       }
       price {
         actual {
@@ -85,7 +85,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       }
     }
     availabilityData {
-      ...availabilityDataFields
+      ...availabilityData
     }
     price {
       actual {
