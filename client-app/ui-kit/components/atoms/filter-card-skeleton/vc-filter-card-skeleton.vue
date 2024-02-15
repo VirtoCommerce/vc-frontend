@@ -25,4 +25,6 @@ defineProps({
     default: false,
   },
 });
+
+console.warn("[UIKit][warn] VcFilterCardSkeleton is deprecated, use VcWidgetSkeleton instead.");
 </script>

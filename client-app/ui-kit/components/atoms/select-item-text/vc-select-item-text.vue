@@ -22,6 +22,8 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+console.warn("[UIKit][warn] VcSelectItemText is deprecated.");
 </script>
 
 <style lang="scss">

@@ -10,19 +10,21 @@
     :x-offset="xOffset"
     :y-offset="yOffset"
     :z-index="zIndex"
+    :width="width"
     :trigger="trigger"
     :disabled="disabled"
+    :disable-trigger-events="disableTriggerEvents"
     @toggle="$emit('toggle', $event)"
   >
-    <template #trigger>
+    <template #trigger="{ toggle, open, close, opened }">
       <div class="vc-dropdown-menu__trigger">
-        <slot name="trigger" />
+        <slot name="trigger" v-bind="{ toggle, open, close, opened }" />
       </div>
     </template>
 
-    <template v-if="!disabled" #content>
-      <ul class="vc-dropdown-menu__list" :style="{ maxHeight, width }">
-        <slot name="content" />
+    <template v-if="!disabled" #content="{ close }">
+      <ul class="vc-dropdown-menu__list" :style="{ maxHeight }">
+        <slot name="content" v-bind="{ close }" />
       </ul>
     </template>
   </VcPopover>
@@ -42,6 +44,7 @@ interface IProps {
   disabled?: boolean;
   width?: string;
   zIndex?: number | string;
+  disableTriggerEvents?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -71,7 +74,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__trigger {
-    @apply flex h-full items-center cursor-pointer;
+    @apply flex h-full w-full items-center cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -79,7 +82,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__list {
-    @apply overflow-y-auto rounded bg-[--color-additional-50] shadow-xl divide-y;
+    @apply overflow-y-auto w-full rounded bg-[--color-additional-50] shadow-xl divide-y divide-[--color-neutral-100];
 
     & > *:first-child {
       @apply rounded-t;
