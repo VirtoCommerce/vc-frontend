@@ -34,7 +34,7 @@ function getAccessTokenPromise() {
 
 // eslint-disable-next-line
 async function updateToken() {
-  const tokens = await innerFetch(
+  const { access_token, refresh_token }: { access_token: string; refresh_token: string } = await innerFetch(
     "/connect/token",
     "POST",
     new URLSearchParams({
@@ -44,10 +44,15 @@ async function updateToken() {
     "application/x-www-form-urlencoded",
   );
 
-  console.log(tokens);
+  if (!access_token || !refresh_token) {
+    return;
+  }
+
+  refreshToken.value = refresh_token;
+  accessToken.value = access_token;
 }
 
-// setTimeout(updateToken, 3000);
+// setTimeout(updateToken, 12000);
 
 const httpLink = new HttpLink({ uri: API_URL });
 const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);

@@ -204,12 +204,15 @@ export function useUser() {
         refresh_token: string;
       };
 
+      const { storeId } = globals;
+
       const tokens: OAuthType = await innerFetch(
         "/connect/token",
         "POST",
         new URLSearchParams({
           grant_type: "password",
           scope: "offline_access",
+          storeId,
           username: payload.email,
           password: payload.password,
         }),
