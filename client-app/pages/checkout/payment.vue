@@ -26,7 +26,7 @@
     </div>
 
     <template #sidebar>
-      <OrderSummary :cart="placedOrder" :no-shipping="allItemsAreDigital" />
+      <OrderSummary :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
     </template>
   </VcLayoutWithRightSidebar>
 </template>
@@ -39,7 +39,7 @@ import { PaymentActionType, PaymentProcessingAuthorizeNet, PaymentProcessingRedi
 import type { PaymentInType } from "@/core/api/graphql/types";
 
 const router = useRouter();
-const { placedOrder, allItemsAreDigital } = useCheckout();
+const { placedOrder, allOrderItemsAreDigital } = useCheckout();
 
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);

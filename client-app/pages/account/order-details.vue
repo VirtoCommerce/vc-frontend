@@ -128,7 +128,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
-import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsModal, useCart } from "@/shared/cart";
+import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -153,7 +153,7 @@ const {
   fetchFullOrder,
   clearOrder,
 } = useUserOrder();
-const { cart, addItemsToCart } = useCart();
+const { cart, addItemsToCart } = useShortCart();
 const { openModal } = useModal();
 const { t } = useI18n();
 

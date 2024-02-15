@@ -1,8 +1,28 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
-const graphQLCodegenTypesConfig: CodegenConfig = {
+// Workaround for missed field in CodegenConfig
+// Types is a copy of not exported types from @graphql-codegen/cli with added field
+
+interface CustomDocumentLoaderOptions {
+  skipGraphQLImport?: boolean;
+}
+
+interface CustomDocumentLoader {
+  [path: string]: CustomDocumentLoaderOptions;
+}
+
+type OperationDocument = CustomDocumentLoader;
+
+type CodegenConfigWorkaround = { documents: OperationDocument | OperationDocument[] };
+
+const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
   schema: `${process.env.APP_BACKEND_URL}/xapi/graphql`,
-  documents: "client-app/**/*.(graphql|gql)",
+  documents: {
+    "client-app/**/*.(graphql|gql)": {
+      skipGraphQLImport: false,
+    },
+  },
   generates: {
     "client-app/core/api/graphql/types.ts": {
       plugins: [
@@ -13,13 +33,19 @@ const graphQLCodegenTypesConfig: CodegenConfig = {
         },
         "typescript",
         "typescript-operations",
+        "typed-document-node",
+        "named-operations-object",
       ],
       config: {
-        skipTypename: true,
+        dedupeFragments: true,
+        identifierName: "OperationNames",
         maybeValue: "T",
         scalars: {
           Long: "number",
+          OptionalString: "string | undefined",
         },
+        skipTypename: true,
+        useTypeImports: true,
       },
     },
   },

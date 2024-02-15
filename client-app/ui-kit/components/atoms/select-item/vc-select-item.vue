@@ -10,6 +10,8 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+console.warn("[UIKit][warn] VcSelectItem is deprecated.");
 </script>
 
 <style lang="scss">

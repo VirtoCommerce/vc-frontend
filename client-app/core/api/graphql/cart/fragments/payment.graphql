@@ -1,0 +1,9 @@
+#import "./cartAddress.graphql"
+
+fragment payment on PaymentType {
+  id
+  paymentGatewayCode
+  billingAddress {
+    ...cartAddress
+  }
+}

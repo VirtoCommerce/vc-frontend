@@ -16,7 +16,7 @@
       </VcCopyText>
     </div>
 
-    <!-- 
+    <!--
         TODO: create VcLayoutWithSidebar component
         https://virtocommerce.atlassian.net/browse/ST-5629
       -->

@@ -1,3 +1,4 @@
+import { useApolloClient } from "@vue/apollo-composable";
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
@@ -60,6 +61,7 @@ interface IPasswordExpirationEntry {
 }
 
 export function useUser() {
+  const { resolveClient } = useApolloClient();
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
   const { openModal, closeModal } = useModal();
@@ -195,6 +197,7 @@ export function useUser() {
       const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
 
       if (result.succeeded) {
+        resolveClient().cache.gc();
         broadcast.emit(pageReloadEvent);
       }
 
@@ -270,6 +273,7 @@ export function useUser() {
     try {
       loading.value = true;
       await innerFetch("/storefrontapi/account/logout");
+      resolveClient().cache.gc();
       if (options.reloadPage) {
         broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
       }

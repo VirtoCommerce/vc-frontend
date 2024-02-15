@@ -1,0 +1,7 @@
+#import "../../fragments/fullCart.graphql"
+
+mutation ChangeFullCartItemQuantity($command: InputChangeCartItemQuantityType!, $skipQuery: Boolean!) {
+  changeCartItemQuantity(command: $command) {
+    ...fullCart @skip(if: $skipQuery)
+  }
+}

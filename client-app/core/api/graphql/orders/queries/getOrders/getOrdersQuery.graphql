@@ -1,4 +1,4 @@
-#import "../../../fragments/moneyFields.graphql"
+#import "../../../common/fragments/money.graphql"
 
 query GetOrders(
   $filter: String
@@ -27,7 +27,7 @@ query GetOrders(
         code
       }
       total {
-        ...moneyFields
+        ...money
       }
       inPayments {
         number
