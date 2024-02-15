@@ -388,12 +388,12 @@
       "forgot_password_form": {
         "error_alert": "Invalid result of the reset password request. Please "
       },
-      "checkout_default_success_dialog": {
+      "checkout_default_success_modal": {
         "title": "Checkout Defaults",
         "message": "Default checkout details successfully updated.",
         "ok_button": "@:common.buttons.ok"
       },
-      "invite_member_dialog": {
+      "invite_member_modal": {
         "title": "Invite member",
         "role_label": "Role",
         "role_placeholder": "Select role",
@@ -407,17 +407,17 @@
         "email_length_exceeded": "The maximum length of an email address is {maxValue} characters",
         "invalid_emails": "Incorrect email addresses: {invalidEmails}"
       },
-      "profile_update_success_dialog": {
+      "profile_update_success_modal": {
         "title": "Profile update",
         "message": "Profile successfully updated!",
         "ok_button": "@:common.buttons.ok"
       },
-      "registration_success_dialog": {
+      "registration_success_modal": {
         "title": "Registration",
         "message": "Registration successfully completed!",
         "ok_button": "@:common.buttons.home"
       },
-      "reorder_info_popup": {
+      "reorder_info_modal": {
         "title": "Reorder confirmation",
         "cancel_button": "@:common.buttons.cancel",
         "confirm_button": "@:common.buttons.confirm",
@@ -447,20 +447,20 @@
       }
     },
     "company": {
-      "add_or_update_address_dialog": {
+      "add_or_update_address_modal": {
         "address_title": "Address information",
         "create_title": "Create a new company address",
         "edit_title": "Edit company address"
       },
-      "block_member_dialog": {
+      "block_member_modal": {
         "title": "Block user",
         "text": "Are you sure you want to block access of the user?"
       },
-      "unblock_member_dialog": {
+      "unblock_member_modal": {
         "title": "Unblock user",
         "text": "Are you sure you want to unblock access of the user?"
       },
-      "delete_member_dialog": {
+      "delete_member_modal": {
         "title": "Delete member",
         "text": "Are you sure you want to delete the user {name} from the company members list?"
       },
@@ -489,7 +489,8 @@
           "enter_correct_number_message": "Please enter a valid number",
           "min": "Min order {0} item(s)",
           "max": "Max order {0} item(s)",
-          "min_max": "Order from {0} to {1} item(s)"
+          "min_max": "Order from {0} to {1} item(s)",
+          "min_not_available": "Min order {0} item(s) is not available in stock"
         }
       },
       "products_section": {
@@ -498,7 +499,7 @@
       "gifts_section": {
         "title": "+ Add a Gift"
       },
-      "add_bulk_items_to_cart_results_popup": {
+      "add_bulk_items_to_cart_results_modal": {
         "title": "Adding products to cart result",
         "groups": {
           "added": "Successfully added",
@@ -549,7 +550,7 @@
       "discount_badge": {
         "off": "off"
       },
-      "branches_dialog": {
+      "branches_modal": {
         "title": "Select Branch",
         "all_branches": "All branches",
         "search_input_placeholder": "Search by address and name",
@@ -592,13 +593,13 @@
           "unauthenticated_no_addresses": "You do not have any billing addresses. Please specify one."
         }
       },
-      "payment_method_dialog": {
+      "payment_method_modal": {
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "select_button": "@:common.buttons.select",
         "title": "Select payment method"
       },
-      "select_address_dialog": {
+      "select_address_modal": {
         "meta": {
           "table_description": "available addresses"
         },
@@ -612,7 +613,7 @@
         "no_addresses_message": "You do not have any addresses yet",
         "title": "Select address"
       },
-      "shipping_method_dialog": {
+      "shipping_method_modal": {
         "cancel_button": "@:common.buttons.cancel",
         "ok_button": "@:common.buttons.ok",
         "select_button": "@:common.buttons.select",
@@ -698,7 +699,7 @@
         "empty_list_button": "Continue browsing",
         "list_icon": "List icon"
       },
-      "add_to_wishlists_dialog": {
+      "add_to_wishlists_modal": {
         "title": "Please select list",
         "empty_list": "You do not have any wish lists",
         "cancel_button": "@:common.buttons.cancel",
@@ -711,11 +712,11 @@
         "is_required_validation_error": "The <b>List name</b> is required",
         "new_list": "New list"
       },
-      "unsuccessful_create_wishlist_dialog": {
+      "unsuccessful_create_wishlist_modal": {
         "message": "You have reached the maximum number of lists. Please delete one you do not use or reshuffle products to reuse an existing list.",
         "ok_button": "@:common.buttons.ok"
       },
-      "add_or_update_wishlist_dialog": {
+      "add_or_update_wishlist_modal": {
         "title": "New List",
         "edit_mode_title": "List Settings",
         "list_name_label": "List name",
@@ -725,13 +726,13 @@
         "cancel_button": "@:common.buttons.cancel",
         "private_list": "Private list"
       },
-      "delete_wishlist_dialog": {
+      "delete_wishlist_modal": {
         "title": "Confirm Delete",
         "message": "Are you sure you want to remove the “{listName}” list?",
         "delete_button": "@:common.buttons.delete",
         "cancel_button": "@:common.buttons.cancel"
       },
-      "delete_wishlist_product_dialog": {
+      "delete_wishlist_product_modal": {
         "title": "Confirm Delete",
         "message": "Are you sure you want to remove “{productName}” from the list?",
         "delete_button": "@:common.buttons.delete",
@@ -1049,6 +1050,7 @@
         "save_changes_notification_success": "The quote request has been successfully saved",
         "select_shipping_address": "Select a shipping address",
         "select_billing_address": "Select a billing address",
+        "files": "Files",
         "line_items": {
           "product": "@:common.labels.product",
           "properties": "@:common.labels.properties",
@@ -1070,6 +1072,8 @@
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
         "address_saved_successful_message": "The address has been successfully saved",
+        "add_to_favorites": "Mark as favorite",
+        "remove_from_favorites": "Remove from favorites",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",
@@ -1332,6 +1336,24 @@
     "pagination": {
       "previous": "Previous",
       "next": "Next"
+    },
+    "select": {
+      "items_selected": "{0} items selected"
+    },
+    "file": {
+      "uploading": "Uploading...",
+      "uploaded": "Upload completed"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Drag and drop file here or",
+      "browse": "Browse your files",
+      "requirements": "The files available for upload are in {formats} formats. Each file should not exceed {fileSize}. Maximum {maxFileCount} files allowed.",
+      "any_format": "any",
+      "errors": {
+        "fix_to_continue": "Fix file upload errors to continue.",
+        "has_max_file_count": "You have uploaded the maximum number of files possible. Futher uploads are not possible.",
+        "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
+      }
     }
   },
   "identity_error": {
@@ -1373,5 +1395,14 @@
     "LINE_ITEM_NOT_FOUND": "Line item not found.",
     "LINE_ITEM_IS_READ_ONLY": "Line item is read only.",
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
+  },
+  "file_error": {
+    "ALREADY_EXISTS": "Cannot upload file with the same name.",
+    "INVALID_CONTENT": "Cannot read file.",
+    "EXCEPTION": "Failure while uploading file. Please try again.",
+    "INVALID_SCOPE": "Unknown scope '{0}'.",
+    "INVALID_EXTENSION": "File is not in one of allowed formats {0}.",
+    "INVALID_SIZE": "File size exceeds the allowed {0}.",
+    "CANNOT_DELETE": "Failure while deleting file."
   }
 }

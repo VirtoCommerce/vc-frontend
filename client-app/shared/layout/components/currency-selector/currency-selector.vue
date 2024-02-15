@@ -24,7 +24,7 @@
           @click="select(item.code)"
         >
           <span
-            class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-[--color-additional-50]"
+            class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-[--color-additional-50]"
           >
             {{ item.symbol }}
           </span>

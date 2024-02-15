@@ -1,5 +1,5 @@
-#import "./moneyFields.graphql"
-#import "./propertyFields.graphql"
+#import "../common/fragments/money.graphql"
+#import "../catalog/fragments/property.graphql"
 
 fragment quoteLineItemFields on QuoteItemType {
   id
@@ -8,12 +8,12 @@ fragment quoteLineItemFields on QuoteItemType {
   name
   imageUrl
   listPrice {
-    ...moneyFields
+    ...money
   }
   selectedTierPrice {
     quantity
     price {
-      ...moneyFields
+      ...money
     }
   }
   product {
@@ -21,7 +21,7 @@ fragment quoteLineItemFields on QuoteItemType {
     slug
     brandName
     properties {
-      ...propertyFields
+      ...property
     }
     availabilityData {
       availableQuantity

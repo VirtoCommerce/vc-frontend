@@ -1,5 +1,5 @@
-#import "./moneyFields.graphql"
-#import "./propertyFields.graphql"
+#import "../common/fragments/money.graphql"
+#import "../catalog/fragments/property.graphql"
 
 fragment orderLineItemFields on OrderLineItemType {
   id
@@ -17,25 +17,25 @@ fragment orderLineItemFields on OrderLineItemType {
       slug
     }
     properties {
-      ...propertyFields
+      ...property
     }
   }
   quantity
   sku
   extendedPrice {
-    ...moneyFields
+    ...money
   }
   price {
-    ...moneyFields
+    ...money
   }
   placedPrice {
-    ...moneyFields
+    ...money
   }
   taxTotal {
-    ...moneyFields
+    ...money
   }
   discountTotal {
-    ...moneyFields
+    ...money
   }
   outerId
   vendor {

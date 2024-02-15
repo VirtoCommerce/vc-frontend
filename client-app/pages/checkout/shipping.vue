@@ -1,21 +1,15 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <ShippingDetailsSection
-      :methods="availableShippingMethods"
-      :shipment="shipment"
-      :disabled="loading"
-      @change:address="onDeliveryAddressChange"
-      @change:method="setShippingMethod"
-    />
+    <ShippingDetailsSection />
 
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
         <template #footer>
-          <VcButton :to="{ name: 'Billing', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
+          <ProceedTo :to="{ name: 'Billing' }" :disabled="!isValidShipment">
             {{ $t("common.buttons.go_to_billing") }}
-          </VcButton>
+          </ProceedTo>
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="!isValidShipment" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -35,14 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useCart } from "@/shared/cart";
-import { OrderCommentSection, OrderSummary, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
+import { useFullCart } from "@/shared/cart";
+import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { loading, cart, selectedLineItems, shipment, hasValidationErrors, availableShippingMethods } = useCart();
-const { comment, isValidShipment, onDeliveryAddressChange, setShippingMethod } = useCheckout();
-
-const isDisabledNextStep = computed<boolean>(
-  () => loading.value || hasValidationErrors.value || !isValidShipment.value,
-);
+const { cart, selectedLineItems, hasValidationErrors } = useFullCart();
+const { comment, isValidShipment } = useCheckout();
 </script>

@@ -7,7 +7,7 @@
 
     <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
       <!-- Company name block -->
-      <div class="flex items-end gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+      <div class="flex items-start gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput
           v-model="organizationName"
           :label="$t('pages.company.info.labels.company_name')"
@@ -24,13 +24,11 @@
           v-if="userCanEditOrganization"
           :loading="loadingOrganization || loadingUser"
           :disabled="!meta.valid || !meta.dirty"
-          :icon="isMobile"
-          class="flex-none"
+          :icon="companyNameSaveIcon"
+          class="mt-[1.375rem] flex-none"
           @click="saveOrganizationName"
         >
-          <VcIcon name="save-v2" class="lg:!hidden" />
-
-          <span>{{ $t("common.buttons.save") }}</span>
+          {{ $t("common.buttons.save") }}
         </VcButton>
       </div>
 
@@ -133,12 +131,24 @@
                   </span>
                 </div>
 
-                <div v-if="userCanEditOrganization" class="absolute right-4 top-3">
+                <div class="absolute right-4 top-3 flex flex-col items-center">
                   <AddressDropdownMenu
+                    v-if="userCanEditOrganization"
                     :address="item"
                     placement="left-start"
                     @edit="openAddOrUpdateCompanyAddressModal(item)"
                     @delete="openDeleteAddressModal(item)"
+                  />
+
+                  <VcIcon
+                    :class="{
+                      'text-neutral-400': !item.isFavorite,
+                      'text-primary-500': item.isFavorite,
+                      'mt-2': userCanEditOrganization,
+                    }"
+                    name="star"
+                    size="md"
+                    @click="toggleFavoriteAddress(item.isFavorite, item.id)"
                   />
                 </div>
               </div>
@@ -174,6 +184,31 @@
 
             <template #desktop-body>
               <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
+                <td class="cursor-pointer px-4 py-3 text-center">
+                  <VcTooltip class="ml-1" placement="bottom-start" strategy="fixed">
+                    <template #trigger>
+                      <VcIcon
+                        :class="{
+                          'text-neutral-400': !address.isFavorite,
+                          'text-primary-500': address.isFavorite,
+                        }"
+                        name="star"
+                        size="md"
+                        @click="toggleFavoriteAddress(address.isFavorite, address.id)"
+                      />
+                    </template>
+
+                    <template #content>
+                      <div class="w-44 rounded-sm bg-white px-3.5 py-1.5 text-xs font-light shadow-sm">
+                        {{
+                          address.isFavorite
+                            ? $t("pages.company.info.remove_from_favorites")
+                            : $t("pages.company.info.add_to_favorites")
+                        }}
+                      </div>
+                    </template>
+                  </VcTooltip>
+                </td>
                 <td class="overflow-hidden text-ellipsis px-5 py-3">
                   <span>{{ address.line1 }}</span>
                   <template v-if="address.city">, {{ address.city }}</template>
@@ -236,8 +271,8 @@ import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
@@ -265,9 +300,11 @@ const {
   fetchAddresses,
   removeAddresses,
   addOrUpdateAddresses,
+  addAddressToFavorite,
+  removeAddressFromFavorite,
   loading: loadingAddresses,
 } = useOrganizationAddresses(organization.value!.id);
-const { openPopup } = usePopup();
+const { openModal } = useModal();
 const notifications = useNotifications();
 
 const {
@@ -285,8 +322,15 @@ const paginatedAddresses = computed<MemberAddressType[]>(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 
+const companyNameSaveIcon = computed(() => (isMobile.value ? "save-v2" : ""));
+
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
+    {
+      id: "isFavorite",
+      sortable: false,
+      classes: "w-14",
+    },
     {
       id: "line1",
       title: t("pages.company.info.labels.address"),
@@ -346,8 +390,8 @@ function openDeleteAddressModal(address: MemberAddressType): void {
     return;
   }
 
-  const closeDeleteAddressModal = openPopup({
-    component: "VcConfirmationDialog",
+  const closeDeleteAddressModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "danger",
       iconVariant: "danger",
@@ -381,7 +425,7 @@ function openDeleteAddressModal(address: MemberAddressType): void {
 }
 
 function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
-  const closeAddOrUpdateAddressModal = openPopup({
+  const closeAddOrUpdateAddressModal = openModal({
     component: AddOrUpdateCompanyAddressModal,
     props: {
       address,
@@ -404,6 +448,12 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
 }
 
 fetchAddresses();
+
+async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
+  if (addressId) {
+    isFavoriteAddress ? await removeAddressFromFavorite(addressId) : await addAddressToFavorite(addressId);
+  }
+}
 
 watch(
   () => organization.value!.name!,

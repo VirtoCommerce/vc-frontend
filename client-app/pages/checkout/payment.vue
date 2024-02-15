@@ -5,7 +5,7 @@
         <div class="min-w-0 truncate">
           <VcImage
             :src="payment?.paymentMethod?.logoUrl"
-            class="mr-3.5 inline-block h-8 w-8 object-center md:h-9 md:w-9"
+            class="mr-3.5 inline-block size-8 object-center md:size-9"
             lazy
           />
 
@@ -26,7 +26,7 @@
     </div>
 
     <template #sidebar>
-      <OrderSummary :cart="placedOrder" :no-shipping="allItemsAreDigital" />
+      <OrderSummary :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
     </template>
   </VcLayoutWithRightSidebar>
 </template>
@@ -39,7 +39,7 @@ import { PaymentActionType, PaymentProcessingAuthorizeNet, PaymentProcessingRedi
 import type { PaymentInType } from "@/core/api/graphql/types";
 
 const router = useRouter();
-const { placedOrder, allItemsAreDigital } = useCheckout();
+const { placedOrder, allOrderItemsAreDigital } = useCheckout();
 
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);

@@ -11,7 +11,7 @@
   >
     <component
       :is="collapsible ? 'button' : 'div'"
-      v-if="title || $slots.header || $slots['header-container']"
+      v-if="title || $slots.title || $slots.header || $slots['header-container']"
       :type="collapsible ? 'button' : null"
       class="vc-widget__header-container"
       @click="toggleCollapse()"
@@ -26,7 +26,9 @@
             </span>
 
             <span class="vc-widget__title">
-              {{ title }}
+              <slot name="title">
+                {{ title }}
+              </slot>
             </span>
 
             <span v-if="collapsible || appendIcon || $slots.append" class="vc-widget__prepend-append">
@@ -67,6 +69,10 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 
+export interface IEmits {
+  (event: "toggleCollapse", value: boolean): void;
+}
+
 interface IProps {
   title?: string;
   prependIcon?: string;
@@ -77,6 +83,8 @@ interface IProps {
   size?: "xs" | "sm" | "md" | "lg";
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
@@ -86,6 +94,7 @@ const _collapsed = ref(false);
 function toggleCollapse() {
   if (props.collapsible) {
     _collapsed.value = !_collapsed.value;
+    emit("toggleCollapse", _collapsed.value);
   }
 }
 
@@ -105,7 +114,7 @@ watchEffect(() => {
   &--size {
     &--xs {
       --p-x: theme("padding.4");
-      --header-p-y: theme("padding.1");
+      --header-p-y: theme("padding.[1.5]");
       --header-gap: theme("gap.[1.5]");
       --title-text: theme("fontSize.sm");
       --title-min-h: 1.625rem;
@@ -113,7 +122,7 @@ watchEffect(() => {
 
     &--sm {
       --p-x: theme("padding.4");
-      --header-p-y: theme("padding.2");
+      --header-p-y: theme("padding.[1.5]");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.base");
       --title-min-h: 1.875rem;
@@ -178,7 +187,7 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--title-min-h] grow text-[length:--title-text] font-bold uppercase;
+    @apply flex flex-col justify-center min-h-[--title-min-h] min-w-0 grow text-[length:--title-text] font-bold uppercase;
   }
 
   &__slot {

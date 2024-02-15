@@ -1,0 +1,6 @@
+fragment quoteAttachment on QuoteAttachmentType {
+  name
+  url
+  contentType
+  size
+}

@@ -1,7 +1,23 @@
-#import "../../../fragments/moneyFields.graphql"
+#import "../../../common/fragments/money.graphql"
 
-query GetOrders($filter: String, $sort: String, $cultureName: String, $userId: String, $after: String, $first: Int) {
-  orders(filter: $filter, sort: $sort, cultureName: $cultureName, userId: $userId, after: $after, first: $first) {
+query GetOrders(
+  $filter: String
+  $sort: String
+  $cultureName: String
+  $userId: String
+  $after: String
+  $first: Int
+  $facet: String
+) {
+  orders(
+    filter: $filter
+    sort: $sort
+    cultureName: $cultureName
+    userId: $userId
+    after: $after
+    first: $first
+    facet: $facet
+  ) {
     totalCount
     items {
       id
@@ -11,7 +27,7 @@ query GetOrders($filter: String, $sort: String, $cultureName: String, $userId: S
         code
       }
       total {
-        ...moneyFields
+        ...money
       }
       inPayments {
         number
@@ -19,6 +35,14 @@ query GetOrders($filter: String, $sort: String, $cultureName: String, $userId: S
       number
       customerId
       purchaseOrderNumber
+    }
+    term_facets {
+      name
+      terms {
+        term
+        label
+        count
+      }
     }
   }
 }

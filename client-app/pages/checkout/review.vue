@@ -19,10 +19,10 @@
       <!-- Items not grouped by Vendor -->
       <OrderLineItems v-else :items="selectedLineItems" />
 
-      <div class="divide-y print:divide-y-0 lg:divide-y-0">
+      <div class="divide-y lg:divide-y-0 print:divide-y-0">
         <!-- Shipping details -->
         <div v-if="!allItemsAreDigital" class="mt-6 flex flex-col gap-6 md:mt-8 lg:flex-row lg:gap-8">
-          <div class="print:break-inside-avoid lg:w-3/5">
+          <div class="lg:w-3/5 print:break-inside-avoid">
             <VcLabel>
               {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
             </VcLabel>
@@ -46,19 +46,18 @@
             readonly
           >
             <template #selected="{ item }">
-              <VcSelectItem class="print:px-0 print:py-1.5">
-                <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
-                <VcSelectItemText>
-                  {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
-                </VcSelectItemText>
-              </VcSelectItem>
+              <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
+                <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+
+                {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
+              </div>
             </template>
           </VcSelect>
         </div>
 
         <!-- Payment details -->
         <div class="mb-2 mt-6 flex flex-col gap-6 pt-5 md:mt-8 lg:flex-row lg:gap-8 lg:pt-0">
-          <div class="print:break-inside-avoid lg:w-3/5">
+          <div class="lg:w-3/5 print:break-inside-avoid">
             <VcLabel>
               {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
             </VcLabel>
@@ -82,10 +81,11 @@
               readonly
             >
               <template #selected="{ item }">
-                <VcSelectItem class="print:px-0 print:py-1.5">
-                  <VcSelectItemImage :src="item.logoUrl" class="print:hidden" />
-                  <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
-                </VcSelectItem>
+                <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
+                  <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+
+                  {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+                </div>
               </template>
             </VcSelect>
 
@@ -119,15 +119,7 @@
             />
           </transition>
 
-          <VcButton
-            :disabled="isDisabledOrderCreation"
-            :loading="loading"
-            full-width
-            class="mt-4 print:!hidden"
-            @click="createOrderFromCart"
-          >
-            {{ $t("common.buttons.place_order") }}
-          </VcButton>
+          <PlaceOrder />
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="hasValidationErrors" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -150,8 +142,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
-import { useCart, useCoupon } from "@/shared/cart";
-import { AcceptedGifts, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { useFullCart, useCoupon } from "@/shared/cart";
+import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {
@@ -164,18 +156,9 @@ const {
   availablePaymentMethods,
   hasValidationErrors,
   allItemsAreDigital,
-} = useCart();
-const {
-  loading,
-  billingAddressEqualsShipping,
-  comment,
-  purchaseOrderNumber,
-  isPurchaseOrderNumberEnabled,
-  isValidCheckout,
-  createOrderFromCart,
-} = useCheckout();
+} = useFullCart();
+const { billingAddressEqualsShipping, comment, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
 const { couponCode } = useCoupon();
-const isDisabledOrderCreation = computed<boolean>(() => !isValidCheckout.value);
 
 const shippingMethodId = computed(
   () => shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,

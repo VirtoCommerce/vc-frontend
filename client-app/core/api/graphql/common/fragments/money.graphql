@@ -1,0 +1,10 @@
+#import "./currency.graphql"
+
+fragment money on MoneyType {
+  amount
+  formattedAmount
+  formattedAmountWithoutCurrency
+  currency {
+    ...currency
+  }
+}

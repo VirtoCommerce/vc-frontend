@@ -14,10 +14,10 @@ export function useFetch() {
   const error = shallowRef<Error | undefined>();
   const statusCode = shallowRef<number | null>();
 
-  function innerFetch<TResult, TBody = unknown>(
+  function innerFetch<TResult, TPayload = unknown>(
     url: string,
     method = "GET",
-    payload?: TBody,
+    payload?: TPayload,
     contentType: string | null = "application/json",
   ): Promise<TResult> {
     const headers = new Headers();

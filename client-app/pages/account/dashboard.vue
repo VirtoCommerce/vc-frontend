@@ -31,7 +31,7 @@
         <div class="flex content-center space-x-9 lg:space-x-4">
           <VcImage
             src="/static/images/dashboard/spend-chart.svg"
-            class="h-24 w-24"
+            class="size-24"
             :alt="$t('pages.account.dashboard.monthly_report_card.spend_chart_alt')"
             lazy
           />

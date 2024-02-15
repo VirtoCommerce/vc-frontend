@@ -1,3 +1,4 @@
+import { useApolloClient } from "@vue/apollo-composable";
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
@@ -24,7 +25,7 @@ import {
   userReloadEvent,
   passwordExpiredEvent,
 } from "@/shared/broadcast";
-import { usePopup } from "@/shared/popup";
+import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
   AccountCreationResultType,
@@ -63,9 +64,10 @@ interface IPasswordExpirationEntry {
 }
 
 export function useUser() {
+  const { resolveClient } = useApolloClient();
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
-  const { openPopup, closePopup } = usePopup();
+  const { openModal, closeModal } = useModal();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -85,7 +87,7 @@ export function useUser() {
       return;
     }
 
-    openPopup({
+    openModal({
       component: PasswordExpirationModal,
 
       props: {
@@ -96,7 +98,7 @@ export function useUser() {
             remove(changePasswordReminderDates.value, (entry) => entry.userId === userPasswordExpirationEntry.userId);
           }
 
-          closePopup();
+          closeModal();
 
           await globals.router.replace({ name: "ChangePassword" });
         },
@@ -114,7 +116,7 @@ export function useUser() {
             });
           }
 
-          closePopup();
+          closeModal();
         },
       },
     });
@@ -218,6 +220,7 @@ export function useUser() {
       refreshToken.value = tokens.refresh_token;
 
       if (result.succeeded) {
+        resolveClient().cache.gc();
         broadcast.emit(pageReloadEvent);
       }
 
@@ -295,6 +298,7 @@ export function useUser() {
     try {
       loading.value = true;
       await innerFetch("/storefrontapi/account/logout");
+      resolveClient().cache.gc();
       if (options.reloadPage) {
         broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
       }

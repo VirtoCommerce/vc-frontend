@@ -2,19 +2,19 @@
   <ul class="vc-steps">
     <transition-group :name="transitionName">
       <li
-        v-for="(step, index) in steps"
+        v-for="(step, index) in steps.filter((step) => !step.hidden)"
         :key="step.text"
         :class="[
           'vc-steps__item',
           {
-            'vc-steps__item--active': index + startStepIndex === currentStepIndex,
-            'vc-steps__item--completed': index + startStepIndex < currentStepIndex,
-            'vc-steps__item--disabled': disabled,
+            'vc-steps__item--active': isActiveStep(index),
+            'vc-steps__item--completed': isCompletedStep(index),
+            'vc-steps__item--disabled': !isCompletedStep(index) && isDisabledStep(step),
           },
         ]"
       >
         <component
-          :is="step.route && index + startStepIndex < currentStepIndex && !disabled ? 'router-link' : 'span'"
+          :is="step.route && isCompletedStep(index) && !isDisabledStep(step) ? 'router-link' : 'span'"
           :to="step.route"
           class="vc-steps__step"
         >
@@ -23,7 +23,7 @@
             <VcIcon v-if="step.icon" :name="step.icon" size="xxs" />
 
             <!-- Completed icon -->
-            <VcIcon v-else-if="index + startStepIndex < currentStepIndex" name="check-bold" size="xxs" />
+            <VcIcon v-else-if="isCompletedStep(index)" name="check-bold" size="xxs" />
 
             <!-- Step number -->
             <template v-else>{{ index + startStepIndex }}</template>
@@ -45,11 +45,23 @@ interface IProps {
   transitionName?: string;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   steps: () => [],
   currentStepIndex: -1,
   startStepIndex: 1,
 });
+
+function isActiveStep(index: number) {
+  return index + props.startStepIndex === props.currentStepIndex;
+}
+
+function isCompletedStep(index: number) {
+  return index + props.startStepIndex < props.currentStepIndex;
+}
+
+function isDisabledStep(step: IStepsItem) {
+  return step.disabled || props.disabled;
+}
 </script>
 
 <style lang="scss">

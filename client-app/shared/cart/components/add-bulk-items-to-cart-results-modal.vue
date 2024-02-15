@@ -1,59 +1,53 @@
 <template>
-  <VcPopup
-    :title="$t('shared.cart.add_bulk_items_to_cart_results_popup.title')"
+  <VcModal
+    :title="$t('shared.cart.add_bulk_items_to_cart_results_modal.title')"
     modal-width="sm:max-w-3xl"
     is-mobile-fullscreen
   >
     <div class="flex-1 gap-y-5 p-6 md:border-b">
       <VcExpansionPanels class="flex flex-col gap-y-4">
-        <VcExpansionPanel
-          v-for="(group, index) in groups"
-          :key="group.name"
-          :expanded="!index && groups.length === 1"
-          header-classes="px-4 py-5"
-          full-width-content
-        >
+        <VcExpansionPanel v-for="(group, index) in groups" :key="group.name" :expanded="!index && groups.length === 1">
+          <template #icon>
+            <VcIcon v-if="group.name === 'added'" class="text-[--color-success-500]" name="check-circle" />
+            <VcIcon v-else-if="group.name === 'not_added'" class="text-[--color-danger-500]" name="x-circle" />
+          </template>
+
           <template #header-content>
-            <div class="flex min-w-0 grow items-center gap-x-2.5">
-              <VcIcon v-if="group.name === 'added'" class="text-[--color-success-500]" name="check-circle" />
-              <VcIcon v-else-if="group.name === 'not_added'" class="text-[--color-danger-500]" name="x-circle" />
-
-              <span class="truncate text-15 font-bold">
-                {{ $t(`shared.cart.add_bulk_items_to_cart_results_popup.groups.${group.name}`) }}
+            <div class="flex items-center gap-x-2.5">
+              <span class="truncate text-sm font-bold normal-case">
+                {{ $t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`) }}
               </span>
 
-              <span
-                class="rounded-full border border-[color:var(--color-primary)] px-2 py-0.5 text-11 font-extrabold leading-3"
-              >
+              <VcBadge class="flex-none" variant="outline" rounded>
                 {{ group.items.length }}
-              </span>
+              </VcBadge>
             </div>
           </template>
 
           <div class="max-h-80 overflow-y-auto rounded-[inherit] md:max-h-72">
             <ul class="w-full md:table">
-              <li class="top-0 hidden bg-gray-50 text-15 font-extrabold md:sticky md:table-row">
+              <li class="top-0 hidden bg-gray-50 text-sm font-extrabold md:sticky md:table-row">
                 <div class="table-cell border-b px-4 py-2.5">
-                  {{ $t("shared.cart.add_bulk_items_to_cart_results_popup.labels.sku") }}
+                  {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </div>
 
                 <div class="table-cell border-b px-4 py-2.5">
-                  {{ $t("shared.cart.add_bulk_items_to_cart_results_popup.labels.product_name") }}
+                  {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.product_name") }}
                 </div>
 
                 <div class="table-cell border-b px-4 py-2.5 text-right">
-                  {{ $t("shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity") }}
+                  {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
                 </div>
               </li>
 
               <li
                 v-for="item in group.items"
                 :key="item.sku"
-                class="flex flex-wrap border-b px-4 py-2.5 last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-gray-50"
+                class="flex flex-wrap border-b px-4 py-2.5 text-sm last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-gray-50"
               >
                 <div class="flex w-3/5 flex-col pr-3 md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle">
-                  <span class="text-13 text-gray-400 md:hidden">
-                    {{ $t("shared.cart.add_bulk_items_to_cart_results_popup.labels.sku") }}
+                  <span class="text-gray-400 md:hidden">
+                    {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                   </span>
                   <span class="font-semibold">{{ item.sku }}</span>
                 </div>
@@ -73,8 +67,8 @@
                 <div
                   class="flex w-2/5 flex-col md:table-cell md:w-auto md:px-4 md:py-2.5 md:text-right md:align-middle"
                 >
-                  <span class="text-13 text-gray-400 md:hidden">
-                    {{ $t("shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity") }}
+                  <span class="text-gray-400 md:hidden">
+                    {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
                   </span>
                   <span class="font-bold">{{ $n(item.quantity) }}</span>
                 </div>
@@ -103,7 +97,7 @@
         {{ $t("common.buttons.ok") }}
       </VcButton>
     </template>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
@@ -112,9 +106,9 @@ import { useI18n } from "vue-i18n";
 import { useProductsRoutes } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { VcButton } from "@/ui-kit/components";
-import type { ItemForAddBulkItemsToCartResultsPopupType } from "@/shared/cart";
+import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
 
-type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsPopupType[] };
+type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsModalType[] };
 
 interface IEmits {
   (event: "confirm"): void;
@@ -122,7 +116,7 @@ interface IEmits {
 
 interface IProps {
   listName: string;
-  items?: ItemForAddBulkItemsToCartResultsPopupType[];
+  items?: ItemForAddBulkItemsToCartResultsModalType[];
 }
 
 defineEmits<IEmits>();
@@ -138,8 +132,8 @@ const { d, t } = useI18n();
 
 const groups = computed<GroupType[]>(() => {
   const result: GroupType[] = [];
-  const added: ItemForAddBulkItemsToCartResultsPopupType[] = [];
-  const notAdded: ItemForAddBulkItemsToCartResultsPopupType[] = [];
+  const added: ItemForAddBulkItemsToCartResultsModalType[] = [];
+  const notAdded: ItemForAddBulkItemsToCartResultsModalType[] = [];
 
   props.items.forEach((item) => {
     if (item.isAddedToCart) {
@@ -160,10 +154,10 @@ const groups = computed<GroupType[]>(() => {
   return result;
 });
 
-function getTableRowsHtml(groupedItems: ItemForAddBulkItemsToCartResultsPopupType[]) {
+function getTableRowsHtml(groupedItems: ItemForAddBulkItemsToCartResultsModalType[]) {
   let rows = "";
 
-  groupedItems.forEach((item: ItemForAddBulkItemsToCartResultsPopupType) => {
+  groupedItems.forEach((item: ItemForAddBulkItemsToCartResultsModalType) => {
     rows += `
     <tr class="even:bg-[--color-neutral-50]">
       <td class="px-2.5 py-2">${item.name}</td>
@@ -209,20 +203,20 @@ function print() {
         <svg class="vc-icon vc-icon--size--sm text-[--color-secondary-300] flex-none">
           <use href="/static/icons/basic/${iconName(group.name)}.svg#icon" />
         </svg>
-        ${t(`shared.cart.add_bulk_items_to_cart_results_popup.groups.${group.name}`)}
+        ${t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`)}
       </h3>
 
       <div class="overflow-hidden border border-[--color-neutral-100] rounded">
         <table class="w-full border-collapse text-xs">
           <thead class="bg-[--color-neutral-50] font-bold text-left">
             <th class="px-2.5 py-2 w-1/2">
-              ${t("shared.cart.add_bulk_items_to_cart_results_popup.labels.product_name")}
+              ${t("shared.cart.add_bulk_items_to_cart_results_modal.labels.product_name")}
             </th>
             <th class="px-2.5 py-2 w-1/6">
-              ${t("shared.cart.add_bulk_items_to_cart_results_popup.labels.sku")}
+              ${t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku")}
             </th>
             <th class="px-2.5 py-2 w-2/6">
-              ${t("shared.cart.add_bulk_items_to_cart_results_popup.labels.quantity")}
+              ${t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity")}
             </th>
           </thead>
 

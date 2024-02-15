@@ -3,8 +3,8 @@ import { getPropertiesGroupedByName } from "../properties";
 import type {
   AnyLineItemType,
   ExtendedLineItemType,
-  LineItemsGroupByVendorType,
-  LineItemsGroupsByVendorType,
+  VendorGroupType,
+  VendorGroupByVendorIdType,
   PreparedLineItemType,
 } from "../../types";
 import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
@@ -13,12 +13,13 @@ export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
   return "proposalPrices" in item || "selectedTierPrice" in item;
 }
 
-export function getLineItemsGroupedByVendor<T extends LineItemType | OrderLineItemType>(
-  items: T[],
-): LineItemsGroupByVendorType<T>[] {
+/** @deprecated Use {@link groupByVendor} instead. */
+export const getLineItemsGroupedByVendor = groupByVendor;
+
+export function groupByVendor<T extends LineItemType | OrderLineItemType>(items: T[]): VendorGroupType<T>[] {
   // NOTE: The group without the vendor should be displayed last.
-  const groupWithoutVendor: LineItemsGroupByVendorType<T> = { items: [] };
-  const map: LineItemsGroupsByVendorType<T> = {};
+  const groupWithoutVendor: VendorGroupType<T> = { items: [] };
+  const map: VendorGroupByVendorIdType<T> = {};
 
   items.forEach((item) => {
     const vendor = item.vendor;
@@ -113,8 +114,6 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
   };
 }
 
-export function prepareLineItems(
-  items: LineItemType[] | OrderLineItemType[] | QuoteItemType[],
-): PreparedLineItemType[] {
+export function prepareLineItems(items: AnyLineItemType[]): PreparedLineItemType[] {
   return items.map((item) => prepareLineItem(item));
 }

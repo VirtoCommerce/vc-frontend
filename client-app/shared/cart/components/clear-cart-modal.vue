@@ -1,5 +1,5 @@
 <template>
-  <VcPopup :title="$t('shared.cart.clear_cart_modal.title')" modal-width="sm:max-w-[30rem]">
+  <VcModal :title="$t('shared.cart.clear_cart_modal.title')" modal-width="sm:max-w-[30rem]">
     <template #actions="{ close }">
       <VcButton
         color="secondary"
@@ -24,9 +24,13 @@
         {{ $t("shared.cart.clear_cart_modal.message") }}
       </span>
     </div>
-  </VcPopup>
+  </VcModal>
 </template>
 
 <script setup lang="ts">
-defineEmits(["result"]);
+interface IEmits {
+  (event: "result"): void;
+}
+
+defineEmits<IEmits>();
 </script>

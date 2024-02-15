@@ -1,6 +1,7 @@
 import { createHead } from "@unhead/vue";
-import { createApp } from "vue";
-import VueSecureHTML from "vue-html-secure";
+import { DefaultApolloClient } from "@vue/apollo-composable";
+import { createApp, h, provide } from "vue";
+import { apolloClient } from "@/core/api/graphql";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -68,18 +69,25 @@ export default async () => {
   /**
    * Create and mount application
    */
-  const app = createApp(App, {
-    /**
-     * Passing data-* attributes to the application props
-     */
-    ...appElement.dataset,
-  });
+  const app = createApp(
+    {
+      setup() {
+        provide(DefaultApolloClient, apolloClient);
+      },
+      render: () => h(App),
+    },
+    {
+      /**
+       * Passing data-* attributes to the application props
+       */
+      ...appElement.dataset,
+    },
+  );
 
   // Plugins
   app.use(head);
   app.use(i18n);
   app.use(router);
-  app.use(VueSecureHTML);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value!.settings);

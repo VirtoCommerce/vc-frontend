@@ -1,44 +1,32 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./changeSelectedCartItemsMutation.graphql";
-import type {
-  CartType,
-  ChangeSelectedCartItemsMutation,
-  ChangeSelectedCartItemsMutationVariables,
-  InputChangeCartItemsSelectedType,
-} from "@/core/api/graphql/types";
+import { useSelectCartItemsMutation } from "@/core/api/graphql/cart/mutations/selectCartItems";
+import { useUnselectCartItemsMutation } from "@/core/api/graphql/cart/mutations/unselectCartItems";
+import type { CartType } from "@/core/api/graphql/types";
 
+/** @deprecated Use {@link useChangeSelectedCartItemsMutation} instead. */
 export async function changeSelectedCartItems(
   selectedLineItemIds: string[],
   unselectedLineItemIds: string[],
 ): Promise<CartType> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
-
-  const command: Omit<InputChangeCartItemsSelectedType, "lineItemIds"> = {
-    storeId,
-    userId,
-    cultureName,
-    currencyCode,
-  };
-
-  const { data } = await graphqlClient.mutate<
-    ChangeSelectedCartItemsMutation,
-    ChangeSelectedCartItemsMutationVariables
-  >({
-    mutation: mutationDocument,
-    variables: {
-      selectCartItemsCommand: {
-        ...command,
+  const { mutate: selectCartItems } = useSelectCartItemsMutation();
+  const { mutate: unselectCartItemsMutation } = useUnselectCartItemsMutation();
+  const withSelected = selectedLineItemIds.length > 0;
+  const withUnselected = unselectedLineItemIds.length > 0;
+  let cart: CartType;
+  if (withSelected) {
+    const result = await selectCartItems({
+      command: {
         lineItemIds: selectedLineItemIds,
       },
-      unselectCartItemsCommand: {
-        ...command,
+    });
+    cart = result!.data!.selectCartItems! as CartType;
+  }
+  if (withUnselected) {
+    const result = await unselectCartItemsMutation({
+      command: {
         lineItemIds: unselectedLineItemIds,
       },
-      withSelected: selectedLineItemIds.length > 0,
-      withUnselected: unselectedLineItemIds.length > 0,
-    },
-  });
-
-  return (data!.unSelectCartItems || data!.selectCartItems)! as CartType;
+    });
+    cart = result!.data!.unSelectCartItems! as CartType;
+  }
+  return cart!;
 }

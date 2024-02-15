@@ -19,8 +19,8 @@ function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "t
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }): UserConfig => {
-  const isDevelopment = mode === "development";
+export default defineConfig(({ command, mode }): UserConfig => {
+  const isServe = command == "serve";
 
   // https://stackoverflow.com/a/66389044
   process.env = {
@@ -30,17 +30,18 @@ export default defineConfig(({ mode }): UserConfig => {
 
   return {
     envPrefix: "APP_",
-    base: isDevelopment ? "/" : "/themes/assets/",
+    base: isServe ? "/" : "/themes/assets/",
     publicDir: "./client-app/public",
     plugins: [
       mkcert({
-        savePath: "./.certificates",
+        force: true,
+        savePath: path.resolve(__dirname, ".certificates"),
         keyFileName: "private.pem",
         certFileName: "public.pem",
       }),
       vue(),
       graphql(),
-      isDevelopment
+      isServe
         ? checker({
             enableBuild: false,
             typescript: true,
@@ -110,8 +111,8 @@ export default defineConfig(({ mode }): UserConfig => {
     },
     server: {
       port: 3000,
-      https: true,
       proxy: {
+        "^/api": getProxy(process.env.APP_BACKEND_URL),
         "^/(xapi|storefrontapi)": getProxy(process.env.APP_BACKEND_URL),
         "^/connect/token": getProxy(process.env.APP_BACKEND_URL),
         // For login on behalf

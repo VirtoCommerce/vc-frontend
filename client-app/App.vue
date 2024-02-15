@@ -7,7 +7,7 @@
     <RouterView />
   </component>
 
-  <PopupHost />
+  <ModalHost />
   <NotificationsHost />
 </template>
 
@@ -17,10 +17,9 @@ import { computedEager } from "@vueuse/core";
 import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
-import { useNavigations, usePagesWithFullCartLoad } from "@/core/composables";
-import { useCart } from "@/shared/cart";
+import { useNavigations } from "@/core/composables";
+import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
-import { PopupHost } from "@/shared/popup";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
 
@@ -31,9 +30,7 @@ const _settings = JSON.parse(_props.settings); // eslint-disable-line @typescrip
 const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
-const { pagesWithFullCartLoad, registerPagesWithFullCartLoad } = usePagesWithFullCartLoad();
 const { fetchMenus } = useNavigations();
-const { fetchShortCart } = useCart();
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
@@ -52,17 +49,7 @@ router.beforeEach((to) => {
   }
 });
 
-registerPagesWithFullCartLoad("Cart", "CheckoutDefaults");
-
-fetchMenus();
-
-/**
- * NOTE: Load the short shopping cart.
- * Except for pages that load a full cart.
- */
-if (!pagesWithFullCartLoad.has(route.name!)) {
-  fetchShortCart();
-}
+void fetchMenus();
 
 onMounted(setupBroadcastGlobalListeners);
 </script>

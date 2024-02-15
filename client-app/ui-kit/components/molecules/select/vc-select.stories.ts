@@ -1,5 +1,4 @@
 import { VcSelect } from "..";
-import { VcSelectItem, VcSelectItemImage, VcSelectItemText } from "../../atoms";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -16,7 +15,7 @@ export default {
         },
       },
     },
-    modelValue: { table: { type: { summary: "object|string" } } },
+    modelValue: { table: { type: { summary: "object|string|array" } } },
   },
   args: {
     readonly: false,
@@ -29,10 +28,14 @@ export default {
   },
 } as Meta<typeof VcSelect>;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 const Template: StoryFn<typeof VcSelect> = (args) => ({
   components: { VcSelect },
   setup: () => ({ args }),
-  template: '<VcSelect v-bind="args" />',
+  template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32" />`,
 });
 
 export const Basic = Template.bind({});
@@ -51,14 +54,30 @@ Common.args = {
 export const Required = Template.bind({});
 Required.args = {
   ...Common.args,
-  modelValue: "Belgium",
   required: true,
+};
+
+export const Readonly = Template.bind({});
+Readonly.args = {
+  ...Common.args,
+  readonly: true,
+};
+
+export const Disabled = Template.bind({});
+Disabled.args = {
+  ...Common.args,
+  disabled: true,
+};
+
+export const Clearable = Template.bind({});
+Clearable.args = {
+  ...Common.args,
+  clearable: true,
 };
 
 export const ErrorState = Template.bind({});
 ErrorState.args = {
   ...Required.args,
-  modelValue: "Belgium",
   error: true,
   message: "Error message",
 };
@@ -66,58 +85,56 @@ ErrorState.args = {
 export const Autocomplete = Template.bind({});
 Autocomplete.args = {
   ...Required.args,
-  modelValue: "",
   placeholder: "Search item",
   autocomplete: true,
 };
 
+export const MultipleSelect = Template.bind({});
+MultipleSelect.args = {
+  ...Required.args,
+  modelValue: [],
+  placeholder: "Select multiple items",
+  multiple: true,
+};
+
+export const MultipleSelectAutocomplete = Template.bind({});
+MultipleSelectAutocomplete.args = {
+  ...MultipleSelect.args,
+  autocomplete: true,
+};
+
+export const MultipleSelectAutocompleteClearable = Template.bind({});
+MultipleSelectAutocompleteClearable.args = {
+  ...MultipleSelectAutocomplete.args,
+  clearable: true,
+};
+
 export const Custom: StoryFn<typeof VcSelect> = (args) => ({
-  components: { VcSelect, VcSelectItem, VcSelectItemImage, VcSelectItemText },
+  components: { VcSelect },
   setup: () => ({ args }),
-  template: `<VcSelect v-bind="args">
+  template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">
     <template #placeholder>
-      <VcSelectItem>
-        <VcSelectItemImage src="/static/icons/placeholders/select-payment.svg" class="bg-gray-100/80" />
-        <VcSelectItemText>
-          {{ $t("common.placeholders.select_payment_method") }}
-        </VcSelectItemText>
-      </VcSelectItem>
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="w-8 h-8 rounded-full bg-[--color-neutral-200]"></div>
+        Select an item
+      </div>
     </template>
 
     <template #selected="{ item }">
-      <VcSelectItem>
-        <VcSelectItemImage :src="item.logoUrl" />
-        <VcSelectItemText>{{ item.optionName }}</VcSelectItemText>
-      </VcSelectItem>
+      <div class="flex items-center gap-3 p-3 text-sm">
+        <div class="flex items-center justify-center w-8 h-8 rounded-full text-[--color-additional-50] bg-[--color-danger-500]">{{ item[0] }}</div>
+
+        {{ item }}
+      </div>
     </template>
 
     <template #item="{ item }">
-      <VcSelectItem bordered>
-        <VcSelectItemImage :src="item.logoUrl" />
-        <VcSelectItemText>{{ item.optionName }}</VcSelectItemText>
-      </VcSelectItem>
+      <div class="flex items-center justify-center w-8 h-8 rounded-full text-[--color-additional-50] bg-[--color-info-500]">{{ item[0] }}</div>
+
+      {{ item }}
     </template>
   </VcSelect>`,
 });
-
 Custom.args = {
-  required: true,
-  label: "Payment method",
-  size: "auto",
-  items: [
-    {
-      id: "FixedRate_Ground",
-      code: "FixedRate",
-      logoUrl:
-        "https://github.com/VirtoCommerce/vc-module-core/raw/master/src/VirtoCommerce.CoreModule.Web/Content/logoVC.png",
-      optionName: "Ground",
-    },
-    {
-      id: "FixedRate_Air",
-      code: "FixedRate",
-      logoUrl:
-        "https://github.com/VirtoCommerce/vc-module-core/raw/master/src/VirtoCommerce.CoreModule.Web/Content/logoVC.png",
-      optionName: "Air",
-    },
-  ],
+  items: ["Albania", "Belgium", "China", "India"],
 };

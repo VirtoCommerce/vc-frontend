@@ -60,10 +60,10 @@ import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
+import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
-import { useCart } from "../composables/useCart";
-import type { Product, LineItemType, VariationType } from "@/core/api/graphql/types";
+import type { Product, ShortCartFragment, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
 import type { NamedValue } from "vue-i18n";
 
 const emit = defineEmits<IEmits>();
@@ -73,7 +73,7 @@ const props = defineProps<IProps>();
 const notifications = useNotifications();
 
 interface IEmits {
-  (event: "update:lineItem", lineItem: LineItemType): void;
+  (event: "update:lineItem", lineItem: ShortLineItemFragment): void;
 }
 
 interface IProps {
@@ -84,14 +84,19 @@ interface IProps {
 // Define max qty available to add
 const MAX_VALUE = 999999999;
 
+const availableQuantity = computed(() => props.product.availabilityData?.availableQuantity);
 const minQuantity = computed(() => props.product.minQuantity);
 const maxQuantity = computed(() => props.product.maxQuantity);
 
-const { cart, addToCart, changeItemQuantity } = useCart();
+const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { getTranslation } = useErrorsTranslator("validation_error");
-const { quantitySchema } = useQuantityValidationSchema(minQuantity.value, maxQuantity.value);
+const { quantitySchema } = useQuantityValidationSchema({
+  availableQuantity,
+  minQuantity,
+  maxQuantity,
+});
 
 const loading = ref(false);
 const inputElement = shallowRef<HTMLInputElement>();
@@ -112,7 +117,10 @@ const rules = computed(() => toTypedSchema(quantitySchema.value));
 
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
-const { errorMessage, validate, setValue } = useField("quantity", rules, { initialValue: enteredQuantity });
+const { errorMessage, validate, setValue } = useField("quantity", rules, {
+  initialValue: enteredQuantity,
+  validateOnMount: true,
+});
 
 /**
  * Process button click to add/update cart line item.
@@ -128,7 +136,7 @@ async function onChange() {
 
   let lineItem = getLineItem(cart.value?.items);
 
-  let updatedCart;
+  let updatedCart: ShortCartFragment | undefined;
 
   const isAlreadyExistsInTheCart = !!lineItem;
   if (isAlreadyExistsInTheCart) {
@@ -154,7 +162,7 @@ async function onChange() {
           ? "common.messages.fail_to_change_quantity_in_cart"
           : "common.messages.fail_add_product_to_cart",
         {
-          reason: updatedCart.validationErrors
+          reason: updatedCart?.validationErrors
             ?.filter(
               (validationError) =>
                 validationError.objectId === props.product.id &&
@@ -183,7 +191,7 @@ async function onChange() {
   loading.value = false;
 }
 
-function getLineItem(items?: LineItemType[]): LineItemType | undefined {
+function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
   return items?.find((item) => item.productId === props.product.id);
 }
 

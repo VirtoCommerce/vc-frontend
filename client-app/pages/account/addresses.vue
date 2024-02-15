@@ -185,8 +185,8 @@ import { useI18n } from "vue-i18n";
 import { useCountries, usePageHead } from "@/core/composables";
 import { AddressType } from "@/core/enums";
 import { AddressDropdownMenu, useUserAddresses } from "@/shared/account";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { usePopup } from "@/shared/popup";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
@@ -201,7 +201,7 @@ const {
   removeAddresses,
   addOrUpdateAddresses,
 } = useUserAddresses();
-const { openPopup, closePopup } = usePopup();
+const { openModal, closeModal } = useModal();
 const notifications = useNotifications();
 
 usePageHead({
@@ -245,7 +245,7 @@ function onPageChange(newPage: number): void {
 }
 
 function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
-  openPopup({
+  openModal({
     component: AddOrUpdateAddressModal,
     props: {
       address,
@@ -253,7 +253,7 @@ function openAddOrUpdateAddressModal(address?: MemberAddressType): void {
 
       async onResult(updatedAddress: MemberAddressType) {
         await addOrUpdateAddresses([{ ...updatedAddress, addressType: AddressType.BillingAndShipping }]);
-        closePopup();
+        closeModal();
       },
     },
   });
@@ -266,8 +266,8 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 function removeAddress(address: MemberAddressType): void {
-  const closeDeleteAddressDialog = openPopup({
-    component: "VcConfirmationDialog",
+  const closeDeleteAddressModal = openModal({
+    component: "VcConfirmationModal",
     props: {
       variant: "danger",
       iconVariant: "danger",
@@ -294,7 +294,7 @@ function removeAddress(address: MemberAddressType): void {
           page.value -= 1;
         }
 
-        closeDeleteAddressDialog();
+        closeDeleteAddressModal();
       },
     },
   });

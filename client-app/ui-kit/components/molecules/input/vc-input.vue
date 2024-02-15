@@ -13,6 +13,10 @@
       },
     ]"
     v-bind="attrs"
+    tabindex="-1"
+    role="button"
+    @keyup="handleContainerClick"
+    @click="handleContainerClick"
   >
     <VcLabel v-if="label" :for-id="componentId" :required="required" :error="error">
       {{ label }}
@@ -25,6 +29,7 @@
 
       <input
         :id="componentId"
+        ref="inputElement"
         v-model="inputValue"
         v-bind="listeners"
         :type="inputType"
@@ -40,6 +45,12 @@
         :autocomplete="autocomplete"
         class="vc-input__input"
       />
+
+      <div v-if="clearable && inputValue && !disabled && !readonly" class="vc-input__decorator">
+        <button type="button" tabindex="-1" class="vc-input__clear" @click.stop="clear">
+          <VcIcon name="delete-mini" :size="16" />
+        </button>
+      </div>
 
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
         <button
@@ -97,6 +108,7 @@ export interface IProps<T> {
   truncate?: boolean;
   type?: "text" | "password" | "number" | "email";
   size?: "sm" | "md" | "auto";
+  clearable?: boolean;
 }
 
 defineOptions({
@@ -114,6 +126,7 @@ const componentId = useComponentId("input");
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
+const inputElement = ref<HTMLElement>();
 const inputType = ref("");
 const isPasswordVisible = ref(false);
 const isNumberTypeSafari = ref(false);
@@ -142,6 +155,18 @@ const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ?
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
   inputType.value = isPasswordVisible.value ? "text" : "password";
+}
+
+function handleContainerClick() {
+  if (inputElement.value) {
+    inputElement.value.focus();
+    inputElement.value.click();
+  }
+}
+
+function clear() {
+  emit("update:modelValue", undefined);
+  inputElement.value?.focus();
 }
 
 watchEffect(() => {
@@ -243,6 +268,11 @@ watchEffect(() => {
       @apply rounded-r-none;
     }
 
+    #{$disabled} &,
+    &:disabled {
+      @apply cursor-not-allowed;
+    }
+
     &:nth-last-child(-n + 2) > * {
       @apply rounded-l-none;
     }
@@ -253,7 +283,7 @@ watchEffect(() => {
   }
 
   &__input {
-    @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] text-15 leading-none w-full min-w-0;
+    @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
 
     &:autofill {
       &:disabled {
@@ -269,13 +299,14 @@ watchEffect(() => {
       @apply outline-none;
     }
 
+    #{$disabled} &,
     &:disabled {
-      @apply text-gray-400;
+      @apply text-[--color-neutral-600] cursor-not-allowed;
     }
 
     &::placeholder {
       #{$error} & {
-        @apply opacity-80 text-[color:var(--color-danger)];
+        @apply opacity-80 text-[--color-danger-500];
       }
     }
 
@@ -288,24 +319,28 @@ watchEffect(() => {
     }
 
     #{$error} & {
-      @apply text-[color:var(--color-danger)];
+      @apply text-[--color-danger-500];
     }
   }
 
+  &__clear {
+    @apply flex items-center p-3 text-[--color-primary-500];
+  }
+
   &__bg {
-    @apply content-[''] z-[-1] absolute inset-0 bg-white border rounded;
+    @apply content-[''] z-[-1] absolute inset-0 bg-[--color-additional-50] border rounded;
 
     input:focus ~ & {
-      @apply ring ring-[color:var(--color-primary-light)];
+      @apply ring ring-[--color-primary-100];
     }
 
     #{$disabled} &,
     input:disabled ~ & {
-      @apply bg-gray-50;
+      @apply bg-[--color-neutral-50];
     }
 
     #{$error} & {
-      @apply border-[color:var(--color-danger)];
+      @apply border-[--color-danger-500];
     }
 
     #{$noBorder} & {
@@ -314,7 +349,11 @@ watchEffect(() => {
   }
 
   &__password-icon {
-    @apply h-full px-3 text-[color:var(--color-primary)] disabled:text-gray-300;
+    @apply h-full px-3 text-[--color-primary-500];
+
+    #{$disabled} & {
+      @apply text-[--color-neutral-300] cursor-not-allowed;
+    }
   }
 }
 </style>
