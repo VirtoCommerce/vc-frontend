@@ -1,4 +1,4 @@
-#import "../../../fragments/moneyFields.graphql"
+#import "../../../common/fragments/money.graphql"
 
 query GetQuotes(
   $storeId: String
@@ -29,7 +29,7 @@ query GetQuotes(
       status
       totals {
         grandTotalInclTax {
-          ...moneyFields
+          ...money
         }
       }
     }

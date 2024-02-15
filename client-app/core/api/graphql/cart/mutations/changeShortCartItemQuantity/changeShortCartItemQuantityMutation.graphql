@@ -1,0 +1,7 @@
+#import "../../fragments/shortCart.graphql"
+
+mutation ChangeShortCartItemQuantity($command: InputChangeCartItemQuantityType!, $skipQuery: Boolean!) {
+  changeCartItemQuantity(command: $command) {
+    ...shortCart @skip(if: $skipQuery)
+  }
+}

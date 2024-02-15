@@ -8,8 +8,7 @@
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
 import { computed } from "vue";
-import { useCart } from "@/shared/cart";
-import type { LineItemType } from "@/core/api/graphql/types";
+import { useShortCart } from "@/shared/cart";
 
 export interface IProps {
   productId?: string;
@@ -20,10 +19,8 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "xs",
 });
 
-const { cart } = useCart();
+const { cart } = useShortCart();
 
-const lineItemInCart = computed<LineItemType | undefined>(() =>
-  cart.value?.items?.find((item) => item.productId === props.productId),
-);
-const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity || 0);
+const lineItemInCart = computed(() => cart.value?.items.find((item) => item.productId === props.productId));
+const countInCart = eagerComputed<number>(() => lineItemInCart.value?.quantity ?? 0);
 </script>

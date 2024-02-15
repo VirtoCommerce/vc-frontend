@@ -1,4 +1,4 @@
-#import "./moneyFields.graphql"
+#import "../common/fragments/money.graphql"
 #import "./orderLineItemFields.graphql"
 
 fragment shortOrderFields on CustomerOrderType {
@@ -22,18 +22,18 @@ fragment shortOrderFields on CustomerOrderType {
     promotionId
   }
   discountTotal {
-    ...moneyFields
+    ...money
   }
   shippingTotal {
-    ...moneyFields
+    ...money
   }
   taxTotal {
-    ...moneyFields
+    ...money
   }
   subTotal {
-    ...moneyFields
+    ...money
   }
   total {
-    ...moneyFields
+    ...money
   }
 }

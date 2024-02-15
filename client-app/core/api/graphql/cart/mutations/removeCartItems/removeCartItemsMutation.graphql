@@ -1,7 +1,7 @@
-#import "../../../fragments/fullCartFields.graphql"
+#import "../../fragments/fullCart.graphql"
 
-mutation RemoveCartItems($command: InputRemoveItemsType!) {
+mutation RemoveCartItems($command: InputRemoveItemsType!, $skipQuery: Boolean!) {
   removeCartItems(command: $command) {
-    ...fullCartFields
+    ...fullCart @skip(if: $skipQuery)
   }
 }

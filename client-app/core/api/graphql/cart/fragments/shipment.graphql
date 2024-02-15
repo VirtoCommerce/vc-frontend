@@ -1,0 +1,17 @@
+#import "./cartAddress.graphql"
+#import "../../common/fragments/money.graphql"
+
+fragment shipment on ShipmentType {
+  id
+  shipmentMethodCode
+  shipmentMethodOption
+  deliveryAddress {
+    ...cartAddress
+  }
+  price {
+    ...money
+  }
+  discountAmount {
+    ...money
+  }
+}

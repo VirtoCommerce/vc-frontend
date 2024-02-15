@@ -1,23 +1,16 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./addGiftItemsMutation.graphql";
-import type { CartType, Mutations, MutationsAddGiftItemsArgs } from "@/core/api/graphql/types";
+import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
+import { useMutation } from "@/core/api/graphql/composables";
+import { AddGiftItemsDocument } from "@/core/api/graphql/types";
+import type { CartIdFragment, CartType } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
-export async function addGiftItems(giftIds: string[]): Promise<CartType> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
+export function useAddGiftItemsMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  return useMutation(AddGiftItemsDocument, useCartMutationVariables(cart));
+}
 
-  const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "addGiftItems">>, MutationsAddGiftItemsArgs>({
-    mutation: mutationDocument,
-    variables: {
-      command: {
-        storeId,
-        userId,
-        cultureName,
-        currencyCode,
-        ids: giftIds,
-      },
-    },
-  });
-
-  return data!.addGiftItems;
+/** @deprecated Use {@link useAddGiftItemsMutation} instead. */
+export async function addGiftItems(giftItems: string[]): Promise<CartType> {
+  const { mutate } = useAddGiftItemsMutation();
+  const result = await mutate({ command: { ids: giftItems } });
+  return result!.data!.addGiftItems as CartType;
 }

@@ -107,13 +107,13 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useUserCheckoutDefaults, CheckoutDefaultsSuccessModal } from "@/shared/account";
-import { useCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
 import type { CheckoutDefaults } from "@/shared/account";
 
 const { t } = useI18n();
 const { openModal } = useModal();
-const { loading, availableShippingMethods, availablePaymentMethods, fetchFullCart } = useCart();
+const { loading, availableShippingMethods, availablePaymentMethods, forceFetch } = useFullCart();
 const { getUserCheckoutDefaults, setUserCheckoutDefaults } = useUserCheckoutDefaults();
 
 usePageHead({
@@ -135,5 +135,5 @@ function saveDefaults() {
   });
 }
 
-void fetchFullCart();
+forceFetch();
 </script>

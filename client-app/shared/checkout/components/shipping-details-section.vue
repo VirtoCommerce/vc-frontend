@@ -9,28 +9,29 @@
         <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
-            :address="address"
+            :address="deliveryAddress"
             :disabled="disabled"
             class="min-h-[4.5rem] px-3 py-1.5"
-            @change="$emit('change:address')"
+            @change="onDeliveryAddressChange"
           />
         </div>
       </div>
 
       <VcSelect
-        v-model="method"
+        :model-value="shipmentMethod"
         :label="$t('shared.checkout.shipping_details_section.labels.shipping_method')"
-        :items="methods"
+        :items="availableShippingMethods"
         :disabled="disabled"
         size="auto"
         item-size="lg"
         class="lg:w-2/5"
         required
+        @change="(value) => setShippingMethod(value)"
       >
         <template #placeholder>
           <div class="flex items-center gap-3 p-3 text-sm">
             <VcImage
-              class="h-12 w-12 rounded-sm bg-[--color-neutral-100]"
+              class="size-12 rounded-sm bg-[--color-neutral-100]"
               src="/static/icons/placeholders/select-shipping.svg"
             />
 
@@ -40,14 +41,14 @@
 
         <template #selected="{ item }">
           <div class="flex items-center gap-3 p-3 text-sm">
-            <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
             {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
           </div>
         </template>
 
         <template #item="{ item }">
-          <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+          <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
           {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
         </template>
@@ -57,30 +58,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import type { CartAddressType, ShipmentType, ShippingMethodType } from "@/core/api/graphql/types";
-
-interface IEmits {
-  (event: "change:address"): void;
-  (event: "change:method", method: ShippingMethodType): void;
-}
+import { useFullCart } from "@/shared/cart";
+import { useCheckout } from "@/shared/checkout/composables";
 
 interface IProps {
-  methods: ShippingMethodType[];
-  shipment?: ShipmentType;
   disabled?: boolean;
 }
 
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
-const address = computed<CartAddressType | undefined>(() => props.shipment?.deliveryAddress);
-
-const method = computed<ShippingMethodType | undefined>({
-  get: () =>
-    props.methods.find(
-      (item) => item.id === props.shipment?.shipmentMethodCode + "_" + props.shipment?.shipmentMethodOption,
-    ),
-  set: (value?: ShippingMethodType) => value && emit("change:method", value),
-});
+const { availableShippingMethods } = useFullCart();
+const { deliveryAddress, shipmentMethod, onDeliveryAddressChange, setShippingMethod } = useCheckout();
 </script>

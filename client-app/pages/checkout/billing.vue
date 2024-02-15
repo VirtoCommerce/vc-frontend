@@ -1,23 +1,13 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <BillingDetailsSection
-      v-model:address-equals-shipping-address="billingAddressEqualsShipping"
-      v-model:purchase-order-number="purchaseOrderNumber"
-      :purchase-order-number-enabled="isPurchaseOrderNumberEnabled"
-      :methods="availablePaymentMethods"
-      :payment="payment"
-      :shipment="allItemsAreDigital ? undefined : shipment"
-      :disabled="loading"
-      @change:address="onBillingAddressChange"
-      @change:method="setPaymentMethod"
-    />
+    <BillingDetailsSection />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
-          <VcButton :to="{ name: 'Review', replace: true }" :disabled="isDisabledNextStep" full-width class="mt-4">
+          <ProceedTo :to="{ name: 'Review' }" :disabled="!isValidPayment">
             {{ $t("common.buttons.review_order") }}
-          </VcButton>
+          </ProceedTo>
 
           <transition name="slide-fade-top" mode="out-in" appear>
             <VcAlert v-show="!isValidPayment" color="warning" size="sm" variant="solid-light" class="mt-4" icon>
@@ -37,29 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useCart } from "@/shared/cart";
-import { BillingDetailsSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { useFullCart } from "@/shared/cart";
+import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
-const {
-  loading,
-  cart,
-  selectedLineItems,
-  shipment,
-  payment,
-  hasValidationErrors,
-  availablePaymentMethods,
-  allItemsAreDigital,
-} = useCart();
-const {
-  purchaseOrderNumber,
-  billingAddressEqualsShipping,
-  isValidPayment,
-  isValidCheckout,
-  isPurchaseOrderNumberEnabled,
-  onBillingAddressChange,
-  setPaymentMethod,
-} = useCheckout();
-
-const isDisabledNextStep = computed<boolean>(() => loading.value || !isValidCheckout.value);
+const { cart, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
+const { isValidPayment } = useCheckout();
 </script>

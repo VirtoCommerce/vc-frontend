@@ -111,7 +111,7 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import { useCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
+import { useShortCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -141,7 +141,14 @@ const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
 const { loading: listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
-const { loading: cartLoading, cart, addItemsToCart, addToCart, changeItemQuantity } = useCart();
+const {
+  loading: cartLoading,
+  changing: cartChanging,
+  cart,
+  addItemsToCart,
+  addToCart,
+  changeItemQuantity,
+} = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
@@ -157,7 +164,7 @@ const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
   wishlistItems.value.map((item) => prepareLineItem(item, cartItemsBySkus.value[item.sku!]?.quantity)),
 );
-const loading = computed<boolean>(() => listLoading.value || cartLoading.value);
+const loading = computed<boolean>(() => listLoading.value || cartLoading.value || cartChanging.value);
 const pagesCount = computed<number>(() => Math.ceil((wishlistItems.value.length ?? 0) / itemsPerPage.value));
 const pagedListItems = computed<PreparedLineItemType[]>(() =>
   preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
@@ -246,9 +253,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     return;
   }
 
-  const itemInCart: LineItemType | undefined = cart.value?.items?.find(
-    (cartItem) => cartItem.productId === item.productId,
-  );
+  const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
 
   if (itemInCart) {
     await changeItemQuantity(itemInCart.id, quantity);
