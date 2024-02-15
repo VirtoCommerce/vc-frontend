@@ -178,6 +178,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const _emptyAddress: Readonly<MemberAddressType> = {
   isDefault: false,
+  isFavorite: false,
   firstName: "",
   lastName: "",
   email: "",
