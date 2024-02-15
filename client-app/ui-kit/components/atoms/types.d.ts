@@ -43,8 +43,11 @@ declare module "@vue/runtime-core" {
     VcSection: typeof Components.VcSection;
     /** @deprecated use {@link VcWidget} instead. */
     VcSectionWidget: typeof Components.VcSectionWidget;
+    /** @deprecated */
     VcSelectItem: typeof Components.VcSelectItem;
+    /** @deprecated */
     VcSelectItemImage: typeof Components.VcSelectItemImage;
+    /** @deprecated */
     VcSelectItemText: typeof Components.VcSelectItemText;
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
