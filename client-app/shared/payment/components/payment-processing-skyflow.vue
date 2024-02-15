@@ -1,7 +1,7 @@
 <template>
   <div v-show="initialized">
     <div class="flex flex-col xl:flex-row">
-      <div ref="cardContainer" class="flex grow"></div>
+      <div ref="cardContainer" class="grow"></div>
       <CardLabels class="mt-6" />
     </div>
     <div class="mt-6">
@@ -156,6 +156,7 @@ function createForm() {
         width: "100%",
         gap: "24px",
         margin: "4px 0",
+        padding: "0 4px",
       },
     },
     errorTextStyles: {
@@ -187,8 +188,7 @@ function createForm() {
         border: `1px solid ${borderColor}`,
         "&:focus": {
           border: "1px solid transparent",
-          outline: `3px solid ${focusOutlineColor}`,
-          outlineOffset: "-3px",
+          outline: `4px solid ${focusOutlineColor}`,
         },
         padding: "0.75rem",
       },
