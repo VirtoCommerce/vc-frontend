@@ -1,97 +1,95 @@
 <template>
-  <div class="grow bg-gray-100 pb-16 shadow-inner">
-    <VcEmptyPage
-      v-if="!productsIds.length"
-      :breadcrumbs="breadcrumbs"
-      :title="$t('pages.compare.empty_list.title')"
-      :description="$t('pages.compare.empty_list.message')"
-      image="/static/images/errors/emptyCompareList.webp"
-      mobile-image="/static/images/errors/emptyCompareListMobile.webp"
-    >
-      <template #actions>
-        <VcButton :to="{ name: 'Catalog' }">
-          {{ $t("pages.compare.empty_list.button_text") }}
-        </VcButton>
-      </template>
-    </VcEmptyPage>
+  <VcEmptyPage
+    v-if="!productsIds.length"
+    :breadcrumbs="breadcrumbs"
+    :title="$t('pages.compare.empty_list.title')"
+    :description="$t('pages.compare.empty_list.message')"
+    image="/static/images/errors/emptyCompareList.webp"
+    mobile-image="/static/images/errors/emptyCompareListMobile.webp"
+  >
+    <template #actions>
+      <VcButton :to="{ name: 'Catalog' }">
+        {{ $t("pages.compare.empty_list.button_text") }}
+      </VcButton>
+    </template>
+  </VcEmptyPage>
 
-    <div v-else class="mx-auto w-full pt-7 lg:max-w-[91rem] lg:px-12">
-      <!-- Page header -->
-      <VcBreadcrumbs :items="breadcrumbs" class="mb-3 px-5 lg:px-0"></VcBreadcrumbs>
+  <VcContainer v-else>
+    <!-- Page header -->
+    <VcBreadcrumbs :items="breadcrumbs" class="mb-3"></VcBreadcrumbs>
 
-      <div class="flex flex-col px-5 lg:mb-5 lg:flex-row lg:space-x-12 lg:px-0">
-        <div class="flex flex-col space-y-1.5">
-          <h1 class="text-black-800 text-3xl font-bold uppercase">{{ $t("pages.compare.header_block.title") }}</h1>
+    <div class="flex flex-col lg:mb-5 lg:flex-row lg:space-x-12">
+      <div class="flex flex-col space-y-1.5">
+        <h1 class="text-black-800 text-3xl font-bold uppercase">{{ $t("pages.compare.header_block.title") }}</h1>
 
-          <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
-            <template #productsNumber>
-              <strong>{{ productsIds.length }}</strong>
-            </template>
+        <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
+          <template #productsNumber>
+            <strong>{{ productsIds.length }}</strong>
+          </template>
 
-            <template #productsLimit>
-              <strong>{{ productsLimit }}</strong>
-            </template>
-          </i18n-t>
-        </div>
-
-        <div class="mb-5 flex grow items-start justify-between lg:mb-0">
-          <VcCheckbox v-model="showOnlyDifferences" class="mt-2">
-            {{ $t("pages.compare.header_block.differences_checkbox_label") }}
-          </VcCheckbox>
-
-          <VcButton variant="outline" size="sm" @click="openClearListModal">
-            {{ $t("pages.compare.header_block.clear_button") }}
-          </VcButton>
-        </div>
+          <template #productsLimit>
+            <strong>{{ productsLimit }}</strong>
+          </template>
+        </i18n-t>
       </div>
 
-      <!-- Main block -->
-      <VcWidget size="lg" class="mx-1.5 lg:mx-0">
-        <template #default-container>
+      <div class="mb-5 flex grow items-start justify-between lg:mb-0">
+        <VcCheckbox v-model="showOnlyDifferences" class="mt-2">
+          {{ $t("pages.compare.header_block.differences_checkbox_label") }}
+        </VcCheckbox>
+
+        <VcButton variant="outline" size="sm" @click="openClearListModal">
+          {{ $t("pages.compare.header_block.clear_button") }}
+        </VcButton>
+      </div>
+    </div>
+
+    <!-- Main block -->
+    <VcWidget size="lg">
+      <template #default-container>
+        <div
+          ref="cardsElement"
+          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t bg-[--color-additional-50] shadow-lg lg:top-[-8.25rem]"
+        >
+          <!-- Product cards block -->
           <div
-            ref="cardsElement"
-            class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t bg-[--color-additional-50] shadow-lg lg:top-[-8.25rem]"
+            class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] p-5 empty:hidden lg:ps-[11rem]"
           >
-            <!-- Product cards block -->
-            <div
-              class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] p-5 empty:hidden lg:ps-[11rem]"
-            >
-              <ProductCardCompare
-                v-for="product in products"
-                :key="product.id"
-                :product="product"
-                class="w-[9.625rem] lg:w-[13.625rem]"
-                @remove="removeFromCompareList(product)"
-              />
-            </div>
+            <ProductCardCompare
+              v-for="product in products"
+              :key="product.id"
+              :product="product"
+              class="w-[9.625rem] lg:w-[13.625rem]"
+              @remove="removeFromCompareList(product)"
+            />
           </div>
+        </div>
 
-          <div ref="propertiesElement" class="relative w-full overflow-x-auto py-5 lg:pt-0">
-            <!-- Properties block -->
-            <div class="float-left min-w-full space-y-5 lg:space-y-0">
+        <div ref="propertiesElement" class="relative w-full overflow-x-auto py-5 lg:pt-0">
+          <!-- Properties block -->
+          <div class="float-left min-w-full space-y-5 lg:space-y-0">
+            <div
+              v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
+              :key="index"
+              class="flex gap-[1.125rem] px-5 lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:py-2 lg:odd:bg-[--color-neutral-50]"
+            >
+              <div class="hidden w-[8.5rem] shrink-0 pl-1 text-sm font-black lg:block">{{ prop.label }}</div>
+
               <div
-                v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
-                :key="index"
-                class="flex gap-[1.125rem] px-5 lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:py-2 lg:odd:bg-[--color-neutral-50]"
+                v-for="(value, i) in prop.values"
+                :key="i"
+                class="w-[9.625rem] shrink-0 text-xs lg:w-[13.625rem] lg:px-2 lg:text-sm"
               >
-                <div class="hidden w-[8.5rem] shrink-0 pl-1 text-sm font-black lg:block">{{ prop.label }}</div>
+                <div class="font-black lg:hidden">{{ prop.label }}</div>
 
-                <div
-                  v-for="(value, i) in prop.values"
-                  :key="i"
-                  class="w-[9.625rem] shrink-0 text-xs lg:w-[13.625rem] lg:px-2 lg:text-sm"
-                >
-                  <div class="font-black lg:hidden">{{ prop.label }}</div>
-
-                  <div class="break-words text-[--color-neutral-700]">{{ value }}</div>
-                </div>
+                <div class="break-words text-[--color-neutral-700]">{{ value }}</div>
               </div>
             </div>
           </div>
-        </template>
-      </VcWidget>
-    </div>
-  </div>
+        </div>
+      </template>
+    </VcWidget>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">

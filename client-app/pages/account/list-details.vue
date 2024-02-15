@@ -7,14 +7,14 @@
     <div class="flex flex-col">
       <!-- Title block -->
       <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
-        <h2 v-if="list?.name" class="mx-5 truncate text-3xl font-bold uppercase text-gray-800 lg:mx-0">
+        <h2 v-if="list?.name" class="truncate text-3xl font-bold uppercase text-gray-800">
           {{ list.name }}
         </h2>
 
         <!-- Title skeleton -->
-        <div v-else class="mx-5 w-2/3 bg-gray-200 text-3xl md:w-1/3 lg:mx-0">&nbsp;</div>
+        <div v-else class="w-2/3 bg-gray-200 text-3xl md:w-1/3">&nbsp;</div>
 
-        <div class="order-last mx-5 mt-8 flex flex-wrap gap-3 md:ms-0 md:mt-0 md:shrink-0 lg:m-0">
+        <div class="order-last mt-8 flex flex-wrap gap-3 md:ms-0 md:mt-0 md:shrink-0 lg:my-0">
           <VcButton
             :disabled="loading || !pagedListItems.length"
             size="sm"
@@ -52,7 +52,7 @@
       <div ref="listElement" class="mt-5 w-full">
         <!-- Skeletons -->
         <template v-if="listLoading">
-          <div v-if="isMobile" class="mx-5 grid grid-cols-2 gap-x-4 gap-y-6 lg:mx-0">
+          <div v-if="isMobile" class="grid grid-cols-2 gap-x-4 gap-y-6">
             <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
           </div>
 
@@ -63,22 +63,24 @@
 
         <!-- List details -->
         <template v-else-if="!listLoading && !!list?.items?.length">
-          <div class="flex flex-col gap-6 bg-white p-5 md:rounded md:border md:shadow-t-3sm">
-            <WishlistLineItems
-              :items="pagedListItems"
-              @update:cart-item="addOrUpdateCartItem"
-              @update:list-item="updateWishListItem"
-              @remove:items="openDeleteProductModal"
-            />
+          <VcWidget size="lg">
+            <div class="flex flex-col gap-6">
+              <WishlistLineItems
+                :items="pagedListItems"
+                @update:cart-item="addOrUpdateCartItem"
+                @update:list-item="updateWishListItem"
+                @remove:items="openDeleteProductModal"
+              />
 
-            <VcPagination
-              v-if="pagesCount > 1"
-              v-model:page="page"
-              :pages="pagesCount"
-              :scroll-target="listElement"
-              :scroll-offset="60"
-            />
-          </div>
+              <VcPagination
+                v-if="pagesCount > 1"
+                v-model:page="page"
+                :pages="pagesCount"
+                :scroll-target="listElement"
+                :scroll-offset="60"
+              />
+            </div>
+          </VcWidget>
         </template>
 
         <!-- Empty list -->

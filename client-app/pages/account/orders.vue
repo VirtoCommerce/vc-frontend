@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between lg:mx-0">
+    <div class="flex items-center justify-between">
       <h2 v-t="'pages.account.orders.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 

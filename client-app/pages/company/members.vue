@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between gap-3 lg:mx-0">
+    <div class="flex items-center justify-between gap-3">
       <h2 v-t="'pages.company.members.title'" class="grow text-3xl font-bold uppercase text-gray-800" />
 
       <VcButton
@@ -190,7 +190,7 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
+    <div v-else class="flex flex-col bg-white shadow-sm max-md:-mx-6 md:rounded md:border">
       <VcTable
         :loading="contactsLoading"
         :items="contacts"

@@ -1,11 +1,11 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between md:mx-0">
+    <div class="flex items-center justify-between">
       <h2 v-t="'pages.company.info.title'" class="text-3xl font-bold uppercase text-gray-800" />
     </div>
 
-    <div class="flex flex-col bg-white shadow-sm md:rounded md:border">
+    <div class="flex flex-col bg-additional-50 shadow-sm max-md:-mx-6 md:rounded md:border">
       <!-- Company name block -->
       <div class="flex items-start gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
         <VcInput

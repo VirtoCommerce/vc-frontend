@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <h2 v-t="'pages.account.quotes.title'" class="mx-5 text-3xl font-bold uppercase text-gray-800 lg:mx-0" />
+    <h2 v-t="'pages.account.quotes.title'" class="text-3xl font-bold uppercase text-neutral-900" />
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 
@@ -42,115 +42,117 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <div v-else class="flex flex-col bg-white shadow-sm lg:rounded lg:border">
-      <VcTable
-        :loading="fetching"
-        :columns="columns"
-        :sort="sort"
-        :items="quotes"
-        :pages="pages"
-        :page="page"
-        :description="$t('pages.account.quotes.meta.table_description')"
-        @item-click="goToQuoteDetails"
-        @header-click="applySorting"
-        @page-changed="changePage"
-      >
-        <template #mobile-item="itemData">
-          <div
-            class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6"
-            role="button"
-            tabindex="0"
-            @click="goToQuoteDetails(itemData.item)"
-            @keyup.enter="goToQuoteDetails(itemData.item)"
-          >
-            <div class="flex flex-col">
-              <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400" />
+    <VcWidget v-else size="lg">
+      <template #default-container>
+        <VcTable
+          :loading="fetching"
+          :columns="columns"
+          :sort="sort"
+          :items="quotes"
+          :pages="pages"
+          :page="page"
+          :description="$t('pages.account.quotes.meta.table_description')"
+          @item-click="goToQuoteDetails"
+          @header-click="applySorting"
+          @page-changed="changePage"
+        >
+          <template #mobile-item="itemData">
+            <div
+              class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6"
+              role="button"
+              tabindex="0"
+              @click="goToQuoteDetails(itemData.item)"
+              @keyup.enter="goToQuoteDetails(itemData.item)"
+            >
+              <div class="flex flex-col">
+                <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400" />
 
-              <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
-                {{ itemData.item.number }}
-              </span>
+                <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
+                  {{ itemData.item.number }}
+                </span>
+              </div>
+
+              <div class="flex flex-col items-end justify-center">
+                <QuoteStatus class="w-full !max-w-[9rem]" :status="itemData.item.status" />
+              </div>
+
+              <div class="flex flex-col">
+                <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400" />
+
+                <span class="overflow-hidden text-ellipsis">
+                  {{ $d(itemData.item?.createdDate) }}
+                </span>
+              </div>
+
+              <div class="flex flex-col">
+                <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400" />
+
+                <span class="overflow-hidden text-ellipsis font-extrabold">
+                  {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
+                </span>
+              </div>
             </div>
+          </template>
 
-            <div class="flex flex-col items-end justify-center">
-              <QuoteStatus class="w-full !max-w-[9rem]" :status="itemData.item.status" />
+          <template #mobile-skeleton>
+            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
+              <div class="flex flex-col">
+                <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400"></span>
+                <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
+              </div>
+
+              <div class="flex flex-col">
+                <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400"></span>
+                <div class="h-6 animate-pulse bg-gray-200"></div>
+              </div>
+
+              <div class="flex flex-col">
+                <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400"></span>
+                <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
+              </div>
+
+              <div class="flex flex-col">
+                <span v-t="'pages.account.quotes.status_label'" class="text-sm text-gray-400"></span>
+                <div class="h-6 animate-pulse bg-gray-200"></div>
+              </div>
             </div>
+          </template>
 
-            <div class="flex flex-col">
-              <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400" />
+          <template #desktop-body>
+            <tr
+              v-for="quote in quotes"
+              :key="quote.id"
+              class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
+              @click="goToQuoteDetails(quote)"
+            >
+              <td class="overflow-hidden text-ellipsis p-5">
+                {{ quote.number }}
+              </td>
 
-              <span class="overflow-hidden text-ellipsis">
-                {{ $d(itemData.item?.createdDate) }}
-              </span>
-            </div>
+              <td class="overflow-hidden text-ellipsis p-5">
+                {{ $d(quote.createdDate) }}
+              </td>
 
-            <div class="flex flex-col">
-              <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400" />
+              <td class="overflow-hidden text-ellipsis p-5 text-center">
+                <QuoteStatus class="w-full !max-w-[9rem]" :status="quote.status" />
+              </td>
 
-              <span class="overflow-hidden text-ellipsis font-extrabold">
-                {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
-              </span>
-            </div>
-          </div>
-        </template>
+              <td class="overflow-hidden text-ellipsis p-5 text-right">
+                {{ quote.totals?.grandTotalInclTax?.formattedAmount }}
+              </td>
+            </tr>
+          </template>
 
-        <template #mobile-skeleton>
-          <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
-            <div class="flex flex-col">
-              <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400"></span>
-              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
-            </div>
-
-            <div class="flex flex-col">
-              <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 animate-pulse bg-gray-200"></div>
-            </div>
-
-            <div class="flex flex-col">
-              <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400"></span>
-              <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
-            </div>
-
-            <div class="flex flex-col">
-              <span v-t="'pages.account.quotes.status_label'" class="text-sm text-gray-400"></span>
-              <div class="h-6 animate-pulse bg-gray-200"></div>
-            </div>
-          </div>
-        </template>
-
-        <template #desktop-body>
-          <tr
-            v-for="quote in quotes"
-            :key="quote.id"
-            class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
-            @click="goToQuoteDetails(quote)"
-          >
-            <td class="overflow-hidden text-ellipsis p-5">
-              {{ quote.number }}
-            </td>
-
-            <td class="overflow-hidden text-ellipsis p-5">
-              {{ $d(quote.createdDate) }}
-            </td>
-
-            <td class="overflow-hidden text-ellipsis p-5 text-center">
-              <QuoteStatus class="w-full !max-w-[9rem]" :status="quote.status" />
-            </td>
-
-            <td class="overflow-hidden text-ellipsis p-5 text-right">
-              {{ quote.totals?.grandTotalInclTax?.formattedAmount }}
-            </td>
-          </tr>
-        </template>
-
-        <template #desktop-skeleton>
-          <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
-            <td v-for="column in columns" :key="column.id" class="p-5">
-              <div class="h-6 animate-pulse bg-gray-200"></div>
-            </td>
-          </tr>
-        </template>
-      </VcTable>
-    </div>
+          <template #desktop-skeleton>
+            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
+              <td v-for="column in columns" :key="column.id" class="p-5">
+                <div class="h-6 animate-pulse bg-gray-200"></div>
+              </td>
+            </tr>
+          </template>
+        </VcTable>
+      </template>
+    </VcWidget>
   </div>
 </template>
 
