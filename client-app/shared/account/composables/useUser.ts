@@ -14,7 +14,7 @@ import {
   sendVerifyEmail as _sendVerifyEmail,
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
-import { useFetch } from "@/core/composables";
+import { useFetch, useAuth } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -68,6 +68,7 @@ export function useUser() {
   const broadcast = useBroadcast();
   const { innerFetch } = useFetch();
   const { openModal, closeModal } = useModal();
+  const { authorize } = useAuth();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -199,30 +200,8 @@ export function useUser() {
 
       const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
 
-      type OAuthType = {
-        access_token: string;
-        refresh_token: string;
-      };
-
-      const { storeId } = globals;
-
-      const tokens: OAuthType = await innerFetch(
-        "/connect/token",
-        "POST",
-        new URLSearchParams({
-          grant_type: "password",
-          scope: "offline_access",
-          storeId,
-          username: payload.email,
-          password: payload.password,
-        }),
-        "application/x-www-form-urlencoded",
-      );
-
-      accessToken.value = tokens.access_token;
-      refreshToken.value = tokens.refresh_token;
-
       if (result.succeeded) {
+        await authorize(payload.email, payload.password);
         resolveClient().cache.gc();
         broadcast.emit(pageReloadEvent);
       }
