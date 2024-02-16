@@ -15,7 +15,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     component: Completed,
   },
   {
-    path: "/checkout/payment:status(success|failure)",
+    path: "/checkout/payment/:status(success|failure)",
     name: "CheckoutPaymentResult",
     component: PaymentResult,
     props: true,
