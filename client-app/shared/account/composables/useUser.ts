@@ -64,8 +64,7 @@ export function useUser() {
   const { resolveClient } = useApolloClient();
   const broadcast = useBroadcast();
   const { openModal, closeModal } = useModal();
-  const { authorize } = useAuth();
-  const { clearTokens } = useAuth();
+  const { authorize, clearTokens } = useAuth();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -271,7 +270,7 @@ export function useUser() {
   }
 
   function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): void {
-    // todo invalidate token on the backend. If no - after second login we get old refresh?
+    // todo invalidate token on the backend. If no - after second login we get old refresh token?
     clearTokens();
     resolveClient().cache.gc();
     if (options.reloadPage) {
