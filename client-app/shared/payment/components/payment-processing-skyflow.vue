@@ -4,8 +4,8 @@
       <div ref="cardContainer" class="grow"></div>
       <CardLabels class="mt-6" />
     </div>
-    <div class="mt-6">
-      <VcButton :disabled="hasInvalid" :loading="loading" class="flex-1 md:order-first md:flex-none" @click="pay">
+    <div class="mt-6 flex justify-center md:justify-start">
+      <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="pay">
         {{ $t("shared.payment.skyflow.pay_now_button") }}
       </VcButton>
     </div>
