@@ -1,6 +1,6 @@
-import { useInterceptors } from "@/core/api/common";
+import { useGlobalInterceptors } from "@/core/api/common";
 
-const { onRequest, onResponse } = useInterceptors();
+const { onRequest, onResponse } = useGlobalInterceptors();
 
 export const apolloFetch = async (input: string | Request | URL, init?: RequestInit) => {
   if (onRequest.value.length) {

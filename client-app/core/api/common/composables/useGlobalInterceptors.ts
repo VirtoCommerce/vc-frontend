@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { ref } from "vue";
 
-function _useInterceptors() {
+function _useGlobalInterceptors() {
   const onRequest = ref<((...args: Parameters<typeof fetch>) => void)[]>([]);
   const onResponse = ref<((response: Awaited<ReturnType<typeof fetch>>) => void)[]>([]);
 
@@ -11,4 +11,4 @@ function _useInterceptors() {
   };
 }
 
-export const useInterceptors = createGlobalState(_useInterceptors);
+export const useGlobalInterceptors = createGlobalState(_useGlobalInterceptors);

@@ -7,8 +7,14 @@ enum HTTP_ERRORS {
   SERVER_ERROR = 500,
 }
 
+/**
+ * @deprecated Use useGlobalInterceptors instead
+ */
 let innerRequestEnricher: (x: Headers) => Headers = (x) => x;
 
+/**
+ * @deprecated Use useFetch from "@/core/api/common" instead
+ */
 export function useFetch() {
   const data = shallowRef<unknown | undefined>();
   const error = shallowRef<Error | undefined>();

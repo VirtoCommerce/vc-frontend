@@ -1,2 +1,2 @@
 export * from "./useFetch";
-export * from "./useInterceptors";
+export * from "./useGlobalInterceptors";

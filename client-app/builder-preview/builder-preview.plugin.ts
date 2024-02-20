@@ -1,4 +1,4 @@
-import { useInterceptors } from "@/core/api/common";
+import { useGlobalInterceptors } from "@/core/api/common";
 import { useStaticPage, useTemplates } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
@@ -10,7 +10,7 @@ import StaticPage from "@/pages/static-page.vue";
 
 templateBlocks["scroll-to"] = ScrollToElement;
 
-const { onRequest } = useInterceptors();
+const { onRequest } = useGlobalInterceptors();
 
 const { staticPagePreview } = useStaticPage();
 const { setTemplate } = useTemplates();

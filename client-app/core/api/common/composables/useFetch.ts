@@ -1,8 +1,8 @@
 import { createFetch } from "@vueuse/core";
-import { useInterceptors } from "@/core/api/common/composables/useInterceptors";
+import { useGlobalInterceptors } from "@/core/api/common/composables/useGlobalInterceptors";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
 
-const { onRequest, onResponse } = useInterceptors();
+const { onRequest, onResponse } = useGlobalInterceptors();
 
 export const useFetch = createFetch({
   options: {
