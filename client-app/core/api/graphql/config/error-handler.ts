@@ -1,5 +1,4 @@
 import { onError } from "@apollo/client/link/error";
-import { useLocalStorage } from "@vueuse/core/index";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
 import {
   TabsType,
@@ -30,12 +29,6 @@ export const errorHandlerLink = onError(({ networkError, graphQLErrors }) => {
   }
 
   if (unauthorized) {
-    const accessToken = useLocalStorage("access_token", "");
-    const refreshToken = useLocalStorage("refresh_token", "");
-
-    refreshToken.value = "";
-    accessToken.value = "";
-
     broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
   }
 

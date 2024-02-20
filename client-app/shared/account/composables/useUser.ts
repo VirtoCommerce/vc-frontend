@@ -14,7 +14,7 @@ import {
   sendVerifyEmail as _sendVerifyEmail,
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
-import { useFetch, useAuth } from "@/core/composables";
+import { useAuth } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -47,9 +47,6 @@ import type {
   UserPersonalData,
 } from "@/shared/account";
 
-const accessToken = useLocalStorage("access_token", "");
-const refreshToken = useLocalStorage("refresh_token", "");
-
 const loading = ref(false);
 const user = ref<UserType>();
 
@@ -66,9 +63,9 @@ interface IPasswordExpirationEntry {
 export function useUser() {
   const { resolveClient } = useApolloClient();
   const broadcast = useBroadcast();
-  const { innerFetch } = useFetch();
   const { openModal, closeModal } = useModal();
   const { authorize } = useAuth();
+  const { clearTokens } = useAuth();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -198,10 +195,9 @@ export function useUser() {
     try {
       loading.value = true;
 
-      const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
+      const result = await authorize(payload.email, payload.password);
 
       if (result.succeeded) {
-        await authorize(payload.email, payload.password);
         resolveClient().cache.gc();
         broadcast.emit(pageReloadEvent);
       }
@@ -274,21 +270,12 @@ export function useUser() {
     }
   }
 
-  async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
-    accessToken.value = "";
-    refreshToken.value = "";
-    try {
-      loading.value = true;
-      await innerFetch("/storefrontapi/account/logout");
-      resolveClient().cache.gc();
-      if (options.reloadPage) {
-        broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
-      }
-    } catch (e) {
-      Logger.error(`${useUser.name}.${signMeOut.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
+  function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): void {
+    // todo invalidate token on the backend. If no - after second login we get old refresh?
+    clearTokens();
+    resolveClient().cache.gc();
+    if (options.reloadPage) {
+      broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
     }
   }
 
