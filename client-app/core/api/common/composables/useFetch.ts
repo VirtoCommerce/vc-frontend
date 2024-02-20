@@ -7,22 +7,15 @@ const { onRequest, onResponse } = useGlobalInterceptors();
 export const useFetch = createFetch({
   options: {
     beforeFetch: (context) => {
-      if (onRequest.value.length) {
-        onRequest.value.forEach((intercept) => intercept(context.url, context.options));
-      }
-
+      onRequest.value.forEach((intercept) => intercept(context.url, context.options));
       return context;
     },
     afterFetch: (context) => {
-      if (onResponse.value.length) {
-        onResponse.value.forEach((intercept) => intercept(context.response));
-      }
-
+      onResponse.value.forEach((intercept) => intercept(context.response));
       return context;
     },
     onFetchError: (context) => {
       errorHandler(toServerError(context.error, context.response?.status));
-
       return context;
     },
   },
