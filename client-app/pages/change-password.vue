@@ -42,9 +42,6 @@ const isSucceeded = ref(false);
 
 function onSucceeded() {
   isSucceeded.value = true;
-  broadcast.emit(openReturnUrl, undefined, TabsType.OTHERS);
-  setTimeout(() => {
-    broadcast.emit(openReturnUrl, undefined, TabsType.CURRENT);
-  }, 3000);
+  broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
 }
 </script>

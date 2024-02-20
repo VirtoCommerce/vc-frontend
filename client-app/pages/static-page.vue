@@ -28,7 +28,7 @@ import { computed, unref } from "vue";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useStaticPage } from "@/shared/static-content";
 
-const template = useStaticPage();
+const { staticPage: template } = useStaticPage();
 const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }]);

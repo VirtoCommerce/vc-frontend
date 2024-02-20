@@ -1,5 +1,5 @@
 <template>
-  <StaticPage v-if="template" />
+  <StaticPage v-if="staticPage" />
   <template v-else-if="!loading">
     <LoginFormSection />
 
@@ -89,13 +89,13 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, onMounted, ref } from "vue";
+import { defineAsyncComponent, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { useFetch, usePageHead } from "@/core/composables";
+import { usePageHead } from "@/core/composables";
+import { useSlugInfo } from "@/shared/common";
 import { LoginFormSection } from "@/shared/layout";
 import { useStaticPage } from "@/shared/static-content";
 
-const { innerFetch } = useFetch();
 const { t } = useI18n();
 
 usePageHead({
@@ -107,23 +107,12 @@ usePageHead({
 });
 
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
+const { staticPage } = useStaticPage();
+const { loading, slugInfo } = useSlugInfo("__index__home__page__");
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const template: any = ref(null);
-const loading = ref(true);
-
-onMounted(async () => {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await innerFetch<any>("/storefrontapi/slug/__index__home__page__");
-    if (response.contentItem?.type === "page") {
-      const result = JSON.parse(response.contentItem.content);
-      template.value = result;
-      useStaticPage(result);
-    }
-  } finally {
-    loading.value = false;
-  }
+watch(slugInfo, (slugInfoValue) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  staticPage.value = slugInfoValue?.contentItem?.type === "page" ? JSON.parse(slugInfoValue.contentItem.content) : null;
 });
 </script>
 

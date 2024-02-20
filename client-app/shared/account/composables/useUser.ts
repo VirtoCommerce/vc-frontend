@@ -1,4 +1,3 @@
-import { useApolloClient } from "@vue/apollo-composable";
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
@@ -14,17 +13,9 @@ import {
   sendVerifyEmail as _sendVerifyEmail,
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
-import { useFetch } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import {
-  TabsType,
-  pageReloadEvent,
-  useBroadcast,
-  userLockedEvent,
-  userReloadEvent,
-  passwordExpiredEvent,
-} from "@/shared/broadcast";
+import { TabsType, useBroadcast, userLockedEvent, userReloadEvent, passwordExpiredEvent } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
@@ -42,7 +33,6 @@ import type {
   RegisterOrganization,
   ResetPassword,
   ChangePassword,
-  SignMeIn,
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
@@ -61,9 +51,7 @@ interface IPasswordExpirationEntry {
 }
 
 export function useUser() {
-  const { resolveClient } = useApolloClient();
   const broadcast = useBroadcast();
-  const { innerFetch } = useFetch();
   const { openModal, closeModal } = useModal();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
@@ -190,26 +178,6 @@ export function useUser() {
     }
   }
 
-  async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
-    try {
-      loading.value = true;
-
-      const result = await innerFetch<IdentityResultType, SignMeIn>("/storefrontapi/account/login", "POST", payload);
-
-      if (result.succeeded) {
-        resolveClient().cache.gc();
-        broadcast.emit(pageReloadEvent);
-      }
-
-      return result;
-    } catch (e) {
-      Logger.error(`${useUser.name}.${signMeIn.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
   async function registerUser(payload: SignMeUp): Promise<AccountCreationResultType> {
     const { storeId } = globals;
 
@@ -263,22 +231,6 @@ export function useUser() {
       return resultData.result!;
     } catch (e) {
       Logger.error(`${useUser.name}.${registerOrganization.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  }
-
-  async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
-    try {
-      loading.value = true;
-      await innerFetch("/storefrontapi/account/logout");
-      resolveClient().cache.gc();
-      if (options.reloadPage) {
-        broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
-      }
-    } catch (e) {
-      Logger.error(`${useUser.name}.${signMeOut.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -378,10 +330,8 @@ export function useUser() {
     fetchUser,
     updateUser,
     confirmEmail,
-    signMeIn,
     registerUser,
     registerOrganization,
-    signMeOut,
     forgotPassword,
     resetPassword,
     inviteUser,
