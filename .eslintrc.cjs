@@ -191,6 +191,16 @@ module.exports = {
                 name: "@vueuse/core",
                 importNames: ["useFetch"],
                 message: "Please import useFetch from @/core/api/common instead"
+              },
+              {
+                name: "@vueuse/integrations/useAxios",
+                importNames: ["useAxios"],
+                message: "Please import useAxios from @/core/api/common instead"
+              },
+              {
+                name: "axios",
+                importNames: ["default"],
+                message: "Please use useAxios from @/core/api/common instead"
               }
             ]
           }
