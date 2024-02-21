@@ -15,7 +15,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     component: Completed,
   },
   {
-    path: "/checkout/payment:status(success|failure)",
+    path: "/checkout/payment/:status(success|failure)",
     name: "CheckoutPaymentResult",
     component: PaymentResult,
     props: true,
@@ -47,11 +47,13 @@ export const checkoutRoutes: RouteRecordRaw[] = [
       },
     ],
     meta: { layout: "Secure" },
-    beforeEnter(_, from, next) {
-      if (from.name !== "Cart") {
-        next({ name: "Cart", replace: true });
-      } else {
+    beforeEnter(to, from, next) {
+      if (from.name === "Cart") {
         next();
+      } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
+        next();
+      } else {
+        next({ name: "Cart", replace: true });
       }
     },
   },
