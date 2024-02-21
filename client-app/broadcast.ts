@@ -82,7 +82,7 @@ export function setupBroadcastGlobalListeners() {
     });
   });
   on(openReturnUrl, () => {
-    location.href = getReturnUrlValue() ?? location.href;
+    location.href = getReturnUrlValue() ?? "/";
   });
 
   on(forbiddenEvent, () => {
