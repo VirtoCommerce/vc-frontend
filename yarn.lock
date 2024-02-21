@@ -6075,7 +6075,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/integrations@npm:^10.8.0":
+"@vueuse/integrations@npm:^10.7.2":
   version: 10.8.0
   resolution: "@vueuse/integrations@npm:10.8.0"
   dependencies:
@@ -16207,7 +16207,7 @@ __metadata:
     "@vue/tsconfig": "npm:~0.5.1"
     "@vueuse/components": "npm:^10.7.2"
     "@vueuse/core": "npm:^10.7.2"
-    "@vueuse/integrations": "npm:^10.8.0"
+    "@vueuse/integrations": "npm:^10.7.2"
     adm-zip: "npm:^0.5.10"
     autoprefixer: "npm:^10.4.17"
     axios: "npm:^1.6.7"
