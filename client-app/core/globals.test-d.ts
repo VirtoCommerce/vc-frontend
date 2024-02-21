@@ -3,7 +3,7 @@ import { globals } from "./globals";
 
 describe("globals", () => {
   it("should be readonly", () => {
-    expectTypeOf(globals).toMatchTypeOf<Readonly<unknown>>;
+    expectTypeOf(globals).toMatchTypeOf<Readonly<unknown>>();
   });
 
   it("should have required fields", () => {

@@ -237,7 +237,8 @@
     "methods": {
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
-        "DefaultManualPaymentMethod": "Manual"
+        "DefaultManualPaymentMethod": "Manual",
+        "SkyflowPaymentMethod": "Bank card (Skyflow)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
@@ -644,9 +645,9 @@
     },
     "payment": {
       "bank_card_form": {
-        "number_label": "Card number",
-        "cardholder_name_label": "Cardholder name",
-        "expiration_date_label": "Expiration date",
+        "number_label": "Card Number",
+        "cardholder_name_label": "Cardholder Name",
+        "expiration_date_label": "Expiration Date",
         "expiration_date_placeholder": "MM / YY",
         "month_label": "Month",
         "month_placeholder": "MM",
@@ -669,6 +670,9 @@
           "cardholder_name": "Please provide a valid cardholder name",
           "incorrect_payment_method": "Incorrect payment method"
         }
+      },
+      "skyflow": {
+        "pay_now_button": "Pay Now"
       },
       "manual": {
         "text": "The payment method you selected does not support online payment. Please select another method or "
