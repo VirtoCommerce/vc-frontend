@@ -27,13 +27,13 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcWidget id="line-items" size="lg">
+      <VcWidget id="line-items" size="lg" class="print:!mx-0 print:break-inside-auto">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
             <div v-if="group.items.length" class="space-y-3">
               <!-- Vendor -->
-              <div class="flex max-w-full flex-wrap gap-x-3">
+              <div class="flex max-w-full flex-wrap gap-x-3 print:break-after-avoid">
                 <VcVendor :vendor="group.vendor" />
                 <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
               </div>
@@ -206,10 +206,6 @@ watchEffect(() => {
 
 <style scoped lang="scss">
 @media print {
-  #line-items {
-    @apply mx-0;
-  }
-
   #order-data,
   #line-items {
     :deep(.vc-widget__header-container) {

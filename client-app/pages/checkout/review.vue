@@ -1,6 +1,12 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <VcWidget id="line-items" :title="$t('common.titles.review_order')" prepend-icon="clipboard-copy-1" size="lg">
+    <VcWidget
+      id="line-items"
+      :title="$t('common.titles.review_order')"
+      prepend-icon="clipboard-copy-1"
+      size="lg"
+      class="print:!mx-0"
+    >
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
         <template v-for="(group, vendorId) in selectedLineItemsGroupedByVendor" :key="vendorId">
@@ -177,8 +183,6 @@ function print() {
 <style scoped lang="scss">
 @media print {
   #line-items {
-    @apply mx-0;
-
     :deep(.vc-widget__header-container) {
       @apply hidden;
     }
