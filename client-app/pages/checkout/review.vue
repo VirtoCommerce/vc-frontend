@@ -1,7 +1,7 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
     <VcWidget
-      id="line-items"
+      id="line-items-widget"
       :title="$t('common.titles.review_order')"
       prepend-icon="clipboard-copy-1"
       size="lg"
@@ -182,7 +182,7 @@ function print() {
 
 <style scoped lang="scss">
 @media print {
-  #line-items {
+  #line-items-widget {
     :deep(.vc-widget__header-container) {
       @apply hidden;
     }

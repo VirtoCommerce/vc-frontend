@@ -27,7 +27,7 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcWidget id="line-items" size="lg" class="print:!mx-0 print:break-inside-auto">
+      <VcWidget id="line-items-widget" size="lg" class="print:!mx-0 print:break-inside-auto">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
@@ -53,7 +53,7 @@
 
       <template #sidebar>
         <!-- Order Data Widget -->
-        <VcWidget id="order-data" :title="$t('common.titles.order_data')" class="order-first">
+        <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first">
           <div class="flex flex-col gap-1.5 text-sm">
             <p v-if="order.createdDate">
               <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
@@ -206,8 +206,8 @@ watchEffect(() => {
 
 <style scoped lang="scss">
 @media print {
-  #order-data,
-  #line-items {
+  #order-data-widget,
+  #line-items-widget {
     :deep(.vc-widget__header-container) {
       @apply hidden;
     }
