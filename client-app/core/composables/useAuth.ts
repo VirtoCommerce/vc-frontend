@@ -9,12 +9,11 @@ import type { IdentityResultType } from "@/core/api/graphql/types";
 
 const { innerFetch } = useFetch();
 
-const FETCH_TIME_SHIFT = 30000;
-
 type OAuthType = {
   access_token?: string;
   refresh_token?: string;
   error?: string;
+  code?: string;
 };
 
 export function useAuth() {
@@ -30,7 +29,7 @@ export function useAuth() {
     const { storeId } = globals;
 
     try {
-      const { access_token, refresh_token } = await innerFetch<OAuthType>(
+      const { access_token, refresh_token, error, code } = await innerFetch<OAuthType>(
         url,
         "POST",
         new URLSearchParams({
@@ -43,6 +42,13 @@ export function useAuth() {
         "application/x-www-form-urlencoded",
       );
 
+      if (error) {
+        return {
+          succeeded: false,
+          errors: [{ code }],
+        };
+      }
+
       if (access_token && refresh_token) {
         accessTokenExpiredInMs.value = String((jwtDecode(access_token).exp as number) * 1000);
 
@@ -54,8 +60,8 @@ export function useAuth() {
         errors: [],
       };
     } catch (e) {
+      // todo emit unhandled error?
       Logger.error(`${authorize.name}`, e);
-      // todo add errors
       return {
         succeeded: false,
         errors: [],
@@ -74,7 +80,7 @@ export function useAuth() {
         }),
         "application/x-www-form-urlencoded",
       );
-      // actual error is invalid_grant
+
       if (error) {
         clearTokens();
         // other tab could be used by Anonymous
@@ -96,7 +102,7 @@ export function useAuth() {
     if (!accessToken.value) {
       return true;
     }
-    return Date.now() - FETCH_TIME_SHIFT < Number(accessTokenExpiredInMs.value);
+    return Date.now() < Number(accessTokenExpiredInMs.value);
   }
 
   const authHeaders = computed(() => {
