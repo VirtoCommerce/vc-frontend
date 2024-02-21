@@ -270,7 +270,7 @@ export function useUser() {
   }
 
   function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): void {
-    // todo invalidate token on the backend. If no - after second login we get old refresh token?
+    // todo invalidate token on the backend
     clearTokens();
     resolveClient().cache.gc();
     if (options.reloadPage) {
