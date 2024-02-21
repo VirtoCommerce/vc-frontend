@@ -1,0 +1,11 @@
+.vc-widget {
+  @apply break-inside-avoid border-none divide-none shadow-none;
+
+  &__header {
+    @apply px-0;
+  }
+
+  &__slot {
+    @apply p-0 #{!important};
+  }
+}

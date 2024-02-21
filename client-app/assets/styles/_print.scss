@@ -1,14 +1,6 @@
 @media print {
   html {
     @apply h-full min-h-screen;
-
-    @media (max-width: theme("screens.xs")) {
-      font-size: 70%;
-    }
-
-    @media (min-width: theme("screens.sm")) {
-      font-size: 130%;
-    }
   }
 
   body {
@@ -21,10 +13,11 @@
 
   @import "print/atoms/vc-badge";
   @import "print/atoms/vc-button";
-  @import "print/atoms/vc-card-widget";
   @import "print/atoms/vc-container";
-  @import "print/atoms/vc-section-widget";
+  @import "print/molecules/vc-chip";
+  @import "print/atoms/vc-widget";
   @import "print/molecules/vc-input";
+  @import "print/molecules/vc-layout-with-right-sidebar";
   @import "print/molecules/vc-line-item-price";
   @import "print/molecules/vc-line-item-total";
   @import "print/molecules/vc-line-item";

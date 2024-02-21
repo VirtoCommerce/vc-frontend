@@ -5,7 +5,7 @@
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
     <!-- Title block -->
-    <div class="mx-7 flex flex-col gap-2.5 lg:mx-0 lg:flex-row lg:justify-between print:mx-0">
+    <div class="mx-6 flex flex-col gap-2.5 lg:mx-0 lg:flex-row lg:justify-between print:mx-0">
       <VcTypography tag="h1" variant="h2" weight="bold">
         {{ $t("pages.account.order_details.title", [order?.number]) }}
       </VcTypography>
@@ -27,7 +27,7 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcWidget id="products" size="lg">
+      <VcWidget id="line-items" size="lg">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
@@ -53,7 +53,7 @@
 
       <template #sidebar>
         <!-- Order Data Widget -->
-        <VcWidget :title="$t('common.titles.order_data')" class="order-first">
+        <VcWidget id="order-data" :title="$t('common.titles.order_data')" class="order-first">
           <div class="flex flex-col gap-1.5 text-sm">
             <p v-if="order.createdDate">
               <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
@@ -206,8 +206,13 @@ watchEffect(() => {
 
 <style scoped lang="scss">
 @media print {
-  #products {
-    :deep(.vc-section-widget__title) {
+  #line-items {
+    @apply mx-0;
+  }
+
+  #order-data,
+  #line-items {
+    :deep(.vc-widget__header-container) {
       @apply hidden;
     }
   }
