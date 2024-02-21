@@ -1,0 +1,19 @@
+#import "../../catalog/fragments/availabilityData.graphql"
+#import "../../catalog/fragments/property.graphql"
+
+fragment fullLineItemProduct on Product {
+  id
+  slug
+  minQuantity
+  maxQuantity
+  masterVariation {
+    id
+    slug
+  }
+  properties {
+    ...property
+  }
+  availabilityData {
+    ...availabilityData
+  }
+}

@@ -8,7 +8,7 @@
 
         <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
           <VcCheckbox
-            v-if="shipment"
+            v-if="!allItemsAreDigital"
             v-model="billingAddressEqualsShipping"
             :disabled="disabled"
             name="billingAddressEqualsShipping"
@@ -19,56 +19,59 @@
 
           <VcAddressSelection
             :placeholder="
-              shipment && billingAddressEqualsShipping
+              !allItemsAreDigital && billingAddressEqualsShipping
                 ? $t('shared.checkout.shipping_details_section.links.select_address')
                 : $t('shared.checkout.billing_details_section.links.select_address')
             "
-            :address="address"
+            :address="billingAddress"
             :disabled="disabled"
-            :readonly="shipment?.deliveryAddress && billingAddressEqualsShipping"
+            :readonly="!allItemsAreDigital && billingAddressEqualsShipping"
             class="min-h-[3.313rem] px-3 py-1.5"
-            @change="$emit('change:address')"
+            @change="onBillingAddressChange"
           />
         </div>
       </div>
 
       <div class="space-y-3 lg:w-2/5">
         <VcSelect
-          v-model="method"
+          :model-value="paymentMethod"
           :label="$t('shared.checkout.billing_details_section.labels.payment_method')"
-          :items="methods"
+          :items="availablePaymentMethods"
           :disabled="disabled"
           size="auto"
           required
+          @change="(value) => setPaymentMethod(value)"
         >
           <template #placeholder>
-            <VcSelectItem>
-              <VcSelectItemImage src="/static/icons/placeholders/select-payment.svg" class="bg-gray-100/80" />
-              <VcSelectItemText>
-                {{ $t("common.placeholders.select_payment_method") }}
-              </VcSelectItemText>
-            </VcSelectItem>
+            <div class="flex items-center gap-3 p-3 text-sm">
+              <VcImage
+                class="h-12 w-12 rounded-sm bg-[--color-neutral-100]"
+                src="/static/icons/placeholders/select-payment.svg"
+              />
+
+              {{ $t("common.placeholders.select_payment_method") }}
+            </div>
           </template>
 
           <template #selected="{ item }">
-            <VcSelectItem>
-              <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
-            </VcSelectItem>
+            <div class="flex items-center gap-3 p-3 text-sm">
+              <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+
+              {{ $t(`common.methods.payment_by_code.${item.code}`) }}
+            </div>
           </template>
 
           <template #item="{ item }">
-            <VcSelectItem bordered>
-              <VcSelectItemImage :src="item.logoUrl" />
-              <VcSelectItemText>{{ $t(`common.methods.payment_by_code.${item.code}`) }}</VcSelectItemText>
-            </VcSelectItem>
+            <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+
+            {{ $t(`common.methods.payment_by_code.${item.code}`) }}
           </template>
         </VcSelect>
 
         <transition name="slide-fade-top" mode="in-out">
           <VcInput
-            v-if="purchaseOrderNumberEnabled"
-            v-model.trim="poNumber"
+            v-if="isPurchaseOrderNumberEnabled"
+            v-model.trim="purchaseOrderNumber"
             :placeholder="$t('common.placeholders.purchase_order_number')"
             :disabled="disabled"
             name="purchaseOrderNumber"
@@ -80,44 +83,23 @@
 </template>
 
 <script setup lang="ts">
-import { useVModel } from "@vueuse/core";
-import { computed } from "vue";
-import type { PaymentType, PaymentMethodType, ShipmentType, CartAddressType } from "@/core/api/graphql/types";
-
-interface IEmits {
-  (event: "change:address"): void;
-  (event: "change:method", method: PaymentMethodType): void;
-  (event: "update:addressEqualsShippingAddress"): void;
-  (event: "update:purchaseOrderNumber", value: string): void;
-}
+import { useFullCart } from "@/shared/cart";
+import { useCheckout } from "@/shared/checkout/composables";
 
 interface IProps {
-  methods: PaymentMethodType[];
   disabled?: boolean;
-  addressEqualsShippingAddress?: boolean;
-  payment?: PaymentType;
-  shipment?: ShipmentType;
-  purchaseOrderNumber?: string;
-  purchaseOrderNumberEnabled?: boolean;
 }
 
-const emit = defineEmits<IEmits>();
+defineProps<IProps>();
 
-const props = withDefaults(defineProps<IProps>(), {
-  purchaseOrderNumber: "",
-});
-
-const billingAddressEqualsShipping = useVModel(props, "addressEqualsShippingAddress", emit);
-const poNumber = useVModel(props, "purchaseOrderNumber", emit);
-
-const address = computed<CartAddressType | undefined>(() =>
-  !!props.shipment && billingAddressEqualsShipping.value
-    ? props.shipment?.deliveryAddress
-    : props.payment?.billingAddress,
-);
-
-const method = computed<PaymentMethodType | undefined>({
-  get: () => props.methods.find((item) => item.code === props.payment?.paymentGatewayCode),
-  set: (value?: PaymentMethodType) => value && emit("change:method", value),
-});
+const { allItemsAreDigital, availablePaymentMethods } = useFullCart();
+const {
+  billingAddressEqualsShipping,
+  billingAddress,
+  paymentMethod,
+  onBillingAddressChange,
+  setPaymentMethod,
+  isPurchaseOrderNumberEnabled,
+  purchaseOrderNumber,
+} = useCheckout();
 </script>

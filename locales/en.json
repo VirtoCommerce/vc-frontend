@@ -1076,6 +1076,8 @@
         "no_addresses_message": "There are no addresses yet",
         "address_not_delete_message": "The default address cannot be deleted",
         "address_saved_successful_message": "The address has been successfully saved",
+        "add_to_favorites": "Mark as favorite",
+        "remove_from_favorites": "Remove from favorites",
         "labels": {
           "company_name": "Company Name",
           "address": "Address",
@@ -1338,6 +1340,9 @@
     "pagination": {
       "previous": "Previous",
       "next": "Next"
+    },
+    "select": {
+      "items_selected": "{0} items selected"
     },
     "file": {
       "uploading": "Uploading...",

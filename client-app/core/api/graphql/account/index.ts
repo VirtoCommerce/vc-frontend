@@ -1,3 +1,4 @@
+export * from "./mutations/addAddressToFavorites";
 export * from "./mutations/addWishlist";
 export * from "./mutations/addWishlistBulkItem";
 export * from "./mutations/addWishlistItem";
@@ -12,6 +13,7 @@ export * from "./mutations/deleteWishlistItem";
 export * from "./mutations/inviteUser";
 export * from "./mutations/registerAccount";
 export * from "./mutations/registerByInvitation";
+export * from "./mutations/removeAddressFromFavorites";
 export * from "./mutations/resetPasswordByToken";
 export * from "./mutations/sendVerifyEmail";
 export * from "./mutations/updateContact";

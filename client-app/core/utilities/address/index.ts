@@ -11,6 +11,7 @@ export function toInputAddress(address: AnyAddressType): InputMemberAddressType 
 
   delete newAddress.id;
   delete newAddress.isDefault;
+  delete newAddress.isFavorite;
 
   return newAddress;
 }

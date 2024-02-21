@@ -1,5 +1,5 @@
 <template>
-  <component :is="componentTag" ref="currentElement" class="vc-menu-item">
+  <component :is="componentTag" v-bind="$attrs" ref="currentElement" class="vc-menu-item">
     <component
       :is="innerTag"
       v-bind="attrs"
@@ -46,18 +46,24 @@ interface IProps {
   truncate?: boolean;
   nowrap?: boolean;
   tag?: string;
+  clickable?: boolean;
 }
+
+defineOptions({
+  inheritAttrs: false,
+});
 
 defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   size: "md",
+  clickable: true,
 });
 
 const currentElement = ref<HTMLElement>();
 const parentTag = ref("");
-const enabled = eagerComputed<boolean>(() => !props.disabled && !props.active);
+const enabled = eagerComputed<boolean>(() => !props.disabled);
 const isRouterLink = eagerComputed<boolean>(() => !!props.to && enabled.value);
 const isExternalLink = eagerComputed<boolean>(() => !!props.externalLink && enabled.value);
 
@@ -82,24 +88,24 @@ const innerTag = computed(() => {
     return "a";
   }
 
-  if (props.active) {
-    return "span";
+  if (props.clickable) {
+    return "button";
   }
 
-  return "button";
+  return "span";
 });
 
 const attrs = computed(() => {
   if (innerTag.value === "router-link") {
-    return { to: props.to, target: props.target };
+    return { to: props.to, target: props.target, tabindex: 0 };
   }
 
   if (innerTag.value === "a") {
-    return { href: props.externalLink, target: props.target };
+    return { href: props.externalLink, target: props.target, tabindex: 0 };
   }
 
   if (innerTag.value === "button") {
-    return { type: "button" };
+    return { type: "button", tabindex: 0 };
   }
 
   return {};
@@ -164,12 +170,13 @@ onMounted(() => {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
-        &:hover {
-          @apply bg-[--color-#{$color}-50];
-        }
-
         &#{$active} {
           @apply bg-[--color-#{$color}-100];
+        }
+
+        &:hover,
+        &:focus {
+          @apply bg-[--color-#{$color}-50] outline-none;
         }
       }
     }

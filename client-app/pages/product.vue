@@ -1,5 +1,5 @@
 <template>
-  <!-- 
+  <!--
     TODO: update VcContainer and use it
     https://virtocommerce.atlassian.net/browse/ST-5628
   -->
@@ -24,7 +24,7 @@
         </VcCopyText>
       </div>
 
-      <!-- 
+      <!--
         TODO: create VcLayoutWithSidebar component
         https://virtocommerce.atlassian.net/browse/ST-5629
       -->

@@ -1,6 +1,6 @@
 import { computed, readonly, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useCart } from "./useCart";
+import { useFullCart } from "@/shared/cart/composables/useCart";
 import type { CouponType } from "@/core/api/graphql/types";
 
 const couponCode = ref("");
@@ -8,7 +8,7 @@ const validationError = ref("");
 
 export function useCoupon() {
   const { t } = useI18n();
-  const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useCart();
+  const { cart, validateCartCoupon, addCartCoupon, removeCartCoupon } = useFullCart();
 
   const INVALID_COUPON_MESSAGE = t("common.messages.invalid_coupon");
 
@@ -25,11 +25,12 @@ export function useCoupon() {
 
   async function applyCoupon() {
     clearValidationError();
+
     if (!trimmedCoupon.value) {
       return;
     }
 
-    const validationResult: boolean = await validateCartCoupon(trimmedCoupon.value);
+    const validationResult = await validateCartCoupon(trimmedCoupon.value);
 
     if (validationResult) {
       await addCartCoupon(trimmedCoupon.value);
@@ -42,6 +43,7 @@ export function useCoupon() {
     if (!trimmedCoupon.value) {
       return;
     }
+
     await removeCartCoupon(trimmedCoupon.value);
   }
 

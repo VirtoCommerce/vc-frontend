@@ -1,26 +1,16 @@
-import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
-import mutationDocument from "./changePurchaseOrderNumber.graphql";
-import type { CartType, Mutations, MutationsChangePurchaseOrderNumberArgs } from "@/core/api/graphql/types";
+import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
+import { useMutation } from "@/core/api/graphql/composables";
+import { ChangePurchaseOrderNumberDocument } from "@/core/api/graphql/types";
+import type { CartIdFragment, CartType } from "@/core/api/graphql/types";
+import type { MaybeRef } from "vue";
 
+export function useChangePurchaseOrderNumberMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
+  return useMutation(ChangePurchaseOrderNumberDocument, useCartMutationVariables(cart));
+}
+
+/** @deprecated Use {@link useChangePurchaseOrderNumberMutation} instead. */
 export async function changePurchaseOrderNumber(purchaseOrderNumber: string): Promise<CartType> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
-
-  const { data } = await graphqlClient.mutate<
-    Required<Pick<Mutations, "changePurchaseOrderNumber">>,
-    MutationsChangePurchaseOrderNumberArgs
-  >({
-    mutation: mutationDocument,
-    variables: {
-      command: {
-        storeId,
-        userId,
-        cultureName,
-        currencyCode,
-        purchaseOrderNumber,
-      },
-    },
-  });
-
-  return data!.changePurchaseOrderNumber;
+  const { mutate } = useChangePurchaseOrderNumberMutation();
+  const result = await mutate({ command: { purchaseOrderNumber } });
+  return result!.data!.changePurchaseOrderNumber as CartType;
 }

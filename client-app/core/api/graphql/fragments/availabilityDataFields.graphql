@@ -1,7 +1,0 @@
-fragment availabilityDataFields on AvailabilityData {
-  isActive
-  isAvailable
-  isBuyable
-  isInStock
-  availableQuantity
-}

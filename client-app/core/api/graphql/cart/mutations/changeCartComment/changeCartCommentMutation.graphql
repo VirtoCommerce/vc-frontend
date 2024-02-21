@@ -1,7 +1,7 @@
-#import "../../../fragments/fullCartFields.graphql"
+#import "../../fragments/fullCart.graphql"
 
-mutation ChangeCartComment($command: InputChangeCommentType!) {
+mutation ChangeCartComment($command: InputChangeCommentType!, $skipQuery: Boolean!) {
   changeComment(command: $command) {
-    ...fullCartFields
+    ...fullCart @skip(if: $skipQuery)
   }
 }
