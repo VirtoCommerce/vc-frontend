@@ -10,8 +10,6 @@ import StaticPage from "@/pages/static-page.vue";
 
 templateBlocks["scroll-to"] = ScrollToElement;
 
-const { onRequest } = useGlobalInterceptors();
-
 const { staticPagePreview } = useStaticPage();
 const { setTemplate } = useTemplates();
 
@@ -104,6 +102,8 @@ let templateUrl: string | undefined;
 // eslint-disable-next-line no-restricted-exports
 export default {
   install: (app: App, options: { router: Router }) => {
+    const { onRequest } = useGlobalInterceptors();
+
     onRequest.value.push((_, request) => {
       if (request) {
         request.headers = { ...request.headers, ["x-template-builder"]: "preview-mode" };
