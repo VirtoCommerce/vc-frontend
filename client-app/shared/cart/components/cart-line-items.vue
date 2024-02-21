@@ -29,6 +29,7 @@
           :disabled="disabled"
           :readonly="readonly"
           @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
+          @update:validation="setItemValidationStatus(item, $event)"
         />
 
         <InStock
@@ -60,13 +61,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { ErrorType } from "@/core/composables";
+import type { PreparedLineItemType } from "@/core/types";
 import type { NamedValue } from "vue-i18n";
 
 interface IProps {
@@ -90,18 +92,45 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const validationErrors = computed<ErrorType[]>(() => {
-  return props.validationErrors.map((el) => {
-    return {
-      id: el.objectId,
-      code: el.errorCode,
-      parameters: el.errorParameters?.reduce((acc, err) => {
-        acc[err.key] = err.value;
-        return acc;
-      }, {} as NamedValue),
-      description: el.errorMessage,
+const maxLimitValidationError = ref<ValidationErrorType>();
+
+function setItemValidationStatus(
+  item: PreparedLineItemType,
+  status: { isValid: true } | { isValid: false; errorMessage: string },
+): void {
+  if (!status.isValid) {
+    maxLimitValidationError.value = {
+      objectId: item.id,
+      errorMessage: status.errorMessage,
     };
-  });
+  } else {
+    maxLimitValidationError.value = undefined;
+  }
+}
+
+const validationErrors = computed<ErrorType[]>(() => {
+  let errors = [];
+
+  if (maxLimitValidationError.value) {
+    errors.push({
+      id: maxLimitValidationError.value.objectId,
+      description: maxLimitValidationError.value.errorMessage,
+    });
+  } else {
+    errors = props.validationErrors.map((error: ValidationErrorType) => {
+      return {
+        id: error.objectId,
+        code: error.errorCode,
+        parameters: error.errorParameters?.reduce((acc, err) => {
+          acc[err.key] = err.value;
+          return acc;
+        }, {} as NamedValue),
+        description: error.errorMessage,
+      };
+    });
+  }
+
+  return errors;
 });
 
 const { idErrors } = useErrorsTranslator("validation_error", validationErrors);

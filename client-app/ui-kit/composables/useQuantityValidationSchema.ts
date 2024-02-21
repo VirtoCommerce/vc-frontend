@@ -87,7 +87,7 @@ export function useQuantityValidationSchema(payload: {
         }
 
         if (minQuantity?.value) {
-          return schema.min(minQuantity.value, t("shared.cart.add_to_cart.errors.max", [minQuantity.value]));
+          return schema.min(minQuantity.value, t("shared.cart.add_to_cart.errors.min", [minQuantity.value]));
         }
 
         if (maxQuantity?.value) {
