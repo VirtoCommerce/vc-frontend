@@ -37,8 +37,8 @@ export function setupBroadcastGlobalListeners() {
 
   on(pageReloadEvent, () => location.reload());
   on(userReloadEvent, () => fetchUser());
-  on(userLockedEvent, () => {
-    signMeOut({ reloadPage: false });
+  on(userLockedEvent, async () => {
+    await signMeOut({ reloadPage: false });
     const { pathname } = location;
 
     if (pathname !== "/blocked") {

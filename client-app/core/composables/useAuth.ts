@@ -23,14 +23,15 @@ export function useAuth() {
   const accessTokenExpiredInMs = useLocalStorage("access_token_expired", "");
   const refreshToken = useLocalStorage("refresh_token", "");
 
-  const url = "/connect/token";
+  const connectUrl = "/connect/token";
+  const revokeUrl = "/revoke/token";
 
   async function authorize(username: string, password: string): Promise<IdentityResultType> {
     const { storeId } = globals;
 
     try {
       const { access_token, refresh_token, error, code } = await innerFetch<OAuthType>(
-        url,
+        connectUrl,
         "POST",
         new URLSearchParams({
           grant_type: "password",
@@ -72,7 +73,7 @@ export function useAuth() {
   async function refresh() {
     try {
       const { access_token, refresh_token, error } = await innerFetch<OAuthType>(
-        url,
+        connectUrl,
         "POST",
         new URLSearchParams({
           grant_type: "refresh_token",
@@ -109,7 +110,7 @@ export function useAuth() {
     if (accessToken.value) {
       return {
         Authorization: `Bearer ${accessToken.value}`,
-      };
+      } as Record<string, string>;
     }
     return {};
   });
@@ -120,13 +121,25 @@ export function useAuth() {
     refreshToken.value = "";
   }
 
+  async function unauthorize() {
+    try {
+      await fetch(revokeUrl, {
+        method: "POST",
+        headers: authHeaders.value,
+      });
+      clearTokens();
+    } catch (e) {
+      Logger.error(`${unauthorize.name}`, e);
+    }
+  }
+
   return {
     authorize,
+    unauthorize,
     refresh,
     isTokenValid,
     accessToken,
     refreshToken,
-    clearTokens,
     authHeaders,
   };
 }
