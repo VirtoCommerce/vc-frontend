@@ -98,9 +98,13 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
         toFailedFile(newFile, getErrorMessage("INVALID_SIZE", options.value.maxFileSize));
       }
 
-      const extension = /(\.[^.]+)?$/.exec(newFile.name)?.[1];
-      if (options.value.allowedExtensions.length && extension && !options.value.allowedExtensions.includes(extension)) {
-        toFailedFile(newFile, getErrorMessage("INVALID_EXTENSION", options.value.allowedExtensions));
+      const extension = /(\.[^.]+)?$/.exec(newFile.name)?.[1]?.toLowerCase();
+      if (
+        options.value.allowedExtensions.length &&
+        extension &&
+        !options.value.allowedExtensions.map((item) => item.toLowerCase()).includes(extension)
+      ) {
+        toFailedFile(newFile, getErrorMessage("INVALID_EXTENSION"));
       }
     });
   }
@@ -156,8 +160,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
           unitDisplay: "narrow",
         }),
       ];
-    } else if (errorCode === "INVALID_EXTENSION") {
-      parameters = [(errorParameter as string[]).map((el) => el.replace(/^\./, "").toUpperCase()).join(", ")];
     } else {
       parameters = [errorParameter as string];
     }
