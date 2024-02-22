@@ -52,6 +52,7 @@
     "lodash": "^4.17.21",
     "marked": "^11.2.0",
     "maska": "^2.1.11",
+    "skyflow-js": "^1.34.2",
     "swiper": "11.0.5",
     "tw-elements": "^1.1.0",
     "utility-types": "^3.11.0",

@@ -5,8 +5,8 @@
       class="flex rounded p-2"
       :class="[
         mode === 'grid'
-          ? 'cursor-auto bg-white text-secondary hover:shadow-t-2sm'
-          : 'text-primary hover:text-[color:var(--color-view-mode-hover)]',
+          ? 'cursor-auto bg-additional-50 text-neutral-700 hover:shadow-md'
+          : 'text-primary hover:text-primary-600',
       ]"
       @click="$emit('update:mode', 'grid')"
     >
@@ -15,13 +15,14 @@
       </svg>
       <span class="ml-1.5 hidden text-15 font-semibold lg:block">{{ $t("shared.catalog.view_mode.grid_label") }}</span>
     </button>
+
     <button
       type="button"
       class="flex rounded p-2"
       :class="[
         mode === 'list'
-          ? 'cursor-auto bg-white text-secondary hover:shadow-t-2sm'
-          : 'text-primary hover:text-[color:var(--color-view-mode-hover)]',
+          ? 'cursor-auto bg-additional-50 text-neutral-700 hover:shadow-md'
+          : 'text-primary hover:text-primary-600',
       ]"
       @click="$emit('update:mode', 'list')"
     >
