@@ -11,10 +11,12 @@
     "lokalise.i18n-ally",
     "graphql.vscode-graphql",
     "graphql.vscode-graphql-syntax",
-    "graphql.vscode-graphql-execution"
+    "graphql.vscode-graphql-execution",
+    "vitest.explorer",
   ],
   "unwantedRecommendations": [
     "vue.vscode-typescript-vue-plugin",
-    "octref.vetur"
+    "octref.vetur",
+    "zixuanchen.vitest-explorer"
   ]
 }

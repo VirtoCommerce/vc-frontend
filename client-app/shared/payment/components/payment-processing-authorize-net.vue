@@ -16,19 +16,7 @@
         @submit="sendPaymentData"
       />
 
-      <div class="mt-5 flex gap-3 pt-0.5 xl:ml-6 xl:w-1/3 xl:gap-4">
-        <svg width="70" height="45" class="flex shrink-0 rounded border border-gray-200">
-          <use href="/static/images/payment/methods/visa.svg#main" />
-        </svg>
-
-        <svg width="70" height="45" class="flex shrink-0 rounded border border-gray-200">
-          <use href="/static/images/payment/methods/mastercard.svg#main" />
-        </svg>
-
-        <svg width="70" height="45" class="flex shrink-0 rounded border border-gray-200">
-          <use href="/static/images/payment/methods/maestro.svg#main" />
-        </svg>
-      </div>
+      <CardLabels class="mt-5" />
     </div>
 
     <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
@@ -73,6 +61,7 @@ import { useAuthorizeNet } from "../composables/useAuthorizeNet";
 import { PaymentActionType } from "../types";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
+import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 interface IEmits {
   (event: "success"): void;

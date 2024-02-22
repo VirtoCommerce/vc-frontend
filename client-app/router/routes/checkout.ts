@@ -47,11 +47,13 @@ export const checkoutRoutes: RouteRecordRaw[] = [
       },
     ],
     meta: { layout: "Secure" },
-    beforeEnter(_, from, next) {
-      if (from.name !== "Cart") {
-        next({ name: "Cart", replace: true });
-      } else {
+    beforeEnter(to, from, next) {
+      if (from.name === "Cart") {
         next();
+      } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
+        next();
+      } else {
+        next({ name: "Cart", replace: true });
       }
     },
   },
