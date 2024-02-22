@@ -1401,7 +1401,7 @@
     "INVALID_CONTENT": "Cannot read file.",
     "EXCEPTION": "Failure while uploading file. Please try again.",
     "INVALID_SCOPE": "Unknown scope '{0}'.",
-    "INVALID_EXTENSION": "File is not in one of allowed formats {0}.",
+    "INVALID_EXTENSION": "File format is not allowed.",
     "INVALID_SIZE": "File size exceeds the allowed {0}.",
     "CANNOT_DELETE": "Failure while deleting file."
   }
