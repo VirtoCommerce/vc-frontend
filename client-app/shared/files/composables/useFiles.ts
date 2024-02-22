@@ -1,8 +1,9 @@
 import { computedEager, isDefined, syncRefs, toValue } from "@vueuse/core";
 import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useAxios } from "@/core/api/common/composables/useAxios";
 import { getFileUploadOptions, deleteFile } from "@/core/api/graphql/files";
-import { useErrorsTranslator, useFetch } from "@/core/composables";
+import { useErrorsTranslator } from "@/core/composables";
 import { asyncForEach } from "@/core/utilities";
 import { DEFAULT_FILE_MAX_COUNT, DEFAULT_FILE_MAX_SIZE } from "@/shared/files/constants";
 import {
@@ -12,12 +13,14 @@ import {
   isNewfile,
   isRemovedFile,
   isUploadedFile,
+  isUploadingFile,
   toFailedFile,
   toRemovedFile,
   toUploadedFile,
   toUploadingFile,
 } from "@/ui-kit";
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
+import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import type { MaybeRef, WatchSource } from "vue";
 
 /**
@@ -28,8 +31,16 @@ import type { MaybeRef, WatchSource } from "vue";
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
   const { getTranslation: getErrorTranlation } = useErrorsTranslator("file_error");
-  const { innerFetch } = useFetch();
   const { t, n } = useI18n();
+
+  const { data, execute: _uploadFiles } = useAxios<
+    FileUploadResultType[],
+    AxiosResponse<FileUploadResultType[]>,
+    FormData
+  >({
+    method: "POST",
+    onUploadProgress,
+  });
 
   const defaultOptions = {
     maxFileCount: DEFAULT_FILE_MAX_COUNT,
@@ -56,6 +67,9 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
 
   const newFiles = computed(() => files.value.filter(isNewfile));
   const hasNewFiles = computedEager(() => newFiles.value.length > 0);
+
+  const uploadingFiles = computed(() => files.value.filter(isUploadingFile));
+  const uploadingFileSize = computed(() => uploadingFiles.value.reduce((sum, file) => sum + file.size, 0));
 
   const failedFiles = computed(() => files.value.filter(isFailedFile));
   const hasFailedFiles = computedEager(() => failedFiles.value.length > 0);
@@ -114,16 +128,16 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       return;
     }
 
-    const uploadingFiles = newFiles.value.map(toUploadingFile);
+    newFiles.value.forEach(toUploadingFile);
 
     const formData = new FormData();
 
-    uploadingFiles.forEach((file) => formData.append("file", file.file));
+    uploadingFiles.value.forEach((file) => formData.append("file", file.file));
 
-    const data = await innerFetch<FileUploadResultType[]>(`/api/files/${unref(scope)}`, "POST", formData, null);
+    await _uploadFiles(`/api/files/${unref(scope)}`, { data: formData });
 
-    data.forEach((result) => {
-      const uploadedFile = uploadingFiles.find((fileInfo) => fileInfo.name === result.name);
+    data.value?.forEach((result) => {
+      const uploadedFile = uploadingFiles.value.find((fileInfo) => fileInfo.name === result.name);
 
       if (uploadedFile) {
         if (result.succeeded) {
@@ -132,6 +146,20 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
           toFailedFile(uploadedFile, getErrorMessage(result.errorCode, result.errorParameter, result.errorMessage));
         }
       }
+    });
+  }
+
+  function onUploadProgress(event: AxiosProgressEvent) {
+    const requestSize = event.total! - uploadingFileSize.value;
+    let processedSize = requestSize;
+
+    uploadingFiles.value.forEach((file) => {
+      if (processedSize + file.size <= event.loaded) {
+        file.progress = 100;
+      } else if (processedSize >= event.loaded - file.size) {
+        file.progress = Math.round((Math.max(event.loaded - processedSize, 0) / file.size) * 100);
+      }
+      processedSize += file.size;
     });
   }
 

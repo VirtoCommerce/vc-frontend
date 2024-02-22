@@ -1345,7 +1345,7 @@
       "items_selected": "{0} items selected"
     },
     "file": {
-      "uploading": "Uploading...",
+      "progress": "{percent} done",
       "uploaded": "Upload completed"
     },
     "file_uploader": {
