@@ -270,11 +270,18 @@ export function useUser() {
   }
 
   async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
-    // todo invalidate token on the backend
-    await unauthorize();
-    resolveClient().cache.gc();
-    if (options.reloadPage) {
-      broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
+    try {
+      loading.value = true;
+      await unauthorize();
+      resolveClient().cache.gc();
+      if (options.reloadPage) {
+        broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
+      }
+    } catch (e) {
+      Logger.error(`${useUser.name}.${signMeOut.name}`, e);
+      throw e;
+    } finally {
+      loading.value = false;
     }
   }
 
