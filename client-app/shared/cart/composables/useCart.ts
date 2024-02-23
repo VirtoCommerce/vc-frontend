@@ -1,6 +1,5 @@
-import { useApolloClient } from "@vue/apollo-composable";
 import { createGlobalState, createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
-import { sumBy, difference, keyBy, without, mergeWith, merge } from "lodash";
+import { sumBy, difference, keyBy, without, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
   useGetShortCartQuery,
@@ -45,16 +44,12 @@ import type {
   InputPaymentType,
   InputShipmentType,
   QuoteType,
-  ShipmentType,
   AddOrUpdateCartPaymentMutation,
   AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
   AddOrUpdateCartPaymentMutationVariables,
-  PaymentType,
-  CartAddressType,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
-import type { InMemoryCache } from "@apollo/client/core";
 
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
