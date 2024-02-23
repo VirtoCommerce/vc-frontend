@@ -4,7 +4,7 @@
   >
     <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name">
       <div class="absolute -right-2.5 -top-2 z-[2]">
-        <VcButton size="xs" variant="solid-lightest" color="danger" icon="delete-2" @click="$emit('remove', product)" />
+        <VcButton size="xs" variant="no-border" color="danger" icon="delete-2" @click="$emit('remove', product)" />
       </div>
     </VcProductImage>
 
