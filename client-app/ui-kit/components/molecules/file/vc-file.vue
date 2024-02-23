@@ -31,7 +31,15 @@
         </span>
       </span>
 
-      <span v-if="isUploadingFile(file)" class="vc-file__message">{{ $t("ui_kit.file.uploading") }}</span>
+      <template v-if="isUploadingFile(file)">
+        <div class="vc-file__progress">
+          <div class="vc-file__progress-value" :style="{ width: `${file.progress || 0}%` }"></div>
+        </div>
+
+        <span class="vc-file__message">
+          {{ $t("ui_kit.file.progress", { percent: $n(file.progress / 100, { style: "percent" }) }) }}
+        </span>
+      </template>
 
       <span v-else-if="isUploadedFile(file)" class="vc-file__message">{{ $t("ui_kit.file.uploaded") }}</span>
 
