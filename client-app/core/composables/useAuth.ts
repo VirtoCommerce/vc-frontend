@@ -1,20 +1,29 @@
 import { useLocalStorage } from "@vueuse/core";
-import { jwtDecode } from "jwt-decode";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useFetch } from "@/core/composables/useFetch";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
-import type { IdentityResultType } from "@/core/api/graphql/types";
 
-const { innerFetch } = useFetch();
+type IdentityErrorType = {
+  code?: string;
+  description?: string;
+};
 
-type OAuthType = {
+type IdentityResultType = {
+  errors?: Array<IdentityErrorType>;
+  succeeded: boolean;
+};
+
+type ConnectTokenResponseType = {
+  expires_in?: number;
   access_token?: string;
   refresh_token?: string;
-  error?: string;
-  code?: string;
+  errors?: Array<IdentityErrorType>;
+  token_type?: string;
 };
+
+const { innerFetch } = useFetch();
 
 export function useAuth() {
   const broadcast = useBroadcast();
@@ -22,6 +31,7 @@ export function useAuth() {
   const accessToken = useLocalStorage("access_token", "");
   const accessTokenExpiredInMs = useLocalStorage("access_token_expired", "");
   const refreshToken = useLocalStorage("refresh_token", "");
+  const tokenType = ref<string>("Bearer");
 
   const connectUrl = "/connect/token";
   const revokeUrl = "/revoke/token";
@@ -30,29 +40,31 @@ export function useAuth() {
     const { storeId } = globals;
 
     try {
-      const { access_token, refresh_token, error, code } = await innerFetch<OAuthType>(
-        connectUrl,
-        "POST",
-        new URLSearchParams({
-          grant_type: "password",
-          scope: "offline_access",
-          storeId,
-          username,
-          password,
-        }),
-        "application/x-www-form-urlencoded",
-      );
+      const { token_type, access_token, refresh_token, expires_in, errors } =
+        await innerFetch<ConnectTokenResponseType>(
+          connectUrl,
+          "POST",
+          new URLSearchParams({
+            grant_type: "password",
+            scope: "offline_access",
+            storeId,
+            username,
+            password,
+          }),
+          "application/x-www-form-urlencoded",
+        );
 
-      if (error) {
+      if (errors?.length) {
         return {
           succeeded: false,
-          errors: [{ code }],
+          errors,
         };
       }
 
-      if (access_token && refresh_token) {
-        accessTokenExpiredInMs.value = String((jwtDecode(access_token).exp as number) * 1000);
+      if (token_type && access_token && refresh_token && expires_in) {
+        tokenType.value = token_type;
 
+        setExpiredTime(expires_in);
         accessToken.value = access_token;
         refreshToken.value = refresh_token;
       }
@@ -61,7 +73,6 @@ export function useAuth() {
         errors: [],
       };
     } catch (e) {
-      // todo emit unhandled error?
       Logger.error(`${authorize.name}`, e);
       return {
         succeeded: false,
@@ -72,31 +83,35 @@ export function useAuth() {
 
   async function refresh() {
     try {
-      const { access_token, refresh_token, error } = await innerFetch<OAuthType>(
-        connectUrl,
-        "POST",
-        new URLSearchParams({
-          grant_type: "refresh_token",
-          refresh_token: refreshToken.value,
-        }),
-        "application/x-www-form-urlencoded",
-      );
+      const { token_type, access_token, refresh_token, expires_in, errors } =
+        await innerFetch<ConnectTokenResponseType>(
+          connectUrl,
+          "POST",
+          new URLSearchParams({
+            grant_type: "refresh_token",
+            refresh_token: refreshToken.value,
+          }),
+          "application/x-www-form-urlencoded",
+        );
 
-      if (error) {
-        clearTokens();
-        // other tab could be used by Anonymous
+      if (errors?.length) {
+        clearState();
         broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
       }
 
-      if (access_token && refresh_token) {
-        accessTokenExpiredInMs.value = String((jwtDecode(access_token).exp as number) * 1000);
-
+      if (token_type && access_token && refresh_token && expires_in) {
+        tokenType.value = token_type;
+        setExpiredTime(expires_in);
         refreshToken.value = refresh_token;
         accessToken.value = access_token;
       }
     } catch (e) {
       Logger.error(`${refresh.name}`, e);
     }
+  }
+
+  function setExpiredTime(expires_in: number) {
+    accessTokenExpiredInMs.value = String(Date.now() + expires_in * 1000);
   }
 
   function isTokenValid() {
@@ -109,16 +124,17 @@ export function useAuth() {
   const authHeaders = computed(() => {
     if (accessToken.value) {
       return {
-        Authorization: `Bearer ${accessToken.value}`,
+        Authorization: `${tokenType.value} ${accessToken.value}`,
       } as Record<string, string>;
     }
     return {};
   });
 
-  function clearTokens() {
+  function clearState() {
+    tokenType.value = "";
     accessToken.value = "";
-    accessTokenExpiredInMs.value = "";
     refreshToken.value = "";
+    accessTokenExpiredInMs.value = "";
   }
 
   async function unauthorize() {
@@ -127,7 +143,7 @@ export function useAuth() {
         method: "POST",
         headers: authHeaders.value,
       });
-      clearTokens();
+      clearState();
     } catch (e) {
       Logger.error(`${unauthorize.name}`, e);
     }
