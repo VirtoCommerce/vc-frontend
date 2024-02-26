@@ -25,7 +25,7 @@ import {
   useUnselectCartItemsMutation,
   useValidateCouponMutation,
   clearCart as deprecatedClearCart,
-  toOptimisticResponse,
+  generateCacheIdIfNew,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
@@ -288,12 +288,12 @@ export function _useFullCart() {
           return {
             addOrUpdateCartShipment: merge({}, cart.value!, {
               shipments: [
-                toOptimisticResponse(
+                generateCacheIdIfNew(
                   {
                     id: value.id,
                     shipmentMethodCode: value.shipmentMethodCode,
                     shipmentMethodOption: value.shipmentMethodOption,
-                    deliveryAddress: toOptimisticResponse(value.deliveryAddress, "CartAddressType"),
+                    deliveryAddress: generateCacheIdIfNew(value.deliveryAddress, "CartAddressType"),
                   },
                   "ShipmentType",
                 ),
@@ -332,11 +332,11 @@ export function _useFullCart() {
           return {
             addOrUpdateCartPayment: merge({}, cart.value!, {
               payments: [
-                toOptimisticResponse(
+                generateCacheIdIfNew(
                   {
                     id: value.id,
                     paymentGatewayCode: value.paymentGatewayCode,
-                    billingAddress: toOptimisticResponse(value.billingAddress, "CartAddressType"),
+                    billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
                   },
                   "PaymentType",
                 ),

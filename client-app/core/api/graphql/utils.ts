@@ -14,7 +14,7 @@ export function filterActiveQueryNames<TCacheShape = any>(
   return intersection(activeQueryNames, queryNames);
 }
 
-export function toOptimisticResponse<T extends { id?: string } | undefined>(
+export function generateCacheIdIfNew<T extends { id?: string } | undefined>(
   data: T,
   __typename: string,
 ): T | undefined {
