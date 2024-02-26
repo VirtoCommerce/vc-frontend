@@ -1,5 +1,6 @@
-import { useLocalStorage } from "@vueuse/core";
+import { useLocalStorage, createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { useGlobalInterceptors } from "@/core/api/common";
 import { useFetch } from "@/core/composables/useFetch";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -20,12 +21,11 @@ type ConnectTokenResponseType = {
   access_token?: string;
   refresh_token?: string;
   errors?: Array<IdentityErrorType>;
+  error: string;
   token_type?: string;
 };
 
-const { innerFetch } = useFetch();
-
-export function useAuth() {
+function _useAuth() {
   const broadcast = useBroadcast();
 
   const accessToken = useLocalStorage("access_token", "");
@@ -35,6 +35,20 @@ export function useAuth() {
 
   const connectUrl = "/connect/token";
   const revokeUrl = "/revoke/token";
+
+  const { innerFetch } = useFetch();
+
+  const { onRequest } = useGlobalInterceptors();
+
+  onRequest.value.push(async (_, request) => {
+    if (!isTokenValid()) {
+      await refresh();
+    }
+
+    if (request) {
+      request.headers = { ...request.headers, ...authHeaders.value };
+    }
+  });
 
   async function authorize(username: string, password: string): Promise<IdentityResultType> {
     const { storeId } = globals;
@@ -83,18 +97,17 @@ export function useAuth() {
 
   async function refresh() {
     try {
-      const { token_type, access_token, refresh_token, expires_in, errors } =
-        await innerFetch<ConnectTokenResponseType>(
-          connectUrl,
-          "POST",
-          new URLSearchParams({
-            grant_type: "refresh_token",
-            refresh_token: refreshToken.value,
-          }),
-          "application/x-www-form-urlencoded",
-        );
+      const { token_type, access_token, refresh_token, expires_in, error } = await innerFetch<ConnectTokenResponseType>(
+        connectUrl,
+        "POST",
+        new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: refreshToken.value,
+        }),
+        "application/x-www-form-urlencoded",
+      );
 
-      if (errors?.length) {
+      if (error) {
         clearState();
         broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
       }
@@ -159,3 +172,5 @@ export function useAuth() {
     authHeaders,
   };
 }
+
+export const useAuth = createGlobalState(_useAuth);

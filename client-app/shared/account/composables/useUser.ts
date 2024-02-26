@@ -13,7 +13,6 @@ import {
   sendVerifyEmail as _sendVerifyEmail,
   confirmEmailByToken,
 } from "@/core/api/graphql/account";
-import { useAuth } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { TabsType, useBroadcast, userLockedEvent, userReloadEvent, passwordExpiredEvent } from "@/shared/broadcast";
@@ -54,7 +53,6 @@ interface IPasswordExpirationEntry {
 export function useUser() {
   const broadcast = useBroadcast();
   const { openModal, closeModal } = useModal();
-  const { authorize, unauthorize } = useAuth();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
