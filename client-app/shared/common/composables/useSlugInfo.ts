@@ -8,7 +8,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   const { currentLanguage } = useLanguages();
 
   const url = computed(() => `/storefrontapi/slug/${toValue(seoUrl)}?culture=${currentLanguage.value.cultureName}`);
-  const { data: slugInfo, isFetching: loading } = useFetch(url).get().json<SlugInfoResultType>();
+  const { data: slugInfo, isFetching: loading } = useFetch(url, { refetch: true }).get().json<SlugInfoResultType>();
 
   return {
     loading,
