@@ -1,7 +1,32 @@
 import { isDefined } from "@vueuse/core";
 import { intersection } from "lodash";
 import { v4 as uuidv4 } from "uuid";
+import { ServerError } from "@/core/api/common";
+import { GraphQLErrorCode } from "@/core/api/graphql/enums";
 import type { ApolloClient } from "@apollo/client/core";
+import type { GraphQLErrors, NetworkError } from "@apollo/client/errors";
+import type { GraphQLError } from "graphql";
+
+export function hasErrorCode(graphQLErrors: ReadonlyArray<GraphQLError> | undefined, errorCode: GraphQLErrorCode) {
+  return graphQLErrors?.some((graphQLError) => graphQLError.extensions.code === errorCode);
+}
+
+export function toServerError(
+  networkError: NetworkError | undefined,
+  graphQLErrors: GraphQLErrors | undefined,
+): ServerError | undefined {
+  if (networkError || hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)) {
+    return ServerError.Unhandled;
+  }
+
+  if (hasErrorCode(graphQLErrors, GraphQLErrorCode.Unauthorized)) {
+    return ServerError.Unauthorized;
+  }
+
+  if (hasErrorCode(graphQLErrors, GraphQLErrorCode.Forbidden)) {
+    return ServerError.Forbidden;
+  }
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function filterActiveQueryNames<TCacheShape = any>(

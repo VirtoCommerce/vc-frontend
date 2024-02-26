@@ -1,23 +1,10 @@
-import { ref } from "vue";
-import { useFetch } from "@/core/composables";
-import type { PageTemplate } from "../types";
-import type { Ref } from "vue";
+import { computedAsync, createGlobalState } from "@vueuse/core";
+import { useTemplates } from "@/shared/static-content/composables/useTemplates";
 
-const { innerFetch } = useFetch();
-const template: { [template: string]: Ref<PageTemplate | null> } = {};
+function _useTemplate(templateName: string) {
+  const { getTemplate } = useTemplates();
 
-export function useTemplate(templateName: string, pageContent: PageTemplate | null = null): Ref<PageTemplate | null> {
-  if (!template[templateName]) {
-    template[templateName] = ref(null);
-  }
-  if (pageContent) {
-    template[templateName].value = pageContent;
-  } else if (!template[templateName].value) {
-    innerFetch<PageTemplate>("/storefrontapi/content/templates", "POST", {
-      template: templateName,
-    }).then((x) => {
-      template[templateName].value = x;
-    });
-  }
-  return template[templateName];
+  return computedAsync(() => getTemplate(templateName));
 }
+
+export const useTemplate = createGlobalState(_useTemplate);
