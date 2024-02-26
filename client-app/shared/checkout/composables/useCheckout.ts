@@ -1,4 +1,4 @@
-import { useDebounceFn } from "@vueuse/core";
+import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -26,17 +26,29 @@ import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
-const loading = ref(false);
-const billingAddressEqualsShipping = ref(true);
-const placedOrder = shallowRef<CustomerOrderType | null>(null);
+const useGlobalCheckout = createGlobalState(() => {
+  const loading = ref(false);
+  const billingAddressEqualsShipping = ref(true);
+  const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
-const commentChanging = ref(false);
-const _comment = ref<string>();
+  const commentChanging = ref(false);
+  const _comment = ref<string>();
 
-const purchaseOrderNumberChanging = ref(false);
-const _purchaseOrderNumber = ref<string>();
+  const purchaseOrderNumberChanging = ref(false);
+  const _purchaseOrderNumber = ref<string>();
 
-export function useCheckout() {
+  return {
+    loading,
+    billingAddressEqualsShipping,
+    placedOrder,
+    commentChanging,
+    _comment,
+    purchaseOrderNumberChanging,
+    _purchaseOrderNumber,
+  };
+});
+
+export function _useCheckout() {
   const ga = useGoogleAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
@@ -70,6 +82,15 @@ export function useCheckout() {
     changeComment,
     updatePurchaseOrderNumber,
   } = useFullCart();
+  const {
+    loading,
+    billingAddressEqualsShipping,
+    placedOrder,
+    commentChanging,
+    _comment,
+    purchaseOrderNumberChanging,
+    _purchaseOrderNumber,
+  } = useGlobalCheckout();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const billingAddress = computed(() =>
@@ -79,11 +100,11 @@ export function useCheckout() {
   );
   const shipmentMethod = computed(() =>
     availableShippingMethods.value.find(
-      (item) => item.id === shipment.value!.shipmentMethodCode + "_" + shipment.value!.shipmentMethodOption,
+      (item) => item.id === shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,
     ),
   );
   const paymentMethod = computed(() =>
-    availablePaymentMethods.value.find((item) => item.code === payment.value!.paymentGatewayCode),
+    availablePaymentMethods.value.find((item) => item.code === payment.value?.paymentGatewayCode),
   );
 
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
@@ -186,7 +207,12 @@ export function useCheckout() {
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
-  watch(allItemsAreDigital, setCheckoutDefaults);
+  watch(allItemsAreDigital, async (_, previousValue) => {
+    // Update defaults if state changed not on initialization
+    if (previousValue !== undefined) {
+      await setCheckoutDefaults();
+    }
+  });
 
   async function setCheckoutDefaults(): Promise<void> {
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
@@ -472,3 +498,5 @@ export function useCheckout() {
     allOrderItemsAreDigital,
   };
 }
+
+export const useCheckout = createSharedComposable(_useCheckout);
