@@ -182,8 +182,27 @@ module.exports = {
         "no-restricted-imports": [
           "error",
           {
-            name: "@apollo/client",
-            message: "@apollo/client is for React only. Please import from @apollo/client/* or @vue/apollo-composable"
+            paths: [
+              {
+                name: "@apollo/client",
+                message: "@apollo/client is for React only. Please import from @apollo/client/* or @vue/apollo-composable"
+              },
+              {
+                name: "@vueuse/core",
+                importNames: ["useFetch"],
+                message: "Please import useFetch from @/core/api/common instead"
+              },
+              {
+                name: "@vueuse/integrations/useAxios",
+                importNames: ["useAxios"],
+                message: "Please import useAxios from @/core/api/common instead"
+              },
+              {
+                name: "axios",
+                importNames: ["default"],
+                message: "Please use useAxios from @/core/api/common instead"
+              }
+            ]
           }
         ],
         "no-restricted-exports": [
