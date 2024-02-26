@@ -1,5 +1,6 @@
 import { toValue } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
+import { globals } from "@/core/globals";
 import type { IAllGlobalVariables } from "@/core/api/graphql/composables";
 import type { CartIdFragment } from "@/core/api/graphql/types";
 import type { UseMutationOptions } from "@vue/apollo-composable";
@@ -26,11 +27,14 @@ export function useCartMutationVariables<TResult>(
   cart?: MaybeRefOrGetter<CartIdFragment | undefined>,
   options: MaybeRefOrGetter<CartMutationOptionsType<TResult>> = {},
 ): UseMutationOptions<TResult, ICartMutationVariables> {
+  const { cultureName } = globals;
+
   return {
     variables: {
       command: {
         ...toValue(useAllGlobalVariables()),
         cartId: toValue(cart)?.id,
+        cultureName,
       },
       skipQuery: false,
     },

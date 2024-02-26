@@ -1545,6 +1545,8 @@ export type InputChangePurchaseOrderNumber = {
 };
 
 export type InputChangeWishlistType = {
+  /** Culture name */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   /** List description */
   description?: InputMaybe<Scalars['String']['input']>;
   /** List ID */
@@ -1582,6 +1584,25 @@ export type InputClearShipmentsType = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputCloneWishlistType = {
+  /** Culture name */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  /** Currency code */
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** List description */
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** Source List ID */
+  listId: Scalars['String']['input'];
+  /** List name */
+  listName?: InputMaybe<Scalars['String']['input']>;
+  /** List scope (private or organization) */
+  scope?: InputMaybe<Scalars['String']['input']>;
+  /** Store ID */
+  storeId: Scalars['String']['input'];
+  /** Owner ID */
   userId: Scalars['String']['input'];
 };
 
@@ -2740,6 +2761,7 @@ export type Mutations = {
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
+  cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
@@ -2967,6 +2989,11 @@ export type MutationsClearPaymentsArgs = {
 
 export type MutationsClearShipmentsArgs = {
   command: InputClearShipmentsType;
+};
+
+
+export type MutationsCloneWishlistArgs = {
+  command: InputCloneWishlistType;
 };
 
 
