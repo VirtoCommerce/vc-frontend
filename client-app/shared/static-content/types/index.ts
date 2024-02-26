@@ -1,3 +1,7 @@
+export interface PageTemplateRequest {
+  template: string;
+}
+
 export interface PageTemplate {
   settings: PageContent;
   content: PageContent[];

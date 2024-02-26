@@ -1,27 +1,16 @@
-import { computed, ref } from "vue";
-import { useFetch } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { useFetch } from "@/core/api/common";
 import type { PasswordOptionsType } from "@/core/types";
 
-const passwordRequirements = ref<PasswordOptionsType>();
-
 export function usePasswordRequirements() {
-  const { innerFetch } = useFetch();
-
-  async function fetchPasswordRequirements(): Promise<void> {
-    try {
-      passwordRequirements.value = await innerFetch<PasswordOptionsType>(
-        "/storefrontapi/account/passwordrequirements",
-        "GET",
-      );
-    } catch (e) {
-      Logger.error(`${usePasswordRequirements.name}.${fetchPasswordRequirements.name}`, e);
-      throw e;
-    }
-  }
+  const { data: passwordRequirements, execute: fetchPasswordRequirements } = useFetch(
+    "/storefrontapi/account/passwordrequirements",
+    { immediate: false },
+  )
+    .get()
+    .json<PasswordOptionsType>();
 
   return {
-    passwordRequirements: computed(() => passwordRequirements.value),
+    passwordRequirements,
     fetchPasswordRequirements,
   };
 }

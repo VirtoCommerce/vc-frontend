@@ -1,4 +1,3 @@
-import { useApolloClient } from "@vue/apollo-composable";
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
@@ -17,14 +16,7 @@ import {
 import { useAuth } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import {
-  TabsType,
-  pageReloadEvent,
-  useBroadcast,
-  userLockedEvent,
-  userReloadEvent,
-  passwordExpiredEvent,
-} from "@/shared/broadcast";
+import { TabsType, useBroadcast, userLockedEvent, userReloadEvent, passwordExpiredEvent } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
@@ -42,7 +34,6 @@ import type {
   RegisterOrganization,
   ResetPassword,
   ChangePassword,
-  SignMeIn,
   SignMeUp,
   UserPersonalData,
 } from "@/shared/account";
@@ -61,7 +52,6 @@ interface IPasswordExpirationEntry {
 }
 
 export function useUser() {
-  const { resolveClient } = useApolloClient();
   const broadcast = useBroadcast();
   const { openModal, closeModal } = useModal();
   const { authorize, unauthorize } = useAuth();
@@ -190,7 +180,7 @@ export function useUser() {
     }
   }
 
-  async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
+  /* async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
     try {
       loading.value = true;
 
@@ -208,7 +198,7 @@ export function useUser() {
     } finally {
       loading.value = false;
     }
-  }
+  } */
 
   async function registerUser(payload: SignMeUp): Promise<AccountCreationResultType> {
     const { storeId } = globals;
@@ -269,7 +259,7 @@ export function useUser() {
     }
   }
 
-  async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
+  /* async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
     try {
       loading.value = true;
       await unauthorize();
@@ -283,7 +273,7 @@ export function useUser() {
     } finally {
       loading.value = false;
     }
-  }
+  } */
 
   async function forgotPassword(payload: ForgotPassword): Promise<boolean> {
     try {
@@ -378,10 +368,8 @@ export function useUser() {
     fetchUser,
     updateUser,
     confirmEmail,
-    signMeIn,
     registerUser,
     registerOrganization,
-    signMeOut,
     forgotPassword,
     resetPassword,
     inviteUser,

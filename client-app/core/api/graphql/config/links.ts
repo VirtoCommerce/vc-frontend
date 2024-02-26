@@ -3,6 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
+import { apolloFetch } from "@/core/api/graphql/config/interceptors";
 import { API_URL } from "@/core/api/graphql/consts";
 import { useAuth } from "@/core/composables";
 
@@ -21,8 +22,8 @@ const authTokenizer = setContext(async (_, { headers }) => {
   };
 });
 
-const httpLink = new HttpLink({ uri: API_URL });
-const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink, authTokenizer]);
+const httpLink = new HttpLink({ uri: API_URL, fetch: apolloFetch });
+const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
 
 export const deprecatedLink = from([sharedLink, httpLink]);
 
