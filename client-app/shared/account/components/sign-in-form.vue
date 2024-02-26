@@ -38,8 +38,8 @@
       :placeholder="$t('common.placeholders.email')"
       :disabled="loading"
       required
-      :message="errors.email"
-      :error="!!errors.email"
+      :message="validationErrors.email"
+      :error="!!validationErrors.email"
       autocomplete="email"
     />
 
@@ -51,8 +51,8 @@
       :disabled="loading"
       type="password"
       required
-      :message="errors.password"
-      :error="!!errors.password"
+      :message="validationErrors.password"
+      :error="!!validationErrors.password"
       autocomplete="password"
     />
 
@@ -84,33 +84,14 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
-import { reactive, ref, watch } from "vue";
+import { ref, toRef, watch } from "vue";
 import { object, string } from "yup";
-import { getMe } from "@/core/api/graphql";
-import { useMergeCartMutation } from "@/core/api/graphql/cart";
 import { useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
-import { Logger } from "@/core/utilities";
-import { useShortCart } from "@/shared/cart";
+import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
-import { useUser } from "../composables/useUser";
-import type { IdentityErrorType } from "@/core/api/graphql/types";
 
-interface IEmits {
-  (event: "succeeded"): void;
-}
-
-const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
-
-const { cart } = useShortCart();
-const { mutate: mergeCart } = useMergeCartMutation();
-const { signMeIn } = useUser();
-
-const loading = ref(false);
-
-const apiErrors = ref<IdentityErrorType[]>();
-const { translatedErrors } = useErrorsTranslator("shared.account.sign_in_form.errors", apiErrors);
 
 const schema = toTypedSchema(
   object({
@@ -119,7 +100,11 @@ const schema = toTypedSchema(
   }),
 );
 
-const { errors, handleSubmit, values } = useForm({
+const {
+  errors: validationErrors,
+  meta,
+  handleSubmit,
+} = useForm({
   validationSchema: schema,
 });
 
@@ -127,28 +112,20 @@ const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 
 const rememberMe = ref(false);
-const model = reactive({ email, password, rememberMe });
+
+const model = toRef({ email, password, rememberMe });
+
+const { errors, loading, signIn, reset } = useSignMeIn(model);
+
+const { translatedErrors } = useErrorsTranslator("shared.account.sign_in_form.errors", errors);
 
 const onSubmit = handleSubmit(async () => {
-  loading.value = true;
-
-  try {
-    const result = await signMeIn(model);
-    if (result.succeeded) {
-      const user = await getMe();
-      await mergeCart({ command: { userId: user.id, secondCartId: cart.value!.id } });
-      emit("succeeded");
-    } else {
-      apiErrors.value = result.errors;
-    }
-  } catch (e) {
-    Logger.error(useUser.name, e);
-  }
-
-  loading.value = false;
+  await signIn();
 });
 
-watch(values, () => {
-  apiErrors.value = undefined;
+watch(meta, (value) => {
+  if (value.touched) {
+    reset();
+  }
 });
 </script>
