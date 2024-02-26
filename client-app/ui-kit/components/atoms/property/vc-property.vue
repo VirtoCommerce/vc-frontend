@@ -21,7 +21,7 @@ defineProps<IProps>();
   --label-color: var(--vc-property-label-color, var(--color-neutral-600));
   --value-color: var(--vc-property-value-color, var(--color-neutral-900));
 
-  @apply grid grid-cols-[auto_1fr_auto] align-baseline gap-1 text-xs leading-normal;
+  @apply grid grid-cols-[auto_1fr_auto] gap-1 text-xs leading-normal;
 
   &__label {
     @apply min-w-0 truncate text-[--label-color];

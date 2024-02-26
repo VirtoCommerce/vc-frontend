@@ -1,19 +1,24 @@
 <template>
-  <component
-    :is="componentType"
-    :to="linkTo"
-    :target="target"
-    :title="title"
+  <div
     :class="[
       'vc-product-title',
       {
-        'vc-product-title--disabled': disabled || !to,
+        'vc-product-title--link': to,
+        'vc-product-title--disabled': disabled,
       },
     ]"
-    @click="$emit('click', $event)"
   >
-    <slot />
-  </component>
+    <component
+      :is="componentType"
+      :to="linkTo"
+      :target="to ? target : null"
+      :title="title"
+      class="vc-product-title__text"
+      @click="$emit('click', $event)"
+    >
+      <slot />
+    </component>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -44,21 +49,36 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 <style lang="scss">
 .vc-product-title {
   $disabled: "";
+  $link: "";
 
   --font-size: var(--vc-product-title-font-size);
 
-  @apply text-[length:var(--font-size)] text-[--color-accent-600] font-bold line-clamp-3 cursor-pointer;
+  @apply text-[length:var(--font-size)] text-neutral-900 font-bold line-clamp-3;
 
   @apply leading-[1.17] #{!important};
 
   &--disabled {
     $disabled: &;
-
-    @apply text-[--color-neutral-500] cursor-not-allowed;
   }
 
-  &:hover:not(#{$disabled}) {
-    @apply text-[--color-accent-700];
+  &--link {
+    $link: &;
+  }
+
+  &__text {
+    @apply text-neutral-950;
+
+    #{$link}:not(#{$disabled}) & {
+      @apply cursor-pointer;
+
+      &:hover {
+        @apply text-accent-700;
+      }
+    }
+
+    #{$disabled} & {
+      @apply text-neutral pointer-events-none;
+    }
   }
 }
 </style>

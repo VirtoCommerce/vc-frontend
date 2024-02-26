@@ -44,11 +44,9 @@ withDefaults(defineProps<IProps>(), {
 .vc-product-price {
   $truncate: "";
 
-  --font-size: --vc-product-price-font-size;
+  --font-size: var(--vc-product-price-font-size);
 
-  @apply flex flex-col text-[length:var(--font-size)] text-[--color-neutral-950] [word-break:break-word];
-
-  @apply leading-[1.2] #{!important};
+  @apply flex flex-col text-[length:var(--font-size)] text-[--color-neutral-950] [word-break:break-word] leading-[1.2];
 
   &--align {
     &--start {

@@ -1,12 +1,8 @@
 <template>
-  <VcLineItems :items="preparedLineItems">
+  <VcLineItems :items="preparedLineItems" subtotal item-total>
     <template #titles>
       <div class="min-w-[5.5rem] text-center">
         {{ $t("common.labels.quantity") }}
-      </div>
-
-      <div class="text-right">
-        {{ $t("common.labels.total") }}
       </div>
     </template>
 
@@ -20,8 +16,6 @@
           disabled
         />
       </div>
-
-      <VcLineItemTotal :list-total="item.extendedPrice" />
     </template>
   </VcLineItems>
 </template>

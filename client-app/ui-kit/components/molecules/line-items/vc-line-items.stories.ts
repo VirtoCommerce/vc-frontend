@@ -1,5 +1,11 @@
 import { VcLineItems } from "..";
-import { prepatedLineItemMock1 } from "../../../mocks/line-item.mock";
+import {
+  preparedLineItemMock1,
+  preparedLineItemMock2,
+  preparedLineItemMock3,
+  preparedLineItemMock4,
+  preparedLineItemMock5,
+} from "../../../mocks/line-item.mock";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -18,69 +24,126 @@ const Template: StoryFn<typeof VcLineItems> = (args) => ({
   template: '<VcLineItems v-bind="args" />',
 });
 
-export const Basic = Template.bind({});
-Basic.args = {
-  items: [prepatedLineItemMock1, prepatedLineItemMock1, prepatedLineItemMock1],
-};
-
-export const Removable = Template.bind({});
-Removable.args = {
-  ...Basic.args,
-  removable: true,
-};
-
-const TemplateQuantityAndTotal: StoryFn<typeof VcLineItems> = (args) => ({
+const TemplateQuantity: StoryFn<typeof VcLineItems> = (args) => ({
   components: { VcLineItems },
   setup: () => ({ args }),
   template: `<VcLineItems v-bind="args">
     <template #titles>
-      <div class="min-w-[5.5rem] text-center">
+      <div class="text-end">
         {{ $t("common.labels.quantity") }}
-      </div>
-
-      <div>
-        {{ $t("common.labels.total") }}
       </div>
     </template>
 
     <template #default="{ item }">
-      <div class="flex flex-col items-center gap-1.5">
-        <VcQuantity
-          :item="item"
-          @change="$emit('change:itemQuantity', { item, quantity: $event })"
-        />
-
-        <VcChip variant="outline-dark" color="neutral">10 in Cart</VcChip>
-      </div>
-
-      <VcLineItemTotal :list-total="item.extendedPrice" />
-    </template>
-
-    <template #after-content="{ item }">
-      <VcAlert v-if="item.id === 2" :key="index" color="danger" size="sm" variant="outline-dark" icon>
-        Validation Error Message
-      </VcAlert>
+      <VcQuantity
+        :item="item"
+        @change="$emit('change:itemQuantity', { item, quantity: $event })"
+      />
     </template>
   </VcLineItems>`,
 });
 
-export const QuantityAndTotal = TemplateQuantityAndTotal.bind({});
-QuantityAndTotal.args = {
+const TemplateAddToCart: StoryFn<typeof VcLineItems> = (args) => ({
+  components: { VcLineItems },
+  setup: () => ({ args }),
+  template: `<VcLineItems v-bind="args">
+    <template #default="{ item }">
+        <VcAddToCart
+          :model-value="item.quantity"
+        />
+
+        <div class="flex gap-1 mt-1.5">
+          <VcChip size="xs" variant="outline-dark" color="neutral" rounded>10 in Cart</VcChip>
+        </div>
+    </template>
+  </VcLineItems>`,
+});
+
+export const Basic = Template.bind({});
+Basic.args = {
+  items: [preparedLineItemMock1, preparedLineItemMock1, preparedLineItemMock1],
+};
+
+export const Selectable = Template.bind({});
+Selectable.args = {
+  items: [preparedLineItemMock1, preparedLineItemMock1, preparedLineItemMock1],
+  selectable: true,
+};
+
+export const Removable = Template.bind({});
+Removable.args = {
+  items: [preparedLineItemMock2, preparedLineItemMock2, preparedLineItemMock2],
+  removable: true,
+};
+
+export const WithoutImage = Template.bind({});
+WithoutImage.args = {
+  items: [preparedLineItemMock3, preparedLineItemMock3, preparedLineItemMock3],
+  removable: true,
+};
+
+export const WithoutImageAndProperties = Template.bind({});
+WithoutImageAndProperties.args = {
+  items: [preparedLineItemMock4, preparedLineItemMock4, preparedLineItemMock4],
+  removable: true,
+};
+
+export const QuantityInput = TemplateQuantity.bind({});
+QuantityInput.args = {
   items: [
     {
-      ...prepatedLineItemMock1,
+      ...preparedLineItemMock1,
       id: "1",
       quantity: 4,
     },
     {
-      ...prepatedLineItemMock1,
+      ...preparedLineItemMock1,
       id: "2",
       quantity: 1999,
     },
     {
-      ...prepatedLineItemMock1,
+      ...preparedLineItemMock1,
       id: "3",
     },
   ],
+  removable: true,
+  itemTotal: true,
+};
+
+export const AddToCart = TemplateAddToCart.bind({});
+AddToCart.args = {
+  items: [
+    {
+      ...preparedLineItemMock1,
+      id: "1",
+      quantity: 4,
+    },
+    {
+      ...preparedLineItemMock1,
+      id: "2",
+      quantity: 1999,
+    },
+    {
+      ...preparedLineItemMock1,
+      id: "3",
+    },
+  ],
+  removable: true,
+};
+
+export const Minimal = Template.bind({});
+Minimal.args = {
+  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
+};
+
+export const MinimalSelectable = Template.bind({});
+MinimalSelectable.args = {
+  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
+  selectable: true,
+};
+
+export const MinimalQuantity = TemplateQuantity.bind({});
+MinimalQuantity.args = {
+  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
   removable: true,
 };

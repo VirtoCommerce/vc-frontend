@@ -90,7 +90,7 @@ const propertiesMock: Property[] = [
   },
 ];
 
-export const prepatedLineItemMock1: PreparedLineItemType = {
+export const preparedLineItemMock1: PreparedLineItemType = {
   id: "52ae03eb-2bf9-4361-9e36-c53f75fe0438",
   name: "Eyebolt, 3/8-16,3/4In, Turned Wire, PK10",
   imageUrl: "https://vcst-dev.govirto.com/cms-content/assets/catalog/7829d/5ZE93/5ZE93.jpg",
@@ -100,12 +100,28 @@ export const prepatedLineItemMock1: PreparedLineItemType = {
   quantity: 459,
   sku: "5ZE93",
   productId: "74f89c449ad44d52a148123e587212c2",
+  properties: propertiesMock.slice(0, 3),
 };
 
 export const preparedLineItemMock2: PreparedLineItemType = {
   id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
   name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
   imageUrl: "https://vcst-dev.govirto.com/cms-content/assets/catalog/7829d/38DJ66/5ZA21_AS01.jpg",
+  inStockQuantity: 25,
+  listPrice: getMoney(57.25),
+  actualPrice: getMoney(47.25),
+  extendedPrice: getMoney(47.25),
+  quantity: 1,
+  deleted: false,
+  route: "/bolts/eyebolts/eye-boltcarbon-steel-46m6x70pk25",
+  properties: propertiesMock.slice(0, 3),
+  minQuantity: 0,
+  maxQuantity: 25,
+};
+
+export const preparedLineItemMock3: PreparedLineItemType = {
+  id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
+  name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
   inStockQuantity: 25,
   listPrice: getMoney(57.25),
   actualPrice: getMoney(57.25),
@@ -116,4 +132,24 @@ export const preparedLineItemMock2: PreparedLineItemType = {
   properties: propertiesMock.slice(0, 3),
   minQuantity: 0,
   maxQuantity: 25,
+};
+
+export const preparedLineItemMock4: PreparedLineItemType = {
+  id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
+  name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
+  inStockQuantity: 25,
+  listPrice: getMoney(57.25),
+  actualPrice: getMoney(57.25),
+  extendedPrice: getMoney(57.25),
+  quantity: 1,
+  deleted: false,
+  route: "/bolts/eyebolts/eye-boltcarbon-steel-46m6x70pk25",
+  minQuantity: 0,
+  maxQuantity: 25,
+};
+
+export const preparedLineItemMock5: PreparedLineItemType = {
+  id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
+  name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
+  quantity: 1,
 };
