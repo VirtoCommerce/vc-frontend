@@ -2,9 +2,10 @@ import { HttpLink, from } from "@apollo/client/core";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
+import { apolloFetch } from "@/core/api/graphql/config/interceptors";
 import { API_URL } from "@/core/api/graphql/consts";
 
-const httpLink = new HttpLink({ uri: API_URL });
+const httpLink = new HttpLink({ uri: API_URL, fetch: apolloFetch });
 const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
 
 export const deprecatedLink = from([sharedLink, httpLink]);
