@@ -3,6 +3,10 @@
 
   &__header {
     @apply px-0;
+
+    & .vc-widget__prepend-append {
+      @apply hidden;
+    }
   }
 
   &__slot {

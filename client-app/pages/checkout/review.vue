@@ -5,7 +5,7 @@
       :title="$t('common.titles.review_order')"
       prepend-icon="clipboard-copy-1"
       size="lg"
-      class="print:!mx-0"
+      class="print:!mx-0 print:break-inside-auto"
     >
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">

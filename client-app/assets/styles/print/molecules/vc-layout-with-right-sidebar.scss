@@ -1,3 +1,7 @@
 .vc-layout-with-right-sidebar {
   @apply p-0;
+
+  & .vc-widget--size--lg {
+    @apply mx-0;
+  }
 }
