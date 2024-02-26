@@ -288,15 +288,12 @@ export function _useFullCart() {
           return {
             addOrUpdateCartShipment: merge({}, cart.value!, {
               shipments: [
-                generateCacheIdIfNew(
-                  {
-                    id: value.id,
-                    shipmentMethodCode: value.shipmentMethodCode,
-                    shipmentMethodOption: value.shipmentMethodOption,
-                    deliveryAddress: generateCacheIdIfNew(value.deliveryAddress, "CartAddressType"),
-                  },
-                  "ShipmentType",
-                ),
+                {
+                  id: value.id,
+                  shipmentMethodCode: value.shipmentMethodCode,
+                  shipmentMethodOption: value.shipmentMethodOption,
+                  deliveryAddress: generateCacheIdIfNew(value.deliveryAddress, "CartAddressType"),
+                },
               ],
             }),
           };
@@ -332,14 +329,11 @@ export function _useFullCart() {
           return {
             addOrUpdateCartPayment: merge({}, cart.value!, {
               payments: [
-                generateCacheIdIfNew(
-                  {
-                    id: value.id,
-                    paymentGatewayCode: value.paymentGatewayCode,
-                    billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
-                  },
-                  "PaymentType",
-                ),
+                {
+                  id: value.id,
+                  paymentGatewayCode: value.paymentGatewayCode,
+                  billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
+                },
               ],
             }),
           };
