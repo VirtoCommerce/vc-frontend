@@ -5,7 +5,7 @@ import { OperationNames } from "@/core/api/graphql/types";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
-import { useUser } from "@/shared/account";
+import { useSignMeOut, useUser } from "@/shared/account";
 import {
   cartReloadEvent,
   pageReloadEvent,
@@ -33,12 +33,14 @@ export function setupBroadcastGlobalListeners() {
   const router = useRouter();
   const { on } = useBroadcast();
   const notifications = useNotifications();
-  const { fetchUser, signMeOut, user } = useUser();
+  const { fetchUser, user } = useUser();
+  const { signMeOut } = useSignMeOut({ reloadPage: false });
 
   on(pageReloadEvent, () => location.reload());
   on(userReloadEvent, () => fetchUser());
   on(userLockedEvent, async () => {
-    await signMeOut({ reloadPage: false });
+    await signMeOut();
+
     const { pathname } = location;
 
     if (pathname !== "/blocked") {
@@ -80,7 +82,7 @@ export function setupBroadcastGlobalListeners() {
     });
   });
   on(openReturnUrl, () => {
-    location.href = getReturnUrlValue() || "/";
+    location.href = getReturnUrlValue() ?? "/";
   });
 
   on(forbiddenEvent, () => {

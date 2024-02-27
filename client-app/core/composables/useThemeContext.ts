@@ -1,12 +1,12 @@
+import { createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { useFetch } from "@/core/api/common";
 import { getStore } from "@/core/api/graphql";
 import { IS_DEVELOPMENT } from "../constants";
-import { useFetch } from "./useFetch";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
-const themeContext = ref<IThemeContext>();
 
-export function useThemeContext() {
-  const { innerFetch } = useFetch();
+function _useThemeContext() {
+  const themeContext = ref<IThemeContext>();
 
   async function fetchThemeContext() {
     const [store, themeSettings] = await Promise.all([getStore("B2B-store"), fetchThemeSettings()]);
@@ -27,7 +27,9 @@ export function useThemeContext() {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
       return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
     } else {
-      return await innerFetch<IThemeConfigPreset>("/themes/settings.json");
+      // TODO: Refactor after storefront dead
+      const { data } = await useFetch("/themes/settings.json").get().json<IThemeConfigPreset>();
+      return data.value!;
     }
   }
 
@@ -48,3 +50,5 @@ export function useThemeContext() {
     }),
   };
 }
+
+export const useThemeContext = createGlobalState(_useThemeContext);
