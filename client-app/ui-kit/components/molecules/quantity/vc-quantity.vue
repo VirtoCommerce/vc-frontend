@@ -4,8 +4,6 @@
     :name="name"
     :readonly="readonly"
     :disabled="disabled"
-    :min="minQuantity"
-    :max="maxQuantity"
     :error="error"
     class="w-[5.625rem] flex-none"
     size="sm"
@@ -22,7 +20,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField } from "vee-validate";
-import { computed, ref, toRefs, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
@@ -47,8 +45,6 @@ const props = defineProps<IProps>();
 let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>();
-
-const { minQuantity, maxQuantity } = toRefs(props);
 
 const { quantitySchema } = useQuantityValidationSchema({});
 
