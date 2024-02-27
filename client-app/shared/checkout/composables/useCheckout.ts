@@ -1,6 +1,6 @@
-import { useDebounceFn } from "@vueuse/core";
+import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
@@ -26,23 +26,29 @@ import type { AnyAddressType } from "@/core/types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
-const loading = ref(false);
-const billingAddressEqualsShipping = ref(true);
-const placedOrder = shallowRef<CustomerOrderType | null>(null);
+const useGlobalCheckout = createGlobalState(() => {
+  const loading = ref(false);
+  const billingAddressEqualsShipping = ref(true);
+  const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
-const _deliveryAddress = ref<CartAddressType | InputAddressType>();
-const _shipmentMethod = ref<ShippingMethodType>();
+  const commentChanging = ref(false);
+  const _comment = ref<string>();
 
-const _billingAddress = ref<CartAddressType | InputAddressType>();
-const _paymentMethod = ref<PaymentMethodType>();
+  const purchaseOrderNumberChanging = ref(false);
+  const _purchaseOrderNumber = ref<string>();
 
-const commentChanging = ref(false);
-const _comment = ref<string>();
+  return {
+    loading,
+    billingAddressEqualsShipping,
+    placedOrder,
+    commentChanging,
+    _comment,
+    purchaseOrderNumberChanging,
+    _purchaseOrderNumber,
+  };
+});
 
-const purchaseOrderNumberChanging = ref(false);
-const _purchaseOrderNumber = ref<string>();
-
-export function useCheckout() {
+export function _useCheckout() {
   const ga = useGoogleAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
@@ -76,29 +82,30 @@ export function useCheckout() {
     changeComment,
     updatePurchaseOrderNumber,
   } = useFullCart();
+  const {
+    loading,
+    billingAddressEqualsShipping,
+    placedOrder,
+    commentChanging,
+    _comment,
+    purchaseOrderNumberChanging,
+    _purchaseOrderNumber,
+  } = useGlobalCheckout();
 
-  const deliveryAddress = computed(() => _deliveryAddress.value ?? shipment.value?.deliveryAddress);
+  const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const billingAddress = computed(() =>
     !allItemsAreDigital.value && billingAddressEqualsShipping.value && deliveryAddress.value
       ? deliveryAddress.value
-      : _billingAddress.value ?? payment.value?.billingAddress,
+      : payment.value?.billingAddress,
   );
-  const shipmentMethod = computed(() => {
-    let result = _shipmentMethod.value;
-    if (!_shipmentMethod.value && shipment.value) {
-      result = availableShippingMethods.value.find(
-        (item) => item.id === shipment.value!.shipmentMethodCode + "_" + shipment.value!.shipmentMethodOption,
-      );
-    }
-    return result;
-  });
-  const paymentMethod = computed(() => {
-    let result = _paymentMethod.value;
-    if (!_paymentMethod.value && payment.value) {
-      result = availablePaymentMethods.value.find((item) => item.code === payment.value!.paymentGatewayCode);
-    }
-    return result;
-  });
+  const shipmentMethod = computed(() =>
+    availableShippingMethods.value.find(
+      (item) => item.id === shipment.value?.shipmentMethodCode + "_" + shipment.value?.shipmentMethodOption,
+    ),
+  );
+  const paymentMethod = computed(() =>
+    availablePaymentMethods.value.find((item) => item.code === payment.value?.paymentGatewayCode),
+  );
 
   const changeCommentDebounced = useDebounceFn(async (value: string) => {
     if (cart.value?.comment !== value) {
@@ -181,28 +188,31 @@ export function useCheckout() {
   }
 
   async function setShippingMethod(method: ShippingMethodType): Promise<void> {
-    _shipmentMethod.value = method;
     await updateShipment({
       id: shipment.value?.id,
       price: method.price?.amount,
       shipmentMethodCode: method.code,
       shipmentMethodOption: method.optionName,
     });
-    _shipmentMethod.value = undefined;
 
     ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
-    _paymentMethod.value = method;
     await updatePayment({
       id: payment.value?.id,
       paymentGatewayCode: method.code,
     });
-    _paymentMethod.value = undefined;
 
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
+
+  watch(allItemsAreDigital, async (_, previousValue) => {
+    // Update defaults if state changed not on initialization
+    if (previousValue !== undefined) {
+      await setCheckoutDefaults();
+    }
+  });
 
   async function setCheckoutDefaults(): Promise<void> {
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
@@ -218,7 +228,7 @@ export function useCheckout() {
     if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
       if (shippingMethodId && defaultShippingMethod) {
         await setShippingMethod(defaultShippingMethod);
-      } else {
+      } else if (!shipment.value) {
         await updateShipment({});
       }
     }
@@ -226,7 +236,7 @@ export function useCheckout() {
     if (!payment.value?.paymentGatewayCode) {
       if (paymentMethodCode && defaultPaymentMethod) {
         await setPaymentMethod(defaultPaymentMethod);
-      } else {
+      } else if (!payment.value) {
         await updatePayment({});
       }
     }
@@ -253,22 +263,18 @@ export function useCheckout() {
       addressType === AddressType.Billing &&
       (!payment.value?.billingAddress || !isEqualAddresses(payment.value?.billingAddress, inputAddress))
     ) {
-      _billingAddress.value = inputAddress;
       await updatePayment({
         id: payment.value?.id,
         billingAddress: inputAddress,
       });
-      _billingAddress.value = undefined;
     } else if (
       addressType === AddressType.Shipping &&
       (!shipment.value?.deliveryAddress || !isEqualAddresses(shipment.value?.deliveryAddress, inputAddress))
     ) {
-      _deliveryAddress.value = inputAddress;
       await updateShipment({
         id: shipment.value?.id,
         deliveryAddress: inputAddress,
       });
-      _deliveryAddress.value = undefined;
     }
   }
 
@@ -492,3 +498,5 @@ export function useCheckout() {
     allOrderItemsAreDigital,
   };
 }
+
+export const useCheckout = createSharedComposable(_useCheckout);
