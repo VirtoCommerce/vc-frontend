@@ -1,6 +1,6 @@
 import { useLocalStorage, createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useGlobalInterceptors, useFetch } from "@/core/api/common";
+import { useFetch } from "@/core/api/common";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
 import type { AfterFetchContext } from "@vueuse/core";
@@ -21,22 +21,15 @@ type ConnectTokenResponseType = {
 
 function _useAuth() {
   const broadcast = useBroadcast();
-  const { onRequest } = useGlobalInterceptors();
-
-  const connectUrl = "/connect/token";
 
   const params = ref<URLSearchParams>();
   const {
     data,
     execute: getToken,
     isFetching: isAuthorizing,
-  } = useFetch(connectUrl, {
+  } = useFetch("/connect/token", {
     afterFetch: updateToken,
     immediate: false,
-    onFetchError: (context) => {
-      context.response = null;
-      return context;
-    },
     updateDataOnError: true,
   })
     .post(params, "application/x-www-form-urlencoded")
@@ -56,16 +49,6 @@ function _useAuth() {
     expires_at: null,
     refresh_token: null,
     token_type: "Bearer",
-  });
-
-  onRequest.value.push(async (_, request) => {
-    if (isTokenExpired()) {
-      await refresh();
-    }
-
-    if (request) {
-      request.headers = { ...request.headers, ...authHeaders.value };
-    }
   });
 
   function updateToken(context: AfterFetchContext<ConnectTokenResponseType>) {
@@ -98,13 +81,10 @@ function _useAuth() {
   }
 
   async function refresh() {
-    // ???
-    if (state.value.refresh_token) {
-      params.value = new URLSearchParams({
-        grant_type: "refresh_token",
-        refresh_token: state.value.refresh_token!,
-      });
-    }
+    params.value = new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: state.value.refresh_token!,
+    });
 
     await getToken();
 
@@ -115,15 +95,20 @@ function _useAuth() {
     }
   }
 
-  function isTokenExpired() {
-    if (state.value.expires_at === null) {
+  async function unauthorize() {
+    await revokeToken(true);
+    state.value = null;
+  }
+
+  const expired = computed(() => {
+    if (state.value.refresh_token === null || state.value.expires_at === null) {
       return null;
     }
 
     return new Date(state.value.expires_at).getTime() <= Date.now();
-  }
+  });
 
-  const authHeaders = computed(() => {
+  const headers = computed(() => {
     if (state.value.access_token) {
       return {
         Authorization: `${state.value.token_type} ${state.value.access_token}`,
@@ -132,16 +117,13 @@ function _useAuth() {
     return {};
   });
 
-  async function unauthorize() {
-    await revokeToken(true);
-    state.value = null;
-  }
-
   return {
-    connectUrl,
+    headers,
+    expired,
     errors,
     isAuthorizing,
     authorize,
+    refresh,
     isUnauthorizing,
     unauthorize,
   };
