@@ -70,7 +70,7 @@ const MAX_PASS_LENGTH = 64;
 
 const { t } = useI18n();
 const { changePassword, loading, user } = useUser();
-const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
+const { passwordRequirements } = usePasswordRequirements();
 
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
@@ -128,8 +128,4 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
-
-if (!passwordRequirements.value) {
-  void fetchPasswordRequirements();
-}
 </script>
