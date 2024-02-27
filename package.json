@@ -43,6 +43,8 @@
     "@vue/apollo-composable": "^4.0.1",
     "@vueuse/components": "^10.7.2",
     "@vueuse/core": "^10.7.2",
+    "@vueuse/integrations": "^10.7.2",
+    "axios": "^1.6.7",
     "dompurify": "^3.0.8",
     "flag-icons": "^7.1.0",
     "graphql": "^16.8.1",

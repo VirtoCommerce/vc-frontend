@@ -1345,7 +1345,7 @@
       "items_selected": "{0} items selected"
     },
     "file": {
-      "uploading": "Uploading...",
+      "progress": "{percent} done",
       "uploaded": "Upload completed"
     },
     "file_uploader": {
@@ -1405,7 +1405,7 @@
     "INVALID_CONTENT": "Cannot read file.",
     "EXCEPTION": "Failure while uploading file. Please try again.",
     "INVALID_SCOPE": "Unknown scope '{0}'.",
-    "INVALID_EXTENSION": "File is not in one of allowed formats {0}.",
+    "INVALID_EXTENSION": "File format is not allowed.",
     "INVALID_SIZE": "File size exceeds the allowed {0}.",
     "CANNOT_DELETE": "Failure while deleting file."
   }

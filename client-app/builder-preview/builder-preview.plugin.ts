@@ -1,5 +1,5 @@
-import { useFetch } from "@/core/composables";
-import { useStaticPage, useTemplate } from "@/shared/static-content";
+import { useGlobalInterceptors } from "@/core/api/common";
+import { useStaticPage, useTemplates } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
 import type { IThemeConfig } from "@/core/types";
@@ -8,14 +8,10 @@ import type { App } from "vue";
 import type { Router } from "vue-router";
 import StaticPage from "@/pages/static-page.vue";
 
-const { enrichRequest } = useFetch();
-
 templateBlocks["scroll-to"] = ScrollToElement;
 
-enrichRequest((headers: Headers) => {
-  headers.append("x-template-builder", "preview-mode");
-  return headers;
-});
+const { staticPagePreview } = useStaticPage();
+const { setTemplate } = useTemplates();
 
 declare type TransferDataType = {
   template: PageTemplate;
@@ -45,12 +41,12 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
     if (templateUrl) {
       await options.router.push("/designer-preview");
     }
-    useStaticPage(newTemplate, true);
+    staticPagePreview.value = newTemplate;
   } else {
     if (templateUrl) {
       await options.router.push(templateUrl);
     }
-    useTemplate(data.templateKey, newTemplate);
+    setTemplate(data.templateKey, newTemplate);
   }
   templateUrl = undefined;
 }
@@ -106,6 +102,14 @@ let templateUrl: string | undefined;
 // eslint-disable-next-line no-restricted-exports
 export default {
   install: (app: App, options: { router: Router }) => {
+    const { onRequest } = useGlobalInterceptors();
+
+    onRequest.value.push((_, request) => {
+      if (request) {
+        request.headers = { ...request.headers, ["x-template-builder"]: "preview-mode" };
+      }
+    });
+
     const bodyEl = document.getElementsByTagName("body").item(0);
 
     if (bodyEl) {
@@ -162,7 +166,7 @@ export default {
       }
     });
     const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
-    useStaticPage(page, true);
+    staticPagePreview.value = page;
     const routes = options.router.getRoutes();
     const matcher = routes.find((x) => x.name === "Matcher")!;
     options.router.removeRoute("Matcher");
