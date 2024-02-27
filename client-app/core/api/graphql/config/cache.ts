@@ -62,9 +62,6 @@ export const cache = new InMemoryCache({
         },
       },
     },
-    Property: {
-      keyFields: ["name"],
-    },
     ValidationErrorType: {
       keyFields: ["errorCode", "objectId", "objectType"],
     },
