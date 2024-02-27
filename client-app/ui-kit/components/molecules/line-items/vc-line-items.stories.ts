@@ -61,12 +61,17 @@ const TemplateAddToCart: StoryFn<typeof VcLineItems> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
+  items: [preparedLineItemMock2, preparedLineItemMock2, preparedLineItemMock2],
+};
+
+export const NoRoute = Template.bind({});
+NoRoute.args = {
   items: [preparedLineItemMock1, preparedLineItemMock1, preparedLineItemMock1],
 };
 
 export const Selectable = Template.bind({});
 Selectable.args = {
-  items: [preparedLineItemMock1, preparedLineItemMock1, preparedLineItemMock1],
+  items: [preparedLineItemMock2, preparedLineItemMock2, preparedLineItemMock2],
   selectable: true,
 };
 
@@ -92,17 +97,17 @@ export const QuantityInput = TemplateQuantity.bind({});
 QuantityInput.args = {
   items: [
     {
-      ...preparedLineItemMock1,
+      ...preparedLineItemMock2,
       id: "1",
       quantity: 4,
     },
     {
-      ...preparedLineItemMock1,
+      ...preparedLineItemMock2,
       id: "2",
       quantity: 1999,
     },
     {
-      ...preparedLineItemMock1,
+      ...preparedLineItemMock2,
       id: "3",
     },
   ],
@@ -114,17 +119,17 @@ export const AddToCart = TemplateAddToCart.bind({});
 AddToCart.args = {
   items: [
     {
-      ...preparedLineItemMock1,
+      ...preparedLineItemMock2,
       id: "1",
       quantity: 4,
     },
     {
-      ...preparedLineItemMock1,
+      ...preparedLineItemMock2,
       id: "2",
       quantity: 1999,
     },
     {
-      ...preparedLineItemMock1,
+      ...preparedLineItemMock2,
       id: "3",
     },
   ],
@@ -144,6 +149,12 @@ MinimalSelectable.args = {
 
 export const MinimalQuantity = TemplateQuantity.bind({});
 MinimalQuantity.args = {
+  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
+  removable: true,
+};
+
+export const MinimalAddToCart = TemplateAddToCart.bind({});
+MinimalAddToCart.args = {
   items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
   removable: true,
 };

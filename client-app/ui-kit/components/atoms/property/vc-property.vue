@@ -1,5 +1,12 @@
 <template>
-  <div class="vc-property">
+  <div
+    :class="[
+      'vc-property',
+      {
+        'vc-property--disabled': disabled,
+      },
+    ]"
+  >
     <div class="vc-property__label">{{ label }}</div>
     <div class="vc-property__dots"></div>
     <div class="vc-property__value">
@@ -11,6 +18,7 @@
 <script setup lang="ts">
 interface IProps {
   label: string;
+  disabled?: boolean;
 }
 
 defineProps<IProps>();
@@ -18,8 +26,13 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-property {
-  --label-color: var(--vc-property-label-color, var(--color-neutral-600));
-  --value-color: var(--vc-property-value-color, var(--color-neutral-900));
+  --label-color: var(--vc-property-label-color, var(--color-neutral-700));
+  --value-color: var(--vc-property-value-color, var(--color-neutral-950));
+
+  &--disabled {
+    --label-color: var(--color-neutral-500);
+    --value-color: var(--color-neutral-500);
+  }
 
   @apply grid grid-cols-[auto_1fr_auto] gap-1 text-xs leading-normal;
 

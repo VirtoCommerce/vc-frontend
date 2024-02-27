@@ -35,7 +35,7 @@
           },
         ]"
       >
-        <VcProductTitle class="vc-line-item__name" :to="route" :title="name" target="_blank">
+        <VcProductTitle class="vc-line-item__name" :disabled="disabled" :to="route" :title="name" target="_blank">
           {{ name }}
         </VcProductTitle>
 
@@ -49,12 +49,22 @@
             },
           ]"
         >
-          <VcProperty v-for="property in properties" :key="property.name" :label="property.label!">
+          <VcProperty v-for="property in properties" :key="property.name" :label="property.label!" :disabled="disabled">
             {{ property.value }}
           </VcProperty>
 
-          <VcProperty v-if="listPrice || actualPrice" class="2xl:hidden" :label="$t('common.labels.price_per_item')">
-            <VcProductPrice class="vc-line-item__property-price" :list-price="actualPrice || listPrice" truncate />
+          <VcProperty
+            v-if="listPrice || actualPrice"
+            class="2xl:hidden"
+            :label="$t('common.labels.price_per_item')"
+            :disabled="disabled"
+          >
+            <VcProductPrice
+              class="vc-line-item__property-price"
+              :list-price="actualPrice || listPrice"
+              :disabled="disabled"
+              truncate
+            />
           </VcProperty>
         </div>
 
@@ -68,13 +78,21 @@
           ]"
           :list-price="listPrice"
           :actual-price="actualPrice"
+          :disabled="disabled"
           align="end"
         />
 
         <div class="vc-line-item__slot">
           <slot />
 
-          <VcProductPrice v-if="total" class="vc-line-item__total" :list-price="total" align="end" truncate />
+          <VcProductPrice
+            v-if="total"
+            class="vc-line-item__total"
+            :list-price="total"
+            align="end"
+            :disabled="disabled"
+            truncate
+          />
         </div>
 
         <VcButton
@@ -207,6 +225,10 @@ watchEffect(() => {
     @media (min-width: theme("screens.xl")) {
       @apply size-16;
     }
+
+    #{$disabled} & {
+      @apply opacity-50;
+    }
   }
 
   &__content {
@@ -256,11 +278,6 @@ watchEffect(() => {
 
     &--hide-2xl {
       @apply 2xl:hidden;
-    }
-
-    #{$deleted} & {
-      --vc-property-label-color: var(--color-neutral-500);
-      --vc-property-value-color: var(--color-neutral-500);
     }
   }
 

@@ -6,6 +6,7 @@
       {
         'vc-product-price--single-line': singleLine,
         'vc-product-price--truncate': truncate,
+        'vc-product-price--disabled': disabled,
       },
     ]"
   >
@@ -33,6 +34,7 @@ interface IProps {
   singleLine?: boolean;
   truncate?: boolean;
   hasVariations?: boolean;
+  disabled?: boolean;
 }
 
 withDefaults(defineProps<IProps>(), {
@@ -46,7 +48,7 @@ withDefaults(defineProps<IProps>(), {
 
   --font-size: var(--vc-product-price-font-size);
 
-  @apply flex flex-col text-[length:var(--font-size)] text-[--color-neutral-950] [word-break:break-word] leading-[1.2];
+  @apply flex flex-col text-[length:var(--font-size)] text-neutral-950 [word-break:break-word] leading-[1.2];
 
   &--align {
     &--start {
@@ -66,8 +68,12 @@ withDefaults(defineProps<IProps>(), {
     $truncate: &;
   }
 
+  &--disabled {
+    @apply text-neutral;
+  }
+
   &__actual {
-    @apply font-bold text-[--color-neutral-950];
+    @apply font-bold;
 
     #{$truncate} & {
       @apply whitespace-nowrap max-w-full truncate;
@@ -75,11 +81,11 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__variations {
-    @apply me-1 whitespace-nowrap text-xs font-normal text-[--color-neutral-500];
+    @apply me-1 whitespace-nowrap text-xs font-normal text-neutral;
   }
 
   &__list {
-    @apply text-[0.7em] line-through text-[--color-neutral-500];
+    @apply text-[0.7em] line-through text-neutral;
 
     #{$truncate} & {
       @apply max-w-full truncate;

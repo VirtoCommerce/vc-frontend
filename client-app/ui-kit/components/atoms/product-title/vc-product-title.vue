@@ -3,7 +3,7 @@
     :class="[
       'vc-product-title',
       {
-        'vc-product-title--link': to,
+        'vc-product-title--link': linkTo,
         'vc-product-title--disabled': disabled,
       },
     ]"
@@ -53,7 +53,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
   --font-size: var(--vc-product-title-font-size);
 
-  @apply text-[length:var(--font-size)] text-neutral-900 font-bold line-clamp-3;
+  @apply text-[length:var(--font-size)] font-bold line-clamp-3;
 
   @apply leading-[1.17] #{!important};
 
@@ -69,7 +69,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
     @apply text-neutral-950;
 
     #{$link}:not(#{$disabled}) & {
-      @apply cursor-pointer;
+      @apply cursor-pointer text-accent-600;
 
       &:hover {
         @apply text-accent-700;
