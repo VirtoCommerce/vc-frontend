@@ -1,6 +1,6 @@
 <template>
   <VcLayoutWithRightSidebar v-if="placedOrder" is-sidebar-sticky>
-    <div class="z-10 bg-white shadow-md lg:rounded lg:border lg:shadow-sm">
+    <VcWidget size="lg">
       <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-6">
         <div class="min-w-0 truncate">
           <VcImage
@@ -29,7 +29,7 @@
           @fail="onPaymentResult(false)"
         />
       </div>
-    </div>
+    </VcWidget>
 
     <template #sidebar>
       <OrderSummary :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
