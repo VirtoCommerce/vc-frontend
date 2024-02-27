@@ -66,7 +66,7 @@ import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
-import { useLineItemsValidation } from "@/ui-kit";
+import { useLineItemsValidation } from "@/ui-kit/composables";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { ErrorType } from "@/core/composables";
 import type { NamedValue } from "vue-i18n";

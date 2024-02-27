@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { ProductType } from "@/core/enums";
 import { InStock, CountInCart } from "@/shared/catalog";
-import { useLineItemsValidation } from "@/ui-kit";
+import { useLineItemsValidation } from "@/ui-kit/composables";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
