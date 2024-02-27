@@ -1,14 +1,11 @@
 import { graphqlClient } from "@/core/api/graphql/client";
-import getFileUploadOptionsQuery from "./getFileUploadOptions.graphql";
-import type {
-  FileUploadOptionsFragment,
-  GetFileUploadOptionsQuery,
-  QueryFileUploadOptionsArgs,
-} from "@/core/api/graphql/types";
+import { GetFileUploadOptionsDocument } from "./getFileUploadOptions.generated";
+import type { GetFileUploadOptionsQuery, GetFileUploadOptionsQueryVariables } from "./getFileUploadOptions.generated";
+import type { FileUploadOptionsFragment } from "../../fragments/fileUploadOptions.generated";
 
 export async function getFileUploadOptions(scope: string): Promise<FileUploadOptionsFragment | undefined> {
-  const { data } = await graphqlClient.query<GetFileUploadOptionsQuery, QueryFileUploadOptionsArgs>({
-    query: getFileUploadOptionsQuery,
+  const { data } = await graphqlClient.query<GetFileUploadOptionsQuery, GetFileUploadOptionsQueryVariables>({
+    query: GetFileUploadOptionsDocument,
     variables: {
       scope,
     },

@@ -1,12 +1,12 @@
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import queryDocument from "./getOrganizationAddressesQuery.graphql";
+import { GetOrganizationAddressesDocument } from "./getOrganizationAddressesQuery.generated";
 import type {
   MemberAddressConnection,
   OrganizationAddressesArgs,
   Query,
   QueryOrganizationArgs,
-} from "@/core/api/graphql/types";
+} from "@/core/api/graphql/types/base.generated";
 
 export async function getOrganizationAddresses(
   organizationId: string,
@@ -18,7 +18,7 @@ export async function getOrganizationAddresses(
     Required<Pick<Query, "organization">>,
     QueryOrganizationArgs & OrganizationAddressesArgs
   >({
-    query: queryDocument,
+    query: GetOrganizationAddressesDocument,
     variables: {
       userId,
       id: organizationId,

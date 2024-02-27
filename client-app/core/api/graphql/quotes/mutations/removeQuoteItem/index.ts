@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./removeQuoteItemMutation.graphql";
+import { RemoveQuoteItemDocument } from "./removeQuoteItemMutation.generated";
 import type { Mutations, MutationsRemoveQuoteItemArgs, QuoteType } from "@/core/api/graphql/types";
 
 export async function removeQuoteItem(payload: MutationsRemoveQuoteItemArgs): Promise<QuoteType> {
@@ -7,7 +7,7 @@ export async function removeQuoteItem(payload: MutationsRemoveQuoteItemArgs): Pr
     Required<Pick<Mutations, "removeQuoteItem">>,
     MutationsRemoveQuoteItemArgs
   >({
-    mutation: mutationDocument,
+    mutation: RemoveQuoteItemDocument,
     variables: {
       ...payload,
     },

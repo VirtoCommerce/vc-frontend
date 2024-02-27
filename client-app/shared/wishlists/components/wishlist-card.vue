@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import WishlistDropdownMenu from "./wishlist-dropdown-menu.vue";
 import WishlistStatus from "./wishlist-status.vue";
 import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";

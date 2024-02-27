@@ -83,13 +83,13 @@ import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vu
 import { computed, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useNavigations } from "@/core/composables";
-import { useUser } from "@/shared/account";
-import { useShortCart } from "@/shared/cart";
+import { useUser } from "@/shared/account/composables/useUser";
+import { useShortCart } from "@/shared/cart/composables/useShortCart";
 import { useCompareProducts } from "@/shared/compare";
-import { SearchBar } from "@/shared/layout";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
+import SearchBar from "@/shared/layout/components/search-bar/search-bar.vue";
 
 const router = useRouter();
 const { organization } = useUser();

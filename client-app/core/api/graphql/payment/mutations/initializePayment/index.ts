@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./initializePaymentMutation.graphql";
+import { InitializePaymentDocument } from "./initializePaymentMutation.generated";
 import type {
   InitializePaymentResultType,
   InputInitializePaymentType,
@@ -12,7 +12,7 @@ export async function initializePayment(payload: InputInitializePaymentType): Pr
     Required<Pick<Mutations, "initializePayment">>,
     MutationsInitializePaymentArgs
   >({
-    mutation: mutationDocument,
+    mutation: InitializePaymentDocument,
     variables: {
       command: payload,
     },

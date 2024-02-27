@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./changePassword.graphql";
+import { ChangePasswordDocument } from "./changePassword.generated";
 import type {
   IdentityResultType,
   InputChangePasswordType,
@@ -10,7 +10,7 @@ import type {
 export async function changePassword(payload: InputChangePasswordType): Promise<IdentityResultType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "changePassword">>, MutationsChangePasswordArgs>(
     {
-      mutation: mutationDocument,
+      mutation: ChangePasswordDocument,
       variables: {
         command: payload,
       },

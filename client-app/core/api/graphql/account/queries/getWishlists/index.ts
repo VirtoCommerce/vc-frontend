@@ -1,9 +1,9 @@
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import queryDocument from "./getWishlists.graphql";
-import type { WishlistsSearchParams } from "@/core/api/graphql/account";
-import type { Query, QueryWishlistsArgs, WishlistConnection } from "@/core/api/graphql/types";
+import { GetWishlistsDocument } from "./getWishlists.generated";
+import type { WishlistsSearchParams } from "@/core/api/graphql/account/types";
+import type { Query, QueryWishlistsArgs, WishlistConnection } from "@/core/api/graphql/types/base.generated";
 
 export async function getWishlists({
   itemsPerPage = DEFAULT_PAGE_SIZE,
@@ -13,7 +13,7 @@ export async function getWishlists({
   const { storeId, userId, cultureName, currencyCode } = globals;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "wishlists">>, QueryWishlistsArgs>({
-    query: queryDocument,
+    query: GetWishlistsDocument,
     variables: {
       storeId,
       userId,

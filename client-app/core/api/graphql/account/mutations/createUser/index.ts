@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./createUser.graphql";
+import { CreateUserDocument } from "./createUser.generated";
 import type {
   IdentityResultType,
   InputCreateApplicationUserType,
@@ -9,7 +9,7 @@ import type {
 
 export async function createUser(user: InputCreateApplicationUserType): Promise<IdentityResultType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "createUser">>, MutationsCreateUserArgs>({
-    mutation: mutationDocument,
+    mutation: CreateUserDocument,
     variables: {
       command: { applicationUser: user },
     },

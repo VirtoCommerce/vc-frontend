@@ -1,14 +1,12 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import {
-  addWishlist,
-  addWishlistBulkItem,
-  changeWishlist,
-  deleteWishlist,
-  deleteWishlistItem,
-  getWishList,
-  getWishlists,
-  updateWishlistItems,
-} from "@/core/api/graphql/account";
+import { addWishlist } from "@/core/api/graphql/account/mutations/addWishlist";
+import { addWishlistBulkItem } from "@/core/api/graphql/account/mutations/addWishlistBulkItem";
+import { changeWishlist } from "@/core/api/graphql/account/mutations/changeWishlist";
+import { deleteWishlist } from "@/core/api/graphql/account/mutations/deleteWishlist";
+import { deleteWishlistItem } from "@/core/api/graphql/account/mutations/deleteWishlistItem";
+import { updateWishlistItems } from "@/core/api/graphql/account/mutations/updateWishlistItems";
+import { getWishList } from "@/core/api/graphql/account/queries/getWishList";
+import { getWishlists } from "@/core/api/graphql/account/queries/getWishlists";
 import { SortDirection } from "@/core/enums";
 import { Logger, asyncForEach } from "@/core/utilities";
 import type {

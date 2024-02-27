@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { WishlistScopeType } from "@/core/api/graphql/types";
+import { WishlistScopeType } from "@/core/api/graphql/types/base.generated";
 
 interface IEmit {
   (event: "edit"): void;

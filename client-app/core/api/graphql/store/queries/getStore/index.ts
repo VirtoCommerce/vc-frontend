@@ -1,10 +1,10 @@
 import { graphqlClient } from "../../../client";
-import getStoreDocument from "./getStore.graphql";
-import type { GetStoreQuery, GetStoreQueryVariables } from "@/core/api/graphql/types";
+import { GetStoreDocument } from "./getStore.generated";
+import type { GetStoreQuery, GetStoreQueryVariables } from "./getStore.generated";
 
 export async function getStore(storeId: string): Promise<GetStoreQuery["store"]> {
   const { data } = await graphqlClient.query<GetStoreQuery, GetStoreQueryVariables>({
-    query: getStoreDocument,
+    query: GetStoreDocument,
     variables: {
       storeId,
     },

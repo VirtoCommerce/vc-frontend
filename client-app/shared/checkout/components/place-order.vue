@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { useFullCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import { useCheckout } from "@/shared/checkout/composables";
 import ProceedTo from "@/shared/checkout/components/proceed-to.vue";
 

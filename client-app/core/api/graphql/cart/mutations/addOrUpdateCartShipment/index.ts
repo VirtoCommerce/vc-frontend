@@ -1,8 +1,9 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
 import { useMutation } from "@/core/api/graphql/composables";
-import { AddOrUpdateCartShipmentDocument } from "@/core/api/graphql/types";
-import type { CartIdFragment, CartType, InputShipmentType } from "@/core/api/graphql/types";
+import { AddOrUpdateCartShipmentDocument } from "./addOrUpdateCartShipmentMutation.generated";
+import type { CartIdFragment } from "@/core/api/graphql/cart/fragments/cartId.generated";
+import type { CartType, InputShipmentType } from "@/core/api/graphql/types/base.generated";
 import type { MaybeRef } from "vue";
 
 export function useAddOrUpdateCartShipmentMutation(cart?: MaybeRef<CartIdFragment | undefined>) {

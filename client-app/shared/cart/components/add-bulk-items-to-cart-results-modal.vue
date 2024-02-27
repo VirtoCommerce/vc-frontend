@@ -106,7 +106,7 @@ import { useI18n } from "vue-i18n";
 import { useProductsRoutes } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { VcButton } from "@/ui-kit/components";
-import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
+import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";
 
 type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsModalType[] };
 

@@ -1,6 +1,7 @@
 import { ValidationErrorObjectType } from "@/core/enums";
-import type { ShortCartFragment, LineItemType, OrderLineItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
+import type { ShortCartFragment } from "@/core/api/graphql/cart/fragments/shortCart.generated";
+import type { LineItemType, OrderLineItemType, ValidationErrorType } from "@/core/api/graphql/types";
+import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";
 
 /** @deprecated No longer used. Add to cart mutations now return ID instead. */
 export function getLineItemValidationErrorsGroupedBySKU(

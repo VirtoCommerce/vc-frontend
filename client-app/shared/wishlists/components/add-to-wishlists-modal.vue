@@ -135,7 +135,7 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables";

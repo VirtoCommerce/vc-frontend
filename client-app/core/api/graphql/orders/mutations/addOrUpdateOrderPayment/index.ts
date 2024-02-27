@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./addOrUpdateOrderPaymentMutation.graphql";
+import { AddOrUpdateOrderPaymentDocument } from "./addOrUpdateOrderPaymentMutation.generated";
 import type {
   InputAddOrUpdateOrderPaymentType,
   Mutations,
@@ -11,7 +11,7 @@ export async function addOrUpdateOrderPayment(payload: InputAddOrUpdateOrderPaym
     Required<Pick<Mutations, "addOrUpdateOrderPayment">>,
     MutationsAddOrUpdateOrderPaymentArgs
   >({
-    mutation: mutationDocument,
+    mutation: AddOrUpdateOrderPaymentDocument,
     variables: {
       command: payload,
     },

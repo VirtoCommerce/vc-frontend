@@ -197,6 +197,10 @@ module.exports = {
     }
   ],
   options: {
+    exclude: {
+      path: ["node_modules"],
+      dynamic: true
+    },
     doNotFollow: {
       path: 'node_modules'
     },

@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./authorizePaymentMutation.graphql";
+import { AuthorizePaymentDocument } from "./authorizePaymentMutation.generated";
 import type {
   AuthorizePaymentResultType,
   InputAuthorizePaymentType,
@@ -12,7 +12,7 @@ export async function authorizePayment(payload: InputAuthorizePaymentType): Prom
     Required<Pick<Mutations, "authorizePayment">>,
     MutationsAuthorizePaymentArgs
   >({
-    mutation: mutationDocument,
+    mutation: AuthorizePaymentDocument,
     variables: {
       command: payload,
     },

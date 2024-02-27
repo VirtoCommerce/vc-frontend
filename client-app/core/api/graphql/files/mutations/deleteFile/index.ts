@@ -1,10 +1,10 @@
 import { graphqlClient } from "@/core/api/graphql/client";
-import deleteFileMutation from "./deleteFile.graphql";
-import type { DeleteFileMutation, MutationsDeleteFileArgs } from "@/core/api/graphql/types";
+import { DeleteFileDocument } from "./deleteFile.generated";
+import type { DeleteFileMutation, DeleteFileMutationVariables } from "./deleteFile.generated";
 
 export async function deleteFile(id: string): Promise<boolean | undefined> {
-  const { data } = await graphqlClient.mutate<DeleteFileMutation, MutationsDeleteFileArgs>({
-    mutation: deleteFileMutation,
+  const { data } = await graphqlClient.mutate<DeleteFileMutation, DeleteFileMutationVariables>({
+    mutation: DeleteFileDocument,
     variables: {
       command: {
         id,

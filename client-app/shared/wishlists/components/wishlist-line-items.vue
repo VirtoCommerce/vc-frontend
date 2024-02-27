@@ -48,9 +48,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { ProductType } from "@/core/enums";
-import { InStock, CountInCart } from "@/shared/catalog";
 import type { ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
+import InStock from "@/shared/catalog/components/in-stock.vue";
 
 interface IEmits {
   (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;

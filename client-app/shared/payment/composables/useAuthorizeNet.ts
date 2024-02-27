@@ -1,5 +1,5 @@
 import { noop, useScriptTag } from "@vueuse/core";
-import { authorizePayment } from "@/core/api/graphql";
+import { authorizePayment } from "@/core/api/graphql/payment/mutations/authorizePayment";
 import { Logger } from "@/core/utilities";
 import type { AuthorizePaymentResultType } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";

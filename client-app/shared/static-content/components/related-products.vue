@@ -30,11 +30,11 @@
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics } from "@/core/composables/useGoogleAnalytics";
 import { BREAKPOINTS } from "@/core/constants";
 import { extractNumberFromString } from "@/core/utilities";
-import { ProductCardRelated } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import ProductCardRelated from "@/shared/catalog/components/product-card-related.vue";
 
 interface IProps {
   relatedProducts: Product[];

@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./changeOrganizationContactRole.graphql";
+import { ChangeOrganizationContactRoleDocument } from "./changeOrganizationContactRole.generated";
 import type {
   CustomIdentityResultType,
   InputChangeOrganizationContactRoleType,
@@ -14,7 +14,7 @@ export async function changeOrganizationContactRole(
     Required<Pick<Mutations, "changeOrganizationContactRole">>,
     MutationsChangeOrganizationContactRoleArgs
   >({
-    mutation: mutationDocument,
+    mutation: ChangeOrganizationContactRoleDocument,
     variables: {
       command: payload,
     },

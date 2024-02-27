@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { initializePayment } from "@/core/api/graphql";
+import { initializePayment } from "@/core/api/graphql/payment/mutations/initializePayment";
 import { PaymentActionType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 

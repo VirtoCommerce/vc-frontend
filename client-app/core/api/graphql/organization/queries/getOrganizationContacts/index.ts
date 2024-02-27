@@ -1,6 +1,6 @@
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import getOrganizationContactsQueryDocument from "./getOrganizationContactsQuery.graphql";
+import { GetOrganizationContactsDocument } from "./getOrganizationContactsQuery.generated";
 import type {
   ContactConnection,
   OrganizationContactsArgs,
@@ -18,7 +18,7 @@ export async function getOrganizationContacts(
     Required<Pick<Query, "organization">>,
     QueryOrganizationArgs & OrganizationContactsArgs
   >({
-    query: getOrganizationContactsQueryDocument,
+    query: GetOrganizationContactsDocument,
     variables: {
       id: organizationId,
       userId,

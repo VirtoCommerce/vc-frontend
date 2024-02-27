@@ -1,4 +1,4 @@
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import { StorefrontPermissions, XApiPermissions } from "../enums";
 import type { App, Plugin } from "vue";
 

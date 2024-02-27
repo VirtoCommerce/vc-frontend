@@ -49,9 +49,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { getProductRoute } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
+import AddToCart from "@/shared/cart/components/add-to-cart.vue";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;

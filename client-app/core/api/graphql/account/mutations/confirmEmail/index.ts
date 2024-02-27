@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./confirmEmail.graphql";
+import { ConfirmEmailDocument } from "./confirmEmail.generated";
 import type {
   CustomIdentityResultType,
   InputConfirmEmailType,
@@ -9,7 +9,7 @@ import type {
 
 export async function confirmEmailByToken(payload: InputConfirmEmailType): Promise<CustomIdentityResultType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "confirmEmail">>, MutationsConfirmEmailArgs>({
-    mutation: mutationDocument,
+    mutation: ConfirmEmailDocument,
     variables: {
       command: payload,
     },

@@ -47,7 +47,7 @@
           >
             <template #selected="{ item }">
               <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
-                <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+                <VcImage class="size-12 rounded-sm print:hidden" :src="item.logoUrl" />
 
                 {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
               </div>
@@ -82,7 +82,7 @@
             >
               <template #selected="{ item }">
                 <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
-                  <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+                  <VcImage class="size-12 rounded-sm print:hidden" :src="item.logoUrl" />
 
                   {{ $t(`common.methods.payment_by_code.${item.code}`) }}
                 </div>
@@ -142,7 +142,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
-import { useFullCart, useCoupon } from "@/shared/cart";
+import { useCoupon } from "@/shared/cart/composables/useCoupon";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
 import type { CartAddressType } from "@/core/api/graphql/types";
 

@@ -1,10 +1,10 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./deleteMemberAddressesMutation.graphql";
+import { DeleteMemberAddressesDocument } from "./deleteMemberAddressesMutation.generated";
 import type { InputMemberAddressType, Mutations, MutationsDeleteMemberAddressesArgs } from "@/core/api/graphql/types";
 
 export async function deleteMemberAddresses(addresses: InputMemberAddressType[], memberId: string): Promise<void> {
   await graphqlClient.mutate<Required<Pick<Mutations, "deleteMemberAddresses">>, MutationsDeleteMemberAddressesArgs>({
-    mutation: mutationDocument,
+    mutation: DeleteMemberAddressesDocument,
     variables: {
       command: {
         memberId,

@@ -2,9 +2,9 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { graphqlClient } from "../../../client";
-import searchProductsQueryDocument from "./searchProductsQuery.graphql";
+import { SearchProductsDocument } from "./searchProductsQuery.generated";
 import type { ProductConnection, Query, QueryProductsArgs } from "@/core/api/graphql/types";
-import type { ProductsSearchParams } from "@/shared/catalog";
+import type { ProductsSearchParams } from "@/shared/catalog/types";
 
 export async function searchProducts(
   {
@@ -42,7 +42,7 @@ export async function searchProducts(
     Required<Pick<Query, "products">>,
     QueryProductsArgs & { withFacets: boolean; withImages: boolean }
   >({
-    query: searchProductsQueryDocument,
+    query: SearchProductsDocument,
     variables: {
       storeId,
       userId,

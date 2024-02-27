@@ -1,6 +1,6 @@
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./sendVerifyEmailMutation.graphql";
+import { SendVerifyEmailDocument } from "./sendVerifyEmailMutation.generated";
 import type { Mutations, MutationsSendVerifyEmailArgs } from "@/core/api/graphql/types";
 
 export async function sendVerifyEmail(userId: string): Promise<boolean | undefined> {
@@ -10,7 +10,7 @@ export async function sendVerifyEmail(userId: string): Promise<boolean | undefin
     Required<Pick<Mutations, "sendVerifyEmail">>,
     MutationsSendVerifyEmailArgs
   >({
-    mutation: mutationDocument,
+    mutation: SendVerifyEmailDocument,
     variables: {
       command: {
         userId,

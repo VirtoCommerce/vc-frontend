@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./changeQuoteItemQuantityMutation.graphql";
+import { ChangeQuoteItemQuantityDocument } from "./changeQuoteItemQuantityMutation.generated";
 import type { Mutations, MutationsChangeQuoteItemQuantityArgs, QuoteType } from "@/core/api/graphql/types";
 
 export async function changeQuoteItemQuantity(payload: MutationsChangeQuoteItemQuantityArgs): Promise<QuoteType> {
@@ -7,7 +7,7 @@ export async function changeQuoteItemQuantity(payload: MutationsChangeQuoteItemQ
     Required<Pick<Mutations, "changeQuoteItemQuantity">>,
     MutationsChangeQuoteItemQuantityArgs
   >({
-    mutation: mutationDocument,
+    mutation: ChangeQuoteItemQuantityDocument,
     variables: {
       ...payload,
     },

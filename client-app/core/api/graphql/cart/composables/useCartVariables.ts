@@ -1,7 +1,7 @@
 import { toValue } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
+import type { CartIdFragment } from "@/core/api/graphql/cart/fragments/cartId.generated";
 import type { IAllGlobalVariables } from "@/core/api/graphql/composables";
-import type { CartIdFragment } from "@/core/api/graphql/types";
 import type { UseMutationOptions } from "@vue/apollo-composable";
 import type { MaybeRefOrGetter } from "vue";
 

@@ -1,7 +1,7 @@
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import searchRelatedProductsQueryDocument from "./searchRelatedProducts.graphql";
+import { SearchRelatedProductsDocument } from "./searchRelatedProducts.generated";
 import type { ProductAssociation, ProductAssociationsArgs, Query, QueryProductArgs } from "@/core/api/graphql/types";
 
 export type RelatedProductsSearchParamsType = {
@@ -25,7 +25,7 @@ export async function searchRelatedProducts({
     Required<Pick<Query, "product">>,
     QueryProductArgs & ProductAssociationsArgs
   >({
-    query: searchRelatedProductsQueryDocument,
+    query: SearchRelatedProductsDocument,
     variables: {
       storeId,
       userId,

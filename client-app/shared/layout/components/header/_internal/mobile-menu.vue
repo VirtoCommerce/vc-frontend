@@ -230,12 +230,13 @@
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
-import { useSignMeOut, useUser } from "@/shared/account";
-import { useShortCart } from "@/shared/cart";
+import { useSignMeOut } from "@/shared/account/composables/useSignMeOut";
+import { useUser } from "@/shared/account/composables/useUser";
+import { useShortCart } from "@/shared/cart/composables/useShortCart";
 import { useCompareProducts } from "@/shared/compare";
-import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 interface IEmits {
   (event: "close"): void;

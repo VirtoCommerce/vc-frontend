@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 import { getChildCategoriesTreeString } from "@/core/api/graphql/utils";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import type { Category, Query, QueryChildCategoriesArgs } from "@/core/api/graphql/types";
+import type { Category, Query, QueryChildCategoriesArgs } from "@/core/api/graphql/types/base.generated";
 import type { DocumentNode } from "graphql";
 
 function getQueryDocument(maxLevel: number): DocumentNode {
@@ -10,7 +10,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
 
   return gql`
     query ChildCategories(
-      $storeId: String
+      $storeId: String!
       $userId: String
       $cultureName: String
       $currencyCode: String

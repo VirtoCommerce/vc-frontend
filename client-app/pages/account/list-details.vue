@@ -111,9 +111,9 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import { useShortCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart/composables/useShortCart";
+import { getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart/utils";
 import { ProductSkeletonGrid } from "@/shared/catalog";
-import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import {
   useWishlists,
@@ -129,6 +129,8 @@ import type {
   LineItemType,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
+import BackButtonInHeader from "@/shared/layout/components/back-button-in-header/back-button-in-header.vue";
 
 interface IProps {
   listId: string;

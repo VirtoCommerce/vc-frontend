@@ -21,9 +21,10 @@
 
 <script setup lang="ts">
 import { watchEffect } from "vue";
-import { useProductsRoutes } from "@/core/composables";
-import { AddToCart } from "@/shared/cart";
-import { ProductCardGrid, useProducts } from "@/shared/catalog";
+import { useProductsRoutes } from "@/core/composables/useProductsRoutes";
+import { useProducts } from "@/shared/catalog/composables/useProducts";
+import AddToCart from "@/shared/cart/components/add-to-cart.vue";
+import ProductCardGrid from "@/shared/catalog/components/product-card-grid.vue";
 
 const props = defineProps({
   model: {

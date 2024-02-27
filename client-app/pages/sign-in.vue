@@ -14,7 +14,7 @@
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
-import { TwoColumn } from "@/shared/layout";
+import TwoColumn from "@/shared/layout/components/two-column.vue";
 
 const { t } = useI18n();
 

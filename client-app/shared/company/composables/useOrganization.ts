@@ -1,7 +1,7 @@
 import { readonly, ref } from "vue";
 import { updateOrganization as _updateOrganization } from "@/core/api/graphql/organization";
 import { Logger } from "@/core/utilities";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { InputUpdateOrganizationType } from "@/core/api/graphql/types";
 
 export function useOrganization() {

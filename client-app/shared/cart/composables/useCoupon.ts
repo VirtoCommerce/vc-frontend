@@ -1,6 +1,6 @@
 import { computed, readonly, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useFullCart } from "@/shared/cart/composables/useCart";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import type { CouponType } from "@/core/api/graphql/types";
 
 const couponCode = ref("");

@@ -18,10 +18,12 @@ import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations } from "@/core/composables";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
-import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
+import MainLayout from "@/shared/layout/components/main-layout/main-layout.vue";
+import SecureLayout from "@/shared/layout/components/secure-layout/secure-layout.vue";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
 const _props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });

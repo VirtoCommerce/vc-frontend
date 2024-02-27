@@ -1,9 +1,11 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useCartMutationVariables } from "@/core/api/graphql/cart/composables";
 import { useMutation } from "@/core/api/graphql/composables";
-import { AddItemsCartDocument, OperationNames } from "@/core/api/graphql/types";
+import { OperationNames } from "@/core/api/graphql/types/operations.generated";
 import { filterActiveQueryNames } from "@/core/api/graphql/utils";
-import type { CartType, InputNewCartItemType, CartIdFragment } from "@/core/api/graphql/types";
+import { AddItemsCartDocument } from "./addItemsCartMutation.generated";
+import type { CartIdFragment } from "@/core/api/graphql/cart/fragments/cartId.generated";
+import type { CartType, InputNewCartItemType } from "@/core/api/graphql/types/base.generated";
 import type { MaybeRef } from "vue";
 
 export function useAddItemsCartMutation(cart?: MaybeRef<CartIdFragment | undefined>) {

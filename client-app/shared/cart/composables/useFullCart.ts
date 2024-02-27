@@ -1,12 +1,7 @@
-import { createGlobalState, createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
-import { sumBy, difference, keyBy, without, merge } from "lodash";
+import { createSharedComposable, computedEager } from "@vueuse/core";
+import { difference, keyBy, without, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
-  useGetShortCartQuery,
-  useAddItemToCartMutation,
-  useAddItemsCartMutation,
-  useAddBulkItemsCartMutation,
-  useChangeShortCartItemQuantityMutation,
   useAddCouponMutation,
   useAddGiftItemsMutation,
   useAddOrUpdateCartPaymentMutation,
@@ -15,7 +10,6 @@ import {
   useChangeFullCartItemQuantityMutation,
   useChangePurchaseOrderNumberMutation,
   useClearCartMutation,
-  useCreateQuoteFromCartMutation,
   useGetFullCartQuery,
   useRejectGiftItemsMutation,
   useRemoveCartItemsMutation,
@@ -24,9 +18,9 @@ import {
   useSelectCartItemsMutation,
   useUnselectCartItemsMutation,
   useValidateCouponMutation,
-  clearCart as deprecatedClearCart,
-  generateCacheIdIfNew,
-} from "@/core/api/graphql";
+} from "@/core/api/graphql/cart";
+import { useCreateQuoteFromCartMutation } from "@/core/api/graphql/quotes/mutations/createQuoteFromCart";
+import { generateCacheIdIfNew } from "@/core/api/graphql/utils";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -35,107 +29,16 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
-import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
-  InputNewBulkItemType,
-  InputNewCartItemType,
-  ShortCartFragment,
-  CartType,
-  InputPaymentType,
-  InputShipmentType,
-  QuoteType,
   AddOrUpdateCartPaymentMutation,
+  AddOrUpdateCartPaymentMutationVariables,
+} from "@/core/api/graphql/cart/mutations/addOrUpdateCartPayment/addOrUpdateCartPaymentMutation.generated";
+import type {
   AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
-  AddOrUpdateCartPaymentMutationVariables,
-} from "@/core/api/graphql/types";
-import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
-
-function _useSharedShortCart() {
-  const { result: query, refetch, loading } = useGetShortCartQuery();
-  const cart = computed(() => query.value?.cart);
-
-  return {
-    cart,
-    refetch,
-    loading,
-  };
-}
-
-const useSharedShortCart = createSharedComposable(_useSharedShortCart);
-
-export function useShortCart() {
-  const { cart, refetch, loading } = useSharedShortCart();
-
-  const { mutate: _addToCart, loading: addToCartLoading } = useAddItemToCartMutation();
-  async function addToCart(productId: string, quantity: number): Promise<ShortCartFragment | undefined> {
-    const result = await _addToCart({ command: { productId, quantity } });
-    return result?.data?.addItem;
-  }
-
-  const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useAddItemsCartMutation();
-  async function addItemsToCart(items: InputNewCartItemType[]): Promise<ShortCartFragment | undefined> {
-    const result = await _addItemsToCart({ command: { cartItems: items } });
-    return result?.data?.addItemsCart;
-  }
-
-  const { mutate: _addBulkItemsToCart, loading: addBulkItemsToCartLoading } = useAddBulkItemsCartMutation();
-  async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
-    const result = await _addBulkItemsToCart({ command: { cartItems: items } });
-
-    const cartFragment = result?.data?.addBulkItemsCart?.cart;
-
-    return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
-      productSku,
-      quantity,
-      // Workaround as we don't know product IDs on bulk order
-      isAddedToCart: cartFragment?.items.some(
-        (item) =>
-          item.sku === productSku &&
-          !cartFragment?.validationErrors.some(
-            (error) =>
-              error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
-          ),
-      ),
-    }));
-  }
-
-  const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useChangeShortCartItemQuantityMutation();
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
-    const result = await _changeItemQuantity({ command: { lineItemId, quantity } });
-    return result?.data?.changeCartItemQuantity;
-  }
-
-  // FIXME: https://virtocommerce.atlassian.net/browse/ST-5474
-  // Calculate total price of items in the cart for some set of products
-  function getItemsTotal(productIds: string[]): number {
-    if (!cart.value?.items.length) {
-      return 0;
-    }
-
-    const filteredItems = cart.value.items.filter((item) => productIds.includes(item.productId));
-
-    return sumBy(filteredItems, (x) => x.extendedPrice.amount);
-  }
-
-  return {
-    cart,
-    refetch,
-    addToCart,
-    addItemsToCart,
-    addBulkItemsToCart,
-    changeItemQuantity,
-    getItemsTotal,
-    loading,
-    changing: computed(
-      () =>
-        addToCartLoading.value ||
-        addItemsToCartLoading.value ||
-        addBulkItemsToCartLoading.value ||
-        changeItemQuantityLoading.value,
-    ),
-  };
-}
+} from "@/core/api/graphql/cart/mutations/addOrUpdateCartShipment/addOrUpdateCartShipmentMutation.generated";
+import type { CartType, InputPaymentType, InputShipmentType, QuoteType } from "@/core/api/graphql/types";
+import type { ExtendedGiftItemType } from "@/shared/cart/types";
 
 export function _useFullCart() {
   const notifications = useNotifications();
@@ -448,106 +351,3 @@ export function _useFullCart() {
 }
 
 export const useFullCart = createSharedComposable(_useFullCart);
-
-function _useCart() {
-  const {
-    cart: shortCart,
-    refetch: fetchShortCart,
-    addToCart,
-    addItemsToCart,
-    addBulkItemsToCart,
-    getItemsTotal,
-    changeItemQuantity: changeShortCartItemQuantity,
-  } = useShortCart();
-
-  const {
-    cart: fullCart,
-    shipment,
-    payment,
-    availableShippingMethods,
-    availablePaymentMethods,
-    selectedItemIds,
-    lineItemsGroupedByVendor,
-    selectedLineItems,
-    selectedLineItemsGroupedByVendor,
-    allItemsAreDigital,
-    addedGiftsByIds,
-    availableExtendedGifts,
-    hasValidationErrors,
-    hasOnlyUnselectedValidationError,
-    forceFetch: fetchFullCart,
-    changeItemQuantity: changeFullCartItemQuantity,
-    removeItems,
-    validateCartCoupon,
-    addCartCoupon,
-    removeCartCoupon,
-    changeComment,
-    updateShipment,
-    removeShipment,
-    updatePayment,
-    updatePurchaseOrderNumber,
-    createQuoteFromCart,
-    addGiftsToCart,
-    removeGiftsFromCart,
-    toggleGift,
-    openClearCartModal,
-    loading,
-    changing,
-  } = useFullCart();
-
-  const lastChangedShortCart = useLastChanged(shortCart, { immediate: true });
-  const lastChangedFullCart = useLastChanged(fullCart, { immediate: true });
-
-  return {
-    shipment,
-    payment,
-    availableShippingMethods,
-    availablePaymentMethods,
-    selectedItemIds,
-    lineItemsGroupedByVendor,
-    selectedLineItems,
-    selectedLineItemsGroupedByVendor,
-    allItemsAreDigital,
-    addedGiftsByIds,
-    availableExtendedGifts,
-    hasValidationErrors,
-    hasOnlyUnselectedValidationError,
-    getItemsTotal,
-    fetchShortCart,
-    fetchFullCart,
-    addToCart,
-    addItemsToCart,
-    addBulkItemsToCart,
-    changeItemQuantity: async (
-      lineItemId: string,
-      quantity: number,
-      options: ChangeCartItemQuantityOptionsType = {},
-    ) => {
-      return await (options.reloadFullCart
-        ? changeFullCartItemQuantity(lineItemId, quantity)
-        : changeShortCartItemQuantity(lineItemId, quantity));
-    },
-    removeItems,
-    validateCartCoupon,
-    addCartCoupon,
-    removeCartCoupon,
-    changeComment,
-    updateShipment,
-    removeShipment,
-    updatePayment,
-    updatePurchaseOrderNumber,
-    clearCart: async (cartId: string) => {
-      return await deprecatedClearCart(cartId);
-    },
-    createQuoteFromCart,
-    addGiftsToCart,
-    removeGiftsFromCart,
-    toggleGift,
-    openClearCartModal,
-    loading: computedEager(() => loading.value || changing.value),
-    cart: computed(() => (lastChangedShortCart.value < lastChangedFullCart.value ? fullCart.value : shortCart.value)),
-  };
-}
-
-/** @deprecated Use {@link useSortCart} for adding products to cart and {@link useFullCart} for cart & checkout pages */
-export const useCart = createGlobalState(_useCart);

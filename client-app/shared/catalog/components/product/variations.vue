@@ -15,8 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { ProductTitledBlock, ProductVariationCard } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import ProductTitledBlock from "@/shared/catalog/components/product-titled-block.vue";
+import ProductVariationCard from "@/shared/catalog/components/product-variation-card.vue";
 
 interface IProps {
   product: Product;

@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./requestRegistration.graphql";
+import { RequestRegistrationDocument } from "./requestRegistration.generated";
 import type {
   InputRequestRegistrationType,
   RequestRegistrationType,
@@ -14,7 +14,7 @@ export async function registerAccount(
     Required<Pick<Mutations, "requestRegistration">>,
     MutationsRequestRegistrationArgs
   >({
-    mutation: mutationDocument,
+    mutation: RequestRegistrationDocument,
     variables: {
       command: registrationData,
     },

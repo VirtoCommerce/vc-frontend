@@ -1,6 +1,6 @@
 import { computed, toValue } from "vue";
 import { useAllGlobalVariables, useMutation } from "@/core/api/graphql/composables";
-import { MergeCartDocument } from "@/core/api/graphql/types";
+import { MergeCartDocument } from "./mergeCartMutation.generated";
 
 export function useMergeCartMutation() {
   return useMutation(

@@ -129,7 +129,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 ├── builder-preview.html             // Page Builder entry point
 ├── graphql.config.json              // GraphQL configuration (https://the-guild.dev/graphql/config/docs) to use generated schema and types.
 ├── graphql-codegen.schema.config.ts // Configuration file to generate GraphQL schema.
-├── graphql-codegen.types.types.ts   // Configuration file to generate GraphQL types.
+├── graphql-codegen.types.config.ts  // Configuration file to generate GraphQL types.
 ├── gulpfile.js                      // Artifact build script to product zip-file installable by VirtoCommerce Storefront.
 ├── index.html                       // Vite Development entry point.
 ├── package.json                     // NPM Package description.

@@ -93,8 +93,8 @@ import { defineAsyncComponent, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
-import { LoginFormSection } from "@/shared/layout";
 import { useStaticPage } from "@/shared/static-content";
+import LoginFormSection from "@/shared/layout/components/login-form-section/login-form-section.vue";
 
 const { t } = useI18n();
 

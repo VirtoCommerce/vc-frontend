@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./addWishlistItemMutation.graphql";
+import { AddWishlistItemDocument } from "./addWishlistItemMutation.generated";
 import type {
   InputAddWishlistItemType,
   Mutations,
@@ -12,7 +12,7 @@ export async function addWishlistItem(payload: InputAddWishlistItemType): Promis
     Required<Pick<Mutations, "addWishlistItem">>,
     MutationsAddWishlistItemArgs
   >({
-    mutation: mutationDocument,
+    mutation: AddWishlistItemDocument,
     variables: {
       command: payload,
     },

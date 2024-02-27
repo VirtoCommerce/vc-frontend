@@ -296,7 +296,6 @@ import {
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
 import { BranchesModal, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
@@ -306,8 +305,9 @@ import ProductsFiltersSidebar from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
-import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
+import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog/types";
 import type { StyleValue } from "vue";
+import AddToCart from "@/shared/cart/components/add-to-cart.vue";
 
 interface IProps {
   categoryId?: string;

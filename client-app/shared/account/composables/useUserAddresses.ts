@@ -1,5 +1,7 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/core/api/graphql/account";
+import { deleteMemberAddresses } from "@/core/api/graphql/account/mutations/deleteMemberAddresses";
+import { updateMemberAddresses } from "@/core/api/graphql/account/mutations/updateMemberAddresses";
+import { getMyAddresses } from "@/core/api/graphql/account/queries/getMyAddresses";
 import { SORT_ASCENDING } from "@/core/constants";
 import { getSortingExpression, isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";

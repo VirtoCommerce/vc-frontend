@@ -115,9 +115,11 @@
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
 import { ref } from "vue";
-import { useSignMeOut, useUser } from "@/shared/account";
-import { CurrencySelector, LanguageSelector } from "@/shared/layout";
+import { useSignMeOut } from "@/shared/account/composables/useSignMeOut";
+import { useUser } from "@/shared/account/composables/useUser";
 import TopHeaderLink from "./top-header-link.vue";
+import CurrencySelector from "@/shared/layout/components/currency-selector/currency-selector.vue";
+import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 const { isAuthenticated, user, operator } = useUser();
 const { signMeOut } = useSignMeOut();

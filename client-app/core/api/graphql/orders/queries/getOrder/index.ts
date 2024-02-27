@@ -1,7 +1,7 @@
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import getFullOrderQuery from "./getFullOrderQuery.graphql";
-import getShortOrderQuery from "./getShortOrderQuery.graphql";
+import { GetFullOrderDocument } from "./getFullOrderQuery.generated";
+import { GetShortOrderDocument } from "./getShortOrderQuery.generated";
 import type { CustomerOrderType, Query, QueryOrderArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
 
@@ -27,10 +27,10 @@ export async function getOrder(
   let query: DocumentNode;
   switch (fields) {
     case GetOrderFeldsType.Full:
-      query = getFullOrderQuery;
+      query = GetFullOrderDocument;
       break;
     case GetOrderFeldsType.Short:
-      query = getShortOrderQuery;
+      query = GetShortOrderDocument;
       break;
   }
   const { data } = await graphqlClient.query<Required<Pick<Query, "order">>, QueryOrderArgs>({

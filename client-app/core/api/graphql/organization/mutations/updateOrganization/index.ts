@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./updateOrganizationMutation.graphql";
+import { UpdateOrganizationDocument } from "./updateOrganizationMutation.generated";
 import type {
   InputUpdateOrganizationType,
   Mutations,
@@ -12,7 +12,7 @@ export async function updateOrganization(payload: InputUpdateOrganizationType): 
     Required<Pick<Mutations, "updateOrganization">>,
     MutationsUpdateOrganizationArgs
   >({
-    mutation: mutationDocument,
+    mutation: UpdateOrganizationDocument,
     variables: {
       command: payload,
     },

@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ExtendedGiftItemType } from "@/shared/cart";
+import type { ExtendedGiftItemType } from "@/shared/cart/types";
 
 interface IProps {
   disabled?: boolean;

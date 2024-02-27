@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useFetch } from "@/core/api/common";
-import { getStore } from "@/core/api/graphql";
+import { useFetch } from "@/core/api/common/composables/useFetch";
+import { getStore } from "@/core/api/graphql/store/queries/getStore";
 import { IS_DEVELOPMENT } from "../constants";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 

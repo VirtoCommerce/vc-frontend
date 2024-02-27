@@ -29,9 +29,11 @@
 </template>
 
 <script setup lang="ts">
-import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
 import type { PageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
+import DiscountBadge from "@/shared/catalog/components/discount-badge.vue";
+import ImageGallery from "@/shared/catalog/components/image-gallery.vue";
+import ProductVideos from "@/shared/catalog/components/product-videos.vue";
 
 interface IProps {
   product: Product;

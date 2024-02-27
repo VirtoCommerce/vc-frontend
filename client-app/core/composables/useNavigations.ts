@@ -1,5 +1,6 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { getChildCategories, getMenu } from "@/core/api/graphql";
+import { getChildCategories } from "@/core/api/graphql/catalog/queries/childCategories";
+import { getMenu } from "@/core/api/graphql/common/queries/getMenu";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import {
   convertToExtendedMenuLink,

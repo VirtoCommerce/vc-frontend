@@ -95,8 +95,8 @@ import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core"
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import { useShortCart } from "@/shared/cart";
-import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import { useShortCart } from "@/shared/cart/composables/useShortCart";
+import { useNestedMobileHeader, useSearchBar } from "@/shared/layout/composables";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";

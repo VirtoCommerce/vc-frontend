@@ -53,7 +53,7 @@
 import { clone } from "lodash";
 import { computed, onMounted, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { initializePayment } from "@/core/api/graphql";
+import { initializePayment } from "@/core/api/graphql/payment/mutations/initializePayment";
 import { useGoogleAnalytics } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import BankCardForm from "../components/bank-card-form.vue";

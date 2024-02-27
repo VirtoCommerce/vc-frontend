@@ -18,7 +18,7 @@ import { useCssVar } from "@vueuse/core";
 import Skyflow from "skyflow-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { initializePayment, authorizePayment } from "@/core/api/graphql/payment";
 import { useGoogleAnalytics } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";

@@ -1,18 +1,16 @@
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
-import {
-  getMe,
-  inviteUser as _inviteUser,
-  registerAccount,
-  registerByInvitation,
-  requestPasswordReset,
-  resetPasswordByToken,
-  updatePersonalData,
-  changePassword as _changePassword,
-  sendVerifyEmail as _sendVerifyEmail,
-  confirmEmailByToken,
-} from "@/core/api/graphql/account";
+import { changePassword as _changePassword } from "@/core/api/graphql/account/mutations/changePassword";
+import { confirmEmailByToken } from "@/core/api/graphql/account/mutations/confirmEmail";
+import { inviteUser as _inviteUser } from "@/core/api/graphql/account/mutations/inviteUser";
+import { registerAccount } from "@/core/api/graphql/account/mutations/registerAccount";
+import { registerByInvitation } from "@/core/api/graphql/account/mutations/registerByInvitation";
+import { resetPasswordByToken } from "@/core/api/graphql/account/mutations/resetPasswordByToken";
+import { sendVerifyEmail as _sendVerifyEmail } from "@/core/api/graphql/account/mutations/sendVerifyEmail";
+import { updatePersonalData } from "@/core/api/graphql/account/mutations/updatePersonalData";
+import { getMe } from "@/core/api/graphql/account/queries/getMe";
+import { requestPasswordReset } from "@/core/api/graphql/account/queries/requestPasswordReset";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { TabsType, useBroadcast, userLockedEvent, userReloadEvent, passwordExpiredEvent } from "@/shared/broadcast";
@@ -35,7 +33,7 @@ import type {
   ChangePassword,
   SignMeUp,
   UserPersonalData,
-} from "@/shared/account";
+} from "@/shared/account/types";
 
 const loading = ref(false);
 const user = ref<UserType>();

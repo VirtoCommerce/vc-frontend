@@ -1,10 +1,8 @@
 import { computed, readonly, ref, shallowRef, unref } from "vue";
-import {
-  addAddressToFavorites,
-  deleteMemberAddresses,
-  removeAddressFromFavorites,
-  updateMemberAddresses,
-} from "@/core/api/graphql/account";
+import { addAddressToFavorites } from "@/core/api/graphql/account/mutations/addAddressToFavorites";
+import { deleteMemberAddresses } from "@/core/api/graphql/account/mutations/deleteMemberAddresses";
+import { removeAddressFromFavorites } from "@/core/api/graphql/account/mutations/removeAddressFromFavorites";
+import { updateMemberAddresses } from "@/core/api/graphql/account/mutations/updateMemberAddresses";
 import { getOrganizationAddresses } from "@/core/api/graphql/organization";
 import { SORT_DESCENDING } from "@/core/constants";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";

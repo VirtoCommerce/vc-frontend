@@ -1,4 +1,4 @@
-import { OperationNames } from "@/core/api/graphql/types";
+import { OperationNames } from "@/core/api/graphql/types/operations.generated";
 
 export const SHORT_CART_MUTATION_NAMES = [
   OperationNames.Mutation.AddBulkItemsCart,

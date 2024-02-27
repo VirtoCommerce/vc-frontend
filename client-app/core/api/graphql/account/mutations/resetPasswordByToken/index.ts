@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./resetPasswordByToken.graphql";
+import { ResetPasswordByTokenDocument } from "./resetPasswordByToken.generated";
 import type {
   IdentityResultType,
   InputResetPasswordByTokenType,
@@ -12,7 +12,7 @@ export async function resetPasswordByToken(payload: InputResetPasswordByTokenTyp
     Required<Pick<Mutations, "resetPasswordByToken">>,
     MutationsResetPasswordByTokenArgs
   >({
-    mutation: mutationDocument,
+    mutation: ResetPasswordByTokenDocument,
     variables: {
       command: payload,
     },

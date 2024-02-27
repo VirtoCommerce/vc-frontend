@@ -12,5 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcFooter, VcHeader } from "@/shared/layout";
+import VcFooter from "@/shared/layout/components/footer/vc-footer.vue";
+import VcHeader from "@/shared/layout/components/header/vc-header.vue";
 </script>

@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from "node:url";
 import path from "path";
 import graphql from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
+import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
@@ -66,6 +67,9 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       splitVendorChunkPlugin(),
+      visualizer({
+        filename: path.resolve(__dirname, "artifacts/bundle-map.html"),
+      }),
     ],
     resolve: {
       alias: {

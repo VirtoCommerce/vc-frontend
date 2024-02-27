@@ -75,7 +75,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
-import { useShortCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart/composables/useShortCart";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();

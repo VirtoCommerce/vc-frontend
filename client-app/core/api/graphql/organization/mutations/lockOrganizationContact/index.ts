@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./lockOrganizationContact.graphql";
+import { LockOrganizationContactDocument } from "./lockOrganizationContact.generated";
 import type { ContactType, Mutations, MutationsLockOrganizationContactArgs } from "@/core/api/graphql/types";
 
 export async function lockOrganizationContact(userId: string): Promise<ContactType> {
@@ -7,7 +7,7 @@ export async function lockOrganizationContact(userId: string): Promise<ContactTy
     Required<Pick<Mutations, "lockOrganizationContact">>,
     MutationsLockOrganizationContactArgs
   >({
-    mutation: mutationDocument,
+    mutation: LockOrganizationContactDocument,
     variables: {
       command: { userId },
     },

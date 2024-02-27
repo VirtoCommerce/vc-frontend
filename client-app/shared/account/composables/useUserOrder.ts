@@ -1,6 +1,6 @@
 import { computed, ref, shallowRef } from "vue";
-import { addOrUpdateOrderPayment, getOrder } from "@/core/api/graphql";
-import { GetOrderFeldsType } from "@/core/api/graphql/orders/queries/getOrder";
+import { addOrUpdateOrderPayment } from "@/core/api/graphql/orders/mutations/addOrUpdateOrderPayment";
+import { getOrder, GetOrderFeldsType } from "@/core/api/graphql/orders/queries/getOrder";
 import { ProductType } from "@/core/enums";
 import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
 import type { GetOrderPayloadType } from "@/core/api/graphql/orders/queries/getOrder";

@@ -82,7 +82,7 @@ import { invoke } from "@vueuse/core";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { CustomIdentityResultType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();

@@ -69,7 +69,7 @@ import { string } from "yup";
 import { useIdentityErrorTranslator } from "@/core/composables";
 import { B2B_ROLES } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";

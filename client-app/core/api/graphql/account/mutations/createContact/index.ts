@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./createContact.graphql";
+import { CreateContactDocument } from "./createContact.generated";
 import type {
   ContactType,
   InputCreateContactType,
@@ -9,7 +9,7 @@ import type {
 
 export async function createContact(contact: InputCreateContactType): Promise<ContactType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "createContact">>, MutationsCreateContactArgs>({
-    mutation: mutationDocument,
+    mutation: CreateContactDocument,
     variables: {
       command: contact,
     },

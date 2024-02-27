@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./registerByInvitationMutation.graphql";
+import { RegisterByInvitationDocument } from "./registerByInvitationMutation.generated";
 import type {
   CustomIdentityResultType,
   InputRegisterByInvitationType,
@@ -12,7 +12,7 @@ export async function registerByInvitation(payload: InputRegisterByInvitationTyp
     Required<Pick<Mutations, "registerByInvitation">>,
     MutationsRegisterByInvitationArgs
   >({
-    mutation: mutationDocument,
+    mutation: RegisterByInvitationDocument,
     variables: {
       command: payload,
     },

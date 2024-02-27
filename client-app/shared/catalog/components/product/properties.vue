@@ -25,8 +25,9 @@ import { computed, inject } from "vue";
 import { PropertyType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { getPropertiesGroupedByName } from "@/core/utilities";
-import { ProductTitledBlock, Vendor } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import ProductTitledBlock from "@/shared/catalog/components/product-titled-block.vue";
+import Vendor from "@/shared/catalog/components/vendor.vue";
 
 interface IProps {
   product: Product;

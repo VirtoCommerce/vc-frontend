@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { useFullCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
 const { cart, selectedLineItems, hasValidationErrors } = useFullCart();

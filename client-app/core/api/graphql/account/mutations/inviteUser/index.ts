@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./inviteUserMutation.graphql";
+import { InviteUserDocument } from "./inviteUserMutation.generated";
 import type {
   CustomIdentityResultType,
   InputInviteUserType,
@@ -9,7 +9,7 @@ import type {
 
 export async function inviteUser(payload: InputInviteUserType): Promise<CustomIdentityResultType> {
   const { data } = await graphqlClient.mutate<Required<Pick<Mutations, "inviteUser">>, MutationsInviteUserArgs>({
-    mutation: mutationDocument,
+    mutation: InviteUserDocument,
     variables: {
       command: payload,
     },

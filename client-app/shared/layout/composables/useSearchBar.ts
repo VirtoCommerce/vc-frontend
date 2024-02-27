@@ -1,5 +1,5 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { getSearchResults } from "@/core/api/graphql/catalog";
+import { getSearchResults } from "@/core/api/graphql/catalog/queries/getSearchResults";
 import { Logger } from "@/core/utilities";
 import { highlightSearchText, prepareSearchText } from "../utils";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";

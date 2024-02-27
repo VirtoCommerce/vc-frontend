@@ -1,8 +1,8 @@
 import { computed, readonly, ref, shallowRef } from "vue";
-import { getCategory } from "@/core/api/graphql";
+import { getCategory } from "@/core/api/graphql/catalog/queries/getCategory";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
+import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql/catalog/queries/getCategory";
 import type { Category } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 

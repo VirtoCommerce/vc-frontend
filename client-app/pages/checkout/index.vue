@@ -27,7 +27,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
-import { useFullCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import { useCheckout } from "@/shared/checkout";
 
 const config = inject(configInjectionKey, {});

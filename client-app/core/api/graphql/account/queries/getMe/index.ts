@@ -1,8 +1,7 @@
 import { useLazyQuery } from "@vue/apollo-composable";
-import { GetMeDocument } from "@/core/api/graphql/types";
 import { graphqlClient } from "../../../client";
-import getMeQueryDocument from "./getMeQuery.graphql";
-import type { ContactTypeOrganizationsArgs, Query, UserType } from "@/core/api/graphql/types";
+import { GetMeDocument } from "./getMeQuery.generated";
+import type { ContactTypeOrganizationsArgs, Query, UserType } from "@/core/api/graphql/types/base.generated";
 
 export function useGetMeQuery() {
   return useLazyQuery(GetMeDocument);
@@ -10,7 +9,7 @@ export function useGetMeQuery() {
 
 export async function getMe(): Promise<UserType> {
   const { data } = await graphqlClient.query<Required<Pick<Query, "me">>, ContactTypeOrganizationsArgs>({
-    query: getMeQueryDocument,
+    query: GetMeDocument,
   });
 
   return data.me;

@@ -1,10 +1,13 @@
 import { graphqlClient } from "../../../client";
-import addAddressToFavoritesMutation from "./addAddressToFavoritesMutation.graphql";
-import type { AddAddressToFavoritesMutation, AddAddressToFavoritesMutationVariables } from "@/core/api/graphql/types";
+import { AddAddressToFavoritesDocument } from "./addAddressToFavoritesMutation.generated";
+import type {
+  AddAddressToFavoritesMutation,
+  AddAddressToFavoritesMutationVariables,
+} from "./addAddressToFavoritesMutation.generated";
 
 export async function addAddressToFavorites(addressId: string): Promise<void> {
   await graphqlClient.mutate<AddAddressToFavoritesMutation, AddAddressToFavoritesMutationVariables>({
-    mutation: addAddressToFavoritesMutation,
+    mutation: AddAddressToFavoritesDocument,
     variables: {
       command: {
         addressId,

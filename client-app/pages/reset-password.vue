@@ -58,7 +58,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { ResetPasswordForm } from "@/shared/account";
-import { TwoColumn } from "@/shared/layout";
+import TwoColumn from "@/shared/layout/components/two-column.vue";
 
 const route = useRoute();
 const { t } = useI18n();

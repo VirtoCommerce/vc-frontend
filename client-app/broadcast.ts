@@ -1,11 +1,12 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
-import { filterActiveQueryNames } from "@/core/api/graphql";
-import { OperationNames } from "@/core/api/graphql/types";
+import { OperationNames } from "@/core/api/graphql/types/operations.generated";
+import { filterActiveQueryNames } from "@/core/api/graphql/utils";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
-import { useSignMeOut, useUser } from "@/shared/account";
+import { useSignMeOut } from "@/shared/account/composables/useSignMeOut";
+import { useUser } from "@/shared/account/composables/useUser";
 import {
   cartReloadEvent,
   pageReloadEvent,

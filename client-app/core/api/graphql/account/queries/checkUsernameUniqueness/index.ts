@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import checkUsernameUniquenessQueryDocument from "./checkUsernameUniquenessQuery.graphql";
+import { CheckUsernameUniquenessDocument } from "./checkUsernameUniquenessQuery.generated";
 import type { Query, QueryCheckUsernameUniquenessArgs } from "@/core/api/graphql/types";
 
 export async function checkUsernameUniqueness(payload: QueryCheckUsernameUniquenessArgs): Promise<boolean> {
@@ -7,7 +7,7 @@ export async function checkUsernameUniqueness(payload: QueryCheckUsernameUniquen
     Required<Pick<Query, "checkUsernameUniqueness">>,
     QueryCheckUsernameUniquenessArgs
   >({
-    query: checkUsernameUniquenessQueryDocument,
+    query: CheckUsernameUniquenessDocument,
     variables: {
       ...payload,
     },

@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./deleteWishlistItemMutation.graphql";
+import { DeleteWishlistItemDocument } from "./deleteWishlistItemMutation.generated";
 import type {
   InputRemoveWishlistItemType,
   Mutations,
@@ -12,7 +12,7 @@ export async function deleteWishlistItem(payload: InputRemoveWishlistItemType): 
     Required<Pick<Mutations, "removeWishlistItem">>,
     MutationsRemoveWishlistItemArgs
   >({
-    mutation: mutationDocument,
+    mutation: DeleteWishlistItemDocument,
     variables: {
       command: payload,
     },

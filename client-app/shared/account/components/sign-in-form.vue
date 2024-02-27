@@ -86,10 +86,10 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useField, useForm } from "vee-validate";
 import { ref, toRef, watch } from "vue";
 import { object, string } from "yup";
-import { useErrorsTranslator } from "@/core/composables";
+import { useErrorsTranslator } from "@/core/composables/useErrorsTranslator";
 import { IdentityErrors } from "@/core/enums";
-import { useSignMeIn } from "@/shared/account/composables";
-import { ContactAdministratorLink } from "@/shared/common";
+import { useSignMeIn } from "@/shared/account/composables/useSignMeIn";
+import ContactAdministratorLink from "@/shared/common/components/contact-administrator-link.vue";
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 

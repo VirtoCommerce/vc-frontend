@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { TwoColumn } from "@/shared/layout";
+import TwoColumn from "@/shared/layout/components/two-column.vue";
 
 export interface IProps {
   title?: string;

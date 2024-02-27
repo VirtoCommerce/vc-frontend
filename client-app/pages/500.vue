@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { TwoColumn } from "@/shared/layout";
+import TwoColumn from "@/shared/layout/components/two-column.vue";
 
 const { t } = useI18n();
 

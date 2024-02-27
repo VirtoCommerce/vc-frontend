@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useFullCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import { useCheckout } from "@/shared/checkout/composables";
 import type { RouteLocationRaw } from "vue-router";
 

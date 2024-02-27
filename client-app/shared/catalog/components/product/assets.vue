@@ -19,8 +19,8 @@
 </template>
 
 <script setup lang="ts">
-import { ProductTitledBlock } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import ProductTitledBlock from "@/shared/catalog/components/product-titled-block.vue";
 
 defineProps<{
   product: Product;

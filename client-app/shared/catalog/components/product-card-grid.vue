@@ -215,13 +215,13 @@ import { computed, ref } from "vue";
 import { ProductType, PropertyType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
-import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
+import AddToList from "@/shared/wishlists/components/add-to-list.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 

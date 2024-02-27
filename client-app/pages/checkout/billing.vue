@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { useFullCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
 const { cart, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();

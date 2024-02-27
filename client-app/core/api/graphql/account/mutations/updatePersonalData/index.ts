@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./updatePersonalDataMutation.graphql";
+import { UpdatePersonalDataDocument } from "./updatePersonalDataMutation.generated";
 import type {
   InputPersonalDataType,
   IdentityResultType,
@@ -12,7 +12,7 @@ export async function updatePersonalData(personalData: InputPersonalDataType): P
     Required<Pick<Mutations, "updatePersonalData">>,
     MutationsUpdatePersonalDataArgs
   >({
-    mutation: mutationDocument,
+    mutation: UpdatePersonalDataDocument,
     variables: {
       command: {
         personalData,

@@ -31,6 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import { VcFooter } from "@/shared/layout";
 import Created from "../print/created.vue";
+import VcFooter from "@/shared/layout/components/footer/vc-footer.vue";
 </script>

@@ -7,7 +7,7 @@ import {
   removeMemberFromOrganization as _removeMemberFromOrganization,
   unlockOrganizationContact,
   changeOrganizationContactRole,
-} from "@/core/api/graphql";
+} from "@/core/api/graphql/organization";
 import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";

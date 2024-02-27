@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 import { getChildCategoriesTreeString } from "@/core/api/graphql/utils";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import type { Query, QueryChildCategoriesArgs } from "@/core/api/graphql/types";
+import type { Query, QueryChildCategoriesArgs } from "@/core/api/graphql/types/base.generated";
 import type { DocumentNode } from "graphql";
 
 function getCategoryQueryDocument(categoryId: string, maxChildCategoriesLevel = 0): DocumentNode {

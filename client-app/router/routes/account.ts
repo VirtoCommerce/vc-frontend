@@ -1,5 +1,5 @@
-import { useThemeContext } from "@/core/composables";
-import { useUser } from "@/shared/account";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { RouteRecordRaw } from "vue-router";
 
 const Dashboard = () => import("@/pages/account/dashboard.vue");

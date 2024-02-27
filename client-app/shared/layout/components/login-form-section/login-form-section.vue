@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { SignInForm } from "@/shared/account";
+import SignInForm from "@/shared/account/components/sign-in-form.vue";
 </script>
 
 <style scoped>

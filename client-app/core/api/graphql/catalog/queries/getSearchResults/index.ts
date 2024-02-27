@@ -1,8 +1,9 @@
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
-import searchQueryDocument from "./getSearchResultsQuery.graphql";
-import type { GetSearchResultsQueryVariables, Query } from "@/core/api/graphql/types";
+import { GetSearchResultsDocument } from "./getSearchResultsQuery.generated";
+import type { GetSearchResultsQueryVariables } from "./getSearchResultsQuery.generated";
+import type { Query } from "@/core/api/graphql/types";
 
 export type SearchResultsType = Required<Pick<Query, "categories" | "products" | "pages" | "productSuggestions">>;
 
@@ -116,7 +117,7 @@ export async function getSearchResults(params: GetSearchResultsParamsType): Prom
   }
 
   const { data } = await graphqlClient.query<SearchResultsType, GetSearchResultsQueryVariables>({
-    query: searchQueryDocument,
+    query: GetSearchResultsDocument,
     variables,
   });
 

@@ -1,4 +1,4 @@
-import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types";
+import { PropertyType, PropertyValueTypes } from "@/core/api/graphql/types/base.generated";
 import { getMoney } from "./money.mock";
 import type { Property } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";

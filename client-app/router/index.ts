@@ -1,7 +1,7 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
-import { useAppContext } from "@/core/composables";
+import { useAppContext } from "@/core/composables/useAppContext";
 import { getReturnUrlValue } from "@/core/utilities";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import { mainRoutes } from "./routes";
 import type { RouteRecordName } from "vue-router";
 

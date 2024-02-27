@@ -1,8 +1,9 @@
 import { computed } from "vue";
 import { useFetch } from "@/core/api/common";
-import { useGetMeQuery, useMergeCartMutation } from "@/core/api/graphql";
+import { useGetMeQuery } from "@/core/api/graphql/account/queries/getMe";
+import { useMergeCartMutation } from "@/core/api/graphql/cart/mutations/mergeCart";
 import { TabsType, openReturnUrl, useBroadcast } from "@/shared/broadcast";
-import { useShortCart } from "@/shared/cart/composables";
+import { useShortCart } from "@/shared/cart/composables/useShortCart";
 import type { IdentityResultType } from "@/core/api/graphql/types";
 import type { SignMeIn } from "@/shared/account/types";
 import type { AfterFetchContext } from "@vueuse/core";

@@ -50,7 +50,7 @@ import { cloneDeep } from "lodash";
 import { watch, shallowReactive } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
-import type { ProductsFilters } from "@/shared/catalog";
+import type { ProductsFilters } from "@/shared/catalog/types";
 
 interface IEmits {
   (event: "change", value: ProductsFilters): void;

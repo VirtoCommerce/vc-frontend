@@ -1,5 +1,5 @@
 import { graphqlClient } from "../../../client";
-import mutationDocument from "./removeMemberFromOrganization.graphql";
+import { RemoveMemberFromOrganizationDocument } from "./removeMemberFromOrganization.generated";
 import type {
   InputRemoveMemberFromOrganizationType,
   Mutations,
@@ -11,7 +11,7 @@ export async function removeMemberFromOrganization(payload: InputRemoveMemberFro
     Required<Pick<Mutations, "removeMemberFromOrganization">>,
     MutationsRemoveMemberFromOrganizationArgs
   >({
-    mutation: mutationDocument,
+    mutation: RemoveMemberFromOrganizationDocument,
     variables: {
       command: payload,
     },

@@ -108,7 +108,7 @@
 import { sumBy } from "lodash";
 import { computed, ref } from "vue";
 import { useCurrency, useLanguages } from "@/core/composables";
-import { useFullCart } from "@/shared/cart";
+import { useFullCart } from "@/shared/cart/composables/useFullCart";
 import { useCheckout } from "@/shared/checkout/composables";
 import type {
   OrderShipmentType,
