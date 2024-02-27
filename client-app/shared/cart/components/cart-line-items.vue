@@ -29,7 +29,7 @@
           :disabled="disabled"
           :readonly="readonly"
           @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
-          @update:validation="setItemValidationStatus(item, $event)"
+          @update:validation="setValidationStatus(item, $event)"
         />
 
         <InStock
@@ -61,14 +61,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
+import { useLineItemsValidation } from "@/ui-kit";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { ErrorType } from "@/core/composables";
-import type { PreparedLineItemType } from "@/core/types";
 import type { NamedValue } from "vue-i18n";
 
 interface IProps {
@@ -92,42 +92,29 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const maxLimitValidationError = ref<ValidationErrorType>();
-
-function setItemValidationStatus(
-  item: PreparedLineItemType,
-  status: { isValid: true } | { isValid: false; errorMessage: string },
-): void {
-  if (!status.isValid) {
-    maxLimitValidationError.value = {
-      objectId: item.id,
-      errorMessage: status.errorMessage,
-    };
-  } else {
-    maxLimitValidationError.value = undefined;
-  }
-}
+const { validationErrors: maxLimitValidationErrors, setValidationStatus } = useLineItemsValidation();
 
 const validationErrors = computed<ErrorType[]>(() => {
-  let errors = [];
+  let errors: ErrorType[] = props.validationErrors.map((error: ValidationErrorType) => {
+    return {
+      id: error.objectId,
+      code: error.errorCode,
+      parameters: error.errorParameters?.reduce((acc, err) => {
+        acc[err.key] = err.value;
+        return acc;
+      }, {} as NamedValue),
+      description: error.errorMessage,
+    };
+  });
 
-  if (maxLimitValidationError.value) {
-    errors.push({
-      id: maxLimitValidationError.value.objectId,
-      description: maxLimitValidationError.value.errorMessage,
-    });
-  } else {
-    errors = props.validationErrors.map((error: ValidationErrorType) => {
-      return {
-        id: error.objectId,
-        code: error.errorCode,
-        parameters: error.errorParameters?.reduce((acc, err) => {
-          acc[err.key] = err.value;
-          return acc;
-        }, {} as NamedValue),
-        description: error.errorMessage,
-      };
-    });
+  if (maxLimitValidationErrors.value.length) {
+    errors = errors.concat(
+      maxLimitValidationErrors.value.map((item) => ({
+        id: item.objectId,
+        code: item.errorCode,
+        description: item.errorMessage,
+      })),
+    );
   }
 
   return errors;
