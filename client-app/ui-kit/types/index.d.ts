@@ -107,4 +107,17 @@ declare global {
   }
 
   type FileType = INewFile | IUploadingFile | IUploadedFile | IFailedFile | IAttachedFile | IRemovedFile;
+
+  type ErrorParameterType = {
+    key: string;
+    value: string;
+  };
+
+  type ValidationErrorType = {
+    errorCode?: string;
+    errorMessage?: string;
+    errorParameters?: ErrorParameterType[];
+    objectId?: string;
+    objectType?: string;
+  };
 }

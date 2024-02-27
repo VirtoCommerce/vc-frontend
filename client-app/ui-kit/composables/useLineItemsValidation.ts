@@ -1,5 +1,4 @@
 import { computed, ref } from "vue";
-import type { ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
 const validationErrors = ref<ValidationErrorType[]>([]);
