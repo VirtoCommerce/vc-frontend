@@ -1,10 +1,10 @@
-import { createGlobalState, createSharedComposable, useDebounceFn } from "@vueuse/core";
+import { createGlobalState, createSharedComposable, syncRefs, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
-import { computed, readonly, ref, shallowRef, watch } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useBroadcastLoading, useGoogleAnalytics } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
@@ -27,7 +27,10 @@ import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-a
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 const useGlobalCheckout = createGlobalState(() => {
-  const loading = ref(false);
+  const localLoading = ref(false);
+  const { loading: otherLoading } = useBroadcastLoading("checkout");
+  syncRefs(localLoading, otherLoading);
+
   const billingAddressEqualsShipping = ref(true);
   const placedOrder = shallowRef<CustomerOrderType | null>(null);
 
@@ -38,7 +41,8 @@ const useGlobalCheckout = createGlobalState(() => {
   const _purchaseOrderNumber = ref<string>();
 
   return {
-    loading,
+    localLoading,
+    otherLoading,
     billingAddressEqualsShipping,
     placedOrder,
     commentChanging,
@@ -83,7 +87,8 @@ export function _useCheckout() {
     updatePurchaseOrderNumber,
   } = useFullCart();
   const {
-    loading,
+    localLoading,
+    otherLoading,
     billingAddressEqualsShipping,
     placedOrder,
     commentChanging,
@@ -207,12 +212,12 @@ export function _useCheckout() {
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
-  watch(allItemsAreDigital, async (_, previousValue) => {
-    // Update defaults if state changed not on initialization
-    if (previousValue !== undefined) {
-      await setCheckoutDefaults();
-    }
-  });
+  // watch(allItemsAreDigital, async (_, previousValue) => {
+  //   // Update defaults if state changed not on initialization
+  //   if (previousValue !== undefined) {
+  //     await setCheckoutDefaults();
+  //   }
+  // });
 
   async function setCheckoutDefaults(): Promise<void> {
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
@@ -244,15 +249,17 @@ export function _useCheckout() {
 
   async function initialize(): Promise<void> {
     placedOrder.value = null;
-    loading.value = true;
+    localLoading.value = true;
 
-    await setCheckoutDefaults();
+    if (!otherLoading.value) {
+      await setCheckoutDefaults();
 
-    void fetchAddresses();
+      void fetchAddresses();
 
-    ga.beginCheckout(cart.value!);
+      ga.beginCheckout(cart.value!);
+    }
 
-    loading.value = false;
+    localLoading.value = false;
   }
 
   async function updateBillingOrDeliveryAddress(
@@ -437,7 +444,7 @@ export function _useCheckout() {
   }
 
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
-    loading.value = true;
+    localLoading.value = true;
 
     await prepareOrderData();
 
@@ -463,7 +470,7 @@ export function _useCheckout() {
       });
     }
 
-    loading.value = false;
+    localLoading.value = false;
 
     return placedOrder.value;
   }
@@ -492,7 +499,7 @@ export function _useCheckout() {
     setShippingMethod,
     setPaymentMethod,
     createOrderFromCart,
-    loading: readonly(loading),
+    loading: computed(() => otherLoading.value || localLoading.value),
     changing: computed(() => commentChanging.value || purchaseOrderNumberChanging.value),
     placedOrder: computed(() => placedOrder.value),
     allOrderItemsAreDigital,

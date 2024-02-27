@@ -52,10 +52,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
               lintCommand: "eslint client-app",
               dev: {
                 overrideConfig: {
-                  cache: true,
-                  cacheLocation: "node_modules/.cache/.eslintcache",
                   cwd: process.cwd(),
-                  extensions: ["js", "ts", "vue"],
+                  extensions: ["js", "cjs", "ts", "cts", "vue"],
                   ignore: true,
                   ignorePath: ".eslintignore",
                   useEslintrc: true,

@@ -1,6 +1,6 @@
-import { createGlobalState, createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
+import { createGlobalState, createSharedComposable, computedEager, useLastChanged, syncRefs } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
-import { computed, readonly } from "vue";
+import { computed } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -27,7 +27,7 @@ import {
   clearCart as deprecatedClearCart,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics, useBroadcastChanging, useBroadcastLoading } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor } from "@/core/utilities";
@@ -142,9 +142,7 @@ export function _useFullCart() {
   const { openModal } = useModal();
   const ga = useGoogleAnalytics();
 
-  const { result: query, load, refetch, loading } = useGetFullCartQuery();
-
-  const forceFetch = async () => (await load()) || (await refetch());
+  const { result: query, load, refetch, loading: localLoading } = useGetFullCartQuery();
 
   const cart = computed(() => query.value?.cart as CartType | undefined);
 
@@ -408,6 +406,31 @@ export function _useFullCart() {
     });
   }
 
+  const localChanging = computed(
+    () =>
+      selectCartItemsLoading.value ||
+      unselectCartItemsLoading.value ||
+      clearCartLoading.value ||
+      removeItemsLoading.value ||
+      changeItemQuantityLoading.value ||
+      validateCouponLoading.value ||
+      addCouponLoading.value ||
+      removeCouponLoading.value ||
+      changeCommentLoading.value ||
+      changePurchaseOrderNumberLoading.value ||
+      addOrUpdateShipmentLoading.value ||
+      removeShipmentLoading.value ||
+      addOrUpdatePaymentLoading.value ||
+      addGiftItemsLoading.value ||
+      rejectGiftItemsLoading.value,
+  );
+
+  const { loading: otherLoading } = useBroadcastLoading("fullCart");
+  const { changing: otherChanging } = useBroadcastChanging("fullCart");
+
+  syncRefs(localLoading, otherLoading);
+  syncRefs(localChanging, otherChanging);
+
   return {
     cart,
     shipment,
@@ -426,7 +449,7 @@ export function _useFullCart() {
     hasOnlyUnselectedValidationError,
     load,
     refetch,
-    forceFetch,
+    forceFetch: async () => (await load()) || (await refetch()),
     changeItemQuantity,
     removeItems,
     validateCartCoupon,
@@ -443,25 +466,8 @@ export function _useFullCart() {
     removeGiftsFromCart,
     toggleGift,
     openClearCartModal,
-    loading: readonly(loading),
-    changing: computed(
-      () =>
-        selectCartItemsLoading.value ||
-        unselectCartItemsLoading.value ||
-        clearCartLoading.value ||
-        removeItemsLoading.value ||
-        changeItemQuantityLoading.value ||
-        validateCouponLoading.value ||
-        addCouponLoading.value ||
-        removeCouponLoading.value ||
-        changeCommentLoading.value ||
-        changePurchaseOrderNumberLoading.value ||
-        addOrUpdateShipmentLoading.value ||
-        removeShipmentLoading.value ||
-        addOrUpdatePaymentLoading.value ||
-        addGiftItemsLoading.value ||
-        rejectGiftItemsLoading.value,
-    ),
+    loading: computed(() => otherLoading.value || localLoading.value),
+    changing: computed(() => otherChanging.value || localChanging.value),
     createQuoteFromCartLoading,
   };
 }

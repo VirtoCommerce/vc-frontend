@@ -1,7 +1,7 @@
 import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient } from "@/core/api/graphql";
+import { apolloClient, cachePersistor } from "@/core/api/graphql";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -35,6 +35,8 @@ export default async () => {
       this.message = await fetchLocaleMessages(this.locale);
     },
   };
+
+  await cachePersistor.restore();
 
   /**
    * Fetching required app data

@@ -4,7 +4,7 @@ import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
 import type { AfterFetchContext } from "@vueuse/core";
 
 export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: true }) {
-  const { resolveClient } = useApolloClient();
+  const { client } = useApolloClient();
   const broadcast = useBroadcast();
 
   const { execute: signMeOut } = useFetch("/storefrontapi/account/logout", {
@@ -13,7 +13,7 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
   }).get();
 
   async function afterFetch(context: AfterFetchContext) {
-    await resolveClient().cache.reset();
+    await client.resetStore();
     if (options.reloadPage) {
       broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
     }
