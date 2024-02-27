@@ -7,12 +7,12 @@ export const useFetch = (() => {
 
   return createFetch({
     options: {
-      beforeFetch: (context) => {
-        onRequest.value.forEach((intercept) => intercept(context.url, context.options));
+      beforeFetch: async (context) => {
+        await Promise.all(onRequest.value.map((intercept) => intercept(context.url, context.options)));
         return context;
       },
-      afterFetch: (context) => {
-        onResponse.value.forEach((intercept) => intercept(context.response));
+      afterFetch: async (context) => {
+        await Promise.all(onResponse.value.map((intercept) => intercept(context.response)));
         return context;
       },
       onFetchError: (context) => {
