@@ -20,7 +20,6 @@
     <button
       type="button"
       class="vc-file-uploader__drop-container"
-      :class="{ 'vc-file-uploader__drop-container--disabled': hasMaxFileCount }"
       @dragover.prevent
       @dragenter.prevent
       @drop="onFileDrop"
