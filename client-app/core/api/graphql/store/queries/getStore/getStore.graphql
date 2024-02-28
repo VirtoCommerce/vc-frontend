@@ -29,6 +29,14 @@ query GetStore($storeId: String!) {
       emailVerificationRequired
       createAnonymousOrderEnabled
       seoLinkType
+      passwordRequirements {
+        requireLowercase
+        requireUppercase
+        requireDigit
+        requiredLength
+        requiredUniqueChars
+        requireNonAlphanumeric
+      }
     }
   }
 }
