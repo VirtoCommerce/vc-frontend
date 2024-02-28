@@ -110,28 +110,26 @@ function _useAuth() {
     }
   }
 
-  const isUnauthorizing = ref(false);
   async function unauthorize() {
     await useFetch("/revoke/token").post();
     state.value = { ...INITIAL_STATE };
   }
 
-  const expired = computed(() => {
+  function isExpired() {
     if (state.value.refresh_token === null || state.value.expires_at === null) {
       return null;
     }
 
     return new Date(state.value.expires_at).getTime() <= Date.now();
-  });
+  }
 
   return {
     headers,
-    expired,
+    isExpired,
     errors,
     isAuthorizing,
     authorize,
     refresh,
-    isUnauthorizing,
     unauthorize,
   };
 }

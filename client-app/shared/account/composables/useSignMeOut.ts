@@ -11,7 +11,7 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
   async function signMeOut() {
     await unauthorize();
 
-    await client.resetStore();
+    await client.clearStore();
 
     if (options.reloadPage) {
       broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
