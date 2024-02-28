@@ -178,26 +178,6 @@ export function useUser() {
     }
   }
 
-  /* async function signMeIn(payload: SignMeIn): Promise<IdentityResultType> {
-    try {
-      loading.value = true;
-
-      const result = await authorize(payload.email, payload.password);
-
-      if (result.succeeded) {
-        resolveClient().cache.gc();
-        broadcast.emit(pageReloadEvent);
-      }
-
-      return result;
-    } catch (e) {
-      Logger.error(`${useUser.name}.${signMeIn.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  } */
-
   async function registerUser(payload: SignMeUp): Promise<AccountCreationResultType> {
     const { storeId } = globals;
 
@@ -256,22 +236,6 @@ export function useUser() {
       loading.value = false;
     }
   }
-
-  /* async function signMeOut(options: { reloadPage?: boolean } = { reloadPage: true }): Promise<void> {
-    try {
-      loading.value = true;
-      await unauthorize();
-      resolveClient().cache.gc();
-      if (options.reloadPage) {
-        broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
-      }
-    } catch (e) {
-      Logger.error(`${useUser.name}.${signMeOut.name}`, e);
-      throw e;
-    } finally {
-      loading.value = false;
-    }
-  } */
 
   async function forgotPassword(payload: ForgotPassword): Promise<boolean> {
     try {
