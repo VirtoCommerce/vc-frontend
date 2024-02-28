@@ -1,6 +1,7 @@
 import { useLocalStorage, createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
+import { errorHandler, toServerError } from "@/core/api/common/utils";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
 import type { AfterFetchContext } from "@vueuse/core";
@@ -28,10 +29,13 @@ function _useAuth() {
     execute: getToken,
     isFetching: isAuthorizing,
   } = useFetch("/connect/token", {
-    // Overwrite default interceptors
-    beforeFetch: (context) => context,
     afterFetch: updateToken,
-    onFetchError: (context) => context,
+    onFetchError: (context) => {
+      if (context.response?.status !== 400) {
+        errorHandler(toServerError(context.error, context.response?.status));
+      }
+      return context;
+    },
     immediate: false,
     updateDataOnError: true,
   })
@@ -49,15 +53,6 @@ function _useAuth() {
     return {};
   });
 
-  const { execute: revokeToken, isFetching: isUnauthorizing } = useFetch("/revoke/token", {
-    immediate: false,
-    beforeFetch: (context) => {
-      if (headers.value.Authorization) {
-        context.options.headers = { ...context.options.headers, ...headers.value };
-      }
-    },
-  }).post();
-
   const INITIAL_STATE = Object.freeze({
     access_token: null,
     expires_at: null,
@@ -70,7 +65,7 @@ function _useAuth() {
     expires_at: Date | string | null;
     refresh_token: string | null;
     token_type: string;
-  }>("auth", INITIAL_STATE);
+  }>("auth", { ...INITIAL_STATE });
 
   function updateToken(context: AfterFetchContext<ConnectTokenResponseType>) {
     if (context.data) {
@@ -110,14 +105,15 @@ function _useAuth() {
     try {
       await getToken(true);
     } catch {
-      state.value = INITIAL_STATE;
+      state.value = { ...INITIAL_STATE };
       broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
     }
   }
 
+  const isUnauthorizing = ref(false);
   async function unauthorize() {
-    await revokeToken();
-    state.value = INITIAL_STATE;
+    await useFetch("/revoke/token").post();
+    state.value = { ...INITIAL_STATE };
   }
 
   const expired = computed(() => {
