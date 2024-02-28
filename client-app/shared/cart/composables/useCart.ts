@@ -1,6 +1,6 @@
-import { createGlobalState, createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
-import { sumBy, difference, keyBy, without } from "lodash";
-import { computed, readonly, ref } from "vue";
+import { createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
+import { sumBy, difference, keyBy, merge } from "lodash";
+import { computed, readonly } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -25,6 +25,7 @@ import {
   useUnselectCartItemsMutation,
   useValidateCouponMutation,
   clearCart as deprecatedClearCart,
+  generateCacheIdIfNew,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
@@ -43,7 +44,10 @@ import type {
   InputPaymentType,
   InputShipmentType,
   QuoteType,
-  FullCartFragment,
+  AddOrUpdateCartPaymentMutation,
+  AddOrUpdateCartShipmentMutation,
+  AddOrUpdateCartShipmentMutationVariables,
+  AddOrUpdateCartPaymentMutationVariables,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 
@@ -152,10 +156,14 @@ export function _useFullCart() {
 
   const lineItemsGroupedByVendor = computed(() => groupByVendor(cart.value?.items ?? []));
 
-  const selectedForCheckoutItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout));
+  const selectedLineItems = computed(() => cart.value?.items?.filter((item) => item.selectedForCheckout) ?? []);
+
+  const selectedLineItemsGroupedByVendor = computed(() => groupByVendor(selectedLineItems.value));
+
+  const hasOnlyUnselectedLineItems = computedEager(() => selectedLineItems.value.length === 0);
 
   const allItemsAreDigital = computed(() =>
-    selectedForCheckoutItems.value?.every((item) => item.productType === ProductType.Digital),
+    selectedLineItems.value?.every((item) => item.productType === ProductType.Digital),
   );
 
   const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
@@ -169,10 +177,10 @@ export function _useFullCart() {
       cart.value?.validationErrors?.some(
         (error) =>
           (error.objectType === ValidationErrorObjectType.CartProduct &&
-            selectedForCheckoutItems.value?.some((item) => item.productId === error.objectId)) ||
+            selectedLineItems.value?.some((item) => item.productId === error.objectId)) ||
           (error.objectType === ValidationErrorObjectType.LineItem &&
-            selectedForCheckoutItems.value?.some((item) => item.id === error.objectId)),
-      ) ?? selectedForCheckoutItems.value?.some((item) => item.validationErrors?.length),
+            selectedLineItems.value?.some((item) => item.id === error.objectId)),
+      ) ?? selectedLineItems.value?.some((item) => item.validationErrors?.length),
   );
 
   const hasOnlyUnselectedValidationError = computedEager(
@@ -181,50 +189,57 @@ export function _useFullCart() {
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
 
-  const selectedForCheckoutItemIds = computed(() => selectedForCheckoutItems.value?.map((item) => item.id) ?? []);
-
   const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);
-  const selectItemIds = async (newValue: string[]): Promise<void> => {
-    const oldValue = selectedItemIds.value;
 
-    const newlySelectedLineItemIds = difference(newValue, oldValue);
-    const newlyUnselectedLineItemIds = difference(oldValue, newValue);
-
-    const hasNewlySelected = newlySelectedLineItemIds.length > 0;
-    const hasNewlyUnselected = newlyUnselectedLineItemIds.length > 0;
-    if (hasNewlySelected) {
-      await _selectCartItems({
-        command: {
-          lineItemIds: newlySelectedLineItemIds,
-        },
-      });
-    }
-    if (hasNewlyUnselected) {
-      await _unselectCartItemsMutation({
-        command: {
-          lineItemIds: newlyUnselectedLineItemIds,
-        },
-      });
-    }
-  };
-
-  const _selectedItemIds = ref<string[]>();
   const selectedItemIds = computed({
-    get: () => _selectedItemIds.value ?? selectedForCheckoutItemIds.value,
-    set: (value) => {
-      void selectItemIds(value);
-      _selectedItemIds.value = value;
+    get: () => selectedLineItems.value.map((item) => item.id),
+    set: (newValue) => {
+      const oldValue = selectedItemIds.value;
+
+      const newlySelectedLineItemIds = difference(newValue, oldValue);
+      const newlyUnselectedLineItemIds = difference(oldValue, newValue);
+
+      const hasNewlySelected = newlySelectedLineItemIds.length > 0;
+      const hasNewlyUnselected = newlyUnselectedLineItemIds.length > 0;
+      if (hasNewlySelected) {
+        void _selectCartItems(
+          {
+            command: {
+              lineItemIds: newlySelectedLineItemIds,
+            },
+          },
+          {
+            optimisticResponse: {
+              selectCartItems: merge({}, cart.value!, {
+                items: cart.value!.items.map((item) => ({
+                  selectedForCheckout: newlySelectedLineItemIds.includes(item.id) || item.selectedForCheckout,
+                })),
+              }),
+            },
+          },
+        );
+      }
+      if (hasNewlyUnselected) {
+        void _unselectCartItemsMutation(
+          {
+            command: {
+              lineItemIds: newlyUnselectedLineItemIds,
+            },
+          },
+          {
+            optimisticResponse: {
+              unSelectCartItems: merge({}, cart.value!, {
+                items: cart.value!.items.map((item) => ({
+                  selectedForCheckout: !newlyUnselectedLineItemIds.includes(item.id) && item.selectedForCheckout,
+                })),
+              }),
+            },
+          },
+        );
+      }
     },
   });
-
-  const selectedLineItems = computed(
-    () => cart.value?.items?.filter((item) => selectedItemIds.value.includes(item.id)) ?? [],
-  );
-
-  const selectedLineItemsGroupedByVendor = computed(() => groupByVendor(selectedLineItems.value));
-
-  const hasOnlyUnselectedLineItems = computedEager(() => selectedItemIds.value.length === 0);
 
   const { mutate: _clearCart, loading: clearCartLoading } = useClearCartMutation(cart);
   async function clearCart(): Promise<void> {
@@ -233,9 +248,17 @@ export function _useFullCart() {
 
   const { mutate: _removeItems, loading: removeItemsLoading } = useRemoveCartItemsMutation(cart);
   async function removeItems(lineItemIds: string[]): Promise<void> {
-    selectedItemIds.value = without(selectedItemIds.value, ...lineItemIds);
-
-    await _removeItems({ command: { lineItemIds } });
+    await _removeItems(
+      { command: { lineItemIds } },
+      {
+        optimisticResponse: {
+          removeCartItems: {
+            ...cart.value!,
+            items: cart.value!.items.filter((item) => !lineItemIds.includes(item.id)),
+          },
+        },
+      },
+    );
   }
 
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } =
@@ -273,23 +296,40 @@ export function _useFullCart() {
 
   const { mutate: _addOrUpdateShipment, loading: addOrUpdateShipmentLoading } =
     useAddOrUpdateCartShipmentMutation(cart);
-  async function updateShipment(newShipment: InputShipmentType): Promise<void> {
-    await _addOrUpdateShipment({ command: { shipment: newShipment } });
+  async function updateShipment(value: InputShipmentType): Promise<void> {
+    await _addOrUpdateShipment(
+      { command: { shipment: value } },
+      {
+        optimisticResponse: (vars, { IGNORE }) => {
+          if ((vars as AddOrUpdateCartShipmentMutationVariables).command.shipment.id === undefined) {
+            return IGNORE as AddOrUpdateCartShipmentMutation;
+          }
+          return {
+            addOrUpdateCartShipment: merge({}, cart.value!, {
+              shipments: [
+                {
+                  id: value.id,
+                  shipmentMethodCode: value.shipmentMethodCode,
+                  shipmentMethodOption: value.shipmentMethodOption,
+                  deliveryAddress: generateCacheIdIfNew(value.deliveryAddress, "CartAddressType"),
+                },
+              ],
+            }),
+          };
+        },
+      },
+    );
   }
 
   const { mutate: _removeShipment, loading: removeShipmentLoading } = useRemoveShipmentMutation(cart);
   async function removeShipment(shipmentId: string): Promise<void> {
-    // Because of workaround above for backward-compatibility
-    const cartValue = cart?.value as FullCartFragment;
-
     await _removeShipment(
       { command: { shipmentId } },
       {
-        // Update cache immediately, then it will be updated (or rolled back) after actual response from the server
         optimisticResponse: {
           removeShipment: {
-            ...cartValue,
-            shipments: [],
+            ...cart.value!,
+            shipments: cart.value!.shipments.filter((x) => x.id !== shipmentId),
           },
         },
       },
@@ -297,8 +337,28 @@ export function _useFullCart() {
   }
 
   const { mutate: _addOrUpdatePayment, loading: addOrUpdatePaymentLoading } = useAddOrUpdateCartPaymentMutation(cart);
-  async function updatePayment(newPayment: InputPaymentType): Promise<void> {
-    await _addOrUpdatePayment({ command: { payment: newPayment } });
+  async function updatePayment(value: InputPaymentType): Promise<void> {
+    await _addOrUpdatePayment(
+      { command: { payment: value } },
+      {
+        optimisticResponse: (vars, { IGNORE }) => {
+          if ((vars as AddOrUpdateCartPaymentMutationVariables).command.payment.id === undefined) {
+            return IGNORE as AddOrUpdateCartPaymentMutation;
+          }
+          return {
+            addOrUpdateCartPayment: merge({}, cart.value!, {
+              payments: [
+                {
+                  id: value.id,
+                  paymentGatewayCode: value.paymentGatewayCode,
+                  billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
+                },
+              ],
+            }),
+          };
+        },
+      },
+    );
   }
 
   const { mutate: _addGiftItems, loading: addGiftItemsLoading } = useAddGiftItemsMutation(cart);
@@ -509,4 +569,4 @@ function _useCart() {
 }
 
 /** @deprecated Use {@link useSortCart} for adding products to cart and {@link useFullCart} for cart & checkout pages */
-export const useCart = createGlobalState(_useCart);
+export const useCart = createSharedComposable(_useCart);

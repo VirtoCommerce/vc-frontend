@@ -168,7 +168,7 @@ function getDiscountAmount(discount: DiscountType | OrderDiscountType): number {
 <style scoped lang="scss">
 @media print {
   #order-summary {
-    :deep(.vc-card-widget__title) {
+    :deep(.vc-widget__header-container) {
       @apply hidden;
     }
   }

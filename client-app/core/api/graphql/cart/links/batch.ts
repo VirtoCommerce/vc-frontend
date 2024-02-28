@@ -1,6 +1,7 @@
 import { from, split } from "@apollo/client/core";
 import { BatchHttpLink } from "@apollo/client/link/batch-http";
 import { FULL_CART_MUTATION_NAMES } from "@/core/api/graphql/cart/consts";
+import { apolloFetch } from "@/core/api/graphql/config/interceptors";
 import { API_URL } from "@/core/api/graphql/consts";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import type { FetchResult, NextLink, Operation, Observable } from "@apollo/client/core";
@@ -43,6 +44,7 @@ export const batchLink = from([
       uri: API_URL,
       batchInterval: DEFAULT_DEBOUNCE_IN_MS,
       batchDebounce: true,
+      fetch: apolloFetch,
     }),
   ),
 ]);

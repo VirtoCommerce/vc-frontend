@@ -230,7 +230,7 @@
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
-import { useUser } from "@/shared/account";
+import { useSignMeOut, useUser } from "@/shared/account";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { LanguageSelector } from "@/shared/layout";
@@ -248,7 +248,8 @@ const { cart } = useShortCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
-const { user, operator, isAuthenticated, organization, isCorporateMember, signMeOut } = useUser();
+const { user, operator, isAuthenticated, organization, isCorporateMember } = useUser();
+const { signMeOut } = useSignMeOut();
 const {
   mobileMainMenuItems,
   mobileAccountMenuItem,
