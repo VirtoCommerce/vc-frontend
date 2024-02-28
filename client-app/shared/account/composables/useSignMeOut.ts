@@ -1,23 +1,21 @@
 import { useApolloClient } from "@vue/apollo-composable";
-import { useFetch } from "@/core/api/common";
+import { useAuth } from "@/core/composables";
 import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
-import type { AfterFetchContext } from "@vueuse/core";
 
 export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: true }) {
-  const { resolveClient } = useApolloClient();
+  const { client } = useApolloClient();
   const broadcast = useBroadcast();
 
-  const { execute: signMeOut } = useFetch("/storefrontapi/account/logout", {
-    immediate: false,
-    afterFetch,
-  }).get();
+  const { unauthorize } = useAuth();
 
-  async function afterFetch(context: AfterFetchContext) {
-    await resolveClient().cache.reset();
+  async function signMeOut() {
+    await unauthorize();
+
+    await client.resetStore();
+
     if (options.reloadPage) {
       broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
     }
-    return context;
   }
 
   return {

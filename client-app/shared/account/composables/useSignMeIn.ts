@@ -21,6 +21,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
 
       await getMe();
       await mergeCart({ command: { userId: me.value!.me!.id, secondCartId: cart.value!.id } });
+
       broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
     },
     null,

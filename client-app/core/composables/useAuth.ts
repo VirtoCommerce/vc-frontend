@@ -28,7 +28,10 @@ function _useAuth() {
     execute: getToken,
     isFetching: isAuthorizing,
   } = useFetch("/connect/token", {
+    // Overwrite default interceptors
+    beforeFetch: (context) => context,
     afterFetch: updateToken,
+    onFetchError: (context) => context,
     immediate: false,
     updateDataOnError: true,
   })
@@ -86,17 +89,16 @@ function _useAuth() {
       refresh_token: state.value.refresh_token!,
     });
 
-    await getToken();
-
-    // ???
-    if (data.value?.error) {
+    try {
+      await getToken(true);
+    } catch {
       state.value = null;
       broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
     }
   }
 
   async function unauthorize() {
-    await revokeToken(true);
+    await revokeToken();
     state.value = null;
   }
 

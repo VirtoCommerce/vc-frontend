@@ -6,6 +6,7 @@ export const useFetch = (() => {
   const { onRequest, onResponse } = useGlobalInterceptors();
 
   return createFetch({
+    combination: "overwrite",
     options: {
       beforeFetch: async (context) => {
         await Promise.all(onRequest.value.map((intercept) => intercept(context.url, context.options)));
