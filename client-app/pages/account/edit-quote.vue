@@ -1,5 +1,5 @@
 <template>
-  <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
+  <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
@@ -8,7 +8,7 @@
       </h2>
     </div>
 
-    <div class="-mx-4.5 space-y-5 lg:mx-0 lg:space-y-6">
+    <div class="space-y-5 lg:space-y-6">
       <!-- Quote comment -->
       <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
         <VcTextarea

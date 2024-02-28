@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between gap-3 lg:mx-0">
+    <div class="flex items-center justify-between gap-3">
       <h2 v-t="'pages.company.members.title'" class="grow text-3xl font-bold uppercase text-gray-800" />
 
       <VcButton
@@ -190,112 +190,114 @@
     </VcEmptyView>
 
     <!-- Content block -->
-    <div v-else class="flex flex-col bg-white shadow-sm md:rounded md:border">
-      <VcTable
-        :loading="contactsLoading"
-        :items="contacts"
-        :columns="columns"
-        :sort="sort"
-        :pages="pages"
-        :page="page"
-        :description="$t('pages.company.members.meta.table_description')"
-        layout="table-fixed"
-        @header-click="applySorting"
-        @page-changed="changePage"
-      >
-        <template #desktop-body>
-          <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
-            <td class="py-2.5 pl-4 pr-0">
-              <RoleIcon :role-id="contact.extended.roles[0]?.id" />
-            </td>
+    <VcWidget v-else size="lg">
+      <template #default-container>
+        <VcTable
+          :loading="contactsLoading"
+          :items="contacts"
+          :columns="columns"
+          :sort="sort"
+          :pages="pages"
+          :page="page"
+          :description="$t('pages.company.members.meta.table_description')"
+          layout="table-fixed"
+          @header-click="applySorting"
+          @page-changed="changePage"
+        >
+          <template #desktop-body>
+            <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
+              <td class="py-2.5 pl-4 pr-0">
+                <RoleIcon :role-id="contact.extended.roles[0]?.id" />
+              </td>
 
-            <td class="px-4 py-2.5">
-              {{ contact.fullName }}
-            </td>
+              <td class="px-4 py-2.5">
+                {{ contact.fullName }}
+              </td>
 
-            <td class="px-4 py-2.5">
-              {{ contact.extended.roles[0]?.name }}
-            </td>
+              <td class="px-4 py-2.5">
+                {{ contact.extended.roles[0]?.name }}
+              </td>
 
-            <td class="w-1/4 truncate px-4 py-2.5">
-              {{ contact.extended.emails[0] }}
-            </td>
+              <td class="w-1/4 truncate px-4 py-2.5">
+                {{ contact.extended.emails[0] }}
+              </td>
 
-            <td class="px-4 py-3 text-center">
-              <MemberStatus :status="contact.status" />
-            </td>
+              <td class="px-4 py-3 text-center">
+                <MemberStatus :status="contact.status" />
+              </td>
 
-            <td v-if="userCanEditOrganization" class="px-5 text-right">
-              <MembersDropdownMenu
-                v-if="contact.id !== user.memberId"
-                :contact-status="contact.status"
-                class="inline-block"
-                @edit="openEditCustomerRoleModal(contact)"
-                @remove="openDeleteModal(contact)"
-                @lock-or-unlock="openLockOrUnlockModal(contact, $event)"
-              />
-            </td>
-          </tr>
-        </template>
+              <td v-if="userCanEditOrganization" class="px-5 text-right">
+                <MembersDropdownMenu
+                  v-if="contact.id !== user.memberId"
+                  :contact-status="contact.status"
+                  class="inline-block"
+                  @edit="openEditCustomerRoleModal(contact)"
+                  @remove="openDeleteModal(contact)"
+                  @lock-or-unlock="openLockOrUnlockModal(contact, $event)"
+                />
+              </td>
+            </tr>
+          </template>
 
-        <template #desktop-skeleton>
-          <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
-            <td class="py-2.5 pl-4 pr-0">
-              <div class="size-9 animate-pulse rounded-full bg-gray-200"></div>
-            </td>
+          <template #desktop-skeleton>
+            <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
+              <td class="py-2.5 pl-4 pr-0">
+                <div class="size-9 animate-pulse rounded-full bg-gray-200"></div>
+              </td>
 
-            <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
-              <div class="h-5 animate-pulse bg-gray-200"></div>
-            </td>
-          </tr>
-        </template>
+              <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
+                <div class="h-5 animate-pulse bg-gray-200"></div>
+              </td>
+            </tr>
+          </template>
 
-        <template #mobile-item="{ item }">
-          <div class="flex items-center border-b px-5">
-            <div class="py-4.5">
-              <RoleIcon :role-id="item.extended.roles[0]?.id" />
-            </div>
-
-            <div class="grow py-4.5 pl-4">
-              <div>
-                <b>{{ item.fullName }}</b>
+          <template #mobile-item="{ item }">
+            <div class="flex items-center border-b px-5">
+              <div class="py-4.5">
+                <RoleIcon :role-id="item.extended.roles[0]?.id" />
               </div>
 
-              <div class="text-sm">
-                {{ item.extended.roles[0]?.name }}
+              <div class="grow py-4.5 pl-4">
+                <div>
+                  <b>{{ item.fullName }}</b>
+                </div>
+
+                <div class="text-sm">
+                  {{ item.extended.roles[0]?.name }}
+                </div>
+              </div>
+
+              <div class="py-4.5 pr-3">
+                <MemberStatus :status="item.status" />
+              </div>
+
+              <div v-if="userCanEditOrganization" class="w-7 flex-none">
+                <MembersDropdownMenu
+                  v-if="item.extended.id !== user.memberId"
+                  :contact-status="item.extended.status"
+                  placement="left-start"
+                  @edit="openEditCustomerRoleModal(item)"
+                  @remove="openDeleteModal(item)"
+                  @lock-or-unlock="openLockOrUnlockModal(item, $event)"
+                />
               </div>
             </div>
+          </template>
 
-            <div class="py-4.5 pr-3">
-              <MemberStatus :status="item.status" />
-            </div>
+          <template #mobile-skeleton>
+            <div v-for="row in itemsPerPage" :key="row" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
+              <div class="flex flex-col">
+                <div class="animate-pulse bg-gray-200 py-6 pl-6"></div>
+              </div>
 
-            <div v-if="userCanEditOrganization" class="w-7 flex-none">
-              <MembersDropdownMenu
-                v-if="item.extended.id !== user.memberId"
-                :contact-status="item.extended.status"
-                placement="left-start"
-                @edit="openEditCustomerRoleModal(item)"
-                @remove="openDeleteModal(item)"
-                @lock-or-unlock="openLockOrUnlockModal(item, $event)"
-              />
+              <div class="flex flex-col">
+                <div class="animate-pulse bg-gray-200 py-6 pl-4"></div>
+              </div>
             </div>
-          </div>
-        </template>
-
-        <template #mobile-skeleton>
-          <div v-for="row in itemsPerPage" :key="row" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
-            <div class="flex flex-col">
-              <div class="animate-pulse bg-gray-200 py-6 pl-6"></div>
-            </div>
-
-            <div class="flex flex-col">
-              <div class="animate-pulse bg-gray-200 py-6 pl-4"></div>
-            </div>
-          </div>
-        </template>
-      </VcTable>
-    </div>
+          </template>
+        </VcTable>
+      </template>
+    </VcWidget>
   </div>
 </template>
 

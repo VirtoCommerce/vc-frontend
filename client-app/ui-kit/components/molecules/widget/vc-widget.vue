@@ -150,6 +150,10 @@ watchEffect(() => {
       @media (min-width: theme("screens.lg")) {
         --p-x: theme("padding.7");
       }
+
+      .vc-container & {
+        @apply max-md:-mx-4.5;
+      }
     }
   }
 
