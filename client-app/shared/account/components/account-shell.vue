@@ -7,7 +7,7 @@
       </div>
 
       <!-- Second column-->
-      <router-view class="relative flex w-full min-w-0 flex-col gap-y-5 print:gap-y-0" />
+      <router-view class="relative flex w-full min-w-0 flex-col gap-y-5" />
     </div>
   </VcContainer>
 </template>
