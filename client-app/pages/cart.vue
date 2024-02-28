@@ -19,10 +19,10 @@
   <VcContainer v-else class="relative z-0">
     <VcLoaderOverlay :visible="creatingQuote" fixed-spinner />
 
-    <VcBreadcrumbs :items="breadcrumbs" class="mx-6 hidden md:mx-0 lg:block" />
+    <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
     <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mx-6 mb-5 lg:mx-0 print:mx-0">
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 

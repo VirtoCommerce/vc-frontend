@@ -1,16 +1,10 @@
-import { useFetch } from "@/core/api/common";
-import type { PasswordOptionsType } from "@/core/types";
+import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 
 export function usePasswordRequirements() {
-  const { data: passwordRequirements, execute: fetchPasswordRequirements } = useFetch(
-    "/storefrontapi/account/passwordrequirements",
-    { immediate: false },
-  )
-    .get()
-    .json<PasswordOptionsType>();
+  const { themeContext } = useThemeContext();
 
   return {
-    passwordRequirements,
-    fetchPasswordRequirements,
+    passwordRequirements: computed(() => themeContext.value?.storeSettings?.passwordRequirements),
   };
 }

@@ -122,7 +122,7 @@ usePageHead({
 
 const { openModal } = useModal();
 const { loading, registerByInvite } = useUser();
-const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
+const { passwordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const userId = useRouteQueryParam<string>("userId");
@@ -198,8 +198,4 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
-
-if (!passwordRequirements.value) {
-  fetchPasswordRequirements();
-}
 </script>

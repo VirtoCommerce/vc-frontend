@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-5 lg:mx-0">
+  <div>
     <!-- Title block -->
     <div class="flex items-center justify-between">
       <h2 class="text-3xl font-bold uppercase text-gray-800">
