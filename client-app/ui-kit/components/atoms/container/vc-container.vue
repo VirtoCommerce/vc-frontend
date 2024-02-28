@@ -12,10 +12,6 @@
 
   &__wrapper {
     @apply mx-auto max-w-[87.75rem];
-
-    & .vc-widget--size--lg {
-      @apply -mx-4.5 lg:mx-0;
-    }
   }
 }
 </style>
