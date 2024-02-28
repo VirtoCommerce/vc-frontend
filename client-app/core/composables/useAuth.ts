@@ -40,19 +40,37 @@ function _useAuth() {
 
   const errors = computed(() => data.value?.errors);
 
-  const { execute: revokeToken, isFetching: isUnauthorizing } = useFetch("/revoke/token", { immediate: false }).post();
+  const headers = computed(() => {
+    if (state.value.access_token) {
+      return {
+        Authorization: `${state.value.token_type} ${state.value.access_token}`,
+      };
+    }
+    return {};
+  });
+
+  const { execute: revokeToken, isFetching: isUnauthorizing } = useFetch("/revoke/token", {
+    immediate: false,
+    beforeFetch: (context) => {
+      if (headers.value.Authorization) {
+        context.options.headers = { ...context.options.headers, ...headers.value };
+      }
+    },
+  }).post();
+
+  const INITIAL_STATE = Object.freeze({
+    access_token: null,
+    expires_at: null,
+    refresh_token: null,
+    token_type: "Bearer",
+  });
 
   const state = useLocalStorage<{
     access_token: string | null;
     expires_at: Date | string | null;
     refresh_token: string | null;
     token_type: string;
-  }>("auth", {
-    access_token: null,
-    expires_at: null,
-    refresh_token: null,
-    token_type: "Bearer",
-  });
+  }>("auth", INITIAL_STATE);
 
   function updateToken(context: AfterFetchContext<ConnectTokenResponseType>) {
     if (context.data) {
@@ -92,14 +110,14 @@ function _useAuth() {
     try {
       await getToken(true);
     } catch {
-      state.value = null;
+      state.value = INITIAL_STATE;
       broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
     }
   }
 
   async function unauthorize() {
     await revokeToken();
-    state.value = null;
+    state.value = INITIAL_STATE;
   }
 
   const expired = computed(() => {
@@ -108,15 +126,6 @@ function _useAuth() {
     }
 
     return new Date(state.value.expires_at).getTime() <= Date.now();
-  });
-
-  const headers = computed(() => {
-    if (state.value.access_token) {
-      return {
-        Authorization: `${state.value.token_type} ${state.value.access_token}`,
-      };
-    }
-    return {};
   });
 
   return {

@@ -12,7 +12,7 @@ export const authPlugin: Plugin = {
         await refresh();
       }
 
-      if (request) {
+      if (request && headers.value.Authorization) {
         request.headers = { ...request.headers, ...headers.value };
       }
     });
