@@ -1,4 +1,5 @@
 fragment property on Property {
+  id
   name
   value
   type

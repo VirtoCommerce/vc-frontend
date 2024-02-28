@@ -3696,6 +3696,21 @@ export type PageType = {
   relativeUrl: Scalars['String']['output'];
 };
 
+export type PasswordOptionsType = {
+  /** Require a digit ('0' - '9'). */
+  requireDigit: Scalars['Boolean']['output'];
+  /** Require a lower case letter ('a' - 'z'). */
+  requireLowercase: Scalars['Boolean']['output'];
+  /** Require a non letter or digit character. */
+  requireNonAlphanumeric: Scalars['Boolean']['output'];
+  /** Require an upper case letter ('A' - 'Z'). */
+  requireUppercase: Scalars['Boolean']['output'];
+  /** The minimum length a password must be. */
+  requiredLength: Scalars['Int']['output'];
+  /** The minimum number of unique chars a password must comprised of. */
+  requiredUniqueChars: Scalars['Int']['output'];
+};
+
 /** A connection from an object to a list of objects of type `PaymentIn`. */
 export type PaymentInConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -5088,6 +5103,8 @@ export type StoreSettingsType = {
   emailVerificationRequired: Scalars['Boolean']['output'];
   /** SPA */
   isSpa: Scalars['Boolean']['output'];
+  /** Password requirements */
+  passwordRequirements?: Maybe<PasswordOptionsType>;
   /** Store ID */
   quotesEnabled: Scalars['Boolean']['output'];
   /** SEO links */

@@ -2,7 +2,7 @@
   @apply border rounded divide-y;
 
   &__head {
-    @apply flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
+    @apply break-inside-avoid break-after-avoid flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
   }
 
   &__checkbox {
@@ -34,10 +34,10 @@
   }
 
   &__foot {
-    @apply px-3;
+    @apply px-3 break-before-avoid break-inside-avoid;
   }
 
   &__subtotal {
-    @apply w-full justify-between break-inside-avoid;
+    @apply w-full justify-between;
   }
 }
