@@ -25,6 +25,7 @@ import {
   useUnselectCartItemsMutation,
   useValidateCouponMutation,
   clearCart as deprecatedClearCart,
+  generateCacheIdIfNew,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
@@ -43,7 +44,10 @@ import type {
   InputPaymentType,
   InputShipmentType,
   QuoteType,
-  FullCartFragment,
+  AddOrUpdateCartPaymentMutation,
+  AddOrUpdateCartShipmentMutation,
+  AddOrUpdateCartShipmentMutationVariables,
+  AddOrUpdateCartPaymentMutationVariables,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 
@@ -292,23 +296,40 @@ export function _useFullCart() {
 
   const { mutate: _addOrUpdateShipment, loading: addOrUpdateShipmentLoading } =
     useAddOrUpdateCartShipmentMutation(cart);
-  async function updateShipment(newShipment: InputShipmentType): Promise<void> {
-    await _addOrUpdateShipment({ command: { shipment: newShipment } });
+  async function updateShipment(value: InputShipmentType): Promise<void> {
+    await _addOrUpdateShipment(
+      { command: { shipment: value } },
+      {
+        optimisticResponse: (vars, { IGNORE }) => {
+          if ((vars as AddOrUpdateCartShipmentMutationVariables).command.shipment.id === undefined) {
+            return IGNORE as AddOrUpdateCartShipmentMutation;
+          }
+          return {
+            addOrUpdateCartShipment: merge({}, cart.value!, {
+              shipments: [
+                {
+                  id: value.id,
+                  shipmentMethodCode: value.shipmentMethodCode,
+                  shipmentMethodOption: value.shipmentMethodOption,
+                  deliveryAddress: generateCacheIdIfNew(value.deliveryAddress, "CartAddressType"),
+                },
+              ],
+            }),
+          };
+        },
+      },
+    );
   }
 
   const { mutate: _removeShipment, loading: removeShipmentLoading } = useRemoveShipmentMutation(cart);
   async function removeShipment(shipmentId: string): Promise<void> {
-    // Because of workaround above for backward-compatibility
-    const cartValue = cart?.value as FullCartFragment;
-
     await _removeShipment(
       { command: { shipmentId } },
       {
-        // Update cache immediately, then it will be updated (or rolled back) after actual response from the server
         optimisticResponse: {
           removeShipment: {
-            ...cartValue,
-            shipments: [],
+            ...cart.value!,
+            shipments: cart.value!.shipments.filter((x) => x.id !== shipmentId),
           },
         },
       },
@@ -316,8 +337,28 @@ export function _useFullCart() {
   }
 
   const { mutate: _addOrUpdatePayment, loading: addOrUpdatePaymentLoading } = useAddOrUpdateCartPaymentMutation(cart);
-  async function updatePayment(newPayment: InputPaymentType): Promise<void> {
-    await _addOrUpdatePayment({ command: { payment: newPayment } });
+  async function updatePayment(value: InputPaymentType): Promise<void> {
+    await _addOrUpdatePayment(
+      { command: { payment: value } },
+      {
+        optimisticResponse: (vars, { IGNORE }) => {
+          if ((vars as AddOrUpdateCartPaymentMutationVariables).command.payment.id === undefined) {
+            return IGNORE as AddOrUpdateCartPaymentMutation;
+          }
+          return {
+            addOrUpdateCartPayment: merge({}, cart.value!, {
+              payments: [
+                {
+                  id: value.id,
+                  paymentGatewayCode: value.paymentGatewayCode,
+                  billingAddress: generateCacheIdIfNew(value.billingAddress, "CartAddressType"),
+                },
+              ],
+            }),
+          };
+        },
+      },
+    );
   }
 
   const { mutate: _addGiftItems, loading: addGiftItemsLoading } = useAddGiftItemsMutation(cart);
