@@ -69,7 +69,7 @@ function _useAuth() {
 
   function updateToken(context: AfterFetchContext<ConnectTokenResponseType>) {
     if (context.data) {
-      const { token_type, access_token, refresh_token, expires_in } = context.data ?? {};
+      const { token_type, access_token, refresh_token, expires_in } = context.data;
 
       if (token_type && access_token && refresh_token && expires_in) {
         state.value.token_type = token_type;

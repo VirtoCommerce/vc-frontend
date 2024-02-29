@@ -1,14 +1,15 @@
-import { useAsyncState } from "@vueuse/core";
-import { toValue } from "vue";
+import { syncRefs, useAsyncState } from "@vueuse/core";
+import { ref, toValue } from "vue";
 import { useGetMeQuery, useMergeCartMutation } from "@/core/api/graphql";
 import { useAuth } from "@/core/composables";
 import { TabsType, openReturnUrl, useBroadcast } from "@/shared/broadcast";
 import { useShortCart } from "@/shared/cart/composables";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 import type { SignMeIn } from "@/shared/account/types";
 import type { MaybeRefOrGetter } from "vue";
 
 export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
-  const { errors, authorize } = useAuth();
+  const { errors: authErrors, authorize } = useAuth();
   const broadcast = useBroadcast();
   const { cart } = useShortCart();
   const { result: me, load: getMe } = useGetMeQuery();
@@ -28,12 +29,18 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
     { immediate: false },
   );
 
-  function reset() {}
+  const errors = ref<IdentityErrorType[]>();
+
+  syncRefs(authErrors, errors);
+
+  function resetErrors() {
+    errors.value = [];
+  }
 
   return {
     errors,
     loading,
     signIn,
-    reset,
+    resetErrors,
   };
 }
