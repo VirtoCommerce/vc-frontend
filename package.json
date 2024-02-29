@@ -1,5 +1,10 @@
 {
   "name": "vc-theme-b2b-vue",
+  "author": {
+    "email": "info@virtocommerce.com",
+    "name": "Virto Commerce",
+    "url": "https://virtocommerce.com"
+  },
   "version": "1.52.0",
   "private": true,
   "type": "module",
