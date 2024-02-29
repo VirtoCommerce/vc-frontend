@@ -69,6 +69,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       splitVendorChunkPlugin(),
       ViteFaviconsPlugin({
         logo: "./client-app/public/static/icons/favicon.svg",
+        outputPath: "static",
         favicons: {
           icons: {
             appleStartup: false,
