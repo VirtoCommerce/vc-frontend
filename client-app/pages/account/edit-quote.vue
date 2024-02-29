@@ -1,5 +1,5 @@
 <template>
-  <div v-if="quote" class="!gap-y-4 px-6 lg:!gap-y-6 lg:px-0">
+  <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
     <div class="flex flex-col gap-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
@@ -8,7 +8,7 @@
       </h2>
     </div>
 
-    <div class="-mx-4.5 space-y-5 lg:mx-0 lg:space-y-6">
+    <div class="space-y-5 lg:space-y-6">
       <!-- Quote comment -->
       <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
         <VcTextarea
@@ -92,17 +92,12 @@
       </VcWidget>
     </div>
 
-    <div class="flex flex-wrap gap-5 py-7 lg:justify-end">
-      <VcButton
-        :disabled="!canSaveChanges || fetching"
-        class="flex-1 lg:min-w-[208px] lg:flex-none"
-        variant="outline"
-        @click="saveChanges"
-      >
+    <div class="flex flex-wrap gap-5 py-7 *:max-lg:flex-1 lg:justify-end lg:[--vc-button-min-width:12.5rem]">
+      <VcButton :disabled="!canSaveChanges || fetching" variant="outline" @click="saveChanges">
         {{ $t("pages.account.quote_details.save_changes") }}
       </VcButton>
 
-      <VcButton :disabled="!canSubmit || fetching" class="flex-1 lg:min-w-[208px] lg:flex-none" @click="submit">
+      <VcButton :disabled="!canSubmit || fetching" @click="submit">
         {{ $t("pages.account.quote_details.submit") }}
       </VcButton>
     </div>

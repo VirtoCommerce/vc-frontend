@@ -2,10 +2,11 @@ import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
 import type { RouteRecordRaw } from "vue-router";
-import Error403 from "@/pages/403.vue";
-import Error404 from "@/pages/404.vue";
-import Error500 from "@/pages/500.vue";
-import Matcher from "@/pages/matcher.vue";
+
+const Error403 = () => import("@/pages/403.vue");
+const Error404 = () => import("@/pages/404.vue");
+const Error500 = () => import("@/pages/500.vue");
+const Matcher = () => import("@/pages/matcher.vue");
 
 const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");

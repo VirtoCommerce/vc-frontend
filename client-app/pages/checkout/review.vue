@@ -1,6 +1,12 @@
 <template>
   <VcLayoutWithRightSidebar is-sidebar-sticky>
-    <VcWidget id="review-order" :title="$t('common.titles.review_order')" prepend-icon="clipboard-copy-1" size="lg">
+    <VcWidget
+      id="line-items-widget"
+      :title="$t('common.titles.review_order')"
+      prepend-icon="clipboard-copy-1"
+      size="lg"
+      class="print:!mx-0 print:break-inside-auto"
+    >
       <!-- Items grouped by Vendor -->
       <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
         <template v-for="(group, vendorId) in selectedLineItemsGroupedByVendor" :key="vendorId">
@@ -47,7 +53,7 @@
           >
             <template #selected="{ item }">
               <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
-                <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+                <VcImage class="size-12 rounded-sm print:hidden" :src="item.logoUrl" />
 
                 {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
               </div>
@@ -82,7 +88,7 @@
             >
               <template #selected="{ item }">
                 <div class="flex items-center gap-3 p-3 text-sm print:px-0 print:py-1.5">
-                  <VcImage class="h-12 w-12 rounded-sm print:hidden" :src="item.logoUrl" />
+                  <VcImage class="size-12 rounded-sm print:hidden" :src="item.logoUrl" />
 
                   {{ $t(`common.methods.payment_by_code.${item.code}`) }}
                 </div>
@@ -176,8 +182,8 @@ function print() {
 
 <style scoped lang="scss">
 @media print {
-  #review-order {
-    :deep(.vc-section-widget__title) {
+  #line-items-widget {
+    :deep(.vc-widget__header-container) {
       @apply hidden;
     }
   }

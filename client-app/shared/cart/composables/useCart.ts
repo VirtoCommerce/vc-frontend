@@ -1,6 +1,6 @@
-import { createGlobalState, createSharedComposable, computedEager, useLastChanged, syncRefs } from "@vueuse/core";
+import { createSharedComposable, computedEager, syncRefs, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
-import { computed } from "vue";
+import { computed, readonly } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -575,4 +575,4 @@ function _useCart() {
 }
 
 /** @deprecated Use {@link useSortCart} for adding products to cart and {@link useFullCart} for cart & checkout pages */
-export const useCart = createGlobalState(_useCart);
+export const useCart = createSharedComposable(_useCart);

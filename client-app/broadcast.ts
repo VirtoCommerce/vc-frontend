@@ -1,4 +1,5 @@
 import { useRouter } from "vue-router";
+import { cachePersistor } from "@/core/api/graphql/config/cache-persistor";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
@@ -17,7 +18,6 @@ import {
   cacheReloadEvent,
 } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
-import { cachePersistor } from "./core/api/graphql";
 
 let installed = false;
 

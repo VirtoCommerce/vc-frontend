@@ -8,10 +8,10 @@
 
 <style lang="scss">
 .vc-container {
-  @apply grow pt-6 pb-8 bg-[color:var(--color-body-bg)];
+  @apply grow bg-neutral-50 p-6 md:pb-9 lg:px-8 2xl:px-12;
 
   &__wrapper {
-    @apply mx-auto max-w-screen-2xl lg:px-5 2xl:px-18;
+    @apply mx-auto max-w-[87.75rem];
   }
 }
 </style>

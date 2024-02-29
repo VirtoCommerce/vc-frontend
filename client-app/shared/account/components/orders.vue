@@ -125,7 +125,15 @@
   </VcEmptyView>
 
   <!-- Content block -->
-  <div v-else class="flex flex-col bg-white shadow-sm lg:rounded lg:border">
+  <div
+    v-else
+    :class="[
+      'flex flex-col bg-white shadow-sm',
+      {
+        'max-lg:-mx-6 lg:rounded lg:border': withSearch,
+      },
+    ]"
+  >
     <VcTable
       :loading="ordersLoading"
       :columns="columns"

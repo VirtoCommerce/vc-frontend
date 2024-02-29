@@ -39,5 +39,3 @@ export const apolloClient = new ApolloClient({
   link,
   cache,
 });
-
-export { cachePersistor } from "@/core/api/graphql/config";

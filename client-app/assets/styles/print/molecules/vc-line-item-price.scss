@@ -1,3 +1,5 @@
 .vc-line-item-price {
-  @apply text-sm font-normal;
+  &, &__actual {
+    @apply text-sm font-normal;
+  }
 }

@@ -1,7 +1,8 @@
 import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient, cachePersistor } from "@/core/api/graphql";
+import { apolloClient } from "@/core/api/graphql/client";
+import { cachePersistor } from "@/core/api/graphql/config/cache-persistor";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";

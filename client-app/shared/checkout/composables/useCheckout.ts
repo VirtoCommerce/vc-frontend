@@ -1,6 +1,6 @@
 import { createGlobalState, createSharedComposable, syncRefs, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
-import { computed, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
@@ -212,12 +212,12 @@ export function _useCheckout() {
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
-  // watch(allItemsAreDigital, async (_, previousValue) => {
-  //   // Update defaults if state changed not on initialization
-  //   if (previousValue !== undefined) {
-  //     await setCheckoutDefaults();
-  //   }
-  // });
+  watch(allItemsAreDigital, async (_, previousValue) => {
+    // Update defaults if state changed not on initialization
+    if (previousValue !== undefined) {
+      await setCheckoutDefaults();
+    }
+  });
 
   async function setCheckoutDefaults(): Promise<void> {
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
