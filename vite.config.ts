@@ -33,12 +33,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
     base: isServe ? "/" : "/themes/assets/",
     publicDir: "./client-app/public",
     plugins: [
-      mkcert({
-        force: true,
-        savePath: path.resolve(__dirname, ".certificates"),
-        keyFileName: "private.pem",
-        certFileName: "public.pem",
-      }),
+      isServe
+        ? mkcert({
+            force: true,
+            savePath: path.resolve(__dirname, ".certificates"),
+            keyFileName: "private.pem",
+            certFileName: "public.pem",
+          })
+        : undefined,
       vue(),
       graphql(),
       isServe
