@@ -4,6 +4,7 @@ import graphql from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
+import { ViteFaviconsPlugin } from "vite-plugin-favicon2";
 import mkcert from "vite-plugin-mkcert";
 import type { ProxyOptions, UserConfig } from "vite";
 
@@ -66,6 +67,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       splitVendorChunkPlugin(),
+      ViteFaviconsPlugin({
+        logo: "./client-app/public/static/icons/favicon.svg",
+        favicons: {
+          icons: {
+            appleStartup: false,
+          },
+        },
+      }),
     ],
     resolve: {
       alias: {
