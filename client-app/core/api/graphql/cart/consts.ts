@@ -16,10 +16,16 @@ export const FULL_CART_MUTATION_NAMES = [
   OperationNames.Mutation.ChangeFullCartItemQuantity,
   OperationNames.Mutation.ChangePurchaseOrderNumber,
   OperationNames.Mutation.ClearCart,
+  OperationNames.Mutation.MergeCart,
   OperationNames.Mutation.RejectGiftItems,
   OperationNames.Mutation.RemoveCartItems,
   OperationNames.Mutation.RemoveCoupon,
   OperationNames.Mutation.RemoveShipment,
   OperationNames.Mutation.SelectCartItems,
   OperationNames.Mutation.UnselectCartItems,
+];
+
+export const MUTATIONS_WITH_SIDE_EFFECTS_TO_CART = [
+  OperationNames.Mutation.CreateOrderFromCart,
+  OperationNames.Mutation.CreateQuoteFromCart,
 ];

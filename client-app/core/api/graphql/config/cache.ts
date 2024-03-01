@@ -5,6 +5,13 @@ import type { NormalizedCacheObject, Reference, Cache } from "@apollo/client/cor
 class ThemeCache extends InMemoryCache {
   broadcast = useBroadcast();
 
+  gc(options?: { resetResultCache?: boolean; resetResultIdentities?: boolean }): string[] {
+    const result = super.gc(options);
+    console.log("gc");
+    this.broadcast.emit(cacheReloadEvent);
+    return result;
+  }
+
   evict(options: Cache.EvictOptions): boolean {
     const result = super.evict(options);
     console.log("evict");
@@ -25,10 +32,6 @@ class ThemeCache extends InMemoryCache {
     console.log("write");
     this.broadcast.emit(cacheReloadEvent);
     return result;
-  }
-
-  extract(optimistic: boolean = false): NormalizedCacheObject {
-    return super.extract(optimistic);
   }
 
   restore(data: NormalizedCacheObject): this {

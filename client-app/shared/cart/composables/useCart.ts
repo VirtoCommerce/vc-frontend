@@ -1,6 +1,6 @@
-import { createSharedComposable, computedEager, syncRefs, useLastChanged } from "@vueuse/core";
+import { createSharedComposable, computedEager, useLastChanged, useBroadcastChannel } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -27,7 +27,7 @@ import {
   clearCart as deprecatedClearCart,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
-import { useGoogleAnalytics, useBroadcastChanging, useBroadcastLoading } from "@/core/composables";
+import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { groupByVendor } from "@/core/utilities";
@@ -427,11 +427,12 @@ export function _useFullCart() {
       rejectGiftItemsLoading.value,
   );
 
-  const otherLoading = useBroadcastLoading("fullCart");
-  const otherChanging = useBroadcastChanging("fullCart");
+  watch(localChanging, (value) => post({ changing: value }));
 
-  syncRefs(localLoading, otherLoading);
-  syncRefs(localChanging, otherChanging);
+  const { data: _broadcastedChanging, post } = useBroadcastChannel<{ changing: boolean }, { changing: boolean }>({
+    name: "cart",
+  });
+  const broadcastedChanging = computed(() => _broadcastedChanging.value?.changing);
 
   return {
     cart,
@@ -468,8 +469,8 @@ export function _useFullCart() {
     removeGiftsFromCart,
     toggleGift,
     openClearCartModal,
-    loading: computed(() => otherLoading.value || localLoading.value),
-    changing: computed(() => otherChanging.value || localChanging.value),
+    loading: localLoading,
+    changing: computed(() => broadcastedChanging.value || localChanging.value),
     createQuoteFromCartLoading,
   };
 }

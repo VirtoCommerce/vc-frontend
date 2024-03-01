@@ -6,9 +6,12 @@ import type { QuoteType } from "@/core/api/graphql/types";
 
 export function useCreateQuoteFromCartMutation() {
   const { client } = useApolloClient();
-  return useMutation(CreateQuoteFromCartDocument, {
+  const result = useMutation(CreateQuoteFromCartDocument, {
     refetchQueries: () => filterActiveQueryNames(client, [OperationNames.Query.GetFullCart]),
+    awaitRefetchQueries: true,
   });
+  result.onDone(() => client.cache.gc());
+  return result;
 }
 
 /** @deprecated Use {@link useCreateQuoteFromCartMutation} instead. */

@@ -1,10 +1,10 @@
-import { createGlobalState, createSharedComposable, syncRefs, useDebounceFn } from "@vueuse/core";
+import { createGlobalState, createSharedComposable, useBroadcastChannel, useDebounceFn } from "@vueuse/core";
 import { omit } from "lodash";
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
-import { useBroadcastLoading, useGoogleAnalytics } from "@/core/composables";
+import { useCreateOrderFromCartMutation } from "@/core/api/graphql";
+import { useGoogleAnalytics } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
@@ -27,9 +27,19 @@ import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-a
 import SelectAddressModal from "@/shared/checkout/components/select-address-modal.vue";
 
 const useGlobalCheckout = createGlobalState(() => {
-  const localLoading = ref(false);
-  const otherLoading = useBroadcastLoading("checkout");
-  syncRefs(localLoading, otherLoading);
+  const _loading = ref(false);
+  const localLoading = computed({
+    get: () => _loading.value,
+    set: (value) => {
+      _loading.value = value;
+      post({ loading: value });
+    },
+  });
+
+  const { data: _otherLoading, post } = useBroadcastChannel<{ loading: boolean }, { loading: boolean }>({
+    name: "checkout",
+  });
+  const otherLoading = computed(() => _otherLoading.value?.loading);
 
   const billingAddressEqualsShipping = ref(true);
   const placedOrder = shallowRef<CustomerOrderType | null>(null);
@@ -71,7 +81,6 @@ export function _useCheckout() {
     addOrUpdateAddresses: addOrUpdateOrganizationAddresses,
   } = useOrganizationAddresses(user.value.contact?.organizationId || "");
   const {
-    refetch: refetchCart,
     cart,
     selectedItemIds,
     shipment,
@@ -214,12 +223,16 @@ export function _useCheckout() {
 
   watch(allItemsAreDigital, async (value, previousValue) => {
     // Update defaults if state changed not on initialization
-    if (!!otherLoading.value && previousValue !== undefined && value !== undefined && previousValue !== value) {
+    if (previousValue !== undefined && value !== undefined && previousValue !== value) {
       await setCheckoutDefaults();
     }
   });
 
   async function setCheckoutDefaults(): Promise<void> {
+    if (otherLoading.value) {
+      return;
+    }
+
     const { shippingMethodId, paymentMethodCode } = getUserCheckoutDefaults();
     const defaultShippingMethod = availableShippingMethods.value.find((item) => item.id === shippingMethodId);
     const defaultPaymentMethod = availablePaymentMethods.value.find((item) => item.code === paymentMethodCode);
@@ -250,13 +263,11 @@ export function _useCheckout() {
     placedOrder.value = null;
     localLoading.value = true;
 
-    if (!otherLoading.value) {
-      await setCheckoutDefaults();
+    await setCheckoutDefaults();
 
-      void fetchAddresses();
+    void fetchAddresses();
 
-      ga.beginCheckout(cart.value!);
-    }
+    ga.beginCheckout(cart.value!);
 
     localLoading.value = false;
   }
@@ -442,25 +453,25 @@ export function _useCheckout() {
     }
   }
 
+  const { mutate: _createOrderFromCart } = useCreateOrderFromCartMutation();
   async function createOrderFromCart(): Promise<CustomerOrderType | null> {
     localLoading.value = true;
 
     await prepareOrderData();
 
     try {
-      placedOrder.value = await _createOrderFromCart(cart.value!.id);
+      const result = await _createOrderFromCart({ command: { cartId: cart.value!.id } });
+      placedOrder.value = result!.data!.createOrderFromCart as CustomerOrderType;
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);
     }
 
     if (placedOrder.value) {
-      await refetchCart();
-
       selectedItemIds.value = cart.value!.items.map((item) => item.id);
 
       ga.placeOrder(placedOrder.value);
 
-      await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
+      await router.push({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {
       notifications.error({
         text: t("common.messages.creating_order_error"),
@@ -473,6 +484,15 @@ export function _useCheckout() {
 
     return placedOrder.value;
   }
+
+  const localChanging = computed(() => commentChanging.value || purchaseOrderNumberChanging.value);
+
+  watch(localChanging, (value) => post({ changing: value }));
+
+  const { data: _broadcastedChanging, post } = useBroadcastChannel<{ changing: boolean }, { changing: boolean }>({
+    name: "checkout",
+  });
+  const broadcastedChanging = computed(() => _broadcastedChanging.value?.changing);
 
   return {
     deliveryAddress,
@@ -498,8 +518,8 @@ export function _useCheckout() {
     setShippingMethod,
     setPaymentMethod,
     createOrderFromCart,
-    loading: computed(() => otherLoading.value || localLoading.value),
-    changing: computed(() => commentChanging.value || purchaseOrderNumberChanging.value),
+    loading: localLoading,
+    changing: computed(() => broadcastedChanging.value || localChanging.value),
     placedOrder: computed(() => placedOrder.value),
     allOrderItemsAreDigital,
   };
