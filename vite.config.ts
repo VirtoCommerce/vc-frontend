@@ -77,8 +77,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
       __VUE_I18N_LEGACY_API__: false,
     },
     build: {
-      outDir: "assets",
-      assetsDir: "./",
       emptyOutDir: true,
       cssCodeSplit: false,
       sourcemap: true,
@@ -95,12 +93,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
               return "static/icons/flag-icons/[name].svg";
             }
             return "[name][extname]";
-          },
-          manualChunks: (id) => {
-            // Force app-runner to have separate chunk to temporarely eliminate caveats of liquid-based hashing
-            if (id.includes("app-runner")) {
-              return "app-runner";
-            }
           },
         },
       },
