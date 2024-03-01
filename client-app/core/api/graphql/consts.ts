@@ -1,1 +1,1 @@
-export const API_URL = "/xapi/graphql";
+export const API_URL = "/graphql";

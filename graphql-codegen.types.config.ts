@@ -17,7 +17,7 @@ type OperationDocument = CustomDocumentLoader;
 type CodegenConfigWorkaround = { documents: OperationDocument | OperationDocument[] };
 
 const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
-  schema: `${process.env.APP_BACKEND_URL}/xapi/graphql`,
+  schema: `${process.env.APP_BACKEND_URL}/graphql`,
   documents: {
     "client-app/**/*.(graphql|gql)": {
       skipGraphQLImport: false,

@@ -1,9 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
-import { useFetch } from "@/core/api/common";
 import { getStore } from "@/core/api/graphql";
-import { IS_DEVELOPMENT } from "../constants";
-import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
+import type { IThemeConfig, IThemeContext } from "../types";
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
@@ -23,14 +21,8 @@ function _useThemeContext() {
   }
 
   async function fetchThemeSettings() {
-    if (IS_DEVELOPMENT) {
-      const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
-      return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
-    } else {
-      // TODO: Refactor after storefront dead
-      const { data } = await useFetch("/themes/settings.json").get().json<IThemeConfigPreset>();
-      return data.value!;
-    }
+    const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
+    return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
   }
 
   return {
