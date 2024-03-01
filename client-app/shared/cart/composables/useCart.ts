@@ -161,7 +161,9 @@ export function _useFullCart() {
   const hasOnlyUnselectedLineItems = computedEager(() => selectedLineItems.value.length === 0);
 
   const allItemsAreDigital = computed(() =>
-    selectedLineItems.value?.every((item) => item.productType === ProductType.Digital),
+    selectedLineItems.value.length > 0
+      ? selectedLineItems.value.every((item) => item.productType === ProductType.Digital)
+      : undefined,
   );
 
   const addedGiftsByIds = computed(() => keyBy(cart.value?.gifts, "id"));
