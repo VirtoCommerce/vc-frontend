@@ -1545,6 +1545,8 @@ export type InputChangePurchaseOrderNumber = {
 };
 
 export type InputChangeWishlistType = {
+  /** Culture name */
+  cultureName?: InputMaybe<Scalars['String']['input']>;
   /** List description */
   description?: InputMaybe<Scalars['String']['input']>;
   /** List ID */
