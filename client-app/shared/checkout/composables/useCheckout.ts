@@ -28,7 +28,7 @@ import SelectAddressModal from "@/shared/checkout/components/select-address-moda
 
 const useGlobalCheckout = createGlobalState(() => {
   const localLoading = ref(false);
-  const { loading: otherLoading } = useBroadcastLoading("checkout");
+  const otherLoading = useBroadcastLoading("checkout");
   syncRefs(localLoading, otherLoading);
 
   const billingAddressEqualsShipping = ref(true);

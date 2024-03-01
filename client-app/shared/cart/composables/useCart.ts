@@ -1,6 +1,6 @@
 import { createSharedComposable, computedEager, syncRefs, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
-import { computed, readonly } from "vue";
+import { computed } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -427,8 +427,8 @@ export function _useFullCart() {
       rejectGiftItemsLoading.value,
   );
 
-  const { loading: otherLoading } = useBroadcastLoading("fullCart");
-  const { changing: otherChanging } = useBroadcastChanging("fullCart");
+  const otherLoading = useBroadcastLoading("fullCart");
+  const otherChanging = useBroadcastChanging("fullCart");
 
   syncRefs(localLoading, otherLoading);
   syncRefs(localChanging, otherChanging);

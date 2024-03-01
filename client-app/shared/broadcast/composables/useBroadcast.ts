@@ -8,7 +8,8 @@ export enum TabsType {
   OTHERS = "others",
   ALL = "all",
 }
-interface IUseBroadcastReturn {
+
+export interface IUseBroadcastReturn {
   /** Add a listener function for the specified event. Automatic deletion on unmounting. */
   on: <T>(event: InjectionEvent<T>, listener: (data: T) => void) => void;
 
