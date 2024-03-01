@@ -33,14 +33,12 @@ export default defineConfig(({ command, mode }): UserConfig => {
     base: isServe ? "/" : "/themes/assets/",
     publicDir: "./client-app/public",
     plugins: [
-      isServe
-        ? mkcert({
-            force: true,
-            savePath: path.resolve(__dirname, ".certificates"),
-            keyFileName: "private.pem",
-            certFileName: "public.pem",
-          })
-        : undefined,
+      mkcert({
+        force: true,
+        savePath: path.resolve(__dirname, ".certificates"),
+        keyFileName: "private.pem",
+        certFileName: "public.pem",
+      }),
       vue(),
       graphql(),
       isServe
@@ -54,8 +52,10 @@ export default defineConfig(({ command, mode }): UserConfig => {
               lintCommand: "eslint client-app",
               dev: {
                 overrideConfig: {
+                  cache: true,
+                  cacheLocation: "node_modules/.cache/.eslintcache",
                   cwd: process.cwd(),
-                  extensions: ["js", "cjs", "ts", "cts", "vue"],
+                  extensions: ["js", "ts", "vue"],
                   ignore: true,
                   ignorePath: ".eslintignore",
                   useEslintrc: true,

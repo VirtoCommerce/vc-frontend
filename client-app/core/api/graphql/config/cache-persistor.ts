@@ -3,20 +3,6 @@ import { cache } from "@/core/api/graphql/config/cache";
 import type { ApolloCache } from "@apollo/client/core";
 import type { ApolloPersistOptions } from "apollo3-cache-persist/lib/types";
 
-class ThemeCacheWrapper extends LocalStorageWrapper {
-  removeItem(key: string): void {
-    console.log("removeItem");
-    super.removeItem(key);
-  }
-
-  setItem(key: string, value: string | null): void {
-    if (super.getItem(key) === value) {
-      console.log("setItem");
-    }
-    super.setItem(key, value);
-  }
-}
-
 class ThemeCachePersistor<T> extends CachePersistor<T> {
   private originalApolloCache: ApolloCache<T>;
   private originalApolloGc: ApolloCache<T>["gc"];
@@ -24,6 +10,7 @@ class ThemeCachePersistor<T> extends CachePersistor<T> {
   constructor(options: ApolloPersistOptions<T>) {
     super(options);
 
+    // Workaround because of bug: authors of apollo3-cache-persist forgot to call save state on gc method
     this.originalApolloCache = options.cache;
     this.originalApolloGc = options.cache.gc;
     options.cache.gc = (...args: []) => {
@@ -44,5 +31,5 @@ export const cachePersistor = new ThemeCachePersistor({
   debounce: 0,
   key: "cache",
   maxSize: false,
-  storage: new ThemeCacheWrapper(window.localStorage),
+  storage: new LocalStorageWrapper(window.localStorage),
 });

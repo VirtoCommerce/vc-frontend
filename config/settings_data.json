@@ -32,7 +32,7 @@
       "support_phone_number": "+31 416 652 803",
       "zero_price_product_enabled": false,
 
-      "checkout_multistep_enabled": false,
+      "checkout_multistep_enabled": true,
       "checkout_comment_enabled": true,
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
