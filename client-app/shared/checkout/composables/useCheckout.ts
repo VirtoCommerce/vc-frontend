@@ -214,7 +214,7 @@ export function _useCheckout() {
 
   watch(allItemsAreDigital, async (value, previousValue) => {
     // Update defaults if state changed not on initialization
-    if (previousValue !== undefined && value !== undefined && previousValue !== value) {
+    if (!!otherLoading.value && previousValue !== undefined && value !== undefined && previousValue !== value) {
       await setCheckoutDefaults();
     }
   });

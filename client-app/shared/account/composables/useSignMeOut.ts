@@ -13,7 +13,7 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
   }).get();
 
   async function afterFetch(context: AfterFetchContext) {
-    await client.resetStore();
+    await client.clearStore();
     if (options.reloadPage) {
       broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
     }
