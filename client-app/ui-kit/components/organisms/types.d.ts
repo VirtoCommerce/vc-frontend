@@ -1,6 +1,6 @@
 import type * as Components from ".";
 
-declare module "@vue/runtime-core" {
+declare module "vue" {
   // Glboal components is already declated interface which we want to augment
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
@@ -13,3 +13,5 @@ declare module "@vue/runtime-core" {
     TableStatusBadge: typeof Components.TableStatusBadge;
   }
 }
+
+export {};

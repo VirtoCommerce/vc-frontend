@@ -151,17 +151,20 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
 - Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
 - Install [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api) module.
-- Install [Node.js](https://nodejs.org/en/download/) (of corresponding to `package.json` version)
-- Enable [corepack](https://yarnpkg.com/corepack) (run as administrator on Windows)
+- Install [Node.js v20](https://nodejs.org/en/download/) (**20.11.0** or later)
+- Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
   ```bash
   corepack enable
   ```
 - If you have installed `yarn` globally, uninstall it:
-  - via npm
+  - via `npm`
     ```bash
     npm uninstall --global yarn
     ```
-  - or through your native Operation System installation tools.
+  - or through your Operation System installation tools
+     - `Control Panel`, `Chocolatey` or `Scoop` on *Windows*
+     - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on *macOs*
+     - Native package manager such as `apt` on *Linux*
 
 ### Install the `vc-storefront`
 
@@ -189,7 +192,7 @@ dotnet run
 dotnet run --no-build
 ```
 
-### Setup current theme
+### Clone repository
 
 ```bash
 # Clone repo into the folder where storefront is installed
@@ -197,46 +200,53 @@ dotnet run --no-build
 git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default"
 # Change the current directory
 cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default
-# Install dependencies
+```
+
+### Check yarn version
+```bash
+yarn -v
+```
+`Yarn` should be of version **4.1.0** or greater.
+
+### Install dependencies
+```bash
 yarn install
 ```
 
-#### If you use Visual Studio Code
-1. Setup recommended extensions
-2. Configure [Volar Takeover mode](https://vuejs.org/guide/typescript/overview#volar-takeover-mode)
+### Build
 
-#### Compile and Hot-Reload for Development
+#### Run with hot reload for development
 
-- Open the **.env** file in a text editor
-- Change **APP_BACKEND_URL** to the correct endpoint to `vc-storefront`:
+- Add new **.env.local** file
+- Copy **APP_BACKEND_URL** from **.env** file and chanage it's value to the correct endpoint to `vc-storefront`:
 
 ```dotenv
-# .env file
+# .env.local file
 APP_BACKEND_URL=https://localhost:2083
 ```
 
 - Run command: `yarn dev` or `yarn dev-expose`
 - Follow the link in the terminal
 
-#### Type-Check, Compile and Minify for Production
+#### Build with validation and minification for production
 
 ```bash
 yarn build
 ```
 
-#### Compile and Minify in Development mode
+#### Build in development mode
 
 ```bash
 yarn build:dev
 ```
 
-#### Compile and Minify in Development mode with change tracking
+#### Build in development mode with change tracking
 
 ```bash
 yarn build:watch
 ```
 
-#### Compile to get the artifact to install.
+#### Create artifact to install from already built code
 
 ```bash
 yarn compress
