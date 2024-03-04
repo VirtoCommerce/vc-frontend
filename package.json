@@ -26,7 +26,7 @@
     "generate:graphql:types": "graphql-codegen --config graphql-codegen.types.config.ts --require ./scripts/graphql-codegen.cjs",
     "generate:graphql": "yarn generate:graphql:schema && yarn generate:graphql:types",
     "generate:routes": "vite-node --mode production scripts/generate-routes.ts",
-    "generate:dependency-graph": "depcruise client-app --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
+    "generate:dependency-graph": "depcruise $0 --focus $0 --focus-depth 0 --reaches $1 --config .dependency-graph.cjs --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
     "storybook:dev": "yarn generate:certificates && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "storybook build",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
