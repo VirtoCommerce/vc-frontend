@@ -77,8 +77,5 @@ defineProps<IProps>();
   &__date {
     @apply mt-0.5 text-xs text-neutral;
   }
-
-  &__button {
-  }
 }
 </style>
