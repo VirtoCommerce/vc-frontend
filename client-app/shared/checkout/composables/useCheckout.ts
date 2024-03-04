@@ -207,9 +207,9 @@ export function _useCheckout() {
     ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
-  watch(allItemsAreDigital, async (_, previousValue) => {
+  watch(allItemsAreDigital, async (value, previousValue) => {
     // Update defaults if state changed not on initialization
-    if (previousValue !== undefined) {
+    if (previousValue !== undefined && value !== undefined && previousValue !== value) {
       await setCheckoutDefaults();
     }
   });
@@ -224,7 +224,6 @@ export function _useCheckout() {
     }
 
     // Create at initialization to prevent duplication due to lack of id
-
     if (!allItemsAreDigital.value && !shipment.value?.shipmentMethodCode && !shipment.value?.shipmentMethodOption) {
       if (shippingMethodId && defaultShippingMethod) {
         await setShippingMethod(defaultShippingMethod);
