@@ -20,7 +20,6 @@
     <button
       type="button"
       class="vc-file-uploader__drop-container"
-      :class="{ 'vc-file-uploader__drop-container--disabled': hasMaxFileCount }"
       @dragover.prevent
       @dragenter.prevent
       @drop="onFileDrop"
@@ -52,7 +51,7 @@
       size="sm"
       icon
     >
-      <template v-if="hasMaxFileCount">
+      <template v-if="hasMaxFileCount && !triedMoreThanMaxFileCount">
         {{ $t("ui_kit.file_uploader.errors.has_max_file_count") }}
       </template>
       <template v-if="triedMoreThanMaxFileCount">
@@ -101,7 +100,7 @@ const { t, n } = useI18n();
 
 const fileInputRef = ref<HTMLInputElement>();
 
-const hasMaxFileCount = computed<boolean>(() => props.files.length >= props.maxFileCount);
+const hasMaxFileCount = computed<boolean>(() => props.files.length === props.maxFileCount);
 
 const triedMoreThanMaxFileCount = ref<boolean>();
 
