@@ -1,268 +1,262 @@
 <template>
-  <div
-    class="grow bg-gray-100 pb-16 pt-4 shadow-inner lg:pt-6"
-    :class="{ 'polygon-gray-bg': !products.length && !loading }"
-  >
-    <div class="mx-auto max-w-screen-2xl px-5 2xl:px-18">
-      <!-- Breadcrumbs -->
-      <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+  <VcContainer :class="{ 'polygon-gray-bg': !products.length && !loading }">
+    <!-- Breadcrumbs -->
+    <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
-      <div class="flex items-stretch lg:gap-6">
-        <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar v-if="isMobile" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
-          <ProductsFiltersSidebar
-            :keyword="keywordQueryParam"
-            :filters="mobileFilters"
-            :loading="loading || facetsLoading"
-            @change="updateMobileFilters($event)"
-            @open-branches="openBranchesModal(true)"
+    <div class="flex items-stretch lg:gap-6">
+      <!-- Mobile sidebar back cover -->
+      <VcPopupSidebar v-if="isMobile" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
+        <ProductsFiltersSidebar
+          :keyword="keywordQueryParam"
+          :filters="mobileFilters"
+          :loading="loading || facetsLoading"
+          @change="updateMobileFilters($event)"
+          @open-branches="openBranchesModal(true)"
+        />
+
+        <template #footer>
+          <VcButton
+            variant="outline"
+            :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
+            @click="
+              resetFacetFilters();
+              hideMobileSidebar();
+            "
+          >
+            {{ $t("common.buttons.reset") }}
+          </VcButton>
+
+          <VcButton
+            :disabled="!isMobileFilterDirty"
+            @click="
+              applyFilters(mobileFilters);
+              hideMobileSidebar();
+            "
+          >
+            {{ $t("common.buttons.apply") }}
+          </VcButton>
+        </template>
+      </VcPopupSidebar>
+
+      <!-- Sidebar -->
+      <div v-else class="relative flex w-60 shrink-0 items-start">
+        <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
+          <CategorySelector
+            v-if="!isSearchPage"
+            :category="currentCategory"
+            :loading="!currentCategory && loadingCategory"
           />
 
-          <template #footer>
-            <VcButton
-              variant="outline"
-              :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
-              @click="
-                resetFacetFilters();
-                hideMobileSidebar();
-              "
-            >
-              {{ $t("common.buttons.reset") }}
-            </VcButton>
-
-            <VcButton
-              :disabled="!isMobileFilterDirty"
-              @click="
-                applyFilters(mobileFilters);
-                hideMobileSidebar();
-              "
-            >
-              {{ $t("common.buttons.apply") }}
-            </VcButton>
-          </template>
-        </VcPopupSidebar>
-
-        <!-- Sidebar -->
-        <div v-else class="relative flex w-60 shrink-0 items-start">
-          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
-            <CategorySelector
-              v-if="!isSearchPage"
-              :category="currentCategory"
-              :loading="!currentCategory && loadingCategory"
-            />
-
-            <ProductsFiltersSidebar
-              :keyword="keywordQueryParam"
-              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-              :loading="loading"
-              @change="applyFilters($event)"
-            />
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div ref="contentElement" class="grow">
-          <div class="flex">
-            <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
-              <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
-                <template #keyword>
-                  <strong>{{ searchParams.keyword }}</strong>
-                </template>
-              </i18n-t>
-
-              <!-- Skeleton -->
-              <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-gray-200 md:w-64">
-                &nbsp;
-              </span>
-
-              <span v-else>
-                {{ currentCategory?.name }}
-              </span>
-
-              <sup
-                v-if="!loading"
-                class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
-              >
-                <b class="font-extrabold">{{ total }}</b>
-                {{ $t("pages.catalog.products_found_message", total) }}
-              </sup>
-            </h2>
-          </div>
-
-          <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
-
-          <div
-            class="sticky top-0 z-10 my-1.5 flex h-14 items-center lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
-            :class="{
-              'z-40 -mx-5 bg-[color:var(--color-header-bottom-bg)] px-5 md:-mx-12 md:px-12':
-                stickyMobileHeaderIsVisible,
-            }"
-          >
-            <!-- Mobile filters toggler -->
-            <VcButton class="mr-2.5 flex-none lg:!hidden" icon="filter" size="sm" @click="showMobileSidebar" />
-
-            <!-- Sorting -->
-            <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
-              <span
-                v-t="'pages.catalog.sort_by_label'"
-                class="mr-2 hidden shrink-0 text-15 font-bold text-[color:var(--color-category-page-label)] lg:block"
-              />
-
-              <VcSelect
-                v-model="sortQueryParam"
-                text-field="name"
-                value-field="id"
-                :disabled="loading"
-                :items="PRODUCT_SORTING_LIST"
-                class="w-0 grow lg:w-48"
-                size="sm"
-              />
-            </div>
-
-            <!-- View options -->
-            <ViewMode v-model:mode="savedViewMode" class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto" />
-
-            <!-- Branch availability -->
-            <div
-              v-if="!isMobile"
-              class="order-3 ml-4 flex items-center xl:ml-6"
-              @click.prevent="openBranchesModal(false)"
-              @keyup.enter.prevent="openBranchesModal(false)"
-            >
-              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
-                <template #trigger>
-                  <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                    <i18n-t
-                      keypath="pages.catalog.branch_availability_filter_card.available_in"
-                      tag="div"
-                      class="text-15"
-                      :class="{
-                        'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
-                      }"
-                      scope="global"
-                    >
-                      <span :class="{ 'font-bold text-[color:var(--color-link)]': savedBranches.length }">
-                        {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
-                      </span>
-                    </i18n-t>
-                  </VcCheckbox>
-                </template>
-
-                <template #content>
-                  <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
-                    {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
-                  </div>
-                </template>
-              </VcTooltip>
-            </div>
-
-            <!-- In Stock -->
-            <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
-              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
-                <template #trigger>
-                  <VcCheckbox v-model="savedInStock" :disabled="loading">
-                    <span
-                      class="whitespace-nowrap text-15"
-                      :class="{
-                        'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
-                      }"
-                    >
-                      {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-                    </span>
-                  </VcCheckbox>
-                </template>
-
-                <template #content>
-                  <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
-                    {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
-                  </div>
-                </template>
-              </VcTooltip>
-            </div>
-          </div>
-
-          <!-- Filters chips -->
-          <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
-            <template v-for="facet in facets">
-              <template v-for="filterItem in facet.values">
-                <VcChip
-                  v-if="filterItem.selected"
-                  :key="facet.paramName + filterItem.value"
-                  color="secondary"
-                  closable
-                  @close="
-                    removeFacetFilterItem({
-                      paramName: facet.paramName,
-                      value: filterItem.value,
-                    })
-                  "
-                >
-                  {{ filterItem.label }}
-                </VcChip>
-              </template>
-            </template>
-
-            <VcChip color="secondary" variant="outline" clickable @click="resetFacetFilters">
-              <span>{{ $t("common.buttons.reset_filters") }}</span>
-
-              <VcIcon name="reset" />
-            </VcChip>
-          </div>
-
-          <!-- Products -->
-          <template v-if="products.length || loading">
-            <DisplayProducts
-              :loading="loading"
-              :view-mode="savedViewMode"
-              :items-per-page="itemsPerPage"
-              :products="products"
-              open-product-in-new-tab
-              @item-link-click="sendGASelectItemEvent"
-            >
-              <template #cart-handler="{ item }">
-                <AddToCart :product="item" :reserved-space="savedViewMode === 'grid'" />
-              </template>
-            </DisplayProducts>
-
-            <VcInfinityScrollLoader
-              v-if="!loading"
-              :loading="loadingMore"
-              distance="400"
-              class="-mb-6 mt-9"
-              @visible="loadMoreProducts"
-            />
-
-            <VcScrollTopButton />
-          </template>
-
-          <!-- Empty view -->
-          <VcEmptyView
-            v-else
-            :text="
-              isExistSelectedFacets || savedInStock || savedBranches.length || keywordQueryParam
-                ? $t('pages.catalog.no_products_filtered_message')
-                : $t('pages.catalog.no_products_message')
-            "
-            class="h-96"
-          >
-            <template #icon>
-              <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
-            </template>
-
-            <template #button>
-              <VcButton
-                v-if="isExistSelectedFacets || keywordQueryParam"
-                prepend-icon="reset"
-                @click="resetFacetFiltersWithKeyword"
-              >
-                {{ $t("pages.catalog.no_products_button") }}
-              </VcButton>
-            </template>
-          </VcEmptyView>
+          <ProductsFiltersSidebar
+            :keyword="keywordQueryParam"
+            :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+            :loading="loading"
+            @change="applyFilters($event)"
+          />
         </div>
       </div>
+
+      <!-- Content -->
+      <div ref="contentElement" class="grow">
+        <div class="flex">
+          <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
+            <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
+              <template #keyword>
+                <strong>{{ searchParams.keyword }}</strong>
+              </template>
+            </i18n-t>
+
+            <!-- Skeleton -->
+            <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-gray-200 md:w-64">
+              &nbsp;
+            </span>
+
+            <span v-else>
+              {{ currentCategory?.name }}
+            </span>
+
+            <sup
+              v-if="!loading"
+              class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
+            >
+              <b class="font-extrabold">{{ total }}</b>
+              {{ $t("pages.catalog.products_found_message", total) }}
+            </sup>
+          </h2>
+        </div>
+
+        <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
+
+        <div
+          class="sticky top-0 z-10 my-1.5 flex h-14 items-center lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
+          :class="{
+            'z-40 -mx-5 bg-[color:var(--color-header-bottom-bg)] px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
+          }"
+        >
+          <!-- Mobile filters toggler -->
+          <VcButton class="mr-2.5 flex-none lg:!hidden" icon="filter" size="sm" @click="showMobileSidebar" />
+
+          <!-- Sorting -->
+          <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
+            <span
+              v-t="'pages.catalog.sort_by_label'"
+              class="mr-2 hidden shrink-0 text-15 font-bold text-[color:var(--color-category-page-label)] lg:block"
+            />
+
+            <VcSelect
+              v-model="sortQueryParam"
+              text-field="name"
+              value-field="id"
+              :disabled="loading"
+              :items="PRODUCT_SORTING_LIST"
+              class="w-0 grow lg:w-48"
+              size="sm"
+            />
+          </div>
+
+          <!-- View options -->
+          <ViewMode v-model:mode="savedViewMode" class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto" />
+
+          <!-- Branch availability -->
+          <div
+            v-if="!isMobile"
+            class="order-3 ml-4 flex items-center xl:ml-6"
+            @click.prevent="openBranchesModal(false)"
+            @keyup.enter.prevent="openBranchesModal(false)"
+          >
+            <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
+              <template #trigger>
+                <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
+                  <i18n-t
+                    keypath="pages.catalog.branch_availability_filter_card.available_in"
+                    tag="div"
+                    class="text-15"
+                    :class="{
+                      'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
+                    }"
+                    scope="global"
+                  >
+                    <span :class="{ 'font-bold text-[color:var(--color-link)]': savedBranches.length }">
+                      {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
+                    </span>
+                  </i18n-t>
+                </VcCheckbox>
+              </template>
+
+              <template #content>
+                <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
+                </div>
+              </template>
+            </VcTooltip>
+          </div>
+
+          <!-- In Stock -->
+          <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
+            <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
+              <template #trigger>
+                <VcCheckbox v-model="savedInStock" :disabled="loading">
+                  <span
+                    class="whitespace-nowrap text-15"
+                    :class="{
+                      'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
+                    }"
+                  >
+                    {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+                  </span>
+                </VcCheckbox>
+              </template>
+
+              <template #content>
+                <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+                  {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
+                </div>
+              </template>
+            </VcTooltip>
+          </div>
+        </div>
+
+        <!-- Filters chips -->
+        <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+          <template v-for="facet in facets">
+            <template v-for="filterItem in facet.values">
+              <VcChip
+                v-if="filterItem.selected"
+                :key="facet.paramName + filterItem.value"
+                color="secondary"
+                closable
+                @close="
+                  removeFacetFilterItem({
+                    paramName: facet.paramName,
+                    value: filterItem.value,
+                  })
+                "
+              >
+                {{ filterItem.label }}
+              </VcChip>
+            </template>
+          </template>
+
+          <VcChip color="secondary" variant="outline" clickable @click="resetFacetFilters">
+            <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+            <VcIcon name="reset" />
+          </VcChip>
+        </div>
+
+        <!-- Products -->
+        <template v-if="products.length || loading">
+          <DisplayProducts
+            :loading="loading"
+            :view-mode="savedViewMode"
+            :items-per-page="itemsPerPage"
+            :products="products"
+            open-product-in-new-tab
+            @item-link-click="sendGASelectItemEvent"
+          >
+            <template #cart-handler="{ item }">
+              <AddToCart :product="item" :reserved-space="savedViewMode === 'grid'" />
+            </template>
+          </DisplayProducts>
+
+          <VcInfinityScrollLoader
+            v-if="!loading"
+            :loading="loadingMore"
+            distance="400"
+            class="mt-8"
+            @visible="loadMoreProducts"
+          />
+
+          <VcScrollTopButton />
+        </template>
+
+        <!-- Empty view -->
+        <VcEmptyView
+          v-else
+          :text="
+            isExistSelectedFacets || savedInStock || savedBranches.length || keywordQueryParam
+              ? $t('pages.catalog.no_products_filtered_message')
+              : $t('pages.catalog.no_products_message')
+          "
+          class="h-96"
+        >
+          <template #icon>
+            <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
+          </template>
+
+          <template #button>
+            <VcButton
+              v-if="isExistSelectedFacets || keywordQueryParam"
+              prepend-icon="reset"
+              @click="resetFacetFiltersWithKeyword"
+            >
+              {{ $t("pages.catalog.no_products_button") }}
+            </VcButton>
+          </template>
+        </VcEmptyView>
+      </div>
     </div>
-  </div>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">

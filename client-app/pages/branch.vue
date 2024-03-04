@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="grow bg-[color:var(--color-body-bg)] px-7 pb-7 pt-5 shadow-inner transition lg:pb-11 lg:pt-5 xl:px-19"
-    :class="{ 'pointer-events-none opacity-50': loading }"
-  >
+  <VcContainer :class="{ 'pointer-events-none opacity-50': loading }">
     <h1 class="-ml-0.5 text-28 font-bold uppercase lg:text-34">{{ fulfillmentCenter?.name }}</h1>
 
     <div class="mt-4 lg:mt-6 lg:flex lg:items-start">
@@ -63,7 +60,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
