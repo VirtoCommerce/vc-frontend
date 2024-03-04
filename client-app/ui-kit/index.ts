@@ -26,7 +26,3 @@ export const uiKit: Plugin = {
     app.use(VueSecureHTML);
   },
 };
-
-export * from "./composables";
-export * from "./constants";
-export * from "./utilities";
