@@ -36,7 +36,7 @@ export function setupBroadcastGlobalListeners() {
 
   on(pageReloadEvent, () => location.reload());
   on(userReloadEvent, () => fetchUser());
-  on(cacheReloadEvent, () => cachePersistor.restore());
+  on(cacheReloadEvent, cachePersistor.restore);
   on(userLockedEvent, async () => {
     await signMeOut();
 
