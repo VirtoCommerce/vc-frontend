@@ -223,7 +223,7 @@
             v-if="!loading"
             :loading="loadingMore"
             distance="400"
-            class="-mb-6 mt-9"
+            class="mt-8"
             @visible="loadMoreProducts"
           />
 

@@ -40,7 +40,7 @@ export const cache = new InMemoryCache({
       keyFields: ["code"],
     },
     CurrencyType: {
-      merge: true,
+      merge: false,
     },
     LineItemType: {
       fields: {
@@ -50,7 +50,7 @@ export const cache = new InMemoryCache({
       },
     },
     MoneyType: {
-      merge: true,
+      merge: false,
     },
     PaymentMethodType: {
       keyFields: ["code"],

@@ -18,7 +18,7 @@ import {
   toRemovedFile,
   toUploadedFile,
   toUploadingFile,
-} from "@/ui-kit";
+} from "@/ui-kit/utilities";
 import type { FileUploadResultType, IFileOptions } from "@/shared/files/types";
 import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import type { MaybeRef, WatchSource } from "vue";
