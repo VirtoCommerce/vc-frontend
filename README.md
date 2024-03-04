@@ -206,7 +206,7 @@ cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cm
 ```bash
 yarn -v
 ```
-`Yarn` should be of version **4.1.0** or greater.
+`Yarn` should be of version **4.1.0** or greater, not 1.XX.
 
 ### Install dependencies
 ```bash
