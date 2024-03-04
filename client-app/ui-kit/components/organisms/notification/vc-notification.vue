@@ -13,19 +13,36 @@
       <VcMarkdownRender class="vc-notification__content" :src="notification.text" />
 
       <div class="vc-notification__date">
-        {{ $d(notification.createdDate) }}
+        {{ $d(notification.createdDate, "long") }}
       </div>
     </div>
 
-    <VcButton class="vc-notification__button" size="xs " color="neutral" variant="no-background" icon="x" />
+    <VcButton
+      v-if="removable"
+      class="vc-notification__button"
+      size="xs "
+      color="neutral"
+      variant="no-background"
+      icon="x"
+      @click="
+        $emit('remove');
+        $event.stopPropagation();
+      "
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-interface IProps {
-  notification: VcNotificationType;
+export interface IEmits {
+  (event: "remove"): void;
 }
 
+interface IProps {
+  notification: VcNotificationType;
+  removable?: boolean;
+}
+
+defineEmits<IEmits>();
 defineProps<IProps>();
 </script>
 
