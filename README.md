@@ -18,6 +18,7 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
 - **Husky + ESLint + Prettier.** Autoformat, check and fix your code and prevent ugly codestyle within repository.
 - **Vite.** It is faster than Webpack. Really FASTER. Use it to develop with HMR benefits and to build for production.
 - **GraphQL.** Forget about REST, use flexible GraphQL queries and mutations to safely work with backend.
+- **vite-plugin-favicon2** Generate all necessary favicon files during build. The favicon will not appear during `DEVELOPMENT` mode
 
 ## Non-functional key features
 
