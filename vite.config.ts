@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from "node:url";
 import path from "path";
 import graphql from "@rollup/plugin-graphql";
 import vue from "@vitejs/plugin-vue";
+import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
@@ -32,12 +33,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
     envPrefix: "APP_",
     publicDir: "./client-app/public",
     plugins: [
-      mkcert({
-        force: true,
-        savePath: path.resolve(__dirname, ".certificates"),
-        keyFileName: "private.pem",
-        certFileName: "public.pem",
-      }),
+      isServe
+        ? mkcert({
+            force: true,
+            savePath: path.resolve(__dirname, ".certificates"),
+            keyFileName: "private.pem",
+            certFileName: "public.pem",
+          })
+        : undefined,
       vue(),
       graphql(),
       isServe
@@ -65,6 +68,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       splitVendorChunkPlugin(),
+      process.env.GENERATE_BUNDLE_MAP
+        ? visualizer({
+            filename: path.resolve(__dirname, "artifacts/bundle-map.html"),
+            brotliSize: true,
+            gzipSize: true,
+            sourcemap: true,
+          })
+        : undefined,
     ],
     resolve: {
       alias: {
@@ -80,7 +91,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
       emptyOutDir: true,
       cssCodeSplit: false,
       sourcemap: true,
-      reportCompressedSize: false,
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, "index.html"),
@@ -105,6 +115,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       proxy: {
         "^/api": getProxy(process.env.APP_BACKEND_URL),
         "^/graphql": getProxy(process.env.APP_BACKEND_URL),
+        "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
         // For login on behalf
         "^/account/impersonate/.+": getProxy(process.env.APP_BACKEND_URL, {
           autoRewrite: true,
