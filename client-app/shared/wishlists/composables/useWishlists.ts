@@ -149,11 +149,6 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     }
   }
 
-  /** @deprecated */
-  function clearList() {
-    list.value = undefined;
-  }
-
   return {
     fetchWishlists,
     fetchWishList,
@@ -163,7 +158,6 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     updateWishlist,
     updateItemsInWishlist,
     removeItemsFromWishlists,
-    clearList,
     loading: readonly(loading),
     lists: computed(() => lists.value),
     list: computed(() => list.value),
