@@ -8,5 +8,6 @@ export * from "./orders";
 export * from "./organization";
 export * from "./payment";
 export * from "./quotes";
+export * from "./slugInfo";
 export * from "./store";
 export * from "./utils";
