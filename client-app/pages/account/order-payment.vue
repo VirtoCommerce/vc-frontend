@@ -267,7 +267,7 @@ const changeMethodLoading = ref(false);
 const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const { t } = useI18n();
-const { loading, order, fetchShortOrder, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
+const { loading, order, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
 const { openModal, closeModal } = useModal();
 const router = useRouter();
 
@@ -349,7 +349,7 @@ function showChangePaymentMethodModal(): void {
 
 watch(success, async (value) => {
   if (value) {
-    await fetchShortOrder({ id: props.orderId });
+    await fetchFullOrder({ id: props.orderId });
   }
 });
 
@@ -358,7 +358,7 @@ watchEffect(async () => {
     await fetchFullOrder({ id: props.orderId });
   } else if (order.value?.inPayments[0]?.isApproved) {
     // If the order is paid
-    router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
+    await router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
   }
 });
 </script>
