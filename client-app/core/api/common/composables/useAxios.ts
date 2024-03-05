@@ -10,23 +10,23 @@ export const useAxios = (() => {
   const { onRequest, onResponse } = useGlobalInterceptors();
 
   axios.interceptors.request.use(
-    (config) => {
-      onRequest.value.forEach((intercept) => intercept(config.url!, config));
+    async (config) => {
+      await Promise.all(onRequest.value.map((intercept) => intercept(config.url!, config)));
       return config;
     },
     (error: AxiosError | undefined) => {
-      errorHandler(toServerError(error?.config?.url, undefined));
+      errorHandler(toServerError(error?.cause, undefined));
       return Promise.reject(error);
     },
   );
 
   axios.interceptors.response.use(
-    (response) => {
-      onResponse.value.forEach((intercept) => intercept(response));
+    async (response) => {
+      await Promise.all(onResponse.value.map((intercept) => intercept(response)));
       return response;
     },
     (error: AxiosError | undefined) => {
-      errorHandler(toServerError(error?.config?.url, error?.response?.status));
+      errorHandler(toServerError(error?.cause, error?.response?.status));
       return Promise.reject(error);
     },
   );

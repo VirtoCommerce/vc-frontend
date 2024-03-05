@@ -115,7 +115,7 @@ const rememberMe = ref(false);
 
 const model = toRef({ email, password, rememberMe });
 
-const { errors, loading, signIn, reset } = useSignMeIn(model);
+const { errors, loading, signIn, resetErrors } = useSignMeIn(model);
 
 const { translatedErrors } = useErrorsTranslator("shared.account.sign_in_form.errors", errors);
 
@@ -125,7 +125,7 @@ const onSubmit = handleSubmit(async () => {
 
 watch(meta, (value) => {
   if (value.touched) {
-    reset();
+    resetErrors();
   }
 });
 </script>

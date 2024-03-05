@@ -1,4 +1,5 @@
 export * from "./useAppContext";
+export * from "./useAuth";
 export * from "./useBreadcrumbs";
 export * from "./useCategoriesRoutes";
 export * from "./useCountries";
