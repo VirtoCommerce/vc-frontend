@@ -31,7 +31,6 @@ export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-
 export { default as VcSection } from "./section/vc-section.vue";
 export { default as VcSelectItem } from "./select-item/vc-select-item.vue";
 export { default as VcSelectItemImage } from "./select-item-image/vc-select-item-image.vue";
-export { default as VcSelectItemText } from "./select-item-text/vc-select-item-text.vue";
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";

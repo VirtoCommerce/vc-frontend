@@ -40,8 +40,6 @@ declare module "@vue/runtime-core" {
     VcSelectItem: typeof Components.VcSelectItem;
     /** @deprecated */
     VcSelectItemImage: typeof Components.VcSelectItemImage;
-    /** @deprecated */
-    VcSelectItemText: typeof Components.VcSelectItemText;
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
