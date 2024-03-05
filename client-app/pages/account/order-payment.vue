@@ -267,7 +267,7 @@ const changeMethodLoading = ref(false);
 const paymentMethodComponent = ref<InstanceType<typeof PaymentProcessingAuthorizeNet> | null>(null);
 
 const { t } = useI18n();
-const { loading, order, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
+const { loading, order, fetchShortOrder, fetchFullOrder, addOrUpdatePayment } = useUserOrder();
 const { openModal, closeModal } = useModal();
 const router = useRouter();
 
@@ -289,7 +289,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const executed = computed<boolean>(() => success.value || failure.value);
-const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
+const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 const paymentTypeName = computed<string | undefined>(() => payment.value?.paymentMethod?.typeName);
 
@@ -349,14 +349,14 @@ function showChangePaymentMethodModal(): void {
 
 watch(success, async (value) => {
   if (value) {
-    await fetchFullOrder({ id: props.orderId });
+    await fetchShortOrder({ id: props.orderId });
   }
 });
 
 watchEffect(async () => {
   if (props.orderId !== order.value?.id) {
     await fetchFullOrder({ id: props.orderId });
-  } else if (order.value?.inPayments[0]?.isApproved) {
+  } else if (order.value?.inPayments?.[0]?.isApproved) {
     // If the order is paid
     await router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
   }
