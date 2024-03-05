@@ -4,7 +4,7 @@ import { createApp, h, provide } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
-import { configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
@@ -22,6 +22,26 @@ export default async () => {
   if (!appElement) {
     return Logger.debug(`The element with the selector "${appSelector}" was not found.`);
   }
+
+  /**
+   * Create and mount application
+   */
+  const app = createApp(
+    {
+      setup() {
+        provide(DefaultApolloClient, apolloClient);
+      },
+      render: () => h(App),
+    },
+    {
+      /**
+       * Passing data-* attributes to the application props
+       */
+      ...appElement.dataset,
+    },
+  );
+
+  app.use(authPlugin);
 
   const { fetchUser, user } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
@@ -65,24 +85,6 @@ export default async () => {
    * Other settings
    */
   await setLocale(i18n, currentLocale.value);
-
-  /**
-   * Create and mount application
-   */
-  const app = createApp(
-    {
-      setup() {
-        provide(DefaultApolloClient, apolloClient);
-      },
-      render: () => h(App),
-    },
-    {
-      /**
-       * Passing data-* attributes to the application props
-       */
-      ...appElement.dataset,
-    },
-  );
 
   // Plugins
   app.use(head);
