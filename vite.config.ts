@@ -124,6 +124,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       proxy: {
         "^/api": getProxy(process.env.APP_BACKEND_URL),
         "^/(xapi|storefrontapi)": getProxy(process.env.APP_BACKEND_URL),
+        "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
         // For login on behalf
         "^/account/impersonate/.+": getProxy(process.env.APP_BACKEND_URL, {
           autoRewrite: true,

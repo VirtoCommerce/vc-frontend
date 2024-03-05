@@ -4,9 +4,9 @@ export const apolloFetch = (() => {
   const { onRequest, onResponse } = useGlobalInterceptors();
 
   return async (input: string | Request | URL, init?: RequestInit) => {
-    onRequest.value.forEach((intercept) => intercept(input, init));
+    await Promise.all(onRequest.value.map((intercept) => intercept(input, init)));
     const response = await fetch(input, init);
-    onResponse.value.forEach((intercept) => intercept(response));
+    await Promise.all(onResponse.value.map((intercept) => intercept(response)));
     return response;
   };
 })();
