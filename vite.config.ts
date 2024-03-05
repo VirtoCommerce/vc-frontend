@@ -101,21 +101,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
       emptyOutDir: true,
       cssCodeSplit: false,
       sourcemap: true,
-      rollupOptions: {
-        input: {
-          main: path.resolve(__dirname, "index.html"),
-        },
-        output: {
-          entryFileNames: "[name].js",
-          assetFileNames: (assetInfo) => {
-            // This code will move flag-icons svg files to separate directory during build.
-            if (assetInfo.name?.endsWith(".svg")) {
-              return "static/icons/flag-icons/[name].svg";
-            }
-            return "[name][extname]";
-          },
-        },
-      },
     },
     optimizeDeps: {
       exclude: ["swiper/vue", "swiper/types"],
