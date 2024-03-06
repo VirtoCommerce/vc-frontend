@@ -10,13 +10,15 @@ import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3";
 import type { App } from "vue";
 import "../client-app/assets/styles/main.scss";
+import { useFetch } from "../client-app/core/api/common";
 
 const i18n: I18n = createI18n("en", "USD");
 
 setGlobals({ i18n });
 
 async function configureThemeSettings(app: App) {
-  const settings: IThemeConfig = await import("../config/settings_data.json");
+  const { data } = await useFetch("/config/settings_data.json").get().json();
+  const settings = data.value as IThemeConfig;
   const themeSettings = settings.presets[settings.current as string];
 
   app.use(configPlugin, themeSettings);
