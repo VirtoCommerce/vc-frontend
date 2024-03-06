@@ -51,12 +51,6 @@
             {{ item.title }}
           </BottomHeaderLink>
 
-          <VcNotifications v-else-if="item.id === 'notifications'" :y-offset="36">
-            <BottomHeaderLink :link="item" :count="35">
-              {{ item.title }}
-            </BottomHeaderLink>
-          </VcNotifications>
-
           <BottomHeaderLink v-else :link="item">
             {{ item.title }}
           </BottomHeaderLink>

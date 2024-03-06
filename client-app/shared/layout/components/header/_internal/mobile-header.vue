@@ -33,18 +33,6 @@
             <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
-          <VcNotifications class="px-1 py-2 xs:px-2">
-            <div class="relative">
-              <VcIcon class="text-primary" name="bell" :size="28" />
-
-              <VcTransitionScale mode="out-in">
-                <VcBadge variant="outline" size="sm" class="absolute -right-2 -top-2 transition-transform" rounded>
-                  35
-                </VcBadge>
-              </VcTransitionScale>
-            </div>
-          </VcNotifications>
-
           <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
             <span class="relative block">
               <VcIcon class="text-[--color-primary-500]" name="cart" :size="28" />
