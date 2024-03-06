@@ -95,7 +95,7 @@ function _useAuth() {
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    getTokenRequest = await getToken(true);
+    await (getTokenRequest = getToken(true));
   }
 
   async function refresh() {
