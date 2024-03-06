@@ -200,7 +200,7 @@ module.exports = {
         sm: [
           "0.875rem", //14px
           {
-            lineHeight: "1rem", //16px
+            lineHeight: "1.125rem", //18px
           },
         ],
         base: [
