@@ -11,7 +11,7 @@
       :product-id="slugInfo?.entityInfo?.objectId"
     />
 
-    <component :is="StaticPage" v-else-if="slugInfo?.contentItem?.type === 'page'" />
+    <component :is="StaticPage" v-else-if="slugInfo?.entityInfo?.objectType === 'ContentFile'" />
 
     <NotFound v-else-if="!loading" />
   </LandingPage>
@@ -54,12 +54,12 @@ onBeforeUnmount(() => {
   setMatchingRouteName("");
 });
 
-watchEffect(() => {
+watchEffect(async () => {
   let matchingRouteName = "";
 
-  if (slugInfo.value?.contentItem?.type === "page") {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    staticPage.value = JSON.parse(slugInfo.value.contentItem.content);
+  if (slugInfo.value?.entityInfo?.objectType === "ContentFile") {
+    // todo add gql query
+    staticPage.value = await Promise.resolve({ content: [], settings: { type: "", id: "", name: "" } });
   }
 
   switch (slugInfo.value?.entityInfo?.objectType) {
