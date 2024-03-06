@@ -1,12 +1,12 @@
 <template>
   <teleport to="body">
-    <transition-group name="app-notifications" tag="div" class="vc-notifications">
+    <transition-group name="app-notifications" tag="div" class="notifications-host">
       <div
         v-for="notification in stack"
         :key="notification.id"
         :class="[
-          'vc-notifications__item',
-          `vc-notifications__item--${notification.type}`,
+          'notifications-host__item',
+          `notifications-host__item--${notification.type}`,
           notification.closeButton ? 'pl-5 pr-12 md:pl-12' : 'px-5 md:px-12',
           notification.classes,
         ]"
@@ -23,7 +23,7 @@
           :is="notification.button.to ? 'router-link' : 'button'"
           v-if="notification.button"
           :to="notification.button.to"
-          :class="['vc-notifications__button', notification.button.classes]"
+          :class="['notifications-host__button', notification.button.classes]"
           @click="notification.button?.clickHandler ? notification.button.clickHandler(notification.id!, $event) : null"
         >
           <span v-if="notification.button.html" v-html-safe="notification.button.html" />
@@ -34,7 +34,7 @@
         <button
           v-if="notification.closeButton"
           type="button"
-          class="vc-notifications__close-button"
+          class="notifications-host__close-button"
           @click="close(notification.id!)"
         >
           <VcIcon name="x" />
@@ -57,7 +57,7 @@ const { stack, close } = useNotifications();
 <style lang="scss">
 $status-colors: success, warning, danger;
 
-.vc-notifications {
+.notifications-host {
   $self: &;
 
   position: fixed;
