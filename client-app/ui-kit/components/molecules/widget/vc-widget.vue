@@ -109,11 +109,16 @@ watchEffect(() => {
 
   $sizeLG: "";
 
+  --p-x: theme("padding.4");
+
   @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] text-[--color-neutral-950] text-base rounded divide-y shadow-md;
+
+  .vc-container & {
+    @apply max-md:-mx-4.5;
+  }
 
   &--size {
     &--xs {
-      --p-x: theme("padding.4");
       --header-p-y: theme("padding.[1.5]");
       --header-gap: theme("gap.[1.5]");
       --title-text: theme("fontSize.sm");
@@ -121,7 +126,6 @@ watchEffect(() => {
     }
 
     &--sm {
-      --p-x: theme("padding.4");
       --header-p-y: theme("padding.[1.5]");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.base");
@@ -129,17 +133,19 @@ watchEffect(() => {
     }
 
     &--md {
-      --p-x: theme("padding.6");
       --header-p-y: theme("padding.2");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.xl");
       --title-min-h: 2.125rem;
+
+      @media (min-width: theme("screens.lg")) {
+        --p-x: theme("padding.6");
+      }
     }
 
     &--lg {
       $sizeLG: &;
 
-      --p-x: theme("padding.5");
       --header-p-y: theme("padding.4");
       --header-gap: theme("gap.2");
       --title-text: theme("fontSize.xl");
@@ -149,10 +155,6 @@ watchEffect(() => {
 
       @media (min-width: theme("screens.lg")) {
         --p-x: theme("padding.7");
-      }
-
-      .vc-container & {
-        @apply max-md:-mx-4.5;
       }
     }
   }
