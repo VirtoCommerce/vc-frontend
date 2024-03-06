@@ -115,7 +115,8 @@
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
-      "ends_to": "End: {0}"
+      "ends_to": "End: {0}",
+      "save_credit_card_info": "Save card information"
     },
     "prefixes": {
       "please": "Please"

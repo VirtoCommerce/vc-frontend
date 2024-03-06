@@ -4,12 +4,20 @@
       <div ref="cardContainer" class="grow"></div>
       <CardLabels class="mt-6" />
     </div>
+
+    <div class="mt-6 flex justify-center md:justify-start">
+      <VcCheckbox v-model="saveCreditCard">
+        {{ $t("common.labels.save_credit_card_info") }}
+      </VcCheckbox>
+    </div>
+
     <div class="mt-6 flex justify-center md:justify-start">
       <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="pay">
         {{ $t("shared.payment.skyflow.pay_now_button") }}
       </VcButton>
     </div>
   </div>
+
   <VcLoaderWithText v-if="!initialized" />
 </template>
 
@@ -21,9 +29,11 @@ import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { useUser } from "@/shared/account";
+import { useSkyflow } from "../composables";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
-import type { IInsertResponse } from "skyflow-js/types/utils/common";
+import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 interface IProps {
@@ -41,10 +51,13 @@ const props = defineProps<IProps>();
 type FieldsType = { [key: string]: string };
 
 const { t } = useI18n();
+const { user, isAuthenticated } = useUser();
+const { fetchCreditCards } = useSkyflow();
 const ga = useGoogleAnalytics();
 
 const loading = ref(false);
 const cardContainer = ref(null);
+const saveCreditCard = ref(false);
 
 let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;
 
@@ -75,10 +88,29 @@ async function initPayment() {
   }
 }
 
+function getAdditionalRecords(): IInsertRecordInput | undefined {
+  if (!isAuthenticated.value || !saveCreditCard.value) {
+    return;
+  }
+
+  return {
+    records: [
+      {
+        table: skyflowTableName,
+        fields: {
+          user_id: user.value.id,
+        },
+      },
+    ],
+  };
+}
+
 async function pay() {
   loading.value = true;
 
-  const res = (await composableContainer.collect()) as IInsertResponse;
+  const res = (await composableContainer.collect({
+    additionalFields: getAdditionalRecords(),
+  })) as IInsertResponse;
 
   if (!res?.records) {
     emit("fail");
@@ -101,6 +133,7 @@ async function pay() {
 }
 
 onMounted(async () => {
+  fetchCreditCards(user.value.id);
   await initPayment();
   createForm();
 });
