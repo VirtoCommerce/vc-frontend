@@ -27,9 +27,6 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     return result.value?.slugInfo;
   });
 
-  // const url = computed(() => `/storefrontapi/slug/${toValue(seoUrl)}?culture=${currentLanguage.value.cultureName}`);
-  // const { data: slugInfo, isFetching: loading } = useFetch(url, { refetch: true }).get().json<SlugInfoResultType>();
-
   return {
     loading,
     slugInfo,

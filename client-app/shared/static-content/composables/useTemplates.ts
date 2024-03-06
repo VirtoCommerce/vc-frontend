@@ -6,14 +6,10 @@ import type { PageTemplate, PageTemplateRequest } from "@/shared/static-content/
 function _useTemplates() {
   const payload = ref<PageTemplateRequest>();
 
-  const { data, execute: loadTemplate } = useFetch("/storefrontapi/content/templates", { immediate: false })
-    .post(payload)
-    .json<PageTemplate>();
-
   const memoize = useMemoize(async (templateName: string) => {
     payload.value = { template: templateName };
-    await loadTemplate();
-    return data.value;
+    const { data } = await useFetch(`/content/templates/${payload.value?.template}.json`).get().json();
+    return data.value as PageTemplate;
   });
 
   function setTemplate(templateName: string, template: PageTemplate) {
