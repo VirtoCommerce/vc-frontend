@@ -1,6 +1,6 @@
 <template>
   <teleport to="body">
-    <transition-group name="app-notifications" tag="div" class="notifications">
+    <transition-group name="app-notifications" tag="div" class="notifications-host">
       <div
         v-for="notification in stack"
         :key="notification.id"
