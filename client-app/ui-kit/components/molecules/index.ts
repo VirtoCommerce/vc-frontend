@@ -13,7 +13,6 @@ export { default as VcEmptyPage } from "./empty-page/vc-empty-page.vue";
 export { default as VcExpansionPanel } from "./expansion-panel/vc-expansion-panel.vue";
 export { default as VcFile } from "./file/vc-file.vue";
 export { default as VcFileUploader } from "./file-uploader/vc-file-uploader.vue";
-export { default as VcImageGallery } from "./image-gallery/vc-image-gallery.vue";
 export { default as VcInput } from "./input/vc-input.vue";
 export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcItemPriceCatalog } from "./item-price-catalog/vc-item-price-catalog.vue";
