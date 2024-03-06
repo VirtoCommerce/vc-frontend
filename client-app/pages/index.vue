@@ -112,7 +112,10 @@ const { loading, slugInfo } = useSlugInfo("__index__home__page__");
 
 watch(slugInfo, (slugInfoValue) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  staticPage.value = slugInfoValue?.contentItem?.type === "page" ? JSON.parse(slugInfoValue.contentItem.content) : null;
+  staticPage.value =
+    slugInfoValue?.entityInfo?.objectType === "ContentFile"
+      ? { content: [], settings: { type: "", id: "", name: "" } }
+      : undefined;
 });
 </script>
 
