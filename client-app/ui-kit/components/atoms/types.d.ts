@@ -37,8 +37,6 @@ declare module "@vue/runtime-core" {
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
     /** @deprecated */
-    VcSelectItemImage: typeof Components.VcSelectItemImage;
-    /** @deprecated */
     VcSelectItemText: typeof Components.VcSelectItemText;
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
