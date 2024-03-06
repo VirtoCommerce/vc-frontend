@@ -23,7 +23,8 @@ type ConnectTokenResponseType = {
 function _useAuth() {
   const broadcast = useBroadcast();
 
-  const params = ref<URLSearchParams>();
+  const getTokenParams = ref<URLSearchParams>();
+  let getTokenRequest = Promise.resolve();
   const {
     data,
     execute: getToken,
@@ -39,7 +40,7 @@ function _useAuth() {
     immediate: false,
     updateDataOnError: true,
   })
-    .post(params, "application/x-www-form-urlencoded")
+    .post(getTokenParams, "application/x-www-form-urlencoded")
     .json<ConnectTokenResponseType>();
 
   const errors = computed(() => data.value?.errors);
@@ -54,17 +55,17 @@ function _useAuth() {
   });
 
   const INITIAL_STATE = Object.freeze({
-    access_token: null,
     expires_at: null,
-    refresh_token: null,
     token_type: "Bearer",
+    access_token: null,
+    refresh_token: null,
   });
 
   const state = useLocalStorage<{
-    access_token: string | null;
     expires_at: Date | string | null;
-    refresh_token: string | null;
     token_type: string;
+    access_token: string | null;
+    refresh_token: string | null;
   }>("auth", { ...INITIAL_STATE });
 
   function updateToken(context: AfterFetchContext<ConnectTokenResponseType>) {
@@ -85,7 +86,7 @@ function _useAuth() {
   async function authorize(username: string, password: string): Promise<void> {
     const { storeId } = globals;
 
-    params.value = new URLSearchParams({
+    getTokenParams.value = new URLSearchParams({
       grant_type: "password",
       scope: "offline_access",
       storeId,
@@ -93,17 +94,23 @@ function _useAuth() {
       password,
     });
 
-    await getToken(true);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    getTokenRequest = await getToken(true);
   }
 
   async function refresh() {
-    params.value = new URLSearchParams({
+    getTokenParams.value = new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: state.value.refresh_token!,
     });
 
     try {
-      await getToken(true);
+      if (!isAuthorizing.value) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        await (getTokenRequest = getToken(true));
+      } else {
+        await getTokenRequest;
+      }
     } catch {
       state.value = { ...INITIAL_STATE };
       broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
