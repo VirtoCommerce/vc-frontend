@@ -17,16 +17,12 @@
             <div class="vc-push-notifications__title">
               <span>{{ $t("ui_kit.push-notifications.title") }}</span>
 
-              <VcBadge v-if="items.length" variant="outline" size="lg" rounded>
-                {{ items.length }}
+              <VcBadge v-if="totalCount > 0" variant="outline" size="lg" rounded>
+                {{ totalCount }}
               </VcBadge>
             </div>
 
-            <VcDropdownMenu
-              v-if="options && items.length"
-              class="vc-push-notifications__options"
-              placement="bottom-end"
-            >
+            <VcDropdownMenu v-if="options && totalCount" class="vc-push-notifications__options" placement="bottom-end">
               <template #trigger>
                 <VcIcon class="vc-push-notifications__options-icon" name="dots-vertical" size="sm" />
               </template>
@@ -63,7 +59,7 @@
               @remove="$emit('itemRemove', item)"
             />
 
-            <div v-if="!items.length" class="vc-push-notifications__empty">
+            <div v-if="totalCount === 0" class="vc-push-notifications__empty">
               <div class="vc-push-notifications__empty-title">
                 {{ $t("ui_kit.push-notifications.empty.title") }}
               </div>
@@ -95,7 +91,8 @@ export interface IEmits {
 }
 
 interface IProps {
-  items?: VcPushNotificationType[];
+  totalCount: number;
+  items: VcPushNotificationType[];
   removable?: boolean;
   options?: boolean;
   yOffset?: number | string;
@@ -105,7 +102,6 @@ interface IProps {
 defineEmits<IEmits>();
 
 withDefaults(defineProps<IProps>(), {
-  items: () => [],
   yOffset: 30,
   placement: "bottom-end",
 });

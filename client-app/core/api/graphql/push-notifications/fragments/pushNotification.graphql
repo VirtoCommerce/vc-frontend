@@ -1,0 +1,6 @@
+fragment pushNotification on PushNotificationType {
+  id
+  createdDate
+  shortMessage
+  status
+}

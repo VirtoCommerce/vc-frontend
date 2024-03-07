@@ -1,0 +1,10 @@
+#import "../../fragments/pushNotification.graphql"
+
+query GetPushNotifications {
+  pushNotifications {
+    unreadCount
+    items {
+      ...pushNotification
+    }
+  }
+}

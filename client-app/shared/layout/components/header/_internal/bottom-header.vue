@@ -51,6 +51,12 @@
             {{ item.title }}
           </BottomHeaderLink>
 
+          <PushNotifications v-else-if="item.id === 'push-notifications'" v-slot="{ count }" :y-offset="36">
+            <BottomHeaderLink :link="item" :count="count">
+              {{ item.title }}
+            </BottomHeaderLink>
+          </PushNotifications>
+
           <BottomHeaderLink v-else :link="item">
             {{ item.title }}
           </BottomHeaderLink>
@@ -90,6 +96,7 @@ import { SearchBar } from "@/shared/layout";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
+import PushNotifications from "@/shared/push-notifications/components/push-notifications.vue";
 
 const router = useRouter();
 const { organization } = useUser();

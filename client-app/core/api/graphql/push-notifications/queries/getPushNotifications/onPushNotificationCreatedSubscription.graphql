@@ -1,0 +1,7 @@
+#import "../../fragments/pushNotification.graphql"
+
+subscription OnPushNotificationCreated {
+  pushNotificationCreated {
+    ...pushNotification
+  }
+}
