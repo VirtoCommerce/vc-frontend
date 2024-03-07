@@ -10,7 +10,7 @@ import { API_URL } from "@/core/api/graphql/consts";
 
 const httpLink = new HttpLink({ uri: API_URL, fetch: apolloFetch });
 const wsLink = new WebSocketLink(
-  new SubscriptionClient(`wss://${location.host}${API_URL}`, { minTimeout: 0, reconnect: true }),
+  new SubscriptionClient(`wss://${location.host}${API_URL}`, { reconnect: true, timeout: 60000 }),
 );
 
 const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);

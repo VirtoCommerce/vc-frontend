@@ -3,7 +3,7 @@ import { merge } from "lodash";
 import { GetPushNotificationsDocument, OnPushNotificationCreatedDocument } from "@/core/api/graphql/types";
 
 export function useGetPushNotifications() {
-  const result = useQuery(GetPushNotificationsDocument);
+  const result = useQuery(GetPushNotificationsDocument, null, { fetchPolicy: "cache-and-network" });
   result.subscribeToMore({
     document: OnPushNotificationCreatedDocument,
     updateQuery: (previousQueryResult, { subscriptionData }) => {
