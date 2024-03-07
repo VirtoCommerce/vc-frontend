@@ -19,11 +19,14 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { defineAsyncComponent, onBeforeUnmount, watchEffect } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, watchEffect } from "vue";
+import { getPage } from "@/core/api/graphql";
 import { useNavigations } from "@/core/composables";
+import { globals } from "@/core/globals";
 import { LandingPage } from "@/shared/builder-io";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
+import type { PageTemplate } from "@/shared/static-content";
 import NotFound from "@/pages/404.vue";
 
 interface IProps {
@@ -54,12 +57,24 @@ onBeforeUnmount(() => {
   setMatchingRouteName("");
 });
 
+const getPageParams = computed(() => {
+  const { storeId } = globals;
+
+  return { id: slugInfo?.value?.entityInfo?.objectId || "", storeId };
+});
+
+const { load: loadPage, result } = getPage(getPageParams);
+
 watchEffect(async () => {
   let matchingRouteName = "";
 
   if (slugInfo.value?.entityInfo?.objectType === "ContentFile") {
-    // todo add gql query
-    staticPage.value = await Promise.resolve({ content: [], settings: { type: "", id: "", name: "" } });
+    await loadPage();
+    if (typeof result?.value?.page?.content !== "string") {
+      return;
+    }
+    const { content, settings } = JSON.parse(result.value.page.content) as PageTemplate;
+    staticPage.value = { content, settings };
   }
 
   switch (slugInfo.value?.entityInfo?.objectType) {

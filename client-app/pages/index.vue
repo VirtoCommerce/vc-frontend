@@ -97,6 +97,7 @@ import { globals } from "@/core/globals";
 import { useSlugInfo } from "@/shared/common";
 import { LoginFormSection } from "@/shared/layout";
 import { useStaticPage } from "@/shared/static-content";
+import type { PageTemplate } from "@/shared/static-content";
 
 const { t } = useI18n();
 
@@ -113,20 +114,24 @@ const { staticPage } = useStaticPage();
 const { loading, slugInfo } = useSlugInfo("__index__home__page__");
 
 const getPageParams = computed(() => {
-  const { storeId, cultureName } = globals;
+  const { storeId } = globals;
 
-  return { id: slugInfo?.value?.entityInfo?.objectId || "", storeId, cultureName };
+  return { id: slugInfo?.value?.entityInfo?.objectId || "", storeId };
 });
 
-getPage(getPageParams).onResult(console.log);
+const { load: loadPage, result } = getPage(getPageParams);
 
-watch(slugInfo, (slugInfoValue) => {
+watch(slugInfo, async (slugInfoValue) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 
-  staticPage.value =
-    slugInfoValue?.entityInfo?.objectType === "ContentFile"
-      ? { content: [], settings: { type: "", id: "", name: "" } }
-      : undefined;
+  if (slugInfoValue?.entityInfo?.objectType === "ContentFile") {
+    await loadPage();
+    if (typeof result?.value?.page?.content !== "string") {
+      return;
+    }
+    const { content, settings } = JSON.parse(result.value.page.content) as PageTemplate;
+    staticPage.value = { content, settings };
+  }
 });
 </script>
 
