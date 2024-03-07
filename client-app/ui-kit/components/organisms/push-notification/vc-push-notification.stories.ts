@@ -1,17 +1,17 @@
-import { VcNotification } from "..";
+import { VcPushNotification } from "..";
 import { notificationMock1, notificationMock2 } from "../../../mocks/notification.mock";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
-  title: "Components/Organisms/VcNotification",
-  component: VcNotification,
+  title: "Components/Organisms/VcPushNotification",
+  component: VcPushNotification,
   argTypes: { onClick: { action: "click" }, onRemove: { action: "remove" } },
-} as Meta<typeof VcNotification>;
+} as Meta<typeof VcPushNotification>;
 
-const Template: StoryFn<typeof VcNotification> = (args) => ({
-  components: { VcNotification },
+const Template: StoryFn<typeof VcPushNotification> = (args) => ({
+  components: { VcPushNotification },
   setup: () => ({ args }),
-  template: '<VcNotification v-bind="args" />',
+  template: '<VcPushNotification v-bind="args" />',
 });
 
 export const Basic = Template.bind({});

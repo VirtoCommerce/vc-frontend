@@ -1,10 +1,10 @@
-import { VcNotifications } from "..";
+import { VcPushNotifications } from "..";
 import { notificationMock1, notificationMock2 } from "../../../mocks/notification.mock";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
-  title: "Components/Organisms/VcNotifications",
-  component: VcNotifications,
+  title: "Components/Organisms/VcPushNotifications",
+  component: VcPushNotifications,
   argTypes: {
     onReadAll: { action: "readAll" },
     onUnreadAll: { action: "unreadAll" },
@@ -12,14 +12,14 @@ export default {
     onItemRemove: { action: "itemRemove" },
     onClearRecent: { action: "clearRecent" },
   },
-} as Meta<typeof VcNotifications>;
+} as Meta<typeof VcPushNotifications>;
 
-const Template: StoryFn<typeof VcNotifications> = (args) => ({
-  components: { VcNotifications },
+const Template: StoryFn<typeof VcPushNotifications> = (args) => ({
+  components: { VcPushNotifications },
   setup: () => ({ args }),
-  template: `<VcNotifications class="inline-block" v-bind="args">
+  template: `<VcPushNotifications class="inline-block" v-bind="args">
     <span class="p-1.5 rounded bg-neutral-600 text-neutral-100">Click me!!!</span>
-  </VcNotifications>`,
+  </VcPushNotifications>`,
 });
 
 export const Basic = Template.bind({});

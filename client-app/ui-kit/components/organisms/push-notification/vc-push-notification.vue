@@ -1,26 +1,26 @@
 <template>
   <div
     :class="[
-      'vc-notification',
+      'vc-push-notification',
       {
-        'vc-notification--unread': !notification.read,
+        'vc-push-notification--unread': !notification.read,
       },
     ]"
   >
-    <VcBadge class="vc-notification__badge" color="info" rounded />
+    <VcBadge class="vc-push-notification__badge" color="info" rounded />
 
-    <div class="vc-notification__info">
-      <VcMarkdownRender class="vc-notification__content" :src="notification.text" />
+    <div class="vc-push-notification__info">
+      <VcMarkdownRender class="vc-push-notification__content" :src="notification.shortMessage" />
 
-      <div class="vc-notification__date">
+      <div class="vc-push-notification__date">
         {{ $d(notification.createdDate, "long") }}
       </div>
     </div>
 
     <VcButton
       v-if="removable"
-      class="vc-notification__button"
-      size="xs "
+      class="vc-push-notification__button"
+      size="xs"
       color="neutral"
       variant="no-background"
       icon="x"
@@ -38,7 +38,7 @@ export interface IEmits {
 }
 
 interface IProps {
-  notification: VcNotificationType;
+  notification: VcPushNotificationType;
   removable?: boolean;
 }
 
@@ -47,7 +47,7 @@ defineProps<IProps>();
 </script>
 
 <style lang="scss">
-.vc-notification {
+.vc-push-notification {
   $unread: "";
 
   @apply flex items-start ps-3 pe-1 py-2;
