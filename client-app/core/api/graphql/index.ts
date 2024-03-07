@@ -6,6 +6,7 @@ export * from "./common";
 export * from "./fulfillmentCenters";
 export * from "./orders";
 export * from "./organization";
+export * from "./page";
 export * from "./payment";
 export * from "./quotes";
 export * from "./slugInfo";

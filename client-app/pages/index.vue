@@ -89,9 +89,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, watch } from "vue";
+import { computed, defineAsyncComponent, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { getPage } from "@/core/api/graphql";
 import { usePageHead } from "@/core/composables";
+import { globals } from "@/core/globals";
 import { useSlugInfo } from "@/shared/common";
 import { LoginFormSection } from "@/shared/layout";
 import { useStaticPage } from "@/shared/static-content";
@@ -110,8 +112,17 @@ const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"))
 const { staticPage } = useStaticPage();
 const { loading, slugInfo } = useSlugInfo("__index__home__page__");
 
+const getPageParams = computed(() => {
+  const { storeId, cultureName } = globals;
+
+  return { id: slugInfo?.value?.entityInfo?.objectId || "", storeId, cultureName };
+});
+
+getPage(getPageParams).onResult(console.log);
+
 watch(slugInfo, (slugInfoValue) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
   staticPage.value =
     slugInfoValue?.entityInfo?.objectType === "ContentFile"
       ? { content: [], settings: { type: "", id: "", name: "" } }
