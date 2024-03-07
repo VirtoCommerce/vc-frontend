@@ -24,6 +24,9 @@ fragment shortOrderFields on CustomerOrderType {
   discountTotal {
     ...money
   }
+  shippingSubTotal {
+    ...money
+  }
   shippingTotal {
     ...money
   }

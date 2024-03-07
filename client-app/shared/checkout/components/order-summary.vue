@@ -148,7 +148,7 @@ const lineItemsDiscountTotal = computed(() =>
 
 // TODO: Change to shippingPrice when this property will be added to CustomerOrderType
 const shippingPrice = computed(() =>
-  "shippingPrice" in props.cart ? props.cart.shippingPrice : props.cart.shipments?.[0]?.price,
+  "shippingPrice" in props.cart ? props.cart.shippingPrice : props.cart.shippingSubTotal,
 );
 
 const shippingDiscountTotal = computed(() =>
