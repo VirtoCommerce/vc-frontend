@@ -42,41 +42,6 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
 }
 
-/** @deprecated Use $n(value, "decimal", { notation: "compact" }) */
-export function numberToShortString(num: number): string {
-  if (num < 1000) {
-    return num.toString();
-  }
-
-  const sizes = [
-    { value: 1e3, suffix: "K" },
-    { value: 1e6, suffix: "M" },
-    { value: 1e9, suffix: "B" },
-    { value: 1e12, suffix: "T" },
-    { value: 1e15, suffix: "P" },
-    { value: 1e18, suffix: "E" },
-  ];
-
-  let index;
-
-  for (index = sizes.length - 1; index > 0; index -= 1) {
-    if (num >= sizes[index].value) {
-      break;
-    }
-  }
-
-  return (num / sizes[index].value).toFixed(2).replace(/\.0+$|(\.[0-9]*[1-9])0+$/, "$1") + sizes[index].suffix;
-}
-
-/**
- * Сonvert Date value to string with format 'yyyy-MM-dd'
- * @deprecated Use {@link Date.toISOString} to convert into full ISO 8601 string instead.
- */
-export function dateToIsoDateString(date: Date | undefined) {
-  const lastDateSymbolIndex = 10;
-  return date?.toISOString().substring(0, lastDateSymbolIndex);
-}
-
 //todo add unit test
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);

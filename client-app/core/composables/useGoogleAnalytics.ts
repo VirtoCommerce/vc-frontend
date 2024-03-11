@@ -141,10 +141,6 @@ function addItemsToCart(items: LineItemType[], params?: EventParamsExtendedType)
   });
 }
 
-function removeItemFromCart(item: LineItemType, params?: EventParamsExtendedType): void {
-  removeItemsFromCart([item], params);
-}
-
 function removeItemsFromCart(items: LineItemType[], params?: EventParamsExtendedType): void {
   const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
   const inputItems = items.map((item) => lineItemToGtagItem(item));
@@ -255,8 +251,6 @@ export function useGoogleAnalytics() {
     addItemToWishList,
     addItemToCart,
     addItemsToCart,
-    /** @deprecated Use {@link removeItemsFromCart } */
-    removeItemFromCart,
     removeItemsFromCart,
     viewCart,
     clearCart,
