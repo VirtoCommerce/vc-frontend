@@ -1,5 +1,5 @@
 import { computed, toValue } from "vue";
-import { getPage, getSlugInfoNew } from "@/core/api/graphql";
+import { getPage, getSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
 import type { PageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
@@ -17,7 +17,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     };
   });
 
-  const { result, loading: slugLoading } = getSlugInfoNew(variables);
+  const { result, loading: slugLoading } = getSlugInfo(variables);
 
   const slugInfo = computed(() => {
     if (!isReserved && RESERVED_URLS.includes(toValue(seoUrl))) {
