@@ -1,5 +1,5 @@
-query GetPage($storeId: String!, $id: String!) {
-  page(storeId: $storeId, id: $id) {
+query GetPage($storeId: String!, $cultureName: String, $id: String!) {
+  page(storeId: $storeId, cultureName: $cultureName, id: $id) {
     id
     name
     content

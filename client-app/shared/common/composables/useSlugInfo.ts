@@ -31,7 +31,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
   });
 
   const getPageParams = computed(() => {
-    return { id: slugInfo?.value?.entityInfo?.objectId || "", storeId };
+    return { id: slugInfo?.value?.entityInfo?.objectId || "", cultureName, storeId };
   });
 
   const { load: fetchContent, result: contentResult, loading: contentLoading } = getPage(getPageParams);
