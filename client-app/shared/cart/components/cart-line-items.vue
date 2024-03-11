@@ -4,15 +4,18 @@
     :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
-    subtotal
-    item-total
+    with-image
+    with-properties
+    with-price
+    with-total
+    with-subtotal
     removable
     selectable
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
   >
     <template #titles>
-      <div class="min-w-[5.5rem] text-center">
+      <div class="text-center">
         {{ $t("common.labels.quantity") }}
       </div>
     </template>

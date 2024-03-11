@@ -1,21 +1,28 @@
 <template>
-  <VcLineItems :items="items" removable @remove:items="$emit('remove:items', $event)">
+  <VcLineItems
+    :items="items"
+    with-image
+    with-properties
+    with-price
+    removable
+    @remove:items="$emit('remove:items', $event)"
+  >
     <template #default="{ item }">
-      <div class="flex w-full max-w-[16rem] flex-wrap gap-1.5 md:max-w-none">
-        <VcAddToCart
-          v-if="!item.deleted"
-          class="w-full"
-          :model-value="item.quantity"
-          :min-quantity="item.minQuantity"
-          :max-quantity="item.maxQuantity"
-          :available-quantity="item.inStockQuantity"
-          :count-in-cart="item.countInCart"
-          :disabled="addToCartDisabled(item)"
-          @update:model-value="changeItemQuantity(item, $event)"
-          @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
-          @update:validation="setValidationStatus(item, $event)"
-        />
+      <VcAddToCart
+        v-if="!item.deleted"
+        class="w-full"
+        :model-value="item.quantity"
+        :min-quantity="item.minQuantity"
+        :max-quantity="item.maxQuantity"
+        :available-quantity="item.inStockQuantity"
+        :count-in-cart="item.countInCart"
+        :disabled="addToCartDisabled(item)"
+        @update:model-value="changeItemQuantity(item, $event)"
+        @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
+        @update:validation="setValidationStatus(item, $event)"
+      />
 
+      <div class="mt-1.5 flex gap-1.5">
         <InStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"

@@ -1,11 +1,5 @@
 import { VcLineItems } from "..";
-import {
-  preparedLineItemMock1,
-  preparedLineItemMock2,
-  preparedLineItemMock3,
-  preparedLineItemMock4,
-  preparedLineItemMock5,
-} from "../../../mocks/line-item.mock";
+import { preparedLineItemMock1, preparedLineItemMock2 } from "../../../mocks/line-item.mock";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -81,15 +75,18 @@ Removable.args = {
   removable: true,
 };
 
-export const WithoutImage = Template.bind({});
-WithoutImage.args = {
-  items: [preparedLineItemMock3, preparedLineItemMock3, preparedLineItemMock3],
+export const WithImage = Template.bind({});
+WithImage.args = {
+  items: [preparedLineItemMock2, preparedLineItemMock2, preparedLineItemMock2],
+  withImage: true,
   removable: true,
 };
 
-export const WithoutImageAndProperties = Template.bind({});
-WithoutImageAndProperties.args = {
-  items: [preparedLineItemMock4, preparedLineItemMock4, preparedLineItemMock4],
+export const WithImageAndProperties = Template.bind({});
+WithImageAndProperties.args = {
+  items: [preparedLineItemMock2, preparedLineItemMock2, preparedLineItemMock2],
+  withImage: true,
+  withProperties: true,
   removable: true,
 };
 
@@ -112,7 +109,10 @@ QuantityInput.args = {
     },
   ],
   removable: true,
-  itemTotal: true,
+  withImage: true,
+  withProperties: true,
+  withPrice: true,
+  withTotal: true,
 };
 
 export const AddToCart = TemplateAddToCart.bind({});
@@ -133,28 +133,5 @@ AddToCart.args = {
       id: "3",
     },
   ],
-  removable: true,
-};
-
-export const Minimal = Template.bind({});
-Minimal.args = {
-  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
-};
-
-export const MinimalSelectable = Template.bind({});
-MinimalSelectable.args = {
-  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
-  selectable: true,
-};
-
-export const MinimalQuantity = TemplateQuantity.bind({});
-MinimalQuantity.args = {
-  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
-  removable: true,
-};
-
-export const MinimalAddToCart = TemplateAddToCart.bind({});
-MinimalAddToCart.args = {
-  items: [preparedLineItemMock5, preparedLineItemMock5, preparedLineItemMock5],
   removable: true,
 };

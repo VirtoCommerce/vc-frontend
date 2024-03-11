@@ -196,7 +196,7 @@ watchEffect(() => {
   }
 
   &__main {
-    @apply flex items-start;
+    @apply flex items-start min-h-[1.25rem];
 
     @media (min-width: theme("screens.md")) {
       @apply items-center gap-3;
@@ -207,7 +207,7 @@ watchEffect(() => {
     @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-additional-50;
 
     @media (min-width: theme("screens.md")) {
-      @apply static top-auto left-auto -mx-2;
+      @apply static top-auto left-auto -m-2;
     }
 
     #{$selected} & {
@@ -305,7 +305,7 @@ watchEffect(() => {
     @apply flex items-center gap-3 empty:hidden max-md:mt-3;
 
     .vc-add-to-cart {
-      @apply xs:w-[15.7rem];
+      @apply w-[13rem] 2xl:w-[15.7rem];
     }
 
     .vc-quantity {

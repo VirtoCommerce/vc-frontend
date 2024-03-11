@@ -14,18 +14,18 @@
       </div>
 
       <div
-        v-if="withProperties"
+        v-if="showProperties"
         :class="[
           'vc-line-items__properties',
           {
-            'vc-line-items__properties--wide': !withPrice,
+            'vc-line-items__properties--wide': !showPrice,
           },
         ]"
       >
         {{ $t("common.labels.properties") }}
       </div>
 
-      <div v-if="withPrice" class="vc-line-items__price">
+      <div v-if="showPrice" class="vc-line-items__price">
         {{ $t("common.labels.price_per_item") }}
       </div>
 
@@ -33,7 +33,7 @@
         <slot name="titles" />
       </div>
 
-      <div v-if="itemTotal && withTotal" class="vc-line-items__total">
+      <div v-if="showTotal" class="vc-line-items__total">
         {{ $t("common.labels.total") }}
       </div>
 
@@ -45,15 +45,15 @@
       <VcLineItem
         v-for="item in items"
         :key="item.id"
-        :image-url="item.imageUrl"
+        :image-url="showImage ? item.imageUrl : undefined"
         :name="item.name"
         :route="item.route"
-        :deleted="item.deleted"
-        :properties="item.properties"
+        :properties="showProperties ? item.properties : undefined"
+        :list-price="showPrice ? item.listPrice : undefined"
+        :actual-price="showPrice ? item.actualPrice : undefined"
+        :total="showTotal ? item.extendedPrice : undefined"
         :disabled="disabled"
-        :list-price="item.listPrice"
-        :actual-price="item.actualPrice"
-        :total="itemTotal && withTotal ? item.extendedPrice : undefined"
+        :deleted="item.deleted"
         :removable="removable"
         :selectable="selectable"
         :selected="selectable && selectedItemIds?.includes(item.id)"
@@ -98,9 +98,9 @@
         </VcButton>
       </template>
 
-      <div v-if="subtotal" class="vc-line-items__subtotal">
+      <div v-if="withSubtotal" class="vc-line-items__subtotal">
         <span class="vc-line-items__subtotal-label">{{ $t("common.labels.subtotal") }}:</span>
-        <span class="vc-line-items__subtotal-sum">{{ $n(_subtotal, "currency") }}</span>
+        <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
       </div>
     </div>
   </div>
@@ -122,9 +122,12 @@ interface IProps {
   removable?: boolean;
   items?: PreparedLineItemType[];
   sharedSelectedItemIds?: string[];
-  subtotal?: boolean;
   selectable?: boolean;
-  itemTotal?: boolean;
+  withImage?: boolean;
+  withProperties?: boolean;
+  withPrice?: boolean;
+  withTotal?: boolean;
+  withSubtotal?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -136,12 +139,15 @@ const props = withDefaults(defineProps<IProps>(), {
 const slotElements = ref<HTMLElement[]>([]);
 const slotWidth = ref<string>("");
 
-const withProperties = computed(() => props.items.some((item) => item.properties?.length));
-const withPrice = computed(() => props.items.some((item) => item.listPrice || item.actualPrice));
-const withTotal = computed(() => props.items.some((item) => item.extendedPrice));
+const showImage = computed(() => props.withImage && props.items.some((item) => item.imageUrl));
+const showProperties = computed(() => props.withProperties && props.items.some((item) => item.properties?.length));
+const showPrice = computed(() => props.withPrice && props.items.some((item) => item.listPrice || item.actualPrice));
+const showTotal = computed(() => props.withTotal && hasTotal.value);
 
-const _subtotal = computed<number>(() =>
-  withTotal.value
+const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
+
+const subtotal = computed<number>(() =>
+  hasTotal.value
     ? sumBy(
         props.items.filter((item) => selectedItemIds.value.includes(item.id)),
         (item) => item.extendedPrice?.amount,

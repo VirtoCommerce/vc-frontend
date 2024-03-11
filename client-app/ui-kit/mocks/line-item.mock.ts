@@ -118,38 +118,3 @@ export const preparedLineItemMock2: PreparedLineItemType = {
   minQuantity: 0,
   maxQuantity: 25,
 };
-
-export const preparedLineItemMock3: PreparedLineItemType = {
-  id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
-  name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
-  inStockQuantity: 25,
-  listPrice: getMoney(57.25),
-  actualPrice: getMoney(57.25),
-  extendedPrice: getMoney(57.25),
-  quantity: 1,
-  deleted: false,
-  route: "/bolts/eyebolts/eye-boltcarbon-steel-46m6x70pk25",
-  properties: propertiesMock.slice(0, 3),
-  minQuantity: 0,
-  maxQuantity: 25,
-};
-
-export const preparedLineItemMock4: PreparedLineItemType = {
-  id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
-  name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
-  inStockQuantity: 25,
-  listPrice: getMoney(57.25),
-  actualPrice: getMoney(57.25),
-  extendedPrice: getMoney(57.25),
-  quantity: 1,
-  deleted: false,
-  route: "/bolts/eyebolts/eye-boltcarbon-steel-46m6x70pk25",
-  minQuantity: 0,
-  maxQuantity: 25,
-};
-
-export const preparedLineItemMock5: PreparedLineItemType = {
-  id: "4be239b3-a95e-4cb9-8bf7-a1e92e594150",
-  name: "Eye Bolt,Carbon Steel 4.6,M6x70,PK25",
-  quantity: 1,
-};
