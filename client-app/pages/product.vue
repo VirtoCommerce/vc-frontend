@@ -1,59 +1,50 @@
 <template>
-  <!--
-    TODO: update VcContainer and use it
-    https://virtocommerce.atlassian.net/browse/ST-5628
-  -->
-  <div
-    v-if="product && template"
-    class="grow bg-[--color-neutral-50] p-6 md:pb-9 lg:px-8 2xl:px-12 print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
-  >
-    <div class="mx-auto max-w-[87.75rem]">
-      <!-- Breadcrumbs -->
-      <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
+  <VcContainer v-if="product && template" class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]">
+    <!-- Breadcrumbs -->
+    <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
-      <h1 class="text-2xl font-bold uppercase sm:text-3xl md:text-4xl">
-        {{ product.name }}
-      </h1>
+    <h1 class="text-2xl font-bold uppercase sm:text-3xl md:text-4xl">
+      {{ product.name }}
+    </h1>
 
-      <div class="mt-2 flex flex-wrap gap-5">
-        <VcCopyText v-if="!hasVariations" :text="product.code" :notification="$t('pages.product.sku_copied_message')">
-          <span class="text-base text-[--color-secondary-900]">
-            {{ $t("pages.product.sku_label") }}
-            <span class="font-black">#{{ product.code }}</span>
-          </span>
-        </VcCopyText>
-      </div>
+    <div class="mt-2 flex flex-wrap gap-5">
+      <VcCopyText v-if="!hasVariations" :text="product.code" :notification="$t('pages.product.sku_copied_message')">
+        <span class="text-base text-[--color-secondary-900]">
+          {{ $t("pages.product.sku_label") }}
+          <span class="font-black">#{{ product.code }}</span>
+        </span>
+      </VcCopyText>
+    </div>
 
-      <!--
+    <!--
         TODO: create VcLayoutWithSidebar component
         https://virtocommerce.atlassian.net/browse/ST-5629
       -->
-      <div
-        class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6 print:flex-row print:gap-4"
-      >
-        <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
-          <template v-for="item in template.content">
-            <component
-              :is="item.type"
-              v-if="!item.hidden"
-              :key="item.id"
-              :product="product"
-              :related-products="relatedProducts"
-              :model="item"
-            />
-          </template>
-        </div>
-
-        <ProductSidebar
-          :class="[
-            'flex-none md:sticky md:top-[4.5rem] md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
-            { 'print:hidden': !!product.hasVariations },
-          ]"
-          :product="product"
-        />
+    <div
+      class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6 print:flex-row print:gap-4"
+    >
+      <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
+        <template v-for="item in template.content">
+          <component
+            :is="item.type"
+            v-if="!item.hidden"
+            :key="item.id"
+            :product="product"
+            :related-products="relatedProducts"
+            :model="item"
+          />
+        </template>
       </div>
+
+      <ProductSidebar
+        :class="[
+          'flex-none md:sticky md:top-[4.5rem] md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
+          { 'print:hidden': !!product.hasVariations },
+        ]"
+        :product="product"
+      />
     </div>
-  </div>
+  </VcContainer>
 
   <Error404 v-else-if="!loading && template" />
 </template>

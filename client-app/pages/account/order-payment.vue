@@ -1,9 +1,9 @@
 <template>
   <div v-if="order">
-    <VcBreadcrumbs :items="breadcrumbs" class="side-space" />
+    <VcBreadcrumbs :items="breadcrumbs" />
 
     <!-- Title block -->
-    <div class="side-space flex items-center justify-between" :class="{ '-mb-3': executed }">
+    <div class="flex items-center justify-between" :class="{ '-mb-3': executed }">
       <h2 class="text-3xl font-bold uppercase text-gray-800">
         {{
           executed
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Subtitle block -->
-    <div v-if="executed" class="side-space gap-x-4 md:flex">
+    <div v-if="executed" class="gap-x-4 md:flex">
       <div class="text-sm">
         <span class="font-bold">
           {{ $t("pages.account.order_payment.order_date") }}
@@ -36,14 +36,14 @@
       <div class="w-full grow lg:w-3/4 xl:w-4/5">
         <div
           :class="executed ? 'md:bg-white md:border md:shadow-sm' : 'bg-white border shadow-sm'"
-          class="overflow-hidden px-9 py-6 md:rounded"
+          class="overflow-hidden p-6 max-lg:-mx-6 md:rounded lg:px-9"
         >
           <!-- Successful payment -->
           <VcEmptyPage
             v-if="success"
             image="/static/images/payment/payment-successful.webp"
             mobile-image="/static/images/payment/payment-successful.webp"
-            class="-mx-9 -mb-24 -mt-16 md:-mt-6 lg:pl-14"
+            class="-mx-6 -mb-24 -mt-16 md:-mt-6 lg:-mx-9 lg:pl-14"
           >
             <template #description>
               <h2
@@ -229,10 +229,7 @@
       </div>
 
       <!-- Sidebar -->
-      <div
-        :class="executed ? 'hidden md:flex' : 'flex'"
-        class="order-first mb-6 flex-col px-5 md:px-0 lg:order-1 lg:mb-0 lg:w-1/4"
-      >
+      <div :class="executed ? 'hidden md:flex' : 'flex'" class="order-first mb-6 flex-col lg:order-1 lg:mb-0 lg:w-1/4">
         <OrderSummary :cart="order" />
       </div>
     </div>
@@ -292,7 +289,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const executed = computed<boolean>(() => success.value || failure.value);
-const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
+const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 const paymentTypeName = computed<string | undefined>(() => payment.value?.paymentMethod?.typeName);
 
@@ -359,19 +356,9 @@ watch(success, async (value) => {
 watchEffect(async () => {
   if (props.orderId !== order.value?.id) {
     await fetchFullOrder({ id: props.orderId });
-  } else if (order.value?.inPayments[0]?.isApproved) {
+  } else if (order.value?.inPayments?.[0]?.isApproved) {
     // If the order is paid
-    router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
+    await router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
   }
 });
 </script>
-
-<style lang="scss" scoped>
-.side-space {
-  @apply mx-5;
-
-  @media (min-width: theme("screens.lg")) {
-    @apply mx-0;
-  }
-}
-</style>

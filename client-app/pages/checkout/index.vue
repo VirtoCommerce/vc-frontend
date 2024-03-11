@@ -1,18 +1,16 @@
 <template>
   <VcContainer>
-    <div class="px-5 lg:px-0 print:px-0">
-      <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5 print:mb-0">
-        {{ pageTitle }}
-      </VcTypography>
+    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5 print:mb-0">
+      {{ pageTitle }}
+    </VcTypography>
 
-      <VcSteps
-        :steps="steps"
-        :current-step-index="currentStepIndex"
-        :start-step-index="0"
-        :disabled="loading || changing"
-        class="mb-5"
-      />
-    </div>
+    <VcSteps
+      :steps="steps"
+      :current-step-index="currentStepIndex"
+      :start-step-index="0"
+      :disabled="loading || changing"
+      class="mb-5"
+    />
 
     <VcLoaderOverlay :visible="loading || !currentStepId" fixed-spinner />
 

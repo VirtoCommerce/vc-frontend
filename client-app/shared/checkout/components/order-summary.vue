@@ -148,7 +148,7 @@ const lineItemsDiscountTotal = computed(() =>
 
 // TODO: Change to shippingPrice when this property will be added to CustomerOrderType
 const shippingPrice = computed(() =>
-  "shippingPrice" in props.cart ? props.cart.shippingPrice : props.cart.shipments?.[0]?.price,
+  "shippingPrice" in props.cart ? props.cart.shippingPrice : props.cart.shippingSubTotal,
 );
 
 const shippingDiscountTotal = computed(() =>
@@ -168,7 +168,7 @@ function getDiscountAmount(discount: DiscountType | OrderDiscountType): number {
 <style scoped lang="scss">
 @media print {
   #order-summary {
-    :deep(.vc-card-widget__title) {
+    :deep(.vc-widget__header-container) {
       @apply hidden;
     }
   }

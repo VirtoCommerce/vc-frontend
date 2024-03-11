@@ -1,6 +1,6 @@
 import type * as Components from ".";
 
-declare module "@vue/runtime-core" {
+declare module "vue" {
   // Glboal components is already declated interface which we want to augment
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
@@ -10,8 +10,6 @@ declare module "@vue/runtime-core" {
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
     VcButton: typeof Components.VcButton;
     VcCardSkeleton: typeof Components.VcCardSkeleton;
-    /** @deprecated use {@link VcWidget} instead. */
-    VcCardWidget: typeof Components.VcCardWidget;
     VcCarouselPagination: typeof Components.VcCarouselPagination;
     VcCheckbox: typeof Components.VcCheckbox;
     VcContainer: typeof Components.VcContainer;
@@ -38,16 +36,6 @@ declare module "@vue/runtime-core" {
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
-    /** @deprecated use {@link VcWidget} instead. */
-    VcSection: typeof Components.VcSection;
-    /** @deprecated use {@link VcWidget} instead. */
-    VcSectionWidget: typeof Components.VcSectionWidget;
-    /** @deprecated */
-    VcSelectItem: typeof Components.VcSelectItem;
-    /** @deprecated */
-    VcSelectItemImage: typeof Components.VcSelectItemImage;
-    /** @deprecated */
-    VcSelectItemText: typeof Components.VcSelectItemText;
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
@@ -55,3 +43,5 @@ declare module "@vue/runtime-core" {
     VcTypography: typeof Components.VcTypography;
   }
 }
+
+export {};

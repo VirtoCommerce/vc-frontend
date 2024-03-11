@@ -156,7 +156,7 @@ const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 
 const { t } = useI18n();
 const { registerUser, registerOrganization, loading } = useUser();
-const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
+const { passwordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 usePageHead({
@@ -284,8 +284,4 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
-
-if (!passwordRequirements.value) {
-  fetchPasswordRequirements();
-}
 </script>

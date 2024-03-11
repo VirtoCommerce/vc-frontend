@@ -1,11 +1,11 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="mx-5 flex items-center justify-between lg:mx-0">
-      <h2 v-t="'pages.account.checkout_defaults.title'" class="text-3xl font-bold uppercase text-gray-800" />
+    <div class="flex items-center justify-between">
+      <h2 v-t="'pages.account.checkout_defaults.title'" class="text-3xl font-bold uppercase text-neutral-900" />
     </div>
 
-    <div class="border bg-white p-7 shadow-sm lg:rounded lg:px-9 lg:py-8">
+    <VcWidget size="lg">
       <VcLoaderWithText v-if="loading" />
 
       <div v-else class="flex flex-col lg:w-1/2">
@@ -97,7 +97,7 @@
           {{ $t("pages.account.checkout_defaults.update_button") }}
         </VcButton>
       </div>
-    </div>
+    </VcWidget>
   </div>
 </template>
 

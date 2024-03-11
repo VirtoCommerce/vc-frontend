@@ -121,10 +121,10 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   }
 
   a[href] {
-    color: var(--color-link);
+    color: var(--color-accent-600);
 
     &:hover {
-      color: var(--color-link-hover);
+      color: var(--color-accent-700);
     }
   }
 

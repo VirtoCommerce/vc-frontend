@@ -305,7 +305,7 @@ const attrs = computed(() => {
 
   &:disabled#{$disabled}:not(#{$loading}) {
     &[class*="--solid--"] {
-      @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
+      @apply bg-[--color-neutral-200] border-[--color-neutral-200] text-[--color-neutral-400];
     }
 
     &[class*="--no-border--"] {

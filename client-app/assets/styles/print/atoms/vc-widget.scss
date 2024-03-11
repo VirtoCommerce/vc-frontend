@@ -1,0 +1,21 @@
+.vc-widget {
+  @apply break-inside-avoid border-none divide-none shadow-none;
+
+  @media (max-width: theme("screens.md")) {
+    .vc-container & {
+      @apply mx-0;
+    }
+  }
+
+  &__header {
+    @apply px-0;
+
+    & .vc-widget__prepend-append {
+      @apply hidden;
+    }
+  }
+
+  &__slot {
+    @apply p-0 #{!important};
+  }
+}

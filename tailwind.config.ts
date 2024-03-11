@@ -166,22 +166,11 @@ module.exports = {
         none: "0 0 #0000",
 
         /** @deprecated Use the shadows listed above */
-        "t-sm": "0 -1px 2px 0 rgba(0, 0, 0, 0.05)",
-        "t-2sm": "1px 2px 4px rgba(0, 0, 0, 0.15)",
         "t-3sm": "1px 2px 4px rgba(0, 0, 0, 0.05)",
-        t: "0 -1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-        "md-s": "2px 3px 6px rgba(0, 0, 0, 0.08)",
         "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
         "t-mds": "1px 1px 3px rgba(0, 0, 0, 0.25)",
-        "t-md": "0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
         "t-lgs": "0px -8px 15px rgba(0, 0, 0, 0.1)",
-        "t-lg": "0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-        "t-xl": "0 -20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-        "t-2xl": "0 -25px 50px -12px rgba(0, 0, 0, 0.25)",
-        "t-3xl": "0 -35px 60px -15px rgba(0, 0, 0, 0.3)",
         "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
-        "sm-x-y-button": "1px 1px 5px rgba(0, 0, 0, 0.15)",
-        "light-lg": "0px 8px 10px rgba(237, 237, 237, 0.8)",
       },
 
       fontSize: {
@@ -200,7 +189,7 @@ module.exports = {
         sm: [
           "0.875rem", //14px
           {
-            lineHeight: "1rem", //16px
+            lineHeight: "1.125rem", //18px
           },
         ],
         base: [
@@ -266,30 +255,16 @@ module.exports = {
 
         /** @deprecated Use the fonts listed above */
 
-        10: "0.625rem", //10px
         11: [
           "0.6875rem", //11px
           {
             lineHeight: "0.875rem", //14px
           },
         ],
-        12: [
-          "0.75rem", //12px
-          {
-            lineHeight: "1rem", //16px
-          },
-        ],
         13: [
           "0.8125rem", //13px
           {
             lineHeight: "1.25rem", //20px
-          },
-        ],
-        "13-title": [
-          "0.8125rem", //13px
-          {
-            lineHeight: "1.25rem", //20px
-            letterSpacing: "0.01em",
           },
         ],
         14: [
@@ -330,7 +305,6 @@ module.exports = {
             lineHeight: "1.563rem", //25px
           },
         ],
-        24: "1.5rem", //24px
         25: [
           "1.5625rem", //25px
           {
@@ -365,10 +339,6 @@ module.exports = {
         17: "4.25rem", //68px
         18: "4.5rem", //72px
         19: "4.75rem", //76px
-      },
-
-      width: {
-        70: "17.5rem", //280px
       },
 
       maxHeight: {

@@ -76,7 +76,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const { t } = useI18n();
 const { resetPassword, loading } = useUser();
-const { passwordRequirements, fetchPasswordRequirements } = usePasswordRequirements();
+const { passwordRequirements } = usePasswordRequirements();
 const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const validationSchema = toTypedSchema(
@@ -125,8 +125,4 @@ const onSubmit = handleSubmit(async (data) => {
     });
   }
 });
-
-if (!passwordRequirements.value) {
-  fetchPasswordRequirements();
-}
 </script>
