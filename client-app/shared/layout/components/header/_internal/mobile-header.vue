@@ -33,7 +33,7 @@
             <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
-          <PushNotifications v-slot="{ count }" class="px-1 py-2 xs:px-2">
+          <PushMessages v-slot="{ count }" class="px-1 py-2 xs:px-2">
             <div class="relative">
               <VcIcon class="text-primary" name="bell" :size="28" />
 
@@ -43,7 +43,7 @@
                 </VcBadge>
               </VcTransitionScale>
             </div>
-          </PushNotifications>
+          </PushMessages>
 
           <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
             <span class="relative block">
@@ -112,7 +112,7 @@ import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import PushNotifications from "@/shared/push-notifications/components/push-notifications.vue";
+import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);

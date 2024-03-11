@@ -26,8 +26,8 @@
         "icon": "/static/images/dashboard/icons/orders-desktop.svg#main"
       },
       {
-        "id": "push-notifications",
-        "title": "shared.layout.header.menu.push-notifications",
+        "id": "push-messages",
+        "title": "shared.layout.header.menu.push-messages",
         "icon": "/static/icons/basic/bell.svg#icon"
       },
       {

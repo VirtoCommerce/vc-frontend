@@ -1,0 +1,6 @@
+fragment pushMessage on PushMessageType {
+  id
+  createdDate
+  shortMessage
+  status
+}

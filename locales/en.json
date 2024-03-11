@@ -204,7 +204,7 @@
       "company_members": "Company Members",
       "quote_requests": "Quote Requests",
       "contact_administrator": "contact the site administrator",
-      "push-notifications": "Notifications"
+      "push-messages": "Notifications"
     },
     "titles": {
       "all_actions": "All actions",
@@ -271,7 +271,7 @@
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
           "contact_us": "@:common.links.contact_us",
-          "push-notifications": "@:common.links.push-notifications"
+          "push-messages": "@:common.links.push-messages"
         },
         "mobile": {
           "my_account": "@:common.links.account",
@@ -1361,7 +1361,7 @@
         "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
       }
     },
-    "push-notifications": {
+    "push-messages": {
       "title": "Notifications",
       "options": {
         "make_all_as_read": "Make all as read",

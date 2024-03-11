@@ -12585,11 +12585,11 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "InputMarkPushNotificationReadType",
+        "name": "InputMarkPushMessageReadType",
         "fields": null,
         "inputFields": [
           {
-            "name": "notificationId",
+            "name": "messageId",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -12610,11 +12610,11 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "InputMarkPushNotificationUnreadType",
+        "name": "InputMarkPushMessageUnreadType",
         "fields": null,
         "inputFields": [
           {
-            "name": "notificationId",
+            "name": "messageId",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -19685,7 +19685,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PushNotificationInputType",
+                    "name": "PushMessageInputType",
                     "ofType": null
                   }
                 },
@@ -19696,7 +19696,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PushNotificationType",
+              "name": "PushMessageType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -20925,7 +20925,7 @@
             "deprecationReason": "Obsolete. Use 'initializePayment' mutation"
           },
           {
-            "name": "pushNotificationMarkRead",
+            "name": "pushMessageMarkRead",
             "args": [
               {
                 "name": "command",
@@ -20934,7 +20934,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "InputMarkPushNotificationReadType",
+                    "name": "InputMarkPushMessageReadType",
                     "ofType": null
                   }
                 },
@@ -20952,7 +20952,7 @@
             "deprecationReason": null
           },
           {
-            "name": "pushNotificationMarkUnread",
+            "name": "pushMessageMarkUnread",
             "args": [
               {
                 "name": "command",
@@ -20961,7 +20961,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "InputMarkPushNotificationUnreadType",
+                    "name": "InputMarkPushMessageUnreadType",
                     "ofType": null
                   }
                 },
@@ -20979,7 +20979,7 @@
             "deprecationReason": null
           },
           {
-            "name": "pushNotificationsClearAll",
+            "name": "pushMessagesClearAll",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -20990,7 +20990,7 @@
             "deprecationReason": null
           },
           {
-            "name": "pushNotificationsMarkReadAll",
+            "name": "pushMessagesMarkReadAll",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -21001,7 +21001,7 @@
             "deprecationReason": null
           },
           {
-            "name": "pushNotificationsMarkUnreadAll",
+            "name": "pushMessagesMarkUnreadAll",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -29026,7 +29026,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "PushNotificationInputType",
+        "name": "PushMessageInputType",
         "fields": null,
         "inputFields": [
           {
@@ -29047,7 +29047,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PushNotificationType",
+        "name": "PushMessageType",
         "fields": [
           {
             "name": "createdDate",
@@ -29105,7 +29105,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PushNotificationsResponseType",
+        "name": "PushMessagesResponseType",
         "fields": [
           {
             "name": "items",
@@ -29121,7 +29121,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PushNotificationType",
+                    "name": "PushMessageType",
                     "ofType": null
                   }
                 }
@@ -31584,7 +31584,7 @@
             "deprecationReason": null
           },
           {
-            "name": "pushNotifications",
+            "name": "pushMessages",
             "args": [
               {
                 "name": "cultureName",
@@ -31614,7 +31614,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PushNotificationsResponseType",
+                "name": "PushMessagesResponseType",
                 "ofType": null
               }
             },
@@ -36130,11 +36130,11 @@
         "name": "Subscriptions",
         "fields": [
           {
-            "name": "pushNotificationCreated",
+            "name": "pushMessageCreated",
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "PushNotificationType",
+              "name": "PushMessageType",
               "ofType": null
             },
             "isDeprecated": false,

@@ -1,30 +1,30 @@
 <template>
-  <VcPopover class="vc-push-notifications" trigger="click" :placement="placement" :y-offset="yOffset">
+  <VcPopover class="vc-push-messages" trigger="click" :placement="placement" :y-offset="yOffset">
     <template #trigger>
       <slot />
     </template>
 
     <template #content>
-      <div class="vc-push-notifications__dropdown">
-        <div class="vc-push-notifications__arrow-container">
-          <div class="vc-push-notifications__popper" data-popper-arrow>
-            <div class="vc-push-notifications__arrow"></div>
+      <div class="vc-push-messages__dropdown">
+        <div class="vc-push-messages__arrow-container">
+          <div class="vc-push-messages__popper" data-popper-arrow>
+            <div class="vc-push-messages__arrow"></div>
           </div>
         </div>
 
-        <div class="vc-push-notifications__list">
-          <div class="vc-push-notifications__head">
-            <div class="vc-push-notifications__title">
-              <span>{{ $t("ui_kit.push-notifications.title") }}</span>
+        <div class="vc-push-messages__list">
+          <div class="vc-push-messages__head">
+            <div class="vc-push-messages__title">
+              <span>{{ $t("ui_kit.push-messages.title") }}</span>
 
               <VcBadge v-if="totalCount > 0" variant="outline" size="lg" rounded>
                 {{ totalCount }}
               </VcBadge>
             </div>
 
-            <VcDropdownMenu v-if="options && totalCount" class="vc-push-notifications__options" placement="bottom-end">
+            <VcDropdownMenu v-if="options && totalCount" class="vc-push-messages__options" placement="bottom-end">
               <template #trigger>
-                <VcIcon class="vc-push-notifications__options-icon" name="dots-vertical" size="sm" />
+                <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
               </template>
 
               <template #content="{ close }">
@@ -34,7 +34,7 @@
                     $emit('readAll');
                   "
                 >
-                  {{ $t("ui_kit.push-notifications.options.make_all_as_read") }}
+                  {{ $t("ui_kit.push-messages.options.make_all_as_read") }}
                 </VcMenuItem>
 
                 <VcMenuItem
@@ -43,14 +43,14 @@
                     $emit('unreadAll');
                   "
                 >
-                  {{ $t("ui_kit.push-notifications.options.make_all_as_unread") }}
+                  {{ $t("ui_kit.push-messages.options.make_all_as_unread") }}
                 </VcMenuItem>
               </template>
             </VcDropdownMenu>
           </div>
 
-          <div class="vc-push-notifications__body">
-            <VcPushNotification
+          <div class="vc-push-messages__body">
+            <VcPushMessage
               v-for="item in items"
               :key="item.id"
               :notification="item"
@@ -59,20 +59,20 @@
               @remove="$emit('itemRemove', item)"
             />
 
-            <div v-if="totalCount === 0" class="vc-push-notifications__empty">
-              <div class="vc-push-notifications__empty-title">
-                {{ $t("ui_kit.push-notifications.empty.title") }}
+            <div v-if="totalCount === 0" class="vc-push-messages__empty">
+              <div class="vc-push-messages__empty-title">
+                {{ $t("ui_kit.push-messages.empty.title") }}
               </div>
 
-              <div class="vc-push-notifications__empty-text">
-                {{ $t("ui_kit.push-notifications.empty.description") }}
+              <div class="vc-push-messages__empty-text">
+                {{ $t("ui_kit.push-messages.empty.description") }}
               </div>
             </div>
           </div>
 
-          <div class="vc-push-notifications__foot">
+          <div class="vc-push-messages__foot">
             <VcButton v-if="removable" variant="outline" color="secondary" size="xs" @click="$emit('clearAll')">
-              {{ $t("ui_kit.push-notifications.clear_all") }}
+              {{ $t("ui_kit.push-messages.clear_all") }}
             </VcButton>
           </div>
         </div>
@@ -83,8 +83,8 @@
 
 <script setup lang="ts">
 export interface IEmits {
-  (event: "itemClick", item: VcPushNotificationType): void;
-  (event: "itemRemove", item: VcPushNotificationType): void;
+  (event: "itemClick", item: VcPushMessageType): void;
+  (event: "itemRemove", item: VcPushMessageType): void;
   (event: "readAll"): void;
   (event: "unreadAll"): void;
   (event: "clearAll"): void;
@@ -92,7 +92,7 @@ export interface IEmits {
 
 interface IProps {
   totalCount: number;
-  items: VcPushNotificationType[];
+  items: VcPushMessageType[];
   removable?: boolean;
   options?: boolean;
   yOffset?: number | string;
@@ -108,7 +108,7 @@ withDefaults(defineProps<IProps>(), {
 </script>
 
 <style lang="scss">
-.vc-push-notifications {
+.vc-push-messages {
   &__dropdown {
     @apply px-1.5 w-screen;
 

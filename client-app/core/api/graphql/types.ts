@@ -27,7 +27,6 @@ export type Scalars = {
 };
 
 export type AccountCreationResultType = {
-  /** The errors that occurred during the operation. */
   errors?: Maybe<Array<Maybe<RegistrationErrorType>>>;
   requireEmailVerification: Scalars['Boolean']['output'];
   succeeded: Scalars['Boolean']['output'];
@@ -43,23 +42,14 @@ export type AddQuoteAttachmentsCommandType = {
 };
 
 export type Asset = {
-  /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
-  /** Group of the asset. */
   group?: Maybe<Scalars['String']['output']>;
-  /** The unique ID of the asset. */
   id: Scalars['String']['output'];
-  /** MimeType of the asset. */
   mimeType?: Maybe<Scalars['String']['output']>;
-  /** The name of the asset. */
   name?: Maybe<Scalars['String']['output']>;
-  /** RelativeUrl of the asset. */
   relativeUrl?: Maybe<Scalars['String']['output']>;
-  /** Size of the asset. */
   size: Scalars['Long']['output'];
-  /** Type id of the asset. */
   typeId: Scalars['String']['output'];
-  /** Url of the asset. */
   url: Scalars['String']['output'];
 };
 
@@ -69,46 +59,30 @@ export type AuthorizePaymentResultType = {
 };
 
 export type AvailabilityData = {
-  /** Available quantity */
   availableQuantity: Scalars['Long']['output'];
-  /** Inventories */
   inventories: Array<InventoryInfo>;
-  /** Is active */
   isActive: Scalars['Boolean']['output'];
-  /** Is available */
   isAvailable: Scalars['Boolean']['output'];
-  /** Is buyable */
   isBuyable: Scalars['Boolean']['output'];
-  /** Is estimated */
   isEstimated: Scalars['Boolean']['output'];
-  /** Is in stock */
   isInStock: Scalars['Boolean']['output'];
-  /** Is track inventory */
   isTrackInventory: Scalars['Boolean']['output'];
 };
 
 export type Breadcrumb = {
-  /** Id of item the breadcrumb calculated for */
   itemId: Scalars['String']['output'];
-  /** Semantic URL keyword */
   semanticUrl?: Maybe<Scalars['String']['output']>;
-  /** Full path from catalog */
   seoPath?: Maybe<Scalars['String']['output']>;
-  /** Name of current breadcrumb */
   title: Scalars['String']['output'];
-  /** Catalog, category or product */
   typeName: Scalars['String']['output'];
 };
 
 export type BulkCartType = {
-  /** Cart */
   cart?: Maybe<CartType>;
-  /** A set of errors in case the Skus are invalid */
   errors?: Maybe<Array<Maybe<ValidationErrorType>>>;
 };
 
 export type BulkWishlistType = {
-  /** Wishlists */
   wishlists?: Maybe<Array<Maybe<WishlistType>>>;
 };
 
@@ -118,202 +92,109 @@ export type CancelQuoteCommandType = {
 };
 
 export type CartAddressType = {
-  /** Address type */
   addressType?: Maybe<Scalars['Int']['output']>;
-  /** City */
   city?: Maybe<Scalars['String']['output']>;
-  /** Country code */
   countryCode?: Maybe<Scalars['String']['output']>;
-  /** Country name */
   countryName?: Maybe<Scalars['String']['output']>;
-  /** Description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Email */
   email?: Maybe<Scalars['String']['output']>;
-  /** First name */
   firstName?: Maybe<Scalars['String']['output']>;
-  /** Id */
   id?: Maybe<Scalars['String']['output']>;
-  /** Id */
   key?: Maybe<Scalars['String']['output']>;
-  /** Last name */
   lastName?: Maybe<Scalars['String']['output']>;
-  /** Line1 */
   line1?: Maybe<Scalars['String']['output']>;
-  /** Line2 */
   line2?: Maybe<Scalars['String']['output']>;
-  /** Middle name */
   middleName?: Maybe<Scalars['String']['output']>;
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Company name */
   organization?: Maybe<Scalars['String']['output']>;
-  /** Outer id */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Phone */
   phone?: Maybe<Scalars['String']['output']>;
-  /** Postal code */
   postalCode: Scalars['String']['output'];
-  /** Region id */
   regionId?: Maybe<Scalars['String']['output']>;
-  /** Region name */
   regionName?: Maybe<Scalars['String']['output']>;
-  /** Zip */
   zip?: Maybe<Scalars['String']['output']>;
 };
 
-/** A connection from an object to a list of objects of type `Cart`. */
 export type CartConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<CartEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<CartType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Cart`. */
 export type CartEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<CartType>;
 };
 
 export type CartShipmentItemType = {
   lineItem?: Maybe<LineItemType>;
-  /** Quantity */
   quantity: Scalars['Int']['output'];
 };
 
 export type CartType = {
-  /** Addresses */
   addresses: Array<CartAddressType>;
-  /** Available Gifts */
   availableGifts: Array<GiftItemType>;
-  /** Available payment methods */
   availablePaymentMethods: Array<PaymentMethodType>;
   availableShippingMethods: Array<ShippingMethodType>;
-  /** Shopping cart channel ID */
   channelId?: Maybe<Scalars['String']['output']>;
-  /** Shopping cart text comment */
   comment?: Maybe<Scalars['String']['output']>;
-  /** Coupons */
   coupons: Array<CouponType>;
-  /** Currency */
   currency: CurrencyType;
-  /** Shopping cart user ID */
   customerId: Scalars['String']['output'];
-  /** Shopping cart user name */
   customerName?: Maybe<Scalars['String']['output']>;
-  /** Total discount */
   discountTotal: MoneyType;
-  /** Total discount with tax */
   discountTotalWithTax: MoneyType;
-  /** Discounts */
   discounts: Array<DiscountType>;
-  /** Cart dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
-  /** Total extended price */
   extendedPriceTotal: MoneyType;
-  /** Total extended price with tax */
   extendedPriceTotalWithTax: MoneyType;
-  /** Shopping cart fee */
   fee: MoneyType;
-  /** Total fee */
   feeTotal: MoneyType;
-  /** Total fee with tax */
   feeTotalWithTax: MoneyType;
-  /** Shopping cart fee with tax */
   feeWithTax: MoneyType;
-  /** Gifts */
   gifts: Array<GiftItemType>;
-  /** Total handling */
   handlingTotal: MoneyType;
-  /** Total handling with tax */
   handlingTotalWithTax: MoneyType;
-  /** Has physical products */
   hasPhysicalProducts?: Maybe<Scalars['Boolean']['output']>;
-  /** Shopping cart ID */
   id: Scalars['String']['output'];
-  /** Displays whether the shopping cart is anonymous */
   isAnonymous: Scalars['Boolean']['output'];
-  /** Displays whether the shopping cart is recurring */
   isRecuring?: Maybe<Scalars['Boolean']['output']>;
-  /**
-   * Shows whether the cart is valid
-   * @deprecated Deprecated, because of useless (no need to know validation state without details). Use validationErrors field.
-   */
+  /** @deprecated Deprecated, because of useless (no need to know validation state without details). Use validationErrors field. */
   isValid: Scalars['Boolean']['output'];
-  /** Items */
   items: Array<LineItemType>;
-  /** Item count */
   itemsCount: Scalars['Int']['output'];
-  /** Quantity of items */
   itemsQuantity: Scalars['Int']['output'];
-  /** Shopping cart name */
   name: Scalars['String']['output'];
-  /** Shopping cart organization ID */
   organizationId?: Maybe<Scalars['String']['output']>;
-  /** Shopping cart organization name */
   organizationName?: Maybe<Scalars['String']['output']>;
-  /** Payment price */
   paymentPrice: MoneyType;
-  /** Payment price with tax */
   paymentPriceWithTax: MoneyType;
-  /** Total payment */
   paymentTotal: MoneyType;
-  /** Total payment with tax */
   paymentTotalWithTax: MoneyType;
-  /** Payments */
   payments: Array<PaymentType>;
-  /** Purchase order number */
   purchaseOrderNumber?: Maybe<Scalars['String']['output']>;
-  /** Shipments */
   shipments: Array<ShipmentType>;
-  /** Shipping price */
   shippingPrice: MoneyType;
-  /** Shipping price with tax */
   shippingPriceWithTax: MoneyType;
-  /** Total shipping */
   shippingTotal: MoneyType;
-  /** Total shipping with tax */
   shippingTotalWithTax: MoneyType;
-  /** Shopping cart status */
   status?: Maybe<Scalars['String']['output']>;
-  /** Shopping cart store ID */
   storeId: Scalars['String']['output'];
-  /** Shopping cart subtotal */
   subTotal: MoneyType;
-  /** Subtotal discount */
   subTotalDiscount: MoneyType;
-  /** Subtotal discount with tax */
   subTotalDiscountWithTax: MoneyType;
-  /** Subtotal with tax */
   subTotalWithTax: MoneyType;
-  /** Tax details */
   taxDetails: Array<TaxDetailType>;
-  /** Tax percentage */
   taxPercentRate: Scalars['Decimal']['output'];
-  /** Total tax */
   taxTotal: MoneyType;
-  /** Shipping tax type */
   taxType: Scalars['String']['output'];
-  /** Shopping cart total */
   total: MoneyType;
-  /** Shopping cart type */
   type?: Maybe<Scalars['String']['output']>;
-  /** A set of errors in case the cart is invalid */
   validationErrors: Array<ValidationErrorType>;
-  /** Shopping cart volumetric weight value */
   volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
-  /** A set of temporary warnings for a cart user */
   warnings: Array<ValidationErrorType>;
-  /** Shopping cart weight value */
   weight?: Maybe<Scalars['Decimal']['output']>;
-  /** Shopping cart weight unit value */
   weightUnit?: Maybe<Scalars['String']['output']>;
 };
 
@@ -333,56 +214,35 @@ export type CartTypeValidationErrorsArgs = {
 };
 
 export type CatalogDiscountType = {
-  /** Discount amount */
   amount: Scalars['Decimal']['output'];
-  /** Discount amount with tax */
   amountWithTax: Scalars['Decimal']['output'];
-  /** Coupon */
   coupon?: Maybe<Scalars['String']['output']>;
-  /** Value of discount description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Discount amount in the specified currency */
   moneyAmount: MoneyType;
-  /** Discount amount with tax in the specified currency */
   moneyAmountWithTax: MoneyType;
   promotion?: Maybe<Promotion>;
-  /** Value of promotion id */
   promotionId?: Maybe<Scalars['String']['output']>;
 };
 
 export type Category = {
-  /** Breadcrumbs */
   breadcrumbs: Array<Breadcrumb>;
   childCategories: Array<Category>;
-  /** SKU of category. */
   code: Scalars['String']['output'];
   description?: Maybe<CategoryDescriptionType>;
   descriptions: Array<CategoryDescriptionType>;
-  /** Have a parent */
   hasParent: Scalars['Boolean']['output'];
-  /** Id of category. */
   id: Scalars['String']['output'];
-  /** Images */
   images: Array<ImageType>;
-  /** The category image. */
   imgSrc?: Maybe<Scalars['String']['output']>;
-  /** Level in hierarchy */
   level: Scalars['Int']['output'];
-  /** Name of category. */
   name: Scalars['String']['output'];
-  /** All parent categories ids relative to the requested catalog and concatenated with \ . E.g. (1/21/344) */
   outline?: Maybe<Scalars['String']['output']>;
-  /** Outlines */
   outlines: Array<OutlineType>;
   parent?: Maybe<Category>;
-  /** Category path in to the requested catalog  (all parent categories names concatenated. E.g. (parent1/parent2)) */
   path?: Maybe<Scalars['String']['output']>;
-  /** The category priority. */
   priority: Scalars['Int']['output'];
   properties: Array<Property>;
-  /** Request related SEO info */
   seoInfo: SeoInfo;
-  /** Request related slug for category */
   slug?: Maybe<Scalars['String']['output']>;
 };
 
@@ -401,34 +261,22 @@ export type CategoryPropertiesArgs = {
   names?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-/** A connection from an object to a list of objects of type `Category`. */
 export type CategoryConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<CategoryEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<Category>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type CategoryDescriptionType = {
-  /** Description text. */
   content?: Maybe<Scalars['String']['output']>;
-  /** Description type. */
   descriptionType?: Maybe<Scalars['String']['output']>;
-  /** Description ID. */
   id: Scalars['String']['output'];
-  /** Description language code. */
   languageCode?: Maybe<Scalars['String']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Category`. */
 export type CategoryEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<Category>;
 };
 
@@ -448,31 +296,20 @@ export type ChildCategoriesQueryResponseType = {
 };
 
 export type CommonVendor = {
-  /** Vendor ID */
   id: Scalars['String']['output'];
-  /** Vendor name */
   name: Scalars['String']['output'];
-  /** Vendor rating */
   rating?: Maybe<Rating>;
 };
 
-/** A connection from an object to a list of objects of type `Contact`. */
 export type ContactConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<ContactEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<ContactType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Contact`. */
 export type ContactEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<ContactType>;
 };
 
@@ -480,37 +317,26 @@ export type ContactType = {
   about: Scalars['String']['output'];
   addresses?: Maybe<MemberAddressConnection>;
   birthDate?: Maybe<Scalars['Date']['output']>;
-  /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
-  /** Default shipping address */
   defaultShippingAddress?: Maybe<MemberAddressType>;
-  /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
-  /** Emails */
   emails: Array<Maybe<Scalars['String']['output']>>;
   firstName: Scalars['String']['output'];
   fullName: Scalars['String']['output'];
   groups: Array<Maybe<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
   lastName: Scalars['String']['output'];
-  /** Member type */
   memberType: Scalars['String']['output'];
   middleName?: Maybe<Scalars['String']['output']>;
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
   organizationId?: Maybe<Scalars['String']['output']>;
   organizations?: Maybe<OrganizationConnection>;
   organizationsIds: Array<Maybe<Scalars['String']['output']>>;
-  /** Outer ID */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Phones */
   phones: Array<Maybe<Scalars['String']['output']>>;
   securityAccounts?: Maybe<Array<Maybe<UserType>>>;
-  /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
-  /** SEO object type */
   seoObjectType: Scalars['String']['output'];
-  /** Status */
   status?: Maybe<Scalars['String']['output']>;
 };
 
@@ -540,30 +366,21 @@ export type ContactTypeSeoInfoArgs = {
   storeId: Scalars['String']['input'];
 };
 
-/** A connection from an object to a list of objects of type `Contract`. */
 export type ContractConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<ContractEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<ContractType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Contract`. */
 export type ContractEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<ContractType>;
 };
 
 export type ContractType = {
   code: Scalars['String']['output'];
   description?: Maybe<Scalars['String']['output']>;
-  /** Contract dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   endDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['String']['output'];
@@ -580,24 +397,18 @@ export type ContractTypeDynamicPropertiesArgs = {
 };
 
 export type CountryRegionType = {
-  /** Code of country region. For example 'AL'. */
   id: Scalars['String']['output'];
-  /** Name of country region. For example 'Alabama'. */
   name: Scalars['String']['output'];
 };
 
 export type CountryType = {
-  /** Code of country. For example 'USA'. */
   id: Scalars['String']['output'];
-  /** Name of country. For example 'United States of America'. */
   name: Scalars['String']['output'];
   regions: Array<CountryRegionType>;
 };
 
 export type CouponType = {
-  /** Coupon code */
   code?: Maybe<Scalars['String']['output']>;
-  /** Is coupon was applied successfully */
   isAppliedSuccessfully: Scalars['Boolean']['output'];
 };
 
@@ -626,55 +437,36 @@ export type CreateQuoteFromCartCommandType = {
 };
 
 export type CurrencyType = {
-  /** Currency code may be used ISO 4217 */
   code: Scalars['String']['output'];
-  /** Currency English name */
   cultureName: Scalars['String']['output'];
-  /** Currency custom formatting */
   customFormatting?: Maybe<Scalars['String']['output']>;
-  /** Currency English name */
   englishName: Scalars['String']['output'];
-  /** Exchange rate */
   exchangeRate: Scalars['Decimal']['output'];
-  /** Symbol */
   symbol: Scalars['String']['output'];
 };
 
 export type CustomIdentityResultType = {
-  /** The errors that occurred during the identity operation. */
   errors?: Maybe<Array<Maybe<IdentityErrorInfoType>>>;
   succeeded: Scalars['Boolean']['output'];
 };
 
-/** A connection from an object to a list of objects of type `CustomerOrder`. */
 export type CustomerOrderConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<CustomerOrderEdge>>>;
-  /** Filter facets */
   filter_facets: Array<FilterFacet>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<CustomerOrderType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** Range facets */
   range_facets: Array<RangeFacet>;
-  /** Term facets */
   term_facets: Array<TermFacet>;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `CustomerOrder`. */
 export type CustomerOrderEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<CustomerOrderType>;
 };
 
 export type CustomerOrderType = {
   addresses: Array<OrderAddressType>;
-  /** Available payment methods */
   availablePaymentMethods: Array<OrderPaymentMethodType>;
   cancelReason?: Maybe<Scalars['String']['output']>;
   cancelledDate?: Maybe<Scalars['DateTime']['output']>;
@@ -690,7 +482,6 @@ export type CustomerOrderType = {
   discountTotal: MoneyType;
   discountTotalWithTax: MoneyType;
   discounts: Array<OrderDiscountType>;
-  /** Customer order dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
   employeeId?: Maybe<Scalars['String']['output']>;
   employeeName?: Maybe<Scalars['String']['output']>;
@@ -777,23 +568,15 @@ export type CustomerReview = {
   userName: Scalars['String']['output'];
 };
 
-/** A connection from an object to a list of objects of type `CustomerReview`. */
 export type CustomerReviewConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<CustomerReviewEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<CustomerReview>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `CustomerReview`. */
 export type CustomerReviewEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<CustomerReview>;
 };
 
@@ -813,66 +596,43 @@ export type DeleteQuoteAttachmentsCommandType = {
 };
 
 export type DescriptionType = {
-  /** Description text. */
   content?: Maybe<Scalars['String']['output']>;
-  /** Description ID. */
   id: Scalars['String']['output'];
-  /** Description language code. */
   languageCode?: Maybe<Scalars['String']['output']>;
-  /** Description type. */
   reviewType?: Maybe<Scalars['String']['output']>;
 };
 
-/** A connection from an object to a list of objects of type `DictionaryItem`. */
 export type DictionaryItemConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<DictionaryItemEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<DictionaryItemType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `DictionaryItem`. */
 export type DictionaryItemEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<DictionaryItemType>;
 };
 
 export type DictionaryItemType = {
-  /** Id */
   id: Scalars['String']['output'];
-  /** Localized dictionary item value */
   label?: Maybe<Scalars['String']['output']>;
-  /** Name */
   name: Scalars['String']['output'];
 };
 
 export type DiscountType = {
-  /** Discount amount */
   amount: Scalars['Decimal']['output'];
-  /** Discount amount with tax */
   amountWithTax: Scalars['Decimal']['output'];
-  /** Coupon */
   coupon?: Maybe<Scalars['String']['output']>;
-  /** Value of discount description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Discount amount in the specified currency */
   moneyAmount: MoneyType;
-  /** Discount amount with tax in the specified currency */
   moneyAmountWithTax: MoneyType;
-  /** Value of promotion id */
   promotionId?: Maybe<Scalars['String']['output']>;
 };
 
 export type DynamicContentItemType = {
   contentType: Scalars['String']['output'];
   description: Scalars['String']['output'];
-  /** Dynamic content dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -884,51 +644,31 @@ export type DynamicContentItemTypeDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
-/** A connection from an object to a list of objects of type `DynamicProperty`. */
 export type DynamicPropertyConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<DynamicPropertyEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<DynamicPropertyType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `DynamicProperty`. */
 export type DynamicPropertyEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<DynamicPropertyType>;
 };
 
 export type DynamicPropertyType = {
   dictionaryItems?: Maybe<DictionaryItemConnection>;
-  /** The order for the dynamic property to display */
   displayOrder?: Maybe<Scalars['Int']['output']>;
-  /** Value type */
   dynamicPropertyValueType: DynamicPropertyValueTypes;
-  /** Id */
   id: Scalars['String']['output'];
-  /** Is dynamic property value an array */
   isArray: Scalars['Boolean']['output'];
-  /** Is dynamic property value a dictionary */
   isDictionary: Scalars['Boolean']['output'];
-  /** Is dynamic property value multilingual */
   isMultilingual: Scalars['Boolean']['output'];
-  /** Is dynamic property value required */
   isRequired: Scalars['Boolean']['output'];
-  /** Localized property name */
   label?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
-  /** Object type */
   objectType: Scalars['String']['output'];
-  /**
-   * Value type
-   * @deprecated Use dynamicPropertyValueType instead
-   */
+  /** @deprecated Use dynamicPropertyValueType instead */
   valueType: Scalars['String']['output'];
 };
 
@@ -942,21 +682,14 @@ export type DynamicPropertyTypeDictionaryItemsArgs = {
 };
 
 export type DynamicPropertyValueType = {
-  /** Associated dictionary item */
   dictionaryItem?: Maybe<DictionaryItemType>;
-  /** Associated dynamic property */
   dynamicProperty?: Maybe<DynamicPropertyType>;
-  /** Value type */
   dynamicPropertyValueType: DynamicPropertyValueTypes;
-  /** Property name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Property value */
   value?: Maybe<Scalars['DynamicPropertyValue']['output']>;
-  /** Value type */
   valueType: Scalars['String']['output'];
 };
 
-/** Dynamic property value type */
 export enum DynamicPropertyValueTypes {
   Boolean = 'BOOLEAN',
   DateTime = 'DATE_TIME',
@@ -970,9 +703,7 @@ export enum DynamicPropertyValueTypes {
 }
 
 export type ErrorParameterType = {
-  /** key */
   key: Scalars['String']['output'];
-  /** Value */
   value: Scalars['String']['output'];
 };
 
@@ -982,48 +713,30 @@ export type EvaluateDynamicContentResultType = {
 };
 
 export type Facet = {
-  /** Three facet types: Terms, Range, and Filter */
   facetType: FacetTypes;
-  /** Localized name of the facet. */
   label: Scalars['String']['output'];
-  /** The key/name  of the facet. */
   name: Scalars['String']['output'];
 };
 
 export type FacetRangeType = {
-  /** Amount of products for which the values in a field fall into the specified range */
   count: Scalars['Long']['output'];
-  /** The range’s lower endpoint in number format, 0 represents infinity */
   from: Scalars['Long']['output'];
-  /** The range’s lower endpoint in string format, empty string represents infinity */
   fromStr?: Maybe<Scalars['String']['output']>;
-  /** The flag indicates that From exclusive */
   includeFrom: Scalars['Boolean']['output'];
-  /** The flag indicates that To exclusive */
   includeTo: Scalars['Boolean']['output'];
-  /** is selected state */
   isSelected: Scalars['Boolean']['output'];
-  /** Localization label */
   label: Scalars['String']['output'];
-  /** Maximum value among all values contained within the range */
   max: Scalars['Long']['output'];
-  /** Minimum value among all values contained within the range */
   min: Scalars['Long']['output'];
-  /** The range’s upper endpoint in number format, 0 represents infinity */
   to: Scalars['Long']['output'];
-  /** The range’s upper endpoint in string format, empty string represents infinity */
   toStr?: Maybe<Scalars['String']['output']>;
-  /** Sum of all values contained in the range */
   total: Scalars['Long']['output'];
 };
 
 export type FacetTermType = {
-  /** count */
   count: Scalars['Long']['output'];
-  /** is selected state */
   isSelected: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
-  /** term */
   term: Scalars['String']['output'];
 };
 
@@ -1040,95 +753,55 @@ export type FileUploadScopeOptionsType = {
 };
 
 export type FilterFacet = Facet & {
-  /** The number of products matching the value specified in the filter facet expression */
   count: Scalars['Int']['output'];
-  /** The three types of facets. Terms, Range, Filter */
   facetType: FacetTypes;
-  /** Localized name of the facet. */
   label: Scalars['String']['output'];
-  /** The key/name  of the facet. */
   name: Scalars['String']['output'];
 };
 
 export type FulfillmentCenterAddressType = {
-  /** Address type */
   addressType?: Maybe<Scalars['Int']['output']>;
-  /** City */
   city?: Maybe<Scalars['String']['output']>;
-  /** Country code */
   countryCode?: Maybe<Scalars['String']['output']>;
-  /** Country name */
   countryName?: Maybe<Scalars['String']['output']>;
-  /** Email */
   email?: Maybe<Scalars['String']['output']>;
-  /** First name */
   firstName?: Maybe<Scalars['String']['output']>;
-  /** Id */
   id?: Maybe<Scalars['String']['output']>;
-  /** Id */
   key?: Maybe<Scalars['String']['output']>;
-  /** Last name */
   lastName?: Maybe<Scalars['String']['output']>;
-  /** Line1 */
   line1?: Maybe<Scalars['String']['output']>;
-  /** Line2 */
   line2?: Maybe<Scalars['String']['output']>;
-  /** Middle name */
   middleName?: Maybe<Scalars['String']['output']>;
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Company name */
   organization?: Maybe<Scalars['String']['output']>;
-  /** Outer id */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Phone */
   phone?: Maybe<Scalars['String']['output']>;
-  /** Postal code */
   postalCode: Scalars['String']['output'];
-  /** Region id */
   regionId?: Maybe<Scalars['String']['output']>;
-  /** Region name */
   regionName?: Maybe<Scalars['String']['output']>;
-  /** Zip */
   zip?: Maybe<Scalars['String']['output']>;
 };
 
-/** A connection from an object to a list of objects of type `FulfillmentCenter`. */
 export type FulfillmentCenterConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<FulfillmentCenterEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<FulfillmentCenterType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `FulfillmentCenter`. */
 export type FulfillmentCenterEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<FulfillmentCenterType>;
 };
 
 export type FulfillmentCenterType = {
-  /** Fulfillment Center address. */
   address?: Maybe<FulfillmentCenterAddressType>;
-  /** Fulfillment Center descripion. */
   description?: Maybe<Scalars['String']['output']>;
-  /** Fulfillment Center geo location. */
   geoLocation?: Maybe<Scalars['String']['output']>;
-  /** Fulfillment Center ID. */
   id: Scalars['String']['output'];
-  /** Fulfillment Center name. */
   name?: Maybe<Scalars['String']['output']>;
-  /** Nearest Fulfillment Centers */
   nearest?: Maybe<Array<Maybe<FulfillmentCenterType>>>;
-  /** Fulfillment Center outerId. */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Fulfillment Center short description. */
   shortDescription?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1138,33 +811,21 @@ export type FulfillmentCenterTypeNearestArgs = {
 };
 
 export type GiftItemType = {
-  /** Product category ID */
   categoryId?: Maybe<Scalars['String']['output']>;
-  /** Artificial ID for this value object */
   id: Scalars['String']['output'];
-  /** Value of reward image absolute URL */
   imageUrl?: Maybe<Scalars['String']['output']>;
-  /** Line item ID in case there is a gift in the cart. If there is no gift, it stays null */
   lineItemId?: Maybe<Scalars['String']['output']>;
-  /** Measurement unit */
   measureUnit?: Maybe<Scalars['String']['output']>;
-  /** Name of the reward */
   name: Scalars['String']['output'];
   product?: Maybe<Product>;
-  /** Product ID */
   productId?: Maybe<Scalars['String']['output']>;
-  /** Promotion ID */
   promotionId: Scalars['String']['output'];
-  /** Number of gifts in the reward */
   quantity: Scalars['Int']['output'];
 };
 
 export type IdentityErrorInfoType = {
-  /** Error code */
   code: Scalars['String']['output'];
-  /** Error description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Error parameter */
   parameter?: Maybe<Scalars['String']['output']>;
 };
 
@@ -1174,25 +835,17 @@ export type IdentityErrorType = {
 };
 
 export type IdentityResultType = {
-  /** The errors that occurred during the identity operation. */
   errors?: Maybe<Array<Maybe<IdentityErrorType>>>;
   succeeded: Scalars['Boolean']['output'];
 };
 
 export type ImageType = {
-  /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
-  /** Image group */
   group?: Maybe<Scalars['String']['output']>;
-  /** Image ID */
   id: Scalars['String']['output'];
-  /** Image name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Image relative URL */
   relativeUrl?: Maybe<Scalars['String']['output']>;
-  /** Sort order */
   sortOrder: Scalars['Int']['output'];
-  /** Image URL */
   url: Scalars['String']['output'];
 };
 
@@ -1212,7 +865,6 @@ export type InitializePaymentResultType = {
 
 export type InputAddBulkItemsType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
-  /** Bulk cart items */
   cartItems: Array<InputMaybe<InputNewBulkItemType>>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
@@ -1226,7 +878,6 @@ export type InputAddCouponType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
-  /** Coupon code */
   couponCode: Scalars['String']['input'];
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
@@ -1240,7 +891,6 @@ export type InputAddGiftItemsType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** IDs of gift rewards to add to the cart */
   ids: Array<InputMaybe<Scalars['String']['input']>>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1250,16 +900,12 @@ export type InputAddItemType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
-  /** Comment */
   comment?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  /** Price */
   price?: InputMaybe<Scalars['Decimal']['input']>;
-  /** Product ID */
   productId: Scalars['String']['input'];
-  /** Quantity */
   quantity: Scalars['Int']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1267,7 +913,6 @@ export type InputAddItemType = {
 
 export type InputAddItemsType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
-  /** Cart items */
   cartItems: Array<InputMaybe<InputNewCartItemType>>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
@@ -1278,7 +923,6 @@ export type InputAddItemsType = {
 };
 
 export type InputAddOrUpdateCartAddressType = {
-  /** Address */
   address: InputAddressType;
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
@@ -1295,7 +939,6 @@ export type InputAddOrUpdateCartPaymentType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Payment */
   payment: InputPaymentType;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1307,84 +950,54 @@ export type InputAddOrUpdateCartShipmentType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Shipment */
   shipment: InputShipmentType;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
 export type InputAddOrUpdateOrderPaymentType = {
-  /** Order ID */
   orderId: Scalars['String']['input'];
-  /** Payment */
   payment: InputOrderPaymentType;
 };
 
 export type InputAddWishlistBulkItemType = {
-  /** Wish list ids */
   listIds: Array<InputMaybe<Scalars['String']['input']>>;
-  /** Product id to add */
   productId: Scalars['String']['input'];
-  /** Product quantity to add */
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputAddWishlistItemType = {
-  /** Wish list id */
   listId: Scalars['String']['input'];
-  /** Product id to add */
   productId: Scalars['String']['input'];
-  /** Product quantity to add */
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputAddWishlistItemsType = {
   listId: Scalars['String']['input'];
-  /** List items */
   listItems: Array<InputNewWishlistItemType>;
 };
 
 export type InputAddressType = {
   addressType?: InputMaybe<Scalars['Int']['input']>;
-  /** City */
   city?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Country code */
   countryCode?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Country */
   countryName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Description */
   description?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Email */
   email?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** First name */
   firstName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** ID */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** ID */
   key?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Last name */
   lastName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Line1 */
   line1?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Line2 */
   line2?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Middle name */
   middleName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Name */
   name?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Company name */
   organization?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Outer ID */
   outerId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Phone */
   phone?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Postal code */
   postalCode?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Region ID */
   regionId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Region */
   regionName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Zip */
   zip?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
@@ -1411,11 +1024,8 @@ export type InputAssignRoleType = {
 };
 
 export type InputAuthorizePaymentType = {
-  /** Order Id */
   orderId?: InputMaybe<Scalars['String']['input']>;
-  /** Input parameters */
   parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
-  /** Payment Id */
   paymentId: Scalars['String']['input'];
 };
 
@@ -1433,11 +1043,9 @@ export type InputChangeCartItemCommentType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
-  /** Comment */
   comment: Scalars['String']['input'];
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Line item Id */
   lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1449,9 +1057,7 @@ export type InputChangeCartItemPriceType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Line item Id */
   lineItemId: Scalars['String']['input'];
-  /** Price */
   price: Scalars['Decimal']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1463,9 +1069,7 @@ export type InputChangeCartItemQuantityType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Line item Id */
   lineItemId: Scalars['String']['input'];
-  /** Quantity */
   quantity: Scalars['Int']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1477,9 +1081,7 @@ export type InputChangeCartItemSelectedType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Line item Id */
   lineItemId: Scalars['String']['input'];
-  /** Is item selected for checkout */
   selectedForCheckout: Scalars['Boolean']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1491,7 +1093,6 @@ export type InputChangeCartItemsSelectedType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** List of line item Ids */
   lineItemIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -1501,7 +1102,6 @@ export type InputChangeCommentType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
-  /** Comment */
   comment?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
@@ -1510,25 +1110,18 @@ export type InputChangeCommentType = {
 };
 
 export type InputChangeOrderStatusType = {
-  /** Order ID */
   orderId: Scalars['String']['input'];
-  /** Order status */
   status: Scalars['String']['input'];
 };
 
 export type InputChangeOrganizationContactRoleType = {
-  /** Role IDs or names to be assigned to the user */
   roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
-  /** User identifier to be changed */
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputChangePasswordType = {
-  /** New password according with system security policy */
   newPassword: Scalars['String']['input'];
-  /** Old user password */
   oldPassword: Scalars['String']['input'];
-  /** User identifier */
   userId: Scalars['String']['input'];
 };
 
@@ -1538,22 +1131,16 @@ export type InputChangePurchaseOrderNumber = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Purchase Order Number */
   purchaseOrderNumber?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
 export type InputChangeWishlistType = {
-  /** Culture name */
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** List description */
   description?: InputMaybe<Scalars['String']['input']>;
-  /** List ID */
   listId: Scalars['String']['input'];
-  /** New List name */
   listName?: InputMaybe<Scalars['String']['input']>;
-  /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1588,67 +1175,39 @@ export type InputClearShipmentsType = {
 };
 
 export type InputCloneWishlistType = {
-  /** Culture name */
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** Currency code */
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** List description */
   description?: InputMaybe<Scalars['String']['input']>;
-  /** Source List ID */
   listId: Scalars['String']['input'];
-  /** List name */
   listName?: InputMaybe<Scalars['String']['input']>;
-  /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
-  /** Store ID */
   storeId: Scalars['String']['input'];
-  /** Owner ID */
   userId: Scalars['String']['input'];
 };
 
 export type InputConfirmEmailType = {
-  /** Confirm email token */
   token: Scalars['String']['input'];
-  /** User identifier */
   userId: Scalars['String']['input'];
 };
 
 export type InputCreateApplicationUserType = {
-  /** Username of the creator */
   createdBy?: InputMaybe<Scalars['String']['input']>;
-  /** Date of user creation */
   createdDate?: InputMaybe<Scalars['DateTime']['input']>;
-  /** User Email */
   email: Scalars['String']['input'];
-  /** User ID */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** Can user be locked out */
   lockoutEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  /** End date of lockout */
   lockoutEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  /** External logins */
   logins?: InputMaybe<Array<InputMaybe<InputApplicationUserLoginType>>>;
-  /** Id of the associated Member */
   memberId?: InputMaybe<Scalars['String']['input']>;
-  /** User password (nullable, for external logins) */
   password?: InputMaybe<Scalars['String']['input']>;
-  /** Password expiration date */
   passwordExpired?: InputMaybe<Scalars['Boolean']['input']>;
-  /** User phone number */
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
-  /** Is user phone number confirmed */
   phoneNumberConfirmed?: InputMaybe<Scalars['Boolean']['input']>;
-  /** User photo URL */
   photoUrl?: InputMaybe<Scalars['String']['input']>;
-  /** List of user roles */
   roles?: InputMaybe<Array<InputMaybe<InputAssignRoleType>>>;
-  /** Associated Store Id */
   storeId?: InputMaybe<Scalars['String']['input']>;
-  /** Is Two Factor Authentication enabled */
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  /** User name */
   userName: Scalars['String']['input'];
-  /** User type (Manager, Customer) */
   userType: Scalars['String']['input'];
 };
 
@@ -1674,7 +1233,6 @@ export type InputCreateContactType = {
 };
 
 export type InputCreateOrderFromCartType = {
-  /** Cart ID */
   cartId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1690,24 +1248,16 @@ export type InputCreateOrganizationType = {
 };
 
 export type InputCreateUserType = {
-  /** Application user to create */
   applicationUser: InputCreateApplicationUserType;
 };
 
 export type InputCreateWishlistType = {
-  /** Culture name */
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** Currency code */
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** List description */
   description?: InputMaybe<Scalars['String']['input']>;
-  /** List name */
   listName?: InputMaybe<Scalars['String']['input']>;
-  /** List scope (private or organization) */
   scope?: InputMaybe<Scalars['String']['input']>;
-  /** Store ID */
   storeId: Scalars['String']['input'];
-  /** Owner ID */
   userId: Scalars['String']['input'];
 };
 
@@ -1725,44 +1275,29 @@ export type InputDeleteUserType = {
 };
 
 export type InputDynamicPropertyValueType = {
-  /** Culture name ("en-US") for multilingual property */
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** Language ("en-US") for multilingual property */
   locale?: InputMaybe<Scalars['String']['input']>;
-  /** Dynamic property name */
   name: Scalars['String']['input'];
-  /** Dynamic property value. ID must be passed for dictionary item */
   value?: InputMaybe<Scalars['DynamicPropertyValue']['input']>;
 };
 
 export type InputInitializePaymentType = {
-  /** Order Id */
   orderId?: InputMaybe<Scalars['String']['input']>;
-  /** Payment Id */
   paymentId: Scalars['String']['input'];
 };
 
 export type InputInviteUserType = {
-  /** Customer order Id to be associated with this user. */
   customerOrderId?: InputMaybe<Scalars['String']['input']>;
-  /** Emails which will receive invites */
   emails: Array<Scalars['String']['input']>;
-  /** Optional message to include into email with instructions which invites persons will see */
   message?: InputMaybe<Scalars['String']['input']>;
-  /** ID of organization where contact will be added for user */
   organizationId?: InputMaybe<Scalars['String']['input']>;
-  /** Role IDs or names to be assigned to the invited user */
   roleIds?: InputMaybe<Array<Scalars['String']['input']>>;
-  /** ID of store which will send invites */
   storeId: Scalars['String']['input'];
-  /** Optional URL suffix: you may provide here relative URL to your page which handle registration by invite */
   urlSuffix?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputKeyValueType = {
-  /** Dictionary key */
   key: Scalars['String']['input'];
-  /** Dictionary value */
   value?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1770,54 +1305,35 @@ export type InputLockUnlockOrganizationContactType = {
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type InputMarkPushNotificationReadType = {
-  notificationId: Scalars['String']['input'];
+export type InputMarkPushMessageReadType = {
+  messageId: Scalars['String']['input'];
 };
 
-export type InputMarkPushNotificationUnreadType = {
-  notificationId: Scalars['String']['input'];
+export type InputMarkPushMessageUnreadType = {
+  messageId: Scalars['String']['input'];
 };
 
 export type InputMemberAddressType = {
   addressType?: InputMaybe<Scalars['Int']['input']>;
-  /** City */
   city: Scalars['String']['input'];
-  /** Country code */
   countryCode: Scalars['String']['input'];
-  /** Country name */
   countryName?: InputMaybe<Scalars['String']['input']>;
-  /** Description */
   description?: InputMaybe<Scalars['String']['input']>;
-  /** Email */
   email?: InputMaybe<Scalars['String']['input']>;
-  /** First name */
   firstName?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
-  /** key */
   key?: InputMaybe<Scalars['String']['input']>;
-  /** Last name */
   lastName?: InputMaybe<Scalars['String']['input']>;
-  /** Line1 */
   line1: Scalars['String']['input'];
-  /** Line2 */
   line2?: InputMaybe<Scalars['String']['input']>;
-  /** Middle name */
   middleName?: InputMaybe<Scalars['String']['input']>;
-  /** Name */
   name?: InputMaybe<Scalars['String']['input']>;
-  /** Company name */
   organization?: InputMaybe<Scalars['String']['input']>;
-  /** Outer id */
   outerId?: InputMaybe<Scalars['String']['input']>;
-  /** Phone */
   phone?: InputMaybe<Scalars['String']['input']>;
-  /** Postal code */
   postalCode: Scalars['String']['input'];
-  /** Region id */
   regionId?: InputMaybe<Scalars['String']['input']>;
-  /** Region name */
   regionName?: InputMaybe<Scalars['String']['input']>;
-  /** Zip */
   zip?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -1827,82 +1343,53 @@ export type InputMergeCartType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Second cart Id */
   secondCartId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
 export type InputMoveWishlistItemType = {
-  /** Destination List ID */
   destinationListId: Scalars['String']['input'];
-  /** Line item ID to move */
   lineItemId: Scalars['String']['input'];
-  /** Source List ID */
   listId: Scalars['String']['input'];
 };
 
 export type InputNewBulkItemType = {
-  /** Product SKU */
   productSku: Scalars['String']['input'];
-  /** Product quantity */
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputNewCartItemType = {
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  /** Product Id */
   productId: Scalars['String']['input'];
-  /** Product quantity */
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputNewWishlistItemType = {
-  /** Product Id */
   productId: Scalars['String']['input'];
-  /** Product quantity */
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type InputOrderAddressType = {
   addressType?: InputMaybe<Scalars['Int']['input']>;
-  /** City */
   city?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Country code */
   countryCode?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Country name */
   countryName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Email */
   email?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** First name */
   firstName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** ID */
   id?: InputMaybe<Scalars['String']['input']>;
-  /** Id */
   key?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Last name */
   lastName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Line1 */
   line1?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Line2 */
   line2?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Middle name */
   middleName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Name */
   name?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Company name */
   organization?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Outer id */
   outerId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Phone */
   phone?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Postal code */
   postalCode?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Region id */
   regionId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Region name */
   regionName?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Zip */
   zip?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
@@ -1918,35 +1405,24 @@ export type InputOrderBankCardInfoType = {
 export type InputOrderPaymentType = {
   amount?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   billingAddress?: InputMaybe<InputOrderAddressType>;
-  /** Text comment */
   comment?: InputMaybe<Scalars['OptionalString']['input']>;
   currency?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  /** Payment ID */
   id?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Payment outer ID value */
   outerId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Payment gateway code value */
   paymentGatewayCode?: InputMaybe<Scalars['OptionalString']['input']>;
   price?: InputMaybe<Scalars['OptionalDecimal']['input']>;
-  /** Payment vendor ID value */
   vendorId?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
 export type InputPaymentType = {
   amount?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   billingAddress?: InputMaybe<InputAddressType>;
-  /** Text comment */
   comment?: InputMaybe<Scalars['OptionalString']['input']>;
   currency?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  /** Payment ID */
   id?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Payment outer ID value */
   outerId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Payment gateway code value */
   paymentGatewayCode?: InputMaybe<Scalars['OptionalString']['input']>;
   price?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   purpose?: InputMaybe<Scalars['OptionalString']['input']>;
@@ -1962,11 +1438,8 @@ export type InputPersonalDataType = {
 };
 
 export type InputProcessOrderPaymentType = {
-  /** Credit card details */
   bankCardInfo?: InputMaybe<InputOrderBankCardInfoType>;
-  /** Order ID */
   orderId: Scalars['String']['input'];
-  /** Payment ID */
   paymentId: Scalars['String']['input'];
 };
 
@@ -1983,7 +1456,6 @@ export type InputQuoteAddressType = {
   line1?: InputMaybe<Scalars['String']['input']>;
   line2?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  /** Company name */
   organization?: InputMaybe<Scalars['String']['input']>;
   outerId?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
@@ -1999,21 +1471,13 @@ export type InputRegisterAccountType = {
 };
 
 export type InputRegisterByInvitationType = {
-  /** Customer order Id to be associated with this user. */
   customerOrderId?: InputMaybe<Scalars['String']['input']>;
-  /** First name of person */
   firstName: Scalars['String']['input'];
-  /** Last name of person */
   lastName: Scalars['String']['input'];
-  /** Password */
   password: Scalars['String']['input'];
-  /** Phone */
   phone?: InputMaybe<Scalars['String']['input']>;
-  /** Invitation token */
   token: Scalars['String']['input'];
-  /** ID of use created for invited email */
   userId: Scalars['String']['input'];
-  /** Username */
   username: Scalars['String']['input'];
 };
 
@@ -2041,14 +1505,12 @@ export type InputRejectGiftItemsType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Ids of gift lineItems to reject from cart */
   ids: Array<InputMaybe<Scalars['String']['input']>>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
 export type InputRemoveCartAddressType = {
-  /** Address Id */
   addressId: Scalars['String']['input'];
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
@@ -2060,9 +1522,7 @@ export type InputRemoveCartAddressType = {
 };
 
 export type InputRemoveCartType = {
-  /** Cart Id */
   cartId: Scalars['String']['input'];
-  /** User Id */
   userId: Scalars['String']['input'];
 };
 
@@ -2070,7 +1530,6 @@ export type InputRemoveCouponType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
-  /** Coupon code */
   couponCode?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
@@ -2084,7 +1543,6 @@ export type InputRemoveItemType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Line item Id */
   lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -2096,7 +1554,6 @@ export type InputRemoveItemsType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Array of line item Id */
   lineItemIds: Array<InputMaybe<Scalars['String']['input']>>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -2113,138 +1570,87 @@ export type InputRemoveShipmentType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Shipment Id */
   shipmentId?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
 
 export type InputRemoveWishlistItemType = {
-  /** Line item ID to remove */
   lineItemId: Scalars['String']['input'];
-  /** List ID */
   listId: Scalars['String']['input'];
 };
 
 export type InputRemoveWishlistItemsType = {
-  /** Line item IDs to remove */
   lineItemIds: Array<Scalars['String']['input']>;
-  /** List ID */
   listId: Scalars['String']['input'];
 };
 
 export type InputRemoveWishlistType = {
-  /** List ID */
   listId: Scalars['String']['input'];
 };
 
 export type InputRenameWishlistType = {
-  /** List ID */
   listId: Scalars['String']['input'];
-  /** New List name */
   listName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputRequestRegistrationType = {
-  /** Creating contact's account */
   account: InputRegisterAccountType;
-  /** Creating contact */
   contact: InputRegisterContactType;
-  /** Notification language code */
   languageCode?: InputMaybe<Scalars['String']['input']>;
-  /** company type */
   organization?: InputMaybe<InputRegisterOrganizationType>;
-  /** Store ID */
   storeId: Scalars['String']['input'];
 };
 
 export type InputResetPasswordByTokenType = {
-  /** New password according with system security policy */
   newPassword: Scalars['String']['input'];
-  /** User password reset token */
   token: Scalars['String']['input'];
-  /** User identifier */
   userId: Scalars['String']['input'];
 };
 
 export type InputSendVerifyEmailType = {
   email?: InputMaybe<Scalars['String']['input']>;
-  /** Notification language code */
   languageCode?: InputMaybe<Scalars['String']['input']>;
-  /** Store ID */
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputShipmentType = {
-  /** Text comment */
   comment?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Currency value */
   currency?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Delivery address */
   deliveryAddress?: InputMaybe<InputAddressType>;
-  /** Dynamic properties */
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  /** Fulfillment center iD */
   fulfillmentCenterId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Height value */
   height?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
-  /** Shipment ID */
   id?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Length value */
   length?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
-  /** Measurement unit value */
   measureUnit?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Price value */
   price?: InputMaybe<Scalars['OptionalDecimal']['input']>;
-  /** Shipping method code */
   shipmentMethodCode?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Shipping method option */
   shipmentMethodOption?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Vendor ID */
   vendorId?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Volumetric weight value */
   volumetricWeight?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
-  /** Weight value */
   weight?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
-  /** Weight unit value */
   weightUnit?: InputMaybe<Scalars['OptionalString']['input']>;
-  /** Width value */
   width?: InputMaybe<Scalars['OptionalNullableDecimal']['input']>;
 };
 
 export type InputUpdateApplicationUserType = {
-  /** Failed login attempts for the current user */
   accessFailedCount?: InputMaybe<Scalars['Int']['input']>;
-  /** User Email */
   email: Scalars['String']['input'];
-  /** User ID */
   id: Scalars['String']['input'];
-  /** Can user be locked out */
   lockoutEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  /** End date of lockout */
   lockoutEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  /** Id of the associated Memeber */
   memberId?: InputMaybe<Scalars['String']['input']>;
-  /** Password Hash */
   passwordHash?: InputMaybe<Scalars['String']['input']>;
-  /** User phone number */
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
-  /** Is user phone number confirmed */
   phoneNumberConfirmed?: InputMaybe<Scalars['Boolean']['input']>;
-  /** User photo URL */
   photoUrl?: InputMaybe<Scalars['String']['input']>;
-  /** List of user roles */
   roles?: InputMaybe<Array<InputMaybe<InputAssignRoleType>>>;
-  /** SecurityStamp */
   securityStamp: Scalars['String']['input'];
-  /** Associated Store Id */
   storeId?: InputMaybe<Scalars['String']['input']>;
-  /** Is Two Factor Authentication enabled */
   twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  /** User name */
   userName: Scalars['String']['input'];
-  /** User type (Manager, Customer) */
   userType: Scalars['String']['input'];
 };
 
@@ -2254,7 +1660,6 @@ export type InputUpdateCartDynamicPropertiesType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -2266,9 +1671,7 @@ export type InputUpdateCartItemDynamicPropertiesType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  /** Line item Id */
   lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -2280,9 +1683,7 @@ export type InputUpdateCartPaymentDynamicPropertiesType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  /** Payment Id */
   paymentId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -2294,9 +1695,7 @@ export type InputUpdateCartShipmentDynamicPropertiesType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  /** Shipment Id */
   shipmentId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -2372,39 +1771,28 @@ export type InputUpdatePersonalDataType = {
 };
 
 export type InputUpdateRoleInnerType = {
-  /** Concurrency Stamp */
   concurrencyStamp?: InputMaybe<Scalars['String']['input']>;
-  /** Role description */
   description?: InputMaybe<Scalars['String']['input']>;
-  /** Role ID */
   id: Scalars['String']['input'];
-  /** Role name */
   name: Scalars['String']['input'];
-  /** List of Role permissions */
   permissions: Array<InputMaybe<InputAssignPermissionType>>;
 };
 
 export type InputUpdateRoleType = {
-  /** Role to update */
   role: InputUpdateRoleInnerType;
 };
 
 export type InputUpdateUserType = {
-  /** Application user to update */
   applicationUser: InputUpdateApplicationUserType;
 };
 
 export type InputUpdateWishlistItemsType = {
-  /** Bulk wishlist items */
   items: Array<InputMaybe<InputUpdateWishlistLineItemType>>;
-  /** Wish list id */
   listId: Scalars['String']['input'];
 };
 
 export type InputUpdateWishlistLineItemType = {
-  /** Line Item Id to update */
   lineItemId: Scalars['String']['input'];
-  /** Product quantity to add */
   quantity: Scalars['Int']['input'];
 };
 
@@ -2412,7 +1800,6 @@ export type InputValidateCouponType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
   cartType?: InputMaybe<Scalars['String']['input']>;
-  /** Coupon */
   coupon: Scalars['String']['input'];
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
@@ -2421,152 +1808,85 @@ export type InputValidateCouponType = {
 };
 
 export type InventoryInfo = {
-  /** Allow backorder */
   allowBackorder: Scalars['Boolean']['output'];
-  /** Allow preorder */
   allowPreorder: Scalars['Boolean']['output'];
-  /** Backorder availability date */
   backorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
   fulfillmentCenterId: Scalars['String']['output'];
   fulfillmentCenterName: Scalars['String']['output'];
-  /** Inventory in stock quantity */
   inStockQuantity: Scalars['Long']['output'];
-  /** Preorder availability date */
   preorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Inventory reserved quantity */
   reservedQuantity: Scalars['Long']['output'];
 };
 
 export type KeyValueType = {
-  /** Dictionary key */
   key: Scalars['String']['output'];
-  /** Dictionary value */
   value?: Maybe<Scalars['String']['output']>;
 };
 
 export type LanguageType = {
-  /** Culture name format (e.g. en-US) */
   cultureName: Scalars['String']['output'];
-  /** Is invariant */
   isInvariant: Scalars['Boolean']['output'];
-  /** Native name */
   nativeName: Scalars['String']['output'];
-  /** ISO 639-2 three-letter code for the language. */
   threeLetterLanguageName: Scalars['String']['output'];
-  /** Three-letter code defined in ISO 3166 for the country/region. */
   threeLetterRegionName: Scalars['String']['output'];
-  /** ISO 639-1 two-letter code for the language. */
   twoLetterLanguageName: Scalars['String']['output'];
-  /** Two-letter code defined in ISO 3166 for the country/region. */
   twoLetterRegionName: Scalars['String']['output'];
 };
 
 export type LineItemType = {
-  /** Catalog ID value */
   catalogId: Scalars['String']['output'];
-  /** Category ID value */
   categoryId?: Maybe<Scalars['String']['output']>;
-  /** Line item create date */
   createdDate: Scalars['DateTime']['output'];
-  /** Discount amount */
   discountAmount: MoneyType;
-  /** Discount amount with tax */
   discountAmountWithTax: MoneyType;
-  /** Total discount */
   discountTotal: MoneyType;
-  /** Total discount with tax */
   discountTotalWithTax: MoneyType;
-  /** Discounts */
   discounts: Array<DiscountType>;
-  /** Cart line item dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  /** Extended price */
   extendedPrice: MoneyType;
-  /** Extended price with tax */
   extendedPriceWithTax: MoneyType;
-  /** Line item fulfillment center ID value */
   fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
-  /** Line item fulfillment center name value */
   fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
-  /** Height value */
   height?: Maybe<Scalars['Decimal']['output']>;
-  /** Line item ID */
   id: Scalars['String']['output'];
-  /** Value of line item image absolute URL */
   imageUrl?: Maybe<Scalars['String']['output']>;
-  /** In stock quantity */
   inStockQuantity: Scalars['Int']['output'];
-  /** flag of line item is a gift */
   isGift: Scalars['Boolean']['output'];
-  /** Shows whether this is read-only */
   isReadOnly: Scalars['Boolean']['output'];
-  /** Shows whether the line item is recurring */
   isReccuring: Scalars['Boolean']['output'];
-  /** Shows whether this is valid */
   isValid: Scalars['Boolean']['output'];
-  /** Culture name in the ISO 3166-1 alpha-3 format */
   languageCode?: Maybe<Scalars['String']['output']>;
-  /** Length value */
   length?: Maybe<Scalars['Decimal']['output']>;
-  /** List price */
   listPrice: MoneyType;
-  /** List price with tax */
   listPriceWithTax: MoneyType;
-  /** Measurement unit value */
   measureUnit?: Maybe<Scalars['String']['output']>;
-  /** Line item name value */
   name: Scalars['String']['output'];
-  /** Line item comment */
   note?: Maybe<Scalars['String']['output']>;
-  /** Line item quantity value */
   objectType: Scalars['String']['output'];
-  /** Placed price */
   placedPrice: MoneyType;
-  /** Placed price with tax */
   placedPriceWithTax: MoneyType;
   product?: Maybe<Product>;
-  /** Product ID value */
   productId: Scalars['String']['output'];
-  /** Product outer Id */
   productOuterId?: Maybe<Scalars['String']['output']>;
-  /** Product type: Physical, Digital, or Subscription */
   productType?: Maybe<Scalars['String']['output']>;
-  /** Line item quantity value */
   quantity: Scalars['Int']['output'];
-  /** Requirement for line item shipping */
   requiredShipping: Scalars['Boolean']['output'];
-  /** Sale price */
   salePrice: MoneyType;
-  /** Sale price with tax */
   salePriceWithTax: MoneyType;
-  /** Shows whether the line item is selected for buying */
   selectedForCheckout: Scalars['Boolean']['output'];
-  /** Line item shipping method code value */
   shipmentMethodCode?: Maybe<Scalars['String']['output']>;
-  /** Product SKU value */
   sku: Scalars['String']['output'];
-  /** Tax details */
   taxDetails: Array<TaxDetailType>;
-  /** Total shipping tax amount value */
   taxPercentRate: Scalars['Decimal']['output'];
-  /** Tax total */
   taxTotal: MoneyType;
-  /** Shipping tax type value */
   taxType?: Maybe<Scalars['String']['output']>;
-  /** Value of line item thumbnail image absolute URL */
   thumbnailImageUrl?: Maybe<Scalars['String']['output']>;
-  /** Validation errors */
   validationErrors: Array<ValidationErrorType>;
   vendor?: Maybe<CommonVendor>;
-  /** Volumetric weight value */
   volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
-  /** Warehouse location */
   warehouseLocation?: Maybe<Scalars['String']['output']>;
-  /** Shopping cart weight value */
   weight?: Maybe<Scalars['Decimal']['output']>;
-  /** Weight unit value */
   weightUnit?: Maybe<Scalars['String']['output']>;
-  /** Width value */
   width?: Maybe<Scalars['Decimal']['output']>;
 };
 
@@ -2579,99 +1899,58 @@ export type LocalizedSettingResponseType = {
   items?: Maybe<Array<Maybe<KeyValueType>>>;
 };
 
-/** A connection from an object to a list of objects of type `MemberAddress`. */
 export type MemberAddressConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<MemberAddressEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<MemberAddressType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `MemberAddress`. */
 export type MemberAddressEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<MemberAddressType>;
 };
 
 export type MemberAddressType = {
   addressType?: Maybe<Scalars['Int']['output']>;
-  /** City */
   city?: Maybe<Scalars['String']['output']>;
-  /** Country code */
   countryCode?: Maybe<Scalars['String']['output']>;
-  /** Country name */
   countryName?: Maybe<Scalars['String']['output']>;
-  /** Description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Email */
   email?: Maybe<Scalars['String']['output']>;
-  /** First name */
   firstName?: Maybe<Scalars['String']['output']>;
-  /** Id */
   id?: Maybe<Scalars['String']['output']>;
-  /** Is default address or not */
   isDefault: Scalars['Boolean']['output'];
-  /** Is favorite address or not */
   isFavorite: Scalars['Boolean']['output'];
-  /** Id */
   key?: Maybe<Scalars['String']['output']>;
-  /** Last name */
   lastName?: Maybe<Scalars['String']['output']>;
-  /** Line1 */
   line1?: Maybe<Scalars['String']['output']>;
-  /** Line2 */
   line2?: Maybe<Scalars['String']['output']>;
-  /** Middle name */
   middleName?: Maybe<Scalars['String']['output']>;
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Company name */
   organization?: Maybe<Scalars['String']['output']>;
-  /** Outer id */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Phone */
   phone?: Maybe<Scalars['String']['output']>;
-  /** Postal code */
   postalCode: Scalars['String']['output'];
-  /** Region id */
   regionId?: Maybe<Scalars['String']['output']>;
-  /** Region name */
   regionName?: Maybe<Scalars['String']['output']>;
-  /** Zip */
   zip?: Maybe<Scalars['String']['output']>;
 };
 
 export type MemberType = {
   addresses?: Maybe<MemberAddressConnection>;
-  /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
-  /** Default shipping address */
   defaultShippingAddress?: Maybe<MemberAddressType>;
-  /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
-  /** Emails */
   emails: Array<Maybe<Scalars['String']['output']>>;
   groups: Array<Maybe<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
-  /** Member type */
   memberType: Scalars['String']['output'];
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Outer ID */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Phones */
   phones: Array<Maybe<Scalars['String']['output']>>;
-  /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
-  /** SEO object type */
   seoObjectType: Scalars['String']['output'];
-  /** Status */
   status?: Maybe<Scalars['String']['output']>;
 };
 
@@ -2695,44 +1974,28 @@ export type MemberTypeSeoInfoArgs = {
 
 export type MenuLinkListType = {
   items: Array<MenuLinkType>;
-  /** Menu name */
   name: Scalars['String']['output'];
-  /** Menu outer ID */
   outerId?: Maybe<Scalars['String']['output']>;
 };
 
 export type MenuLinkType = {
-  /** Menu item object ID */
   associatedObjectId?: Maybe<Scalars['String']['output']>;
-  /** Menu item object name */
   associatedObjectName?: Maybe<Scalars['String']['output']>;
-  /** Menu item type name */
   associatedObjectType?: Maybe<Scalars['String']['output']>;
   childItems: Array<MenuLinkType>;
-  /** Menu item outerID */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Menu item priority */
   priority: Scalars['Int']['output'];
-  /** Menu item title */
   title: Scalars['String']['output'];
-  /** Menu item url */
   url: Scalars['String']['output'];
 };
 
 export type MoneyType = {
-  /** A decimal with the amount rounded to the significant number of decimal digits. */
   amount: Scalars['Decimal']['output'];
-  /** Currency type */
   currency: CurrencyType;
-  /** Number of decimal digits for the associated currency. */
   decimalDigits: Scalars['Int']['output'];
-  /** Formatted amount. */
   formattedAmount: Scalars['String']['output'];
-  /** Formatted amount without currency. */
   formattedAmountWithoutCurrency: Scalars['String']['output'];
-  /** Formatted amount without point. */
   formattedAmountWithoutPoint: Scalars['String']['output'];
-  /** Formatted amount without point and currency. */
   formattedAmountWithoutPointAndCurrency: Scalars['String']['output'];
 };
 
@@ -2744,7 +2007,7 @@ export type Mutations = {
   addGiftItems?: Maybe<CartType>;
   addItem?: Maybe<CartType>;
   addItemsCart?: Maybe<CartType>;
-  addMessage?: Maybe<PushNotificationType>;
+  addMessage?: Maybe<PushMessageType>;
   addOrUpdateCartAddress?: Maybe<CartType>;
   addOrUpdateCartPayment?: Maybe<CartType>;
   addOrUpdateCartShipment?: Maybe<CartType>;
@@ -2792,11 +2055,11 @@ export type Mutations = {
   moveWishlistItem?: Maybe<WishlistType>;
   /** @deprecated Obsolete. Use 'initializePayment' mutation */
   processOrderPayment?: Maybe<ProcessPaymentRequestResultType>;
-  pushNotificationMarkRead?: Maybe<Scalars['Boolean']['output']>;
-  pushNotificationMarkUnread?: Maybe<Scalars['Boolean']['output']>;
-  pushNotificationsClearAll?: Maybe<Scalars['Boolean']['output']>;
-  pushNotificationsMarkReadAll?: Maybe<Scalars['Boolean']['output']>;
-  pushNotificationsMarkUnreadAll?: Maybe<Scalars['Boolean']['output']>;
+  pushMessageMarkRead?: Maybe<Scalars['Boolean']['output']>;
+  pushMessageMarkUnread?: Maybe<Scalars['Boolean']['output']>;
+  pushMessagesClearAll?: Maybe<Scalars['Boolean']['output']>;
+  pushMessagesMarkReadAll?: Maybe<Scalars['Boolean']['output']>;
+  pushMessagesMarkUnreadAll?: Maybe<Scalars['Boolean']['output']>;
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
@@ -2882,7 +2145,7 @@ export type MutationsAddItemsCartArgs = {
 
 
 export type MutationsAddMessageArgs = {
-  command: PushNotificationInputType;
+  command: PushMessageInputType;
 };
 
 
@@ -3116,13 +2379,13 @@ export type MutationsProcessOrderPaymentArgs = {
 };
 
 
-export type MutationsPushNotificationMarkReadArgs = {
-  command: InputMarkPushNotificationReadType;
+export type MutationsPushMessageMarkReadArgs = {
+  command: InputMarkPushMessageReadType;
 };
 
 
-export type MutationsPushNotificationMarkUnreadArgs = {
-  command: InputMarkPushNotificationUnreadType;
+export type MutationsPushMessageMarkUnreadArgs = {
+  command: InputMarkPushMessageUnreadType;
 };
 
 
@@ -3346,50 +2609,29 @@ export type MutationsValidateCouponArgs = {
 };
 
 export type OrderAddressType = {
-  /** Address type */
   addressType?: Maybe<Scalars['Int']['output']>;
-  /** City */
   city?: Maybe<Scalars['String']['output']>;
-  /** Country code */
   countryCode?: Maybe<Scalars['String']['output']>;
-  /** Country name */
   countryName?: Maybe<Scalars['String']['output']>;
-  /** Email */
   email?: Maybe<Scalars['String']['output']>;
-  /** First name */
   firstName?: Maybe<Scalars['String']['output']>;
-  /** Id */
   id?: Maybe<Scalars['String']['output']>;
-  /** Id */
   key?: Maybe<Scalars['String']['output']>;
-  /** Last name */
   lastName?: Maybe<Scalars['String']['output']>;
-  /** Line1 */
   line1?: Maybe<Scalars['String']['output']>;
-  /** Line2 */
   line2?: Maybe<Scalars['String']['output']>;
-  /** Middle name */
   middleName?: Maybe<Scalars['String']['output']>;
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Company name */
   organization?: Maybe<Scalars['String']['output']>;
-  /** Outer id */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Phone */
   phone?: Maybe<Scalars['String']['output']>;
-  /** Postal code */
   postalCode: Scalars['String']['output'];
-  /** Region id */
   regionId?: Maybe<Scalars['String']['output']>;
-  /** Region name */
   regionName?: Maybe<Scalars['String']['output']>;
-  /** Zip */
   zip?: Maybe<Scalars['String']['output']>;
 };
 
 export type OrderDiscountType = {
-  /** Order discount amount */
   amount: MoneyType;
   coupon?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -3408,7 +2650,6 @@ export type OrderLineItemType = {
   discountTotal: MoneyType;
   discountTotalWithTax: MoneyType;
   discounts: Array<OrderDiscountType>;
-  /** Customer order Line item dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
   extendedPrice: MoneyType;
   extendedPriceWithTax: MoneyType;
@@ -3514,7 +2755,6 @@ export type OrderShipmentType = {
   discountAmount: MoneyType;
   discountAmountWithTax: MoneyType;
   discounts: Array<OrderDiscountType>;
-  /** Customer order Shipment dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
   employeeId?: Maybe<Scalars['String']['output']>;
   employeeName?: Maybe<Scalars['String']['output']>;
@@ -3583,46 +2823,29 @@ export type OrderTaxDetailType = {
   rate: MoneyType;
 };
 
-/** Organization info */
 export type Organization = {
   addresses?: Maybe<MemberAddressConnection>;
-  /** Business category */
   businessCategory?: Maybe<Scalars['String']['output']>;
   contacts?: Maybe<ContactConnection>;
-  /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
-  /** Default shipping address */
   defaultShippingAddress?: Maybe<MemberAddressType>;
-  /** Description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
-  /** Emails */
   emails: Array<Maybe<Scalars['String']['output']>>;
   groups: Array<Maybe<Scalars['String']['output']>>;
   id: Scalars['String']['output'];
-  /** Member type */
   memberType: Scalars['String']['output'];
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Outer ID */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Owner id */
   ownerId?: Maybe<Scalars['String']['output']>;
-  /** Parent id */
   parentId?: Maybe<Scalars['String']['output']>;
-  /** Phones */
   phones: Array<Maybe<Scalars['String']['output']>>;
-  /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
-  /** SEO object type */
   seoObjectType: Scalars['String']['output'];
-  /** Status */
   status?: Maybe<Scalars['String']['output']>;
 };
 
 
-/** Organization info */
 export type OrganizationAddressesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -3630,7 +2853,6 @@ export type OrganizationAddressesArgs = {
 };
 
 
-/** Organization info */
 export type OrganizationContactsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -3639,124 +2861,82 @@ export type OrganizationContactsArgs = {
 };
 
 
-/** Organization info */
 export type OrganizationDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** Organization info */
 export type OrganizationSeoInfoArgs = {
   cultureName: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
 };
 
-/** A connection from an object to a list of objects of type `Organization`. */
 export type OrganizationConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<OrganizationEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<Organization>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Organization`. */
 export type OrganizationEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<Organization>;
 };
 
 export type OutlineItemType = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  /** SEO info */
   seoInfos?: Maybe<Array<SeoInfo>>;
   seoObjectType: Scalars['String']['output'];
 };
 
 export type OutlineType = {
-  /** Outline items */
   items?: Maybe<Array<OutlineItemType>>;
 };
 
-/** A connection from an object to a list of objects of type `Page`. */
 export type PageConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<PageEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<PageType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Page`. */
 export type PageEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<PageType>;
 };
 
-/** Information about pagination in a connection. */
 export type PageInfo = {
-  /** When paginating forwards, the cursor to continue. */
   endCursor?: Maybe<Scalars['String']['output']>;
-  /** When paginating forwards, are there more items? */
   hasNextPage: Scalars['Boolean']['output'];
-  /** When paginating backwards, are there more items? */
   hasPreviousPage: Scalars['Boolean']['output'];
-  /** When paginating backwards, the cursor to continue. */
   startCursor?: Maybe<Scalars['String']['output']>;
 };
 
 export type PageType = {
-  /** Page title */
   name?: Maybe<Scalars['String']['output']>;
-  /** Page permalink */
   permalink?: Maybe<Scalars['String']['output']>;
-  /** Page file relative url */
   relativeUrl: Scalars['String']['output'];
 };
 
 export type PasswordOptionsType = {
-  /** Require a digit ('0' - '9'). */
   requireDigit: Scalars['Boolean']['output'];
-  /** Require a lower case letter ('a' - 'z'). */
   requireLowercase: Scalars['Boolean']['output'];
-  /** Require a non letter or digit character. */
   requireNonAlphanumeric: Scalars['Boolean']['output'];
-  /** Require an upper case letter ('A' - 'Z'). */
   requireUppercase: Scalars['Boolean']['output'];
-  /** The minimum length a password must be. */
   requiredLength: Scalars['Int']['output'];
-  /** The minimum number of unique chars a password must comprised of. */
   requiredUniqueChars: Scalars['Int']['output'];
 };
 
-/** A connection from an object to a list of objects of type `PaymentIn`. */
 export type PaymentInConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<PaymentInEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<PaymentInType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `PaymentIn`. */
 export type PaymentInEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<PaymentInType>;
 };
 
@@ -3772,7 +2952,6 @@ export type PaymentInType = {
   currency: CurrencyType;
   customerId: Scalars['String']['output'];
   customerName?: Maybe<Scalars['String']['output']>;
-  /** Customer order Payment dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
   gatewayCode?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -3784,7 +2963,6 @@ export type PaymentInType = {
   number: Scalars['String']['output'];
   objectType: Scalars['String']['output'];
   operationType: Scalars['String']['output'];
-  /** Associated Order */
   order: CustomerOrderType;
   orderId?: Maybe<Scalars['String']['output']>;
   organizationId?: Maybe<Scalars['String']['output']>;
@@ -3809,43 +2987,24 @@ export type PaymentInTypeDynamicPropertiesArgs = {
 };
 
 export type PaymentMethodType = {
-  /** Value of payment gateway code */
   code: Scalars['String']['output'];
-  /** Currency */
   currency: CurrencyType;
-  /** Payment method description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Discount amount */
   discountAmount: MoneyType;
-  /** Discount amount with tax */
   discountAmountWithTax: MoneyType;
-  /** Is payment method available for partial payments */
   isAvailableForPartial: Scalars['Boolean']['output'];
-  /** Value of payment method logo absolute URL */
   logoUrl?: Maybe<Scalars['String']['output']>;
-  /** Value of payment method name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Value of payment group type */
   paymentMethodGroupType: Scalars['String']['output'];
-  /** Value of payment method type */
   paymentMethodType: Scalars['String']['output'];
-  /** Price */
   price: MoneyType;
-  /** Price with tax */
   priceWithTax: MoneyType;
-  /** Value of payment method priority */
   priority: Scalars['Int']['output'];
-  /** Tax details */
   taxDetails?: Maybe<Array<TaxDetailType>>;
-  /** Tax percent rate */
   taxPercentRate: Scalars['Decimal']['output'];
-  /** Tax total */
   taxTotal: MoneyType;
-  /** Tax type */
   taxType?: Maybe<Scalars['String']['output']>;
-  /** Total */
   total: MoneyType;
-  /** Total with tax */
   totalWithTax: MoneyType;
 };
 
@@ -3866,44 +3025,25 @@ export type PaymentTransactionType = {
 };
 
 export type PaymentType = {
-  /** Amount */
   amount: MoneyType;
-  /** Billing address */
   billingAddress?: Maybe<CartAddressType>;
-  /** Text comment */
   comment?: Maybe<Scalars['String']['output']>;
-  /** Currency */
   currency: CurrencyType;
-  /** Discount amount */
   discountAmount: MoneyType;
-  /** Discount amount with tax */
   discountAmountWithTax: MoneyType;
-  /** Discounts */
   discounts: Array<Maybe<DiscountType>>;
-  /** Cart payment dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
-  /** Payment Id */
   id: Scalars['String']['output'];
-  /** Value of payment outer id */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Value of payment gateway code */
   paymentGatewayCode?: Maybe<Scalars['String']['output']>;
-  /** Price */
   price: MoneyType;
-  /** Price with tax */
   priceWithTax: MoneyType;
   purpose?: Maybe<Scalars['String']['output']>;
-  /** Tax details */
   taxDetails: Array<TaxDetailType>;
-  /** Tax percent rate */
   taxPercentRate: Scalars['Decimal']['output'];
-  /** Tax total */
   taxTotal: MoneyType;
-  /** Tax type */
   taxType?: Maybe<Scalars['String']['output']>;
-  /** Total */
   total: MoneyType;
-  /** Total with tax */
   totalWithTax: MoneyType;
   vendor?: Maybe<CommonVendor>;
 };
@@ -3914,46 +3054,25 @@ export type PaymentTypeDynamicPropertiesArgs = {
 };
 
 export type PriceType = {
-  /** Actual price */
   actual: MoneyType;
-  /** Actual price with tax */
   actualWithTax: MoneyType;
-  /** Currency */
   currency: Scalars['String']['output'];
-  /** Discount amount */
   discountAmount: MoneyType;
-  /** Discount amount with tax */
   discountAmountWithTax: MoneyType;
   discountPercent: Scalars['Decimal']['output'];
-  /** Discounts */
   discounts: Array<CatalogDiscountType>;
-  /** End date */
   endDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Price list */
   list: MoneyType;
-  /** Price list with tax */
   listWithTax: MoneyType;
-  /** The product min qty */
   minQuantity?: Maybe<Scalars['Int']['output']>;
-  /** The product price list */
   pricelistId?: Maybe<Scalars['String']['output']>;
-  /** Sale price */
   sale: MoneyType;
-  /** Sale price with tax */
   saleWithTax: MoneyType;
-  /** Start date */
   startDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Tier prices */
   tierPrices: Array<TierPriceType>;
-  /**
-   * Valid from
-   * @deprecated startDate
-   */
+  /** @deprecated startDate */
   validFrom?: Maybe<Scalars['DateTime']['output']>;
-  /**
-   * Valid until
-   * @deprecated endDate
-   */
+  /** @deprecated endDate */
   validUntil?: Maybe<Scalars['DateTime']['output']>;
 };
 
@@ -3961,76 +3080,49 @@ export type ProcessPaymentRequestResultType = {
   errorMessage?: Maybe<Scalars['String']['output']>;
   htmlForm?: Maybe<Scalars['String']['output']>;
   isSuccess: Scalars['Boolean']['output'];
-  /** New payment status */
   newPaymentStatus?: Maybe<Scalars['String']['output']>;
   outerId?: Maybe<Scalars['String']['output']>;
   redirectUrl?: Maybe<Scalars['String']['output']>;
 };
 
-/** Products are the sellable goods in an e-commerce project. */
 export type Product = {
-  /** Assets */
   assets: Array<Asset>;
   associations?: Maybe<ProductAssociationConnection>;
-  /** Product availability data */
   availabilityData: AvailabilityData;
-  /** Get brandName for product. */
   brandName?: Maybe<Scalars['String']['output']>;
-  /** Breadcrumbs */
   breadcrumbs: Array<Breadcrumb>;
-  /** The unique ID of the catalog */
   catalogId?: Maybe<Scalars['String']['output']>;
   category?: Maybe<Category>;
-  /** The product SKU. */
   code: Scalars['String']['output'];
   description?: Maybe<DescriptionType>;
   descriptions: Array<DescriptionType>;
-  /** Global Trade Item Number */
   gtin?: Maybe<Scalars['String']['output']>;
   hasVariations: Scalars['Boolean']['output'];
-  /** The unique ID of the product. */
   id: Scalars['String']['output'];
-  /** Product images */
   images: Array<ImageType>;
-  /** The product main image URL. */
   imgSrc?: Maybe<Scalars['String']['output']>;
-  /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
   keyProperties: Array<Property>;
   masterVariation?: Maybe<VariationType>;
-  /** Max. quantity */
   maxQuantity?: Maybe<Scalars['Int']['output']>;
-  /** Min. quantity */
   minQuantity?: Maybe<Scalars['Int']['output']>;
-  /** Minimim product variation price */
   minVariationPrice?: Maybe<PriceType>;
-  /** The name of the product. */
   name: Scalars['String']['output'];
-  /** The outer identifier */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** All parent categories ids relative to the requested catalog and concatenated with \ . E.g. (1/21/344) */
   outline?: Maybe<Scalars['String']['output']>;
-  /** Outlines */
   outlines: Array<OutlineType>;
-  /** Product price */
   price: PriceType;
-  /** Product prices */
   prices: Array<PriceType>;
-  /** The type of product */
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
-  /** Request related SEO info */
   seoInfo: SeoInfo;
-  /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
   variations: Array<VariationType>;
-  /** Product vendor */
   vendor?: Maybe<CommonVendor>;
   videos?: Maybe<VideoConnection>;
 };
 
 
-/** Products are the sellable goods in an e-commerce project. */
 export type ProductAssociationsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -4039,37 +3131,31 @@ export type ProductAssociationsArgs = {
 };
 
 
-/** Products are the sellable goods in an e-commerce project. */
 export type ProductDescriptionArgs = {
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** Products are the sellable goods in an e-commerce project. */
 export type ProductDescriptionsArgs = {
   type?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** Products are the sellable goods in an e-commerce project. */
 export type ProductKeyPropertiesArgs = {
   take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
-/** Products are the sellable goods in an e-commerce project. */
 export type ProductPropertiesArgs = {
   names?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
-/** Products are the sellable goods in an e-commerce project. */
 export type ProductVideosArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
 };
 
-/** product association. */
 export type ProductAssociation = {
   associatedObjectId?: Maybe<Scalars['String']['output']>;
   associatedObjectType?: Maybe<Scalars['String']['output']>;
@@ -4080,49 +3166,30 @@ export type ProductAssociation = {
   type: Scalars['String']['output'];
 };
 
-/** A connection from an object to a list of objects of type `ProductAssociation`. */
 export type ProductAssociationConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<ProductAssociationEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<ProductAssociation>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `ProductAssociation`. */
 export type ProductAssociationEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<ProductAssociation>;
 };
 
-/** A connection from an object to a list of objects of type `Product`. */
 export type ProductConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<ProductEdge>>>;
-  /** Filter facets */
   filter_facets: Array<FilterFacet>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<Product>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** Range facets */
   range_facets: Array<RangeFacet>;
-  /** Term facets */
   term_facets: Array<TermFacet>;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Product`. */
 export type ProductEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<Product>;
 };
 
@@ -4130,113 +3197,75 @@ export type ProductSuggestionsQueryResponseType = {
   suggestions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
-/** Represents promotion object */
 export type Promotion = {
-  /** Promotion description */
   description?: Maybe<Scalars['String']['output']>;
-  /** The unique ID of the promotion. */
   id: Scalars['String']['output'];
-  /** The name of the promotion */
   name: Scalars['String']['output'];
-  /** Promotion type */
   type?: Maybe<Scalars['String']['output']>;
 };
 
-/** Products attributes. */
 export type Property = {
-  /** The display order of the property. */
   displayOrder?: Maybe<Scalars['Int']['output']>;
-  /** Is property hidden. */
   hidden: Scalars['Boolean']['output'];
-  /** The unique ID of the property. */
   id: Scalars['String']['output'];
   label: Scalars['String']['output'];
-  /** Is property has multiple values. */
   multivalue: Scalars['Boolean']['output'];
-  /** The name of the property. */
   name: Scalars['String']['output'];
   /** @deprecated Use propertyDictionaryItems instead. */
   propertyDictItems?: Maybe<PropertyDictionaryItemConnection>;
   propertyDictionaryItems?: Maybe<PropertyDictionaryItemConnection>;
   propertyType: PropertyType;
-  /** ValueType of the property. */
   propertyValueType: PropertyValueTypes;
   /** @deprecated Use propertyType instead. */
   type: Scalars['String']['output'];
   value?: Maybe<Scalars['PropertyValue']['output']>;
   valueId?: Maybe<Scalars['String']['output']>;
-  /**
-   * ValueType of the property.
-   * @deprecated Use propertyValueType instead.
-   */
+  /** @deprecated Use propertyValueType instead. */
   valueType: Scalars['String']['output'];
 };
 
 
-/** Products attributes. */
 export type PropertyPropertyDictItemsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
-/** Products attributes. */
 export type PropertyPropertyDictionaryItemsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
 };
 
-/** A connection from an object to a list of objects of type `Property`. */
 export type PropertyConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<PropertyEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<Property>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** Represents property dictionary item */
 export type PropertyDictionaryItem = {
-  /** The unique ID of the property dictionary item. */
   id: Scalars['String']['output'];
-  /** Value order. */
   sortOrder: Scalars['Int']['output'];
-  /** Value alias. */
   value?: Maybe<Scalars['String']['output']>;
 };
 
-/** A connection from an object to a list of objects of type `PropertyDictionaryItem`. */
 export type PropertyDictionaryItemConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<PropertyDictionaryItemEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<PropertyDictionaryItem>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `PropertyDictionaryItem`. */
 export type PropertyDictionaryItemEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<PropertyDictionaryItem>;
 };
 
-/** An edge in a connection from an object to another object of type `Property`. */
 export type PropertyEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<Property>;
 };
 
-/** The type of catalog property. */
 export enum PropertyType {
   Catalog = 'CATALOG',
   Category = 'CATEGORY',
@@ -4244,7 +3273,6 @@ export enum PropertyType {
   Variation = 'VARIATION'
 }
 
-/** The type of catalog property value. */
 export enum PropertyValueTypes {
   Boolean = 'BOOLEAN',
   DateTime = 'DATE_TIME',
@@ -4255,19 +3283,19 @@ export enum PropertyValueTypes {
   ShortText = 'SHORT_TEXT'
 }
 
-export type PushNotificationInputType = {
+export type PushMessageInputType = {
   content?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type PushNotificationType = {
+export type PushMessageType = {
   createdDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['String']['output'];
   shortMessage?: Maybe<Scalars['String']['output']>;
   status?: Maybe<Scalars['String']['output']>;
 };
 
-export type PushNotificationsResponseType = {
-  items: Array<PushNotificationType>;
+export type PushMessagesResponseType = {
+  items: Array<PushMessageType>;
   unreadCount: Scalars['Int']['output'];
 };
 
@@ -4309,7 +3337,7 @@ export type Query = {
   products?: Maybe<ProductConnection>;
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
-  pushNotifications: PushNotificationsResponseType;
+  pushMessages: PushMessagesResponseType;
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
   quotes?: Maybe<QuoteConnection>;
@@ -4635,7 +3663,7 @@ export type QueryPropertyArgs = {
 };
 
 
-export type QueryPushNotificationsArgs = {
+export type QueryPushMessagesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   unreadOnly?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -4760,14 +3788,12 @@ export type QuoteAddressType = {
   countryName: Scalars['String']['output'];
   email?: Maybe<Scalars['String']['output']>;
   firstName: Scalars['String']['output'];
-  /** ID */
   id?: Maybe<Scalars['String']['output']>;
   key?: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
   line1?: Maybe<Scalars['String']['output']>;
   line2?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
-  /** Company name */
   organization?: Maybe<Scalars['String']['output']>;
   outerId?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
@@ -4785,23 +3811,15 @@ export type QuoteAttachmentType = {
   url: Scalars['String']['output'];
 };
 
-/** A connection from an object to a list of objects of type `Quote`. */
 export type QuoteConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<QuoteEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<QuoteType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Quote`. */
 export type QuoteEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<QuoteType>;
 };
 
@@ -4866,7 +3884,6 @@ export type QuoteType = {
   currency: CurrencyType;
   customerId?: Maybe<Scalars['String']['output']>;
   customerName?: Maybe<Scalars['String']['output']>;
-  /** Quote dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
   employeeId?: Maybe<Scalars['String']['output']>;
   employeeName?: Maybe<Scalars['String']['output']>;
@@ -4903,20 +3920,14 @@ export type QuoteTypeDynamicPropertiesArgs = {
 };
 
 export type RangeFacet = Facet & {
-  /** The three types of facets. Terms, Range, Filter */
   facetType: FacetTypes;
-  /** Localized name of the facet. */
   label: Scalars['String']['output'];
-  /** The key/name  of the facet. */
   name: Scalars['String']['output'];
-  /** Ranges */
   ranges: Array<FacetRangeType>;
 };
 
 export type Rating = {
-  /** Total count of customer reviews */
   reviewCount: Scalars['Int']['output'];
-  /** Average rating */
   value: Scalars['Decimal']['output'];
 };
 
@@ -4943,7 +3954,6 @@ export type RegisterContactType = {
   address?: Maybe<MemberAddressType>;
   birthdate?: Maybe<Scalars['Date']['output']>;
   createdBy?: Maybe<Scalars['String']['output']>;
-  /** Contact's dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
@@ -4962,7 +3972,6 @@ export type RegisterOrganizationType = {
   address?: Maybe<MemberAddressType>;
   createdBy?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
-  /** Contact's dynamic property values */
   dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -4991,13 +4000,9 @@ export type RemoveQuoteItemCommandType = {
 };
 
 export type RequestRegistrationType = {
-  /** Contact's account */
   account?: Maybe<RegisterAccountType>;
-  /** Created contact */
   contact?: Maybe<RegisterContactType>;
-  /** Created company */
   organization?: Maybe<RegisterOrganizationType>;
-  /** Account creation result */
   result?: Maybe<AccountCreationResultType>;
 };
 
@@ -5006,7 +4011,6 @@ export type RoleType = {
   id: Scalars['String']['output'];
   name: Scalars['String']['output'];
   normalizedName: Scalars['String']['output'];
-  /** Permissions in Role */
   permissions: Array<Maybe<Scalars['String']['output']>>;
 };
 
@@ -5026,65 +4030,36 @@ export type SeoInfo = {
 };
 
 export type ShipmentType = {
-  /** Text comment */
   comment?: Maybe<Scalars['String']['output']>;
-  /** Currency */
   currency: CurrencyType;
-  /** Delivery address */
   deliveryAddress?: Maybe<CartAddressType>;
-  /** Discount amount */
   discountAmount: MoneyType;
-  /** Discount amount with tax */
   discountAmountWithTax: MoneyType;
-  /** Discounts */
   discounts: Array<DiscountType>;
-  /** Cart shipment dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
-  /** Fee */
   fee: MoneyType;
-  /** Fee with tax */
   feeWithTax: MoneyType;
-  /** Fulfillment center id */
   fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
-  /** Value of height */
   height?: Maybe<Scalars['Decimal']['output']>;
-  /** Shipment Id */
   id: Scalars['String']['output'];
-  /** Items */
   items: Array<CartShipmentItemType>;
-  /** Value of length */
   length?: Maybe<Scalars['Decimal']['output']>;
-  /** Value of measurement units */
   measureUnit?: Maybe<Scalars['String']['output']>;
-  /** Price */
   price: MoneyType;
-  /** Price with tax */
   priceWithTax: MoneyType;
-  /** Shipment method code */
   shipmentMethodCode?: Maybe<Scalars['String']['output']>;
-  /** Shipment method option */
   shipmentMethodOption?: Maybe<Scalars['String']['output']>;
   shippingMethod?: Maybe<ShippingMethodType>;
-  /** Tax details */
   taxDetails: Array<TaxDetailType>;
-  /** Tax percent rate */
   taxPercentRate: Scalars['Decimal']['output'];
-  /** Tax total */
   taxTotal: MoneyType;
-  /** Tax type */
   taxType?: Maybe<Scalars['String']['output']>;
-  /** Total */
   total: MoneyType;
-  /** Total with tax */
   totalWithTax: MoneyType;
   vendor?: Maybe<CommonVendor>;
-  /** Value of volumetric weight */
   volumetricWeight?: Maybe<Scalars['Decimal']['output']>;
-  /** Value of weight */
   weight?: Maybe<Scalars['Decimal']['output']>;
-  /** Value of weight unit */
   weightUnit?: Maybe<Scalars['String']['output']>;
-  /** Value of width */
   width?: Maybe<Scalars['Decimal']['output']>;
 };
 
@@ -5094,34 +4069,20 @@ export type ShipmentTypeDynamicPropertiesArgs = {
 };
 
 export type ShippingMethodType = {
-  /** Value of shipping gateway code */
   code: Scalars['String']['output'];
-  /** Currency */
   currency: CurrencyType;
-  /** Shipping method description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Discount amount */
   discountAmount: MoneyType;
-  /** Discount amount with tax */
   discountAmountWithTax: MoneyType;
   id: Scalars['String']['output'];
-  /** Value of shipping method logo absolute URL */
   logoUrl?: Maybe<Scalars['String']['output']>;
-  /** Shipping method name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Value of shipping method option description */
   optionDescription?: Maybe<Scalars['String']['output']>;
-  /** Value of shipping method option name */
   optionName?: Maybe<Scalars['String']['output']>;
-  /** Price */
   price: MoneyType;
-  /** Price with tax */
   priceWithTax: MoneyType;
-  /** Value of shipping method priority */
   priority: Scalars['Int']['output'];
-  /** Total */
   total: MoneyType;
-  /** Total with tax */
   totalWithTax: MoneyType;
 };
 
@@ -5141,51 +4102,31 @@ export type SkyflowCardType = {
 };
 
 export type SlugInfoResponseType = {
-  /** SEO info */
   entityInfo?: Maybe<SeoInfo>;
 };
 
 export type StoreResponseType = {
-  /** Available currencies */
   availableCurrencies: Array<CurrencyType>;
-  /** Available languages */
   availableLanguages: Array<LanguageType>;
-  /** Store catalog ID */
   catalogId: Scalars['String']['output'];
-  /** Currency */
   defaultCurrency: CurrencyType;
-  /** Language */
   defaultLanguage: LanguageType;
-  /** Store settings */
   settings: StoreSettingsType;
-  /** Store ID */
   storeId: Scalars['String']['output'];
-  /** Store name */
   storeName: Scalars['String']['output'];
-  /** Store URL */
   storeUrl?: Maybe<Scalars['String']['output']>;
 };
 
 export type StoreSettingsType = {
-  /** Allow anonymous users to visit the store  */
   anonymousUsersAllowed: Scalars['Boolean']['output'];
-  /** Allow anonymous users to create orders (XAPI) */
   createAnonymousOrderEnabled: Scalars['Boolean']['output'];
-  /** Email address verification enabled */
   emailVerificationEnabled: Scalars['Boolean']['output'];
-  /** Email address verification required */
   emailVerificationRequired: Scalars['Boolean']['output'];
-  /** SPA */
   isSpa: Scalars['Boolean']['output'];
-  /** Password requirements */
   passwordRequirements?: Maybe<PasswordOptionsType>;
-  /** Store ID */
   quotesEnabled: Scalars['Boolean']['output'];
-  /** SEO links */
   seoLinkType: Scalars['String']['output'];
-  /** Store ID */
   subscriptionEnabled: Scalars['Boolean']['output'];
-  /** Tax calculation enabled */
   taxCalculationEnabled: Scalars['Boolean']['output'];
 };
 
@@ -5195,37 +4136,26 @@ export type SubmitQuoteCommandType = {
 };
 
 export type Subscriptions = {
-  pushNotificationCreated?: Maybe<PushNotificationType>;
+  pushMessageCreated?: Maybe<PushMessageType>;
 };
 
 export type TaxDetailType = {
-  /** Amount */
   amount: MoneyType;
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Price */
   price: MoneyType;
-  /** Rate */
   rate: MoneyType;
 };
 
 export type TermFacet = Facet & {
-  /** Three facet types: Terms, Range, and Filter */
   facetType: FacetTypes;
-  /** Localized name of the facet. */
   label: Scalars['String']['output'];
-  /** The key/name  of the facet. */
   name: Scalars['String']['output'];
-  /** Terms */
   terms: Array<FacetTermType>;
 };
 
 export type TierPriceType = {
-  /** Price */
   price: MoneyType;
-  /** Price with tax */
   priceWithTax: MoneyType;
-  /** Quantity */
   quantity: Scalars['Long']['output'];
 };
 
@@ -5241,17 +4171,14 @@ export type UpdateQuoteAttachmentsCommandType = {
 
 export type UserType = {
   accessFailedCount: Scalars['Int']['output'];
-  /** The associated contact info */
   contact?: Maybe<ContactType>;
   createdBy?: Maybe<Scalars['String']['output']>;
   createdDate?: Maybe<Scalars['DateTime']['output']>;
   email?: Maybe<Scalars['String']['output']>;
   emailConfirmed: Scalars['Boolean']['output'];
-  /** Make this user change their password when they sign in next time */
   forcePasswordChange?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['String']['output'];
   isAdministrator: Scalars['Boolean']['output'];
-  /** Account locked state */
   lockedState?: Maybe<Scalars['Boolean']['output']>;
   lockoutEnabled: Scalars['Boolean']['output'];
   lockoutEnd?: Maybe<Scalars['DateTime']['output']>;
@@ -5262,9 +4189,7 @@ export type UserType = {
   normalizedUserName?: Maybe<Scalars['String']['output']>;
   operator?: Maybe<UserType>;
   passwordExpired: Scalars['Boolean']['output'];
-  /** Password expiry in days */
   passwordExpiryInDays?: Maybe<Scalars['Int']['output']>;
-  /** Account permissions */
   permissions?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
   phoneNumberConfirmed: Scalars['Boolean']['output'];
@@ -5278,88 +4203,53 @@ export type UserType = {
 };
 
 export type ValidationErrorType = {
-  /** Error code */
   errorCode?: Maybe<Scalars['String']['output']>;
-  /** Error msg */
   errorMessage?: Maybe<Scalars['String']['output']>;
   errorParameters?: Maybe<Array<Maybe<ErrorParameterType>>>;
-  /** Object id */
   objectId?: Maybe<Scalars['String']['output']>;
-  /** Object type */
   objectType?: Maybe<Scalars['String']['output']>;
 };
 
 export type VariationType = {
-  /** Assets */
   assets: Array<Asset>;
-  /** Availability data */
   availabilityData: AvailabilityData;
-  /** SKU of variation. */
   code: Scalars['String']['output'];
-  /** Id of variation. */
   id: Scalars['String']['output'];
-  /** Product images */
   images: Array<ImageType>;
-  /** Max. quantity. */
   maxQuantity?: Maybe<Scalars['Int']['output']>;
-  /** Min. quantity. */
   minQuantity?: Maybe<Scalars['Int']['output']>;
-  /** Name of variation. */
   name: Scalars['String']['output'];
-  /** Outlines */
   outlines?: Maybe<Array<OutlineType>>;
-  /** Product price */
   price: PriceType;
-  /** Product prices */
   prices: Array<PriceType>;
-  /** The type of product */
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
-  /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
-  /** Product vendor */
   vendor?: Maybe<CommonVendor>;
 };
 
-/** Vendor Info */
 export type Vendor = {
-  /** About vendor */
   about?: Maybe<Scalars['String']['output']>;
   addresses?: Maybe<MemberAddressConnection>;
-  /** Default billing address */
   defaultBillingAddress?: Maybe<MemberAddressType>;
-  /** Default shipping address */
   defaultShippingAddress?: Maybe<MemberAddressType>;
-  /** Dynamic property values */
   dynamicProperties: Array<Maybe<DynamicPropertyValueType>>;
-  /** Emails */
   emails: Array<Maybe<Scalars['String']['output']>>;
   groups: Array<Maybe<Scalars['String']['output']>>;
-  /** Icon URL */
   iconUrl?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  /** Member type */
   memberType: Scalars['String']['output'];
-  /** Name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Outer ID */
   outerId?: Maybe<Scalars['String']['output']>;
-  /** Phones */
   phones: Array<Maybe<Scalars['String']['output']>>;
-  /** Vendor rating */
   rating?: Maybe<Rating>;
-  /** Request related SEO info */
   seoInfo?: Maybe<SeoInfo>;
-  /** SEO object type */
   seoObjectType: Scalars['String']['output'];
-  /** Site URL */
   siteUrl?: Maybe<Scalars['String']['output']>;
-  /** Status */
   status?: Maybe<Scalars['String']['output']>;
 };
 
 
-/** Vendor Info */
 export type VendorAddressesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -5367,118 +4257,75 @@ export type VendorAddressesArgs = {
 };
 
 
-/** Vendor Info */
 export type VendorDynamicPropertiesArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** Vendor Info */
 export type VendorRatingArgs = {
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
-/** Vendor Info */
 export type VendorSeoInfoArgs = {
   cultureName: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
 };
 
-/** A connection from an object to a list of objects of type `Video`. */
 export type VideoConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<VideoEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<VideoType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Video`. */
 export type VideoEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<VideoType>;
 };
 
 export type VideoType = {
-  /** Video URL */
   contentUrl: Scalars['String']['output'];
-  /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
-  /** Video description */
   description: Scalars['String']['output'];
-  /** Video duration */
   duration?: Maybe<Scalars['String']['output']>;
-  /** Embeded video URL */
   embedUrl?: Maybe<Scalars['String']['output']>;
-  /** Video name */
   name: Scalars['String']['output'];
-  /** ID of the object video is attached to */
   ownerId: Scalars['String']['output'];
-  /** Type of the object video is attached to (Product, Category) */
   ownerType: Scalars['String']['output'];
-  /** Sort order */
   sortOrder: Scalars['Int']['output'];
-  /** Video thumbnial URL */
   thumbnailUrl: Scalars['String']['output'];
-  /** Video upload date */
   uploadDate?: Maybe<Scalars['DateTime']['output']>;
 };
 
-/** A connection from an object to a list of objects of type `Wishlist`. */
 export type WishlistConnection = {
-  /** A list of all of the edges returned in the connection. */
   edges?: Maybe<Array<Maybe<WishlistEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
   items?: Maybe<Array<Maybe<WishlistType>>>;
-  /** Information to aid in pagination. */
   pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `Wishlist`. */
 export type WishlistEdge = {
-  /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
   node?: Maybe<WishlistType>;
 };
 
 export enum WishlistScopeType {
-  /** Organization scope */
   Organization = 'Organization',
-  /** Private scope */
   Private = 'Private'
 }
 
 export type WishlistType = {
-  /** Currency */
   currency?: Maybe<CurrencyType>;
-  /** Shopping cart user ID */
   customerId?: Maybe<Scalars['String']['output']>;
-  /** Shopping cart user name */
   customerName?: Maybe<Scalars['String']['output']>;
-  /** Wishlist description */
   description?: Maybe<Scalars['String']['output']>;
-  /** Shopping cart ID */
   id: Scalars['String']['output'];
-  /** Items */
   items?: Maybe<Array<Maybe<LineItemType>>>;
-  /** Item count */
   itemsCount?: Maybe<Scalars['Int']['output']>;
-  /** Wishlist modified date */
   modifiedDate?: Maybe<Scalars['DateTime']['output']>;
-  /** Shopping cart name */
   name: Scalars['String']['output'];
-  /** Wishlist scope */
   scope?: Maybe<WishlistScopeType>;
-  /** Shopping cart store ID */
   storeId?: Maybe<Scalars['String']['output']>;
 };
 
@@ -6185,17 +5032,17 @@ export type InitializePaymentMutationVariables = Exact<{
 
 export type InitializePaymentMutation = { initializePayment?: { isSuccess: boolean, errorMessage?: string, actionHtmlForm?: string, actionRedirectUrl?: string, paymentActionType?: string, publicParameters?: Array<{ key: string, value?: string }> } };
 
-export type PushNotificationFragment = { id: string, createdDate?: any, shortMessage?: string, status?: string };
+export type PushMessageFragment = { id: string, createdDate?: any, shortMessage?: string, status?: string };
 
-export type GetPushNotificationsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetPushNotificationsQuery = { pushNotifications: { unreadCount: number, items: Array<{ id: string, createdDate?: any, shortMessage?: string, status?: string }> } };
-
-export type OnPushNotificationCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type GetPushMessagesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OnPushNotificationCreatedSubscription = { pushNotificationCreated?: { id: string, createdDate?: any, shortMessage?: string, status?: string } };
+export type GetPushMessagesQuery = { pushMessages: { unreadCount: number, items: Array<{ id: string, createdDate?: any, shortMessage?: string, status?: string }> } };
+
+export type OnPushMessageCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OnPushMessageCreatedSubscription = { pushMessageCreated?: { id: string, createdDate?: any, shortMessage?: string, status?: string } };
 
 export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
 
@@ -6311,7 +5158,7 @@ export const OrderAddressFieldsFragmentDoc = {"kind":"Document","definitions":[{
 export const FullOrderFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"fullOrderFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerOrderType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"shortOrderFields"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"purchaseOrderNumber"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shipments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shipmentMethodCode"}},{"kind":"Field","name":{"kind":"Name","value":"shipmentMethodOption"}},{"kind":"Field","name":{"kind":"Name","value":"shippingMethod"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"typeName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountAmount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deliveryAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"orderAddressFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"inPayments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"1"}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"StringValue","value":"CreatedDate:desc","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"isApproved"}},{"kind":"Field","name":{"kind":"Name","value":"gatewayCode"}},{"kind":"Field","name":{"kind":"Name","value":"paymentMethod"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"typeName"}},{"kind":"Field","name":{"kind":"Name","value":"paymentMethodType"}},{"kind":"Field","name":{"kind":"Name","value":"paymentMethodGroupType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingAddress"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"orderAddressFields"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"availablePaymentMethods"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"property"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"valueType"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"currency"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"money"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MoneyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmountWithoutCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"orderLineItemFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderLineItemType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isGift"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"productType"}},{"kind":"Field","name":{"kind":"Name","value":"product"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"brandName"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"masterVariation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"property"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"sku"}},{"kind":"Field","name":{"kind":"Name","value":"extendedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"placedPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"outerId"}},{"kind":"Field","name":{"kind":"Name","value":"vendor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"rating"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"reviewCount"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"shortOrderFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CustomerOrderType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"orderLineItemFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"coupon"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"promotionId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"discountTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shippingSubTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"shippingTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"taxTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"subTotal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"orderAddressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"OrderAddressType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"organization"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"line1"}},{"kind":"Field","name":{"kind":"Name","value":"line2"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"countryCode"}},{"kind":"Field","name":{"kind":"Name","value":"countryName"}},{"kind":"Field","name":{"kind":"Name","value":"regionId"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"addressType"}}]}}]} as unknown as DocumentNode<FullOrderFieldsFragment, unknown>;
 export const QuoteAddressFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"quoteAddressFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"QuoteAddressType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"line1"}},{"kind":"Field","name":{"kind":"Name","value":"line2"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"countryCode"}},{"kind":"Field","name":{"kind":"Name","value":"countryName"}},{"kind":"Field","name":{"kind":"Name","value":"regionId"}},{"kind":"Field","name":{"kind":"Name","value":"regionName"}},{"kind":"Field","name":{"kind":"Name","value":"postalCode"}},{"kind":"Field","name":{"kind":"Name","value":"phone"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"addressType"}},{"kind":"Field","name":{"kind":"Name","value":"key"}}]}}]} as unknown as DocumentNode<QuoteAddressFieldsFragment, unknown>;
 export const QuoteLineItemFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"quoteLineItemFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"QuoteItemType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"sku"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"imageUrl"}},{"kind":"Field","name":{"kind":"Name","value":"listPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}},{"kind":"Field","name":{"kind":"Name","value":"selectedTierPrice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"price"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"money"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"product"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"brandName"}},{"kind":"Field","name":{"kind":"Name","value":"properties"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"property"}}]}},{"kind":"Field","name":{"kind":"Name","value":"availabilityData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"availableQuantity"}},{"kind":"Field","name":{"kind":"Name","value":"isInStock"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"currency"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"money"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"MoneyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmount"}},{"kind":"Field","name":{"kind":"Name","value":"formattedAmountWithoutCurrency"}},{"kind":"Field","name":{"kind":"Name","value":"currency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"currency"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"property"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Property"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"valueType"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}}]} as unknown as DocumentNode<QuoteLineItemFieldsFragment, unknown>;
-export const PushNotificationFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushNotification"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushNotificationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<PushNotificationFragment, unknown>;
+export const PushMessageFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushMessage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushMessageType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<PushMessageFragment, unknown>;
 export const QuoteAttachmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"quoteAttachment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"QuoteAttachmentType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"contentType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}}]}}]} as unknown as DocumentNode<QuoteAttachmentFragment, unknown>;
 export const AddAddressToFavoritesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddAddressToFavorites"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddAddressToFavoritesCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addAddressToFavorites"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<AddAddressToFavoritesMutation, AddAddressToFavoritesMutationVariables>;
 export const AddWishlistDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddWishlist"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreateWishlistType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWishlist"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<AddWishlistMutation, AddWishlistMutationVariables>;
@@ -6390,8 +5237,8 @@ export const GetOrganizationAddressesDocument = {"kind":"Document","definitions"
 export const GetOrganizationContactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationContacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchPhrase"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"emails"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"securityAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganizationContactsQuery, GetOrganizationContactsQueryVariables>;
 export const AuthorizePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AuthorizePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputAuthorizePaymentType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authorizePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]}}]} as unknown as DocumentNode<AuthorizePaymentMutation, AuthorizePaymentMutationVariables>;
 export const InitializePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputInitializePaymentType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"actionHtmlForm"}},{"kind":"Field","name":{"kind":"Name","value":"actionRedirectUrl"}},{"kind":"Field","name":{"kind":"Name","value":"paymentActionType"}},{"kind":"Field","name":{"kind":"Name","value":"publicParameters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<InitializePaymentMutation, InitializePaymentMutationVariables>;
-export const GetPushNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPushNotifications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushNotifications"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unreadCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pushNotification"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushNotification"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushNotificationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<GetPushNotificationsQuery, GetPushNotificationsQueryVariables>;
-export const OnPushNotificationCreatedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OnPushNotificationCreated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushNotificationCreated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pushNotification"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushNotification"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushNotificationType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<OnPushNotificationCreatedSubscription, OnPushNotificationCreatedSubscriptionVariables>;
+export const GetPushMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unreadCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pushMessage"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushMessage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushMessageType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<GetPushMessagesQuery, GetPushMessagesQueryVariables>;
+export const OnPushMessageCreatedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OnPushMessageCreated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessageCreated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pushMessage"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushMessage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushMessageType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<OnPushMessageCreatedSubscription, OnPushMessageCreatedSubscriptionVariables>;
 export const ChangeQuoteCommentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangeQuoteComment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ChangeQuoteCommentCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changeQuoteComment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<ChangeQuoteCommentMutation, ChangeQuoteCommentMutationVariables>;
 export const ChangeQuoteItemQuantityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangeQuoteItemQuantity"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ChangeQuoteItemQuantityCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changeQuoteItemQuantity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<ChangeQuoteItemQuantityMutation, ChangeQuoteItemQuantityMutationVariables>;
 export const CreateQuoteFromCartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateQuoteFromCart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateQuoteFromCartCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createQuoteFromCart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateQuoteFromCartMutation, CreateQuoteFromCartMutationVariables>;
@@ -6429,7 +5276,7 @@ export const OperationNames = {
     GetOrders: 'GetOrders',
     GetOrganizationAddresses: 'GetOrganizationAddresses',
     GetOrganizationContacts: 'GetOrganizationContacts',
-    GetPushNotifications: 'GetPushNotifications',
+    GetPushMessages: 'GetPushMessages',
     GetQuote: 'GetQuote',
     GetQuotes: 'GetQuotes',
     GetStore: 'GetStore'
@@ -6496,7 +5343,7 @@ export const OperationNames = {
     UpdateQuoteAttachments: 'UpdateQuoteAttachments'
   },
   Subscription: {
-    OnPushNotificationCreated: 'OnPushNotificationCreated'
+    OnPushMessageCreated: 'OnPushMessageCreated'
   },
   Fragment: {
     wishlistLineItemFields: 'wishlistLineItemFields',
@@ -6530,7 +5377,7 @@ export const OperationNames = {
     orderAddressFields: 'orderAddressFields',
     quoteAddressFields: 'quoteAddressFields',
     quoteLineItemFields: 'quoteLineItemFields',
-    pushNotification: 'pushNotification',
+    pushMessage: 'pushMessage',
     quoteAttachment: 'quoteAttachment'
   }
 }
