@@ -1,14 +1,17 @@
 import { createGlobalState, useMemoize } from "@vueuse/core";
-import { ref } from "vue";
 import { useFetch } from "@/core/api/common";
-import type { PageTemplate, PageTemplateRequest } from "@/shared/static-content/types";
+import type { PageTemplate } from "@/shared/static-content/types";
+
+//list of files names in client-app/public/content/templates
+const TEMPLATES = ["product"];
 
 function _useTemplates() {
-  const payload = ref<PageTemplateRequest>();
-
   const memoize = useMemoize(async (templateName: string) => {
-    payload.value = { template: templateName };
-    const { data } = await useFetch(`/content/templates/${payload.value?.template}.json`).get().json();
+    if (!TEMPLATES.includes(templateName as string)) {
+      throw new Error(`Template with name ${templateName}.json not found!`);
+    }
+
+    const { data } = await useFetch(`/content/templates/${templateName}.json`).get().json();
     return data.value as PageTemplate;
   });
 

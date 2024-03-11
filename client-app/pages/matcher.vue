@@ -11,7 +11,7 @@
       :product-id="slugInfo?.entityInfo?.objectId"
     />
 
-    <component :is="StaticPage" v-else-if="slugInfo?.entityInfo?.objectType === 'ContentFile'" />
+    <component :is="StaticPage" v-else-if="hasContent" />
 
     <NotFound v-else-if="!loading" />
   </LandingPage>
