@@ -26,6 +26,10 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     return result.value?.slugInfo;
   });
 
+  const hasContent = computed(() => {
+    return slugInfo.value?.entityInfo?.objectType === "ContentFile";
+  });
+
   const getPageParams = computed(() => {
     return { id: slugInfo?.value?.entityInfo?.objectId || "", storeId };
   });
@@ -51,6 +55,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
       return slugLoading.value || contentLoading.value;
     }),
     slugInfo,
+    hasContent,
     pageContent,
     fetchContent,
   };

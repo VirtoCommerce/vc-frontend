@@ -108,10 +108,10 @@ usePageHead({
 
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const { staticPage } = useStaticPage();
-const { loading, slugInfo, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
+const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
 
-watch(slugInfo, async (slugInfoValue) => {
-  if (slugInfoValue?.entityInfo?.objectType === "ContentFile") {
+watch(slugInfo, async () => {
+  if (hasContent.value) {
     await fetchContent();
     if (pageContent.value) {
       staticPage.value = pageContent.value;

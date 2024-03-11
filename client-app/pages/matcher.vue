@@ -48,7 +48,7 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
-const { loading, slugInfo, pageContent, fetchContent } = useSlugInfo(seoUrl);
+const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo(seoUrl);
 
 onBeforeUnmount(() => {
   setMatchingRouteName("");
@@ -57,7 +57,7 @@ onBeforeUnmount(() => {
 watchEffect(async () => {
   let matchingRouteName = "";
 
-  if (slugInfo.value?.entityInfo?.objectType === "ContentFile") {
+  if (hasContent.value) {
     await fetchContent();
     if (pageContent.value) {
       staticPage.value = pageContent.value;
