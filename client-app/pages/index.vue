@@ -89,15 +89,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, watch } from "vue";
+import { defineAsyncComponent, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { getPage } from "@/core/api/graphql";
 import { usePageHead } from "@/core/composables";
-import { globals } from "@/core/globals";
 import { useSlugInfo } from "@/shared/common";
 import { LoginFormSection } from "@/shared/layout";
 import { useStaticPage } from "@/shared/static-content";
-import type { PageTemplate } from "@/shared/static-content";
 
 const { t } = useI18n();
 
@@ -111,26 +108,14 @@ usePageHead({
 
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const { staticPage } = useStaticPage();
-const { loading, slugInfo } = useSlugInfo("__index__home__page__");
-
-const getPageParams = computed(() => {
-  const { storeId } = globals;
-
-  return { id: slugInfo?.value?.entityInfo?.objectId || "", storeId };
-});
-
-const { load: loadPage, result } = getPage(getPageParams);
+const { loading, slugInfo, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
 
 watch(slugInfo, async (slugInfoValue) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-
   if (slugInfoValue?.entityInfo?.objectType === "ContentFile") {
-    await loadPage();
-    if (typeof result?.value?.page?.content !== "string") {
-      return;
+    await fetchContent();
+    if (pageContent.value) {
+      staticPage.value = pageContent.value;
     }
-    const { content, settings } = JSON.parse(result.value.page.content) as PageTemplate;
-    staticPage.value = { content, settings };
   }
 });
 </script>
