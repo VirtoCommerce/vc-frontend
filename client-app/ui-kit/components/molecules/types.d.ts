@@ -1,6 +1,6 @@
 import type * as Components from ".";
 
-declare module "@vue/runtime-core" {
+declare module "vue" {
   // Glboal components is already declated interface which we want to augment
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
@@ -19,8 +19,6 @@ declare module "@vue/runtime-core" {
     VcExpansionPanel: typeof Components.VcExpansionPanel;
     VcFileUploader: typeof Components.VcFileUploader;
     VcFile: typeof Components.VcFile;
-    /** @deprecated use Swiper instead. */
-    VcImageGallery: typeof Components.VcImageGallery;
     VcInput: typeof Components.VcInput;
     VcItemPrice: typeof Components.VcItemPrice;
     VcItemPriceCatalog: typeof Components.VcItemPriceCatalog;
@@ -45,3 +43,5 @@ declare module "@vue/runtime-core" {
     VcWidgetSkeleton: typeof Components.VcWidgetSkeleton;
   }
 }
+
+export {};

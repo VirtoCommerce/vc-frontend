@@ -87,8 +87,7 @@ const iconName = computed<string>(() => {
   @apply flex items-stretch border rounded;
 
   &--shadow {
-    /** @deprecated waiting for shadow styles design */
-    box-shadow: 5px 5px 16px 0px rgba(137, 137, 137, 0.3);
+    @apply shadow-lg;
   }
 
   &--size {

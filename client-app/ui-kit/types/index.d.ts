@@ -107,4 +107,11 @@ declare global {
   }
 
   type FileType = INewFile | IUploadingFile | IUploadedFile | IFailedFile | IAttachedFile | IRemovedFile;
+
+  type VcNotificationType = {
+    id: string;
+    text: string;
+    read?: boolean;
+    createdDate: number | Date;
+  };
 }

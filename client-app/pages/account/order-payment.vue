@@ -289,7 +289,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 const executed = computed<boolean>(() => success.value || failure.value);
-const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments[0]);
+const payment = computed<PaymentInType | undefined>(() => order.value?.inPayments?.[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);
 const paymentTypeName = computed<string | undefined>(() => payment.value?.paymentMethod?.typeName);
 
@@ -356,9 +356,9 @@ watch(success, async (value) => {
 watchEffect(async () => {
   if (props.orderId !== order.value?.id) {
     await fetchFullOrder({ id: props.orderId });
-  } else if (order.value?.inPayments[0]?.isApproved) {
+  } else if (order.value?.inPayments?.[0]?.isApproved) {
     // If the order is paid
-    router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
+    await router.replace({ name: "OrderDetails", params: { orderId: props.orderId } });
   }
 });
 </script>

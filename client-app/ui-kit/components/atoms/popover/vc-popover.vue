@@ -76,6 +76,9 @@ function create(): void {
           offset: [props.xOffset, props.yOffset],
         },
       },
+      {
+        name: "arrow",
+      },
     ],
   });
 }
