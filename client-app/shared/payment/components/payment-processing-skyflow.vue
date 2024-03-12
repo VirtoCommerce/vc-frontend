@@ -172,7 +172,7 @@ async function initPayment() {
 }
 
 function getAdditionalRecords(): IInsertRecordInput | undefined {
-  if (!isAuthenticated.value || !saveCreditCard.value || !addNewCardSelected.value) {
+  if (!isAuthenticated.value || !saveCreditCard.value) {
     return;
   }
 
