@@ -36,7 +36,7 @@
       <div class="w-full grow lg:w-3/4 xl:w-4/5">
         <div
           :class="executed ? 'md:bg-white md:border md:shadow-sm' : 'bg-white border shadow-sm'"
-          class="overflow-hidden p-6 max-lg:-mx-6 md:rounded lg:px-9"
+          class="p-6 max-lg:-mx-6 md:rounded lg:px-9"
         >
           <!-- Successful payment -->
           <VcEmptyPage
@@ -160,7 +160,7 @@
             <!-- region Payment method -->
             <h5 v-t="'pages.account.order_payment.payment_method_label'" class="mb-1 font-extrabold" />
 
-            <div class="overflow-hidden rounded border">
+            <div class="rounded border">
               <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
                 <div class="min-w-0 truncate">
                   <VcImage

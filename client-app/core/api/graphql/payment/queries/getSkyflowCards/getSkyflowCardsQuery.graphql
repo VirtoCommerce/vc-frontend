@@ -1,0 +1,9 @@
+query GetSkyflowCards($storeId: String, $userId: String) {
+  skyflowCards(storeId: $storeId, userId: $userId) {
+    cards {
+      cardNumber
+      cardExpiration
+      skyflowId
+    }
+  }
+}

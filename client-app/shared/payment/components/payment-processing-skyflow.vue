@@ -1,37 +1,117 @@
 <template>
-  <div v-show="initialized">
+  <template v-if="skyflowCards?.length">
+    <VcSelect
+      :model-value="selectedSkyflowCard"
+      :label="$t('common.labels.saved_cards')"
+      :items="
+        skyflowCards.concat([
+          {
+            cardNumber: $t('common.labels.add_new_card'),
+            skyflowId: '',
+          },
+        ])
+      "
+      size="auto"
+      item-size="lg"
+      class="lg:w-2/5"
+      @change="(value) => selectSkyflowCard(value)"
+    >
+      <template #placeholder>
+        <div class="flex items-center gap-3 p-3 text-sm">
+          <VcImage
+            class="size-12 rounded-sm bg-[--color-neutral-100]"
+            src="/static/icons/payment-methods/credit-card.svg"
+          />
+
+          {{ $t("common.placeholders.select_credit_card") }}
+        </div>
+      </template>
+
+      <template #selected="{ item }">
+        <div class="flex items-center gap-3 p-3 text-sm">
+          <VcImage
+            v-if="item.skyflowId.length"
+            class="size-12 rounded-sm"
+            src="/static/icons/payment-methods/credit-card.svg"
+          />
+
+          <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
+
+          {{ item.cardNumber }}
+
+          <template v-if="item.cardExpiration">({{ item.cardExpiration }})</template>
+        </div>
+      </template>
+
+      <template #item="{ item }">
+        <VcImage
+          v-if="item.skyflowId.length"
+          class="size-12 rounded-sm"
+          src="/static/icons/payment-methods/credit-card.svg"
+        />
+
+        <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
+
+        {{ item.cardNumber }}
+
+        <template v-if="item.cardExpiration">({{ item.cardExpiration }})</template>
+      </template>
+    </VcSelect>
+
+    <div v-if="!addNewCardSelected" class="mt-6 flex justify-center md:justify-start">
+      <VcButton
+        :disabled="!selectedSkyflowCard"
+        :loading="loading"
+        class="shrink"
+        @click="
+          processPayment([
+            {
+              key: 'skyflow_id',
+              value: selectedSkyflowCard!.skyflowId,
+            },
+          ])
+        "
+      >
+        {{ $t("shared.payment.skyflow.pay_now_button") }}
+      </VcButton>
+    </div>
+  </template>
+
+  <div v-show="(initialized && !skyflowCards?.length) || addNewCardSelected">
     <div class="flex flex-col xl:flex-row">
       <div ref="cardContainer" class="grow"></div>
       <CardLabels class="mt-6" />
     </div>
 
-    <div class="mt-6 flex justify-center md:justify-start">
-      <VcCheckbox v-model="saveCreditCard">
-        {{ $t("common.labels.save_credit_card_info") }}
-      </VcCheckbox>
-    </div>
+    <div class="mt-6 flex items-center justify-center gap-4 md:justify-start">
+      <div class="shrink">
+        <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="pay">
+          {{ $t("shared.payment.skyflow.pay_now_button") }}
+        </VcButton>
+      </div>
 
-    <div class="mt-6 flex justify-center md:justify-start">
-      <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="pay">
-        {{ $t("shared.payment.skyflow.pay_now_button") }}
-      </VcButton>
+      <div class="shrink">
+        <VcCheckbox v-model="saveCreditCard">
+          {{ $t("common.labels.save_card_for_future_payments") }}
+        </VcCheckbox>
+      </div>
     </div>
   </div>
 
-  <VcLoaderWithText v-if="!initialized" />
+  <VcLoaderWithText v-if="!initialized && !skyflowCards?.length" />
 </template>
 
 <script setup lang="ts">
 import { useCssVar } from "@vueuse/core";
 import Skyflow from "skyflow-js";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { useUser } from "@/shared/account";
-import { useSkyflow } from "../composables";
-import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
+import { useSkyflowCards } from "../composables";
+import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
@@ -52,12 +132,15 @@ type FieldsType = { [key: string]: string };
 
 const { t } = useI18n();
 const { user, isAuthenticated } = useUser();
-const { fetchCreditCards } = useSkyflow();
+const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
 const ga = useGoogleAnalytics();
 
 const loading = ref(false);
 const cardContainer = ref(null);
 const saveCreditCard = ref(false);
+const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
+
+const addNewCardSelected = computed(() => selectedSkyflowCard.value?.cardNumber === t("common.labels.add_new_card"));
 
 let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;
 
@@ -89,7 +172,7 @@ async function initPayment() {
 }
 
 function getAdditionalRecords(): IInsertRecordInput | undefined {
-  if (!isAuthenticated.value || !saveCreditCard.value) {
+  if (!isAuthenticated.value || !saveCreditCard.value || !addNewCardSelected.value) {
     return;
   }
 
@@ -105,6 +188,25 @@ function getAdditionalRecords(): IInsertRecordInput | undefined {
   };
 }
 
+function selectSkyflowCard(skyflowCard: { cardNumber: string; cardExpiration?: string; skyflowId: string }): void {
+  selectedSkyflowCard.value = skyflowCard;
+}
+
+async function processPayment(parameters: InputKeyValueType[]): Promise<void> {
+  const { isSuccess } = await authorizePayment({
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0]!.id,
+    parameters,
+  });
+
+  if (isSuccess) {
+    ga.purchase(props.order);
+    emit("success");
+  } else {
+    emit("fail");
+  }
+}
+
 async function pay() {
   loading.value = true;
 
@@ -116,26 +218,25 @@ async function pay() {
     emit("fail");
   }
 
-  const { isSuccess } = await authorizePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0]!.id,
-    parameters: objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType),
-  });
-
-  if (isSuccess) {
-    ga.purchase(props.order);
-    emit("success");
-  } else {
-    emit("fail");
-  }
+  await processPayment(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType));
 
   loading.value = false;
 }
 
+watch(addNewCardSelected, async (value) => {
+  if (value) {
+    await initPayment();
+    createForm();
+  }
+});
+
 onMounted(async () => {
-  fetchCreditCards(user.value.id);
-  await initPayment();
-  createForm();
+  await fetchSkyflowCards();
+
+  if (!skyflowCards.value?.length) {
+    await initPayment();
+    createForm();
+  }
 });
 
 type ElementType =
