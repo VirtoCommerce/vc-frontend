@@ -19,7 +19,7 @@ type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_l
 
 const { storeSettings } = useAppContext();
 
-const isAvailableGtag: Readonly<boolean> = Boolean(IS_CLIENT && storeSettings.googleAnalyticsEnabled && window.gtag);
+const isAvailableGtag: Readonly<boolean> = Boolean(IS_CLIENT && window && storeSettings.googleAnalyticsEnabled);
 
 function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
   const categories: Record<string, string> = {};
@@ -242,6 +242,9 @@ function search(searchTerm: string): void {
 }
 
 export function useGoogleAnalytics() {
+  if (isAvailableGtag && !(window as GlobalContext).dataLayer) {
+    (window as GlobalContext).dataLayer = [];
+  }
   return {
     isAvailableGtag,
     sendEvent,
