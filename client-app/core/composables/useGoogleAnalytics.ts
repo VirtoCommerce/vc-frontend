@@ -1,8 +1,11 @@
 import { sumBy } from "lodash";
+import { watch } from "vue";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { IS_CLIENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { globals } from "../globals";
-import { useAppContext } from "./useAppContext";
+const { currentCurrency } = useCurrency();
+
 import type {
   Breadcrumb,
   CartType,
@@ -12,14 +15,46 @@ import type {
   Product,
   VariationType,
 } from "@/core/api/graphql/types";
+import { useCurrency } from "@/core/composables/useCurrency";
 
 type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
 
-const { storeSettings } = useAppContext();
+const { isThemeContextReady, themeContext } = useThemeContext();
 
-const isAvailableGtag: Readonly<boolean> = Boolean(IS_CLIENT && window && storeSettings.googleAnalyticsEnabled);
+watch(isThemeContextReady, (isReady) => {
+  if (!IS_CLIENT) {
+    return;
+  }
+  if (isReady) {
+    const moduleSettings = themeContext.value.storeSettings.modules?.find(
+      (el) => el.moduleId === "VirtoCommerce.GoogleEcommerceAnalytics",
+    );
+    const isGoogleAnalyticsEnabled = !!moduleSettings?.settings?.find(
+      (el) => el.name === "GoogleAnalytics4.EnableTracking",
+    )?.value;
+
+    if (isGoogleAnalyticsEnabled) {
+      const id = moduleSettings?.settings?.find((el) => el.name === "GoogleAnalytics4.MeasurementId")?.value as string;
+
+      const script = document.createElement("script");
+      script.type = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+      script.src = "url";
+
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function gtag() {
+        // eslint-disable-next-line prefer-rest-params
+        window.dataLayer.push(arguments);
+      };
+      window.gtag("js", new Date());
+      window.gtag("config", id, { debug_mode: true });
+      window.gtag("set", { currency: currentCurrency.value.code });
+    }
+  }
+});
 
 function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
   const categories: Record<string, string> = {};
@@ -75,7 +110,7 @@ function getCartEventParams(cart: CartType): EventParamsType {
 }
 
 function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
-  if (isAvailableGtag) {
+  if (window.gtag) {
     window.gtag("event", eventName, eventParams);
   } else {
     Logger.debug("[GA]", eventName, eventParams);
@@ -242,11 +277,7 @@ function search(searchTerm: string): void {
 }
 
 export function useGoogleAnalytics() {
-  if (isAvailableGtag && !(window as GlobalContext).dataLayer) {
-    (window as GlobalContext).dataLayer = [];
-  }
   return {
-    isAvailableGtag,
     sendEvent,
     viewItemList,
     selectItem,
