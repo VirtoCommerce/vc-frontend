@@ -6,6 +6,11 @@ import type { MaybeRefOrGetter } from "vue";
 
 const RESERVED_URLS = ["__index__home__page__"];
 
+/**
+ * @param seoUrl path after domain without slash at the beginning
+ * @param isReserved shows whether seoUrl is included in the reserved urls
+ * It's needed for the Theme to show a 404 page if a user tries to open, for example, /index__home__page.
+ */
 export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boolean) {
   const { storeId, userId, cultureName } = globals;
   const variables = computed(() => {
