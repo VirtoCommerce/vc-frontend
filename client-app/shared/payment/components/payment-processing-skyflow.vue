@@ -193,6 +193,8 @@ function selectSkyflowCard(skyflowCard: { cardNumber: string; cardExpiration?: s
 }
 
 async function processPayment(parameters: InputKeyValueType[]): Promise<void> {
+  loading.value = true;
+
   const { isSuccess } = await authorizePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0]!.id,
@@ -205,11 +207,11 @@ async function processPayment(parameters: InputKeyValueType[]): Promise<void> {
   } else {
     emit("fail");
   }
+
+  loading.value = false;
 }
 
 async function pay() {
-  loading.value = true;
-
   const res = (await composableContainer.collect({
     additionalFields: getAdditionalRecords(),
   })) as IInsertResponse;
@@ -219,8 +221,6 @@ async function pay() {
   }
 
   await processPayment(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType));
-
-  loading.value = false;
 }
 
 watch(addNewCardSelected, async (value) => {
