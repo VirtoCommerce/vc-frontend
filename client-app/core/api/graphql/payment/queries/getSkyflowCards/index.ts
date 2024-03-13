@@ -3,7 +3,7 @@ import { GetSkyflowCardsDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 
 export function useGetSkyflowCards() {
-  const { storeId, userId } = globals;
+  const { storeId } = globals;
 
-  return useLazyQuery(GetSkyflowCardsDocument, { storeId, userId });
+  return useLazyQuery(GetSkyflowCardsDocument, { storeId });
 }
