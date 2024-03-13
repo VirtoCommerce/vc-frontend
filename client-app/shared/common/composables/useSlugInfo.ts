@@ -1,5 +1,5 @@
 import { computed, toValue } from "vue";
-import { getPage, getSlugInfo } from "@/core/api/graphql";
+import { useGetPage, useGetSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
 import type { PageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
@@ -17,7 +17,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     };
   });
 
-  const { result, loading: slugLoading } = getSlugInfo(variables);
+  const { result, loading: slugLoading } = useGetSlugInfo(variables);
 
   const slugInfo = computed(() => {
     if (!isReserved && RESERVED_URLS.includes(toValue(seoUrl))) {
@@ -34,7 +34,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     return { id: slugInfo?.value?.entityInfo?.objectId || "", cultureName, storeId };
   });
 
-  const { load: fetchContent, result: contentResult, loading: contentLoading } = getPage(getPageParams);
+  const { load: fetchContent, result: contentResult, loading: contentLoading } = useGetPage(getPageParams);
 
   const pageContent = computed(() => {
     const content: unknown = JSON.parse(contentResult?.value?.page?.content || "");
