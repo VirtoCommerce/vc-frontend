@@ -66,8 +66,6 @@ export function useCategory() {
   return {
     catalogBreadcrumb,
     catalog,
-    /** @deprecated Use {@link catalog} instead. */
-    rootCategory: catalog,
     fetchCategory,
     loading: readonly(loading),
     category: computed(() => category.value),

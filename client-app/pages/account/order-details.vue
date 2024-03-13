@@ -27,7 +27,7 @@
     </div>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcWidget id="line-items-widget" size="lg" class="print:!mx-0 print:break-inside-auto">
+      <VcWidget id="line-items-widget" size="lg" class="print:break-inside-auto">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
           <template v-for="(group, vendorId) in orderItemsGroupedByVendor" :key="vendorId">
