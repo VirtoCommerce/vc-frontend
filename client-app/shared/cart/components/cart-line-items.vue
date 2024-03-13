@@ -31,13 +31,14 @@
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
-      <InStock
-        class="mx-auto mt-1.5"
-        :is-in-stock="item.availabilityData?.isInStock"
-        :is-available="!item.deleted"
-        :quantity="item.availabilityData?.availableQuantity"
-        :is-digital="item.productType === ProductType.Digital"
-      />
+      <div class="mt-0.5 text-center">
+        <InStock
+          :is-in-stock="item.availabilityData?.isInStock"
+          :is-available="!item.deleted"
+          :quantity="item.availabilityData?.availableQuantity"
+          :is-digital="item.productType === ProductType.Digital"
+        />
+      </div>
     </template>
 
     <template #after-content="{ item }">

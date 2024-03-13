@@ -24,7 +24,7 @@
       />
 
       <!--  IMAGE -->
-      <VcImage v-if="imageUrl" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+      <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
 
       <div
         :class="[
@@ -40,12 +40,12 @@
         </VcProductTitle>
 
         <div
-          v-if="properties.length || listPrice || actualPrice"
+          v-if="withProperties || withPrice"
           :class="[
             'vc-line-item__properties',
             {
-              'vc-line-item__properties--wide': !listPrice && !actualPrice,
-              'vc-line-item__properties--hide-2xl': !properties.length && (listPrice || actualPrice),
+              'vc-line-item__properties--wide': !withPrice,
+              'vc-line-item__properties--hide-2xl': !withProperties && withPrice,
             },
           ]"
         >
@@ -54,7 +54,7 @@
           </VcProperty>
 
           <VcProperty
-            v-if="listPrice || actualPrice"
+            v-if="withPrice"
             class="2xl:hidden"
             :label="$t('common.labels.price_per_item')"
             :disabled="disabled"
@@ -69,7 +69,7 @@
         </div>
 
         <VcProductPrice
-          v-if="listPrice || actualPrice"
+          v-if="withPrice"
           :class="[
             'vc-line-item__price',
             {
@@ -86,7 +86,7 @@
           <slot />
 
           <VcProductPrice
-            v-if="total"
+            v-if="withTotal"
             class="vc-line-item__total"
             :list-price="total"
             align="end"
@@ -137,6 +137,10 @@ interface IProps {
   removable?: boolean;
   disabled?: boolean;
   deleted?: boolean;
+  withImage?: boolean;
+  withProperties?: boolean;
+  withPrice?: boolean;
+  withTotal?: boolean;
 }
 
 defineEmits<IEmits>();
