@@ -1,93 +1,167 @@
 <template>
   <component
     :is="tag"
-    :class="['vc-typography', `vc-typography--variant--${variant}`, `vc-typography--weight--${weight}`]"
+    :class="[
+      'vc-typography',
+      `vc-typography--variant--${_variant}`,
+      `vc-typography--weight--${_weight}`,
+      `vc-typography--case--${_textTransform}`,
+      {
+        'vc-typography--truncate': truncate,
+      },
+    ]"
   >
     <slot />
   </component>
 </template>
 
 <script setup lang="ts">
-interface Props {
+import { computed } from "vue";
+
+interface IProps {
   tag?: string;
-  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "large" | "base" | "medium" | "small";
-  weight?: "normal" | "semibold" | "bold" | "extrabold";
+  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
+  weight?: "thin" | "light" | "normal" | "bold" | "black";
+  textTransform?: "uppercase" | "lowercase" | "capitalize" | "none";
+  truncate?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
   tag: "p",
-  variant: "base",
-  weight: "normal",
+  align: "left",
+});
+
+const isHeader = computed(() => /^(h[1-6])$/.test(props.tag));
+
+const _variant = computed(() => {
+  if (props.variant) {
+    return props.variant;
+  }
+
+  if (isHeader.value) {
+    return props.tag;
+  }
+
+  return "base";
+});
+
+const _weight = computed(() => {
+  if (props.weight) {
+    return props.weight;
+  }
+
+  if (isHeader.value) {
+    return "bold";
+  }
+
+  return "normal";
+});
+
+const _textTransform = computed(() => {
+  if (props.textTransform) {
+    return props.textTransform;
+  }
+
+  if (isHeader.value) {
+    return "uppercase";
+  }
+
+  return "none";
 });
 </script>
 
 <style lang="scss">
 .vc-typography {
-  @apply text-inherit;
+  @apply empty:hidden;
 
   &--variant {
     &--h1 {
-      @apply text-3xl uppercase tracking-wide;
+      @apply text-2xl tracking-wide;
 
       @media (min-width: theme("screens.lg")) {
-        @apply text-4xl;
+        @apply text-3xl;
       }
     }
 
     &--h2 {
-      @apply text-3xl uppercase tracking-wide;
+      @apply text-xl tracking-wide;
+
+      @media (min-width: theme("screens.lg")) {
+        @apply text-2xl;
+      }
     }
 
     &--h3 {
-      @apply text-xl uppercase tracking-wide;
-    }
-
-    &--h4 {
-    }
-
-    &--h5 {
-    }
-
-    &--h6 {
-    }
-
-    &--large {
-      @apply text-lg;
+      @apply text-lg tracking-wide;
 
       @media (min-width: theme("screens.lg")) {
         @apply text-xl;
       }
     }
 
-    &--base {
+    &--h4 {
+      @apply text-base;
+
+      @media (min-width: theme("screens.lg")) {
+        @apply text-lg;
+      }
+    }
+
+    &--h5 {
       @apply text-base;
     }
 
-    &--medium {
-      @apply text-sm;
+    &--h6 {
+      @apply text-base;
     }
 
-    &--small {
-      @apply text-xs;
+    &--base {
+      @apply text-base;
     }
   }
 
   &--weight {
-    &--normal {
-      @apply font-normal;
+    &--thin {
+      @apply font-thin;
     }
 
-    &--semibold {
-      @apply font-semibold;
+    &--light {
+      @apply font-light;
+    }
+
+    &--normal {
+      @apply font-normal;
     }
 
     &--bold {
       @apply font-bold;
     }
 
-    &--extrabold {
-      @apply font-extrabold;
+    &--black {
+      @apply font-black;
     }
+  }
+
+  &--case {
+    &--uppercase {
+      @apply uppercase;
+    }
+
+    &--lowercase {
+      @apply lowercase;
+    }
+
+    &--capitalize {
+      @apply capitalize;
+    }
+
+    &--none {
+      @apply normal-case;
+    }
+  }
+
+  &--truncate {
+    @apply truncate;
   }
 }
 </style>

@@ -1,7 +1,10 @@
 <template>
   <div class="py-10 lg:py-24" :class="model.background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-      <h2 class="mb-2 text-center text-3xl font-bold lg:mb-4 lg:text-4xl">{{ model.title }}</h2>
+      <VcTypography tag="h2" variant="h1" text-transform="none" class="mb-2 text-center lg:mb-4">
+        {{ model.title }}
+      </VcTypography>
+
       <div class="text-center lg:text-lg">{{ model.subtitle }}</div>
 
       <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">

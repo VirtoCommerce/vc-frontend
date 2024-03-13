@@ -59,7 +59,7 @@
       <!-- Content -->
       <div ref="contentElement" class="grow">
         <div class="flex">
-          <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
+          <VcTypography tag="h1" text-transform="none">
             <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
               <template #keyword>
                 <strong>{{ searchParams.keyword }}</strong>
@@ -82,7 +82,7 @@
               <b class="font-extrabold">{{ total }}</b>
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
-          </h2>
+          </VcTypography>
         </div>
 
         <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>

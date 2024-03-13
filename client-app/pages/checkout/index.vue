@@ -1,6 +1,6 @@
 <template>
   <VcContainer>
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5 print:mb-0">
+    <VcTypography tag="h1" class="mb-5 print:mb-0">
       {{ pageTitle }}
     </VcTypography>
 

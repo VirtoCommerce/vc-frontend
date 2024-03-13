@@ -7,8 +7,12 @@
 @import "vendors";
 
 @layer base {
+  html, :host {
+    @apply font-lato;
+  }
+
   body {
-    @apply text-[--color-body-text];
+    @apply text-[--color-neutral-950];
   }
 }
 

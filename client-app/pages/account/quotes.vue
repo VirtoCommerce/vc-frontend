@@ -1,7 +1,8 @@
 <template>
   <div>
-    <!-- Title block -->
-    <h2 v-t="'pages.account.quotes.title'" class="text-3xl font-bold uppercase text-neutral-900" />
+    <VcTypography tag="h1">
+      {{ $t("pages.account.quotes.title") }}
+    </VcTypography>
 
     <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
 

@@ -2,6 +2,10 @@
   <div class="py-10 lg:py-24" :class="model.background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <div class="mb-6 text-center text-2xl font-bold lg:text-5xl">{{ model.title }}</div>
+      <VcTypography tag="h2" variant="h1" text-transform="none" class="mb-6 text-center">
+        {{ model.title }}
+      </VcTypography>
+
       <div class="text-center text-base">{{ model.subtitle }}</div>
       <div class="mt-16 grid grid-cols-1 items-center gap-x-20 gap-y-10 px-8 lg:px-0" :class="classObject">
         <div v-for="(item, index) in model.columns" :key="index" class="text-center">
