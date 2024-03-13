@@ -33,16 +33,18 @@
             <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
-          <PushMessages v-slot="{ count }" class="px-1 py-2 xs:px-2">
-            <div class="relative">
-              <VcIcon class="text-primary" name="bell" :size="28" />
+          <PushMessages class="px-1 py-2 xs:px-2">
+            <template #trigger="{ unreadCount }">
+              <div class="relative">
+                <VcIcon class="text-primary" name="bell" :size="28" />
 
-              <VcTransitionScale mode="out-in">
-                <VcBadge variant="outline" size="sm" class="absolute -right-2 -top-2 transition-transform" rounded>
-                  {{ count }}
-                </VcBadge>
-              </VcTransitionScale>
-            </div>
+                <VcTransitionScale mode="out-in">
+                  <VcBadge variant="outline" size="sm" class="absolute -right-2 -top-2 transition-transform" rounded>
+                    {{ unreadCount }}
+                  </VcBadge>
+                </VcTransitionScale>
+              </div>
+            </template>
           </PushMessages>
 
           <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">

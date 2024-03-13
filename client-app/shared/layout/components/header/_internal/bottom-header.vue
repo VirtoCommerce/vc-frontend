@@ -51,10 +51,12 @@
             {{ item.title }}
           </BottomHeaderLink>
 
-          <PushMessages v-else-if="item.id === 'push-messages'" v-slot="{ count }" :y-offset="36">
-            <BottomHeaderLink :link="item" :count="count">
-              {{ item.title }}
-            </BottomHeaderLink>
+          <PushMessages v-else-if="item.id === 'push-messages'" :y-offset="36">
+            <template #trigger="{ unreadCount }">
+              <BottomHeaderLink :link="item" :count="unreadCount">
+                {{ item.title }}
+              </BottomHeaderLink>
+            </template>
           </PushMessages>
 
           <BottomHeaderLink v-else :link="item">

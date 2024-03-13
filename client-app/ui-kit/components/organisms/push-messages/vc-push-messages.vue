@@ -1,7 +1,7 @@
 <template>
   <VcPopover class="vc-push-messages" trigger="click" :placement="placement" :y-offset="yOffset">
     <template #trigger>
-      <slot />
+      <slot name="trigger" />
     </template>
 
     <template #content>
@@ -22,7 +22,11 @@
               </VcBadge>
             </div>
 
-            <VcDropdownMenu v-if="options && totalCount" class="vc-push-messages__options" placement="bottom-end">
+            <VcDropdownMenu
+              v-if="withOptions && totalCount > 0"
+              class="vc-push-messages__options"
+              placement="bottom-end"
+            >
               <template #trigger>
                 <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
               </template>
@@ -31,7 +35,7 @@
                 <VcMenuItem
                   @click="
                     close();
-                    $emit('readAll');
+                    $emit('markReadAll');
                   "
                 >
                   {{ $t("ui_kit.push-messages.options.make_all_as_read") }}
@@ -40,7 +44,7 @@
                 <VcMenuItem
                   @click="
                     close();
-                    $emit('unreadAll');
+                    $emit('markUnreadAll');
                   "
                 >
                   {{ $t("ui_kit.push-messages.options.make_all_as_unread") }}
@@ -50,14 +54,7 @@
           </div>
 
           <div class="vc-push-messages__body">
-            <VcPushMessage
-              v-for="item in items"
-              :key="item.id"
-              :notification="item"
-              :removable="removable"
-              @click="$emit('itemClick', item)"
-              @remove="$emit('itemRemove', item)"
-            />
+            <slot name="items" />
 
             <div v-if="totalCount === 0" class="vc-push-messages__empty">
               <div class="vc-push-messages__empty-title">
@@ -83,18 +80,15 @@
 
 <script setup lang="ts">
 export interface IEmits {
-  (event: "itemClick", item: VcPushMessageType): void;
-  (event: "itemRemove", item: VcPushMessageType): void;
-  (event: "readAll"): void;
-  (event: "unreadAll"): void;
+  (event: "markReadAll"): void;
+  (event: "markUnreadAll"): void;
   (event: "clearAll"): void;
 }
 
 interface IProps {
   totalCount: number;
-  items: VcPushMessageType[];
   removable?: boolean;
-  options?: boolean;
+  withOptions?: boolean;
   yOffset?: number | string;
   placement?: VcPopoverPlacement;
 }

@@ -16,17 +16,17 @@ const Template: StoryFn<typeof VcPushMessage> = (args) => ({
 
 export const Basic = Template.bind({});
 Basic.args = {
-  notification: unreadPushMessageMock,
+  pushMessage: unreadPushMessageMock,
 };
 
 export const Removable = Template.bind({});
 Removable.args = {
-  notification: unreadPushMessageMock,
+  pushMessage: unreadPushMessageMock,
   removable: true,
 };
 
 export const Read = Template.bind({});
 Read.args = {
-  notification: readPushMessageMock,
+  pushMessage: readPushMessageMock,
   removable: true,
 };

@@ -1,4 +1,7 @@
 import { computed } from "vue";
+import { useClearAllPushMessages } from "@/core/api/graphql/push-messages/mutations/clearAllPushMessages";
+import { useMarkReadAllPushMessages } from "@/core/api/graphql/push-messages/mutations/markReadAllPushMessages";
+import { useMarkUnreadAllPushMessages } from "@/core/api/graphql/push-messages/mutations/markUnreadAllPushMessages";
 import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/getPushMessages";
 
 export function usePushMessages() {
@@ -16,9 +19,16 @@ export function usePushMessages() {
       })) ?? [],
   );
 
+  const { mutate: markReadAll } = useMarkReadAllPushMessages();
+  const { mutate: markUnreadAll } = useMarkUnreadAllPushMessages();
+  const { mutate: clearAll } = useClearAllPushMessages();
+
   return {
     totalCount,
     unreadCount,
     items,
+    markReadAll,
+    markUnreadAll,
+    clearAll,
   };
 }

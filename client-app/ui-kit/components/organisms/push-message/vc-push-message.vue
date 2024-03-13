@@ -3,17 +3,17 @@
     :class="[
       'vc-push-message',
       {
-        'vc-push-message--unread': !notification.read,
+        'vc-push-message--unread': !pushMessage.read,
       },
     ]"
   >
     <VcBadge class="vc-push-message__badge" color="info" rounded />
 
     <div class="vc-push-message__info">
-      <VcMarkdownRender class="vc-push-message__content" :src="notification.shortMessage" />
+      <VcMarkdownRender class="vc-push-message__content" :src="pushMessage.shortMessage" />
 
       <div class="vc-push-message__date">
-        {{ $d(notification.createdDate, "long") }}
+        {{ $d(pushMessage.createdDate, "long") }}
       </div>
     </div>
 
@@ -38,7 +38,7 @@ export interface IEmits {
 }
 
 interface IProps {
-  notification: VcPushMessageType;
+  pushMessage: VcPushMessageType;
   removable?: boolean;
 }
 
