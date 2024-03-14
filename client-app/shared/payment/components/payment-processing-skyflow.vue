@@ -43,7 +43,7 @@
           src="/static/icons/payment-methods/credit-card.svg"
         />
 
-        <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
+        <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" size="xxs" />
 
         {{ item.cardNumber }}
 
@@ -64,18 +64,18 @@
       <CardLabels class="mt-6" />
     </div>
 
-    <div class="mt-6 flex items-center justify-center gap-4 md:justify-start">
-      <div class="shrink">
-        <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="payWithNewCreditCard">
-          {{ $t("shared.payment.skyflow.pay_now_button") }}
-        </VcButton>
-      </div>
-
+    <div class="mt-6 flex items-center">
       <div class="shrink">
         <VcCheckbox v-model="saveCreditCard">
           {{ $t("common.labels.save_card_for_future_payments") }}
         </VcCheckbox>
       </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-center gap-4 md:justify-start">
+      <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="payWithNewCreditCard">
+        {{ $t("shared.payment.skyflow.pay_now_button") }}
+      </VcButton>
     </div>
   </div>
 
