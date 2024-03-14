@@ -43,7 +43,7 @@
           src="/static/icons/payment-methods/credit-card.svg"
         />
 
-        <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" size="xxs" />
+        <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
 
         {{ item.cardNumber }}
 
