@@ -3,14 +3,7 @@
     <VcSelect
       :model-value="selectedSkyflowCard"
       :label="$t('common.labels.saved_cards')"
-      :items="
-        skyflowCards.concat([
-          {
-            cardNumber: $t('common.labels.add_new_card'),
-            skyflowId: '',
-          },
-        ])
-      "
+      :items="creditCards"
       size="auto"
       item-size="lg"
       class="lg:w-2/5"
@@ -59,19 +52,7 @@
     </VcSelect>
 
     <div v-if="!addNewCardSelected" class="mt-6 flex justify-center md:justify-start">
-      <VcButton
-        :disabled="!selectedSkyflowCard"
-        :loading="loading"
-        class="shrink"
-        @click="
-          processPayment([
-            {
-              key: 'skyflow_id',
-              value: selectedSkyflowCard!.skyflowId,
-            },
-          ])
-        "
-      >
+      <VcButton :disabled="!selectedSkyflowCard" :loading="loading" class="shrink" @click="payWithSavedCreditCard">
         {{ $t("shared.payment.skyflow.pay_now_button") }}
       </VcButton>
     </div>
@@ -85,7 +66,7 @@
 
     <div class="mt-6 flex items-center justify-center gap-4 md:justify-start">
       <div class="shrink">
-        <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="pay">
+        <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="payWithNewCreditCard">
           {{ $t("shared.payment.skyflow.pay_now_button") }}
         </VcButton>
       </div>
@@ -140,6 +121,14 @@ const cardContainer = ref(null);
 const saveCreditCard = ref(false);
 const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
 
+const creditCards = computed(() =>
+  (skyflowCards.value || []).concat([
+    {
+      cardNumber: t("common.labels.add_new_card"),
+      skyflowId: "",
+    },
+  ]),
+);
 const addNewCardSelected = computed(() => selectedSkyflowCard.value?.cardNumber === t("common.labels.add_new_card"));
 
 let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;
@@ -192,7 +181,7 @@ function selectSkyflowCard(skyflowCard: { cardNumber: string; cardExpiration?: s
   selectedSkyflowCard.value = skyflowCard;
 }
 
-async function processPayment(parameters: InputKeyValueType[]): Promise<void> {
+async function pay(parameters: InputKeyValueType[]): Promise<void> {
   loading.value = true;
 
   const { isSuccess } = await authorizePayment({
@@ -211,7 +200,7 @@ async function processPayment(parameters: InputKeyValueType[]): Promise<void> {
   loading.value = false;
 }
 
-async function pay() {
+async function payWithNewCreditCard() {
   const res = (await composableContainer.collect({
     additionalFields: getAdditionalRecords(),
   })) as IInsertResponse;
@@ -220,13 +209,32 @@ async function pay() {
     emit("fail");
   }
 
-  await processPayment(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType));
+  await pay(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType));
+}
+
+async function payWithSavedCreditCard() {
+  if (!selectedSkyflowCard.value) {
+    return;
+  }
+
+  await pay([
+    {
+      key: "skyflow_id",
+      value: selectedSkyflowCard.value.skyflowId,
+    },
+  ]);
+}
+
+async function initForm() {
+  if (!initialized.value) {
+    await initPayment();
+    createForm();
+  }
 }
 
 watch(addNewCardSelected, async (value) => {
   if (value) {
-    await initPayment();
-    createForm();
+    await initForm();
   }
 });
 
@@ -234,8 +242,7 @@ onMounted(async () => {
   await fetchSkyflowCards();
 
   if (!skyflowCards.value?.length) {
-    await initPayment();
-    createForm();
+    await initForm();
   }
 });
 
@@ -306,7 +313,7 @@ function createForm() {
 
   container.on(Skyflow.EventName.SUBMIT, () => {
     if (!hasInvalid.value) {
-      void pay();
+      void payWithNewCreditCard();
     }
   });
 
