@@ -4,7 +4,6 @@ fragment property on Property {
   value
   type
   hidden
-  valueId
   valueType
   label
 }
