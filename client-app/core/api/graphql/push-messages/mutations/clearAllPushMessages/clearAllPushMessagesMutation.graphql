@@ -1,3 +1,3 @@
 mutation ClearAllPushMessages {
-  pushMessagesClearAll
+  clearAllPushMessages
 }

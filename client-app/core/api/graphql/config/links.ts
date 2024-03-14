@@ -1,19 +1,40 @@
-import { HttpLink, from, split } from "@apollo/client/core";
+import { ApolloLink, HttpLink, from, split } from "@apollo/client/core";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
-import { apolloFetch } from "@/core/api/graphql/config/interceptors";
-import { API_URL } from "@/core/api/graphql/consts";
+import {
+  apolloFetch,
+  apolloWebSocketConnectionParams,
+  apolloWebSocketConnectionCallback,
+} from "@/core/api/graphql/config/interceptors";
+import { HTTP_ENDPOINT_URL, WEBSOCKETS_ENDPOINT_URL } from "@/core/api/graphql/consts";
 
-const httpLink = new HttpLink({ uri: API_URL, fetch: apolloFetch });
+const httpLink = new HttpLink({ uri: HTTP_ENDPOINT_URL, fetch: apolloFetch });
 const wsLink = new WebSocketLink(
-  new SubscriptionClient(`wss://${location.host}${API_URL}`, { reconnect: true, timeout: 60000 }),
+  new SubscriptionClient(WEBSOCKETS_ENDPOINT_URL, {
+    reconnect: true,
+    timeout: 55000,
+    connectionParams: apolloWebSocketConnectionParams,
+    connectionCallback: apolloWebSocketConnectionCallback,
+  }),
 );
 
-const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
+const sharedLink = from([
+  removeTypenameFromVariables(),
+  new ApolloLink((operation, forward) => {
+    operation.setContext({
+      headers: {
+        test: "test",
+      },
+    });
+
+    return forward(operation);
+  }),
+  errorHandlerLink,
+]);
 
 export const deprecatedLink = from([sharedLink, httpLink]);
 

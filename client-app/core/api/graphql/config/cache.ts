@@ -62,6 +62,13 @@ export const cache = new InMemoryCache({
         },
       },
     },
+    PushMessagesResponseType: {
+      fields: {
+        items: {
+          merge: false,
+        },
+      },
+    },
     ValidationErrorType: {
       keyFields: ["errorCode", "objectId", "objectType"],
     },

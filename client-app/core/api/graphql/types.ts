@@ -20,10 +20,12 @@ export type Scalars = {
   Decimal: { input: any; output: any; }
   DynamicPropertyValue: { input: any; output: any; }
   Long: { input: number; output: number; }
+  ModuleSettingValue: { input: any; output: any; }
   OptionalDecimal: { input: any; output: any; }
   OptionalNullableDecimal: { input: any; output: any; }
   OptionalString: { input: string | undefined; output: string | undefined; }
   PropertyValue: { input: any; output: any; }
+  Seconds: { input: any; output: any; }
 };
 
 export type AccountCreationResultType = {
@@ -595,6 +597,11 @@ export type DeleteQuoteAttachmentsCommandType = {
   urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
+export type DeleteSkyflowCardCommandType = {
+  skyflowId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
 export type DescriptionType = {
   content?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -821,6 +828,10 @@ export type GiftItemType = {
   productId?: Maybe<Scalars['String']['output']>;
   promotionId: Scalars['String']['output'];
   quantity: Scalars['Int']['output'];
+};
+
+export type GraphQlSettingsType = {
+  keepAliveInterval: Scalars['Seconds']['output'];
 };
 
 export type IdentityErrorInfoType = {
@@ -1989,6 +2000,16 @@ export type MenuLinkType = {
   url: Scalars['String']['output'];
 };
 
+export type ModuleSettingType = {
+  name: Scalars['String']['output'];
+  value?: Maybe<Scalars['ModuleSettingValue']['output']>;
+};
+
+export type ModuleSettingsType = {
+  moduleId: Scalars['String']['output'];
+  settings: Array<ModuleSettingType>;
+};
+
 export type MoneyType = {
   amount: Scalars['Decimal']['output'];
   currency: CurrencyType;
@@ -2007,7 +2028,6 @@ export type Mutations = {
   addGiftItems?: Maybe<CartType>;
   addItem?: Maybe<CartType>;
   addItemsCart?: Maybe<CartType>;
-  addMessage?: Maybe<PushMessageType>;
   addOrUpdateCartAddress?: Maybe<CartType>;
   addOrUpdateCartPayment?: Maybe<CartType>;
   addOrUpdateCartShipment?: Maybe<CartType>;
@@ -2030,6 +2050,7 @@ export type Mutations = {
   changeQuoteComment?: Maybe<QuoteType>;
   changeQuoteItemQuantity?: Maybe<QuoteType>;
   changeWishlist?: Maybe<WishlistType>;
+  clearAllPushMessages?: Maybe<Scalars['Boolean']['output']>;
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
@@ -2047,19 +2068,19 @@ export type Mutations = {
   deleteFile?: Maybe<Scalars['Boolean']['output']>;
   deleteMemberAddresses?: Maybe<MemberType>;
   deleteQuoteAttachments?: Maybe<QuoteType>;
+  deleteSkyflowCard?: Maybe<Scalars['Boolean']['output']>;
   deleteUsers?: Maybe<IdentityResultType>;
   initializePayment?: Maybe<InitializePaymentResultType>;
   inviteUser?: Maybe<CustomIdentityResultType>;
   lockOrganizationContact?: Maybe<ContactType>;
+  markAllPushMessagesRead?: Maybe<Scalars['Boolean']['output']>;
+  markAllPushMessagesUnread?: Maybe<Scalars['Boolean']['output']>;
+  markPushMessageRead?: Maybe<Scalars['Boolean']['output']>;
+  markPushMessageUnread?: Maybe<Scalars['Boolean']['output']>;
   mergeCart?: Maybe<CartType>;
   moveWishlistItem?: Maybe<WishlistType>;
   /** @deprecated Obsolete. Use 'initializePayment' mutation */
   processOrderPayment?: Maybe<ProcessPaymentRequestResultType>;
-  pushMessageMarkRead?: Maybe<Scalars['Boolean']['output']>;
-  pushMessageMarkUnread?: Maybe<Scalars['Boolean']['output']>;
-  pushMessagesClearAll?: Maybe<Scalars['Boolean']['output']>;
-  pushMessagesMarkReadAll?: Maybe<Scalars['Boolean']['output']>;
-  pushMessagesMarkUnreadAll?: Maybe<Scalars['Boolean']['output']>;
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
@@ -2141,11 +2162,6 @@ export type MutationsAddItemArgs = {
 
 export type MutationsAddItemsCartArgs = {
   command: InputAddItemsType;
-};
-
-
-export type MutationsAddMessageArgs = {
-  command: PushMessageInputType;
 };
 
 
@@ -2344,6 +2360,11 @@ export type MutationsDeleteQuoteAttachmentsArgs = {
 };
 
 
+export type MutationsDeleteSkyflowCardArgs = {
+  command: DeleteSkyflowCardCommandType;
+};
+
+
 export type MutationsDeleteUsersArgs = {
   command: InputDeleteUserType;
 };
@@ -2364,6 +2385,16 @@ export type MutationsLockOrganizationContactArgs = {
 };
 
 
+export type MutationsMarkPushMessageReadArgs = {
+  command: InputMarkPushMessageReadType;
+};
+
+
+export type MutationsMarkPushMessageUnreadArgs = {
+  command: InputMarkPushMessageUnreadType;
+};
+
+
 export type MutationsMergeCartArgs = {
   command: InputMergeCartType;
 };
@@ -2376,16 +2407,6 @@ export type MutationsMoveWishlistItemArgs = {
 
 export type MutationsProcessOrderPaymentArgs = {
   command: InputProcessOrderPaymentType;
-};
-
-
-export type MutationsPushMessageMarkReadArgs = {
-  command: InputMarkPushMessageReadType;
-};
-
-
-export type MutationsPushMessageMarkUnreadArgs = {
-  command: InputMarkPushMessageUnreadType;
 };
 
 
@@ -2914,6 +2935,8 @@ export type PageInfo = {
 };
 
 export type PageType = {
+  content: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   name?: Maybe<Scalars['String']['output']>;
   permalink?: Maybe<Scalars['String']['output']>;
   relativeUrl: Scalars['String']['output'];
@@ -3283,15 +3306,11 @@ export enum PropertyValueTypes {
   ShortText = 'SHORT_TEXT'
 }
 
-export type PushMessageInputType = {
-  content?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type PushMessageType = {
-  createdDate?: Maybe<Scalars['DateTime']['output']>;
+  createdDate: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
-  shortMessage?: Maybe<Scalars['String']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
+  shortMessage: Scalars['String']['output'];
+  status: Scalars['String']['output'];
 };
 
 export type PushMessagesResponseType = {
@@ -3329,6 +3348,7 @@ export type Query = {
   organizationContracts?: Maybe<ContractConnection>;
   organizationOrders?: Maybe<CustomerOrderConnection>;
   organizations?: Maybe<OrganizationConnection>;
+  page?: Maybe<PageType>;
   pages?: Maybe<PageConnection>;
   paymentStatuses?: Maybe<LocalizedSettingResponseType>;
   payments?: Maybe<PaymentInConnection>;
@@ -3587,6 +3607,13 @@ export type QueryOrganizationsArgs = {
 };
 
 
+export type QueryPageArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
+
 export type QueryPagesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -3714,7 +3741,6 @@ export type QueryShipmentStatusesArgs = {
 
 export type QuerySkyflowCardsArgs = {
   storeId?: InputMaybe<Scalars['String']['input']>;
-  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4111,6 +4137,7 @@ export type StoreResponseType = {
   catalogId: Scalars['String']['output'];
   defaultCurrency: CurrencyType;
   defaultLanguage: LanguageType;
+  graphQLSettings: GraphQlSettingsType;
   settings: StoreSettingsType;
   storeId: Scalars['String']['output'];
   storeName: Scalars['String']['output'];
@@ -4123,6 +4150,7 @@ export type StoreSettingsType = {
   emailVerificationEnabled: Scalars['Boolean']['output'];
   emailVerificationRequired: Scalars['Boolean']['output'];
   isSpa: Scalars['Boolean']['output'];
+  modules: Array<ModuleSettingsType>;
   passwordRequirements?: Maybe<PasswordOptionsType>;
   quotesEnabled: Scalars['Boolean']['output'];
   seoLinkType: Scalars['String']['output'];
@@ -5032,46 +5060,46 @@ export type InitializePaymentMutationVariables = Exact<{
 
 export type InitializePaymentMutation = { initializePayment?: { isSuccess: boolean, errorMessage?: string, actionHtmlForm?: string, actionRedirectUrl?: string, paymentActionType?: string, publicParameters?: Array<{ key: string, value?: string }> } };
 
-export type PushMessageFragment = { id: string, createdDate?: any, shortMessage?: string, status?: string };
+export type PushMessageFragment = { id: string, createdDate: any, shortMessage: string, status: string };
 
 export type ClearAllPushMessagesMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ClearAllPushMessagesMutation = { pushMessagesClearAll?: boolean };
+export type ClearAllPushMessagesMutation = { clearAllPushMessages?: boolean };
 
-export type MarkReadAllPushMessagesMutationVariables = Exact<{ [key: string]: never; }>;
+export type MarkAllPushMessagesReadMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MarkReadAllPushMessagesMutation = { pushMessagesMarkReadAll?: boolean };
+export type MarkAllPushMessagesReadMutation = { markAllPushMessagesRead?: boolean };
 
-export type MarkReadPushMessageMutationVariables = Exact<{
+export type MarkAllPushMessagesUnreadMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MarkAllPushMessagesUnreadMutation = { markAllPushMessagesUnread?: boolean };
+
+export type MarkPushMessageReadMutationVariables = Exact<{
   command: InputMarkPushMessageReadType;
 }>;
 
 
-export type MarkReadPushMessageMutation = { pushMessageMarkRead?: boolean };
+export type MarkPushMessageReadMutation = { markPushMessageRead?: boolean };
 
-export type MarkUnreadAllPushMessagesMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type MarkUnreadAllPushMessagesMutation = { pushMessagesMarkUnreadAll?: boolean };
-
-export type MarkUnreadPushMessageMutationVariables = Exact<{
+export type MarkPushMessageUnreadMutationVariables = Exact<{
   command: InputMarkPushMessageUnreadType;
 }>;
 
 
-export type MarkUnreadPushMessageMutation = { pushMessageMarkUnread?: boolean };
+export type MarkPushMessageUnreadMutation = { markPushMessageUnread?: boolean };
 
 export type GetPushMessagesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPushMessagesQuery = { pushMessages: { unreadCount: number, items: Array<{ id: string, createdDate?: any, shortMessage?: string, status?: string }> } };
+export type GetPushMessagesQuery = { pushMessages: { unreadCount: number, items: Array<{ id: string, createdDate: any, shortMessage: string, status: string }> } };
 
 export type OnPushMessageCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OnPushMessageCreatedSubscription = { pushMessageCreated?: { id: string, createdDate?: any, shortMessage?: string, status?: string } };
+export type OnPushMessageCreatedSubscription = { pushMessageCreated?: { id: string, createdDate: any, shortMessage: string, status: string } };
 
 export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
 
@@ -5266,11 +5294,11 @@ export const GetOrganizationAddressesDocument = {"kind":"Document","definitions"
 export const GetOrganizationContactsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetOrganizationContacts"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"organization"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"contacts"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"searchPhrase"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchPhrase"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"emails"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"securityAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]}}]} as unknown as DocumentNode<GetOrganizationContactsQuery, GetOrganizationContactsQueryVariables>;
 export const AuthorizePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AuthorizePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputAuthorizePaymentType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authorizePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]}}]} as unknown as DocumentNode<AuthorizePaymentMutation, AuthorizePaymentMutationVariables>;
 export const InitializePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputInitializePaymentType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"actionHtmlForm"}},{"kind":"Field","name":{"kind":"Name","value":"actionRedirectUrl"}},{"kind":"Field","name":{"kind":"Name","value":"paymentActionType"}},{"kind":"Field","name":{"kind":"Name","value":"publicParameters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<InitializePaymentMutation, InitializePaymentMutationVariables>;
-export const ClearAllPushMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClearAllPushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessagesClearAll"}}]}}]} as unknown as DocumentNode<ClearAllPushMessagesMutation, ClearAllPushMessagesMutationVariables>;
-export const MarkReadAllPushMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkReadAllPushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessagesMarkReadAll"}}]}}]} as unknown as DocumentNode<MarkReadAllPushMessagesMutation, MarkReadAllPushMessagesMutationVariables>;
-export const MarkReadPushMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkReadPushMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputMarkPushMessageReadType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessageMarkRead"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<MarkReadPushMessageMutation, MarkReadPushMessageMutationVariables>;
-export const MarkUnreadAllPushMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkUnreadAllPushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessagesMarkUnreadAll"}}]}}]} as unknown as DocumentNode<MarkUnreadAllPushMessagesMutation, MarkUnreadAllPushMessagesMutationVariables>;
-export const MarkUnreadPushMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkUnreadPushMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputMarkPushMessageUnreadType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessageMarkUnread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<MarkUnreadPushMessageMutation, MarkUnreadPushMessageMutationVariables>;
+export const ClearAllPushMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClearAllPushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"clearAllPushMessages"}}]}}]} as unknown as DocumentNode<ClearAllPushMessagesMutation, ClearAllPushMessagesMutationVariables>;
+export const MarkAllPushMessagesReadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAllPushMessagesRead"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"markAllPushMessagesRead"}}]}}]} as unknown as DocumentNode<MarkAllPushMessagesReadMutation, MarkAllPushMessagesReadMutationVariables>;
+export const MarkAllPushMessagesUnreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkAllPushMessagesUnread"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"markAllPushMessagesUnread"}}]}}]} as unknown as DocumentNode<MarkAllPushMessagesUnreadMutation, MarkAllPushMessagesUnreadMutationVariables>;
+export const MarkPushMessageReadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkPushMessageRead"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputMarkPushMessageReadType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"markPushMessageRead"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<MarkPushMessageReadMutation, MarkPushMessageReadMutationVariables>;
+export const MarkPushMessageUnreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"MarkPushMessageUnread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputMarkPushMessageUnreadType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"markPushMessageUnread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<MarkPushMessageUnreadMutation, MarkPushMessageUnreadMutationVariables>;
 export const GetPushMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unreadCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pushMessage"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushMessage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushMessageType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<GetPushMessagesQuery, GetPushMessagesQueryVariables>;
 export const OnPushMessageCreatedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OnPushMessageCreated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pushMessageCreated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pushMessage"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pushMessage"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PushMessageType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"shortMessage"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]} as unknown as DocumentNode<OnPushMessageCreatedSubscription, OnPushMessageCreatedSubscriptionVariables>;
 export const ChangeQuoteCommentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangeQuoteComment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ChangeQuoteCommentCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changeQuoteComment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<ChangeQuoteCommentMutation, ChangeQuoteCommentMutationVariables>;
@@ -5369,10 +5397,10 @@ export const OperationNames = {
     AuthorizePayment: 'AuthorizePayment',
     InitializePayment: 'InitializePayment',
     ClearAllPushMessages: 'ClearAllPushMessages',
-    MarkReadAllPushMessages: 'MarkReadAllPushMessages',
-    MarkReadPushMessage: 'MarkReadPushMessage',
-    MarkUnreadAllPushMessages: 'MarkUnreadAllPushMessages',
-    MarkUnreadPushMessage: 'MarkUnreadPushMessage',
+    MarkAllPushMessagesRead: 'MarkAllPushMessagesRead',
+    MarkAllPushMessagesUnread: 'MarkAllPushMessagesUnread',
+    MarkPushMessageRead: 'MarkPushMessageRead',
+    MarkPushMessageUnread: 'MarkPushMessageUnread',
     ChangeQuoteComment: 'ChangeQuoteComment',
     ChangeQuoteItemQuantity: 'ChangeQuoteItemQuantity',
     CreateQuoteFromCart: 'CreateQuoteFromCart',

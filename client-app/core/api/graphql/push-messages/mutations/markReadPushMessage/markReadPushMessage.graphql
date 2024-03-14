@@ -1,3 +1,0 @@
-mutation MarkReadPushMessage($command: InputMarkPushMessageReadType!) {
-  pushMessageMarkRead(command: $command)
-}
