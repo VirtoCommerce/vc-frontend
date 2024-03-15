@@ -30,8 +30,8 @@
         :class="[
           'vc-line-item__content',
           {
-            'vc-line-item__content--with-image': imageUrl,
-            'vc-line-item__content--selectable': !imageUrl && selectable,
+            'vc-line-item__content--with-image': withImage,
+            'vc-line-item__content--selectable': !withImage && selectable,
           },
         ]"
       >
@@ -311,7 +311,7 @@ watchEffect(() => {
     @apply flex items-center gap-3 empty:hidden max-md:mt-3;
 
     .vc-add-to-cart {
-      @apply w-[13rem] 2xl:w-[15.7rem];
+      @apply w-[11.75rem] xs:w-[13rem] 2xl:w-[15.7rem];
     }
 
     .vc-quantity {
@@ -339,14 +339,10 @@ watchEffect(() => {
 
       @apply w-[8.625rem];
     }
-
-    * > .vc-add-to-cart ~ & {
-      @apply hidden;
-    }
   }
 
   &__remove-button {
-    @apply shrink-0 -my-2 -me-2 max-md:top-0.5 max-md:right-0.5 max-md:absolute #{!important};
+    @apply shrink-0 max-md:top-0.5 max-md:right-0.5 max-md:absolute md:-my-2 md:-me-2 #{!important};
   }
 }
 </style>
