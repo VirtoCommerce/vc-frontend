@@ -39,12 +39,6 @@
       <template #item="{ item }">
         <VcIcon v-if="item.skyflowId.length" class="text-neutral" name="credit-card" size="xl" />
 
-        <!--<VcImage
-          v-if="item.skyflowId.length"
-          class="size-12 rounded-sm"
-          src="/static/icons/payment-methods/credit-card.svg"
-        />-->
-
         <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
 
         {{ item.cardNumber }}
