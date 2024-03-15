@@ -1,0 +1,19 @@
+fragment storeSettings on StoreSettingsType {
+  quotesEnabled
+  subscriptionEnabled
+  taxCalculationEnabled
+  anonymousUsersAllowed
+  isSpa
+  emailVerificationEnabled
+  emailVerificationRequired
+  createAnonymousOrderEnabled
+  seoLinkType
+  passwordRequirements {
+    requireLowercase
+    requireUppercase
+    requireDigit
+    requiredLength
+    requiredUniqueChars
+    requireNonAlphanumeric
+  }
+}
