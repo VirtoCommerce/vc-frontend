@@ -113,6 +113,11 @@
             "route": { "name": "Quotes" },
             "title": "shared.layout.header.mobile.account_menu.quote_requests",
             "icon": "/static/images/dashboard/icons/quotes.svg#main"
+          },
+          {
+            "route": { "name": "SavedCreditCards" },
+            "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
+            "icon": "/static/images/dashboard/icons/credit-card.svg#main"
           }
         ]
       },
