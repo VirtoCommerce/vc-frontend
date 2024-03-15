@@ -1,15 +1,11 @@
-import { ApolloLink, HttpLink, from, split } from "@apollo/client/core";
+import { HttpLink, from, split } from "@apollo/client/core";
 import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { cartLink } from "@/core/api/graphql/cart/links";
 import { errorHandlerLink } from "@/core/api/graphql/config/error-handler";
-import {
-  apolloFetch,
-  apolloWebSocketConnectionParams,
-  apolloWebSocketConnectionCallback,
-} from "@/core/api/graphql/config/interceptors";
+import { apolloFetch, apolloWebSocketConnectionParams } from "@/core/api/graphql/config/interceptors";
 import { HTTP_ENDPOINT_URL, WEBSOCKETS_ENDPOINT_URL } from "@/core/api/graphql/consts";
 
 const httpLink = new HttpLink({ uri: HTTP_ENDPOINT_URL, fetch: apolloFetch });
@@ -18,23 +14,10 @@ const wsLink = new WebSocketLink(
     reconnect: true,
     timeout: 55000,
     connectionParams: apolloWebSocketConnectionParams,
-    connectionCallback: apolloWebSocketConnectionCallback,
   }),
 );
 
-const sharedLink = from([
-  removeTypenameFromVariables(),
-  new ApolloLink((operation, forward) => {
-    operation.setContext({
-      headers: {
-        test: "test",
-      },
-    });
-
-    return forward(operation);
-  }),
-  errorHandlerLink,
-]);
+const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
 
 export const deprecatedLink = from([sharedLink, httpLink]);
 
@@ -53,6 +36,9 @@ export const link = from([
   split(
     ({ query }) => {
       const definition = getMainDefinition(query);
+      // Disabled because importing this enums cause issues and graphql package will remove them at v17
+      // https://github.com/graphql/graphql-js/pull/3686
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       return definition.kind === "OperationDefinition" && definition.operation === "subscription";
     },
     wsLink,

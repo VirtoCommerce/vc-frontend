@@ -22,7 +22,3 @@ export const apolloWebSocketConnectionParams = (() => {
     return init;
   };
 })();
-
-export const apolloWebSocketConnectionCallback = (() => {
-  return (): void => {};
-})();
