@@ -49,9 +49,16 @@
             },
           ]"
         >
-          <VcProperty v-for="property in properties" :key="property.name" :label="property.label!" :disabled="disabled">
-            {{ property.value }}
-          </VcProperty>
+          <template v-if="withProperties">
+            <VcProperty
+              v-for="property in properties"
+              :key="property.name"
+              :label="property.label!"
+              :disabled="disabled"
+            >
+              {{ property.value }}
+            </VcProperty>
+          </template>
 
           <VcProperty
             v-if="withPrice"
@@ -70,12 +77,7 @@
 
         <VcProductPrice
           v-if="withPrice"
-          :class="[
-            'vc-line-item__price',
-            {
-              'vc-line-item__price--desktop': properties.length,
-            },
-          ]"
+          class="vc-line-item__price"
           :list-price="listPrice"
           :actual-price="actualPrice"
           :disabled="disabled"
@@ -344,7 +346,7 @@ watchEffect(() => {
   }
 
   &__remove-button {
-    @apply shrink-0 max-md:top-0.5 max-md:right-0.5 max-md:absolute #{!important};
+    @apply shrink-0 -my-2 -me-2 max-md:top-0.5 max-md:right-0.5 max-md:absolute #{!important};
   }
 }
 </style>

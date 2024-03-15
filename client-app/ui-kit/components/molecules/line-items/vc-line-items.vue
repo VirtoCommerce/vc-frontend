@@ -247,7 +247,7 @@ watchEffect(() => {
   }
 
   &__removable {
-    @apply w-9;
+    @apply w-7;
   }
 
   &__body {
