@@ -1,11 +1,12 @@
+import { canUseDOM } from "@apollo/client/utilities";
 import { sumBy } from "lodash";
 import { watch } from "vue";
+import { useCurrency } from "@/core/composables/useCurrency";
 import { useThemeContext } from "@/core/composables/useThemeContext";
-import { IS_CLIENT } from "@/core/constants";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { globals } from "../globals";
 const { currentCurrency } = useCurrency();
-
 import type {
   Breadcrumb,
   CartType,
@@ -15,7 +16,6 @@ import type {
   Product,
   VariationType,
 } from "@/core/api/graphql/types";
-import { useCurrency } from "@/core/composables/useCurrency";
 
 type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
@@ -24,7 +24,7 @@ type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_l
 const { isThemeContextReady, themeContext } = useThemeContext();
 
 watch(isThemeContextReady, (isReady) => {
-  if (!IS_CLIENT) {
+  if (!canUseDOM) {
     return;
   }
   if (isReady) {
@@ -37,17 +37,17 @@ watch(isThemeContextReady, (isReady) => {
 
     if (isGoogleAnalyticsEnabled) {
       const id = moduleSettings?.settings?.find((el) => el.name === "GoogleAnalytics4.MeasurementId")?.value as string;
+      if (!IS_DEVELOPMENT) {
+        const script = document.createElement("script");
+        script.type = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+        script.src = "url";
 
-      const script = document.createElement("script");
-      script.type = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-      script.src = "url";
-
-      document.head.appendChild(script);
+        document.head.appendChild(script);
+      }
 
       window.dataLayer = window.dataLayer || [];
-      window.gtag = function gtag() {
-        // eslint-disable-next-line prefer-rest-params
-        window.dataLayer.push(arguments);
+      window.gtag = function gtag(...args: unknown[]) {
+        window.dataLayer.push(args);
       };
       window.gtag("js", new Date());
       window.gtag("config", id, { debug_mode: true });
@@ -110,7 +110,7 @@ function getCartEventParams(cart: CartType): EventParamsType {
 }
 
 function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
-  if (window.gtag) {
+  if (canUseDOM && window.gtag) {
     window.gtag("event", eventName, eventParams);
   } else {
     Logger.debug("[GA]", eventName, eventParams);
