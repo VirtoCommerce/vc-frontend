@@ -15,6 +15,7 @@ const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
 const Quotes = () => import("@/pages/account/quotes.vue");
 const EditQuote = () => import("@/pages/account/edit-quote.vue");
 const ViewQuote = () => import("@/pages/account/view-quote.vue");
+const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -104,5 +105,10 @@ export const accountRoutes: RouteRecordRaw[] = [
         next({ name: "Dashboard" });
       }
     },
+  },
+  {
+    path: "saved-credit-cards",
+    name: "SavedCreditCards",
+    component: SavedCreditCards,
   },
 ];

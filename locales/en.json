@@ -115,10 +115,14 @@
       "search": "Search {0}",
       "in_stock": "In stock",
       "starts_from": "Start: {0}",
-      "ends_to": "End: {0}"
+      "ends_to": "End: {0}",
+      "saved_cards": "Saved cards",
+      "save_card_for_future_payments": "Save card for future payments. It's safe.",
+      "add_new_card": "Add new card"
     },
     "prefixes": {
-      "please": "Please"
+      "please": "Please",
+      "expired": "Expired:"
     },
     "suffixes": {
       "from": "From",
@@ -182,7 +186,8 @@
       "password": "Enter your password",
       "confirm_password": "Confirm your password",
       "purchase_order_number": "Enter a purchase order number",
-      "promotion_code": "Enter a promo-coupon"
+      "promotion_code": "Enter a promo-coupon",
+      "select_credit_card": "Select credit card"
     },
     "links": {
       "home": "Home",
@@ -204,7 +209,8 @@
       "company_members": "Company Members",
       "quote_requests": "Quote Requests",
       "contact_administrator": "contact the site administrator",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "saved_credit_cards": "Saved Credit Cards"
     },
     "titles": {
       "all_actions": "All actions",
@@ -283,7 +289,8 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
-            "quote_requests": "@:common.links.quote_requests"
+            "quote_requests": "@:common.links.quote_requests",
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -361,7 +368,8 @@
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "quote_requests": "@:common.links.quote_requests"
+          "quote_requests": "@:common.links.quote_requests",
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
         }
       },
       "change_password_form": {
@@ -1006,6 +1014,13 @@
         "create_list_button": "Create list",
         "create_list_button_mobile": "Create",
         "lists_icon": "List icon"
+      },
+      "saved_credit_cards": {
+        "no_cards": "You have not saved any credit cards yet",
+        "delete_credit_card_modal": {
+          "title": "Confirm Delete",
+          "message": "Are you sure you want to remove the credit card?"
+        }
       },
       "list_details": {
         "meta": {
