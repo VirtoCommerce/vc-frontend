@@ -1,5 +1,5 @@
 <template>
-  <VcButton color="accent" variant="solid-lightest" size="sm" :prepend-icon="icon" @click="toggled = !toggled">
+  <VcButton color="accent" variant="no-border" size="sm" :prepend-icon="icon" @click="toggled = !toggled">
     {{ text }}
   </VcButton>
 </template>
