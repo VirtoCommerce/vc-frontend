@@ -35,7 +35,13 @@
           },
         ]"
       >
-        <VcProductTitle class="vc-line-item__name" :disabled="disabled" :to="route" :title="name" target="_blank">
+        <VcProductTitle
+          class="vc-line-item__name"
+          :disabled="disabled || deleted"
+          :to="route"
+          :title="name"
+          target="_blank"
+        >
           {{ name }}
         </VcProductTitle>
 
@@ -54,14 +60,14 @@
               v-for="property in properties"
               :key="property.name"
               :label="property.label!"
-              :disabled="disabled"
+              :disabled="disabled || deleted"
             >
               {{ property.value }}
             </VcProperty>
           </template>
 
           <VcProperty
-            v-if="withPrice"
+            v-if="withPrice && !deleted"
             class="2xl:hidden"
             :label="$t('common.labels.price_per_item')"
             :disabled="disabled"
@@ -232,7 +238,8 @@ watchEffect(() => {
       @apply size-16;
     }
 
-    #{$disabled} & {
+    #{$disabled} &,
+    #{$deleted} & {
       @apply opacity-50;
     }
   }
