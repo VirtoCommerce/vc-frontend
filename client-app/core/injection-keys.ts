@@ -1,4 +1,5 @@
 import type { IThemeConfigPreset, IThemeContext } from "./types";
+import type { ModuleSettingsType } from "@/core/api/graphql/types";
 import type { InjectionKey } from "vue";
 
 /**
@@ -10,3 +11,4 @@ import type { InjectionKey } from "vue";
 
 export const configInjectionKey = Symbol() as InjectionKey<IThemeConfigPreset>;
 export const contextInjectionKey = Symbol() as InjectionKey<IThemeContext>;
+export const modulesInjectionKey = Symbol() as InjectionKey<ModuleSettingsType[]>;

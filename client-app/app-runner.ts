@@ -4,7 +4,7 @@ import { createApp, h, provide } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
-import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import { authPlugin, configPlugin, contextPlugin, permissionsPlugin, modulesPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
@@ -92,7 +92,8 @@ export default async () => {
   app.use(router);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value!.settings);
+  app.use(configPlugin, themeContext.value.settings);
+  app.use(modulesPlugin, themeContext.value.storeSettings.modules);
   app.use(uiKit);
 
   if (window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {
