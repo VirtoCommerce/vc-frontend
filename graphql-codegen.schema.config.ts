@@ -5,9 +5,6 @@ const graphQLCodegenSchemaConfig: CodegenConfig = {
   generates: {
     "client-app/core/api/graphql/schema.json": {
       plugins: ["introspection"],
-      config: {
-        descriptions: false,
-      },
     },
   },
 };
