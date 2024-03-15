@@ -21,28 +21,35 @@ type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
 
-const { isThemeContextReady, themeContext } = useThemeContext();
+const DEBUG_PREFIX = "[GA]";
 
-watch(isThemeContextReady, (isReady) => {
+const MODULE_KEYS = {
+  ID: "VirtoCommerce.GoogleEcommerceAnalytics",
+  ENABLE_STATE: "GoogleAnalytics4.EnableTracking",
+  TRACK_ID: "GoogleAnalytics4.MeasurementId",
+};
+
+const { isThemeContextReady, modulesSettings } = useThemeContext();
+
+watch(isThemeContextReady, (isReady: boolean) => {
   if (!canUseDOM) {
     return;
   }
   if (isReady) {
-    const moduleSettings = themeContext.value.storeSettings.modules?.find(
-      (el) => el.moduleId === "VirtoCommerce.GoogleEcommerceAnalytics",
-    );
-    const isGoogleAnalyticsEnabled = !!moduleSettings?.settings?.find(
-      (el) => el.name === "GoogleAnalytics4.EnableTracking",
-    )?.value;
+    const moduleSettings = modulesSettings.value.find((el) => el.moduleId === MODULE_KEYS.ID);
+    const isGoogleAnalyticsEnabled = !!moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.ENABLE_STATE)
+      ?.value;
 
     if (isGoogleAnalyticsEnabled) {
-      const id = moduleSettings?.settings?.find((el) => el.name === "GoogleAnalytics4.MeasurementId")?.value as string;
+      const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
       if (!IS_DEVELOPMENT) {
         const script = document.createElement("script");
         script.type = `https://www.googletagmanager.com/gtag/js?id=${id}`;
         script.src = "url";
 
         document.head.appendChild(script);
+      } else {
+        Logger.debug(DEBUG_PREFIX, "initialized without sync with google");
       }
 
       window.dataLayer = window.dataLayer || [];
@@ -113,7 +120,7 @@ function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParam
   if (canUseDOM && window.gtag) {
     window.gtag("event", eventName, eventParams);
   } else {
-    Logger.debug("[GA]", eventName, eventParams);
+    Logger.debug(DEBUG_PREFIX, eventName, eventParams);
   }
 }
 
