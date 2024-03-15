@@ -1,5 +1,6 @@
 #import "../../../fragments/allCurrencyFields.graphql"
 #import "../../../fragments/allLanguageFields.graphql"
+#import "../../fragments/storeSettings.graphql"
 
 query GetStore($storeId: String!) {
   store(storeId: $storeId) {
@@ -20,23 +21,7 @@ query GetStore($storeId: String!) {
       ...allCurrencyFields
     }
     settings {
-      quotesEnabled
-      subscriptionEnabled
-      taxCalculationEnabled
-      anonymousUsersAllowed
-      isSpa
-      emailVerificationEnabled
-      emailVerificationRequired
-      createAnonymousOrderEnabled
-      seoLinkType
-      passwordRequirements {
-        requireLowercase
-        requireUppercase
-        requireDigit
-        requiredLength
-        requiredUniqueChars
-        requireNonAlphanumeric
-      }
+      ...storeSettings
     }
   }
 }

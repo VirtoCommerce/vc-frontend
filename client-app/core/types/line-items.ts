@@ -19,9 +19,6 @@ export type VendorGroupType<T extends LineItemType | OrderLineItemType> = {
   vendor?: CommonVendor;
 };
 
-/** @deprecated {@link VendorGroupByVendorIdType} instead. */
-export type LineItemsGroupsByVendorType<T extends LineItemType | OrderLineItemType> = VendorGroupByVendorIdType<T>;
-
 export type VendorGroupByVendorIdType<T extends LineItemType | OrderLineItemType> = Record<string, VendorGroupType<T>>;
 
 /** @deprecated Use {@link PreparedLineItemType} */
