@@ -11,6 +11,7 @@ import { HTTP_ENDPOINT_URL, WEBSOCKETS_ENDPOINT_URL } from "@/core/api/graphql/c
 const httpLink = new HttpLink({ uri: HTTP_ENDPOINT_URL, fetch: apolloFetch });
 const wsLink = new WebSocketLink(
   new SubscriptionClient(WEBSOCKETS_ENDPOINT_URL, {
+    lazy: true,
     reconnect: true,
     timeout: 55000,
     connectionParams: apolloWebSocketConnectionParams,
