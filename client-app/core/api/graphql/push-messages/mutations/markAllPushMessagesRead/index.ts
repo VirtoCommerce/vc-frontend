@@ -1,4 +1,3 @@
-import { merge } from "lodash";
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
 import { MarkAllPushMessagesReadDocument, OperationNames } from "@/core/api/graphql/types";
 import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
@@ -13,15 +12,17 @@ export function useMarkAllPushMessagesRead() {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
         if (mutationResult.data?.markAllPushMessagesRead) {
           const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
-          return merge({}, pushMessagesQueryResult, {
+          return {
+            ...pushMessagesQueryResult,
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               unreadCount: 0,
-              items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) =>
-                merge({}, pushMessage, { status: "Read" }),
-              ),
+              items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) => ({
+                ...pushMessage,
+                status: "Read",
+              })),
             },
-          });
+          };
         } else {
           return { ...previousQueryResult };
         }
