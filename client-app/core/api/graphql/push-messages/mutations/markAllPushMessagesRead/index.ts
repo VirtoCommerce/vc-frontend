@@ -1,28 +1,25 @@
+import { merge } from "lodash";
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { MarkAllPushMessagesReadDocument } from "@/core/api/graphql/types";
-import type { PushMessageFragment } from "@/core/api/graphql/types";
+import { MarkAllPushMessagesReadDocument, OperationNames } from "@/core/api/graphql/types";
 
 export function useMarkAllPushMessagesRead() {
   return useMutation(MarkAllPushMessagesReadDocument, {
     optimisticResponse: {
       markAllPushMessagesRead: true,
     },
-    update(cache) {
-      cache.modify({
-        fields: {
-          pushNotifications(existingPushMessages) {
-            return {
-              unreadCount: 0,
-              items: existingPushMessages.items.map((item: PushMessageFragment) => {
-                return {
-                  ...item,
-                  status: "Read",
-                };
-              }),
-            };
+    updateQueries: {
+      [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
+        return merge({}, previousQueryResult, {
+          pushMessages: {
+            unreadCount: 0,
+            items: previousQueryResult.pushMessages.items.map((pushMessage) =>
+              merge({}, pushMessage, { status: "Read" }),
+            ),
           },
-        },
-      });
+        });
+      },
     },
+    // Just in case we did something wrong in cache
+    refetchQueries: [OperationNames.Query.GetPushMessages],
   });
 }
