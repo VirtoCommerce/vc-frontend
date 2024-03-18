@@ -13,8 +13,8 @@ export function usePushMessages() {
     () =>
       result.value?.pushMessages.items.map(({ id, createdDate, shortMessage, status }) => ({
         id,
-        createdDate: createdDate!,
-        shortMessage: shortMessage!,
+        createdDate: createdDate,
+        shortMessage: shortMessage,
         read: status === "Read",
       })) ?? [],
   );
