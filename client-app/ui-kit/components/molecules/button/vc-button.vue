@@ -72,7 +72,7 @@ interface IAttributes {
 interface IProps {
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
   size?: "xs" | "sm" | "md" | "lg";
-  variant?: "solid" | "outline" | "solid-lightest" | "no-background";
+  variant?: "solid" | "outline" | "no-border" | "no-background";
   type?: "button" | "reset" | "submit";
   disabled?: boolean;
   loading?: boolean;
@@ -276,11 +276,11 @@ const attrs = computed(() => {
       }
     }
 
-    &--solid-lightest--#{$color} {
-      @apply bg-[--color-additional-50] text-[--color-#{$color}-500] border-[--color-additional-50];
+    &--no-border--#{$color} {
+      @apply bg-additional-50 text-[--color-#{$color}-500] border-additional-50;
 
       &:hover:not(#{$loading}, #{$disabled}) {
-        @apply bg-[--color-#{$color}-50] text-[--color-#{$color}-700];
+        @apply bg-[--color-#{$color}-100] border-[--color-#{$color}-100] text-[--color-#{$color}-700];
       }
     }
 
@@ -308,7 +308,7 @@ const attrs = computed(() => {
       @apply bg-[--color-neutral-200] border-[--color-neutral-200] text-[--color-neutral-400];
     }
 
-    &[class*="--solid-lightest--"] {
+    &[class*="--no-border--"] {
       @apply bg-[--color-neutral-50] border-[--color-neutral-50] text-[--color-neutral-400];
     }
 
