@@ -13,14 +13,28 @@
         {{ $t("common.labels.product") }}
       </div>
 
-      <div class="vc-line-items__properties">{{ $t("common.labels.properties") }}</div>
+      <div
+        v-if="showProperties"
+        :class="[
+          'vc-line-items__properties',
+          {
+            'vc-line-items__properties--wide': !showPrice,
+          },
+        ]"
+      >
+        {{ $t("common.labels.properties") }}
+      </div>
 
-      <div class="vc-line-items__price">
+      <div v-if="showPrice" class="vc-line-items__price">
         {{ $t("common.labels.price_per_item") }}
       </div>
 
-      <div class="vc-line-items__slot">
+      <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
         <slot name="titles" />
+      </div>
+
+      <div v-if="showTotal" class="vc-line-items__total">
+        {{ $t("common.labels.total") }}
       </div>
 
       <div v-if="removable" class="vc-line-items__removable"></div>
@@ -34,11 +48,16 @@
         :image-url="item.imageUrl"
         :name="item.name"
         :route="item.route"
-        :deleted="item.deleted"
         :properties="item.properties"
-        :disabled="disabled"
         :list-price="item.listPrice"
         :actual-price="item.actualPrice"
+        :total="item.extendedPrice"
+        :with-image="showImage"
+        :with-properties="showProperties"
+        :with-price="showPrice"
+        :with-total="showTotal"
+        :disabled="disabled"
+        :deleted="item.deleted"
         :removable="removable"
         :selectable="selectable"
         :selected="selectable && selectedItemIds?.includes(item.id)"
@@ -49,8 +68,10 @@
           <slot name="before-content" v-bind="{ item }" />
         </template>
 
-        <template #default>
-          <slot v-bind="{ item }" />
+        <template v-if="$slots.default" #default>
+          <div ref="slotElements">
+            <slot v-bind="{ item }" />
+          </div>
         </template>
 
         <template #after>
@@ -81,7 +102,7 @@
         </VcButton>
       </template>
 
-      <div v-if="!disableSubtotal" class="vc-line-items__subtotal">
+      <div v-if="withSubtotal" class="vc-line-items__subtotal">
         <span class="vc-line-items__subtotal-label">{{ $t("common.labels.subtotal") }}:</span>
         <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
       </div>
@@ -91,7 +112,7 @@
 
 <script setup lang="ts">
 import { intersection, map, sumBy } from "lodash";
-import { computed } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
@@ -105,8 +126,12 @@ interface IProps {
   removable?: boolean;
   items?: PreparedLineItemType[];
   sharedSelectedItemIds?: string[];
-  disableSubtotal?: boolean;
   selectable?: boolean;
+  withImage?: boolean;
+  withProperties?: boolean;
+  withPrice?: boolean;
+  withTotal?: boolean;
+  withSubtotal?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -115,11 +140,23 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
+const slotElements = ref<HTMLElement[]>([]);
+const slotWidth = ref<string>("");
+
+const showImage = computed(() => props.withImage && props.items.some((item) => item.imageUrl));
+const showProperties = computed(() => props.withProperties && props.items.some((item) => item.properties?.length));
+const showPrice = computed(() => props.withPrice && props.items.some((item) => item.listPrice || item.actualPrice));
+const showTotal = computed(() => props.withTotal && hasTotal.value);
+
+const hasTotal = computed(() => props.items.some((item) => item.extendedPrice));
+
 const subtotal = computed<number>(() =>
-  sumBy(
-    props.items.filter((item) => selectedItemIds.value.includes(item.id)),
-    (item) => item.extendedPrice?.amount,
-  ),
+  hasTotal.value
+    ? sumBy(
+        props.items.filter((item) => selectedItemIds.value.includes(item.id)),
+        (item) => item.extendedPrice?.amount,
+      )
+    : 0,
 );
 
 const itemIds = computed(() => map(props.items, "id"));
@@ -147,6 +184,10 @@ function removeSelectedItems() {
 function removeAllItems() {
   emit("remove:items", itemIds.value);
 }
+
+watchEffect(() => {
+  slotWidth.value = slotElements.value[0] ? `${slotElements.value[0].clientWidth}px` : "";
+});
 </script>
 
 <style lang="scss">
@@ -159,51 +200,49 @@ function removeAllItems() {
     @apply hidden;
 
     @media (min-width: theme("screens.md")) {
-      @apply flex items-center gap-3 py-0.5 px-3 min-h-[2.75rem] text-sm font-bold;
-    }
-
-    @media (min-width: theme("screens.2xl")) {
-      @apply px-3;
+      @apply flex items-center gap-3 py-0.5 px-4 min-h-[2.75rem] text-sm font-bold;
     }
   }
 
   &__product {
-    @apply flex-none w-[12.75rem];
-
-    @media (min-width: theme("screens.lg")) {
-      @apply w-[11.75rem];
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      @apply w-[16.75rem];
-    }
+    @apply flex-grow;
   }
 
   &__properties {
-    @apply flex-grow;
+    @apply flex-none;
+
+    @media (min-width: theme("screens.md")) {
+      @apply w-40;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply w-[11.875rem];
+    }
+
+    &--wide {
+      @media (min-width: theme("screens.xl")) {
+        @apply w-[15.5rem];
+      }
+    }
   }
 
   &__price {
     @apply hidden;
 
     @media (min-width: theme("screens.2xl")) {
-      @apply flex-none block w-[8.75rem] text-right;
+      @apply flex-none block w-[8.25rem] text-end;
     }
   }
 
-  &__slot {
-    @apply shrink-0 flex items-center justify-between w-[15.75rem];
+  &__total {
+    @apply text-end;
 
     @media (min-width: theme("screens.md")) {
-      @apply gap-4;
-    }
-
-    @media (min-width: theme("screens.lg")) {
-      @apply w-1/3;
+      @apply shrink-0 w-[6.5rem];
     }
 
     @media (min-width: theme("screens.xl")) {
-      @apply w-[15.85rem];
+      @apply w-[8.625rem];
     }
   }
 
@@ -250,7 +289,7 @@ function removeAllItems() {
   }
 
   &__subtotal {
-    @apply ms-auto justify-self-end flex items-center gap-2 text-[--color-success-600];
+    @apply ms-auto justify-self-end flex items-center gap-2 text-success-600;
   }
 
   &__subtotal-label {

@@ -1,4 +1,5 @@
-import { VcLineItem, VcAlert } from "..";
+import { VcLineItem } from "..";
+import { VcAlert } from "../..";
 import { preparedLineItemMock2 as lineItem } from "../../../mocks/line-item.mock";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
@@ -29,6 +30,7 @@ Basic.args = {
   properties: lineItem.properties,
   listPrice: lineItem.listPrice,
   actualPrice: lineItem.actualPrice,
+  total: lineItem.extendedPrice,
 };
 
 export const Selectable = Template.bind({});
@@ -42,14 +44,6 @@ export const Removable = Template.bind({});
 Removable.args = {
   ...Basic.args,
   removable: true,
-};
-
-export const Removed = Template.bind({});
-Removed.args = {
-  ...Basic.args,
-  selectable: true,
-  removable: true,
-  removed: true,
 };
 
 export const Disabled = Template.bind({});
@@ -75,4 +69,27 @@ DeletedProduct.args = {
   ...Basic.args,
   removable: true,
   deleted: true,
+};
+
+export const AddToCart: StoryFn<typeof VcLineItem> = (args) => ({
+  components: { VcLineItem },
+  setup: () => ({ args }),
+  template: `<VcLineItem v-bind="args">
+    <VcAddToCart />
+  </VcLineItem>`,
+});
+AddToCart.args = {
+  ...Basic.args,
+  removable: true,
+};
+
+export const QuantityInput: StoryFn<typeof VcLineItem> = (args) => ({
+  components: { VcLineItem },
+  setup: () => ({ args }),
+  template: `<VcLineItem v-bind="args">
+    <VcQuantity />
+  </VcLineItem>`,
+});
+QuantityInput.args = {
+  ...Basic.args,
 };
