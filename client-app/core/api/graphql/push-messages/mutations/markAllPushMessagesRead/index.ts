@@ -5,6 +5,7 @@ import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
 
 export function useMarkAllPushMessagesRead() {
   return useMutation(MarkAllPushMessagesReadDocument, {
+    // TODO: Remove all code below in next iteration when XAPI will return objects from mutations
     optimisticResponse: {
       markAllPushMessagesRead: true,
     },
@@ -13,6 +14,7 @@ export function useMarkAllPushMessagesRead() {
         if (mutationResult.data?.markAllPushMessagesRead) {
           const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
           return merge({}, pushMessagesQueryResult, {
+            // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               unreadCount: 0,
               items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) =>
