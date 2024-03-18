@@ -1,34 +1,32 @@
 <template>
-  <div>
-    <VcInput
-      v-model.number="quantity"
-      :disabled="disabled"
-      :min="minQuantity"
-      :max="maxQuantity"
-      single-line-message
-      center
-      class="w-full"
-      type="number"
-      size="sm"
-      @input="onChange"
-      @blur="onFocusOut"
-    >
-      <template #append>
-        <VcButton
-          :variant="isButtonOutlined ? 'outline' : 'solid'"
-          :loading="loading"
-          :disabled="disabled || !!errorMessage"
-          :title="buttonText"
-          size="sm"
-          class="w-28"
-          truncate
-          @click="$emit('update:cartItemQuantity', quantity!)"
-        >
-          {{ buttonText }}
-        </VcButton>
-      </template>
-    </VcInput>
-  </div>
+  <VcInput
+    v-model.number="quantity"
+    :disabled="disabled"
+    :min="minQuantity"
+    :max="maxQuantity"
+    single-line-message
+    center
+    class="vc-add-to-cart"
+    type="number"
+    size="sm"
+    @input="onChange"
+    @blur="onFocusOut"
+  >
+    <template #append>
+      <VcButton
+        :variant="isButtonOutlined ? 'outline' : 'solid'"
+        :loading="loading"
+        :disabled="disabled || !!errorMessage"
+        :title="buttonText"
+        size="sm"
+        class="vc-add-to-cart__button"
+        truncate
+        @click="$emit('update:cartItemQuantity', quantity!)"
+      >
+        {{ buttonText }}
+      </VcButton>
+    </template>
+  </VcInput>
 </template>
 
 <script setup lang="ts">
@@ -121,3 +119,13 @@ watchEffect(async () => {
   await validateFields();
 });
 </script>
+
+<style lang="scss">
+.vc-add-to-cart {
+  @apply w-full;
+
+  &__button {
+    @apply w-28;
+  }
+}
+</style>

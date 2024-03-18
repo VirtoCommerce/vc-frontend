@@ -108,11 +108,15 @@ usePageHead({
 
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const { staticPage } = useStaticPage();
-const { loading, slugInfo } = useSlugInfo("__index__home__page__");
+const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
 
-watch(slugInfo, (slugInfoValue) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  staticPage.value = slugInfoValue?.contentItem?.type === "page" ? JSON.parse(slugInfoValue.contentItem.content) : null;
+watch(slugInfo, async () => {
+  if (hasContent.value) {
+    await fetchContent();
+    if (pageContent.value) {
+      staticPage.value = pageContent.value;
+    }
+  }
 });
 </script>
 

@@ -7,7 +7,7 @@
     :min="minQuantity"
     :max="maxQuantity"
     :error="error"
-    class="w-[5.625rem] flex-none"
+    class="vc-quantity"
     size="sm"
     type="number"
     center
@@ -116,3 +116,9 @@ watchEffect(() => {
   quantity.value = props.modelValue;
 });
 </script>
+
+<style lang="scss">
+.vc-quantity {
+  @apply w-[5.625rem] flex-none;
+}
+</style>

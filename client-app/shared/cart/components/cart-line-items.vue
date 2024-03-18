@@ -4,33 +4,34 @@
     :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
+    with-image
+    with-properties
+    with-price
+    with-total
+    with-subtotal
     removable
     selectable
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
   >
     <template #titles>
-      <div class="min-w-[5.5rem] text-center">
+      <div class="text-center">
         {{ $t("common.labels.quantity") }}
-      </div>
-
-      <div class="text-right">
-        {{ $t("common.labels.total") }}
       </div>
     </template>
 
     <template #default="{ item }">
-      <div class="flex flex-col items-center gap-1.5">
-        <VcQuantity
-          :model-value="item.quantity"
-          :name="item.id"
-          :min-quantity="item.minQuantity"
-          :max-quantity="item.maxQuantity"
-          :disabled="disabled"
-          :readonly="readonly"
-          @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
-        />
+      <VcQuantity
+        :model-value="item.quantity"
+        :name="item.id"
+        :min-quantity="item.minQuantity"
+        :max-quantity="item.maxQuantity"
+        :disabled="disabled"
+        :readonly="readonly"
+        @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
+      />
 
+      <div class="mt-0.5 text-center">
         <InStock
           :is-in-stock="item.availabilityData?.isInStock"
           :is-available="!item.deleted"
@@ -38,12 +39,10 @@
           :is-digital="item.productType === ProductType.Digital"
         />
       </div>
-
-      <VcLineItemTotal :list-total="item.extendedPrice" />
     </template>
 
     <template #after-content="{ item }">
-      <div class="flex flex-col gap-1">
+      <div v-if="idErrors[item.id]" class="flex flex-col gap-1">
         <VcAlert
           v-for="(validationError, index) in idErrors[item.id]"
           :key="index"
