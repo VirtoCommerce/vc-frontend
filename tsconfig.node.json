@@ -2,6 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node20/tsconfig.json",
   "include": ["client-app/core/constants/tailwind.ts", "*", "scripts/*", "package.json"],
+  // TODO: https://virtocommerce.atlassian.net/browse/VCST-235
+  "exclude": ["scripts/generate-routes.ts"],
   "compilerOptions": {
     "composite": true,
     "noEmit": true,
