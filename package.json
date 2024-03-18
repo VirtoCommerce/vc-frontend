@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:expose": "yarn dev --host",
-    "build": "yarn validate && generate:routes && yarn yarn build-only",
+    "build": "yarn validate && yarn generate:routes && yarn build-only",
     "build:dev": "yarn build-only --mode=development",
     "build:watch": "yarn build-only --watch",
     "build-only": "vite build",
