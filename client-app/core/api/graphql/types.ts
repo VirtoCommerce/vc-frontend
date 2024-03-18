@@ -815,7 +815,9 @@ export type DeleteQuoteAttachmentsCommandType = {
 };
 
 export type DeleteSkyflowCardCommandType = {
+  /** Skyflow card id */
   skyflowId: Scalars['String']['input'];
+  /** Store id */
   storeId: Scalars['String']['input'];
 };
 
