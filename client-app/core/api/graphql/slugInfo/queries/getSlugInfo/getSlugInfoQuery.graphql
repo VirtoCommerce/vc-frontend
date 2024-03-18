@@ -1,0 +1,12 @@
+query GetSlugInfo($slug: String, $storeId: String, $userId: String, $cultureName: String) {
+  slugInfo(slug: $slug, storeId: $storeId, userId: $userId, cultureName: $cultureName) {
+    entityInfo {
+      id
+      isActive
+      languageCode
+      objectId
+      objectType
+      semanticUrl
+    }
+  }
+}
