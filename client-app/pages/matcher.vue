@@ -11,7 +11,7 @@
       :product-id="slugInfo?.entityInfo?.objectId"
     />
 
-    <component :is="StaticPage" v-else-if="slugInfo?.contentItem?.type === 'page'" />
+    <component :is="StaticPage" v-else-if="hasContent" />
 
     <NotFound v-else-if="!loading" />
   </LandingPage>
@@ -48,18 +48,20 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
-const { loading, slugInfo } = useSlugInfo(seoUrl);
+const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo(seoUrl);
 
 onBeforeUnmount(() => {
   setMatchingRouteName("");
 });
 
-watchEffect(() => {
+watchEffect(async () => {
   let matchingRouteName = "";
 
-  if (slugInfo.value?.contentItem?.type === "page") {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    staticPage.value = JSON.parse(slugInfo.value.contentItem.content);
+  if (hasContent.value) {
+    await fetchContent();
+    if (pageContent.value) {
+      staticPage.value = pageContent.value;
+    }
   }
 
   switch (slugInfo.value?.entityInfo?.objectType) {

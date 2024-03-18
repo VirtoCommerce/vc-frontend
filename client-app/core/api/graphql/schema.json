@@ -6329,10 +6329,12 @@
       {
         "kind": "INPUT_OBJECT",
         "name": "DeleteSkyflowCardCommandType",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
             "name": "skyflowId",
+            "description": "Skyflow card id",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -6348,6 +6350,7 @@
           },
           {
             "name": "storeId",
+            "description": "Store id",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -8585,6 +8588,33 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "GraphQLSettingsType",
+        "description": null,
+        "fields": [
+          {
+            "name": "keepAliveInterval",
+            "description": "Keep-alive message interval for GraphQL subscription",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Seconds",
                 "ofType": null
               }
             },
@@ -13593,11 +13623,13 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "InputMarkPushNotificationReadType",
+        "name": "InputMarkPushMessageReadType",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
-            "name": "notificationId",
+            "name": "messageId",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -13618,11 +13650,13 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "InputMarkPushNotificationUnreadType",
+        "name": "InputMarkPushMessageUnreadType",
+        "description": null,
         "fields": null,
         "inputFields": [
           {
-            "name": "notificationId",
+            "name": "messageId",
+            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -20911,6 +20945,106 @@
       },
       {
         "kind": "OBJECT",
+        "name": "ModuleSettingType",
+        "description": null,
+        "fields": [
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "value",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "ModuleSettingValue",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "ModuleSettingValue",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ModuleSettingsType",
+        "description": null,
+        "fields": [
+          {
+            "name": "moduleId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "settings",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ModuleSettingType",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "MoneyType",
         "description": null,
         "fields": [
@@ -21235,33 +21369,6 @@
             "type": {
               "kind": "OBJECT",
               "name": "CartType",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "addMessage",
-            "args": [
-              {
-                "name": "command",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "PushNotificationInputType",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PushNotificationType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -21886,6 +21993,18 @@
             "deprecationReason": null
           },
           {
+            "name": "clearAllPushMessages",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "clearCart",
             "description": null,
             "args": [
@@ -22380,9 +22499,11 @@
           },
           {
             "name": "deleteSkyflowCard",
+            "description": null,
             "args": [
               {
                 "name": "command",
+                "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
@@ -22522,6 +22643,88 @@
             "deprecationReason": null
           },
           {
+            "name": "markAllPushMessagesRead",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "markAllPushMessagesUnread",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "markPushMessageRead",
+            "description": null,
+            "args": [
+              {
+                "name": "command",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "InputMarkPushMessageReadType",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "markPushMessageUnread",
+            "description": null,
+            "args": [
+              {
+                "name": "command",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "InputMarkPushMessageUnreadType",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "mergeCart",
             "description": null,
             "args": [
@@ -22607,93 +22810,6 @@
             },
             "isDeprecated": true,
             "deprecationReason": "Obsolete. Use 'initializePayment' mutation"
-          },
-          {
-            "name": "pushNotificationMarkRead",
-            "args": [
-              {
-                "name": "command",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "InputMarkPushNotificationReadType",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pushNotificationMarkUnread",
-            "args": [
-              {
-                "name": "command",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "InputMarkPushNotificationUnreadType",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pushNotificationsClearAll",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pushNotificationsMarkReadAll",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pushNotificationsMarkUnreadAll",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
           },
           {
             "name": "refreshCart",
@@ -27458,6 +27574,38 @@
         "description": null,
         "fields": [
           {
+            "name": "content",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "name",
             "description": "Page title",
             "args": [],
@@ -31321,43 +31469,29 @@
         "possibleTypes": null
       },
       {
-        "kind": "INPUT_OBJECT",
-        "name": "PushNotificationInputType",
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "content",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
         "kind": "OBJECT",
-        "name": "PushNotificationType",
+        "name": "PushMessageType",
+        "description": null,
         "fields": [
           {
             "name": "createdDate",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "DateTime",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "id",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -31373,22 +31507,32 @@
           },
           {
             "name": "shortMessage",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "status",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -31401,10 +31545,12 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PushNotificationsResponseType",
+        "name": "PushMessagesResponseType",
+        "description": null,
         "fields": [
           {
             "name": "items",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -31417,7 +31563,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PushNotificationType",
+                    "name": "PushMessageType",
                     "ofType": null
                   }
                 }
@@ -31428,6 +31574,7 @@
           },
           {
             "name": "unreadCount",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -33412,6 +33559,63 @@
             "deprecationReason": null
           },
           {
+            "name": "page",
+            "description": null,
+            "args": [
+              {
+                "name": "cultureName",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "storeId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "PageType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "pages",
             "description": null,
             "args": [
@@ -34084,10 +34288,12 @@
             "deprecationReason": null
           },
           {
-            "name": "pushNotifications",
+            "name": "pushMessages",
+            "description": null,
             "args": [
               {
                 "name": "cultureName",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -34099,6 +34305,7 @@
               },
               {
                 "name": "unreadOnly",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "Boolean",
@@ -34114,7 +34321,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PushNotificationsResponseType",
+                "name": "PushMessagesResponseType",
                 "ofType": null
               }
             },
@@ -34465,9 +34672,11 @@
           },
           {
             "name": "skyflowCards",
+            "description": null,
             "args": [
               {
                 "name": "storeId",
+                "description": null,
                 "type": {
                   "kind": "SCALAR",
                   "name": "String",
@@ -37505,6 +37714,16 @@
         "possibleTypes": null
       },
       {
+        "kind": "SCALAR",
+        "name": "Seconds",
+        "description": "The `Seconds` scalar type represents a period of time represented as the total number of seconds in range [-922337203685, 922337203685].",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "SeoInfo",
         "description": null,
@@ -38405,9 +38624,11 @@
       {
         "kind": "OBJECT",
         "name": "SkyflowCardResponseType",
+        "description": null,
         "fields": [
           {
             "name": "cards",
+            "description": null,
             "args": [],
             "type": {
               "kind": "LIST",
@@ -38430,9 +38651,11 @@
       {
         "kind": "OBJECT",
         "name": "SkyflowCardType",
+        "description": null,
         "fields": [
           {
             "name": "cardExpiration",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -38444,6 +38667,7 @@
           },
           {
             "name": "cardNumber",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -38459,6 +38683,7 @@
           },
           {
             "name": "cardholderName",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -38470,6 +38695,7 @@
           },
           {
             "name": "cvv",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -38481,6 +38707,7 @@
           },
           {
             "name": "expiryMonth",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -38492,6 +38719,7 @@
           },
           {
             "name": "expiryYear",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -38503,6 +38731,7 @@
           },
           {
             "name": "skyflowId",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -38518,6 +38747,7 @@
           },
           {
             "name": "userId",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -38655,6 +38885,22 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "LanguageType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "graphQLSettings",
+            "description": "GraphQL settings",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "GraphQLSettingsType",
                 "ofType": null
               }
             },
@@ -38813,6 +39059,30 @@
             "deprecationReason": null
           },
           {
+            "name": "modules",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "ModuleSettingsType",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "passwordRequirements",
             "description": "Password requirements",
             "args": [],
@@ -38950,13 +39220,15 @@
       {
         "kind": "OBJECT",
         "name": "Subscriptions",
+        "description": null,
         "fields": [
           {
-            "name": "pushNotificationCreated",
+            "name": "pushMessageCreated",
+            "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "PushNotificationType",
+              "name": "PushMessageType",
               "ofType": null
             },
             "isDeprecated": false,
