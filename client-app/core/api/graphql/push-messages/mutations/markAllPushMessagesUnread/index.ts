@@ -9,16 +9,20 @@ export function useMarkAllPushMessagesUnread() {
       markAllPushMessagesUnread: true,
     },
     updateQueries: {
-      [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
-        const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
-        return merge({}, pushMessagesQueryResult, {
-          pushMessages: {
-            unreadCount: pushMessagesQueryResult.pushMessages.items.length,
-            items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) =>
-              merge({}, pushMessage, { status: "Unread" }),
-            ),
-          },
-        });
+      [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
+        if (mutationResult.data?.markAllPushMessagesUnread) {
+          const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
+          return merge({}, pushMessagesQueryResult, {
+            pushMessages: {
+              unreadCount: pushMessagesQueryResult.pushMessages.items.length,
+              items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) =>
+                merge({}, pushMessage, { status: "Unread" }),
+              ),
+            },
+          });
+        } else {
+          return { ...previousQueryResult };
+        }
       },
     },
     // Just in case we did something wrong in cache

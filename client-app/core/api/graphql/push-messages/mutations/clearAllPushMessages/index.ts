@@ -11,14 +11,18 @@ export function useClearAllPushMessages() {
       clearAllPushMessages: true,
     },
     updateQueries: {
-      [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
-        const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
-        return merge({}, pushMessagesQueryResult, {
-          pushMessages: {
-            unreadCount: 0,
-            items: [],
-          },
-        });
+      [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
+        if (mutationResult.data?.clearAllPushMessages) {
+          const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
+          return merge({}, pushMessagesQueryResult, {
+            pushMessages: {
+              unreadCount: 0,
+              items: [],
+            },
+          });
+        } else {
+          return { ...previousQueryResult };
+        }
       },
     },
     // Just in case we did something wrong in cache
