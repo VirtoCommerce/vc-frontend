@@ -9,8 +9,7 @@ const appContextString =
     : // Mock settings for DEV mode
       `{
         "storeSettings": {
-          "anonymousAccessEnabled": true,
-          "googleAnalyticsEnabled": true
+          "anonymousAccessEnabled": true
         }
       }`;
 
