@@ -1,6 +1,7 @@
 import { merge } from "lodash";
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
 import { MarkAllPushMessagesReadDocument, OperationNames } from "@/core/api/graphql/types";
+import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
 
 export function useMarkAllPushMessagesRead() {
   return useMutation(MarkAllPushMessagesReadDocument, {
@@ -9,10 +10,11 @@ export function useMarkAllPushMessagesRead() {
     },
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
-        return merge({}, previousQueryResult, {
+        const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
+        return merge({}, pushMessagesQueryResult, {
           pushMessages: {
             unreadCount: 0,
-            items: previousQueryResult.pushMessages.items.map((pushMessage) =>
+            items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) =>
               merge({}, pushMessage, { status: "Read" }),
             ),
           },
