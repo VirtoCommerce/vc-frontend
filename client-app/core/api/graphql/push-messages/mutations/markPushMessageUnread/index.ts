@@ -9,15 +9,17 @@ export function useMarkPushMessageUnread() {
     optimisticResponse: {
       markPushMessageUnread: true,
     },
-    update(cache, _, { variables }) {
-      cache.updateFragment(
-        {
-          id: `PushMessageType:${variables?.command?.messageId}`,
-          fragment: PushMessageFragmentDoc,
-        },
-        // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
-        (pushMessage) => merge({}, pushMessage, { status: "Unread" }),
-      );
+    update(cache, result, { variables }) {
+      if (result.data?.markPushMessageUnread) {
+        cache.updateFragment(
+          {
+            id: `PushMessageType:${variables?.command?.messageId}`,
+            fragment: PushMessageFragmentDoc,
+          },
+          // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
+          (pushMessage) => merge({}, pushMessage, { status: "Unread" }),
+        );
+      }
     },
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
