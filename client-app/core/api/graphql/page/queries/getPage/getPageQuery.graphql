@@ -1,0 +1,7 @@
+query GetPage($storeId: String!, $cultureName: String, $id: String!) {
+  page(storeId: $storeId, cultureName: $cultureName, id: $id) {
+    id
+    name
+    content
+  }
+}
