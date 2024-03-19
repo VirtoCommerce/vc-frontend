@@ -5227,7 +5227,7 @@ export type SubmitQuoteCommandType = {
 };
 
 export type Subscriptions = {
-  pushMessageCreated?: Maybe<PushMessageType>;
+  pushMessageCreated: PushMessageType;
 };
 
 export type TaxDetailType = {
@@ -6279,7 +6279,7 @@ export type GetPushMessagesQuery = { pushMessages: { unreadCount: number, items:
 export type OnPushMessageCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OnPushMessageCreatedSubscription = { pushMessageCreated?: { id: string, createdDate: any, shortMessage: string, isRead: boolean } };
+export type OnPushMessageCreatedSubscription = { pushMessageCreated: { id: string, createdDate: any, shortMessage: string, isRead: boolean } };
 
 export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
 
