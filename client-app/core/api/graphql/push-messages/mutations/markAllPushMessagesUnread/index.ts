@@ -5,6 +5,7 @@ import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
 export function useMarkAllPushMessagesUnread() {
   return useMutation(MarkAllPushMessagesUnreadDocument, {
     // TODO: Remove all code below in next iteration when XAPI will return objects from mutations
+    // https://virtocommerce.atlassian.net/browse/VCST-833
     optimisticResponse: {
       markAllPushMessagesUnread: true,
     },

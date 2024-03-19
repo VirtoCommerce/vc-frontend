@@ -7,6 +7,7 @@ export function useClearAllPushMessages() {
   const { client } = useApolloClient();
   const result = useMutation(ClearAllPushMessagesDocument, {
     // TODO: Remove all code below in next iteration when XAPI will return objects from mutations
+    // https://virtocommerce.atlassian.net/browse/VCST-833
     optimisticResponse: {
       clearAllPushMessages: true,
     },
