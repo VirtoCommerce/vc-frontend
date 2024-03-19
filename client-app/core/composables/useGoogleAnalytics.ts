@@ -44,9 +44,7 @@ watch(isThemeContextReady, (isReady: boolean) => {
       const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
       if (!IS_DEVELOPMENT) {
         const script = document.createElement("script");
-        script.type = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-        script.src = "url";
-
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
         document.head.appendChild(script);
       } else {
         Logger.debug(DEBUG_PREFIX, "initialized without sync with google");
