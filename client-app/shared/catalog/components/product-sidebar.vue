@@ -30,12 +30,14 @@
         <div class="mt-4 print:hidden">
           <AddToCart :product="product" />
 
-          <div class="mt-2 flex">
+          <div class="mt-2 flex items-center gap-1">
             <InStock
               :is-in-stock="product.availabilityData?.isInStock"
               :is-digital="isDigital"
               :quantity="product.availabilityData?.availableQuantity"
             />
+
+            <CountInCart :product-id="product.id" />
           </div>
         </div>
       </template>
@@ -48,6 +50,7 @@ import { computed } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
+import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";
 import type { Product } from "@/core/api/graphql/types";
