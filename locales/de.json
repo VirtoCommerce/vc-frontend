@@ -150,6 +150,7 @@
     },
     "account": {
       "navigation": {
+        "corporate_title": "Corporate",
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
