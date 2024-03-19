@@ -4,7 +4,6 @@ import { useFetch } from "@/core/api/common";
 import { getStore } from "@/core/api/graphql";
 import { IS_DEVELOPMENT } from "../constants";
 import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
-import type { ModuleSettingsType } from "@/core/api/graphql/types";
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
@@ -53,8 +52,8 @@ function _useThemeContext() {
         throw new Error("Theme context change is not available.");
       },
     }),
-    modulesSettings: computed<ModuleSettingsType[]>(() => {
-      return themeContext.value?.storeSettings?.modules || [];
+    modulesSettings: computed(() => {
+      return themeContext.value?.storeSettings?.modules;
     }),
   };
 }

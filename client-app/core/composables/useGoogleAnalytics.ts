@@ -36,7 +36,7 @@ watch(isThemeContextReady, (isReady: boolean) => {
     return;
   }
   if (isReady) {
-    const moduleSettings = modulesSettings.value.find((el) => el.moduleId === MODULE_KEYS.ID);
+    const moduleSettings = modulesSettings.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
     const isGoogleAnalyticsEnabled = !!moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.ENABLE_STATE)
       ?.value;
 
