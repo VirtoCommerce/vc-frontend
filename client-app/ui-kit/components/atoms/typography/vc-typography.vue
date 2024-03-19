@@ -20,9 +20,9 @@ import { computed } from "vue";
 
 interface IProps {
   tag?: string;
-  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "base";
-  weight?: "thin" | "light" | "normal" | "bold" | "black";
-  textTransform?: "uppercase" | "lowercase" | "capitalize" | "none";
+  variant?: VcTypographyVariantType;
+  weight?: VcTypographyWeightType;
+  textTransform?: VcTypographyTextTransformType;
   truncate?: boolean;
 }
 

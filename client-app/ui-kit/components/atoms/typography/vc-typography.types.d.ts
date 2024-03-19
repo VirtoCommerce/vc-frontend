@@ -3,3 +3,5 @@ declare global {
   type VcTypographyWeightType = "thin" | "light" | "normal" | "bold" | "black";
   type VcTypographyTextTransformType = "uppercase" | "lowercase" | "capitalize" | "none";
 }
+
+export {};
