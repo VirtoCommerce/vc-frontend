@@ -1,5 +1,5 @@
 <template>
-  <VcPushMessage :push-message="_pushMessage" @click="toggleRead()" />
+  <VcPushMessage :push-message="_pushMessage" @click="toggleRead" />
 </template>
 
 <script setup lang="ts">
