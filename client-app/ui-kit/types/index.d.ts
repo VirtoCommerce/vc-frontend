@@ -111,7 +111,7 @@ declare global {
   type VcPushMessageType = {
     id: string;
     createdDate: number | Date;
-    read?: boolean;
+    isRead?: boolean;
     shortMessage: string;
   };
 }

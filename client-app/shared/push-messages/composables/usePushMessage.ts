@@ -14,7 +14,7 @@ export function usePushMessage(pushMessage: Ref<VcPushMessageType>) {
   }
 
   async function toggleRead() {
-    if (pushMessage.value.read) {
+    if (pushMessage.value.isRead) {
       await markUnread();
     } else {
       await markRead();

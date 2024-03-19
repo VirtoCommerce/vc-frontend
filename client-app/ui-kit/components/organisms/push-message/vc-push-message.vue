@@ -3,7 +3,7 @@
     :class="[
       'vc-push-message',
       {
-        'vc-push-message--unread': !pushMessage.read,
+        'vc-push-message--unread': !pushMessage.isRead,
       },
     ]"
   >

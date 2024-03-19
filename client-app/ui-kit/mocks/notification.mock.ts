@@ -8,6 +8,6 @@ export const readPushMessageMock: VcPushMessageType = {
   id: "222-333-444-555",
   shortMessage:
     "**31 new agencies** are available on **OMNIA** Partners Connect 31 new agencies are available on OMNIA. **Partners** Connect 31 new agencies are available on OMNIA Partners Connect",
-  read: true,
+  isRead: true,
   createdDate: new Date("2024-02-28T07:58:19.1545801Z"),
 };

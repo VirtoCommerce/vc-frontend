@@ -9,15 +9,7 @@ export function usePushMessages() {
 
   const totalCount = computed(() => items.value.length);
   const unreadCount = computed(() => result.value?.pushMessages.unreadCount ?? 0);
-  const items = computed<VcPushMessageType[]>(
-    () =>
-      result.value?.pushMessages.items.map(({ id, createdDate, shortMessage, status }) => ({
-        id,
-        createdDate: createdDate,
-        shortMessage: shortMessage,
-        read: status === "Read",
-      })) ?? [],
-  );
+  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages.items ?? []);
 
   const { mutate: markReadAll } = useMarkAllPushMessagesRead();
   const { mutate: markUnreadAll } = useMarkAllPushMessagesUnread();
