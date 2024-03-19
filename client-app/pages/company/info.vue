@@ -160,7 +160,7 @@
 
               <template #mobile-skeleton>
                 <div
-                  v-for="i in itemsPerPage"
+                  v-for="i in skeletonItemsCount"
                   :key="i"
                   class="relative grid grid-cols-3 gap-4 border-t border-gray-200 px-6 py-5 text-sm"
                 >
@@ -254,7 +254,7 @@
               </template>
 
               <template #desktop-skeleton>
-                <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
+                <tr v-for="i in skeletonItemsCount" :key="i" class="even:bg-gray-50">
                   <td v-for="column in columns.length" :key="column" class="px-5 py-4">
                     <div class="h-5 animate-pulse bg-gray-200" />
                   </td>
@@ -328,6 +328,9 @@ const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XA
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+);
+const skeletonItemsCount = computed(() =>
+  paginatedAddresses.value.length > itemsPerPage.value ? itemsPerPage.value : paginatedAddresses.value.length,
 );
 
 const companyNameSaveIcon = computed(() => (isMobile.value ? "save-v2" : ""));
