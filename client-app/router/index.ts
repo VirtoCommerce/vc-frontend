@@ -14,7 +14,7 @@ export function createRouter(options: { base: string }) {
 
   const router = _createRouter({
     routes: mainRoutes,
-    history: createWebHistory(base),
+    history: createWebHistory(),
     scrollBehavior(to, from, savedPosition) {
       if (to.path !== from.path) {
         return savedPosition || { top: 0 };
