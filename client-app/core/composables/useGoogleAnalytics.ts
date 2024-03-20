@@ -6,7 +6,6 @@ import { useThemeContext } from "@/core/composables/useThemeContext";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { globals } from "../globals";
-const { currentCurrency } = useCurrency();
 import type {
   Breadcrumb,
   CartType,
@@ -21,6 +20,9 @@ type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
 
+const { currentCurrency } = useCurrency();
+const { modulesSettings } = useThemeContext();
+
 const DEBUG_PREFIX = "[GA]";
 
 const MODULE_KEYS = {
@@ -28,8 +30,6 @@ const MODULE_KEYS = {
   ENABLE_STATE: "GoogleAnalytics4.EnableTracking",
   TRACK_ID: "GoogleAnalytics4.MeasurementId",
 };
-
-const { modulesSettings } = useThemeContext();
 
 function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
   const categories: Record<string, string> = {};
