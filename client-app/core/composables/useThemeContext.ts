@@ -7,7 +7,6 @@ import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
-  const isThemeContextReady = ref(false);
 
   async function fetchThemeContext() {
     const [store, themeSettings] = await Promise.all([getStore("B2B-store"), fetchThemeSettings()]);
@@ -21,8 +20,6 @@ function _useThemeContext() {
       settings: themeSettings,
       storeSettings: store.settings,
     };
-
-    isThemeContextReady.value = true;
   }
 
   async function fetchThemeSettings() {
@@ -38,7 +35,6 @@ function _useThemeContext() {
 
   return {
     fetchThemeContext,
-    isThemeContextReady,
     themeContext: computed({
       get() {
         if (!themeContext.value) {

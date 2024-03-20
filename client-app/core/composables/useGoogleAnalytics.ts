@@ -1,6 +1,6 @@
 import { canUseDOM } from "@apollo/client/utilities";
+import { useScriptTag } from "@vueuse/core";
 import { sumBy } from "lodash";
-import { watch } from "vue";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { IS_DEVELOPMENT } from "@/core/constants";
@@ -29,38 +29,7 @@ const MODULE_KEYS = {
   TRACK_ID: "GoogleAnalytics4.MeasurementId",
 };
 
-const { isThemeContextReady, modulesSettings } = useThemeContext();
-
-watch(isThemeContextReady, (isReady: boolean) => {
-  if (!canUseDOM) {
-    return;
-  }
-  if (isReady) {
-    const moduleSettings = modulesSettings.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
-    const isGoogleAnalyticsEnabled = !!moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.ENABLE_STATE)
-      ?.value;
-
-    if (isGoogleAnalyticsEnabled) {
-      const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
-      if (!IS_DEVELOPMENT) {
-        const script = document.createElement("script");
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-        document.head.appendChild(script);
-      } else {
-        Logger.debug(DEBUG_PREFIX, "initialized without sync with google");
-      }
-
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function gtag() {
-        // eslint-disable-next-line prefer-rest-params
-        window.dataLayer.push(arguments);
-      };
-      window.gtag("js", new Date());
-      window.gtag("config", id, { debug_mode: true });
-      window.gtag("set", { currency: currentCurrency.value.code });
-    }
-  }
-});
+const { modulesSettings } = useThemeContext();
 
 function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
   const categories: Record<string, string> = {};
@@ -282,6 +251,36 @@ function search(searchTerm: string): void {
   });
 }
 
+function init() {
+  if (!canUseDOM) {
+    return;
+  }
+
+  const moduleSettings = modulesSettings.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
+  const isGoogleAnalyticsEnabled = !!moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.ENABLE_STATE)
+    ?.value;
+
+  if (isGoogleAnalyticsEnabled) {
+    const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
+    if (!IS_DEVELOPMENT) {
+      useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${id}`);
+    } else {
+      Logger.debug(DEBUG_PREFIX, "initialized without sync with google");
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag() {
+      // is not working with rest
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer.push(arguments);
+    };
+
+    window.gtag("js", new Date());
+    window.gtag("config", id, { debug_mode: true });
+    window.gtag("set", { currency: currentCurrency.value.code });
+  }
+}
+
 export function useGoogleAnalytics() {
   return {
     sendEvent,
@@ -300,5 +299,6 @@ export function useGoogleAnalytics() {
     purchase,
     placeOrder,
     search,
+    init,
   };
 }
