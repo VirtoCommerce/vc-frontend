@@ -47,7 +47,7 @@ export default async () => {
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
-  const { init: initGA } = useGoogleAnalytics();
+  const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
 
   const fallback = {
     locale: "en",
@@ -62,7 +62,7 @@ export default async () => {
    */
   await Promise.all([fetchThemeContext(), fetchUser(), fallback.setMessage()]);
 
-  initGA();
+  initializeGoogleAnalytics();
 
   /**
    * Creating plugin instances
