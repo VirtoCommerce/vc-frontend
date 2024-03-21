@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { useField, useForm } from "vee-validate";
+import { useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
@@ -88,8 +88,8 @@ const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { openModal } = useModal();
 
-const apiErrors = ref<IdentityErrorType[]>();
-const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
+const responseErrors = ref<IdentityErrorType[]>();
+const { translatedErrors } = useErrorsTranslator("identity_error", responseErrors);
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
@@ -97,44 +97,40 @@ usePageHead({
 
 const validationSchema = toTypedSchema(
   object({
-    firstName: string().trim().required().max(MAX_NAME_LENGTH),
-    lastName: string().trim().required().max(MAX_NAME_LENGTH),
+    firstName: string().required().max(MAX_NAME_LENGTH),
+    lastName: string().required().max(MAX_NAME_LENGTH),
     email: string(),
   }),
 );
 
-const initialValues = computed(() => ({
-  firstName: user.value.contact?.firstName,
-  lastName: user.value.contact?.lastName,
-  email: user.value.email,
-}));
+function initialValues() {
+  return {
+    firstName: user.value.contact?.firstName,
+    lastName: user.value.contact?.lastName,
+    email: user.value.email,
+  };
+}
 
-const { errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
+const { defineField, errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
   validationSchema,
-  initialValues,
+  initialValues: initialValues(),
 });
 
-const { value: firstName } = useField<string>("firstName");
-const { value: lastName } = useField<string>("lastName");
-const { value: email } = useField<string>("email");
+const [firstName] = defineField("firstName");
+const [lastName] = defineField("lastName");
+const [email] = defineField("email");
 
 const onSubmit = handleSubmit(async (data) => {
-  const trimmedFirstName = data.firstName.trim();
-  const trimmedLastName = data.lastName.trim();
+  console.log([data, meta.value]);
 
-  const results: boolean[] = [];
-  apiErrors.value = [];
-  if (initialValues.value.firstName !== trimmedFirstName || initialValues.value.lastName !== trimmedLastName) {
-    const userDataUpdateResult = await updateUser({ firstName: trimmedFirstName, lastName: trimmedLastName });
+  responseErrors.value = [];
 
-    results.push(userDataUpdateResult.succeeded);
+  const response = await updateUser(data);
 
-    apiErrors.value = userDataUpdateResult.errors;
-  }
+  responseErrors.value = response.errors ?? [];
 
-  if (results.every((item) => item)) {
-    resetForm();
-    apiErrors.value = [];
+  if (response.succeeded) {
+    resetForm({ values: initialValues() });
     openModal({
       component: ProfileUpdateSuccessModal,
     });
