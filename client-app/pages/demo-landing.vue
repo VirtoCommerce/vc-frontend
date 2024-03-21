@@ -103,7 +103,7 @@
 
     <div class="bg-gray-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-        <VcTypography tag="h2" variant="h1" class="mb-2 lg:mb-4" text-transform="none">
+        <VcTypography tag="h2" variant="h1" class="mb-2 lg:mb-4">
           {{ $t("pages.demo_landing.products_block.title") }}
         </VcTypography>
 
@@ -195,3 +195,9 @@ onMounted(async () => {
   });
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

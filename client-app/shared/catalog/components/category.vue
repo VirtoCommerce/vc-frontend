@@ -59,7 +59,7 @@
       <!-- Content -->
       <div ref="contentElement" class="grow">
         <div class="flex">
-          <VcTypography tag="h1" text-transform="none">
+          <VcTypography tag="h1">
             <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
               <template #keyword>
                 <strong>{{ searchParams.keyword }}</strong>
@@ -696,3 +696,9 @@ watchDebounced(
   },
 );
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

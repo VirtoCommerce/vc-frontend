@@ -2,7 +2,6 @@ import { VcTypography } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 const VARIANTS = ["h1", "h2", "h3", "h4", "h5", "h6", "base"];
-const WEIGHTS = ["thin", "light", "normal", "bold", "black"];
 
 export default {
   title: "Components/Atoms/VcTypography",
@@ -15,16 +14,6 @@ export default {
       table: {
         type: {
           summary: VARIANTS.join(" | "),
-        },
-      },
-    },
-    weight: {
-      control: "select",
-      options: WEIGHTS,
-      type: { name: "string", required: false },
-      table: {
-        type: {
-          summary: WEIGHTS.join(" | "),
         },
       },
     },
@@ -52,16 +41,4 @@ H2.args = {
 export const H3 = Template.bind({});
 H3.args = {
   tag: "h3",
-};
-
-export const H1FontWeightNormal = Template.bind({});
-H1FontWeightNormal.args = {
-  tag: "h1",
-  weight: "normal",
-};
-
-export const H1TextTransformNone = Template.bind({});
-H1TextTransformNone.args = {
-  tag: "h1",
-  textTransform: "none",
 };

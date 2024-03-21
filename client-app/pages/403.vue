@@ -3,7 +3,7 @@
     <template #left>
       <h1 v-t="'pages.403.error_code'" class="mb-5 text-7xl font-black text-primary md:text-8xl"></h1>
 
-      <VcTypography tag="h2" variant="h1" text-transform="none" class="mb-2">
+      <VcTypography tag="h2" variant="h1" class="mb-2">
         {{ $t("pages.403.error_text") }}
       </VcTypography>
 
@@ -31,3 +31,9 @@ usePageHead({
   title: `${t("pages.403.error_code")} ${t("pages.403.error_text")}`,
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

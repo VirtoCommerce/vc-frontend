@@ -3,7 +3,7 @@
     <!-- Breadcrumbs -->
     <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
-    <VcTypography tag="h1" text-transform="none">
+    <VcTypography tag="h1">
       {{ product.name }}
     </VcTypography>
 
@@ -126,3 +126,9 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

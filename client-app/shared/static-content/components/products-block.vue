@@ -1,7 +1,7 @@
 <template>
   <div class="py-10 lg:py-24" :class="model.background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-      <VcTypography tag="h2" variant="h1" text-transform="none" class="mb-2 text-center lg:mb-4">
+      <VcTypography tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
         {{ model.title }}
       </VcTypography>
 
@@ -49,3 +49,9 @@ watchEffect(async () => {
   });
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

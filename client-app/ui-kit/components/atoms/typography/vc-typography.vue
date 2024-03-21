@@ -4,8 +4,6 @@
     :class="[
       'vc-typography',
       `vc-typography--variant--${_variant}`,
-      `vc-typography--weight--${_weight}`,
-      `vc-typography--case--${_textTransform}`,
       {
         'vc-typography--truncate': truncate,
       },
@@ -21,8 +19,6 @@ import { computed } from "vue";
 interface IProps {
   tag?: string;
   variant?: VcTypographyVariantType;
-  weight?: VcTypographyWeightType;
-  textTransform?: VcTypographyTextTransformType;
   truncate?: boolean;
 }
 
@@ -44,30 +40,6 @@ const _variant = computed(() => {
 
   return "base";
 });
-
-const _weight = computed(() => {
-  if (props.weight) {
-    return props.weight;
-  }
-
-  if (isHeader.value) {
-    return "bold";
-  }
-
-  return "normal";
-});
-
-const _textTransform = computed(() => {
-  if (props.textTransform) {
-    return props.textTransform;
-  }
-
-  if (isHeader.value) {
-    return "uppercase";
-  }
-
-  return "none";
-});
 </script>
 
 <style lang="scss">
@@ -76,7 +48,7 @@ const _textTransform = computed(() => {
 
   &--variant {
     &--h1 {
-      @apply text-2xl tracking-wide;
+      @apply text-2xl tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
         @apply text-3xl;
@@ -84,7 +56,7 @@ const _textTransform = computed(() => {
     }
 
     &--h2 {
-      @apply text-xl tracking-wide;
+      @apply text-xl tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
         @apply text-2xl;
@@ -92,7 +64,7 @@ const _textTransform = computed(() => {
     }
 
     &--h3 {
-      @apply text-lg tracking-wide;
+      @apply text-lg tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
         @apply text-xl;
@@ -100,7 +72,7 @@ const _textTransform = computed(() => {
     }
 
     &--h4 {
-      @apply text-base;
+      @apply text-base font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
         @apply text-lg;
@@ -108,55 +80,15 @@ const _textTransform = computed(() => {
     }
 
     &--h5 {
-      @apply text-base;
+      @apply text-base font-bold uppercase;
     }
 
     &--h6 {
-      @apply text-base;
+      @apply text-base font-bold uppercase;
     }
 
     &--base {
       @apply text-base;
-    }
-  }
-
-  &--weight {
-    &--thin {
-      @apply font-thin;
-    }
-
-    &--light {
-      @apply font-light;
-    }
-
-    &--normal {
-      @apply font-normal;
-    }
-
-    &--bold {
-      @apply font-bold;
-    }
-
-    &--black {
-      @apply font-black;
-    }
-  }
-
-  &--case {
-    &--uppercase {
-      @apply uppercase;
-    }
-
-    &--lowercase {
-      @apply lowercase;
-    }
-
-    &--capitalize {
-      @apply capitalize;
-    }
-
-    &--none {
-      @apply normal-case;
     }
   }
 

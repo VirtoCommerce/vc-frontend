@@ -2,7 +2,7 @@
   <div class="py-10 lg:py-24" :class="model.background">
     <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
       <div class="mb-6 text-center text-2xl font-bold lg:text-5xl">{{ model.title }}</div>
-      <VcTypography tag="h2" variant="h1" text-transform="none" class="mb-6 text-center">
+      <VcTypography tag="h2" variant="h1" class="mb-6 text-center">
         {{ model.title }}
       </VcTypography>
 
@@ -38,3 +38,9 @@ const classObject = computed(() => {
   };
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>
