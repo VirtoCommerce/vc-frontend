@@ -33,7 +33,7 @@
             <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
-          <PushMessages class="px-1 py-2 xs:px-2">
+          <PushMessages v-if="isAuthenticated" class="px-1 py-2 xs:px-2">
             <template #trigger="{ unreadCount }">
               <div class="relative">
                 <VcIcon class="text-primary" name="bell" :size="28" />
@@ -109,6 +109,7 @@ import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core"
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
@@ -121,6 +122,7 @@ const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
 
+const { isAuthenticated } = useUser();
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);

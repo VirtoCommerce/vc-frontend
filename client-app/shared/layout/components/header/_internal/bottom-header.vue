@@ -51,13 +51,15 @@
             {{ item.title }}
           </BottomHeaderLink>
 
-          <PushMessages v-else-if="item.id === 'push-messages'" :y-offset="36">
-            <template #trigger="{ unreadCount }">
-              <BottomHeaderLink :link="item" :count="unreadCount">
-                {{ item.title }}
-              </BottomHeaderLink>
-            </template>
-          </PushMessages>
+          <template v-else-if="item.id === 'push-messages'">
+            <PushMessages v-if="isAuthenticated" :y-offset="36">
+              <template #trigger="{ unreadCount }">
+                <BottomHeaderLink :link="item" :count="unreadCount">
+                  {{ item.title }}
+                </BottomHeaderLink>
+              </template>
+            </PushMessages>
+          </template>
 
           <BottomHeaderLink v-else :link="item">
             {{ item.title }}
@@ -91,7 +93,7 @@ import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vu
 import { computed, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useNavigations } from "@/core/composables";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
@@ -101,7 +103,7 @@ import type { StyleValue } from "vue";
 import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const router = useRouter();
-const { organization } = useUser();
+const { isAuthenticated, organization } = useUser();
 const { cart } = useShortCart();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
