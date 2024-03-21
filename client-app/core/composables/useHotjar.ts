@@ -12,24 +12,32 @@ const MODULE_KEYS = {
   ID: "VirtoCommerce.Hotjar",
   ENABLE_STATE: "Hotjar.EnableTracking",
   TRACK_ID: "Hotjar.SiteId",
+  SNIPPET_VERSION: "Hotjar.SnippetVersion",
 };
 
 function init() {
   if (!canUseDOM) {
     return;
   }
-  const moduleSettings = modulesSettings.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
-  const isEnabled = !!moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.ENABLE_STATE)?.value;
+  const moduleSettings = modulesSettings?.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
 
-  if (isEnabled) {
-    const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as number;
+  const [isEnabled, id, version] = [
+    !!getSettingsValue(moduleSettings?.settings, MODULE_KEYS.ENABLE_STATE),
+    Number(getSettingsValue(moduleSettings?.settings, MODULE_KEYS.TRACK_ID)),
+    Number(getSettingsValue(moduleSettings?.settings, MODULE_KEYS.SNIPPET_VERSION)),
+  ];
+
+  if (isEnabled && id && version) {
     if (!IS_DEVELOPMENT) {
-      // todo get version from Platform
-      Hotjar.init(id, 6);
+      Hotjar.init(id, version);
     } else {
       Logger.debug(DEBUG_PREFIX, "Hotjar enabled but not initialized");
     }
   }
+}
+
+function getSettingsValue(settings: { name: string; value?: unknown }[] | undefined, settingsKey: string): unknown {
+  return settings?.find((el) => el.name === settingsKey)?.value;
 }
 
 export function useHotjar() {
