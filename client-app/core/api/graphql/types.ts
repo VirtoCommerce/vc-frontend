@@ -458,6 +458,10 @@ export type CommonVendor = {
   rating?: Maybe<Rating>;
 };
 
+export type ConfirmTaskCommandType = {
+  id: Scalars['String']['input'];
+};
+
 /** A connection from an object to a list of objects of type `Contact`. */
 export type ContactConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -1841,6 +1845,8 @@ export type InputMergeCartType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Delete second cart after merge */
+  deleteAfterMerge?: InputMaybe<Scalars['Boolean']['input']>;
   /** Second cart Id */
   secondCartId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
@@ -2796,6 +2802,7 @@ export type Mutations = {
   clearShipments?: Maybe<CartType>;
   cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
+  confirmTask?: Maybe<WorkTaskType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
@@ -2824,6 +2831,7 @@ export type Mutations = {
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
+  rejectTask?: Maybe<WorkTaskType>;
   removeAddressFromFavorites?: Maybe<Scalars['Boolean']['output']>;
   removeCart?: Maybe<Scalars['Boolean']['output']>;
   removeCartAddress?: Maybe<CartType>;
@@ -3040,6 +3048,11 @@ export type MutationsConfirmEmailArgs = {
 };
 
 
+export type MutationsConfirmTaskArgs = {
+  command: ConfirmTaskCommandType;
+};
+
+
 export type MutationsCreateContactArgs = {
   command: InputCreateContactType;
 };
@@ -3162,6 +3175,11 @@ export type MutationsRegisterByInvitationArgs = {
 
 export type MutationsRejectGiftItemsArgs = {
   command: InputRejectGiftItemsType;
+};
+
+
+export type MutationsRejectTaskArgs = {
+  command: RejectTaskCommandType;
 };
 
 
@@ -4284,8 +4302,8 @@ export enum PropertyValueTypes {
 export type PushMessageType = {
   createdDate: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
+  isRead: Scalars['Boolean']['output'];
   shortMessage: Scalars['String']['output'];
-  status: Scalars['String']['output'];
 };
 
 export type PushMessagesResponseType = {
@@ -4343,6 +4361,7 @@ export type Query = {
   skyflowCards?: Maybe<SkyflowCardResponseType>;
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
+  tasks?: Maybe<WorkTaskConnection>;
   user?: Maybe<UserType>;
   validateCoupon?: Maybe<Scalars['Boolean']['output']>;
   validatePassword?: Maybe<CustomIdentityResultType>;
@@ -4733,6 +4752,20 @@ export type QueryStoreArgs = {
 };
 
 
+export type QueryTasksArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  completed?: InputMaybe<Scalars['Boolean']['input']>;
+  endDueDate?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  responsibleId?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  startDueDate?: InputMaybe<Scalars['DateTime']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryUserArgs = {
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -4845,6 +4878,7 @@ export type QuoteItemType = {
   product?: Maybe<Product>;
   productId: Scalars['String']['output'];
   proposalPrices: Array<QuoteTierPriceType>;
+  quantity: Scalars['Int']['output'];
   salePrice: MoneyType;
   selectedTierPrice?: Maybe<QuoteTierPriceType>;
   sku: Scalars['String']['output'];
@@ -5008,6 +5042,10 @@ export type RegistrationErrorType = {
   code?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   parameter?: Maybe<Scalars['String']['output']>;
+};
+
+export type RejectTaskCommandType = {
+  id: Scalars['String']['input'];
 };
 
 export type RemoveAddressFromFavoritesCommandType = {
@@ -5227,7 +5265,7 @@ export type SubmitQuoteCommandType = {
 };
 
 export type Subscriptions = {
-  pushMessageCreated?: Maybe<PushMessageType>;
+  pushMessageCreated: PushMessageType;
 };
 
 export type TaxDetailType = {
@@ -5512,6 +5550,44 @@ export type WishlistType = {
   scope?: Maybe<WishlistScopeType>;
   /** Shopping cart store ID */
   storeId?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `WorkTask`. */
+export type WorkTaskConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<WorkTaskEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<WorkTaskType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `WorkTask`. */
+export type WorkTaskEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<WorkTaskType>;
+};
+
+export type WorkTaskType = {
+  completed?: Maybe<Scalars['Boolean']['output']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
+  createdDate: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  dueDate?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['String']['output'];
+  isActive: Scalars['Boolean']['output'];
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  parameters?: Maybe<Scalars['String']['output']>;
+  priority?: Maybe<Scalars['Int']['output']>;
+  responsibleName?: Maybe<Scalars['String']['output']>;
+  storeId?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  workflowId?: Maybe<Scalars['String']['output']>;
 };
 
 export type AddAddressToFavoritesMutationVariables = Exact<{
@@ -6256,6 +6332,13 @@ export type ChangeQuoteItemQuantityMutationVariables = Exact<{
 
 export type ChangeQuoteItemQuantityMutation = { changeQuoteItemQuantity?: { id: string } };
 
+export type CreateQuoteMutationVariables = Exact<{
+  command: CreateQuoteCommandType;
+}>;
+
+
+export type CreateQuoteMutation = { createQuote?: { id: string } };
+
 export type CreateQuoteFromCartMutationVariables = Exact<{
   command: CreateQuoteFromCartCommandType;
 }>;
@@ -6447,6 +6530,7 @@ export const InitializePaymentDocument = {"kind":"Document","definitions":[{"kin
 export const GetSkyflowCardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSkyflowCards"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skyflowCards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cardNumber"}},{"kind":"Field","name":{"kind":"Name","value":"cardExpiration"}},{"kind":"Field","name":{"kind":"Name","value":"skyflowId"}}]}}]}}]}}]} as unknown as DocumentNode<GetSkyflowCardsQuery, GetSkyflowCardsQueryVariables>;
 export const ChangeQuoteCommentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangeQuoteComment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ChangeQuoteCommentCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changeQuoteComment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<ChangeQuoteCommentMutation, ChangeQuoteCommentMutationVariables>;
 export const ChangeQuoteItemQuantityDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ChangeQuoteItemQuantity"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ChangeQuoteItemQuantityCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changeQuoteItemQuantity"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<ChangeQuoteItemQuantityMutation, ChangeQuoteItemQuantityMutationVariables>;
+export const CreateQuoteDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateQuote"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateQuoteCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createQuote"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateQuoteMutation, CreateQuoteMutationVariables>;
 export const CreateQuoteFromCartDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateQuoteFromCart"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateQuoteFromCartCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createQuoteFromCart"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateQuoteFromCartMutation, CreateQuoteFromCartMutationVariables>;
 export const RemoveQuoteItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveQuoteItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveQuoteItemCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeQuoteItem"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RemoveQuoteItemMutation, RemoveQuoteItemMutationVariables>;
 export const SubmitQuoteRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SubmitQuoteRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SubmitQuoteCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"submitQuoteRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<SubmitQuoteRequestMutation, SubmitQuoteRequestMutationVariables>;
@@ -6546,6 +6630,7 @@ export const OperationNames = {
     InitializePayment: 'InitializePayment',
     ChangeQuoteComment: 'ChangeQuoteComment',
     ChangeQuoteItemQuantity: 'ChangeQuoteItemQuantity',
+    CreateQuote: 'CreateQuote',
     CreateQuoteFromCart: 'CreateQuoteFromCart',
     RemoveQuoteItem: 'RemoveQuoteItem',
     SubmitQuoteRequest: 'SubmitQuoteRequest',
