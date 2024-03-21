@@ -30,7 +30,7 @@
       <input
         :id="componentId"
         ref="inputElement"
-        v-model="model"
+        v-model="inputValue"
         v-bind="listeners"
         :type="inputType"
         :name="name"
@@ -127,6 +127,17 @@ const inputElement = ref<HTMLElement>();
 
 const inputType = ref("");
 syncRefs(type, inputType);
+
+const inputValue = computed({
+  get: () => model.value,
+  set: (value) => {
+    if (props.disabled) {
+      return;
+    }
+
+    model.value = !(inputType.value === "number" && value === "") ? value : undefined;
+  },
+});
 
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
