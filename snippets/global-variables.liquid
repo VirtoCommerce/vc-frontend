@@ -4,10 +4,3 @@
 {%- else -%}
   {% assign google_analytics_enabled = false %}
 {%- endif -%}
-
-{%- if current_store.settings['Hotjar.EnableTracking'] -%}
-  {%- assign hotjar_enabled = current_store.settings['Hotjar.EnableTracking'].value == true -%}
-  {%- assign hotjar_site_id = current_store.settings['Hotjar.SiteId'].value -%}
-{%- else -%}
-  {%- assign hotjar_enabled = false -%}
-{%- endif -%}
