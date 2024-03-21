@@ -14,16 +14,15 @@ export function useMarkAllPushMessagesRead() {
         if (mutationResult.data?.markAllPushMessagesRead) {
           const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
           return {
-            ...pushMessagesQueryResult,
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               unreadCount: 0,
               items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) => ({
                 ...pushMessage,
-                status: "Read",
+                isRead: true,
               })),
             },
-          };
+          } satisfies GetPushMessagesQuery;
         } else {
           return { ...previousQueryResult };
         }

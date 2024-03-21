@@ -14,15 +14,13 @@ export function useClearAllPushMessages() {
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
         if (mutationResult.data?.clearAllPushMessages) {
-          const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
           return {
-            ...pushMessagesQueryResult,
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               unreadCount: 0,
               items: [],
             },
-          };
+          } satisfies GetPushMessagesQuery;
         } else {
           return { ...previousQueryResult };
         }
