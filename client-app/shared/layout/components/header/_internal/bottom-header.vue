@@ -53,8 +53,21 @@
 
           <template v-else-if="item.id === 'push-messages'">
             <PushMessages v-if="isAuthenticated" :y-offset="36">
-              <template #trigger="{ unreadCount }">
+              <template #trigger="{ totalCount, unreadCount }">
                 <BottomHeaderLink :link="item" :count="unreadCount">
+                  <template #icon>
+                    <transition name="shake" mode="out-in">
+                      <svg
+                        v-if="item.icon"
+                        :key="totalCount"
+                        height="24"
+                        width="24"
+                        class="mb-0.5 text-[color:var(--color-primary)]"
+                      >
+                        <use :href="item.icon" />
+                      </svg>
+                    </transition>
+                  </template>
                   {{ item.title }}
                 </BottomHeaderLink>
               </template>

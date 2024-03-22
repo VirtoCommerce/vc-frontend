@@ -34,11 +34,13 @@
           </button>
 
           <PushMessages v-if="isAuthenticated" class="px-1 py-2 xs:px-2">
-            <template #trigger="{ unreadCount }">
+            <template #trigger="{ totalCount, unreadCount }">
               <div class="relative">
-                <VcIcon class="text-primary" name="bell" :size="28" />
+                <transition name="shake" mode="out-in">
+                  <VcIcon :key="totalCount" class="text-primary" name="bell" :size="28" />
+                </transition>
 
-                <VcTransitionScale mode="out-in">
+                <transition mode="out-in" name="scale">
                   <VcBadge
                     v-if="unreadCount"
                     variant="outline"
@@ -48,7 +50,7 @@
                   >
                     {{ unreadCount }}
                   </VcBadge>
-                </VcTransitionScale>
+                </transition>
               </div>
             </template>
           </PushMessages>

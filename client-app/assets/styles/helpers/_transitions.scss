@@ -1,9 +1,10 @@
-$duration: var(--transition-duration, .2s);
+$transition-duration: var(--transition-duration, .2s);
+$animation-duration: var(--animation-duration, .3s);
 
 // fade
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity $duration;
+  transition: opacity $transition-duration;
   will-change: opacity;
 }
 
@@ -23,7 +24,7 @@ $slide-fade: (
 @each $direction, $data in $slide-fade {
   .slide-fade-#{$direction}-enter-active,
   .slide-fade-#{$direction}-leave-active {
-    transition: transform $duration ease, opacity $duration ease;
+    transition: transform $transition-duration ease, opacity $transition-duration ease;
     will-change: transform, opacity;
   }
 
@@ -34,11 +35,45 @@ $slide-fade: (
   }
 }
 
+// scale
+.scale-enter-active,
+.scale-leave-active {
+  transition: transform $transition-duration;
+  will-change: transform;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  transform: scale(0);
+}
+
+// shake
+.shake-enter-active,
+{
+  animation: $animation-duration 6 both ease shake;
+  will-change: transform;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20%,
+  60% {
+    transform: rotate(15deg);
+  }
+  40%,
+  80% {
+    transform: rotate(-15deg);
+  }
+}
+
 // list
 .list-move,
 .list-enter-active,
 .list-leave-active {
-  transition: var(--list-transition, transform $duration ease);
+  transition: var(--list-transition, transform $transition-duration ease);
   will-change: var(--list-will-change, transform, opacity);
 }
 
