@@ -259,9 +259,7 @@ async function requestQuote(): Promise<void> {
   const result = await createQuote();
   const quoteId = result?.data?.createQuote?.id;
 
-  if (quoteId) {
-    goToQuoteDetails({ id: quoteId, status: "Draft" });
-  }
+  await router.push({ name: "EditQuote", params: { quoteId } });
 }
 
 watch(
