@@ -30,9 +30,9 @@
       <input
         :id="componentId"
         ref="inputElement"
-        v-model="inputValue"
+        v-model="model"
         v-bind="listeners"
-        :type="inputType"
+        :type="isPasswordVisible ? 'text' : type"
         :name="name"
         :placeholder="placeholder"
         :readonly="readonly"
@@ -58,7 +58,7 @@
           tabindex="-1"
           type="button"
           class="vc-input__password-icon"
-          @click="togglePasswordVisibility"
+          @click="isPasswordVisible = !isPasswordVisible"
         >
           <VcIcon :name="passwordVisibilityIcon" />
         </button>
@@ -76,7 +76,6 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { syncRefs } from "@vueuse/core";
 import { computed, ref, toRefs } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
@@ -115,7 +114,15 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const model = defineModel<T>();
+const model = defineModel<T>({
+  set(value) {
+    if (props.disabled) {
+      return;
+    }
+
+    return !(props.type === "number" && value === "") ? value : undefined;
+  },
+});
 
 const { type } = toRefs(props);
 
@@ -125,32 +132,12 @@ const attrs = useAttrsOnly();
 
 const inputElement = ref<HTMLElement>();
 
-const inputType = ref("");
-syncRefs(type, inputType);
-
-const inputValue = computed({
-  get: () => model.value,
-  set: (value) => {
-    if (props.disabled) {
-      return;
-    }
-
-    model.value = !(inputType.value === "number" && value === "") ? value : undefined;
-  },
-});
-
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
-const isPasswordVisible = ref(false);
-
+const isPasswordVisible = ref<boolean>();
 const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ? "eye-off" : "eye"));
-
-function togglePasswordVisibility() {
-  isPasswordVisible.value = !isPasswordVisible.value;
-  inputType.value = isPasswordVisible.value ? "text" : "password";
-}
 
 function handleContainerClick() {
   if (inputElement.value) {
