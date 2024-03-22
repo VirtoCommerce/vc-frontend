@@ -13,7 +13,7 @@
       <VcMarkdownRender class="vc-push-message__content" :src="pushMessage.shortMessage" />
 
       <div class="vc-push-message__date">
-        {{ $d(pushMessage.createdDate, "long") }}
+        {{ $d(pushMessage.createdDate, { key: "long", second: undefined }) }}
       </div>
     </div>
 
