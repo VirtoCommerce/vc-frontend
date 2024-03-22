@@ -32,7 +32,7 @@
         ref="inputElement"
         v-model="model"
         v-bind="listeners"
-        :type="isPasswordVisible ? 'text' : type"
+        :type="inputType"
         :name="name"
         :placeholder="placeholder"
         :readonly="readonly"
@@ -58,7 +58,7 @@
           tabindex="-1"
           type="button"
           class="vc-input__password-icon"
-          @click="isPasswordVisible = !isPasswordVisible"
+          @click="togglePasswordVisibility"
         >
           <VcIcon :name="passwordVisibilityIcon" />
         </button>
@@ -113,11 +113,13 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
 });
+
 const componentId = useComponentId("input");
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
 const inputElement = ref<HTMLElement>();
+const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
 
 const model = defineModel<T>({
   set(value) {
@@ -133,8 +135,12 @@ const minValue = computed(() => (props.type === "number" ? props.min : undefined
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
-const isPasswordVisible = ref<boolean>();
+const isPasswordVisible = ref<boolean>(false);
 const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ? "eye-off" : "eye"));
+
+function togglePasswordVisibility() {
+  isPasswordVisible.value = !isPasswordVisible.value;
+}
 
 function handleContainerClick() {
   if (inputElement.value) {
