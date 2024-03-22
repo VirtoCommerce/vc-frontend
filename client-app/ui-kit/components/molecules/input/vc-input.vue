@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { computed, ref, toRefs } from "vue";
+import { computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
 export interface IProps {
@@ -113,6 +113,11 @@ const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
 });
+const componentId = useComponentId("input");
+const listeners = useListeners();
+const attrs = useAttrsOnly();
+
+const inputElement = ref<HTMLElement>();
 
 const model = defineModel<T>({
   set(value) {
@@ -123,14 +128,6 @@ const model = defineModel<T>({
     return !(props.type === "number" && value === "") ? value : undefined;
   },
 });
-
-const { type } = toRefs(props);
-
-const componentId = useComponentId("input");
-const listeners = useListeners();
-const attrs = useAttrsOnly();
-
-const inputElement = ref<HTMLElement>();
 
 const minValue = computed(() => (props.type === "number" ? props.min : undefined));
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
