@@ -17,8 +17,8 @@
             <div class="vc-push-messages__title">
               <span>{{ $t("ui_kit.push-messages.title") }}</span>
 
-              <VcBadge v-if="totalCount > 0" variant="outline" size="lg" rounded>
-                {{ totalCount }}
+              <VcBadge v-if="unreadCount > 0" variant="outline" size="lg" rounded>
+                {{ unreadCount }}
               </VcBadge>
             </div>
 
@@ -87,6 +87,7 @@ export interface IEmits {
 
 interface IProps {
   totalCount: number;
+  unreadCount: number;
   removable?: boolean;
   withOptions?: boolean;
   yOffset?: number | string;

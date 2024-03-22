@@ -1,6 +1,7 @@
 <template>
   <VcPushMessages
     :total-count="totalCount"
+    :unread-count="unreadCount"
     :items="items"
     removable
     with-options
