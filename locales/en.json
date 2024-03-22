@@ -715,7 +715,7 @@
       },
       "add_to_wishlists_modal": {
         "title": "Please select list",
-        "empty_list": "You do not have any wish lists",
+        "empty_list": "You do not have any shopping lists",
         "cancel_button": "@:common.buttons.cancel",
         "already_in_the_lists": "Already in the lists",
         "add_to_other_lists": "Add to other lists",
