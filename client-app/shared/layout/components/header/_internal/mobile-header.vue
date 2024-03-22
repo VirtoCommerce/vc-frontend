@@ -39,7 +39,13 @@
                 <VcIcon class="text-primary" name="bell" :size="28" />
 
                 <VcTransitionScale mode="out-in">
-                  <VcBadge variant="outline" size="sm" class="absolute -right-2 -top-2 transition-transform" rounded>
+                  <VcBadge
+                    v-if="unreadCount"
+                    variant="outline"
+                    size="sm"
+                    class="absolute -right-2 -top-2 transition-transform"
+                    rounded
+                  >
                     {{ unreadCount }}
                   </VcBadge>
                 </VcTransitionScale>
@@ -51,7 +57,13 @@
             <span class="relative block">
               <VcIcon class="text-[--color-primary-500]" name="cart" :size="28" />
 
-              <VcTransitionScale mode="out-in">
+              <transition
+                mode="out-in"
+                enter-from-class="scale-0"
+                leave-to-class="scale-0"
+                enter-active-class="will-change-transform"
+                leave-active-class="will-change-transform"
+              >
                 <VcBadge
                   v-if="cart?.itemsQuantity"
                   variant="outline"
@@ -61,7 +73,7 @@
                 >
                   {{ $n(cart.itemsQuantity, "decimal", { notation: "compact" }) }}
                 </VcBadge>
-              </VcTransitionScale>
+              </transition>
             </span>
           </router-link>
         </div>
