@@ -19,7 +19,7 @@ type CodegenConfigWorkaround = { documents: OperationDocument | OperationDocumen
 const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
   schema: `client-app/core/api/graphql/schema.json`,
   documents: {
-    "client-app/**/*.(graphql|gql)": {
+    "client-app/**/*.(graphql|gql|ts)": {
       skipGraphQLImport: false,
     },
   },
