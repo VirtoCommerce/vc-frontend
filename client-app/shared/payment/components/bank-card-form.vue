@@ -77,8 +77,8 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { vMaska } from "maska";
-import { useField, useForm } from "vee-validate";
-import { computed, ref, watch } from "vue";
+import { useForm } from "vee-validate";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
@@ -104,7 +104,7 @@ interface IProps {
 
 const { t } = useI18n();
 
-const initialValues = ref<BankCardType>({ number: "", cardholderName: "", month: "", year: "", securityCode: "" });
+const initialValues = { number: "", cardholderName: "", month: "", year: "", securityCode: "" };
 
 const labels = computed(() => {
   return {
@@ -135,20 +135,32 @@ const validationSchema = toTypedSchema(
   }),
 );
 
-const { values, meta, errors: formErrors } = useForm<BankCardType>({ validationSchema, initialValues });
+const {
+  values,
+  meta,
+  errors: formErrors,
+  defineField,
+  resetForm,
+} = useForm({
+  validationSchema,
+  initialValues,
+});
 
-const { value: number } = useField<string>("number", undefined, { syncVModel: false });
-const { value: cardholderName } = useField<string>("cardholderName", undefined, { syncVModel: false });
-const { value: month } = useField<string>("month", undefined, { syncVModel: false });
-const { value: year } = useField<string>("year", undefined, { syncVModel: false });
-const { value: securityCode } = useField<string>("securityCode", undefined, { syncVModel: false });
+const [number] = defineField("number");
+const [cardholderName] = defineField("cardholderName");
+const [month] = defineField("month");
+const [year] = defineField("year");
+const [securityCode] = defineField("securityCode");
 
 const expirationDate = computed({
-  get: () => (month.value.length > 1 || year.value ? `${month.value || "  "} / ${year.value}` : month.value),
-  set(value: string) {
-    const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
-    month.value = rawMonth;
-    year.value = rawYear;
+  get: () =>
+    (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
+  set: (value) => {
+    if (value) {
+      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
+      month.value = rawMonth;
+      year.value = rawYear;
+    }
   },
 });
 
@@ -168,7 +180,7 @@ function input() {
 
 watch(
   () => props.modelValue,
-  (value) => (initialValues.value = clone(value)),
+  (value) => resetForm({ values: value }),
   { deep: true },
 );
 
