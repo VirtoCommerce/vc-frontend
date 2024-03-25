@@ -56,7 +56,7 @@
               <template #trigger="{ totalCount, unreadCount }">
                 <BottomHeaderLink :link="item" :count="unreadCount">
                   <template #icon>
-                    <transition name="shake" mode="out-in">
+                    <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
                       <svg
                         v-if="item.icon"
                         :key="totalCount"

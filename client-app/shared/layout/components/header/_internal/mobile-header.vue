@@ -36,7 +36,7 @@
           <PushMessages v-if="isAuthenticated" class="px-1 py-2 xs:px-2">
             <template #trigger="{ totalCount, unreadCount }">
               <div class="relative">
-                <transition name="shake" mode="out-in">
+                <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
                   <VcIcon :key="totalCount" class="text-primary" name="bell" :size="28" />
                 </transition>
 
