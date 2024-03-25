@@ -10,7 +10,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
 
   return gql`
     query ChildCategories(
-      $storeId: String
+      $storeId: String!
       $userId: String
       $cultureName: String
       $currencyCode: String
