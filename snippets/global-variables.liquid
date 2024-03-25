@@ -1,6 +1,0 @@
-{%- if current_store.settings['GoogleAnalytics4.EnableTracking'] -%}
-  {%- assign google_analytics_enabled = current_store.settings['GoogleAnalytics4.EnableTracking'].value == true -%}
-  {%- assign google_tag_id = current_store.settings['GoogleAnalytics4.MeasurementId'].value -%}
-{%- else -%}
-  {% assign google_analytics_enabled = false %}
-{%- endif -%}
