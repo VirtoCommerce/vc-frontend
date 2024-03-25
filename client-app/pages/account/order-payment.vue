@@ -27,7 +27,7 @@
           {{ $t("pages.account.order_payment.status_label") }}
         </span>
 
-        {{ order.status }}
+        {{ order.statusDisplayValue }}
       </div>
     </div>
 
