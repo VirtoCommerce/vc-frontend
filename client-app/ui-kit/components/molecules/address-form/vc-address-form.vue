@@ -148,10 +148,9 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { clone } from "lodash";
-import { useField, useForm } from "vee-validate";
-import { computed, ref, watch } from "vue";
-import { string as yupString } from "yup";
+import { useForm } from "vee-validate";
+import { computed, readonly, watch } from "vue";
+import { object, string as yupString } from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
 import type { CountryRegionType, CountryType, MemberAddressType } from "@/core/api/graphql/types";
 
@@ -176,7 +175,7 @@ const props = withDefaults(defineProps<IProps>(), {
   countries: () => [],
 });
 
-const _emptyAddress: Readonly<MemberAddressType> = {
+const emptyAddress = readonly<MemberAddressType>({
   isDefault: false,
   isFavorite: false,
   firstName: "",
@@ -192,25 +191,12 @@ const _emptyAddress: Readonly<MemberAddressType> = {
   line1: "",
   line2: "",
   phone: "",
-};
-
-const initialValues = ref<MemberAddressType>(clone(props.modelValue || _emptyAddress));
-
-const {
-  values,
-  meta,
-  errors,
-  handleSubmit,
-  setValues,
-  setErrors,
-  validate,
-  resetForm: reset,
-} = useForm({ initialValues });
+});
 
 const slotsData = computed(() => ({
   setErrors,
   validate,
-  reset,
+  reset: resetForm,
   save,
   errors,
   values,
@@ -221,52 +207,72 @@ const slotsData = computed(() => ({
   touched: meta.value.touched,
 }));
 
-const emailRules = computed(() => {
-  let rules = yupString().max(64).email().nullable();
+const validationSchema = computed(() => {
+  let email = yupString().max(64).email().nullable();
   if (props.withPersonalInfo && props.requiredEmail) {
-    rules = rules.required();
+    email = email.required();
   }
-  return toTypedSchema(rules);
-});
 
-const phoneRules = computed(() => {
-  let rules = yupString().max(64).nullable();
+  let phone = yupString().max(64).nullable();
   if (props.withPersonalInfo && props.requiredPhone) {
-    rules = rules.required();
+    phone = phone.required();
   }
-  return toTypedSchema(rules);
-});
 
-const cityRules = computed(() => {
-  let rules = yupString().max(128).nullable();
+  let city = yupString().max(128).nullable();
   if (props.requiredCity) {
-    rules = rules.required();
+    city = city.required();
   }
-  return toTypedSchema(rules);
-});
 
-const regionRules = computed(() => {
-  let rules = yupString().nullable();
+  let regionId = yupString().nullable();
   if (regions.value.length) {
-    rules = rules.required();
+    regionId = regionId.required();
   }
-  return toTypedSchema(rules);
+
+  let firstName = yupString().max(64).nullable();
+  if (props.withPersonalInfo) {
+    firstName = firstName.required();
+  }
+
+  let lastName = yupString().max(64).nullable();
+  if (props.withPersonalInfo) {
+    lastName = lastName.required();
+  }
+
+  const postalCode = yupString().max(32).required().nullable();
+
+  const countryCode = yupString().required().nullable();
+
+  const countryName = yupString().max(128).nullable();
+
+  const regionName = yupString().max(128).nullable();
+
+  const line1 = yupString().max(128).required().nullable();
+
+  const line2 = yupString().max(128).nullable();
+
+  const description = yupString().max(128).nullable();
+
+  return toTypedSchema(
+    object({
+      email,
+      city,
+      phone,
+      firstName,
+      lastName,
+      postalCode,
+      countryCode,
+      countryName,
+      regionName,
+      regionId,
+      line1,
+      line2,
+      description,
+    }),
+  );
 });
 
-const firstNameRules = computed(() => {
-  let rules = yupString().max(64).nullable();
-  if (props.withPersonalInfo) {
-    rules = rules.required();
-  }
-  return toTypedSchema(rules);
-});
-
-const lastNameRules = computed(() => {
-  let rules = yupString().max(64).nullable();
-  if (props.withPersonalInfo) {
-    rules = rules.required();
-  }
-  return toTypedSchema(rules);
+const { defineField, values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm<MemberAddressType>({
+  validationSchema,
 });
 
 const country = computed<CountryType | undefined>({
@@ -287,31 +293,19 @@ const region = computed<CountryRegionType | undefined>({
   },
 });
 
-const { value: email } = useField("email", emailRules, { syncVModel: false });
-const { value: city } = useField("city", cityRules, { syncVModel: false });
-const { value: phone } = useField("phone", phoneRules, { syncVModel: false });
-const { value: firstName } = useField("firstName", firstNameRules, { syncVModel: false });
-const { value: lastName } = useField("lastName", lastNameRules, { syncVModel: false });
-const { value: postalCode } = useField("postalCode", toTypedSchema(yupString().max(32).required().nullable()), {
-  syncVModel: false,
-});
-const { value: countryCode } = useField("countryCode", toTypedSchema(yupString().required().nullable()), {
-  syncVModel: false,
-});
-const { value: countryName } = useField("countryName", toTypedSchema(yupString().max(128).nullable()), {
-  syncVModel: false,
-});
-const { value: regionName } = useField("regionName", toTypedSchema(yupString().max(128).nullable()), {
-  syncVModel: false,
-});
-const { value: regionId } = useField("regionId", regionRules, { syncVModel: false });
-const { value: line1 } = useField("line1", toTypedSchema(yupString().max(128).required().nullable()), {
-  syncVModel: false,
-});
-const { value: line2 } = useField("line2", toTypedSchema(yupString().max(128).nullable()), { syncVModel: false });
-const { value: description } = useField("description", toTypedSchema(yupString().max(128).nullable()), {
-  syncVModel: false,
-});
+const [email] = defineField("email");
+const [city] = defineField("city");
+const [phone] = defineField("phone");
+const [firstName] = defineField("firstName");
+const [lastName] = defineField("lastName");
+const [postalCode] = defineField("postalCode");
+const [countryCode] = defineField("countryCode");
+const [countryName] = defineField("countryName");
+const [regionName] = defineField("regionName");
+const [regionId] = defineField("regionId");
+const [line1] = defineField("line1");
+const [line2] = defineField("line2");
+const [description] = defineField("description");
 
 const save = handleSubmit((address) => {
   const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
@@ -322,9 +316,8 @@ const save = handleSubmit((address) => {
 watch(
   () => props.modelValue,
   (value) => {
-    initialValues.value = clone(value || _emptyAddress);
-    setValues(initialValues.value);
+    resetForm({ values: value ?? emptyAddress });
   },
-  { deep: true },
+  { deep: true, immediate: true },
 );
 </script>
