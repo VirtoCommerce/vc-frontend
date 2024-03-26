@@ -184,8 +184,12 @@ const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
-const listsWithProduct = computed(() => {
-  return lists.value.filter((list) => list.items!.some((item) => item.productId === product.value.id));
+const listsWithProduct = computed(() =>
+  lists.value.filter((list) => product.value.wishlistIds.some((listId) => listId === list.id)),
+);
+
+const listsOther = computed(() => {
+  return lists.value.filter((list) => !product.value.wishlistIds.some((listId) => listId === list.id));
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -197,10 +201,6 @@ function listsRemoveUpdate(id: string, checked: boolean) {
     removedLists.value.splice(index, 1);
   }
 }
-
-const listsOther = computed(() => {
-  return lists.value.filter((list) => !list.items!.some((item) => item.productId === product.value.id));
-});
 
 function addNewList() {
   newLists.value.push({
@@ -253,12 +253,9 @@ async function createLists() {
 
 async function removeProductFromWishlists() {
   const payload = removedLists.value.map((listId) => {
-    const listWithProduct = listsWithProduct.value.find((item) => item.id === listId);
-    const lineItemId = listWithProduct?.items?.find((item) => item.productId === product.value.id)?.id || "";
-
     return {
       listId,
-      lineItemId,
+      productId: product.value.id,
     };
   });
 
