@@ -292,8 +292,6 @@ const validationSchema = computed(() => {
   );
 });
 
-watch;
-
 const { defineField, values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm<MemberAddressType>({
   validationSchema,
   initialValues,
@@ -322,8 +320,6 @@ const save = handleSubmit((address) => {
 watch(
   () => props.modelValue,
   (value) => {
-    console.log(value);
-    console.log({ ...initialValues, ...value });
     resetForm({ values: { ...initialValues, ...value } });
   },
   { deep: true, immediate: true },
