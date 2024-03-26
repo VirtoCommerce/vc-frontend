@@ -105,8 +105,8 @@ const validationSchema = toTypedSchema(
 
 function initialValues() {
   return {
-    firstName: user.value.contact?.firstName,
-    lastName: user.value.contact?.lastName,
+    firstName: user.value.contact?.firstName ?? "",
+    lastName: user.value.contact?.lastName ?? "",
     email: user.value.email,
   };
 }
@@ -121,8 +121,6 @@ const [lastName] = defineField("lastName");
 const [email] = defineField("email");
 
 const onSubmit = handleSubmit(async (data) => {
-  console.log([data, meta.value]);
-
   responseErrors.value = [];
 
   const response = await updateUser(data);

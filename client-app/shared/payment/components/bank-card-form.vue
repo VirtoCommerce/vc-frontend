@@ -78,7 +78,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { vMaska } from "maska";
 import { useForm } from "vee-validate";
-import { computed, watch } from "vue";
+import { computed, readonly as readonlyUtil, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
@@ -104,7 +104,13 @@ interface IProps {
 
 const { t } = useI18n();
 
-const initialValues = { number: "", cardholderName: "", month: "", year: "", securityCode: "" };
+const initialValues = readonlyUtil<BankCardType>({
+  number: "",
+  cardholderName: "",
+  month: "",
+  year: "",
+  securityCode: "",
+});
 
 const labels = computed(() => {
   return {
@@ -180,7 +186,7 @@ function input() {
 
 watch(
   () => props.modelValue,
-  (value) => resetForm({ values: value }),
+  (value) => resetForm({ values: { ...initialValues, ...value } }),
   { deep: true },
 );
 

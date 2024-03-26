@@ -175,7 +175,7 @@ const props = withDefaults(defineProps<IProps>(), {
   countries: () => [],
 });
 
-const emptyAddress = readonly<MemberAddressType>({
+const initialValues = readonly<MemberAddressType>({
   isDefault: false,
   isFavorite: false,
   firstName: "",
@@ -191,6 +191,27 @@ const emptyAddress = readonly<MemberAddressType>({
   line1: "",
   line2: "",
   phone: "",
+  description: "",
+});
+
+const country = computed<CountryType | undefined>({
+  get: () => props.countries.find((item) => countryCode.value === item.id),
+  set: (value?: CountryType) => {
+    countryCode.value = value?.id ?? "";
+    countryName.value = value?.name ?? "";
+    regionId.value = "";
+    regionName.value = "";
+  },
+});
+
+const regions = computed<CountryRegionType[]>(() => country.value?.regions ?? []);
+
+const region = computed<CountryRegionType | undefined>({
+  get: () => regions.value.find((item) => regionId.value === item.id),
+  set: (value?: CountryRegionType) => {
+    regionId.value = value?.id ?? "";
+    regionName.value = value?.name ?? "";
+  },
 });
 
 const slotsData = computed(() => ({
@@ -271,26 +292,11 @@ const validationSchema = computed(() => {
   );
 });
 
+watch;
+
 const { defineField, values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm<MemberAddressType>({
   validationSchema,
-});
-
-const country = computed<CountryType | undefined>({
-  get: () => props.countries.find((item) => countryCode.value === item.id),
-  set: (value?: CountryType) => {
-    countryCode.value = value?.id ?? "";
-    countryName.value = value?.name ?? "";
-    regionId.value = "";
-    regionName.value = "";
-  },
-});
-const regions = computed<CountryRegionType[]>(() => country.value?.regions ?? []);
-const region = computed<CountryRegionType | undefined>({
-  get: () => regions.value.find((item) => regionId.value === item.id),
-  set: (value?: CountryRegionType) => {
-    regionId.value = value?.id ?? "";
-    regionName.value = value?.name ?? "";
-  },
+  initialValues,
 });
 
 const [email] = defineField("email");
@@ -316,7 +322,9 @@ const save = handleSubmit((address) => {
 watch(
   () => props.modelValue,
   (value) => {
-    resetForm({ values: value ?? emptyAddress });
+    console.log(value);
+    console.log({ ...initialValues, ...value });
+    resetForm({ values: { ...initialValues, ...value } });
   },
   { deep: true, immediate: true },
 );
