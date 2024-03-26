@@ -5,7 +5,7 @@
     "name": "Virto Commerce",
     "url": "https://virtocommerce.com"
   },
-  "license": "VCOSL",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "version": "1.52.0",
   "private": true,
   "type": "module",
