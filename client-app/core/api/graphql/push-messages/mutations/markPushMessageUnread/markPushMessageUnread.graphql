@@ -1,0 +1,3 @@
+mutation MarkPushMessageUnread($command: InputMarkPushMessageUnreadType!) {
+  markPushMessageUnread(command: $command)
+}

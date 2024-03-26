@@ -106,7 +106,10 @@
       </ul>
 
       <!-- Empty -->
-      <div v-else-if="!listsOther.length && !listsWithProduct.length" class="bg-gray-50 px-6 py-10 text-center">
+      <div
+        v-else-if="!listsOther.length && !listsWithProduct.length && !newLists.length"
+        class="bg-gray-50 px-6 py-10 text-center"
+      >
         {{ $t("shared.wishlists.add_to_wishlists_modal.empty_list") }}
       </div>
     </div>
