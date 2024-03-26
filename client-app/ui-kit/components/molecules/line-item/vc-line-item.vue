@@ -7,7 +7,6 @@
         'vc-line-item--disabled': disabled,
         'vc-line-item--selected': selected,
         'vc-line-item--deleted': deleted,
-        'vc-line-item--removed': removed,
       },
     ]"
   >
@@ -25,49 +24,95 @@
       />
 
       <!--  IMAGE -->
-      <VcImage class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
+      <VcImage v-if="withImage" class="vc-line-item__img" :src="imageUrl" :alt="name" size-suffix="sm" lazy />
 
-      <div class="vc-line-item__content">
-        <div class="vc-line-item__name">
-          <router-link
-            v-if="!deleted && route"
-            :to="route"
-            :title="name"
-            target="_blank"
-            class="vc-line-item__name-link"
+      <div
+        :class="[
+          'vc-line-item__content',
+          {
+            'vc-line-item__content--with-image': withImage,
+            'vc-line-item__content--selectable': !withImage && selectable,
+          },
+        ]"
+      >
+        <VcProductTitle
+          class="vc-line-item__name"
+          :disabled="disabled || deleted"
+          :to="route"
+          :title="name"
+          target="_blank"
+        >
+          {{ name }}
+        </VcProductTitle>
+
+        <div
+          v-if="withProperties || withPrice"
+          :class="[
+            'vc-line-item__properties',
+            {
+              'vc-line-item__properties--wide': !withPrice,
+              'vc-line-item__properties--hide-2xl': !withProperties && withPrice,
+            },
+          ]"
+        >
+          <template v-if="withProperties">
+            <VcProperty
+              v-for="property in properties"
+              :key="property.name"
+              :label="property.label!"
+              :disabled="disabled || deleted"
+            >
+              {{ property.value }}
+            </VcProperty>
+          </template>
+
+          <VcProperty
+            v-if="withPrice && !deleted"
+            class="2xl:hidden"
+            :label="$t('common.labels.price_per_item')"
+            :disabled="disabled"
           >
-            {{ name }}
-          </router-link>
-
-          <div v-else class="vc-line-item__name-text">
-            {{ name }}
-          </div>
-        </div>
-
-        <div class="vc-line-item__properties">
-          <VcProperty v-for="property in properties" :key="property.name" :label="property.label!">
-            {{ property.value }}
-          </VcProperty>
-
-          <VcProperty class="2xl:hidden" :label="$t('common.labels.price_per_item')">
-            <VcLineItemPrice :list-price="listPrice" :actual-price="actualPrice" />
+            <VcProductPrice
+              class="vc-line-item__property-price"
+              :list-price="actualPrice || listPrice"
+              :disabled="disabled"
+              truncate
+            />
           </VcProperty>
         </div>
 
-        <div class="vc-line-item__price">
-          <VcLineItemPrice :list-price="listPrice" :actual-price="actualPrice" />
-        </div>
+        <VcProductPrice
+          v-if="withPrice"
+          class="vc-line-item__price"
+          :list-price="listPrice"
+          :actual-price="actualPrice"
+          :disabled="disabled"
+          align="end"
+        />
 
         <div class="vc-line-item__slot">
           <slot />
+
+          <VcProductPrice
+            v-if="withTotal"
+            class="vc-line-item__total"
+            :list-price="total"
+            align="end"
+            :disabled="disabled"
+            truncate
+          />
         </div>
 
-        <div v-if="removable" class="vc-line-item__remove-button">
-          <VcButton color="secondary" size="xs" variant="outline" icon :disabled="disabled" @click="$emit('remove')">
-            <VcIcon v-if="removed" class="text-[--color-success-500]" name="reset" />
-            <VcIcon v-else class="text-[--color-danger-500]" name="delete-2" />
-          </VcButton>
-        </div>
+        <VcButton
+          v-if="removable"
+          class="vc-line-item__remove-button"
+          color="neutral"
+          size="sm"
+          variant="no-border"
+          icon="x"
+          :disabled="disabled"
+          @click="$emit('remove')"
+        />
       </div>
     </div>
 
@@ -94,12 +139,16 @@ interface IProps {
   properties?: Property[];
   listPrice?: MoneyType;
   actualPrice?: MoneyType;
+  total?: MoneyType;
   selectable?: boolean;
   selected?: boolean;
   removable?: boolean;
   disabled?: boolean;
   deleted?: boolean;
-  removed?: boolean;
+  withImage?: boolean;
+  withProperties?: boolean;
+  withPrice?: boolean;
+  withTotal?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -123,16 +172,16 @@ watchEffect(() => {
   $deleted: "";
   $disabled: "";
 
-  @apply flex flex-col gap-2 p-3 rounded border shadow-t-3sm;
+  @apply relative flex flex-col gap-2 p-3 rounded border shadow-md;
 
   @media (min-width: theme("screens.md")) {
-    @apply px-3 rounded-none border-0 shadow-none;
+    @apply p-4 rounded-none border-0 shadow-none;
   }
 
   &--selected {
     $selected: &;
 
-    @apply bg-[--color-secondary-50];
+    @apply bg-secondary-50;
   }
 
   &--removable {
@@ -159,54 +208,63 @@ watchEffect(() => {
   }
 
   &__main {
-    @apply relative flex items-start gap-3;
+    @apply flex items-start min-h-[1.25rem];
 
     @media (min-width: theme("screens.md")) {
-      @apply items-center;
+      @apply items-center gap-3;
     }
   }
 
   &__checkbox {
-    @apply flex-none absolute -top-2 -left-2 p-2 rounded bg-[--color-additional-50];
+    @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-additional-50;
 
     @media (min-width: theme("screens.md")) {
-      @apply static top-auto left-auto -mx-2;
+      @apply static top-auto left-auto -m-2;
     }
 
     #{$selected} & {
-      @apply bg-[--color-secondary-50];
+      @apply bg-secondary-50;
     }
   }
 
   &__img {
-    @apply shrink-0 w-16 h-16 rounded border object-contain object-center;
+    @apply shrink-0 size-16 rounded border object-contain object-center;
 
     @media (min-width: theme("screens.lg")) {
-      @apply w-12 h-12;
+      @apply size-12;
     }
 
     @media (min-width: theme("screens.xl")) {
-      @apply w-16 h-16;
+      @apply size-16;
+    }
+
+    #{$disabled} &,
+    #{$deleted} & {
+      @apply opacity-50;
     }
   }
 
   &__content {
-    @apply grow;
+    @apply w-full;
 
     @media (min-width: theme("screens.md")) {
       @apply contents;
     }
+
+    &--with-image {
+      @apply w-[calc(100%-theme(width.16))] ps-3;
+    }
+
+    &--selectable {
+      @apply ps-8;
+    }
   }
 
   &__name {
-    @apply min-h-[2rem] text-sm/[1rem] font-bold line-clamp-4;
+    @apply text-sm;
 
     @media (min-width: theme("screens.md")) {
-      @apply shrink-0 min-h-0 w-[8rem];
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      @apply w-48;
+      @apply grow min-h-0;
     }
 
     #{$removable} & {
@@ -214,94 +272,84 @@ watchEffect(() => {
     }
   }
 
-  &__name-link {
-    @apply text-[--color-accent-600];
-
-    word-break: break-word;
-
-    &:hover {
-      @apply text-[--color-accent-700];
-    }
-
-    #{$deleted} &,
-    #{$removed} & {
-      @apply text-[--color-neutral-500] cursor-not-allowed;
-    }
-  }
-
-  &__name-text {
-    word-break: break-word;
-
-    #{$deleted} &,
-    #{$removed} & {
-      @apply text-[--color-neutral-500];
-    }
-  }
-
   &__properties {
-    @apply space-y-px mt-3;
+    @apply flex-none mt-3;
 
     @media (min-width: theme("screens.md")) {
-      @apply grow mt-0;
+      @apply mt-0 w-40;
     }
 
-    #{$removed} &,
-    #{$deleted} & {
-      --vc-property-label-color: var(--color-neutral-500);
-      --vc-property-value-color: var(--color-neutral-500);
+    @media (min-width: theme("screens.xl")) {
+      @apply w-[11.875rem];
     }
+
+    &--wide {
+      @media (min-width: theme("screens.xl")) {
+        @apply w-[15.5rem];
+      }
+    }
+
+    &--hide-2xl {
+      @apply 2xl:hidden;
+    }
+  }
+
+  &__property-price {
+    @apply leading-[inherit] #{!important};
   }
 
   &__price {
-    @apply hidden;
+    --vc-product-price-font-size: theme(fontSize.sm);
+
+    @apply max-2xl:hidden #{!important};
 
     @media (min-width: theme("screens.2xl")) {
-      @apply block shrink-0 w-[8.5rem] text-right;
-    }
-
-    #{$removed} & {
-      --vc-line-item-price-actual-color: var(--color-neutral-500);
+      @apply shrink-0 w-[8.25rem];
     }
 
     #{$deleted} & {
-      @apply hidden;
-
       @media (min-width: theme("screens.2xl")) {
-        @apply block invisible;
+        @apply invisible;
       }
     }
   }
 
   &__slot {
-    @apply flex items-start gap-1 mt-4 empty:hidden;
+    @apply flex items-center gap-3 empty:hidden max-md:mt-3;
 
-    @media (min-width: theme("screens.md")) {
-      @apply flex-shrink-0 items-center gap-2 mt-0 w-64 empty:block;
+    .vc-add-to-cart {
+      @apply w-[11.75rem] xs:w-[13rem] 2xl:w-[15.7rem];
     }
 
-    @media (min-width: theme("screens.lg")) {
-      @apply w-1/3;
-    }
-
-    @media (min-width: theme("screens.xl")) {
-      @apply w-64;
-    }
-
-    #{$removed} & {
-      --vc-line-item-total-actual-color: var(--color-neutral-500);
+    .vc-quantity {
+      @apply w-[5rem] 2xl:w-[6.5rem];
     }
 
     #{$deleted} & {
-      @apply hidden md:block md:invisible;
+      @apply max-md:hidden md:invisible;
+    }
+  }
+
+  &__total {
+    --vc-product-price-font-size: theme(fontSize.sm);
+
+    @apply w-full min-w-0;
+
+    @media (min-width: theme("screens.md")) {
+      --vc-product-price-font-size: theme(fontSize.sm);
+
+      @apply shrink-0 w-[6.5rem];
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      --vc-product-price-font-size: theme(fontSize.base);
+
+      @apply w-[8.625rem];
     }
   }
 
   &__remove-button {
-    @apply shrink-0 absolute top-0 right-0;
-
-    @media (min-width: theme("screens.md")) {
-      @apply relative;
-    }
+    @apply shrink-0 max-md:top-0.5 max-md:right-0.5 max-md:absolute md:-my-2 md:-me-2 #{!important};
   }
 }
 </style>

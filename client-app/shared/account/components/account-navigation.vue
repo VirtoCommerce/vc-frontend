@@ -87,6 +87,12 @@
         :text="$t('shared.account.navigation.links.quote_requests')"
         class="quotes-icon"
       />
+
+      <AccountNavigationLink
+        :to="{ name: 'SavedCreditCards' }"
+        :text="$t('shared.account.navigation.links.saved_credit_cards')"
+        class="credit-card"
+      />
     </VcWidget>
 
     <VcWidget v-if="isCorporateMember" :title="$t(`shared.account.navigation.corporate_title`)" size="sm">

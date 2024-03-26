@@ -40,7 +40,7 @@
 
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
-      "favicon_image": "/static/icons/favicon-16x16.png",
+      "favicon_image": "/static/icons/favicon-32x32.png",
       "homepage_background_image": "/static/images/home/main-banner.webp",
 
       "image_thumbnails_enabled": true,
@@ -340,7 +340,7 @@
 
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
-      "favicon_image": "/static/icons/favicon-16x16.png",
+      "favicon_image": "/static/icons/favicon-32x32.png",
       "homepage_background_image": "/static/images/home/main-banner.webp",
 
       "image_thumbnails_enabled": true,

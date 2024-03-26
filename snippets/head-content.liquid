@@ -23,11 +23,10 @@
 
 <meta name="robots" content="noindex">
 
-<link rel="apple-touch-icon" sizes="180x180" href="{{ 'icons/apple-touch-icon.png' | static_asset_url }}">
-<link rel="icon" type="image/png" sizes="32x32" href="{{ 'icons/favicon-32x32.png' | static_asset_url }}">
-<link rel="icon" type="image/png" sizes="16x16" href="{{ 'icons/favicon-16x16.png' | static_asset_url }}">
-<link rel="manifest" href="{{ 'icons/site.webmanifest' | static_asset_url }}">
-<link rel="mask-icon" href="{{ 'icons/safari-pinned-tab.svg' | static_asset_url }}" color="#5bbad5">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ 'apple-touch-icon.png' | static_asset_url }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ 'favicon-32x32.png' | static_asset_url }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ 'favicon-16x16.png' | static_asset_url }}">
+<link rel="manifest" href="{{ 'manifest.json' | static_asset_url }}">
 
 <meta name="vc-storefront-version" content="{{ version }}">
 <meta name="format-detection" content="telephone=no">
@@ -36,30 +35,6 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-{%- comment %}
-  NOTE: Data for Vue apps. See '~/client-app/core/composables/useAppContext.ts' file.
-{% endcomment %}
-<script type="application/json" id="vcAppContext">
-  {
-    {%- comment %} NOTE: Uncomment this when migrating to MPA
-    "baseUrl": "{{ '/' | full_url }}",
-    "storeId": "{{ current_store.id }}",
-    "locale": "{{ current_language.culture_name }}",
-    "locales": {{ current_store.languages | map 'CultureName' | json }},
-    "currencyCode": "{{ current_currency.code }}",
-    "catalogId": "{{ current_store.catalog }}",
-    "userId": "{{ current_user.id }}",
-    "userIsAuthorized": {{ current_user.is_registered_user }},
-    {% endcomment %}
-    "storeSettings": {
-      "anonymousAccessEnabled": {{ current_store.anonymous_users_allowed }},
-      "googleAnalyticsEnabled": {{ google_analytics_enabled }}
-    }
-    {%- comment %}"themeSettings": {{ settings | json }}{% endcomment -%}
-    {%- comment %}"localization": {{ '' | t }}{% endcomment -%}
-  }
-</script>
 
 {{ 'main.js' | asset_url | append_version | script_tag_module }}
 

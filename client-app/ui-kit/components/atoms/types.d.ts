@@ -1,6 +1,6 @@
 import type * as Components from ".";
 
-declare module "@vue/runtime-core" {
+declare module "vue" {
   // Glboal components is already declated interface which we want to augment
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
@@ -36,16 +36,13 @@ declare module "@vue/runtime-core" {
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
-    /** @deprecated */
-    VcSelectItem: typeof Components.VcSelectItem;
-    /** @deprecated */
-    VcSelectItemImage: typeof Components.VcSelectItemImage;
-    /** @deprecated */
-    VcSelectItemText: typeof Components.VcSelectItemText;
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
+    /** @deprecated Use vue's <transition> directly */
     VcTransitionScale: typeof Components.VcTransitionScale;
     VcTypography: typeof Components.VcTypography;
   }
 }
+
+export {};

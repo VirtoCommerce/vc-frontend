@@ -107,4 +107,11 @@ declare global {
   }
 
   type FileType = INewFile | IUploadingFile | IUploadedFile | IFailedFile | IAttachedFile | IRemovedFile;
+
+  type VcPushMessageType = {
+    id: string;
+    createdDate: number | Date;
+    isRead?: boolean;
+    shortMessage: string;
+  };
 }

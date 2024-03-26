@@ -1,25 +1,19 @@
 <template>
   <router-link :to="to" class="icon flex items-center p-2.5">
-    <div class="mr-2.5 size-5"></div>
-    <span class="text-13 font-bold text-gray-500">{{ text }}</span>
+    <div class="mr-2.5 size-5 flex-none"></div>
+    <span class="overflow-hidden text-ellipsis text-13 font-bold text-gray-500">{{ text }}</span>
   </router-link>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-defineProps({
-  text: {
-    type: String,
-    required: true,
-  },
+interface IProps {
+  text: string;
+  to: RouteLocationRaw;
+}
 
-  to: {
-    type: [String, Object] as PropType<RouteLocationRaw>,
-    required: true,
-  },
-});
+defineProps<IProps>();
 </script>
 
 <style scoped>
@@ -58,6 +52,10 @@ defineProps({
 
 .quotes-icon > div {
   mask: url(/static/images/dashboard/icons/quotes.svg) no-repeat center / contain;
+}
+
+.credit-card > div {
+  mask: url(/static/images/dashboard/icons/credit-card.svg) no-repeat center / contain;
 }
 
 /* Active/hover state styles */

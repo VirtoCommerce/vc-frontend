@@ -5,4 +5,6 @@ export { default as VcConfirmationModal } from "./confirmation-modal/vc-confirma
 export { default as VcModal } from "./modal/vc-modal.vue";
 export { default as VcPagination } from "./pagination/vc-pagination.vue";
 export { default as VcProductImage } from "./product-image/vc-product-image.vue";
+export { default as VcPushMessage } from "./push-message/vc-push-message.vue";
+export { default as VcPushMessages } from "./push-messages/vc-push-messages.vue";
 export { default as VcTable } from "./table/vc-table.vue";
