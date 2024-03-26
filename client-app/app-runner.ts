@@ -2,7 +2,7 @@ import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient } from "@/core/api/graphql";
-import { useCurrency, useLanguages, useThemeContext } from "@/core/composables";
+import { useCurrency, useLanguages, useThemeContext, useGoogleAnalytics } from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
@@ -47,6 +47,7 @@ export default async () => {
   const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
+  const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
 
   const fallback = {
     locale: "en",
@@ -60,6 +61,8 @@ export default async () => {
    * Fetching required app data
    */
   await Promise.all([fetchThemeContext(), fetchUser(), fallback.setMessage()]);
+
+  initializeGoogleAnalytics();
 
   /**
    * Creating plugin instances
@@ -92,7 +95,7 @@ export default async () => {
   app.use(router);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value!.settings);
+  app.use(configPlugin, themeContext.value.settings);
   app.use(uiKit);
 
   if (window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {
