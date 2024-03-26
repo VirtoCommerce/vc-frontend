@@ -417,7 +417,7 @@ async function submit(): Promise<void> {
 
   await submitQuote(quote.value!.id, comment.value || "");
 
-  await router.replace({ name: "Quotes" });
+  void router.replace({ name: "Quotes" });
 }
 
 async function fetchAddresses(): Promise<void> {
@@ -432,9 +432,9 @@ async function fetchAddresses(): Promise<void> {
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
   if (quote.value && quote.value.status !== "Draft") {
-    await router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
+    void router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
   }
 });
 
