@@ -108,10 +108,10 @@ declare global {
 
   type FileType = INewFile | IUploadingFile | IUploadedFile | IFailedFile | IAttachedFile | IRemovedFile;
 
-  type VcNotificationType = {
+  type VcPushMessageType = {
     id: string;
-    text: string;
-    read?: boolean;
     createdDate: number | Date;
+    isRead?: boolean;
+    shortMessage: string;
   };
 }

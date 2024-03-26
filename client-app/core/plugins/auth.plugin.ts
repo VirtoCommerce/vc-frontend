@@ -7,13 +7,17 @@ export const authPlugin: Plugin = {
     const { isExpired, headers, refresh } = useAuth();
 
     const { onRequest } = useGlobalInterceptors();
-    onRequest.value.push(async (_, request) => {
+    onRequest.value.push(async (_, init) => {
       if (isExpired()) {
         await refresh();
       }
 
-      if (request && headers.value.Authorization) {
-        request.headers = { ...request.headers, ...headers.value };
+      if (init && headers.value.Authorization) {
+        if (init.headers) {
+          Object.assign(init.headers, headers.value);
+        } else {
+          Object.assign(init, headers.value);
+        }
       }
     });
   },
