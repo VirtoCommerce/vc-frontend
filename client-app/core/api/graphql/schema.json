@@ -31506,7 +31506,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shortMessage",
+            "name": "isRead",
             "description": null,
             "args": [],
             "type": {
@@ -31514,7 +31514,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Boolean",
                 "ofType": null
               }
             },
@@ -31522,7 +31522,7 @@
             "deprecationReason": null
           },
           {
-            "name": "status",
+            "name": "shortMessage",
             "description": null,
             "args": [],
             "type": {
@@ -39227,9 +39227,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "PushMessageType",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "PushMessageType",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

@@ -18,4 +18,6 @@ defineProps({
   appear: Boolean,
   mode: String as PropType<TransitionProps["mode"]>,
 });
+
+console.warn("[UIKit][warn] VcTransitionScale is deprecated, use vue's <transition> directly instead.");
 </script>
