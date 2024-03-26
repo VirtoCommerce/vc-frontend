@@ -52,7 +52,7 @@
           </BottomHeaderLink>
 
           <template v-else-if="item.id === 'push-messages'">
-            <PushMessages v-if="isAuthenticated" :y-offset="36">
+            <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" :y-offset="36">
               <template #trigger="{ totalCount, unreadCount }">
                 <BottomHeaderLink :link="item" :count="unreadCount">
                   <template #icon>
