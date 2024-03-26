@@ -38,10 +38,9 @@
             v-if="addresses.length || loadingAddresses"
             class="mx-6 mb-5 mt-9 flex flex-row items-center justify-between gap-3 md:mx-0 md:mb-4 md:mt-1.5"
           >
-            <h2
-              v-t="'pages.company.info.content_header'"
-              class="py-0.5 text-xl font-extrabold uppercase text-gray-800"
-            />
+            <VcTypography tag="h2" variant="h3">
+              {{ $t("pages.company.info.content_header") }}
+            </VcTypography>
 
             <VcButton
               v-if="userCanEditOrganization"
