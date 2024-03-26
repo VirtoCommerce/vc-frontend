@@ -99,6 +99,7 @@
             </VcButton>
           </template>
         </VcEmptyView>
+        <Error404 v-else-if="!loading && !list" />
       </div>
     </div>
   </div>
@@ -107,7 +108,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy } from "lodash";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -137,6 +138,8 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
