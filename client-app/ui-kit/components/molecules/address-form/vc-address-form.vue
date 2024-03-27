@@ -194,40 +194,6 @@ const initialValues = readonly<MemberAddressType>({
   description: "",
 });
 
-const country = computed<CountryType | undefined>({
-  get: () => props.countries.find((item) => countryCode.value === item.id),
-  set: (value?: CountryType) => {
-    countryCode.value = value?.id ?? "";
-    countryName.value = value?.name ?? "";
-    regionId.value = "";
-    regionName.value = "";
-  },
-});
-
-const regions = computed<CountryRegionType[]>(() => country.value?.regions ?? []);
-
-const region = computed<CountryRegionType | undefined>({
-  get: () => regions.value.find((item) => regionId.value === item.id),
-  set: (value?: CountryRegionType) => {
-    regionId.value = value?.id ?? "";
-    regionName.value = value?.name ?? "";
-  },
-});
-
-const slotsData = computed(() => ({
-  setErrors,
-  validate,
-  reset: resetForm,
-  save,
-  errors,
-  values,
-  dirty: meta.value.dirty,
-  valid: meta.value.valid,
-  validated: meta.value.validated,
-  pending: meta.value.pending,
-  touched: meta.value.touched,
-}));
-
 const validationSchema = computed(() => {
   let email = yupString().max(64).email().nullable();
   if (props.withPersonalInfo && props.requiredEmail) {
@@ -295,9 +261,23 @@ const validationSchema = computed(() => {
 });
 
 const { defineField, values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm<MemberAddressType>({
-  validationSchema,
   initialValues,
+  validationSchema,
 });
+
+const slotsData = computed(() => ({
+  setErrors,
+  validate,
+  reset: resetForm,
+  save,
+  errors,
+  values,
+  dirty: meta.value.dirty,
+  valid: meta.value.valid,
+  validated: meta.value.validated,
+  pending: meta.value.pending,
+  touched: meta.value.touched,
+}));
 
 const [email] = defineField("email");
 const [city] = defineField("city");
@@ -312,6 +292,26 @@ const [regionId] = defineField("regionId");
 const [line1] = defineField("line1");
 const [line2] = defineField("line2");
 const [description] = defineField("description");
+
+const country = computed<CountryType | undefined>({
+  get: () => props.countries.find((item) => countryCode.value === item.id),
+  set: (value?: CountryType) => {
+    countryCode.value = value?.id ?? "";
+    countryName.value = value?.name ?? "";
+    regionId.value = "";
+    regionName.value = "";
+  },
+});
+
+const regions = computed<CountryRegionType[]>(() => country.value?.regions ?? []);
+
+const region = computed<CountryRegionType | undefined>({
+  get: () => regions.value.find((item) => regionId.value === item.id),
+  set: (value?: CountryRegionType) => {
+    regionId.value = value?.id ?? "";
+    regionName.value = value?.name ?? "";
+  },
+});
 
 const save = handleSubmit((address) => {
   const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
