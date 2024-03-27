@@ -2,7 +2,7 @@
   <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" modal-width="sm:max-w-xl" is-mobile-fullscreen>
     <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
       <!-- Lists -->
-      <template v-if="!loadingLists">
+      <template v-if="!loadingProduct && !loadingLists">
         <template v-if="listsWithProduct.length">
           <div
             class="bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 text-15 font-bold leading-5 sm:py-2.5"
@@ -99,7 +99,7 @@
       </template>
 
       <!-- Skeletons -->
-      <ul v-if="loadingLists">
+      <ul v-if="loadingProduct || loadingLists">
         <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-gray-50">
           <div class="w-full bg-gray-100"></div>
         </li>
@@ -132,22 +132,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, toRef, onMounted } from "vue";
+import { computed, ref, inject, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account";
+import { useProduct } from "@/shared/catalog";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables";
-import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { WishlistInputType } from "@/shared/wishlists/types";
 import WishlistStatus from "@/shared/wishlists/components/wishlist-status.vue";
 
 interface IProps {
-  product: ProductType;
+  productId: string;
 }
 
 interface IEmits {
@@ -161,6 +161,7 @@ const props = defineProps<IProps>();
 const { d, t } = useI18n();
 const { closeModal } = useModal();
 const { isCorporateMember } = useUser();
+const { loading: loadingProduct, product, fetchWishlistsProduct } = useProduct();
 
 const {
   loading: loadingLists,
@@ -178,18 +179,17 @@ const selectedListsOtherIds = ref<string[]>([]);
 const removedLists = ref<string[]>([]);
 const newLists = ref<WishlistInputType[]>([]);
 
-const product = toRef(props, "product");
 const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
 const listsWithProduct = computed(() =>
-  lists.value.filter((list) => product.value.wishlistIds.some((listId) => listId === list.id)),
+  lists.value.filter((list) => product.value?.wishlistIds.some((listId) => listId === list.id)),
 );
 
 const listsOther = computed(() => {
-  return lists.value.filter((list) => !product.value.wishlistIds.some((listId) => listId === list.id));
+  return lists.value.filter((list) => !product.value?.wishlistIds.some((listId) => listId === list.id));
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -220,14 +220,14 @@ async function addToWishlistsFromListOther() {
 
   await addItemsToWishlists({
     listIds: selectedListsOtherIds.value,
-    productId: product.value.id,
-    quantity: product.value.minQuantity || 1,
+    productId: props.productId,
+    quantity: product.value!.minQuantity || 1,
   });
 
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value);
+  ga.addItemToWishList(product.value!);
 }
 
 async function createLists() {
@@ -248,14 +248,14 @@ async function createLists() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value);
+  ga.addItemToWishList(product.value!);
 }
 
 async function removeProductFromWishlists() {
   const payload = removedLists.value.map((listId) => {
     return {
       listId,
-      productId: product.value.id,
+      productId: props.productId,
     };
   });
 
@@ -284,7 +284,7 @@ async function save() {
   await createLists();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
-  await fetchWishlists();
+  await fetchWishlistsProduct(props.productId);
 
   emit("result", !!listsWithProduct.value.length);
 
@@ -298,7 +298,10 @@ async function save() {
   });
 }
 
-onMounted(async () => await fetchWishlists());
+onMounted(async () => {
+  await fetchWishlistsProduct(props.productId);
+  await fetchWishlists();
+});
 </script>
 
 <style lang="scss">

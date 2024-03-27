@@ -40,7 +40,6 @@ query SearchProducts(
       minQuantity
       maxQuantity
       inWishlist
-      wishlistIds
       productType
       vendor {
         id

@@ -1,0 +1,6 @@
+query GetWishlistsProduct($storeId: String!, $currencyCode: String!, $cultureName: String, $id: String!) {
+  product(storeId: $storeId, id: $id, currencyCode: $currencyCode, cultureName: $cultureName) {
+    wishlistIds
+    minQuantity
+  }
+}
