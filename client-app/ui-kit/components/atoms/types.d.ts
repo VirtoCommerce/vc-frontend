@@ -40,6 +40,7 @@ declare module "vue" {
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
+    /** @deprecated Use vue's <transition> directly */
     VcTransitionScale: typeof Components.VcTransitionScale;
     VcTypography: typeof Components.VcTypography;
   }
