@@ -149,7 +149,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useForm } from "vee-validate";
-import { computed, readonly, watch } from "vue";
+import { computed, watch } from "vue";
 import * as yup from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
 import type { CountryRegionType, CountryType, MemberAddressType } from "@/core/api/graphql/types";
@@ -175,7 +175,7 @@ const props = withDefaults(defineProps<IProps>(), {
   countries: () => [],
 });
 
-const initialValues = readonly<MemberAddressType>({
+const initialValues: MemberAddressType = {
   isDefault: false,
   isFavorite: false,
   firstName: "",
@@ -192,7 +192,7 @@ const initialValues = readonly<MemberAddressType>({
   line2: "",
   phone: "",
   description: "",
-});
+};
 
 const validationSchema = computed(() => {
   let email = yup.string().max(64).email().nullable();
