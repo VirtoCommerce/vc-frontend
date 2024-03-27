@@ -1,41 +1,62 @@
 <template>
-  <div
+  <label
     :class="[
       'vc-switch',
       `vc-switch--color--${color}`,
       `vc-switch--size--${size}`,
-      {
-        'vc-switch--on': modelValue,
-        'vc-switch--disabled': disabled,
-      },
+      `vc-switch--label--${labelPosition}`,
     ]"
-    :click="toggle"
   >
-    <div class="vc-switch--circle"></div>
-  </div>
+    <div v-if="$slots.default" class="vc-switch__label">
+      <slot />
+    </div>
+
+    <div class="vc-switch__bg">
+      <div class="vc-switch__circle"></div>
+    </div>
+
+    <input
+      :value="value"
+      :checked="modelValue"
+      :aria-checked="modelValue"
+      :disabled="disabled"
+      type="checkbox"
+      @change="change"
+    />
+  </label>
 </template>
 
 <script setup lang="ts">
 export interface IEmits {
-  (event: "click", value: MouseEvent): void;
   (event: "update:modelValue", value?: boolean): void;
+  (event: "change", value: boolean): void;
 }
 
 interface IProps {
   modelValue?: boolean;
   disabled?: boolean;
+  name?: string;
+  value?: boolean;
   color?: VcSwitchColorType;
   size?: "xs" | "sm" | "md" | "lg";
+  labelPosition?: "left" | "right";
 }
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   color: "primary",
+  labelPosition: "left",
 });
 
-function toggle() {
-  emit("update:modelValue", !props.modelValue);
+function change() {
+  if (props.disabled) {
+    return;
+  }
+
+  const newValue = !props.modelValue;
+  emit("update:modelValue", newValue);
+  emit("change", newValue);
 }
 </script>
 
@@ -43,69 +64,106 @@ function toggle() {
 .vc-switch {
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
-  $on: "";
+  $checked: "";
   $disabled: "";
+  $bg: "";
+  $left: left;
+  $right: right;
 
   --color: var(--color-neutral-300);
-  --circle-color: var(--color-additional-50);
 
-  @apply relative p-0.5 h-[--circle-size] box-content rounded-full bg-current border border-current text-[--color] cursor-pointer;
+  @apply relative inline-flex items-center cursor-pointer;
 
   &--size {
     &--xs {
+      --w: 1.25rem;
       --circle-size: 0.625rem;
 
-      @apply w-5;
+      @apply text-xxs;
     }
 
     &--sm {
+      --w: 1.5rem;
       --circle-size: 0.75rem;
 
-      @apply w-6;
+      @apply text-xs;
     }
 
     &--md {
+      --w: 1.875rem;
       --circle-size: 1rem;
 
-      @apply w-[1.875rem];
+      @apply text-xs;
     }
 
     &--lg {
+      --w: 2.375rem;
       --circle-size: 1.25rem;
 
-      @apply w-[2.375rem];
+      @apply text-sm;
     }
   }
 
-  &--on {
-    $on: &;
-  }
-
-  &--disabled {
+  &:has(input:disabled) {
     $disabled: &;
 
-    --circle-color: var(--color-neutral-50);
     --color: var(--color-neutral-200);
 
     @apply cursor-not-allowed;
   }
 
+  &:has(input:checked) {
+    $checked: &;
+  }
+
   @each $color in $colors {
     &--color {
-      &--#{$color}#{$on} {
+      &--#{$color}#{$checked} {
         --color: var(--color-#{$color}-500);
 
         &#{$disabled} {
-          --color: var(--color-#{$color}-300);
+          --color: var(--color-#{$color}-200);
         }
       }
     }
   }
 
-  &--circle {
-    @apply relative left-0 size-[--circle-size] bg-[--circle-color] rounded-full transition-[left];
+  &--label {
+    &--left {
+      $left: &;
+    }
 
-    #{$on} & {
+    &--right {
+      $right: &;
+    }
+  }
+
+  &__label {
+    @apply text-neutral-950 font-normal;
+
+    #{$left} & {
+      @apply order-first me-2;
+    }
+
+    #{$right} & {
+      @apply order-last ms-2;
+    }
+  }
+
+  input {
+    @apply hidden;
+  }
+
+  &__bg {
+    $bg: &;
+
+    @apply order-1 relative h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5;
+  }
+
+  &__circle {
+    @apply relative left-0 size-[--circle-size] bg-additional-50 rounded-full transition-[left];
+
+    #{$checked} & {
       @apply left-[calc(100%-var(--circle-size))];
     }
   }
