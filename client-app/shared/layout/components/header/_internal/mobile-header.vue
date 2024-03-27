@@ -33,7 +33,7 @@
             <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
-          <PushMessages v-if="isAuthenticated" class="px-1 py-2 xs:px-2">
+          <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" class="px-1 py-2 xs:px-2">
             <template #trigger="{ totalCount, unreadCount }">
               <div class="relative">
                 <transition :name="unreadCount ? 'shake' : ''" mode="out-in">

@@ -1049,12 +1049,13 @@
         "status_label": "@:common.labels.status",
         "total_label": "@:common.labels.total",
         "search_placeholder": "Enter keyword...",
-        "no_results_message": "No results found"
+        "no_results_message": "No results found",
+        "request_quote_button": "Request Quote"
       },
       "quote_details": {
         "title": "Quote Request #{0}",
-        "remarks": "Remarks",
-        "remarks_field_label": "Do you have a general remark for this Quote Request?",
+        "comment": "Comment",
+        "comment_field_label": "Do you have a general remark for this Quote Request?",
         "products": "Products",
         "shipping_address": "Shipping Address",
         "billing_address": "Billing Address",
