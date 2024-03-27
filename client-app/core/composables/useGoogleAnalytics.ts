@@ -1,8 +1,11 @@
+import { canUseDOM } from "@apollo/client/utilities";
+import { useScriptTag } from "@vueuse/core";
 import { sumBy } from "lodash";
-import { IS_CLIENT } from "@/core/constants";
+import { useCurrency } from "@/core/composables/useCurrency";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { globals } from "../globals";
-import { useAppContext } from "./useAppContext";
 import type {
   Breadcrumb,
   CartType,
@@ -17,9 +20,16 @@ type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
 
-const { storeSettings } = useAppContext();
+const { currentCurrency } = useCurrency();
+const { modulesSettings } = useThemeContext();
 
-const isAvailableGtag: Readonly<boolean> = Boolean(IS_CLIENT && storeSettings.googleAnalyticsEnabled && window.gtag);
+const DEBUG_PREFIX = "[GA]";
+
+const MODULE_KEYS = {
+  ID: "VirtoCommerce.GoogleEcommerceAnalytics",
+  ENABLE_STATE: "GoogleAnalytics4.EnableTracking",
+  TRACK_ID: "GoogleAnalytics4.MeasurementId",
+};
 
 function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
   const categories: Record<string, string> = {};
@@ -75,10 +85,10 @@ function getCartEventParams(cart: CartType): EventParamsType {
 }
 
 function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
-  if (isAvailableGtag) {
+  if (canUseDOM && window.gtag) {
     window.gtag("event", eventName, eventParams);
   } else {
-    Logger.debug("[GA]", eventName, eventParams);
+    Logger.debug(DEBUG_PREFIX, eventName, eventParams);
   }
 }
 
@@ -241,9 +251,38 @@ function search(searchTerm: string): void {
   });
 }
 
+function init() {
+  if (!canUseDOM) {
+    return;
+  }
+
+  const moduleSettings = modulesSettings.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
+  const isGoogleAnalyticsEnabled = !!moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.ENABLE_STATE)
+    ?.value;
+
+  if (isGoogleAnalyticsEnabled) {
+    const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
+    if (!IS_DEVELOPMENT) {
+      useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${id}`);
+    } else {
+      Logger.debug(DEBUG_PREFIX, "initialized without sync with google");
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag() {
+      // is not working with rest
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer.push(arguments);
+    };
+
+    window.gtag("js", new Date());
+    window.gtag("config", id, { debug_mode: true });
+    window.gtag("set", { currency: currentCurrency.value.code });
+  }
+}
+
 export function useGoogleAnalytics() {
   return {
-    isAvailableGtag,
     sendEvent,
     viewItemList,
     selectItem,
@@ -260,5 +299,6 @@ export function useGoogleAnalytics() {
     purchase,
     placeOrder,
     search,
+    init,
   };
 }

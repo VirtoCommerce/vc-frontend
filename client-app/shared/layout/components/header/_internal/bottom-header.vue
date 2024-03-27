@@ -51,6 +51,29 @@
             {{ item.title }}
           </BottomHeaderLink>
 
+          <template v-else-if="item.id === 'push-messages'">
+            <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" :y-offset="36">
+              <template #trigger="{ totalCount, unreadCount }">
+                <BottomHeaderLink :link="item" :count="unreadCount">
+                  <template #icon>
+                    <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
+                      <svg
+                        v-if="item.icon"
+                        :key="totalCount"
+                        height="24"
+                        width="24"
+                        class="mb-0.5 text-[color:var(--color-primary)]"
+                      >
+                        <use :href="item.icon" />
+                      </svg>
+                    </transition>
+                  </template>
+                  {{ item.title }}
+                </BottomHeaderLink>
+              </template>
+            </PushMessages>
+          </template>
+
           <BottomHeaderLink v-else :link="item">
             {{ item.title }}
           </BottomHeaderLink>
@@ -83,16 +106,17 @@ import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vu
 import { computed, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useNavigations } from "@/core/composables";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
+import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const router = useRouter();
-const { organization } = useUser();
+const { isAuthenticated, organization } = useUser();
 const { cart } = useShortCart();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
