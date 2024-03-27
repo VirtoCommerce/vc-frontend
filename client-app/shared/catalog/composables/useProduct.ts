@@ -1,5 +1,5 @@
 import { ref, computed, readonly, triggerRef, shallowRef } from "vue";
-import { getProduct, getWishlistsProduct } from "@/core/api/graphql/catalog";
+import { getProduct, getProductWishlistIds } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import type { Product } from "@/core/api/graphql/types";
@@ -9,7 +9,7 @@ import type { Ref, ShallowRef } from "vue";
 export function useProduct() {
   const loading: Ref<boolean> = ref(true);
   const product: ShallowRef<Product | undefined> = shallowRef();
-  const wishlistsProduct: ShallowRef<Product | undefined> = shallowRef();
+  const productWishlistIds: ShallowRef<string[] | undefined> = shallowRef();
 
   const broadcast = useBroadcast();
 
@@ -25,13 +25,13 @@ export function useProduct() {
     }
   }
 
-  async function fetchWishlistsProduct(productId: string): Promise<void> {
+  async function fetchProductWishlistIds(productId: string): Promise<void> {
     loading.value = true;
 
     try {
-      wishlistsProduct.value = await getWishlistsProduct(productId);
+      productWishlistIds.value = await getProductWishlistIds(productId);
     } catch (e) {
-      Logger.error(`${useProduct.name}.${fetchWishlistsProduct.name}`, e);
+      Logger.error(`${useProduct.name}.${fetchProductWishlistIds.name}`, e);
       throw e;
     } finally {
       loading.value = false;
@@ -55,9 +55,9 @@ export function useProduct() {
 
   return {
     loadProduct,
-    fetchWishlistsProduct,
+    fetchProductWishlistIds,
     loading: readonly(loading),
     product: computed(() => product.value),
-    wishlistsProduct: computed(() => wishlistsProduct.value),
+    productWishlistIds: computed(() => productWishlistIds.value),
   };
 }

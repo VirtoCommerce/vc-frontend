@@ -162,7 +162,7 @@ const props = defineProps<IProps>();
 const { d, t } = useI18n();
 const { closeModal } = useModal();
 const { isCorporateMember } = useUser();
-const { loading: loadingProduct, wishlistsProduct, fetchWishlistsProduct } = useProduct();
+const { loading: loadingProduct, productWishlistIds, fetchProductWishlistIds } = useProduct();
 
 const {
   loading: loadingLists,
@@ -188,11 +188,11 @@ const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
 const listsWithProduct = computed(() =>
-  lists.value.filter((list) => wishlistsProduct.value?.wishlistIds.some((listId) => listId === list.id)),
+  lists.value.filter((list) => productWishlistIds.value?.some((listId) => listId === list.id)),
 );
 
 const listsOther = computed(() => {
-  return lists.value.filter((list) => !wishlistsProduct.value?.wishlistIds.some((listId) => listId === list.id));
+  return lists.value.filter((list) => !productWishlistIds.value?.some((listId) => listId === list.id));
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -224,13 +224,13 @@ async function addToWishlistsFromListOther() {
   await addItemsToWishlists({
     listIds: selectedListsOtherIds.value,
     productId: product.value.id,
-    quantity: wishlistsProduct.value!.minQuantity || 1,
+    quantity: product.value!.minQuantity || 1,
   });
 
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(wishlistsProduct.value!);
+  ga.addItemToWishList(product.value!);
 }
 
 async function createLists() {
@@ -287,7 +287,7 @@ async function save() {
   await createLists();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
-  await fetchWishlistsProduct(product.value.id);
+  await fetchProductWishlistIds(product.value.id);
 
   emit("result", !!listsWithProduct.value.length);
 
@@ -302,7 +302,7 @@ async function save() {
 }
 
 onMounted(async () => {
-  await fetchWishlistsProduct(product.value.id);
+  await fetchProductWishlistIds(product.value.id);
   await fetchWishlists();
 });
 </script>
