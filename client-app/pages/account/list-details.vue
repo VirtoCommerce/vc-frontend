@@ -99,7 +99,7 @@
             </VcButton>
           </template>
         </VcEmptyView>
-        <Error404 v-else-if="!loading && !list" />
+        <Error404 v-else-if="!listLoading && !list" />
       </div>
     </div>
   </div>
