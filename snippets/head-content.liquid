@@ -36,30 +36,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-{%- comment %}
-  NOTE: Data for Vue apps. See '~/client-app/core/composables/useAppContext.ts' file.
-{% endcomment %}
-<script type="application/json" id="vcAppContext">
-  {
-    {%- comment %} NOTE: Uncomment this when migrating to MPA
-    "baseUrl": "{{ '/' | full_url }}",
-    "storeId": "{{ current_store.id }}",
-    "locale": "{{ current_language.culture_name }}",
-    "locales": {{ current_store.languages | map 'CultureName' | json }},
-    "currencyCode": "{{ current_currency.code }}",
-    "catalogId": "{{ current_store.catalog }}",
-    "userId": "{{ current_user.id }}",
-    "userIsAuthorized": {{ current_user.is_registered_user }},
-    {% endcomment %}
-    "storeSettings": {
-      "anonymousAccessEnabled": {{ current_store.anonymous_users_allowed }},
-      "googleAnalyticsEnabled": {{ google_analytics_enabled }}
-    }
-    {%- comment %}"themeSettings": {{ settings | json }}{% endcomment -%}
-    {%- comment %}"localization": {{ '' | t }}{% endcomment -%}
-  }
-</script>
-
 {{ 'main.js' | asset_url | append_version | script_tag_module }}
 
 {{ 'style.css' | asset_url | append_version | stylesheet_tag: 'all' }}

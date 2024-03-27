@@ -209,7 +209,7 @@
       "company_members": "Company Members",
       "quote_requests": "Quote Requests",
       "contact_administrator": "contact the site administrator",
-      "notifications": "Notifications",
+      "push-messages": "Notifications",
       "saved_credit_cards": "Saved Credit Cards"
     },
     "titles": {
@@ -277,7 +277,7 @@
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
           "contact_us": "@:common.links.contact_us",
-          "notifications": "@:common.links.notifications"
+          "push-messages": "@:common.links.push-messages"
         },
         "mobile": {
           "my_account": "@:common.links.account",
@@ -1049,12 +1049,13 @@
         "status_label": "@:common.labels.status",
         "total_label": "@:common.labels.total",
         "search_placeholder": "Enter keyword...",
-        "no_results_message": "No results found"
+        "no_results_message": "No results found",
+        "request_quote_button": "Request Quote"
       },
       "quote_details": {
         "title": "Quote Request #{0}",
-        "remarks": "Remarks",
-        "remarks_field_label": "Do you have a general remark for this Quote Request?",
+        "comment": "Comment",
+        "comment_field_label": "Do you have a general remark for this Quote Request?",
         "products": "Products",
         "shipping_address": "Shipping Address",
         "billing_address": "Billing Address",
@@ -1376,7 +1377,7 @@
         "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
       }
     },
-    "notifications": {
+    "push-messages": {
       "title": "Notifications",
       "options": {
         "make_all_as_read": "Make all as read",
@@ -1386,7 +1387,7 @@
         "title": "No new notifications at the moment.",
         "description": "Stay tuned for updates and important messages."
       },
-      "clear_recent": "Clear recent"
+      "clear_all": "Clear all"
     }
   },
   "identity_error": {
