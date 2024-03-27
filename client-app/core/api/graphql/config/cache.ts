@@ -62,6 +62,13 @@ export const cache = new InMemoryCache({
         },
       },
     },
+    PushMessagesResponseType: {
+      fields: {
+        items: {
+          merge: false,
+        },
+      },
+    },
     Property: {
       keyFields: false,
     },

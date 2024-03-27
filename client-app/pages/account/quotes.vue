@@ -1,10 +1,18 @@
 <template>
   <div>
-    <VcTypography tag="h1">
-      {{ $t("pages.account.quotes.title") }}
-    </VcTypography>
+    <!-- Title block -->
+    <div class="flex items-center justify-between gap-2">
+      <VcTypography tag="h1">
+        {{ $t("pages.account.quotes.title") }}
+      </VcTypography>
 
-    <div ref="stickyMobileHeaderAnchor" class="-mt-5"></div>
+      <VcButton size="sm" variant="outline" prepend-icon="plus" @click="requestQuote">
+        <span class="hidden sm:inline">{{ $t("pages.account.quotes.request_quote_button") }}</span>
+        <span class="sm:hidden">{{ $t("pages.account.quotes.request_quote_button") }}</span>
+      </VcButton>
+    </div>
+
+    <div ref="stickyMobileHeaderAnchor" class="-mt-5" />
 
     <!-- Page toolbar -->
     <PageToolbarBlock
@@ -162,11 +170,11 @@ import { useBreakpoints, breakpointsTailwind, useElementVisibility } from "@vueu
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { useCreateQuoteMutation } from "@/core/api/graphql";
 import { useRouteQueryParam, usePageHead } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
-import type { QuoteType } from "@/core/api/graphql/types";
 import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 
@@ -179,6 +187,7 @@ usePageHead({
 });
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
+const { mutate: createQuote } = useCreateQuoteMutation();
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -220,9 +229,9 @@ async function changePage(newPage: number): Promise<void> {
   await fetchQuotes();
 }
 
-function goToQuoteDetails(quote: QuoteType): void {
-  const pathName: string = quote.status === "Draft" ? "EditQuote" : "ViewQuote";
-  const quoteRoute = router.resolve({ name: pathName, params: { quoteId: quote.id } });
+function goToQuoteDetails(payload: { id: string; status?: string }): void {
+  const pathName: string = payload.status === "Draft" ? "EditQuote" : "ViewQuote";
+  const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
   window.open(quoteRoute.fullPath, "_blank")!.focus();
 }
 
@@ -246,6 +255,13 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
   await fetchQuotes();
 }
 
+async function requestQuote(): Promise<void> {
+  const result = await createQuote();
+  const quoteId = result?.data?.createQuote?.id;
+
+  await router.push({ name: "EditQuote", params: { quoteId } });
+}
+
 watch(
   () => sortQueryParam.value,
   async (value: string) => {
@@ -256,5 +272,5 @@ watch(
   },
 );
 
-fetchQuotes();
+void fetchQuotes();
 </script>

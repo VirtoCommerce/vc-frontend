@@ -104,9 +104,9 @@ export default {
   install: (app: App, options: { router: Router }) => {
     const { onRequest } = useGlobalInterceptors();
 
-    onRequest.value.push((_, request) => {
-      if (request) {
-        request.headers = { ...request.headers, ["x-template-builder"]: "preview-mode" };
+    onRequest.value.push((_, init) => {
+      if (init?.headers) {
+        Object.assign(init.headers, { ["x-template-builder"]: "preview-mode" });
       }
     });
 
