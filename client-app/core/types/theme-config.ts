@@ -15,6 +15,7 @@ export interface IThemeConfigPreset {
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
+  push_messages_enabled?: boolean;
   files_enabled?: boolean;
 
   quotes_enabled?: boolean;

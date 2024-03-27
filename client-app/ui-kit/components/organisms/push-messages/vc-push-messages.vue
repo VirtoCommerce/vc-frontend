@@ -68,7 +68,13 @@
           </div>
 
           <div class="vc-push-messages__foot">
-            <VcButton v-if="removable" variant="outline" color="secondary" size="xs" @click="$emit('clearAll')">
+            <VcButton
+              v-if="removable && totalCount"
+              variant="outline"
+              color="secondary"
+              size="xs"
+              @click="$emit('clearAll')"
+            >
               {{ $t("ui_kit.push-messages.clear_all") }}
             </VcButton>
           </div>
