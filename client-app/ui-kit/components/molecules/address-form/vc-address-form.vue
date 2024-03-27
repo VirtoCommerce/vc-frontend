@@ -244,10 +244,12 @@ const validationSchema = computed(() => {
     city = city.required();
   }
 
-  let regionId = yupString().nullable();
-  if (regions.value.length) {
-    regionId = regionId.required();
-  }
+  const regionId = yupString()
+    .nullable()
+    .when("countryCode", {
+      is: (value: string) => props.countries.find((item) => value === item.id)?.regions.length,
+      then: (schema) => schema.required(),
+    });
 
   let firstName = yupString().max(64).nullable();
   if (props.withPersonalInfo) {
