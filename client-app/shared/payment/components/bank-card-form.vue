@@ -78,7 +78,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { vMaska } from "maska";
 import { useForm } from "vee-validate";
-import { computed, readonly as readonlyUtil, watch } from "vue";
+import { computed, readonly as vueReadonly, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, string } from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
@@ -104,7 +104,7 @@ interface IProps {
 
 const { t } = useI18n();
 
-const initialValues = readonlyUtil<BankCardType>({
+const initialValues = vueReadonly<BankCardType>({
   number: "",
   cardholderName: "",
   month: "",
