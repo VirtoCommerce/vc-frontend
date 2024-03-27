@@ -9,6 +9,7 @@ import type { Ref, ShallowRef } from "vue";
 export function useProduct() {
   const loading: Ref<boolean> = ref(true);
   const product: ShallowRef<Product | undefined> = shallowRef();
+  const wishlistsProduct: ShallowRef<Product | undefined> = shallowRef();
 
   const broadcast = useBroadcast();
 
@@ -28,7 +29,7 @@ export function useProduct() {
     loading.value = true;
 
     try {
-      product.value = await getWishlistsProduct(productId);
+      wishlistsProduct.value = await getWishlistsProduct(productId);
     } catch (e) {
       Logger.error(`${useProduct.name}.${fetchWishlistsProduct.name}`, e);
       throw e;
@@ -57,5 +58,6 @@ export function useProduct() {
     fetchWishlistsProduct,
     loading: readonly(loading),
     product: computed(() => product.value),
+    wishlistsProduct: computed(() => wishlistsProduct.value),
   };
 }

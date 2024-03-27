@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, onMounted } from "vue";
+import { computed, ref, inject, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
@@ -143,11 +143,12 @@ import { useProduct } from "@/shared/catalog";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables";
+import type { Product as ProductType } from "@/core/api/graphql/types";
 import type { WishlistInputType } from "@/shared/wishlists/types";
 import WishlistStatus from "@/shared/wishlists/components/wishlist-status.vue";
 
 interface IProps {
-  productId: string;
+  product: ProductType;
 }
 
 interface IEmits {
@@ -161,7 +162,7 @@ const props = defineProps<IProps>();
 const { d, t } = useI18n();
 const { closeModal } = useModal();
 const { isCorporateMember } = useUser();
-const { loading: loadingProduct, product, fetchWishlistsProduct } = useProduct();
+const { loading: loadingProduct, wishlistsProduct, fetchWishlistsProduct } = useProduct();
 
 const {
   loading: loadingLists,
@@ -174,6 +175,8 @@ const {
 const notifications = useNotifications();
 const ga = useGoogleAnalytics();
 
+const product = toRef(props, "product");
+
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
 const removedLists = ref<string[]>([]);
@@ -185,11 +188,11 @@ const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
 const listsWithProduct = computed(() =>
-  lists.value.filter((list) => product.value?.wishlistIds.some((listId) => listId === list.id)),
+  lists.value.filter((list) => wishlistsProduct.value?.wishlistIds.some((listId) => listId === list.id)),
 );
 
 const listsOther = computed(() => {
-  return lists.value.filter((list) => !product.value?.wishlistIds.some((listId) => listId === list.id));
+  return lists.value.filter((list) => !wishlistsProduct.value?.wishlistIds.some((listId) => listId === list.id));
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -220,14 +223,14 @@ async function addToWishlistsFromListOther() {
 
   await addItemsToWishlists({
     listIds: selectedListsOtherIds.value,
-    productId: props.productId,
-    quantity: product.value!.minQuantity || 1,
+    productId: product.value.id,
+    quantity: wishlistsProduct.value!.minQuantity || 1,
   });
 
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value!);
+  ga.addItemToWishList(wishlistsProduct.value!);
 }
 
 async function createLists() {
@@ -255,7 +258,7 @@ async function removeProductFromWishlists() {
   const payload = removedLists.value.map((listId) => {
     return {
       listId,
-      productId: props.productId,
+      productId: product.value.id,
     };
   });
 
@@ -284,7 +287,7 @@ async function save() {
   await createLists();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
-  await fetchWishlistsProduct(props.productId);
+  await fetchWishlistsProduct(product.value.id);
 
   emit("result", !!listsWithProduct.value.length);
 
@@ -299,7 +302,7 @@ async function save() {
 }
 
 onMounted(async () => {
-  await fetchWishlistsProduct(props.productId);
+  await fetchWishlistsProduct(product.value.id);
   await fetchWishlists();
 });
 </script>
