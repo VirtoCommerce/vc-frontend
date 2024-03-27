@@ -2,7 +2,7 @@
   <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" modal-width="sm:max-w-xl" is-mobile-fullscreen>
     <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
       <!-- Lists -->
-      <template v-if="!loadingProduct && !loadingLists">
+      <template v-if="!loadingProductWishlists && !loadingLists">
         <template v-if="listsWithProduct.length">
           <div
             class="bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 text-15 font-bold leading-5 sm:py-2.5"
@@ -99,7 +99,7 @@
       </template>
 
       <!-- Skeletons -->
-      <ul v-if="loadingProduct || loadingLists">
+      <ul v-if="loadingProductWishlists || loadingLists">
         <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-gray-50">
           <div class="w-full bg-gray-100"></div>
         </li>
@@ -134,12 +134,12 @@
 <script setup lang="ts">
 import { computed, ref, inject, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useGetProductWishlistsQuery } from "@/core/api/graphql/catalog/queries/getProductWishlists";
 import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account";
-import { useProduct } from "@/shared/catalog";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables";
@@ -159,10 +159,11 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
+const product = toRef(props, "product");
+
 const { d, t } = useI18n();
 const { closeModal } = useModal();
 const { isCorporateMember } = useUser();
-const { loading: loadingProduct, productWishlistIds, fetchProductWishlistIds } = useProduct();
 
 const {
   loading: loadingLists,
@@ -174,8 +175,12 @@ const {
 } = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
 const ga = useGoogleAnalytics();
-
-const product = toRef(props, "product");
+const {
+  loading: loadingProductWishlists,
+  load: fetchProductWishlists,
+  refetch: refetchProductWishlists,
+  result: productWishlistsResult,
+} = useGetProductWishlistsQuery(product.value.id);
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
@@ -188,11 +193,13 @@ const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
 const listsWithProduct = computed(() =>
-  lists.value.filter((list) => productWishlistIds.value?.some((listId) => listId === list.id)),
+  lists.value.filter((list) => productWishlistsResult.value?.product?.wishlistIds.some((listId) => listId === list.id)),
 );
 
 const listsOther = computed(() => {
-  return lists.value.filter((list) => !productWishlistIds.value?.some((listId) => listId === list.id));
+  return lists.value.filter(
+    (list) => !productWishlistsResult.value?.product?.wishlistIds.some((listId) => listId === list.id),
+  );
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -287,9 +294,9 @@ async function save() {
   await createLists();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
-  await fetchProductWishlistIds(product.value.id);
+  await refetchProductWishlists();
 
-  emit("result", !!listsWithProduct.value.length);
+  emit("result", !!productWishlistsResult.value?.product?.wishlistIds?.length);
 
   closeModal();
   loading.value = false;
@@ -302,7 +309,7 @@ async function save() {
 }
 
 onMounted(async () => {
-  await fetchProductWishlistIds(product.value.id);
+  await fetchProductWishlists();
   await fetchWishlists();
 });
 </script>
