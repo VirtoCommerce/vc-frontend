@@ -13,8 +13,10 @@ export function useClearAllPushMessages() {
     },
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
+        const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
         if (mutationResult.data?.clearAllPushMessages) {
           return {
+            ...pushMessagesQueryResult,
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               unreadCount: 0,
@@ -22,7 +24,7 @@ export function useClearAllPushMessages() {
             },
           } satisfies GetPushMessagesQuery;
         } else {
-          return { ...previousQueryResult };
+          return { ...pushMessagesQueryResult };
         }
       },
     },

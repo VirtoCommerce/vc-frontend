@@ -25,6 +25,7 @@ export function useMarkPushMessageRead() {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
         const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
         return {
+          ...pushMessagesQueryResult,
           pushMessages: {
             ...pushMessagesQueryResult.pushMessages,
             unreadCount:
