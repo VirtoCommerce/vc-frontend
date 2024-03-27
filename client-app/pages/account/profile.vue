@@ -76,7 +76,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { object, string } from "yup";
+import * as yup from "yup";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { useModal } from "@/shared/modal";
@@ -96,10 +96,10 @@ usePageHead({
 });
 
 const validationSchema = toTypedSchema(
-  object({
-    firstName: string().required().max(MAX_NAME_LENGTH),
-    lastName: string().required().max(MAX_NAME_LENGTH),
-    email: string(),
+  yup.object({
+    firstName: yup.string().required().max(MAX_NAME_LENGTH),
+    lastName: yup.string().required().max(MAX_NAME_LENGTH),
+    email: yup.string(),
   }),
 );
 

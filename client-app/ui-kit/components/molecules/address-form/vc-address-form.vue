@@ -150,7 +150,7 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useForm } from "vee-validate";
 import { computed, readonly, watch } from "vue";
-import { object, string as yupString } from "yup";
+import * as yup from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
 import type { CountryRegionType, CountryType, MemberAddressType } from "@/core/api/graphql/types";
 
@@ -195,54 +195,55 @@ const initialValues = readonly<MemberAddressType>({
 });
 
 const validationSchema = computed(() => {
-  let email = yupString().max(64).email().nullable();
+  let email = yup.string().max(64).email().nullable();
   if (props.withPersonalInfo && props.requiredEmail) {
     email = email.required();
   }
 
-  let phone = yupString().max(64).nullable();
+  let phone = yup.string().max(64).nullable();
   if (props.withPersonalInfo && props.requiredPhone) {
     phone = phone.required();
   }
 
-  let city = yupString().max(128).nullable();
+  let city = yup.string().max(128).nullable();
   if (props.requiredCity) {
     city = city.required();
   }
 
-  const regionId = yupString()
+  const regionId = yup
+    .string()
     .nullable()
     .when("countryCode", {
       is: (value: string) => props.countries.find((item) => value === item.id)?.regions.length,
       then: (schema) => schema.required(),
     });
 
-  let firstName = yupString().max(64).nullable();
+  let firstName = yup.string().max(64).nullable();
   if (props.withPersonalInfo) {
     firstName = firstName.required();
   }
 
-  let lastName = yupString().max(64).nullable();
+  let lastName = yup.string().max(64).nullable();
   if (props.withPersonalInfo) {
     lastName = lastName.required();
   }
 
-  const postalCode = yupString().max(32).required().nullable();
+  const postalCode = yup.string().max(32).required().nullable();
 
-  const countryCode = yupString().required().nullable();
+  const countryCode = yup.string().required().nullable();
 
-  const countryName = yupString().max(128).nullable();
+  const countryName = yup.string().max(128).nullable();
 
-  const regionName = yupString().max(128).nullable();
+  const regionName = yup.string().max(128).nullable();
 
-  const line1 = yupString().max(128).required().nullable();
+  const line1 = yup.string().max(128).required().nullable();
 
-  const line2 = yupString().max(128).nullable();
+  const line2 = yup.string().max(128).nullable();
 
-  const description = yupString().max(128).nullable();
+  const description = yup.string().max(128).nullable();
 
   return toTypedSchema(
-    object({
+    yup.object({
       email,
       city,
       phone,

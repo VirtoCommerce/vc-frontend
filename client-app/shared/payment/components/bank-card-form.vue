@@ -80,7 +80,7 @@ import { vMaska } from "maska";
 import { useForm } from "vee-validate";
 import { computed, readonly as vueReadonly, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { object, string } from "yup";
+import * as yup from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 const emit = defineEmits<IEmits>();
@@ -123,21 +123,22 @@ const labels = computed(() => {
   };
 });
 
-const monthYupSchema = string()
+const monthYupSchema = yup
+  .string()
   .required()
   .length(2)
   .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
   .label(labels.value.monthLabel);
 
 const validationSchema = toTypedSchema(
-  object({
-    number: string().required().min(12).max(19).label(labels.value.number),
-    cardholderName: string().required().max(64).label(labels.value.cardholderName),
+  yup.object({
+    number: yup.string().required().min(12).max(19).label(labels.value.number),
+    cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
     month: monthYupSchema,
-    year: string().when("month", ([month], schema) => {
+    year: yup.string().when("month", ([month], schema) => {
       return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
     }),
-    securityCode: string().required().min(3).max(4).label(labels.value.securityCode),
+    securityCode: yup.string().required().min(3).max(4).label(labels.value.securityCode),
   }),
 );
 
