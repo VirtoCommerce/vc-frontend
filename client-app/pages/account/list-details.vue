@@ -145,7 +145,7 @@ const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
-const { loading: listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
+const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
   changing: cartChanging,
