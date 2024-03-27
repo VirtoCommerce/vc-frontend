@@ -1,5 +1,5 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
-import { useAppContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables";
 import { getReturnUrlValue } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
@@ -8,9 +8,7 @@ import type { RouteRecordName } from "vue-router";
 export function createRouter(options: { base: string }) {
   const { base } = options;
   const { isAuthenticated, organization } = useUser();
-  const {
-    storeSettings: { anonymousAccessEnabled },
-  } = useAppContext();
+  const { themeContext } = useThemeContext();
 
   const router = _createRouter({
     routes: mainRoutes,
@@ -27,7 +25,9 @@ export function createRouter(options: { base: string }) {
   router.beforeEach((to, _from, next) => {
     // Protecting routes
     const unauthorizedAccessIsDenied: boolean =
-      !isAuthenticated.value && !to.meta.public && (to.meta.requiresAuth || !anonymousAccessEnabled);
+      !isAuthenticated.value &&
+      !to.meta.public &&
+      (to.meta.requiresAuth || !themeContext.value.storeSettings.anonymousUsersAllowed);
 
     if (unauthorizedAccessIsDenied) {
       return next({
