@@ -389,7 +389,6 @@ const columns = computed<ITableColumn[]>(() => {
   ];
 
   if (userCanEditOrganization.value) {
-    // Add action column
     result.push({
       id: "id",
       title: t("pages.company.info.labels.actions"),
