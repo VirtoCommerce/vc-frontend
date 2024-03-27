@@ -97,8 +97,8 @@ usePageHead({
 
 const validationSchema = toTypedSchema(
   yup.object({
-    firstName: yup.string().required().max(MAX_NAME_LENGTH),
-    lastName: yup.string().required().max(MAX_NAME_LENGTH),
+    firstName: yup.string().trim().required().max(MAX_NAME_LENGTH),
+    lastName: yup.string().trim().required().max(MAX_NAME_LENGTH),
     email: yup.string(),
   }),
 );

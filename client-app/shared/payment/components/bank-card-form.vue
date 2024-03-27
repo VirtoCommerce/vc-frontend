@@ -18,7 +18,7 @@
     />
 
     <VcInput
-      v-model.trim="cardholderName"
+      v-model="cardholderName"
       :label="labels.cardholderName"
       :message="formErrors.cardholderName || errors.cardholderName"
       :error="!!formErrors.cardholderName || !!errors.cardholderName"
@@ -133,7 +133,7 @@ const monthYupSchema = yup
 const validationSchema = toTypedSchema(
   yup.object({
     number: yup.string().required().min(12).max(19).label(labels.value.number),
-    cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
+    cardholderName: yup.string().trim().required().max(64).label(labels.value.cardholderName),
     month: monthYupSchema,
     year: yup.string().when("month", ([month], schema) => {
       return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;

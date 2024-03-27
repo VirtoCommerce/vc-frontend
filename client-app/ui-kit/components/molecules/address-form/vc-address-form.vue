@@ -5,7 +5,7 @@
     <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
       <div v-if="withPersonalInfo" class="md:w-1/2">
         <VcInput
-          v-model.trim="firstName"
+          v-model="firstName"
           :message="errors.firstName"
           :error="!!errors.firstName"
           :disabled="disabled"
@@ -16,7 +16,7 @@
         />
 
         <VcInput
-          v-model.trim="lastName"
+          v-model="lastName"
           :message="errors.lastName"
           :error="!!errors.lastName"
           :disabled="disabled"
@@ -27,7 +27,7 @@
         />
 
         <VcInput
-          v-model.trim="email"
+          v-model="email"
           :message="errors.email"
           :error="!!errors.email"
           :disabled="disabled"
@@ -38,7 +38,7 @@
         />
 
         <VcInput
-          v-model.trim="phone"
+          v-model="phone"
           :message="errors.phone"
           :error="!!errors.phone"
           :disabled="disabled"
@@ -58,7 +58,7 @@
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput
           v-if="withDescriptionField"
-          v-model.trim="description"
+          v-model="description"
           :message="(errors as Record<string, string>).description"
           :error="!!(errors as Record<string, string>).description"
           :disabled="disabled"
@@ -83,7 +83,7 @@
           />
 
           <VcInput
-            v-model.trim="postalCode"
+            v-model="postalCode"
             :message="errors.postalCode"
             :error="!!errors.postalCode"
             :disabled="disabled"
@@ -108,7 +108,7 @@
           />
 
           <VcInput
-            v-model.trim="city"
+            v-model="city"
             :message="errors.city"
             :error="!!errors.city"
             :disabled="disabled"
@@ -120,7 +120,7 @@
         </div>
 
         <VcInput
-          v-model.trim="line1"
+          v-model="line1"
           :message="errors.line1"
           :error="!!errors.line1"
           :disabled="disabled"
@@ -131,7 +131,7 @@
         />
 
         <VcInput
-          v-model.trim="line2"
+          v-model="line2"
           :message="errors.line2"
           :error="!!errors.line2"
           :disabled="disabled"
@@ -195,17 +195,17 @@ const initialValues: MemberAddressType = {
 };
 
 const validationSchema = computed(() => {
-  let email = yup.string().max(64).email().nullable();
+  let email = yup.string().trim().max(64).email().nullable();
   if (props.withPersonalInfo && props.requiredEmail) {
     email = email.required();
   }
 
-  let phone = yup.string().max(64).nullable();
+  let phone = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo && props.requiredPhone) {
     phone = phone.required();
   }
 
-  let city = yup.string().max(128).nullable();
+  let city = yup.string().trim().max(128).nullable();
   if (props.requiredCity) {
     city = city.required();
   }
@@ -218,17 +218,17 @@ const validationSchema = computed(() => {
       then: (schema) => schema.required(),
     });
 
-  let firstName = yup.string().max(64).nullable();
+  let firstName = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo) {
     firstName = firstName.required();
   }
 
-  let lastName = yup.string().max(64).nullable();
+  let lastName = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo) {
     lastName = lastName.required();
   }
 
-  const postalCode = yup.string().max(32).required().nullable();
+  const postalCode = yup.string().trim().max(32).required().nullable();
 
   const countryCode = yup.string().required().nullable();
 
@@ -236,11 +236,11 @@ const validationSchema = computed(() => {
 
   const regionName = yup.string().max(128).nullable();
 
-  const line1 = yup.string().max(128).required().nullable();
+  const line1 = yup.string().trim().max(128).required().nullable();
 
-  const line2 = yup.string().max(128).nullable();
+  const line2 = yup.string().trim().max(128).nullable();
 
-  const description = yup.string().max(128).nullable();
+  const description = yup.string().trim().max(128).nullable();
 
   return toTypedSchema(
     yup.object({
