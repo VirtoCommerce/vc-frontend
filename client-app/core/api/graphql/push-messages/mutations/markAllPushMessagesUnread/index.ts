@@ -11,9 +11,10 @@ export function useMarkAllPushMessagesUnread() {
     },
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
+        const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
         if (mutationResult.data?.markAllPushMessagesUnread) {
-          const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
           return {
+            ...pushMessagesQueryResult,
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               unreadCount: pushMessagesQueryResult.pushMessages.items.length,
@@ -24,7 +25,7 @@ export function useMarkAllPushMessagesUnread() {
             },
           } satisfies GetPushMessagesQuery;
         } else {
-          return { ...previousQueryResult };
+          return { ...pushMessagesQueryResult };
         }
       },
     },

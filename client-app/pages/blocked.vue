@@ -1,7 +1,7 @@
 <template>
   <VcEmptyPage image="/static/images/blocked/image.webp" mobile-image="/static/images/blocked/image.webp">
     <template #description>
-      <VcTypography tag="h1" variant="h1" weight="bold" class="mb-6">
+      <VcTypography tag="h1" class="mb-6">
         {{ $t("pages.blocked.title") }}
       </VcTypography>
 

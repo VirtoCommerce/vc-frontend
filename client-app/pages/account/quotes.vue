@@ -1,10 +1,10 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex items-center justify-between">
-      <h2 class="text-3xl font-bold uppercase text-neutral-900">
+    <div class="flex items-center justify-between gap-2">
+      <VcTypography tag="h1">
         {{ $t("pages.account.quotes.title") }}
-      </h2>
+      </VcTypography>
 
       <VcButton size="sm" variant="outline" prepend-icon="plus" @click="requestQuote">
         <span class="hidden sm:inline">{{ $t("pages.account.quotes.request_quote_button") }}</span>

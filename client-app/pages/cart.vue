@@ -21,8 +21,7 @@
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
-    <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
+    <VcTypography tag="h1" class="mb-5">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 

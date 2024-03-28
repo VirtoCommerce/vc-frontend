@@ -1,5 +1,11 @@
 {
   "name": "vc-theme-b2b-vue",
+  "author": {
+    "email": "info@virtocommerce.com",
+    "name": "Virto Commerce",
+    "url": "https://virtocommerce.com"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
   "version": "1.55.0",
   "private": true,
   "type": "module",
@@ -38,6 +44,7 @@
     "@apollo/client": "^3.9.4",
     "@builder.io/sdk-vue": "^0.3.1",
     "@headlessui/vue": "^1.7.17",
+    "@hotjar/browser": "^1.0.9",
     "@popperjs/core": "^2.11.8",
     "@unhead/vue": "^1.8.10",
     "@vee-validate/rules": "~4.11.8",
