@@ -1,9 +1,8 @@
 <template>
   <div>
-    <!-- Title block -->
-    <div class="flex items-center justify-between lg:hidden">
-      <h2 v-t="'pages.account.dashboard.title'" class="text-3xl font-bold uppercase text-gray-800" />
-    </div>
+    <VcTypography tag="h1" class="lg:hidden">
+      {{ $t("pages.account.dashboard.title") }}
+    </VcTypography>
 
     <VcWidget :title="$t('pages.account.dashboard.last_orders_card.title')">
       <template #append>

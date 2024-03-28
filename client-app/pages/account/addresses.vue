@@ -2,9 +2,9 @@
   <div>
     <!-- Title block -->
     <div class="flex items-center justify-between">
-      <h2 class="truncate text-3xl font-bold uppercase text-gray-800">
+      <VcTypography tag="h1">
         {{ $t("common.titles.addresses") }}
-      </h2>
+      </VcTypography>
 
       <VcButton v-if="paginatedAddresses.length" size="sm" variant="outline" @click="openAddOrUpdateAddressModal()">
         <span class="sm:hidden">{{ $t("common.buttons.add_new") }}</span>

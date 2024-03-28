@@ -1,7 +1,9 @@
 <template>
   <div class="pt-7">
     <div class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10">
-      <h1 v-t="'pages.demo_landing.header'" class="text-3xl font-bold uppercase text-gray-900 lg:text-4xl"></h1>
+      <VcTypography tag="h1">
+        {{ $t("pages.demo_landing.header") }}
+      </VcTypography>
     </div>
 
     <div class="bg-gray-100 pb-16 pt-6 lg:py-24">
@@ -101,10 +103,10 @@
 
     <div class="bg-gray-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-        <h2
-          v-t="'pages.demo_landing.products_block.title'"
-          class="mb-2 text-center text-3xl font-bold lg:mb-4 lg:text-4xl"
-        ></h2>
+        <VcTypography tag="h2" variant="h1" class="mb-2 lg:mb-4">
+          {{ $t("pages.demo_landing.products_block.title") }}
+        </VcTypography>
+
         <div v-t="'pages.demo_landing.products_block.message'" class="text-center lg:text-lg"></div>
 
         <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
@@ -193,3 +195,9 @@ onMounted(async () => {
   });
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

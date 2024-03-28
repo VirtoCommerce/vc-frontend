@@ -1,9 +1,8 @@
 <template>
   <div>
-    <!-- Title block -->
-    <div class="flex items-center justify-between">
-      <h2 v-t="'pages.account.profile.title'" class="text-3xl font-bold uppercase text-gray-800" />
-    </div>
+    <VcTypography tag="h1">
+      {{ $t("pages.account.profile.title") }}
+    </VcTypography>
 
     <VcWidget size="lg" class="polygon-bg [--polygon-bg-position:right_bottom_-180px]">
       <form class="flex flex-col lg:w-1/2" @submit.prevent="onSubmit">
