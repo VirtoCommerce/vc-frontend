@@ -1,11 +1,13 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
+import type { FacetTermType } from "@/core/api/graphql/types";
 import type { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
 import type { Ref } from "vue";
 
 const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
 const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
+const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
 
 export function useUserOrdersFilter() {
   const { d, t } = useI18n();
@@ -24,7 +26,7 @@ export function useUserOrdersFilter() {
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: "statuses", value: status, label: status });
+        items.push({ fieldName: "statuses", value: status, label: findFacetLocalization(status) || status });
       }
     }
 
@@ -81,6 +83,14 @@ export function useUserOrdersFilter() {
     filterData.value = { ...appliedFilterData.value };
   }
 
+  function setFacetsLocalization(facets: FacetTermType[] | undefined) {
+    facetLocalization.value = facets;
+  }
+
+  function findFacetLocalization(term: string): string | undefined {
+    return facetLocalization.value?.find((el) => el.term === term)?.label;
+  }
+
   return {
     filterData,
     appliedFilterData: computed(() => appliedFilterData.value),
@@ -91,5 +101,6 @@ export function useUserOrdersFilter() {
     resetFilters,
     resetDataToApplied,
     removeFilterChipsItem,
+    setFacetsLocalization,
   };
 }
