@@ -1,9 +1,8 @@
 <template>
   <div>
-    <!-- Title block -->
-    <div class="flex items-center justify-between">
-      <h2 v-t="'pages.account.orders.title'" class="text-3xl font-bold uppercase text-gray-800" />
-    </div>
+    <VcTypography tag="h1">
+      {{ $t("pages.account.orders.title") }}
+    </VcTypography>
 
     <Orders with-search with-pagination />
   </div>

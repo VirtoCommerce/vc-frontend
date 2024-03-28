@@ -6,7 +6,7 @@
 
     <!-- Title block -->
     <div class="flex flex-col gap-2.5 lg:flex-row lg:justify-between">
-      <VcTypography tag="h1" variant="h2" weight="bold">
+      <VcTypography tag="h1">
         {{ $t("pages.account.order_details.title", [order?.number]) }}
       </VcTypography>
 

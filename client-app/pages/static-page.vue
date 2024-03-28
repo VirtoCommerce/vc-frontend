@@ -5,9 +5,10 @@
       class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
     >
       <VcBreadcrumbs v-if="!template.settings?.hideBreadcrumbs" class="mb-3" :items="breadcrumbs"></VcBreadcrumbs>
-      <h1 v-if="template.settings?.header" class="text-2xl font-bold uppercase md:text-4xl">
+
+      <VcTypography v-if="template.settings?.header" tag="h1">
         {{ template.settings.header }}
-      </h1>
+      </VcTypography>
     </div>
     <template v-for="item in template.content">
       <!-- @deprecated. TODO Keep only v-bind="item". Remove settings and model from all components -->

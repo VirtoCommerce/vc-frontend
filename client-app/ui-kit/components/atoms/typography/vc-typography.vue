@@ -1,93 +1,99 @@
 <template>
   <component
     :is="tag"
-    :class="['vc-typography', `vc-typography--variant--${variant}`, `vc-typography--weight--${weight}`]"
+    :class="[
+      'vc-typography',
+      `vc-typography--variant--${_variant}`,
+      {
+        'vc-typography--truncate': truncate,
+      },
+    ]"
   >
     <slot />
   </component>
 </template>
 
 <script setup lang="ts">
-interface Props {
+import { computed } from "vue";
+
+interface IProps {
   tag?: string;
-  variant?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "large" | "base" | "medium" | "small";
-  weight?: "normal" | "semibold" | "bold" | "extrabold";
+  variant?: VcTypographyVariantType;
+  truncate?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<IProps>(), {
   tag: "p",
-  variant: "base",
-  weight: "normal",
+  align: "left",
+});
+
+const isHeader = computed(() => /^(h[1-6])$/.test(props.tag));
+
+const _variant = computed(() => {
+  if (props.variant) {
+    return props.variant;
+  }
+
+  if (isHeader.value) {
+    return props.tag;
+  }
+
+  return "base";
 });
 </script>
 
 <style lang="scss">
 .vc-typography {
-  @apply text-inherit;
+  @apply empty:hidden;
 
   &--variant {
     &--h1 {
-      @apply text-3xl uppercase tracking-wide;
+      @apply text-2xl tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
-        @apply text-4xl;
+        @apply text-3xl;
       }
     }
 
     &--h2 {
-      @apply text-3xl uppercase tracking-wide;
+      @apply text-xl tracking-wide font-bold uppercase;
+
+      @media (min-width: theme("screens.lg")) {
+        @apply text-2xl;
+      }
     }
 
     &--h3 {
-      @apply text-xl uppercase tracking-wide;
-    }
-
-    &--h4 {
-    }
-
-    &--h5 {
-    }
-
-    &--h6 {
-    }
-
-    &--large {
-      @apply text-lg;
+      @apply text-lg tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
         @apply text-xl;
       }
     }
 
+    &--h4 {
+      @apply text-base font-bold uppercase;
+
+      @media (min-width: theme("screens.lg")) {
+        @apply text-lg;
+      }
+    }
+
+    &--h5 {
+      @apply text-base font-bold uppercase;
+    }
+
+    &--h6 {
+      @apply text-base font-bold uppercase;
+    }
+
     &--base {
       @apply text-base;
     }
-
-    &--medium {
-      @apply text-sm;
-    }
-
-    &--small {
-      @apply text-xs;
-    }
   }
 
-  &--weight {
-    &--normal {
-      @apply font-normal;
-    }
-
-    &--semibold {
-      @apply font-semibold;
-    }
-
-    &--bold {
-      @apply font-bold;
-    }
-
-    &--extrabold {
-      @apply font-extrabold;
-    }
+  &--truncate {
+    @apply truncate;
   }
 }
 </style>

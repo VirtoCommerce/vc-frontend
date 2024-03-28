@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-col font-lato">
+  <div class="flex min-h-screen flex-col">
     <VcHeader />
 
     <!-- Main Content -->

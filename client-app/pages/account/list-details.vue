@@ -7,9 +7,9 @@
     <div class="flex flex-col">
       <!-- Title block -->
       <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
-        <h2 v-if="list?.name" class="truncate text-3xl font-bold uppercase text-gray-800">
+        <VcTypography v-if="list?.name" tag="h1" truncate>
           {{ list.name }}
-        </h2>
+        </VcTypography>
 
         <!-- Title skeleton -->
         <div v-else class="w-2/3 bg-gray-200 text-3xl md:w-1/3">&nbsp;</div>
@@ -99,6 +99,7 @@
             </VcButton>
           </template>
         </VcEmptyView>
+        <Error404 v-else-if="!listLoading && !list" />
       </div>
     </div>
   </div>
@@ -107,7 +108,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { cloneDeep, isEqual, keyBy } from "lodash";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -138,11 +139,13 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
-const { loading: listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
+const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
 const {
   loading: cartLoading,
   changing: cartChanging,
