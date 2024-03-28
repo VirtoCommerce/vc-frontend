@@ -23,6 +23,7 @@ import type { Ref } from "vue";
 const loading = ref(true);
 const lists = shallowRef<WishlistType[]>([]);
 const list: Ref<WishlistType | undefined> = ref();
+const listLoading = ref(true);
 
 export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: true }) {
   async function createWishlist(payload: CreateWishlistPayloadType): Promise<string | undefined> {
@@ -44,7 +45,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
   }
 
   async function updateWishlist(payload: ChangeWishlistPayloadType): Promise<void> {
-    loading.value = true;
+    listLoading.value = true;
 
     try {
       list.value = await changeWishlist(payload);
@@ -52,7 +53,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
       Logger.error(`${useWishlists.name}.${updateWishlist.name}`, e);
       throw e;
     } finally {
-      loading.value = false;
+      listLoading.value = false;
     }
 
     if (options.autoRefetch) {
@@ -76,7 +77,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
   }
 
   async function fetchWishList(listId: string) {
-    loading.value = true;
+    listLoading.value = true;
 
     try {
       list.value = await getWishList(listId);
@@ -84,7 +85,7 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
       Logger.error(`${useWishlists.name}.${fetchWishList.name}`, e);
       throw e;
     } finally {
-      loading.value = false;
+      listLoading.value = false;
     }
   }
 
@@ -161,5 +162,6 @@ export function useWishlists(options: { autoRefetch: boolean } = { autoRefetch: 
     loading: readonly(loading),
     lists: computed(() => lists.value),
     list: computed(() => list.value),
+    listLoading: readonly(listLoading),
   };
 }
