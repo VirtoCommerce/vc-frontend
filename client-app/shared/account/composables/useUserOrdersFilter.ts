@@ -26,7 +26,7 @@ export function useUserOrdersFilter() {
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
-        items.push({ fieldName: "statuses", value: status, label: findFacetLocalization(status) || status });
+        items.push({ fieldName: "statuses", value: status, label: getFacetLocalization(status) || status });
       }
     }
 
@@ -87,7 +87,7 @@ export function useUserOrdersFilter() {
     facetLocalization.value = facets;
   }
 
-  function findFacetLocalization(term: string): string | undefined {
+  function getFacetLocalization(term: string): string | undefined {
     return facetLocalization.value?.find((el) => el.term === term)?.label;
   }
 
