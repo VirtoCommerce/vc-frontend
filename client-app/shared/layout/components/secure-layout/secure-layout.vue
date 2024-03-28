@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-col font-lato">
+  <div class="flex min-h-screen flex-col">
     <!-- Header -->
     <div
       class="sticky top-0 z-10 flex h-14 items-center justify-between gap-3 bg-[color:var(--color-header-bottom-bg)] px-6 shadow-md lg:h-auto lg:px-12 lg:py-5 print:relative print:px-0 print:shadow-none"
