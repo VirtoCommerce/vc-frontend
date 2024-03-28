@@ -147,7 +147,6 @@ const {
   meta,
   errors: formErrors,
   defineField,
-  resetForm,
 } = useForm({
   validationSchema,
   initialValues,
@@ -184,12 +183,6 @@ function updateValue(value?: string): void {
 function input() {
   emit("update:modelValue", clone(values));
 }
-
-watch(
-  () => props.modelValue,
-  (value) => resetForm({ values: { ...initialValues, ...value } }),
-  { deep: true },
-);
 
 watch(
   () => meta.value.valid,
