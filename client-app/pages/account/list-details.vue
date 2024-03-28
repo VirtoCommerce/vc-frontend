@@ -7,9 +7,9 @@
     <div class="flex flex-col">
       <!-- Title block -->
       <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
-        <h2 v-if="list?.name" class="truncate text-3xl font-bold uppercase text-gray-800">
+        <VcTypography v-if="list?.name" tag="h1" truncate>
           {{ list.name }}
-        </h2>
+        </VcTypography>
 
         <!-- Title skeleton -->
         <div v-else class="w-2/3 bg-gray-200 text-3xl md:w-1/3">&nbsp;</div>

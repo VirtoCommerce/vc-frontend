@@ -6,9 +6,9 @@
     class="flex grow flex-col"
   >
     <template #description>
-      <h1 class="mb-8 text-center text-3xl font-bold uppercase lg:text-left">
+      <VcTypography tag="h1" class="mb-6 text-center lg:text-left">
         {{ $t("pages.confirm_email.header") }}
-      </h1>
+      </VcTypography>
 
       <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
         <VcIcon name="check" size="xxl" class="text-[color:var(--color-success)]" />
@@ -47,9 +47,9 @@
     class="flex grow flex-col"
   >
     <template #description>
-      <h1 class="mb-8 text-center text-3xl font-bold uppercase lg:text-left">
+      <VcTypography tag="h1" class="mb-6 text-center lg:text-left">
         {{ $t("pages.confirm_email.header") }}
-      </h1>
+      </VcTypography>
 
       <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
         <VcIcon name="exclamation-circle" size="xxl" class="text-[color:var(--color-danger)]" />

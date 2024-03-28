@@ -1,7 +1,9 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1 v-t="`pages.${localizationPageTerm}.header`" class="mb-5 text-3xl font-bold uppercase lg:mt-5 lg:text-4xl" />
+      <VcTypography tag="h1" class="lg:mt-5">
+        {{ $t(`pages.${localizationPageTerm}.header`) }}
+      </VcTypography>
 
       <template v-if="isValidData">
         <template v-if="!isSucceeded">

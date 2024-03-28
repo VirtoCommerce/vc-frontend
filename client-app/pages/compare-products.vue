@@ -19,8 +19,10 @@
     <VcBreadcrumbs :items="breadcrumbs" class="mb-3"></VcBreadcrumbs>
 
     <div class="flex flex-col lg:mb-5 lg:flex-row lg:space-x-12">
-      <div class="flex flex-col space-y-1.5">
-        <h1 class="text-black-800 text-3xl font-bold uppercase">{{ $t("pages.compare.header_block.title") }}</h1>
+      <div class="space-y-1.5">
+        <VcTypography tag="h1">
+          {{ $t("pages.compare.header_block.title") }}
+        </VcTypography>
 
         <i18n-t keypath="pages.compare.header_block.counter_message" scope="global" tag="span" class="mb-3 block">
           <template #productsNumber>

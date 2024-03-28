@@ -1,11 +1,11 @@
 <template>
   <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
-    <div class="flex flex-col gap-3">
+    <div class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
-      <h2 class="text-26 font-bold uppercase tracking-wide lg:text-3xl lg:leading-8">
+      <VcTypography tag="h1">
         {{ $t("pages.account.quote_details.title", [quote!.number]) }}
-      </h2>
+      </VcTypography>
     </div>
 
     <div class="space-y-5 lg:space-y-6">
