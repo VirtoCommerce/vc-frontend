@@ -148,7 +148,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { useForm } from "vee-validate";
+import { useField, useForm } from "vee-validate";
 import { computed, watch } from "vue";
 import * as yup from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
@@ -194,76 +194,8 @@ const initialValues: MemberAddressType = {
   description: "",
 };
 
-const validationSchema = computed(() => {
-  let email = yup.string().trim().max(64).email().nullable();
-  if (props.withPersonalInfo && props.requiredEmail) {
-    email = email.required();
-  }
-
-  let phone = yup.string().trim().max(64).nullable();
-  if (props.withPersonalInfo && props.requiredPhone) {
-    phone = phone.required();
-  }
-
-  let city = yup.string().trim().max(128).nullable();
-  if (props.requiredCity) {
-    city = city.required();
-  }
-
-  const regionId = yup
-    .string()
-    .nullable()
-    .when("countryCode", {
-      is: (value: string) => props.countries.find((item) => value === item.id)?.regions.length,
-      then: (schema) => schema.required(),
-    });
-
-  let firstName = yup.string().trim().max(64).nullable();
-  if (props.withPersonalInfo) {
-    firstName = firstName.required();
-  }
-
-  let lastName = yup.string().trim().max(64).nullable();
-  if (props.withPersonalInfo) {
-    lastName = lastName.required();
-  }
-
-  const postalCode = yup.string().trim().max(32).required().nullable();
-
-  const countryCode = yup.string().required().nullable();
-
-  const countryName = yup.string().max(128).nullable();
-
-  const regionName = yup.string().max(128).nullable();
-
-  const line1 = yup.string().trim().max(128).required().nullable();
-
-  const line2 = yup.string().trim().max(128).nullable();
-
-  const description = yup.string().trim().max(128).nullable();
-
-  return toTypedSchema(
-    yup.object({
-      email,
-      city,
-      phone,
-      firstName,
-      lastName,
-      postalCode,
-      countryCode,
-      countryName,
-      regionName,
-      regionId,
-      line1,
-      line2,
-      description,
-    }),
-  );
-});
-
-const { defineField, values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm<MemberAddressType>({
+const { values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm<MemberAddressType>({
   initialValues,
-  validationSchema,
 });
 
 const slotsData = computed(() => ({
@@ -280,19 +212,57 @@ const slotsData = computed(() => ({
   touched: meta.value.touched,
 }));
 
-const [email] = defineField("email");
-const [city] = defineField("city");
-const [phone] = defineField("phone");
-const [firstName] = defineField("firstName");
-const [lastName] = defineField("lastName");
-const [postalCode] = defineField("postalCode");
-const [countryCode] = defineField("countryCode");
-const [countryName] = defineField("countryName");
-const [regionName] = defineField("regionName");
-const [regionId] = defineField("regionId");
-const [line1] = defineField("line1");
-const [line2] = defineField("line2");
-const [description] = defineField("description");
+const emailRules = computed(() => {
+  let rules = yup.string().max(64).email().nullable();
+  if (props.withPersonalInfo && props.requiredEmail) {
+    rules = rules.required();
+  }
+  return toTypedSchema(rules);
+});
+
+const phoneRules = computed(() => {
+  let rules = yup.string().max(64).nullable();
+  if (props.withPersonalInfo && props.requiredPhone) {
+    rules = rules.required();
+  }
+  return toTypedSchema(rules);
+});
+
+const cityRules = computed(() => {
+  let rules = yup.string().max(128).nullable();
+  if (props.requiredCity) {
+    rules = rules.required();
+  }
+  return toTypedSchema(rules);
+});
+
+const regionRules = computed(() => {
+  // Do not use computed based on field value cause it may cause infinite loop
+  const rules = yup
+    .string()
+    .nullable()
+    .when("countryCode", {
+      is: (value: string) => props.countries.find((item) => value === item.id)?.regions.length,
+      then: (schema) => schema.required(),
+    });
+  return toTypedSchema(rules);
+});
+
+const firstNameRules = computed(() => {
+  let rules = yup.string().max(64).nullable();
+  if (props.withPersonalInfo) {
+    rules = rules.required();
+  }
+  return toTypedSchema(rules);
+});
+
+const lastNameRules = computed(() => {
+  let rules = yup.string().max(64).nullable();
+  if (props.withPersonalInfo) {
+    rules = rules.required();
+  }
+  return toTypedSchema(rules);
+});
 
 const country = computed<CountryType | undefined>({
   get: () => props.countries.find((item) => countryCode.value === item.id),
@@ -314,6 +284,20 @@ const region = computed<CountryRegionType | undefined>({
   },
 });
 
+const { value: email } = useField("email", emailRules);
+const { value: city } = useField("city", cityRules);
+const { value: phone } = useField("phone", phoneRules);
+const { value: firstName } = useField("firstName", firstNameRules);
+const { value: lastName } = useField("lastName", lastNameRules);
+const { value: postalCode } = useField("postalCode", toTypedSchema(yup.string().max(32).required().nullable()));
+const { value: countryCode } = useField("countryCode", toTypedSchema(yup.string().required().nullable()));
+const { value: countryName } = useField("countryName", toTypedSchema(yup.string().max(128).nullable()));
+const { value: regionName } = useField("regionName", toTypedSchema(yup.string().max(128).nullable()));
+const { value: regionId } = useField("regionId", regionRules);
+const { value: line1 } = useField("line1", toTypedSchema(yup.string().max(128).required().nullable()));
+const { value: line2 } = useField("line2", toTypedSchema(yup.string().max(128).nullable()));
+const { value: description } = useField("description", toTypedSchema(yup.string().max(128).nullable()));
+
 const save = handleSubmit((address) => {
   const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
   emit("update:modelValue", newAddress);
@@ -322,8 +306,8 @@ const save = handleSubmit((address) => {
 
 watch(
   () => props.modelValue,
-  (value) => {
-    resetForm({ values: { ...initialValues, ...value } });
+  (modelValue) => {
+    resetForm({ values: modelValue });
   },
   { deep: true, immediate: true },
 );
