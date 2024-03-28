@@ -213,7 +213,7 @@ const slotsData = computed(() => ({
 }));
 
 const emailRules = computed(() => {
-  let rules = yup.string().max(64).email().nullable();
+  let rules = yup.string().trim().max(64).email().nullable();
   if (props.withPersonalInfo && props.requiredEmail) {
     rules = rules.required();
   }
@@ -221,7 +221,7 @@ const emailRules = computed(() => {
 });
 
 const phoneRules = computed(() => {
-  let rules = yup.string().max(64).nullable();
+  let rules = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo && props.requiredPhone) {
     rules = rules.required();
   }
@@ -229,7 +229,7 @@ const phoneRules = computed(() => {
 });
 
 const cityRules = computed(() => {
-  let rules = yup.string().max(128).nullable();
+  let rules = yup.string().trim().max(128).nullable();
   if (props.requiredCity) {
     rules = rules.required();
   }
@@ -249,7 +249,7 @@ const regionRules = computed(() => {
 });
 
 const firstNameRules = computed(() => {
-  let rules = yup.string().max(64).nullable();
+  let rules = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo) {
     rules = rules.required();
   }
@@ -257,7 +257,7 @@ const firstNameRules = computed(() => {
 });
 
 const lastNameRules = computed(() => {
-  let rules = yup.string().max(64).nullable();
+  let rules = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo) {
     rules = rules.required();
   }
@@ -289,14 +289,14 @@ const { value: city } = useField("city", cityRules);
 const { value: phone } = useField("phone", phoneRules);
 const { value: firstName } = useField("firstName", firstNameRules);
 const { value: lastName } = useField("lastName", lastNameRules);
-const { value: postalCode } = useField("postalCode", toTypedSchema(yup.string().max(32).required().nullable()));
+const { value: postalCode } = useField("postalCode", toTypedSchema(yup.string().trim().max(32).required().nullable()));
 const { value: countryCode } = useField("countryCode", toTypedSchema(yup.string().required().nullable()));
 const { value: countryName } = useField("countryName", toTypedSchema(yup.string().max(128).nullable()));
 const { value: regionName } = useField("regionName", toTypedSchema(yup.string().max(128).nullable()));
 const { value: regionId } = useField("regionId", regionRules);
-const { value: line1 } = useField("line1", toTypedSchema(yup.string().max(128).required().nullable()));
-const { value: line2 } = useField("line2", toTypedSchema(yup.string().max(128).nullable()));
-const { value: description } = useField("description", toTypedSchema(yup.string().max(128).nullable()));
+const { value: line1 } = useField("line1", toTypedSchema(yup.string().trim().max(128).required().nullable()));
+const { value: line2 } = useField("line2", toTypedSchema(yup.string().trim().max(128).nullable()));
+const { value: description } = useField("description", toTypedSchema(yup.string().trim().max(128).nullable()));
 
 const save = handleSubmit((address) => {
   const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
