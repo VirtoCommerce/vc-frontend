@@ -4,11 +4,11 @@
 
     <VcPriceDisplay
       class="vc-line-item-total__actual"
-      :value="listTotal?.amount > actualTotal?.amount ? actualTotal : listTotal"
+      :value="listTotal && actualTotal && listTotal?.amount > actualTotal?.amount ? actualTotal : listTotal"
     />
 
     <VcPriceDisplay
-      v-if="listTotal?.amount > actualTotal?.amount"
+      v-if="listTotal && actualTotal && listTotal?.amount > actualTotal?.amount"
       class="vc-line-item-total__list"
       :value="listTotal"
     />
@@ -24,6 +24,8 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+console.warn("[UIKit][warn] VcLineItemTotal is deprecated, use VcProductPrice instead.");
 </script>
 
 <style lang="scss">

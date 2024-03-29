@@ -2,10 +2,10 @@
   <div class="vc-line-item-price">
     <VcPriceDisplay
       class="vc-line-item-price__actual"
-      :value="listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice"
+      :value="listPrice && actualPrice && listPrice?.amount > actualPrice?.amount ? actualPrice : listPrice"
     />
     <VcPriceDisplay
-      v-if="listPrice?.amount > actualPrice?.amount"
+      v-if="listPrice && actualPrice && listPrice?.amount > actualPrice?.amount"
       class="vc-line-item-price__list"
       :value="listPrice"
     />
@@ -21,6 +21,8 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+console.warn("[UIKit][warn] VcLineItemPrice is deprecated, use VcProductPrice instead.");
 </script>
 
 <style lang="scss">

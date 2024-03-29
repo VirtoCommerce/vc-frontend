@@ -154,7 +154,7 @@ const subtotal = computed<number>(() =>
   hasTotal.value
     ? sumBy(
         props.items.filter((item) => selectedItemIds.value.includes(item.id)),
-        (item) => item.extendedPrice?.amount,
+        (item) => item.extendedPrice?.amount ?? 0,
       )
     : 0,
 );
