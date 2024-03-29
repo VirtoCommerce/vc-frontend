@@ -13,22 +13,15 @@
     <span class="vc-product-price__actual">
       <span v-if="hasVariations" class="vc-product-price__variations"> {{ $t("common.suffixes.from") }}</span>
 
-      <VcPriceDisplay
-        :value="
-          (listPrice && actualPrice && listPrice?.amount > actualPrice?.amount) || !listPrice ? actualPrice : listPrice
-        "
-      />
+      <VcPriceDisplay :value="shouldUseActualPrice || !listPrice ? actualPrice : listPrice" />
     </span>
 
-    <VcPriceDisplay
-      v-if="!hasVariations && listPrice && actualPrice && listPrice?.amount > actualPrice?.amount"
-      class="vc-product-price__list"
-      :value="listPrice"
-    />
+    <VcPriceDisplay v-if="!hasVariations && shouldUseActualPrice" class="vc-product-price__list" :value="listPrice" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -41,8 +34,12 @@ interface IProps {
   disabled?: boolean;
 }
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   align: "start",
+});
+
+const shouldUseActualPrice = computed(() => {
+  return props.listPrice && props.actualPrice && props.listPrice.amount > props.actualPrice.amount;
 });
 </script>
 
