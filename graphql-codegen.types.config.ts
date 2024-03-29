@@ -1,53 +1,37 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+import { relative } from "path";
+import { GRAPHQL_DIRECTORY, GRAPHQL_TYPES_DIRECTORY } from "./client-app/core/constants/graphql";
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
-// Workaround for missed field in CodegenConfig
-// Types is a copy of not exported types from @graphql-codegen/cli with added field
-
-interface CustomDocumentLoaderOptions {
-  skipGraphQLImport?: boolean;
-}
-
-interface CustomDocumentLoader {
-  [path: string]: CustomDocumentLoaderOptions;
-}
-
-type OperationDocument = CustomDocumentLoader;
-
-type CodegenConfigWorkaround = { documents: OperationDocument | OperationDocument[] };
-
-const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
-  schema: `client-app/core/api/graphql/schema.json`,
-  documents: {
-    "client-app/**/*.(graphql|gql)": {
-      skipGraphQLImport: false,
-    },
-  },
+const graphQLCodegenTypesConfig: CodegenConfig = {
+  schema: `${GRAPHQL_DIRECTORY}/schema.json`,
+  documents: ["client-app/**/*.(graphql|gql)"],
   generates: {
-    "client-app/core/api/graphql/types.ts": {
-      plugins: [
-        {
-          add: {
-            content: "// This file is auto-generated. Do not edit manually.\n",
-          },
-        },
-        "typescript",
-        "typescript-operations",
-        "typed-document-node",
-        "named-operations-object",
-      ],
+    [`${GRAPHQL_TYPES_DIRECTORY}/base.generated.ts`]: { plugins: ["typescript"] },
+    [`${GRAPHQL_TYPES_DIRECTORY}/operations.generated.ts`]: {
+      plugins: ["named-operations-object"],
       config: {
-        dedupeFragments: true,
         identifierName: "OperationNames",
-        maybeValue: "T",
-        scalars: {
-          Long: "number",
-          OptionalString: "string | undefined",
-        },
-        skipTypename: true,
-        useTypeImports: true,
       },
     },
+    "client-app/": {
+      preset: "near-operation-file",
+      presetConfig: {
+        baseTypesPath: relative("client-app", `${GRAPHQL_TYPES_DIRECTORY}/base.generated.ts`),
+        extensions: ".generated.ts",
+      },
+      plugins: ["typescript-operations", "typed-document-node"],
+    },
+  },
+  config: {
+    dedupeFragments: true,
+    inlineFragmentTypes: "combine",
+    maybeValue: "T",
+    scalars: {
+      Long: "number",
+      OptionalString: "string | undefined",
+    },
+    skipTypename: true,
+    useTypeImports: true,
   },
 };
 

@@ -3,5 +3,7 @@ assets
 content
 node_modules
 storybook-static
-client-app/core/api/graphql/types.ts
+client-app/core/api/graphql/schema.json
+client-app/core/api/graphql/types/index.ts
+client-app/**/*.generated.ts
 scripts/generate-routes.ts
