@@ -1,11 +1,19 @@
 import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import type { Property, PropertyType } from "@/core/api/graphql/types";
+import type { NonUndefined } from "utility-types";
+
+function hasPropertyValue(property: Property): property is Property & { value: NonUndefined<Property["value"]> } {
+  return !(
+    property.value === undefined ||
+    (property.value === null && property.propertyValueType !== PropertyValueTypes.Boolean)
+  );
+}
 
 export function getPropertyValue(property: Property): string | null | undefined {
   const { t, d, n } = globals.i18n.global;
 
-  if (property.value === null || property.value === undefined) {
+  if (!hasPropertyValue(property)) {
     return;
   }
 
@@ -25,23 +33,18 @@ export function getPropertyValue(property: Property): string | null | undefined 
   }
 }
 
-export function getPropertiesGroupedByName(items: Property[], type?: PropertyType): Record<string, Property> {
-  return items.reduce<Record<string, Property>>((propertiesByName, item) => {
-    if (
-      item.hidden ||
-      (type && type !== item.propertyType) ||
-      item.value === void 0 ||
-      (item.value === null && item.propertyValueType !== PropertyValueTypes.Boolean)
-    ) {
+export function getPropertiesGroupedByName(properties: Property[], type?: PropertyType): Record<string, Property> {
+  return properties.reduce<Record<string, Property>>((propertiesByName, property) => {
+    if (property.hidden || (type && type !== property.propertyType) || !hasPropertyValue(property)) {
       return propertiesByName;
     }
 
-    const value: string | null | undefined = getPropertyValue(item);
+    const value: string | null | undefined = getPropertyValue(property);
 
-    if (propertiesByName[item.name]) {
-      propertiesByName[item.name].value += `, ${value}`;
+    if (propertiesByName[property.name]) {
+      propertiesByName[property.name].value += `, ${value}`;
     } else {
-      propertiesByName[item.name] = { ...item, value, label: item.label || item.name };
+      propertiesByName[property.name] = { ...property, value, label: property.label || property.name };
     }
 
     return propertiesByName;
