@@ -1,28 +1,27 @@
+import { PropertyValueTypes } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
-import { PropertyValueType } from "../../enums";
-import type { PropertyType } from "../../enums";
-import type { Property } from "@/core/api/graphql/types";
+import type { Property, PropertyType } from "@/core/api/graphql/types";
 
 export function getPropertyValue(property: Property): string | null | undefined {
   const { t, d, n } = globals.i18n.global;
 
-  if (!property.value) {
+  if (property.value === null || property.value === undefined) {
     return;
   }
 
-  switch (property.valueType) {
-    case PropertyValueType.Boolean:
+  switch (property.propertyValueType) {
+    case PropertyValueTypes.Boolean:
       return property.value ? t("common.labels.true_property") : t("common.labels.false_property");
 
-    case PropertyValueType.DateTime:
-      return d(new Date(property.value));
+    case PropertyValueTypes.DateTime:
+      return d(new Date(property.value as string));
 
-    case PropertyValueType.Integer:
-    case PropertyValueType.DecimalNumber:
-      return n(property.value);
+    case PropertyValueTypes.Integer:
+    case PropertyValueTypes.Number:
+      return n(property.value as number);
 
     default:
-      return property.value;
+      return property.value as string;
   }
 }
 
@@ -30,9 +29,9 @@ export function getPropertiesGroupedByName(items: Property[], type?: PropertyTyp
   return items.reduce<Record<string, Property>>((propertiesByName, item) => {
     if (
       item.hidden ||
-      (type && type !== item.type) ||
+      (type && type !== item.propertyType) ||
       item.value === void 0 ||
-      (item.value === null && item.valueType !== PropertyValueType.Boolean)
+      (item.value === null && item.propertyValueType !== PropertyValueTypes.Boolean)
     ) {
       return propertiesByName;
     }
