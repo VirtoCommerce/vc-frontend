@@ -8,7 +8,7 @@ describe("shouldUseActualPrice", () => {
   });
 
   it("should return false when actualPrice is not provided", () => {
-    const result = shouldUseActualPrice({ amount: 20 }, undefined);
+    const result = shouldUseActualPrice({ amount: 20 });
     expect(result).toBe(false);
   });
 
