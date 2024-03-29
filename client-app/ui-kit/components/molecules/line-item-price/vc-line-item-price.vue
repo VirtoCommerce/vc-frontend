@@ -1,24 +1,26 @@
 <template>
   <div class="vc-line-item-price">
-    <VcPriceDisplay class="vc-line-item-price__actual" :value="shouldUseActualPrice ? actualPrice : listPrice" />
-    <VcPriceDisplay v-if="shouldUseActualPrice" class="vc-line-item-price__list" :value="listPrice" />
+    <VcPriceDisplay
+      class="vc-line-item-price__actual"
+      :value="shouldUseActualPrice(listPrice, actualPrice) ? actualPrice : listPrice"
+    />
+    <VcPriceDisplay
+      v-if="shouldUseActualPrice(listPrice, actualPrice)"
+      class="vc-line-item-price__list"
+      :value="listPrice"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
 import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
   listPrice?: MoneyType;
   actualPrice?: MoneyType;
 }
-
-const props = defineProps<IProps>();
-
-const shouldUseActualPrice = computed(() => {
-  return props.listPrice && props.actualPrice && props.listPrice.amount > props.actualPrice.amount;
-});
+defineProps<IProps>();
 
 console.warn("[UIKit][warn] VcLineItemPrice is deprecated, use VcProductPrice instead.");
 </script>

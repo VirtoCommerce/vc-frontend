@@ -2,14 +2,21 @@
   <div class="vc-line-item-total">
     <div class="vc-line-item-total__label">{{ $t("common.labels.total") }}</div>
 
-    <VcPriceDisplay class="vc-line-item-total__actual" :value="shouldUseActualTotal ? actualTotal : listTotal" />
+    <VcPriceDisplay
+      class="vc-line-item-total__actual"
+      :value="shouldUseActualPrice(listTotal, actualTotal) ? actualTotal : listTotal"
+    />
 
-    <VcPriceDisplay v-if="shouldUseActualTotal" class="vc-line-item-total__list" :value="listTotal" />
+    <VcPriceDisplay
+      v-if="shouldUseActualPrice(listTotal, actualTotal)"
+      class="vc-line-item-total__list"
+      :value="listTotal"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
 import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -17,11 +24,7 @@ interface IProps {
   actualTotal?: MoneyType;
 }
 
-const props = defineProps<IProps>();
-
-const shouldUseActualTotal = computed(() => {
-  return props.listTotal && props.actualTotal && props.listTotal.amount > props.actualTotal.amount;
-});
+defineProps<IProps>();
 
 console.warn("[UIKit][warn] VcLineItemTotal is deprecated, use VcProductPrice instead.");
 </script>

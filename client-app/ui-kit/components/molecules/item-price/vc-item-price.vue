@@ -2,7 +2,7 @@
   <div class="flex flex-col">
     <div class="flex space-x-1">
       <VcPriceDisplay
-        v-if="value?.list && value?.actual && value.list.amount > value.actual.amount"
+        v-if="shouldUseActualPrice(value?.list, value?.actual)"
         class="font-extrabold"
         :class="priceColorClass"
         :value="value?.actual"
@@ -12,15 +12,16 @@
     </div>
     <div class="leading-4">
       <VcPriceDisplay
-        v-if="value?.list && value?.actual && value.list.amount > value.actual.amount"
+        v-if="shouldUseActualPrice(value?.list, value?.actual)"
         class="text-xs font-semibold text-gray-400 line-through"
-        :value="value.list"
+        :value="value?.list"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
 import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {
