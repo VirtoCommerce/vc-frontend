@@ -164,7 +164,11 @@
           </div>
 
           <div class="flex flex-col items-end justify-center">
-            <OrderStatus class="w-full !max-w-[9rem]" :status="itemData.item.status" />
+            <OrderStatus
+              class="w-full !max-w-[9rem]"
+              :status="itemData.item.status"
+              :display-value="itemData.item.statusDisplayValue"
+            />
           </div>
 
           <div class="flex flex-col">
@@ -235,12 +239,16 @@
           <td class="p-5 text-center">
             <VcTooltip class="!block">
               <template #trigger>
-                <OrderStatus class="w-full !max-w-[9rem]" :status="order.status" />
+                <OrderStatus
+                  class="w-full !max-w-[9rem]"
+                  :status="order.status"
+                  :display-value="order.statusDisplayValue"
+                />
               </template>
 
               <template #content>
                 <div class="rounded-sm bg-[--color-additional-50] px-3.5 py-1.5 text-xs shadow-sm-x-y">
-                  {{ order.status }}
+                  {{ order.statusDisplayValue }}
                 </div>
               </template>
             </VcTooltip>
