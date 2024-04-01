@@ -1,10 +1,8 @@
 <template>
   <div>
-    <div class="flex justify-between">
-      <h2 class="text-3xl font-bold uppercase text-gray-800">
-        {{ $t("shared.account.navigation.links.saved_credit_cards") }}
-      </h2>
-    </div>
+    <VcTypography tag="h1">
+      {{ $t("shared.account.navigation.links.saved_credit_cards") }}
+    </VcTypography>
 
     <!-- Skeletons -->
     <div v-if="loading" class="flex flex-col divide-y lg:space-y-3 lg:divide-none">

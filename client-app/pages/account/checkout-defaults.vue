@@ -1,9 +1,8 @@
 <template>
   <div>
-    <!-- Title block -->
-    <div class="flex items-center justify-between">
-      <h2 v-t="'pages.account.checkout_defaults.title'" class="text-3xl font-bold uppercase text-neutral-900" />
-    </div>
+    <VcTypography tag="h1">
+      {{ $t("pages.account.checkout_defaults.title") }}
+    </VcTypography>
 
     <VcWidget size="lg">
       <VcLoaderWithText v-if="loading" />
@@ -36,7 +35,7 @@
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
               <VcImage
-                class="h-12 w-12 rounded-sm bg-[--color-neutral-100]"
+                class="size-12 rounded-sm bg-[--color-neutral-100]"
                 src="/static/icons/placeholders/select-payment.svg"
               />
 
@@ -46,14 +45,14 @@
 
           <template #selected="{ item }">
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+              <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
               {{ $t(`common.methods.payment_by_code.${item.code}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
             {{ $t(`common.methods.payment_by_code.${item.code}`) }}
           </template>
@@ -70,7 +69,7 @@
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
               <VcImage
-                class="h-12 w-12 rounded-sm bg-[--color-neutral-100]"
+                class="size-12 rounded-sm bg-[--color-neutral-100]"
                 src="/static/icons/placeholders/select-shipping.svg"
               />
 
@@ -80,14 +79,14 @@
 
           <template #selected="{ item }">
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+              <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
               {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="h-12 w-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
 
             {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
           </template>

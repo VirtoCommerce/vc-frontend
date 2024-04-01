@@ -1,6 +1,8 @@
 <template>
   <VcContainer :class="{ 'pointer-events-none opacity-50': loading }">
-    <h1 class="-ml-0.5 text-28 font-bold uppercase lg:text-34">{{ fulfillmentCenter?.name }}</h1>
+    <VcTypography tag="h1">
+      {{ fulfillmentCenter?.name }}
+    </VcTypography>
 
     <div class="mt-4 lg:mt-6 lg:flex lg:items-start">
       <div class="lg:drop-shadow-md-x lg:grow lg:rounded lg:border lg:bg-white">

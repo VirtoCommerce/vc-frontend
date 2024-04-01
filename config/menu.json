@@ -26,6 +26,11 @@
         "icon": "/static/images/dashboard/icons/orders-desktop.svg#main"
       },
       {
+        "id": "push-messages",
+        "title": "shared.layout.header.menu.push-messages",
+        "icon": "/static/icons/basic/bell.svg#icon"
+      },
+      {
         "id": "cart",
         "route": { "name": "Cart" },
         "title": "shared.layout.header.menu.cart",

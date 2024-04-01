@@ -1,10 +1,9 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1
-        v-t="'pages.forgot_password.header'"
-        class="mb-8 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"
-      ></h1>
+      <VcTypography tag="h1" class="mb-6 lg:mt-5">
+        {{ $t("pages.forgot_password.header") }}
+      </VcTypography>
 
       <div v-if="!isSucceeded">
         <div v-t="'pages.forgot_password.email_will_be_sended_message'" class="mb-4 text-lg md:text-base"></div>

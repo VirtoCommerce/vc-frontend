@@ -23,6 +23,7 @@ query GetOrders(
       id
       createdDate
       status
+      statusDisplayValue
       currency {
         code
       }

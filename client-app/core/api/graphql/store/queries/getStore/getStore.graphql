@@ -37,6 +37,13 @@ query GetStore($storeId: String!) {
         requiredUniqueChars
         requireNonAlphanumeric
       }
+      modules {
+        moduleId
+        settings {
+          name
+          value
+        }
+      }
     }
   }
 }
