@@ -77,6 +77,15 @@
             >
               {{ $t("ui_kit.push-messages.clear_all") }}
             </VcButton>
+            <VcButton
+              v-if="canViewAll && totalCount"
+              variant="outline"
+              color="secondary"
+              size="xs"
+              @click="$emit('viewAll')"
+            >
+              {{ $t("ui_kit.push-messages.view_all") }}
+            </VcButton>
           </div>
         </div>
       </div>
@@ -89,12 +98,14 @@ export interface IEmits {
   (event: "markReadAll"): void;
   (event: "markUnreadAll"): void;
   (event: "clearAll"): void;
+  (event: "viewAll"): void;
 }
 
 interface IProps {
   totalCount: number;
   unreadCount: number;
   removable?: boolean;
+  canViewAll?: boolean;
   withOptions?: boolean;
   yOffset?: number | string;
   placement?: VcPopoverPlacement;

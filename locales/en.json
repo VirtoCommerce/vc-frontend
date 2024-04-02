@@ -1387,7 +1387,8 @@
         "title": "No new notifications at the moment.",
         "description": "Stay tuned for updates and important messages."
       },
-      "clear_all": "Clear all"
+      "clear_all": "Clear all",
+      "view_all": "View all notifications"
     }
   },
   "identity_error": {
