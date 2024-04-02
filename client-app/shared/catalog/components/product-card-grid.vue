@@ -19,15 +19,17 @@
             @slide-change="slideChanged"
           >
             <SwiperSlide v-for="(image, index) in product.images" :key="index" class="rounded">
-              <VcImage
-                :src="image.url"
-                :alt="product.name"
-                size-suffix="md"
-                :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
-                class="size-full select-none rounded object-cover object-center"
-                :lazy="lazy || index > 0"
-                @click="swiperInstance?.slideNext()"
-              />
+              <div class="flex size-full">
+                <VcImage
+                  :src="image.url"
+                  :alt="product.name"
+                  size-suffix="md"
+                  :class="{ 'cursor-pointer': swiperInstance?.allowSlideNext }"
+                  class="m-auto flex size-auto max-h-full max-w-full select-none rounded object-cover object-center"
+                  :lazy="lazy || index > 0"
+                  @click="swiperInstance?.slideNext()"
+                />
+              </div>
             </SwiperSlide>
 
             <template #container-end>

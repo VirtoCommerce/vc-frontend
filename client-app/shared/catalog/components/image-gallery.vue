@@ -25,14 +25,16 @@
           @slide-change="setActiveIndex"
         >
           <SwiperSlide v-for="(image, i) in images" :key="image.url || i">
-            <VcImage
-              class="image-gallery__img"
-              :src="image.url"
-              :alt="image.name"
-              :data-te-img="image.url"
-              size-suffix="md"
-              lazy
-            />
+            <div class="flex size-full">
+              <VcImage
+                class="image-gallery__img"
+                :src="image.url"
+                :alt="image.name"
+                :data-te-img="image.url"
+                size-suffix="md"
+                lazy
+              />
+            </div>
           </SwiperSlide>
         </Swiper>
       </template>
@@ -161,7 +163,7 @@ onMounted(async () => {
   }
 
   &__img {
-    @apply relative w-full h-full rounded object-center object-contain cursor-zoom-in;
+    @apply relative size-auto max-w-full max-h-full m-auto rounded object-center object-contain cursor-zoom-in;
   }
 
   &__badges {
