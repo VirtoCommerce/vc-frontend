@@ -28,6 +28,9 @@
               placement="bottom-end"
             >
               <template #trigger>
+                <VcSwitch v-model="unreadVisibility" class="mr-1">
+                  {{ $t("ui_kit.push-messages.show_unread_only") }}
+                </VcSwitch>
                 <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
               </template>
 
@@ -94,11 +97,14 @@
 </template>
 
 <script setup lang="ts">
+import { useVModel } from "@vueuse/core";
+
 export interface IEmits {
   (event: "markReadAll"): void;
   (event: "markUnreadAll"): void;
   (event: "clearAll"): void;
   (event: "viewAll"): void;
+  (event: "update:showUnreadOnly", value: boolean): void;
 }
 
 interface IProps {
@@ -106,17 +112,20 @@ interface IProps {
   unreadCount: number;
   removable?: boolean;
   canViewAll?: boolean;
+  showUnreadOnly?: boolean;
   withOptions?: boolean;
   yOffset?: number | string;
   placement?: VcPopoverPlacement;
 }
 
-defineEmits<IEmits>();
+const emits = defineEmits<IEmits>();
 
-withDefaults(defineProps<IProps>(), {
+const props = withDefaults(defineProps<IProps>(), {
   yOffset: 30,
   placement: "bottom-end",
 });
+
+const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
 </script>
 
 <style lang="scss">

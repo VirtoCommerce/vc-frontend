@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useClearAllPushMessages } from "@/core/api/graphql/push-messages/mutations/clearAllPushMessages";
 import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesRead";
 import { useMarkAllPushMessagesUnread } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesUnread";
@@ -9,11 +9,21 @@ export function usePushMessages() {
 
   const totalCount = computed(() => items.value.length);
   const unreadCount = computed(() => result.value?.pushMessages.unreadCount ?? 0);
-  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages.items ?? []);
+  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages.items.filter(checkVisibility) ?? []);
 
   const { mutate: markReadAll } = useMarkAllPushMessagesRead();
   const { mutate: markUnreadAll } = useMarkAllPushMessagesUnread();
   const { mutate: clearAll } = useClearAllPushMessages();
+
+  const showUnreadOnly = ref(false);
+
+  function checkVisibility(item: VcPushMessageType): boolean {
+    if (!showUnreadOnly.value) {
+      return true;
+    }
+
+    return !item.isRead;
+  }
 
   return {
     totalCount,
@@ -22,5 +32,6 @@ export function usePushMessages() {
     markReadAll,
     markUnreadAll,
     clearAll,
+    showUnreadOnly,
   };
 }
