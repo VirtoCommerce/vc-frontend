@@ -601,7 +601,8 @@ function _setFiltersPosition() {
   if (
     (up && scrollTop <= filterTop - offsetTop) ||
     filterHeight <= clientHeight - offsetTop ||
-    filterHeight >= contentHeight
+    filterHeight >= contentHeight ||
+    contentTop > filterTop
   ) {
     action = "TOP";
   } else if (
