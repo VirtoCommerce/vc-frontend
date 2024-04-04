@@ -4,7 +4,7 @@
       <slot name="trigger" />
     </template>
 
-    <template #content>
+    <template #content="{ close: closeMessages }">
       <div class="vc-push-messages__dropdown">
         <div class="vc-push-messages__arrow-container">
           <div class="vc-push-messages__popper" data-popper-arrow>
@@ -36,10 +36,10 @@
                 <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
               </template>
 
-              <template #content="{ close }">
+              <template #content="{ close: closeMenu }">
                 <VcMenuItem
                   @click="
-                    close();
+                    closeMenu();
                     $emit('markReadAll');
                   "
                 >
@@ -48,7 +48,7 @@
 
                 <VcMenuItem
                   @click="
-                    close();
+                    closeMenu();
                     $emit('markUnreadAll');
                   "
                 >
@@ -87,7 +87,10 @@
               variant="outline"
               color="secondary"
               size="xs"
-              @click="$emit('viewAll')"
+              @click="
+                closeMessages();
+                $emit('viewAll');
+              "
             >
               {{ $t("ui_kit.push-messages.view_all") }}
             </VcButton>

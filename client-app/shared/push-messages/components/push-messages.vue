@@ -11,6 +11,7 @@
     @mark-read-all="markReadAll"
     @mark-unread-all="markUnreadAll"
     @clear-all="clearAll"
+    @view-all="$router.push({ name: 'Notifications' })"
   >
     <template #trigger>
       <slot name="trigger" :total-count="totalCount" :unread-count="unreadCount" />

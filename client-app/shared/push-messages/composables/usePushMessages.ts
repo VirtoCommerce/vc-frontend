@@ -14,7 +14,7 @@ export function usePushMessages(showUnreadOnly: Ref<boolean>) {
     };
   });
 
-  const { result } = useGetPushMessages(getPushMessagesParams);
+  const { result, loading } = useGetPushMessages(getPushMessagesParams);
 
   const totalCount = computed(() => items.value.length);
   const unreadCount = computed(() => result.value?.pushMessages.unreadCount ?? 0);
@@ -39,6 +39,7 @@ export function usePushMessages(showUnreadOnly: Ref<boolean>) {
     markReadAll,
     markUnreadAll,
     clearAll,
+    loading,
     showUnreadOnly,
   };
 }
