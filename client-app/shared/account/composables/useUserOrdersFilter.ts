@@ -13,50 +13,44 @@ const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
 export function useUserOrdersFilter() {
   const { d, t } = useI18n();
 
-  const currentDate = new Date();
+  function buildPredefinedFilters(): DateFilterType[] {
+    const currentDate = new Date();
+    const day = 24 * 60 * 60 * 1000;
+    const days7 = 7 * day;
+    const days30 = 30 * day;
+    const days365 = 365 * day;
 
-  const yesterdayDate = new Date(currentDate);
-  yesterdayDate.setDate(currentDate.getDate() - 1);
-
-  const lastWeekDate = new Date(currentDate);
-  lastWeekDate.setDate(currentDate.getDate() - 7);
-
-  const lastMonthDate = new Date(currentDate);
-  lastMonthDate.setMonth(currentDate.getMonth() - 1);
-
-  const lastYearDate = new Date(currentDate);
-  lastYearDate.setFullYear(currentDate.getFullYear() - 1);
-
-  const dateFilterTypes: DateFilterType[] = [
-    {
-      id: "custom",
-      label: t("common.labels.custom_date"),
-    },
-    {
-      id: "lastDay",
-      label: t("common.labels.last_24_hours"),
-      startDate: yesterdayDate,
-      endDate: currentDate,
-    },
-    {
-      id: "lastWeek",
-      label: t("common.labels.last_week"),
-      startDate: lastWeekDate,
-      endDate: currentDate,
-    },
-    {
-      id: "lastMonth",
-      label: t("common.labels.last_month"),
-      startDate: lastMonthDate,
-      endDate: currentDate,
-    },
-    {
-      id: "lastYear",
-      label: t("common.labels.last_year"),
-      startDate: lastYearDate,
-      endDate: currentDate,
-    },
-  ];
+    return [
+      {
+        id: "custom",
+        label: t("common.labels.custom_date"),
+      },
+      {
+        id: "lastDay",
+        label: t("common.labels.last_24_hours"),
+        startDate: new Date(currentDate.getTime() - day),
+        endDate: currentDate,
+      },
+      {
+        id: "lastWeek",
+        label: t("common.labels.last_week"),
+        startDate: new Date(currentDate.getTime() - days7),
+        endDate: currentDate,
+      },
+      {
+        id: "lastMonth",
+        label: t("common.labels.last_month"),
+        startDate: new Date(currentDate.getTime() - days30),
+        endDate: currentDate,
+      },
+      {
+        id: "lastYear",
+        label: t("common.labels.last_year"),
+        startDate: new Date(currentDate.getTime() - days365),
+        endDate: currentDate,
+      },
+    ];
+  }
 
   const isFilterEmpty = computed(() => {
     const { statuses, startDate, endDate } = appliedFilterData.value;
@@ -140,7 +134,7 @@ export function useUserOrdersFilter() {
   return {
     filterData,
     appliedFilterData: computed(() => appliedFilterData.value),
-    dateFilterTypes: computed(() => dateFilterTypes),
+    dateFilterTypes: computed(() => buildPredefinedFilters()),
     isFilterEmpty,
     isFilterDirty,
     filterChipsItems,
