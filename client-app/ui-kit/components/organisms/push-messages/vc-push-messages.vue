@@ -22,15 +22,17 @@
               </VcBadge>
             </div>
 
+            <VcSwitch v-model="unreadVisibility" class="mr-1">
+              {{ $t("ui_kit.push-messages.show_unread_only") }}
+            </VcSwitch>
             <VcDropdownMenu
-              v-if="withOptions && totalCount > 0"
-              class="vc-push-messages__options"
+              :class="[
+                'vc-push-messages__options',
+                { 'vc-push-messages__options--invisible': !withOptions || totalCount <= 0 },
+              ]"
               placement="bottom-end"
             >
               <template #trigger>
-                <VcSwitch v-model="unreadVisibility" class="mr-1">
-                  {{ $t("ui_kit.push-messages.show_unread_only") }}
-                </VcSwitch>
                 <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
               </template>
 
@@ -168,6 +170,9 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
 
   &__options {
     @apply ms-2;
+    &--invisible {
+      @apply invisible;
+    }
   }
 
   &__options-icon {

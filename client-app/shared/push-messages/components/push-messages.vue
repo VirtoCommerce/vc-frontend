@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
@@ -31,5 +32,7 @@ interface IProps {
 
 defineProps<IProps>();
 
-const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll, showUnreadOnly } = usePushMessages();
+const showUnreadOnly = ref(false);
+
+const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll } = usePushMessages(showUnreadOnly);
 </script>
