@@ -23,6 +23,10 @@ export function toEndDateFilterValue(dateOnly?: string): string | undefined {
   }
 }
 
+export function toDateISOString(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
 function toLocalMidnight(dateOnly: string): string {
   return `${dateOnly}T00:00:00.000`;
 }

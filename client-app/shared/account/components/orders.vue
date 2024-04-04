@@ -2,7 +2,7 @@
   <template v-if="withSearch">
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <MobileOrdersFilter />
+      <MobileOrdersFilter :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
 
       <template #footer>
         <VcButton
@@ -59,7 +59,7 @@
             <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
           </button>
 
-          <OrdersFilter @change="hideFilters" />
+          <OrdersFilter :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
         </div>
       </div>
 
@@ -306,7 +306,7 @@ import OrdersFilter from "./orders-filter.vue";
 import PageToolbarBlock from "./page-toolbar-block.vue";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { SortDirection } from "@/core/enums";
-import type { ISortInfo } from "@/core/types";
+import type { DateFilterType, ISortInfo } from "@/core/types";
 
 export interface IProps {
   withSearch?: boolean;
@@ -344,6 +344,7 @@ const isMobile = breakpoints.smaller("lg");
 
 const localKeyword = ref("");
 const filtersVisible = ref(false);
+const selectedDateFilterType = ref<DateFilterType>();
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
@@ -426,6 +427,14 @@ function toggleFilters() {
 
 function hideFilters() {
   filtersVisible.value = false;
+}
+
+function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
+  selectedDateFilterType.value = dateFilterType;
+
+  if (!isMobile.value) {
+    hideFilters();
+  }
 }
 
 function goToOrderDetails(order: CustomerOrderType): void {

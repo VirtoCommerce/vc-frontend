@@ -2,6 +2,7 @@ import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import type { FacetTermType } from "@/core/api/graphql/types";
+import type { DateFilterType } from "@/core/types";
 import type { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
 import type { Ref } from "vue";
 
@@ -11,6 +12,51 @@ const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
 
 export function useUserOrdersFilter() {
   const { d, t } = useI18n();
+
+  const currentDate = new Date();
+
+  const yesterdayDate = new Date(currentDate);
+  yesterdayDate.setDate(currentDate.getDate() - 1);
+
+  const lastWeekDate = new Date(currentDate);
+  lastWeekDate.setDate(currentDate.getDate() - 7);
+
+  const lastMonthDate = new Date(currentDate);
+  lastMonthDate.setMonth(currentDate.getMonth() - 1);
+
+  const lastYearDate = new Date(currentDate);
+  lastYearDate.setFullYear(currentDate.getFullYear() - 1);
+
+  const dateFilterTypes: DateFilterType[] = [
+    {
+      id: "custom",
+      label: t("common.labels.custom_date"),
+    },
+    {
+      id: "lastDay",
+      label: t("common.labels.last_24_hours"),
+      startDate: yesterdayDate,
+      endDate: currentDate,
+    },
+    {
+      id: "lastWeek",
+      label: t("common.labels.last_week"),
+      startDate: lastWeekDate,
+      endDate: currentDate,
+    },
+    {
+      id: "lastMonth",
+      label: t("common.labels.last_month"),
+      startDate: lastMonthDate,
+      endDate: currentDate,
+    },
+    {
+      id: "lastYear",
+      label: t("common.labels.last_year"),
+      startDate: lastYearDate,
+      endDate: currentDate,
+    },
+  ];
 
   const isFilterEmpty = computed(() => {
     const { statuses, startDate, endDate } = appliedFilterData.value;
@@ -94,6 +140,7 @@ export function useUserOrdersFilter() {
   return {
     filterData,
     appliedFilterData: computed(() => appliedFilterData.value),
+    dateFilterTypes: computed(() => dateFilterTypes),
     isFilterEmpty,
     isFilterDirty,
     filterChipsItems,
