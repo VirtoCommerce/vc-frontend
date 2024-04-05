@@ -88,17 +88,6 @@
             >
               <template #mobile-item="{ item }">
                 <div class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0">
-                  <div
-                    v-if="item.isDefault"
-                    class="absolute left-0 top-0 rounded-tl border-[16px] border-transparent border-l-primary border-t-primary"
-                  >
-                    <VcIcon
-                      class="absolute left-[-0.75rem] top-[-0.85rem] text-additional-50"
-                      name="check-bold"
-                      size="xs"
-                    />
-                  </div>
-
                   <div class="grow space-y-2.5 pe-2">
                     <div>
                       <div class="mb-1 flex gap-1 empty:hidden">
