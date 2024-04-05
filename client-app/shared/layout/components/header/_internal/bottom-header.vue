@@ -9,7 +9,7 @@
       </router-link>
 
       <template v-if="organization">
-        <div class="hidden h-6 w-0.5 bg-[color:var(--color-primary)] xl:block"></div>
+        <div class="hidden h-6 w-0.5 bg-primary xl:block"></div>
 
         <div
           class="hidden max-w-[9rem] text-base font-medium italic leading-[18px] text-[color:var(--color-header-bottom-text)] xl:line-clamp-2"
@@ -23,7 +23,7 @@
         ref="showCatalogMenuButton"
         :href="catalogLink"
         type="button"
-        class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
+        class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-neutral-500 hover:text-neutral-900"
         @click="toggleCatalogDropdown"
       >
         <span
@@ -31,12 +31,7 @@
           class="font-bold uppercase tracking-wide"
         />
 
-        <VcIcon
-          v-if="catalogMenuItems.length"
-          :name="catalogButtonIcon"
-          size="xs"
-          class="ml-3 text-[color:var(--color-primary)]"
-        />
+        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 text-primary" />
       </a>
 
       <SearchBar />
@@ -57,13 +52,7 @@
                 <BottomHeaderLink :link="item" :count="unreadCount">
                   <template #icon>
                     <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-                      <svg
-                        v-if="item.icon"
-                        :key="totalCount"
-                        height="24"
-                        width="24"
-                        class="mb-0.5 text-[color:var(--color-primary)]"
-                      >
+                      <svg v-if="item.icon" :key="totalCount" height="24" width="24" class="mb-0.5 text-primary">
                         <use :href="item.icon" />
                       </svg>
                     </transition>

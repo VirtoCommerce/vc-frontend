@@ -4,9 +4,7 @@
       <!-- Lists -->
       <template v-if="!loadingProductWishlists && !loadingLists">
         <template v-if="listsWithProduct.length">
-          <div
-            class="bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 text-15 font-bold leading-5 sm:py-2.5"
-          >
+          <div class="bg-neutral-100 px-6 py-3 text-base font-bold leading-5 sm:py-2.5">
             {{ $t("shared.wishlists.add_to_wishlists_modal.already_in_the_lists") }}
           </div>
 
@@ -32,23 +30,21 @@
           </ul>
         </template>
 
-        <div class="flex justify-between bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 sm:py-2.5">
-          <div class="text-15 font-bold">
+        <div class="flex justify-between bg-neutral-100 px-6 py-3 sm:py-2.5">
+          <div class="text-base font-bold">
             {{ $t("shared.wishlists.add_to_wishlists_modal.add_to_other_lists") }}
           </div>
+
           <button
             type="button"
-            class="flex cursor-pointer items-center text-sm font-bold text-[color:var(--color-link)]"
-            :class="{ 'cursor-not-allowed text-gray-400': creationButtonDisabled }"
+            class="flex cursor-pointer items-center text-sm font-bold text-accent-600 disabled:cursor-not-allowed disabled:text-neutral-400"
             :disabled="creationButtonDisabled"
             @click="addNewList"
           >
-            <svg
-              class="mr-2 size-3.5 text-[color:var(--color-primary)]"
-              :class="{ 'text-gray-400': creationButtonDisabled }"
-            >
+            <svg :class="['mr-2 size-3.5', creationButtonDisabled ? 'text-neutral-400' : 'text-primary']">
               <use href="/static/images/plus.svg#main" />
             </svg>
+
             {{ $t("shared.wishlists.add_to_wishlists_modal.add_new_list") }}
           </button>
         </div>
@@ -74,7 +70,7 @@
               :error="!!input.errorMessage"
             />
             <button type="button" class="mt-3.5" @click="removeNewList(index)">
-              <svg class="text-[color:var(--color-add-wishlist-modal-delete-icon)]" width="16" height="16">
+              <svg class="text-danger" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>
             </button>
@@ -87,7 +83,7 @@
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
                 class="line-clamp-1 text-base font-medium"
-                :class="{ 'text-gray-500': !selectedListsOtherIds.includes(list.id!) }"
+                :class="{ 'text-neutral-500': !selectedListsOtherIds.includes(list.id!) }"
               >
                 {{ list.name }}
               </span>
@@ -100,15 +96,15 @@
 
       <!-- Skeletons -->
       <ul v-if="loadingProductWishlists || loadingLists">
-        <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-gray-50">
-          <div class="w-full bg-gray-100"></div>
+        <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-neutral-50">
+          <div class="w-full bg-neutral-100"></div>
         </li>
       </ul>
 
       <!-- Empty -->
       <div
         v-else-if="!listsOther.length && !listsWithProduct.length && !newLists.length"
-        class="bg-gray-50 px-6 py-10 text-center"
+        class="bg-neutral-50 px-6 py-10 text-center"
       >
         {{ $t("shared.wishlists.add_to_wishlists_modal.empty_list") }}
       </div>

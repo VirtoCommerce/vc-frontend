@@ -95,7 +95,7 @@ function isDisabledStep(step: IStepsItem) {
     text-sm font-extrabold text-white bg-gray-400;
 
     #{$itemActive}:not(#{$itemDisabled}) & {
-      @apply bg-[color:var(--color-primary)];
+      @apply bg-primary;
     }
 
     #{$itemCompleted}:not(#{$itemDisabled}) & {

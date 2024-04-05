@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link
-      class="mb-2 block px-2 py-1 text-base font-bold hover:bg-gray-100"
+      class="mb-2 block px-2 py-1 text-base font-bold hover:bg-neutral-100"
       :to="item.route ?? '#'"
       @click="select"
     >
@@ -11,7 +11,7 @@
     <div>
       <template v-for="(child, index) in visibleChildren" :key="index">
         <router-link
-          class="mb-1 block truncate px-2 py-1 text-sm !leading-4 text-gray-500 hover:bg-gray-100"
+          class="mb-1 block truncate px-2 py-1 text-sm !leading-4 text-neutral hover:bg-neutral-100"
           :to="child.route ?? '#'"
           @click="select"
         >
@@ -25,11 +25,11 @@
         class="flex items-center px-2 py-1 text-sm"
         @click="toggleShowAll"
       >
-        <span class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
+        <span class="text-accent-600 hover:text-accent-700">
           {{ buttonText }}
         </span>
 
-        <VcIcon :name="buttonIcon" size="xxs" class="ml-1 text-[color:var(--color-primary)]" />
+        <VcIcon :name="buttonIcon" size="xxs" class="ml-1 text-primary" />
       </button>
     </div>
   </div>

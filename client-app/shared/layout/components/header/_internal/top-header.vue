@@ -19,7 +19,7 @@
           {{ $cfg.support_phone_number }}
         </a>
 
-        <span class="mx-4 h-5 w-px bg-[color:var(--color-primary)]" />
+        <span class="mx-4 h-5 w-px bg-primary" />
       </div>
 
       <!-- Authorized menu items -->
@@ -28,20 +28,20 @@
           {{ $t("shared.layout.header.top_header.link_dashboard") }}
         </TopHeaderLink>
 
-        <span class="mx-2 size-1 rounded-full bg-[color:var(--color-primary)]" />
+        <span class="mx-2 size-1 rounded-full bg-primary" />
 
         <TopHeaderLink to="/contacts">
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
-        <span class="mx-4 h-5 w-px bg-[color:var(--color-primary)]" />
+        <span class="mx-4 h-5 w-px bg-primary" />
 
         <!-- Account menu -->
         <div ref="loginMenu" class="relative flex flex-row items-center gap-x-1">
           <!-- Operator -->
           <template v-if="operator">
             <span class="font-bold">{{ operator.contact?.fullName || operator.userName }}</span>
-            <span v-t="'shared.layout.header.top_header.logged_in_as'" class="text-gray-400" />
+            <span v-t="'shared.layout.header.top_header.logged_in_as'" class="text-neutral-400" />
           </template>
 
           <button
@@ -64,7 +64,7 @@
             <div class="flex items-center justify-between">
               <router-link
                 to="/account/dashboard"
-                class="flex items-center hover:text-[color:var(--color-primary)]"
+                class="flex items-center hover:text-primary"
                 @click="loginMenuVisible = false"
               >
                 <VcIcon class="text-[--color-primary-500]" name="user-circle" />
@@ -96,13 +96,13 @@
           {{ $t("shared.layout.header.top_header.link_contact_us") }}
         </TopHeaderLink>
 
-        <span class="mx-4 h-5 w-px bg-[color:var(--color-primary)]" />
+        <span class="mx-4 h-5 w-px bg-primary" />
 
         <TopHeaderLink to="/sign-in">
           {{ $t("shared.layout.header.link_sign_in") }}
         </TopHeaderLink>
 
-        <span class="mx-3 size-1 rounded-full bg-[color:var(--color-primary)]" />
+        <span class="mx-3 size-1 rounded-full bg-primary" />
 
         <TopHeaderLink to="/sign-up">
           {{ $t("shared.layout.header.link_register_now") }}

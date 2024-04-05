@@ -2,10 +2,10 @@
   <div v-on-click-outside="() => open && hideList()" class="relative select-none">
     <button
       type="button"
-      class="relative flex appearance-none items-center gap-x-1.5 py-3 leading-none text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+      class="relative flex appearance-none items-center gap-x-1.5 py-3 leading-none text-accent-300 hover:text-additional-50"
       @click="toggle"
     >
-      <span v-t="'shared.layout.language_selector.label'" class="hidden text-white lg:inline"></span>
+      <span v-t="'shared.layout.language_selector.label'" class="hidden text-additional-50 lg:inline"></span>
 
       <span
         class="fi fis fa-2x -my-3 h-[30px] !w-[30px] rounded-full lg:h-[14px] lg:!w-[14px]"
@@ -25,7 +25,7 @@
     <transition name="slide-fade-top">
       <div
         v-show="open"
-        class="absolute right-0 z-30 mt-2 max-h-[260px] overflow-hidden rounded border bg-white shadow-lg lg:mt-0"
+        class="absolute right-0 z-30 mt-2 max-h-[260px] overflow-hidden rounded border bg-additional-50 shadow-lg lg:mt-0"
       >
         <ul ref="listElement" class="max-h-[260px] divide-y overflow-auto">
           <li
@@ -33,10 +33,10 @@
             :key="item.twoLetterLanguageName"
             :class="[
               item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
-                ? 'cursor-default bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]'
-                : 'cursor-pointer',
+                ? 'cursor-default bg-primary'
+                : 'cursor-pointer hover:bg-gray-100',
             ]"
-            class="flex items-center space-x-2 p-2.5 pr-3 font-normal text-black hover:bg-gray-100"
+            class="flex items-center space-x-2 p-2.5 pr-3 font-normal text-additional-950"
             @click="
               item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
                 ? null
@@ -49,7 +49,9 @@
             ></span>
 
             <span
-              :class="{ 'font-bold text-black': item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName }"
+              :class="{
+                'font-bold text-additional-950': item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName,
+              }"
             >
               {{ item.nativeName.replace(/ *\([^)]*\) */g, "") }}
             </span>
