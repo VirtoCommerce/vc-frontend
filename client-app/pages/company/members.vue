@@ -2,7 +2,9 @@
   <div>
     <!-- Title block -->
     <div class="flex items-center justify-between gap-3">
-      <h2 v-t="'pages.company.members.title'" class="grow text-3xl font-bold uppercase text-gray-800" />
+      <VcTypography tag="h1">
+        {{ $t("pages.company.members.title") }}
+      </VcTypography>
 
       <VcButton
         v-if="$can($permissions.storefront.CanInviteUsers)"

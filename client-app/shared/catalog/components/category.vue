@@ -59,7 +59,7 @@
       <!-- Content -->
       <div ref="contentElement" class="grow">
         <div class="flex">
-          <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
+          <VcTypography tag="h1">
             <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
               <template #keyword>
                 <strong>{{ searchParams.keyword }}</strong>
@@ -82,7 +82,7 @@
               <b class="font-extrabold">{{ total }}</b>
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
-          </h2>
+          </VcTypography>
         </div>
 
         <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
@@ -377,8 +377,10 @@ const contentElement = ref<HTMLElement | null>(null);
 const filtersElement = ref<HTMLElement | null>(null);
 const filtersStyle = ref<StyleValue | undefined>();
 
-const { top: cTop, height: cHeight } = useElementBounding(contentElement);
-const { height: fHeight, top: fTop } = useElementBounding(filtersElement);
+const BOUNDING_OPTIONS = { windowResize: false, immediate: false };
+
+const { top: cTop, height: cHeight } = useElementBounding(contentElement, BOUNDING_OPTIONS);
+const { height: fHeight, top: fTop } = useElementBounding(filtersElement, BOUNDING_OPTIONS);
 
 const seoTitle = computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name);
 const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
@@ -571,7 +573,9 @@ function openBranchesModal(fromMobileFilter: boolean) {
   });
 }
 
-function setFiltersPosition() {
+const setFiltersPosition = throttle(_setFiltersPosition, 100);
+
+function _setFiltersPosition() {
   const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
 
   const scrollBottom = scrollTop + clientHeight;
@@ -597,7 +601,8 @@ function setFiltersPosition() {
   if (
     (up && scrollTop <= filterTop - offsetTop) ||
     filterHeight <= clientHeight - offsetTop ||
-    filterHeight >= contentHeight
+    filterHeight >= contentHeight ||
+    contentTop > filterTop
   ) {
     action = "TOP";
   } else if (
@@ -631,14 +636,12 @@ function setFiltersPosition() {
   scrollOld = scrollTop;
 }
 
-const setFiltersPositionOptimized = throttle(setFiltersPosition, 100);
-
 onMounted(() => {
-  window.addEventListener("scroll", setFiltersPositionOptimized);
+  window.addEventListener("scroll", setFiltersPosition);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", setFiltersPositionOptimized);
+  window.removeEventListener("scroll", setFiltersPosition);
 });
 
 whenever(() => !isMobile.value, hideMobileSidebar);
@@ -681,8 +684,10 @@ watch(
 
 watch(
   () => cHeight.value,
-  () => {
-    setFiltersPosition();
+  (value, oldValue) => {
+    if (value !== oldValue) {
+      setFiltersPosition();
+    }
   },
 );
 
@@ -696,3 +701,9 @@ watchDebounced(
   },
 );
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

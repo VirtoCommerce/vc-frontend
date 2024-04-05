@@ -1,9 +1,10 @@
 <template>
   <VcEmptyPage image="/static/images/illustrations/emails.webp" mobile-image="/static/images/illustrations/emails.webp">
     <template #description>
-      <VcTypography tag="h1" variant="h2" weight="bold" class="mb-8">
+      <VcTypography tag="h1" class="mb-8">
         {{ $t("pages.welcome.title") }}
       </VcTypography>
+
       <VcTypography class="mb-8 max-w-lg text-center lg:text-left">
         {{ $t("pages.welcome.description") }}
       </VcTypography>

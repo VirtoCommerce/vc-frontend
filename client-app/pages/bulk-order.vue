@@ -1,8 +1,10 @@
 <template>
   <VcContainer>
-    <VcBreadcrumbs class="mb-3 hidden lg:block" :items="breadcrumbs" />
+    <VcBreadcrumbs class="mb-3 max-lg:hidden" :items="breadcrumbs" />
 
-    <h2 v-t="'pages.bulk_order.title'" class="mb-5 text-2xl font-bold uppercase text-neutral-900 lg:text-3xl" />
+    <VcTypography tag="h1" class="mb-5">
+      {{ $t("pages.bulk_order.title") }}
+    </VcTypography>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-5">
       <!-- Error section -->

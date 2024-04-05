@@ -3,12 +3,12 @@
     <!-- Breadcrumbs -->
     <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
-    <h1 class="text-2xl font-bold uppercase sm:text-3xl md:text-4xl">
+    <VcTypography tag="h1">
       {{ product.name }}
-    </h1>
+    </VcTypography>
 
-    <div class="mt-2 flex flex-wrap gap-5">
-      <VcCopyText v-if="!hasVariations" :text="product.code" :notification="$t('pages.product.sku_copied_message')">
+    <div v-if="!hasVariations" class="mt-2 flex flex-wrap gap-5">
+      <VcCopyText :text="product.code" :notification="$t('pages.product.sku_copied_message')">
         <span class="text-base text-[--color-secondary-900]">
           {{ $t("pages.product.sku_label") }}
           <span class="font-black">#{{ product.code }}</span>
@@ -126,3 +126,9 @@ watchEffect(() => {
   }
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

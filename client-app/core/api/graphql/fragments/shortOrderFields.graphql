@@ -6,6 +6,7 @@ fragment shortOrderFields on CustomerOrderType {
   number
   createdDate
   status
+  statusDisplayValue
   items {
     ...orderLineItemFields
   }

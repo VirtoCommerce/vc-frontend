@@ -36,9 +36,11 @@ declare module "vue" {
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
+    VcSwitch: typeof Components.VcSwitch;
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
+    /** @deprecated Use vue's <transition> directly */
     VcTransitionScale: typeof Components.VcTransitionScale;
     VcTypography: typeof Components.VcTypography;
   }

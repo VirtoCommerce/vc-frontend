@@ -2,7 +2,11 @@
   <TwoColumn class="max-w-screen-lg">
     <template #left>
       <h1 v-t="'pages.500.error_code'" class="text-black-800 mb-5 text-7xl font-black md:text-8xl"></h1>
-      <h2 v-t="'pages.500.error_text'" class="text-black-800 mb-2 text-2xl font-bold md:text-4xl"></h2>
+
+      <VcTypography tag="h2" variant="h1" class="mb-2">
+        {{ $t("pages.500.error_text") }}
+      </VcTypography>
+
       <p v-t="'pages.500.message'" class="mb-10 text-base leading-relaxed text-gray-700 md:text-xl"></p>
       <div>
         <VcButton to="/" class="w-40">
@@ -27,3 +31,9 @@ usePageHead({
   title: `${t("pages.500.error_code")} ${t("pages.500.error_text")}`,
 });
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>

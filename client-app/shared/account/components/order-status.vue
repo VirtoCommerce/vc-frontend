@@ -1,6 +1,6 @@
 <template>
   <VcChip :variant="orderStatus?.variant" :color="orderStatus?.color || defaultColor" truncate rounded>
-    {{ status }}
+    {{ displayValue || status }}
   </VcChip>
 </template>
 
@@ -11,6 +11,7 @@ import type { IOrderStatus } from "@/core/types";
 
 interface IProps {
   status?: string;
+  displayValue?: string;
 }
 
 const props = defineProps<IProps>();

@@ -4,9 +4,9 @@
       <VcBreadcrumbs v-if="breadcrumbs?.length" :items="breadcrumbs" class="mb-3" />
 
       <slot name="title">
-        <h1 v-if="title" class="text-black-800 mb-8 text-2xl font-bold uppercase md:text-4xl">
+        <VcTypography v-if="title" tag="h1" class="mb-8">
           {{ title }}
-        </h1>
+        </VcTypography>
       </slot>
     </div>
 
@@ -16,9 +16,9 @@
           <VcImage v-if="mobileImage" :src="mobileImage" class="mb-8 lg:hidden" lazy />
 
           <slot name="description">
-            <h2 class="text-black-800 mb-8 text-center text-2xl font-semibold lg:text-left">
+            <VcTypography tag="h2" class="mb-8 text-center lg:text-left">
               {{ description }}
-            </h2>
+            </VcTypography>
           </slot>
 
           <slot name="actions" />

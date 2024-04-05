@@ -18,7 +18,7 @@ const facets = shallowRef<FacetTermType[] | undefined>();
 export function useUserOrders(options: IUseUserOrdersOptions) {
   const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);
 
-  const { appliedFilterData } = useUserOrdersFilter();
+  const { appliedFilterData, setFacetsLocalization } = useUserOrdersFilter();
 
   const orders: Ref<CustomerOrderType[]> = shallowRef<CustomerOrderType[]>([]);
   const loading: Ref<boolean> = ref(false);
@@ -45,6 +45,7 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
       orders.value = response.items ?? [];
       pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
       facets.value = response.term_facets?.find((item) => item.name === STATUS_ORDERS_FACET_NAME)?.terms;
+      setFacetsLocalization(facets.value);
     } catch (e) {
       Logger.error(`${useUserOrders.name}.${fetchOrders.name}`, e);
       throw e;

@@ -29,8 +29,10 @@ export { default as VcProperty } from "./property/vc-property.vue";
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
 export { default as VcSection } from "./section/vc-section.vue";
+export { default as VcSwitch } from "./switch/vc-switch.vue";
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";
 export { default as VcTotalDisplay } from "./total-display/vc-total-display.vue";
+/** @deprecated Use vue's <transition> directly */
 export { default as VcTransitionScale } from "./transition-scale/vc-transition-scale.vue";
 export { default as VcTypography } from "./typography/vc-typography.vue";

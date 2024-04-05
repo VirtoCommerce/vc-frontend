@@ -42,6 +42,9 @@ function _useThemeContext() {
         throw new Error("Theme context change is not available.");
       },
     }),
+    modulesSettings: computed(() => {
+      return themeContext.value?.storeSettings?.modules;
+    }),
   };
 }
 
