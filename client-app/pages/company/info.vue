@@ -33,10 +33,10 @@
         </div>
 
         <!-- Content block -->
-        <div class="md:p-5">
+        <div class="px-4 pb-5 md:p-5">
           <div
             v-if="addresses.length || loadingAddresses"
-            class="mx-6 mb-5 mt-9 flex flex-row items-center justify-between gap-3 md:mx-0 md:mb-4 md:mt-1.5"
+            class="mb-4 mt-9 flex flex-row items-center justify-between gap-3 md:mt-1.5"
           >
             <VcTypography tag="h2" variant="h3">
               {{ $t("pages.company.info.content_header") }}
@@ -87,72 +87,73 @@
               @page-changed="onPageChange"
             >
               <template #mobile-item="{ item }">
-                <div class="relative grid grid-cols-3 gap-4 border-t border-gray-200 px-6 py-5 text-sm">
-                  <div
-                    v-if="item.isDefault"
-                    class="absolute right-0 top-0 border-[23px] border-transparent border-r-[--color-primary-500] border-t-[--color-primary-500]"
-                  >
-                    <VcIcon
-                      class="absolute right-[-1.125rem] top-[-0.875rem] text-[--color-additional-50]"
-                      name="check-bold"
-                      size="xs"
-                    />
+                <div class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0">
+                  <div class="grow space-y-2.5 pe-2">
+                    <div>
+                      <div class="mb-1 flex gap-1 empty:hidden">
+                        <VcBadge v-if="item.isDefault" size="sm" color="info" variant="outline-dark" rounded>
+                          <VcIcon name="apply" />
+                          <span>{{ $t("pages.company.info.labels.default") }}</span>
+                        </VcBadge>
+
+                        <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded>
+                          <VcIcon name="whishlist" />
+                          <span>{{ $t("pages.company.info.labels.favorite") }}</span>
+                        </VcBadge>
+                      </div>
+
+                      <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
+                        {{ $t("pages.company.info.labels.address") }}
+                      </div>
+
+                      <div class="text-sm font-bold text-neutral-950">
+                        <span>{{ item.line1 }}</span>
+                        <template v-if="item.city">, {{ item.city }}</template>
+                        <template v-if="item.regionName">, {{ item.regionName }}</template>
+                      </div>
+                    </div>
+
+                    <div v-if="item.description">
+                      <div class="mb-0.5 text-xs text-neutral">
+                        {{ $t("pages.company.info.labels.description") }}
+                      </div>
+
+                      <div class="text-sm text-neutral-950">
+                        {{ item.description }}
+                      </div>
+                    </div>
+
+                    <div class="flex">
+                      <div class="w-1/2 pe-2">
+                        <div class="mb-0.5 text-xs text-neutral">
+                          {{ $t("pages.company.info.labels.zip") }}
+                        </div>
+
+                        <div class="text-sm text-neutral-950">
+                          {{ item.postalCode }}
+                        </div>
+                      </div>
+
+                      <div class="w-1/2 ps-2">
+                        <div class="mb-0.5 text-xs text-neutral">
+                          {{ $t("pages.company.info.labels.country") }}
+                        </div>
+
+                        <div class="text-sm text-neutral-950">
+                          {{ item.countryName }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="col-span-2 flex flex-col">
-                    <span v-t="'pages.company.info.labels.address'" class="text-gray-400" />
-
-                    <span class="overflow-hidden text-ellipsis font-bold leading-tight">
-                      <span>{{ item.line1 }}</span>
-                      <template v-if="item.city">, {{ item.city }}</template>
-                      <template v-if="item.regionName">, {{ item.regionName }}</template>
-                    </span>
-                  </div>
-
-                  <div class="flex flex-col">
-                    <span v-t="'pages.company.info.labels.country'" class="text-gray-400" />
-
-                    <span class="overflow-hidden text-ellipsis leading-tight">
-                      {{ item.countryName }}
-                    </span>
-                  </div>
-
-                  <div class="col-span-2 flex flex-col">
-                    <span v-t="'pages.company.info.labels.description'" class="text-gray-400" />
-
-                    <span class="overflow-hidden text-ellipsis leading-tight">
-                      {{ item.description }}
-                    </span>
-                  </div>
-
-                  <div class="flex flex-col">
-                    <span v-t="'pages.company.info.labels.zip'" class="text-gray-400" />
-
-                    <span class="overflow-hidden text-ellipsis leading-tight">
-                      {{ item.postalCode }}
-                    </span>
-                  </div>
-
-                  <div class="absolute right-4 top-3 flex flex-col items-center">
-                    <AddressDropdownMenu
-                      v-if="userCanEditOrganization"
-                      :address="item"
-                      placement="left-start"
-                      @edit="openAddOrUpdateCompanyAddressModal(item)"
-                      @delete="openDeleteAddressModal(item)"
-                    />
-
-                    <VcIcon
-                      :class="{
-                        'text-neutral-400': !item.isFavorite,
-                        'text-primary-500': item.isFavorite,
-                        'mt-2': userCanEditOrganization,
-                      }"
-                      name="star"
-                      size="md"
-                      @click="toggleFavoriteAddress(item.isFavorite, item.id)"
-                    />
-                  </div>
+                  <AddressDropdownMenu
+                    v-if="userCanEditOrganization"
+                    :address="item"
+                    placement="left-start"
+                    @edit="openAddOrUpdateCompanyAddressModal(item)"
+                    @delete="openDeleteAddressModal(item)"
+                    @toggle-favorite="toggleFavoriteAddress(item.isFavorite, item.id)"
+                  />
                 </div>
               </template>
 
@@ -160,48 +161,59 @@
                 <div
                   v-for="i in paginatedAddresses.length"
                   :key="i"
-                  class="relative grid grid-cols-3 gap-4 border-t border-gray-200 px-6 py-5 text-sm"
+                  class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0"
                 >
-                  <div class="col-span-2 flex flex-col">
-                    <span v-t="'pages.company.info.labels.address'" class="text-gray-400" />
-                    <div class="h-4 animate-pulse bg-gray-200"></div>
-                  </div>
+                  <div class="grow space-y-2.5 pe-2">
+                    <div>
+                      <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
+                        {{ $t("pages.company.info.labels.address") }}
+                      </div>
 
-                  <div class="flex flex-col">
-                    <span v-t="'pages.company.info.labels.country'" class="text-gray-400" />
-                    <div class="h-4 animate-pulse bg-gray-200"></div>
-                  </div>
+                      <div class="h-4.5 animate-pulse bg-neutral-200"></div>
+                    </div>
 
-                  <div class="col-span-2 flex flex-col">
-                    <span v-t="'pages.company.info.labels.description'" class="text-gray-400" />
-                    <div class="h-4 animate-pulse bg-gray-200"></div>
-                  </div>
+                    <div class="flex">
+                      <div class="w-1/2 pe-2">
+                        <div class="mb-0.5 text-xs text-neutral">
+                          {{ $t("pages.company.info.labels.zip") }}
+                        </div>
 
-                  <div class="flex flex-col">
-                    <span v-t="'pages.company.info.labels.zip'" class="text-gray-400" />
-                    <div class="h-4 animate-pulse bg-gray-200"></div>
+                        <div class="h-4.5 animate-pulse bg-neutral-200"></div>
+                      </div>
+
+                      <div class="w-1/2 ps-2">
+                        <div class="mb-0.5 text-xs text-neutral">
+                          {{ $t("pages.company.info.labels.country") }}
+                        </div>
+
+                        <div class="h-4.5 animate-pulse bg-neutral-200"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </template>
 
               <template #desktop-body>
-                <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-gray-50">
-                  <td class="cursor-pointer px-4 py-3 text-center">
-                    <VcTooltip class="ml-1" placement="bottom-start" strategy="fixed">
+                <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
+                  <td class="px-4 py-3 text-center">
+                    <VcTooltip placement="bottom-start" strategy="fixed">
                       <template #trigger>
                         <VcIcon
-                          :class="{
-                            'text-neutral-400': !address.isFavorite,
-                            'text-primary-500': address.isFavorite,
-                          }"
-                          name="star"
+                          :class="[
+                            'cursor-pointer',
+                            {
+                              'text-neutral-400': !address.isFavorite,
+                              'text-primary': address.isFavorite,
+                            },
+                          ]"
+                          name="whishlist"
                           size="md"
                           @click="toggleFavoriteAddress(address.isFavorite, address.id)"
                         />
                       </template>
 
                       <template #content>
-                        <div class="w-44 rounded-sm bg-white px-3.5 py-1.5 text-xs font-light shadow-sm">
+                        <div class="w-44 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs font-light shadow-sm">
                           {{
                             address.isFavorite
                               ? $t("pages.company.info.remove_from_favorites")
@@ -211,50 +223,48 @@
                       </template>
                     </VcTooltip>
                   </td>
-                  <td class="overflow-hidden text-ellipsis px-5 py-3">
+
+                  <td class="px-5 py-3">
                     <span>{{ address.line1 }}</span>
                     <template v-if="address.city">, {{ address.city }}</template>
                     <template v-if="address.regionName">, {{ address.regionName }}</template>
                   </td>
 
-                  <td class="overflow-hidden text-ellipsis px-5 py-3">
-                    {{ address.description }}
-                  </td>
-
-                  <td class="overflow-hidden text-ellipsis px-5 py-3">
-                    {{ address.postalCode }}
-                  </td>
-
-                  <td class="overflow-hidden text-ellipsis px-5 py-3">
+                  <td class="px-5 py-3">
                     {{ address.countryName }}
                   </td>
 
-                  <td
-                    :class="{ 'text-right': !userCanEditOrganization }"
-                    class="overflow-hidden text-ellipsis px-5 py-3"
-                  >
-                    <div v-if="address.isDefault" class="flex items-center gap-1">
-                      <VcIcon class="text-[--color-primary-500]" name="check-bold" size="xs" />
-
-                      <b v-t="'pages.company.info.labels.default'" />
-                    </div>
+                  <td class="px-5 py-3 text-center">
+                    {{ address.postalCode }}
                   </td>
 
-                  <td v-if="userCanEditOrganization" class="relative px-5 py-3 text-right">
+                  <td class="px-5 py-3">
+                    {{ address.description }}
+                  </td>
+
+                  <td :class="{ 'text-right': !userCanEditOrganization }" class="px-5 py-3 text-center">
+                    <VcChip v-if="address.isDefault" color="info" variant="outline-dark" size="sm" rounded>
+                      <VcIcon name="apply" />
+                      {{ $t("pages.company.info.labels.default") }}
+                    </VcChip>
+                  </td>
+
+                  <td v-if="userCanEditOrganization" class="px-5 py-3 text-center">
                     <AddressDropdownMenu
                       class="inline-block"
                       :address="address"
                       @edit="openAddOrUpdateCompanyAddressModal(address)"
                       @delete="openDeleteAddressModal(address)"
+                      @toggle-favorite="toggleFavoriteAddress(address.isFavorite, address.id)"
                     />
                   </td>
                 </tr>
               </template>
 
               <template #desktop-skeleton>
-                <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-gray-50">
+                <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-neutral-50">
                   <td v-for="column in columns.length" :key="column" class="px-5 py-4">
-                    <div class="h-5 animate-pulse bg-gray-200" />
+                    <div class="h-4.5 animate-pulse bg-neutral-200" />
                   </td>
                 </tr>
               </template>
@@ -341,6 +351,17 @@ const columns = computed<ITableColumn[]>(() => {
       id: "line1",
       title: t("pages.company.info.labels.address"),
       sortable: true,
+      classes: "w-64",
+    },
+    {
+      id: "countryName",
+      title: t("pages.company.info.labels.country"),
+      classes: "w-32",
+    },
+    {
+      id: "postalCode",
+      title: t("pages.company.info.labels.zip"),
+      classes: "w-28 text-center",
     },
     {
       id: "description",
@@ -348,25 +369,17 @@ const columns = computed<ITableColumn[]>(() => {
       sortable: true,
     },
     {
-      id: "postalCode",
-      title: t("pages.company.info.labels.zip"),
-      classes: "w-28",
-    },
-    {
-      id: "countryName",
-      title: t("pages.company.info.labels.country"),
-    },
-    {
       id: "isDefault",
-      classes: "w-1/6",
+      title: t("pages.company.info.labels.default"),
+      classes: "w-28 text-center",
     },
   ];
 
   if (userCanEditOrganization.value) {
-    // Add action column
     result.push({
       id: "id",
-      classes: "w-20",
+      title: t("pages.company.info.labels.actions"),
+      classes: "w-20 text-center",
     });
   }
 
