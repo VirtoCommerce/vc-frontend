@@ -4303,16 +4303,33 @@ export enum PropertyValueTypes {
   ShortText = 'SHORT_TEXT'
 }
 
+/** A connection from an object to a list of objects of type `PushMessage`. */
+export type PushMessageConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<PushMessageEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<PushMessageType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+  /** Unread messages count */
+  unreadCount: Scalars['Int']['output'];
+};
+
+/** An edge in a connection from an object to another object of type `PushMessage`. */
+export type PushMessageEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<PushMessageType>;
+};
+
 export type PushMessageType = {
   createdDate: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
   isRead: Scalars['Boolean']['output'];
   shortMessage: Scalars['String']['output'];
-};
-
-export type PushMessagesResponseType = {
-  items: Array<PushMessageType>;
-  unreadCount: Scalars['Int']['output'];
 };
 
 export type Query = {
@@ -4354,7 +4371,7 @@ export type Query = {
   products?: Maybe<ProductConnection>;
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
-  pushMessages: PushMessagesResponseType;
+  pushMessages?: Maybe<PushMessageConnection>;
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
   quotes?: Maybe<QuoteConnection>;
@@ -4689,8 +4706,12 @@ export type QueryPropertyArgs = {
 
 
 export type QueryPushMessagesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
   unreadOnly?: InputMaybe<Scalars['Boolean']['input']>;
+  withHidden?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -6368,7 +6389,7 @@ export type GetPushMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetPushMessagesQuery = { pushMessages: { unreadCount: number, items: Array<{ id: string, createdDate: any, shortMessage: string, isRead: boolean }> } };
+export type GetPushMessagesQuery = { pushMessages?: { unreadCount: number, items?: Array<{ id: string, createdDate: any, shortMessage: string, isRead: boolean }> } };
 
 export type OnPushMessageCreatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 

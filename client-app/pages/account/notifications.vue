@@ -36,7 +36,7 @@
     <div>
       <PushMessage v-for="item in items" :key="item.id" class="border-b" :push-message="item" />
     </div>
-    <div v-if="totalCount === 0">
+    <div v-if="totalCount === 0 && !loading">
       <div class="mb-1 font-bold">
         {{ $t("ui_kit.push-messages.empty.title") }}
       </div>
@@ -52,7 +52,7 @@ import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
 const unreadVisibility = ref(false);
 
-const { items, markReadAll, markUnreadAll, totalCount } = usePushMessages(unreadVisibility);
+const { items, markReadAll, markUnreadAll, totalCount, loading } = usePushMessages(unreadVisibility);
 </script>
 
 <style scoped lang="scss">

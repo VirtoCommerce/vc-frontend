@@ -18,7 +18,7 @@ export function usePushMessages(showUnreadOnly: Ref<boolean>) {
 
   const totalCount = computed(() => items.value.length);
   const unreadCount = computed(() => result.value?.pushMessages.unreadCount ?? 0);
-  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages.items.filter(checkVisibility) ?? []);
+  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages?.items?.filter(checkVisibility) ?? []);
 
   const { mutate: markReadAll } = useMarkAllPushMessagesRead();
   const { mutate: markUnreadAll } = useMarkAllPushMessagesUnread();
