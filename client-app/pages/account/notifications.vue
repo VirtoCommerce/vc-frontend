@@ -34,7 +34,7 @@
       </VcDropdownMenu>
     </div>
     <div>
-      <PushMessage v-for="item in items" :key="item.id" class="border-b" :push-message="item" />
+      <PushMessage v-for="item in items" :key="item.id" size="lg" class="border-b" :push-message="item" />
       <VcPagination
         v-if="items.length && pages > 1"
         :page="page"
