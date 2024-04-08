@@ -22,8 +22,8 @@
               </VcBadge>
             </div>
 
-            <VcSwitch v-model="unreadVisibility" class="mr-1">
-              {{ $t("ui_kit.push-messages.show_unread_only") }}
+            <VcSwitch v-model="unreadVisibility" size="sm" :color="COLORS.success">
+              {{ $t("ui_kit.push-messages.show_unread") }}
             </VcSwitch>
             <VcDropdownMenu
               :class="[
@@ -103,6 +103,7 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
+import { COLORS } from "@/core/constants";
 
 export interface IEmits {
   (event: "markReadAll"): void;
@@ -172,7 +173,6 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
   }
 
   &__options {
-    @apply ms-2;
     &--invisible {
       @apply invisible;
     }

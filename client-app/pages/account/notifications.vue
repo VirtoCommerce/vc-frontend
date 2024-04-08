@@ -4,8 +4,8 @@
       {{ $t("shared.account.navigation.links.notifications") }}
     </VcTypography>
     <div class="flex justify-between">
-      <VcSwitch v-model="unreadVisibility" class="mr-1">
-        {{ $t("ui_kit.push-messages.show_unread_only") }}
+      <VcSwitch v-model="unreadVisibility" :color="COLORS.success" label-position="right">
+        {{ $t("ui_kit.push-messages.show_unread") }}
       </VcSwitch>
       <VcDropdownMenu placement="bottom-end">
         <template #trigger>
@@ -36,17 +36,23 @@
     <div>
       <PushMessage v-for="item in items" :key="item.id" class="border-b" :push-message="item" />
     </div>
+    <div v-if="totalCount === 0">
+      <div class="mb-1 font-bold">
+        {{ $t("ui_kit.push-messages.empty.title") }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { COLORS } from "@/core/constants";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
 const unreadVisibility = ref(false);
 
-const { items, markReadAll, markUnreadAll } = usePushMessages(unreadVisibility);
+const { items, markReadAll, markUnreadAll, totalCount } = usePushMessages(unreadVisibility);
 </script>
 
 <style scoped lang="scss">
