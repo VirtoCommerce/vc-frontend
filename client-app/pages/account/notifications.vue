@@ -4,7 +4,7 @@
       {{ $t("shared.account.navigation.links.notifications") }}
     </VcTypography>
     <div class="flex justify-between">
-      <VcSwitch v-model="unreadVisibility" :color="COLORS.success" label-position="right">
+      <VcSwitch v-model="showUnreadOnly" :color="COLORS.success" label-position="right">
         {{ $t("ui_kit.push-messages.show_unread") }}
       </VcSwitch>
       <VcDropdownMenu placement="bottom-end">
@@ -61,9 +61,12 @@ import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
-const unreadVisibility = ref(false);
+const showUnreadOnly = ref(false);
 
-const { items, markReadAll, markUnreadAll, totalCount, loading, pages, page } = usePushMessages(unreadVisibility);
+const { items, markReadAll, markUnreadAll, totalCount, loading, pages, page } = usePushMessages({
+  showUnreadOnly,
+  withHidden: true,
+});
 
 function changePage(newPage: number) {
   page.value = newPage;

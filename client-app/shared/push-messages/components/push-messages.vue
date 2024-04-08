@@ -35,5 +35,7 @@ defineProps<IProps>();
 
 const showUnreadOnly = ref(false);
 
-const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll } = usePushMessages(showUnreadOnly);
+const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll } = usePushMessages({
+  showUnreadOnly,
+});
 </script>

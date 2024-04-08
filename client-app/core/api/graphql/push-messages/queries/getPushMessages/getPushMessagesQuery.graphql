@@ -1,7 +1,13 @@
 #import "../../fragments/pushMessage.graphql"
 
-query GetPushMessages($unreadOnly: Boolean, $cultureName: String) {
-  pushMessages(unreadOnly: $unreadOnly, cultureName: $cultureName) {
+query GetPushMessages($unreadOnly: Boolean, $withHidden: Boolean, $cultureName: String, $after: String, $first: Int) {
+  pushMessages(
+    unreadOnly: $unreadOnly
+    withHidden: $withHidden
+    cultureName: $cultureName
+    after: $after
+    first: $first
+  ) {
     unreadCount
     items {
       ...pushMessage

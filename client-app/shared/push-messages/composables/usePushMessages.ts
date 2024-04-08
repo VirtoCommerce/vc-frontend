@@ -4,12 +4,23 @@ import { useClearAllPushMessages } from "@/core/api/graphql/push-messages/mutati
 import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesRead";
 import { useMarkAllPushMessagesUnread } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesUnread";
 import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/getPushMessages";
-import type { Ref } from "vue";
+import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import type { Ref, MaybeRef } from "vue";
 
-export function usePushMessages(showUnreadOnly: Ref<boolean>) {
+export interface IUsePushMessagesOptions {
+  showUnreadOnly?: MaybeRef<boolean>;
+  withHidden?: MaybeRef<boolean>;
+  itemsPerPage?: MaybeRef<number>;
+}
+
+export function usePushMessages(options: IUsePushMessagesOptions) {
+  const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);
+  const page: Ref<number> = ref(1);
+
   const getPushMessagesParams = computed(() => {
     return {
-      unreadOnly: toValue(showUnreadOnly),
+      unreadOnly: toValue(options.showUnreadOnly),
+      withHidden: toValue(options.withHidden),
       cultureName: toValue(useAllGlobalVariables()).cultureName,
     };
   });
@@ -19,15 +30,16 @@ export function usePushMessages(showUnreadOnly: Ref<boolean>) {
   const totalCount = computed(() => items.value.length);
   const unreadCount = computed(() => result.value?.pushMessages?.unreadCount ?? 0);
   const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages?.items?.filter(checkVisibility) ?? []);
-  const pages: Ref<number> = ref(0);
-  const page: Ref<number> = ref(1);
+  const pages = computed(() => {
+    return Math.ceil((result?.value?.pushMessages?.unreadCount ?? 0) / itemsPerPage.value);
+  });
 
   const { mutate: markReadAll } = useMarkAllPushMessagesRead();
   const { mutate: markUnreadAll } = useMarkAllPushMessagesUnread();
   const { mutate: clearAll } = useClearAllPushMessages();
 
   function checkVisibility(item: VcPushMessageType): boolean {
-    if (!showUnreadOnly.value) {
+    if (toValue(options.showUnreadOnly)) {
       return true;
     }
 
@@ -42,7 +54,6 @@ export function usePushMessages(showUnreadOnly: Ref<boolean>) {
     markUnreadAll,
     clearAll,
     loading,
-    showUnreadOnly,
     pages,
     page,
   };
