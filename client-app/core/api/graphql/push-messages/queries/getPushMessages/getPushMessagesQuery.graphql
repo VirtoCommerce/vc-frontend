@@ -8,9 +8,10 @@ query GetPushMessages($unreadOnly: Boolean, $withHidden: Boolean, $cultureName: 
     after: $after
     first: $first
   ) {
-    unreadCount
+    totalCount
     items {
       ...pushMessage
     }
+    unreadCount
   }
 }

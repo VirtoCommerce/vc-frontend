@@ -5,6 +5,7 @@ import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mut
 import { useMarkAllPushMessagesUnread } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesUnread";
 import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/getPushMessages";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
 import type { Ref, MaybeRef } from "vue";
 
 export interface IUsePushMessagesOptions {
@@ -17,11 +18,13 @@ export function usePushMessages(options: IUsePushMessagesOptions) {
   const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);
   const page: Ref<number> = ref(1);
 
-  const getPushMessagesParams = computed(() => {
+  const getPushMessagesParams = computed<GetPushMessagesQueryVariables>(() => {
     return {
-      unreadOnly: toValue(options.showUnreadOnly),
       withHidden: toValue(options.withHidden),
       cultureName: toValue(useAllGlobalVariables()).cultureName,
+      unreadOnly: !toValue(options.showUnreadOnly),
+      first: itemsPerPage.value,
+      after: String((page.value - 1) * itemsPerPage.value),
     };
   });
 
@@ -29,22 +32,14 @@ export function usePushMessages(options: IUsePushMessagesOptions) {
 
   const totalCount = computed(() => items.value.length);
   const unreadCount = computed(() => result.value?.pushMessages?.unreadCount ?? 0);
-  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages?.items?.filter(checkVisibility) ?? []);
+  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages?.items ?? []);
   const pages = computed(() => {
-    return Math.ceil((result?.value?.pushMessages?.unreadCount ?? 0) / itemsPerPage.value);
+    return Math.ceil((result?.value?.pushMessages?.totalCount ?? 0) / itemsPerPage.value);
   });
 
   const { mutate: markReadAll } = useMarkAllPushMessagesRead();
   const { mutate: markUnreadAll } = useMarkAllPushMessagesUnread();
   const { mutate: clearAll } = useClearAllPushMessages();
-
-  function checkVisibility(item: VcPushMessageType): boolean {
-    if (toValue(options.showUnreadOnly)) {
-      return true;
-    }
-
-    return !item.isRead;
-  }
 
   return {
     totalCount,
