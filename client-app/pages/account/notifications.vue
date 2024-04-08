@@ -3,41 +3,54 @@
     <VcTypography tag="h1">
       {{ $t("shared.account.navigation.links.notifications") }}
     </VcTypography>
-    <VcWidget>
-      <VcTable hide-default-header :items="items" :loading="loading">
-        <template #desktop-body>
-          <tr v-for="item in items" :key="item.id" class="border-y" :class="{ 'bg-info-50': !item.isRead }">
-            <td class="w-7 py-6 pl-4 pr-1">
-              <div class="flex align-middle">
-                <VcBadge v-if="!item.isRead" color="info" rounded />
-              </div>
-            </td>
-            <VcMarkdownRender :src="item.shortMessage" class="py-6" />
-            <td class="w-24 px-4 py-6">
-              {{ $d(item.createdDate) }}
-            </td>
-          </tr>
+    <div class="flex justify-between">
+      <VcSwitch v-model="unreadVisibility" class="mr-1">
+        {{ $t("ui_kit.push-messages.show_unread_only") }}
+      </VcSwitch>
+      <VcDropdownMenu placement="bottom-end">
+        <template #trigger>
+          <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
         </template>
-      </VcTable>
-    </VcWidget>
+
+        <template #content="{ close: closeMenu }">
+          <VcMenuItem
+            @click="
+              closeMenu();
+              markReadAll();
+            "
+          >
+            {{ $t("ui_kit.push-messages.options.make_all_as_read") }}
+          </VcMenuItem>
+
+          <VcMenuItem
+            @click="
+              closeMenu();
+              markUnreadAll();
+            "
+          >
+            {{ $t("ui_kit.push-messages.options.make_all_as_unread") }}
+          </VcMenuItem>
+        </template>
+      </VcDropdownMenu>
+    </div>
+    <div>
+      <PushMessage v-for="item in items" :key="item.id" class="border-b" :push-message="item" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
+import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
-const showUnreadOnly = ref(false);
+const unreadVisibility = ref(false);
 
-const { loading, items } = usePushMessages(showUnreadOnly);
+const { items, markReadAll, markUnreadAll } = usePushMessages(unreadVisibility);
 </script>
 
 <style scoped lang="scss">
 .vc-typography--variant--h1 {
   @apply normal-case;
-}
-
-.vc-widget__slot {
-  @apply p-0;
 }
 </style>
