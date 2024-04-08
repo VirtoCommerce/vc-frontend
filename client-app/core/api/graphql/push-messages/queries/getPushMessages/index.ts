@@ -12,11 +12,12 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
         return previousQueryResult;
       }
       const newPushMessage = subscriptionData.data.pushMessageCreated;
+      const items = previousQueryResult.pushMessages?.items ?? [];
       return {
         ...previousQueryResult,
         pushMessages: {
-          unreadCount: previousQueryResult.pushMessages.unreadCount + 1,
-          items: [newPushMessage, ...previousQueryResult.pushMessages.items],
+          unreadCount: (previousQueryResult.pushMessages?.unreadCount || 0) + 1,
+          items: [newPushMessage, ...items],
         },
       };
     },

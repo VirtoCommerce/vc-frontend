@@ -18,7 +18,7 @@ export function useMarkAllPushMessagesRead() {
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               unreadCount: 0,
-              items: pushMessagesQueryResult.pushMessages.items.map((pushMessage) => ({
+              items: pushMessagesQueryResult.pushMessages?.items?.map((pushMessage) => ({
                 ...pushMessage,
                 isRead: true,
               })),

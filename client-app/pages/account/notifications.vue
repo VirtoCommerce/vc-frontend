@@ -35,6 +35,14 @@
     </div>
     <div>
       <PushMessage v-for="item in items" :key="item.id" class="border-b" :push-message="item" />
+      <VcPagination
+        v-if="items.length && pages > 1"
+        :page="page"
+        :pages="pages"
+        class="self-start"
+        :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
+        @update:page="changePage"
+      />
     </div>
     <div v-if="totalCount === 0 && !loading">
       <div class="mb-1 font-bold">
@@ -45,14 +53,22 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { ref } from "vue";
 import { COLORS } from "@/core/constants";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller("md");
 const unreadVisibility = ref(false);
 
-const { items, markReadAll, markUnreadAll, totalCount, loading } = usePushMessages(unreadVisibility);
+const { items, markReadAll, markUnreadAll, totalCount, loading, pages, page } = usePushMessages(unreadVisibility);
+
+function changePage(newPage: number) {
+  page.value = newPage;
+  window.scroll({ top: 0, behavior: "smooth" });
+}
 </script>
 
 <style scoped lang="scss">
