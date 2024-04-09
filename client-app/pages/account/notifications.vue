@@ -48,19 +48,24 @@
         @update:page="changePage"
       />
     </div>
-    <div v-if="totalCount === 0 && !loading">
-      <div class="mb-1 font-bold">
-        {{ $t("ui_kit.push-messages.empty.title") }}
-      </div>
-    </div>
+    <VcWidget v-if="totalCount === 0 && !loading">
+      <VcEmptyView class="py-16" :text="$t('pages.account.notifications.empty_list')">
+        <template #icon>
+          <VcImage src="/static/images/common/notifications.svg" :alt="$t('pages.account.notifications.empty_list')" />
+        </template>
+      </VcEmptyView>
+    </VcWidget>
   </div>
 </template>
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
+const { t } = useI18n();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
@@ -69,6 +74,10 @@ const showUnreadOnly = ref(false);
 const { items, markReadAll, markUnreadAll, totalCount, loading, pages, page } = usePushMessages({
   showUnreadOnly,
   withHidden: true,
+});
+
+usePageHead({
+  title: t("pages.account.notifications.meta.title"),
 });
 
 function changePage(newPage: number) {

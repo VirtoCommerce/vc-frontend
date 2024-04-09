@@ -1083,6 +1083,12 @@
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
         }
+      },
+      "notifications": {
+        "meta": {
+          "title": "Notifications"
+        },
+        "empty_list": "You do not have any new notifications at this time"
       }
     },
     "company": {
