@@ -3,10 +3,12 @@
     <VcTypography tag="h1">
       {{ $t("shared.account.navigation.links.notifications") }}
     </VcTypography>
+
     <div class="flex justify-between">
       <VcSwitch v-model="showUnreadOnly" :color="COLORS.success" label-position="right">
         {{ $t("ui_kit.push-messages.show_unread") }}
       </VcSwitch>
+
       <VcDropdownMenu placement="bottom-end">
         <template #trigger>
           <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
@@ -33,8 +35,10 @@
         </template>
       </VcDropdownMenu>
     </div>
+
     <div>
       <PushMessage v-for="item in items" :key="item.id" size="lg" class="border-b" :push-message="item" />
+
       <VcPagination
         v-if="items.length && pages > 1"
         :page="page"

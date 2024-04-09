@@ -4328,6 +4328,7 @@ export type PushMessageEdge = {
 export type PushMessageType = {
   createdDate: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
+  isHidden: Scalars['Boolean']['output'];
   isRead: Scalars['Boolean']['output'];
   shortMessage: Scalars['String']['output'];
 };
