@@ -26,10 +26,7 @@
               {{ $t("ui_kit.push-messages.show_unread") }}
             </VcSwitch>
             <VcDropdownMenu
-              :class="[
-                'vc-push-messages__options',
-                { 'vc-push-messages__options--invisible': !withOptions || totalCount <= 0 },
-              ]"
+              :class="['vc-push-messages__options', { 'vc-push-messages__options--invisible': !withOptions }]"
               placement="bottom-end"
             >
               <template #trigger>

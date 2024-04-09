@@ -28,7 +28,6 @@ export function useMarkPushMessageRead() {
           ...pushMessagesQueryResult,
           pushMessages: {
             ...pushMessagesQueryResult.pushMessages,
-            unreadCount: (pushMessagesQueryResult.pushMessages?.unreadCount as number) - 1,
           },
         } satisfies GetPushMessagesQuery;
       },

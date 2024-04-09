@@ -16,7 +16,6 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
       return {
         ...previousQueryResult,
         pushMessages: {
-          unreadCount: (previousQueryResult.pushMessages?.unreadCount || 0) + 1,
           items: [newPushMessage, ...items],
         },
       };

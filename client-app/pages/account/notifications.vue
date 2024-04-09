@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
@@ -71,6 +71,8 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 const showUnreadOnly = ref(false);
 
+watch(showUnreadOnly, resetPagination);
+
 const { items, markReadAll, markUnreadAll, totalCount, loading, pages, page } = usePushMessages({
   showUnreadOnly,
   withHidden: true,
@@ -79,6 +81,10 @@ const { items, markReadAll, markUnreadAll, totalCount, loading, pages, page } = 
 usePageHead({
   title: t("pages.account.notifications.meta.title"),
 });
+
+function resetPagination() {
+  changePage(1);
+}
 
 function changePage(newPage: number) {
   page.value = newPage;

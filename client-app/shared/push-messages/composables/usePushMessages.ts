@@ -29,9 +29,15 @@ export function usePushMessages(options: IUsePushMessagesOptions) {
   });
 
   const { result, loading } = useGetPushMessages(getPushMessagesParams);
+  const { result: unreadResult } = useGetPushMessages({
+    unreadOnly: true,
+    withHidden: true,
+    first: 0,
+    cultureName: toValue(useAllGlobalVariables()).cultureName,
+  });
 
   const totalCount = computed(() => items.value.length);
-  const unreadCount = computed(() => result.value?.pushMessages?.unreadCount ?? 0);
+  const unreadCount = computed(() => unreadResult.value?.pushMessages?.totalCount ?? 0);
   const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages?.items ?? []);
   const pages = computed(() => {
     return Math.ceil((result?.value?.pushMessages?.totalCount ?? 0) / itemsPerPage.value);

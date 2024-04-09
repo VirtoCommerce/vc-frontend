@@ -12,6 +12,5 @@ query GetPushMessages($unreadOnly: Boolean, $withHidden: Boolean, $cultureName: 
     items {
       ...pushMessage
     }
-    unreadCount
   }
 }
