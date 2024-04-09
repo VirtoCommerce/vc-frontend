@@ -2,7 +2,11 @@
   <template v-if="withSearch">
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <MobileOrdersFilter :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+      <MobileOrdersFilter>
+        <template #dateFilterType>
+          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+        </template>
+      </MobileOrdersFilter>
 
       <template #footer>
         <VcButton
@@ -59,7 +63,11 @@
             <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
           </button>
 
-          <OrdersFilter :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+          <OrdersFilter>
+            <template #dateFilterType>
+              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+            </template>
+          </OrdersFilter>
         </div>
       </div>
 

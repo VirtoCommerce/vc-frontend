@@ -20,6 +20,8 @@
 
     <VcWidget :title="$t('shared.account.orders-filter.created-date-label')" size="sm">
       <div class="flex flex-col space-y-3">
+        <slot name="dateFilterType" />
+
         <VcSelect
           v-model="selectedDateFilter"
           :items="dateFilterTypes"

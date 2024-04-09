@@ -1,5 +1,6 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { DateFilterId } from "@/core/enums";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import type { FacetTermType } from "@/core/api/graphql/types";
 import type { DateFilterType } from "@/core/types";
@@ -10,44 +11,77 @@ const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
 const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
 const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
 
+function getFirstDayOfWeek(currentDate: Date): Date {
+  const date = new Date(currentDate);
+  const day = date.getDay();
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+
+  return new Date(date.setDate(diff));
+}
+
 export function useUserOrdersFilter() {
   const { d, t } = useI18n();
 
-  function buildPredefinedFilters(): DateFilterType[] {
+  function getDateFilterRanges(): DateFilterType[] {
     const currentDate = new Date();
-    const day = 24 * 60 * 60 * 1000;
-    const days7 = 7 * day;
-    const days30 = 30 * day;
-    const days365 = 365 * day;
+    currentDate.setHours(0, 0, 0, 0);
+
+    const lastDayStartDate = new Date(currentDate);
+    lastDayStartDate.setDate(currentDate.getDate() - 1);
+
+    const firstDayOfWeek = getFirstDayOfWeek(currentDate);
+
+    const lastWeekStartDate = new Date(currentDate);
+    lastWeekStartDate.setDate(firstDayOfWeek.getDate() - 7);
+
+    const lastWeekEndDate = new Date(currentDate);
+    lastWeekEndDate.setDate(firstDayOfWeek.getDate());
+
+    const lastMonthStartDate = new Date(currentDate);
+    lastMonthStartDate.setMonth(currentDate.getMonth() - 1);
+    lastMonthStartDate.setDate(1);
+
+    const lastMonthEndDate = new Date(currentDate);
+    lastMonthEndDate.setDate(1);
+
+    const lastYearStartDate = new Date(currentDate);
+    lastYearStartDate.setFullYear(currentDate.getFullYear() - 1);
+    lastYearStartDate.setMonth(0);
+    lastYearStartDate.setDate(1);
+
+    const lastYearEndDate = new Date(currentDate);
+    lastYearEndDate.setFullYear(currentDate.getFullYear());
+    lastYearEndDate.setMonth(0);
+    lastYearEndDate.setDate(1);
 
     return [
       {
-        id: "custom",
+        id: DateFilterId.CUSTOM,
         label: t("common.labels.custom_date"),
       },
       {
-        id: "lastDay",
+        id: DateFilterId.LAST_DAY,
         label: t("common.labels.last_24_hours"),
-        startDate: new Date(currentDate.getTime() - day),
+        startDate: lastDayStartDate,
         endDate: currentDate,
       },
       {
-        id: "lastWeek",
+        id: DateFilterId.LAST_WEEK,
         label: t("common.labels.last_week"),
-        startDate: new Date(currentDate.getTime() - days7),
-        endDate: currentDate,
+        startDate: lastWeekStartDate,
+        endDate: lastWeekEndDate,
       },
       {
-        id: "lastMonth",
+        id: DateFilterId.LAST_MONTH,
         label: t("common.labels.last_month"),
-        startDate: new Date(currentDate.getTime() - days30),
-        endDate: currentDate,
+        startDate: lastMonthStartDate,
+        endDate: lastMonthEndDate,
       },
       {
-        id: "lastYear",
+        id: DateFilterId.LAST_YEAR,
         label: t("common.labels.last_year"),
-        startDate: new Date(currentDate.getTime() - days365),
-        endDate: currentDate,
+        startDate: lastYearStartDate,
+        endDate: lastYearEndDate,
       },
     ];
   }
@@ -134,7 +168,7 @@ export function useUserOrdersFilter() {
   return {
     filterData,
     appliedFilterData: computed(() => appliedFilterData.value),
-    dateFilterTypes: computed(() => buildPredefinedFilters()),
+    dateFilterTypes: computed(() => getDateFilterRanges()),
     isFilterEmpty,
     isFilterDirty,
     filterChipsItems,

@@ -23,6 +23,8 @@
           {{ $t("shared.account.orders-filter.created-date-label") }}
         </div>
 
+        <slot name="DateFilterType" />
+
         <VcSelect
           v-model="selectedDateFilter"
           :items="dateFilterTypes"
@@ -86,6 +88,11 @@ function isSelectedStatus(status: string) {
 }
 
 function setDateFilterType(value: DateFilterType): void {
+  if (value.id === "custom") {
+    filterData.value.startDate = undefined;
+    filterData.value.endDate = undefined;
+  }
+
   if (value.id !== "custom" && !!value.startDate && !!value.endDate) {
     filterData.value.startDate = toDateISOString(value.startDate);
     filterData.value.endDate = toDateISOString(value.endDate);
