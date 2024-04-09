@@ -11,7 +11,7 @@
 
       <VcDropdownMenu placement="bottom-end">
         <template #trigger>
-          <VcButton icon="dots-vertical" variant="outline" size="sm" />
+          <VcButton icon="dots-vertical" variant="outline" />
         </template>
 
         <template #content="{ close: closeMenu }">
