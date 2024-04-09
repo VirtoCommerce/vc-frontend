@@ -5,13 +5,13 @@
     </VcTypography>
 
     <div class="flex justify-between">
-      <VcSwitch v-model="showUnreadOnly" :color="COLORS.success" label-position="right">
+      <VcSwitch v-model="showUnreadOnly" label-position="right">
         {{ $t("ui_kit.push-messages.show_unread") }}
       </VcSwitch>
 
       <VcDropdownMenu placement="bottom-end">
         <template #trigger>
-          <VcIcon class="vc-push-messages__options-icon" name="dots-vertical" size="sm" />
+          <VcButton icon="dots-vertical" variant="outline" size="sm" />
         </template>
 
         <template #content="{ close: closeMenu }">
@@ -59,7 +59,6 @@
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { ref } from "vue";
-import { COLORS } from "@/core/constants";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 

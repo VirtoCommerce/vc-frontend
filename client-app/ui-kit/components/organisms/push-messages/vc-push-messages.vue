@@ -22,7 +22,7 @@
               </VcBadge>
             </div>
 
-            <VcSwitch v-model="unreadVisibility" size="sm" :color="COLORS.success">
+            <VcSwitch v-model="unreadVisibility" size="sm">
               {{ $t("ui_kit.push-messages.show_unread") }}
             </VcSwitch>
             <VcDropdownMenu
@@ -78,15 +78,17 @@
               variant="outline"
               color="secondary"
               size="xs"
+              class="vc-push-messages__action-left"
               @click="$emit('clearAll')"
             >
               {{ $t("ui_kit.push-messages.clear_all") }}
             </VcButton>
             <VcButton
-              v-if="canViewAll && totalCount"
+              v-if="canViewAll"
               variant="outline"
               color="secondary"
               size="xs"
+              class="vc-push-messages__action-right"
               @click="
                 closeMessages();
                 $emit('viewAll');
@@ -103,7 +105,6 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
-import { COLORS } from "@/core/constants";
 
 export interface IEmits {
   (event: "markReadAll"): void;
@@ -204,6 +205,14 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
 
   &__foot {
     @apply flex justify-between p-4 empty:hidden;
+  }
+
+  &__action-left {
+    @apply mr-auto;
+  }
+
+  &__action-right {
+    @apply ml-auto;
   }
 }
 </style>
