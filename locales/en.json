@@ -1110,7 +1110,9 @@
           "description": "Description",
           "zip": "Zip code",
           "country": "Country",
-          "default": "Default"
+          "default": "Default",
+          "favorite": "Favorite",
+          "actions": "Actions"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
