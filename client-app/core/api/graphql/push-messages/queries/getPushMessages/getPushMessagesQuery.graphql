@@ -13,4 +13,12 @@ query GetPushMessages($unreadOnly: Boolean, $withHidden: Boolean, $cultureName: 
       ...pushMessage
     }
   }
+
+  unreadCount: pushMessages(unreadOnly: true, cultureName: $cultureName) {
+    totalCount
+  }
+
+  unreadCountWithHidden: pushMessages(unreadOnly: true, withHidden: true, cultureName: $cultureName) {
+    totalCount
+  }
 }

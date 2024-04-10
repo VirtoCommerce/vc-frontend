@@ -1,7 +1,10 @@
 <template>
   <div>
-    <VcTypography tag="h1">
+    <VcTypography tag="h1" class="flex items-center">
       {{ $t("shared.account.navigation.links.notifications") }}
+      <VcBadge v-if="unreadCountWithHidden > 0" class="ml-2" variant="outline" size="lg" rounded>
+        {{ unreadCountWithHidden }}
+      </VcBadge>
     </VcTypography>
 
     <div class="flex justify-between">
@@ -73,7 +76,7 @@ const showUnreadOnly = ref(false);
 
 watch(showUnreadOnly, resetPagination);
 
-const { items, markReadAll, markUnreadAll, totalCount, loading, pages, page } = usePushMessages({
+const { items, markReadAll, markUnreadAll, totalCount, unreadCountWithHidden, loading, pages, page } = usePushMessages({
   showUnreadOnly,
   withHidden: true,
 });
