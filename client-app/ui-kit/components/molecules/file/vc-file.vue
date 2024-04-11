@@ -12,9 +12,14 @@
 
     <span class="vc-file__details">
       <span class="vc-file__row">
-        <span v-if="isAttachedFile(file) || isUploadedFile(file)" class="vc-file__link" @click="downloadFile(file)">
+        <a
+          v-if="isAttachedFile(file) || isUploadedFile(file)"
+          class="vc-file__link"
+          :href="file.url"
+          @click.prevent="onFileDownloadClick"
+        >
           {{ file.name }}
-        </span>
+        </a>
         <span v-else class="vc-file__name">
           {{ file.name }}
         </span>
@@ -66,12 +71,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { ContentType } from "@/core/enums";
-import { generateLinkAndDownloadFile } from "@/shared/files";
 import { getFileSize, isAttachedFile, isFailedFile, isUploadingFile, isUploadedFile } from "@/ui-kit/utilities";
 
 interface IEmits {
   (event: "reload", value: FileType): void;
   (event: "remove", value: FileType): void;
+  (event: "download", value: FileType): void;
 }
 
 interface IProps {
@@ -91,10 +96,8 @@ function remove() {
   emit("remove", props.file);
 }
 
-async function downloadFile(file: FileType) {
-  if (file && file.url) {
-    await generateLinkAndDownloadFile(file.url, file.name);
-  }
+function onFileDownloadClick() {
+  emit("download", props.file);
 }
 
 const icon = computed(() => {

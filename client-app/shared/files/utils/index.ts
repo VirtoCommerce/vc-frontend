@@ -1,7 +1,7 @@
 import { useAuth } from "@/core/composables";
 
 const { headers } = useAuth();
-export async function generateLinkAndDownloadFile(fileUrl: string, fileName: string) {
+export async function downloadFile(fileUrl: string, fileName: string) {
   try {
     const response = await fetch(fileUrl, {
       method: "GET",
