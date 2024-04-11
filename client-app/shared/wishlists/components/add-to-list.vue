@@ -63,13 +63,13 @@ function openAddToListModal() {
     component: AddToWishlistsModal,
     props: {
       product: props.product,
-      onResult: (isInList: boolean) => {
+      onResult: (isInLists: boolean) => {
         broadcast.emit(
           productsInWishlistEvent,
           [
             {
               productId: props.product.id,
-              inWishlist: isInList,
+              inWishlist: isInLists,
             },
           ],
           TabsType.ALL,
