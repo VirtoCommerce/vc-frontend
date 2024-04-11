@@ -8,7 +8,7 @@ import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/co
 import { getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
-import { useUser } from "@/shared/account";
+import { useUser, useWhiteLabeling } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
@@ -45,6 +45,7 @@ export default async () => {
 
   const { fetchUser, user } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
+  const { fetchWhiteLabeling } = useWhiteLabeling();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
@@ -62,6 +63,10 @@ export default async () => {
    * Fetching required app data
    */
   await Promise.all([fetchThemeContext(), fetchUser(), fallback.setMessage()]);
+
+  if (user.value?.contact?.organizationId) {
+    fetchWhiteLabeling(user.value.contact.organizationId);
+  }
 
   initializeGoogleAnalytics();
   initHotjar();

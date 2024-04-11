@@ -51,7 +51,7 @@ router.beforeEach((to) => {
 
 void fetchMenus();
 
-onMounted(setupBroadcastGlobalListeners);
+onMounted(() => setupBroadcastGlobalListeners());
 </script>
 
 <style lang="scss">

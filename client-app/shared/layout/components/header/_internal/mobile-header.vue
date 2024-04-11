@@ -16,7 +16,14 @@
           </button>
 
           <router-link to="/">
-            <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8" lazy />
+            <VcImage
+              v-if="whiteLabelingSettings?.logoUrl"
+              :src="whiteLabelingSettings.logoUrl"
+              :alt="$context.storeName"
+              class="h-8"
+              lazy
+            />
+            <VcImage v-else :src="$cfg.logo_image" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
         </div>
         <!-- endregion Left slot -->
@@ -123,6 +130,7 @@ import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core"
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
+import { useWhiteLabeling } from "@/shared/account";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
@@ -141,6 +149,7 @@ const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
+const { settings: whiteLabelingSettings } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

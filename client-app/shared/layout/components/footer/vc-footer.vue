@@ -8,7 +8,14 @@
       <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
         <!-- Logo column -->
         <div class="hidden xl:block">
-          <VcImage :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="h-9" lazy />
+          <VcImage
+            v-if="whiteLabelingSettings?.secondaryLogoUrl"
+            :src="whiteLabelingSettings?.secondaryLogoUrl"
+            :alt="$context.storeName"
+            class="h-9"
+            lazy
+          />
+          <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="h-9" lazy />
         </div>
 
         <!-- Column 1 -->
@@ -99,6 +106,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWhiteLabeling } from "@/shared/account";
 import pkg from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
 
@@ -107,6 +115,8 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+const { settings: whiteLabelingSettings } = useWhiteLabeling();
 
 const { version } = pkg;
 </script>

@@ -5,7 +5,14 @@
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)] px-5 py-3 xl:px-12"
     >
       <router-link to="/">
-        <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
+        <VcImage
+          v-if="whiteLabelingSettings?.logoUrl"
+          :src="whiteLabelingSettings.logoUrl"
+          :alt="$context.storeName"
+          class="h-8 xl:h-[2.8rem]"
+          lazy
+        />
+        <VcImage v-else :src="$cfg.logo_image" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
       <template v-if="organization">
@@ -106,6 +113,7 @@ import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vu
 import { computed, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useNavigations } from "@/core/composables";
+import { useWhiteLabeling } from "@/shared/account";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -120,6 +128,7 @@ const { isAuthenticated, organization } = useUser();
 const { cart } = useShortCart();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
+const { settings: whiteLabelingSettings } = useWhiteLabeling();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
