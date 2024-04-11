@@ -16,7 +16,8 @@
           v-if="isAttachedFile(file) || isUploadedFile(file)"
           class="vc-file__link"
           :href="file.url"
-          @click.prevent="onFileDownloadClick"
+          :download="file.name"
+          @click="onFileDownloadClick"
         >
           {{ file.name }}
         </a>
@@ -83,6 +84,7 @@ interface IProps {
   file: FileType;
   reloadable?: boolean;
   removable?: boolean;
+  nativeDownload?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -96,8 +98,11 @@ function remove() {
   emit("remove", props.file);
 }
 
-function onFileDownloadClick() {
-  emit("download", props.file);
+function onFileDownloadClick(e: Event) {
+  if (!props.nativeDownload) {
+    e.preventDefault();
+    emit("download", props.file);
+  }
 }
 
 const icon = computed(() => {
