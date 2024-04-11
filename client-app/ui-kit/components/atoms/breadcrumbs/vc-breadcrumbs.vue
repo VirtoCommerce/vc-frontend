@@ -7,25 +7,25 @@
             <component
               :is="item.route ? 'router-link' : 'span'"
               :to="item.route"
-              class="font-medium text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+              class="font-medium text-accent-600 hover:text-accent-700"
             >
               {{ item.title }}
             </component>
           </li>
-          <li><span class="mx-2 text-gray-300">/</span></li>
+          <li><span class="mx-2 text-neutral-300">/</span></li>
         </template>
 
         <!-- Last breadcrumbs item -->
-        <li v-else class="font-medium text-gray-500">{{ item.title }}</li>
+        <li v-else class="font-medium text-neutral">{{ item.title }}</li>
       </template>
     </ol>
   </nav>
 </template>
 
 <script setup lang="ts">
-interface Props {
+interface IProps {
   items: IBreadcrumb[];
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>

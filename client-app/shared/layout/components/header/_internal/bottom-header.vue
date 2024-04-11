@@ -2,7 +2,7 @@
   <div class="relative">
     <nav
       ref="bottomHeader"
-      class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-[color:var(--color-header-bottom-bg)] px-5 py-3 xl:px-12"
+      class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-additional-50 px-5 py-3 xl:px-12"
     >
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
@@ -11,9 +11,7 @@
       <template v-if="organization">
         <div class="hidden h-6 w-0.5 bg-primary xl:block"></div>
 
-        <div
-          class="hidden max-w-[9rem] text-base font-medium italic leading-[18px] text-[color:var(--color-header-bottom-text)] xl:line-clamp-2"
-        >
+        <div class="hidden max-w-[9rem] text-base font-medium italic leading-[18px] text-neutral-800 xl:line-clamp-2">
           {{ organization?.name }}
         </div>
       </template>

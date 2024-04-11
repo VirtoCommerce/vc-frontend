@@ -35,6 +35,6 @@ defineProps({
 
 <style lang="scss">
 .block-subscribe-form .checkbox-label a {
-  @apply text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)];
+  @apply text-accent-600 hover:text-accent-700;
 }
 </style>

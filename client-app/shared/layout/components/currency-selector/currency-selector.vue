@@ -6,7 +6,7 @@
 
     <VcDropdownMenu placement="bottom-end" width="7.5rem" @toggle="toggle($event)">
       <template #trigger>
-        <span class="flex items-center gap-x-1.5 text-[--color-accent-300] hover:text-[--color-accent-500]">
+        <span class="flex items-center gap-x-1.5 text-accent-300 hover:text-additional-50">
           <span class="uppercase">
             {{ currentCurrency?.code }}
           </span>

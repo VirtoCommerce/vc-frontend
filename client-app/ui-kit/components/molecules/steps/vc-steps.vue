@@ -92,26 +92,26 @@ function isDisabledStep(step: IStepsItem) {
 
   &__icon {
     @apply flex shrink-0 items-center justify-center w-5 h-5 rounded-full
-    text-sm font-extrabold text-white bg-gray-400;
+    text-sm font-extrabold text-additional-50 bg-neutral-400;
 
     #{$itemActive}:not(#{$itemDisabled}) & {
       @apply bg-primary;
     }
 
     #{$itemCompleted}:not(#{$itemDisabled}) & {
-      @apply bg-[color:var(--color-success)];
+      @apply bg-success;
     }
   }
 
   &__text {
-    @apply text-sm font-semibold text-gray-600;
+    @apply text-sm font-semibold text-neutral-600;
 
     #{$itemActive}:not(#{$itemDisabled}) & {
-      @apply text-[color:var(--color-body-text)];
+      @apply text-neutral-900;
     }
 
     #{$itemCompleted}:not(#{$itemDisabled}) & {
-      @apply text-[color:var(--color-success)];
+      @apply text-success;
     }
   }
 }

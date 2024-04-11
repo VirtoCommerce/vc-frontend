@@ -1,5 +1,5 @@
 <template>
-  <div class="branch-item border-t px-5 py-4 first:border-t-transparent sm:px-4 sm:pb-1.5 sm:pt-3">
+  <div class="border-t px-5 py-4 first:border-t-transparent sm:px-4 sm:pb-1.5 sm:pt-3">
     <div class="flex grow items-start">
       <slot></slot>
 
@@ -7,11 +7,7 @@
         <div class="relative -mt-0.5 grow md:-mt-1" :class="{ 'h-[3.75rem]': isTextTruncateEnabled }">
           <div class="pr-3" :class="{ 'absolute inset-0': isTextTruncateEnabled }">
             <div :class="{ 'max-w-full truncate': isTextTruncateEnabled }">
-              <a
-                :href="`/branch/${branch.id}`"
-                target="_blank"
-                class="mt-px text-base font-extrabold text-[color:var(--color-link)]"
-              >
+              <a :href="`/branch/${branch.id}`" target="_blank" class="mt-px text-base font-extrabold text-accent-600">
                 {{ branch.name }}
               </a>
             </div>
@@ -22,12 +18,12 @@
         </div>
 
         <div v-if="branch.shortDescription" class="mt-2 flex items-start md:-mt-0.5">
-          <svg class="text-[color:var(--color-branch-modal-clock)] md:mt-px" width="16" height="16">
+          <svg class="text-secondary md:mt-px" width="16" height="16">
             <use href="/static/images/clock.svg#main"></use>
           </svg>
           <div
             v-html-safe="branch.shortDescription"
-            class="short-description ml-1.5 flex space-x-3 whitespace-nowrap text-xs md:block md:space-x-0"
+            class="ml-1.5 flex space-x-3 whitespace-nowrap text-xs md:block md:space-x-0"
           />
         </div>
       </div>
@@ -51,9 +47,3 @@ defineProps({
   },
 });
 </script>
-
-<style lang="scss">
-.branch-item .closed {
-  @apply text-[color:var(--color-branch-modal-closed)];
-}
-</style>

@@ -20,13 +20,13 @@
 
   <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
     <template #trigger>
-      <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
+      <div class="line-clamp-1 pt-0.5 text-xs text-danger">
         {{ errorMessage }}
       </div>
     </template>
 
     <template #content>
-      <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+      <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
         {{ errorMessage }}
       </div>
     </template>
