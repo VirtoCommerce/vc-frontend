@@ -63,7 +63,7 @@
             <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
           </button>
 
-          <OrdersFilter>
+          <OrdersFilter @applied="hideFilters">
             <template #dateFilterType>
               <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
             </template>
@@ -307,7 +307,9 @@ import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { Sort } from "@/core/types";
+import { toDateISOString } from "@/core/utilities";
 import { useUserOrdersFilter, useUserOrders } from "@/shared/account/composables";
+import DateFilterSelect from "./date-filter-select.vue";
 import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
@@ -337,6 +339,7 @@ const {
   appliedFilterData,
   isFilterEmpty,
   isFilterDirty,
+  filterData,
   filterChipsItems,
   applyFilters,
   resetFilters,
@@ -438,11 +441,15 @@ function hideFilters() {
 }
 
 function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
-  selectedDateFilterType.value = dateFilterType;
-
-  if (!isMobile.value) {
-    hideFilters();
+  if (dateFilterType.startDate) {
+    filterData.value.startDate = toDateISOString(dateFilterType.startDate);
   }
+
+  if (dateFilterType.endDate) {
+    filterData.value.endDate = toDateISOString(dateFilterType.endDate);
+  }
+
+  selectedDateFilterType.value = dateFilterType;
 }
 
 function goToOrderDetails(order: CustomerOrderType): void {

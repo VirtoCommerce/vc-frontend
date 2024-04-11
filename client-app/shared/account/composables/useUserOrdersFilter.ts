@@ -62,26 +62,26 @@ export function useUserOrdersFilter() {
       {
         id: DateFilterId.LAST_DAY,
         label: t("common.labels.last_24_hours"),
-        startDate: lastDayStartDate,
-        endDate: currentDate,
+        startDate: lastDayStartDate.toISOString(),
+        endDate: currentDate.toISOString(),
       },
       {
         id: DateFilterId.LAST_WEEK,
         label: t("common.labels.last_week"),
-        startDate: lastWeekStartDate,
-        endDate: lastWeekEndDate,
+        startDate: lastWeekStartDate.toISOString(),
+        endDate: lastWeekEndDate.toISOString(),
       },
       {
         id: DateFilterId.LAST_MONTH,
         label: t("common.labels.last_month"),
-        startDate: lastMonthStartDate,
-        endDate: lastMonthEndDate,
+        startDate: lastMonthStartDate.toISOString(),
+        endDate: lastMonthEndDate.toISOString(),
       },
       {
         id: DateFilterId.LAST_YEAR,
         label: t("common.labels.last_year"),
-        startDate: lastYearStartDate,
-        endDate: lastYearEndDate,
+        startDate: lastYearStartDate.toISOString(),
+        endDate: lastYearEndDate.toISOString(),
       },
     ];
   }

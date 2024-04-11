@@ -23,19 +23,7 @@
           {{ $t("shared.account.orders-filter.created-date-label") }}
         </div>
 
-        <slot name="DateFilterType" />
-
-        <VcSelect
-          v-model="selectedDateFilter"
-          :items="dateFilterTypes"
-          text-field="label"
-          @change="setDateFilterType"
-        />
-
-        <template v-if="selectedDateFilter.id === 'custom'">
-          <VcDateSelector v-model="filterData.startDate" :label="$t('shared.account.orders-filter.start-date-label')" />
-          <VcDateSelector v-model="filterData.endDate" :label="$t('shared.account.orders-filter.end-date-label')" />
-        </template>
+        <slot name="dateFilterType" />
       </div>
     </div>
     <div class="grow lg:grow-0"></div>
@@ -58,58 +46,28 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "@vueuse/core";
-import { ref } from "vue";
-import { toDateISOString } from "@/core/utilities";
 import { useUserOrders, useUserOrdersFilter } from "../composables";
-import type { DateFilterType } from "@/core/types";
 
 interface IEmits {
-  (event: "change", dateFilterType: DateFilterType): void;
-}
-
-interface IProps {
-  dateFilterType?: DateFilterType;
+  (event: "applied"): void;
 }
 
 const emit = defineEmits<IEmits>();
 
-const props = defineProps<IProps>();
-
 const { facets } = useUserOrders({});
-const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty, dateFilterTypes } = useUserOrdersFilter();
-
-const { dateFilterType } = toRefs(props);
-
-const selectedDateFilter = ref<DateFilterType>(dateFilterType.value ?? dateFilterTypes.value[0]);
+const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
 }
 
-function setDateFilterType(value: DateFilterType): void {
-  if (value.id === "custom") {
-    filterData.value.startDate = undefined;
-    filterData.value.endDate = undefined;
-  }
-
-  if (value.id !== "custom" && !!value.startDate && !!value.endDate) {
-    filterData.value.startDate = toDateISOString(value.startDate);
-    filterData.value.endDate = toDateISOString(value.endDate);
-  }
-}
-
-function onChange() {
-  emit("change", selectedDateFilter.value);
-}
-
-function apply() {
+function apply(): void {
   applyFilters();
-  onChange();
+  emit("applied");
 }
 
-function reset() {
+function reset(): void {
   resetFilters();
-  onChange();
+  emit("applied");
 }
 </script>
