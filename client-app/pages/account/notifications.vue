@@ -1,20 +1,17 @@
 <template>
-  <div>
-    <VcTypography tag="h1" class="flex items-center">
-      {{ $t("shared.account.navigation.links.notifications") }}
-      <VcBadge v-if="unreadCountWithHidden > 0" class="ml-2" variant="outline" size="lg" rounded>
-        {{ unreadCountWithHidden }}
-      </VcBadge>
-    </VcTypography>
+  <div class="!block">
+    <div class="flex items-start justify-between gap-3">
+      <VcTypography tag="h1" class="flex items-center gap-2">
+        {{ $t("shared.account.navigation.links.notifications") }}
 
-    <div class="flex justify-between">
-      <VcSwitch v-model="showUnreadOnly" label-position="right">
-        {{ $t("ui_kit.push-messages.show_unread") }}
-      </VcSwitch>
+        <VcBadge v-if="unreadCountWithHidden > 0" variant="outline" size="lg" rounded>
+          {{ unreadCountWithHidden }}
+        </VcBadge>
+      </VcTypography>
 
       <VcDropdownMenu placement="bottom-end">
         <template #trigger>
-          <VcButton icon="dots-vertical" variant="outline" />
+          <VcButton icon="dots-vertical" variant="outline" size="sm" />
         </template>
 
         <template #content="{ close: closeMenu }">
@@ -39,30 +36,52 @@
       </VcDropdownMenu>
     </div>
 
-    <div>
-      <PushMessage v-for="item in items" :key="item.id" size="lg" class="border-b" :push-message="item" />
-
-      <VcPagination
-        v-if="items.length && pages > 1"
-        :page="page"
-        :pages="pages"
-        class="self-start"
-        :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
-        @update:page="changePage"
-      />
+    <div class="mt-4 lg:mt-5">
+      <VcSwitch v-model="showUnreadOnly" label-position="right">
+        {{ $t("ui_kit.push-messages.show_unread") }}
+      </VcSwitch>
     </div>
-    <VcWidget v-if="totalCount === 0 && !loading">
-      <VcEmptyView class="py-16" :text="$t('pages.account.notifications.empty_list')">
-        <template #icon>
-          <VcImage src="/static/images/common/notifications.svg" :alt="$t('pages.account.notifications.empty_list')" />
-        </template>
-      </VcEmptyView>
+
+    <VcWidget size="lg" class="mt-4 lg:mt-5">
+      <template #default-container>
+        <div class="p-3 lg:p-6">
+          <div class="divide-y rounded border empty:hidden">
+            <PushMessage
+              v-for="item in items"
+              :key="item.id"
+              size="lg"
+              class="first:rounded-t last:rounded-b"
+              :push-message="item"
+            />
+          </div>
+
+          <VcPagination
+            v-if="items.length && pages > 1"
+            :page="page"
+            :pages="pages"
+            class="mt-6"
+            @update:page="changePage"
+          />
+
+          <VcEmptyView
+            v-if="totalCount === 0 && !loading"
+            class="min-h-[20rem]"
+            :text="$t('pages.account.notifications.empty_list')"
+          >
+            <template #icon>
+              <VcImage
+                src="/static/images/common/notifications.svg"
+                :alt="$t('pages.account.notifications.empty_list')"
+              />
+            </template>
+          </VcEmptyView>
+        </div>
+      </template>
     </VcWidget>
   </div>
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
@@ -70,8 +89,6 @@ import { usePushMessages } from "@/shared/push-messages/composables/usePushMessa
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 const { t } = useI18n();
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("md");
 const showUnreadOnly = ref(false);
 
 watch(showUnreadOnly, resetPagination);
@@ -94,9 +111,3 @@ function changePage(newPage: number) {
   window.scroll({ top: 0, behavior: "smooth" });
 }
 </script>
-
-<style scoped lang="scss">
-.vc-typography--variant--h1 {
-  @apply normal-case;
-}
-</style>
