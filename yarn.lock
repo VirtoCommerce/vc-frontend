@@ -6098,23 +6098,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vee-validate/rules@npm:~4.11.8":
-  version: 4.11.8
-  resolution: "@vee-validate/rules@npm:4.11.8"
+"@vee-validate/rules@npm:~4.12.6":
+  version: 4.12.6
+  resolution: "@vee-validate/rules@npm:4.12.6"
   dependencies:
-    vee-validate: "npm:4.11.8"
-  checksum: 10c0/4835f3c06e3b090fdbce13373d73b3d6842f6440925a8777741740dbb9109af0ca276fbb0d2ec2d267ca9bdedc049da57fa78193a213a4d6675e78cf8f337d98
+    vee-validate: "npm:4.12.6"
+  checksum: 10c0/fb2cc9a0d9845aa09a5e3a1090ecbd152f6c8e90bf4efad8ee14584b93d6bfab741c70b4c54c9721375ea82c7cfb05ef3ac93d4e8cc31cbbf07384816da59c42
   languageName: node
   linkType: hard
 
-"@vee-validate/yup@npm:~4.11.8":
-  version: 4.11.8
-  resolution: "@vee-validate/yup@npm:4.11.8"
+"@vee-validate/yup@npm:~4.12.6":
+  version: 4.12.6
+  resolution: "@vee-validate/yup@npm:4.12.6"
   dependencies:
-    type-fest: "npm:^4.3.1"
-    vee-validate: "npm:4.11.8"
-    yup: "npm:^1.2.0"
-  checksum: 10c0/762d7781fea571ea7406796853f353cddac0e5eea36befb576dd01a8450a812a3bbe9f5cd1e3566c433482bd21398f13edc2cdc8ca556d7236857a40bc16793d
+    type-fest: "npm:^4.8.3"
+    vee-validate: "npm:4.12.6"
+    yup: "npm:^1.3.2"
+  checksum: 10c0/b17df2c16848b5fc3251c00f9b537fcc415a0341ddb3f40d24eeeabde7f936d1bb7e26e45f48c030bb9d5fa13698288bf25849547c5ad435905410e63354c99b
   languageName: node
   linkType: hard
 
@@ -6324,6 +6324,13 @@ __metadata:
   version: 6.5.1
   resolution: "@vue/devtools-api@npm:6.5.1"
   checksum: 10c0/d28b00a64df2c5b3351f74ad28ec7fe65e9ee6e20e585c0130ae6ab74b7e616d4eda3b3e82d39ad391e959be4bbb7aa7221d8253bbca1f3021ad07d4430095f9
+  languageName: node
+  linkType: hard
+
+"@vue/devtools-api@npm:^6.5.1":
+  version: 6.6.1
+  resolution: "@vue/devtools-api@npm:6.6.1"
+  checksum: 10c0/ab9a1e09baae514b0d3a8bf1d670ecb7724f7e55b82eea30aa2e7255e6200b45c1086c1376560f243cf86e98c0726e94d69cefe0ad23dfd50c7c49dfcb1fbf21
   languageName: node
   linkType: hard
 
@@ -17633,10 +17640,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.3.1":
-  version: 4.9.0
-  resolution: "type-fest@npm:4.9.0"
-  checksum: 10c0/7e6423f7337928a7323ce8a68cfbbaf30ecb70b9c635207899e58297d219c71be4a8c50b52afb9fe09c9f44b2c4276d0a44bb95acabab7bc942455f980aad267
+"type-fest@npm:^4.8.3":
+  version: 4.13.1
+  resolution: "type-fest@npm:4.13.1"
+  checksum: 10c0/5ef2232fa78c0bc09249abbfd17d13ff154873846d7d7b264fa3e774ed33df244284cbdff367c6e3d4b46f1c40800482d55501a943d1fdd30ea6651b374b1353
   languageName: node
   linkType: hard
 
@@ -18170,8 +18177,8 @@ __metadata:
     "@types/node": "npm:~20.11.15"
     "@types/uuid": "npm:^9.0.8"
     "@unhead/vue": "npm:^1.8.10"
-    "@vee-validate/rules": "npm:~4.11.8"
-    "@vee-validate/yup": "npm:~4.11.8"
+    "@vee-validate/rules": "npm:~4.12.6"
+    "@vee-validate/yup": "npm:~4.12.6"
     "@vitejs/plugin-vue": "npm:~5.0.3"
     "@vue/apollo-composable": "npm:^4.0.1"
     "@vue/eslint-config-prettier": "npm:^8.0.0"
@@ -18223,7 +18230,7 @@ __metadata:
     typescript: "npm:~5.3.0"
     utility-types: "npm:^3.11.0"
     uuid: "npm:^9.0.1"
-    vee-validate: "npm:~4.11.8"
+    vee-validate: "npm:~4.12.6"
     vite: "npm:~5.0.11"
     vite-node: "npm:~1.2.2"
     vite-plugin-checker: "npm:^0.6.4"
@@ -18236,19 +18243,19 @@ __metadata:
     vue-i18n: "npm:^9.9.1"
     vue-router: "npm:~4.2.5"
     vue-tsc: "npm:~1.8.27"
-    yup: "npm:^1.3.3"
+    yup: "npm:^1.4.0"
   languageName: unknown
   linkType: soft
 
-"vee-validate@npm:4.11.8, vee-validate@npm:~4.11.8":
-  version: 4.11.8
-  resolution: "vee-validate@npm:4.11.8"
+"vee-validate@npm:4.12.6, vee-validate@npm:~4.12.6":
+  version: 4.12.6
+  resolution: "vee-validate@npm:4.12.6"
   dependencies:
-    "@vue/devtools-api": "npm:^6.5.0"
-    type-fest: "npm:^4.3.1"
+    "@vue/devtools-api": "npm:^6.5.1"
+    type-fest: "npm:^4.8.3"
   peerDependencies:
-    vue: ^3.3.4
-  checksum: 10c0/03e8345e82ee170684895b568301c5cd8d999d48e0f9a942366a7ee7e2e4d1d3b563c696b45b3d3063a2a66b3fe4500bd23b1ebbb7da8e7513491c7f5d59a2a4
+    vue: ^3.3.11
+  checksum: 10c0/2341f23586b03ef9536a950155660ad3c003275094763649069817c07f66215dcaf5e5abb95a4a8cb8a832c8a2102ff0592a2c3fb36f31a89c5bf578ed33b638
   languageName: node
   linkType: hard
 
@@ -19232,15 +19239,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yup@npm:^1.2.0, yup@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "yup@npm:1.3.3"
+"yup@npm:^1.3.2, yup@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "yup@npm:1.4.0"
   dependencies:
     property-expr: "npm:^2.0.5"
     tiny-case: "npm:^1.0.3"
     toposort: "npm:^2.0.2"
     type-fest: "npm:^2.19.0"
-  checksum: 10c0/cc00e98af8617b779dd151d6a77779228cfe973a185c743628b2afdecda88c333187d058c1199518d696c15827ba9b757a6c57c1ace6766d970d3cd2368c3264
+  checksum: 10c0/fe142141365eed0f78fb2e18bdd2f10bf101385dae12a5f9de14884448067bdca16a54b547fc0bffec04a098dd70b4519ff366422f3da006fd11a0717a7863ac
   languageName: node
   linkType: hard
 
