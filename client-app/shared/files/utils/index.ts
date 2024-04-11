@@ -1,5 +1,6 @@
 import { toValue } from "vue";
 import { useFetch } from "@/core/api/common";
+import { Logger } from "@/core/utilities";
 
 export async function downloadFile(fileUrl: string, fileName: string) {
   try {
@@ -12,6 +13,6 @@ export async function downloadFile(fileUrl: string, fileName: string) {
     link.click();
     document.body.removeChild(link);
   } catch (error) {
-    console.error("Request error:", error);
+    Logger.error(downloadFile.name, error);
   }
 }
