@@ -59,7 +59,7 @@ defineProps<IProps>();
 }
 
 .notifications > div {
-  mask: url(/static/images/dashboard/icons/bell.svg) no-repeat center / contain;
+  mask: url(/static/icons/basic/bell.svg) no-repeat center / contain;
 }
 
 /* Active/hover state styles */
