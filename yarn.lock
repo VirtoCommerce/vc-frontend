@@ -14460,7 +14460,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react-dom@npm:^18.2.0":
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -14493,7 +14493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react@npm:^18.2.0":
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:
@@ -17295,8 +17295,6 @@ __metadata:
     postcss: "npm:^8.4.33"
     postcss-import: "npm:^16.0.0"
     prettier: "npm:^3.0.3"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
     rollup-plugin-visualizer: "npm:^5.12.0"
     sass: "npm:^1.70.0"
     skyflow-js: "npm:^1.34.2"
