@@ -212,7 +212,8 @@
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
-import { ProductType, PropertyType } from "@/core/enums";
+import { PropertyType } from "@/core/api/graphql/types";
+import { ProductType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
