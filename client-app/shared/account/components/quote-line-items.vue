@@ -54,7 +54,7 @@
                 v-if="item.extended.route"
                 :to="item.extended.route"
                 :title="item.name"
-                class="text-accent-600 [word-break:break-word]"
+                class="text-[--link-color] [word-break:break-word] hover:text-[--link-hover-color]"
               >
                 {{ item.name }}
               </router-link>

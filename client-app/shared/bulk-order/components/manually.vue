@@ -11,7 +11,7 @@
         <router-link
           v-t="'shared.bulk_order.manually.cart_link'"
           :to="{ name: 'Cart' }"
-          class="text-accent-600"
+          class="text-[--link-color] hover:text-[--link-hover-color]"
         ></router-link>
         {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
       </p>

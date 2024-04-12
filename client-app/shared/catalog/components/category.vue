@@ -136,7 +136,7 @@
                     }"
                     scope="global"
                   >
-                    <span :class="{ 'font-bold text-accent-600': savedBranches.length }">
+                    <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
                       {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
                     </span>
                   </i18n-t>

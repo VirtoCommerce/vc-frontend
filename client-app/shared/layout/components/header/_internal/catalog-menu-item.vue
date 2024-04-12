@@ -25,7 +25,7 @@
         class="flex items-center px-2 py-1 text-sm"
         @click="toggleShowAll"
       >
-        <span class="text-accent-600 hover:text-accent-700">
+        <span class="text-[--link-color] hover:text-[--link-hover-color]">
           {{ buttonText }}
         </span>
 

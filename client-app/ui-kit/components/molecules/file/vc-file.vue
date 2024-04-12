@@ -130,7 +130,11 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__link {
-    @apply text-accent-600;
+    color: var(--link-color);
+
+    &:hover {
+      color: var(--link-hover-color);
+    }
   }
 
   &__name,

@@ -13,7 +13,7 @@
         <button type="button" @click.prevent="onOpenBranches">
           <VcCheckbox :model-value="!!localFilters.branches.length" :disabled="loading">
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
-              <span :class="{ 'font-bold text-accent-600': localFilters.branches.length }">
+              <span :class="{ 'font-bold text-[--link-color]': localFilters.branches.length }">
                 {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: localFilters.branches.length }) }}
               </span>
             </i18n-t>

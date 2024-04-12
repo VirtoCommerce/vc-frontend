@@ -59,7 +59,8 @@
             <svg class="text-primary" width="16" height="16">
               <use href="/static/images/clear.svg#main"></use>
             </svg>
-            <div class="pl-2 text-sm font-bold text-accent-600">
+
+            <div class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
               {{ $t("shared.catalog.branches_modal.clear_selection") }}
             </div>
           </div>
@@ -88,7 +89,7 @@
           type="button"
           class="mr-auto flex items-center py-2 font-bold"
           :class="{
-            'text-accent-600': showSelectedBranchesMobile && selectedBranchesIds.length,
+            'text-[--link-color]': showSelectedBranchesMobile && selectedBranchesIds.length,
           }"
           :disabled="!(showSelectedBranchesMobile && selectedBranchesIds.length) || !selectedBranchesIds.length"
           @click="toggleShowSelectedBranchesMobile(false)"
@@ -100,7 +101,7 @@
           <button
             type="button"
             class="flex items-center py-2 font-bold"
-            :class="{ 'text-accent-600': !showSelectedBranchesMobile }"
+            :class="{ 'text-[--link-color]': !showSelectedBranchesMobile }"
             :disabled="showSelectedBranchesMobile"
             @click="toggleShowSelectedBranchesMobile(true)"
           >

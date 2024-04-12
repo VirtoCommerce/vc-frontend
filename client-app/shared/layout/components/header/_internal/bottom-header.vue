@@ -1,9 +1,6 @@
 <template>
-  <div class="relative">
-    <nav
-      ref="bottomHeader"
-      class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-additional-50 px-5 py-3 xl:px-12"
-    >
+  <div class="relative bg-[--bottom-header-bg-color]">
+    <nav ref="bottomHeader" class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 px-5 py-3 xl:px-12">
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>

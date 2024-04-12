@@ -37,7 +37,7 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center text-sm font-bold text-accent-600 disabled:cursor-not-allowed disabled:text-neutral-400"
+            class="flex cursor-pointer items-center text-sm font-bold text-[--link-color] disabled:cursor-not-allowed disabled:text-neutral-400"
             :disabled="creationButtonDisabled"
             @click="addNewList"
           >

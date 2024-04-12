@@ -152,7 +152,7 @@
             <VcCheckbox class="inline-flex">
               {{ $t("pages.demo_landing.subscription_block.agreement_checkbox_label") }}
 
-              <router-link class="text-accent-600 hover:text-accent-700" to="/terms">
+              <router-link class="text-[--link-color] hover:text-[--link-hover-color]" to="/terms">
                 {{ $t("pages.demo_landing.subscription_block.terms_and_policy_link") }}
               </router-link>
             </VcCheckbox>

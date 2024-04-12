@@ -47,7 +47,7 @@
             <li v-for="(branch, index) in otherBranches" :key="index" class="text-primary marker:text-xl">
               <router-link
                 :to="`/branch/${branch.id}`"
-                class="mb-1 text-[1.063rem] font-extrabold text-accent-600 lg:text-base"
+                class="mb-1 text-[1.063rem] font-extrabold text-[--link-color] hover:text-[--link-hover-color] lg:text-base"
               >
                 {{ branch.name }}
               </router-link>

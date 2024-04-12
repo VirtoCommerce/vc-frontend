@@ -80,7 +80,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__tooltip {
-    @apply w-52 rounded-sm bg-additional-50 py-1.5 px-3.5 text-xs text-neutral-800 shadow-sm-x-y;
+    @apply w-52 rounded-sm bg-additional-50 py-1.5 px-3.5 text-xs text-neutral-800 shadow-md;
   }
 
   &__counter {

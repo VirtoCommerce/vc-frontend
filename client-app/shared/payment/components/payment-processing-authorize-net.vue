@@ -23,13 +23,13 @@
       <p class="text-center text-sm text-neutral md:text-left">
         {{ $t("shared.payment.authorize_net.accept_terms_text") }}
 
-        <router-link to="/agreement" class="text-accent-600 hover:text-accent-700">
+        <router-link to="/agreement" class="text-[--link-color] hover:text-[--link-hover-color]">
           {{ $t("shared.payment.authorize_net.user_agreement_link") }}
         </router-link>
 
         {{ $t("shared.payment.authorize_net.processing_personal_data_text") }}
 
-        <router-link to="/policy" class="text-accent-600 hover:text-accent-700">
+        <router-link to="/policy" class="text-[--link-color] hover:text-[--link-hover-color]">
           {{ $t("shared.payment.authorize_net.privacy_policy_link") }}
         </router-link>
       </p>

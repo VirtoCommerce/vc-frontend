@@ -58,7 +58,7 @@
                   <router-link
                     :to="links[item.productId]"
                     target="_blank"
-                    class="font-semibold text-accent-600 hover:text-accent-700"
+                    class="font-semibold text-[--link-color] hover:text-[--link-hover-color]"
                   >
                     {{ item.name }}
                   </router-link>

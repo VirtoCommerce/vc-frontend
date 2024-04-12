@@ -4,7 +4,7 @@
       v-for="(item, index) in items"
       :key="index"
       :disabled="isDisabled"
-      :class="isActiveItem(item) ? 'cursor-default' : 'text-accent-600 hover:text-accent-700'"
+      :class="isActiveItem(item) ? 'cursor-default' : 'text-[--link-color] hover:text-[--link-hover-color]'"
       type="button"
       class="appearance-none px-2.5 disabled:opacity-40"
       @click="select(item)"
