@@ -6251,9 +6251,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/apollo-composable@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@vue/apollo-composable@npm:4.0.1"
+"@vue/apollo-composable@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@vue/apollo-composable@npm:4.0.2"
   dependencies:
     throttle-debounce: "npm:^5.0.0"
     ts-essentials: "npm:^9.4.0"
@@ -6266,7 +6266,7 @@ __metadata:
   peerDependenciesMeta:
     "@vue/composition-api":
       optional: true
-  checksum: 10c0/52e0424bd872159888ad4449228cb4ce2c31d847a9ed3f99a875d2a4ac43a16b94a61c79d25ede65f9dda2958c994fcab1c782e08fd6c413006c5012c0afd07c
+  checksum: 10c0/117fec6158ce44f5a254180601da249efa88d1ec4eed65c77bce3ff6cd039157ff1f4c93895cf57b37289e1869bf56d9bd419a11c28e598f33e8edd2d2b467f1
   languageName: node
   linkType: hard
 
@@ -16938,10 +16938,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:11.0.5":
-  version: 11.0.5
-  resolution: "swiper@npm:11.0.5"
-  checksum: 10c0/443d147cdca55708dcf0fd174edfd68f6b55166578a9aedc7c636687c071f520e0bb626dd4ea9fb83feb21d61e4e6e4beda8d1f4b7e664077ebda9e22398d815
+"swiper@npm:11.1.1":
+  version: 11.1.1
+  resolution: "swiper@npm:11.1.1"
+  checksum: 10c0/02ded86e5033dbac47bbaa5e5592e15e945be990235f244236ddb2b8d6299cf6e66f1a45ad67277b1a133295daa5c7bad38e9c725b6d00b72d33431603202288
   languageName: node
   linkType: hard
 
@@ -18180,7 +18180,7 @@ __metadata:
     "@vee-validate/rules": "npm:~4.12.6"
     "@vee-validate/yup": "npm:~4.12.6"
     "@vitejs/plugin-vue": "npm:~5.0.3"
-    "@vue/apollo-composable": "npm:^4.0.1"
+    "@vue/apollo-composable": "npm:^4.0.2"
     "@vue/eslint-config-prettier": "npm:^8.0.0"
     "@vue/eslint-config-typescript": "npm:^12.0.0"
     "@vue/test-utils": "npm:~2.4.4"
@@ -18224,7 +18224,7 @@ __metadata:
     storybook: "npm:^7.6.12"
     storybook-vue3-router: "npm:^5.0.0"
     subscriptions-transport-ws: "npm:^0.11.0"
-    swiper: "npm:11.0.5"
+    swiper: "npm:11.1.1"
     tailwindcss: "npm:^3.4.1"
     tw-elements: "npm:^1.1.0"
     typescript: "npm:~5.3.0"
