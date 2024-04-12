@@ -84,20 +84,14 @@ defineProps<IProps>();
   }
 
   &__link {
-    @apply appearance-none lowercase border-b border-dashed border-current;
-
-    color: var(--link-color);
+    @apply appearance-none lowercase border-b border-dashed border-current text-[--link-color];
 
     &:hover {
-      color: var(--link-hover-color);
+      @apply text-[--link-hover-color];
     }
 
     #{$disabled} & {
       @apply text-neutral pointer-events-none;
-    }
-
-    &:hover {
-      @apply text-accent-700;
     }
   }
 }
