@@ -289,7 +289,7 @@ watchEffect(() => {
   }
 
   &__subtotal {
-    @apply ms-auto justify-self-end flex items-center gap-2 text-success-600;
+    @apply ms-auto justify-self-end flex items-center gap-2 text-[--price-color];
   }
 
   &__subtotal-label {

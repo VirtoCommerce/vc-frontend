@@ -66,7 +66,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   &__text {
-    color: var(--text-color);
+    color: var(--body-text-color);
 
     #{$link}:not(#{$disabled}) & {
       @apply cursor-pointer;

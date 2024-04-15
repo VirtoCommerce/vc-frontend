@@ -1,5 +1,8 @@
 <template>
-  <router-link class="footer-link text-xs font-medium text-neutral-400 hover:text-additional-50" :to="to">
+  <router-link
+    class="footer-link text-xs font-medium text-[--footer-top-link-color] hover:text-[--footer-top-link-hover-color]"
+    :to="to"
+  >
     <slot>{{ title }}</slot>
   </router-link>
 </template>
@@ -23,6 +26,6 @@ defineProps({
 
 <style>
 .footer-link.router-link-active {
-  @apply text-additional-50;
+  @apply text-[--footer-top-link-active-color];
 }
 </style>

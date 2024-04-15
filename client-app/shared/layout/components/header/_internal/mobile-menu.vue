@@ -2,7 +2,10 @@
   <nav class="fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-accent-200">
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
-        <span v-if="organization" class="line-clamp-2 text-xl font-medium italic leading-[22px] text-additional-50">
+        <span
+          v-if="organization"
+          class="line-clamp-2 text-xl font-medium italic leading-[22px] text-[--mobile-menu-text-color]"
+        >
           {{ organization?.name }}
         </span>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[39px] items-center gap-x-5 bg-[--top-header-bg-color] px-5 text-sm text-additional-50 xl:px-12">
+  <div class="flex h-[39px] items-center gap-x-5 bg-[--header-top-bg-color] px-5 text-sm text-additional-50 xl:px-12">
     <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
     <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 
@@ -11,7 +11,7 @@
         <span v-t="'shared.layout.header.top_header.call_us_label'" class="mr-1 font-thin" />
 
         <a
-          class="py-1 font-semibold text-accent-300 hover:text-additional-50"
+          class="py-1 font-semibold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
           :href="`tel:${$cfg.support_phone_number}`"
         >
           {{ $cfg.support_phone_number }}
@@ -44,7 +44,7 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center py-1 text-additional-50 hover:text-accent-300"
+            class="flex cursor-pointer items-center py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             @click="loginMenuVisible = !loginMenuVisible"
           >
             <span class="font-bold">{{ user.contact?.fullName || user.userName }}</span>

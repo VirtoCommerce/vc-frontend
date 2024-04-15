@@ -7,7 +7,7 @@
         :class="priceColorClass"
         :value="value?.actual"
       />
-      <VcPriceDisplay v-else class="font-bold text-success-700" :value="value?.list" />
+      <VcPriceDisplay v-else class="font-bold text-[--price-color]" :value="value?.list" />
       <span v-t="'common.suffixes.per_item'" class="hidden sm:inline md:hidden xl:inline print:!block"></span>
     </div>
     <div class="leading-4">
@@ -29,6 +29,6 @@ interface IProps {
 }
 
 withDefaults(defineProps<IProps>(), {
-  priceColorClass: "text-success-700",
+  priceColorClass: "text-[--price-color]",
 });
 </script>

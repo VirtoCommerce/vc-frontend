@@ -164,7 +164,9 @@
     </div>
 
     <!-- table footer -->
-    <div class="flex items-center justify-end gap-2 py-2.5 text-success-700 md:rounded-b md:border md:px-4 md:py-2.5">
+    <div
+      class="flex items-center justify-end gap-2 py-2.5 text-[--price-color] md:rounded-b md:border md:px-4 md:py-2.5"
+    >
       <div class="text-sm font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
 
       <div class="text-base font-black">{{ $n(subtotal, "currency") }}</div>

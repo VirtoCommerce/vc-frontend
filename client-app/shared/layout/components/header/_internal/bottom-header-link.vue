@@ -3,7 +3,11 @@
     <a
       v-bind="$attrs"
       :href="href"
-      :class="[isActive ? 'text-neutral-900' : 'text-neutral-500 hover:text-neutral-900']"
+      :class="[
+        isActive
+          ? 'text-[--header-bottom-link-active-color]'
+          : 'text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]',
+      ]"
       class="flex flex-col items-center px-3 text-13 font-bold tracking-wide"
       @click="navigate"
     >

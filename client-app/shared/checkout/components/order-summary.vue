@@ -88,7 +88,7 @@
 
       <div class="mt-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.total") }}</span>
-        <span class="text-green-700 print:text-inherit">
+        <span class="text-[--price-color] print:text-inherit">
           <VcPriceDisplay :value="cart.total!" />
         </span>
       </div>

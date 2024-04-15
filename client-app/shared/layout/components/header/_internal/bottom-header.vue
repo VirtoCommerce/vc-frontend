@@ -1,6 +1,9 @@
 <template>
-  <div class="relative bg-[--bottom-header-bg-color]">
-    <nav ref="bottomHeader" class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 px-5 py-3 xl:px-12">
+  <div class="relative bg-[--header-bottom-bg-color]">
+    <nav
+      ref="bottomHeader"
+      class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-inherit px-5 py-3 xl:px-12"
+    >
       <router-link to="/">
         <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
@@ -18,7 +21,7 @@
         ref="showCatalogMenuButton"
         :href="catalogLink"
         type="button"
-        class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-neutral-500 hover:text-neutral-900"
+        class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
         @click="toggleCatalogDropdown"
       >
         <span
@@ -76,7 +79,7 @@
       <div
         v-if="catalogMenuVisible"
         ref="catalogMenuElement"
-        class="absolute w-full overflow-y-auto shadow-md transition-transform duration-200"
+        class="absolute w-full overflow-y-auto bg-inherit shadow-md transition-transform duration-200"
         :style="catalogMenuStyle"
       >
         <CatalogMenu :items="catalogMenuItems" @select="catalogMenuVisible = false" />

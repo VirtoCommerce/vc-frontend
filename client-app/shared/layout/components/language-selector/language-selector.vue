@@ -2,10 +2,13 @@
   <div v-on-click-outside="() => open && hideList()" class="relative select-none">
     <button
       type="button"
-      class="relative flex appearance-none items-center gap-x-1.5 py-3 leading-none text-accent-300 hover:text-additional-50"
+      class="relative flex appearance-none items-center gap-x-1.5 py-3 leading-none text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
       @click="toggle"
     >
-      <span v-t="'shared.layout.language_selector.label'" class="hidden text-additional-50 lg:inline"></span>
+      <span
+        v-t="'shared.layout.language_selector.label'"
+        class="hidden text-sm text-[--header-top-text-color] lg:inline"
+      ></span>
 
       <span
         class="fi fis fa-2x -my-3 h-[30px] !w-[30px] rounded-full lg:h-[14px] lg:!w-[14px]"

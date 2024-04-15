@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full columns-4 bg-additional-50 px-10 pt-3 xl:columns-5">
+  <div class="w-full columns-4 px-10 pt-3 xl:columns-5">
     <CatalogMenuItem
       v-for="(item, index) in items"
       :key="index"
