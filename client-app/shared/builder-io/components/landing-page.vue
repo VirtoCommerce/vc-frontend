@@ -17,6 +17,7 @@ import { getContent, RenderContent, isPreviewing } from "@builder.io/sdk-vue/vue
 import { onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
+import { builderIOComponents } from "@/shared/static-content";
 
 const router = useRouter();
 const { themeContext } = useThemeContext();
@@ -50,6 +51,6 @@ async function tryLoadContent(urlPath: string) {
 }
 
 const getRegisteredComponents = () => {
-  return [];
+  return builderIOComponents;
 };
 </script>

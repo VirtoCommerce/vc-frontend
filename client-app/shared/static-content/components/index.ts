@@ -14,6 +14,29 @@ import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
+export const builderIOComponents: Array<BuilderIOComponentType> = [
+  {
+    name: "Products",
+    component: ProductsBlock,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Products Block",
+      },
+      {
+        name: "query",
+        type: "string",
+      },
+    ],
+  },
+];
+
+type BuilderIOComponentType = {
+  component: Component;
+  inputs: Array<object>;
+  name: string;
+};
 export const templateBlocks: { [key: string]: Component } = {
   "call-to-action-with-image": CallToActionWithImage,
   "call-to-action": CallToAction,
