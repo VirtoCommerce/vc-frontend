@@ -291,7 +291,8 @@
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
             "quote_requests": "@:common.links.quote_requests",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "saved_credit_cards": "@:common.links.saved_credit_cards",
+            "notifications": "@:common.links.notifications"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {

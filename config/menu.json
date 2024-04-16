@@ -118,6 +118,11 @@
             "route": { "name": "SavedCreditCards" },
             "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
             "icon": "/static/images/dashboard/icons/credit-card.svg#main"
+          },
+          {
+            "route": { "name": "Notifications" },
+            "title": "shared.layout.header.mobile.account_menu.notifications",
+            "icon": "/static/icons/basic/bell.svg#icon"
           }
         ]
       },
