@@ -1,8 +1,8 @@
 fragment property on Property {
   name
   value
-  type
+  propertyType
   hidden
-  valueType
+  propertyValueType
   label
 }

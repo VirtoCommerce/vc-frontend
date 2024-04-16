@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { computed, inject } from "vue";
-import { PropertyType } from "@/core/enums";
+import { PropertyType } from "@/core/api/graphql/types";
 import { configInjectionKey } from "@/core/injection-keys";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { ProductTitledBlock, Vendor } from "@/shared/catalog";

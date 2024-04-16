@@ -41,8 +41,11 @@ const graphQLCodegenTypesConfig: CodegenConfig | CodegenConfigWorkaround = {
         identifierName: "OperationNames",
         maybeValue: "T",
         scalars: {
+          DynamicPropertyValue: "string | number | boolean | null",
           Long: "number",
+          ModuleSettingValue: "string | number | boolean | null",
           OptionalString: "string | undefined",
+          PropertyValue: "string | number | boolean | null",
         },
         skipTypename: true,
         useTypeImports: true,
