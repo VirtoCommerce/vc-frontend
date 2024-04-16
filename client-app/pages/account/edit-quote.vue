@@ -32,7 +32,13 @@
         prepend-icon="document-add"
         size="lg"
       >
-        <VcFileUploader v-bind="fileOptions" :files="files" @add-files="onAddFiles" @remove-files="onRemoveFiles" />
+        <VcFileUploader
+          v-bind="fileOptions"
+          :files="files"
+          @add-files="onAddFiles"
+          @remove-files="onRemoveFiles"
+          @download="onFileDownload"
+        />
       </VcWidget>
 
       <!-- Quote products -->
@@ -127,7 +133,7 @@ import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities"
 import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
-import { useFiles } from "@/shared/files";
+import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
@@ -429,6 +435,12 @@ async function fetchAddresses(): Promise<void> {
     await fetchOrganizationAddresses();
   } else {
     await fetchPersonalAddresses();
+  }
+}
+
+function onFileDownload(file: FileType) {
+  if (file && file.url) {
+    downloadFile(file.url, file.name);
   }
 }
 

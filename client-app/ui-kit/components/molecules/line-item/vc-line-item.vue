@@ -108,7 +108,7 @@
           class="vc-line-item__remove-button"
           color="neutral"
           size="sm"
-          variant="no-border"
+          variant="no-background"
           icon="x"
           :disabled="disabled"
           @click="$emit('remove')"
@@ -172,7 +172,9 @@ watchEffect(() => {
   $deleted: "";
   $disabled: "";
 
-  @apply relative flex flex-col gap-2 p-3 rounded border shadow-md;
+  --bg-color: var(--color-additional-50);
+
+  @apply relative flex flex-col gap-2 p-3 rounded border shadow-md bg-[--bg-color];
 
   @media (min-width: theme("screens.md")) {
     @apply p-4 rounded-none border-0 shadow-none;
@@ -180,8 +182,7 @@ watchEffect(() => {
 
   &--selected {
     $selected: &;
-
-    @apply bg-secondary-50;
+    --bg-color: var(--color-secondary-50);
   }
 
   &--removable {
@@ -216,14 +217,10 @@ watchEffect(() => {
   }
 
   &__checkbox {
-    @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-additional-50;
+    @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-[--bg-color];
 
     @media (min-width: theme("screens.md")) {
       @apply static top-auto left-auto -m-2;
-    }
-
-    #{$selected} & {
-      @apply bg-secondary-50;
     }
   }
 
