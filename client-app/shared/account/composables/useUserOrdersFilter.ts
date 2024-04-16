@@ -61,7 +61,7 @@ export function useUserOrdersFilter() {
       },
       {
         id: DateFilterId.LAST_DAY,
-        label: t("common.labels.last_24_hours"),
+        label: t("common.labels.last_day"),
         startDate: lastDayStartDate.toISOString(),
         endDate: currentDate.toISOString(),
       },
@@ -133,7 +133,7 @@ export function useUserOrdersFilter() {
   }
 
   function resetFilters() {
-    filterData.value = { statuses: [] };
+    filterData.value = { statuses: [], startDate: undefined, endDate: undefined };
     appliedFilterData.value = { ...filterData.value };
   }
 

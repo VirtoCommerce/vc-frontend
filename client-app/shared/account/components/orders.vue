@@ -9,24 +9,11 @@
       </MobileOrdersFilter>
 
       <template #footer>
-        <VcButton
-          :disabled="isFilterEmpty && !isFilterDirty"
-          variant="outline"
-          @click="
-            resetFilters();
-            hideFilters();
-          "
-        >
+        <VcButton :disabled="isFilterEmpty && !isFilterDirty" variant="outline" @click="resetOrderFilters">
           {{ $t("common.buttons.reset") }}
         </VcButton>
 
-        <VcButton
-          :disabled="!isFilterDirty"
-          @click="
-            applyFilters();
-            hideFilters();
-          "
-        >
+        <VcButton :disabled="!isFilterDirty" @click="applyOrderFilters">
           {{ $t("common.buttons.apply") }}
         </VcButton>
       </template>
@@ -63,7 +50,7 @@
             <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
           </button>
 
-          <OrdersFilter @applied="hideFilters">
+          <OrdersFilter @apply="applyOrderFilters" @reset="resetOrderFilters">
             <template #dateFilterType>
               <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
             </template>
@@ -99,7 +86,7 @@
         </VcChip>
       </template>
 
-      <VcChip color="secondary" variant="outline" clickable @click="resetFilters">
+      <VcChip color="secondary" variant="outline" clickable @click="resetOrderFilters">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
         <VcIcon name="reset" />
@@ -337,6 +324,7 @@ const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword 
 
 const {
   appliedFilterData,
+  dateFilterTypes,
   isFilterEmpty,
   isFilterDirty,
   filterData,
@@ -455,6 +443,17 @@ function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
   window.open(orderRoute.fullPath, "_blank")!.focus();
+}
+
+function applyOrderFilters(): void {
+  applyFilters();
+  hideFilters();
+}
+
+function resetOrderFilters(): void {
+  resetFilters();
+  selectedDateFilterType.value = dateFilterTypes.value[0];
+  hideFilters();
 }
 
 onClickOutside(

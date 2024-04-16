@@ -33,12 +33,12 @@
         variant="outline"
         :disabled="isFilterEmpty && !isFilterDirty"
         size="sm"
-        @click="reset"
+        @click="$emit('reset')"
       >
         {{ $t("shared.account.orders-filter.reset-button") }}
       </VcButton>
 
-      <VcButton size="sm" :disabled="!isFilterDirty" @click="apply">
+      <VcButton size="sm" :disabled="!isFilterDirty" @click="$emit('apply')">
         {{ $t("shared.account.orders-filter.apply-button") }}
       </VcButton>
     </div>
@@ -49,25 +49,16 @@
 import { useUserOrders, useUserOrdersFilter } from "../composables";
 
 interface IEmits {
-  (event: "applied"): void;
+  (event: "apply"): void;
+  (event: "reset"): void;
 }
 
-const emit = defineEmits<IEmits>();
+defineEmits<IEmits>();
 
 const { facets } = useUserOrders({});
-const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
+const { filterData, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
-}
-
-function apply(): void {
-  applyFilters();
-  emit("applied");
-}
-
-function reset(): void {
-  resetFilters();
-  emit("applied");
 }
 </script>
