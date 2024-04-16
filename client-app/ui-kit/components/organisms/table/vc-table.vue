@@ -21,7 +21,7 @@
           <th
             v-for="column in columns"
             :key="column.id"
-            class="px-5 py-3 font-extrabold"
+            class="px-5 py-3 font-bold"
             :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
             @click="
               column.sortable

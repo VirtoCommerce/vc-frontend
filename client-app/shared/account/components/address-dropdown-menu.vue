@@ -11,6 +11,18 @@
         <span>{{ $t("common.buttons.edit") }}</span>
       </VcMenuItem>
 
+      <VcMenuItem color="secondary" @click="$emit('toggleFavorite')">
+        <VcIcon name="whishlist" />
+
+        <span>
+          {{
+            address.isFavorite
+              ? $t("pages.company.info.remove_from_favorites")
+              : $t("pages.company.info.add_to_favorites")
+          }}
+        </span>
+      </VcMenuItem>
+
       <VcMenuItem
         :title="address.isDefault ? $t('pages.company.info.address_not_delete_message') : undefined"
         :disabled="address.isDefault"
@@ -35,6 +47,7 @@ import type { MemberAddressType } from "@/core/api/graphql/types";
 interface IEmit {
   (event: "edit"): void;
   (event: "delete"): void;
+  (event: "toggleFavorite"): void;
 }
 
 export interface IProps {

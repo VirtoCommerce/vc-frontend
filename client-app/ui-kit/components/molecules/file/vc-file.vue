@@ -12,7 +12,13 @@
 
     <span class="vc-file__details">
       <span class="vc-file__row">
-        <a v-if="isAttachedFile(file) || isUploadedFile(file)" class="vc-file__link" :href="file.url" target="_blank">
+        <a
+          v-if="isAttachedFile(file) || isUploadedFile(file)"
+          class="vc-file__link"
+          :href="file.url"
+          :download="file.name"
+          @click="onFileDownloadClick"
+        >
           {{ file.name }}
         </a>
         <span v-else class="vc-file__name">
@@ -71,12 +77,14 @@ import { getFileSize, isAttachedFile, isFailedFile, isUploadingFile, isUploadedF
 interface IEmits {
   (event: "reload", value: FileType): void;
   (event: "remove", value: FileType): void;
+  (event: "download", value: FileType): void;
 }
 
 interface IProps {
   file: FileType;
   reloadable?: boolean;
   removable?: boolean;
+  nativeDownload?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -88,6 +96,13 @@ function reload() {
 
 function remove() {
   emit("remove", props.file);
+}
+
+function onFileDownloadClick(e: Event) {
+  if (!props.nativeDownload) {
+    e.preventDefault();
+    emit("download", props.file);
+  }
 }
 
 const icon = computed(() => {
@@ -130,7 +145,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__link {
-    @apply text-[color:var(--color-link)];
+    @apply text-[color:var(--color-link)] cursor-pointer;
   }
 
   &__name,

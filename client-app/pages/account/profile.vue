@@ -72,10 +72,10 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { useField, useForm } from "vee-validate";
+import { useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { object, string } from "yup";
+import * as yup from "yup";
 import { useErrorsTranslator, usePageHead } from "@/core/composables";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { useModal } from "@/shared/modal";
@@ -87,53 +87,47 @@ const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { openModal } = useModal();
 
-const apiErrors = ref<IdentityErrorType[]>();
-const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
+const responseErrors = ref<IdentityErrorType[]>();
+const { translatedErrors } = useErrorsTranslator("identity_error", responseErrors);
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
 });
 
 const validationSchema = toTypedSchema(
-  object({
-    firstName: string().trim().required().max(MAX_NAME_LENGTH),
-    lastName: string().trim().required().max(MAX_NAME_LENGTH),
-    email: string(),
+  yup.object({
+    firstName: yup.string().trim().required().max(MAX_NAME_LENGTH),
+    lastName: yup.string().trim().required().max(MAX_NAME_LENGTH),
+    email: yup.string(),
   }),
 );
 
-const initialValues = computed(() => ({
-  firstName: user.value.contact?.firstName,
-  lastName: user.value.contact?.lastName,
-  email: user.value.email,
-}));
+function initialValues() {
+  return {
+    firstName: user.value.contact?.firstName ?? "",
+    lastName: user.value.contact?.lastName ?? "",
+    email: user.value.email,
+  };
+}
 
-const { errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
+const { defineField, errors, isSubmitting, meta, handleSubmit, resetForm } = useForm({
   validationSchema,
-  initialValues,
+  initialValues: initialValues(),
 });
 
-const { value: firstName } = useField<string>("firstName");
-const { value: lastName } = useField<string>("lastName");
-const { value: email } = useField<string>("email");
+const [firstName] = defineField("firstName");
+const [lastName] = defineField("lastName");
+const [email] = defineField("email");
 
 const onSubmit = handleSubmit(async (data) => {
-  const trimmedFirstName = data.firstName.trim();
-  const trimmedLastName = data.lastName.trim();
+  responseErrors.value = [];
 
-  const results: boolean[] = [];
-  apiErrors.value = [];
-  if (initialValues.value.firstName !== trimmedFirstName || initialValues.value.lastName !== trimmedLastName) {
-    const userDataUpdateResult = await updateUser({ firstName: trimmedFirstName, lastName: trimmedLastName });
+  const response = await updateUser(data);
 
-    results.push(userDataUpdateResult.succeeded);
+  responseErrors.value = response.errors ?? [];
 
-    apiErrors.value = userDataUpdateResult.errors;
-  }
-
-  if (results.every((item) => item)) {
-    resetForm();
-    apiErrors.value = [];
+  if (response.succeeded) {
+    resetForm({ values: initialValues() });
     openModal({
       component: ProfileUpdateSuccessModal,
     });
