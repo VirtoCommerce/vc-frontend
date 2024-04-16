@@ -453,13 +453,13 @@
           "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
         }
       },
-      "orders-filter": {
-        "status-label": "@:common.labels.status",
-        "created-date-label": "Create date",
-        "start-date-label": "Start date",
-        "end-date-label": "End date",
-        "apply-button": "@:common.buttons.apply",
-        "reset-button": "@:common.buttons.reset"
+      "orders_filter": {
+        "status_label": "@:common.labels.status",
+        "created_date_label": "Create date",
+        "start_date_label": "Start date",
+        "end_date_label": "End date",
+        "apply_button": "@:common.buttons.apply",
+        "reset_button": "@:common.buttons.reset"
       }
     },
     "company": {

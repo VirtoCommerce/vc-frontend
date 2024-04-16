@@ -1,7 +1,7 @@
 <template>
   <!-- Mobile filters -->
   <div v-if="isMobile" class="flex flex-col gap-4 lg:gap-5">
-    <VcWidget v-if="!!facets" :title="$t('shared.account.orders-filter.status-label')" size="sm" collapsible>
+    <VcWidget v-if="!!facets" :title="$t('shared.account.orders_filter.status_label')" size="sm" collapsible>
       <div class="flex flex-col space-y-4">
         <VcCheckbox
           v-for="facet in facets"
@@ -18,7 +18,7 @@
       </div>
     </VcWidget>
 
-    <VcWidget :title="$t('shared.account.orders-filter.created-date-label')" size="sm">
+    <VcWidget :title="$t('shared.account.orders_filter.created_date_label')" size="sm">
       <div class="flex flex-col space-y-3">
         <slot name="dateFilterType" />
       </div>

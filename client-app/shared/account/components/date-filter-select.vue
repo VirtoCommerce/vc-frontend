@@ -4,13 +4,13 @@
   <template v-if="selectedDateFilter.id === DateFilterId.CUSTOM">
     <VcDateSelector
       v-model="selectedDateFilter.startDate"
-      :label="$t('shared.account.orders-filter.start-date-label')"
+      :label="$t('shared.account.orders_filter.start_date_label')"
       @update:model-value="$emit('change', selectedDateFilter)"
     />
 
     <VcDateSelector
       v-model="selectedDateFilter.endDate"
-      :label="$t('shared.account.orders-filter.end-date-label')"
+      :label="$t('shared.account.orders_filter.end_date_label')"
       @update:model-value="$emit('change', selectedDateFilter)"
     />
   </template>
