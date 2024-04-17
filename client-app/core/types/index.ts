@@ -3,6 +3,7 @@ export * from "./category-tree";
 export * from "./change-wishlist-payload";
 export * from "./create-wishlist-payload";
 export * from "./currency";
+export * from "./date-filter-type";
 export * from "./facet";
 export * from "./language";
 export * from "./line-items";
