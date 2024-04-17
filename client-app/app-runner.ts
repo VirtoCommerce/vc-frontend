@@ -1,5 +1,6 @@
 import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
+import { useFavicon } from "@vueuse/core";
 import { createApp, h, provide } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useCurrency, useLanguages, useThemeContext, useGoogleAnalytics, useHotjar } from "@/core/composables";
@@ -45,11 +46,12 @@ export default async () => {
 
   const { fetchUser, user } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
-  const { fetchWhiteLabeling } = useWhiteLabeling();
+  const { settings: whiteLabelingSettings, fetchWhiteLabeling } = useWhiteLabeling();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initHotjar } = useHotjar();
+  const favIcon = useFavicon("/static/icons/favicon.svg");
 
   const fallback = {
     locale: "en",
@@ -66,6 +68,10 @@ export default async () => {
 
   if (user.value?.contact?.organizationId) {
     fetchWhiteLabeling(user.value.contact.organizationId);
+  }
+
+  if (whiteLabelingSettings.value && whiteLabelingSettings.value?.favIconUrl) {
+    favIcon.value = whiteLabelingSettings.value.favIconUrl;
   }
 
   initializeGoogleAnalytics();

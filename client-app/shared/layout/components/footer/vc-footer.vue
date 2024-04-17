@@ -18,65 +18,38 @@
           <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="h-9" lazy />
         </div>
 
-        <!-- Column 1 -->
-        <div>
-          <div
-            v-t="'shared.layout.footer.company_information_link_group'"
-            class="mb-3 text-base font-extrabold uppercase text-white"
-          ></div>
-          <div class="flex flex-col space-y-1">
-            <FooterLink v-t="'shared.layout.footer.about_us_link'" to="/about"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.investor_relations_link'" to="/investor-relations"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.supplier_overview_link'" to="/supplier-overview"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.worldwide_link'" to="/worldwide"></FooterLink>
-          </div>
-        </div>
+        <template v-if="whiteLabelingSettings?.footerLinks?.length">
+          <div v-for="footerLink in whiteLabelingSettings.footerLinks" :key="footerLink.url">
+            <div class="mb-3 text-base font-extrabold uppercase text-white">
+              {{ footerLink.title }}
+            </div>
 
-        <!-- Column 2 -->
-        <div>
-          <div
-            v-t="'shared.layout.footer.customer_support_link_group'"
-            class="mb-3 text-base font-extrabold uppercase text-white"
-          ></div>
-          <div class="flex flex-col space-y-1">
-            <FooterLink v-t="'shared.layout.footer.catalog_request_link'" to="/catalog-request"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.contact_us_link'" to="/contacts"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.feedback_link'" to="/feedback"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.find_a_branch_link'" to="/find-a-branch"></FooterLink>
+            <div v-if="footerLink.childItems?.length" class="flex flex-col space-y-1">
+              <FooterLink
+                v-for="footerLinkChild in footerLink.childItems"
+                :key="footerLinkChild.url"
+                :title="footerLinkChild.title"
+                :to="footerLinkChild.url"
+              />
+            </div>
           </div>
-        </div>
+        </template>
+        <template v-else>
+          <div v-for="footerLink in footerLinks" :key="footerLink.id">
+            <div class="mb-3 text-base font-extrabold uppercase text-white">
+              {{ footerLink.title }}
+            </div>
 
-        <!-- Column 3 -->
-        <div>
-          <div
-            v-t="'shared.layout.footer.order_support_link_group'"
-            class="mb-3 text-base font-extrabold uppercase text-white"
-          ></div>
-          <div class="flex flex-col space-y-1">
-            <FooterLink v-t="'shared.layout.footer.orders_link'" to="/orders"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.pick_up_link'" to="/pick-up"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.auto_reorder_link'" to="/auto-reorder"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.special_orders_link'" to="/special-orders"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.returns_cancellations_link'" to="/returns"></FooterLink>
+            <div v-if="footerLink.children?.length" class="flex flex-col space-y-1">
+              <FooterLink
+                v-for="footerLinkChild in footerLink.children"
+                :key="footerLinkChild.id"
+                :title="footerLinkChild.title"
+                :to="footerLinkChild.route!"
+              />
+            </div>
           </div>
-        </div>
-
-        <!-- Column 4 -->
-        <div>
-          <div
-            v-t="'shared.layout.footer.online_resources_ling_group'"
-            class="mb-3 text-base font-extrabold uppercase text-white"
-          ></div>
-          <div class="flex flex-col space-y-1">
-            <FooterLink v-t="'shared.layout.footer.catalog_link'" :to="{ name: 'Catalog' }" />
-            <FooterLink v-t="'shared.layout.footer.hot_buys_link'" to="/hot-buys"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.rebates_link'" to="/rebates"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.replacement_parts_link'" to="/replacement-parts"></FooterLink>
-            <FooterLink v-t="'shared.layout.footer.demo_landing_link'" :to="{ name: 'DemoLanding' }" />
-            <FooterLink v-t="'shared.layout.footer.demo_page_link'" to="/demo-page" />
-            <FooterLink v-t="'shared.layout.footer.builder_io_page_link'" to="/landing/virto-start" />
-          </div>
-        </div>
+        </template>
       </div>
     </div>
 
@@ -106,6 +79,7 @@
 </template>
 
 <script setup lang="ts">
+import { useNavigations } from "@/core/composables";
 import { useWhiteLabeling } from "@/shared/account";
 import pkg from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
@@ -116,6 +90,7 @@ interface IProps {
 
 defineProps<IProps>();
 
+const { footerLinks } = useNavigations();
 const { settings: whiteLabelingSettings } = useWhiteLabeling();
 
 const { version } = pkg;
