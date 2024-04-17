@@ -414,7 +414,7 @@ function resetFiltersWithKeyword() {
   localKeyword.value = "";
   keyword.value = "";
   page.value = 1;
-  resetFilters();
+  resetOrderFilters();
 }
 
 function toggleFilters() {
