@@ -102,7 +102,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
       outDir: "assets",
       assetsDir: "./",
       emptyOutDir: true,
-      cssCodeSplit: false,
       sourcemap: true,
       rollupOptions: {
         input: {
