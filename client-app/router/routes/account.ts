@@ -16,6 +16,7 @@ const Quotes = () => import("@/pages/account/quotes.vue");
 const EditQuote = () => import("@/pages/account/edit-quote.vue");
 const ViewQuote = () => import("@/pages/account/view-quote.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
+const Impersonate = () => import("@/pages/account/impersonate.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -110,5 +111,11 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: "saved-credit-cards",
     name: "SavedCreditCards",
     component: SavedCreditCards,
+  },
+  {
+    path: "impersonate/:userId",
+    name: "Impersonate",
+    props: true,
+    component: Impersonate,
   },
 ];

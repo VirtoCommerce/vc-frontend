@@ -1086,6 +1086,12 @@
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
         }
+      },
+      "impersonate": {
+        "title": "Impersonate",
+        "success": "You are successfully impersonated",
+        "error": "Some problems during impersonation. Check your permissions",
+        "reset_button": "Revoke impersonation"
       }
     },
     "company": {
