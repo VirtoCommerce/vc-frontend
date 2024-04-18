@@ -23,7 +23,7 @@
             </div>
 
             <VcSwitch v-model="unreadVisibility" size="sm">
-              {{ $t("ui_kit.push-messages.show_unread") }}
+              {{ $t("ui_kit.push-messages.show_unread_only") }}
             </VcSwitch>
             <VcDropdownMenu
               :class="['vc-push-messages__options', { 'vc-push-messages__options--invisible': !withOptions }]"

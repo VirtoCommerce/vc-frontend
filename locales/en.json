@@ -1405,7 +1405,7 @@
       },
       "clear_all": "Clear all",
       "view_all": "View all notifications",
-      "show_unread": "Show unread"
+      "show_unread_only": "Show unread only"
     }
   },
   "identity_error": {

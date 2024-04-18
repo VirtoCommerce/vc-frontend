@@ -22,7 +22,7 @@ export function usePushMessages(options: IUsePushMessagesOptions) {
     return {
       withHidden: toValue(options.withHidden),
       cultureName: toValue(useAllGlobalVariables()).cultureName,
-      unreadOnly: !toValue(options.showUnreadOnly),
+      unreadOnly: toValue(options.showUnreadOnly),
       first: itemsPerPage.value,
       after: String((page.value - 1) * itemsPerPage.value),
     };

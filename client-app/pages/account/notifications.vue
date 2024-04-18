@@ -38,7 +38,7 @@
 
     <div class="mt-4 lg:mt-5">
       <VcSwitch v-model="showUnreadOnly" label-position="right">
-        {{ $t("ui_kit.push-messages.show_unread") }}
+        {{ $t("ui_kit.push-messages.show_unread_only") }}
       </VcSwitch>
     </div>
 
@@ -82,14 +82,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { useLocalStorage } from "@vueuse/core";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 const { t } = useI18n();
 
-const showUnreadOnly = ref(false);
+const showUnreadOnly = useLocalStorage<boolean>("showUnreadOnly_pushMessages_history", false);
 
 watch(showUnreadOnly, resetPagination);
 

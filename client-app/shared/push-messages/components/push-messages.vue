@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { useLocalStorage } from "@vueuse/core";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
@@ -33,7 +33,7 @@ interface IProps {
 
 defineProps<IProps>();
 
-const showUnreadOnly = ref(false);
+const showUnreadOnly = useLocalStorage<boolean>("showUnreadOnly_pushMessages_popup", false);
 
 const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll } = usePushMessages({
   showUnreadOnly,
