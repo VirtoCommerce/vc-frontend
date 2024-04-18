@@ -1,6 +1,5 @@
 import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
-import { useFavicon } from "@vueuse/core";
 import { createApp, h, provide } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useCurrency, useLanguages, useThemeContext, useGoogleAnalytics, useHotjar } from "@/core/composables";
@@ -9,7 +8,7 @@ import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/co
 import { getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
-import { useUser, useWhiteLabeling } from "@/shared/account";
+import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
@@ -46,12 +45,10 @@ export default async () => {
 
   const { fetchUser, user } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
-  const { settings: whiteLabelingSettings, fetchWhiteLabeling } = useWhiteLabeling();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initHotjar } = useHotjar();
-  const favIcon = useFavicon("/static/icons/favicon.svg");
 
   const fallback = {
     locale: "en",
@@ -65,14 +62,6 @@ export default async () => {
    * Fetching required app data
    */
   await Promise.all([fetchThemeContext(), fetchUser(), fallback.setMessage()]);
-
-  if (user.value?.contact?.organizationId) {
-    fetchWhiteLabeling(user.value.contact.organizationId);
-  }
-
-  if (whiteLabelingSettings.value && whiteLabelingSettings.value?.favIconUrl) {
-    favIcon.value = whiteLabelingSettings.value.favIconUrl;
-  }
 
   initializeGoogleAnalytics();
   initHotjar();

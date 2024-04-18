@@ -8,48 +8,23 @@
       <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
         <!-- Logo column -->
         <div class="hidden xl:block">
-          <VcImage
-            v-if="whiteLabelingSettings?.secondaryLogoUrl"
-            :src="whiteLabelingSettings?.secondaryLogoUrl"
-            :alt="$context.storeName"
-            class="h-9"
-            lazy
-          />
-          <VcImage v-else :src="$cfg.logo_inverted_image" :alt="$context.storeName" class="h-9" lazy />
+          <VcImage :src="siteLogoUrl" :alt="$context.storeName" class="h-9" lazy />
         </div>
 
-        <template v-if="whiteLabelingSettings?.footerLinks?.length">
-          <div v-for="footerLink in whiteLabelingSettings.footerLinks" :key="footerLink.url">
-            <div class="mb-3 text-base font-extrabold uppercase text-white">
-              {{ footerLink.title }}
-            </div>
-
-            <div v-if="footerLink.childItems?.length" class="flex flex-col space-y-1">
-              <FooterLink
-                v-for="footerLinkChild in footerLink.childItems"
-                :key="footerLinkChild.url"
-                :title="footerLinkChild.title"
-                :to="footerLinkChild.url"
-              />
-            </div>
+        <div v-for="footerLink in footerLinks" :key="footerLink.id">
+          <div class="mb-3 text-base font-extrabold uppercase text-white">
+            {{ footerLink.title }}
           </div>
-        </template>
-        <template v-else>
-          <div v-for="footerLink in footerLinks" :key="footerLink.id">
-            <div class="mb-3 text-base font-extrabold uppercase text-white">
-              {{ footerLink.title }}
-            </div>
 
-            <div v-if="footerLink.children?.length" class="flex flex-col space-y-1">
-              <FooterLink
-                v-for="footerLinkChild in footerLink.children"
-                :key="footerLinkChild.id"
-                :title="footerLinkChild.title"
-                :to="footerLinkChild.route!"
-              />
-            </div>
+          <div v-if="footerLink.children?.length" class="flex flex-col space-y-1">
+            <FooterLink
+              v-for="footerLinkChild in footerLink.children"
+              :key="footerLinkChild.id"
+              :title="footerLinkChild.title"
+              :to="footerLinkChild.route!"
+            />
           </div>
-        </template>
+        </div>
       </div>
     </div>
 
@@ -79,7 +54,8 @@
 </template>
 
 <script setup lang="ts">
-import { useNavigations } from "@/core/composables";
+import { computed } from "vue";
+import { useNavigations, useThemeContext } from "@/core/composables";
 import { useWhiteLabeling } from "@/shared/account";
 import pkg from "../../../../../package.json";
 import FooterLink from "./_internal/footer-link.vue";
@@ -90,8 +66,13 @@ interface IProps {
 
 defineProps<IProps>();
 
+const { themeContext } = useThemeContext();
+const { whiteLabelingSettings } = useWhiteLabeling();
 const { footerLinks } = useNavigations();
-const { settings: whiteLabelingSettings } = useWhiteLabeling();
 
 const { version } = pkg;
+
+const siteLogoUrl = computed(
+  () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
+);
 </script>
