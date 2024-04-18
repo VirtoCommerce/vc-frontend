@@ -1,21 +1,11 @@
-@tailwind base;
 @tailwind components;
-@tailwind utilities;
-
-@layer base {
-  html, :host {
-    @apply font-lato;
-  }
-
-  body {
-    @apply text-[--color-neutral-950];
-  }
-}
 
 @import "helpers";
-@import "print";
-@import "vendors";
 @import "deprecated";
+
+@import "print";
 
 /* Use for custom themes only */
 @import "custom";
+
+@tailwind utilities;
