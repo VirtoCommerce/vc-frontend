@@ -2,8 +2,10 @@ import { omit, remove } from "lodash";
 import { computed, ref } from "vue";
 import {
   getQuote,
+  approveQuoteRequest,
   changeQuoteComment,
   changeQuoteItemQuantity,
+  declineQuoteRequest,
   removeQuoteItem,
   updateQuoteAddresses,
   submitQuoteRequest,
@@ -12,7 +14,13 @@ import {
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
 import { toAttachedFile } from "@/ui-kit/utilities";
-import type { QueryQuoteArgs, QuoteType, QuoteAddressType, InputQuoteAddressType } from "@/core/api/graphql/types";
+import type {
+  QueryQuoteArgs,
+  QuoteType,
+  QuoteAddressType,
+  InputQuoteAddressType,
+  ApproveQuoteResultType,
+} from "@/core/api/graphql/types";
 
 const fetching = ref<boolean>(false);
 
@@ -112,6 +120,30 @@ export function useUserQuote() {
     }
   }
 
+  async function approveItem(quoteId: string): Promise<ApproveQuoteResultType> {
+    fetching.value = true;
+    try {
+      return await approveQuoteRequest({ command: { quoteId } });
+    } catch (e) {
+      Logger.error(`${useUserQuote.name}.${approveItem.name}`, e);
+      throw e;
+    } finally {
+      fetching.value = false;
+    }
+  }
+
+  async function declineItem(quoteId: string): Promise<void> {
+    fetching.value = true;
+    try {
+      await declineQuoteRequest({ command: { quoteId, comment: "" } });
+    } catch (e) {
+      Logger.error(`${useUserQuote.name}.${declineItem.name}`, e);
+      throw e;
+    } finally {
+      fetching.value = false;
+    }
+  }
+
   async function updateAddresses(quoteId: string, addresses: QuoteAddressType[]): Promise<void> {
     fetching.value = true;
 
@@ -150,6 +182,8 @@ export function useUserQuote() {
     shippingAddress,
     attachments,
     attachedFiles,
+    approveItem,
+    declineItem,
     clearQuote,
     setQuoteAddress,
     fetchQuote,

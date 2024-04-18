@@ -58,7 +58,9 @@
       "remove_selected": "Remove Selected",
       "remove_all": "Remove all",
       "resend_link": "Resend link",
-      "set_new_password": "Set new password"
+      "set_new_password": "Set new password",
+      "approve": "Approve",
+      "decline": "Decline"
     },
     "labels": {
       "actions": "Actions",
@@ -1085,6 +1087,10 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "error": {
+          "approve": "The quote cannot be approved",
+          "decline": "The quote cannot be declined"
         }
       }
     },
