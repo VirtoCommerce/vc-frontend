@@ -118,7 +118,12 @@
       "ends_to": "End: {0}",
       "saved_cards": "Saved cards",
       "save_card_for_future_payments": "Save card for future payments. It's safe.",
-      "add_new_card": "Add new card"
+      "add_new_card": "Add new card",
+      "last_day": "Last day",
+      "last_week": "Last week",
+      "last_month": "Last month",
+      "last_year": "Last year",
+      "custom_date": "Custom date"
     },
     "prefixes": {
       "please": "Please",
@@ -448,13 +453,13 @@
           "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
         }
       },
-      "orders-filter": {
-        "status-label": "@:common.labels.status",
-        "created-date-label": "Create date",
-        "start-date-label": "Start date",
-        "end-date-label": "End date",
-        "apply-button": "@:common.buttons.apply",
-        "reset-button": "@:common.buttons.reset"
+      "orders_filter": {
+        "status_label": "@:common.labels.status",
+        "created_date_label": "Create date",
+        "start_date_label": "Start date",
+        "end_date_label": "End date",
+        "apply_button": "@:common.buttons.apply",
+        "reset_button": "@:common.buttons.reset"
       }
     },
     "company": {

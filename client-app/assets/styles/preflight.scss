@@ -1,0 +1,28 @@
+@tailwind base;
+
+@layer base {
+  html, :host {
+    @apply font-lato;
+  }
+
+  body {
+    @apply text-[--color-neutral-950];
+  }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
