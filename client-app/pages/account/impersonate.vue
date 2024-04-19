@@ -4,16 +4,15 @@
       {{ $t("pages.account.impersonate.title") }}
     </VcTypography>
 
-    <VcAlert v-if="impersonateState.isError" color="danger" class="mt-4" icon>
+    <VcLoaderOverlay v-if="status === 'loading'" no-bg />
+
+    <VcAlert v-if="status === 'error'" color="danger" class="mt-4" icon>
       {{ $t("pages.account.impersonate.error") }}
     </VcAlert>
-    <VcAlert v-else-if="impersonateState.isImpersonated" color="success" class="mt-4" icon>
+
+    <VcAlert v-if="status === 'success'" color="success" class="mt-4" icon>
       {{ $t("pages.account.impersonate.success") }}
     </VcAlert>
-
-    <div>
-      <VcButton @click="onRevoke">{{ $t("pages.account.impersonate.reset_button") }}</VcButton>
-    </div>
   </div>
 </template>
 
@@ -27,13 +26,9 @@ interface IProps {
   userId: string;
 }
 
-const { checkImpersonate, revokeImpersonate, impersonateState } = useImpersonate();
+const { status, impersonate } = useImpersonate();
 
-async function onRevoke() {
-  await revokeImpersonate();
-}
-
-onMounted(async () => {
-  await checkImpersonate(props.userId);
+onMounted(() => {
+  void impersonate(props.userId);
 });
 </script>
