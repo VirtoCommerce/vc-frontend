@@ -3,7 +3,6 @@ import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
 import { globals } from "@/core/globals";
-import { Logger } from "@/core/utilities";
 import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
 import type { AfterFetchContext } from "@vueuse/core";
 
@@ -61,10 +60,6 @@ function _useAuth() {
     token_type: "Bearer",
     access_token: null,
     refresh_token: null,
-    impersonateData: {
-      isImpersonated: false,
-      isError: false,
-    },
   });
 
   const state = useLocalStorage<{
@@ -72,15 +67,7 @@ function _useAuth() {
     token_type: string;
     access_token: string | null;
     refresh_token: string | null;
-    impersonateData: {
-      isImpersonated: boolean;
-      isError: boolean;
-    };
   }>("auth", { ...INITIAL_STATE });
-
-  const impersonateState = computed(() => {
-    return state.value.impersonateData;
-  });
 
   function updateToken(context: AfterFetchContext<ConnectTokenResponseType>) {
     if (context.data) {
@@ -136,86 +123,28 @@ function _useAuth() {
     state.value = { ...INITIAL_STATE };
   }
 
-  async function impersonate(userId: string) {
-    try {
-      clearImpersonateData();
-
-      const { error, data: impersonateData } = await useFetch("/connect/token")
-        .post(
-          new URLSearchParams({
-            grant_type: "impersonate",
-            user_id: userId,
-          }),
-          "application/x-www-form-urlencoded",
-        )
-        .json<ConnectTokenResponseType>();
-
-      if (!impersonateData.value || error.value) {
-        setImpersonateError();
-      } else if (impersonateData.value) {
-        const { access_token, token_type, expires_in } = impersonateData.value;
-        if (access_token && token_type && expires_in) {
-          state.value.token_type = token_type;
-          state.value.expires_at = new Date(Date.now() + expires_in * 1000);
-          state.value.access_token = access_token;
-
-          setImpersonateSuccess();
-          location.reload();
-        }
-      }
-    } catch (e) {
-      Logger.error(impersonate.name, e);
-      setImpersonateError();
-    }
-  }
-
-  async function revokeImpersonate() {
-    const { error, data: impersonateData } = await useFetch("/connect/token")
-      .post(
-        new URLSearchParams({
-          grant_type: "impersonate",
-          user_id: "",
-        }),
-        "application/x-www-form-urlencoded",
-      )
-      .json<ConnectTokenResponseType>();
-
-    if (!impersonateData.value || error.value) {
-      setImpersonateError();
-    } else if (impersonateData.value) {
-      const { access_token, token_type, expires_in } = impersonateData.value;
-      if (access_token && token_type && expires_in) {
-        state.value.token_type = token_type;
-        state.value.expires_at = new Date(Date.now() + expires_in * 1000);
-        state.value.access_token = access_token;
-
-        clearImpersonateData();
-
-        location.href = "/account";
-      }
-    }
-  }
-
-  function setImpersonateError() {
-    state.value.impersonateData.isError = true;
-    state.value.impersonateData.isImpersonated = false;
-  }
-
-  function setImpersonateSuccess() {
-    state.value.impersonateData.isError = false;
-    state.value.impersonateData.isImpersonated = true;
-  }
-
-  function clearImpersonateData() {
-    state.value.impersonateData = { ...INITIAL_STATE.impersonateData };
-  }
-
   function isExpired() {
     if (state.value.refresh_token === null || state.value.expires_at === null) {
       return null;
     }
 
     return new Date(state.value.expires_at).getTime() <= Date.now();
+  }
+
+  /*function setRefreshToken(token: string) {
+    state.value.refresh_token = token;
+  }*/
+
+  function setAccessToken(token: string) {
+    state.value.access_token = token;
+  }
+
+  function setExpiresAt(seconds: number) {
+    state.value.expires_at = new Date(Date.now() + seconds * 1000);
+  }
+
+  function setTokenType(type: string) {
+    state.value.token_type = type;
   }
 
   return {
@@ -227,9 +156,9 @@ function _useAuth() {
     refresh,
     unauthorize,
 
-    impersonate,
-    revokeImpersonate,
-    impersonateState,
+    setTokenType,
+    setAccessToken,
+    setExpiresAt,
   };
 }
 

@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useAuth } from "@/core/composables";
+import { useImpersonate } from "@/core/composables";
 
 const props = defineProps<IProps>();
 
@@ -27,15 +27,13 @@ interface IProps {
   userId: string;
 }
 
-const { impersonate, revokeImpersonate, impersonateState } = useAuth();
+const { checkImpersonate, revokeImpersonate, impersonateState } = useImpersonate();
 
 async function onRevoke() {
   await revokeImpersonate();
 }
 
 onMounted(async () => {
-  if (!impersonateState.value.isImpersonated) {
-    await impersonate(props.userId);
-  }
+  await checkImpersonate(props.userId);
 });
 </script>
