@@ -19,7 +19,6 @@ export function useClearAllPushMessages() {
             ...pushMessagesQueryResult,
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
-              unreadCount: 0,
               items: [],
             },
           } satisfies GetPushMessagesQuery;
