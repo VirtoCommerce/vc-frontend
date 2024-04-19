@@ -1099,8 +1099,7 @@
       "impersonate": {
         "title": "Impersonate",
         "success": "You are impersonated",
-        "error": "Some problems during impersonation. Check your permissions",
-        "reset_button": "Revoke impersonation"
+        "error": "Some problems during impersonation. Check your permissions"
       }
     },
     "company": {
