@@ -215,7 +215,8 @@
       "quote_requests": "Quote Requests",
       "contact_administrator": "contact the site administrator",
       "push-messages": "Notifications",
-      "saved_credit_cards": "Saved Credit Cards"
+      "saved_credit_cards": "Saved Credit Cards",
+      "notifications": "Notifications"
     },
     "titles": {
       "all_actions": "All actions",
@@ -295,7 +296,8 @@
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
             "quote_requests": "@:common.links.quote_requests",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "saved_credit_cards": "@:common.links.saved_credit_cards",
+            "notifications": "@:common.links.notifications"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -374,7 +376,8 @@
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "quote_requests": "@:common.links.quote_requests",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "saved_credit_cards": "@:common.links.saved_credit_cards",
+          "notifications": "@:common.links.notifications"
         }
       },
       "change_password_form": {
@@ -1086,6 +1089,12 @@
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
         }
+      },
+      "notifications": {
+        "meta": {
+          "title": "Notifications"
+        },
+        "empty_list": "You do not have any new notifications at this time"
       }
     },
     "company": {
@@ -1394,7 +1403,9 @@
         "title": "No new notifications at the moment.",
         "description": "Stay tuned for updates and important messages."
       },
-      "clear_all": "Clear all"
+      "clear_all": "Clear all",
+      "view_all": "View all notifications",
+      "show_unread_only": "Show unread only"
     }
   },
   "identity_error": {
