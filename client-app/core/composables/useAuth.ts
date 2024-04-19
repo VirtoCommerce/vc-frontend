@@ -74,10 +74,10 @@ function _useAuth() {
       const { token_type, access_token, refresh_token, expires_in } = context.data;
 
       if (token_type && access_token && refresh_token && expires_in) {
-        state.value.token_type = token_type;
-        state.value.expires_at = new Date(Date.now() + expires_in * 1000);
-        state.value.access_token = access_token;
-        state.value.refresh_token = refresh_token;
+        setTokenType(token_type);
+        setExpiresAt(expires_in);
+        setAccessToken(access_token);
+        setRefreshToken(refresh_token);
       }
     }
 
@@ -131,9 +131,9 @@ function _useAuth() {
     return new Date(state.value.expires_at).getTime() <= Date.now();
   }
 
-  /*function setRefreshToken(token: string) {
+  function setRefreshToken(token: string) {
     state.value.refresh_token = token;
-  }*/
+  }
 
   function setAccessToken(token: string) {
     state.value.access_token = token;

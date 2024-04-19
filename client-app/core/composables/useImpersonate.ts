@@ -43,9 +43,8 @@ export function _useImpersonate() {
         status.value = "success";
 
         broadcast.emit(pageReloadEvent, TabsType.OTHERS);
-        setTimeout(() => {
-          location.href = "/account";
-        }, 2000);
+        // reload page and redirect to account default page to renew state
+        location.href = "/account";
       }
     } catch (e) {
       Logger.error(impersonate.name, e);
