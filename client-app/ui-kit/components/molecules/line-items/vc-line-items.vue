@@ -1,110 +1,114 @@
 <template>
   <div class="vc-line-items">
-    <!-- table header -->
-    <div class="vc-line-items__head">
-      <VcCheckbox
-        v-if="selectable"
-        :model-value="isAllItemsSelected"
-        class="vc-line-items__checkbox"
-        @change="($event) => selectAllItems($event as boolean)"
-      />
+    <div class="vc-line-items__container">
+      <!-- table header -->
+      <div v-if="withHeader" class="vc-line-items__head">
+        <VcCheckbox
+          v-if="selectable"
+          :model-value="isAllItemsSelected"
+          class="vc-line-items__checkbox"
+          @change="($event) => selectAllItems($event as boolean)"
+        />
 
-      <div class="vc-line-items__product">
-        {{ $t("common.labels.product") }}
-      </div>
+        <div class="vc-line-items__product">
+          {{ $t("common.labels.product") }}
+        </div>
 
-      <div
-        v-if="showProperties"
-        :class="[
-          'vc-line-items__properties',
-          {
-            'vc-line-items__properties--wide': !showPrice,
-          },
-        ]"
-      >
-        {{ $t("common.labels.properties") }}
-      </div>
-
-      <div v-if="showPrice" class="vc-line-items__price">
-        {{ $t("common.labels.price_per_item") }}
-      </div>
-
-      <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
-        <slot name="titles" />
-      </div>
-
-      <div v-if="showTotal" class="vc-line-items__total">
-        {{ $t("common.labels.total") }}
-      </div>
-
-      <div v-if="removable" class="vc-line-items__removable"></div>
-    </div>
-
-    <!-- table body -->
-    <div v-if="items.length" class="vc-line-items__body">
-      <VcLineItem
-        v-for="item in items"
-        :key="item.id"
-        :image-url="item.imageUrl"
-        :name="item.name"
-        :route="item.route"
-        :properties="item.properties"
-        :list-price="item.listPrice"
-        :actual-price="item.actualPrice"
-        :total="item.extendedPrice"
-        :with-image="showImage"
-        :with-properties="showProperties"
-        :with-price="showPrice"
-        :with-total="showTotal"
-        :disabled="disabled"
-        :deleted="item.deleted"
-        :removable="removable"
-        :selectable="selectable"
-        :selected="selectable && selectedItemIds?.includes(item.id)"
-        @select="($event) => selectSingleItem(item.id, $event)"
-        @remove="() => removeSingleItem(item.id)"
-      >
-        <template #before>
-          <slot name="before-content" v-bind="{ item }" />
-        </template>
-
-        <template v-if="$slots.default" #default>
-          <div ref="slotElements">
-            <slot v-bind="{ item }" />
-          </div>
-        </template>
-
-        <template #after>
-          <slot name="after-content" v-bind="{ item }" />
-        </template>
-      </VcLineItem>
-    </div>
-
-    <!-- table footer -->
-    <div class="vc-line-items__foot">
-      <template v-if="selectable">
-        <VcButton
-          class="vc-line-items__button vc-line-items__button--desktop"
-          size="xs"
-          :disabled="!selectedItemIds.length"
-          @click="removeSelectedItems"
+        <div
+          v-if="showProperties"
+          :class="[
+            'vc-line-items__properties',
+            {
+              'vc-line-items__properties--wide': !showPrice,
+            },
+          ]"
         >
-          {{ $t("common.buttons.remove_selected") }}
-        </VcButton>
+          {{ $t("common.labels.properties") }}
+        </div>
 
-        <VcButton
-          class="vc-line-items__button vc-line-items__button--mobile"
-          size="xs"
-          variant="outline"
-          @click="removeAllItems"
-        >
-          {{ $t("common.buttons.remove_all") }}
-        </VcButton>
-      </template>
+        <div v-if="showPrice" class="vc-line-items__price">
+          {{ $t("common.labels.price_per_item") }}
+        </div>
 
-      <div v-if="withSubtotal" class="vc-line-items__subtotal">
-        <span class="vc-line-items__subtotal-label">{{ $t("common.labels.subtotal") }}:</span>
-        <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
+        <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
+          <slot name="titles" />
+        </div>
+
+        <div v-if="showTotal" class="vc-line-items__total">
+          {{ $t("common.labels.total") }}
+        </div>
+
+        <div v-if="removable" class="vc-line-items__removable"></div>
+      </div>
+
+      <!-- table body -->
+      <div v-if="items.length || $slots['line-items']" class="vc-line-items__body">
+        <slot name="line-items">
+          <VcLineItem
+            v-for="item in items"
+            :key="item.id"
+            :image-url="item.imageUrl"
+            :name="item.name"
+            :route="item.route"
+            :properties="item.properties"
+            :list-price="item.listPrice"
+            :actual-price="item.actualPrice"
+            :total="item.extendedPrice"
+            :with-image="showImage"
+            :with-properties="showProperties"
+            :with-price="showPrice"
+            :with-total="showTotal"
+            :disabled="disabled"
+            :deleted="item.deleted"
+            :removable="removable"
+            :selectable="selectable"
+            :selected="selectable && selectedItemIds?.includes(item.id)"
+            @select="($event) => selectSingleItem(item.id, $event)"
+            @remove="() => removeSingleItem(item.id)"
+          >
+            <template #before>
+              <slot name="before-content" v-bind="{ item }" />
+            </template>
+
+            <template v-if="$slots.default" #default>
+              <div ref="slotElements">
+                <slot v-bind="{ item }" />
+              </div>
+            </template>
+
+            <template #after>
+              <slot name="after-content" v-bind="{ item }" />
+            </template>
+          </VcLineItem>
+        </slot>
+      </div>
+
+      <!-- table footer -->
+      <div class="vc-line-items__foot">
+        <template v-if="selectable">
+          <VcButton
+            class="vc-line-items__button vc-line-items__button--desktop"
+            size="xs"
+            :disabled="!selectedItemIds.length"
+            @click="removeSelectedItems"
+          >
+            {{ $t("common.buttons.remove_selected") }}
+          </VcButton>
+
+          <VcButton
+            class="vc-line-items__button vc-line-items__button--mobile"
+            size="xs"
+            variant="outline"
+            @click="removeAllItems"
+          >
+            {{ $t("common.buttons.remove_all") }}
+          </VcButton>
+        </template>
+
+        <div v-if="withSubtotal" class="vc-line-items__subtotal">
+          <span class="vc-line-items__subtotal-label">{{ $t("common.labels.subtotal") }}:</span>
+          <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -132,12 +136,14 @@ interface IProps {
   withPrice?: boolean;
   withTotal?: boolean;
   withSubtotal?: boolean;
+  withHeader?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
+  withHeader: true,
 });
 
 const slotElements = ref<HTMLElement[]>([]);
@@ -192,14 +198,18 @@ watchEffect(() => {
 
 <style lang="scss">
 .vc-line-items {
-  @media (min-width: theme("screens.md")) {
-    @apply border rounded divide-y;
+  @apply @container;
+
+  &__container {
+    @container (width > theme("containers.xl")) {
+      @apply border rounded divide-y;
+    }
   }
 
   &__head {
     @apply hidden;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply flex items-center gap-3 py-0.5 px-4 min-h-[2.75rem] text-sm font-bold;
     }
   }
@@ -211,16 +221,16 @@ watchEffect(() => {
   &__properties {
     @apply flex-none;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply w-40;
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @container (width > theme("containers.4xl")) {
       @apply w-[11.875rem];
     }
 
     &--wide {
-      @media (min-width: theme("screens.xl")) {
+      @container (width > theme("containers.4xl")) {
         @apply w-[15.5rem];
       }
     }
@@ -229,7 +239,7 @@ watchEffect(() => {
   &__price {
     @apply hidden;
 
-    @media (min-width: theme("screens.2xl")) {
+    @container (width > theme("containers.3xl")) {
       @apply flex-none block w-[8.25rem] text-end;
     }
   }
@@ -237,11 +247,11 @@ watchEffect(() => {
   &__total {
     @apply text-end;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply shrink-0 w-[6.5rem];
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @container (width > theme("containers.4xl")) {
       @apply w-[8.625rem];
     }
   }
@@ -253,7 +263,7 @@ watchEffect(() => {
   &__body {
     @apply flex flex-col gap-4;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply gap-0 space-y-0 divide-y;
     }
   }
@@ -261,7 +271,7 @@ watchEffect(() => {
   &__foot {
     @apply flex justify-end py-2.5;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply px-3;
     }
 
@@ -274,7 +284,7 @@ watchEffect(() => {
     @apply me-1;
 
     &--mobile.vc-button {
-      @media (min-width: theme("screens.md")) {
+      @container (width > theme("containers.xl")) {
         @apply hidden;
       }
     }
@@ -282,7 +292,7 @@ watchEffect(() => {
     &--desktop.vc-button {
       @apply hidden;
 
-      @media (min-width: theme("screens.md")) {
+      @container (width > theme("containers.xl")) {
         @apply inline-block;
       }
     }

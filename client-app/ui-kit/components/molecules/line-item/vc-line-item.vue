@@ -176,7 +176,7 @@ watchEffect(() => {
 
   @apply relative flex flex-col gap-2 p-3 rounded border shadow-md bg-[--bg-color];
 
-  @media (min-width: theme("screens.md")) {
+  @container (width > theme("containers.xl")) {
     @apply p-4 rounded-none border-0 shadow-none;
   }
 
@@ -211,7 +211,7 @@ watchEffect(() => {
   &__main {
     @apply flex items-start min-h-[1.25rem];
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply items-center gap-3;
     }
   }
@@ -219,7 +219,7 @@ watchEffect(() => {
   &__checkbox {
     @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-[--bg-color];
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply static top-auto left-auto -m-2;
     }
   }
@@ -227,11 +227,11 @@ watchEffect(() => {
   &__img {
     @apply shrink-0 size-16 rounded border object-contain object-center;
 
-    @media (min-width: theme("screens.lg")) {
+    @container (width > theme("containers.xl")) {
       @apply size-12;
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @container (width > theme("containers.4xl")) {
       @apply size-16;
     }
 
@@ -244,7 +244,7 @@ watchEffect(() => {
   &__content {
     @apply w-full;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply contents;
     }
 
@@ -260,7 +260,7 @@ watchEffect(() => {
   &__name {
     @apply text-sm;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply grow min-h-0;
     }
 
@@ -272,16 +272,16 @@ watchEffect(() => {
   &__properties {
     @apply flex-none mt-3;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       @apply mt-0 w-40;
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @container (width > theme("containers.4xl")) {
       @apply w-[11.875rem];
     }
 
     &--wide {
-      @media (min-width: theme("screens.xl")) {
+      @container (width > theme("containers.4xl")) {
         @apply w-[15.5rem];
       }
     }
@@ -298,28 +298,36 @@ watchEffect(() => {
   &__price {
     --vc-product-price-font-size: theme(fontSize.sm);
 
-    @apply max-2xl:hidden #{!important};
+    @container (width <= theme("containers.3xl")) {
+      @apply hidden #{!important};
+    }
 
-    @media (min-width: theme("screens.2xl")) {
+    @container (width > theme("containers.3xl")) {
       @apply shrink-0 w-[8.25rem];
     }
 
     #{$deleted} & {
-      @media (min-width: theme("screens.2xl")) {
+      @container (width > theme("containers.3xl")) {
         @apply invisible;
       }
     }
   }
 
   &__slot {
-    @apply flex items-center gap-3 empty:hidden max-md:mt-3;
+    @apply flex items-center gap-3 empty:hidden;
 
-    .vc-add-to-cart {
-      @apply w-[11.75rem] xs:w-[13rem] 2xl:w-[15.7rem];
+    @container (width <= theme("containers.xl")) {
+      @apply mt-3;
     }
 
-    .vc-quantity {
-      @apply w-[5rem] 2xl:w-[6.5rem];
+    & > * > {
+      .vc-add-to-cart {
+        @apply w-[11.75rem] xs:w-[13rem] 2xl:w-[15.7rem];
+      }
+
+      .vc-quantity {
+        @apply w-[5rem] 2xl:w-[6.5rem];
+      }
     }
 
     #{$deleted} & {
@@ -332,13 +340,13 @@ watchEffect(() => {
 
     @apply w-full min-w-0;
 
-    @media (min-width: theme("screens.md")) {
+    @container (width > theme("containers.xl")) {
       --vc-product-price-font-size: theme(fontSize.sm);
 
       @apply shrink-0 w-[6.5rem];
     }
 
-    @media (min-width: theme("screens.xl")) {
+    @container (width > theme("containers.4xl")) {
       --vc-product-price-font-size: theme(fontSize.base);
 
       @apply w-[8.625rem];
@@ -346,7 +354,15 @@ watchEffect(() => {
   }
 
   &__remove-button {
-    @apply shrink-0 max-md:top-0.5 max-md:right-0.5 max-md:absolute md:-my-2 md:-me-2 #{!important};
+    @apply shrink-0;
+
+    @container (width <= theme("containers.xl")) {
+      @apply top-0.5 right-0.5 absolute #{!important};
+    }
+
+    @container (width > theme("containers.xl")) {
+      @apply -my-2 -me-2;
+    }
   }
 }
 </style>
