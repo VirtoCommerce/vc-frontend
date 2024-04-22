@@ -19,6 +19,7 @@
           :properties="variation.properties.slice(0, 3)"
           :list-price="variation.price.list"
           :actual-price="variation.price.actual"
+          :vendor="$cfg.vendor_enabled ? product.vendor : undefined"
         >
           <div>
             <AddToCart :product="variation" />

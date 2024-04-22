@@ -66,6 +66,12 @@
             </VcProperty>
           </template>
 
+          <VcProperty v-if="vendor" :label="$t('common.labels.vendor')" :disabled="disabled">
+            <span class="vc-line-item__vendor">
+              {{ vendor.name }}
+            </span>
+          </VcProperty>
+
           <VcProperty
             v-if="withPrice && !deleted"
             class="vc-line-item__property-price"
@@ -119,7 +125,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import type { Property, MoneyType } from "@/core/api/graphql/types";
+import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -144,6 +150,7 @@ interface IProps {
   withProperties?: boolean;
   withPrice?: boolean;
   withTotal?: boolean;
+  vendor?: CommonVendor;
 }
 
 defineEmits<IEmits>();
@@ -298,6 +305,10 @@ watchEffect(() => {
         @apply hidden;
       }
     }
+  }
+
+  &__vendor {
+    @apply text-accent-600;
   }
 
   &__property-price {
