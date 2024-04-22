@@ -51,7 +51,7 @@
             'vc-line-item__properties',
             {
               'vc-line-item__properties--wide': !withPrice,
-              'vc-line-item__properties--hide-2xl': !withProperties && withPrice,
+              'vc-line-item__properties--hide': !withProperties && withPrice,
             },
           ]"
         >
@@ -68,16 +68,11 @@
 
           <VcProperty
             v-if="withPrice && !deleted"
-            class="2xl:hidden"
+            class="vc-line-item__property-price"
             :label="$t('common.labels.price_per_item')"
             :disabled="disabled"
           >
-            <VcProductPrice
-              class="vc-line-item__property-price"
-              :list-price="actualPrice || listPrice"
-              :disabled="disabled"
-              truncate
-            />
+            <VcProductPrice :list-price="actualPrice || listPrice" :disabled="disabled" truncate />
           </VcProperty>
         </div>
 
@@ -176,7 +171,7 @@ watchEffect(() => {
 
   @apply relative flex flex-col gap-2 p-3 rounded border shadow-md bg-[--bg-color];
 
-  @container (width > theme("containers.xl")) {
+  @container (width > theme("containers.2xl")) {
     @apply p-4 rounded-none border-0 shadow-none;
   }
 
@@ -208,10 +203,18 @@ watchEffect(() => {
     }
   }
 
+  &:first-child {
+    @apply rounded-t-[inherit];
+  }
+
+  &:last-child {
+    @apply rounded-b-[inherit];
+  }
+
   &__main {
     @apply flex items-start min-h-[1.25rem];
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply items-center gap-3;
     }
   }
@@ -219,7 +222,7 @@ watchEffect(() => {
   &__checkbox {
     @apply flex-none absolute top-0.5 left-0.5 p-2 rounded bg-[--bg-color];
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply static top-auto left-auto -m-2;
     }
   }
@@ -227,7 +230,7 @@ watchEffect(() => {
   &__img {
     @apply shrink-0 size-16 rounded border object-contain object-center;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply size-12;
     }
 
@@ -244,7 +247,7 @@ watchEffect(() => {
   &__content {
     @apply w-full;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply contents;
     }
 
@@ -260,7 +263,7 @@ watchEffect(() => {
   &__name {
     @apply text-sm;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply grow min-h-0;
     }
 
@@ -272,7 +275,7 @@ watchEffect(() => {
   &__properties {
     @apply flex-none mt-3;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply mt-0 w-40;
     }
 
@@ -286,28 +289,34 @@ watchEffect(() => {
       }
     }
 
-    &--hide-2xl {
-      @apply 2xl:hidden;
+    &--hide {
+      @container (width > theme("containers.4xl")) {
+        @apply hidden;
+      }
     }
   }
 
   &__property-price {
     @apply leading-[inherit] #{!important};
+
+    @container (width > theme("containers.4xl")) {
+      @apply hidden;
+    }
   }
 
   &__price {
     --vc-product-price-font-size: theme(fontSize.sm);
 
-    @container (width <= theme("containers.3xl")) {
+    @container (width <= theme("containers.4xl")) {
       @apply hidden #{!important};
     }
 
-    @container (width > theme("containers.3xl")) {
+    @container (width > theme("containers.4xl")) {
       @apply shrink-0 w-[8.25rem];
     }
 
     #{$deleted} & {
-      @container (width > theme("containers.3xl")) {
+      @container (width > theme("containers.4xl")) {
         @apply invisible;
       }
     }
@@ -316,22 +325,40 @@ watchEffect(() => {
   &__slot {
     @apply flex items-center gap-3 empty:hidden;
 
-    @container (width <= theme("containers.xl")) {
+    @container (width <= theme("containers.2xl")) {
       @apply mt-3;
     }
 
     & > * > {
       .vc-add-to-cart {
-        @apply w-[11.75rem] xs:w-[13rem] 2xl:w-[15.7rem];
+        @apply w-[11.75rem];
+
+        @container (width > theme("containers.sm")) {
+          @apply w-[13rem];
+        }
+
+        @container (width > theme("containers.2xl")) {
+          @apply w-[15.7rem];
+        }
       }
 
       .vc-quantity {
-        @apply w-[5rem] 2xl:w-[6.5rem];
+        @apply w-[5rem];
+
+        @container (width > theme("containers.2xl")) {
+          @apply w-[6.5rem];
+        }
       }
     }
 
     #{$deleted} & {
-      @apply max-md:hidden md:invisible;
+      @container (width <= theme("containers.2xl")) {
+        @apply hidden;
+      }
+
+      @container (width > theme("containers.2xl")) {
+        @apply invisible;
+      }
     }
   }
 
@@ -340,7 +367,7 @@ watchEffect(() => {
 
     @apply w-full min-w-0;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       --vc-product-price-font-size: theme(fontSize.sm);
 
       @apply shrink-0 w-[6.5rem];
@@ -356,11 +383,11 @@ watchEffect(() => {
   &__remove-button {
     @apply shrink-0;
 
-    @container (width <= theme("containers.xl")) {
+    @container (width <= theme("containers.2xl")) {
       @apply top-0.5 right-0.5 absolute #{!important};
     }
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply -my-2 -me-2;
     }
   }

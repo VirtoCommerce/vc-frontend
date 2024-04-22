@@ -201,7 +201,7 @@ watchEffect(() => {
   @apply @container;
 
   &__container {
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply border rounded divide-y;
     }
   }
@@ -209,7 +209,7 @@ watchEffect(() => {
   &__head {
     @apply hidden;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply flex items-center gap-3 py-0.5 px-4 min-h-[2.75rem] text-sm font-bold;
     }
   }
@@ -221,7 +221,7 @@ watchEffect(() => {
   &__properties {
     @apply flex-none;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply w-40;
     }
 
@@ -239,7 +239,7 @@ watchEffect(() => {
   &__price {
     @apply hidden;
 
-    @container (width > theme("containers.3xl")) {
+    @container (width > theme("containers.4xl")) {
       @apply flex-none block w-[8.25rem] text-end;
     }
   }
@@ -247,7 +247,7 @@ watchEffect(() => {
   &__total {
     @apply text-end;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply shrink-0 w-[6.5rem];
     }
 
@@ -263,15 +263,23 @@ watchEffect(() => {
   &__body {
     @apply flex flex-col gap-4;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply gap-0 space-y-0 divide-y;
+
+      &:first-child {
+        @apply rounded-t;
+      }
+
+      &:last-child {
+        @apply rounded-b;
+      }
     }
   }
 
   &__foot {
     @apply flex justify-end py-2.5;
 
-    @container (width > theme("containers.xl")) {
+    @container (width > theme("containers.2xl")) {
       @apply px-3;
     }
 
@@ -284,7 +292,7 @@ watchEffect(() => {
     @apply me-1;
 
     &--mobile.vc-button {
-      @container (width > theme("containers.xl")) {
+      @container (width > theme("containers.2xl")) {
         @apply hidden;
       }
     }
@@ -292,7 +300,7 @@ watchEffect(() => {
     &--desktop.vc-button {
       @apply hidden;
 
-      @container (width > theme("containers.xl")) {
+      @container (width > theme("containers.2xl")) {
         @apply inline-block;
       }
     }

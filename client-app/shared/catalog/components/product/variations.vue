@@ -20,7 +20,18 @@
           :list-price="variation.price.list"
           :actual-price="variation.price.actual"
         >
-          <AddToCart :product="variation" />
+          <div>
+            <AddToCart :product="variation" />
+
+            <div class="variations__badges">
+              <InStock
+                :is-in-stock="variation.availabilityData?.isInStock"
+                :quantity="variation.availabilityData?.availableQuantity"
+              />
+
+              <CountInCart :product-id="variation.id" />
+            </div>
+          </div>
         </VcLineItem>
       </template>
     </VcLineItems>
@@ -29,6 +40,8 @@
 
 <script setup lang="ts">
 import { AddToCart } from "@/shared/cart";
+import CountInCart from "../count-in-cart.vue";
+import InStock from "../in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -41,3 +54,11 @@ interface IProps {
 
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.variations {
+  &__badges {
+    @apply flex items-center flex-wrap gap-1 mt-1.5;
+  }
+}
+</style>
