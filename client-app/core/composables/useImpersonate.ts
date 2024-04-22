@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { useAuth } from "@/core/composables/useAuth";
 import { Logger } from "@/core/utilities";
-import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
+import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcast";
 
 type ConnectTokenResponseType = {
   expires_in: number;
@@ -42,9 +42,8 @@ export function _useImpersonate() {
 
         status.value = "success";
 
-        broadcast.emit(pageReloadEvent, TabsType.OTHERS);
-        // reload page and redirect to account default page to renew state
-        location.href = "/account";
+        // reload all tabs to renew state
+        broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
       }
     } catch (e) {
       Logger.error(impersonate.name, e);
