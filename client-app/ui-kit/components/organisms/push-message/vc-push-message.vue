@@ -2,6 +2,7 @@
   <div
     :class="[
       'vc-push-message',
+      `vc-push-message--size--${size}`,
       {
         'vc-push-message--unread': !pushMessage.isRead,
       },
@@ -40,17 +41,30 @@ export interface IEmits {
 interface IProps {
   pushMessage: VcPushMessageType;
   removable?: boolean;
+  size?: "md" | "lg";
 }
 
 defineEmits<IEmits>();
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  size: "md",
+});
 </script>
 
 <style lang="scss">
 .vc-push-message {
   $unread: "";
 
-  @apply flex items-start ps-3 pe-1 py-2;
+  @apply flex items-start;
+
+  &--size {
+    &--md {
+      @apply ps-3 pe-1 py-2;
+    }
+
+    &--lg {
+      @apply ps-4 pe-2 py-3;
+    }
+  }
 
   &--unread {
     $unread: &;

@@ -58,6 +58,10 @@ defineProps<IProps>();
   mask: url(/static/images/dashboard/icons/credit-card.svg) no-repeat center / contain;
 }
 
+.notifications > div {
+  mask: url(/static/icons/basic/bell.svg) no-repeat center / contain;
+}
+
 /* Active/hover state styles */
 .router-link-active > div,
 .icon:hover > div {
