@@ -301,10 +301,12 @@ watchEffect(() => {
   }
 
   &__property-price {
-    @apply leading-[inherit] #{!important};
-
     @container (width > theme("containers.4xl")) {
       @apply hidden;
+    }
+
+    * {
+      @apply leading-[inherit] #{!important};
     }
   }
 
