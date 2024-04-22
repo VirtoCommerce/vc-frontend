@@ -9,10 +9,6 @@
     <VcAlert v-if="status === 'error'" color="danger" class="mt-4" icon>
       {{ $t("pages.account.impersonate.error") }}
     </VcAlert>
-
-    <VcAlert v-if="status === 'success'" color="success" class="mt-4" icon>
-      {{ $t("pages.account.impersonate.success") }}
-    </VcAlert>
   </div>
 </template>
 
