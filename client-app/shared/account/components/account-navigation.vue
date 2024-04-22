@@ -93,6 +93,13 @@
         :text="$t('shared.account.navigation.links.saved_credit_cards')"
         class="credit-card"
       />
+
+      <AccountNavigationLink
+        v-if="$cfg.push_messages_enabled"
+        :to="{ name: 'Notifications' }"
+        :text="$t('shared.account.navigation.links.notifications')"
+        class="notifications"
+      />
     </VcWidget>
 
     <VcWidget v-if="isCorporateMember" :title="$t(`shared.account.navigation.corporate_title`)" size="sm">
