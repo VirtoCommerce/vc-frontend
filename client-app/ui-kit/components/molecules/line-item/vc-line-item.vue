@@ -204,11 +204,15 @@ watchEffect(() => {
   }
 
   &:first-child {
-    @apply rounded-t-[inherit];
+    @container (width > theme("containers.2xl")) {
+      @apply rounded-t-[inherit];
+    }
   }
 
   &:last-child {
-    @apply rounded-b-[inherit];
+    @container (width > theme("containers.2xl")) {
+      @apply rounded-b-[inherit];
+    }
   }
 
   &__main {

@@ -1,21 +1,21 @@
 <template>
-  <VcWidget size="lg">
-    <div class="flex flex-col lg:flex-row lg:gap-8 print:flex-row print:gap-4">
-      <div class="flex-none lg:w-80 xl:w-[27.5rem] 2xl:w-[30rem] print:hidden">
+  <VcWidget class="product-info" size="lg">
+    <div class="product-info__container">
+      <div class="product-info__side">
         <ImageGallery :images="product.images">
           <template #badges>
             <DiscountBadge :price="product.price!" />
           </template>
         </ImageGallery>
 
-        <ProductVideos class="mt-8 lg:mt-3" :videos="product.videos" />
+        <ProductVideos class="product-info__videos" :videos="product.videos" />
       </div>
 
-      <div class="hidden aspect-square w-40 flex-none print:block">
-        <VcImage :src="product.imgSrc" class="w-full rounded border" />
+      <div class="product-info__print">
+        <VcImage :src="product.imgSrc" class="product-info__print-img" />
       </div>
 
-      <div v-if="model?.blocks?.length" class="mt-5 flex flex-col gap-6 lg:mt-0 lg:grow print:mt-5">
+      <div v-if="model?.blocks?.length" class="product-info__content">
         <template v-for="(block, index) in model.blocks">
           <component
             :is="block.type"
@@ -42,3 +42,31 @@ interface IProps {
 
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.product-info {
+  &__container {
+    @apply flex flex-col lg:flex-row lg:gap-8 print:flex-row print:gap-4;
+  }
+
+  &__side {
+    @apply flex-none lg:w-80 xl:w-[27.5rem] 2xl:w-[30rem] print:hidden;
+  }
+
+  &__videos {
+    @apply mt-8 lg:mt-3;
+  }
+
+  &__print {
+    @apply hidden aspect-square w-40 flex-none print:block;
+  }
+
+  &__print-img {
+    @apply w-full rounded border;
+  }
+
+  &__content {
+    @apply mt-5 flex flex-col gap-6 lg:mt-0 lg:grow print:mt-5;
+  }
+}
+</style>

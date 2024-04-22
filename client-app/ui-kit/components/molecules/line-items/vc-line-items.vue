@@ -84,7 +84,7 @@
       </div>
 
       <!-- table footer -->
-      <div class="vc-line-items__foot">
+      <div v-if="selectable || withSubtotal" class="vc-line-items__foot">
         <template v-if="selectable">
           <VcButton
             class="vc-line-items__button vc-line-items__button--desktop"
