@@ -28,8 +28,6 @@ export function useMarkPushMessageUnread() {
           ...pushMessagesQueryResult,
           pushMessages: {
             ...pushMessagesQueryResult.pushMessages,
-            unreadCount:
-              pushMessagesQueryResult.pushMessages.items.filter((pushMessage) => !pushMessage.isRead).length + 1,
           },
         } satisfies GetPushMessagesQuery;
       },

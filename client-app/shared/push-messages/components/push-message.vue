@@ -1,5 +1,5 @@
 <template>
-  <VcPushMessage :push-message="_pushMessage" @click="toggleRead" />
+  <VcPushMessage :size="size" :push-message="_pushMessage" @click="toggleRead" />
 </template>
 
 <script setup lang="ts">
@@ -8,6 +8,7 @@ import { usePushMessage } from "@/shared/push-messages/composables/usePushMessag
 
 interface IProps {
   pushMessage: VcPushMessageType;
+  size?: "md" | "lg";
 }
 
 const props = defineProps<IProps>();
