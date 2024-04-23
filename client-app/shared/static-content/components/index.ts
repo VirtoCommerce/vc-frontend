@@ -25,6 +25,40 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         defaultValue: "Products Block",
       },
       {
+        name: "cardType",
+        type: "string",
+        defaultValue: "full",
+        enum: ["full", "short"],
+      },
+      {
+        name: "count",
+        type: "number",
+        defaultValue: 4,
+        friendlyName: "Cards amount",
+        onChange: (options: Map<string, number>) => {
+          const count = options.get("count");
+          if (typeof count !== "number") {
+            return;
+          }
+          if (count > 12) {
+            options.set("count", 12);
+            alert("the maximum number of cards is 12");
+          }
+        },
+      },
+      {
+        name: "columnsAmountTablet",
+        type: "string",
+        defaultValue: "3",
+        enum: ["3", "2"],
+      },
+      {
+        name: "columnsAmountDesktop",
+        type: "string",
+        defaultValue: "4",
+        enum: ["4", "3"],
+      },
+      {
         name: "query",
         type: "string",
       },

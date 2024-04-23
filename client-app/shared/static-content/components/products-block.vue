@@ -7,16 +7,27 @@
 
       <div class="text-center lg:text-lg">{{ subtitle }}</div>
 
-      <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
-        <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
-          <template #cart-handler>
-            <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
-              {{ $t("pages.demo_landing.products_block.choose_button") }}
-            </VcButton>
+      <div
+        :class="[
+          'grid grid-cols-1 gap-6 xs:grid-cols-2 lg:gap-5',
+          `md:grid-cols-${columnsAmountTablet}`,
+          `lg:grid-cols-${columnsAmountDesktop}`,
+        ]"
+      >
+        <template v-if="cardType === 'full'">
+          <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
+            <template #cart-handler>
+              <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
+                {{ $t("pages.demo_landing.products_block.choose_button") }}
+              </VcButton>
 
-            <AddToCart v-else :product="item"></AddToCart>
-          </template>
-        </ProductCardGrid>
+              <AddToCart v-else :product="item"></AddToCart>
+            </template>
+          </ProductCardGrid>
+        </template>
+        <template v-if="cardType === 'short'">
+          <ProductCardRelated v-for="item in products" :key="item.id" :product="item" />
+        </template>
       </div>
     </div>
   </div>
@@ -27,6 +38,7 @@ import { watchEffect } from "vue";
 import { useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
+import ProductCardRelated from "@/shared/catalog/components/product-card-related.vue";
 
 interface IProps {
   id: string;
@@ -35,15 +47,24 @@ interface IProps {
   subtitle?: string;
   count?: number;
   query?: string;
+  cardType?: string;
+  columnsAmountDesktop?: string;
+  columnsAmountTablet?: string;
 }
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  cardType: "full",
+  count: 4,
+  columnsAmountDesktop: "4",
+  columnsAmountTablet: "3",
+});
+
 const { products, fetchProducts } = useProducts();
 const productsRoutes = useProductsRoutes(products);
 
 watchEffect(async () => {
   await fetchProducts({
-    itemsPerPage: props.count || 4,
+    itemsPerPage: props.count,
     filter: props.query,
   });
 });
