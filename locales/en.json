@@ -1401,8 +1401,8 @@
     "push-messages": {
       "title": "Notifications",
       "options": {
-        "make_all_as_read": "Make all as read",
-        "make_all_as_unread": "Make all as unread"
+        "make_all_as_read": "Mark all as read",
+        "make_all_as_unread": "Mark all as unread"
       },
       "empty": {
         "title": "No new notifications at the moment.",
