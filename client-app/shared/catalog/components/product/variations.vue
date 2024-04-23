@@ -4,7 +4,7 @@
     class="variations"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations_block_title')"
-    prepend-icon="adjustments"
+    prepend-icon="cube"
   >
     <VcLineItems :with-header="false">
       <template #line-items>
