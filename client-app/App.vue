@@ -76,9 +76,11 @@ void fetchMenus();
 void fetchWhiteLabelingSettings();
 
 watchEffect(() => {
-  useHead({
-    link: whiteLabelingSettings.value?.favicons,
-  });
+  if (whiteLabelingSettings.value?.favicons?.length) {
+    useHead({
+      link: whiteLabelingSettings.value.favicons,
+    });
+  }
 });
 
 onMounted(setupBroadcastGlobalListeners);
