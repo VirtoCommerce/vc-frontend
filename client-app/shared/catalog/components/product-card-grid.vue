@@ -138,14 +138,7 @@
             </div>
           </div>
           <div class="flex items-center gap-1">
-            <svg
-              class="size-3 shrink-0"
-              :class="{
-                'text-success': true,
-                'text-warning': false,
-                'text-danger': false,
-              }"
-            >
+            <svg class="size-3 shrink-0 text-success">
               <use href="/static/images/cup.svg#main"></use>
             </svg>
             <div class="font-bold">4,3/5</div>
