@@ -1097,7 +1097,7 @@
         "empty_list": "You do not have any new notifications at this time"
       },
       "impersonate": {
-        "title": "Impersonate",
+        "title": "Impersonation",
         "success": "You are impersonated",
         "error": "Some problems during impersonation. Check your permissions"
       }
