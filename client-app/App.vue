@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
-import { markRaw, onMounted, watch } from "vue";
+import { markRaw, onMounted, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations } from "@/core/composables";
@@ -18,7 +18,6 @@ import { useWhiteLabeling } from "@/shared/account";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
-import type { Link } from "@unhead/vue";
 import type { Component } from "vue";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
@@ -76,27 +75,13 @@ useHead({
 void fetchMenus();
 void fetchWhiteLabelingSettings();
 
-watch(
-  () => whiteLabelingSettings.value,
-  (value) => {
-    if (value) {
-      const links: Link[] | undefined = whiteLabelingSettings.value?.favicons?.map((item) => ({
-        rel: item.rel,
-        type: item.type,
-        sizes: item.sizes,
-        href: item.href,
-      }));
+watchEffect(() => {
+  useHead({
+    link: whiteLabelingSettings.value?.favicons,
+  });
+});
 
-      if (links) {
-        useHead({
-          link: links,
-        });
-      }
-    }
-  },
-);
-
-onMounted(() => setupBroadcastGlobalListeners());
+onMounted(setupBroadcastGlobalListeners);
 </script>
 
 <style lang="scss">
