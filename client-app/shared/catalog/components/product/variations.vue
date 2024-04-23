@@ -14,7 +14,7 @@
           with-image
           with-price
           with-properties
-          :image-url="variation.images[0].url"
+          :image-url="variation.images[0]?.url"
           :name="variation.name"
           :properties="variation.properties.slice(0, 3)"
           :list-price="variation.price.list"

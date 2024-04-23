@@ -92,18 +92,17 @@ const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 const hasVariations = computed(() => productHasVariations(product.value));
 
-const productInfoSection = computed(
-  () => template.value?.content.filter((item: PageContent) => item.type === "product-info")[0],
+const productInfoSection = computed(() =>
+  template.value?.content.find((item: PageContent) => item.type === "product-info"),
 );
 
-const productVariationsBlock = computed(
-  () =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    productInfoSection.value?.blocks.filter((block: any) => block.type === "product-variations")[0],
+const productVariationsBlock = computed(() =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  productInfoSection.value?.blocks.find((block: any) => block.type === "product-variations"),
 );
 
-const relatedProductsSection = computed(
-  () => template.value?.content.filter((item: PageContent) => item.type === "related-products")[0],
+const relatedProductsSection = computed(() =>
+  template.value?.content.find((item: PageContent) => item.type === "related-products"),
 );
 
 usePageHead({
