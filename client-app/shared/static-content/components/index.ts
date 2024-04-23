@@ -60,7 +60,14 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       },
       {
         name: "query",
+        friendlyName: "Keyword",
         type: "string",
+      },
+      {
+        name: "filter",
+        type: "string",
+        helperText:
+          "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
       },
     ],
   },

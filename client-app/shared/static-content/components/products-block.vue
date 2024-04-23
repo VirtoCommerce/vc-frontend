@@ -47,6 +47,7 @@ interface IProps {
   subtitle?: string;
   count?: number;
   query?: string;
+  filter?: string;
   cardType?: string;
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
@@ -65,7 +66,8 @@ const productsRoutes = useProductsRoutes(products);
 watchEffect(async () => {
   await fetchProducts({
     itemsPerPage: props.count,
-    filter: props.query,
+    keyword: props.query,
+    filter: props.filter,
   });
 });
 </script>
