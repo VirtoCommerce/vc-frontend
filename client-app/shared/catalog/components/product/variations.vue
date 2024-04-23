@@ -21,17 +21,15 @@
           :actual-price="variation.price.actual"
           :vendor="$cfg.vendor_enabled ? product.vendor : undefined"
         >
-          <div>
-            <AddToCart :product="variation" />
+          <AddToCart :product="variation" />
 
-            <div class="variations__badges">
-              <InStock
-                :is-in-stock="variation.availabilityData?.isInStock"
-                :quantity="variation.availabilityData?.availableQuantity"
-              />
+          <div class="variations__badges">
+            <InStock
+              :is-in-stock="variation.availabilityData?.isInStock"
+              :quantity="variation.availabilityData?.availableQuantity"
+            />
 
-              <CountInCart :product-id="variation.id" />
-            </div>
+            <CountInCart :product-id="variation.id" />
           </div>
         </VcLineItem>
       </template>

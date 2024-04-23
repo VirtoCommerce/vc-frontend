@@ -234,12 +234,8 @@ function onClick() {
 
 <style lang="scss">
 .add-to-cart {
-  .vc-line-item & {
-    @apply w-[11.75rem];
-
-    @container (width > theme("containers.sm")) {
-      @apply w-[13rem];
-    }
+  .vc-line-item__slot:has(&, * &) {
+    @apply w-[13rem];
 
     @container (width > theme("containers.2xl")) {
       @apply w-[15.7rem];

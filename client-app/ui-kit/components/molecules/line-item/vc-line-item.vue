@@ -91,8 +91,10 @@
           align="end"
         />
 
-        <div class="vc-line-item__slot">
-          <slot />
+        <div class="vc-line-item__mobile-row">
+          <div class="vc-line-item__slot">
+            <slot />
+          </div>
 
           <VcProductPrice
             v-if="withTotal"
@@ -339,32 +341,30 @@ watchEffect(() => {
     }
   }
 
+  &__mobile-row {
+    @apply contents;
+
+    @container (width <= theme("containers.2xl")) {
+      @apply flex items-center gap-3;
+    }
+  }
+
   &__slot {
-    @apply flex items-center gap-3 empty:hidden;
+    @apply flex-none empty:hidden;
 
     @container (width <= theme("containers.2xl")) {
       @apply mt-3;
     }
 
-    & > * > {
-      .vc-add-to-cart {
-        @apply w-[11.75rem];
+    &:has(.vc-quantity, * .vc-quantity) {
+      @apply w-[6.5rem];
+    }
 
-        @container (width > theme("containers.sm")) {
-          @apply w-[13rem];
-        }
+    &:has(.vc-add-to-cart, * .vc-add-to-cart) {
+      @apply w-[13rem];
 
-        @container (width > theme("containers.2xl")) {
-          @apply w-[15.7rem];
-        }
-      }
-
-      .vc-quantity {
-        @apply w-[5rem];
-
-        @container (width > theme("containers.2xl")) {
-          @apply w-[6.5rem];
-        }
+      @container (width > theme("containers.2xl")) {
+        @apply w-[15.7rem];
       }
     }
 
