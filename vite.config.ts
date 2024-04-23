@@ -5,7 +5,6 @@ import vue from "@vitejs/plugin-vue";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
-import { ViteFaviconsPlugin } from "vite-plugin-favicon2";
 import mkcert from "vite-plugin-mkcert";
 import type { ProxyOptions, UserConfig } from "vite";
 
@@ -70,15 +69,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       splitVendorChunkPlugin(),
-      ViteFaviconsPlugin({
-        logo: "./client-app/public/static/icons/favicon.svg",
-        outputPath: "static",
-        favicons: {
-          icons: {
-            appleStartup: false,
-          },
-        },
-      }),
       process.env.GENERATE_BUNDLE_MAP
         ? visualizer({
             filename: path.resolve(__dirname, "artifacts/bundle-map.html"),

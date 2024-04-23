@@ -7,5 +7,11 @@ query GetWhiteLabelingSettings($organizationId: String, $userId: String, $cultur
   ) {
     logoUrl
     secondaryLogoUrl
+    favicons {
+      rel
+      type
+      sizes
+      href
+    }
   }
 }

@@ -23,10 +23,6 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
       await getMe();
       await mergeCart({ command: { userId: me.value!.me!.id, secondCartId: cart.value!.id } });
 
-      //if (me.value?.me?.contact?.organizationId) {
-      //  fetchWhiteLabeling(me.value.me.contact.organizationId);
-      //}
-
       broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
     },
     null,

@@ -1,8 +1,4 @@
 <template>
-  <Head>
-    <link rel="icon" :href="$cfg.favicon_image" />
-  </Head>
-
   <component :is="layout">
     <RouterView />
   </component>
@@ -12,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
-import { Head } from "@unhead/vue/components";
+import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
-import { markRaw, onMounted } from "vue";
+import { markRaw, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations } from "@/core/composables";
@@ -22,6 +18,7 @@ import { useWhiteLabeling } from "@/shared/account";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
+import type { Link } from "@unhead/vue";
 import type { Component } from "vue";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
@@ -31,7 +28,7 @@ const _settings = JSON.parse(_props.settings); // eslint-disable-line @typescrip
 const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
-const { fetchWhiteLabelingSettings } = useWhiteLabeling();
+const { whiteLabelingSettings, fetchWhiteLabelingSettings } = useWhiteLabeling();
 const { fetchMenus } = useNavigations();
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
@@ -51,8 +48,53 @@ router.beforeEach((to) => {
   }
 });
 
+useHead({
+  link: [
+    {
+      rel: "shortcut icon",
+      href: "/static/icons/favicon.ico",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "16x16",
+      href: "/static/icons/favicon-16x16.png",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "32x32",
+      href: "/static/icons/favicon-32x32.png",
+    },
+    {
+      rel: "manifest",
+      href: "/static/manifest.json",
+    },
+  ],
+});
+
 void fetchMenus();
 void fetchWhiteLabelingSettings();
+
+watch(
+  () => whiteLabelingSettings.value,
+  (value) => {
+    if (value) {
+      const links: Link[] | undefined = whiteLabelingSettings.value?.favicons?.map((item) => ({
+        rel: item.rel,
+        type: item.type,
+        sizes: item.sizes,
+        href: item.href,
+      }));
+
+      if (links) {
+        useHead({
+          link: links,
+        });
+      }
+    }
+  },
+);
 
 onMounted(() => setupBroadcastGlobalListeners());
 </script>
