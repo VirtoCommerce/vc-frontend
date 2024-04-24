@@ -6,6 +6,10 @@
       `vc-switch--size--${size}`,
       `vc-switch--label--${labelPosition}`,
     ]"
+    role="button"
+    tabindex="0"
+    @keypress.prevent="change"
+    @click.prevent="change"
   >
     <div v-if="$slots.default" class="vc-switch__label">
       <slot />
