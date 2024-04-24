@@ -28,7 +28,7 @@
 
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !localFilters.facets.length">
-      <VcFilterCardSkeleton v-for="i in 6" :key="i" is-collapsible />
+      <VcWidgetSkeleton v-for="i in 6" :key="i" size="xs" head />
     </template>
 
     <!-- Facet Filters -->

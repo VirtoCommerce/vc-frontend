@@ -16,8 +16,6 @@ declare module "vue" {
     VcDateSelector: typeof Components.VcDateSelector;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
-    /** @deprecated use {@link VcWidgetSkeleton} instead. */
-    VcFilterCardSkeleton: typeof Components.VcFilterCardSkeleton;
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
     VcHexagonIcon: typeof Components.VcHexagonIcon;

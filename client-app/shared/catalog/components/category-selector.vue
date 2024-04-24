@@ -1,8 +1,7 @@
 <template>
-  <VcFilterCardSkeleton v-if="loading">
-    <div class="mb-1.5 h-5 bg-neutral-50">&nbsp;</div>
-    <div v-for="i in 6" :key="i" class="mb-1.5 ml-6 h-4 bg-neutral-50">&nbsp;</div>
-  </VcFilterCardSkeleton>
+  <VcWidgetSkeleton v-if="loading" size="xs">
+    <div v-for="i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" :key="i" />
+  </VcWidgetSkeleton>
 
   <VcWidget v-else size="xs">
     <template v-if="!!parentCategory" #header>
