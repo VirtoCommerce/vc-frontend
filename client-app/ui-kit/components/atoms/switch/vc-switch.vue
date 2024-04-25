@@ -1,25 +1,27 @@
 <template>
-  <label
+  <!-- Workaround to fix Firefox input label bug -->
+  <div
     :class="[
       'vc-switch',
       `vc-switch--color--${color}`,
       `vc-switch--size--${size}`,
       `vc-switch--label--${labelPosition}`,
     ]"
+    tabindex="-1"
     role="button"
-    tabindex="0"
-    @keypress.prevent="change"
-    @click.prevent="change"
+    @keyup.stop="change"
+    @click.stop="change"
   >
-    <div v-if="$slots.default" class="vc-switch__label">
+    <label v-if="$slots.default" :for-id="componentId" class="vc-switch__label">
       <slot />
-    </div>
+    </label>
 
     <div class="vc-switch__bg">
       <div class="vc-switch__circle"></div>
     </div>
 
     <input
+      :id="componentId"
       :value="value"
       :checked="modelValue"
       :aria-checked="modelValue"
@@ -27,10 +29,12 @@
       type="checkbox"
       @change="change"
     />
-  </label>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { useComponentId } from "@/ui-kit/composables";
+
 export interface IEmits {
   (event: "update:modelValue", value?: boolean): void;
   (event: "change", value: boolean): void;
@@ -52,6 +56,8 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   labelPosition: "left",
 });
+
+const componentId = useComponentId("input");
 
 function change() {
   if (props.disabled) {
@@ -76,7 +82,7 @@ function change() {
 
   --color: var(--color-neutral-300);
 
-  @apply relative inline-flex items-center cursor-pointer;
+  @apply relative inline-flex items-center;
 
   &--size {
     &--xs {
@@ -143,7 +149,7 @@ function change() {
   }
 
   &__label {
-    @apply text-neutral-950 font-normal;
+    @apply text-neutral-950 font-normal cursor-pointer;
 
     #{$left} & {
       @apply order-first me-2;
@@ -161,7 +167,7 @@ function change() {
   &__bg {
     $bg: &;
 
-    @apply order-1 relative h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5;
+    @apply order-1 relative h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5 cursor-pointer;
   }
 
   &__circle {

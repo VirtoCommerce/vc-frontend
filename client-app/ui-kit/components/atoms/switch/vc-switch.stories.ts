@@ -29,13 +29,13 @@ export default {
         },
       },
     },
-    label: {
-      control: "select",
+    labelPosition: {
+      control: "inline-radio",
       options: LABEL,
       type: { name: "string", required: false },
       table: {
         type: {
-          summary: COLORS.join(" | "),
+          summary: LABEL.join(" | "),
         },
       },
     },
@@ -45,7 +45,7 @@ export default {
 const Template: StoryFn<typeof VcSwitch> = (args) => ({
   components: { VcSwitch },
   setup: () => ({ args }),
-  template: '<VcSwitch v-bind="args" />',
+  template: '<VcSwitch v-bind="args" v-model="modelValue" />',
 });
 
 const Label: StoryFn<typeof VcSwitch> = (args) => ({
