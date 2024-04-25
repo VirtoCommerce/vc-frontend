@@ -1,8 +1,10 @@
 import { useQuery } from "@vue/apollo-composable";
 import { GetPushMessagesDocument, OnPushMessageCreatedDocument } from "@/core/api/graphql/types";
+import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
+import type { MaybeRefOrGetter } from "vue";
 
-export function useGetPushMessages() {
-  const result = useQuery(GetPushMessagesDocument, null, { fetchPolicy: "cache-and-network" });
+export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQueryVariables>) {
+  const result = useQuery(GetPushMessagesDocument, payload, { fetchPolicy: "cache-and-network" });
   result.subscribeToMore({
     document: OnPushMessageCreatedDocument,
     updateQuery: (previousQueryResult, { subscriptionData }) => {
@@ -10,11 +12,11 @@ export function useGetPushMessages() {
         return previousQueryResult;
       }
       const newPushMessage = subscriptionData.data.pushMessageCreated;
+      const items = previousQueryResult.pushMessages?.items ?? [];
       return {
         ...previousQueryResult,
         pushMessages: {
-          unreadCount: previousQueryResult.pushMessages.unreadCount + 1,
-          items: [newPushMessage, ...previousQueryResult.pushMessages.items],
+          items: [newPushMessage, ...items],
         },
       };
     },
