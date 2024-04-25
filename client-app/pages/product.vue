@@ -9,7 +9,7 @@
 
     <div v-if="!hasVariations" class="mt-2 flex flex-wrap gap-5">
       <VcCopyText :text="product.code" :notification="$t('pages.product.sku_copied_message')">
-        <span class="text-base text-[--color-secondary-900]">
+        <span class="text-base text-secondary-900">
           {{ $t("pages.product.sku_label") }}
           <span class="font-black">#{{ product.code }}</span>
         </span>
@@ -20,9 +20,7 @@
         TODO: create VcLayoutWithSidebar component
         https://virtocommerce.atlassian.net/browse/ST-5629
       -->
-    <div
-      class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6 print:flex-row print:gap-4"
-    >
+    <div class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6">
       <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
         <component
           :is="productInfoSection?.type"
@@ -49,7 +47,7 @@
       <ProductSidebar
         :class="[
           'flex-none md:sticky md:top-[4.5rem] md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
-          { 'print:hidden': !!product.hasVariations },
+          { 'print:hidden': hasVariations },
         ]"
         :product="product"
       />
