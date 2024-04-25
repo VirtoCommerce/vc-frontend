@@ -40,6 +40,36 @@
       <template #sidebar>
         <VcWidget :title="$t('pages.account.quote_details.quote_summary')">
           <div class="flex justify-between text-base">
+            <span v-t="'pages.account.quote_details.subTotal'" class="font-bold" />
+
+            <span class="text-18 font-extrabold text-[color:var(--color-price)]">
+              <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
+            </span>
+          </div>
+          <div class="border-y py-2 text-base font-normal">
+            <div class="flex justify-between text-base">
+              <span v-t="'pages.account.quote_details.discountTotal'" />
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.discountTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              <span v-t="'pages.account.quote_details.shippingTotal'" />
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.shippingTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              <span v-t="'pages.account.quote_details.taxTotal'" />
+
+              <span class="">
+                <VcPriceDisplay :value="quote.totals?.taxTotal" />
+              </span>
+            </div>
+          </div>
+          <div class="flex justify-between text-base">
             <span v-t="'pages.account.quote_details.total'" class="font-bold" />
 
             <span class="text-18 font-extrabold text-[color:var(--color-price)]">
