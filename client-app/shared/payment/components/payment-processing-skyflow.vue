@@ -294,6 +294,10 @@ function createForm() {
       base: {
         fontFamily,
         color: errorColor,
+        textTransform: "lowercase",
+        "&::first-letter": {
+          textTransform: "uppercase",
+        },
       },
       global,
     },
