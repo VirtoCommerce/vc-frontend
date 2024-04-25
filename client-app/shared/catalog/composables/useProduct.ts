@@ -17,7 +17,7 @@ export function useProduct() {
     try {
       product.value = await getProduct(id);
     } catch (e) {
-      Logger.error("useProduct.loadProduct", e);
+      Logger.error(`${useProduct.name}.${loadProduct.name}`, e);
       throw e;
     } finally {
       loading.value = false;

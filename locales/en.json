@@ -118,7 +118,12 @@
       "ends_to": "End: {0}",
       "saved_cards": "Saved cards",
       "save_card_for_future_payments": "Save card for future payments. It's safe.",
-      "add_new_card": "Add new card"
+      "add_new_card": "Add new card",
+      "last_day": "Last day",
+      "last_week": "Last week",
+      "last_month": "Last month",
+      "last_year": "Last year",
+      "custom_date": "Custom date"
     },
     "prefixes": {
       "please": "Please",
@@ -210,7 +215,8 @@
       "quote_requests": "Quote Requests",
       "contact_administrator": "contact the site administrator",
       "push-messages": "Notifications",
-      "saved_credit_cards": "Saved Credit Cards"
+      "saved_credit_cards": "Saved Credit Cards",
+      "notifications": "Notifications"
     },
     "titles": {
       "all_actions": "All actions",
@@ -290,7 +296,8 @@
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
             "quote_requests": "@:common.links.quote_requests",
-            "saved_credit_cards": "@:common.links.saved_credit_cards"
+            "saved_credit_cards": "@:common.links.saved_credit_cards",
+            "notifications": "@:common.links.notifications"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -369,7 +376,8 @@
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "quote_requests": "@:common.links.quote_requests",
-          "saved_credit_cards": "@:common.links.saved_credit_cards"
+          "saved_credit_cards": "@:common.links.saved_credit_cards",
+          "notifications": "@:common.links.notifications"
         }
       },
       "change_password_form": {
@@ -448,13 +456,13 @@
           "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
         }
       },
-      "orders-filter": {
-        "status-label": "@:common.labels.status",
-        "created-date-label": "Create date",
-        "start-date-label": "Start date",
-        "end-date-label": "End date",
-        "apply-button": "@:common.buttons.apply",
-        "reset-button": "@:common.buttons.reset"
+      "orders_filter": {
+        "status_label": "@:common.labels.status",
+        "created_date_label": "Create date",
+        "start_date_label": "Start date",
+        "end_date_label": "End date",
+        "apply_button": "@:common.buttons.apply",
+        "reset_button": "@:common.buttons.reset"
       }
     },
     "company": {
@@ -1081,6 +1089,17 @@
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
         }
+      },
+      "notifications": {
+        "meta": {
+          "title": "Notifications"
+        },
+        "empty_list": "You do not have any new notifications at this time"
+      },
+      "impersonate": {
+        "title": "Impersonation",
+        "success": "You are impersonated",
+        "error": "Some problems during impersonation. Check your permissions"
       }
     },
     "company": {
@@ -1102,7 +1121,9 @@
           "description": "Description",
           "zip": "Zip code",
           "country": "Country",
-          "default": "Default"
+          "default": "Default",
+          "favorite": "Favorite",
+          "actions": "Actions"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
@@ -1380,14 +1401,16 @@
     "push-messages": {
       "title": "Notifications",
       "options": {
-        "make_all_as_read": "Make all as read",
-        "make_all_as_unread": "Make all as unread"
+        "make_all_as_read": "Mark all as read",
+        "make_all_as_unread": "Mark all as unread"
       },
       "empty": {
         "title": "No new notifications at the moment.",
         "description": "Stay tuned for updates and important messages."
       },
-      "clear_all": "Clear all"
+      "clear_all": "Clear all",
+      "view_all": "View all notifications",
+      "show_unread_only": "Show unread only"
     }
   },
   "identity_error": {

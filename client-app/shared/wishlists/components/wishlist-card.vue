@@ -11,7 +11,7 @@
       </router-link>
 
       <VcBadge class="md:-ms-4 md:me-auto" variant="outline-dark" color="info" size="lg" rounded>
-        {{ list.items!.length }}
+        {{ list.itemsCount }}
       </VcBadge>
     </div>
 
