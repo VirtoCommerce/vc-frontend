@@ -1,6 +1,6 @@
 <template>
   <VcWidgetSkeleton v-if="loading" size="xs">
-    <div v-for="i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]" :key="i" />
+    <div v-for="i in 6" :key="i" />
   </VcWidgetSkeleton>
 
   <VcWidget v-else size="xs">
