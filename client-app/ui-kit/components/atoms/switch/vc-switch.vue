@@ -1,5 +1,4 @@
 <template>
-  <!-- Workaround to fix Firefox input label bug -->
   <div
     :class="[
       'vc-switch',
@@ -7,18 +6,15 @@
       `vc-switch--size--${size}`,
       `vc-switch--label--${labelPosition}`,
     ]"
-    tabindex="-1"
-    role="button"
-    @keyup.stop="change"
-    @click.stop="change"
   >
-    <label v-if="$slots.default" :for-id="componentId" class="vc-switch__label">
+    <!-- Workarounds to fix Firefox label click bug -->
+    <button v-if="$slots.default" type="button" class="vc-switch__label" @click="change">
       <slot />
-    </label>
+    </button>
 
-    <div class="vc-switch__bg">
-      <div class="vc-switch__circle"></div>
-    </div>
+    <button type="button" class="vc-switch__bg" @click="change">
+      <span class="vc-switch__circle" />
+    </button>
 
     <input
       :id="componentId"
@@ -167,11 +163,11 @@ function change() {
   &__bg {
     $bg: &;
 
-    @apply order-1 relative h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5 cursor-pointer;
+    @apply order-1 relative block h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5 cursor-pointer;
   }
 
   &__circle {
-    @apply relative left-0 size-[--circle-size] bg-additional-50 rounded-full transition-[left];
+    @apply relative block left-0 size-[--circle-size] bg-additional-50 rounded-full transition-[left];
 
     #{$checked} & {
       @apply left-[calc(100%-var(--circle-size))];
