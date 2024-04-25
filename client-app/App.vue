@@ -50,10 +50,6 @@ router.beforeEach((to) => {
 useHead({
   link: [
     {
-      rel: "shortcut icon",
-      href: "/static/icons/favicon.ico",
-    },
-    {
       rel: "icon",
       type: "image/png",
       sizes: "16x16",
