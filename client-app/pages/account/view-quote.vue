@@ -45,12 +45,10 @@
               <span>{{ $d(quote.createdDate) }}</span>
             </div>
 
-            <div class="flex text-base">
-              <span class="mr-2 font-bold">{{ $t("pages.account.quote_details.status") }}:</span>
+            <div class="flex items-center gap-2">
+              <span class="text-base font-bold">{{ $t("pages.account.quote_details.status") }}:</span>
 
-              <span>
-                <TableStatusBadge :status="quote.status" />
-              </span>
+              <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
             </div>
           </div>
         </VcWidget>
@@ -73,7 +71,7 @@
 import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { QuoteLineItems, useUserQuote } from "@/shared/account";
+import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
 
 interface IProps {
   quoteId: string;
