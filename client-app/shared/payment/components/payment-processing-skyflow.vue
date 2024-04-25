@@ -73,6 +73,7 @@
 
 <script setup lang="ts">
 import { useCssVar } from "@vueuse/core";
+import { cloneDeep } from "lodash";
 import Skyflow from "skyflow-js";
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -316,6 +317,7 @@ function createForm() {
         lineHeight: "1",
         borderRadius: "3px",
         border: `1px solid ${borderColor}`,
+        textSecurity: "none",
         "&:focus": {
           border: "1px solid transparent",
           outline: `4px solid ${focusOutlineColor}`,
@@ -381,11 +383,14 @@ function createForm() {
     },
   );
 
+  const cvvStyles = cloneDeep(collectStylesOptions);
+  cvvStyles.inputStyles.base.textSecurity = "disc";
+
   const CVV = container.create(
     {
       table: skyflowTableName,
       column: "cvv",
-      ...collectStylesOptions,
+      ...cvvStyles,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
       type: Skyflow.ElementType.CVV,
