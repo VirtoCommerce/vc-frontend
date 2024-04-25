@@ -111,14 +111,21 @@ const cardContainer = ref(null);
 const saveCreditCard = ref(false);
 const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
 
-const creditCards = computed(() =>
-  (skyflowCards.value || []).concat([
+const creditCards = computed(() => {
+  const cards =
+    skyflowCards.value?.map((el) => {
+      return {
+        ...el,
+        cardNumber: el.cardNumber.replace(/^X+/, "•••• "),
+      };
+    }) || [];
+  return cards.concat([
     {
       cardNumber: t("common.labels.add_new_card"),
       skyflowId: "",
     },
-  ]),
-);
+  ]);
+});
 const addNewCardSelected = computed(() => selectedSkyflowCard.value?.cardNumber === t("common.labels.add_new_card"));
 
 let skyflowClient: Skyflow, skyflowTableName: string, composableContainer: ComposableContainer;
