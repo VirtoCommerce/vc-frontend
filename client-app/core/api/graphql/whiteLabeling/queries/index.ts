@@ -16,7 +16,7 @@ function getFooterLinksTreeString(level: number): string {
     : "";
 }
 
-function getQueryDocument(maxLevel: number): DocumentNode {
+function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
   return gql`
     query WhiteLabelingSettings($storeId: String, $userId: String, $cultureName: String, $organizationId: String) {
       whiteLabelingSettings(
@@ -37,7 +37,7 @@ function getQueryDocument(maxLevel: number): DocumentNode {
           title
           url
           priority
-          ${getFooterLinksTreeString(maxLevel)}
+          ${getFooterLinksTreeString(maxLevelFooterLinks)}
         }
       }
     }
