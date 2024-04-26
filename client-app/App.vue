@@ -1,8 +1,4 @@
 <template>
-  <Head>
-    <link rel="icon" :href="$cfg.favicon_image" />
-  </Head>
-
   <component :is="layout">
     <RouterView />
   </component>
@@ -12,12 +8,13 @@
 </template>
 
 <script setup lang="ts">
-import { Head } from "@unhead/vue/components";
+import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
-import { markRaw, onMounted } from "vue";
+import { markRaw, onMounted, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { useNavigations } from "@/core/composables";
+import { useWhiteLabeling } from "@/shared/account";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
@@ -30,6 +27,7 @@ const _settings = JSON.parse(_props.settings); // eslint-disable-line @typescrip
 const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
+const { whiteLabelingSettings, fetchWhiteLabelingSettings } = useWhiteLabeling();
 const { fetchMenus } = useNavigations();
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
@@ -49,7 +47,37 @@ router.beforeEach((to) => {
   }
 });
 
+useHead({
+  link: [
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "16x16",
+      href: "/static/icons/favicon-16x16.png",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "32x32",
+      href: "/static/icons/favicon-32x32.png",
+    },
+    {
+      rel: "manifest",
+      href: "/static/manifest.json",
+    },
+  ],
+});
+
 void fetchMenus();
+void fetchWhiteLabelingSettings();
+
+watchEffect(() => {
+  if (whiteLabelingSettings.value?.favicons?.length) {
+    useHead({
+      link: whiteLabelingSettings.value.favicons,
+    });
+  }
+});
 
 onMounted(setupBroadcastGlobalListeners);
 </script>

@@ -140,7 +140,6 @@
     "vite": "~5.0.11",
     "vite-node": "~1.2.2",
     "vite-plugin-checker": "^0.6.4",
-    "vite-plugin-favicon2": "^1.1.5",
     "vite-plugin-mkcert": "^1.17.3",
     "vitest": "~1.2.2",
     "vue-component-type-helpers": "^2.0.6",
