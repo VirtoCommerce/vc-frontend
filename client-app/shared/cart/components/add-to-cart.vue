@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <!-- TODO: Use VcInput https://virtocommerce.atlassian.net/browse/VCST-1095 -->
+  <div class="add-to-cart">
     <div class="relative z-0 flex">
       <input
         ref="inputElement"
@@ -230,3 +231,15 @@ function onClick() {
   inputElement.value!.select();
 }
 </script>
+
+<style lang="scss">
+.add-to-cart {
+  .vc-line-item__slot:has(&, * &) {
+    @apply w-[13rem];
+
+    @container (width > theme("containers.2xl")) {
+      @apply w-[15.7rem];
+    }
+  }
+}
+</style>

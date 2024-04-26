@@ -14,7 +14,7 @@
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="!singleLine" class="vc-input-details__message" v-html="message"></div>
 
-      <VcTooltip v-else class="w-full" placement="bottom-start" strategy="fixed">
+      <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start" strategy="absolute">
         <template #trigger>
           <div class="vc-input-details__message">{{ message }}</div>
         </template>
@@ -53,7 +53,7 @@ withDefaults(defineProps<IProps>(), {
   $error: "";
   $singleLine: "";
 
-  @apply flex justify-end mt-0.5 gap-2 min-h-[0.875rem] text-11;
+  @apply flex mt-0.5 gap-2 min-h-[0.875rem] text-11;
 
   &--error {
     $error: &;
@@ -80,7 +80,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__tooltip {
-    @apply w-52 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y;
+    @apply w-48 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y;
   }
 
   &__counter {

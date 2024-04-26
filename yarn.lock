@@ -4332,6 +4332,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tailwindcss/container-queries@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@tailwindcss/container-queries@npm:0.1.1"
+  peerDependencies:
+    tailwindcss: ">=3.2.0"
+  checksum: 10c0/336546ddcc60280723f2a92e311cac0acb8b05624c6519675d4b11ae13ed01dba5e622705a9be69cd66ca2c8019032551176546e6920d9634750165ac4c15d8e
+  languageName: node
+  linkType: hard
+
 "@tanstack/virtual-core@npm:3.0.0":
   version: 3.0.0
   resolution: "@tanstack/virtual-core@npm:3.0.0"
@@ -15561,6 +15570,7 @@ __metadata:
     "@storybook/test": "npm:8.0.8"
     "@storybook/vue3": "npm:^8.0.8"
     "@storybook/vue3-vite": "npm:^8.0.8"
+    "@tailwindcss/container-queries": "npm:^0.1.1"
     "@tsconfig/node20": "npm:^20.1.2"
     "@types/adm-zip": "npm:^0.5.5"
     "@types/dompurify": "npm:^3.0.5"
