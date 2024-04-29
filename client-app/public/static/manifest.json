@@ -1,0 +1,25 @@
+{
+  "name": null,
+  "short_name": null,
+  "description": null,
+  "dir": "auto",
+  "lang": "en-US",
+  "display": "standalone",
+  "orientation": "any",
+  "scope": "/",
+  "start_url": "/?homescreen=1",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "/static/icons/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/icons/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

@@ -42,7 +42,6 @@ setup((app) => {
 const preview: Preview = {
   decorators: [vueRouter()],
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
         color: /(background|color)$/i,

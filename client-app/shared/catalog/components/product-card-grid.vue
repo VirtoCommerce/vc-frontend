@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full flex-col rounded bg-white p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg xs:p-4 lg:px-5 lg:pb-3.5 lg:pt-5"
+    class="shadow-t-3sm xs:p-4 flex w-full flex-col rounded bg-white p-6 outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg lg:px-5 lg:pb-3.5 lg:pt-5"
   >
     <!-- Product image -->
     <div class="relative flex flex-col items-center justify-center pb-[87%]">
@@ -101,7 +101,7 @@
           <router-link
             :to="link"
             :target="target"
-            class="my-px line-clamp-2 h-12 cursor-pointer text-18 font-extrabold text-[color:var(--color-link)] lg:h-10 lg:text-14"
+            class="text-18 lg:text-14 my-px line-clamp-2 h-12 cursor-pointer font-extrabold text-[color:var(--color-link)] lg:h-10"
             @click="$emit('linkClick', $event)"
           >
             {{ product.name }}
@@ -109,14 +109,14 @@
         </template>
 
         <template #content>
-          <div class="max-w-[16rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
+          <div class="bg-additional-50 max-w-[16rem] rounded-sm px-3.5 py-1.5 text-xs shadow-md">
             {{ product.name }}
           </div>
         </template>
       </VcTooltip>
 
       <div
-        class="mt-2 grid w-full grid-cols-2 gap-1.5 text-14 leading-4 text-tooltip empty:hidden lg:mt-0.5 lg:gap-y-0.5 lg:text-11"
+        class="text-14 text-tooltip lg:text-11 mt-2 grid w-full grid-cols-2 gap-1.5 leading-4 empty:hidden lg:mt-0.5 lg:gap-y-0.5"
       >
         <!-- Product properties -->
         <template v-for="prop in properties" :key="prop.id">
@@ -182,10 +182,10 @@
 
       <router-link
         :to="link"
-        class="mt-2.5 flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-[1.35rem] lg:text-11"
+        class="text-14 lg:text-11 mt-2.5 flex items-center gap-1 text-[color:var(--color-link)] lg:mt-[1.35rem]"
         target="_blank"
       >
-        <svg class="size-3 shrink-0 text-primary lg:size-2.5">
+        <svg class="text-primary size-3 shrink-0 lg:size-2.5">
           <use href="/static/images/link.svg#main"></use>
         </svg>
         <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
@@ -212,7 +212,8 @@
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
-import { ProductType, PropertyType } from "@/core/enums";
+import { PropertyType } from "@/core/api/graphql/types";
+import { ProductType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";

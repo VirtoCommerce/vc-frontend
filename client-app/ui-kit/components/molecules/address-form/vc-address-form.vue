@@ -5,7 +5,7 @@
     <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
       <div v-if="withPersonalInfo" class="md:w-1/2">
         <VcInput
-          v-model.trim="firstName"
+          v-model="firstName"
           :message="errors.firstName"
           :error="!!errors.firstName"
           :disabled="disabled"
@@ -16,7 +16,7 @@
         />
 
         <VcInput
-          v-model.trim="lastName"
+          v-model="lastName"
           :message="errors.lastName"
           :error="!!errors.lastName"
           :disabled="disabled"
@@ -27,7 +27,7 @@
         />
 
         <VcInput
-          v-model.trim="email"
+          v-model="email"
           :message="errors.email"
           :error="!!errors.email"
           :disabled="disabled"
@@ -38,7 +38,7 @@
         />
 
         <VcInput
-          v-model.trim="phone"
+          v-model="phone"
           :message="errors.phone"
           :error="!!errors.phone"
           :disabled="disabled"
@@ -58,7 +58,7 @@
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput
           v-if="withDescriptionField"
-          v-model.trim="description"
+          v-model="description"
           :message="(errors as Record<string, string>).description"
           :error="!!(errors as Record<string, string>).description"
           :disabled="disabled"
@@ -83,7 +83,7 @@
           />
 
           <VcInput
-            v-model.trim="postalCode"
+            v-model="postalCode"
             :message="errors.postalCode"
             :error="!!errors.postalCode"
             :disabled="disabled"
@@ -108,7 +108,7 @@
           />
 
           <VcInput
-            v-model.trim="city"
+            v-model="city"
             :message="errors.city"
             :error="!!errors.city"
             :disabled="disabled"
@@ -120,7 +120,7 @@
         </div>
 
         <VcInput
-          v-model.trim="line1"
+          v-model="line1"
           :message="errors.line1"
           :error="!!errors.line1"
           :disabled="disabled"
@@ -131,7 +131,7 @@
         />
 
         <VcInput
-          v-model.trim="line2"
+          v-model="line2"
           :message="errors.line2"
           :error="!!errors.line2"
           :disabled="disabled"
@@ -148,10 +148,9 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { clone } from "lodash";
 import { useField, useForm } from "vee-validate";
-import { computed, ref, watch } from "vue";
-import { string as yupString } from "yup";
+import { computed, watch } from "vue";
+import * as yup from "yup";
 import { getAddressName, Logger } from "@/core/utilities";
 import type { CountryRegionType, CountryType, MemberAddressType } from "@/core/api/graphql/types";
 
@@ -176,7 +175,7 @@ const props = withDefaults(defineProps<IProps>(), {
   countries: () => [],
 });
 
-const _emptyAddress: Readonly<MemberAddressType> = {
+const initialValues: MemberAddressType = {
   isDefault: false,
   isFavorite: false,
   firstName: "",
@@ -192,25 +191,17 @@ const _emptyAddress: Readonly<MemberAddressType> = {
   line1: "",
   line2: "",
   phone: "",
+  description: "",
 };
 
-const initialValues = ref<MemberAddressType>(clone(props.modelValue || _emptyAddress));
-
-const {
-  values,
-  meta,
-  errors,
-  handleSubmit,
-  setValues,
-  setErrors,
-  validate,
-  resetForm: reset,
-} = useForm({ initialValues });
+const { values, meta, errors, handleSubmit, setErrors, validate, resetForm } = useForm<MemberAddressType>({
+  initialValues,
+});
 
 const slotsData = computed(() => ({
   setErrors,
   validate,
-  reset,
+  reset: resetForm,
   save,
   errors,
   values,
@@ -222,7 +213,7 @@ const slotsData = computed(() => ({
 }));
 
 const emailRules = computed(() => {
-  let rules = yupString().max(64).email().nullable();
+  let rules = yup.string().trim().max(64).email().nullable();
   if (props.withPersonalInfo && props.requiredEmail) {
     rules = rules.required();
   }
@@ -230,7 +221,7 @@ const emailRules = computed(() => {
 });
 
 const phoneRules = computed(() => {
-  let rules = yupString().max(64).nullable();
+  let rules = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo && props.requiredPhone) {
     rules = rules.required();
   }
@@ -238,7 +229,7 @@ const phoneRules = computed(() => {
 });
 
 const cityRules = computed(() => {
-  let rules = yupString().max(128).nullable();
+  let rules = yup.string().trim().max(128).nullable();
   if (props.requiredCity) {
     rules = rules.required();
   }
@@ -246,15 +237,19 @@ const cityRules = computed(() => {
 });
 
 const regionRules = computed(() => {
-  let rules = yupString().nullable();
-  if (regions.value.length) {
-    rules = rules.required();
-  }
+  // Do not use computed based on field value cause it may cause infinite loop
+  const rules = yup
+    .string()
+    .nullable()
+    .when("countryCode", {
+      is: (value: string) => props.countries.find((item) => value === item.id)?.regions.length,
+      then: (schema) => schema.required(),
+    });
   return toTypedSchema(rules);
 });
 
 const firstNameRules = computed(() => {
-  let rules = yupString().max(64).nullable();
+  let rules = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo) {
     rules = rules.required();
   }
@@ -262,7 +257,7 @@ const firstNameRules = computed(() => {
 });
 
 const lastNameRules = computed(() => {
-  let rules = yupString().max(64).nullable();
+  let rules = yup.string().trim().max(64).nullable();
   if (props.withPersonalInfo) {
     rules = rules.required();
   }
@@ -278,7 +273,9 @@ const country = computed<CountryType | undefined>({
     regionName.value = "";
   },
 });
+
 const regions = computed<CountryRegionType[]>(() => country.value?.regions ?? []);
+
 const region = computed<CountryRegionType | undefined>({
   get: () => regions.value.find((item) => regionId.value === item.id),
   set: (value?: CountryRegionType) => {
@@ -287,31 +284,19 @@ const region = computed<CountryRegionType | undefined>({
   },
 });
 
-const { value: email } = useField("email", emailRules, { syncVModel: false });
-const { value: city } = useField("city", cityRules, { syncVModel: false });
-const { value: phone } = useField("phone", phoneRules, { syncVModel: false });
-const { value: firstName } = useField("firstName", firstNameRules, { syncVModel: false });
-const { value: lastName } = useField("lastName", lastNameRules, { syncVModel: false });
-const { value: postalCode } = useField("postalCode", toTypedSchema(yupString().max(32).required().nullable()), {
-  syncVModel: false,
-});
-const { value: countryCode } = useField("countryCode", toTypedSchema(yupString().required().nullable()), {
-  syncVModel: false,
-});
-const { value: countryName } = useField("countryName", toTypedSchema(yupString().max(128).nullable()), {
-  syncVModel: false,
-});
-const { value: regionName } = useField("regionName", toTypedSchema(yupString().max(128).nullable()), {
-  syncVModel: false,
-});
-const { value: regionId } = useField("regionId", regionRules, { syncVModel: false });
-const { value: line1 } = useField("line1", toTypedSchema(yupString().max(128).required().nullable()), {
-  syncVModel: false,
-});
-const { value: line2 } = useField("line2", toTypedSchema(yupString().max(128).nullable()), { syncVModel: false });
-const { value: description } = useField("description", toTypedSchema(yupString().max(128).nullable()), {
-  syncVModel: false,
-});
+const { value: email } = useField("email", emailRules);
+const { value: city } = useField("city", cityRules);
+const { value: phone } = useField("phone", phoneRules);
+const { value: firstName } = useField("firstName", firstNameRules);
+const { value: lastName } = useField("lastName", lastNameRules);
+const { value: postalCode } = useField("postalCode", toTypedSchema(yup.string().trim().max(32).required().nullable()));
+const { value: countryCode } = useField("countryCode", toTypedSchema(yup.string().required().nullable()));
+const { value: countryName } = useField("countryName", toTypedSchema(yup.string().max(128).nullable()));
+const { value: regionName } = useField("regionName", toTypedSchema(yup.string().max(128).nullable()));
+const { value: regionId } = useField("regionId", regionRules);
+const { value: line1 } = useField("line1", toTypedSchema(yup.string().trim().max(128).required().nullable()));
+const { value: line2 } = useField("line2", toTypedSchema(yup.string().trim().max(128).nullable()));
+const { value: description } = useField("description", toTypedSchema(yup.string().trim().max(128).nullable()));
 
 const save = handleSubmit((address) => {
   const newAddress: MemberAddressType = { ...address, name: getAddressName(address) };
@@ -321,10 +306,9 @@ const save = handleSubmit((address) => {
 
 watch(
   () => props.modelValue,
-  (value) => {
-    initialValues.value = clone(value || _emptyAddress);
-    setValues(initialValues.value);
+  (modelValue) => {
+    resetForm({ values: modelValue });
   },
-  { deep: true },
+  { deep: true, immediate: true },
 );
 </script>

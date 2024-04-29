@@ -17,6 +17,7 @@ const matchingRouteName = ref("");
 const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
+const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
 
 const openedItem = computed<ExtendedMenuLinkType | undefined>(
   () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
@@ -84,6 +85,14 @@ export function useNavigations() {
     }
   }
 
+  async function fetchFooterLinks() {
+    try {
+      footerLinks.value = (await getMenu("footer-links")).map((item) => convertToExtendedMenuLink(item, false));
+    } catch (e) {
+      Logger.error(`${useNavigations.name}.${fetchFooterLinks.name}`, e);
+    }
+  }
+
   async function fetchCatalogMenu() {
     const { catalog_menu_link_list_name, catalog_empty_categories_enabled, zero_price_product_enabled } =
       themeContext.value.settings;
@@ -123,7 +132,7 @@ export function useNavigations() {
 
   async function fetchMenus() {
     loading.value = true;
-    await Promise.all([fetchMenuSchema(), fetchCatalogMenu()]);
+    await Promise.all([fetchMenuSchema(), fetchCatalogMenu(), fetchFooterLinks()]);
     loading.value = false;
   }
 
@@ -151,6 +160,7 @@ export function useNavigations() {
 
   return {
     fetchMenus,
+    fetchFooterLinks,
     goBack,
     goMainMenu,
     selectMenuItem,
@@ -164,5 +174,6 @@ export function useNavigations() {
     mobilePreSelectedMenuItem,
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),
+    footerLinks: computed(() => footerLinks.value),
   };
 }

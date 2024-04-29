@@ -12,7 +12,13 @@
     <div v-if="files?.length" class="vc-file-uploader__list-container">
       <ul class="vc-file-uploader__list">
         <li v-for="(file, index) in files" :key="index">
-          <VcFile :file="file" removable @remove="onRemove([file])" />
+          <VcFile
+            :native-download="nativeDownload"
+            :file="file"
+            removable
+            @remove="onRemove([file])"
+            @download="onFileDownload"
+          />
         </li>
       </ul>
     </div>
@@ -83,11 +89,13 @@ interface IProps {
   allowedExtensions: Readonly<string[]>;
   view?: "horizontal" | "vertical";
   files: FileType[];
+  nativeDownload?: boolean;
 }
 
 interface IEmits {
   (event: "addFiles", items: INewFile[]): void;
   (event: "removeFiles", items: FileType[]): void;
+  (event: "download", item: FileType): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -168,6 +176,10 @@ function addFiles(items: File[]) {
 
 function removeFiles(items: FileType[]) {
   emit("removeFiles", items);
+}
+
+function onFileDownload(file: FileType) {
+  emit("download", file);
 }
 </script>
 

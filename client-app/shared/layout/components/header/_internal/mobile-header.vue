@@ -16,7 +16,7 @@
           </button>
 
           <router-link to="/">
-            <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8" lazy />
+            <VcImage :src="siteLogoUrl" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
         </div>
         <!-- endregion Left slot -->
@@ -25,15 +25,15 @@
         <component :is="customSlots.right" v-if="customSlots.right" />
 
         <div v-else class="flex h-full flex-row items-center pr-4">
-          <a v-if="$cfg.support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${$cfg.support_phone_number}`">
+          <a v-if="$cfg.support_phone_number" class="xs:px-2 px-1 py-2" :href="`tel:${$cfg.support_phone_number}`">
             <VcIcon class="text-[--color-primary-500]" name="phone" :size="28" />
           </a>
 
-          <button type="button" class="px-1 py-2 xs:px-2" @click="toggleSearchBar">
+          <button type="button" class="xs:px-2 px-1 py-2" @click="toggleSearchBar">
             <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
-          <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" class="px-1 py-2 xs:px-2">
+          <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" class="xs:px-2 px-1 py-2">
             <template #trigger="{ totalCount, unreadCount }">
               <div class="relative">
                 <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
@@ -55,7 +55,7 @@
             </template>
           </PushMessages>
 
-          <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
+          <router-link :to="{ name: 'Cart' }" class="xs:px-2 px-1 py-2">
             <span class="relative block">
               <VcIcon class="text-[--color-primary-500]" name="cart" :size="28" />
 
@@ -121,8 +121,9 @@
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
-import { useRouteQueryParam } from "@/core/composables";
+import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
+import { useWhiteLabeling } from "@/shared/account";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
@@ -136,11 +137,15 @@ const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
 
+const { themeContext } = useThemeContext();
 const { isAuthenticated } = useUser();
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
+const { whiteLabelingSettings } = useWhiteLabeling();
+
+const siteLogoUrl = computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image);
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

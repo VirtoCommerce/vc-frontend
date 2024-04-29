@@ -1,6 +1,6 @@
 <template>
   <div
-    class="vc-product-card-list grid gap-x-3.5 bg-white px-4 pb-5 pt-4 md:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
+    class="vc-product-card-list lg:shadow-t-3sm grid gap-x-3.5 bg-white px-4 pb-5 pt-4 md:place-items-center lg:rounded lg:py-3.5 lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
   >
     <div class="vc-product-card-list__mobile-left sm:contents">
       <!-- Product image -->
@@ -46,14 +46,14 @@
       </template>
 
       <template #content>
-        <div class="max-w-[16rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
+        <div class="bg-additional-50 max-w-[16rem] rounded-sm px-3.5 py-1.5 text-xs shadow-md">
           {{ product.name }}
         </div>
       </template>
     </VcTooltip>
 
     <div
-      class="vc-product-card-list__properties mt-2 hidden w-full grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 text-14 leading-4 text-tooltip empty:mt-0 lg:mt-0.5 lg:text-xs xl:grid"
+      class="vc-product-card-list__properties text-14 text-tooltip mt-2 hidden w-full grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 leading-4 empty:mt-0 lg:mt-0.5 lg:text-xs xl:grid"
     >
       <!-- Product properties -->
       <template v-for="prop in properties" :key="prop.name">
@@ -123,10 +123,10 @@
 
         <router-link
           :to="link"
-          class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
+          class="text-14 lg:text-11 flex items-center gap-1 text-[color:var(--color-link)] lg:mt-1"
           target="_blank"
         >
-          <svg class="size-3 shrink-0 text-primary lg:size-2.5">
+          <svg class="text-primary size-3 shrink-0 lg:size-2.5">
             <use href="/static/images/link.svg#main"></use>
           </svg>
           <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
@@ -152,7 +152,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ProductType, PropertyType } from "@/core/enums";
+import { PropertyType } from "@/core/api/graphql/types";
+import { ProductType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";

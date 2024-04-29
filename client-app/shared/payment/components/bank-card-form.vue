@@ -77,10 +77,10 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { vMaska } from "maska";
-import { useField, useForm } from "vee-validate";
-import { computed, ref, watch } from "vue";
+import { useForm } from "vee-validate";
+import { computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { object, string } from "yup";
+import * as yup from "yup";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
 
 const emit = defineEmits<IEmits>();
@@ -104,7 +104,13 @@ interface IProps {
 
 const { t } = useI18n();
 
-const initialValues = ref<BankCardType>({ number: "", cardholderName: "", month: "", year: "", securityCode: "" });
+const initialValues: BankCardType = {
+  number: "",
+  cardholderName: "",
+  month: "",
+  year: "",
+  securityCode: "",
+};
 
 const labels = computed(() => {
   return {
@@ -117,38 +123,50 @@ const labels = computed(() => {
   };
 });
 
-const monthYupSchema = string()
+const monthYupSchema = yup
+  .string()
   .required()
   .length(2)
   .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
   .label(labels.value.monthLabel);
 
 const validationSchema = toTypedSchema(
-  object({
-    number: string().required().min(12).max(19).label(labels.value.number),
-    cardholderName: string().required().max(64).label(labels.value.cardholderName),
+  yup.object({
+    number: yup.string().required().min(12).max(19).label(labels.value.number),
+    cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
     month: monthYupSchema,
-    year: string().when("month", ([month], schema) => {
+    year: yup.string().when("month", ([month], schema) => {
       return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
     }),
-    securityCode: string().required().min(3).max(4).label(labels.value.securityCode),
+    securityCode: yup.string().required().min(3).max(4).label(labels.value.securityCode),
   }),
 );
 
-const { values, meta, errors: formErrors } = useForm<BankCardType>({ validationSchema, initialValues });
+const {
+  values,
+  meta,
+  errors: formErrors,
+  defineField,
+} = useForm({
+  validationSchema,
+  initialValues,
+});
 
-const { value: number } = useField<string>("number", undefined, { syncVModel: false });
-const { value: cardholderName } = useField<string>("cardholderName", undefined, { syncVModel: false });
-const { value: month } = useField<string>("month", undefined, { syncVModel: false });
-const { value: year } = useField<string>("year", undefined, { syncVModel: false });
-const { value: securityCode } = useField<string>("securityCode", undefined, { syncVModel: false });
+const [number] = defineField("number");
+const [cardholderName] = defineField("cardholderName");
+const [month] = defineField("month");
+const [year] = defineField("year");
+const [securityCode] = defineField("securityCode");
 
 const expirationDate = computed({
-  get: () => (month.value.length > 1 || year.value ? `${month.value || "  "} / ${year.value}` : month.value),
-  set(value: string) {
-    const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
-    month.value = rawMonth;
-    year.value = rawYear;
+  get: () =>
+    (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
+  set: (value) => {
+    if (value) {
+      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
+      month.value = rawMonth;
+      year.value = rawYear;
+    }
   },
 });
 
@@ -165,12 +183,6 @@ function updateValue(value?: string): void {
 function input() {
   emit("update:modelValue", clone(values));
 }
-
-watch(
-  () => props.modelValue,
-  (value) => (initialValues.value = clone(value)),
-  { deep: true },
-);
 
 watch(
   () => meta.value.valid,

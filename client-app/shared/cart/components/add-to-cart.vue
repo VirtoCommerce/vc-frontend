@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <!-- TODO: Use VcInput https://virtocommerce.atlassian.net/browse/VCST-1095 -->
+  <div class="add-to-cart">
     <div class="relative z-0 flex">
       <input
         ref="inputElement"
@@ -35,13 +36,13 @@
     <!-- Info hint -->
     <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
       <template #trigger>
-        <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
+        <div class="text-11 line-clamp-1 pt-0.5 text-[color:var(--color-danger)]">
           {{ errorMessage }}
         </div>
       </template>
 
       <template #content>
-        <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+        <div class="text-tooltip shadow-sm-x-y w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs">
           {{ errorMessage }}
         </div>
       </template>
@@ -230,3 +231,15 @@ function onClick() {
   inputElement.value!.select();
 }
 </script>
+
+<style lang="scss">
+.add-to-cart {
+  .vc-line-item__slot:has(&, * &) {
+    @apply w-[13rem];
+
+    @container (width > theme("containers.2xl")) {
+      @apply w-[15.7rem];
+    }
+  }
+}
+</style>
