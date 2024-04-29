@@ -1,6 +1,6 @@
 <template>
   <div v-if="canShowContent">
-    <RenderContent
+    <Content
       model="page"
       :content="content"
       :api-key="themeContext.settings.builderIoKey"
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { getContent, RenderContent, isPreviewing } from "@builder.io/sdk-vue/vue3";
+import { fetchOneEntry, Content, isPreviewing } from "@builder.io/sdk-vue";
 import { onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
@@ -35,7 +35,7 @@ onMounted(async () => {
 async function tryLoadContent(urlPath: string) {
   const apiKey = themeContext.value.settings.builderIoKey;
   if (apiKey) {
-    const result = await getContent({
+    const result = await fetchOneEntry({
       model: "page",
       apiKey: apiKey,
       userAttributes: {
