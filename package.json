@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.9.4",
-    "@builder.io/sdk-vue": "^0.3.1",
+    "@builder.io/sdk-vue": "^1.0.24",
     "@headlessui/vue": "^1.7.17",
     "@hotjar/browser": "^1.0.9",
     "@popperjs/core": "^2.11.8",
