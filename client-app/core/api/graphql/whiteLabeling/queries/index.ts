@@ -3,6 +3,8 @@ import { gql } from "graphql-tag";
 import { globals } from "@/core/globals";
 import type { DocumentNode } from "graphql";
 
+const FOOTER_LINKS_DEPTH = 1;
+
 function getFooterLinksTreeString(level: number): string {
   return level > 0
     ? `
@@ -48,7 +50,7 @@ export function useGetWhiteLabelingSettings(organizationId: string) {
   const { storeId, userId, cultureName } = globals;
 
   return useLazyQuery(
-    getQueryDocument(1),
+    getQueryDocument(FOOTER_LINKS_DEPTH),
     { organizationId, storeId, userId, cultureName },
     {
       notifyOnNetworkStatusChange: true,
