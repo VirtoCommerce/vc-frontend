@@ -1,5 +1,12 @@
 <template>
-  <div class="vc-file">
+  <div
+    :class="[
+      'vc-file',
+      {
+        'vc-file--outline': outline,
+      },
+    ]"
+  >
     <VcImage
       :src="icon"
       :class="[
@@ -10,62 +17,67 @@
       ]"
     />
 
-    <span class="vc-file__details">
-      <span class="vc-file__row">
-        <a
-          v-if="isAttachedFile(file) || isUploadedFile(file)"
-          class="vc-file__link"
-          :href="file.url"
-          :download="file.name"
-          @click="onFileDownloadClick"
-        >
-          {{ file.name }}
-        </a>
-        <span v-else class="vc-file__name">
-          {{ file.name }}
+    <div class="vc-file__main">
+      <span class="vc-file__details">
+        <span class="vc-file__row">
+          <a
+            v-if="isAttachedFile(file) || isUploadedFile(file)"
+            class="vc-file__link"
+            :target="nativeDownload ? '_blank' : ''"
+            :href="file.url"
+            :download="file.name"
+            @click="onFileDownloadClick"
+          >
+            {{ file.name }}
+          </a>
+
+          <span v-else class="vc-file__name">
+            {{ file.name }}
+          </span>
+
+          <span class="vc-file__size">
+            {{
+              $n(fileSize.value, "decimal", {
+                notation: "compact",
+                style: "unit",
+                unit: fileSize.unit,
+                unitDisplay: "narrow",
+              })
+            }}
+          </span>
         </span>
 
-        <span class="vc-file__size">
-          {{
-            $n(fileSize.value, "decimal", {
-              notation: "compact",
-              style: "unit",
-              unit: fileSize.unit,
-              unitDisplay: "narrow",
-            })
-          }}
+        <template v-if="isUploadingFile(file)">
+          <div class="vc-file__progress">
+            <div class="vc-file__progress-value" :style="{ width: `${file.progress || 0}%` }"></div>
+          </div>
+
+          <span class="vc-file__message">
+            {{ $t("ui_kit.file.progress", { percent: $n(file.progress / 100, { style: "percent" }) }) }}
+          </span>
+        </template>
+
+        <span v-else-if="isUploadedFile(file)" class="vc-file__message">{{ $t("ui_kit.file.uploaded") }}</span>
+
+        <span v-else-if="isFailedFile(file)" class="vc-file__message vc-file__message--error">
+          {{ file.errorMessage }}
         </span>
       </span>
 
-      <template v-if="isUploadingFile(file)">
-        <div class="vc-file__progress">
-          <div class="vc-file__progress-value" :style="{ width: `${file.progress || 0}%` }"></div>
-        </div>
+      <span class="vc-file__buttons">
+        <VcButton
+          v-if="reloadable || removable"
+          :class="{ invisible: !reloadable }"
+          variant="no-background"
+          color="accent"
+          size="xs"
+          icon="reset"
+          @click="reload"
+        />
 
-        <span class="vc-file__message">
-          {{ $t("ui_kit.file.progress", { percent: $n(file.progress / 100, { style: "percent" }) }) }}
-        </span>
-      </template>
-
-      <span v-else-if="isUploadedFile(file)" class="vc-file__message">{{ $t("ui_kit.file.uploaded") }}</span>
-
-      <span v-else-if="isFailedFile(file)" class="vc-file__message vc-file__message--error">
-        {{ file.errorMessage }}
+        <VcButton v-if="removable" variant="no-background" color="neutral" size="xs" icon="x" @click="remove" />
       </span>
-    </span>
-
-    <span class="vc-file__buttons">
-      <VcButton
-        :class="{ invisible: !reloadable }"
-        variant="no-background"
-        color="accent"
-        size="xs"
-        icon="reset"
-        @click="reload"
-      />
-
-      <VcButton v-if="removable" variant="no-background" color="neutral" size="xs" icon="x" @click="remove" />
-    </span>
+    </div>
   </div>
 </template>
 
@@ -85,6 +97,7 @@ interface IProps {
   reloadable?: boolean;
   removable?: boolean;
   nativeDownload?: boolean;
+  outline?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -126,7 +139,11 @@ const fileSize = computed(() => getFileSize(props.file.size));
 
 <style lang="scss">
 .vc-file {
-  @apply flex items-start gap-2 min-h-[2.375rem];
+  @apply flex items-center gap-2 min-h-[2.375rem];
+
+  &--outline {
+    @apply border rounded p-3;
+  }
 
   &__icon {
     @apply flex-none w-8 h-8;
@@ -136,12 +153,16 @@ const fileSize = computed(() => getFileSize(props.file.size));
     }
   }
 
+  &__main {
+    @apply grow flex items-center gap-2;
+  }
+
   &__details {
-    @apply grow flex flex-col gap-1 w-0;
+    @apply grow;
   }
 
   &__row {
-    @apply flex gap-2 justify-between;
+    @apply flex gap-2 justify-between items-center;
   }
 
   &__link {
@@ -174,7 +195,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__buttons {
-    @apply flex-none flex -mt-1;
+    @apply flex-none flex self-start;
   }
 }
 </style>
