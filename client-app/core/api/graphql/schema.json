@@ -8048,57 +8048,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "FooterLinkType",
-        "description": null,
-        "fields": [
-          {
-            "name": "childItems",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "FooterLinkType",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "title",
-            "description": "Title of the footer link",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "url",
-            "description": "URL of the footer link",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
         "name": "FulfillmentCenterAddressType",
         "description": null,
         "fields": [
@@ -41588,7 +41537,7 @@
         "fields": [
           {
             "name": "faviconUrl",
-            "description": "FavIcon",
+            "description": "Master favicon URL",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -41623,7 +41572,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "FooterLinkType",
+                "name": "MenuLinkType",
                 "ofType": null
               }
             },
@@ -41657,6 +41606,18 @@
           {
             "name": "secondaryLogoUrl",
             "description": "Logo URL for footer",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "themePresetName",
+            "description": "Theme preset name",
             "args": [],
             "type": {
               "kind": "SCALAR",
