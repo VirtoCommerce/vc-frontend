@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { fetchOneEntry, Content, isPreviewing } from "@builder.io/sdk-vue";
+import { fetchOneEntry, Content, isPreviewing, getBuilderSearchParams } from "@builder.io/sdk-vue";
 import { onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
@@ -38,6 +38,7 @@ async function tryLoadContent(urlPath: string) {
     const result = await fetchOneEntry({
       model: "page",
       apiKey: apiKey,
+      options: getBuilderSearchParams(new URL(location.href).searchParams),
       userAttributes: {
         urlPath: urlPath,
       },
