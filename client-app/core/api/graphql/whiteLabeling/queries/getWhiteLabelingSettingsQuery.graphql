@@ -1,0 +1,25 @@
+#import "../../fragments/menuLinkFields.graphql"
+
+query getWhiteLabelingSettings($storeId: String, $organizationId: String, $userId: String, $cultureName: String) {
+  whiteLabelingSettings(
+    storeId: $storeId
+    organizationId: $organizationId
+    userId: $userId
+    cultureName: $cultureName
+  ) {
+    logoUrl
+    secondaryLogoUrl
+    favicons {
+      rel
+      type
+      sizes
+      href
+    }
+    footerLinks {
+      ...menuLinkFields
+      childItems @recursive(depth: 2) {
+        ...menuLinkFields
+      }
+    }
+  }
+}
