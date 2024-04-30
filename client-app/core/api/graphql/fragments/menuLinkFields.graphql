@@ -1,5 +1,0 @@
-fragment menuLinkFields on MenuLinkType {
-  title
-  url
-  priority
-}

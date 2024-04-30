@@ -5547,7 +5547,7 @@ export type VideoType = {
 };
 
 export type WhiteLabelingSettingsType = {
-  /** Favicon URL */
+  /** Master favicon URL */
   faviconUrl?: Maybe<Scalars['String']['output']>;
   favicons?: Maybe<Array<Maybe<FaviconType>>>;
   footerLinks?: Maybe<Array<Maybe<MenuLinkType>>>;
