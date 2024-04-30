@@ -6,7 +6,9 @@
     :disabled="disabled"
     :min="minQuantity"
     :max="maxQuantity"
-    :error="error"
+    :error="!!errorMessage"
+    :message="errorMessage"
+    single-line-message
     class="vc-quantity"
     size="sm"
     type="number"
@@ -17,20 +19,6 @@
     @input="onQuantityChanged"
     @blur="onFocusOut"
   />
-
-  <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
-    <template #trigger>
-      <div class="line-clamp-1 pt-0.5 text-xs text-danger">
-        {{ errorMessage }}
-      </div>
-    </template>
-
-    <template #content>
-      <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
-        {{ errorMessage }}
-      </div>
-    </template>
-  </VcTooltip>
 </template>
 
 <script setup lang="ts">
@@ -119,6 +107,6 @@ watchEffect(() => {
 
 <style lang="scss">
 .vc-quantity {
-  @apply w-[5.625rem] flex-none;
+  @apply flex-none;
 }
 </style>

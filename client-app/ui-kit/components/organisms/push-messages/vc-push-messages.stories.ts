@@ -62,3 +62,12 @@ Options.args = {
   removable: true,
   withOptions: true,
 };
+
+export const CanViewAll = Template.bind({});
+CanViewAll.args = {
+  totalCount: 2,
+  items: [unreadPushMessageMock, readPushMessageMock],
+  removable: true,
+  withOptions: true,
+  canViewAll: true,
+};

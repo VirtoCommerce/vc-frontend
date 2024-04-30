@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "1.57.0",
+  "version": "1.58.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -46,6 +46,7 @@
     "@headlessui/vue": "^1.7.17",
     "@hotjar/browser": "^1.0.9",
     "@popperjs/core": "^2.11.8",
+    "@tailwindcss/container-queries": "^0.1.1",
     "@unhead/vue": "^1.8.10",
     "@vee-validate/rules": "~4.12.6",
     "@vee-validate/yup": "~4.12.6",
@@ -139,7 +140,6 @@
     "vite": "~5.0.11",
     "vite-node": "~1.2.2",
     "vite-plugin-checker": "^0.6.4",
-    "vite-plugin-favicon2": "^1.1.5",
     "vite-plugin-mkcert": "^1.17.3",
     "vitest": "~1.2.2",
     "vue-component-type-helpers": "^2.0.6",

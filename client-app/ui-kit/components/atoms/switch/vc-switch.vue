@@ -1,5 +1,5 @@
 <template>
-  <label
+  <div
     :class="[
       'vc-switch',
       `vc-switch--color--${color}`,
@@ -7,15 +7,17 @@
       `vc-switch--label--${labelPosition}`,
     ]"
   >
-    <div v-if="$slots.default" class="vc-switch__label">
+    <!-- Workarounds to fix Firefox label click bug -->
+    <button v-if="$slots.default" type="button" class="vc-switch__label" @click="change">
       <slot />
-    </div>
+    </button>
 
-    <div class="vc-switch__bg">
-      <div class="vc-switch__circle"></div>
-    </div>
+    <button type="button" class="vc-switch__bg" @click="change">
+      <span class="vc-switch__circle" />
+    </button>
 
     <input
+      :id="componentId"
       :value="value"
       :checked="modelValue"
       :aria-checked="modelValue"
@@ -23,10 +25,12 @@
       type="checkbox"
       @change="change"
     />
-  </label>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { useComponentId } from "@/ui-kit/composables";
+
 export interface IEmits {
   (event: "update:modelValue", value?: boolean): void;
   (event: "change", value: boolean): void;
@@ -48,6 +52,8 @@ const props = withDefaults(defineProps<IProps>(), {
   color: "primary",
   labelPosition: "left",
 });
+
+const componentId = useComponentId("input");
 
 function change() {
   if (props.disabled) {
@@ -72,7 +78,7 @@ function change() {
 
   --color: var(--color-neutral-300);
 
-  @apply relative inline-flex items-center cursor-pointer;
+  @apply relative inline-flex items-center;
 
   &--size {
     &--xs {
@@ -139,7 +145,7 @@ function change() {
   }
 
   &__label {
-    @apply text-neutral-950 font-normal;
+    @apply text-neutral-950 font-normal cursor-pointer;
 
     #{$left} & {
       @apply order-first me-2;
@@ -157,11 +163,11 @@ function change() {
   &__bg {
     $bg: &;
 
-    @apply order-1 relative h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5;
+    @apply order-1 relative block h-[--circle-size] w-[--w] box-content rounded-full bg-current border border-current text-[--color] p-0.5 cursor-pointer;
   }
 
   &__circle {
-    @apply relative left-0 size-[--circle-size] bg-additional-50 rounded-full transition-[left];
+    @apply relative block left-0 size-[--circle-size] bg-additional-50 rounded-full transition-[left];
 
     #{$checked} & {
       @apply left-[calc(100%-var(--circle-size))];
