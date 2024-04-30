@@ -62,7 +62,7 @@ withDefaults(defineProps<IProps>(), {
   &--size {
     &--xs {
       --p-x: theme("padding.4");
-      --header-p-y: theme("padding.2");
+      --header-p-y: theme("padding[2.5]");
       --placeholder-h: 1.125rem;
     }
 
