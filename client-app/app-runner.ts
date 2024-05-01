@@ -1,8 +1,16 @@
-import { createHead } from "@unhead/vue";
+import { createHead, useHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient } from "@/core/api/graphql";
-import { useCurrency, useLanguages, useThemeContext, useGoogleAnalytics, useHotjar } from "@/core/composables";
+import {
+  useCurrency,
+  useLanguages,
+  useThemeContext,
+  useGoogleAnalytics,
+  useHotjar,
+  useWhiteLabeling,
+  useNavigations,
+} from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
@@ -49,6 +57,8 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initHotjar } = useHotjar();
+  const { fetchMenus } = useNavigations();
+  const { favIcons, themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: "en",
@@ -58,10 +68,9 @@ export default async () => {
     },
   };
 
-  /**
-   * Fetching required app data
-   */
-  await Promise.all([fetchThemeContext(), fetchUser(), fallback.setMessage()]);
+  await fallback.setMessage();
+  await fetchThemeContext();
+  await fetchUser();
 
   initializeGoogleAnalytics();
   initHotjar();
@@ -82,14 +91,46 @@ export default async () => {
     storeId: themeContext.value.storeId,
     catalogId: themeContext.value.catalogId,
     userId: user.value.id,
+    organizationId: user.value?.contact?.organizationId,
     cultureName: currentLanguage.value.cultureName,
     currencyCode: currentCurrency.value.code,
   });
+
+  await fetchMenus();
 
   /**
    * Other settings
    */
   await setLocale(i18n, currentLocale.value);
+
+  await fetchWhiteLabelingSettings();
+
+  if (themePresetName.value) {
+    await fetchThemeContext(themePresetName.value);
+  }
+
+  useHead({
+    link: favIcons.value?.length
+      ? favIcons.value
+      : [
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "16x16",
+            href: "/static/icons/favicon-16x16.png",
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "32x32",
+            href: "/static/icons/favicon-32x32.png",
+          },
+          {
+            rel: "manifest",
+            href: "/static/manifest.json",
+          },
+        ],
+  });
 
   // Plugins
   app.use(head);

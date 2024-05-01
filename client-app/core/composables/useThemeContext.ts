@@ -8,8 +8,8 @@ import type { IThemeConfig, IThemeConfigPreset, IThemeContext } from "../types";
 function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
-  async function fetchThemeContext() {
-    const [store, themeSettings] = await Promise.all([getStore("B2B-store"), fetchThemeSettings()]);
+  async function fetchThemeContext(themePresetName?: string) {
+    const [store, themeSettings] = await Promise.all([getStore("B2B-store"), fetchThemeSettings(themePresetName)]);
 
     if (!store || !themeSettings) {
       throw new Error("Can't get context");
@@ -22,9 +22,14 @@ function _useThemeContext() {
     };
   }
 
-  async function fetchThemeSettings() {
+  async function fetchThemeSettings(themePresetName?: string) {
     if (IS_DEVELOPMENT) {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
+
+      if (themePresetName && themeConfig.presets[themePresetName]) {
+        return themeConfig.presets[themePresetName];
+      }
+
       return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
     } else {
       // TODO: Refactor after storefront dead
