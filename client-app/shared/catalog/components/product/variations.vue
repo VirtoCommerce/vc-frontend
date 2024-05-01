@@ -16,7 +16,7 @@
           with-properties
           :image-url="variation.images[0]?.url"
           :name="variation.name"
-          :properties="variation.properties.slice(0, 3)"
+          :properties="filteredProperties(variation.properties)"
           :list-price="variation.price.list"
           :actual-price="variation.price.actual"
           :vendor="$cfg.vendor_enabled ? product.vendor : undefined"
@@ -41,7 +41,7 @@
 import { AddToCart } from "@/shared/cart";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
-import type { Product } from "@/core/api/graphql/types";
+import type { Product, Property } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
@@ -52,6 +52,10 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+function filteredProperties(properties: Property[]) {
+  return properties.filter((prop) => !!prop.value).slice(0, 3);
+}
 </script>
 
 <style lang="scss">
