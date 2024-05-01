@@ -11,20 +11,13 @@
           <VcImage :src="siteLogoUrl" :alt="$context.storeName" class="h-9" lazy />
         </div>
 
-        <div v-for="footerLink in footerLinks" :key="footerLink.id">
-          <div class="mb-3 text-base font-black uppercase">
-            {{ footerLink.title }}
-          </div>
+        <template v-if="whiteLabelingFooterLinks?.length">
+          <FooterLinks v-for="(footerLink, index) in whiteLabelingFooterLinks" :key="index" :links-block="footerLink" />
+        </template>
 
-          <div v-if="footerLink.children?.length" class="flex flex-col space-y-1">
-            <FooterLink
-              v-for="footerLinkChild in footerLink.children"
-              :key="footerLinkChild.id"
-              :title="footerLinkChild.title"
-              :to="footerLinkChild.route!"
-            />
-          </div>
-        </div>
+        <template v-else>
+          <FooterLinks v-for="footerLink in footerLinks" :key="footerLink.id" :links-block="footerLink" />
+        </template>
       </div>
     </div>
 
@@ -56,9 +49,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useNavigations, useThemeContext } from "@/core/composables";
+import { convertToExtendedMenuLink } from "@/core/utilities";
 import { useWhiteLabeling } from "@/shared/account";
 import pkg from "../../../../../package.json";
-import FooterLink from "./_internal/footer-link.vue";
+import FooterLinks from "./_internal/footer-links.vue";
 
 interface IProps {
   compact?: boolean;
@@ -74,5 +68,9 @@ const { version } = pkg;
 
 const siteLogoUrl = computed(
   () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
+);
+
+const whiteLabelingFooterLinks = computed(() =>
+  whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item, false)),
 );
 </script>
