@@ -52,6 +52,7 @@
           >
             {{ $t("shared.payment.skyflow.pay_now_button") }}
           </VcButton>
+          <VcButton @click="updateCvv">UPDATE CVV</VcButton>
         </div>
       </div>
     </template>
@@ -93,6 +94,7 @@ import { useUser } from "@/shared/account";
 import { useSkyflowCards } from "../composables";
 import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
 import type CollectContainer from "skyflow-js/types/core/external/collect/collect-container";
+import type CollectElement from "skyflow-js/types/core/external/collect/collect-element";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
@@ -133,7 +135,32 @@ const creditCards = computed(() =>
 );
 const addNewCardSelected = computed(() => selectedSkyflowCard.value?.cardNumber === t("common.labels.add_new_card"));
 
-let skyflowClient: Skyflow, skyflowTableName: string, fullCardCollector: ComposableContainer;
+let skyflowClient: Skyflow,
+  skyflowTableName: string,
+  fullCardCollector: ComposableContainer,
+  cvvCardCollector: CollectContainer,
+  cvvElement: CollectElement;
+
+function updateCvv() {
+  if (!cvvCardCollector || !cvvElement) {
+    return;
+  }
+
+  const options = {
+    upsert: [
+      {
+        table: skyflowTableName,
+        column: "cvv",
+      },
+    ],
+  };
+
+  cvvElement.update({
+    skyflowID: selectedSkyflowCard.value?.skyflowId,
+  });
+
+  void cvvCardCollector.collect(options);
+}
 
 async function initPayment() {
   if (skyflowClient) {
@@ -511,6 +538,9 @@ function createCvvForm() {
   CVV.on(Skyflow.EventName.READY, () => {
     cvvFormStatus.value.ready = true;
   });
+
+  cvvCardCollector = container;
+  cvvElement = CVV;
 }
 
 function getParameter(data: KeyValueType[], key: string): string {
