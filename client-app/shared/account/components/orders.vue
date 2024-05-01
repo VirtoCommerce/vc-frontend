@@ -331,7 +331,6 @@ const {
   filterChipsItems,
   applyFilters,
   resetFilters,
-  resetDataToApplied,
   removeFilterChipsItem,
 } = useUserOrdersFilter();
 
@@ -418,9 +417,6 @@ function resetFiltersWithKeyword() {
 }
 
 function toggleFilters() {
-  if (!filtersVisible.value) {
-    resetDataToApplied();
-  }
   filtersVisible.value = !filtersVisible.value;
 }
 
@@ -453,6 +449,8 @@ function applyOrderFilters(): void {
 function resetOrderFilters(): void {
   resetFilters();
   selectedDateFilterType.value = dateFilterTypes.value[0];
+  selectedDateFilterType.value.startDate = undefined;
+  selectedDateFilterType.value.endDate = undefined;
   hideFilters();
 }
 

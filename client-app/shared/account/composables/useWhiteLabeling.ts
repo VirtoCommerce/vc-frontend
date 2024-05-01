@@ -27,7 +27,10 @@ export function useWhiteLabeling() {
 
       try {
         await load();
-        whiteLabelingSettings.value = result.value?.whiteLabelingSettings;
+
+        if (result.value?.whiteLabelingSettings) {
+          whiteLabelingSettings.value = result.value.whiteLabelingSettings;
+        }
       } catch (e) {
         Logger.error(`${useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
         throw e;
