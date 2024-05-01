@@ -26,7 +26,8 @@
   }
 
   &__price {
-    @apply block shrink-0 text-right w-[7rem];
+    @apply shrink-0 text-right w-[7rem];
+    @apply block #{!important};
   }
 
   &__deleted &__price {
