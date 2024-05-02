@@ -9,10 +9,16 @@ function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
   async function fetchThemeContext(themePresetName?: string) {
-    const [store, themeSettings] = await Promise.all([getStore("B2B-store"), fetchThemeSettings(themePresetName)]);
+    const store = await getStore("B2B-store");
 
-    if (!store || !themeSettings) {
-      throw new Error("Can't get context");
+    if (!store) {
+      throw new Error("Can't get store");
+    }
+
+    const themeSettings = await fetchThemeSettings(store.storeId, themePresetName);
+
+    if (!themeSettings) {
+      throw new Error("Can't get theme context");
     }
 
     themeContext.value = {
@@ -30,13 +36,15 @@ function _useThemeContext() {
     return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
   }
 
-  async function fetchThemeSettings(themePresetName?: string) {
+  async function fetchThemeSettings(storeId: string, themePresetName?: string) {
     if (IS_DEVELOPMENT) {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
 
       return getThemeSettings(themeConfig, themePresetName);
     } else {
-      const { data } = await useFetch("/static/settings_data.json").get().json<IThemeConfig>();
+      const { data } = await useFetch(`/cms-content/themes/${storeId}/default/config/settings_data.json`)
+        .get()
+        .json<IThemeConfig>();
 
       return getThemeSettings(data.value!, themePresetName);
     }
