@@ -194,7 +194,13 @@ const newCardFormInitialized = computed(() => {
   return Object.values(newCardFormElementsStatus.value).every((el) => el.ready);
 });
 
-function createNewCardForm() {
+async function initNewCardForm(): Promise<void> {
+  if (newCardFormInitialized.value) {
+    return;
+  }
+
+  await initPayment();
+
   const { global, fontFamily, errorColor, borderColor, focusOutlineColor } = inputStyles;
 
   const containerOptions = {
@@ -324,12 +330,6 @@ function createNewCardForm() {
   fullCardCollector = container;
 }
 
-function initNewCardForm() {
-  if (!newCardFormInitialized.value) {
-    createNewCardForm();
-  }
-}
-
 function isNewCard(card: { skyflowId: string }) {
   return !card.skyflowId;
 }
@@ -351,10 +351,12 @@ const isNewCardPayBtnDisabled = computed(() => {
 
 const cvvCollectorStatus = ref({ valid: false, ready: false });
 
-function initCvvForm() {
+async function initCvvForm() {
   if (!isNewCardCvvRequired.value) {
     return;
   }
+
+  await initPayment();
 
   clearCvv();
 
@@ -557,10 +559,10 @@ async function payWithSavedCreditCard() {
 // PAYMENT END
 
 onMounted(async () => {
-  await Promise.all([fetchSkyflowCards(), initPayment()]);
+  await fetchSkyflowCards();
 
   if (!skyflowCards.value?.length) {
-    initNewCardForm();
+    void initNewCardForm();
   }
 });
 
