@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full bg-[color:var(--color-header-bottom-bg)] shadow-md print:hidden">
+  <div ref="headerElement" class="fixed z-40 w-full bg-[--header-bottom-bg-color] shadow-md print:hidden">
     <!-- region Default slot -->
     <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
       <div v-if="customSlots.default">

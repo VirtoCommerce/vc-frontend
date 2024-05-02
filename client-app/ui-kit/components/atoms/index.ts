@@ -9,7 +9,6 @@ export { default as VcContainer } from "./container/vc-container.vue";
 export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue";
 export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
 export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-panels.vue";
-export { default as VcFilterCardSkeleton } from "./filter-card-skeleton/vc-filter-card-skeleton.vue";
 export { default as VcHexagonIcon } from "./hexagon-icon/vc-hexagon-icon.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";

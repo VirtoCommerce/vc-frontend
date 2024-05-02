@@ -21,7 +21,7 @@
         prepend-icon="document-text"
         size="lg"
       >
-        <div class="text-15 font-medium">
+        <div class="text-base font-medium">
           {{ quote.comment }}
         </div>
       </VcWidget>
@@ -31,7 +31,7 @@
           <div class="flex justify-between text-base">
             <span v-t="'pages.account.quote_details.total'" class="font-bold" />
 
-            <span class="text-18 font-extrabold text-[color:var(--color-price)]">
+            <span class="text-lg font-extrabold text-success-700">
               <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
             </span>
           </div>

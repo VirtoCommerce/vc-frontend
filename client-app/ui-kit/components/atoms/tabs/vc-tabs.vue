@@ -4,17 +4,13 @@
       v-for="(item, index) in items"
       :key="index"
       :disabled="isDisabled"
-      :class="
-        isActiveItem(item)
-          ? 'cursor-default'
-          : 'text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]'
-      "
+      :class="isActiveItem(item) ? 'cursor-default' : 'text-[--link-color] hover:text-[--link-hover-color]'"
       type="button"
       class="appearance-none px-2.5 disabled:opacity-40"
       @click="select(item)"
     >
       <span
-        :class="{ [isDisabled ? '!border-gray-400' : '!border-primary']: isActiveItem(item) }"
+        :class="{ [isDisabled ? '!border-neutral-400' : '!border-primary']: isActiveItem(item) }"
         class="block appearance-none border-b-[3px] border-transparent pb-2.5 pt-3 font-bold"
       >
         <slot name="item" v-bind="{ item, index }">

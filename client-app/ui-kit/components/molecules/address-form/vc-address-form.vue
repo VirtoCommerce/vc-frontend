@@ -52,7 +52,7 @@
       <!-- Divider -->
       <div
         v-if="withPersonalInfo"
-        class="-mx-96 mb-6 mt-8 border-t border-[color:var(--color-primary)] md:mx-9 md:mb-4 md:mt-6 md:border-l"
+        class="-mx-96 mb-6 mt-8 border-t border-primary md:mx-9 md:mb-4 md:mt-6 md:border-l"
       />
 
       <div :class="{ 'md:w-1/2': withPersonalInfo }">

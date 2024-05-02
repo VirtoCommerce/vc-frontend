@@ -10,9 +10,9 @@
         :max="maxQty"
         :min="minQty"
         :class="{
-          'z-10 border-[color:var(--color-danger)] focus:border-[color:var(--color-danger-hover)]': !!errorMessage,
+          'z-10 border-danger focus:border-danger-600': !!errorMessage,
         }"
-        class="-mr-px h-9 w-full min-w-0 flex-1 appearance-none rounded-l rounded-r-none border border-gray-300 px-1 text-center text-base leading-9 outline-none focus:border-gray-400 lg:text-sm"
+        class="-mr-px h-9 w-full min-w-0 flex-1 appearance-none rounded-l rounded-r-none border border-neutral-300 px-1 text-center text-base leading-9 outline-none focus:border-neutral-400 lg:text-sm"
         @input="onInput"
         @keypress="onKeypress"
         @click="onClick"
@@ -36,13 +36,13 @@
     <!-- Info hint -->
     <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
       <template #trigger>
-        <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
+        <div class="line-clamp-1 pt-0.5 text-xs text-danger">
           {{ errorMessage }}
         </div>
       </template>
 
       <template #content>
-        <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+        <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-md">
           {{ errorMessage }}
         </div>
       </template>

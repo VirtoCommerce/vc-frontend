@@ -1,7 +1,7 @@
 <template>
   <router-link :to="to" class="icon flex items-center p-2.5">
     <div class="mr-2.5 size-5 flex-none"></div>
-    <span class="overflow-hidden text-ellipsis text-13 font-bold text-gray-500">{{ text }}</span>
+    <span class="overflow-hidden text-ellipsis text-13 font-bold text-neutral">{{ text }}</span>
   </router-link>
 </template>
 
@@ -65,7 +65,7 @@ defineProps<IProps>();
 /* Active/hover state styles */
 .router-link-active > div,
 .icon:hover > div {
-  background-color: var(--color-primary);
+  background-color: var(--color-primary-500);
 }
 .icon:hover span {
   color: #4b5563;

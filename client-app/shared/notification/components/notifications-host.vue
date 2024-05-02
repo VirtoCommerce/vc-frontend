@@ -70,7 +70,7 @@ $status-colors: success, warning, danger;
 
   &__item {
     @apply relative flex flex-row gap-3 items-center justify-center w-full min-h-[3.5rem] lg:min-h-[3rem]
-     py-2 shadow-inner leading-tight;
+     py-2 shadow-inner leading-tight text-additional-50;
 
     --tw-shadow: inset 0 -1px 0px 0 rgb(0 0 0 / 0.08);
 
@@ -88,13 +88,13 @@ $status-colors: success, warning, danger;
 
     @each $status in $status-colors {
       &--#{$status} {
-        @apply bg-[color:var(--color-#{$status})] text-white;
+        @apply bg-[--color-#{$status}-600];
       }
     }
   }
 
   &__button {
-    @apply h-[25px] inline-flex items-center justify-center appearance-none bg-white text-gray-800
+    @apply h-[25px] inline-flex items-center justify-center appearance-none bg-white text-neutral-800
     uppercase text-xs font-bold px-3.5 shadow rounded font-roboto-condensed;
 
     --tw-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);

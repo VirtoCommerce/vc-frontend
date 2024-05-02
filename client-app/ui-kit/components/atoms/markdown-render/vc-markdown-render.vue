@@ -121,10 +121,10 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   }
 
   a[href] {
-    color: var(--color-accent-600);
+    color: var(--link-color);
 
     &:hover {
-      color: var(--color-accent-700);
+      color: var(--link-hover-color);
     }
   }
 
@@ -156,9 +156,9 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
 
   blockquote {
     padding: 12px 24px;
-    border-left: 4px solid theme("colors.gray.400");
+    border-left: 4px solid theme("colors.neutral.400");
     border-radius: 0 4px 4px 0;
-    background-color: theme("colors.gray.100");
+    background-color: theme("colors.neutral.100");
   }
 
   pre {
@@ -166,12 +166,12 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
     padding: 16px;
     font-size: 85%;
     line-height: 1.45;
-    background-color: theme("colors.gray.100");
+    background-color: theme("colors.neutral.100");
     border-radius: 4px;
   }
 
   code {
-    background-color: theme("colors.gray.100");
+    background-color: theme("colors.neutral.100");
     border-radius: 3px;
     font-family: monospace;
     padding: 0 3px;
@@ -191,7 +191,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
 
     th {
       padding: 8px 12px;
-      background: theme("colors.gray.100");
+      background: theme("colors.neutral.100");
       font-weight: 700;
       text-align: left;
     }
@@ -199,7 +199,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
     td {
       width: 50%;
       padding: 8px 12px;
-      border-bottom: 1px solid theme("colors.gray.100");
+      border-bottom: 1px solid theme("colors.neutral.100");
       vertical-align: top;
 
       &:first-child {
@@ -207,7 +207,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
       }
 
       &:not(:first-child) {
-        border-left: 1px solid theme("colors.gray.100");
+        border-left: 1px solid theme("colors.neutral.100");
       }
     }
   }

@@ -3,7 +3,7 @@
     <!-- Top footer -->
     <div
       v-if="!compact"
-      class="hidden bg-[color:var(--color-footer-top-bg)] text-[color:var(--color-footer-top-text)] md:block print:!hidden"
+      class="hidden bg-[--footer-top-bg-color] text-[--footer-top-text-color] md:block print:!hidden"
     >
       <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
         <!-- Logo column -->
@@ -11,26 +11,19 @@
           <VcImage :src="siteLogoUrl" :alt="$context.storeName" class="h-9" lazy />
         </div>
 
-        <div v-for="footerLink in footerLinks" :key="footerLink.id">
-          <div class="mb-3 text-base font-extrabold uppercase text-white">
-            {{ footerLink.title }}
-          </div>
+        <template v-if="whiteLabelingFooterLinks?.length">
+          <FooterLinks v-for="(footerLink, index) in whiteLabelingFooterLinks" :key="index" :links-block="footerLink" />
+        </template>
 
-          <div v-if="footerLink.children?.length" class="flex flex-col space-y-1">
-            <FooterLink
-              v-for="footerLinkChild in footerLink.children"
-              :key="footerLinkChild.id"
-              :title="footerLinkChild.title"
-              :to="footerLinkChild.route!"
-            />
-          </div>
-        </div>
+        <template v-else>
+          <FooterLinks v-for="footerLink in footerLinks" :key="footerLink.id" :links-block="footerLink" />
+        </template>
       </div>
     </div>
 
     <!-- Bottom footer -->
     <div
-      class="flex h-16 flex-col items-center justify-between bg-[color:var(--color-footer-bottom-bg)] px-4 py-3 text-xs font-medium text-[color:var(--color-footer-bottom-text)] md:flex-row md:px-12 print:flex-row print:bg-[color:var(--color-white)] print:px-0 print:text-[color:var(--color-black)]"
+      class="flex h-16 flex-col items-center justify-between bg-[--footer-bottom-bg-color] px-4 py-3 text-xs font-medium text-[--footer-bottom-text-color] md:flex-row md:px-12 print:flex-row print:bg-additional-50 print:px-0 print:text-additional-950"
     >
       <span>
         {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
@@ -41,7 +34,7 @@
 
       <i18n-t keypath="shared.layout.footer.asp_net_e_commerce_platform" tag="span" scope="global">
         <a
-          class="font-bold text-[color:var(--color-footer-bottom-link)] hover:text-[color:var(--color-footer-bottom-link-hover)] print:text-black"
+          class="font-bold text-[--footer-bottom-link-color] hover:text-[--footer-bottom-link-hover-color] print:text-additional-950"
           href="https://virtocommerce.com"
           target="_blank"
           rel="noopener noreferrer"
@@ -56,9 +49,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useNavigations, useThemeContext } from "@/core/composables";
+import { convertToExtendedMenuLink } from "@/core/utilities";
 import { useWhiteLabeling } from "@/shared/account";
 import pkg from "../../../../../package.json";
-import FooterLink from "./_internal/footer-link.vue";
+import FooterLinks from "./_internal/footer-links.vue";
 
 interface IProps {
   compact?: boolean;
@@ -74,5 +68,9 @@ const { version } = pkg;
 
 const siteLogoUrl = computed(
   () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
+);
+
+const whiteLabelingFooterLinks = computed(() =>
+  whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item, false)),
 );
 </script>
