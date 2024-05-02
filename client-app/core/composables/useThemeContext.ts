@@ -22,19 +22,23 @@ function _useThemeContext() {
     };
   }
 
+  function getThemeSettings(themeConfig: IThemeConfig, themePresetName?: string): IThemeConfigPreset {
+    if (themePresetName && themeConfig.presets[themePresetName]) {
+      return themeConfig.presets[themePresetName];
+    }
+
+    return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
+  }
+
   async function fetchThemeSettings(themePresetName?: string) {
     if (IS_DEVELOPMENT) {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
 
-      if (themePresetName && themeConfig.presets[themePresetName]) {
-        return themeConfig.presets[themePresetName];
-      }
-
-      return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
+      return getThemeSettings(themeConfig, themePresetName);
     } else {
-      // TODO: Refactor after storefront dead
-      const { data } = await useFetch("/themes/settings.json").get().json<IThemeConfigPreset>();
-      return data.value!;
+      const { data } = await useFetch("/static/settings_data.json").get().json<IThemeConfig>();
+
+      return getThemeSettings(data.value!, themePresetName);
     }
   }
 
