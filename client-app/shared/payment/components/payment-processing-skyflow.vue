@@ -45,14 +45,13 @@
         <div ref="cvvOnlyContainer" class="-ml-1 mt-4"></div>
         <div class="mt-6 flex justify-center md:justify-start">
           <VcButton
-            :disabled="!selectedSkyflowCard || (cvvFormStatus.ready && !cvvFormStatus.valid)"
+            :disabled="isNewCardPayBtnDisabled"
             :loading="loading"
             class="shrink"
             @click="payWithSavedCreditCard"
           >
             {{ $t("shared.payment.skyflow.pay_now_button") }}
           </VcButton>
-          <VcButton @click="updateCvv">UPDATE CVV</VcButton>
         </div>
       </div>
     </template>
@@ -135,160 +134,22 @@ const creditCards = computed(() =>
 );
 const addNewCardSelected = computed(() => selectedSkyflowCard.value?.cardNumber === t("common.labels.add_new_card"));
 
-let skyflowClient: Skyflow,
-  skyflowTableName: string,
-  fullCardCollector: ComposableContainer,
-  cvvCardCollector: CollectContainer,
-  cvvElement: CollectElement;
-
-function updateCvv() {
-  if (!cvvCardCollector || !cvvElement) {
-    return;
-  }
-
-  const options = {
-    upsert: [
-      {
-        table: skyflowTableName,
-        column: "cvv",
-      },
-    ],
-  };
-
-  cvvElement.update({
-    skyflowID: selectedSkyflowCard.value?.skyflowId,
-  });
-
-  void cvvCardCollector.collect(options);
-}
-
-async function initPayment() {
-  if (skyflowClient) {
-    return;
-  }
-
-  try {
-    const { publicParameters, errorMessage } = await initializePayment({
-      orderId: props.order.id,
-      paymentId: props.order.inPayments[0]!.id,
-    });
-
-    if (errorMessage || !publicParameters) {
-      emit("fail");
-      return;
-    }
-
-    skyflowTableName = getParameter(publicParameters, "tableName");
-
-    skyflowClient = Skyflow.init({
-      vaultID: getParameter(publicParameters, "vaultID"),
-      vaultURL: getParameter(publicParameters, "vaultURL"),
-      getBearerToken: () => Promise.resolve(getParameter(publicParameters, "accessToken")),
-      options: {
-        env: IS_DEVELOPMENT ? Skyflow.Env.DEV : Skyflow.Env.PROD,
-      },
-    });
-  } catch (e) {
-    emit("fail");
-  }
-}
-
-function getAdditionalRecords(): IInsertRecordInput | undefined {
-  if (!isAuthenticated.value || !saveCreditCard.value) {
-    return;
-  }
-
-  return {
-    records: [
-      {
-        table: skyflowTableName,
-        fields: {
-          user_id: user.value.id,
-        },
-      },
-    ],
-  };
-}
-
 function selectSkyflowCard(skyflowCard: { cardNumber: string; cardExpiration?: string; skyflowId: string }): void {
   selectedSkyflowCard.value = skyflowCard;
   if (isNewCard(skyflowCard)) {
-    void initForm();
+    void initNewCardForm();
   } else {
     void initCvvForm();
   }
 }
 
-function isNewCard(card: { skyflowId: string }) {
-  return !card.skyflowId;
-}
+let skyflowClient: Skyflow,
+  skyflowTableName: string,
+  fullCardCollector: ComposableContainer,
+  cvvCollector: CollectContainer | null,
+  cvvElement: CollectElement | null;
 
-async function pay(parameters: InputKeyValueType[]): Promise<void> {
-  loading.value = true;
-
-  const { isSuccess } = await authorizePayment({
-    orderId: props.order.id,
-    paymentId: props.order.inPayments[0]!.id,
-    parameters,
-  });
-
-  if (isSuccess) {
-    ga.purchase(props.order);
-    emit("success");
-  } else {
-    emit("fail");
-  }
-
-  loading.value = false;
-}
-
-async function payWithNewCreditCard() {
-  const res = (await fullCardCollector.collect({
-    additionalFields: getAdditionalRecords(),
-  })) as IInsertResponse;
-
-  if (!res?.records) {
-    emit("fail");
-  }
-
-  await pay(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType));
-}
-
-async function payWithSavedCreditCard() {
-  if (!selectedSkyflowCard.value) {
-    return;
-  }
-
-  await pay([
-    {
-      key: "skyflow_id",
-      value: selectedSkyflowCard.value.skyflowId,
-    },
-  ]);
-}
-
-async function initForm() {
-  if (!newCardFormInitialized.value) {
-    await initPayment();
-    createForm();
-  }
-}
-
-async function initCvvForm() {
-  if (!cvvFormStatus.value.ready) {
-    await initPayment();
-    createCvvForm();
-  }
-}
-
-onMounted(async () => {
-  await fetchSkyflowCards();
-
-  if (!skyflowCards.value?.length) {
-    await initForm();
-  }
-});
-
+// general styles for CVV only and for NEW CARD
 const inputStyles = {
   global: {
     "@import": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
@@ -299,6 +160,7 @@ const inputStyles = {
   focusOutlineColor: useCssVar("--color-primary-200", root).value,
 };
 
+// NEW CARD START
 type ElementType =
   | typeof Skyflow.ElementType.CARD_NUMBER
   | typeof Skyflow.ElementType.CARDHOLDER_NAME
@@ -332,7 +194,7 @@ const newCardFormInitialized = computed(() => {
   return Object.values(newCardFormElementsStatus.value).every((el) => el.ready);
 });
 
-function createForm() {
+function createNewCardForm() {
   const { global, fontFamily, errorColor, borderColor, focusOutlineColor } = inputStyles;
 
   const containerOptions = {
@@ -462,12 +324,40 @@ function createForm() {
   fullCardCollector = container;
 }
 
-const cvvFormStatus = ref({ valid: false, ready: false });
+function initNewCardForm() {
+  if (!newCardFormInitialized.value) {
+    createNewCardForm();
+  }
+}
 
-function createCvvForm() {
-  if (cvvFormStatus.value.ready) {
+function isNewCard(card: { skyflowId: string }) {
+  return !card.skyflowId;
+}
+// NEW CARD END
+
+// CVV only START
+const isNewCardCvvRequired = computed(() => {
+  // todo add "isCvvRequired" flag to saved cards
+  // return selectedSkyflowCard.value?.isCvvRequired
+  return false;
+});
+
+const isNewCardPayBtnDisabled = computed(() => {
+  return (
+    !selectedSkyflowCard.value ||
+    (isNewCardCvvRequired.value && cvvCollectorStatus.value.ready && !cvvCollectorStatus.value.valid)
+  );
+});
+
+const cvvCollectorStatus = ref({ valid: false, ready: false });
+
+function initCvvForm() {
+  if (!isNewCardCvvRequired.value) {
     return;
   }
+
+  clearCvv();
+
   const { global, fontFamily, errorColor, borderColor, focusOutlineColor } = inputStyles;
 
   const container = skyflowClient.container(Skyflow.ContainerType.COLLECT) as CollectContainer;
@@ -533,16 +423,148 @@ function createCvvForm() {
   CVV.mount(cvvOnlyContainer.value);
 
   CVV.on(Skyflow.EventName.CHANGE, ({ isValid }: { isValid: boolean }) => {
-    cvvFormStatus.value.valid = isValid;
+    cvvCollectorStatus.value.valid = isValid;
   });
   CVV.on(Skyflow.EventName.READY, () => {
-    cvvFormStatus.value.ready = true;
+    cvvCollectorStatus.value.ready = true;
   });
 
-  cvvCardCollector = container;
+  cvvCollector = container;
   cvvElement = CVV;
 }
 
+function clearCvv() {
+  cvvElement?.unmount();
+  cvvElement = null;
+  cvvCollector = null;
+  cvvCollectorStatus.value.valid = false;
+  cvvCollectorStatus.value.ready = false;
+}
+
+async function updateCvvInVault(): Promise<void> {
+  if (!cvvCollector || !cvvElement) {
+    return;
+  }
+
+  cvvElement.update({
+    skyflowID: selectedSkyflowCard.value?.skyflowId,
+  });
+
+  await cvvCollector.collect();
+}
+// CVV only END
+
+// PAYMENT START
+async function initPayment() {
+  if (skyflowClient) {
+    return;
+  }
+
+  try {
+    const { publicParameters, errorMessage } = await initializePayment({
+      orderId: props.order.id,
+      paymentId: props.order.inPayments[0]!.id,
+    });
+
+    if (errorMessage || !publicParameters) {
+      emit("fail");
+      return;
+    }
+
+    skyflowTableName = getParameter(publicParameters, "tableName");
+
+    skyflowClient = Skyflow.init({
+      vaultID: getParameter(publicParameters, "vaultID"),
+      vaultURL: getParameter(publicParameters, "vaultURL"),
+      getBearerToken: () => Promise.resolve(getParameter(publicParameters, "accessToken")),
+      options: {
+        env: IS_DEVELOPMENT ? Skyflow.Env.DEV : Skyflow.Env.PROD,
+      },
+    });
+  } catch (e) {
+    emit("fail");
+  }
+}
+
+function getAdditionalRecords(): IInsertRecordInput | undefined {
+  if (!isAuthenticated.value || !saveCreditCard.value) {
+    return;
+  }
+
+  return {
+    records: [
+      {
+        table: skyflowTableName,
+        fields: {
+          user_id: user.value.id,
+        },
+      },
+    ],
+  };
+}
+
+async function pay(parameters: InputKeyValueType[]): Promise<void> {
+  const { isSuccess } = await authorizePayment({
+    orderId: props.order.id,
+    paymentId: props.order.inPayments[0]!.id,
+    parameters,
+  });
+
+  if (isSuccess) {
+    ga.purchase(props.order);
+    emit("success");
+  } else {
+    emit("fail");
+  }
+}
+
+async function payWithNewCreditCard() {
+  loading.value = true;
+
+  const res = (await fullCardCollector.collect({
+    additionalFields: getAdditionalRecords(),
+  })) as IInsertResponse;
+
+  if (!res?.records) {
+    emit("fail");
+  }
+
+  await pay(objectToKeyValue(res.records.find((el) => el.fields)?.fields as FieldsType));
+
+  loading.value = false;
+}
+
+async function payWithSavedCreditCard() {
+  loading.value = true;
+
+  if (!selectedSkyflowCard.value) {
+    return;
+  }
+
+  if (isNewCardCvvRequired.value) {
+    await updateCvvInVault();
+  }
+
+  await pay([
+    {
+      key: "skyflow_id",
+      value: selectedSkyflowCard.value.skyflowId,
+    },
+  ]);
+
+  loading.value = false;
+}
+// PAYMENT END
+
+onMounted(async () => {
+  await Promise.all([fetchSkyflowCards(), initPayment()]);
+
+  if (!skyflowCards.value?.length) {
+    initNewCardForm();
+  }
+});
+
+// utils
 function getParameter(data: KeyValueType[], key: string): string {
   const param = data.find((el) => el.key === key);
   if (!param?.value) {
