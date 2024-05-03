@@ -2,7 +2,7 @@ import { createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { getStore } from "@/core/api/graphql";
-//import { IS_DEVELOPMENT } from "../constants";
+import { IS_DEVELOPMENT } from "../constants";
 import type { IThemeConfig, IThemeContext, IThemeConfigPreset } from "../types";
 
 function _useThemeContext() {
@@ -39,13 +39,7 @@ function _useThemeContext() {
   }
 
   async function fetchThemeSettings(themePresetName?: string) {
-    const { data } = await useFetch(`/cms-content/Themes/${STORE_ID}/default/config/settings_data.json`)
-      .get()
-      .json<IThemeConfig>();
-
-    return getThemePreset(data.value!, themePresetName);
-
-    /*if (IS_DEVELOPMENT) {
+    if (IS_DEVELOPMENT) {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
 
       return getThemePreset(themeConfig, themePresetName);
@@ -55,7 +49,7 @@ function _useThemeContext() {
         .json<IThemeConfig>();
 
       return getThemePreset(data.value!, themePresetName);
-    }*/
+    }
   }
 
   return {
