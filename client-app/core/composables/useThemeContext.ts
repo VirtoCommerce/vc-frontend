@@ -1,23 +1,15 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
-import { getStore } from "@/core/api/graphql";
 import { IS_DEVELOPMENT } from "../constants";
+import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeContext, IThemeConfigPreset } from "../types";
 
 function _useThemeContext() {
-  const STORE_ID = "B2B-store";
-
   const themeContext = ref<IThemeContext>();
 
-  async function fetchThemeContext(themePresetName?: string) {
-    const store = await getStore(STORE_ID);
-
-    if (!store) {
-      throw new Error("Can't get store");
-    }
-
-    const themeSettings = await fetchThemeSettings(themePresetName);
+  async function fetchThemeContext(store: StoreResponseType, themePresetName?: string) {
+    const themeSettings = await fetchThemeSettings(store.storeId, themePresetName);
 
     if (!themeSettings) {
       throw new Error("Can't get theme context");
@@ -38,13 +30,13 @@ function _useThemeContext() {
     return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
   }
 
-  async function fetchThemeSettings(themePresetName?: string) {
+  async function fetchThemeSettings(storeId: string, themePresetName?: string) {
     if (IS_DEVELOPMENT) {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
 
       return getThemePreset(themeConfig, themePresetName);
     } else {
-      const { data } = await useFetch(`/cms-content/Themes/${STORE_ID}/default/config/settings_data.json`)
+      const { data } = await useFetch(`/cms-content/Themes/${storeId}/default/config/settings_data.json`)
         .get()
         .json<IThemeConfig>();
 

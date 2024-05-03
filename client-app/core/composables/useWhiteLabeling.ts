@@ -1,3 +1,4 @@
+import { createGlobalState } from "@vueuse/core";
 import { computed, shallowRef } from "vue";
 import { getGetWhiteLabelingSettings } from "@/core/api/graphql/whiteLabeling/queries";
 import { Logger, convertToExtendedMenuLink } from "@/core/utilities";
@@ -17,13 +18,13 @@ const moduleEnabled = computed(
   () => moduleSettings.value?.settings?.find((item) => item.name === MODULE_KEYS.ENABLE_STATE)?.value,
 );
 
-export function useWhiteLabeling() {
+function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
     if (moduleEnabled.value) {
       try {
         whiteLabelingSettings.value = await getGetWhiteLabelingSettings();
       } catch (e) {
-        Logger.error(`${useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
+        Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
         throw e;
       }
     }
@@ -42,3 +43,5 @@ export function useWhiteLabeling() {
     fetchWhiteLabelingSettings,
   };
 }
+
+export const useWhiteLabeling = createGlobalState(_useWhiteLabeling);

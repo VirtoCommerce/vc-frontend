@@ -256,6 +256,8 @@
 
       "files_enabled": true,
 
+      "push_messages_enabled": true,
+
       "quotes_enabled": true,
       "quotes_files_scope": "quote_attachments",
 

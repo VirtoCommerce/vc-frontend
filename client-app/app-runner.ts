@@ -1,7 +1,7 @@
 import { createHead, useHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient } from "@/core/api/graphql";
+import { apolloClient, getStore } from "@/core/api/graphql";
 import {
   useCurrency,
   useLanguages,
@@ -21,9 +21,12 @@ import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
+import type { StoreResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
+  const STORE_ID = "B2B-store";
+
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -68,9 +71,13 @@ export default async () => {
     },
   };
 
-  await fallback.setMessage();
-  await fetchThemeContext();
-  await fetchUser();
+  const store = (await getStore(STORE_ID)) as StoreResponseType;
+
+  if (!store) {
+    throw new Error("Can't get store");
+  }
+
+  await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
   initializeGoogleAnalytics();
   initHotjar();
@@ -106,7 +113,7 @@ export default async () => {
   await fetchWhiteLabelingSettings();
 
   if (themePresetName.value) {
-    await fetchThemeContext(themePresetName.value);
+    await fetchThemeContext(store, themePresetName.value);
   }
 
   useHead({
