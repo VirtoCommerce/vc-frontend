@@ -87,7 +87,7 @@ import Skyflow from "skyflow-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { useUser } from "@/shared/account";
 import { useSkyflowCards } from "../composables";
@@ -116,6 +116,7 @@ const { t } = useI18n();
 const { user, isAuthenticated } = useUser();
 const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
 const ga = useGoogleAnalytics();
+const { themeContext } = useThemeContext();
 
 const loading = ref(false);
 const cardContainer = ref(null);
@@ -339,7 +340,7 @@ function isNewCard(card: { skyflowId: string }) {
 const isNewCardCvvRequired = computed(() => {
   // todo add "isCvvRequired" flag to saved cards
   // return selectedSkyflowCard.value?.isCvvRequired
-  return false;
+  return themeContext.value.settings.isCVVinSkyflowRequired;
 });
 
 const isNewCardPayBtnDisabled = computed(() => {
