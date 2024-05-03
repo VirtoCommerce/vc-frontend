@@ -6,7 +6,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
-import type { ProxyOptions, UserConfig } from "vite";
+import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
   const dontTrustSelfSignedCertificate = false;
@@ -43,7 +43,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
           })
         : undefined,
       vue(),
-      graphql(),
+      graphql() as PluginOption,
       isServe
         ? checker({
             enableBuild: false,
@@ -70,12 +70,12 @@ export default defineConfig(({ command, mode }): UserConfig => {
         : undefined,
       splitVendorChunkPlugin(),
       process.env.GENERATE_BUNDLE_MAP
-        ? visualizer({
+        ? (visualizer({
             filename: path.resolve(__dirname, "artifacts/bundle-map.html"),
             brotliSize: true,
             gzipSize: true,
             sourcemap: true,
-          })
+          }) as PluginOption)
         : undefined,
     ],
     resolve: {

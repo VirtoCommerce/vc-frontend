@@ -5,7 +5,9 @@
       :href="isLink ? href : null"
       :class="[
         'flex min-h-[2.25rem] items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]',
-        isLink && (isActive || isExactActive) ? 'text-[--color-additional-50]' : 'text-[--color-accent-200]',
+        isLink && (isActive || isExactActive)
+          ? 'text-[--mobile-menu-link-active-color]'
+          : 'text-[--mobile-menu-link-color]',
         $attrs.class,
       ]"
       @click.prevent="click(navigate)"
@@ -17,7 +19,9 @@
           width="36"
           :class="[
             'shrink-0',
-            isLink && (isActive || isExactActive) ? 'text-[--color-primary-500]' : 'text-[--color-accent-300]',
+            isLink && (isActive || isExactActive)
+              ? 'text-[--mobile-menu-icon-active-color]'
+              : 'text-[--mobile-menu-icon-color]',
           ]"
         >
           <use :href="link.icon" />

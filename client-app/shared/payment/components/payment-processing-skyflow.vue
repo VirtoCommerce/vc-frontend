@@ -274,7 +274,7 @@ function createForm() {
   };
 
   const fontFamily = "Lato, sans-serif";
-  const errorColor = useCssVar("--color-danger", cardContainer).value;
+  const errorColor = useCssVar("--color-danger-500", cardContainer).value;
   const borderColor = useCssVar("--color-neutral-200", cardContainer).value;
   const focusOutlineColor = useCssVar("--color-primary-200", cardContainer).value;
 

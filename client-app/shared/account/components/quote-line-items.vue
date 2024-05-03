@@ -47,14 +47,14 @@
 
             <!-- NAME -->
             <div
-              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:text-13 lg:font-bold lg:leading-4"
+              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:font-bold lg:leading-4"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
                 v-if="item.extended.route"
                 :to="item.extended.route"
                 :title="item.name"
-                class="text-[color:var(--color-link)] [word-break:break-word]"
+                class="text-[--link-color] [word-break:break-word] hover:text-[--link-hover-color]"
               >
                 {{ item.name }}
               </router-link>
@@ -71,13 +71,13 @@
               <div
                 v-for="property in item.extended.displayProperties"
                 :key="property.id"
-                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-13 md:grid-cols-[33%_1fr] lg:text-xs"
+                class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-sm md:grid-cols-[33%_1fr] lg:text-xs"
               >
-                <div class="min-w-0 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800">
+                <div class="min-w-0 font-medium capitalize text-neutral-600 md:font-bold md:text-neutral-800">
                   <div class="truncate">{{ property.label }}:</div>
                 </div>
 
-                <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
+                <div class="mb-1 h-4 grow border-b-2 border-dotted border-neutral-200 md:hidden"></div>
 
                 <div class="min-w-0">
                   <div class="truncate font-semibold md:font-normal">
@@ -92,25 +92,18 @@
               class="vc-quote-line-items__price grid w-full grid-cols-[auto_1fr_auto] gap-1.5 md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
-                class="min-w-0 text-13 font-medium capitalize text-gray-600 md:font-bold md:text-gray-800 lg:text-xs xl:hidden"
+                class="min-w-0 text-sm font-medium capitalize text-neutral-600 md:font-bold md:text-neutral-800 lg:text-xs xl:hidden"
               >
                 <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
               </div>
 
-              <div class="mb-1 h-4 grow border-b-2 border-dotted border-gray-200 md:hidden"></div>
+              <div class="mb-1 h-4 grow border-b-2 border-dotted border-neutral-200 md:hidden"></div>
 
               <div class="xl:w-full xl:pr-4 xl:text-right">
-                <div class="text-13 font-semibold md:font-normal lg:text-xs xl:font-medium">
+                <div class="text-sm font-semibold md:font-normal lg:text-xs xl:font-medium">
                   <!-- Price per item -->
                   <VcPriceDisplay :value="item.selectedTierPrice!.price" />
                 </div>
-
-                <!-- Price without discount -->
-                <!--
-                <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">
-                  OLD PRICE
-                </div>
-                 -->
               </div>
             </div>
           </div>
@@ -120,7 +113,7 @@
             <input
               v-model="item.selectedTierPrice!.quantity"
               :disabled="readonly"
-              class="h-8 w-20 rounded border text-center text-sm disabled:bg-gray-100 disabled:text-gray-400 xl:w-full"
+              class="h-8 w-20 rounded border text-center text-sm disabled:bg-neutral-100 disabled:text-neutral-400 xl:w-full"
               type="number"
               pattern="\d"
               min="1"
@@ -135,7 +128,7 @@
           >
             <!-- Total -->
             <div class="flex flex-wrap items-center justify-end gap-x-1 text-right">
-              <div class="text-14 font-bold text-[color:var(--color-price-from)] md:hidden">
+              <div class="text-14 font-bold text-neutral md:hidden">
                 {{ $t("pages.account.quote_details.line_items.total") }}:
               </div>
 
@@ -143,11 +136,6 @@
                 {{ $n(item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity, "currency") }}
               </div>
             </div>
-
-            <!-- Total without discount -->
-            <!--
-            <div class="text-11 leading-3 line-through text-[color:var(--color-price-old)]">OLD PRICE</div>
-            -->
           </div>
 
           <!-- REMOVE BUTTON -->
@@ -157,7 +145,7 @@
           >
             <button
               type="button"
-              class="flex size-[26px] items-center justify-center rounded-full border bg-white text-[color:var(--color-danger)] hover:bg-gray-100 md:size-7 md:rounded md:border-2"
+              class="flex size-[26px] items-center justify-center rounded-full border bg-additional-50 text-danger hover:bg-neutral-100 md:size-7 md:rounded md:border-2"
               @click="$emit('remove:item', item)"
             >
               <svg class="size-3.5">
@@ -177,11 +165,11 @@
 
     <!-- table footer -->
     <div
-      class="flex items-center justify-end gap-2 py-2.5 text-[color:var(--color-price)] md:rounded-b md:border md:px-4 md:py-2.5"
+      class="flex items-center justify-end gap-2 py-2.5 text-[--price-color] md:rounded-b md:border md:px-4 md:py-2.5"
     >
-      <div class="text-13 font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
+      <div class="text-sm font-bold">{{ $t("pages.account.quote_details.line_items.subtotal") }}:</div>
 
-      <div class="text-17 font-extrabold">{{ $n(subtotal, "currency") }}</div>
+      <div class="text-base font-black">{{ $n(subtotal, "currency") }}</div>
     </div>
   </div>
 </template>
