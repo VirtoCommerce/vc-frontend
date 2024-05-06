@@ -1,8 +1,16 @@
-import { createHead } from "@unhead/vue";
+import { createHead, useHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
-import { apolloClient } from "@/core/api/graphql";
-import { useCurrency, useLanguages, useThemeContext, useGoogleAnalytics, useHotjar } from "@/core/composables";
+import { apolloClient, getStore } from "@/core/api/graphql";
+import {
+  useCurrency,
+  useLanguages,
+  useThemeContext,
+  useGoogleAnalytics,
+  useHotjar,
+  useWhiteLabeling,
+  useNavigations,
+} from "@/core/composables";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { getBaseUrl, Logger } from "@/core/utilities";
@@ -13,9 +21,12 @@ import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
+import type { StoreResponseType } from "./core/api/graphql/types";
 
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
+  const STORE_ID = "B2B-store";
+
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -49,6 +60,8 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initHotjar } = useHotjar();
+  const { fetchMenus } = useNavigations();
+  const { favIcons, themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: "en",
@@ -58,10 +71,13 @@ export default async () => {
     },
   };
 
-  /**
-   * Fetching required app data
-   */
-  await Promise.all([fetchThemeContext(), fetchUser(), fallback.setMessage()]);
+  const store = (await getStore(STORE_ID)) as StoreResponseType;
+
+  if (!store) {
+    throw new Error("Can't get store");
+  }
+
+  await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
   initializeGoogleAnalytics();
   initHotjar();
@@ -82,14 +98,46 @@ export default async () => {
     storeId: themeContext.value.storeId,
     catalogId: themeContext.value.catalogId,
     userId: user.value.id,
+    organizationId: user.value?.contact?.organizationId,
     cultureName: currentLanguage.value.cultureName,
     currencyCode: currentCurrency.value.code,
   });
+
+  await fetchMenus();
 
   /**
    * Other settings
    */
   await setLocale(i18n, currentLocale.value);
+
+  await fetchWhiteLabelingSettings();
+
+  if (themePresetName.value) {
+    await fetchThemeContext(store, themePresetName.value);
+  }
+
+  useHead({
+    link: favIcons.value?.length
+      ? favIcons.value
+      : [
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "16x16",
+            href: "/static/icons/favicon-16x16.png",
+          },
+          {
+            rel: "icon",
+            type: "image/png",
+            sizes: "32x32",
+            href: "/static/icons/favicon-32x32.png",
+          },
+          {
+            rel: "manifest",
+            href: "/static/manifest.json",
+          },
+        ],
+  });
 
   // Plugins
   app.use(head);
