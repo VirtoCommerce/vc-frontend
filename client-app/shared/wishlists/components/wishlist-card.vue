@@ -5,13 +5,13 @@
     <div class="flex items-center gap-2 pe-10 md:contents">
       <router-link
         :to="{ name: 'ListDetails', params: { listId: list.id } }"
-        class="truncate text-base font-bold text-[--color-accent-600]"
+        class="truncate text-base font-bold text-[--link-color] hover:text-[--link-hover-color]"
       >
         {{ list.name }}
       </router-link>
 
       <VcBadge class="md:-ms-4 md:me-auto" variant="outline-dark" color="info" size="lg" rounded>
-        {{ list.items!.length }}
+        {{ list.itemsCount }}
       </VcBadge>
     </div>
 

@@ -10,7 +10,7 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <DialogOverlay class="fixed inset-0 z-50 bg-gray-900/30" />
+        <DialogOverlay class="fixed inset-0 z-50 bg-neutral-900 opacity-30" />
       </TransitionChild>
 
       <div
@@ -32,7 +32,7 @@
             @after-leave="$emit('close')"
           >
             <div
-              class="inline-block w-full overflow-hidden bg-white text-left transition-all sm:rounded-md sm:shadow-xl"
+              class="inline-block w-full overflow-hidden bg-additional-50 text-left transition-all sm:rounded-md sm:shadow-xl"
               :class="[
                 modalWidth,
                 isMobileFullscreen ? 'fixed inset-0 flex flex-col sm:static sm:inset-auto' : 'rounded-md shadow-xl',
@@ -41,7 +41,7 @@
               <!-- Title bar -->
               <DialogTitle
                 as="h3"
-                class="flex items-center px-6 py-3 text-19 font-extrabold text-white"
+                class="flex items-center px-6 py-3 text-lg font-extrabold text-additional-50"
                 :class="headerStyle"
               >
                 <slot name="title">
@@ -116,17 +116,17 @@ function close() {
 const headerStyle = computed(() => {
   switch (props.variant) {
     case "warn":
-      return "bg-[color:var(--color-warning)]";
+      return "bg-warning";
 
     case "danger":
-      return "bg-[color:var(--color-danger)]";
+      return "bg-danger";
 
     case "success":
-      return "bg-[color:var(--color-success)]";
+      return "bg-success";
 
     case "info":
     default:
-      return "bg-gray-900";
+      return "bg-neutral-900";
   }
 });
 

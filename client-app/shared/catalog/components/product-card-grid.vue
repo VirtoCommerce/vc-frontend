@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full flex-col rounded bg-white p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-[color:var(--color-product-outline)] hover:shadow-lg xs:p-4 lg:px-5 lg:pb-3.5 lg:pt-5"
+    class="flex w-full flex-col rounded bg-additional-50 p-6 shadow-md outline outline-1 outline-offset-0 outline-neutral-200 hover:shadow-lg xs:p-4 lg:px-5 lg:pb-3.5 lg:pt-5"
   >
     <!-- Product image -->
     <div class="relative flex flex-col items-center justify-center pb-[87%]">
@@ -36,7 +36,7 @@
                 class="carousel-button-prev group absolute left-0 top-0 z-[2] hidden h-full cursor-pointer items-center pl-1 pr-5 md:flex"
               >
                 <span
-                  class="flex size-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
+                  class="flex size-6 items-center justify-center rounded-full bg-additional-50 opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <VcIcon class="text-[--color-neutral-400]" name="chevron-left" size="xs" />
                 </span>
@@ -47,7 +47,7 @@
                 class="carousel-button-next group absolute right-0 top-0 z-[2] hidden h-full cursor-pointer items-center pl-5 pr-1 md:flex"
               >
                 <span
-                  class="flex size-6 items-center justify-center rounded-full bg-white opacity-0 transition-opacity group-hover:opacity-100"
+                  class="flex size-6 items-center justify-center rounded-full bg-additional-50 opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <VcIcon class="text-[--color-neutral-400]" name="chevron-right" size="xs" />
                 </span>
@@ -64,8 +64,8 @@
                     :class="[
                       'inline-block size-2 rounded-full border',
                       state
-                        ? 'border-gray-400 bg-gray-400 outline outline-[1px] outline-white'
-                        : 'box-border border-gray-400 bg-white',
+                        ? 'border-neutral-400 bg-neutral-400 outline outline-[1px] outline-additional-50'
+                        : 'box-border border-neutral-400 bg-additional-50',
                     ]"
                   />
                 </template>
@@ -87,7 +87,7 @@
       <DiscountBadge :price="product.price!" />
 
       <div
-        class="absolute -right-4 -top-4 z-[2] flex flex-col gap-2 rounded-3xl bg-white px-2 py-3.5 empty:hidden lg:-right-3 lg:px-1.5 lg:py-2"
+        class="absolute -right-4 -top-4 z-[2] flex flex-col gap-2 rounded-3xl bg-additional-50 px-2 py-3.5 empty:hidden lg:-right-3 lg:px-1.5 lg:py-2"
       >
         <AddToList :product="product" />
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" class="relative" :product="product" />
@@ -101,7 +101,7 @@
           <router-link
             :to="link"
             :target="target"
-            class="my-px line-clamp-2 h-12 cursor-pointer text-18 font-extrabold text-[color:var(--color-link)] lg:h-10 lg:text-14"
+            class="my-px line-clamp-2 h-11 cursor-pointer text-lg font-extrabold text-[--link-color] hover:text-[--link-hover-color] lg:h-9 lg:text-sm"
             @click="$emit('linkClick', $event)"
           >
             {{ product.name }}
@@ -116,7 +116,7 @@
       </VcTooltip>
 
       <div
-        class="mt-2 grid w-full grid-cols-2 gap-1.5 text-14 leading-4 text-tooltip empty:hidden lg:mt-0.5 lg:gap-y-0.5 lg:text-11"
+        class="mt-2 grid w-full grid-cols-2 gap-1.5 text-sm leading-4 text-neutral-800 empty:hidden lg:mt-0.5 lg:gap-y-0.5 lg:text-xs"
       >
         <!-- Product properties -->
         <template v-for="prop in properties" :key="prop.id">
@@ -138,14 +138,7 @@
             </div>
           </div>
           <div class="flex items-center gap-1">
-            <svg
-              class="size-3 shrink-0"
-              :class="{
-                'text-[color:var(--color-success)]': true,
-                'text-[color:var(--color-warning)]': false,
-                'text-[color:var(--color-danger)]': false,
-              }"
-            >
+            <svg class="size-3 shrink-0 text-success">
               <use href="/static/images/cup.svg#main"></use>
             </svg>
             <div class="font-bold">4,3/5</div>
@@ -182,7 +175,7 @@
 
       <router-link
         :to="link"
-        class="mt-2.5 flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-[1.35rem] lg:text-11"
+        class="mt-2.5 flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-[1.35rem] lg:text-xs"
         target="_blank"
       >
         <svg class="size-3 shrink-0 text-primary lg:size-2.5">
@@ -212,7 +205,8 @@
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
-import { ProductType, PropertyType } from "@/core/enums";
+import { PropertyType } from "@/core/api/graphql/types";
+import { ProductType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";

@@ -1,16 +1,15 @@
 <template>
   <div v-if="order">
-    <VcBreadcrumbs :items="breadcrumbs" />
+    <div class="space-y-3">
+      <VcBreadcrumbs :items="breadcrumbs" />
 
-    <!-- Title block -->
-    <div class="flex items-center justify-between" :class="{ '-mb-3': executed }">
-      <h2 class="text-3xl font-bold uppercase text-gray-800">
+      <VcTypography tag="h1">
         {{
           executed
             ? $t("pages.account.order_payment.processed_title", [order.number])
             : $t("pages.account.order_payment.title")
         }}
-      </h2>
+      </VcTypography>
     </div>
 
     <!-- Subtitle block -->
@@ -27,7 +26,7 @@
           {{ $t("pages.account.order_payment.status_label") }}
         </span>
 
-        {{ order.status }}
+        {{ order.statusDisplayValue }}
       </div>
     </div>
 

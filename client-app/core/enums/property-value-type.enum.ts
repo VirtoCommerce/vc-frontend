@@ -1,3 +1,4 @@
+/** @deprecated Use propertyValueType field and PropertyValueType type from XAPI */
 export enum PropertyValueType {
   ShortText = "ShortText",
   LongText = "LongText",

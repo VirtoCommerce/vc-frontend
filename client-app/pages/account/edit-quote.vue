@@ -1,24 +1,28 @@
 <template>
   <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
-    <div class="flex flex-col gap-3">
+    <div class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
-      <h2 class="text-26 font-bold uppercase tracking-wide lg:text-3xl lg:leading-8">
+      <VcTypography tag="h1">
         {{ $t("pages.account.quote_details.title", [quote!.number]) }}
-      </h2>
+      </VcTypography>
     </div>
 
     <div class="space-y-5 lg:space-y-6">
       <!-- Quote comment -->
-      <VcWidget :title="$t('pages.account.quote_details.remarks')" prepend-icon="document-text" size="lg">
+      <VcWidget :title="$t('pages.account.quote_details.comment')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
-          :label="$t('pages.account.quote_details.remarks_field_label')"
+          :label="$t('pages.account.quote_details.comment_field_label')"
           :disabled="fetching"
           :max-length="1000"
           :rows="4"
+          :required="!quote.items?.length"
+          :error="!!commentErrorMessage"
+          :message="commentErrorMessage"
           no-resize
           counter
+          @input="editComment"
         />
       </VcWidget>
 
@@ -28,7 +32,13 @@
         prepend-icon="document-add"
         size="lg"
       >
-        <VcFileUploader v-bind="fileOptions" :files="files" @add-files="onAddFiles" @remove-files="onRemoveFiles" />
+        <VcFileUploader
+          v-bind="fileOptions"
+          :files="files"
+          @add-files="onAddFiles"
+          @remove-files="onRemoveFiles"
+          @download="onFileDownload"
+        />
       </VcWidget>
 
       <!-- Quote products -->
@@ -107,11 +117,14 @@
 </template>
 
 <script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/yup";
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, every, isEqual, remove } from "lodash";
+import { useField } from "vee-validate";
 import { computed, inject, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { string } from "yup";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
@@ -120,15 +133,16 @@ import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities"
 import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
-import { useFiles } from "@/shared/files";
+import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import type { StringSchema } from "yup";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 interface IProps {
-  quoteId: string;
+  quoteId?: string;
 }
 
 const props = defineProps<IProps>();
@@ -191,6 +205,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 const originalQuote = ref<QuoteType>();
 const billingAddressEqualsShipping = ref<boolean>(true);
 const comment = ref<string>();
+const commentValid = ref(true);
 
 const accountAddresses = computed<AnyAddressType[]>(() => {
   const { firstName, lastName } = user.value.contact ?? {};
@@ -199,12 +214,14 @@ const accountAddresses = computed<AnyAddressType[]>(() => {
     ? organizationsAddresses.value.map((address) => ({ ...address, firstName, lastName }))
     : personalAddresses.value;
 });
+
 const canSaveChanges = computed<boolean>(
   () =>
     (!isEqual(originalQuote.value, quote.value) ||
       originalQuote.value?.comment !== comment.value ||
       (!!shippingAddress.value && billingAddressEqualsShipping.value && !isBillingAddressEqualsShipping.value) ||
       anyFilesModified.value) &&
+    commentValid.value &&
     allFilesAttachedOrUploaded.value,
 );
 const quoteItemsValid = computed<boolean>(
@@ -234,6 +251,31 @@ const isBillingAddressEqualsShipping = computed<boolean>(() => {
 
   return false;
 });
+
+const commentValidationSchema = computed<StringSchema>(() =>
+  string()
+    .max(1000)
+    .withMutation((schema) => {
+      if (!quote.value?.items?.length) {
+        return schema.required(t("common.messages.required_field"));
+      }
+
+      return schema;
+    }),
+);
+
+const {
+  errorMessage: commentErrorMessage,
+  setValue: setCommentValue,
+  validate: validateComment,
+} = useField("comment", toTypedSchema(commentValidationSchema.value));
+
+async function editComment(): Promise<void> {
+  setCommentValue(comment.value);
+
+  const result = await validateComment();
+  commentValid.value = result.valid;
+}
 
 function accountAddressExists(address: AnyAddressType): boolean {
   return accountAddresses.value.some((item) => isEqualAddresses(item, address));
@@ -381,7 +423,7 @@ async function submit(): Promise<void> {
 
   await submitQuote(quote.value!.id, comment.value || "");
 
-  router.replace({ name: "Quotes" });
+  void router.replace({ name: "Quotes" });
 }
 
 async function fetchAddresses(): Promise<void> {
@@ -396,9 +438,15 @@ async function fetchAddresses(): Promise<void> {
   }
 }
 
+function onFileDownload(file: FileType) {
+  if (file && file.url) {
+    downloadFile(file.url, file.name);
+  }
+}
+
 onMounted(() => {
   if (quote.value && quote.value.status !== "Draft") {
-    router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
+    void router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
   }
 });
 

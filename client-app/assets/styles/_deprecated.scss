@@ -1,0 +1,29 @@
+.polygon-bg {
+  background-image: url(/static/images/common/polygon.webp);
+  background-repeat: no-repeat;
+  background-size: 46%;
+  background-position: var(--polygon-bg-position, right top);
+}
+
+.polygon-gray-bg {
+  background-image: url(/static/images/common/polygon-gray.webp);
+  background-repeat: no-repeat;
+  background-position: right bottom -120px;
+}
+
+@media (max-width: 768px) {
+  .polygon-bg {
+    background-position: right bottom -120px;
+  }
+}
+
+.form-tick:checked {
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 15 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M11.5273 0.430725C12.1016 -0.143575 13.0327 -0.143575 13.607 0.430725C14.1813 1.00503 14.1813 1.93615 13.607 2.51045L6.45015 9.66731C5.87585 10.2416 4.94473 10.2416 4.37043 9.66731L1.13513 6.43202C0.560832 5.85772 0.560832 4.92659 1.13513 4.35229C1.70943 3.77799 2.64056 3.77799 3.21486 4.35229L5.41029 6.54772L11.5273 0.430725Z' fill='white'/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.square {
+  padding-bottom: 100%;
+}

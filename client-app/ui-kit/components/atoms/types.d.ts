@@ -16,8 +16,6 @@ declare module "vue" {
     VcDateSelector: typeof Components.VcDateSelector;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
-    /** @deprecated use {@link VcWidgetSkeleton} instead. */
-    VcFilterCardSkeleton: typeof Components.VcFilterCardSkeleton;
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
     VcHexagonIcon: typeof Components.VcHexagonIcon;
@@ -36,9 +34,11 @@ declare module "vue" {
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;
+    VcSwitch: typeof Components.VcSwitch;
     VcTabs: typeof Components.VcTabs;
     VcTooltip: typeof Components.VcTooltip;
     VcTotalDisplay: typeof Components.VcTotalDisplay;
+    /** @deprecated Use vue's <transition> directly */
     VcTransitionScale: typeof Components.VcTransitionScale;
     VcTypography: typeof Components.VcTypography;
   }

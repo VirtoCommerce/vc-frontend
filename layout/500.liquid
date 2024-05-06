@@ -5,8 +5,8 @@
     {{ 'style.css' | asset_url | append_version | stylesheet_tag }}
     <style>
       :root {
-        --color-primary: {{ 'color_primary' | setting }};
-        --color-primary-hover: {{ 'color_primary_hover' | setting }};
+        --color-primary: {{ 'color_primary_500' | setting }};
+        --color-primary-hover: {{ 'color_primary_700' | setting }};
       }
 
       .hover\:\!bg-\[color\:var\(--color-primary-hover\)\]:hover {
@@ -14,7 +14,7 @@
       }
     </style>
   </head>
-  <body class="font-lato">
+  <body>
     <div class="flex-grow flex flex-col">
       <div class="polygon-bg flex-grow">
         <div class="container mx-auto pt-5 pb-52 px-7 max-w-screen-lg">

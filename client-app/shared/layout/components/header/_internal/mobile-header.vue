@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full bg-[color:var(--color-header-bottom-bg)] shadow-md print:hidden">
+  <div ref="headerElement" class="fixed z-40 w-full bg-[--header-bottom-bg-color] shadow-md print:hidden">
     <!-- region Default slot -->
     <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
       <div v-if="customSlots.default">
@@ -16,7 +16,7 @@
           </button>
 
           <router-link to="/">
-            <VcImage :src="$cfg.logo_image" :alt="$context.storeName" class="h-8" lazy />
+            <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
         </div>
         <!-- endregion Left slot -->
@@ -33,11 +33,39 @@
             <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
           </button>
 
+          <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" class="px-1 py-2 xs:px-2">
+            <template #trigger="{ totalCount, unreadCount }">
+              <div class="relative">
+                <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
+                  <VcIcon :key="totalCount" class="text-primary" name="bell" :size="28" />
+                </transition>
+
+                <transition mode="out-in" name="scale">
+                  <VcBadge
+                    v-if="unreadCount"
+                    variant="outline"
+                    size="sm"
+                    class="absolute -right-2 -top-2 transition-transform"
+                    rounded
+                  >
+                    {{ unreadCount }}
+                  </VcBadge>
+                </transition>
+              </div>
+            </template>
+          </PushMessages>
+
           <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
             <span class="relative block">
               <VcIcon class="text-[--color-primary-500]" name="cart" :size="28" />
 
-              <VcTransitionScale mode="out-in">
+              <transition
+                mode="out-in"
+                enter-from-class="scale-0"
+                leave-to-class="scale-0"
+                enter-active-class="will-change-transform"
+                leave-active-class="will-change-transform"
+              >
                 <VcBadge
                   v-if="cart?.itemsQuantity"
                   variant="outline"
@@ -47,7 +75,7 @@
                 >
                   {{ $n(cart.itemsQuantity, "decimal", { notation: "compact" }) }}
                 </VcBadge>
-              </VcTransitionScale>
+              </transition>
             </span>
           </router-link>
         </div>
@@ -93,23 +121,27 @@
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
-import { useRouteQueryParam } from "@/core/composables";
+import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
 
+const { isAuthenticated } = useUser();
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
+const { logoUrl } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

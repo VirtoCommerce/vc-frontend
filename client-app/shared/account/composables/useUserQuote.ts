@@ -43,11 +43,11 @@ export function useUserQuote() {
     quote.value!.addresses!.push(newAddress);
   }
 
-  async function fetchQuote(paylod: QueryQuoteArgs): Promise<void> {
+  async function fetchQuote(payload: QueryQuoteArgs): Promise<void> {
     fetching.value = true;
 
     try {
-      quote.value = await getQuote(paylod);
+      quote.value = await getQuote(payload);
     } catch (e) {
       Logger.error(`${useUserQuote.name}.${fetchQuote.name}`, e);
       throw e;

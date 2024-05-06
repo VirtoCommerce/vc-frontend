@@ -1,10 +1,9 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <h1
-        v-t="'pages.confirm_invitation.header'"
-        class="mb-3 text-3xl font-bold uppercase tracking-wide lg:mt-5 lg:text-4xl"
-      />
+      <VcTypography tag="h1" class="mb-3 lg:mt-5">
+        {{ $t("pages.confirm_invitation.header") }}
+      </VcTypography>
 
       <p v-html-safe="$t('pages.confirm_invitation.text')" class="mb-4 text-sm" />
 

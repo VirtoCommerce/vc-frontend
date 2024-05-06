@@ -1,11 +1,13 @@
 <template>
   <VcContainer :class="{ 'pointer-events-none opacity-50': loading }">
-    <h1 class="-ml-0.5 text-28 font-bold uppercase lg:text-34">{{ fulfillmentCenter?.name }}</h1>
+    <VcTypography tag="h1">
+      {{ fulfillmentCenter?.name }}
+    </VcTypography>
 
     <div class="mt-4 lg:mt-6 lg:flex lg:items-start">
-      <div class="lg:drop-shadow-md-x lg:grow lg:rounded lg:border lg:bg-white">
+      <div class="lg:drop-shadow-md-x lg:grow lg:rounded lg:border lg:bg-additional-50">
         <div
-          class="drop-shadow-md-x rounded border bg-white px-[1.4rem] py-5 text-base lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:pb-5 lg:pt-6 lg:drop-shadow-none"
+          class="drop-shadow-md-x rounded border bg-additional-50 px-[1.4rem] py-5 text-base lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:pb-5 lg:pt-6 lg:drop-shadow-none"
         >
           <div class="mb-1 mt-0.5 lg:mb-0.5">
             <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
@@ -25,7 +27,7 @@
 
         <div
           v-if="fulfillmentCenter?.description"
-          class="drop-shadow-md-x mt-6 rounded border bg-white text-base lg:mt-0 lg:rounded-none lg:border-0 lg:bg-transparent lg:drop-shadow-none"
+          class="drop-shadow-md-x mt-6 rounded border bg-additional-50 text-base lg:mt-0 lg:rounded-none lg:border-0 lg:bg-transparent lg:drop-shadow-none"
         >
           <div class="hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
 
@@ -33,7 +35,9 @@
         </div>
       </div>
 
-      <div class="drop-shadow-md-x mt-6 rounded border bg-white text-base lg:ml-8 lg:mt-0 lg:w-[21.125rem] lg:shrink-0">
+      <div
+        class="drop-shadow-md-x mt-6 rounded border bg-additional-50 text-base lg:ml-8 lg:mt-0 lg:w-[21.125rem] lg:shrink-0"
+      >
         <div class="border-b px-6 py-4 lg:pb-4 lg:pt-5">
           <h2 class="text-19 font-extrabold uppercase lg:text-21">{{ $t("pages.branch.other_branches") }}</h2>
         </div>
@@ -43,14 +47,14 @@
             <li v-for="(branch, index) in otherBranches" :key="index" class="text-primary marker:text-xl">
               <router-link
                 :to="`/branch/${branch.id}`"
-                class="mb-1 text-[1.063rem] font-extrabold text-link lg:text-base"
+                class="mb-1 text-[1.063rem] font-extrabold text-[--link-color] hover:text-[--link-hover-color] lg:text-base"
               >
                 {{ branch.name }}
               </router-link>
-              <div v-if="branch.address" class="break-words text-sm text-[color:var(--color-body-text)]">
+              <div v-if="branch.address" class="break-words text-sm text-neutral-900">
                 {{ branch.address }}
               </div>
-              <div class="text-sm text-[color:var(--color-body-text)]">
+              <div class="text-sm text-neutral-900">
                 <b>{{ $t("pages.branch.phone") }}</b>
                 <a v-if="branch.phone" :href="`tel:${branch.phone}`" class="hover:underline">{{ branch.phone }}</a>
                 <span v-else>&ndash;</span>

@@ -21,8 +21,7 @@
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
-    <!-- Page title -->
-    <VcTypography tag="h1" variant="h2" weight="bold" class="mb-5">
+    <VcTypography tag="h1" class="mb-5">
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
@@ -131,7 +130,7 @@
     <transition name="slide-fade-bottom">
       <div
         v-if="!isEmpty(selectedItemIds)"
-        class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden"
+        class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden print:hidden"
       >
         <VcButton variant="outline" prepend-icon="trash" @click="handleRemoveItems(selectedItemIds)">
           {{ $t("common.buttons.remove_selected") }}

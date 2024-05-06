@@ -46,7 +46,7 @@ withDefaults(defineProps<IProps>(), {
     &--sm {
       --vc-icon-size: 0.625rem;
 
-      @apply min-w-[1rem] gap-0.5 px-0.5 text-xxs;
+      @apply min-w-[1rem] gap-1 px-0.5 text-xxs/[1.375];
 
       &--dot {
         @apply w-1.5 h-1.5;
@@ -56,7 +56,7 @@ withDefaults(defineProps<IProps>(), {
     &--md {
       --vc-icon-size: 0.75rem;
 
-      @apply min-w-[1.125rem] gap-1 px-0.5 text-xs;
+      @apply min-w-[1.125rem] gap-1 px-1 text-xs/[1.35];
 
       &--dot {
         @apply w-2 h-2;
@@ -66,7 +66,7 @@ withDefaults(defineProps<IProps>(), {
     &--lg {
       --vc-icon-size: 0.875rem;
 
-      @apply min-w-[1.375rem] gap-1 px-1 text-sm;
+      @apply min-w-[1.375rem] gap-1 px-1.5 text-sm;
 
       &--dot {
         @apply w-2.5 h-2.5;
@@ -92,26 +92,26 @@ withDefaults(defineProps<IProps>(), {
     &--solid-light--#{$color} {
       @apply bg-[color:var(--color-#{$color}-50)]
       border-[color:var(--color-#{$color}-50)]
-      text-[color:var(--color-#{$color}-800)];
+      text-[color:var(--color-#{$color}-700)];
     }
 
     &--outline--#{$color} {
       @apply bg-[color:var(--color-additional-50)]
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
+      text-[color:var(--color-#{$color}-700)];
     }
 
     &--outline-dark--#{$color} {
       @apply bg-[color:var(--color-#{$color}-50)]
       border-[color:var(--color-#{$color}-500)]
-      text-[color:var(--color-#{$color}-800)];
+      text-[color:var(--color-#{$color}-700)];
     }
   }
 
   &__content {
     @apply grow;
 
-    &:has(.vc-icon) {
+    &:has(.vc-icon):has(:not(.vc-icon)) {
       @apply inline-flex items-center gap-[inherit];
     }
 
@@ -124,6 +124,10 @@ withDefaults(defineProps<IProps>(), {
 
       #{$truncate} & {
         @apply truncate;
+      }
+
+      &:not(.vc-icon) {
+        @apply px-0.5;
       }
     }
   }

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="vc-product-card-list grid gap-x-3.5 bg-white px-4 pb-5 pt-4 md:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-[color:var(--color-product-outline)] lg:hover:shadow-lg"
+    class="vc-product-card-list grid gap-x-3.5 bg-additional-50 px-4 pb-5 pt-4 md:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-neutral-200 lg:hover:shadow-lg"
   >
     <div class="vc-product-card-list__mobile-left sm:contents">
       <!-- Product image -->
@@ -38,7 +38,7 @@
         <router-link
           :to="link"
           :target="target"
-          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[color:var(--color-link)] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
+          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
           {{ product.name }}
@@ -53,7 +53,7 @@
     </VcTooltip>
 
     <div
-      class="vc-product-card-list__properties mt-2 hidden w-full grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 text-14 leading-4 text-tooltip empty:mt-0 lg:mt-0.5 lg:text-xs xl:grid"
+      class="vc-product-card-list__properties mt-2 hidden w-full grid-cols-[40%_1fr] gap-x-1.5 gap-y-0.5 text-sm leading-4 text-neutral-800 empty:mt-0 lg:mt-0.5 lg:text-xs xl:grid"
     >
       <!-- Product properties -->
       <template v-for="prop in properties" :key="prop.name">
@@ -75,14 +75,7 @@
           </div>
         </div>
         <div class="flex items-center gap-1">
-          <svg
-            class="size-3 shrink-0"
-            :class="{
-              'text-[color:var(--color-success)]': true,
-              'text-[color:var(--color-warning)]': false,
-              'text-[color:var(--color-danger)]': false,
-            }"
-          >
+          <svg class="size-3 shrink-0 text-success">
             <use href="/static/images/cup.svg#main"></use>
           </svg>
           <div class="font-bold">4,3/5</div>
@@ -123,7 +116,7 @@
 
         <router-link
           :to="link"
-          class="flex items-center gap-1 text-14 text-[color:var(--color-link)] lg:mt-1 lg:text-11"
+          class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
           target="_blank"
         >
           <svg class="size-3 shrink-0 text-primary lg:size-2.5">
@@ -152,7 +145,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ProductType, PropertyType } from "@/core/enums";
+import { PropertyType } from "@/core/api/graphql/types";
+import { ProductType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";

@@ -2,11 +2,9 @@
   <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" modal-width="sm:max-w-xl" is-mobile-fullscreen>
     <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
       <!-- Lists -->
-      <template v-if="!loadingLists">
+      <template v-if="!loadingProductWishlists && !loadingLists">
         <template v-if="listsWithProduct.length">
-          <div
-            class="bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 text-15 font-bold leading-5 sm:py-2.5"
-          >
+          <div class="bg-neutral-100 px-6 py-3 text-base font-bold leading-5 sm:py-2.5">
             {{ $t("shared.wishlists.add_to_wishlists_modal.already_in_the_lists") }}
           </div>
 
@@ -32,23 +30,21 @@
           </ul>
         </template>
 
-        <div class="flex justify-between bg-[color:var(--color-add-wishlist-modal-subtitle-bg)] px-6 py-3 sm:py-2.5">
-          <div class="text-15 font-bold">
+        <div class="flex justify-between bg-neutral-100 px-6 py-3 sm:py-2.5">
+          <div class="text-base font-bold">
             {{ $t("shared.wishlists.add_to_wishlists_modal.add_to_other_lists") }}
           </div>
+
           <button
             type="button"
-            class="flex cursor-pointer items-center text-sm font-bold text-[color:var(--color-link)]"
-            :class="{ 'cursor-not-allowed text-gray-400': creationButtonDisabled }"
+            class="flex cursor-pointer items-center text-sm font-bold text-[--link-color] disabled:cursor-not-allowed disabled:text-neutral-400"
             :disabled="creationButtonDisabled"
             @click="addNewList"
           >
-            <svg
-              class="mr-2 size-3.5 text-[color:var(--color-primary)]"
-              :class="{ 'text-gray-400': creationButtonDisabled }"
-            >
+            <svg :class="['mr-2 size-3.5', creationButtonDisabled ? 'text-neutral-400' : 'text-primary']">
               <use href="/static/images/plus.svg#main" />
             </svg>
+
             {{ $t("shared.wishlists.add_to_wishlists_modal.add_new_list") }}
           </button>
         </div>
@@ -74,7 +70,7 @@
               :error="!!input.errorMessage"
             />
             <button type="button" class="mt-3.5" @click="removeNewList(index)">
-              <svg class="text-[color:var(--color-add-wishlist-modal-delete-icon)]" width="16" height="16">
+              <svg class="text-danger" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>
             </button>
@@ -87,7 +83,7 @@
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
                 class="line-clamp-1 text-base font-medium"
-                :class="{ 'text-gray-500': !selectedListsOtherIds.includes(list.id!) }"
+                :class="{ 'text-neutral-500': !selectedListsOtherIds.includes(list.id!) }"
               >
                 {{ list.name }}
               </span>
@@ -99,16 +95,16 @@
       </template>
 
       <!-- Skeletons -->
-      <ul v-if="loadingLists">
-        <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-gray-50">
-          <div class="w-full bg-gray-100"></div>
+      <ul v-if="loadingProductWishlists || loadingLists">
+        <li v-for="item in lists.length || 3" :key="item" class="flex h-14 px-6 py-4 even:bg-neutral-50">
+          <div class="w-full bg-neutral-100"></div>
         </li>
       </ul>
 
       <!-- Empty -->
       <div
         v-else-if="!listsOther.length && !listsWithProduct.length && !newLists.length"
-        class="bg-gray-50 px-6 py-10 text-center"
+        class="bg-neutral-50 px-6 py-10 text-center"
       >
         {{ $t("shared.wishlists.add_to_wishlists_modal.empty_list") }}
       </div>
@@ -132,8 +128,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, toRef, onMounted } from "vue";
+import { computed, ref, inject, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useGetProductWishlistsQuery } from "@/core/api/graphql/catalog/queries/getProductWishlists";
 import { useGoogleAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -158,6 +155,8 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
+const product = toRef(props, "product");
+
 const { d, t } = useI18n();
 const { closeModal } = useModal();
 const { isCorporateMember } = useUser();
@@ -172,20 +171,31 @@ const {
 } = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
 const ga = useGoogleAnalytics();
+const {
+  loading: loadingProductWishlists,
+  load: fetchProductWishlists,
+  refetch: refetchProductWishlists,
+  result: productWishlistsResult,
+} = useGetProductWishlistsQuery(product.value.id);
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
 const removedLists = ref<string[]>([]);
 const newLists = ref<WishlistInputType[]>([]);
 
-const product = toRef(props, "product");
 const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
-const listsWithProduct = computed(() => {
-  return lists.value.filter((list) => list.items!.some((item) => item.productId === product.value.id));
+const listsWithProduct = computed(() =>
+  lists.value.filter((list) => productWishlistsResult.value?.product?.wishlistIds.some((listId) => listId === list.id)),
+);
+
+const listsOther = computed(() => {
+  return lists.value.filter(
+    (list) => !productWishlistsResult.value?.product?.wishlistIds.some((listId) => listId === list.id),
+  );
 });
 
 function listsRemoveUpdate(id: string, checked: boolean) {
@@ -197,10 +207,6 @@ function listsRemoveUpdate(id: string, checked: boolean) {
     removedLists.value.splice(index, 1);
   }
 }
-
-const listsOther = computed(() => {
-  return lists.value.filter((list) => !list.items!.some((item) => item.productId === product.value.id));
-});
 
 function addNewList() {
   newLists.value.push({
@@ -221,13 +227,13 @@ async function addToWishlistsFromListOther() {
   await addItemsToWishlists({
     listIds: selectedListsOtherIds.value,
     productId: product.value.id,
-    quantity: product.value.minQuantity || 1,
+    quantity: product.value!.minQuantity || 1,
   });
 
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value);
+  ga.addItemToWishList(product.value!);
 }
 
 async function createLists() {
@@ -248,17 +254,14 @@ async function createLists() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value);
+  ga.addItemToWishList(product.value!);
 }
 
 async function removeProductFromWishlists() {
   const payload = removedLists.value.map((listId) => {
-    const listWithProduct = listsWithProduct.value.find((item) => item.id === listId);
-    const lineItemId = listWithProduct?.items?.find((item) => item.productId === product.value.id)?.id || "";
-
     return {
       listId,
-      lineItemId,
+      productId: product.value.id,
     };
   });
 
@@ -287,9 +290,9 @@ async function save() {
   await createLists();
   await removeProductFromWishlists();
   await addToWishlistsFromListOther();
-  await fetchWishlists();
+  await refetchProductWishlists();
 
-  emit("result", !!listsWithProduct.value.length);
+  emit("result", !!productWishlistsResult.value?.product?.wishlistIds?.length);
 
   closeModal();
   loading.value = false;
@@ -301,7 +304,10 @@ async function save() {
   });
 }
 
-onMounted(async () => await fetchWishlists());
+onMounted(async () => {
+  await fetchProductWishlists();
+  await fetchWishlists();
+});
 </script>
 
 <style lang="scss">

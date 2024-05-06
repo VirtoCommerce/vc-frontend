@@ -6,14 +6,14 @@
     class="flex grow flex-col"
   >
     <template #description>
-      <h1 class="mb-8 text-center text-3xl font-bold uppercase lg:text-left">
+      <VcTypography tag="h1" class="mb-6 text-center lg:text-left">
         {{ $t("pages.confirm_email.header") }}
-      </h1>
+      </VcTypography>
 
       <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
-        <VcIcon name="check" size="xxl" class="text-[color:var(--color-success)]" />
+        <VcIcon name="check" size="xxl" class="text-success" />
 
-        <p class="max-w-md text-center text-19 lg:text-left">
+        <p class="max-w-md text-center text-lg lg:text-left">
           <span v-if="linkSentSuccessfully">
             {{ $t("pages.confirm_email.link_sent_successfully_text") }}
           </span>
@@ -47,14 +47,14 @@
     class="flex grow flex-col"
   >
     <template #description>
-      <h1 class="mb-8 text-center text-3xl font-bold uppercase lg:text-left">
+      <VcTypography tag="h1" class="mb-6 text-center lg:text-left">
         {{ $t("pages.confirm_email.header") }}
-      </h1>
+      </VcTypography>
 
       <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
-        <VcIcon name="exclamation-circle" size="xxl" class="text-[color:var(--color-danger)]" />
+        <VcIcon name="exclamation-circle" size="xxl" class="text-danger" />
 
-        <p class="max-w-md text-center text-19 font-bold lg:text-left">
+        <p class="max-w-md text-center text-lg font-bold lg:text-left">
           <span v-if="!emailConfirmed">
             {{ $t("pages.confirm_email.email_confirmation_failed_text") }}
           </span>

@@ -12,7 +12,9 @@
     </template>
 
     <template #content>
-      <div class="max-w-[8rem] rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y xs:max-w-[10rem]">
+      <div
+        class="max-w-[8rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y xs:max-w-[10rem]"
+      >
         {{ tooltipText }}
       </div>
     </template>
@@ -63,13 +65,13 @@ function openAddToListModal() {
     component: AddToWishlistsModal,
     props: {
       product: props.product,
-      onResult: (isInList: boolean) => {
+      onResult: (isInLists: boolean) => {
         broadcast.emit(
           productsInWishlistEvent,
           [
             {
               productId: props.product.id,
-              inWishlist: isInList,
+              inWishlist: isInLists,
             },
           ],
           TabsType.ALL,

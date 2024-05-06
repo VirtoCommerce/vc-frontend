@@ -6,7 +6,7 @@
 
     <!-- Title block -->
     <div class="flex flex-col gap-2.5 lg:flex-row lg:justify-between">
-      <VcTypography tag="h1" variant="h2" weight="bold">
+      <VcTypography tag="h1">
         {{ $t("pages.account.order_details.title", [order?.number]) }}
       </VcTypography>
 
@@ -61,7 +61,11 @@
             </p>
             <p v-if="order.status" class="flex items-center">
               <span class="mr-1 font-extrabold"> {{ $t("common.labels.status") }}: </span>
-              <OrderStatus class="min-w-[7.785rem] print:min-w-0" :status="order.status" />
+              <OrderStatus
+                class="min-w-[7.785rem] print:min-w-0"
+                :status="order.status"
+                :display-value="order.statusDisplayValue"
+              />
             </p>
           </div>
         </VcWidget>

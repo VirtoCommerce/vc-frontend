@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-4 space-y-8 lg:flex-row lg:space-y-0">
       <div v-if="!!facets" class="flex w-48 flex-col space-y-4">
         <div class="font-bold uppercase lg:normal-case lg:text-gray-400">
-          {{ $t("shared.account.orders-filter.status-label") }}
+          {{ $t("shared.account.orders_filter.status_label") }}
         </div>
         <VcCheckbox
           v-for="facet in facets"
@@ -18,16 +18,12 @@
           </div>
         </VcCheckbox>
       </div>
-      <div class="flex flex-col space-y-3">
+      <div class="flex w-48 flex-col space-y-3">
         <div class="font-bold uppercase lg:normal-case lg:text-gray-400">
-          {{ $t("shared.account.orders-filter.created-date-label") }}
+          {{ $t("shared.account.orders_filter.created_date_label") }}
         </div>
-        <div>
-          <VcDateSelector v-model="filterData.startDate" :label="$t('shared.account.orders-filter.start-date-label')" />
-        </div>
-        <div>
-          <VcDateSelector v-model="filterData.endDate" :label="$t('shared.account.orders-filter.end-date-label')" />
-        </div>
+
+        <slot name="dateFilterType" />
       </div>
     </div>
     <div class="grow lg:grow-0"></div>
@@ -37,13 +33,13 @@
         variant="outline"
         :disabled="isFilterEmpty && !isFilterDirty"
         size="sm"
-        @click="reset"
+        @click="$emit('reset')"
       >
-        {{ $t("shared.account.orders-filter.reset-button") }}
+        {{ $t("shared.account.orders_filter.reset_button") }}
       </VcButton>
 
-      <VcButton size="sm" :disabled="!isFilterDirty" @click="apply">
-        {{ $t("shared.account.orders-filter.apply-button") }}
+      <VcButton size="sm" :disabled="!isFilterDirty" @click="$emit('apply')">
+        {{ $t("shared.account.orders_filter.apply_button") }}
       </VcButton>
     </div>
   </div>
@@ -53,29 +49,16 @@
 import { useUserOrders, useUserOrdersFilter } from "../composables";
 
 interface IEmits {
-  (event: "change"): void;
+  (event: "apply"): void;
+  (event: "reset"): void;
 }
 
-const emit = defineEmits<IEmits>();
+defineEmits<IEmits>();
 
 const { facets } = useUserOrders({});
-const { filterData, applyFilters, resetFilters, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
+const { filterData, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
 
 function isSelectedStatus(status: string) {
   return filterData.value.statuses.indexOf(status) !== -1;
-}
-
-function onChange() {
-  emit("change");
-}
-
-function apply() {
-  applyFilters();
-  onChange();
-}
-
-function reset() {
-  resetFilters();
-  onChange();
 }
 </script>

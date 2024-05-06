@@ -1,9 +1,8 @@
 <template>
   <div>
-    <!-- Title block -->
-    <div class="flex items-center justify-between lg:hidden">
-      <h2 v-t="'pages.account.dashboard.title'" class="text-3xl font-bold uppercase text-gray-800" />
-    </div>
+    <VcTypography tag="h1" class="lg:hidden">
+      {{ $t("pages.account.dashboard.title") }}
+    </VcTypography>
 
     <VcWidget :title="$t('pages.account.dashboard.last_orders_card.title')">
       <template #append>
@@ -13,7 +12,7 @@
 
         <router-link
           :to="{ name: 'Orders' }"
-          class="hidden items-center gap-1 text-xs font-bold text-[--color-accent-600] hover:text-[--color-accent-700] lg:flex"
+          class="hidden items-center gap-1 text-xs font-bold text-[--link-color] hover:text-[--link-hover-color] lg:flex"
         >
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 

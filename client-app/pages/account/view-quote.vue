@@ -1,11 +1,11 @@
 <template>
-  <div v-if="quote" class="!gap-y-5 lg:!gap-y-6">
-    <div class="flex flex-col gap-3">
+  <div v-if="quote">
+    <div class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
-      <h2 class="text-3xl font-bold uppercase lg:text-28">
+      <VcTypography tag="h1">
         {{ $t("pages.account.quote_details.title", [quote.number]) }}
-      </h2>
+      </VcTypography>
     </div>
 
     <VcLayoutWithRightSidebar>
@@ -17,11 +17,11 @@
       <!-- Quote comment -->
       <VcWidget
         v-if="quote.comment"
-        :title="$t('pages.account.quote_details.remarks')"
+        :title="$t('pages.account.quote_details.comment')"
         prepend-icon="document-text"
         size="lg"
       >
-        <div class="text-15 font-medium">
+        <div class="text-base font-medium">
           {{ quote.comment }}
         </div>
       </VcWidget>
@@ -31,7 +31,7 @@
           <div class="flex justify-between text-base">
             <span v-t="'pages.account.quote_details.total'" class="font-bold" />
 
-            <span class="text-18 font-extrabold text-[color:var(--color-price)]">
+            <span class="text-lg font-extrabold text-success-700">
               <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
             </span>
           </div>
@@ -45,12 +45,10 @@
               <span>{{ $d(quote.createdDate) }}</span>
             </div>
 
-            <div class="flex text-base">
-              <span class="mr-2 font-bold">{{ $t("pages.account.quote_details.status") }}:</span>
+            <div class="flex items-center gap-2">
+              <span class="text-base font-bold">{{ $t("pages.account.quote_details.status") }}:</span>
 
-              <span>
-                <TableStatusBadge :status="quote.status" />
-              </span>
+              <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
             </div>
           </div>
         </VcWidget>
@@ -73,7 +71,7 @@
 import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { QuoteLineItems, useUserQuote } from "@/shared/account";
+import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
 
 interface IProps {
   quoteId: string;

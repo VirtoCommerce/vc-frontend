@@ -2,9 +2,9 @@
   <div>
     <!-- Title block -->
     <div class="flex items-center justify-between">
-      <h2 class="text-3xl font-bold uppercase text-gray-800">
+      <VcTypography tag="h1">
         {{ $t("shared.account.navigation.links.lists") }}
-      </h2>
+      </VcTypography>
 
       <VcButton
         v-if="lists.length || loading"

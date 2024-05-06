@@ -3,22 +3,26 @@
     <a
       v-bind="$attrs"
       :href="href"
-      :class="{
-        'text-[color:var(--color-header-bottom-link-hover)]': isActive,
-      }"
-      class="flex flex-col items-center px-3 text-13 font-semibold tracking-wide text-[color:var(--color-header-bottom-link)] hover:text-[color:var(--color-header-bottom-link-hover)]"
+      :class="[
+        isActive
+          ? 'text-[--header-bottom-link-active-color]'
+          : 'text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]',
+      ]"
+      class="flex flex-col items-center px-3 text-13 font-bold tracking-wide"
       @click="navigate"
     >
       <span class="relative">
-        <svg v-if="link.icon" height="24" width="24" class="mb-0.5 text-[color:var(--color-primary)]">
-          <use :href="link.icon" />
-        </svg>
+        <slot name="icon">
+          <svg v-if="link.icon" height="24" width="24" class="mb-0.5 text-primary">
+            <use :href="link.icon" />
+          </svg>
+        </slot>
 
-        <VcTransitionScale mode="out-in">
+        <transition mode="out-in" name="scale">
           <VcBadge v-if="count" class="absolute -right-3 -top-2 transition-transform" variant="outline" rounded>
             {{ $n(count, "decimal", { notation: "compact" }) }}
           </VcBadge>
-        </VcTransitionScale>
+        </transition>
       </span>
 
       <span>

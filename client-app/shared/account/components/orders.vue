@@ -2,27 +2,18 @@
   <template v-if="withSearch">
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <MobileOrdersFilter />
+      <MobileOrdersFilter>
+        <template #dateFilterType>
+          <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+        </template>
+      </MobileOrdersFilter>
 
       <template #footer>
-        <VcButton
-          :disabled="isFilterEmpty && !isFilterDirty"
-          variant="outline"
-          @click="
-            resetFilters();
-            hideFilters();
-          "
-        >
+        <VcButton :disabled="isFilterEmpty && !isFilterDirty" variant="outline" @click="resetOrderFilters">
           {{ $t("common.buttons.reset") }}
         </VcButton>
 
-        <VcButton
-          :disabled="!isFilterDirty"
-          @click="
-            applyFilters();
-            hideFilters();
-          "
-        >
+        <VcButton :disabled="!isFilterDirty" @click="applyOrderFilters">
           {{ $t("common.buttons.apply") }}
         </VcButton>
       </template>
@@ -59,7 +50,11 @@
             <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
           </button>
 
-          <OrdersFilter @change="hideFilters" />
+          <OrdersFilter @apply="applyOrderFilters" @reset="resetOrderFilters">
+            <template #dateFilterType>
+              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+            </template>
+          </OrdersFilter>
         </div>
       </div>
 
@@ -91,7 +86,7 @@
         </VcChip>
       </template>
 
-      <VcChip color="secondary" variant="outline" clickable @click="resetFilters">
+      <VcChip color="secondary" variant="outline" clickable @click="resetOrderFilters">
         <span>{{ $t("common.buttons.reset_filters") }}</span>
 
         <VcIcon name="reset" />
@@ -164,7 +159,11 @@
           </div>
 
           <div class="flex flex-col items-end justify-center">
-            <OrderStatus class="w-full !max-w-[9rem]" :status="itemData.item.status" />
+            <OrderStatus
+              class="w-full !max-w-[9rem]"
+              :status="itemData.item.status"
+              :display-value="itemData.item.statusDisplayValue"
+            />
           </div>
 
           <div class="flex flex-col">
@@ -235,12 +234,16 @@
           <td class="p-5 text-center">
             <VcTooltip class="!block">
               <template #trigger>
-                <OrderStatus class="w-full !max-w-[9rem]" :status="order.status" />
+                <OrderStatus
+                  class="w-full !max-w-[9rem]"
+                  :status="order.status"
+                  :display-value="order.statusDisplayValue"
+                />
               </template>
 
               <template #content>
                 <div class="rounded-sm bg-[--color-additional-50] px-3.5 py-1.5 text-xs shadow-sm-x-y">
-                  {{ order.status }}
+                  {{ order.statusDisplayValue }}
                 </div>
               </template>
             </VcTooltip>
@@ -291,14 +294,16 @@ import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { Sort } from "@/core/types";
+import { toDateISOString } from "@/core/utilities";
 import { useUserOrdersFilter, useUserOrders } from "@/shared/account/composables";
+import DateFilterSelect from "./date-filter-select.vue";
 import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
 import PageToolbarBlock from "./page-toolbar-block.vue";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { SortDirection } from "@/core/enums";
-import type { ISortInfo } from "@/core/types";
+import type { DateFilterType, ISortInfo } from "@/core/types";
 
 export interface IProps {
   withSearch?: boolean;
@@ -319,12 +324,13 @@ const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword 
 
 const {
   appliedFilterData,
+  dateFilterTypes,
   isFilterEmpty,
   isFilterDirty,
+  filterData,
   filterChipsItems,
   applyFilters,
   resetFilters,
-  resetDataToApplied,
   removeFilterChipsItem,
 } = useUserOrdersFilter();
 
@@ -336,6 +342,7 @@ const isMobile = breakpoints.smaller("lg");
 
 const localKeyword = ref("");
 const filtersVisible = ref(false);
+const selectedDateFilterType = ref<DateFilterType>();
 const filtersButtonElement = shallowRef<HTMLElement | null>(null);
 const filtersDropdownElement = shallowRef<HTMLElement | null>(null);
 
@@ -406,13 +413,10 @@ function resetFiltersWithKeyword() {
   localKeyword.value = "";
   keyword.value = "";
   page.value = 1;
-  resetFilters();
+  resetOrderFilters();
 }
 
 function toggleFilters() {
-  if (!filtersVisible.value) {
-    resetDataToApplied();
-  }
   filtersVisible.value = !filtersVisible.value;
 }
 
@@ -420,9 +424,34 @@ function hideFilters() {
   filtersVisible.value = false;
 }
 
+function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
+  if (dateFilterType.startDate) {
+    filterData.value.startDate = toDateISOString(dateFilterType.startDate);
+  }
+
+  if (dateFilterType.endDate) {
+    filterData.value.endDate = toDateISOString(dateFilterType.endDate);
+  }
+
+  selectedDateFilterType.value = dateFilterType;
+}
+
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
   window.open(orderRoute.fullPath, "_blank")!.focus();
+}
+
+function applyOrderFilters(): void {
+  applyFilters();
+  hideFilters();
+}
+
+function resetOrderFilters(): void {
+  resetFilters();
+  selectedDateFilterType.value = dateFilterTypes.value[0];
+  selectedDateFilterType.value.startDate = undefined;
+  selectedDateFilterType.value.endDate = undefined;
+  hideFilters();
 }
 
 onClickOutside(

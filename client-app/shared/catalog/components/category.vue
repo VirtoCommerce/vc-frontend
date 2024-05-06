@@ -59,7 +59,7 @@
       <!-- Content -->
       <div ref="contentElement" class="grow">
         <div class="flex">
-          <h2 class="text-21 font-bold uppercase text-gray-800 lg:my-px lg:text-25 lg:leading-none">
+          <VcTypography tag="h1">
             <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
               <template #keyword>
                 <strong>{{ searchParams.keyword }}</strong>
@@ -77,12 +77,12 @@
 
             <sup
               v-if="!loading"
-              class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
+              class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
               <b class="font-extrabold">{{ total }}</b>
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
-          </h2>
+          </VcTypography>
         </div>
 
         <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
@@ -90,7 +90,7 @@
         <div
           class="sticky top-0 z-10 my-1.5 flex h-14 items-center lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
           :class="{
-            'z-40 -mx-5 bg-[color:var(--color-header-bottom-bg)] px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
+            'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
           }"
         >
           <!-- Mobile filters toggler -->
@@ -100,7 +100,7 @@
           <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
             <span
               v-t="'pages.catalog.sort_by_label'"
-              class="mr-2 hidden shrink-0 text-15 font-bold text-[color:var(--color-category-page-label)] lg:block"
+              class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block"
             />
 
             <VcSelect
@@ -130,13 +130,13 @@
                   <i18n-t
                     keypath="pages.catalog.branch_availability_filter_card.available_in"
                     tag="div"
-                    class="text-15"
+                    class="text-sm"
                     :class="{
-                      'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
+                      'text-neutral': !savedBranches.length,
                     }"
                     scope="global"
                   >
-                    <span :class="{ 'font-bold text-[color:var(--color-link)]': savedBranches.length }">
+                    <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
                       {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
                     </span>
                   </i18n-t>
@@ -144,7 +144,7 @@
               </template>
 
               <template #content>
-                <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+                <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
                   {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
                 </div>
               </template>
@@ -157,9 +157,9 @@
               <template #trigger>
                 <VcCheckbox v-model="savedInStock" :disabled="loading">
                   <span
-                    class="whitespace-nowrap text-15"
+                    class="whitespace-nowrap text-sm"
                     :class="{
-                      'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
+                      'text-neutral': !savedInStock,
                     }"
                   >
                     {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
@@ -168,7 +168,7 @@
               </template>
 
               <template #content>
-                <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+                <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
                   {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
                 </div>
               </template>
@@ -377,8 +377,10 @@ const contentElement = ref<HTMLElement | null>(null);
 const filtersElement = ref<HTMLElement | null>(null);
 const filtersStyle = ref<StyleValue | undefined>();
 
-const { top: cTop, height: cHeight } = useElementBounding(contentElement);
-const { height: fHeight, top: fTop } = useElementBounding(filtersElement);
+const BOUNDING_OPTIONS = { windowResize: false, immediate: false };
+
+const { top: cTop, height: cHeight } = useElementBounding(contentElement, BOUNDING_OPTIONS);
+const { height: fHeight, top: fTop } = useElementBounding(filtersElement, BOUNDING_OPTIONS);
 
 const seoTitle = computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name);
 const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
@@ -571,7 +573,9 @@ function openBranchesModal(fromMobileFilter: boolean) {
   });
 }
 
-function setFiltersPosition() {
+const setFiltersPosition = throttle(_setFiltersPosition, 100);
+
+function _setFiltersPosition() {
   const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
 
   const scrollBottom = scrollTop + clientHeight;
@@ -597,7 +601,8 @@ function setFiltersPosition() {
   if (
     (up && scrollTop <= filterTop - offsetTop) ||
     filterHeight <= clientHeight - offsetTop ||
-    filterHeight >= contentHeight
+    filterHeight >= contentHeight ||
+    contentTop > filterTop
   ) {
     action = "TOP";
   } else if (
@@ -631,14 +636,12 @@ function setFiltersPosition() {
   scrollOld = scrollTop;
 }
 
-const setFiltersPositionOptimized = throttle(setFiltersPosition, 100);
-
 onMounted(() => {
-  window.addEventListener("scroll", setFiltersPositionOptimized);
+  window.addEventListener("scroll", setFiltersPosition);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", setFiltersPositionOptimized);
+  window.removeEventListener("scroll", setFiltersPosition);
 });
 
 whenever(() => !isMobile.value, hideMobileSidebar);
@@ -681,8 +684,10 @@ watch(
 
 watch(
   () => cHeight.value,
-  () => {
-    setFiltersPosition();
+  (value, oldValue) => {
+    if (value !== oldValue) {
+      setFiltersPosition();
+    }
   },
 );
 
@@ -696,3 +701,9 @@ watchDebounced(
   },
 );
 </script>
+
+<style scoped lang="scss">
+.vc-typography--variant--h1 {
+  @apply normal-case;
+}
+</style>
