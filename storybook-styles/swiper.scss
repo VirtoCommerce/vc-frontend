@@ -1,0 +1,8 @@
+@import "swiper/scss";
+@import "swiper/scss/pagination";
+@import "swiper/scss/navigation";
+@import "swiper/scss/thumbs";
+
+:root {
+  --swiper-theme-color: var(--color-primary-500);
+}
