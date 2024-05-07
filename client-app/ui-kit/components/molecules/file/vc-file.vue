@@ -1,12 +1,5 @@
 <template>
-  <div
-    :class="[
-      'vc-file',
-      {
-        'vc-file--outline': outline,
-      },
-    ]"
-  >
+  <div class="vc-file">
     <VcImage
       :src="icon"
       :class="[
@@ -140,10 +133,6 @@ const fileSize = computed(() => getFileSize(props.file.size));
 <style lang="scss">
 .vc-file {
   @apply flex items-center gap-2 min-h-[2.375rem];
-
-  &--outline {
-    @apply border rounded p-3;
-  }
 
   &__icon {
     @apply flex-none w-8 h-8;
