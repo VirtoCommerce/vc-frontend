@@ -117,6 +117,11 @@
           "code": "Draft",
           "color": "neutral",
           "variant": "outline-dark"
+        },
+        {
+         "code": "Declined",
+         "color": "danger",
+         "variant": "outline-dark"
         }
       ],
 
@@ -362,6 +367,11 @@
           "code": "Draft",
           "color": "neutral",
           "variant": "outline-dark"
+        },
+        {
+        "code": "Declined",
+        "color": "danger",
+        "variant": "outline-dark"
         }
       ],
 
