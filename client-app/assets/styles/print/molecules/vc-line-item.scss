@@ -26,8 +26,8 @@
   }
 
   &__price {
-    @apply shrink-0 text-right w-[7rem];
-    @apply block #{!important};
+    @apply flex-none text-right;
+    @apply flex flex-col #{!important};
   }
 
   &__deleted &__price {
