@@ -44,6 +44,7 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         class="vc-input__input"
+        @keydown="keyDown($event)"
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
@@ -152,6 +153,15 @@ function handleContainerClick() {
 function clear() {
   model.value = undefined;
   inputElement.value?.focus();
+}
+
+// Workaround to fix Safari bug
+function keyDown(event: KeyboardEvent) {
+  if (props.type === "number") {
+    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
+
+    return !event.key.match(allowedCharacter) && event.preventDefault();
+  }
 }
 </script>
 
