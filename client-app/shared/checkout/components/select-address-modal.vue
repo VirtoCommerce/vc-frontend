@@ -46,7 +46,7 @@
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
           <div class="w-1/2 grow truncate">
-            <VcBadge v-if="isFavoriteAddress(itemData.item)" size="sm" variant="outline-dark" rounded>
+            <VcBadge v-if="itemData.item.isFavorite" size="sm" variant="outline-dark" rounded>
               <VcIcon name="whishlist" />
               <span>{{ $t("pages.company.info.labels.favorite") }}</span>
             </VcBadge>
@@ -116,7 +116,7 @@
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-neutral-50': index % 2 }">
           <td v-if="hasFavoriteAddresses" class="truncate p-5">
-            <VcIcon v-if="isFavoriteAddress(address)" class="text-primary" name="whishlist" size="md" />
+            <VcIcon v-if="address.isFavorite" class="text-primary" name="whishlist" size="md" />
           </td>
 
           <td class="truncate p-5">
@@ -233,7 +233,7 @@ const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.val
 const paginatedAddresses = computed(() =>
   props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
-const hasFavoriteAddresses = computed(() => props.addresses.some((item) => isFavoriteAddress(item)));
+const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
 const columns = computed<ITableColumn[]>(() => {
   const cols: ITableColumn[] = props.isCorporateAddresses
@@ -257,10 +257,6 @@ const columns = computed<ITableColumn[]>(() => {
 
   return cols;
 });
-
-function isFavoriteAddress(address: AnyAddressType): boolean {
-  return "isFavorite" in address && address.isFavorite;
-}
 
 function onPageChange(newPage: number): void {
   page.value = newPage;
