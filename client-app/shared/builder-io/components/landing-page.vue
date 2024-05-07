@@ -13,14 +13,14 @@
 </template>
 
 <script setup lang="ts">
-import { fetchOneEntry, Content, isPreviewing } from "@builder.io/sdk-vue";
+import { fetchOneEntry, Content, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
 import { onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
 
 const router = useRouter();
 const { themeContext } = useThemeContext();
-const canShowContent = shallowRef(true);
+const canShowContent = shallowRef(false);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const content: any = shallowRef(null);
 
@@ -38,14 +38,13 @@ async function tryLoadContent(urlPath: string) {
     const result = await fetchOneEntry({
       model: "page",
       apiKey: apiKey,
+      options: getBuilderSearchParams(new URL(location.href).searchParams),
       userAttributes: {
         urlPath: urlPath,
       },
     });
     content.value = result;
     canShowContent.value = content.value || isPreviewing();
-  } else {
-    canShowContent.value = false;
   }
 }
 
