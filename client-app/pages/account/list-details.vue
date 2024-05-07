@@ -66,6 +66,7 @@
           <VcWidget size="lg">
             <div class="flex flex-col gap-6">
               <WishlistLineItems
+                :disabled="isListPending"
                 :items="pagedListItems"
                 @update:cart-item="addOrUpdateCartItem"
                 @update:list-item="updateWishListItem"
@@ -164,6 +165,7 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
+const isListPending = ref(false);
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -259,6 +261,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   }
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
+  isListPending.value = true;
 
   if (itemInCart) {
     await changeItemQuantity(itemInCart.id, quantity);
@@ -268,6 +271,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     ga.addItemToCart(lineItem.product, quantity);
   }
 
+  isListPending.value = false;
   showResultModal([lineItem]);
 }
 

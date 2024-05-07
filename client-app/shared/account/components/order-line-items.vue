@@ -1,5 +1,13 @@
 <template>
-  <VcLineItems :items="preparedLineItems" with-image with-properties with-price with-total with-subtotal>
+  <VcLineItems
+    :items="preparedLineItems"
+    with-image
+    with-properties
+    with-price
+    with-total
+    with-subtotal
+    :disabled="disabled"
+  >
     <template #titles>
       <div class="text-center">
         {{ $t("common.labels.quantity") }}
@@ -25,10 +33,12 @@ import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 interface IProps {
   items?: OrderLineItemType[] | LineItemType[];
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
+  disabled: false,
 });
 
 const preparedLineItems = computed(() => prepareLineItems(props.items));

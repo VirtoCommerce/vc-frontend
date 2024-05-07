@@ -1,5 +1,6 @@
 <template>
   <VcLineItems
+    :disabled="disabled"
     :items="items"
     with-image
     with-properties
@@ -16,7 +17,7 @@
         :max-quantity="item.maxQuantity"
         :available-quantity="item.inStockQuantity"
         :count-in-cart="item.countInCart"
-        :disabled="addToCartDisabled(item)"
+        :disabled="addToCartDisabled(item) || disabled"
         @update:model-value="changeItemQuantity(item, $event)"
         @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
         @update:validation="setValidationStatus(item, $event)"
@@ -67,6 +68,7 @@ interface IEmits {
 
 interface IProp {
   items: PreparedLineItemType[];
+  disabled?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
