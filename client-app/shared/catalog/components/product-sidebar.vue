@@ -8,7 +8,7 @@
           </span>
 
           <!-- todo: extract a component for price and use it here -->
-          <span class="text-[--color-success-600]">
+          <span class="text-[--price-color]">
             {{ currentCurrency.symbol }}{{ variationsCartTotalAmount.toFixed(2) }}
           </span>
         </div>

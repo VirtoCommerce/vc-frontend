@@ -1,31 +1,30 @@
 <template>
-  <router-link
-    class="footer-link text-xs font-medium text-[color:var(--color-footer-top-link)] hover:text-[color:var(--color-footer-top-link-hover)]"
-    :to="to"
-  >
+  <router-link class="footer-link" :to="to">
     <slot>{{ title }}</slot>
   </router-link>
 </template>
 
 <script setup lang="ts">
-import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-defineProps({
-  to: {
-    type: [String, Object] as PropType<RouteLocationRaw>,
-    required: true,
-  },
+interface IProps {
+  to: RouteLocationRaw;
+  title?: string;
+}
 
-  title: {
-    type: String,
-    default: undefined,
-  },
-});
+defineProps<IProps>();
 </script>
 
-<style>
-.footer-link.router-link-active {
-  color: var(--color-footer-link-hover);
+<style lang="scss">
+.footer-link {
+  @apply text-xs font-medium text-[--footer-top-link-color];
+
+  &:hover {
+    @apply text-[--footer-top-link-hover-color];
+  }
+
+  &.router-link-active {
+    @apply text-[--footer-top-link-active-color];
+  }
 }
 </style>

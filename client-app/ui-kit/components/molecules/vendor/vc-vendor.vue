@@ -15,18 +15,18 @@
 <script setup lang="ts">
 import type { CommonVendor } from "@/core/api/graphql/types";
 
-interface Props {
+interface IProps {
   vendor?: CommonVendor;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
 .vc-vendor {
   $notAvailable: "";
 
-  @apply flex gap-x-1.5 items-center min-w-0 text-[color:var(--color-primary)];
+  @apply flex gap-x-1.5 items-center min-w-0 text-primary;
 
   &--not-available {
     $notAvailable: &;
@@ -42,7 +42,7 @@ defineProps<Props>();
 
   &__name {
     #{$notAvailable} & {
-      @apply text-gray-400;
+      @apply text-neutral-400;
     }
   }
 }
