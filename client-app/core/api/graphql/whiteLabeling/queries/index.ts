@@ -1,6 +1,7 @@
-import { useLazyQuery } from "@vue/apollo-composable";
 import { gql } from "graphql-tag";
 import { globals } from "@/core/globals";
+import { graphqlClient } from "../../client";
+import type { Query, QueryWhiteLabelingSettingsArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
 
 const FOOTER_LINKS_DEPTH = 1;
@@ -29,6 +30,7 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
       ) {
         logoUrl
         secondaryLogoUrl
+        themePresetName
         favicons {
           rel
           type
@@ -46,16 +48,25 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
   `;
 }
 
-export function useGetWhiteLabelingSettings(organizationId: string) {
-  const { storeId, userId, cultureName } = globals;
+export async function getGetWhiteLabelingSettings() {
+  const { storeId, userId, organizationId, cultureName } = globals;
 
-  return useLazyQuery(
-    getQueryDocument(FOOTER_LINKS_DEPTH),
-    { organizationId, storeId, userId, cultureName },
-    {
-      notifyOnNetworkStatusChange: true,
-      fetchPolicy: "cache-and-network",
-      nextFetchPolicy: "cache-first",
+  if (!organizationId) {
+    return undefined;
+  }
+
+  const { data } = await graphqlClient.query<
+    Required<Pick<Query, "whiteLabelingSettings">>,
+    QueryWhiteLabelingSettingsArgs
+  >({
+    query: getQueryDocument(FOOTER_LINKS_DEPTH),
+    variables: {
+      storeId,
+      userId,
+      organizationId,
+      cultureName,
     },
-  );
+  });
+
+  return data.whiteLabelingSettings;
 }

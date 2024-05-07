@@ -11,11 +11,11 @@
 <script setup lang="ts">
 import type { Rating } from "@/core/api/graphql/types";
 
-interface Props {
+interface IProps {
   rating: Rating;
 }
 
-defineProps<Props>();
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
@@ -23,7 +23,7 @@ defineProps<Props>();
   @apply flex items-center gap-0.5;
 
   &__icon {
-    @apply text-[color:var(--color-primary)];
+    @apply text-primary;
   }
 
   &__text {

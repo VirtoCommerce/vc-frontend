@@ -9,4 +9,3 @@ export * from "./useUserOrders";
 export * from "./useUserOrdersFilter";
 export * from "./useUserQuote";
 export * from "./useUserQuotes";
-export * from "./useWhiteLabeling";

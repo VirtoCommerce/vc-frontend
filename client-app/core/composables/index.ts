@@ -14,3 +14,4 @@ export * from "./usePageHead";
 export * from "./useProductsRoutes";
 export * from "./useRouteQueryParam";
 export * from "./useThemeContext";
+export * from "./useWhiteLabeling";

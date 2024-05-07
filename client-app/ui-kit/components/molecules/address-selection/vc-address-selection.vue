@@ -56,7 +56,7 @@ defineProps<IProps>();
   $readonly: "";
   $disabled: "";
 
-  @apply flex items-center gap-4 text-15;
+  @apply flex items-center gap-4 text-sm;
 
   &--readonly {
     $readonly: &;
@@ -71,7 +71,7 @@ defineProps<IProps>();
 
     #{$readonly} &,
     #{$disabled} & {
-      @apply text-gray-500;
+      @apply text-neutral;
     }
   }
 
@@ -80,18 +80,18 @@ defineProps<IProps>();
   }
 
   &__no-address {
-    @apply grow select-none text-gray-500;
+    @apply grow select-none text-neutral;
   }
 
   &__link {
-    @apply appearance-none lowercase border-b border-dashed border-current text-[color:var(--color-link)];
-
-    #{$disabled} & {
-      @apply text-gray-500 pointer-events-none;
-    }
+    @apply appearance-none lowercase border-b border-dashed border-current text-[--link-color];
 
     &:hover {
-      @apply text-[color:var(--color-link-hover)];
+      @apply text-[--link-hover-color];
+    }
+
+    #{$disabled} & {
+      @apply text-neutral pointer-events-none;
     }
   }
 }

@@ -77,7 +77,7 @@
 
             <sup
               v-if="!loading"
-              class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-[color:var(--color-category-page-results)] lg:top-[-0.5em] lg:text-15"
+              class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
               <b class="font-extrabold">{{ total }}</b>
               {{ $t("pages.catalog.products_found_message", total) }}
@@ -90,7 +90,7 @@
         <div
           class="sticky top-0 z-10 my-1.5 flex h-14 items-center lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
           :class="{
-            'z-40 -mx-5 bg-[color:var(--color-header-bottom-bg)] px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
+            'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
           }"
         >
           <!-- Mobile filters toggler -->
@@ -100,7 +100,7 @@
           <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
             <span
               v-t="'pages.catalog.sort_by_label'"
-              class="mr-2 hidden shrink-0 text-15 font-bold text-[color:var(--color-category-page-label)] lg:block"
+              class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block"
             />
 
             <VcSelect
@@ -130,13 +130,13 @@
                   <i18n-t
                     keypath="pages.catalog.branch_availability_filter_card.available_in"
                     tag="div"
-                    class="text-15"
+                    class="text-sm"
                     :class="{
-                      'text-[color:var(--color-category-page-checkbox-label)]': !savedBranches.length,
+                      'text-neutral': !savedBranches.length,
                     }"
                     scope="global"
                   >
-                    <span :class="{ 'font-bold text-[color:var(--color-link)]': savedBranches.length }">
+                    <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
                       {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
                     </span>
                   </i18n-t>
@@ -144,7 +144,7 @@
               </template>
 
               <template #content>
-                <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+                <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
                   {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
                 </div>
               </template>
@@ -157,9 +157,9 @@
               <template #trigger>
                 <VcCheckbox v-model="savedInStock" :disabled="loading">
                   <span
-                    class="whitespace-nowrap text-15"
+                    class="whitespace-nowrap text-sm"
                     :class="{
-                      'text-[color:var(--color-category-page-checkbox-label)]': !savedInStock,
+                      'text-neutral': !savedInStock,
                     }"
                   >
                     {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
@@ -168,7 +168,7 @@
               </template>
 
               <template #content>
-                <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
+                <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
                   {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
                 </div>
               </template>

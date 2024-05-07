@@ -53,7 +53,7 @@ withDefaults(defineProps<IProps>(), {
   $error: "";
   $singleLine: "";
 
-  @apply flex mt-0.5 gap-2 min-h-[0.875rem] text-11;
+  @apply flex mt-0.5 gap-2 min-h-[0.875rem] text-xs;
 
   &--error {
     $error: &;
@@ -68,10 +68,10 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__message {
-    @apply grow text-gray-400;
+    @apply grow text-neutral-400;
 
     #{$error} & {
-      @apply text-[color:var(--color-danger)];
+      @apply text-danger;
     }
 
     #{$singleLine} & {
@@ -80,7 +80,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__tooltip {
-    @apply w-48 rounded-sm bg-white py-1.5 px-3.5 text-xs text-tooltip shadow-sm-x-y;
+    @apply w-48 rounded-sm bg-additional-50 py-1.5 px-3.5 text-xs text-neutral-800 shadow-md;
   }
 
   &__counter {
