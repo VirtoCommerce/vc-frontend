@@ -119,9 +119,9 @@
           "variant": "outline-dark"
         },
         {
-         "code": "Declined",
-         "color": "danger",
-         "variant": "outline-dark"
+          "code": "Declined",
+          "color": "danger",
+          "variant": "outline-dark"
         }
       ],
 
@@ -369,9 +369,9 @@
           "variant": "outline-dark"
         },
         {
-        "code": "Declined",
-        "color": "danger",
-        "variant": "outline-dark"
+          "code": "Declined",
+          "color": "danger",
+          "variant": "outline-dark"
         }
       ],
 
