@@ -2,7 +2,7 @@
   <div
     class="sticky top-0 lg:relative"
     :class="{
-      'z-40 -mx-6 bg-[color:var(--color-header-bottom-bg)] px-5 py-3.5': stick,
+      'z-40 -mx-6 bg-additional-50 px-5 py-3.5': stick,
       'shadow-md': stick && shadow,
     }"
   >

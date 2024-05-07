@@ -552,9 +552,9 @@
       },
       "product_details": {
         "technical_specs_block_title": "Properties",
-        "variations_block_title": "Customize your order",
+        "variations_block_title": "Product variations",
         "description_block_title": "Description",
-        "assets_block_title": "Specifications",
+        "assets_block_title": "Files",
         "vendor_label": "Vendor",
         "share_product_label": "Share product",
         "price_block": {

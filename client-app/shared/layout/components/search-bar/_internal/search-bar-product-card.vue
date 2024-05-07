@@ -3,7 +3,7 @@
     <!-- Product image -->
     <router-link
       :to="link"
-      class="size-[4.75rem] shrink-0 border border-gray-200 p-1"
+      class="size-[4.75rem] shrink-0 border border-neutral-200 p-1"
       @click="$emit('linkClick', $event)"
     >
       <VcImage
@@ -19,7 +19,7 @@
       <!-- Product title -->
       <router-link
         :to="link"
-        class="line-clamp-2 h-8 shrink-0 text-[13px] font-extrabold leading-[1.05rem] text-[color:var(--color-link)]"
+        class="line-clamp-2 h-8 shrink-0 text-sm font-extrabold leading-[1.05rem] text-[--link-color]"
         @click="$emit('linkClick', $event)"
       >
         {{ product.name }}
