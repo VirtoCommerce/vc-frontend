@@ -345,16 +345,12 @@ watchEffect(() => {
     @apply contents;
 
     @container (width <= theme("containers.2xl")) {
-      @apply flex items-center gap-3;
+      @apply flex items-center gap-3 mt-3;
     }
   }
 
   &__slot {
     @apply flex-none empty:hidden;
-
-    @container (width <= theme("containers.2xl")) {
-      @apply mt-3;
-    }
 
     &:has(.vc-quantity, * .vc-quantity) {
       @apply w-[6.5rem];
