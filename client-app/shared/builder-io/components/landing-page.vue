@@ -1,11 +1,6 @@
 <template>
   <div v-if="canShowContent">
-    <Content
-      model="page"
-      :content="content"
-      :api-key="themeContext.settings.builderIoKey"
-      :custom-components="getRegisteredComponents()"
-    />
+    <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
   <div v-else>
     <slot></slot>
@@ -13,16 +8,15 @@
 </template>
 
 <script setup lang="ts">
-import { fetchOneEntry, Content, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
-import { onMounted, shallowRef } from "vue";
+import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
+import { computed, onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
 
 const router = useRouter();
-const { themeContext } = useThemeContext();
+const { modulesSettings } = useThemeContext();
 const canShowContent = shallowRef(false);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const content: any = shallowRef(null);
+const content = shallowRef();
 
 router.beforeEach(async (to) => {
   await tryLoadContent(to.fullPath);
@@ -32,19 +26,30 @@ onMounted(async () => {
   await tryLoadContent(window.location.pathname);
 });
 
+const moduleSettings = computed(() => {
+  return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
+});
+
+const apiKey = computed(() => {
+  return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value;
+});
+
+const isEnabled = computed(() => {
+  return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.Enable")?.value;
+});
+
 async function tryLoadContent(urlPath: string) {
-  const apiKey = themeContext.value.settings.builderIoKey;
-  if (apiKey) {
-    const result = await fetchOneEntry({
+  if (isEnabled.value && typeof apiKey.value === "string") {
+    content.value = await fetchOneEntry({
       model: "page",
-      apiKey: apiKey,
+      apiKey: apiKey.value,
       options: getBuilderSearchParams(new URL(location.href).searchParams),
       userAttributes: {
         urlPath: urlPath,
       },
     });
-    content.value = result;
-    canShowContent.value = content.value || isPreviewing();
+
+    canShowContent.value = !!content.value || isPreviewing();
   }
 }
 

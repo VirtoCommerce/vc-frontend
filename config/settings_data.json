@@ -246,9 +246,7 @@
       "color_info_950": "#0E212A",
 
       "color_additional_50": "#FFFFFF",
-      "color_additional_950": "#000000",
-
-      "builderIoKey": ""
+      "color_additional_950": "#000000"
     },
 
     "Watermelon": {
@@ -531,9 +529,7 @@
       "color_footer_bottom_bg": "#06350d",
       "color_footer_bottom_text": "#FFFFFF",
       "color_footer_bottom_link": "#66B9D8",
-      "color_footer_bottom_link_hover": "",
-
-      "builderIoKey": ""
+      "color_footer_bottom_link_hover": ""
     }
   }
 }
