@@ -24,8 +24,6 @@
       <VcQuantity
         :model-value="item.quantity"
         :name="item.id"
-        :min-quantity="item.minQuantity"
-        :max-quantity="item.maxQuantity"
         :disabled="disabled"
         :readonly="readonly"
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
