@@ -7,7 +7,7 @@
   >
     <ul class="assets__list">
       <li v-for="(file, index) in files" :key="index" class="assets__item">
-        <VcFile :file="file" native-download outline />
+        <VcFile :file="file" native-download />
       </li>
     </ul>
   </ProductTitledBlock>
@@ -42,7 +42,7 @@ const files = computed<FileType[]>(() =>
 <style lang="scss">
 .assets {
   &__list {
-    @apply space-y-2;
+    @apply px-3 py-4 border border-[--color-neutral-200] rounded space-y-2;
   }
 }
 </style>

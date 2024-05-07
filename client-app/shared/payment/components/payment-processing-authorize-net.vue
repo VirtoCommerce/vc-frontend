@@ -1,6 +1,6 @@
 <template>
   <!-- Initialization Error -->
-  <p v-if="initializationError" class="text-center font-bold text-[color:var(--color-danger)] md:text-left">
+  <p v-if="initializationError" class="text-center font-bold text-danger md:text-left">
     {{ initializationError }}
   </p>
 
@@ -20,16 +20,16 @@
     </div>
 
     <div class="mt-6 flex flex-col items-center gap-x-6 gap-y-4 md:flex-row xl:mt-8">
-      <p class="text-center text-sm text-gray-500 md:text-left">
+      <p class="text-center text-sm text-neutral md:text-left">
         {{ $t("shared.payment.authorize_net.accept_terms_text") }}
 
-        <router-link to="/agreement" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
+        <router-link to="/agreement" class="text-[--link-color] hover:text-[--link-hover-color]">
           {{ $t("shared.payment.authorize_net.user_agreement_link") }}
         </router-link>
 
         {{ $t("shared.payment.authorize_net.processing_personal_data_text") }}
 
-        <router-link to="/policy" class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]">
+        <router-link to="/policy" class="text-[--link-color] hover:text-[--link-hover-color]">
           {{ $t("shared.payment.authorize_net.privacy_policy_link") }}
         </router-link>
       </p>

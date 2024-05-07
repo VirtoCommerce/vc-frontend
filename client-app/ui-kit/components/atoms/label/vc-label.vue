@@ -26,14 +26,14 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-label {
-  @apply block mb-0.5 text-15 font-bold text-[color:var(--color-body-text)];
+  @apply block mb-0.5 text-sm font-bold text-neutral-900;
 
   &--error {
-    @apply text-[color:var(--color-danger)];
+    @apply text-danger;
   }
 
   &__asterisk {
-    @apply text-[color:var(--color-danger)];
+    @apply text-danger;
   }
 }
 </style>

@@ -2,15 +2,11 @@
   <VcModal :title="title" :variant="variant" modal-width="sm:max-w-[30rem]" hide-actions @close="$emit('close')">
     <template #default="{ close }">
       <div class="flex flex-row justify-center gap-x-4 px-6 py-10 lg:px-10">
-        <div
+        <VcIcon
           v-if="!noIcon"
-          :class="`bg-[color:var(--color-${iconVariant})]`"
-          class="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-full"
-        >
-          <svg width="6" height="23" class="text-white">
-            <use href="/static/images/exclamation.svg#main" />
-          </svg>
-        </div>
+          :class="`mt-0.5 size-11 flex-none text-[--color-${iconVariant}-500]`"
+          name="exclamation-circle"
+        />
 
         <p class="lg:text-lg lg:font-semibold lg:leading-snug">
           {{ text }}

@@ -1,6 +1,6 @@
 <template>
   <!-- Initialization Error -->
-  <p v-if="initializationError" class="text-center font-bold text-[color:var(--color-danger)] md:text-left">
+  <p v-if="initializationError" class="text-center font-bold text-danger md:text-left">
     {{ initializationError }}
   </p>
 

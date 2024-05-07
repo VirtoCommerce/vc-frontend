@@ -11,7 +11,7 @@
         <router-link
           v-t="'shared.bulk_order.manually.cart_link'"
           :to="{ name: 'Cart' }"
-          class="text-[color:var(--color-link)]"
+          class="text-[--link-color] hover:text-[--link-hover-color]"
         ></router-link>
         {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
       </p>
@@ -48,9 +48,9 @@
           class="inline-flex appearance-none items-center gap-1.5 py-1.5 md:py-0"
           @click="increment"
         >
-          <VcIcon class="text-[--color-primary-500]" name="plus" size="sm" />
+          <VcIcon class="text-primary" name="plus" size="sm" />
 
-          <span class="border-b border-dashed border-current text-[--color-accent-600] hover:text-[--color-accent-700]">
+          <span class="border-b border-dashed border-current text-[--link-color] hover:text-[--link-hover-color]">
             {{ $t("shared.bulk_order.manually.add_rows_action_link") }}
           </span>
         </button>

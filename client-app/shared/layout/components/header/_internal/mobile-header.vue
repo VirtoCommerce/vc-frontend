@@ -1,5 +1,5 @@
 <template>
-  <div ref="headerElement" class="fixed z-40 w-full bg-[color:var(--color-header-bottom-bg)] shadow-md print:hidden">
+  <div ref="headerElement" class="fixed z-40 w-full bg-[--header-bottom-bg-color] shadow-md print:hidden">
     <!-- region Default slot -->
     <transition :name="isAnimated ? 'slide-fade-top' : ''" mode="out-in">
       <div v-if="customSlots.default">
@@ -16,7 +16,7 @@
           </button>
 
           <router-link to="/">
-            <VcImage :src="siteLogoUrl" :alt="$context.storeName" class="h-8" lazy />
+            <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
         </div>
         <!-- endregion Left slot -->
@@ -121,9 +121,8 @@
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
-import { useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import { useWhiteLabeling } from "@/shared/account";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
@@ -137,15 +136,12 @@ const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
 
-const { themeContext } = useThemeContext();
 const { isAuthenticated } = useUser();
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
-const { whiteLabelingSettings } = useWhiteLabeling();
-
-const siteLogoUrl = computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image);
+const { logoUrl } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

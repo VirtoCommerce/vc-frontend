@@ -166,7 +166,11 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__link {
-    @apply text-[color:var(--color-link)] cursor-pointer;
+    @apply text-[--link-color] cursor-pointer;
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
   }
 
   &__name,

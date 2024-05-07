@@ -1,10 +1,11 @@
 <template>
-  <nav
-    class="fixed z-50 flex size-full flex-col bg-[color:var(--color-mobile-menu-bg)] text-[color:var(--color-mobile-menu-link)]"
-  >
+  <nav class="fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-accent-200">
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
-        <span v-if="organization" class="line-clamp-2 text-xl font-medium italic leading-[22px] text-white">
+        <span
+          v-if="organization"
+          class="line-clamp-2 text-xl font-medium italic leading-[22px] text-[--mobile-menu-text-color]"
+        >
           {{ organization?.name }}
         </span>
 
@@ -15,20 +16,20 @@
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <svg class="text-[color:var(--color-primary)]" height="20" width="20">
+        <svg class="text-primary" height="20" width="20">
           <use href="/static/images/close.svg#main" />
         </svg>
       </button>
     </header>
 
     <!-- region Children links section -->
-    <section v-if="openedItem" class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
+    <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
         <button type="button" class="appearance-none self-start text-[--color-accent-100]" @click="goBack">
           <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
-        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-white">
+        <h2 v-if="openedItem?.title" class="mt-5 text-2xl uppercase tracking-[0.01em] text-additional-50">
           {{ openedItem?.title }}
         </h2>
 
@@ -36,7 +37,7 @@
           <li v-for="childItem in openedItem?.children" :key="childItem.title">
             <!-- Currency setting -->
             <div v-if="childItem.id === 'currency-setting'" class="flex grow flex-col gap-y-1 font-normal">
-              <header class="-mt-1 mb-1 text-2xl uppercase text-white">
+              <header class="-mt-1 mb-1 text-2xl uppercase text-additional-50">
                 {{ $t("shared.layout.header.mobile.currency") }}
               </header>
 
@@ -50,7 +51,7 @@
                   currentCurrency?.code === currencyItem.code ? null : saveCurrencyCodeAndReload(currencyItem.code)
                 "
               >
-                <span :class="{ 'text-white': currentCurrency?.code === currencyItem.code }" class="uppercase">
+                <span :class="{ 'text-additional-50': currentCurrency?.code === currencyItem.code }" class="uppercase">
                   {{ currencyItem.code }}
                 </span>
               </VcRadioButton>
@@ -88,7 +89,7 @@
     <!-- endregion Children links section -->
 
     <!-- region Main menu section -->
-    <section v-else class="grow divide-y divide-white divide-opacity-20 overflow-y-auto">
+    <section v-else class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <ul class="flex flex-col gap-y-2 px-9 py-6">
         <!-- Home link -->
         <li>
@@ -141,16 +142,13 @@
             </div>
 
             <div class="flex flex-col leading-tight">
-              <div class="flex flex-wrap items-center gap-x-1 text-[color:var(--color-mobile-menu-link)]">
+              <div class="flex flex-wrap items-center gap-x-1 text-accent-100">
                 <template v-if="operator">
                   <span class="line-clamp-3 font-bold [word-break:break-word]">
                     {{ operator.contact?.fullName || operator.userName }}
                   </span>
 
-                  <span
-                    v-t="'shared.layout.header.top_header.logged_in_as'"
-                    class="text-[color:var(--color-mobile-menu-icon)]"
-                  />
+                  <span v-t="'shared.layout.header.top_header.logged_in_as'" class="text-accent-200" />
                 </template>
 
                 <span class="line-clamp-3 font-bold [word-break:break-word]">
@@ -162,7 +160,7 @@
                 <button
                   v-t="'shared.layout.header.link_logout'"
                   type="button"
-                  class="font-bold text-[color:var(--color-primary)]"
+                  class="font-bold text-primary"
                   @click="() => signMeOut()"
                 />
               </div>

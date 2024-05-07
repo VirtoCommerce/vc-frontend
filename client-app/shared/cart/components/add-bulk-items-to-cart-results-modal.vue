@@ -26,7 +26,7 @@
 
           <div class="max-h-80 overflow-y-auto rounded-[inherit] md:max-h-72">
             <ul class="w-full md:table">
-              <li class="top-0 hidden bg-gray-50 text-sm font-extrabold md:sticky md:table-row">
+              <li class="top-0 hidden bg-neutral-50 text-sm font-extrabold md:sticky md:table-row">
                 <div class="table-cell border-b px-4 py-2.5">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </div>
@@ -43,10 +43,10 @@
               <li
                 v-for="item in group.items"
                 :key="item.sku"
-                class="flex flex-wrap border-b px-4 py-2.5 text-sm last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-gray-50"
+                class="flex flex-wrap border-b px-4 py-2.5 text-sm last:border-0 md:table-row md:border-0 md:p-0 md:odd:bg-neutral-50"
               >
                 <div class="flex w-3/5 flex-col pr-3 md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle">
-                  <span class="text-gray-400 md:hidden">
+                  <span class="text-neutral-400 md:hidden">
                     {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                   </span>
                   <span class="font-semibold">{{ item.sku }}</span>
@@ -58,7 +58,7 @@
                   <router-link
                     :to="links[item.productId]"
                     target="_blank"
-                    class="font-semibold text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
+                    class="font-semibold text-[--link-color] hover:text-[--link-hover-color]"
                   >
                     {{ item.name }}
                   </router-link>
@@ -67,7 +67,7 @@
                 <div
                   class="flex w-2/5 flex-col md:table-cell md:w-auto md:px-4 md:py-2.5 md:text-right md:align-middle"
                 >
-                  <span class="text-gray-400 md:hidden">
+                  <span class="text-neutral-400 md:hidden">
                     {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
                   </span>
                   <span class="font-bold">{{ $n(item.quantity) }}</span>
@@ -103,8 +103,7 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
-import { useProductsRoutes, useThemeContext } from "@/core/composables";
-import { useWhiteLabeling } from "@/shared/account";
+import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
 import { VcButton } from "@/ui-kit/components";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
 
@@ -126,8 +125,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { items } = toRefs(props);
 
 const links = useProductsRoutes(items, { productIdProperty: "productId" });
-const { themeContext } = useThemeContext();
-const { whiteLabelingSettings } = useWhiteLabeling();
+const { logoUrl } = useWhiteLabeling();
 const { d, t } = useI18n();
 
 const groups = computed<GroupType[]>(() => {
@@ -170,7 +168,6 @@ function getTableRowsHtml(groupedItems: ItemForAddBulkItemsToCartResultsModalTyp
 }
 
 function print() {
-  const logo = computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image);
   const htmlStyle = document.documentElement.attributes.getNamedItem("style")?.textContent;
   const styleLinks = Array.from(document.head.querySelectorAll("link[rel=stylesheet], style"))
     .map((el) => el.outerHTML)
@@ -178,7 +175,7 @@ function print() {
 
   const headerHtml = `
   <header class="flex justify-between items-start">
-    <img class="h-7" src="${logo.value}" alt="">
+    <img class="h-7" src="${logoUrl.value}" alt="">
 
     <div class="p-2 border border-[--color-neutral-100] rounded text-xs">
       <div class="font-black">${t("common.labels.created_date")}</div>
