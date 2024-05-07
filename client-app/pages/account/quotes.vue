@@ -30,11 +30,22 @@
           @keypress.enter="applyKeyword"
         >
           <template #append>
-            <button v-if="keyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
+            <button
+              v-if="keyword"
+              :aria-label="$t('common.buttons.reset_search_quote_requests')"
+              type="button"
+              class="flex h-full items-center px-4"
+              @click="resetKeyword"
+            >
               <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
             </button>
 
-            <VcButton :disabled="fetching" icon="search" @click="applyKeyword" />
+            <VcButton
+              :aria-label="$t('common.buttons.search_quote_requests')"
+              :disabled="fetching"
+              icon="search"
+              @click="applyKeyword"
+            />
           </template>
         </VcInput>
       </div>
@@ -82,7 +93,7 @@
               </div>
 
               <div class="flex flex-col items-end justify-center">
-                <QuoteStatus class="w-full !max-w-[9rem]" :status="itemData.item.status" />
+                <QuoteStatus class="w-full !max-w-36" :status="itemData.item.status" />
               </div>
 
               <div class="flex flex-col">
@@ -143,7 +154,7 @@
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5 text-center">
-                <QuoteStatus class="w-full !max-w-[9rem]" :status="quote.status" />
+                <QuoteStatus class="w-full !max-w-36" :status="quote.status" />
               </td>
 
               <td class="overflow-hidden text-ellipsis p-5 text-right">

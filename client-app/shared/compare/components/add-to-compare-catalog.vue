@@ -2,7 +2,7 @@
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
       <slot :is-in-compare-list="isInCompareList" :toggle="toggle">
-        <button type="button" class="flex" @click="toggle">
+        <button :aria-label="tooltipText" type="button" class="flex" @click="toggle">
           <VcIcon
             :class="[customClass, isInCompareList ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
             name="compare"

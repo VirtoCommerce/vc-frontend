@@ -27,6 +27,7 @@
       "add_to_cart": "Add to cart",
       "update_cart": "Update cart",
       "apply": "Apply",
+      "deny": "Deny",
       "send": "Send",
       "more": "More",
       "yes": "Yes",
@@ -58,7 +59,17 @@
       "remove_selected": "Remove Selected",
       "remove_all": "Remove all",
       "resend_link": "Resend link",
-      "set_new_password": "Set new password"
+      "set_new_password": "Set new password",
+      "show_hide_password": "Show/hide password",
+      "toggle_dropdown": "Toggle dropdown",
+      "remove_from_cart": "Remove from cart",
+      "search_orders": "Search orders",
+      "reset_orders_search_keyword": "Reset orders search keyword",
+      "search_quote_requests": "Search quote requests",
+      "reset_quote_requests_search_keyword": "Reset quote requests search keyword",
+      "remove_credit_card": "Remove credit card",
+      "search_company_members": "Search company members",
+      "reset_company_members_search_keyword": "Reset company members search keyword"
     },
     "labels": {
       "actions": "Actions",
@@ -123,7 +134,11 @@
       "last_week": "Last week",
       "last_month": "Last month",
       "last_year": "Last year",
-      "custom_date": "Custom date"
+      "custom_date": "Custom date",
+      "background_image": "Background image",
+      "product_quantity": "Product quantity",
+      "toggle_vendor_select": "Toggle vendor select",
+      "quote_request_comment": "Quote request comment"
     },
     "prefixes": {
       "please": "Please",

@@ -12,7 +12,14 @@
     </div>
 
     <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">
-      <VcButton color="neutral" size="sm" variant="no-background" icon="delete-2" @click="$emit('remove')" />
+      <VcButton
+        :aria-label="$t('common.buttons.remove_credit_card')"
+        color="neutral"
+        size="sm"
+        variant="no-background"
+        icon="delete-2"
+        @click="$emit('remove')"
+      />
     </div>
   </div>
 </template>

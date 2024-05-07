@@ -43,6 +43,7 @@
         :maxlength="maxlength"
         :step="stepValue"
         :autocomplete="autocomplete"
+        :aria-label="ariaLabel ?? label"
         class="vc-input__input"
       />
 
@@ -55,6 +56,7 @@
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
         <button
           :disabled="disabled"
+          :aria-label="$t('common.buttons.show_hide_password')"
           tabindex="-1"
           type="button"
           class="vc-input__password-icon"
@@ -91,6 +93,7 @@ export interface IProps<T> {
   disabled?: boolean;
   required?: boolean;
   name?: string;
+  ariaLabel?: string;
   label?: string;
   placeholder?: string;
   message?: string;
