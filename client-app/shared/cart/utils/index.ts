@@ -31,5 +31,6 @@ export function getItemsForAddBulkItemsToCartResultsModal(
     isAddedToCart: !cart.validationErrors.some(
       (error) => error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
     ),
+    id: item.id,
   }));
 }

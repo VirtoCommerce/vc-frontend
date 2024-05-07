@@ -16,4 +16,5 @@ export type ItemForAddBulkItemsToCartResultsModalType = {
   sku: string;
   slug?: string;
   isAddedToCart: boolean;
+  id: string;
 };

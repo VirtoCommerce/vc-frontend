@@ -164,6 +164,8 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
+const pendingRequestCountByItemId = ref<Record<string, number>>({});
+const addingQuantityById = ref<Record<string, number>>({});
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -232,12 +234,13 @@ async function openSaveChangesModal(): Promise<boolean> {
   });
 }
 
-function showResultModal(items: LineItemType[]) {
+function showResultModal(items: LineItemType[], forcedQuantity?: Record<string, number>) {
   openModal({
     component: AddBulkItemsToCartResultsModal,
     props: {
       listName: list.value?.name,
       items: getItemsForAddBulkItemsToCartResultsModal(items, cart.value!),
+      forcedQuantity,
     },
   });
 }
@@ -260,15 +263,24 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
 
-  if (itemInCart) {
+  pendingRequestCountByItemId.value[lineItem.id] = (pendingRequestCountByItemId.value[lineItem.id] || 0) + 1;
+
+  if (itemInCart && itemInCart.quantity !== quantity) {
     await changeItemQuantity(itemInCart.id, quantity);
-  } else {
+  }
+  if (!itemInCart) {
+    addingQuantityById.value[lineItem.id] = (addingQuantityById.value[lineItem.id] || 0) + quantity;
     await addToCart(lineItem.product.id, quantity);
 
     ga.addItemToCart(lineItem.product, quantity);
   }
 
-  showResultModal([lineItem]);
+  pendingRequestCountByItemId.value[lineItem.id] -= 1;
+
+  if (pendingRequestCountByItemId.value[lineItem.id] === 0) {
+    showResultModal([lineItem], { [lineItem.id]: addingQuantityById.value[lineItem.id] });
+    addingQuantityById.value[lineItem.id] = 0;
+  }
 }
 
 function openDeleteProductModal(values: string[]): void {

@@ -70,7 +70,7 @@
                   <span class="text-neutral-400 md:hidden">
                     {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.quantity") }}
                   </span>
-                  <span class="font-bold">{{ $n(item.quantity) }}</span>
+                  <span class="font-bold">{{ $n(forcedQuantity[item.id] || item.quantity) }}</span>
                 </div>
               </li>
             </ul>
@@ -116,11 +116,13 @@ interface IEmits {
 interface IProps {
   listName: string;
   items?: ItemForAddBulkItemsToCartResultsModalType[];
+  forcedQuantity?: Record<string, number>;
 }
 
 defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
+  forcedQuantity: () => ({}),
 });
 const { items } = toRefs(props);
 
