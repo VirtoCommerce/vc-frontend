@@ -18,8 +18,11 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       url
     }
     assets {
+      id
       name
       url
+      size
+      mimeType
     }
     breadcrumbs {
       itemId
