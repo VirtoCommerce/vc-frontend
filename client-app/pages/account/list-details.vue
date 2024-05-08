@@ -130,6 +130,7 @@ import type {
   InputUpdateWishlistItemsType,
   InputUpdateWishlistLineItemType,
   LineItemType,
+  ShortCartFragment,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
@@ -165,7 +166,6 @@ const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
 const pendingRequestCountByItemId = ref<Record<string, number>>({});
-const addingQuantityById = ref<Record<string, number>>({});
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -262,14 +262,14 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   }
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
+  let response: ShortCartFragment | undefined;
 
   pendingRequestCountByItemId.value[lineItem.id] = (pendingRequestCountByItemId.value[lineItem.id] || 0) + 1;
 
   if (itemInCart) {
-    await changeItemQuantity(itemInCart.id, quantity);
+    response = await changeItemQuantity(itemInCart.id, quantity);
   } else {
-    addingQuantityById.value[lineItem.id] = (addingQuantityById.value[lineItem.id] || 0) + quantity;
-    await addToCart(lineItem.product.id, quantity);
+    response = await addToCart(lineItem.product.id, quantity);
 
     ga.addItemToCart(lineItem.product, quantity);
   }
@@ -277,8 +277,9 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   pendingRequestCountByItemId.value[lineItem.id] -= 1;
 
   if (pendingRequestCountByItemId.value[lineItem.id] === 0) {
-    showResultModal([lineItem], { [lineItem.id]: addingQuantityById.value[lineItem.id] });
-    addingQuantityById.value[lineItem.id] = 0;
+    const ultimateQuantity =
+      response?.items?.find(({ productId }) => lineItem.productId === productId)?.quantity || quantity;
+    showResultModal([lineItem], { [lineItem.id]: ultimateQuantity });
   }
 }
 
