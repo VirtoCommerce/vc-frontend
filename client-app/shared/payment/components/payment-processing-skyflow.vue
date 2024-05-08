@@ -226,6 +226,7 @@ async function initNewCardForm(): Promise<void> {
     errorTextStyles: {
       base: {
         fontFamily,
+        fontSize: "0.75rem",
         color: errorColor,
         textTransform: "lowercase",
         "&::first-letter": {
@@ -390,6 +391,7 @@ async function initCvvForm() {
         fontSize: "0.9375rem",
         lineHeight: "1",
         borderRadius: "3px",
+        textSecurity: "disc",
         border: `1px solid ${borderColor}`,
         "&:focus": {
           border: "1px solid transparent",
@@ -418,8 +420,13 @@ async function initCvvForm() {
     errorTextStyles: {
       base: {
         fontFamily,
+        fontSize: "0.75rem",
         marginTop: "4px",
         color: errorColor,
+        textTransform: "lowercase",
+        "&::first-letter": {
+          textTransform: "uppercase",
+        },
       },
       global,
     },
