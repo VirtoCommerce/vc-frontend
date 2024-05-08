@@ -265,10 +265,9 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
 
   pendingRequestCountByItemId.value[lineItem.id] = (pendingRequestCountByItemId.value[lineItem.id] || 0) + 1;
 
-  if (itemInCart && itemInCart.quantity !== quantity) {
+  if (itemInCart) {
     await changeItemQuantity(itemInCart.id, quantity);
-  }
-  if (!itemInCart) {
+  } else {
     addingQuantityById.value[lineItem.id] = (addingQuantityById.value[lineItem.id] || 0) + quantity;
     await addToCart(lineItem.product.id, quantity);
 
