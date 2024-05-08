@@ -165,7 +165,7 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
-const pendingRequestCountByItemId = ref<Record<string, number>>({});
+const pendingRequests = ref<Record<string, number>>({});
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -264,7 +264,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
   let response: ShortCartFragment | undefined;
 
-  pendingRequestCountByItemId.value[lineItem.id] = (pendingRequestCountByItemId.value[lineItem.id] || 0) + 1;
+  pendingRequests.value[lineItem.id] = (pendingRequests.value[lineItem.id] || 0) + 1;
 
   if (itemInCart) {
     response = await changeItemQuantity(itemInCart.id, quantity);
@@ -274,9 +274,9 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     ga.addItemToCart(lineItem.product, quantity);
   }
 
-  pendingRequestCountByItemId.value[lineItem.id] -= 1;
+  pendingRequests.value[lineItem.id] -= 1;
 
-  if (pendingRequestCountByItemId.value[lineItem.id] === 0) {
+  if (pendingRequests.value[lineItem.id] === 0) {
     const ultimateQuantity =
       response?.items?.find(({ productId }) => lineItem.productId === productId)?.quantity || quantity;
     showResultModal([lineItem], { [lineItem.id]: ultimateQuantity });
