@@ -16,7 +16,7 @@
           with-properties
           :image-url="variation.images[0]?.url"
           :name="variation.name"
-          :properties="variation.properties.slice(0, 3)"
+          :properties="getProperties(variation)"
           :list-price="variation.price.list"
           :actual-price="variation.price.actual"
           :vendor="$cfg.vendor_enabled ? product.vendor : undefined"
@@ -38,10 +38,12 @@
 </template>
 
 <script setup lang="ts">
+import { PropertyType } from "@/core/api/graphql/types";
+import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
-import type { Product } from "@/core/api/graphql/types";
+import type { Product, VariationType } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
@@ -52,6 +54,10 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+function getProperties(variation: VariationType) {
+  return Object.values(getPropertiesGroupedByName(variation.properties ?? [], PropertyType.Product)).slice(0, 3);
+}
 </script>
 
 <style lang="scss">
