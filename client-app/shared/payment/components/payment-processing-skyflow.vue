@@ -158,7 +158,7 @@ let skyflowClient: Skyflow,
   cvvCollector: CollectContainer | null,
   cvvElement: CollectElement | null;
 
-// general styles for CVV only and for NEW CARD
+// styles for CVV only and for NEW CARD
 const inputStyles = {
   global: {
     "@import": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
@@ -168,6 +168,39 @@ const inputStyles = {
   borderColor: useCssVar("--color-neutral-200", root).value,
   focusOutlineColor: useCssVar("--color-primary-200", root).value,
 };
+
+const baseInputStyles = {
+  fontFamily: inputStyles.fontFamily,
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "0.9375rem",
+  lineHeight: "1",
+  borderRadius: "3px",
+  border: `1px solid ${inputStyles.borderColor}`,
+  "&:focus": {
+    border: "1px solid transparent",
+    outline: `4px solid ${inputStyles.focusOutlineColor}`,
+  },
+};
+
+const baseLabelStyles = {
+  fontFamily: inputStyles.fontFamily,
+  fontSize: "0.9375rem",
+  fontWeight: 700,
+  lineHeight: "1.25rem",
+  marginBottom: "0.125rem",
+};
+
+const baseErrorStyles = {
+  fontFamily: inputStyles.fontFamily,
+  fontSize: "0.75rem",
+  color: inputStyles.errorColor,
+  textTransform: "lowercase",
+  "&::first-letter": {
+    textTransform: "uppercase",
+  },
+};
+// end styles
 
 // NEW CARD START
 type ElementType =
@@ -210,7 +243,7 @@ async function initNewCardForm(): Promise<void> {
 
   await initPayment();
 
-  const { global, fontFamily, errorColor, borderColor, focusOutlineColor } = inputStyles;
+  const { global, fontFamily, errorColor } = inputStyles;
 
   const containerOptions = {
     layout: [1, 1, 2],
@@ -224,15 +257,7 @@ async function initNewCardForm(): Promise<void> {
       },
     },
     errorTextStyles: {
-      base: {
-        fontFamily,
-        fontSize: "0.75rem",
-        color: errorColor,
-        textTransform: "lowercase",
-        "&::first-letter": {
-          textTransform: "uppercase",
-        },
-      },
+      base: baseErrorStyles,
       global,
     },
   };
@@ -248,30 +273,14 @@ async function initNewCardForm(): Promise<void> {
   const collectStylesOptions = {
     inputStyles: {
       base: {
-        fontFamily,
-        fontStyle: "normal",
-        fontWeight: 400,
-        fontSize: "0.9375rem",
-        lineHeight: "1",
-        borderRadius: "3px",
-        border: `1px solid ${borderColor}`,
+        ...baseInputStyles,
         textSecurity: "none",
-        "&:focus": {
-          border: "1px solid transparent",
-          outline: `4px solid ${focusOutlineColor}`,
-        },
         padding: "0.75rem",
       },
       global,
     },
     labelStyles: {
-      base: {
-        fontFamily,
-        fontSize: "0.9375rem",
-        fontWeight: 700,
-        lineHeight: "1.25rem",
-        marginBottom: "0.125rem",
-      },
+      base: baseLabelStyles,
       requiredAsterisk: {
         color: errorColor,
       },
@@ -378,25 +387,15 @@ async function initCvvForm() {
 
   clearCvv();
 
-  const { global, fontFamily, errorColor, borderColor, focusOutlineColor } = inputStyles;
+  const { global, errorColor } = inputStyles;
 
   const container = skyflowClient.container(Skyflow.ContainerType.COLLECT) as CollectContainer;
 
   const collectStylesOptions = {
     inputStyles: {
       base: {
-        fontFamily,
-        fontStyle: "normal",
-        fontWeight: 400,
-        fontSize: "0.9375rem",
-        lineHeight: "1",
-        borderRadius: "3px",
+        ...baseInputStyles,
         textSecurity: "disc",
-        border: `1px solid ${borderColor}`,
-        "&:focus": {
-          border: "1px solid transparent",
-          outline: `4px solid ${focusOutlineColor}`,
-        },
         width: "6.2rem",
         margin: "4px",
         padding: "0.6rem",
@@ -405,12 +404,8 @@ async function initCvvForm() {
     },
     labelStyles: {
       base: {
-        fontFamily,
-        fontSize: "0.9375rem",
-        fontWeight: 700,
-        lineHeight: "1.25rem",
+        ...baseLabelStyles,
         marginLeft: "4px",
-        marginBottom: "0.125rem",
       },
       requiredAsterisk: {
         color: errorColor,
@@ -418,16 +413,7 @@ async function initCvvForm() {
       global,
     },
     errorTextStyles: {
-      base: {
-        fontFamily,
-        fontSize: "0.75rem",
-        marginTop: "4px",
-        color: errorColor,
-        textTransform: "lowercase",
-        "&::first-letter": {
-          textTransform: "uppercase",
-        },
-      },
+      base: baseErrorStyles,
       global,
     },
   };
