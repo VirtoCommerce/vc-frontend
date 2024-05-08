@@ -159,7 +159,7 @@ let skyflowClient: Skyflow,
   cvvElement: CollectElement | null;
 
 // styles for CVV only and for NEW CARD
-const inputStyles = {
+const globalStyles = {
   global: {
     "@import": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
   },
@@ -170,21 +170,21 @@ const inputStyles = {
 };
 
 const baseInputStyles = {
-  fontFamily: inputStyles.fontFamily,
+  fontFamily: globalStyles.fontFamily,
   fontStyle: "normal",
   fontWeight: 400,
   fontSize: "0.9375rem",
   lineHeight: "1",
   borderRadius: "3px",
-  border: `1px solid ${inputStyles.borderColor}`,
+  border: `1px solid ${globalStyles.borderColor}`,
   "&:focus": {
     border: "1px solid transparent",
-    outline: `4px solid ${inputStyles.focusOutlineColor}`,
+    outline: `4px solid ${globalStyles.focusOutlineColor}`,
   },
 };
 
 const baseLabelStyles = {
-  fontFamily: inputStyles.fontFamily,
+  fontFamily: globalStyles.fontFamily,
   fontSize: "0.9375rem",
   fontWeight: 700,
   lineHeight: "1.25rem",
@@ -192,9 +192,9 @@ const baseLabelStyles = {
 };
 
 const baseErrorStyles = {
-  fontFamily: inputStyles.fontFamily,
+  fontFamily: globalStyles.fontFamily,
   fontSize: "0.75rem",
-  color: inputStyles.errorColor,
+  color: globalStyles.errorColor,
   textTransform: "lowercase",
   "&::first-letter": {
     textTransform: "uppercase",
@@ -243,7 +243,7 @@ async function initNewCardForm(): Promise<void> {
 
   await initPayment();
 
-  const { global, fontFamily, errorColor } = inputStyles;
+  const { global, fontFamily, errorColor } = globalStyles;
 
   const containerOptions = {
     layout: [1, 1, 2],
@@ -387,7 +387,7 @@ async function initCvvForm() {
 
   clearCvv();
 
-  const { global, errorColor } = inputStyles;
+  const { global, errorColor } = globalStyles;
 
   const container = skyflowClient.container(Skyflow.ContainerType.COLLECT) as CollectContainer;
 
