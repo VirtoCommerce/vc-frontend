@@ -1,8 +1,8 @@
 <template>
-  <div class="rounded border border-transparent bg-white lg:p-2 lg:hover:border-gray-100 lg:hover:shadow-lg">
+  <div class="rounded border border-transparent bg-additional-50 lg:p-2 lg:hover:border-neutral-100 lg:hover:shadow-lg">
     <!-- Product image -->
     <router-link :to="link" @click="$emit('link-click', $event)">
-      <div class="square relative border border-gray-200">
+      <div class="square relative border border-neutral-200">
         <VcImage
           :src="product.imgSrc"
           :alt="product.name"
@@ -18,7 +18,7 @@
       <router-link
         :to="link"
         :title="product.name"
-        class="mt-2 line-clamp-3 text-sm font-extrabold text-[color:var(--color-link)]"
+        class="mt-2 line-clamp-3 text-sm font-extrabold text-[--link-color] hover:text-[--link-hover-color]"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}

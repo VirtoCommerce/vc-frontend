@@ -156,6 +156,7 @@ export interface IThemeConfigPreset {
   color_footer_bottom_link_hover?: string;
   // builder.io integration
   builderIoKey?: string;
+  isCVVinSkyflowRequired?: boolean;
 }
 
 export interface IThemeConfig {

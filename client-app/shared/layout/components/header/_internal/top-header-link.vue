@@ -1,6 +1,6 @@
 <template>
   <router-link
-    class="py-1 font-bold text-[color:var(--color-header-top-link)] hover:text-[color:var(--color-header-top-link-hover)]"
+    class="py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
     :to="to"
   >
     <slot />

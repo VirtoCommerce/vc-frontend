@@ -104,7 +104,7 @@ const wrapperClasses = computed(() => {
 
   &__btn {
     @apply absolute top-1/2 z-10 w-[var(--navigation-size)] h-[var(--navigation-size)]
-    flex items-center justify-center text-[color:var(--color-primary)] cursor-pointer;
+    flex items-center justify-center text-primary cursor-pointer;
 
     margin-top: calc(0px - (var(--navigation-size) / 2) - var(--navigation-offset));
 

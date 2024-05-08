@@ -1,5 +1,5 @@
 <template>
-  <VcWidget id="order-summary" :title="$t('common.titles.order_summary')">
+  <VcWidget id="order-summary" class="print:break-inside-avoid" :title="$t('common.titles.order_summary')">
     <slot name="header" />
 
     <!-- Totals block -->
@@ -88,7 +88,7 @@
 
       <div class="mt-4 flex justify-between text-base font-extrabold">
         <span>{{ $t("common.labels.total") }}</span>
-        <span class="text-green-700 print:text-inherit">
+        <span class="text-[--price-color] print:text-inherit">
           <VcPriceDisplay :value="cart.total!" />
         </span>
       </div>

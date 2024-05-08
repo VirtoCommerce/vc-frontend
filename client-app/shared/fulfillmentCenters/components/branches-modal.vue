@@ -6,7 +6,7 @@
         class="flex shrink-0 grow flex-col transition-all delay-100"
         :class="[selectedBranchesIds.length ? 'w-1/2' : 'w-full']"
       >
-        <div class="flex h-11 items-center bg-[color:var(--color-branch-modal-bg)] py-2 pl-4 pr-3.5">
+        <div class="flex h-11 items-center bg-neutral-50 py-2 pl-4 pr-3.5">
           <div class="text-15">
             {{ $t("shared.catalog.branches_modal.all_branches") }}
           </div>
@@ -50,15 +50,17 @@
         class="flex shrink-0 flex-col overflow-hidden transition-all"
         :class="[selectedBranchesIds.length ? 'w-1/2 border-l' : 'w-0']"
       >
-        <div class="flex h-11 items-center justify-between bg-[color:var(--color-branch-modal-bg)] py-2 pl-4 pr-3.5">
-          <div class="text-15">
+        <div class="flex h-11 items-center justify-between bg-neutral-50 py-2 pl-4 pr-3.5">
+          <div class="text-sm">
             {{ $t("shared.catalog.branches_modal.selected_branches") }}
           </div>
+
           <div class="flex cursor-pointer items-center pl-2" @click="clearSelection">
             <svg class="text-primary" width="16" height="16">
               <use href="/static/images/clear.svg#main"></use>
             </svg>
-            <div class="pl-2 text-sm font-bold text-[color:var(--color-link)]">
+
+            <div class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
               {{ $t("shared.catalog.branches_modal.clear_selection") }}
             </div>
           </div>
@@ -82,12 +84,12 @@
 
     <!-- MOBILE content BEGIN -->
     <div class="flex max-h-full grow flex-col sm:hidden">
-      <div class="flex min-h-[2.75rem] items-stretch bg-[color:var(--color-branch-modal-bg)] px-6 text-15">
+      <div class="flex min-h-[2.75rem] items-stretch bg-neutral-50 px-6 text-sm">
         <button
           type="button"
           class="mr-auto flex items-center py-2 font-bold"
           :class="{
-            'text-[color:var(--color-link)]': showSelectedBranchesMobile && selectedBranchesIds.length,
+            'text-[--link-color]': showSelectedBranchesMobile && selectedBranchesIds.length,
           }"
           :disabled="!(showSelectedBranchesMobile && selectedBranchesIds.length) || !selectedBranchesIds.length"
           @click="toggleShowSelectedBranchesMobile(false)"
@@ -99,7 +101,7 @@
           <button
             type="button"
             class="flex items-center py-2 font-bold"
-            :class="{ 'text-[color:var(--color-link)]': !showSelectedBranchesMobile }"
+            :class="{ 'text-[--link-color]': !showSelectedBranchesMobile }"
             :disabled="showSelectedBranchesMobile"
             @click="toggleShowSelectedBranchesMobile(true)"
           >
@@ -108,7 +110,7 @@
 
           <button
             type="button"
-            class="ml-2.5 flex size-7 items-center justify-center self-center rounded bg-white shadow-t-mds"
+            class="ml-2.5 flex size-7 items-center justify-center self-center rounded bg-additional-50 shadow-md"
             @click="clearSelection"
           >
             <svg class="text-primary" width="16" height="16">
@@ -138,7 +140,7 @@
       <!-- NO RESULTS content BEGIN -->
       <div v-else class="flex grow flex-col items-center justify-center space-y-3 pb-16">
         <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
-        <div class="text-17">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
+        <div class="text-base">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
         <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
           {{ $t("shared.catalog.branches_modal.reset_search_button") }}
         </VcButton>
