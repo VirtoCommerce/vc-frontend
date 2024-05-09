@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { eagerComputed, useDebounceFn } from "@vueuse/core";
 import { nextTick, ref } from "vue";
-import { useCompareProducts } from "@/shared/compare";
+import { useCompareProducts } from "@/shared/compare/composables/useCompareProducts";
 import type { Product } from "@/core/api/graphql/types";
 import type { PropType } from "vue";
 

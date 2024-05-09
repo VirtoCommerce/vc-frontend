@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { maxQuantity, validateQuantity } from "@/shared/bulk-order";
+import { maxQuantity, validateQuantity } from "@/shared/bulk-order/utils";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 

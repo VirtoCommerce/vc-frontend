@@ -9,7 +9,7 @@ import {
   STORE_ADMINISTRATOR,
   STORE_MANAGER,
 } from "@/core/constants";
-import { ContactStatus } from "@/shared/company";
+import { ContactStatus } from "@/shared/company/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 export function useOrganizationContactsFilterFacets() {
