@@ -8,7 +8,7 @@
       <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
         <!-- Logo column -->
         <div class="hidden xl:block">
-          <VcImage :src="siteLogoUrl" :alt="$context.storeName" class="h-9" lazy />
+          <VcImage :src="secondaryLogoUrl" :alt="$context.storeName" class="h-9" lazy />
         </div>
 
         <template v-if="whiteLabelingFooterLinks?.length">
@@ -47,10 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useNavigations, useThemeContext } from "@/core/composables";
-import { convertToExtendedMenuLink } from "@/core/utilities";
-import { useWhiteLabeling } from "@/shared/account";
+import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import pkg from "../../../../../package.json";
 import FooterLinks from "./_internal/footer-links.vue";
 
@@ -60,17 +57,8 @@ interface IProps {
 
 defineProps<IProps>();
 
-const { themeContext } = useThemeContext();
-const { whiteLabelingSettings } = useWhiteLabeling();
+const { secondaryLogoUrl, footerLinks: whiteLabelingFooterLinks } = useWhiteLabeling();
 const { footerLinks } = useNavigations();
 
 const { version } = pkg;
-
-const siteLogoUrl = computed(
-  () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
-);
-
-const whiteLabelingFooterLinks = computed(() =>
-  whiteLabelingSettings.value?.footerLinks?.map((item) => convertToExtendedMenuLink(item, false)),
-);
 </script>

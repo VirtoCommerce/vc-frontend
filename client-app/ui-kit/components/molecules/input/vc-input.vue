@@ -30,7 +30,7 @@
       <input
         :id="componentId"
         ref="inputElement"
-        v-model="inputValue"
+        v-model="model"
         v-bind="listeners"
         :type="inputType"
         :name="name"
@@ -44,9 +44,10 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         class="vc-input__input"
+        @keydown="keyDown($event)"
       />
 
-      <div v-if="clearable && inputValue && !disabled && !readonly" class="vc-input__decorator">
+      <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
         <button type="button" tabindex="-1" class="vc-input__clear" @click.stop="clear">
           <VcIcon name="delete-mini" :size="16" />
         </button>
@@ -76,16 +77,10 @@
 </template>
 
 <script setup lang="ts" generic="T extends string | number | null">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
-export interface IEmits<T> {
-  (event: "update:modelValue", value?: T): void;
-}
-
-export interface IProps<T> {
-  modelValue?: T;
-  modelModifiers?: Record<string, boolean>;
+export interface IProps {
   autocomplete?: string;
   readonly?: boolean;
   disabled?: boolean;
@@ -115,11 +110,9 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const emit = defineEmits<IEmits<T>>();
-const props = withDefaults(defineProps<IProps<T>>(), {
+const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
-  modelModifiers: () => ({}),
 });
 
 const componentId = useComponentId("input");
@@ -127,22 +120,15 @@ const listeners = useListeners();
 const attrs = useAttrsOnly();
 
 const inputElement = ref<HTMLElement>();
-const inputType = ref("");
-const isPasswordVisible = ref(false);
-const isNumberTypeSafari = ref(false);
+const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
 
-const inputValue = computed({
-  get: () => props.modelValue,
-  set: (value) => {
+const model = defineModel<T>({
+  set(value) {
     if (props.disabled) {
       return;
     }
 
-    if (props.type === "number") {
-      emit("update:modelValue", value !== undefined && value !== "" ? (Number(value) as T) : undefined);
-    } else {
-      emit("update:modelValue", value);
-    }
+    return !(props.type === "number" && value === "") ? value : undefined;
   },
 });
 
@@ -150,11 +136,11 @@ const minValue = computed(() => (props.type === "number" ? props.min : undefined
 const maxValue = computed(() => (props.type === "number" ? props.max : undefined));
 const stepValue = computed(() => (props.type === "number" ? props.step : undefined));
 
+const isPasswordVisible = ref<boolean>(false);
 const passwordVisibilityIcon = computed<string>(() => (isPasswordVisible.value ? "eye-off" : "eye"));
 
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
-  inputType.value = isPasswordVisible.value ? "text" : "password";
 }
 
 function handleContainerClick() {
@@ -165,35 +151,18 @@ function handleContainerClick() {
 }
 
 function clear() {
-  emit("update:modelValue", undefined);
+  model.value = undefined;
   inputElement.value?.focus();
 }
 
-watchEffect(() => {
-  let type = props.type;
+// Workaround to fix Safari bug
+function keyDown(event: KeyboardEvent) {
+  if (props.type === "number") {
+    const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
 
-  // Safari has bug for number input
-  if (typeof window !== "undefined" || typeof document !== "undefined") {
-    const ua = navigator.userAgent.toLocaleLowerCase();
-
-    if (type === "number" && ua.includes("safari") && !ua.includes("chrome")) {
-      isNumberTypeSafari.value = true;
-      type = "text";
-    }
+    return !event.key.match(allowedCharacter) && event.preventDefault();
   }
-
-  inputType.value = type;
-});
-
-watchEffect(() => {
-  if (!isNumberTypeSafari.value) {
-    return;
-  }
-
-  if (isNaN(props.modelValue as number)) {
-    emit("update:modelValue", null as T);
-  }
-});
+}
 </script>
 
 <style lang="scss">

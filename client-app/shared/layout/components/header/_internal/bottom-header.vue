@@ -5,7 +5,7 @@
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-inherit px-5 py-3 xl:px-12"
     >
       <router-link to="/">
-        <VcImage :src="siteLogoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
+        <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8 xl:h-[2.8rem]" lazy />
       </router-link>
 
       <template v-if="organization">
@@ -92,8 +92,7 @@
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
-import { useNavigations, useThemeContext } from "@/core/composables";
-import { useWhiteLabeling } from "@/shared/account";
+import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
@@ -103,11 +102,10 @@ import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
-const { themeContext } = useThemeContext();
 const router = useRouter();
 const { isAuthenticated, organization } = useUser();
 const { cart } = useShortCart();
-const { whiteLabelingSettings } = useWhiteLabeling();
+const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
 
@@ -119,7 +117,6 @@ const catalogMenuVisible = ref(false);
 const { bottom } = useElementBounding(bottomHeader);
 
 const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
-const siteLogoUrl = computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image);
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const catalogMenuStyle = computed<StyleValue | undefined>(() =>
   bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined,

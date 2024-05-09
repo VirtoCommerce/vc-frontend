@@ -117,6 +117,11 @@
           "code": "Draft",
           "color": "neutral",
           "variant": "outline-dark"
+        },
+        {
+          "code": "Declined",
+          "color": "danger",
+          "variant": "outline-dark"
         }
       ],
 
@@ -243,7 +248,8 @@
       "color_additional_50": "#FFFFFF",
       "color_additional_950": "#000000",
 
-      "builderIoKey": ""
+      "builderIoKey": "",
+      "isCVVinSkyflowRequired": false
     },
 
     "Watermelon": {
@@ -255,6 +261,8 @@
       "catalog_empty_categories_enabled": false,
 
       "files_enabled": true,
+
+      "push_messages_enabled": true,
 
       "quotes_enabled": true,
       "quotes_files_scope": "quote_attachments",
@@ -359,6 +367,11 @@
         {
           "code": "Draft",
           "color": "neutral",
+          "variant": "outline-dark"
+        },
+        {
+          "code": "Declined",
+          "color": "danger",
           "variant": "outline-dark"
         }
       ],
@@ -521,7 +534,8 @@
       "color_footer_bottom_link": "#66B9D8",
       "color_footer_bottom_link_hover": "",
 
-      "builderIoKey": ""
+      "builderIoKey": "",
+      "isCVVinSkyflowRequired": false
     }
   }
 }

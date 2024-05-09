@@ -56,12 +56,16 @@
                   class="order-first mb-2.5 line-clamp-2 w-full shrink-0 md:mb-0 md:line-clamp-none md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle"
                 >
                   <router-link
+                    v-if="item.productExists"
                     :to="links[item.productId]"
                     target="_blank"
                     class="font-semibold text-[--link-color] hover:text-[--link-hover-color]"
                   >
                     {{ item.name }}
                   </router-link>
+                  <div v-else>
+                    {{ item.name }}
+                  </div>
                 </div>
 
                 <div
@@ -103,8 +107,7 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
-import { useProductsRoutes, useThemeContext } from "@/core/composables";
-import { useWhiteLabeling } from "@/shared/account";
+import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
 import { VcButton } from "@/ui-kit/components";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
 
@@ -126,8 +129,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { items } = toRefs(props);
 
 const links = useProductsRoutes(items, { productIdProperty: "productId" });
-const { themeContext } = useThemeContext();
-const { whiteLabelingSettings } = useWhiteLabeling();
+const { logoUrl } = useWhiteLabeling();
 const { d, t } = useI18n();
 
 const groups = computed<GroupType[]>(() => {
@@ -170,7 +172,6 @@ function getTableRowsHtml(groupedItems: ItemForAddBulkItemsToCartResultsModalTyp
 }
 
 function print() {
-  const logo = computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image);
   const htmlStyle = document.documentElement.attributes.getNamedItem("style")?.textContent;
   const styleLinks = Array.from(document.head.querySelectorAll("link[rel=stylesheet], style"))
     .map((el) => el.outerHTML)
@@ -178,7 +179,7 @@ function print() {
 
   const headerHtml = `
   <header class="flex justify-between items-start">
-    <img class="h-7" src="${logo.value}" alt="">
+    <img class="h-7" src="${logoUrl.value}" alt="">
 
     <div class="p-2 border border-[--color-neutral-100] rounded text-xs">
       <div class="font-black">${t("common.labels.created_date")}</div>
