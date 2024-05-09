@@ -35,7 +35,7 @@
     "generate:routes": "vite-node --config vite.routes.config.ts --mode production scripts/generate-routes.ts",
     "generate:bundle-map": "GENERATE_BUNDLE_MAP=true yarn build-only",
     "generate:dependency-graph": "depcruise $0 --focus $0 --focus-depth 0 --reaches $1 --config .dependency-graph.cjs --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
-    "storybook:styles": "npx tailwindcss -i storybook-styles/preflight.scss -o storybook-styles/preflight.css",
+    "storybook:styles": "npx tailwindcss -i storybook-styles/preflight.scss -o storybook-styles/dist/preflight.css",
     "storybook:dev": "yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn storybook:styles && storybook build",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
