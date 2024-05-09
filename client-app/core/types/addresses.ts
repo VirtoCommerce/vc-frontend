@@ -6,9 +6,10 @@ import type {
   QuoteAddressType,
 } from "@/core/api/graphql/types";
 
-export type AnyAddressType =
+export type AnyAddressType = (
   | MemberAddressType
   | OrderAddressType
   | CartAddressType
   | QuoteAddressType
-  | InputAddressType;
+  | InputAddressType
+) & { isFavorite?: boolean };

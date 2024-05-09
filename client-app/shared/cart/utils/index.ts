@@ -23,6 +23,7 @@ export function getItemsForAddBulkItemsToCartResultsModal(
   cart: ShortCartFragment,
 ): ItemForAddBulkItemsToCartResultsModalType[] {
   return inputItems.map<ItemForAddBulkItemsToCartResultsModalType>((item) => ({
+    productExists: !!item.product,
     productId: item.productId,
     name: item.name,
     sku: item.sku,
