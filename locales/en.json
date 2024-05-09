@@ -1441,18 +1441,18 @@
     "required_unique_chars": "At least one unique character | Minimum {0} unique characters"
   },
   "validation_error": {
-    "PRODUCT_QTY_CHANGED": "Max order {availQty} item(s)",
+    "PRODUCT_QTY_CHANGED": "You can order maximum {availQty} item(s)",
     "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
     "CART_PRODUCT_INACTIVE": "The product is inactive.",
     "PRODUCT_PRICE_INVALID": "Price is invalid.",
-    "PRODUCT_FFC_QTY": "Max order {availableQty} item(s)",
-    "PRODUCT_MIN_QTY": "Min order {minQty} item(s)",
-    "PRODUCT_MAX_QTY": "Max order {maxQty} item(s)",
-    "PRODUCT_MIN_MAX_QTY": "Order from {minQty} to {maxQty} item(s)",
+    "PRODUCT_FFC_QTY": "You can order maximum {availableQty} item(s)",
+    "PRODUCT_MIN_QTY": "You can order minimum {minQty} item(s)",
+    "PRODUCT_MAX_QTY": "You can order maximum {maxQty} item(s)",
+    "PRODUCT_MIN_MAX_QTY": "You can order from {minQty} to {maxQty} item(s)",
     "UNABLE_SET_LESS_PRICE": "Unable to set less price.",
     "LINE_ITEM_NOT_FOUND": "Line item not found.",
     "LINE_ITEM_IS_READ_ONLY": "Line item is read only.",
-    "PRODUCT_QTY_INSUFFICIENT": "Max order {availQty} item(s)"
+    "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
   },
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name.",
