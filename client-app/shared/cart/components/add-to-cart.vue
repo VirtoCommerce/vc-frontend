@@ -1,62 +1,44 @@
 <template>
-  <!-- TODO: Use VcInput https://virtocommerce.atlassian.net/browse/VCST-1095 -->
-  <div class="add-to-cart">
-    <div class="relative z-0 flex">
-      <input
-        ref="inputElement"
-        v-model.number="enteredQuantity"
-        type="number"
-        :disabled="disabled"
-        :max="maxQty"
-        :min="minQty"
-        :class="{
-          'z-10 border-danger focus:border-danger-600': !!errorMessage,
-        }"
-        class="-mr-px h-9 w-full min-w-0 flex-1 appearance-none rounded-l rounded-r-none border border-neutral-300 px-1 text-center text-base leading-9 outline-none focus:border-neutral-400 lg:text-sm"
-        @input="onInput"
-        @keypress="onKeypress"
-        @click="onClick"
-        @blur="onBlur"
-      />
-
+  <VcInput
+    v-model.number="enteredQuantity"
+    type="number"
+    :disabled="disabled"
+    :max="maxQty"
+    :min="minQty"
+    :error="!!errorMessage"
+    :message="errorMessage"
+    single-line-message
+    center
+    show-empty-details
+    select-on-click
+    size="sm"
+    class="add-to-cart"
+    @input="onInput"
+    @keypress="onKeypress"
+    @blur="onBlur"
+  >
+    <template #append>
       <VcButton
-        class="w-28 !rounded-l-none"
         :variant="countInCart ? 'solid' : 'outline'"
         :loading="loading"
         :disabled="disabled || !!errorMessage"
         :title="buttonText"
         size="sm"
         truncate
+        class="add-to-cart__button"
         @click="onChange"
       >
         {{ buttonText }}
       </VcButton>
-    </div>
-
-    <!-- Info hint -->
-    <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
-      <template #trigger>
-        <div class="line-clamp-1 pt-0.5 text-xs text-danger">
-          {{ errorMessage }}
-        </div>
-      </template>
-
-      <template #content>
-        <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-md">
-          {{ errorMessage }}
-        </div>
-      </template>
-    </VcTooltip>
-
-    <div v-else-if="reservedSpace" class="h-4"></div>
-  </div>
+    </template>
+  </VcInput>
 </template>
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { clone } from "lodash";
 import { useField } from "vee-validate";
-import { computed, ref, shallowRef } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
 import { ValidationErrorObjectType } from "@/core/enums";
@@ -100,7 +82,6 @@ const { quantitySchema } = useQuantityValidationSchema({
 });
 
 const loading = ref(false);
-const inputElement = shallowRef<HTMLInputElement>();
 
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => minQuantity.value || 1);
@@ -223,23 +204,22 @@ function onBlur() {
     enteredQuantity.value = countInCart.value || minQty.value;
   }
 }
-
-/**
- * Select input value.
- */
-function onClick() {
-  inputElement.value!.select();
-}
 </script>
 
 <style lang="scss">
 .add-to-cart {
+  @apply w-full;
+
   .vc-line-item__slot:has(&, * &) {
     @apply w-[13rem];
 
     @container (width > theme("containers.2xl")) {
       @apply w-[15.7rem];
     }
+  }
+
+  &__button {
+    @apply w-28;
   }
 }
 </style>
