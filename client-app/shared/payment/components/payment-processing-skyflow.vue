@@ -90,6 +90,7 @@ import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useSkyflowCards } from "../composables";
 import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
@@ -131,7 +132,7 @@ const creditCards = computed(() => {
     skyflowCards.value?.map((el) => {
       return {
         ...el,
-        cardNumber: el.cardNumber.replace(/^X+/, "•••• "),
+        cardNumber: replaceXFromBeginning(el.cardNumber),
       };
     }) || [];
   return cards.concat([
