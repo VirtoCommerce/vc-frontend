@@ -11,7 +11,7 @@ import {
   updatePersonalData,
   changePassword as _changePassword,
   sendVerifyEmail as _sendVerifyEmail,
-  confirmEmailByToken,
+  useConfirmEmailMutation,
 } from "@/core/api/graphql/account";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -169,7 +169,9 @@ export function useUser() {
     loading.value = true;
 
     try {
-      return await confirmEmailByToken(payload);
+      const { mutate } = useConfirmEmailMutation();
+      const result = await mutate({ command: payload });
+      return result!.data!.confirmEmail!;
     } catch (e) {
       Logger.error(`${useUser.name}.${confirmEmail.name}`, e);
       throw e;

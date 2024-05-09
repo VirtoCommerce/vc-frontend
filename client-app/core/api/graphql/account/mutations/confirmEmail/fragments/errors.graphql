@@ -1,0 +1,5 @@
+fragment errors on IdentityErrorInfoType {
+  code
+  parameter
+  description
+}

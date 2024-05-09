@@ -1,5 +1,10 @@
+#import "./fragments/errors.graphql"
+
 mutation confirmEmail($command: InputConfirmEmailType!) {
   confirmEmail(command: $command) {
     succeeded
+    errors {
+      ...errors
+    }
   }
 }
