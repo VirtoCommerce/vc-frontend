@@ -7372,6 +7372,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"country-flag-emoji-polyfill@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "country-flag-emoji-polyfill@npm:0.1.8"
+  checksum: 10c0/aac74de7df236bfc64d33438e29ab4c9eec314370b48f2e7aabb052a57fd3bc939e41afdcad0069987f18509aaf4b34d9e44327d0284fa2afabe97129f25cd89
+  languageName: node
+  linkType: hard
+
 "cross-fetch@npm:^3.1.5":
   version: 3.1.8
   resolution: "cross-fetch@npm:3.1.8"
@@ -9069,13 +9076,6 @@ __metadata:
     locate-path: "npm:^6.0.0"
     path-exists: "npm:^4.0.0"
   checksum: 10c0/062c5a83a9c02f53cdd6d175a37ecf8f87ea5bbff1fdfb828f04bfa021441bc7583e8ebc0872a4c1baab96221fb8a8a275a19809fb93fbc40bd69ec35634069a
-  languageName: node
-  linkType: hard
-
-"flag-icons@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "flag-icons@npm:7.1.0"
-  checksum: 10c0/dd3b456b3b15d2b74a3baf23c57aa77c2afb64f66a1de14188bd3d1d2717e8ed136b2c7b76088ab046093790c04a4362178642a638c16436a123d262ec87cf29
   languageName: node
   linkType: hard
 
@@ -15941,6 +15941,7 @@ __metadata:
     autoprefixer: "npm:^10.4.17"
     axios: "npm:^1.6.7"
     chalk: "npm:^5.3.0"
+    country-flag-emoji-polyfill: "npm:^0.1.8"
     dependency-cruiser: "npm:^16.1.0"
     dompurify: "npm:^3.0.8"
     eslint: "npm:^8.57.0"
@@ -15953,7 +15954,6 @@ __metadata:
     eslint-plugin-tailwindcss: "npm:^3.15.1"
     eslint-plugin-vue: "npm:^9.25.0"
     eslint-plugin-vuejs-accessibility: "npm:^2.3.0"
-    flag-icons: "npm:^7.1.0"
     graphql: "npm:^16.8.1"
     graphql-tag: "npm:^2.12.6"
     husky: "npm:^9.0.7"
