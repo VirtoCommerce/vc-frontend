@@ -8,10 +8,13 @@
 
 --price-color: var(--color-price, var(--color-success-600));
 
+--hexagon-icon-bg-color: var(--color-hexagon-icon-bg, var(--color-neutral-300));
+--hexagon-icon-color: var(--color-hexagon-icon, var(--color-additional-50));
+
 --header-top-bg-color: var(--color-header-top-bg, var(--color-secondary-900));
---header-top-text-color: var(--color-header-top-bg, var(--color-additional-50));
---header-top-link-color: var(--color-header-top-bg, var(--color-accent-300));
---header-top-link-hover-color: var(--color-header-top-bg, var(--color-additional-50));
+--header-top-text-color: var(--color-header-top-text, var(--color-additional-50));
+--header-top-link-color: var(--color-header-top-link, var(--color-accent-300));
+--header-top-link-hover-color: var(--color-header-top-link-hover, var(--color-additional-50));
 
 --header-bottom-bg-color: var(--color-header-bottom-bg, var(--color-additional-50));
 --header-bottom-text-color: var(--color-header-bottom-text, var(--color-neutral-900));

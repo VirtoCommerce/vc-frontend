@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { extractHostname } from "./index";
+import { replaceXFromBeginning, extractHostname } from "./index";
 
 describe("extractHostname function", () => {
   it("should extract hostname from a simple URL", () => {
@@ -25,5 +25,18 @@ describe("extractHostname function", () => {
   it("should extract hostname from a URL without protocol", () => {
     const url = "example.com/path/to/page";
     expect(extractHostname(url)).toBe("example.com");
+  });
+});
+
+describe("extractHostname function", () => {
+  const testCases: [string, string][] = [
+    ["XXXXXXXXXXXX1234", "•••• 1234"], // "Visa"
+    ["XXXXXXXXXXXX4321", "•••• 4321"], // "MasterCard",
+    ["XXXXXXXXXXX5678", "•••• 5678"], // "American Express",
+    ["XXXXXXXXXXXX9876", "•••• 9876"], // "Discover",
+  ];
+
+  it.each(testCases)("replaceXFromBeginning(%s) -> %s", (maskedNumber, expected) => {
+    expect(replaceXFromBeginning(maskedNumber)).toBe(expected);
   });
 });
