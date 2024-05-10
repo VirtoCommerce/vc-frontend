@@ -7,6 +7,7 @@
         <AddToList class="flex w-1/5 flex-col justify-stretch" :product="product" tooltip-placement="bottom">
           <template #default="{ openModal, isInWishlist, isAuthenticated }">
             <button
+              :disabled="!isAuthenticated"
               :class="[
                 'w-full py-4 hover:bg-[--color-neutral-50] disabled:bg-transparent',
                 {
@@ -14,8 +15,8 @@
                   'text-[--color-neutral-300]': !isInWishlist,
                 },
               ]"
+              :aria-label="$t('pages.catalog.add_to_wishlist_tooltip')"
               type="button"
-              :disabled="!isAuthenticated"
               @click="openModal"
             >
               <VcIcon name="whishlist" size="sm" />
@@ -33,6 +34,7 @@
                   'text-[--color-neutral-300]': !isInCompareList,
                 },
               ]"
+              :aria-label="$t('shared.compare.add_to_compare.tooltips.add')"
               type="button"
               @click="toggle"
             >
@@ -47,6 +49,7 @@
               <VcIcon
                 name="share"
                 size="sm"
+                :aria-label="$t('common.buttons.share')"
                 :class="{
                   'text-[--color-primary-500]': !shareProductPopoverShown,
                   'text-[--color-neutral-400]': shareProductPopoverShown,
@@ -95,6 +98,7 @@
 
         <a
           :href="mailToLink"
+          :aria-label="$t('common.buttons.send_link_email')"
           target="_blank"
           class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-[--color-neutral-50]"
         >
@@ -102,6 +106,7 @@
         </a>
 
         <button
+          :aria-label="$t('common.buttons.print')"
           class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-[--color-neutral-50]"
           type="button"
           @click="print()"
@@ -131,7 +136,6 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const route = useRoute();
-
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { t } = useI18n();
 

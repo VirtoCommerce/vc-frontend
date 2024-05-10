@@ -8,16 +8,17 @@
     ]"
   >
     <!-- Workarounds to fix Firefox label click bug -->
-    <button v-if="$slots.default" type="button" class="vc-switch__label" @click="change">
+    <button v-if="$slots.default" :aria-label="ariaLabel" type="button" class="vc-switch__label" @click="change">
       <slot />
     </button>
 
-    <button type="button" class="vc-switch__bg" @click="change">
+    <button :aria-label="ariaLabel" type="button" class="vc-switch__bg" @click="change">
       <span class="vc-switch__circle" />
     </button>
 
     <input
       :id="componentId"
+      :aria-label="ariaLabel"
       :value="value"
       :checked="modelValue"
       :aria-checked="modelValue"
@@ -37,6 +38,7 @@ export interface IEmits {
 }
 
 interface IProps {
+  ariaLabel?: string;
   modelValue?: boolean;
   disabled?: boolean;
   name?: string;

@@ -69,7 +69,12 @@
       "reset_quote_requests_search_keyword": "Reset quote requests search keyword",
       "remove_credit_card": "Remove credit card",
       "search_company_members": "Search company members",
-      "reset_company_members_search_keyword": "Reset company members search keyword"
+      "reset_company_members_search_keyword": "Reset company members search keyword",
+      "copy": "Copy",
+      "previous": "Previous",
+      "next": "Next",
+      "send_link_email": "Send link by e-mail",
+      "share": "Share"
     },
     "labels": {
       "actions": "Actions",
