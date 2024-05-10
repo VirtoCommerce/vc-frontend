@@ -26,6 +26,24 @@ query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: St
       grandTotalInclTax {
         ...money
       }
+      subTotalExlTax {
+        ...money
+      }
+      shippingTotal {
+        ...money
+      }
+      taxTotal {
+        ...money
+      }
+      adjustmentQuoteExlTax {
+        ...money
+      }
+      grandTotalExlTax {
+        ...money
+      }
+      discountTotal {
+        ...money
+      }
     }
   }
 }
