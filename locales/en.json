@@ -127,7 +127,7 @@
     },
     "prefixes": {
       "please": "Please",
-      "expired": "Expired:"
+      "expires": "Expires:"
     },
     "suffixes": {
       "from": "From",
