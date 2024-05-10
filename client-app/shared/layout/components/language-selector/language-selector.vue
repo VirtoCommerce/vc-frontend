@@ -113,6 +113,6 @@ function getFlagEmoji(countryCode: string): string {
 <style scoped>
 .country-flag {
   /* Used by polyfillCountryFlagEmojis to render flag emojis (for Windows) */
-  font-family: "Twemoji Country Flags";
+  font-family: "Twemoji Country Flags", sans-serif;
 }
 </style>
