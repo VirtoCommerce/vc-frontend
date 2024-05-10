@@ -5,7 +5,6 @@ import type { RouteRecordRaw } from "vue-router";
 import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
-import Matcher from "@/pages/matcher.vue";
 
 const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
@@ -28,6 +27,7 @@ const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const DemoLanding = () => import("@/pages/demo-landing.vue");
 const Welcome = () => import("@/pages/welcome.vue");
+const Matcher = () => import("@/pages/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/", name: "Home", component: Home, meta: { public: true } },
