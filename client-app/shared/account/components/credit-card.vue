@@ -8,7 +8,7 @@
     </div>
 
     <div v-if="cardExpiration" class="flex items-center max-md:pt-4">
-      {{ $t("common.prefixes.expired") }} {{ cardExpiration }}
+      {{ $t("common.prefixes.expires") }} {{ cardExpiration }}
     </div>
 
     <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">

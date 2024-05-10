@@ -83,3 +83,7 @@ export function objectToKeyValues(object: { [key: string]: string }): KeyValueTy
     value: object[key],
   }));
 }
+
+export function replaceXFromBeginning(input: string, by: string = "•••• "): string {
+  return input.replace(/^X+/, by);
+}

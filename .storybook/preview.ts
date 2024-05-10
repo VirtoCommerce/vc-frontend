@@ -9,7 +9,9 @@ import type { IThemeConfig } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3";
 import type { App } from "vue";
-import "../client-app/assets/styles/main.scss";
+
+import "../storybook-styles/swiper.scss";
+import "../storybook-styles/utilities.scss";
 
 const i18n: I18n = createI18n("en", "USD");
 

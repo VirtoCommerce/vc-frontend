@@ -56,12 +56,16 @@
                   class="order-first mb-2.5 line-clamp-2 w-full shrink-0 md:mb-0 md:line-clamp-none md:table-cell md:w-auto md:px-4 md:py-2.5 md:align-middle"
                 >
                   <router-link
+                    v-if="item.productExists"
                     :to="links[item.productId]"
                     target="_blank"
                     class="font-semibold text-[--link-color] hover:text-[--link-hover-color]"
                   >
                     {{ item.name }}
                   </router-link>
+                  <div v-else>
+                    {{ item.name }}
+                  </div>
                 </div>
 
                 <div
