@@ -11,9 +11,12 @@
       ></span>
 
       <span
-        class="fi fis fa-2x -my-3 h-[30px] !w-[30px] rounded-full lg:h-[14px] lg:!w-[14px]"
-        :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
-      ></span>
+        class="-my-3 flex h-[30px] !w-[30px] items-center justify-center overflow-hidden rounded-full lg:h-[14px] lg:!w-[14px]"
+      >
+        <span class="country-flag text-[40px] lg:text-[18px]">{{
+          getFlagEmoji(currentLanguage?.twoLetterRegionName)
+        }}</span>
+      </span>
 
       <span class="hidden uppercase lg:inline">
         {{ currentLanguage?.twoLetterLanguageName }}
@@ -46,10 +49,11 @@
                 : select(item.twoLetterLanguageName)
             "
           >
-            <span
-              class="fi fis fa-2x shrink-0 rounded-full"
-              :class="`fi-${item.twoLetterRegionName.toLowerCase()}`"
-            ></span>
+            <span class="flex size-[14px] shrink-0 items-center justify-center overflow-hidden rounded-full">
+              <span class="country-flag text-[18px]">
+                {{ getFlagEmoji(item.twoLetterRegionName) }}
+              </span>
+            </span>
 
             <span
               :class="{
@@ -66,9 +70,11 @@
 </template>
 
 <script setup lang="ts">
-import "flag-icons/css/flag-icons.css";
+import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
 import { ref, shallowRef } from "vue";
 import { useLanguages } from "@/core/composables";
+
+polyfillCountryFlagEmojis();
 
 const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
 
@@ -98,4 +104,15 @@ function select(locale: string) {
   saveLocaleAndReload(locale);
   hideList();
 }
+
+function getFlagEmoji(countryCode: string): string {
+  return countryCode.toUpperCase().replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
+}
 </script>
+
+<style scoped>
+.country-flag {
+  /* Used by polyfillCountryFlagEmojis to render flag emojis (for Windows) */
+  font-family: "Twemoji Country Flags";
+}
+</style>
