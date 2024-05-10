@@ -13,6 +13,25 @@ export function getReturnUrlValue(): string | null {
   return searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
 }
 
+export function extractHostname(url: string) {
+  let hostname = "";
+
+  // Find & remove protocol (http, ftp, etc.) and get hostname
+  if (url.indexOf("://") > -1) {
+    hostname = url.split("/")[2];
+  } else {
+    hostname = url.split("/")[0];
+  }
+
+  // Find & remove port number
+  hostname = hostname.split(":")[0];
+
+  // Find & remove "?"
+  hostname = hostname.split("?")[0];
+
+  return hostname;
+}
+
 export function sleep(ms: number, resolvedValue?: any): Promise<any> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }
