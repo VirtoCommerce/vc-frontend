@@ -9,10 +9,10 @@
         </VcTypography>
 
         <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3">
-          <VcButton variant="outline" @click="decline()">
+          <VcButton variant="outline" @click="decline">
             {{ $t("common.buttons.decline") }}
           </VcButton>
-          <VcButton @click="approve()">
+          <VcButton @click="approve">
             {{ $t("common.buttons.approve") }}
           </VcButton>
         </div>

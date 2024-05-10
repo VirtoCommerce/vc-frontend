@@ -135,7 +135,7 @@ export function useUserQuote() {
   async function declineItem(quoteId: string): Promise<void> {
     fetching.value = true;
     try {
-      await declineQuoteRequest({ command: { quoteId, comment: "" } });
+      await declineQuoteRequest({ command: { quoteId } });
     } catch (e) {
       Logger.error(`${useUserQuote.name}.${declineItem.name}`, e);
       throw e;

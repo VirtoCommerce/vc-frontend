@@ -2998,7 +2998,6 @@ export type MutationsCreateWishlistArgs = {
 
 
 export type MutationsDeclineQuoteRequestArgs = {
-  command: DeclineQuoteCommandType;
 };
 
 
