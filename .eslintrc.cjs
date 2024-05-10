@@ -166,13 +166,6 @@ module.exports = {
     "vue/require-default-prop": "off",
     "vuejs-accessibility/form-control-has-label": "off",
     "vuejs-accessibility/label-has-for": "off",
-    "import/no-cycle": [
-      "error",
-      {
-        maxDepth: 2,
-        ignoreExternal: true,
-      },
-    ],
   },
   overrides: [
     // Fix import of ts types in .vue files
