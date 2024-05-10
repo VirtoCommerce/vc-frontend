@@ -17,4 +17,5 @@ export type ItemForAddBulkItemsToCartResultsModalType = {
   slug?: string;
   isAddedToCart: boolean;
   id: string;
+  productExists: boolean;
 };

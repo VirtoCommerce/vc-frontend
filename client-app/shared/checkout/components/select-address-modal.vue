@@ -46,6 +46,11 @@
       <template #mobile-item="itemData">
         <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
           <div class="w-1/2 grow truncate">
+            <VcBadge v-if="itemData.item.isFavorite" size="sm" variant="outline-dark" rounded>
+              <VcIcon name="whishlist" />
+              <span>{{ $t("pages.company.info.labels.favorite") }}</span>
+            </VcBadge>
+
             <p class="text-base font-bold">
               <span v-if="isCorporateAddresses" class="text-base font-bold">
                 {{ itemData.item.line1 }}<br />
@@ -110,6 +115,10 @@
 
       <template #desktop-body>
         <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-neutral-50': index % 2 }">
+          <td v-if="hasFavoriteAddresses" class="truncate p-5">
+            <VcIcon v-if="address.isFavorite" class="text-primary" name="whishlist" size="md" />
+          </td>
+
           <td class="truncate p-5">
             <span v-if="isCorporateAddresses">
               {{ address.line1 }}<br />
@@ -224,9 +233,10 @@ const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.val
 const paginatedAddresses = computed(() =>
   props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
+const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
-const columns = computed<ITableColumn[]>(() =>
-  props.isCorporateAddresses
+const columns = computed<ITableColumn[]>(() => {
+  const cols: ITableColumn[] = props.isCorporateAddresses
     ? [
         { id: "name", title: t("common.labels.address") },
         { id: "description", title: t("common.labels.description") },
@@ -239,8 +249,14 @@ const columns = computed<ITableColumn[]>(() =>
         { id: "phone", title: t("common.labels.phone") },
         { id: "email", title: t("common.labels.email") },
         { id: "id", title: t("common.labels.active_address"), align: "center" },
-      ],
-);
+      ];
+
+  if (hasFavoriteAddresses.value) {
+    return [{ id: "isFavorite", classes: "w-12" } as ITableColumn].concat(cols);
+  }
+
+  return cols;
+});
 
 function onPageChange(newPage: number): void {
   page.value = newPage;
