@@ -1,0 +1,5 @@
+mutation DeclineQuoteRequest($command: DeclineQuoteCommandType!) {
+  declineQuoteRequest(command: $command) {
+    id
+  }
+}
