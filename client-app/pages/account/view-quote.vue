@@ -3,9 +3,20 @@
     <div class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
-      <VcTypography tag="h1">
-        {{ $t("pages.account.quote_details.title", [quote.number]) }}
-      </VcTypography>
+      <div class="flex flex-col gap-2.5 lg:flex-row lg:justify-between">
+        <VcTypography tag="h1">
+          {{ $t("pages.account.quote_details.title", [quote.number]) }}
+        </VcTypography>
+
+        <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3">
+          <VcButton variant="outline" @click="decline">
+            {{ $t("common.buttons.decline") }}
+          </VcButton>
+          <VcButton @click="approve">
+            {{ $t("common.buttons.approve") }}
+          </VcButton>
+        </div>
+      </div>
     </div>
 
     <VcLayoutWithRightSidebar>
@@ -28,6 +39,36 @@
 
       <template #sidebar>
         <VcWidget :title="$t('pages.account.quote_details.quote_summary')">
+          <div class="flex justify-between text-base">
+            <span v-t="'pages.account.quote_details.subTotal'" class="font-bold" />
+
+            <span class="text-18 font-extrabold text-[color:var(--color-price)]">
+              <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
+            </span>
+          </div>
+          <div class="border-y py-2 text-base font-normal">
+            <div class="flex justify-between text-base">
+              <span v-t="'pages.account.quote_details.discountTotal'" />
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.discountTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              <span v-t="'pages.account.quote_details.shippingTotal'" />
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.shippingTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              <span v-t="'pages.account.quote_details.taxTotal'" />
+
+              <span class="">
+                <VcPriceDisplay :value="quote.totals?.taxTotal" />
+              </span>
+            </div>
+          </div>
           <div class="flex justify-between text-base">
             <span v-t="'pages.account.quote_details.total'" class="font-bold" />
 
@@ -70,8 +111,10 @@
 <script setup lang="ts">
 import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
+import { useNotifications } from "@/shared/notification";
 
 interface IProps {
   quoteId: string;
@@ -80,11 +123,35 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-const { quote, billingAddress, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
+const { quote, billingAddress, approveItem, declineItem, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
+const notification = useNotifications();
+const router = useRouter();
 
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
+
+async function approve() {
+  try {
+    const result = await approveItem(quote.value!.id);
+    await router.push({ name: "OrderDetails", params: { orderId: result.orderId } });
+  } catch (e) {
+    notification.error({
+      text: t("pages.account.quote_details.error.approve"),
+    });
+  }
+}
+
+async function decline() {
+  try {
+    await declineItem(quote.value!.id);
+    await fetchQuote({ id: props.quoteId });
+  } catch (e) {
+    notification.error({
+      text: t("pages.account.quote_details.error.decline"),
+    });
+  }
+}
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
