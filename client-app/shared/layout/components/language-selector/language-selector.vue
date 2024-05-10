@@ -71,15 +71,15 @@
 
 <script setup lang="ts">
 import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
-import { ref, shallowRef } from "vue";
+import { onMounted, ref, shallowRef } from "vue";
 import { useLanguages } from "@/core/composables";
-
-polyfillCountryFlagEmojis();
 
 const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
 
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
+
+onMounted(polyfillCountryFlagEmojis);
 
 function hideList() {
   const HIDE_TIMEOUT = 350;
