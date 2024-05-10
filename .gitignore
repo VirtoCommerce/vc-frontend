@@ -5,6 +5,7 @@ dist
 tmp
 out-tsc
 storybook-static
+storybook-styles/*.css
 # Only exists if Bazel was run
 bazel-out
 

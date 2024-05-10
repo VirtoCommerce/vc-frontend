@@ -117,6 +117,11 @@
           "code": "Draft",
           "color": "neutral",
           "variant": "outline-dark"
+        },
+        {
+          "code": "Declined",
+          "color": "danger",
+          "variant": "outline-dark"
         }
       ],
 
@@ -243,7 +248,8 @@
       "color_additional_50": "#FFFFFF",
       "color_additional_950": "#000000",
 
-      "builderIoKey": ""
+      "builderIoKey": "",
+      "isCVVinSkyflowRequired": false
     },
 
     "Watermelon": {
@@ -259,7 +265,7 @@
       "push_messages_enabled": true,
 
       "quotes_enabled": true,
-      "quotes_files_scope": "quote_attachments",
+      "quotes_files_scope": "quote-attachments",
 
       "product_compare_enabled": true,
       "product_compare_limit": 5,
@@ -362,10 +368,15 @@
           "code": "Draft",
           "color": "neutral",
           "variant": "outline-dark"
+        },
+        {
+          "code": "Declined",
+          "color": "danger",
+          "variant": "outline-dark"
         }
       ],
 
-      "line_items_group_by_vendor_enabled": false,
+      "line_items_group_by_vendor_enabled": true,
       "social_sharing_services": [
         {
           "name": "Facebook",
@@ -389,53 +400,53 @@
         }
       ],
 
-      "color_primary_50": "#FFF2DA",
-      "color_primary_100": "#FBEAD2",
-      "color_primary_200": "#F8DBB1",
-      "color_primary_300": "#F6CB90",
-      "color_primary_400": "#F3BC6F",
-      "color_primary_500": "#F0AD4E",
-      "color_primary_600": "#EB9016",
-      "color_primary_700": "#B46B0F",
-      "color_primary_800": "#7C480B",
-      "color_primary_900": "#432606",
-      "color_primary_950": "#271603",
+      "color_primary_50": "#EEF0DE",
+      "color_primary_100": "#E7EAD0",
+      "color_primary_200": "#D9DEB4",
+      "color_primary_300": "#CBD198",
+      "color_primary_400": "#BCC57B",
+      "color_primary_500": "#AEB85F",
+      "color_primary_600": "#919A45",
+      "color_primary_700": "#6C7433",
+      "color_primary_800": "#484D22",
+      "color_primary_900": "#232611",
+      "color_primary_950": "#111208",
 
-      "color_secondary_50": "#E4EDF4",
-      "color_secondary_100": "#D9E4EE",
-      "color_secondary_200": "#C5D2DE",
-      "color_secondary_300": "#B2C1CD",
-      "color_secondary_400": "#9EAFBD",
-      "color_secondary_500": "#899DAF",
-      "color_secondary_600": "#6C8194",
-      "color_secondary_700": "#546574",
-      "color_secondary_800": "#3C4953",
-      "color_secondary_900": "#252C33",
-      "color_secondary_950": "#191E23",
+      "color_secondary_50": "#F6F4F4",
+      "color_secondary_100": "#EBE5E5",
+      "color_secondary_200": "#D4C9C9",
+      "color_secondary_300": "#BEACAD",
+      "color_secondary_400": "#A79090",
+      "color_secondary_500": "#917374",
+      "color_secondary_600": "#725A5B",
+      "color_secondary_700": "#534142",
+      "color_secondary_800": "#332829",
+      "color_secondary_900": "#141010",
+      "color_secondary_950": "#040303",
 
-      "color_accent-50": "#E8F6FB",
-      "color_accent-100": "#DBF1F9",
-      "color_accent-200": "#C0E6F4",
-      "color_accent-300": "#A6DCF0",
-      "color_accent-400": "#8CD1EB",
-      "color_accent-500": "#72C7E7",
-      "color_accent-600": "#42B4DF",
-      "color_accent-700": "#229AC7",
-      "color_accent-800": "#1A7597",
-      "color_accent-900": "#125067",
-      "color_accent-950": "#29313B",
+      "color_accent_50": "#FEF5F5",
+      "color_accent_100": "#FCE5E5",
+      "color_accent_200": "#F8C5C5",
+      "color_accent_300": "#F4A6A5",
+      "color_accent_400": "#F18685",
+      "color_accent_500": "#ED6665",
+      "color_accent_600": "#E73433",
+      "color_accent_700": "#CA1918",
+      "color_accent_800": "#981312",
+      "color_accent_900": "#660D0C",
+      "color_accent_950": "#4D0909",
 
-      "color_neutral_50": "#FAFAFA",
-      "color_neutral_100": "#EBEBEB",
-      "color_neutral_200": "#D6D6D6",
-      "color_neutral_300": "#C2C2C2",
-      "color_neutral_400": "#ADADAD",
-      "color_neutral_500": "#999999",
-      "color_neutral_600": "#7D7D7D",
-      "color_neutral_700": "#616161",
-      "color_neutral_800": "#454545",
-      "color_neutral_900": "#292929",
-      "color_neutral_950": "#1B1B1B",
+      "color_neutral_50": "#FCFBFA",
+      "color_neutral_100": "#F7F5F2",
+      "color_neutral_200": "#EEEEEC",
+      "color_neutral_300": "#DFDDD7",
+      "color_neutral_400": "#B5B3B0",
+      "color_neutral_500": "#7E7C76",
+      "color_neutral_600": "#5F5B53",
+      "color_neutral_700": "#464441",
+      "color_neutral_800": "#2A2825",
+      "color_neutral_900": "#201F1C",
+      "color_neutral_950": "#0A0A0A",
 
       "color_warning_50": "#FFF6D6",
       "color_warning_100": "#FFF2C4",
@@ -488,42 +499,24 @@
       "color_additional_50": "#FFFFFF",
       "color_additional_950": "#000000",
 
-      "color_body_bg": "#41a640",
-      "color_body_text": "#064806",
-      "color_link": "#2dcb1c",
-      "color_link_hover": "#3ed271",
-      "color_price": "#3C763D",
+      "color_link": "#1b789b",
+      "color_link_hover": "#135770",
 
-      "color_mobile_menu_bg": "#0f5f1b",
-      "color_mobile_menu_text": "#FFFFFF",
-      "color_mobile_menu_link": "#198411",
-      "color_mobile_menu_link_active": "",
-      "color_mobile_menu_icon": "#198411",
-      "color_mobile_menu_icon_active": "",
+      "color_hexagon_icon_bg": "#ed6665",
 
-      "color_header_top_bg": "#09672c",
-      "color_header_top_text": "#a4ee9f",
-      "color_header_top_link": "#b9f3bb",
-      "color_header_top_link_hover": "#4ce396",
+      "color_mobile_menu_icon": "#f18685",
 
-      "color_header_bottom_bg": "#def7de",
-      "color_header_bottom_text": "#292D3B",
-      "color_header_bottom_link": "#015021",
-      "color_header_bottom_link_hover": "#43f043",
-      "color_header_bottom_link_active": "#292D3B",
+      "color_header_top_bg": "#332829",
+      "color_header_top_link": "#d4c9c9",
+      "color_header_top_link_hover": "#f4a6a5",
 
-      "color_footer_top_bg": "#afc2aa",
-      "color_footer_top_text": "#0f7408",
-      "color_footer_top_link": "#053015",
-      "color_footer_top_link_hover": "",
-      "color_footer_top_link_active": "",
+      "color_footer_top_bg": "#332829",
 
-      "color_footer_bottom_bg": "#06350d",
-      "color_footer_bottom_text": "#FFFFFF",
-      "color_footer_bottom_link": "#66B9D8",
-      "color_footer_bottom_link_hover": "",
+      "color_footer_bottom_bg": "#141010",
+      "color_footer_bottom_link": "#d4c9c9",
 
-      "builderIoKey": ""
+      "builderIoKey": "",
+      "isCVVinSkyflowRequired": false
     }
   }
 }

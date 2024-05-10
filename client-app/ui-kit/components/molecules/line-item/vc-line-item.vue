@@ -68,9 +68,7 @@
           </template>
 
           <VcProperty v-if="vendor" :label="$t('common.labels.vendor')" :disabled="disabled">
-            <span class="vc-line-item__vendor">
-              {{ vendor.name }}
-            </span>
+            {{ vendor.name }}
           </VcProperty>
 
           <VcProperty
@@ -311,10 +309,6 @@ watchEffect(() => {
     }
   }
 
-  &__vendor {
-    @apply text-accent-600;
-  }
-
   &__property-price {
     @container (width > theme("containers.4xl")) {
       @apply hidden;
@@ -347,16 +341,12 @@ watchEffect(() => {
     @apply contents;
 
     @container (width <= theme("containers.2xl")) {
-      @apply flex items-center gap-3;
+      @apply flex items-center gap-3 mt-3;
     }
   }
 
   &__slot {
     @apply flex-none empty:hidden;
-
-    @container (width <= theme("containers.2xl")) {
-      @apply mt-3;
-    }
 
     &:has(.vc-quantity, * .vc-quantity) {
       @apply w-[6.5rem];

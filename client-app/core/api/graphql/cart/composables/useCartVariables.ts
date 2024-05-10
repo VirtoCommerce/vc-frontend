@@ -1,9 +1,9 @@
-import { toValue } from "vue";
+import { computed, toValue } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
 import type { IAllGlobalVariables } from "@/core/api/graphql/composables";
 import type { CartIdFragment } from "@/core/api/graphql/types";
 import type { UseMutationOptions } from "@vue/apollo-composable";
-import type { MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter, ComputedRef } from "vue";
 
 export interface ICartVariables extends IAllGlobalVariables {
   cartId?: string;
@@ -25,8 +25,8 @@ export function useCartQueryVariables(): MaybeRefOrGetter<ICartQueryVariables> {
 export function useCartMutationVariables<TResult>(
   cart?: MaybeRefOrGetter<CartIdFragment | undefined>,
   options: MaybeRefOrGetter<CartMutationOptionsType<TResult>> = {},
-): UseMutationOptions<TResult, ICartMutationVariables> {
-  return {
+): ComputedRef<UseMutationOptions<TResult, ICartMutationVariables>> {
+  return computed(() => ({
     variables: {
       command: {
         ...toValue(useAllGlobalVariables()),
@@ -35,5 +35,5 @@ export function useCartMutationVariables<TResult>(
       skipQuery: false,
     },
     ...toValue(options),
-  };
+  }));
 }

@@ -74,7 +74,9 @@
       "previous": "Previous",
       "next": "Next",
       "send_link_email": "Send link by e-mail",
-      "share": "Share"
+      "share": "Share",
+      "approve": "Approve",
+      "decline": "Decline"
     },
     "labels": {
       "actions": "Actions",
@@ -147,7 +149,7 @@
     },
     "prefixes": {
       "please": "Please",
-      "expired": "Expired:"
+      "expires": "Expires:"
     },
     "suffixes": {
       "from": "From",
@@ -1093,6 +1095,10 @@
         "same_as_shipping_address": "Same as shipping address",
         "quote_summary": "Quote Summary",
         "quote_data": "Quote Data",
+        "subTotal": "@:common.labels.subtotal",
+        "discountTotal": "@:common.labels.discount",
+        "shippingTotal": "@:common.labels.shipping_cost",
+        "taxTotal": "@:common.labels.tax",
         "total": "@:common.labels.total",
         "created": "@:common.labels.created",
         "status": "@:common.labels.status",
@@ -1108,6 +1114,10 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "error": {
+          "approve": "The quote cannot be approved",
+          "decline": "The quote cannot be declined"
         }
       },
       "notifications": {
