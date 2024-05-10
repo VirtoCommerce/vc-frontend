@@ -67,9 +67,7 @@
           </template>
 
           <VcProperty v-if="vendor" :label="$t('common.labels.vendor')" :disabled="disabled">
-            <span class="vc-line-item__vendor">
-              {{ vendor.name }}
-            </span>
+            {{ vendor.name }}
           </VcProperty>
 
           <VcProperty
@@ -307,10 +305,6 @@ watchEffect(() => {
         @apply hidden;
       }
     }
-  }
-
-  &__vendor {
-    @apply text-accent-600;
   }
 
   &__property-price {
