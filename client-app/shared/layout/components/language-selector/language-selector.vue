@@ -106,6 +106,7 @@ function select(locale: string) {
 }
 
 function getFlagEmoji(countryCode: string): string {
+  // commonly accepted approach to convert country code to flag emoji
   return countryCode.toUpperCase().replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
 }
 </script>
