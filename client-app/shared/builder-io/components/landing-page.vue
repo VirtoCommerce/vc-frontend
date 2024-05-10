@@ -43,7 +43,7 @@ async function tryLoadContent(urlPath: string) {
     content.value = await fetchOneEntry({
       model: "page",
       apiKey: apiKey.value,
-      options: getBuilderSearchParams(new URL(location.href).searchParams),
+      options: getBuilderSearchParams(new URLSearchParams(location.search)),
       userAttributes: {
         urlPath: urlPath,
       },
