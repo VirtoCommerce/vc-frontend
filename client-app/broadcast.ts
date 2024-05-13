@@ -17,6 +17,7 @@ import {
   userLockedEvent,
   forbiddenEvent,
   passwordExpiredEvent,
+  reloadAndOpenMainPage,
 } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 
@@ -37,6 +38,9 @@ export function setupBroadcastGlobalListeners() {
   const { signMeOut } = useSignMeOut({ reloadPage: false });
 
   on(pageReloadEvent, () => location.reload());
+  on(reloadAndOpenMainPage, () => {
+    location.href = "/";
+  });
   on(userReloadEvent, () => fetchUser());
   on(userLockedEvent, async () => {
     await signMeOut();

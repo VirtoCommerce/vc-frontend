@@ -1,7 +1,7 @@
 <template>
   <label class="inline-flex cursor-pointer flex-row items-center space-x-2">
     <input
-      class="size-6 cursor-pointer appearance-none rounded-full border-2 border-gray-300 bg-white checked:border-8 checked:border-[color:var(--color-primary)] focus:outline-none"
+      class="size-6 cursor-pointer appearance-none rounded-full border-2 border-neutral-300 bg-additional-50 checked:border-8 checked:border-primary focus:outline-none"
       type="radio"
       :value="value"
       :checked="checked"
@@ -9,7 +9,7 @@
       @change="$emit('update:modelValue', value)"
     />
     <slot v-bind="{ checked, value, label }">
-      <span class="text-base font-medium" :class="{ 'text-gray-500': !checked }">{{ label }}</span>
+      <span class="text-base font-normal" :class="{ 'text-neutral-500': !checked }">{{ label }}</span>
     </slot>
   </label>
 </template>

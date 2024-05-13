@@ -6,7 +6,7 @@
       </VcTypography>
     </div>
 
-    <div class="bg-gray-100 pb-16 pt-6 lg:py-24">
+    <div class="bg-neutral-100 pb-16 pt-6 lg:py-24">
       <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
         <div class="grid grid-cols-1 items-center gap-x-20 gap-y-10 lg:grid-cols-2">
           <div class="order-2 lg:order-1">
@@ -25,7 +25,7 @@
               </VcButton>
             </div>
           </div>
-          <div class="order-1 aspect-video rounded bg-gray-200 lg:order-2">
+          <div class="order-1 aspect-video rounded bg-neutral-200 lg:order-2">
             <VcImage
               src="/static/images/demo-landing/note.webp"
               :alt="$t('pages.demo_landing.primary_block.image_alt')"
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div class="bg-white py-10 lg:py-24">
+    <div class="bg-additional-50 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-14 lg:px-32">
         <div
           v-t="'pages.demo_landing.secondary_block.primary_text'"
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <div class="bg-gray-100 py-10 lg:py-24">
+    <div class="bg-neutral-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
         <div
           v-t="'pages.demo_landing.features_block.primary_text'"
@@ -81,12 +81,12 @@
       </div>
     </div>
 
-    <div class="bg-gray-800 py-10 lg:py-24">
+    <div class="bg-neutral-800 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
         <div class="flex flex-col items-center justify-between space-y-10 lg:block">
           <div
             v-t="'pages.demo_landing.booking_block.message'"
-            class="text-center text-2xl font-bold text-white lg:text-3xl"
+            class="text-center text-2xl font-bold text-additional-50 lg:text-3xl"
           ></div>
           <div class="flex w-full justify-center gap-6">
             <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com">
@@ -101,7 +101,7 @@
       </div>
     </div>
 
-    <div class="bg-gray-100 py-10 lg:py-24">
+    <div class="bg-neutral-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
         <VcTypography tag="h2" variant="h1" class="mb-2 lg:mb-4">
           {{ $t("pages.demo_landing.products_block.title") }}
@@ -123,7 +123,7 @@
       </div>
     </div>
 
-    <div class="bg-white py-10 lg:py-24">
+    <div class="bg-additional-50 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-14 lg:px-32">
         <div
           v-t="'pages.demo_landing.after_products_block.primary_text'"
@@ -133,7 +133,7 @@
       </div>
     </div>
 
-    <div class="bg-gray-100 py-10 lg:py-24">
+    <div class="bg-neutral-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-14 lg:px-32">
         <div
           v-t="'pages.demo_landing.subscription_block.primary_text'"
@@ -152,10 +152,7 @@
             <VcCheckbox class="inline-flex">
               {{ $t("pages.demo_landing.subscription_block.agreement_checkbox_label") }}
 
-              <router-link
-                class="text-[color:var(--color-link)] hover:text-[color:var(--color-link-hover)]"
-                to="/terms"
-              >
+              <router-link class="text-[--link-color] hover:text-[--link-hover-color]" to="/terms">
                 {{ $t("pages.demo_landing.subscription_block.terms_and_policy_link") }}
               </router-link>
             </VcCheckbox>

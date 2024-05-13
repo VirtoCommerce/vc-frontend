@@ -68,11 +68,22 @@
           @keypress.enter="applyKeyword"
         >
           <template #append>
-            <button v-if="localKeyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
+            <button
+              v-if="localKeyword"
+              :aria-label="$t('common.buttons.reset_orders_search_keyword')"
+              type="button"
+              class="flex h-full items-center px-4"
+              @click="resetKeyword"
+            >
               <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
             </button>
 
-            <VcButton :disabled="ordersLoading" icon="search" @click="applyKeyword" />
+            <VcButton
+              :disabled="ordersLoading"
+              :aria-label="$t('commmon.buttons.search_orders')"
+              icon="search"
+              @click="applyKeyword"
+            />
           </template>
         </VcInput>
       </div>
@@ -160,7 +171,7 @@
 
           <div class="flex flex-col items-end justify-center">
             <OrderStatus
-              class="w-full !max-w-[9rem]"
+              class="w-full !max-w-36"
               :status="itemData.item.status"
               :display-value="itemData.item.statusDisplayValue"
             />
@@ -235,7 +246,7 @@
             <VcTooltip class="!block">
               <template #trigger>
                 <OrderStatus
-                  class="w-full !max-w-[9rem]"
+                  class="w-full !max-w-36"
                   :status="order.status"
                   :display-value="order.statusDisplayValue"
                 />
@@ -331,7 +342,6 @@ const {
   filterChipsItems,
   applyFilters,
   resetFilters,
-  resetDataToApplied,
   removeFilterChipsItem,
 } = useUserOrdersFilter();
 
@@ -418,9 +428,6 @@ function resetFiltersWithKeyword() {
 }
 
 function toggleFilters() {
-  if (!filtersVisible.value) {
-    resetDataToApplied();
-  }
   filtersVisible.value = !filtersVisible.value;
 }
 
@@ -453,6 +460,8 @@ function applyOrderFilters(): void {
 function resetOrderFilters(): void {
   resetFilters();
   selectedDateFilterType.value = dateFilterTypes.value[0];
+  selectedDateFilterType.value.startDate = undefined;
+  selectedDateFilterType.value.endDate = undefined;
   hideFilters();
 }
 

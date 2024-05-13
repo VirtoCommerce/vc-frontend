@@ -11,10 +11,14 @@
     >
       <template #append>
         <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click="reset">
-          <VcIcon name="delete-2" size="xs" class="text-[color:var(--color-primary)]" />
+          <VcIcon name="delete-2" size="xs" class="text-primary" />
         </button>
 
-        <VcButton icon="search" @click="goToSearchResultsPage" />
+        <VcButton
+          :aria-label="$t('shared.layout.search_bar.search_button')"
+          icon="search"
+          @click="goToSearchResultsPage"
+        />
       </template>
     </VcInput>
 
@@ -22,7 +26,7 @@
     <transition name="slide-fade-top">
       <div
         v-if="searchDropdownVisible"
-        class="absolute left-0 top-[3.45rem] z-20 flex w-full flex-col gap-1 overflow-y-auto rounded bg-white shadow-lg"
+        class="absolute left-0 top-[3.45rem] z-20 flex w-full flex-col gap-1 overflow-y-auto rounded bg-additional-50 shadow-lg"
         :style="searchDropdownStyle"
       >
         <!-- Results -->
@@ -103,7 +107,7 @@
           </section>
 
           <!-- Actions -->
-          <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-gray-100 bg-white px-5 py-3">
+          <section v-if="total" class="sticky bottom-0 mt-0.5 border-t border-neutral-100 bg-additional-50 px-5 py-3">
             <VcButton size="sm" @click="goToSearchResultsPage">
               {{ $t("shared.layout.search_bar.view_all_results_button", { total }) }}
             </VcButton>
@@ -112,7 +116,7 @@
 
         <!-- Not found -->
         <div v-else-if="!loading" class="my-16 text-center">
-          <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 text-[color:var(--color-primary)]" />
+          <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 text-primary" />
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
             <template #keyword>

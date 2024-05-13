@@ -1,0 +1,6 @@
+mutation ApproveQuoteRequest($command: ApproveQuoteCommandType!) {
+  approveQuoteRequest(command: $command) {
+    id
+    orderId
+  }
+}
