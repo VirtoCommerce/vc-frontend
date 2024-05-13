@@ -6,6 +6,7 @@
     :disabled="disabled"
     :error="!!errorMessage"
     :message="errorMessage"
+    :aria-label="$t('common.labels.product_quantity')"
     single-line-message
     class="vc-quantity"
     size="sm"

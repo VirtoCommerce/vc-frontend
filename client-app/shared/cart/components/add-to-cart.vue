@@ -6,6 +6,7 @@
         ref="inputElement"
         v-model.number="enteredQuantity"
         type="number"
+        :aria-label="$t('common.labels.product_quantity')"
         :disabled="disabled"
         :max="maxQty"
         :min="minQty"

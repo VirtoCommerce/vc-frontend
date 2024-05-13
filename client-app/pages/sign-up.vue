@@ -135,7 +135,12 @@
     </template>
 
     <template #right>
-      <VcImage class="max-w-md" src="/static/images/sign-up/image.webp" lazy />
+      <VcImage
+        :alt="$t('common.labels.background_image')"
+        class="max-w-md"
+        src="/static/images/sign-up/image.webp"
+        lazy
+      />
     </template>
   </TwoColumn>
 </template>
