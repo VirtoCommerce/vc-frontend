@@ -4,6 +4,7 @@ import type { StorybookConfig } from "@storybook/vue3-vite";
 
 const config: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
+  staticDirs: [{ from: "../storybook-styles/dist", to: "/assets" }],
   addons: [
     "@storybook/addon-viewport",
     "@storybook/addon-links",

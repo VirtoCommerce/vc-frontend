@@ -35,14 +35,15 @@
     "generate:routes": "vite-node --config vite.routes.config.ts --mode production scripts/generate-routes.ts",
     "generate:bundle-map": "GENERATE_BUNDLE_MAP=true yarn build-only",
     "generate:dependency-graph": "depcruise $0 --focus $0 --focus-depth 0 --reaches $1 --config .dependency-graph.cjs --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
-    "storybook:dev": "yarn generate:certificates && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
-    "storybook:build": "storybook build",
+    "storybook:styles": "npx tailwindcss -i storybook-styles/preflight.scss -o storybook-styles/dist/preflight.css",
+    "storybook:dev": "yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
+    "storybook:build": "yarn storybook:styles && storybook build",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
     "postinstall": "husky"
   },
   "dependencies": {
     "@apollo/client": "^3.9.4",
-    "@builder.io/sdk-vue": "^0.3.1",
+    "@builder.io/sdk-vue": "^1.0.27",
     "@headlessui/vue": "^1.7.17",
     "@hotjar/browser": "^1.0.9",
     "@popperjs/core": "^2.11.8",

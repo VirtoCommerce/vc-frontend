@@ -83,12 +83,14 @@
 
 <script setup lang="ts">
 import { useCssVar } from "@vueuse/core";
+import { cloneDeep } from "lodash";
 import Skyflow from "skyflow-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { useSkyflowCards } from "../composables";
 import type { CustomerOrderType, InputKeyValueType, KeyValueType } from "@/core/api/graphql/types";
@@ -125,14 +127,21 @@ const cvvOnlyContainer = ref(null);
 const saveCreditCard = ref(false);
 const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; skyflowId: string }>();
 
-const creditCards = computed(() =>
-  (skyflowCards.value || []).concat([
+const creditCards = computed(() => {
+  const cards =
+    skyflowCards.value?.map((el) => {
+      return {
+        ...el,
+        cardNumber: replaceXFromBeginning(el.cardNumber),
+      };
+    }) || [];
+  return cards.concat([
     {
       cardNumber: t("common.labels.add_new_card"),
       skyflowId: "",
     },
-  ]),
-);
+  ]);
+});
 const addNewCardSelected = computed(() => selectedSkyflowCard.value?.cardNumber === t("common.labels.add_new_card"));
 
 function selectSkyflowCard(skyflowCard: { cardNumber: string; cardExpiration?: string; skyflowId: string }): void {
@@ -150,8 +159,8 @@ let skyflowClient: Skyflow,
   cvvCollector: CollectContainer | null,
   cvvElement: CollectElement | null;
 
-// general styles for CVV only and for NEW CARD
-const inputStyles = {
+// styles for CVV only and for NEW CARD
+const globalStyles = {
   global: {
     "@import": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
   },
@@ -160,6 +169,39 @@ const inputStyles = {
   borderColor: useCssVar("--color-neutral-200", root).value,
   focusOutlineColor: useCssVar("--color-primary-200", root).value,
 };
+
+const baseInputStyles = {
+  fontFamily: globalStyles.fontFamily,
+  fontStyle: "normal",
+  fontWeight: 400,
+  fontSize: "0.9375rem",
+  lineHeight: "1",
+  borderRadius: "3px",
+  border: `1px solid ${globalStyles.borderColor}`,
+  "&:focus": {
+    border: "1px solid transparent",
+    outline: `4px solid ${globalStyles.focusOutlineColor}`,
+  },
+};
+
+const baseLabelStyles = {
+  fontFamily: globalStyles.fontFamily,
+  fontSize: "0.9375rem",
+  fontWeight: 700,
+  lineHeight: "1.25rem",
+  marginBottom: "0.125rem",
+};
+
+const baseErrorStyles = {
+  fontFamily: globalStyles.fontFamily,
+  fontSize: "0.75rem",
+  color: globalStyles.errorColor,
+  textTransform: "lowercase",
+  "&::first-letter": {
+    textTransform: "uppercase",
+  },
+};
+// end styles
 
 // NEW CARD START
 type ElementType =
@@ -202,7 +244,7 @@ async function initNewCardForm(): Promise<void> {
 
   await initPayment();
 
-  const { global, fontFamily, errorColor, borderColor, focusOutlineColor } = inputStyles;
+  const { global, fontFamily, errorColor } = globalStyles;
 
   const containerOptions = {
     layout: [1, 1, 2],
@@ -216,10 +258,7 @@ async function initNewCardForm(): Promise<void> {
       },
     },
     errorTextStyles: {
-      base: {
-        fontFamily,
-        color: errorColor,
-      },
+      base: baseErrorStyles,
       global,
     },
   };
@@ -235,29 +274,14 @@ async function initNewCardForm(): Promise<void> {
   const collectStylesOptions = {
     inputStyles: {
       base: {
-        fontFamily,
-        fontStyle: "normal",
-        fontWeight: 400,
-        fontSize: "0.9375rem",
-        lineHeight: "1",
-        borderRadius: "3px",
-        border: `1px solid ${borderColor}`,
-        "&:focus": {
-          border: "1px solid transparent",
-          outline: `4px solid ${focusOutlineColor}`,
-        },
+        ...baseInputStyles,
+        textSecurity: "none",
         padding: "0.75rem",
       },
       global,
     },
     labelStyles: {
-      base: {
-        fontFamily,
-        fontSize: "0.9375rem",
-        fontWeight: 700,
-        lineHeight: "1.25rem",
-        marginBottom: "0.125rem",
-      },
+      base: baseLabelStyles,
       requiredAsterisk: {
         color: errorColor,
       },
@@ -307,11 +331,14 @@ async function initNewCardForm(): Promise<void> {
     },
   );
 
+  const cvvStyles = cloneDeep(collectStylesOptions);
+  cvvStyles.inputStyles.base.textSecurity = "disc";
+
   const CVV = container.create(
     {
       table: skyflowTableName,
       column: "cvv",
-      ...collectStylesOptions,
+      ...cvvStyles,
       placeholder: "111",
       label: t("shared.payment.bank_card_form.security_code_label"),
       type: Skyflow.ElementType.CVV,
@@ -361,24 +388,15 @@ async function initCvvForm() {
 
   clearCvv();
 
-  const { global, fontFamily, errorColor, borderColor, focusOutlineColor } = inputStyles;
+  const { global, errorColor } = globalStyles;
 
   const container = skyflowClient.container(Skyflow.ContainerType.COLLECT) as CollectContainer;
 
   const collectStylesOptions = {
     inputStyles: {
       base: {
-        fontFamily,
-        fontStyle: "normal",
-        fontWeight: 400,
-        fontSize: "0.9375rem",
-        lineHeight: "1",
-        borderRadius: "3px",
-        border: `1px solid ${borderColor}`,
-        "&:focus": {
-          border: "1px solid transparent",
-          outline: `4px solid ${focusOutlineColor}`,
-        },
+        ...baseInputStyles,
+        textSecurity: "disc",
         width: "6.2rem",
         margin: "4px",
         padding: "0.6rem",
@@ -387,12 +405,8 @@ async function initCvvForm() {
     },
     labelStyles: {
       base: {
-        fontFamily,
-        fontSize: "0.9375rem",
-        fontWeight: 700,
-        lineHeight: "1.25rem",
+        ...baseLabelStyles,
         marginLeft: "4px",
-        marginBottom: "0.125rem",
       },
       requiredAsterisk: {
         color: errorColor,
@@ -400,11 +414,7 @@ async function initCvvForm() {
       global,
     },
     errorTextStyles: {
-      base: {
-        fontFamily,
-        marginTop: "4px",
-        color: errorColor,
-      },
+      base: baseErrorStyles,
       global,
     },
   };
