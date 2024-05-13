@@ -17,6 +17,7 @@
         :available-quantity="item.inStockQuantity"
         :count-in-cart="item.countInCart"
         :disabled="addToCartDisabled(item)"
+        :is-in-stock="item.availabilityData?.isInStock"
         @update:model-value="changeItemQuantity(item, $event)"
         @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
         @update:validation="setValidationStatus(item, $event)"
@@ -93,6 +94,10 @@ function setValidationStatus(
   item: PreparedLineItemType,
   status: { isValid: true } | { isValid: false; errorMessage: string },
 ): void {
+  if (!item.availabilityData?.isInStock) {
+    return;
+  }
+
   const existingValidationError = validationErrors.value.find((error) => error.objectId === item.id);
 
   if (!existingValidationError && !status.isValid) {
