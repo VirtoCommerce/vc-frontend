@@ -35,6 +35,7 @@
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
               <VcImage
+                :alt="$t('common.placeholders.select_payment_method')"
                 class="size-12 rounded-sm bg-[--color-neutral-100]"
                 src="/static/icons/placeholders/select-payment.svg"
               />
@@ -45,14 +46,22 @@
 
           <template #selected="{ item }">
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+              <VcImage
+                :alt="$t(`common.methods.payment_by_code.${item.code}`)"
+                class="size-12 rounded-sm"
+                :src="item.logoUrl"
+              />
 
               {{ $t(`common.methods.payment_by_code.${item.code}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage
+              :alt="$t(`common.methods.payment_by_code.${item.code}`)"
+              class="size-12 rounded-sm"
+              :src="item.logoUrl"
+            />
 
             {{ $t(`common.methods.payment_by_code.${item.code}`) }}
           </template>
@@ -69,6 +78,7 @@
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
               <VcImage
+                :alt="$t('common.placeholders.select_delivery_method')"
                 class="size-12 rounded-sm bg-[--color-neutral-100]"
                 src="/static/icons/placeholders/select-shipping.svg"
               />
@@ -79,14 +89,22 @@
 
           <template #selected="{ item }">
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+              <VcImage
+                :alt="$t(`common.methods.delivery_by_id.${item.id}`)"
+                class="size-12 rounded-sm"
+                :src="item.logoUrl"
+              />
 
               {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
             </div>
           </template>
 
           <template #item="{ item }">
-            <VcImage class="size-12 rounded-sm" :src="item.logoUrl" />
+            <VcImage
+              :alt="$t(`common.methods.delivery_by_id.${item.id}`)"
+              class="size-12 rounded-sm"
+              :src="item.logoUrl"
+            />
 
             {{ $t(`common.methods.delivery_by_id.${item.id}`) }}
           </template>

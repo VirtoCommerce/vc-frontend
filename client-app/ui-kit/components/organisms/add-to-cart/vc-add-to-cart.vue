@@ -4,6 +4,7 @@
     :disabled="disabled"
     :min="minQuantity"
     :max="maxQuantity"
+    :aria-label="$t('common.labels.product_quantity')"
     single-line-message
     center
     class="vc-add-to-cart"

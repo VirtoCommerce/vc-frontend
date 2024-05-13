@@ -96,10 +96,15 @@
         <!-- Shipping Method Card -->
         <VcWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')">
           <div class="flex items-center gap-4 text-15">
-            <VcImage :src="shipment.shippingMethod?.logoUrl" class="size-12 print:hidden" lazy />
+            <VcImage
+              :alt="shipmentMethodName"
+              :src="shipment.shippingMethod?.logoUrl"
+              class="size-12 print:hidden"
+              lazy
+            />
 
             <span class="min-w-0 break-words">
-              {{ $t(`common.methods.delivery_by_id.${shipment.shipmentMethodCode}_${shipment.shipmentMethodOption}`) }}
+              {{ shipmentMethodName }}
               ({{ shipment.price?.formattedAmount }})
             </span>
           </div>
@@ -113,9 +118,9 @@
         <!-- Payment Method section -->
         <VcWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')">
           <div class="flex items-center gap-4 text-15">
-            <VcImage :src="payment.paymentMethod.logoUrl" class="size-12 print:hidden" lazy />
+            <VcImage :alt="paymentMethodName" :src="payment.paymentMethod.logoUrl" class="size-12 print:hidden" lazy />
             <span class="min-w-0 break-words">
-              {{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}
+              {{ paymentMethodName }}
             </span>
           </div>
         </VcWidget>
@@ -179,6 +184,13 @@ const showPaymentButton = computed<boolean>(
   () => !!order.value && (order.value.status === "New" || order.value.status === "Payment required"),
 );
 const showReorderButton = computed<boolean>(() => !!order.value && order.value.status === "Completed");
+
+const shipmentMethodName = computed<string>(() =>
+  t(`common.methods.delivery_by_id.${shipment.value?.shipmentMethodCode}_${shipment.value?.shipmentMethodOption}`),
+);
+const paymentMethodName = computed<string>(() =>
+  t(`common.methods.payment_by_code.${payment.value?.paymentMethod?.code}`),
+);
 
 async function reorderItems() {
   const items = order.value!.items.filter((item) => !item.isGift);
