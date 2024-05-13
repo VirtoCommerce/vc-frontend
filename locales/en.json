@@ -1471,17 +1471,20 @@
     "required_unique_chars": "At least one unique character | Minimum {0} unique characters"
   },
   "validation_error": {
-    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed. Available quantity: {availQty}",
+    "PRODUCT_QTY_CHANGED": "You can order maximum {availQty} item(s)",
     "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
     "CART_PRODUCT_INACTIVE": "The product is inactive.",
     "PRODUCT_PRICE_INVALID": "Price is invalid.",
-    "PRODUCT_FFC_QTY": "Maximum available quantity is {availableQty}.",
-    "PRODUCT_MIN_QTY": "Product quantity {qty} is less than minumum {minQty}.",
-    "PRODUCT_MAX_QTY": "Product quantity {qty} is greater than maximum {maxQty}.",
+    "PRODUCT_FFC_QTY": "The product is out of stock",
+    "PRODUCT_MIN_QTY": "You can order minimum {minQty} item(s)",
+    "PRODUCT_MAX_QTY": "You can order maximum {maxQty} item(s)",
+    "PRODUCT_MIN_MAX_QTY": "You can order from {minQty} to {maxQty} item(s)",
     "UNABLE_SET_LESS_PRICE": "Unable to set less price.",
     "LINE_ITEM_NOT_FOUND": "Line item not found.",
     "LINE_ITEM_IS_READ_ONLY": "Line item is read only.",
-    "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
+    "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
+    "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
+    "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)"
   },
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name.",

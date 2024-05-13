@@ -4,8 +4,6 @@
     :name="name"
     :readonly="readonly"
     :disabled="disabled"
-    :min="minQuantity"
-    :max="maxQuantity"
     :error="!!errorMessage"
     :message="errorMessage"
     :aria-label="$t('common.labels.product_quantity')"
@@ -26,6 +24,7 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField } from "vee-validate";
 import { computed, ref, toRefs, watchEffect } from "vue";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
 interface IEmits {
@@ -98,7 +97,7 @@ function onKeydown(e: KeyboardEvent) {
 
 function isQuantity(qty: unknown): qty is number {
   const qtyAsNumber = Number(quantity.value);
-  return !isNaN(qtyAsNumber) && Number(qtyAsNumber) >= 1;
+  return !isNaN(qtyAsNumber) && Number(qtyAsNumber) >= 1 && Number(qtyAsNumber) <= LINE_ITEM_QUANTITY_LIMIT;
 }
 
 watchEffect(() => {
