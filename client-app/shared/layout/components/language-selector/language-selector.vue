@@ -13,9 +13,7 @@
       <span
         class="-my-3 flex h-[30px] !w-[30px] items-center justify-center overflow-hidden rounded-full lg:h-[14px] lg:!w-[14px]"
       >
-        <span class="country-flag text-[40px] lg:text-[18px]">{{
-          getFlagEmoji(currentLanguage?.twoLetterRegionName)
-        }}</span>
+        <span class="font-flag text-[2.5rem] lg:text-lg">{{ getFlagEmoji(currentLanguage?.twoLetterRegionName) }}</span>
       </span>
 
       <span class="hidden uppercase lg:inline">
@@ -50,7 +48,7 @@
             "
           >
             <span class="flex size-[14px] shrink-0 items-center justify-center overflow-hidden rounded-full">
-              <span class="country-flag text-[18px]">
+              <span class="font-flag text-lg">
                 {{ getFlagEmoji(item.twoLetterRegionName) }}
               </span>
             </span>
@@ -110,10 +108,3 @@ function getFlagEmoji(countryCode: string): string {
   return countryCode.toUpperCase().replace(/./g, (char) => String.fromCodePoint(char.charCodeAt(0) + 127397));
 }
 </script>
-
-<style scoped>
-.country-flag {
-  /* Used by polyfillCountryFlagEmojis to render flag emojis (for Windows) */
-  font-family: "Twemoji Country Flags", sans-serif;
-}
-</style>

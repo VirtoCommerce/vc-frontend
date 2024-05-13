@@ -10,6 +10,7 @@ module.exports = {
       lato: ["Lato", "sans-serif"],
       roboto: ["Roboto", "sans-serif"],
       "roboto-condensed": ["Roboto Condensed", "sans-serif"],
+      flag: ["Twemoji Country Flags", "sans-serif"],
     },
 
     extend: {
