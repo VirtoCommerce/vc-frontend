@@ -268,7 +268,9 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   }
   if (itemInCart) {
     itemsStatus.value[lineItem.id] = LineItemStatus.Updating;
-    await changeItemQuantity(itemInCart.id, quantity);
+    if (itemInCart.quantity !== quantity) {
+      await changeItemQuantity(itemInCart.id, quantity);
+    }
   } else {
     itemsStatus.value[lineItem.id] = LineItemStatus.Adding;
     await addToCart(lineItem.product.id, quantity);
