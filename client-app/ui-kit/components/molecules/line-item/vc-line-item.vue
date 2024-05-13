@@ -111,7 +111,7 @@
           size="sm"
           variant="no-background"
           icon="x"
-          :disabled="disabled"
+          :disabled="disabled || isPending"
           @click="$emit('remove')"
         />
       </div>
@@ -124,7 +124,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
+import { LineItemStatus } from "@/core/enums";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -143,6 +144,7 @@ interface IProps {
   total?: MoneyType;
   selectable?: boolean;
   selected?: boolean;
+  status?: LineItemStatus;
   removable?: boolean;
   disabled?: boolean;
   deleted?: boolean;
@@ -157,9 +159,11 @@ defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
+  status: LineItemStatus.Idle,
 });
 
 const isSelected = ref<boolean>(true);
+const isPending = computed(() => props.status !== LineItemStatus.Idle);
 
 watchEffect(() => {
   isSelected.value = props.selected;

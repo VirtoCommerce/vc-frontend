@@ -2,6 +2,7 @@ export * from "./address-type.enum";
 export * from "./content-type.enum";
 export * from "./date-filter-ids.enum";
 export * from "./identity-errors.enum";
+export * from "./line-item-status.enum";
 export * from "./permissions.enum";
 export * from "./product-type.enum";
 export * from "./property-type.enum";

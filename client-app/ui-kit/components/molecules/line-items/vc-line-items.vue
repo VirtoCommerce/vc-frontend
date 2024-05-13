@@ -61,6 +61,7 @@
             :disabled="disabled"
             :deleted="item.deleted"
             :removable="removable"
+            :status="getStatus(item.id)"
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
             @select="($event) => selectSingleItem(item.id, $event)"
@@ -72,7 +73,7 @@
 
             <template v-if="$slots.default" #default>
               <div ref="slotElements">
-                <slot v-bind="{ item }" />
+                <slot v-bind="{ item, status: getStatus(item.id) }" />
               </div>
             </template>
 
@@ -117,7 +118,8 @@
 <script setup lang="ts">
 import { intersection, map, sumBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
-import type { PreparedLineItemType } from "@/core/types";
+import { LineItemStatus } from "@/core/enums";
+import type { PreparedLineItemType, LineItemsStatusType } from "@/core/types";
 
 interface IEmits {
   (event: "remove:items", value: string[]): void;
@@ -129,6 +131,7 @@ interface IProps {
   readonly?: boolean;
   removable?: boolean;
   items?: PreparedLineItemType[];
+  itemsStatus: LineItemsStatusType;
   sharedSelectedItemIds?: string[];
   selectable?: boolean;
   withImage?: boolean;
@@ -143,6 +146,7 @@ const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
+  itemsStatus: () => ({}),
   withHeader: true,
 });
 
@@ -189,6 +193,10 @@ function removeSelectedItems() {
 
 function removeAllItems() {
   emit("remove:items", itemIds.value);
+}
+
+function getStatus(id: string): LineItemStatus {
+  return props.itemsStatus[id] || LineItemStatus.Idle;
 }
 
 watchEffect(() => {

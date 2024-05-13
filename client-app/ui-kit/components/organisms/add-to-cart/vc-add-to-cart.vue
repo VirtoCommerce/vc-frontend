@@ -1,7 +1,7 @@
 <template>
   <VcInput
     v-model.number="quantity"
-    :disabled="disabled"
+    :disabled="disabled || loading"
     :min="minQuantity"
     :max="maxQuantity"
     single-line-message

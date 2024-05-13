@@ -7,6 +7,7 @@ import type {
   Property,
   QuoteItemType,
 } from "@/core/api/graphql/types";
+import type { LineItemStatus } from "@/core/enums";
 import type { RouteLocationRaw } from "vue-router";
 
 export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
@@ -53,3 +54,5 @@ export type PreparedLineItemType = {
   productId?: string;
   countInCart?: number;
 };
+
+export type LineItemsStatusType = Record<string, LineItemStatus>;
