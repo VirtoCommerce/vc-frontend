@@ -11,9 +11,10 @@ import {
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
-import { getBaseUrl, Logger } from "@/core/utilities";
+import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
@@ -22,11 +23,8 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
 import type { StoreResponseType } from "./core/api/graphql/types";
-
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
-  const STORE_ID = "B2B-store";
-
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -71,7 +69,9 @@ export default async () => {
     },
   };
 
-  const store = (await getStore(STORE_ID)) as StoreResponseType;
+  const store = (await getStore(
+    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
+  )) as StoreResponseType;
 
   if (!store) {
     throw new Error("Can't get store");
