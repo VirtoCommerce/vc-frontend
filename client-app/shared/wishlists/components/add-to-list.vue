@@ -2,7 +2,13 @@
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
       <slot :open-modal="openAddToListModal" :is-authenticated="isAuthenticated" :is-in-wishlist="product.inWishlist">
-        <button type="button" class="flex" :disabled="!isAuthenticated" @click="openAddToListModal">
+        <button
+          :aria-label="tooltipText"
+          type="button"
+          class="flex"
+          :disabled="!isAuthenticated"
+          @click="openAddToListModal"
+        >
           <VcIcon
             :class="[customClass, product.inWishlist ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
             name="whishlist"
@@ -13,7 +19,7 @@
 
     <template #content>
       <div
-        class="max-w-[8rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y xs:max-w-[10rem]"
+        class="max-w-32 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y xs:max-w-40"
       >
         {{ tooltipText }}
       </div>

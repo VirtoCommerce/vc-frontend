@@ -19,6 +19,7 @@
         v-if="selectable"
         v-model="isSelected"
         class="vc-line-item__checkbox"
+        :name="$t('common.labels.toggle_vendor_select')"
         :disabled="disabled"
         @change="$emit('select', isSelected)"
       />
@@ -106,6 +107,7 @@
 
         <VcButton
           v-if="removable"
+          :aria-label="$t('common.buttons.remove_from_cart')"
           class="vc-line-item__remove-button"
           color="neutral"
           size="sm"

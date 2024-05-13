@@ -61,6 +61,7 @@
           <template #append>
             <button
               v-if="clearable && (filterValue || (selectedText && !isShown))"
+              :aria-label="$t('common.buttons.toggle_dropdown')"
               type="button"
               tabindex="-1"
               class="vc-select__clear"
@@ -69,7 +70,13 @@
               <VcIcon name="delete-mini" :size="16" />
             </button>
 
-            <button type="button" tabindex="-1" class="vc-select__arrow" @click="handleArrowClick($event, close)">
+            <button
+              :aria-label="$t('common.buttons.toggle_dropdown')"
+              type="button"
+              tabindex="-1"
+              class="vc-select__arrow"
+              @click="handleArrowClick($event, close)"
+            >
               <VcIcon :name="isShown ? 'chevron-up' : 'chevron-down'" size="xs" />
             </button>
           </template>

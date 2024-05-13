@@ -11,7 +11,12 @@
 
       <VcDropdownMenu placement="bottom-end">
         <template #trigger>
-          <VcButton icon="dots-vertical" variant="outline" size="sm" />
+          <VcButton
+            :aria-label="$t('common.buttons.toggle_dropdown')"
+            icon="dots-vertical"
+            variant="outline"
+            size="sm"
+          />
         </template>
 
         <template #content="{ close: closeMenu }">
@@ -37,7 +42,11 @@
     </div>
 
     <div class="mt-4 lg:mt-5">
-      <VcSwitch v-model="showUnreadOnly" label-position="right">
+      <VcSwitch
+        v-model="showUnreadOnly"
+        :aria-label="$t('ui_kit.push-messages.show_unread_only')"
+        label-position="right"
+      >
         {{ $t("ui_kit.push-messages.show_unread_only") }}
       </VcSwitch>
     </div>
@@ -65,7 +74,7 @@
 
           <VcEmptyView
             v-if="totalCount === 0 && !loading"
-            class="min-h-[20rem]"
+            class="min-h-80"
             :text="$t('pages.account.notifications.empty_list')"
           >
             <template #icon>

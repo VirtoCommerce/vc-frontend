@@ -5,6 +5,7 @@
       <div v-if="withHeader" class="vc-line-items__head">
         <VcCheckbox
           v-if="selectable"
+          :name="$t('common.labels.toggle_vendor_select')"
           :model-value="isAllItemsSelected"
           class="vc-line-items__checkbox"
           @change="($event) => selectAllItems($event as boolean)"
