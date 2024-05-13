@@ -5,9 +5,10 @@
     with-properties
     with-price
     removable
+    :items-status="itemsStatus"
     @remove:items="$emit('remove:items', $event)"
   >
-    <template #default="{ item }">
+    <template #default="{ item, status }">
       <VcAddToCart
         v-if="!item.deleted"
         class="w-full"
@@ -17,6 +18,7 @@
         :available-quantity="item.inStockQuantity"
         :count-in-cart="item.countInCart"
         :disabled="addToCartDisabled(item)"
+        :loading="isLoading(status)"
         @update:model-value="changeItemQuantity(item, $event)"
         @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
         @update:validation="setValidationStatus(item, $event)"
@@ -54,10 +56,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { ProductType } from "@/core/enums";
+import { ProductType, LineItemStatus } from "@/core/enums";
 import { InStock, CountInCart } from "@/shared/catalog";
 import type { ValidationErrorType } from "@/core/api/graphql/types";
-import type { PreparedLineItemType } from "@/core/types";
+import type { PreparedLineItemType, LineItemsStatusType } from "@/core/types";
 
 interface IEmits {
   (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;
@@ -65,12 +67,15 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
 }
 
-interface IProp {
+interface IProps {
   items: PreparedLineItemType[];
+  itemsStatus?: LineItemsStatusType;
 }
 
 const emit = defineEmits<IEmits>();
-defineProps<IProp>();
+withDefaults(defineProps<IProps>(), {
+  itemsStatus: () => ({}),
+});
 
 const validationErrors = ref<ValidationErrorType[]>([]);
 
@@ -87,6 +92,10 @@ function changeCartItemQuantity(item: PreparedLineItemType, quantity: number): v
 
 function changeItemQuantity(item: PreparedLineItemType, quantity: number): void {
   emit("update:listItem", item, quantity);
+}
+
+function isLoading(status: LineItemStatus): boolean {
+  return status === LineItemStatus.Adding || status === LineItemStatus.Updating;
 }
 
 function setValidationStatus(

@@ -67,6 +67,7 @@
             <div class="flex flex-col gap-6">
               <WishlistLineItems
                 :items="pagedListItems"
+                :items-status="itemsStatus"
                 @update:cart-item="addOrUpdateCartItem"
                 @update:list-item="updateWishListItem"
                 @remove:items="openDeleteProductModal"
@@ -112,6 +113,7 @@ import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { LineItemStatus } from "@/core/enums";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -131,7 +133,7 @@ import type {
   InputUpdateWishlistLineItemType,
   LineItemType,
 } from "@/core/api/graphql/types";
-import type { PreparedLineItemType } from "@/core/types";
+import type { PreparedLineItemType, LineItemsStatusType } from "@/core/types";
 
 interface IProps {
   listId: string;
@@ -164,6 +166,7 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
+const itemsStatus = ref<LineItemsStatusType>({});
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -259,14 +262,20 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   }
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
-
+  const currentStatus = itemsStatus.value[lineItem.id];
+  if (!!currentStatus && currentStatus !== LineItemStatus.Idle) {
+    return;
+  }
   if (itemInCart) {
+    itemsStatus.value[lineItem.id] = LineItemStatus.Updating;
     await changeItemQuantity(itemInCart.id, quantity);
   } else {
+    itemsStatus.value[lineItem.id] = LineItemStatus.Adding;
     await addToCart(lineItem.product.id, quantity);
 
     ga.addItemToCart(lineItem.product, quantity);
   }
+  itemsStatus.value[lineItem.id] = LineItemStatus.Idle;
 
   showResultModal([lineItem]);
 }
