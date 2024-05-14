@@ -33,9 +33,9 @@
     </div>
 
     <div v-if="isCorporateMember" class="border-b px-6 pb-6">
-      <VcCheckbox v-model="isPrivate">
+      <VcSwitch v-model="isPrivate" label-position="right">
         {{ $t("shared.wishlists.add_or_update_wishlist_modal.private_list") }}
-      </VcCheckbox>
+      </VcSwitch>
     </div>
 
     <template #actions="{ close }">
