@@ -110,7 +110,7 @@ function getCountryCode(language: ILanguage): string {
   return (
     languageToCountryMap[language.cultureName.toLocaleLowerCase()] ||
     languageToCountryMap[language.twoLetterLanguageName] ||
-    "unknown"
+    "xx" // placeholder for unknown country
   );
 }
 </script>
