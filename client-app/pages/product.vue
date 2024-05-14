@@ -46,10 +46,10 @@
 
       <ProductSidebar
         :class="[
-          'flex-none md:sticky md:top-[4.5rem] md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
+          'flex-none md:sticky md:top-18 md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
           { 'print:hidden': hasVariations },
         ]"
-        :product="product"
+        :product="sideBarProduct"
       />
     </div>
   </VcContainer>
@@ -65,6 +65,7 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { buildBreadcrumbs, productHasVariations } from "@/core/utilities";
 import { useProduct, useRelatedProducts, useCategory, ProductSidebar } from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
+import type { Product } from "@/core/api/graphql/types";
 import type { PageContent } from "@/shared/static-content";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -83,6 +84,11 @@ const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
+
+// todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1099
+const sideBarProduct = computed(() => {
+  return product.value as Product;
+});
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
@@ -132,7 +138,8 @@ watchEffect(async () => {
  */
 watchEffect(() => {
   if (product.value) {
-    ga.viewItem(product.value);
+    // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
+    ga.viewItem(product.value as Product);
   }
 });
 
