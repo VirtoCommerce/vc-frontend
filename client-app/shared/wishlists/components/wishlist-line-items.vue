@@ -8,7 +8,7 @@
     @remove:items="$emit('remove:items', $event)"
   >
     <template #titles>
-      <div :style="{ width: itemDefaultSlotWidth }"></div>
+      <div :style="{ width: itemDefaultSlotWidth }" />
     </template>
     <template #line-items>
       <VcLineItem
@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import { ProductType } from "@/core/enums";
 import { InStock, CountInCart } from "@/shared/catalog";
 import type { ValidationErrorType } from "@/core/api/graphql/types";
@@ -100,11 +100,9 @@ withDefaults(defineProps<IProps>(), {
 });
 
 const validationErrors = ref<ValidationErrorType[]>([]);
-const itemDefaultSlotWidth = ref<string>("");
 const itemDefaultSlot = ref<HTMLElement[] | null>(null);
-
-watchEffect(() => {
-  itemDefaultSlotWidth.value = itemDefaultSlot.value?.[0] ? `${itemDefaultSlot.value[0].clientWidth}px` : "";
+const itemDefaultSlotWidth = computed<string>(() => {
+  return itemDefaultSlot.value?.[0] ? `${itemDefaultSlot.value[0].clientWidth}px` : "";
 });
 
 function addToCartDisabled(item: PreparedLineItemType) {
