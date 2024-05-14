@@ -130,7 +130,9 @@ const breadcrumbs = useBreadcrumbs(() => {
 watchEffect(async () => {
   const productId = props.productId;
   await loadProduct(productId);
-  await fetchRelatedProducts({ productId, itemsPerPage: 30 });
+  if (product.value?.associations?.totalCount) {
+    await fetchRelatedProducts({ productId, itemsPerPage: 30 });
+  }
 });
 
 /**
