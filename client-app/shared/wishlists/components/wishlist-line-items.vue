@@ -56,23 +56,22 @@
             <CountInCart :product-id="item.productId" />
           </div>
         </div>
-      </VcLineItem>
-    </template>
-
-    <template #after-content="{ item }">
-      <div v-if="validationErrors.length" class="flex flex-col gap-1">
-        <template v-for="(validationError, index) in validationErrors" :key="index">
-          <VcAlert
-            v-if="validationError.objectId === item.id && !!validationError.errorMessage"
-            color="danger"
-            size="sm"
-            variant="outline-dark"
-            icon
-          >
-            {{ validationError.errorMessage }}
-          </VcAlert>
+        <template #after>
+          <div v-if="validationErrors.length" class="flex flex-col gap-1">
+            <template v-for="(validationError, index) in validationErrors" :key="index">
+              <VcAlert
+                v-if="validationError.objectId === item.id && !!validationError.errorMessage"
+                color="danger"
+                size="sm"
+                variant="outline-dark"
+                icon
+              >
+                {{ validationError.errorMessage }}
+              </VcAlert>
+            </template>
+          </div>
         </template>
-      </div>
+      </VcLineItem>
     </template>
   </VcLineItems>
 </template>
