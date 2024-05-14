@@ -26,6 +26,7 @@
         with-properties
         with-price
         removable
+        @remove="() => removeSingleItem(item.id)"
       >
         <div ref="itemDefaultSlot">
           <VcAddToCart
@@ -118,6 +119,10 @@ function changeCartItemQuantity(item: PreparedLineItemType, quantity: number): v
 
 function changeItemQuantity(item: PreparedLineItemType, quantity: number): void {
   emit("update:listItem", item, quantity);
+}
+
+function removeSingleItem(itemId: string) {
+  emit("remove:items", [itemId]);
 }
 
 function setValidationStatus(
