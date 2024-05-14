@@ -11,10 +11,10 @@
       ></span>
 
       <span class="-my-3 h-[30px] !w-[30px] overflow-hidden rounded-full lg:h-[14px] lg:!w-[14px]">
-        <img
-          :src="`/static/icons/flags/${currentLanguage?.twoLetterRegionName.toLowerCase()}.svg`"
+        <VcImage
+          :src="`/static/icons/flags/${getCountryCode(currentLanguage)}.svg`"
           :alt="currentLanguage.nativeName"
-          loading="lazy"
+          lazy
         />
       </span>
 
@@ -50,10 +50,10 @@
             "
           >
             <span class="w-4 shrink-0 overflow-hidden rounded-full">
-              <img
-                :src="`/static/icons/flags/${item?.twoLetterRegionName.toLowerCase()}.svg`"
+              <VcImage
+                :src="`/static/icons/flags/${getCountryCode(item)}.svg`"
                 :alt="currentLanguage.nativeName"
-                loading="lazy"
+                lazy
               />
             </span>
 
@@ -74,6 +74,8 @@
 <script setup lang="ts">
 import { ref, shallowRef } from "vue";
 import { useLanguages } from "@/core/composables";
+import { languageToCountryMap } from "@/core/constants";
+import type { ILanguage } from "@/core/types";
 
 const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
 
@@ -102,5 +104,13 @@ function toggle() {
 function select(locale: string) {
   saveLocaleAndReload(locale);
   hideList();
+}
+
+function getCountryCode(language: ILanguage): string {
+  return (
+    languageToCountryMap[language.cultureName.toLocaleLowerCase()] ||
+    languageToCountryMap[language.twoLetterLanguageName] ||
+    "unknown"
+  );
 }
 </script>
