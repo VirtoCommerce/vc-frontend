@@ -49,7 +49,7 @@
                 : select(item.twoLetterLanguageName)
             "
           >
-            <span class="w-4 shrink-0 overflow-hidden rounded-full">
+            <span class="w-4 shrink-0 overflow-hidden rounded-full lg:w-3.5">
               <VcImage
                 :src="`/static/icons/flags/${getCountryCode(item)}.svg`"
                 :alt="currentLanguage.nativeName"
