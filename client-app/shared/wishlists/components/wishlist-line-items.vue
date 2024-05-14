@@ -5,36 +5,57 @@
     with-properties
     with-price
     removable
-    :items-status="itemsStatus"
     @remove:items="$emit('remove:items', $event)"
   >
-    <template #default="{ item, status }">
-      <VcAddToCart
-        v-if="!item.deleted"
-        class="w-full"
-        :model-value="item.quantity"
-        :min-quantity="item.minQuantity"
-        :max-quantity="item.maxQuantity"
-        :available-quantity="item.inStockQuantity"
-        :count-in-cart="item.countInCart"
-        :disabled="addToCartDisabled(item)"
-        :is-in-stock="item.availabilityData?.isInStock"
-        :loading="isLoading(status)"
-        @update:model-value="changeItemQuantity(item, $event)"
-        @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
-        @update:validation="setValidationStatus(item, $event)"
-      />
+    <template #titles>
+      <div :style="{ width: itemDefaultSlotWidth }"></div>
+    </template>
+    <template #line-items>
+      <VcLineItem
+        v-for="item in items"
+        :key="item.id"
+        :image-url="item.imageUrl"
+        :name="item.name"
+        :route="item.route"
+        :properties="item.properties"
+        :list-price="item.listPrice"
+        :actual-price="item.actualPrice"
+        :total="item.extendedPrice"
+        :disabled="pendingItems[item.id]"
+        with-image
+        with-properties
+        with-price
+        removable
+      >
+        <div ref="itemDefaultSlot">
+          <VcAddToCart
+            v-if="!item.deleted"
+            class="w-full"
+            :model-value="item.quantity"
+            :min-quantity="item.minQuantity"
+            :max-quantity="item.maxQuantity"
+            :available-quantity="item.inStockQuantity"
+            :count-in-cart="item.countInCart"
+            :disabled="addToCartDisabled(item)"
+            :is-in-stock="item.availabilityData?.isInStock"
+            :loading="pendingItems[item.id]"
+            @update:model-value="changeItemQuantity(item, $event)"
+            @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
+            @update:validation="setValidationStatus(item, $event)"
+          />
 
-      <div class="mt-1.5 flex gap-1.5">
-        <InStock
-          :is-in-stock="item.availabilityData?.isInStock"
-          :is-available="!item.deleted"
-          :quantity="item.availabilityData?.availableQuantity"
-          :is-digital="item.productType === ProductType.Digital"
-        />
+          <div class="mt-1.5 flex gap-1.5">
+            <InStock
+              :is-in-stock="item.availabilityData?.isInStock"
+              :is-available="!item.deleted"
+              :quantity="item.availabilityData?.availableQuantity"
+              :is-digital="item.productType === ProductType.Digital"
+            />
 
-        <CountInCart :product-id="item.productId" />
-      </div>
+            <CountInCart :product-id="item.productId" />
+          </div>
+        </div>
+      </VcLineItem>
     </template>
 
     <template #after-content="{ item }">
@@ -56,11 +77,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { ProductType, LineItemStatus } from "@/core/enums";
+import { ref, watchEffect } from "vue";
+import { ProductType } from "@/core/enums";
 import { InStock, CountInCart } from "@/shared/catalog";
 import type { ValidationErrorType } from "@/core/api/graphql/types";
-import type { PreparedLineItemType, LineItemsStatusType } from "@/core/types";
+import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;
@@ -70,15 +91,21 @@ interface IEmits {
 
 interface IProps {
   items: PreparedLineItemType[];
-  itemsStatus?: LineItemsStatusType;
+  pendingItems?: Record<string, boolean>;
 }
 
 const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
-  itemsStatus: () => ({}),
+  pendingItems: () => ({}),
 });
 
 const validationErrors = ref<ValidationErrorType[]>([]);
+const itemDefaultSlotWidth = ref<string>("");
+const itemDefaultSlot = ref<HTMLElement[] | null>(null);
+
+watchEffect(() => {
+  itemDefaultSlotWidth.value = itemDefaultSlot.value?.[0] ? `${itemDefaultSlot.value[0].clientWidth}px` : "";
+});
 
 function addToCartDisabled(item: PreparedLineItemType) {
   return (
@@ -93,10 +120,6 @@ function changeCartItemQuantity(item: PreparedLineItemType, quantity: number): v
 
 function changeItemQuantity(item: PreparedLineItemType, quantity: number): void {
   emit("update:listItem", item, quantity);
-}
-
-function isLoading(status: LineItemStatus): boolean {
-  return status === LineItemStatus.Adding || status === LineItemStatus.Updating;
 }
 
 function setValidationStatus(

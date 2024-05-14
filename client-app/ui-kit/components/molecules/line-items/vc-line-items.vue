@@ -31,7 +31,7 @@
           {{ $t("common.labels.price_per_item") }}
         </div>
 
-        <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
+        <div v-if="$slots.default || $slots.titles" class="vc-line-items__slot" :style="{ width: slotWidth }">
           <slot name="titles" />
         </div>
 

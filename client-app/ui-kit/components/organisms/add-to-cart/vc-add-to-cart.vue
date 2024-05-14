@@ -1,7 +1,7 @@
 <template>
   <VcInput
     v-model.number="quantity"
-    :disabled="disabled"
+    :disabled="disabled || loading"
     :min="minQuantity"
     :max="maxQuantity"
     :aria-label="$t('common.labels.product_quantity')"
