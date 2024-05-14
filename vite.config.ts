@@ -98,7 +98,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
           main: path.resolve(__dirname, "index.html"),
         },
         output: {
-          entryFileNames: "[name][extname]",
+          entryFileNames: "[name].js",
+          assetFileNames: "[name][extname]",
           manualChunks: (id) => {
             // Force app-runner to have separate chunk to temporarely eliminate caveats of liquid-based hashing
             if (id.includes("app-runner")) {
