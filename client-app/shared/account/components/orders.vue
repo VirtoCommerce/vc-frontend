@@ -458,11 +458,9 @@ function handleRemoveFilter(item: OrdersFilterChipsItem): void {
 
   if (item.fieldName === "startDate" || item.fieldName === "endDate") {
     selectedDateFilterType.value = dateFilterTypes.value[0];
+    selectedDateFilterType.value.startDate = appliedFilterData.value?.startDate;
+    selectedDateFilterType.value.endDate = appliedFilterData.value?.endDate;
   }
-
-  selectedDateFilterType.value = dateFilterTypes.value[0];
-  selectedDateFilterType.value.startDate = appliedFilterData.value?.startDate;
-  selectedDateFilterType.value.endDate = appliedFilterData.value?.endDate;
 }
 
 function resetOrderFilters(): void {
