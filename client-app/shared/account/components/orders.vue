@@ -437,13 +437,8 @@ function hideFilters() {
 }
 
 function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
-  if (dateFilterType.startDate) {
-    filterData.value.startDate = toDateISOString(dateFilterType.startDate);
-  }
-
-  if (dateFilterType.endDate) {
-    filterData.value.endDate = toDateISOString(dateFilterType.endDate);
-  }
+  filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
+  filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
 
   selectedDateFilterType.value = dateFilterType;
 }
