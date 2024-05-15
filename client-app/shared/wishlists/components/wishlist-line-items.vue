@@ -7,6 +7,7 @@
     removable
     @remove:items="$emit('remove:items', $event)"
   >
+    <template #default></template>
     <template #titles>
       <div :style="{ width: itemDefaultSlotWidth }" />
     </template>
