@@ -192,11 +192,9 @@ function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
 }
 
 function addShippingInfo(cart?: CartType, params?: EventParamsExtendedType, shipmentMethodOption?: string): void {
-  const shipping_tier = shipmentMethodOption || cart?.shipments?.[0]?.shipmentMethodOption;
-
   sendEvent("add_shipping_info", {
     ...params,
-    shipping_tier,
+    shipping_tier: shipmentMethodOption,
     currency: cart?.currency?.code,
     value: cart?.total?.amount,
     coupon: cart?.coupons?.[0]?.code,
@@ -204,19 +202,14 @@ function addShippingInfo(cart?: CartType, params?: EventParamsExtendedType, ship
   });
 }
 
-function addPaymentInfo(cart: CartType, params?: EventParamsExtendedType, paymentGatewayCode?: string): void {
-  const paymentMethodCode = paymentGatewayCode || cart.payments?.[0]?.paymentGatewayCode;
-  const payment_type = cart.availablePaymentMethods?.find(
-    (paymentMethod) => paymentMethod.code === paymentMethodCode,
-  )?.paymentMethodGroupType;
-
+function addPaymentInfo(cart?: CartType, params?: EventParamsExtendedType, paymentGatewayCode?: string): void {
   sendEvent("add_payment_info", {
     ...params,
-    payment_type,
-    currency: cart.currency?.code,
-    value: cart.total?.amount,
-    coupon: cart.coupons?.[0]?.code,
-    items: cart.items!.map(lineItemToGtagItem),
+    payment_type: paymentGatewayCode,
+    currency: cart?.currency?.code,
+    value: cart?.total?.amount,
+    coupon: cart?.coupons?.[0]?.code,
+    items: cart?.items?.map(lineItemToGtagItem),
   });
 }
 

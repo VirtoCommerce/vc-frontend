@@ -201,8 +201,6 @@ export function _useCheckout() {
       id: payment.value?.id,
       paymentGatewayCode: method.code,
     });
-
-    ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
   watch(allItemsAreDigital, async (value, previousValue) => {
@@ -418,11 +416,6 @@ export function _useCheckout() {
     if (!isPurchaseOrderNumberEnabled.value && purchaseOrderNumber.value) {
       await updatePurchaseOrderNumber("");
     }
-
-    /**
-     * Send a Google Analytics event about adding payment information.
-     */
-    ga.addPaymentInfo(cart.value!);
 
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
