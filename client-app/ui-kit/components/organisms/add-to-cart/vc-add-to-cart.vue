@@ -22,7 +22,7 @@
         size="sm"
         class="vc-add-to-cart__button"
         truncate
-        @click="$emit('update:cartItemQuantity', quantity!)"
+        @click="handleButtonClick($event, quantity!)"
       >
         {{ buttonText }}
       </VcButton>
@@ -111,6 +111,11 @@ function onFocusOut() {
   if (isNaN(newQuantity) || newQuantity < 1) {
     quantity.value = props.modelValue;
   }
+}
+
+function handleButtonClick(event: Event, newQuantity: number): void {
+  event.stopPropagation();
+  emit("update:cartItemQuantity", newQuantity);
 }
 
 watchEffect(() => {
