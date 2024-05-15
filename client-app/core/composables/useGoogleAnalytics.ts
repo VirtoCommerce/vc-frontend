@@ -191,16 +191,16 @@ function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
   });
 }
 
-function addShippingInfo(cart: CartType, params?: EventParamsExtendedType, shipmentMethodOption?: string): void {
-  const shipping_tier = shipmentMethodOption || cart.shipments?.[0]?.shipmentMethodOption;
+function addShippingInfo(cart?: CartType, params?: EventParamsExtendedType, shipmentMethodOption?: string): void {
+  const shipping_tier = shipmentMethodOption || cart?.shipments?.[0]?.shipmentMethodOption;
 
   sendEvent("add_shipping_info", {
     ...params,
     shipping_tier,
-    currency: cart.currency?.code,
-    value: cart.total?.amount,
-    coupon: cart.coupons?.[0]?.code,
-    items: cart.items!.map(lineItemToGtagItem),
+    currency: cart?.currency?.code,
+    value: cart?.total?.amount,
+    coupon: cart?.coupons?.[0]?.code,
+    items: cart?.items!.map(lineItemToGtagItem),
   });
 }
 

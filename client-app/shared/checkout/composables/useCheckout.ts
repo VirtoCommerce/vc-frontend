@@ -194,8 +194,6 @@ export function _useCheckout() {
       shipmentMethodCode: method.code,
       shipmentMethodOption: method.optionName,
     });
-
-    ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
