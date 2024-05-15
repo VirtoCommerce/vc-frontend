@@ -92,7 +92,7 @@
     <!-- Filters chips -->
     <div v-if="!isFilterEmpty" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
       <template v-for="item in filterChipsItems" :key="item.value">
-        <VcChip color="secondary" closable @close="removeFilterChipsItem(item)">
+        <VcChip color="secondary" closable @close="handleRemoveFilter(item)">
           {{ item.label }}
         </VcChip>
       </template>
@@ -312,6 +312,7 @@ import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
 import PageToolbarBlock from "./page-toolbar-block.vue";
+import type { OrdersFilterChipsItem } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { SortDirection } from "@/core/enums";
 import type { DateFilterType, ISortInfo } from "@/core/types";
@@ -455,6 +456,17 @@ function goToOrderDetails(order: CustomerOrderType): void {
 function applyOrderFilters(): void {
   applyFilters();
   hideFilters();
+}
+
+function handleRemoveFilter(item: OrdersFilterChipsItem): void {
+  removeFilterChipsItem(item);
+
+  if (item.fieldName === "startDate" || item.fieldName === "endDate") {
+    selectedDateFilterType.value = dateFilterTypes.value[0];
+  }
+
+  selectedDateFilterType.value!.startDate = appliedFilterData.value?.startDate;
+  selectedDateFilterType.value!.endDate = appliedFilterData.value?.endDate;
 }
 
 function resetOrderFilters(): void {
