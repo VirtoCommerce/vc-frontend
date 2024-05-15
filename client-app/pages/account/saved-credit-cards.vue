@@ -14,7 +14,7 @@
       <CreditCard
         v-for="(creditCard, index) in skyflowCards"
         :key="index"
-        :card-number="creditCard.cardNumber"
+        :card-number="replaceXFromBeginning(creditCard.cardNumber)"
         :card-expiration="creditCard.cardExpiration"
         @remove="removeCreditCard(creditCard.skyflowId)"
       />
@@ -32,6 +32,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useDeleteSkyflowCardMutation } from "@/core/api/graphql/payment/mutations/deleteSkyflowCard";
+import { replaceXFromBeginning } from "@/core/utilities";
 import { CreditCard, CreditCardSkeleton } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 import { useSkyflowCards } from "@/shared/payment";

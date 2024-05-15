@@ -138,21 +138,6 @@ module.exports = {
           50: "var(--color-additional-50)",
           950: "var(--color-additional-950)",
         },
-
-        /**
-         * @deprecated
-         */
-        link: {
-          DEFAULT: "var(--color-link, #00739E)",
-          hover: "var(--color-link-hover, #00678D)",
-        },
-
-        /**
-         * @deprecated
-         */
-        tooltip: {
-          DEFAULT: "#4D4D4D",
-        },
       },
 
       boxShadow: {
@@ -348,5 +333,5 @@ module.exports = {
     },
   },
 
-  plugins: [require("tw-elements/dist/plugin.cjs")],
+  plugins: [require("@tailwindcss/container-queries"), require("tw-elements/dist/plugin.cjs")],
 } satisfies Config;

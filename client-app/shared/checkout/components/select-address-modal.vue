@@ -44,8 +44,13 @@
       @page-changed="onPageChange"
     >
       <template #mobile-item="itemData">
-        <div class="flex items-center space-x-3 border-b border-gray-200 p-6">
+        <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
           <div class="w-1/2 grow truncate">
+            <VcBadge v-if="itemData.item.isFavorite" size="sm" variant="outline-dark" rounded>
+              <VcIcon name="whishlist" />
+              <span>{{ $t("pages.company.info.labels.favorite") }}</span>
+            </VcBadge>
+
             <p class="text-base font-bold">
               <span v-if="isCorporateAddresses" class="text-base font-bold">
                 {{ itemData.item.line1 }}<br />
@@ -70,14 +75,14 @@
               </span>
             </p>
 
-            <p class="text-sm text-gray-400">
+            <p class="text-sm text-neutral-400">
               <span v-if="!isCorporateAddresses && !!itemData.item.phone">
                 <span class="font-semibold">{{ $t("common.labels.phone") }}: </span>
                 {{ itemData.item.phone }}
               </span>
             </p>
 
-            <p class="text-sm text-gray-400">
+            <p class="text-sm text-neutral-400">
               <span v-if="isCorporateAddresses">{{ itemData.item.countryName }}</span>
               <span v-else-if="!!itemData.item.email">
                 <span class="font-semibold">{{ $t("common.labels.email") }}: </span>
@@ -94,7 +99,7 @@
             <button
               v-t="'shared.checkout.select_address_modal.select_button'"
               type="button"
-              class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
+              class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-primary px-3 font-roboto-condensed text-base font-bold uppercase text-primary hover:bg-primary hover:text-additional-50 focus:outline-none"
               @click="setAddress(itemData.item)"
             ></button>
           </div>
@@ -104,12 +109,16 @@
       <template #mobile-empty>
         <div
           v-t="'shared.checkout.select_address_modal.no_addresses_message'"
-          class="flex items-center space-x-3 border-b border-gray-200 p-6"
+          class="flex items-center space-x-3 border-b border-neutral-200 p-6"
         ></div>
       </template>
 
       <template #desktop-body>
-        <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-gray-50': index % 2 }">
+        <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-neutral-50': index % 2 }">
+          <td v-if="hasFavoriteAddresses" class="truncate p-5">
+            <VcIcon v-if="address.isFavorite" class="text-primary" name="whishlist" size="md" />
+          </td>
+
           <td class="truncate p-5">
             <span v-if="isCorporateAddresses">
               {{ address.line1 }}<br />
@@ -154,7 +163,7 @@
             <button
               v-t="'shared.checkout.select_address_modal.select_button'"
               type="button"
-              class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-[color:var(--color-primary)] px-3 font-roboto-condensed text-base font-bold uppercase text-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)] hover:text-white focus:outline-none"
+              class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-primary px-3 font-roboto-condensed text-base font-bold uppercase text-primary hover:bg-primary hover:text-additional-50 focus:outline-none"
               @click="setAddress(address)"
             ></button>
           </td>
@@ -172,7 +181,7 @@
         </tr>
         <tr>
           <td colspan="5">
-            <div class="flex items-center border-b border-gray-200 p-5">
+            <div class="flex items-center border-b border-neutral-200 p-5">
               <span v-t="'shared.checkout.select_address_modal.no_addresses_message'" class="text-base"></span>
             </div>
           </td>
@@ -180,7 +189,7 @@
       </template>
 
       <template #footer>
-        <div v-if="pages > 1" class="flex justify-start border-b border-gray-200">
+        <div v-if="pages > 1" class="flex justify-start border-b border-neutral-200">
           <VcPagination v-model:page="page" :pages="pages" class="mt-5 self-start px-5 pb-5"></VcPagination>
         </div>
       </template>
@@ -224,9 +233,10 @@ const pages = computed(() => Math.ceil(props.addresses.length / itemsPerPage.val
 const paginatedAddresses = computed(() =>
   props.addresses.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
+const hasFavoriteAddresses = computed(() => props.addresses.some((item) => item.isFavorite));
 
-const columns = computed<ITableColumn[]>(() =>
-  props.isCorporateAddresses
+const columns = computed<ITableColumn[]>(() => {
+  const cols: ITableColumn[] = props.isCorporateAddresses
     ? [
         { id: "name", title: t("common.labels.address") },
         { id: "description", title: t("common.labels.description") },
@@ -239,8 +249,14 @@ const columns = computed<ITableColumn[]>(() =>
         { id: "phone", title: t("common.labels.phone") },
         { id: "email", title: t("common.labels.email") },
         { id: "id", title: t("common.labels.active_address"), align: "center" },
-      ],
-);
+      ];
+
+  if (hasFavoriteAddresses.value) {
+    return [{ id: "isFavorite", classes: "w-12" } as ITableColumn].concat(cols);
+  }
+
+  return cols;
+});
 
 function onPageChange(newPage: number): void {
   page.value = newPage;

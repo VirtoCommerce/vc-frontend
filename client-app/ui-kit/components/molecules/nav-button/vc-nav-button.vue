@@ -1,6 +1,7 @@
 <template>
   <button
     type="button"
+    :aria-label="label"
     :disabled="disabled"
     :class="[
       'vc-nav-button',
@@ -24,6 +25,7 @@ interface IProps {
   size?: "xs" | "sm" | "md";
   direction?: "left" | "right" | "up" | "down";
   disabled?: boolean;
+  label?: string;
 }
 
 defineEmits<IEmits>();

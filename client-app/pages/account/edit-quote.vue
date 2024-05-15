@@ -20,6 +20,7 @@
           :required="!quote.items?.length"
           :error="!!commentErrorMessage"
           :message="commentErrorMessage"
+          :aria-label="$t('common.labels.quote_request_comment')"
           no-resize
           counter
           @input="editComment"

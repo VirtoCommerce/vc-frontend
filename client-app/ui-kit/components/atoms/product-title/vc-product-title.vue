@@ -66,13 +66,15 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   }
 
   &__text {
-    @apply text-neutral-950;
+    color: var(--body-text-color);
 
     #{$link}:not(#{$disabled}) & {
-      @apply cursor-pointer text-accent-600;
+      @apply cursor-pointer;
+
+      color: var(--link-color);
 
       &:hover {
-        @apply text-accent-700;
+        color: var(--link-hover-color);
       }
     }
 

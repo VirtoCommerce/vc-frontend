@@ -4,9 +4,10 @@
     :name="name"
     :readonly="readonly"
     :disabled="disabled"
-    :min="minQuantity"
-    :max="maxQuantity"
-    :error="error"
+    :error="!!errorMessage"
+    :message="errorMessage"
+    :aria-label="$t('common.labels.product_quantity')"
+    single-line-message
     class="vc-quantity"
     size="sm"
     type="number"
@@ -17,26 +18,13 @@
     @input="onQuantityChanged"
     @blur="onFocusOut"
   />
-
-  <VcTooltip v-if="errorMessage" class="!block" :x-offset="28" placement="bottom-start" strategy="fixed">
-    <template #trigger>
-      <div class="line-clamp-1 pt-0.5 text-11 text-[color:var(--color-danger)]">
-        {{ errorMessage }}
-      </div>
-    </template>
-
-    <template #content>
-      <div class="w-52 rounded-sm bg-white px-3.5 py-1.5 text-xs text-tooltip shadow-sm-x-y">
-        {{ errorMessage }}
-      </div>
-    </template>
-  </VcTooltip>
 </template>
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useField } from "vee-validate";
 import { computed, ref, toRefs, watchEffect } from "vue";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
 interface IEmits {
@@ -109,7 +97,7 @@ function onKeydown(e: KeyboardEvent) {
 
 function isQuantity(qty: unknown): qty is number {
   const qtyAsNumber = Number(quantity.value);
-  return !isNaN(qtyAsNumber) && Number(qtyAsNumber) >= 1;
+  return !isNaN(qtyAsNumber) && Number(qtyAsNumber) >= 1 && Number(qtyAsNumber) <= LINE_ITEM_QUANTITY_LIMIT;
 }
 
 watchEffect(() => {
@@ -119,6 +107,6 @@ watchEffect(() => {
 
 <style lang="scss">
 .vc-quantity {
-  @apply w-[5.625rem] flex-none;
+  @apply flex-none;
 }
 </style>

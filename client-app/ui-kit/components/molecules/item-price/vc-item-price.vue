@@ -7,13 +7,13 @@
         :class="priceColorClass"
         :value="value?.actual"
       />
-      <VcPriceDisplay v-else class="font-bold text-green-700" :value="value?.list" />
+      <VcPriceDisplay v-else class="font-bold text-[--price-color]" :value="value?.list" />
       <span v-t="'common.suffixes.per_item'" class="hidden sm:inline md:hidden xl:inline print:!block"></span>
     </div>
     <div class="leading-4">
       <VcPriceDisplay
         v-if="shouldUseActualPrice(value?.list, value?.actual)"
-        class="text-xs font-semibold text-gray-400 line-through"
+        class="text-xs font-semibold text-neutral-400 line-through"
         :value="value?.list"
       />
     </div>
@@ -30,6 +30,6 @@ interface IProps {
 }
 
 withDefaults(defineProps<IProps>(), {
-  priceColorClass: "text-[color:var(--color-price)]",
+  priceColorClass: "text-[--price-color]",
 });
 </script>

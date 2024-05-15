@@ -4,6 +4,7 @@
     :disabled="disabled"
     :min="minQuantity"
     :max="maxQuantity"
+    :aria-label="$t('common.labels.product_quantity')"
     single-line-message
     center
     class="vc-add-to-cart"
@@ -51,6 +52,7 @@ interface IProps {
   maxQuantity?: number;
   countInCart?: number;
   availableQuantity?: number;
+  isInStock?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -58,7 +60,7 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const { minQuantity, maxQuantity, availableQuantity } = toRefs(props);
+const { isInStock, minQuantity, maxQuantity, availableQuantity } = toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -72,6 +74,7 @@ const { quantitySchema } = useQuantityValidationSchema({
   minQuantity,
   maxQuantity,
   availableQuantity,
+  isInStock,
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));

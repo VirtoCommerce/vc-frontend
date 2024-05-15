@@ -22,7 +22,7 @@ const style = computed(() => (props.size ? { width: width.value } : {}));
 .vc-hexagon-icon {
   --hexagon-size: var(--vc-hexagon-icon-size, 2.5rem);
 
-  @apply flex items-center justify-center w-[--hexagon-size] bg-[--color-neutral-300] text-[--color-additional-50] aspect-square;
+  @apply flex items-center justify-center w-[--hexagon-size] bg-[--hexagon-icon-bg-color] text-[--hexagon-icon-color] aspect-square;
 
   clip-path: polygon(
     45% 1.33975%,

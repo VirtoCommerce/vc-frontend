@@ -1,8 +1,4 @@
 <template>
-  <Head>
-    <link rel="icon" :href="$cfg.favicon_image" />
-  </Head>
-
   <component :is="layout">
     <RouterView />
   </component>
@@ -12,12 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import { Head } from "@unhead/vue/components";
 import { computedEager } from "@vueuse/core";
 import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
-import { useNavigations } from "@/core/composables";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
@@ -30,7 +24,6 @@ const _settings = JSON.parse(_props.settings); // eslint-disable-line @typescrip
 const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
-const { fetchMenus } = useNavigations();
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
@@ -48,8 +41,6 @@ router.beforeEach((to) => {
     hideSearchBar();
   }
 });
-
-void fetchMenus();
 
 onMounted(setupBroadcastGlobalListeners);
 </script>

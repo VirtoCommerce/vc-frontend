@@ -20,6 +20,7 @@
       v-model="text"
       v-bind="listeners"
       :name="name"
+      :aria-label="ariaLabel"
       :placeholder="placeholder"
       :readonly="readonly"
       :disabled="disabled"
@@ -69,6 +70,7 @@ interface IProps {
   showEmptyDetails?: boolean;
   maxLength?: number | string;
   rows?: number | string;
+  ariaLabel?: string;
 }
 
 defineOptions({
@@ -94,7 +96,7 @@ const text = useVModel(props, "modelValue", emit);
   $noResize: "";
   $error: "";
 
-  @apply flex flex-col text-[color:var(--color-body-text)];
+  @apply flex flex-col text-neutral-950 font-normal;
 
   &--readonly {
     $readonly: &;
@@ -112,20 +114,12 @@ const text = useVModel(props, "modelValue", emit);
     $error: &;
   }
 
-  &__label {
-    @apply text-15 font-bold;
-
-    #{$error} & {
-      @apply text-[color:var(--color-danger)];
-    }
-  }
-
   &__asterisk {
-    @apply text-[color:var(--color-danger)];
+    @apply text-danger;
   }
 
   &__input {
-    @apply p-3 w-full rounded border text-15 font-medium bg-white;
+    @apply p-3 w-full rounded border text-base bg-additional-50;
 
     #{$noResize} & {
       @apply resize-none;
@@ -133,16 +127,20 @@ const text = useVModel(props, "modelValue", emit);
 
     &:focus,
     &:focus-visible {
-      @apply outline-none ring ring-[color:var(--color-primary-light)];
+      @apply outline-none ring ring-primary-100;
+
+      #{$error} & {
+        @apply ring-danger-100;
+      }
     }
 
     &[disabled],
     #{$disabled} & {
-      @apply bg-gray-100 cursor-not-allowed;
+      @apply bg-neutral-100 cursor-not-allowed;
     }
 
     #{$error} & {
-      @apply border-[color:var(--color-danger)];
+      @apply border-danger;
     }
   }
 }
