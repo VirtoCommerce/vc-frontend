@@ -1,16 +1,15 @@
 import { globals } from "@/core/globals";
 import { graphqlClient } from "../../../client";
 import getProductsQueryDocument from "./getProductQuery.graphql";
-import type { Product, Query, QueryProductArgs } from "@/core/api/graphql/types";
+import type { GetProductQuery, GetProductQueryVariables } from "@/core/api/graphql/types";
 
-export async function getProduct(id: string): Promise<Product | undefined> {
-  const { storeId, userId, cultureName, currencyCode } = globals;
+export async function getProduct(id: string): Promise<GetProductQuery["product"] | undefined> {
+  const { storeId, cultureName, currencyCode } = globals;
 
-  const { data } = await graphqlClient.query<Required<Pick<Query, "product">>, QueryProductArgs>({
+  const { data } = await graphqlClient.query<GetProductQuery, GetProductQueryVariables>({
     query: getProductsQueryDocument,
     variables: {
       storeId,
-      userId,
       cultureName,
       currencyCode,
       id,
