@@ -232,7 +232,7 @@ module.exports = {
     {
       files: ["client-app/ui-kit/*"],
       rules: {
-        "no-console": ["warn", { allow: ["warn", "error"] }],
+        "no-console": ["off", { allow: ["warn", "error"] }],
       }
     },
     {
