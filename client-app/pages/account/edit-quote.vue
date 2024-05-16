@@ -258,7 +258,10 @@ const isBillingAddressEqualsShipping = computed<boolean>(() => {
 const commentValidationSchema = computed<StringSchema>(() =>
   string()
     .max(1000)
-    .withMutation((schema) => (!hasItems.value ? schema.required(t("common.messages.required_field")) : schema)),
+    .test({
+      message: t("common.messages.required_field"),
+      test: (value) => new Promise((resolve) => resolve(!!hasItems.value || (!hasItems.value && !!value))),
+    }),
 );
 
 const {
