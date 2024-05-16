@@ -18,7 +18,9 @@ export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcItemPriceCatalog } from "./item-price-catalog/vc-item-price-catalog.vue";
 export { default as VcLayoutWithRightSidebar } from "./layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 export { default as VcLineItem } from "./line-item/vc-line-item.vue";
+/** @deprecated VcLineItemPrice is deprecated, use VcProductPrice instead. */
 export { default as VcLineItemPrice } from "./line-item-price/vc-line-item-price.vue";
+/** @deprecated VcLineItemTotal is deprecated, use VcProductPrice instead. */
 export { default as VcLineItemTotal } from "./line-item-total/vc-line-item-total.vue";
 export { default as VcLineItems } from "./line-items/vc-line-items.vue";
 export { default as VcList } from "./list/vc-list.vue";
