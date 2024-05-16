@@ -24,7 +24,9 @@ declare module "vue" {
     VcItemPriceCatalog: typeof Components.VcItemPriceCatalog;
     VcLineItem: typeof Components.VcLineItem;
     VcLineItems: typeof Components.VcLineItems;
+    /** @deprecated VcLineItemPrice is deprecated, use VcProductPrice instead. */
     VcLineItemPrice: typeof Components.VcLineItemPrice;
+    /** @deprecated VcLineItemTotal is deprecated, use VcProductPrice instead. */
     VcLineItemTotal: typeof Components.VcLineItemTotal;
     VcList: typeof Components.VcList;
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;

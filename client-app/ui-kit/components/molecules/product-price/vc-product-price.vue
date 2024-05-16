@@ -13,11 +13,11 @@
     <span class="vc-product-price__actual">
       <span v-if="hasVariations" class="vc-product-price__variations"> {{ $t("common.suffixes.from") }}</span>
 
-      <VcPriceDisplay :value="listPrice?.amount > actualPrice?.amount || !listPrice ? actualPrice : listPrice" />
+      <VcPriceDisplay :value="shouldUseActualPrice(listPrice, actualPrice) || !listPrice ? actualPrice : listPrice" />
     </span>
 
     <VcPriceDisplay
-      v-if="!hasVariations && listPrice?.amount > actualPrice?.amount"
+      v-if="!hasVariations && shouldUseActualPrice(listPrice, actualPrice)"
       class="vc-product-price__list"
       :value="listPrice"
     />
@@ -25,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
 import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
