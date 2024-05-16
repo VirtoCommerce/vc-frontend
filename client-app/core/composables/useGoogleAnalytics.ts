@@ -69,13 +69,14 @@ function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: numb
     item_name: item.name,
     affiliation: item.product?.vendor?.name,
     currency: globals.currencyCode,
-    discount: item.discountAmount?.amount,
+    discount: item.discountAmount?.amount || item.discountTotal.amount,
     price: "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
     ...categories,
   };
 }
 
+/** @deprecated use direct mapping */
 function getCartEventParams(cart: CartType): EventParamsType {
   return {
     currency: globals.currencyCode,
@@ -182,11 +183,11 @@ function clearCart(cart: CartType, params?: EventParamsExtendedType): void {
 }
 
 function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
-  const cartEventParams: EventParamsType = getCartEventParams(cart);
-
   sendEvent("begin_checkout", {
     ...params,
-    ...cartEventParams,
+    currency: cart.currency.code,
+    value: cart.total?.amount,
+    items: cart.items!.map(lineItemToGtagItem),
     coupon: cart.coupons?.[0]?.code,
   });
 }
