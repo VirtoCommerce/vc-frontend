@@ -18,8 +18,8 @@
           :max-length="1000"
           :rows="4"
           :required="!hasItems"
-          :error="!hasItems && !!commentErrorMessage"
-          :message="!hasItems ? commentErrorMessage : undefined"
+          :error="!commentValid"
+          :message="commentErrorMessage"
           :aria-label="$t('common.labels.quote_request_comment')"
           no-resize
           counter
