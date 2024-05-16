@@ -181,7 +181,7 @@ function getFile(attachment: QuoteAttachmentType): IAttachedFile {
   };
 }
 
-function onDownload(file: IAttachedFile) {
-  downloadFile(file.url, file.name);
+function onDownload(file: FileType) {
+  downloadFile(file.url!, file.name);
 }
 </script>
