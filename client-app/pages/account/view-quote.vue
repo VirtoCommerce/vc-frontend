@@ -40,7 +40,7 @@
       <VcWidget v-if="quote.attachments?.length" :title="$t('pages.account.quote_details.files')" size="lg">
         <ul class="space-y-2 rounded border border-[--color-neutral-200] px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
-            <VcFile :file="getFile(attachment)" native-download />
+            <VcFile :file="getFile(attachment)" @download="onDownload" />
           </li>
         </ul>
       </VcWidget>
@@ -122,6 +122,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
+import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import type { QuoteAttachmentType } from "@/core/api/graphql/types";
 
@@ -175,11 +176,12 @@ watchEffect(async () => {
 
 function getFile(attachment: QuoteAttachmentType): IAttachedFile {
   return {
+    ...attachment,
     status: "attached",
-    url: attachment.url,
-    name: attachment.name,
-    contentType: attachment.contentType,
-    size: attachment.size,
   };
+}
+
+function onDownload(file: IAttachedFile) {
+  downloadFile(file.url, file.name);
 }
 </script>
