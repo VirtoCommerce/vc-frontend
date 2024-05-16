@@ -46,7 +46,7 @@
 
       <ProductSidebar
         :class="[
-          'flex-none md:sticky md:top-[4.5rem] md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
+          'flex-none md:sticky md:top-18 md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
           { 'print:hidden': hasVariations },
         ]"
         :product="product"
