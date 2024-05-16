@@ -69,6 +69,7 @@ export function _useCheckout() {
   const {
     refetch: refetchCart,
     cart,
+    selectedLineItems,
     selectedItemIds,
     shipment,
     payment,
@@ -245,7 +246,7 @@ export function _useCheckout() {
 
     void fetchAddresses();
 
-    ga.beginCheckout(cart.value!);
+    ga.beginCheckout({ ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
   }

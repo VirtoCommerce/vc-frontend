@@ -8,7 +8,7 @@
           <ProceedTo
             :to="{ name: 'Review' }"
             :disabled="!isValidPayment"
-            @click="ga.addPaymentInfo(cart, {}, payment?.paymentGatewayCode)"
+            @click="ga.addPaymentInfo({ ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)"
           >
             {{ $t("common.buttons.review_order") }}
           </ProceedTo>

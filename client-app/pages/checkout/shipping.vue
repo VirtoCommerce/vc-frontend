@@ -10,7 +10,7 @@
           <ProceedTo
             :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
-            @click="ga.addShippingInfo(cart, {}, shipment?.shipmentMethodOption)"
+            @click="ga.addShippingInfo({ ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)"
           >
             {{ $t("common.buttons.go_to_billing") }}
           </ProceedTo>
