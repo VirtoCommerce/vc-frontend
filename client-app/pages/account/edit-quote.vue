@@ -260,7 +260,7 @@ const commentValidationSchema = computed<StringSchema>(() =>
     .max(1000)
     .test({
       message: t("common.messages.required_field"),
-      test: (value) => new Promise((resolve) => resolve(!!hasItems.value || (!hasItems.value && !!value))),
+      test: (value) => Promise.resolve(!!hasItems.value || (!hasItems.value && !!value)),
     }),
 );
 
