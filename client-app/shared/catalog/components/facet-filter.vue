@@ -115,7 +115,7 @@ const hasFade = computed(
 
 function getFacetLabel(label: string): string {
   if (isDateString(label)) {
-    return $d(new Date(label));
+    return $d(label);
   }
   return label;
 }
