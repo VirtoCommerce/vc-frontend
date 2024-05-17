@@ -21,7 +21,7 @@
           @change="changeFacetValues"
         >
           <div :class="['flex text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
-            <span class="truncate">{{ item.label }}</span>
+            <span class="truncate">{{ formatLabel(item.label) }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
         </VcCheckbox>
@@ -44,6 +44,8 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef } from "vue";
+import { useLanguages } from "@/core/composables";
+import { isDateString } from "@/core/utilities/date";
 import type { FacetItemType } from "@/core/types";
 
 interface IEmits {
@@ -59,6 +61,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { currentLanguage } = useLanguages();
 
 const SHOW_MORE_AMOUNT = 8;
 const SEARCH_FIELD_AMOUNT = 10;
@@ -109,6 +112,13 @@ const hasFade = computed(
     (searchedValues.value.length > SHOW_MORE_AMOUNT && !isExpanded.value) ||
     (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value),
 );
+
+function formatLabel(label: string): string {
+  if (isDateString(label)) {
+    return new Date(label).toLocaleDateString(currentLanguage.value.cultureName);
+  }
+  return label;
+}
 </script>
 
 <style scoped lang="scss">
