@@ -2,22 +2,24 @@
   <div v-if="quote">
     <div class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
+    </div>
 
-      <div class="flex flex-col gap-2.5 lg:flex-row lg:justify-between">
-        <VcTypography tag="h1">
-          {{ $t("pages.account.quote_details.title", [quote.number]) }}
-        </VcTypography>
+    <VcLayoutWithRightSidebar>
+      <VcTypography tag="h1">
+        {{ $t("pages.account.quote_details.title", [quote.number]) }}
+      </VcTypography>
 
+      <template #sidebar>
         <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3">
-          <VcButton variant="outline" @click="decline">
+          <VcButton class="grow" variant="outline" @click="decline">
             {{ $t("common.buttons.decline") }}
           </VcButton>
-          <VcButton @click="approve">
+          <VcButton class="grow" @click="approve">
             {{ $t("common.buttons.approve") }}
           </VcButton>
         </div>
-      </div>
-    </div>
+      </template>
+    </VcLayoutWithRightSidebar>
 
     <VcLayoutWithRightSidebar>
       <!-- Quote products -->
@@ -115,6 +117,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
+import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {
   quoteId: string;
