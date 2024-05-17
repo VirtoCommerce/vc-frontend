@@ -21,7 +21,7 @@
           @change="changeFacetValues"
         >
           <div :class="['flex text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
-            <span class="truncate">{{ getFacetLabel(item.label) }}</span>
+            <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
         </VcCheckbox>
@@ -44,7 +44,6 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef } from "vue";
-import { useI18n } from "vue-i18n";
 import type { FacetItemType } from "@/core/types";
 
 interface IEmits {
@@ -60,7 +59,6 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { t } = useI18n();
 
 const SHOW_MORE_AMOUNT = 8;
 const SEARCH_FIELD_AMOUNT = 10;
@@ -111,17 +109,6 @@ const hasFade = computed(
     (searchedValues.value.length > SHOW_MORE_AMOUNT && !isExpanded.value) ||
     (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value),
 );
-
-function getFacetLabel(label: string): string {
-  switch (label.toLowerCase()) {
-    case "true":
-      return t("common.labels.true_property");
-    case "false":
-      return t("common.labels.false_property");
-    default:
-      return label;
-  }
-}
 </script>
 
 <style scoped lang="scss">
