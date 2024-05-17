@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { eagerComputed } from "@vueuse/core";
 import { computed } from "vue";
-import { useShortCart } from "@/shared/cart";
+import { useShortCart } from "@/shared/cart/composables";
 
 export interface IProps {
   productId?: string;

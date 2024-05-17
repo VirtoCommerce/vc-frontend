@@ -69,6 +69,7 @@ export function _useCheckout() {
   const {
     refetch: refetchCart,
     cart,
+    selectedLineItems,
     selectedItemIds,
     shipment,
     payment,
@@ -194,8 +195,6 @@ export function _useCheckout() {
       shipmentMethodCode: method.code,
       shipmentMethodOption: method.optionName,
     });
-
-    ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
@@ -203,8 +202,6 @@ export function _useCheckout() {
       id: payment.value?.id,
       paymentGatewayCode: method.code,
     });
-
-    ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
   watch(allItemsAreDigital, async (value, previousValue) => {
@@ -249,7 +246,7 @@ export function _useCheckout() {
 
     void fetchAddresses();
 
-    ga.beginCheckout(cart.value!);
+    ga.beginCheckout({ ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
   }
@@ -420,11 +417,6 @@ export function _useCheckout() {
     if (!isPurchaseOrderNumberEnabled.value && purchaseOrderNumber.value) {
       await updatePurchaseOrderNumber("");
     }
-
-    /**
-     * Send a Google Analytics event about adding payment information.
-     */
-    ga.addPaymentInfo(cart.value!);
 
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {

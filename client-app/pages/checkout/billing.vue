@@ -5,7 +5,11 @@
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
-          <ProceedTo :to="{ name: 'Review' }" :disabled="!isValidPayment">
+          <ProceedTo
+            :to="{ name: 'Review' }"
+            :disabled="!isValidPayment"
+            @click="ga.addPaymentInfo({ ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)"
+          >
             {{ $t("common.buttons.review_order") }}
           </ProceedTo>
 
@@ -27,9 +31,11 @@
 </template>
 
 <script setup lang="ts">
+import { useGoogleAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
-const { cart, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
+const { cart, payment, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
 const { isValidPayment } = useCheckout();
+const ga = useGoogleAnalytics();
 </script>

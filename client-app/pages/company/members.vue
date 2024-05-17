@@ -286,7 +286,7 @@
               <div v-if="userCanEditOrganization" class="w-7 flex-none">
                 <MembersDropdownMenu
                   v-if="item.extended.id !== user.memberId"
-                  :contact-status="item.extended.status"
+                  :contact-status="item.status"
                   placement="left-start"
                   @edit="openEditCustomerRoleModal(item)"
                   @remove="openDeleteModal(item)"
