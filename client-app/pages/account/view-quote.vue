@@ -37,7 +37,12 @@
         </div>
       </VcWidget>
 
-      <VcWidget v-if="quote.attachments?.length" :title="$t('pages.account.quote_details.files')" size="lg">
+      <VcWidget
+        v-if="quote.attachments?.length"
+        :title="$t('pages.account.quote_details.files')"
+        size="lg"
+        prepend-icon="document-text"
+      >
         <ul class="space-y-2 rounded border border-[--color-neutral-200] px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
             <VcFile :file="getFile(attachment)" @download="onDownload" />
