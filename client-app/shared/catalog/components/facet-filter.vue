@@ -44,7 +44,7 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef } from "vue";
-import { useLanguages } from "@/core/composables";
+import { useI18n } from "vue-i18n";
 import { isDateString } from "@/core/utilities/date";
 import type { FacetItemType } from "@/core/types";
 
@@ -61,7 +61,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
-const { currentLanguage } = useLanguages();
+const { d: $d } = useI18n();
 
 const SHOW_MORE_AMOUNT = 8;
 const SEARCH_FIELD_AMOUNT = 10;
@@ -115,7 +115,7 @@ const hasFade = computed(
 
 function formatLabel(label: string): string {
   if (isDateString(label)) {
-    return new Date(label).toLocaleDateString(currentLanguage.value.cultureName);
+    return $d(new Date(label));
   }
   return label;
 }
