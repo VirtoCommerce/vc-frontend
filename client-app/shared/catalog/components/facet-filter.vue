@@ -21,7 +21,7 @@
           @change="changeFacetValues"
         >
           <div :class="['flex text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
-            <span class="truncate">{{ formatLabel(item.label) }}</span>
+            <span class="truncate">{{ getFacetLabel(item.label) }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
         </VcCheckbox>
@@ -113,7 +113,7 @@ const hasFade = computed(
     (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value),
 );
 
-function formatLabel(label: string): string {
+function getFacetLabel(label: string): string {
   if (isDateString(label)) {
     return $d(new Date(label));
   }
