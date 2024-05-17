@@ -7,7 +7,11 @@
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
         <template #footer>
-          <ProceedTo :to="{ name: 'Billing' }" :disabled="!isValidShipment">
+          <ProceedTo
+            :to="{ name: 'Billing' }"
+            :disabled="!isValidShipment"
+            @click="ga.addShippingInfo({ ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)"
+          >
             {{ $t("common.buttons.go_to_billing") }}
           </ProceedTo>
 
@@ -29,9 +33,11 @@
 </template>
 
 <script setup lang="ts">
+import { useGoogleAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { cart, selectedLineItems, hasValidationErrors } = useFullCart();
+const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
 const { comment, isValidShipment } = useCheckout();
+const ga = useGoogleAnalytics();
 </script>
