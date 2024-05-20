@@ -27,7 +27,7 @@
       />
     </div>
 
-    <div class="">
+    <div>
       <VcButton
         v-if="product.hasVariations"
         class="mb-4"
