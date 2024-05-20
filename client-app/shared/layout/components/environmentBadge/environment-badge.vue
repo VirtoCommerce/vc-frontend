@@ -16,6 +16,8 @@ const badgesColors: Record<string, VcBadgeColorType> = {
   demo: COLORS.success,
 };
 
+console.log("ENV", import.meta.env);
+
 // const { themeContext } = useThemeContext();
 // const envName = themeContext.value.storeSettings?.envName || "";
 const envName = ""; // TODO: Uncomment above lines and remove this line after adding envName property to storeSettings
