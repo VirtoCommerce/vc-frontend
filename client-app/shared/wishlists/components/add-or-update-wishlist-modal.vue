@@ -60,7 +60,7 @@ import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
 import { bool, object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables";
 import { useWishlists } from "../composables/useWishlists";
 import type { WishlistType } from "@/core/api/graphql/types";
 
