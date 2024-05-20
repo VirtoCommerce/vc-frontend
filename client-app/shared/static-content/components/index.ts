@@ -81,6 +81,17 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         defaultValue: "Slider",
       },
       {
+        name: "subtitle",
+        type: "string",
+        defaultValue: "Subtitle",
+      },
+      {
+        name: "height",
+        type: "string",
+        defaultValue: "auto",
+        enum: ["small", "medium", "large", "auto"],
+      },
+      {
         name: "slides",
         type: "list",
         subFields: [

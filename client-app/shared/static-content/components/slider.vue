@@ -37,7 +37,7 @@ import { computed } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 import type { BreakpointsType } from "@/core/constants";
 
-// synced with config/schemas/sections/slider.json
+// synced with Page builder module config/schemas/sections/slider.json and builder.io builderIOComponents
 type SlideHeightType = "small" | "medium" | "large" | "auto";
 
 type SlideType = {
