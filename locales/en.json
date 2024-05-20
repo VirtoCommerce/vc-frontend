@@ -1494,5 +1494,10 @@
     "INVALID_EXTENSION": "File format is not allowed.",
     "INVALID_SIZE": "File size exceeds the allowed {0}.",
     "CANNOT_DELETE": "Failure while deleting file."
+  },
+  "env": {
+    "dev": "Dev",
+    "qa": "QA",
+    "demo": "Demo"
   }
 }
