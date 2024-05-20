@@ -31,7 +31,8 @@
     },
     {
       "id": "section3",
-      "type": "related-products"
+      "type": "related-products",
+      "hidden": false
     }
   ]
 }

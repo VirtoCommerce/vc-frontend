@@ -30,7 +30,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables";
 import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";

@@ -37,6 +37,19 @@
         </div>
       </VcWidget>
 
+      <VcWidget
+        v-if="quote.attachments?.length"
+        :title="$t('pages.account.quote_details.files')"
+        size="lg"
+        prepend-icon="document-text"
+      >
+        <ul class="space-y-2 rounded border border-[--color-neutral-200] px-3 py-4">
+          <li v-for="(attachment, index) in quote.attachments" :key="index">
+            <VcFile :file="getFile(attachment)" @download="onDownload" />
+          </li>
+        </ul>
+      </VcWidget>
+
       <template #sidebar>
         <VcWidget :title="$t('pages.account.quote_details.quote_summary')">
           <div class="flex justify-between text-base">
@@ -114,7 +127,9 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
+import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
+import type { QuoteAttachmentType } from "@/core/api/graphql/types";
 
 interface IProps {
   quoteId: string;
@@ -163,4 +178,15 @@ watchEffect(async () => {
   clearQuote();
   await fetchQuote({ id: props.quoteId });
 });
+
+function getFile(attachment: QuoteAttachmentType): IAttachedFile {
+  return {
+    ...attachment,
+    status: "attached",
+  };
+}
+
+function onDownload(file: FileType) {
+  downloadFile(file.url!, file.name);
+}
 </script>
