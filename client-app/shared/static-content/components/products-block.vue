@@ -14,20 +14,20 @@
           `lg:grid-cols-${columnsAmountDesktop}`,
         ]"
       >
-        <template v-if="cardType === 'full'">
-          <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
-            <template #cart-handler>
-              <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
-                {{ $t("pages.demo_landing.products_block.choose_button") }}
-              </VcButton>
+        <ProductCardGrid
+          v-for="item in products"
+          :key="item.id"
+          :hide-properties="cardType === 'short'"
+          :product="item"
+        >
+          <template #cart-handler>
+            <VcButton v-if="item.hasVariations" :to="productsRoutes[item.id]" class="mb-4">
+              {{ $t("pages.demo_landing.products_block.choose_button") }}
+            </VcButton>
 
-              <AddToCart v-else :product="item"></AddToCart>
-            </template>
-          </ProductCardGrid>
-        </template>
-        <template v-if="cardType === 'short'">
-          <ProductCardRelated v-for="item in products" :key="item.id" :product="item" />
-        </template>
+            <AddToCart v-else :product="item"></AddToCart>
+          </template>
+        </ProductCardGrid>
       </div>
     </div>
   </div>
@@ -38,7 +38,6 @@ import { watchEffect } from "vue";
 import { useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
-import ProductCardRelated from "@/shared/catalog/components/product-card-related.vue";
 
 interface IProps {
   id: string;
