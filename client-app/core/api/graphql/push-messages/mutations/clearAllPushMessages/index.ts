@@ -19,6 +19,7 @@ export function useClearAllPushMessages() {
             ...pushMessagesQueryResult,
             // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
+              ...pushMessagesQueryResult.pushMessages,
               items: [],
             },
           } satisfies GetPushMessagesQuery;

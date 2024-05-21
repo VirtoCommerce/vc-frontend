@@ -16,6 +16,7 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
       return {
         ...previousQueryResult,
         pushMessages: {
+          ...previousQueryResult.pushMessages,
           items: [newPushMessage, ...items],
         },
       };
