@@ -1,61 +1,62 @@
 <template>
   <VcContainer :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <!-- Breadcrumbs -->
-    <VcBreadcrumbs v-if="!isSearchPage" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
+    <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
     <div class="flex items-stretch lg:gap-6">
-      <!-- Mobile sidebar back cover -->
-      <VcPopupSidebar v-if="isMobile" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
-        <ProductsFiltersSidebar
-          :keyword="keywordQueryParam"
-          :filters="mobileFilters"
-          :loading="loading || facetsLoading"
-          @change="updateMobileFilters($event)"
-          @open-branches="openBranchesModal(true)"
-        />
-
-        <template #footer>
-          <VcButton
-            variant="outline"
-            :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
-            @click="
-              resetFacetFilters();
-              hideMobileSidebar();
-            "
-          >
-            {{ $t("common.buttons.reset") }}
-          </VcButton>
-
-          <VcButton
-            :disabled="!isMobileFilterDirty"
-            @click="
-              applyFilters(mobileFilters);
-              hideMobileSidebar();
-            "
-          >
-            {{ $t("common.buttons.apply") }}
-          </VcButton>
-        </template>
-      </VcPopupSidebar>
-
-      <!-- Sidebar -->
-      <div v-else class="relative flex w-60 shrink-0 items-start">
-        <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
-          <CategorySelector
-            v-if="!isSearchPage"
-            :category="currentCategory"
-            :loading="!currentCategory && loadingCategory"
-          />
-
+      <template v-if="!hideSidebar">
+        <!-- Mobile sidebar back cover -->
+        <VcPopupSidebar v-if="isMobile" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
-            :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-            :loading="loading"
-            @change="applyFilters($event)"
+            :filters="mobileFilters"
+            :loading="loading || facetsLoading"
+            @change="updateMobileFilters($event)"
+            @open-branches="openBranchesModal(true)"
           />
-        </div>
-      </div>
 
+          <template #footer>
+            <VcButton
+              variant="outline"
+              :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
+              @click="
+                resetFacetFilters();
+                hideMobileSidebar();
+              "
+            >
+              {{ $t("common.buttons.reset") }}
+            </VcButton>
+
+            <VcButton
+              :disabled="!isMobileFilterDirty"
+              @click="
+                applyFilters(mobileFilters);
+                hideMobileSidebar();
+              "
+            >
+              {{ $t("common.buttons.apply") }}
+            </VcButton>
+          </template>
+        </VcPopupSidebar>
+
+        <!-- Sidebar -->
+        <div v-else class="relative flex w-60 shrink-0 items-start">
+          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
+            <CategorySelector
+              v-if="!isSearchPage"
+              :category="currentCategory"
+              :loading="!currentCategory && loadingCategory"
+            />
+
+            <ProductsFiltersSidebar
+              :keyword="keywordQueryParam"
+              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+              :loading="loading"
+              @change="applyFilters($event)"
+            />
+          </div>
+        </div>
+      </template>
       <!-- Content -->
       <div ref="contentElement" class="grow">
         <div class="flex">
@@ -71,12 +72,16 @@
               &nbsp;
             </span>
 
+            <span v-else-if="title">
+              {{ title }}
+            </span>
+
             <span v-else>
               {{ currentCategory?.name }}
             </span>
 
             <sup
-              v-if="!loading"
+              v-if="!loading && !hideTotal"
               class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
               <b class="font-extrabold">{{ total }}</b>
@@ -115,7 +120,11 @@
           </div>
 
           <!-- View options -->
-          <ViewMode v-model:mode="savedViewMode" class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto" />
+          <ViewMode
+            v-if="!hideViewModeSelector"
+            v-model:mode="savedViewMode"
+            class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
+          />
 
           <!-- Branch availability -->
           <div
@@ -303,12 +312,19 @@ import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
 import type { StyleValue } from "vue";
 
+const props = defineProps<IProps>();
+const viewModes = ["grid", "list"] as const;
+type ViewModeType = (typeof viewModes)[number];
+
 interface IProps {
   categoryId?: string;
   isSearchPage?: boolean;
+  title?: string;
+  hideTotal?: boolean;
+  hideBreadcrumbs?: boolean;
+  hideSidebar?: boolean;
+  viewMode?: ViewModeType;
 }
-
-const props = defineProps<IProps>();
 
 const { catalogId, currencyCode } = globals;
 
@@ -332,7 +348,7 @@ const {
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
 
-const savedViewMode = useLocalStorage<"grid" | "list">("viewMode", "grid");
+const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
 const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
 
@@ -690,6 +706,16 @@ watch(
     }
   },
 );
+
+watch(props, ({ viewMode }) => {
+  if (viewMode && viewModes.includes(viewMode)) {
+    savedViewMode.value = viewMode;
+  }
+});
+
+const hideViewModeSelector = computed(() => {
+  return props.viewMode && viewModes.includes(props.viewMode);
+});
 
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),

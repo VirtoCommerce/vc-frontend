@@ -1,3 +1,4 @@
+import { Category } from "@/shared/catalog";
 import CallToActionWithImage from "./call-to-action-with-image.vue";
 import CallToAction from "./call-to-action.vue";
 import DemoProductList from "./demo-product-list.vue";
@@ -15,6 +16,37 @@ import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
 export const builderIOComponents: Array<BuilderIOComponentType> = [
+  {
+    name: "Category",
+    component: Category,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Custom Category",
+      },
+      {
+        name: "hideTotal",
+        type: "boolean",
+      },
+      {
+        name: "hideBreadcrumbs",
+        type: "boolean",
+      },
+      {
+        name: "hideSidebar",
+        type: "boolean",
+      },
+      {
+        name: "viewMode",
+        type: "string",
+        defaultValue: "<unset>",
+        enum: ["<unset>", "grid", "list"],
+        helperText: "Fixing the View Mode",
+        showIf: `options.get('hideViewModeSelector') === false`,
+      },
+    ],
+  },
   {
     name: "Products",
     component: ProductsBlock,
