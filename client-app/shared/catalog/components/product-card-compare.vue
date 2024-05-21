@@ -10,7 +10,7 @@
 
     <div class="flex grow flex-col justify-between gap-2">
       <VcProductTitle
-        class="text-sm"
+        class="h-[3.125rem] text-sm"
         :to="link"
         :title="product.name"
         target="_blank"
@@ -27,9 +27,10 @@
       />
     </div>
 
-    <div class="h-[3.25rem]">
+    <div>
       <VcButton
         v-if="product.hasVariations"
+        class="mb-4"
         :to="link"
         target="_blank"
         variant="outline"
@@ -41,9 +42,9 @@
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
 
-      <AddToCart v-else :product="product" />
+      <AddToCart v-else :product="product" reserved-space />
 
-      <div class="mt-1 flex flex-wrap items-center gap-1">
+      <div class="flex flex-wrap items-center gap-1 pt-1">
         <InStock
           :is-in-stock="product.availabilityData?.isInStock"
           :is-digital="isDigital"

@@ -2,22 +2,24 @@
   <div v-if="quote">
     <div class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
+    </div>
 
-      <div class="flex flex-col gap-2.5 lg:flex-row lg:justify-between">
-        <VcTypography tag="h1">
-          {{ $t("pages.account.quote_details.title", [quote.number]) }}
-        </VcTypography>
+    <VcLayoutWithRightSidebar>
+      <VcTypography tag="h1">
+        {{ $t("pages.account.quote_details.title", [quote.number]) }}
+      </VcTypography>
 
+      <template #sidebar>
         <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3">
-          <VcButton variant="outline" @click="decline">
+          <VcButton class="grow" variant="outline" @click="decline">
             {{ $t("common.buttons.decline") }}
           </VcButton>
-          <VcButton @click="approve">
+          <VcButton class="grow" @click="approve">
             {{ $t("common.buttons.approve") }}
           </VcButton>
         </div>
-      </div>
-    </div>
+      </template>
+    </VcLayoutWithRightSidebar>
 
     <VcLayoutWithRightSidebar>
       <!-- Quote products -->
@@ -35,6 +37,19 @@
         <div class="text-base font-medium">
           {{ quote.comment }}
         </div>
+      </VcWidget>
+
+      <VcWidget
+        v-if="quote.attachments?.length"
+        :title="$t('pages.account.quote_details.files')"
+        size="lg"
+        prepend-icon="document-text"
+      >
+        <ul class="space-y-2 rounded border border-[--color-neutral-200] px-3 py-4">
+          <li v-for="(attachment, index) in quote.attachments" :key="index">
+            <VcFile :file="getFile(attachment)" @download="onDownload" />
+          </li>
+        </ul>
       </VcWidget>
 
       <template #sidebar>
@@ -114,7 +129,10 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
+import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
+import type { QuoteAttachmentType } from "@/core/api/graphql/types";
+import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {
   quoteId: string;
@@ -163,4 +181,15 @@ watchEffect(async () => {
   clearQuote();
   await fetchQuote({ id: props.quoteId });
 });
+
+function getFile(attachment: QuoteAttachmentType): IAttachedFile {
+  return {
+    ...attachment,
+    status: "attached",
+  };
+}
+
+function onDownload(file: FileType) {
+  downloadFile(file.url!, file.name);
+}
 </script>

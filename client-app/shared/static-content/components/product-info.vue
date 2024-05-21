@@ -66,7 +66,7 @@ defineProps<IProps>();
   }
 
   &__content {
-    @apply mt-5 flex flex-col gap-6 lg:mt-0 lg:grow print:mt-5;
+    @apply mt-5 flex flex-col gap-6 lg:mt-0 lg:grow print:mt-5 print:grow;
   }
 }
 </style>

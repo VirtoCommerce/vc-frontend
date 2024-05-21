@@ -1,4 +1,5 @@
 import { unref } from "vue";
+import { globals } from "@/core/globals";
 import type { FacetItemType, FacetValueItemType } from "../../types";
 import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
@@ -78,7 +79,7 @@ export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
     values: termFacet
       .terms!.map<FacetValueItemType>((facetTerm: FacetTermType) => ({
         count: facetTerm.count,
-        label: facetTerm.label,
+        label: getFacetLabel(facetTerm.label),
         value: facetTerm.term!,
         selected: facetTerm.isSelected!,
       }))
@@ -93,9 +94,22 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
     paramName: rangeFacet.name,
     values: rangeFacet.ranges!.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
-      label: facetRange.label!,
+      label: getFacetLabel(facetRange.label!),
       value: getFilterExpressionFromFacetRange(facetRange),
       selected: facetRange.isSelected!,
     })),
   };
+}
+
+function getFacetLabel(label: string): string {
+  const { t } = globals.i18n.global;
+
+  switch (label.toLowerCase()) {
+    case "true":
+      return t("common.labels.true_property");
+    case "false":
+      return t("common.labels.false_property");
+    default:
+      return label;
+  }
 }

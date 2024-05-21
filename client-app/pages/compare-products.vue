@@ -51,12 +51,10 @@
       <template #default-container>
         <div
           ref="cardsElement"
-          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t bg-[--color-additional-50] shadow-lg lg:top-[-8.25rem]"
+          class="hide-scrollbar sticky top-[-7.5rem] z-10 max-w-full overflow-x-auto rounded-t bg-[--color-additional-50] shadow-lg lg:top-[-8.25rem] lg:ps-[9.6rem]"
         >
           <!-- Product cards block -->
-          <div
-            class="float-left flex min-w-full gap-[1.125rem] bg-[--color-additional-50] p-5 empty:hidden lg:ps-[11rem]"
-          >
+          <div class="float-left flex min-w-full gap-4.5 p-5">
             <ProductCardCompare
               v-for="product in products"
               :key="product.id"
@@ -73,7 +71,7 @@
             <div
               v-for="(prop, index) in showOnlyDifferences ? propertiesDiffs : properties"
               :key="index"
-              class="flex gap-[1.125rem] px-5 lg:min-h-[4.25rem] lg:items-center lg:border-0 lg:py-2 lg:odd:bg-[--color-neutral-50]"
+              class="flex gap-4.5 px-5 lg:min-h-17 lg:items-center lg:border-0 lg:py-2 lg:odd:bg-[--color-neutral-50]"
             >
               <div class="hidden w-[8.5rem] shrink-0 pl-1 text-sm font-black lg:block">{{ prop.label }}</div>
 
