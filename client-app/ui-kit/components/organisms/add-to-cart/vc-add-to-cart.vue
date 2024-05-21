@@ -22,7 +22,7 @@
         size="sm"
         class="vc-add-to-cart__button"
         truncate
-        @click="$emit('update:cartItemQuantity', quantity!)"
+        @click.stop="$emit('update:cartItemQuantity', quantity!)"
       >
         {{ buttonText }}
       </VcButton>

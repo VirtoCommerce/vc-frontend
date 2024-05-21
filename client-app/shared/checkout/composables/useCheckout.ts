@@ -37,6 +37,9 @@ const useGlobalCheckout = createGlobalState(() => {
   const purchaseOrderNumberChanging = ref(false);
   const _purchaseOrderNumber = ref<string>();
 
+  function clearState() {
+    _comment.value = undefined;
+  }
   return {
     loading,
     billingAddressEqualsShipping,
@@ -45,6 +48,7 @@ const useGlobalCheckout = createGlobalState(() => {
     _comment,
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
+    clearState,
   };
 });
 
@@ -91,6 +95,7 @@ export function _useCheckout() {
     _comment,
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
+    clearState: clearGlobalCheckoutState,
   } = useGlobalCheckout();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
@@ -443,6 +448,8 @@ export function _useCheckout() {
 
       selectedItemIds.value = cart.value!.items.map((item) => item.id);
 
+      clearState();
+
       ga.placeOrder(placedOrder.value);
 
       await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
@@ -457,6 +464,10 @@ export function _useCheckout() {
     loading.value = false;
 
     return placedOrder.value;
+  }
+
+  function clearState() {
+    clearGlobalCheckoutState();
   }
 
   return {
