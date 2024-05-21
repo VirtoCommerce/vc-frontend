@@ -1,4 +1,4 @@
-import { createHead, useHead } from "@unhead/vue";
+import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getStore } from "@/core/api/graphql";
@@ -59,7 +59,7 @@ export default async () => {
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initHotjar } = useHotjar();
   const { fetchMenus } = useNavigations();
-  const { favIcons, themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
+  const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: "en",
@@ -115,29 +115,6 @@ export default async () => {
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
   }
-
-  useHead({
-    link: favIcons.value?.length
-      ? favIcons.value
-      : [
-          {
-            rel: "icon",
-            type: "image/png",
-            sizes: "16x16",
-            href: "/static/icons/favicon-16x16.png",
-          },
-          {
-            rel: "icon",
-            type: "image/png",
-            sizes: "32x32",
-            href: "/static/icons/favicon-32x32.png",
-          },
-          {
-            rel: "manifest",
-            href: "/static/manifest.json",
-          },
-        ],
-  });
 
   // Plugins
   app.use(head);

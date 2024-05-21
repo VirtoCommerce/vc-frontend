@@ -12,6 +12,7 @@ import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@b
 import { computed, onMounted, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
+import { builderIOComponents } from "@/shared/static-content";
 
 const router = useRouter();
 const { modulesSettings } = useThemeContext();
@@ -54,6 +55,6 @@ async function tryLoadContent(urlPath: string) {
 }
 
 const getRegisteredComponents = () => {
-  return [];
+  return builderIOComponents;
 };
 </script>

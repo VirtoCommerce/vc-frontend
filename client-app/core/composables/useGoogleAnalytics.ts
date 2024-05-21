@@ -69,13 +69,14 @@ function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: numb
     item_name: item.name,
     affiliation: item.product?.vendor?.name,
     currency: globals.currencyCode,
-    discount: item.discountAmount?.amount,
+    discount: item.discountAmount?.amount || item.discountTotal.amount,
     price: "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
     ...categories,
   };
 }
 
+/** @deprecated use direct mapping */
 function getCartEventParams(cart: CartType): EventParamsType {
   return {
     currency: globals.currencyCode,
@@ -182,41 +183,34 @@ function clearCart(cart: CartType, params?: EventParamsExtendedType): void {
 }
 
 function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
-  const cartEventParams: EventParamsType = getCartEventParams(cart);
-
   sendEvent("begin_checkout", {
     ...params,
-    ...cartEventParams,
+    currency: cart.currency.code,
+    value: cart.total?.amount,
+    items: cart.items!.map(lineItemToGtagItem),
     coupon: cart.coupons?.[0]?.code,
   });
 }
 
-function addShippingInfo(cart: CartType, params?: EventParamsExtendedType, shipmentMethodOption?: string): void {
-  const shipping_tier = shipmentMethodOption || cart.shipments?.[0]?.shipmentMethodOption;
-
+function addShippingInfo(cart?: CartType, params?: EventParamsExtendedType, shipmentMethodOption?: string): void {
   sendEvent("add_shipping_info", {
     ...params,
-    shipping_tier,
-    currency: cart.currency?.code,
-    value: cart.total?.amount,
-    coupon: cart.coupons?.[0]?.code,
-    items: cart.items!.map(lineItemToGtagItem),
+    shipping_tier: shipmentMethodOption,
+    currency: cart?.currency?.code,
+    value: cart?.total?.amount,
+    coupon: cart?.coupons?.[0]?.code,
+    items: cart?.items!.map(lineItemToGtagItem),
   });
 }
 
-function addPaymentInfo(cart: CartType, params?: EventParamsExtendedType, paymentGatewayCode?: string): void {
-  const paymentMethodCode = paymentGatewayCode || cart.payments?.[0]?.paymentGatewayCode;
-  const payment_type = cart.availablePaymentMethods?.find(
-    (paymentMethod) => paymentMethod.code === paymentMethodCode,
-  )?.paymentMethodGroupType;
-
+function addPaymentInfo(cart?: CartType, params?: EventParamsExtendedType, paymentGatewayCode?: string): void {
   sendEvent("add_payment_info", {
     ...params,
-    payment_type,
-    currency: cart.currency?.code,
-    value: cart.total?.amount,
-    coupon: cart.coupons?.[0]?.code,
-    items: cart.items!.map(lineItemToGtagItem),
+    payment_type: paymentGatewayCode,
+    currency: cart?.currency?.code,
+    value: cart?.total?.amount,
+    coupon: cart?.coupons?.[0]?.code,
+    items: cart?.items?.map(lineItemToGtagItem),
   });
 }
 

@@ -19,7 +19,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
 <style lang="scss">
 .vc-markdown-render {
   font-size: 1rem;
-  line-height: 1.5rem;
+  line-height: 1.5;
 
   h1,
   h2,
@@ -36,7 +36,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   dl,
   hr {
     &:not(:last-child) {
-      margin-bottom: 20px;
+      margin-bottom: 0.5em;
     }
   }
 
@@ -44,13 +44,13 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   dt,
   dd {
     &:not(:last-child) {
-      margin-bottom: 8px;
+      margin-bottom: 0.25em;
     }
 
     & > ul,
     & > ol,
     & > dl {
-      margin-top: 8px;
+      margin-top: 0.25em;
     }
   }
 

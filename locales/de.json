@@ -57,7 +57,9 @@
       "add_new_address": "Neue Adresse hinzufügen",
       "remove_selected": "Ausgewählte entfernen",
       "remove_all": "Alle entfernen",
-      "resend_link": "Link erneut senden"
+      "resend_link": "Link erneut senden",
+      "approve": "Billigen",
+      "decline": "Ablehnen"
     },
     "links": {
       "home": "Startseite",
