@@ -63,7 +63,7 @@
                   {{ $t("pages.account.order_payment.back_to_order_button") }}
                 </VcButton>
 
-                <VcButton :to="{ name: 'Orders', replace: true }" class="lg:min-w-[10rem]">
+                <VcButton :to="{ name: 'Orders', replace: true }" class="lg:min-w-40">
                   {{ $t("pages.account.order_payment.orders_list_button") }}
                 </VcButton>
 
@@ -162,13 +162,24 @@
             <div class="rounded border">
               <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
                 <div class="min-w-0 truncate">
-                  <VcImage
-                    :src="payment?.paymentMethod?.logoUrl"
-                    class="mr-3.5 inline-block size-8 object-center md:size-9"
-                    lazy
-                  />
+                  <template v-if="payment?.paymentMethod">
+                    <VcImage
+                      :src="payment.paymentMethod.logoUrl"
+                      class="mr-3.5 inline-block size-8 object-center md:size-9"
+                      lazy
+                    />
 
-                  <span>{{ $t(`common.methods.payment_by_code.${payment?.paymentMethod?.code}`) }}</span>
+                    <span>{{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}</span>
+                  </template>
+                  <template v-else>
+                    <VcImage
+                      src="/static/icons/placeholders/select-payment.svg"
+                      class="mr-3.5 inline-block size-10 object-center md:size-12"
+                      lazy
+                    />
+
+                    <span>{{ $t("common.placeholders.select_payment_method") }}</span>
+                  </template>
                 </div>
 
                 <div>

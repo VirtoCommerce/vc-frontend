@@ -7,58 +7,83 @@
     removable
     @remove:items="$emit('remove:items', $event)"
   >
-    <template #default="{ item }">
-      <VcAddToCart
-        v-if="!item.deleted"
-        class="w-full"
-        :model-value="item.quantity"
-        :min-quantity="item.minQuantity"
-        :max-quantity="item.maxQuantity"
-        :available-quantity="item.inStockQuantity"
-        :count-in-cart="item.countInCart"
-        :disabled="addToCartDisabled(item)"
-        :is-in-stock="item.availabilityData?.isInStock"
-        @update:model-value="changeItemQuantity(item, $event)"
-        @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
-        @update:validation="setValidationStatus(item, $event)"
-      />
-
-      <div class="mt-1.5 flex gap-1.5">
-        <InStock
-          :is-in-stock="item.availabilityData?.isInStock"
-          :is-available="!item.deleted"
-          :quantity="item.availabilityData?.availableQuantity"
-          :is-digital="item.productType === ProductType.Digital"
-        />
-
-        <CountInCart :product-id="item.productId" />
-      </div>
+    <template #default></template>
+    <template #titles>
+      <div :style="{ width: itemDefaultSlotWidth }" />
     </template>
+    <template #line-items>
+      <VcLineItem
+        v-for="item in items"
+        :key="item.id"
+        :image-url="item.imageUrl"
+        :name="item.name"
+        :route="item.route"
+        :properties="item.properties"
+        :list-price="item.listPrice"
+        :actual-price="item.actualPrice"
+        :total="item.extendedPrice"
+        :disabled="pendingItems[item.id]"
+        with-image
+        with-properties
+        with-price
+        removable
+        @remove="() => removeSingleItem(item.id)"
+      >
+        <div ref="itemDefaultSlot">
+          <VcAddToCart
+            v-if="!item.deleted"
+            class="w-full"
+            :model-value="item.quantity"
+            :min-quantity="item.minQuantity"
+            :max-quantity="item.maxQuantity"
+            :available-quantity="item.inStockQuantity"
+            :count-in-cart="item.countInCart"
+            :disabled="addToCartDisabled(item) || pendingItems[item.id]"
+            :is-in-stock="item.availabilityData?.isInStock"
+            :loading="pendingItems[item.id]"
+            @update:model-value="changeItemQuantity(item, $event)"
+            @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
+            @update:validation="setValidationStatus(item, $event)"
+          />
 
-    <template #after-content="{ item }">
-      <div v-if="validationErrors.length" class="flex flex-col gap-1">
-        <template v-for="(validationError, index) in validationErrors" :key="index">
-          <VcAlert
-            v-if="validationError.objectId === item.id && !!validationError.errorMessage"
-            color="danger"
-            size="sm"
-            variant="outline-dark"
-            icon
-          >
-            {{ validationError.errorMessage }}
-          </VcAlert>
+          <div class="mt-1.5 flex gap-1.5">
+            <InStock
+              :is-in-stock="item.availabilityData?.isInStock"
+              :is-available="!item.deleted"
+              :quantity="item.availabilityData?.availableQuantity"
+              :is-digital="item.productType === ProductType.Digital"
+            />
+
+            <CountInCart :product-id="item.productId" />
+          </div>
+        </div>
+        <template #after>
+          <div v-if="validationErrors.length" class="flex flex-col gap-1">
+            <template v-for="(validationError, index) in validationErrors" :key="index">
+              <VcAlert
+                v-if="validationError.objectId === item.id && !!validationError.errorMessage"
+                color="danger"
+                size="sm"
+                variant="outline-dark"
+                icon
+              >
+                {{ validationError.errorMessage }}
+              </VcAlert>
+            </template>
+          </div>
         </template>
-      </div>
+      </VcLineItem>
     </template>
   </VcLineItems>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { ProductType } from "@/core/enums";
-import { InStock, CountInCart } from "@/shared/catalog";
 import type { ValidationErrorType } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import CountInCart from "@/shared/catalog/components/count-in-cart.vue";
+import InStock from "@/shared/catalog/components/in-stock.vue";
 
 interface IEmits {
   (event: "update:cartItem", item: PreparedLineItemType, quantity: number): void;
@@ -66,14 +91,21 @@ interface IEmits {
   (event: "remove:items", value: string[]): void;
 }
 
-interface IProp {
+interface IProps {
   items: PreparedLineItemType[];
+  pendingItems?: Record<string, boolean>;
 }
 
 const emit = defineEmits<IEmits>();
-defineProps<IProp>();
+withDefaults(defineProps<IProps>(), {
+  pendingItems: () => ({}),
+});
 
 const validationErrors = ref<ValidationErrorType[]>([]);
+const itemDefaultSlot = ref<HTMLElement[] | null>(null);
+const itemDefaultSlotWidth = computed<string>(() => {
+  return itemDefaultSlot.value?.[0] ? `${itemDefaultSlot.value[0].clientWidth}px` : "";
+});
 
 function addToCartDisabled(item: PreparedLineItemType) {
   return (
@@ -88,6 +120,10 @@ function changeCartItemQuantity(item: PreparedLineItemType, quantity: number): v
 
 function changeItemQuantity(item: PreparedLineItemType, quantity: number): void {
   emit("update:listItem", item, quantity);
+}
+
+function removeSingleItem(itemId: string) {
+  emit("remove:items", [itemId]);
 }
 
 function setValidationStatus(
