@@ -31,8 +31,8 @@ function init() {
   if (isEnabled && id && version) {
     if (!IS_DEVELOPMENT) {
       Hotjar.init(id, version);
-      const user = useUser();
-      Hotjar.identify(user.user?.value?.id, {});
+      const { user } = useUser();
+      Hotjar.identify(user?.value?.id, {});
     } else {
       Logger.debug(DEBUG_PREFIX, "Hotjar enabled but not initialized");
     }
