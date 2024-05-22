@@ -7,7 +7,7 @@
     removable
     can-view-all
     with-options
-    :y-offset="yOffset"
+    :offset-options="offsetOptions"
     @mark-read-all="markReadAll"
     @mark-unread-all="markUnreadAll"
     @clear-all="clearAll"
@@ -28,7 +28,7 @@ import { usePushMessages } from "@/shared/push-messages/composables/usePushMessa
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
 interface IProps {
-  yOffset?: number;
+  offsetOptions: VcPushMessageOffsetOptionsType;
 }
 
 defineProps<IProps>();

@@ -64,7 +64,7 @@
                     :class="[
                       'inline-block size-2 rounded-full border',
                       state
-                        ? 'border-neutral-400 bg-neutral-400 outline outline-[1px] outline-additional-50'
+                        ? 'border-neutral-400 bg-neutral-400 outline outline-1 outline-additional-50'
                         : 'box-border border-neutral-400 bg-additional-50',
                     ]"
                   />
@@ -90,13 +90,13 @@
         class="absolute -right-4 -top-4 z-[2] flex flex-col gap-2 rounded-3xl bg-additional-50 px-2 py-3.5 empty:hidden lg:-right-3 lg:px-1.5 lg:py-2"
       >
         <AddToList :product="product" />
-        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" class="relative" :product="product" />
+        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
       </div>
     </div>
 
     <div class="flex grow flex-col pt-3 lg:pt-2.5">
       <!-- Product title -->
-      <VcTooltip placement="bottom" strategy="fixed">
+      <VcTooltip>
         <template #trigger>
           <router-link
             :to="link"
@@ -109,7 +109,7 @@
         </template>
 
         <template #content>
-          <div class="max-w-[16rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
+          <div class="max-w-64">
             {{ product.name }}
           </div>
         </template>

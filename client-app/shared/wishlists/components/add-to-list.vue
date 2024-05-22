@@ -13,7 +13,7 @@
 
     <template #content>
       <div
-        class="max-w-[8rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y xs:max-w-[10rem]"
+        class="max-w-32 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y xs:max-w-40"
       >
         {{ tooltipText }}
       </div>
@@ -33,7 +33,7 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   product: Product;
   customClass?: string;
-  tooltipPlacement?: VcTooltipPlacement;
+  tooltipPlacement?: VcTooltipPlacementType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

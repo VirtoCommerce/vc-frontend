@@ -44,7 +44,7 @@ interface IEmit {
 
 export interface IProps {
   contactStatus?: string;
-  placement?: VcPopoverPlacement;
+  placement?: VcPopoverPlacementType;
 }
 
 defineEmits<IEmit>();

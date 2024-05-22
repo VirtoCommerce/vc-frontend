@@ -1,124 +1,116 @@
 <template>
-  <div>
+  <div class="vc-popover">
+    <div v-if="disableTriggerEvents" ref="reference" class="vc-popover__trigger">
+      <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
+    </div>
+
     <div
-      v-if="!disableTriggerEvents"
-      ref="triggerNode"
-      :aria-describedby="`popover-${$.uid}`"
-      tabindex="0"
+      v-else
+      ref="reference"
+      class="vc-popover__trigger"
       role="button"
-      @mouseenter="trigger === 'hover' && open()"
-      @mouseleave="trigger === 'hover' && close()"
-      @focus="trigger === 'hover' && open()"
-      @blur="trigger === 'hover' && close()"
-      @click="trigger === 'click' && toggle()"
-      @keyup="trigger === 'click' && toggle()"
+      tabindex="-1"
+      @mouseenter="hover && open()"
+      @mouseleave="hover && close()"
+      @focusin="hover && open()"
+      @blur="hover && close()"
+      @click="!hover && toggle()"
+      @keyup="!hover && toggle()"
     >
-      <slot name="trigger" v-bind="{ toggle, open, close, opened: isShown }" />
+      <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
 
-    <div v-else ref="triggerNode" :aria-describedby="`popover-${$.uid}`">
-      <slot name="trigger" v-bind="{ toggle, open, close, opened: isShown }" />
-    </div>
-
-    <div v-show="isShown" :id="`popover-${$.uid}`" ref="popoverNode" :style="{ zIndex, width }">
-      <slot name="content" v-bind="{ close }" />
+    <div ref="floating" :style="{ zIndex, display, ...floatingStyles }" class="vc-popover__content" :role="role">
+      <slot name="content" :close="close" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { bottom, createPopper } from "@popperjs/core";
+import { flip, offset, shift, useFloating, autoUpdate } from "@floating-ui/vue";
 import { onClickOutside } from "@vueuse/core";
-import { ref, shallowRef, onUnmounted, watch } from "vue";
-import type { Instance, PositioningStrategy } from "@popperjs/core";
+import { ref, toRefs, computed, watch } from "vue";
+import type { Placement, Strategy, OffsetOptions, FlipOptions, ShiftOptions } from "@floating-ui/vue";
 
 interface IEmits {
   (event: "toggle", value: boolean): void;
 }
 
 interface IProps {
-  placement?: VcPopoverPlacement;
-  strategy?: PositioningStrategy;
-  xOffset?: number | string;
-  yOffset?: number | string;
-  trigger?: "hover" | "click";
+  placement?: Placement;
+  strategy?: Strategy;
+  flipOptions?: FlipOptions;
+  offsetOptions?: OffsetOptions;
+  shiftOptions?: ShiftOptions;
   disabled?: boolean;
   zIndex?: number | string;
-  width?: string;
+  role?: string;
+  hover?: boolean;
   disableTriggerEvents?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  placement: bottom,
-  strategy: "absolute",
-  xOffset: 0,
-  yOffset: 0,
-  trigger: "hover",
   zIndex: 1,
+  placement: "bottom",
 });
 
-const triggerNode = shallowRef<HTMLElement | null>(null);
-const popoverNode = shallowRef<HTMLElement | null>(null);
+const opened = ref(false);
+const reference = ref<HTMLElement | null>(null);
+const floating = ref<HTMLElement | null>(null);
+const { placement, strategy, flipOptions, offsetOptions, shiftOptions } = toRefs(props);
 
-const isShown = ref(false);
-let popoverInstance: Instance | null = null;
+const display = computed(() => (opened.value ? "block" : ""));
 
-function create(): void {
-  popoverInstance = createPopper(triggerNode.value!, popoverNode.value!, {
-    placement: props.placement,
-    strategy: props.strategy,
-    modifiers: [
-      {
-        name: "offset",
-        options: {
-          offset: [props.xOffset, props.yOffset],
-        },
-      },
-      {
-        name: "arrow",
-      },
-    ],
-  });
-}
+const { floatingStyles } = useFloating(reference, floating, {
+  placement,
+  strategy,
+  middleware: [flip(flipOptions.value), offset(offsetOptions.value), shift(shiftOptions.value)],
+  whileElementsMounted(...args) {
+    return autoUpdate(...args, { animationFrame: true });
+  },
+});
 
-function toggle(): void {
+function open() {
   if (props.disabled) {
     return;
   }
 
-  if (isShown.value) {
-    close();
-  } else {
-    open();
+  opened.value = true;
+}
+
+function close() {
+  if (props.disabled) {
+    return;
   }
+
+  opened.value = false;
 }
 
-function open(): void {
-  isShown.value = true;
+function toggle() {
+  if (props.disabled) {
+    return;
+  }
 
-  create();
-}
-
-function close(): void {
-  isShown.value = false;
-
-  popoverInstance?.destroy();
-  popoverInstance = null;
+  opened.value = !opened.value;
 }
 
 onClickOutside(
-  triggerNode,
+  reference,
   () => {
     close();
   },
-  { ignore: [popoverNode] },
+  { ignore: [floating] },
 );
 
-watch(isShown, (value: boolean) => emit("toggle", value));
-
-onUnmounted(() => {
-  popoverInstance?.destroy();
-});
+watch(opened, (value: boolean) => emit("toggle", value));
 </script>
+
+<style lang="scss">
+.vc-popover {
+  &__content {
+    @apply hidden absolute top-0 left-0;
+  }
+}
+</style>

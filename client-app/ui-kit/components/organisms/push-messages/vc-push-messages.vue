@@ -1,5 +1,5 @@
 <template>
-  <VcPopover class="vc-push-messages" trigger="click" :placement="placement" :y-offset="yOffset">
+  <VcPopover class="vc-push-messages" :placement="placement" :offset-options="offsetOptions">
     <template #trigger>
       <slot name="trigger" />
     </template>
@@ -119,14 +119,14 @@ interface IProps {
   canViewAll?: boolean;
   showUnreadOnly?: boolean;
   withOptions?: boolean;
-  yOffset?: number | string;
-  placement?: VcPopoverPlacement;
+  offsetOptions?: VcPushMessagesOffsetOptionsType;
+  placement?: VcPushMessagesPlacementType;
 }
 
 const emits = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  yOffset: 30,
+  offsetOptions: 30,
   placement: "bottom-end",
 });
 
