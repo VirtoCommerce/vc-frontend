@@ -1,5 +1,6 @@
 import { unref } from "vue";
 import { globals } from "@/core/globals";
+import { isDateString } from "@/core/utilities/date";
 import type { FacetItemType, FacetValueItemType } from "../../types";
 import type { FacetRangeType, FacetTermType, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { MaybeRef } from "@vueuse/core";
@@ -102,7 +103,11 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
 }
 
 function getFacetLabel(label: string): string {
-  const { t } = globals.i18n.global;
+  const { d, t } = globals.i18n.global;
+
+  if (isDateString(label)) {
+    return d(label);
+  }
 
   switch (label.toLowerCase()) {
     case "true":

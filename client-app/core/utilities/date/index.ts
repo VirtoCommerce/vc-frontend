@@ -35,3 +35,13 @@ function toDateObject(dateOnly: string): Date {
   const timestamp = Date.parse(toLocalMidnight(dateOnly));
   return new Date(timestamp);
 }
+
+/**
+ * @description Check if the string is a valid ISO 8601 date string
+ * @param str string to check
+ * @returns true if the string is a valid ISO 8601 date string, otherwise false
+ */
+export function isDateString(str: string): boolean {
+  const date = new Date(str);
+  return !isNaN(date.valueOf()) && date.toISOString() === str;
+}
