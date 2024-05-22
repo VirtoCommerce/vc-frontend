@@ -33,10 +33,10 @@ export function usePageHead(data: IUsePageSeoData) {
         titleChunks[page_title_store_name_align === "end" ? "push" : "unshift"](storeName);
       }
 
-      // TODO: uncomment lines below and above after adding envName property to storeSettings
-      // const envName = themeContext.value.storeSettings?.envName;
-      // if (envName) {
-      //   titleChunks.unshift($t(`env.${envName}`));
+      // TODO: uncomment lines below and above after adding environmentName property to storeSettings
+      // const environmentName = themeContext.value.storeSettings?.environmentName;
+      // if (environmentName) {
+      //   titleChunks.unshift($t(`env.${environmentName}`));
       // }
 
       return titleChunks.filter(Boolean).join(page_title_divider);

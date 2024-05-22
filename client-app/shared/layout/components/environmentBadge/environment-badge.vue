@@ -1,7 +1,10 @@
 <template>
-  <div v-if="!!envName" :class="`fixed top-0 z-[21] flex h-1 w-full justify-center bg-[--color-${badgeColor}-500]`">
+  <div
+    v-if="!!environmentName"
+    :class="`fixed top-0 z-[21] flex h-1 w-full justify-center bg-[--color-${badgeColor}-500]`"
+  >
     <VcBadge class="h-[22px] min-w-17 items-center rounded-b-md" :color="badgeColor">
-      {{ $t(`env.${envName}`) }}
+      {{ $t(`env.${environmentName}`) }}
     </VcBadge>
   </div>
 </template>
@@ -17,7 +20,7 @@ const badgesColors: Record<string, VcBadgeColorType> = {
 };
 
 // const { themeContext } = useThemeContext();
-// const envName = themeContext.value.storeSettings?.envName || "";
-const envName = ""; // TODO: Uncomment above lines and remove this line after adding envName property to storeSettings
-const badgeColor: VcBadgeColorType = badgesColors[envName];
+// const environmentName = themeContext.value.storeSettings?.environmentName || "";
+const environmentName = ""; // TODO: Uncomment above lines and remove this line after adding environmentName property to storeSettings
+const badgeColor: VcBadgeColorType = badgesColors[environmentName];
 </script>
