@@ -93,16 +93,22 @@
         <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
 
         <div
-          class="sticky top-0 z-10 my-1.5 flex h-14 items-center lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
+          class="sticky top-0 z-10 my-1.5 flex h-14 items-center empty:h-2 lg:relative lg:mb-3.5 lg:mt-3 lg:h-auto lg:flex-wrap lg:justify-end"
           :class="{
             'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
           }"
         >
           <!-- Mobile filters toggler -->
-          <VcButton class="mr-2.5 flex-none lg:!hidden" icon="filter" size="sm" @click="showMobileSidebar" />
+          <VcButton
+            v-if="!hideSidebar"
+            class="mr-2.5 flex-none lg:!hidden"
+            icon="filter"
+            size="sm"
+            @click="showMobileSidebar"
+          />
 
           <!-- Sorting -->
-          <div class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
+          <div v-if="!hideSorting" class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
             <span
               v-t="'pages.catalog.sort_by_label'"
               class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block"
@@ -126,63 +132,65 @@
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
 
-          <!-- Branch availability -->
-          <div
-            v-if="!isMobile"
-            class="order-3 ml-4 flex items-center xl:ml-6"
-            @click.prevent="openBranchesModal(false)"
-            @keyup.enter.prevent="openBranchesModal(false)"
-          >
-            <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
-              <template #trigger>
-                <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                  <i18n-t
-                    keypath="pages.catalog.branch_availability_filter_card.available_in"
-                    tag="div"
-                    class="text-sm"
-                    :class="{
-                      'text-neutral': !savedBranches.length,
-                    }"
-                    scope="global"
-                  >
-                    <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
-                      {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
+          <template v-if="!hideControls">
+            <!-- Branch availability -->
+            <div
+              v-if="!isMobile"
+              class="order-3 ml-4 flex items-center xl:ml-6"
+              @click.prevent="openBranchesModal(false)"
+              @keyup.enter.prevent="openBranchesModal(false)"
+            >
+              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
+                <template #trigger>
+                  <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
+                    <i18n-t
+                      keypath="pages.catalog.branch_availability_filter_card.available_in"
+                      tag="div"
+                      class="text-sm"
+                      :class="{
+                        'text-neutral': !savedBranches.length,
+                      }"
+                      scope="global"
+                    >
+                      <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
+                        {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
+                      </span>
+                    </i18n-t>
+                  </VcCheckbox>
+                </template>
+
+                <template #content>
+                  <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
+                    {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
+                  </div>
+                </template>
+              </VcTooltip>
+            </div>
+
+            <!-- In Stock -->
+            <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
+              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
+                <template #trigger>
+                  <VcCheckbox v-model="savedInStock" :disabled="loading">
+                    <span
+                      class="whitespace-nowrap text-sm"
+                      :class="{
+                        'text-neutral': !savedInStock,
+                      }"
+                    >
+                      {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
                     </span>
-                  </i18n-t>
-                </VcCheckbox>
-              </template>
+                  </VcCheckbox>
+                </template>
 
-              <template #content>
-                <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
-                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
-                </div>
-              </template>
-            </VcTooltip>
-          </div>
-
-          <!-- In Stock -->
-          <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
-            <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
-              <template #trigger>
-                <VcCheckbox v-model="savedInStock" :disabled="loading">
-                  <span
-                    class="whitespace-nowrap text-sm"
-                    :class="{
-                      'text-neutral': !savedInStock,
-                    }"
-                  >
-                    {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-                  </span>
-                </VcCheckbox>
-              </template>
-
-              <template #content>
-                <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
-                  {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
-                </div>
-              </template>
-            </VcTooltip>
-          </div>
+                <template #content>
+                  <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
+                    {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
+                  </div>
+                </template>
+              </VcTooltip>
+            </div>
+          </template>
         </div>
 
         <!-- Filters chips -->
@@ -221,6 +229,7 @@
             :items-per-page="itemsPerPage"
             :products="products"
             open-product-in-new-tab
+            :card-type="cardType"
             @item-link-click="sendGASelectItemEvent"
           >
             <template #cart-handler="{ item }">
@@ -323,7 +332,10 @@ interface IProps {
   hideTotal?: boolean;
   hideBreadcrumbs?: boolean;
   hideSidebar?: boolean;
+  hideControls?: boolean;
+  hideSorting?: boolean;
   viewMode?: ViewModeType;
+  cardType?: "full" | "short";
 }
 
 const { catalogId, currencyCode } = globals;

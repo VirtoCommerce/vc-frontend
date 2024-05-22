@@ -14,6 +14,7 @@
         :product="item"
         :lazy="index >= lazyCardsCount"
         :open-in-new-tab="openProductInNewTab"
+        :hide-properties="cardType === 'short'"
         @link-click="$emit('itemLinkClick', item, $event)"
       >
         <template #add-to-list-handler>
@@ -47,6 +48,7 @@ interface IProps {
   itemsPerPage?: number;
   viewMode?: string;
   openProductInNewTab?: boolean;
+  cardType?: "full" | "short";
 }
 
 defineEmits<IEmits>();

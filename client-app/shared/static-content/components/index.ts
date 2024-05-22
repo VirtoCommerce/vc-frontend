@@ -38,12 +38,27 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "boolean",
       },
       {
+        name: "hideControls",
+        type: "boolean",
+      },
+      {
+        name: "hideSorting",
+        type: "boolean",
+      },
+      {
         name: "viewMode",
         type: "string",
         defaultValue: "<unset>",
         enum: ["<unset>", "grid", "list"],
         helperText: "Fixing the View Mode",
         showIf: `options.get('hideViewModeSelector') === false`,
+      },
+      {
+        name: "cardType",
+        type: "string",
+        defaultValue: "full",
+        helperText: "Card type for grid view mode",
+        enum: ["full", "short"],
       },
     ],
   },
