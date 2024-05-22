@@ -311,6 +311,10 @@ function inputClick() {
 
     input:focus ~ & {
       @apply ring ring-[--color-primary-100];
+
+      #{$error} & {
+        @apply ring-[--color-danger-100];
+      }
     }
 
     #{$disabled} &,
@@ -319,7 +323,7 @@ function inputClick() {
     }
 
     #{$error} & {
-      @apply border-[--color-danger-500];
+      @apply -inset-px border-[--color-danger-500];
     }
 
     #{$noBorder} & {
