@@ -768,7 +768,8 @@
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
-        "private_list": "Private list"
+        "private_list": "Private list",
+        "make_shared": "Make shared"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
