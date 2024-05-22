@@ -2,6 +2,7 @@
   <VcInput
     v-model.number="enteredQuantity"
     type="number"
+    :aria-label="$t('common.labels.product_quantity')"
     :disabled="disabled"
     :max="maxQty"
     :min="minQty"
@@ -41,6 +42,7 @@ import { useField } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
@@ -64,9 +66,9 @@ interface IProps {
   reservedSpace?: boolean;
 }
 
-// Define max qty available to add
-const MAX_VALUE = 999999999;
-
+const isInStock = computed(
+  () => props.product.availabilityData?.isInStock && props.product.availabilityData?.isBuyable,
+);
 const availableQuantity = computed(() => props.product.availabilityData?.availableQuantity);
 const minQuantity = computed(() => props.product.minQuantity);
 const maxQuantity = computed(() => props.product.maxQuantity);
@@ -76,6 +78,7 @@ const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { getTranslation } = useErrorsTranslator("validation_error");
 const { quantitySchema } = useQuantityValidationSchema({
+  isInStock,
   availableQuantity,
   minQuantity,
   maxQuantity,
@@ -86,7 +89,10 @@ const loading = ref(false);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
 const minQty = computed<number>(() => minQuantity.value || 1);
 const maxQty = computed<number>(() =>
-  Math.min(props.product.availabilityData?.availableQuantity || MAX_VALUE, maxQuantity.value || MAX_VALUE),
+  Math.min(
+    props.product.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
+    maxQuantity.value || LINE_ITEM_QUANTITY_LIMIT,
+  ),
 );
 
 const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
@@ -192,8 +198,8 @@ function onKeypress(event: KeyboardEvent) {
 function onInput() {
   if (!enteredQuantity.value) {
     enteredQuantity.value = undefined;
-  } else if (enteredQuantity.value > MAX_VALUE) {
-    enteredQuantity.value = MAX_VALUE;
+  } else if (enteredQuantity.value > LINE_ITEM_QUANTITY_LIMIT) {
+    enteredQuantity.value = LINE_ITEM_QUANTITY_LIMIT;
   } else {
     setValue(enteredQuantity.value);
   }

@@ -68,11 +68,22 @@
           @keypress.enter="applyKeyword"
         >
           <template #append>
-            <button v-if="localKeyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
+            <button
+              v-if="localKeyword"
+              :aria-label="$t('common.buttons.reset_orders_search_keyword')"
+              type="button"
+              class="flex h-full items-center px-4"
+              @click="resetKeyword"
+            >
               <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
             </button>
 
-            <VcButton :disabled="ordersLoading" icon="search" @click="applyKeyword" />
+            <VcButton
+              :disabled="ordersLoading"
+              :aria-label="$t('commmon.buttons.search_orders')"
+              icon="search"
+              @click="applyKeyword"
+            />
           </template>
         </VcInput>
       </div>
@@ -81,7 +92,7 @@
     <!-- Filters chips -->
     <div v-if="!isFilterEmpty" class="hidden flex-wrap gap-x-3 gap-y-2 lg:flex">
       <template v-for="item in filterChipsItems" :key="item.value">
-        <VcChip color="secondary" closable @close="removeFilterChipsItem(item)">
+        <VcChip color="secondary" closable @close="handleRemoveFilter(item)">
           {{ item.label }}
         </VcChip>
       </template>
@@ -160,7 +171,7 @@
 
           <div class="flex flex-col items-end justify-center">
             <OrderStatus
-              class="w-full !max-w-[9rem]"
+              class="w-full !max-w-36"
               :status="itemData.item.status"
               :display-value="itemData.item.statusDisplayValue"
             />
@@ -235,7 +246,7 @@
             <VcTooltip class="!block">
               <template #trigger>
                 <OrderStatus
-                  class="w-full !max-w-[9rem]"
+                  class="w-full !max-w-36"
                   :status="order.status"
                   :display-value="order.statusDisplayValue"
                 />
@@ -301,6 +312,7 @@ import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
 import PageToolbarBlock from "./page-toolbar-block.vue";
+import type { OrdersFilterChipsItem } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { SortDirection } from "@/core/enums";
 import type { DateFilterType, ISortInfo } from "@/core/types";
@@ -425,13 +437,8 @@ function hideFilters() {
 }
 
 function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
-  if (dateFilterType.startDate) {
-    filterData.value.startDate = toDateISOString(dateFilterType.startDate);
-  }
-
-  if (dateFilterType.endDate) {
-    filterData.value.endDate = toDateISOString(dateFilterType.endDate);
-  }
+  filterData.value.startDate = dateFilterType.startDate ? toDateISOString(dateFilterType.startDate) : undefined;
+  filterData.value.endDate = dateFilterType.endDate ? toDateISOString(dateFilterType.endDate) : undefined;
 
   selectedDateFilterType.value = dateFilterType;
 }
@@ -444,6 +451,16 @@ function goToOrderDetails(order: CustomerOrderType): void {
 function applyOrderFilters(): void {
   applyFilters();
   hideFilters();
+}
+
+function handleRemoveFilter(item: OrdersFilterChipsItem): void {
+  removeFilterChipsItem(item);
+
+  if (item.fieldName === "startDate" || item.fieldName === "endDate") {
+    selectedDateFilterType.value = dateFilterTypes.value[0];
+    selectedDateFilterType.value.startDate = appliedFilterData.value?.startDate;
+    selectedDateFilterType.value.endDate = appliedFilterData.value?.endDate;
+  }
 }
 
 function resetOrderFilters(): void {

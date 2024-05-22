@@ -5,7 +5,7 @@
     </div>
     <VcPriceDisplayCatalog :value="value?.actual" class="text-xl font-bold" />
   </div>
-  <div v-else-if="value?.list?.amount > value?.actual?.amount" class="flex flex-wrap items-end gap-1.5">
+  <div v-else-if="shouldUseActualPrice(value?.list, value?.actual)" class="flex flex-wrap items-end gap-1.5">
     <VcPriceDisplayCatalog :class="priceColorClass" :value="value?.actual" class="text-xl font-bold" />
     <VcPriceDisplayCatalog :value="value?.list" class="mb-px pb-0.5 text-xs font-semibold text-neutral" is-old-price />
   </div>
@@ -15,6 +15,7 @@
 </template>
 
 <script setup lang="ts">
+import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
 import type { MoneyType, PriceType } from "@/core/api/graphql/types";
 
 interface IProps {

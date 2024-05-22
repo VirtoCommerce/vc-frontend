@@ -48,7 +48,7 @@
     <VcCarouselPagination v-if="showPagination" class="image-gallery__pagination" data-nav-pagination size="sm" />
 
     <div v-show="showThumbs" class="image-gallery__thumbs-container">
-      <VcNavButton size="xs" direction="left" data-nav-prev />
+      <VcNavButton :label="$t('common.buttons.previous')" size="xs" direction="left" data-nav-prev />
 
       <Swiper
         class="image-gallery__thumbs"
@@ -78,7 +78,7 @@
         </SwiperSlide>
       </Swiper>
 
-      <VcNavButton size="xs" direction="right" data-nav-next />
+      <VcNavButton :label="$t('common.buttons.next')" size="xs" direction="right" data-nav-next />
     </div>
   </div>
 </template>

@@ -1,7 +1,7 @@
 {
-  "name": null,
-  "short_name": null,
-  "description": null,
+  "name": "B2B-store",
+  "short_name": "B2B-store",
+  "description": "B2B-store",
   "dir": "auto",
   "lang": "en-US",
   "display": "standalone",

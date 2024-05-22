@@ -33,9 +33,9 @@
     </div>
 
     <div v-if="isCorporateMember" class="border-b px-6 pb-6">
-      <VcCheckbox v-model="isPrivate">
-        {{ $t("shared.wishlists.add_or_update_wishlist_modal.private_list") }}
-      </VcCheckbox>
+      <VcSwitch v-model="isShared" label-position="right">
+        {{ $t("shared.wishlists.add_or_update_wishlist_modal.make_shared") }}
+      </VcSwitch>
     </div>
 
     <template #actions="{ close }">
@@ -60,7 +60,7 @@ import { useField, useForm } from "vee-validate";
 import { computed } from "vue";
 import { bool, object, string } from "yup";
 import { WishlistScopeType } from "@/core/api/graphql/types";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables";
 import { useWishlists } from "../composables/useWishlists";
 import type { WishlistType } from "@/core/api/graphql/types";
 
@@ -72,7 +72,7 @@ const props = defineProps<IProps>();
 
 const listName = computed<string | undefined>(() => props.list?.name);
 const listDescription = computed<string | undefined>(() => props.list?.description);
-const listIsPrivate = computed<boolean>(() => !props.list?.scope || props.list?.scope === WishlistScopeType.Private);
+const listIsShared = computed<boolean>(() => props.list?.scope === WishlistScopeType.Organization);
 
 const { loading, createWishlist, updateWishlist } = useWishlists();
 const { isCorporateMember } = useUser();
@@ -83,7 +83,7 @@ const validationSchema = toTypedSchema(
   object({
     name: string().required().max(25),
     description: string().max(MAX_DESCRIPTION_LENGTH),
-    isPrivate: bool(),
+    isShared: bool(),
   }),
 );
 
@@ -92,14 +92,14 @@ const { errors, meta } = useForm({
   initialValues: {
     name: listName.value,
     description: listDescription.value ?? "",
-    isPrivate: listIsPrivate.value,
+    isShared: listIsShared.value,
   },
   validateOnMount: true,
 });
 
 const { value: name } = useField<string | undefined>("name");
 const { value: description } = useField<string | undefined>("description");
-const { value: isPrivate } = useField<boolean | undefined>("isPrivate");
+const { value: isShared } = useField<boolean | undefined>("isShared");
 
 const isEditMode = computed<boolean>(() => !!props.list);
 const canSave = computed<boolean>(() => meta.value.dirty && meta.value.valid);
@@ -109,7 +109,7 @@ async function save(closeHandle: () => void): Promise<void> {
     return;
   }
 
-  const scope = isPrivate.value ? WishlistScopeType.Private : WishlistScopeType.Organization;
+  const scope = isShared.value ? WishlistScopeType.Organization : WishlistScopeType.Private;
 
   if (isEditMode.value) {
     await updateWishlist({

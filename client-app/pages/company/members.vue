@@ -135,10 +135,20 @@
         >
           <template #append>
             <button v-if="localKeyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
-              <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
+              <VcIcon
+                :aria-label="$t('common.buttons.reset_company_members_search_keyword')"
+                class="text-[--color-primary-500]"
+                name="delete-2"
+                size="xs"
+              />
             </button>
 
-            <VcButton :disabled="contactsLoading" icon="search" @click="applyKeyword" />
+            <VcButton
+              :aria-label="$t('common.buttons.search_company_members')"
+              :disabled="contactsLoading"
+              icon="search"
+              @click="applyKeyword"
+            />
           </template>
         </VcInput>
       </div>
@@ -276,7 +286,7 @@
               <div v-if="userCanEditOrganization" class="w-7 flex-none">
                 <MembersDropdownMenu
                   v-if="item.extended.id !== user.memberId"
-                  :contact-status="item.extended.status"
+                  :contact-status="item.status"
                   placement="left-start"
                   @edit="openEditCustomerRoleModal(item)"
                   @remove="openDeleteModal(item)"

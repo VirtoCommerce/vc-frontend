@@ -14,7 +14,11 @@
           <VcIcon name="delete-2" size="xs" class="text-primary" />
         </button>
 
-        <VcButton icon="search" @click="goToSearchResultsPage" />
+        <VcButton
+          :aria-label="$t('shared.layout.search_bar.search_button')"
+          icon="search"
+          @click="goToSearchResultsPage"
+        />
       </template>
     </VcInput>
 

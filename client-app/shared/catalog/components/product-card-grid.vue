@@ -64,7 +64,7 @@
                     :class="[
                       'inline-block size-2 rounded-full border',
                       state
-                        ? 'border-neutral-400 bg-neutral-400 outline outline-[1px] outline-additional-50'
+                        ? 'border-neutral-400 bg-neutral-400 outline outline-1 outline-additional-50'
                         : 'box-border border-neutral-400 bg-additional-50',
                     ]"
                   />
@@ -109,13 +109,14 @@
         </template>
 
         <template #content>
-          <div class="max-w-[16rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
+          <div class="max-w-64 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
             {{ product.name }}
           </div>
         </template>
       </VcTooltip>
 
       <div
+        v-if="!hideProperties"
         class="mt-2 grid w-full grid-cols-2 gap-1.5 text-sm leading-4 text-neutral-800 empty:hidden lg:mt-0.5 lg:gap-y-0.5 lg:text-xs"
       >
         <!-- Product properties -->
@@ -227,6 +228,7 @@ interface IProps {
   product: Product;
   lazy?: boolean;
   openInNewTab?: boolean;
+  hideProperties?: boolean;
 }
 
 const swiperInstance = ref<SwiperInstance>();
