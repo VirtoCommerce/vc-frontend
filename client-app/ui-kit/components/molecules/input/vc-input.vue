@@ -45,6 +45,7 @@
         :autocomplete="autocomplete"
         :aria-label="ariaLabel ?? label"
         class="vc-input__input"
+        title=""
         @keydown="keyDown($event)"
       />
 
