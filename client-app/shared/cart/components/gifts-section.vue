@@ -1,21 +1,22 @@
 <template>
   <VcWidget :title="$t('shared.cart.gifts_section.title')" prepend-icon="gift" size="lg">
-    <div class="divide-y rounded border">
-      <div v-for="gift in gifts" :key="gift.id" class="flex items-center px-6 py-3">
-        <VcCheckbox
-          :model-value="gift.isAddedInCart"
+    <VcLineItems :with-header="false">
+      <template #line-items>
+        <VcLineItem
+          v-for="gift in gifts"
+          :key="gift.id"
+          with-image
+          selectable
+          :name="gift.name"
+          :image-url="gift.imageUrl"
           :disabled="disabled"
-          class="mr-6"
-          @change="$emit('toggle:gift', gift)"
-        />
-
-        <VcImage :src="gift.imageUrl" class="mr-4 size-[60px] shrink-0 rounded border" lazy />
-
-        <span class="grow text-sm font-bold">
-          {{ gift.name }}
-        </span>
-      </div>
-    </div>
+          :selected="gift.isAddedInCart"
+          @select="$emit('toggle:gift', gift)"
+        >
+          <VcQuantity v-model="gift.quantity" disabled />
+        </VcLineItem>
+      </template>
+    </VcLineItems>
   </VcWidget>
 </template>
 
