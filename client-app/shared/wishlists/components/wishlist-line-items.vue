@@ -108,6 +108,9 @@ const itemDefaultSlotWidth = computed<string>(() => {
 });
 
 function addToCartDisabled(item: PreparedLineItemType) {
+  if (item.actualPrice?.amount === 0 || item.listPrice?.amount === 0) {
+    return true;
+  }
   return (
     item.productType === ProductType.Physical &&
     (!item.availabilityData?.isAvailable || !item.availabilityData?.isInStock)
