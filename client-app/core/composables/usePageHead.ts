@@ -1,13 +1,13 @@
 import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
 import { unref } from "vue";
-// import { useI18n } from "vue-i18n";
+import { useEnvironmentName } from "@/core/composables/useEnvironmentName";
 import { useThemeContext } from "./useThemeContext";
 import type { IUsePageSeoData } from "../types";
 
 export function usePageHead(data: IUsePageSeoData) {
   const { themeContext } = useThemeContext();
-  // const { t: $t } = useI18n();
+  const { environmentName, shouldShowBadge } = useEnvironmentName();
 
   const {
     storeName,
@@ -33,11 +33,9 @@ export function usePageHead(data: IUsePageSeoData) {
         titleChunks[page_title_store_name_align === "end" ? "push" : "unshift"](storeName);
       }
 
-      // TODO: uncomment lines below and above after adding environmentName property to storeSettings
-      // const environmentName = themeContext.value.storeSettings?.environmentName;
-      // if (environmentName) {
-      //   titleChunks.unshift($t(`env.${environmentName}`));
-      // }
+      if (shouldShowBadge) {
+        titleChunks.unshift(environmentName);
+      }
 
       return titleChunks.filter(Boolean).join(page_title_divider);
     }),
