@@ -69,7 +69,7 @@ function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: numb
     item_name: item.name,
     affiliation: item.product?.vendor?.name,
     currency: globals.currencyCode,
-    discount: item.discountAmount?.amount || item.discountTotal.amount,
+    discount: item.discountAmount?.amount || item.discountTotal?.amount,
     price: "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
     ...categories,
