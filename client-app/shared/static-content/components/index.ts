@@ -71,6 +71,51 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       },
     ],
   },
+  {
+    component: Slider,
+    name: "Slider",
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Slider",
+      },
+      {
+        name: "subtitle",
+        type: "string",
+        defaultValue: "Subtitle",
+      },
+      {
+        name: "height",
+        type: "string",
+        defaultValue: "auto",
+        enum: ["small", "medium", "large", "auto"],
+      },
+      {
+        name: "slides",
+        type: "list",
+        subFields: [
+          {
+            id: "image",
+            name: "image",
+            type: "file",
+            allowedFileTypes: ["jpeg", "jpg", "png", "svg"],
+          },
+          {
+            name: "title",
+            id: "title",
+            label: "Title",
+            type: "string",
+          },
+          {
+            name: "text",
+            id: "text",
+            type: "string",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 type BuilderIOComponentType = {

@@ -25,10 +25,12 @@ query GetStore($domain: String!) {
       taxCalculationEnabled
       anonymousUsersAllowed
       isSpa
+      environmentName
       emailVerificationEnabled
       emailVerificationRequired
       createAnonymousOrderEnabled
       seoLinkType
+      defaultSelectedForCheckout
       passwordRequirements {
         requireLowercase
         requireUppercase

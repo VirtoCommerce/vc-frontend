@@ -40,7 +40,7 @@ import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
 
 interface IProps {
-  id: string;
+  id?: string;
   background?: string;
   title?: string;
   subtitle?: string;
