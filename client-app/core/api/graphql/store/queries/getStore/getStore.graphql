@@ -30,6 +30,7 @@ query GetStore($domain: String!) {
       emailVerificationRequired
       createAnonymousOrderEnabled
       seoLinkType
+      defaultSelectedForCheckout
       passwordRequirements {
         requireLowercase
         requireUppercase

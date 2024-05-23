@@ -39722,6 +39722,22 @@
             "deprecationReason": null
           },
           {
+            "name": "defaultSelectedForCheckout",
+            "description": "Default \"Selected for checkout\" state for new line items and gifts",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "emailVerificationEnabled",
             "description": "Email address verification enabled",
             "args": [],

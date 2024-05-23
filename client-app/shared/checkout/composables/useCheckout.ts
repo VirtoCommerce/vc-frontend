@@ -4,7 +4,7 @@ import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
@@ -97,6 +97,7 @@ export function _useCheckout() {
     _purchaseOrderNumber,
     clearState: clearGlobalCheckoutState,
   } = useGlobalCheckout();
+  const { themeContext } = useThemeContext();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const billingAddress = computed(() =>
@@ -446,7 +447,9 @@ export function _useCheckout() {
     if (placedOrder.value) {
       await refetchCart();
 
-      selectedItemIds.value = cart.value!.items.map((item) => item.id);
+      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout) {
+        selectedItemIds.value = cart.value!.items.map((item) => item.id);
+      }
 
       clearState();
 
