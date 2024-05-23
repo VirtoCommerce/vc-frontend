@@ -67,6 +67,7 @@
             <div class="flex flex-col gap-6">
               <WishlistLineItems
                 :items="pagedListItems"
+                :pending-items="pendingItems"
                 @update:cart-item="addOrUpdateCartItem"
                 @update:list-item="updateWishListItem"
                 @remove:items="openDeleteProductModal"
@@ -164,6 +165,7 @@ const itemsPerPage = ref(6);
 const page = ref(1);
 const wishlistItems = ref<LineItemType[]>([]);
 const listElement = ref<HTMLElement | undefined>();
+const pendingItems = ref<Record<string, boolean>>({});
 
 const cartItemsBySkus = computed(() => keyBy(cart.value?.items, "sku"));
 const preparedLineItems = computed<PreparedLineItemType[]>(() =>
@@ -259,14 +261,20 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   }
 
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.productId);
-
+  if (pendingItems.value[lineItem.id]) {
+    return;
+  }
+  pendingItems.value[lineItem.id] = true;
   if (itemInCart) {
-    await changeItemQuantity(itemInCart.id, quantity);
+    if (itemInCart.quantity !== quantity) {
+      await changeItemQuantity(itemInCart.id, quantity);
+    }
   } else {
     await addToCart(lineItem.product.id, quantity);
 
     ga.addItemToCart(lineItem.product, quantity);
   }
+  pendingItems.value[lineItem.id] = false;
 
   showResultModal([lineItem]);
 }
