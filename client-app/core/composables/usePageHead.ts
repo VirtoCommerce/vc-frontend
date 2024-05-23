@@ -7,7 +7,7 @@ import type { IUsePageSeoData } from "../types";
 
 export function usePageHead(data: IUsePageSeoData) {
   const { themeContext } = useThemeContext();
-  const { environmentName, shouldShowBadge } = useEnvironmentName();
+  const { environmentName, isIgnored } = useEnvironmentName();
 
   const {
     storeName,
@@ -33,7 +33,7 @@ export function usePageHead(data: IUsePageSeoData) {
         titleChunks[page_title_store_name_align === "end" ? "push" : "unshift"](storeName);
       }
 
-      if (shouldShowBadge) {
+      if (isIgnored) {
         titleChunks.unshift(environmentName);
       }
 
