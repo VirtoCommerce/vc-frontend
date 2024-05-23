@@ -33,7 +33,7 @@ export function usePageHead(data: IUsePageSeoData) {
         titleChunks[page_title_store_name_align === "end" ? "push" : "unshift"](storeName);
       }
 
-      if (isIgnored) {
+      if (!isIgnored) {
         titleChunks.unshift(environmentName);
       }
 
