@@ -39722,6 +39722,22 @@
             "deprecationReason": null
           },
           {
+            "name": "defaultSelectedForCheckout",
+            "description": "Default \"Selected for checkout\" state for new line items and gifts",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "emailVerificationEnabled",
             "description": "Email address verification enabled",
             "args": [],
@@ -39747,6 +39763,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "environmentName",
+            "description": "Environment name",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -39807,7 +39839,7 @@
           },
           {
             "name": "quotesEnabled",
-            "description": "Store ID",
+            "description": "Quotes enabled",
             "args": [],
             "type": {
               "kind": "NON_NULL",
