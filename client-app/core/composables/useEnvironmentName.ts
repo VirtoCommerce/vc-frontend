@@ -16,8 +16,10 @@ export function useEnvironmentName() {
     storeSettings: { environmentName },
   } = themeContext.value;
 
-  const badgeColor: VcBadgeColorType = BADGE_COLORS[environmentName?.toLowerCase() ?? COLORS.neutral];
-  const shouldShowBadge = !!environmentName && !ENVIRONMENTS_TO_IGNORE.includes(environmentName);
+  console.log(environmentName);
+
+  const badgeColor: VcBadgeColorType = BADGE_COLORS[environmentName?.toLowerCase()] ?? COLORS.neutral;
+  const shouldShowBadge = !!environmentName && !ENVIRONMENTS_TO_IGNORE.includes(environmentName?.toLowerCase());
 
   return {
     badgeColor,

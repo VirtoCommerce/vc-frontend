@@ -39754,6 +39754,22 @@
             "deprecationReason": null
           },
           {
+            "name": "environmentName",
+            "description": "Environment name",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "isSpa",
             "description": "SPA",
             "args": [],
@@ -39807,7 +39823,7 @@
           },
           {
             "name": "quotesEnabled",
-            "description": "Store ID",
+            "description": "Quotes enabled",
             "args": [],
             "type": {
               "kind": "NON_NULL",
