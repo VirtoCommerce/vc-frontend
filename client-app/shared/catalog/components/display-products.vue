@@ -49,6 +49,8 @@ interface IProps {
   viewMode?: string;
   openProductInNewTab?: boolean;
   cardType?: "full" | "short";
+  columnsAmountTablet?: string;
+  columnsAmountDesktop?: string;
 }
 
 defineEmits<IEmits>();
@@ -57,6 +59,8 @@ const props = withDefaults(defineProps<IProps>(), {
   itemsPerPage: DEFAULT_PAGE_SIZE,
   products: () => [],
   viewMode: "grid",
+  columnsAmountTablet: "3",
+  columnsAmountDesktop: "4",
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
@@ -64,15 +68,15 @@ const breakpoints = useBreakpoints(BREAKPOINTS);
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));
 
-const columns = {
+const columns = computed(() => ({
   null: 1,
   xs: 2,
-  md: 3,
-  xl: 4,
-};
+  md: Number(props.columnsAmountTablet),
+  xl: Number(props.columnsAmountDesktop),
+}));
 
 const cssColumns = computed(() =>
-  Object.entries(columns)
+  Object.entries(columns.value)
     .map(([key, value]) => {
       const delimiter = key ? ":" : "";
       return `${key}${delimiter}grid-cols-${value}`;
@@ -93,16 +97,16 @@ const lazyCardsCount = computed(() => {
 function getGridLazyCardsCount() {
   const rowCount = 2;
   if (breakpoints.isSmaller("xs")) {
-    return columns.null;
+    return columns.value.null;
   }
   if (breakpoints.isInBetween("xs", "md")) {
-    return columns.xs * rowCount;
+    return columns.value.xs * rowCount;
   }
   if (breakpoints.isInBetween("md", "xl")) {
-    return columns.md * rowCount;
+    return columns.value.md * rowCount;
   }
   if (breakpoints.isGreaterOrEqual("xl")) {
-    return columns.xl * rowCount;
+    return columns.value.xl * rowCount;
   }
   return 0;
 }

@@ -60,6 +60,18 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         helperText: "Card type for grid view mode",
         enum: ["full", "short"],
       },
+      {
+        name: "columnsAmountTablet",
+        type: "string",
+        defaultValue: "3",
+        enum: ["3", "2"],
+      },
+      {
+        name: "columnsAmountDesktop",
+        type: "string",
+        defaultValue: "4",
+        enum: ["4", "3"],
+      },
     ],
   },
   {

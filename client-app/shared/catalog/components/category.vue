@@ -230,6 +230,8 @@
             :products="products"
             open-product-in-new-tab
             :card-type="cardType"
+            :columns-amount-desktop="columnsAmountDesktop"
+            :columns-amount-tablet="columnsAmountTablet"
             @item-link-click="sendGASelectItemEvent"
           >
             <template #cart-handler="{ item }">
@@ -336,6 +338,8 @@ interface IProps {
   hideSorting?: boolean;
   viewMode?: ViewModeType;
   cardType?: "full" | "short";
+  columnsAmountDesktop?: string;
+  columnsAmountTablet?: string;
 }
 
 const { catalogId, currencyCode } = globals;
