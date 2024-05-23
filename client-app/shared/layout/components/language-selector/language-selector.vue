@@ -10,10 +10,13 @@
         class="hidden text-sm text-[--header-top-text-color] lg:inline"
       ></span>
 
-      <span
-        class="fi fis fa-2x -my-3 h-[30px] !w-[30px] rounded-full lg:h-[14px] lg:!w-[14px]"
-        :class="`fi-${currentLanguage?.twoLetterRegionName.toLowerCase()}`"
-      ></span>
+      <span class="-my-3 h-[30px] !w-[30px] overflow-hidden rounded-full lg:h-[14px] lg:!w-[14px]">
+        <VcImage
+          :src="`/static/icons/flags/${getCountryCode(currentLanguage)}.svg`"
+          :alt="currentLanguage.nativeName"
+          lazy
+        />
+      </span>
 
       <span class="hidden uppercase lg:inline">
         {{ currentLanguage?.twoLetterLanguageName }}
@@ -46,10 +49,13 @@
                 : select(item.twoLetterLanguageName)
             "
           >
-            <span
-              class="fi fis fa-2x shrink-0 rounded-full"
-              :class="`fi-${item.twoLetterRegionName.toLowerCase()}`"
-            ></span>
+            <span class="w-4 shrink-0 overflow-hidden rounded-full lg:w-3.5">
+              <VcImage
+                :src="`/static/icons/flags/${getCountryCode(item)}.svg`"
+                :alt="currentLanguage.nativeName"
+                lazy
+              />
+            </span>
 
             <span
               :class="{
@@ -66,9 +72,10 @@
 </template>
 
 <script setup lang="ts">
-import "flag-icons/css/flag-icons.css";
 import { ref, shallowRef } from "vue";
 import { useLanguages } from "@/core/composables";
+import { languageToCountryMap } from "@/core/constants";
+import type { ILanguage } from "@/core/types";
 
 const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
 
@@ -97,5 +104,13 @@ function toggle() {
 function select(locale: string) {
   saveLocaleAndReload(locale);
   hideList();
+}
+
+function getCountryCode(language: ILanguage): string {
+  return (
+    languageToCountryMap[language.cultureName.toLocaleLowerCase()] ||
+    languageToCountryMap[language.twoLetterLanguageName] ||
+    "xx" // placeholder for unknown country
+  );
 }
 </script>
