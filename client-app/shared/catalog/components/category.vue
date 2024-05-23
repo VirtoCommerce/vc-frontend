@@ -240,7 +240,7 @@
           </DisplayProducts>
 
           <VcInfinityScrollLoader
-            v-if="!loading && !fixedProductsCount"
+            v-if="!loading && !Number(fixedProductsCount)"
             :loading="loadingMore"
             distance="400"
             class="mt-8"

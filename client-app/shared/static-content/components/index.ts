@@ -83,8 +83,26 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
           "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
       },
       {
+        name: "countLimitation",
+        type: "boolean",
+        helperText: "Turn on to set up products count limitation",
+        onChange: "options.set('fixedProductsCount', 0)",
+      },
+      {
+        showIf: `options.get('countLimitation') === true`,
         name: "fixedProductsCount",
-        type: "string",
+        type: "number",
+        defaultValue: 0,
+        onChange: (options: Map<string, number>) => {
+          const count = options.get("fixedProductsCount");
+          if (typeof count !== "number") {
+            return;
+          }
+          if (count > 20) {
+            options.set("fixedProductsCount", 20);
+            alert("the maximum number of cards is 20");
+          }
+        },
       },
     ],
   },
