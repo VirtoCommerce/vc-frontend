@@ -82,6 +82,10 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         helperText:
           "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
       },
+      {
+        name: "fixedProductsCount",
+        type: "string",
+      },
     ],
   },
   {

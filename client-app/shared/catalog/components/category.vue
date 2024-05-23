@@ -240,7 +240,7 @@
           </DisplayProducts>
 
           <VcInfinityScrollLoader
-            v-if="!loading"
+            v-if="!loading && !fixedProductsCount"
             :loading="loadingMore"
             distance="400"
             class="mt-8"
@@ -342,6 +342,7 @@ interface IProps {
   columnsAmountTablet?: string;
   keyword?: string;
   filter?: string;
+  fixedProductsCount?: string;
 }
 
 const { catalogId, currencyCode } = globals;
@@ -441,7 +442,7 @@ const breadcrumbs = useBreadcrumbs(() => {
 
 const searchParams = computedEager<ProductsSearchParams>(() => ({
   categoryId: props.categoryId,
-  itemsPerPage: itemsPerPage.value,
+  itemsPerPage: Number(props.fixedProductsCount) || itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: props.keyword || (props.isSearchPage ? searchQueryParam.value : keywordQueryParam.value),
   filter:
