@@ -5,6 +5,7 @@
 
   <ModalHost />
   <NotificationsHost />
+  <EnvironmentBadge />
 </template>
 
 <script setup lang="ts">
@@ -18,6 +19,7 @@ import { NotificationsHost } from "@/shared/notification";
 import { useWhiteLabeling } from "./core/composables";
 import { MainLayout, SecureLayout, useSearchBar } from "./shared/layout";
 import type { Component } from "vue";
+import EnvironmentBadge from "@/shared/layout/components/environmentBadge/environment-badge.vue";
 
 /** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
 const _props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });

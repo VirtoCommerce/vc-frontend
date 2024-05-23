@@ -1,11 +1,13 @@
 import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
 import { unref } from "vue";
+import { useEnvironmentName } from "@/core/composables/useEnvironmentName";
 import { useThemeContext } from "./useThemeContext";
 import type { IUsePageSeoData } from "../types";
 
 export function usePageHead(data: IUsePageSeoData) {
   const { themeContext } = useThemeContext();
+  const { environmentName, isIgnored } = useEnvironmentName();
 
   const {
     storeName,
@@ -29,6 +31,10 @@ export function usePageHead(data: IUsePageSeoData) {
 
       if (page_title_with_store_name) {
         titleChunks[page_title_store_name_align === "end" ? "push" : "unshift"](storeName);
+      }
+
+      if (!isIgnored) {
+        titleChunks.unshift(environmentName);
       }
 
       return titleChunks.filter(Boolean).join(page_title_divider);
