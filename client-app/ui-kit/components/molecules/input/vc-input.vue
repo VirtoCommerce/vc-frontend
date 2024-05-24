@@ -46,6 +46,7 @@
         :aria-label="ariaLabel ?? label"
         class="vc-input__input"
         @keydown="keyDown($event)"
+        @click.prevent.stop="inputClick()"
       />
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
@@ -107,6 +108,7 @@ export interface IProps {
   type?: "text" | "password" | "number" | "email";
   size?: "sm" | "md" | "auto";
   clearable?: boolean;
+  selectOnClick?: boolean;
 }
 
 defineOptions({
@@ -122,7 +124,7 @@ const componentId = useComponentId("input");
 const listeners = useListeners();
 const attrs = useAttrsOnly();
 
-const inputElement = ref<HTMLElement>();
+const inputElement = ref<HTMLInputElement>();
 const inputType = computed(() => (props.type === "password" && isPasswordVisible.value ? "text" : props.type));
 
 const model = defineModel<T>({
@@ -149,7 +151,6 @@ function togglePasswordVisibility() {
 function handleContainerClick() {
   if (inputElement.value) {
     inputElement.value.focus();
-    inputElement.value.click();
   }
 }
 
@@ -164,6 +165,12 @@ function keyDown(event: KeyboardEvent) {
     const allowedCharacter = /(^\d*$)|(Backspace|Tab|Delete|ArrowLeft|ArrowRight)/;
 
     return !event.key.match(allowedCharacter) && event.preventDefault();
+  }
+}
+
+function inputClick() {
+  if (inputElement.value && props.selectOnClick) {
+    inputElement.value.select();
   }
 }
 </script>
@@ -304,6 +311,10 @@ function keyDown(event: KeyboardEvent) {
 
     input:focus ~ & {
       @apply ring ring-[--color-primary-100];
+
+      #{$error} & {
+        @apply ring-[--color-danger-100];
+      }
     }
 
     #{$disabled} &,
@@ -312,7 +323,7 @@ function keyDown(event: KeyboardEvent) {
     }
 
     #{$error} & {
-      @apply border-[--color-danger-500];
+      @apply -inset-px border-[--color-danger-500];
     }
 
     #{$noBorder} & {
