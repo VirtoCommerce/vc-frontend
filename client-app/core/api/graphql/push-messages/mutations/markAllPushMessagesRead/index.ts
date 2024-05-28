@@ -3,6 +3,7 @@ import { MarkAllPushMessagesReadDocument, OperationNames } from "@/core/api/grap
 
 export function useMarkAllPushMessagesRead() {
   return useMutation(MarkAllPushMessagesReadDocument, {
+    // TODO: Implement optimistic response and cache update
     refetchQueries: [OperationNames.Query.GetPushMessages],
   });
 }

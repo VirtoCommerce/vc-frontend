@@ -3,6 +3,7 @@ import { MarkAllPushMessagesUnreadDocument, OperationNames } from "@/core/api/gr
 
 export function useMarkAllPushMessagesUnread() {
   return useMutation(MarkAllPushMessagesUnreadDocument, {
+    // TODO: Implement optimistic response and cache update
     refetchQueries: [OperationNames.Query.GetPushMessages],
   });
 }
