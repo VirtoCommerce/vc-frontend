@@ -1,5 +1,6 @@
 <template>
-  <div v-if="canShowContent">
+  <VcLoaderOverlay v-if="isLoading" no-bg />
+  <div v-else-if="canShowContent">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
   <div v-else>
@@ -9,7 +10,7 @@
 
 <script setup lang="ts">
 import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
-import { computed, onMounted, shallowRef } from "vue";
+import { computed, onMounted, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
 import { builderIOComponents } from "@/shared/static-content";
@@ -39,8 +40,12 @@ const isEnabled = computed(() => {
   return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.Enable")?.value;
 });
 
+const isLoading = ref(false);
+
 async function tryLoadContent(urlPath: string) {
   if (isEnabled.value && typeof apiKey.value === "string") {
+    isLoading.value = true;
+
     content.value = await fetchOneEntry({
       model: "page",
       apiKey: apiKey.value,
@@ -49,6 +54,8 @@ async function tryLoadContent(urlPath: string) {
         urlPath: urlPath,
       },
     });
+
+    isLoading.value = false;
 
     canShowContent.value = !!content.value || isPreviewing();
   }
