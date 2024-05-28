@@ -22,7 +22,10 @@ export function useMarkAllPushMessagesUnread() {
               totalCount: pushMessagesQueryResult.pushMessages?.items?.length ?? 0,
             },
             unreadCount: {
-              totalCount: pushMessagesQueryResult.pushMessages?.items?.length ?? 0,
+              totalCount:
+                pushMessagesQueryResult.pushMessages?.items?.length ??
+                pushMessagesQueryResult?.unreadCount?.totalCount ??
+                0,
             },
           } satisfies GetPushMessagesQuery;
         } else {
