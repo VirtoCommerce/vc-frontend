@@ -19,7 +19,7 @@ export function useMarkAllPushMessagesRead() {
                 ...pushMessage,
                 isRead: true,
               })),
-              totalCount: pushMessagesQueryResult.pushMessages?.items?.length,
+              totalCount: pushMessagesQueryResult.pushMessages?.items?.length ?? 0,
             },
             unreadCount: {
               totalCount: 0,
