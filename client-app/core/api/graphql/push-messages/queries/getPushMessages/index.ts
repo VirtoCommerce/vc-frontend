@@ -17,6 +17,7 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
         ...previousQueryResult,
         pushMessages: {
           items: [newPushMessage, ...items],
+          totalCount: items.length + 1,
         },
       };
     },
