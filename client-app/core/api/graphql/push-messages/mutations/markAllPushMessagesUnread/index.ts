@@ -7,7 +7,7 @@ export function useMarkAllPushMessagesUnread() {
     optimisticResponse: {
       markAllPushMessagesUnread: true,
     },
-    // TODO: Refactor updateQueries to use update
+    // TODO: Refactor updateQueries to use update since it will be depricated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
         const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
