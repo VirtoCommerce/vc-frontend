@@ -72,7 +72,7 @@ export const cache = new InMemoryCache({
       fields: {
         pushMessages: {
           merge(existing, incoming) {
-            return { ...existing, ...incoming, items: incoming.items };
+            return { ...existing, ...incoming };
           },
         },
       },
