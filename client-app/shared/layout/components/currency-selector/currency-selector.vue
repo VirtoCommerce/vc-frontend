@@ -1,5 +1,5 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" width="7.5rem" class="h-full">
+  <VcDropdownMenu placement="bottom-end" class="h-full">
     <template #trigger="{ opened }">
       <button type="button" class="flex h-full items-center gap-x-1.5">
         <span class="text-sm">
@@ -10,7 +10,7 @@
           {{ currentCurrency?.code }}
         </span>
 
-        <VcIcon class="text-[--color-primary-500]" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
+        <VcIcon class="text-primary" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
       </button>
     </template>
 
@@ -26,7 +26,7 @@
         "
       >
         <span
-          class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-[--color-additional-50]"
+          class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-additional-50"
         >
           {{ item.symbol }}
         </span>

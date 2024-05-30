@@ -28,7 +28,7 @@ import { usePushMessages } from "@/shared/push-messages/composables/usePushMessa
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
 interface IProps {
-  offsetOptions: VcPushMessageOffsetOptionsType;
+  offsetOptions?: VcPushMessagesOffsetOptionsType;
 }
 
 defineProps<IProps>();

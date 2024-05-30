@@ -33,7 +33,7 @@
     </div>
 
     <!-- Product title -->
-    <VcTooltip class="w-full" placement="bottom" strategy="fixed">
+    <VcTooltip class="w-full" placement="bottom-start">
       <template #trigger>
         <router-link
           :to="link"
@@ -46,9 +46,7 @@
       </template>
 
       <template #content>
-        <div class="max-w-[16rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
-          {{ product.name }}
-        </div>
+        {{ product.name }}
       </template>
     </VcTooltip>
 

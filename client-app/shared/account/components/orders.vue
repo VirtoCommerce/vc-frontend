@@ -253,9 +253,7 @@
               </template>
 
               <template #content>
-                <div class="rounded-sm bg-[--color-additional-50] px-3.5 py-1.5 text-xs shadow-sm-x-y">
-                  {{ order.statusDisplayValue }}
-                </div>
+                {{ order.statusDisplayValue }}
               </template>
             </VcTooltip>
           </td>

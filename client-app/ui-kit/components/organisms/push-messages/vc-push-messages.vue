@@ -1,17 +1,11 @@
 <template>
-  <VcPopover class="vc-push-messages" :placement="placement" :offset-options="offsetOptions">
+  <VcPopover class="vc-push-messages" :placement="placement" :offset-options="offsetOptions" arrow-enabled>
     <template #trigger>
       <slot name="trigger" />
     </template>
 
     <template #content="{ close: closeMessages }">
       <div class="vc-push-messages__dropdown">
-        <div class="vc-push-messages__arrow-container">
-          <div class="vc-push-messages__popper" data-popper-arrow>
-            <div class="vc-push-messages__arrow"></div>
-          </div>
-        </div>
-
         <div class="vc-push-messages__list">
           <div class="vc-push-messages__head">
             <div class="vc-push-messages__title">
@@ -126,7 +120,7 @@ interface IProps {
 const emits = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  offsetOptions: 30,
+  offsetOptions: 12,
   placement: "bottom-end",
 });
 
@@ -141,18 +135,6 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
     @media (min-width: theme("screens.sm")) {
       @apply max-w-none w-[25rem] px-0;
     }
-  }
-
-  &__arrow-container {
-    @apply relative;
-  }
-
-  &__popper {
-    @apply -top-2.5 w-5 h-2.5 p-1 overflow-hidden;
-  }
-
-  &__arrow {
-    @apply w-3 h-3 bg-additional-50 rotate-45 shadow-md;
   }
 
   &__list {

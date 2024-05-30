@@ -1,8 +1,14 @@
-import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } from "@floating-ui/vue";
+import type {
+  VcPopoverPlacementType,
+  VcPopoverStrategyType,
+  VcPopoverFlipOptionsType,
+  VcPopoverOffsetOptionsType,
+  VcPopoverShiftOptionsType,
+} from "../popover/vc-popover.types";
 declare global {
-  type VcTooltipPlacementType = Placement;
-  type VcTooltipStrategyType = Strategy;
-  type VcTooltipFlipOptionsType = FlipOptions;
-  type VcTooltipOffsetOptionsType = OffsetOptions;
-  type VcTooltipShiftOptionsType = ShiftOptions;
+  type VcTooltipPlacementType = VcPopoverPlacementType;
+  type VcTooltipStrategyType = VcPopoverStrategyType;
+  type VcTooltipFlipOptionsType = VcPopoverFlipOptionsType;
+  type VcTooltipOffsetOptionsType = VcPopoverOffsetOptionsType;
+  type VcTooltipShiftOptionsType = VcPopoverShiftOptionsType;
 }

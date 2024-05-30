@@ -6,6 +6,7 @@
         'vc-dropdown-menu--disabled': disabled,
       },
     ]"
+    :width="width"
     :placement="placement"
     :offset-options="offsetOptions"
     :z-index="zIndex"
@@ -20,7 +21,7 @@
     </template>
 
     <template v-if="!disabled" #content="{ close }">
-      <ul class="vc-dropdown-menu__list" :style="{ maxHeight, width }">
+      <ul class="vc-dropdown-menu__list" :style="{ maxHeight }">
         <slot name="content" v-bind="{ close }" />
       </ul>
     </template>
