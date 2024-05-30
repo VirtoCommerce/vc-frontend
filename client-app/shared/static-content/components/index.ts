@@ -26,10 +26,6 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         defaultValue: "Custom Category",
       },
       {
-        name: "hideTotal",
-        type: "boolean",
-      },
-      {
         name: "hideBreadcrumbs",
         type: "boolean",
       },
@@ -103,6 +99,12 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
             alert("the maximum number of cards is 20");
           }
         },
+      },
+      {
+        name: "hideTotal",
+        type: "boolean",
+        showIf: `options.get('countLimitation') === false`,
+        helperText: "hidden if Count Limitation is active",
       },
     ],
   },

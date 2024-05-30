@@ -81,7 +81,7 @@
             </span>
 
             <sup
-              v-if="!loading && !hideTotal"
+              v-if="!loading && !hideTotal && !Number(fixedProductsCount)"
               class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
               <b class="font-extrabold">{{ total }}</b>
