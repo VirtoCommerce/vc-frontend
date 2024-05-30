@@ -1,5 +1,5 @@
-import { initializeApp } from "../../node_modules/firebase/app";
-import { getMessaging, onBackgroundMessage } from "../../node_modules/firebase/messaging/sw";
+import { initializeApp } from "/node_modules/firebase/app";
+import { getMessaging, onBackgroundMessage } from "/node_modules/firebase/messaging/sw";
 
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
