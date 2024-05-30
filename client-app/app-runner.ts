@@ -11,6 +11,7 @@ import {
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
+import { useWebPushNotifications } from "@/core/composables/useWebPushNotifications";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -58,6 +59,7 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initHotjar } = useHotjar();
+  const { init: initializeWebPushNotifications } = useWebPushNotifications();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
@@ -81,6 +83,7 @@ export default async () => {
 
   initializeGoogleAnalytics();
   initHotjar();
+  initializeWebPushNotifications();
 
   /**
    * Creating plugin instances
