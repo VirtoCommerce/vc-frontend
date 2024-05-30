@@ -22,6 +22,9 @@ import type {
 type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
+type AdditionalItemParamsType = {
+  isGift?: boolean;
+};
 
 const { currentCurrency } = useCurrency();
 const { modulesSettings } = useThemeContext();
@@ -63,7 +66,10 @@ function productToGtagItem(item: Product | VariationType, index?: number): Gtag.
   };
 }
 
-function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: number): Gtag.Item {
+function lineItemToGtagItem(
+  item: LineItemType | OrderLineItemType,
+  index?: number,
+): Gtag.Item & AdditionalItemParamsType {
   const categories: Record<string, string> = getCategories(item.product?.breadcrumbs);
 
   return {
@@ -75,6 +81,7 @@ function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: numb
     discount: item.discountAmount?.amount || item.discountTotal?.amount,
     price: "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
+    isGift: item.isGift,
     ...categories,
   };
 }
@@ -244,7 +251,8 @@ function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType):
     currency: order.currency.code,
     value: order.total.amount,
     coupon: order.coupons?.[0],
-    shipping: order.shippingTotal.amount,
+    // todo find out why shippingTotal zero
+    shipping: order.shippingTotal.amount || order.shippingSubTotal.amount,
     tax: order.taxTotal.amount,
     itemsCount: order.items.length,
   });
