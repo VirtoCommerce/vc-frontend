@@ -4,7 +4,7 @@ import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
@@ -37,6 +37,9 @@ const useGlobalCheckout = createGlobalState(() => {
   const purchaseOrderNumberChanging = ref(false);
   const _purchaseOrderNumber = ref<string>();
 
+  function clearState() {
+    _comment.value = undefined;
+  }
   return {
     loading,
     billingAddressEqualsShipping,
@@ -45,6 +48,7 @@ const useGlobalCheckout = createGlobalState(() => {
     _comment,
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
+    clearState,
   };
 });
 
@@ -69,6 +73,7 @@ export function _useCheckout() {
   const {
     refetch: refetchCart,
     cart,
+    selectedLineItems,
     selectedItemIds,
     shipment,
     payment,
@@ -90,7 +95,9 @@ export function _useCheckout() {
     _comment,
     purchaseOrderNumberChanging,
     _purchaseOrderNumber,
+    clearState: clearGlobalCheckoutState,
   } = useGlobalCheckout();
+  const { themeContext } = useThemeContext();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const billingAddress = computed(() =>
@@ -194,8 +201,6 @@ export function _useCheckout() {
       shipmentMethodCode: method.code,
       shipmentMethodOption: method.optionName,
     });
-
-    ga.addShippingInfo(cart.value!, {}, method.optionName);
   }
 
   async function setPaymentMethod(method: PaymentMethodType): Promise<void> {
@@ -203,8 +208,6 @@ export function _useCheckout() {
       id: payment.value?.id,
       paymentGatewayCode: method.code,
     });
-
-    ga.addPaymentInfo(cart.value!, {}, method.code);
   }
 
   watch(allItemsAreDigital, async (value, previousValue) => {
@@ -249,7 +252,7 @@ export function _useCheckout() {
 
     void fetchAddresses();
 
-    ga.beginCheckout(cart.value!);
+    ga.beginCheckout({ ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
   }
@@ -421,11 +424,6 @@ export function _useCheckout() {
       await updatePurchaseOrderNumber("");
     }
 
-    /**
-     * Send a Google Analytics event about adding payment information.
-     */
-    ga.addPaymentInfo(cart.value!);
-
     // Parallel saving of new addresses in account. Before cleaning shopping cart
     if (isAuthenticated.value) {
       void saveNewAddresses({
@@ -449,7 +447,11 @@ export function _useCheckout() {
     if (placedOrder.value) {
       await refetchCart();
 
-      selectedItemIds.value = cart.value!.items.map((item) => item.id);
+      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout) {
+        selectedItemIds.value = cart.value!.items.map((item) => item.id);
+      }
+
+      clearState();
 
       ga.placeOrder(placedOrder.value);
 
@@ -465,6 +467,10 @@ export function _useCheckout() {
     loading.value = false;
 
     return placedOrder.value;
+  }
+
+  function clearState() {
+    clearGlobalCheckoutState();
   }
 
   return {

@@ -1,8 +1,8 @@
 #import "../../../fragments/allCurrencyFields.graphql"
 #import "../../../fragments/allLanguageFields.graphql"
 
-query GetStore($storeId: String!) {
-  store(storeId: $storeId) {
+query GetStore($domain: String!) {
+  store(domain: $domain) {
     storeId
     storeName
     catalogId
@@ -25,10 +25,12 @@ query GetStore($storeId: String!) {
       taxCalculationEnabled
       anonymousUsersAllowed
       isSpa
+      environmentName
       emailVerificationEnabled
       emailVerificationRequired
       createAnonymousOrderEnabled
       seoLinkType
+      defaultSelectedForCheckout
       passwordRequirements {
         requireLowercase
         requireUppercase

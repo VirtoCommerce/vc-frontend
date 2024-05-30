@@ -1,8 +1,8 @@
 <template>
-  <VcTooltip hover>
+  <VcTooltip>
     <template #trigger>
       <slot :is-in-compare-list="isInCompareList" :toggle="toggle">
-        <button type="button" class="flex" tabindex="0" @click="toggle">
+        <button :aria-label="tooltipText" type="button" class="flex" tabindex="0" @click="toggle">
           <VcIcon
             :class="[customClass, isInCompareList ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
             name="compare"
@@ -12,9 +12,7 @@
     </template>
 
     <template #content>
-      <div class="w-24">
-        {{ tooltipText }}
-      </div>
+      {{ tooltipText }}
     </template>
   </VcTooltip>
 </template>

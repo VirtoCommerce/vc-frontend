@@ -1,4 +1,4 @@
-import { createHead, useHead } from "@unhead/vue";
+import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getStore } from "@/core/api/graphql";
@@ -11,9 +11,10 @@ import {
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
-import { getBaseUrl, Logger } from "@/core/utilities";
+import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
@@ -22,11 +23,8 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
 import type { StoreResponseType } from "./core/api/graphql/types";
-
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
-  const STORE_ID = "B2B-store";
-
   const appSelector = "#app";
   const appElement = document.querySelector<HTMLElement | SVGElement>(appSelector);
 
@@ -61,7 +59,7 @@ export default async () => {
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initHotjar } = useHotjar();
   const { fetchMenus } = useNavigations();
-  const { favIcons, themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
+  const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
     locale: "en",
@@ -71,7 +69,9 @@ export default async () => {
     },
   };
 
-  const store = (await getStore(STORE_ID)) as StoreResponseType;
+  const store = (await getStore(
+    IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,
+  )) as StoreResponseType;
 
   if (!store) {
     throw new Error("Can't get store");
@@ -115,29 +115,6 @@ export default async () => {
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
   }
-
-  useHead({
-    link: favIcons.value?.length
-      ? favIcons.value
-      : [
-          {
-            rel: "icon",
-            type: "image/png",
-            sizes: "16x16",
-            href: "/static/icons/favicon-16x16.png",
-          },
-          {
-            rel: "icon",
-            type: "image/png",
-            sizes: "32x32",
-            href: "/static/icons/favicon-32x32.png",
-          },
-          {
-            rel: "manifest",
-            href: "/static/manifest.json",
-          },
-        ],
-  });
 
   // Plugins
   app.use(head);

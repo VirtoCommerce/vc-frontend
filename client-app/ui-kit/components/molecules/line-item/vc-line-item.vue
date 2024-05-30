@@ -19,6 +19,7 @@
         v-if="selectable"
         v-model="isSelected"
         class="vc-line-item__checkbox"
+        :name="$t('common.labels.toggle_vendor_select')"
         :disabled="disabled"
         @change="$emit('select', isSelected)"
       />
@@ -67,9 +68,7 @@
           </template>
 
           <VcProperty v-if="vendor" :label="$t('common.labels.vendor')" :disabled="disabled">
-            <span class="vc-line-item__vendor">
-              {{ vendor.name }}
-            </span>
+            {{ vendor.name }}
           </VcProperty>
 
           <VcProperty
@@ -108,6 +107,7 @@
 
         <VcButton
           v-if="removable"
+          :aria-label="$t('common.buttons.remove_from_cart')"
           class="vc-line-item__remove-button"
           color="neutral"
           size="sm"
@@ -307,10 +307,6 @@ watchEffect(() => {
         @apply hidden;
       }
     }
-  }
-
-  &__vendor {
-    @apply text-accent-600;
   }
 
   &__property-price {

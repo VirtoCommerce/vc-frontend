@@ -1,7 +1,7 @@
 <template>
   <VcDropdownMenu :y-offset="4" :x-offset="0" :placement="placement">
     <template #trigger>
-      <VcButton icon="cog" color="secondary" variant="outline" size="xs" />
+      <VcButton :aria-label="$t('common.labels.actions')" icon="cog" color="secondary" variant="outline" size="xs" />
     </template>
 
     <template #content>

@@ -2,7 +2,13 @@
   <VcTooltip :placement="tooltipPlacement" strategy="fixed">
     <template #trigger>
       <slot :open-modal="openAddToListModal" :is-authenticated="isAuthenticated" :is-in-wishlist="product.inWishlist">
-        <button type="button" class="flex" :disabled="!isAuthenticated" @click="openAddToListModal">
+        <button
+          :aria-label="tooltipText"
+          type="button"
+          class="flex"
+          :disabled="!isAuthenticated"
+          @click="openAddToListModal"
+        >
           <VcIcon
             :class="[customClass, product.inWishlist ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
             name="whishlist"
@@ -24,7 +30,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables";
 import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";

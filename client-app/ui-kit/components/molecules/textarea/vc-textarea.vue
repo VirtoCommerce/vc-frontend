@@ -20,6 +20,7 @@
       v-model="text"
       v-bind="listeners"
       :name="name"
+      :aria-label="ariaLabel"
       :placeholder="placeholder"
       :readonly="readonly"
       :disabled="disabled"
@@ -69,6 +70,7 @@ interface IProps {
   showEmptyDetails?: boolean;
   maxLength?: number | string;
   rows?: number | string;
+  ariaLabel?: string;
 }
 
 defineOptions({

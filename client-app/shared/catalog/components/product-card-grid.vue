@@ -109,13 +109,12 @@
         </template>
 
         <template #content>
-          <div class="max-w-64">
-            {{ product.name }}
-          </div>
+          {{ product.name }}
         </template>
       </VcTooltip>
 
       <div
+        v-if="!hideProperties"
         class="mt-2 grid w-full grid-cols-2 gap-1.5 text-sm leading-4 text-neutral-800 empty:hidden lg:mt-0.5 lg:gap-y-0.5 lg:text-xs"
       >
         <!-- Product properties -->
@@ -227,6 +226,7 @@ interface IProps {
   product: Product;
   lazy?: boolean;
   openInNewTab?: boolean;
+  hideProperties?: boolean;
 }
 
 const swiperInstance = ref<SwiperInstance>();

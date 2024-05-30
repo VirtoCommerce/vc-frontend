@@ -27,6 +27,7 @@
       "add_to_cart": "Add to cart",
       "update_cart": "Update cart",
       "apply": "Apply",
+      "deny": "Deny",
       "send": "Send",
       "more": "More",
       "yes": "Yes",
@@ -58,7 +59,24 @@
       "remove_selected": "Remove Selected",
       "remove_all": "Remove all",
       "resend_link": "Resend link",
-      "set_new_password": "Set new password"
+      "set_new_password": "Set new password",
+      "show_hide_password": "Show/hide password",
+      "toggle_dropdown": "Toggle dropdown",
+      "remove_from_cart": "Remove from cart",
+      "search_orders": "Search orders",
+      "reset_orders_search_keyword": "Reset orders search keyword",
+      "search_quote_requests": "Search quote requests",
+      "reset_quote_requests_search_keyword": "Reset quote requests search keyword",
+      "remove_credit_card": "Remove credit card",
+      "search_company_members": "Search company members",
+      "reset_company_members_search_keyword": "Reset company members search keyword",
+      "copy": "Copy",
+      "previous": "Previous",
+      "next": "Next",
+      "send_link_email": "Send link by e-mail",
+      "share": "Share",
+      "approve": "Approve",
+      "decline": "Decline"
     },
     "labels": {
       "actions": "Actions",
@@ -123,11 +141,15 @@
       "last_week": "Last week",
       "last_month": "Last month",
       "last_year": "Last year",
-      "custom_date": "Custom date"
+      "custom_date": "Custom date",
+      "background_image": "Background image",
+      "product_quantity": "Product quantity",
+      "toggle_vendor_select": "Toggle vendor select",
+      "quote_request_comment": "Quote request comment"
     },
     "prefixes": {
       "please": "Please",
-      "expired": "Expired:"
+      "expires": "Expires:"
     },
     "suffixes": {
       "from": "From",
@@ -746,7 +768,8 @@
         "create_button": "Create list",
         "save_button": "@:common.buttons.save",
         "cancel_button": "@:common.buttons.cancel",
-        "private_list": "Private list"
+        "private_list": "Private list",
+        "make_shared": "Make shared"
       },
       "delete_wishlist_modal": {
         "title": "Confirm Delete",
@@ -1073,6 +1096,10 @@
         "same_as_shipping_address": "Same as shipping address",
         "quote_summary": "Quote Summary",
         "quote_data": "Quote Data",
+        "subTotal": "@:common.labels.subtotal",
+        "discountTotal": "@:common.labels.discount",
+        "shippingTotal": "@:common.labels.shipping_cost",
+        "taxTotal": "@:common.labels.tax",
         "total": "@:common.labels.total",
         "created": "@:common.labels.created",
         "status": "@:common.labels.status",
@@ -1088,6 +1115,10 @@
           "quantity": "@:common.labels.quantity",
           "total": "@:common.labels.total",
           "subtotal": "@:common.labels.subtotal"
+        },
+        "error": {
+          "approve": "The quote cannot be approved",
+          "decline": "The quote cannot be declined"
         }
       },
       "notifications": {
@@ -1441,17 +1472,20 @@
     "required_unique_chars": "At least one unique character | Minimum {0} unique characters"
   },
   "validation_error": {
-    "PRODUCT_QTY_CHANGED": "The product's available quantity has changed. Available quantity: {availQty}",
+    "PRODUCT_QTY_CHANGED": "You can order maximum {availQty} item(s)",
     "CART_PRODUCT_UNAVAILABLE": "The product is not longer available for purchase.",
     "CART_PRODUCT_INACTIVE": "The product is inactive.",
     "PRODUCT_PRICE_INVALID": "Price is invalid.",
-    "PRODUCT_FFC_QTY": "Maximum available quantity is {availableQty}.",
-    "PRODUCT_MIN_QTY": "Product quantity {qty} is less than minumum {minQty}.",
-    "PRODUCT_MAX_QTY": "Product quantity {qty} is greater than maximum {maxQty}.",
+    "PRODUCT_FFC_QTY": "The product is out of stock",
+    "PRODUCT_MIN_QTY": "You can order minimum {minQty} item(s)",
+    "PRODUCT_MAX_QTY": "You can order maximum {maxQty} item(s)",
+    "PRODUCT_MIN_MAX_QTY": "You can order from {minQty} to {maxQty} item(s)",
     "UNABLE_SET_LESS_PRICE": "Unable to set less price.",
     "LINE_ITEM_NOT_FOUND": "Line item not found.",
     "LINE_ITEM_IS_READ_ONLY": "Line item is read only.",
-    "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}"
+    "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
+    "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
+    "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)"
   },
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name.",

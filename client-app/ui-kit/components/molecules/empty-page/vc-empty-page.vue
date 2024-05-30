@@ -13,7 +13,13 @@
     <TwoColumn class="max-w-screen-xl">
       <template #left>
         <div class="flex h-full flex-col items-center justify-center lg:items-start">
-          <VcImage v-if="mobileImage" :src="mobileImage" class="mb-8 lg:hidden" lazy />
+          <VcImage
+            v-if="mobileImage"
+            :src="mobileImage"
+            :alt="$t('common.labels.background_image')"
+            class="mb-8 lg:hidden"
+            lazy
+          />
 
           <slot name="description">
             <VcTypography tag="h2" class="mb-8 text-center lg:text-left">
@@ -26,7 +32,7 @@
       </template>
 
       <template #right>
-        <VcImage class="max-w-md" :src="image" lazy />
+        <VcImage alt="$t('common.labels.background_image')" class="max-w-md" :src="image" lazy />
       </template>
     </TwoColumn>
   </div>

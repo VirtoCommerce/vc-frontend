@@ -14,6 +14,115 @@ import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
 
+export const builderIOComponents: Array<BuilderIOComponentType> = [
+  {
+    name: "Products",
+    component: ProductsBlock,
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Products Block",
+      },
+      {
+        name: "cardType",
+        type: "string",
+        defaultValue: "full",
+        enum: ["full", "short"],
+      },
+      {
+        name: "count",
+        type: "number",
+        defaultValue: 4,
+        friendlyName: "Cards amount",
+        onChange: (options: Map<string, number>) => {
+          const count = options.get("count");
+          if (typeof count !== "number") {
+            return;
+          }
+          if (count > 12) {
+            options.set("count", 12);
+            alert("the maximum number of cards is 12");
+          }
+        },
+      },
+      {
+        name: "columnsAmountTablet",
+        type: "string",
+        defaultValue: "3",
+        enum: ["3", "2"],
+      },
+      {
+        name: "columnsAmountDesktop",
+        type: "string",
+        defaultValue: "4",
+        enum: ["4", "3"],
+      },
+      {
+        name: "query",
+        friendlyName: "Keyword",
+        type: "string",
+      },
+      {
+        name: "filter",
+        type: "string",
+        helperText:
+          "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
+      },
+    ],
+  },
+  {
+    component: Slider,
+    name: "Slider",
+    inputs: [
+      {
+        name: "title",
+        type: "string",
+        defaultValue: "Slider",
+      },
+      {
+        name: "subtitle",
+        type: "string",
+        defaultValue: "Subtitle",
+      },
+      {
+        name: "height",
+        type: "string",
+        defaultValue: "auto",
+        enum: ["small", "medium", "large", "auto"],
+      },
+      {
+        name: "slides",
+        type: "list",
+        subFields: [
+          {
+            id: "image",
+            name: "image",
+            type: "file",
+            allowedFileTypes: ["jpeg", "jpg", "png", "svg"],
+          },
+          {
+            name: "title",
+            id: "title",
+            label: "Title",
+            type: "string",
+          },
+          {
+            name: "text",
+            id: "text",
+            type: "string",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+type BuilderIOComponentType = {
+  component: Component;
+  inputs: Array<object>;
+  name: string;
+};
 export const templateBlocks: { [key: string]: Component } = {
   "call-to-action-with-image": CallToActionWithImage,
   "call-to-action": CallToAction,

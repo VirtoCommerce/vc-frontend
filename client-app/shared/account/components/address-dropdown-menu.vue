@@ -1,7 +1,7 @@
 <template>
   <VcDropdownMenu :y-offset="4" :x-offset="0" :placement="placement">
     <template #trigger>
-      <VcButton icon="cog" color="secondary" variant="outline" size="xs" />
+      <VcButton :aria-label="$t('common.labels.actions')" icon="cog" color="secondary" variant="outline" size="xs" />
     </template>
 
     <template #content>
@@ -11,7 +11,7 @@
         <span>{{ $t("common.buttons.edit") }}</span>
       </VcMenuItem>
 
-      <VcMenuItem color="secondary" @click="$emit('toggleFavorite')">
+      <VcMenuItem v-if="isCorporateMember" color="secondary" @click="$emit('toggleFavorite')">
         <VcIcon name="whishlist" />
 
         <span>
@@ -42,6 +42,7 @@
 
 <script setup lang="ts">
 import { toRefs } from "vue";
+import { useUser } from "@/shared/account/composables/useUser";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 
 interface IEmit {
@@ -56,12 +57,12 @@ export interface IProps {
 }
 
 const emit = defineEmits<IEmit>();
-
 const props = withDefaults(defineProps<IProps>(), {
   placement: "bottom-end",
 });
 
 const { address, placement } = toRefs(props);
+const { isCorporateMember } = useUser();
 
 const editAddress = () => {
   emit("edit");

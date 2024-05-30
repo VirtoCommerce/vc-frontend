@@ -17,9 +17,10 @@
           :disabled="fetching"
           :max-length="1000"
           :rows="4"
-          :required="!quote.items?.length"
-          :error="!!commentErrorMessage"
+          :required="!hasItems"
+          :error="!commentValid"
           :message="commentErrorMessage"
+          :aria-label="$t('common.labels.quote_request_comment')"
           no-resize
           counter
           @input="editComment"
@@ -207,6 +208,8 @@ const billingAddressEqualsShipping = ref<boolean>(true);
 const comment = ref<string>();
 const commentValid = ref(true);
 
+const hasItems = computed<boolean>(() => !!quote.value?.items?.length);
+
 const accountAddresses = computed<AnyAddressType[]>(() => {
   const { firstName, lastName } = user.value.contact ?? {};
 
@@ -255,12 +258,9 @@ const isBillingAddressEqualsShipping = computed<boolean>(() => {
 const commentValidationSchema = computed<StringSchema>(() =>
   string()
     .max(1000)
-    .withMutation((schema) => {
-      if (!quote.value?.items?.length) {
-        return schema.required(t("common.messages.required_field"));
-      }
-
-      return schema;
+    .test({
+      message: t("common.messages.required_field"),
+      test: (value) => Promise.resolve(!!hasItems.value || (!hasItems.value && !!value)),
     }),
 );
 

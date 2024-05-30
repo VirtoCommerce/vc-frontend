@@ -1,11 +1,7 @@
 <template>
-  <div v-if="canShowContent">
-    <RenderContent
-      model="page"
-      :content="content"
-      :api-key="themeContext.settings.builderIoKey"
-      :custom-components="getRegisteredComponents()"
-    />
+  <VcLoaderOverlay v-if="isLoading" no-bg />
+  <div v-else-if="canShowContent">
+    <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
   <div v-else>
     <slot></slot>
@@ -13,16 +9,16 @@
 </template>
 
 <script setup lang="ts">
-import { getContent, RenderContent, isPreviewing } from "@builder.io/sdk-vue/vue3";
-import { onMounted, shallowRef } from "vue";
+import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
+import { computed, onMounted, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables";
+import { builderIOComponents } from "@/shared/static-content";
 
 const router = useRouter();
-const { themeContext } = useThemeContext();
-const canShowContent = shallowRef(true);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const content: any = shallowRef(null);
+const { modulesSettings } = useThemeContext();
+const canShowContent = shallowRef(false);
+const content = shallowRef();
 
 router.beforeEach(async (to) => {
   await tryLoadContent(to.fullPath);
@@ -32,24 +28,40 @@ onMounted(async () => {
   await tryLoadContent(window.location.pathname);
 });
 
+const moduleSettings = computed(() => {
+  return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
+});
+
+const apiKey = computed(() => {
+  return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value;
+});
+
+const isEnabled = computed(() => {
+  return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.Enable")?.value;
+});
+
+const isLoading = ref(false);
+
 async function tryLoadContent(urlPath: string) {
-  const apiKey = themeContext.value.settings.builderIoKey;
-  if (apiKey) {
-    const result = await getContent({
+  if (isEnabled.value && typeof apiKey.value === "string") {
+    isLoading.value = true;
+
+    content.value = await fetchOneEntry({
       model: "page",
-      apiKey: apiKey,
+      apiKey: apiKey.value,
+      options: getBuilderSearchParams(new URLSearchParams(location.search)),
       userAttributes: {
         urlPath: urlPath,
       },
     });
-    content.value = result;
-    canShowContent.value = content.value || isPreviewing();
-  } else {
-    canShowContent.value = false;
+
+    isLoading.value = false;
+
+    canShowContent.value = !!content.value || isPreviewing();
   }
 }
 
 const getRegisteredComponents = () => {
-  return [];
+  return builderIOComponents;
 };
 </script>

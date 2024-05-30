@@ -26,14 +26,14 @@ defineProps<IProps>();
 .vc-vendor {
   $notAvailable: "";
 
-  @apply flex gap-x-1.5 items-center min-w-0 text-primary;
+  @apply flex gap-x-1.5 items-center min-w-0 text-primary-600;
 
   &--not-available {
     $notAvailable: &;
   }
 
   &__icon {
-    @apply flex-none;
+    @apply flex-none text-primary;
   }
 
   &__title {

@@ -2,6 +2,7 @@
   <label class="flex select-none items-center" :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'">
     <input
       type="checkbox"
+      :aria-label="name"
       :name="name"
       :value="value"
       :disabled="disabled"

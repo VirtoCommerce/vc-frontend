@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center gap-x-1">
-    <div class="truncate font-bold text-[--color-accent-600]">{{ vendor.name }}</div>
+    <div class="truncate font-bold">{{ vendor.name }}</div>
 
     <div v-if="$cfg.rating_enabled && displayRating" class="flex items-center gap-1">
       <VcIcon class="flex-none text-[--color-primary-500]" name="star" size="xs" />

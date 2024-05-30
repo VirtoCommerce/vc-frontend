@@ -99,13 +99,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
         },
         output: {
           entryFileNames: "[name].js",
-          assetFileNames: (assetInfo) => {
-            // This code will move flag-icons svg files to separate directory during build.
-            if (assetInfo.name?.endsWith(".svg")) {
-              return "static/icons/flag-icons/[name].svg";
-            }
-            return "[name][extname]";
-          },
+          assetFileNames: "[name][extname]",
           manualChunks: (id) => {
             // Force app-runner to have separate chunk to temporarely eliminate caveats of liquid-based hashing
             if (id.includes("app-runner")) {
