@@ -47,7 +47,6 @@
     "@floating-ui/vue": "^1.0.6",
     "@headlessui/vue": "^1.7.17",
     "@hotjar/browser": "^1.0.9",
-    "@popperjs/core": "^2.11.8",
     "@tailwindcss/container-queries": "^0.1.1",
     "@unhead/vue": "^1.8.10",
     "@vee-validate/rules": "~4.12.6",
