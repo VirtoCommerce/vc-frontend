@@ -1,5 +1,5 @@
 <template>
-  <VcTooltip>
+  <VcTooltip width="max-content">
     <template #trigger>
       <slot :is-in-compare-list="isInCompareList" :toggle="toggle">
         <button :aria-label="tooltipText" type="button" class="flex" tabindex="0" @click="toggle">
