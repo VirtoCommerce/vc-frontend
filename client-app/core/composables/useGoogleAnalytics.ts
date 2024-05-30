@@ -16,6 +16,9 @@ import type {
   VariationType,
 } from "@/core/api/graphql/types";
 
+/**
+ * Custom events. The items array can not be added
+ */
 type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
@@ -67,8 +70,8 @@ function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: numb
     index,
     item_id: item.sku,
     item_name: item.name,
-    affiliation: item.product?.vendor?.name,
-    currency: globals.currencyCode,
+    affiliation: item.vendor?.name || "?",
+    currency: item.placedPrice.currency.code,
     discount: item.discountAmount?.amount || item.discountTotal?.amount,
     price: "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
@@ -80,8 +83,9 @@ function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: numb
 function getCartEventParams(cart: CartType): EventParamsType {
   return {
     currency: globals.currencyCode,
-    value: cart.total?.amount,
-    items: cart.items!.map(lineItemToGtagItem),
+    value: cart.total.amount,
+    items: cart.items.map(lineItemToGtagItem),
+    itemsCount: cart.items.length,
   };
 }
 
@@ -97,6 +101,7 @@ function viewItemList(items: Product[], params?: EventParamsExtendedType): void 
   sendEvent("view_item_list", {
     ...params,
     items: items.map(productToGtagItem),
+    itemsCount: items.length,
   });
 }
 
@@ -149,6 +154,7 @@ function addItemsToCart(items: LineItemType[], params?: EventParamsExtendedType)
     currency: globals.currencyCode,
     value: subtotal,
     items: inputItems,
+    itemsCount: inputItems.length,
   });
 }
 
@@ -161,6 +167,7 @@ function removeItemsFromCart(items: LineItemType[], params?: EventParamsExtended
     currency: globals.currencyCode,
     value: subtotal,
     items: inputItems,
+    itemsCount: inputItems.length,
   });
 }
 
@@ -186,8 +193,9 @@ function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
   sendEvent("begin_checkout", {
     ...params,
     currency: cart.currency.code,
-    value: cart.total?.amount,
-    items: cart.items!.map(lineItemToGtagItem),
+    value: cart.total.amount,
+    items: cart.items.map(lineItemToGtagItem),
+    itemsCount: cart.items.length,
     coupon: cart.coupons?.[0]?.code,
   });
 }
@@ -196,10 +204,11 @@ function addShippingInfo(cart?: CartType, params?: EventParamsExtendedType, ship
   sendEvent("add_shipping_info", {
     ...params,
     shipping_tier: shipmentMethodOption,
-    currency: cart?.currency?.code,
-    value: cart?.total?.amount,
+    currency: cart?.shippingPrice.currency.code,
+    value: cart?.shippingPrice.amount,
     coupon: cart?.coupons?.[0]?.code,
-    items: cart?.items!.map(lineItemToGtagItem),
+    items: cart?.items.map(lineItemToGtagItem),
+    itemsCount: cart?.items.length,
   });
 }
 
@@ -210,7 +219,8 @@ function addPaymentInfo(cart?: CartType, params?: EventParamsExtendedType, payme
     currency: cart?.currency?.code,
     value: cart?.total?.amount,
     coupon: cart?.coupons?.[0]?.code,
-    items: cart?.items?.map(lineItemToGtagItem),
+    items: cart?.items.map(lineItemToGtagItem),
+    itemsCount: cart?.items.length,
   });
 }
 
@@ -224,18 +234,19 @@ function purchase(order: CustomerOrderType, transactionId?: string, params?: Eve
     shipping: order.shippingTotal?.amount,
     tax: order.taxTotal?.amount,
     items: order.items!.map(lineItemToGtagItem),
+    itemsCount: order?.items?.length,
   });
 }
 
 function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType): void {
   sendEvent("place_order", {
     ...params,
-    currency: order.currency?.code,
-    value: order.total!.amount,
+    currency: order.currency.code,
+    value: order.total.amount,
     coupon: order.coupons?.[0],
-    shipping: order.shippingTotal?.amount,
-    tax: order.taxTotal?.amount,
-    items: order.items!.map(lineItemToGtagItem),
+    shipping: order.shippingTotal.amount,
+    tax: order.taxTotal.amount,
+    itemsCount: order.items.length,
   });
 }
 
@@ -256,7 +267,8 @@ function init() {
 
   if (isGoogleAnalyticsEnabled) {
     const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
-    if (!IS_DEVELOPMENT) {
+    // eslint-disable-next-line no-constant-condition,sonarjs/no-gratuitous-expressions
+    if (IS_DEVELOPMENT) {
       useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${id}`);
     } else {
       Logger.debug(DEBUG_PREFIX, "initialized without sync with google");
