@@ -3,6 +3,7 @@ import Hotjar from "@hotjar/browser";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 
 const { modulesSettings } = useThemeContext();
 
@@ -30,6 +31,8 @@ function init() {
   if (isEnabled && id && version) {
     if (!IS_DEVELOPMENT) {
       Hotjar.init(id, version);
+      const { user } = useUser();
+      Hotjar.identify(user.value?.id, {});
     } else {
       Logger.debug(DEBUG_PREFIX, "Hotjar enabled but not initialized");
     }
