@@ -2,6 +2,7 @@ import { useLocalStorage, createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
+import { useWebPushNotifications } from "@/core/composables/useWebPushNotifications";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
 import type { AfterFetchContext } from "@vueuse/core";
@@ -119,6 +120,8 @@ function _useAuth() {
   }
 
   async function unauthorize() {
+    const { deleteFcmToken } = useWebPushNotifications();
+    await deleteFcmToken();
     await useFetch("/revoke/token").post();
     state.value = { ...INITIAL_STATE };
   }

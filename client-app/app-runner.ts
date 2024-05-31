@@ -83,7 +83,7 @@ export default async () => {
 
   initializeGoogleAnalytics();
   initHotjar();
-  initializeWebPushNotifications();
+  void initializeWebPushNotifications();
 
   /**
    * Creating plugin instances
