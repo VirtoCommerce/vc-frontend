@@ -97,7 +97,7 @@ function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParam
   }
 }
 
-function viewItemList(items: Product[] = [], params?: EventParamsExtendedType): void {
+function viewItemList(items: { code: string }[] = [], params?: EventParamsExtendedType): void {
   sendEvent("view_item_list", {
     ...params,
     items_skus: items
@@ -276,7 +276,6 @@ function init() {
 
   if (isGoogleAnalyticsEnabled) {
     const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
-    // eslint-disable-next-line no-constant-condition,sonarjs/no-gratuitous-expressions
     if (IS_DEVELOPMENT) {
       useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${id}`);
     } else {
