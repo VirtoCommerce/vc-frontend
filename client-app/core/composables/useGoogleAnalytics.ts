@@ -193,65 +193,85 @@ function clearCart(cart: CartType, params?: EventParamsExtendedType): void {
 }
 
 function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
-  sendEvent("begin_checkout", {
-    ...params,
-    currency: cart.currency.code,
-    value: cart.total.amount,
-    items: cart.items.map(lineItemToGtagItem),
-    items_count: cart.items.length,
-    coupon: cart.coupons?.[0]?.code,
-  });
+  try {
+    sendEvent("begin_checkout", {
+      ...params,
+      currency: cart.currency.code,
+      value: cart.total.amount,
+      items: cart.items.map(lineItemToGtagItem),
+      items_count: cart.items.length,
+      coupon: cart.coupons?.[0]?.code,
+    });
+  } catch (e) {
+    Logger.error(DEBUG_PREFIX, beginCheckout.name, e);
+  }
 }
 
 function addShippingInfo(cart?: CartType, params?: EventParamsExtendedType, shipmentMethodOption?: string): void {
-  sendEvent("add_shipping_info", {
-    ...params,
-    shipping_tier: shipmentMethodOption,
-    currency: cart?.shippingPrice.currency.code,
-    value: cart?.shippingPrice.amount,
-    coupon: cart?.coupons?.[0]?.code,
-    items: cart?.items.map(lineItemToGtagItem),
-    items_count: cart?.items.length,
-  });
+  try {
+    sendEvent("add_shipping_info", {
+      ...params,
+      shipping_tier: shipmentMethodOption,
+      currency: cart?.shippingPrice.currency.code,
+      value: cart?.shippingPrice.amount,
+      coupon: cart?.coupons?.[0]?.code,
+      items: cart?.items.map(lineItemToGtagItem),
+      items_count: cart?.items.length,
+    });
+  } catch (e) {
+    Logger.error(DEBUG_PREFIX, addShippingInfo.name, e);
+  }
 }
 
 function addPaymentInfo(cart?: CartType, params?: EventParamsExtendedType, paymentGatewayCode?: string): void {
-  sendEvent("add_payment_info", {
-    ...params,
-    payment_type: paymentGatewayCode,
-    currency: cart?.currency?.code,
-    value: cart?.total?.amount,
-    coupon: cart?.coupons?.[0]?.code,
-    items: cart?.items.map(lineItemToGtagItem),
-    items_count: cart?.items.length,
-  });
+  try {
+    sendEvent("add_payment_info", {
+      ...params,
+      payment_type: paymentGatewayCode,
+      currency: cart?.currency?.code,
+      value: cart?.total?.amount,
+      coupon: cart?.coupons?.[0]?.code,
+      items: cart?.items.map(lineItemToGtagItem),
+      items_count: cart?.items.length,
+    });
+  } catch (e) {
+    Logger.error(DEBUG_PREFIX, addPaymentInfo.name, e);
+  }
 }
 
 function purchase(order: CustomerOrderType, transactionId?: string, params?: EventParamsExtendedType): void {
-  sendEvent("purchase", {
-    ...params,
-    currency: order.currency?.code,
-    transaction_id: transactionId,
-    value: order.total!.amount,
-    coupon: order.coupons?.[0],
-    shipping: order.shippingTotal?.amount,
-    tax: order.taxTotal?.amount,
-    items: order.items!.map(lineItemToGtagItem),
-    items_count: order?.items?.length,
-  });
+  try {
+    sendEvent("purchase", {
+      ...params,
+      currency: order.currency?.code,
+      transaction_id: transactionId,
+      value: order.total!.amount,
+      coupon: order.coupons?.[0],
+      shipping: order.shippingTotal?.amount,
+      tax: order.taxTotal?.amount,
+      items: order.items!.map(lineItemToGtagItem),
+      items_count: order?.items?.length,
+    });
+  } catch (e) {
+    Logger.error(DEBUG_PREFIX, purchase.name, e);
+  }
 }
 
 function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType): void {
-  sendEvent("place_order", {
-    ...params,
-    currency: order.currency.code,
-    value: order.total.amount,
-    coupon: order.coupons?.[0],
-    // todo find out why shippingTotal zero
-    shipping: order.shippingTotal.amount || order.shippingSubTotal.amount,
-    tax: order.taxTotal.amount,
-    items_count: order.items.length,
-  });
+  try {
+    sendEvent("place_order", {
+      ...params,
+      currency: order.currency?.code,
+      value: order.total?.amount,
+      coupon: order.coupons?.[0],
+      // todo find out why shippingTotal zero
+      shipping: order.shippingTotal.amount || order.shippingSubTotal.amount,
+      tax: order.taxTotal.amount,
+      items_count: order.items?.length,
+    });
+  } catch (e) {
+    Logger.error(DEBUG_PREFIX, placeOrder.name, e);
+  }
 }
 
 function search(searchTerm: string, visibleItems: { code: string }[] = [], itemsCount: number = 0): void {
@@ -276,7 +296,7 @@ function init() {
 
   if (isGoogleAnalyticsEnabled) {
     const id = moduleSettings?.settings?.find((el) => el.name === MODULE_KEYS.TRACK_ID)?.value as string;
-    if (IS_DEVELOPMENT) {
+    if (!IS_DEVELOPMENT) {
       useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${id}`);
     } else {
       Logger.debug(DEBUG_PREFIX, "initialized without sync with google");
