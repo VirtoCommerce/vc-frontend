@@ -22,9 +22,6 @@ import type {
 type CustomEventNamesType = "place_order" | "clear_cart";
 type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 type EventParamsExtendedType = EventParamsType & { item_list_id?: string; item_list_name?: string };
-type AdditionalItemParamsType = {
-  isGift?: boolean;
-};
 
 const { currentCurrency } = useCurrency();
 const { modulesSettings } = useThemeContext();
@@ -66,10 +63,7 @@ function productToGtagItem(item: Product | VariationType, index?: number): Gtag.
   };
 }
 
-function lineItemToGtagItem(
-  item: LineItemType | OrderLineItemType,
-  index?: number,
-): Gtag.Item & AdditionalItemParamsType {
+function lineItemToGtagItem(item: LineItemType | OrderLineItemType, index?: number): Gtag.Item {
   const categories: Record<string, string> = getCategories(item.product?.breadcrumbs);
 
   return {
@@ -81,7 +75,6 @@ function lineItemToGtagItem(
     discount: item.discountAmount?.amount || item.discountTotal?.amount,
     price: "price" in item ? item.price.amount : item.listPrice.amount,
     quantity: item.quantity,
-    isGift: item.isGift,
     ...categories,
   };
 }
@@ -92,7 +85,7 @@ function getCartEventParams(cart: CartType): EventParamsType {
     currency: globals.currencyCode,
     value: cart.total.amount,
     items: cart.items.map(lineItemToGtagItem),
-    itemsCount: cart.items.length,
+    items_count: cart.items.length,
   };
 }
 
@@ -107,11 +100,11 @@ function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParam
 function viewItemList(items: Product[] = [], params?: EventParamsExtendedType): void {
   sendEvent("view_item_list", {
     ...params,
-    itemsIds: items
-      .map((el) => el.id)
+    items_skus: items
+      .map((el) => el.code)
       .join(", ")
       .trim(),
-    itemsCount: items.length,
+    items_count: items.length,
   });
 }
 
@@ -164,7 +157,7 @@ function addItemsToCart(items: LineItemType[], params?: EventParamsExtendedType)
     currency: globals.currencyCode,
     value: subtotal,
     items: inputItems,
-    itemsCount: inputItems.length,
+    items_count: inputItems.length,
   });
 }
 
@@ -177,7 +170,7 @@ function removeItemsFromCart(items: LineItemType[], params?: EventParamsExtended
     currency: globals.currencyCode,
     value: subtotal,
     items: inputItems,
-    itemsCount: inputItems.length,
+    items_count: inputItems.length,
   });
 }
 
@@ -205,7 +198,7 @@ function beginCheckout(cart: CartType, params?: EventParamsExtendedType): void {
     currency: cart.currency.code,
     value: cart.total.amount,
     items: cart.items.map(lineItemToGtagItem),
-    itemsCount: cart.items.length,
+    items_count: cart.items.length,
     coupon: cart.coupons?.[0]?.code,
   });
 }
@@ -218,7 +211,7 @@ function addShippingInfo(cart?: CartType, params?: EventParamsExtendedType, ship
     value: cart?.shippingPrice.amount,
     coupon: cart?.coupons?.[0]?.code,
     items: cart?.items.map(lineItemToGtagItem),
-    itemsCount: cart?.items.length,
+    items_count: cart?.items.length,
   });
 }
 
@@ -230,7 +223,7 @@ function addPaymentInfo(cart?: CartType, params?: EventParamsExtendedType, payme
     value: cart?.total?.amount,
     coupon: cart?.coupons?.[0]?.code,
     items: cart?.items.map(lineItemToGtagItem),
-    itemsCount: cart?.items.length,
+    items_count: cart?.items.length,
   });
 }
 
@@ -244,7 +237,7 @@ function purchase(order: CustomerOrderType, transactionId?: string, params?: Eve
     shipping: order.shippingTotal?.amount,
     tax: order.taxTotal?.amount,
     items: order.items!.map(lineItemToGtagItem),
-    itemsCount: order?.items?.length,
+    items_count: order?.items?.length,
   });
 }
 
@@ -257,16 +250,16 @@ function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType):
     // todo find out why shippingTotal zero
     shipping: order.shippingTotal.amount || order.shippingSubTotal.amount,
     tax: order.taxTotal.amount,
-    itemsCount: order.items.length,
+    items_count: order.items.length,
   });
 }
 
-function search(searchTerm: string, visibleItems: { sku: string }[] = [], itemsCount: number = 0): void {
+function search(searchTerm: string, visibleItems: { code: string }[] = [], itemsCount: number = 0): void {
   sendEvent("search", {
     search_term: searchTerm,
-    itemsCount: itemsCount,
-    itemsSKUs: visibleItems
-      .map((el) => el.sku)
+    items_count: itemsCount,
+    visible_items: visibleItems
+      .map((el) => el.code)
       .join(", ")
       .trim(),
   });
