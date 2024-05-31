@@ -7,10 +7,12 @@
     removable
     @remove:items="$emit('remove:items', $event)"
   >
-    <template #default></template>
+    <template #default />
+
     <template #titles>
       <div :style="{ width: itemDefaultSlotWidth }" />
     </template>
+
     <template #line-items>
       <VcLineItem
         v-for="item in items"
@@ -23,6 +25,7 @@
         :actual-price="item.actualPrice"
         :total="item.extendedPrice"
         :disabled="pendingItems[item.id]"
+        :deleted="item.deleted"
         with-image
         with-properties
         with-price
@@ -57,7 +60,12 @@
             <CountInCart :product-id="item.productId" />
           </div>
         </div>
+
         <template #after>
+          <VcAlert v-if="item.deleted" color="danger" size="sm" variant="outline-dark" icon>
+            {{ $t("validation_error.CART_PRODUCT_UNAVAILABLE") }}
+          </VcAlert>
+
           <div v-if="validationErrors.length" class="flex flex-col gap-1">
             <template v-for="(validationError, index) in validationErrors" :key="index">
               <VcAlert
