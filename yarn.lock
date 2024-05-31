@@ -9104,13 +9104,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flag-icons@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "flag-icons@npm:7.1.0"
-  checksum: 10c0/dd3b456b3b15d2b74a3baf23c57aa77c2afb64f66a1de14188bd3d1d2717e8ed136b2c7b76088ab046093790c04a4362178642a638c16436a123d262ec87cf29
-  languageName: node
-  linkType: hard
-
 "flat-cache@npm:^3.0.4":
   version: 3.2.0
   resolution: "flat-cache@npm:3.2.0"
@@ -16095,7 +16088,6 @@ __metadata:
     eslint-plugin-tailwindcss: "npm:^3.15.1"
     eslint-plugin-vue: "npm:^9.25.0"
     eslint-plugin-vuejs-accessibility: "npm:^2.3.0"
-    flag-icons: "npm:^7.1.0"
     graphql: "npm:^16.8.1"
     graphql-tag: "npm:^2.12.6"
     husky: "npm:^9.0.7"
