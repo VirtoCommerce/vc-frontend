@@ -57,10 +57,9 @@ interface IProps {
 defineProps<IProps>();
 
 function getProperties(variation: VariationType) {
-  const sortedByName = sortBy(variation.properties, (item) => item.name);
-  const variationProperties = sortBy(sortedByName, (item) => item.displayOrder);
-
-  return Object.values(getPropertiesGroupedByName(variationProperties ?? [], PropertyType.Variation));
+  return Object.values(
+    getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
+  );
 }
 </script>
 
