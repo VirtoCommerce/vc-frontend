@@ -1,17 +1,21 @@
 import { useLocalStorage } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
-import { watch } from "vue";
+import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
+// import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
+// import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
 import type { Messaging } from "firebase/messaging";
 
+let initialized = false;
+let messaging: Messaging | undefined;
+let currentToken: string | undefined;
+let firebaseApp: ReturnType<typeof initializeApp>;
+
 export function useWebPushNotifications() {
   const { isAuthenticated, user } = useUser();
-  let currentToken: string | undefined;
-  let firebaseApp: ReturnType<typeof initializeApp>;
-  let initialized = false;
-  let messaging: Messaging | undefined;
+  // const { mutate: addFcmTokenMutation } = useAddFcmToken();
+  // const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
 
   const savedFcmToken = useLocalStorage<{ userId: string; token: string }>("fcmToken", { userId: "", token: "" });
 
@@ -26,27 +30,15 @@ export function useWebPushNotifications() {
   };
   // TODO: Replace with key from module settings
 
-  // TODO: Probably can be removed is we use soft ask
-  function watchIsAuthenticated() {
-    watch(
-      isAuthenticated,
-      (value) => {
-        if (value) {
-          void init();
-        }
-      },
-      { once: true },
-    );
-  }
-
   async function init() {
+    if (!(await isSupported())) {
+      return;
+    }
     const vapidKey = "BE1iGYmRsbdI1FB-qTiIUvGrWvC91GCfnXSHtfzcPLgXfQ28fbpKFlD8YlbI7w-aHVepW3Ih17oRB53ceYNaM6k";
     if (initialized) {
       await getFcmToken(messaging!, vapidKey);
     }
     if (isAuthenticated.value === false) {
-      // TODO: Probably can be removed is we use soft ask
-      watchIsAuthenticated();
       return;
     }
 
@@ -57,9 +49,7 @@ export function useWebPushNotifications() {
       "/firebase-cloud-messaging-push-scope",
     );
     serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
-
-    currentToken = await getFcmToken(messaging, vapidKey);
-    console.log("currentToken", currentToken);
+    initialized = true;
 
     onMessage(messaging, (payload) => {
       new Notification(payload?.notification?.title ?? "", {
@@ -67,7 +57,9 @@ export function useWebPushNotifications() {
         icon: "/static/icons/favicon.svg",
       });
     });
-    initialized = true;
+
+    currentToken = await getFcmToken(messaging, vapidKey);
+    console.log("currentToken", currentToken);
   }
 
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string) {
@@ -76,10 +68,11 @@ export function useWebPushNotifications() {
         vapidKey,
       });
       if (token) {
-        void updateFcmToken(token);
+        await updateFcmToken(token);
         return token;
       }
       void Notification.requestPermission();
+      // TODO: Logic when permission is not granted check is there is a token for current user, then delete it
     } catch (e) {
       Logger.warn(getFcmToken.name, e);
     }
@@ -89,25 +82,34 @@ export function useWebPushNotifications() {
     const userId = user.value?.id;
     const identicalUsers = savedFcmToken.value.userId === userId;
     const identicalUserAndToken = identicalUsers && savedFcmToken.value.token === token;
+    console.log({
+      userId,
+      token,
+      savedFcmTokenUserId: savedFcmToken.value.userId,
+      savedFcmTokenToken: savedFcmToken.value.token,
+      identicalUsers,
+      identicalUserAndToken,
+    });
     if (!userId || identicalUserAndToken || !isAuthenticated.value) {
       return;
     }
     if (identicalUsers) {
       await deleteFcmToken(savedFcmToken.value.token);
     }
-    addFcmToken(token, userId);
+    void addFcmToken(token, userId);
   }
 
-  function addFcmToken(token: string, userId: string) {
-    // TODO: Send token to server
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async function addFcmToken(token: string, userId: string) {
+    // await addFcmTokenMutation({ command: { token } });
     console.log("addFcmToken", token);
     savedFcmToken.value = { userId, token };
   }
 
   async function deleteFcmToken(token: string = currentToken!) {
+    // await deleteFcmTokenMutation({ command: { token } });
     await deleteToken(messaging!);
     savedFcmToken.value = { userId: "", token: "" };
-    // TODO: Delete token from server
     console.log("deleteFcmToken", token);
   }
 
