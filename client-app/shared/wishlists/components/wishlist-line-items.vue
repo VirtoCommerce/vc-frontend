@@ -23,6 +23,7 @@
         :actual-price="item.actualPrice"
         :total="item.extendedPrice"
         :disabled="pendingItems[item.id]"
+        :deleted="item.deleted"
         with-image
         with-properties
         with-price
