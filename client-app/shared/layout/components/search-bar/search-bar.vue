@@ -277,7 +277,11 @@ function goToSearchResultsPage() {
   if (trimmedSearchPhrase.value) {
     hideSearchDropdown();
     void router.push(getSearchRoute(trimmedSearchPhrase.value));
-    ga.search(trimmedSearchPhrase.value);
+    ga.search(
+      trimmedSearchPhrase.value,
+      products.value.map((el) => ({ sku: el.code })),
+      total.value,
+    );
   }
 }
 

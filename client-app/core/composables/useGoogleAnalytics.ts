@@ -104,10 +104,13 @@ function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParam
   }
 }
 
-function viewItemList(items: Product[], params?: EventParamsExtendedType): void {
+function viewItemList(items: Product[] = [], params?: EventParamsExtendedType): void {
   sendEvent("view_item_list", {
     ...params,
-    items: items.map(productToGtagItem),
+    itemsIds: items
+      .map((el) => el.id)
+      .join(", ")
+      .trim(),
     itemsCount: items.length,
   });
 }
@@ -258,9 +261,14 @@ function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType):
   });
 }
 
-function search(searchTerm: string): void {
+function search(searchTerm: string, visibleItems: { sku: string }[] = [], itemsCount: number = 0): void {
   sendEvent("search", {
     search_term: searchTerm,
+    itemsCount: itemsCount,
+    itemsSKUs: visibleItems
+      .map((el) => el.sku)
+      .join(", ")
+      .trim(),
   });
 }
 
