@@ -7,7 +7,7 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
   const result = useQuery(GetPushMessagesDocument, payload, { fetchPolicy: "cache-and-network" });
   result.subscribeToMore({
     document: OnPushMessageCreatedDocument,
-    // TODO: Refactor updateQueries to use update since it will be depricated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
+    // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
     updateQuery: (previousQueryResult, { subscriptionData }) => {
       if (!subscriptionData.data) {
         return previousQueryResult;
