@@ -9,7 +9,7 @@
         v-for="(footerLinkChild, i) in linksBlock.children"
         :key="i"
         :title="footerLinkChild.title"
-        :to="footerLinkChild.route!"
+        :to="footerLinkChild.route as string"
       />
     </div>
   </div>

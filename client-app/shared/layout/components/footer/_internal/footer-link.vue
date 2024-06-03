@@ -1,18 +1,30 @@
 <template>
-  <router-link class="footer-link" :to="to">
-    <slot>{{ title }}</slot>
-  </router-link>
+  <template v-if="'to' in linkAttrs">
+    <router-link class="footer-link" :to="linkAttrs.to">
+      <slot>{{ title }}</slot>
+    </router-link>
+  </template>
+  <template v-if="'externalLink' in linkAttrs">
+    <a class="footer-link" target="_blank" :href="linkAttrs.externalLink">
+      {{ title }}
+    </a>
+  </template>
 </template>
 
 <script setup lang="ts">
-import type { RouteLocationRaw } from "vue-router";
+import { computed } from "vue";
+import { getLinkAttr } from "@/core/utilities/common";
 
 interface IProps {
-  to: RouteLocationRaw;
+  to: string;
   title?: string;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const linkAttrs = computed(() => {
+  return getLinkAttr(props.to);
+});
 </script>
 
 <style lang="scss">
