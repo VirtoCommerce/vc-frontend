@@ -11,7 +11,6 @@ import {
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
-import { useWebPushNotifications } from "@/core/composables/useWebPushNotifications";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -20,6 +19,7 @@ import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { useWebPushNotifications } from "@/shared/push-messages/composables/useWebPushNotifications";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";

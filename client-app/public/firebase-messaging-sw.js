@@ -8,6 +8,7 @@ importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat
 
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
+    console.log("initialize", event.data);
     const { config } = event.data;
     initialize(config);
   }
@@ -18,10 +19,12 @@ function initialize(config) {
   const messaging = firebase.messaging(app);
 
   messaging.onBackgroundMessage(function (payload) {
+    console.log("background message received", payload);
     const notificationTitle = payload?.notification?.title ?? "";
     const notificationOptions = {
       body: payload?.notification?.body ?? "",
       icon: "/static/icons/favicon.svg",
+      tag: payload.messageId,
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);

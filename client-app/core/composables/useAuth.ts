@@ -2,9 +2,9 @@ import { useLocalStorage, createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
-import { useWebPushNotifications } from "@/core/composables/useWebPushNotifications";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
+import { useWebPushNotifications } from "@/shared/push-messages/composables/useWebPushNotifications";
 import type { AfterFetchContext } from "@vueuse/core";
 
 type IdentityErrorType = {

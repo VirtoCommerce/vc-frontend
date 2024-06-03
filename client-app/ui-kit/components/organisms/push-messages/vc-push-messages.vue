@@ -71,6 +71,9 @@
           </div>
 
           <div class="vc-push-messages__foot">
+            <VcSwitch v-model="browserNotificationsAllowance" size="sm">
+              {{ $t("ui_kit.push-messages.show_browser_notifications") }}
+            </VcSwitch>
             <VcButton
               v-if="removable && totalCount"
               variant="outline"
@@ -110,9 +113,11 @@ export interface IEmits {
   (event: "clearAll"): void;
   (event: "viewAll"): void;
   (event: "update:showUnreadOnly", value: boolean): void;
+  (event: "update:allowBrowserNotifications", value: boolean): void;
 }
 
 interface IProps {
+  allowBrowserNotifications?: boolean;
   totalCount: number;
   unreadCount: number;
   removable?: boolean;
@@ -131,6 +136,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
+const browserNotificationsAllowance = useVModel(props, "allowBrowserNotifications", emits);
 </script>
 
 <style lang="scss">

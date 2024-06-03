@@ -1,5 +1,6 @@
 <template>
   <VcPushMessages
+    v-model:allowBrowserNotifications="allowBrowserNotifications"
     v-model:showUnreadOnly="showUnreadOnly"
     :total-count="totalCount"
     :unread-count="unreadCount"
@@ -24,7 +25,9 @@
 
 <script setup lang="ts">
 import { useLocalStorage } from "@vueuse/core";
+import { ref, watch } from "vue";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
+import { useWebPushNotifications } from "@/shared/push-messages/composables/useWebPushNotifications";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 
 interface IProps {
@@ -32,9 +35,15 @@ interface IProps {
 }
 
 defineProps<IProps>();
-
+const allowBrowserNotifications = ref(Notification.permission === "granted");
 const showUnreadOnly = useLocalStorage<boolean>("showUnreadOnly_pushMessages_popup", false);
 
+watch(allowBrowserNotifications, (value) => {
+  if (value) {
+    init();
+  }
+});
+const { init } = useWebPushNotifications();
 const { totalCount, unreadCount, items, markReadAll, markUnreadAll, clearAll } = usePushMessages({
   showUnreadOnly,
 });
