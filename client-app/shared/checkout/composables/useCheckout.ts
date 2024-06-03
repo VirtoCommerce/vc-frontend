@@ -439,7 +439,6 @@ export function _useCheckout() {
     await prepareOrderData();
 
     try {
-      // todo replace CustomerOrderType for placedOrder
       placedOrder.value = (await _createOrderFromCart(cart.value!.id)) as CustomerOrderType;
     } catch (e) {
       Logger.error(`${useCheckout.name}.${createOrderFromCart.name}`, e);

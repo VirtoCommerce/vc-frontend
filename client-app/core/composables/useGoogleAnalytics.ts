@@ -264,8 +264,7 @@ function placeOrder(order: CustomerOrderType, params?: EventParamsExtendedType):
       currency: order.currency?.code,
       value: order.total?.amount,
       coupon: order.coupons?.[0],
-      // todo find out why shippingTotal zero
-      shipping: order.shippingTotal.amount || order.shippingSubTotal.amount,
+      shipping: order.shippingTotal.amount,
       tax: order.taxTotal.amount,
       items_count: order.items?.length,
     });
