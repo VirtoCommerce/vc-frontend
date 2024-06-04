@@ -70,7 +70,7 @@ function click(navigate: () => Promise<void | NavigationFailure>) {
     emit("select");
   } else {
     if (isExternalLink.value) {
-      window.open(props.link.route as string, "_blank")!.focus();
+      window.open(props.link.route as string, "_blank")?.focus();
     } else {
       void navigate();
     }
@@ -93,6 +93,6 @@ const toValue = computed(() => {
   if (isExternalLink.value) {
     return "";
   }
-  return props.link.route ?? "";
+  return props.link.route ?? "#";
 });
 </script>
