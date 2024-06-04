@@ -4,8 +4,6 @@ import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
 
 export function useMarkPushMessageUnread() {
   return useMutation(MarkPushMessageUnreadDocument, {
-    // TODO: Remove all code below in next iteration when XAPI will return objects from mutations
-    // https://virtocommerce.atlassian.net/browse/VCST-833
     optimisticResponse: {
       markPushMessageUnread: true,
     },
@@ -16,18 +14,20 @@ export function useMarkPushMessageUnread() {
             id: `PushMessageType:${variables?.command?.messageId}`,
             fragment: PushMessageFragmentDoc,
           },
-          // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
           (pushMessage) => ({ ...pushMessage!, isRead: false }),
         );
       }
     },
+    // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
         const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
         return {
           ...pushMessagesQueryResult,
-          pushMessages: {
-            ...pushMessagesQueryResult.pushMessages,
+          unreadCount: {
+            totalCount: pushMessagesQueryResult.unreadCount?.totalCount
+              ? pushMessagesQueryResult.unreadCount.totalCount + 1
+              : 1,
           },
         } satisfies GetPushMessagesQuery;
       },
