@@ -1,15 +1,7 @@
 <template>
   <div>
-    <router-link
-      v-if="getLinkType(item.route) === 'internal'"
-      class="catalog-menu-link"
-      :to="item.route ?? '#'"
-      @click="select"
-    >
-      {{ item.title }}
-    </router-link>
     <a
-      v-if="getLinkType(item.route) === 'external'"
+      v-if="isExternalLink(item.route)"
       class="catalog-menu-link"
       :href="item.route as string"
       target="_blank"
@@ -17,19 +9,13 @@
     >
       {{ item.title }}
     </a>
-
+    <router-link v-else class="catalog-menu-link" :to="item.route ?? '#'" @click="select">
+      {{ item.title }}
+    </router-link>
     <div>
       <template v-for="(child, index) in visibleChildren" :key="index">
-        <router-link
-          v-if="getLinkType(child.route) === 'internal'"
-          class="catalog-menu-child-link"
-          :to="child.route ?? '#'"
-          @click="select"
-        >
-          {{ child.title }}
-        </router-link>
         <a
-          v-if="getLinkType(item.route) === 'external'"
+          v-if="isExternalLink(item.route)"
           class="catalog-menu-child-link"
           :href="child.route as string"
           target="_blank"
@@ -37,6 +23,9 @@
         >
           {{ child.title }}
         </a>
+        <router-link v-else class="catalog-menu-child-link" :to="child.route ?? '#'" @click="select">
+          {{ child.title }}
+        </router-link>
       </template>
 
       <button
@@ -94,12 +83,8 @@ function select() {
   emit("select");
 }
 
-function getLinkType(link?: RouteLocationRaw): "internal" | "external" {
-  if ("externalLink" in getLinkAttr(link)) {
-    return "external";
-  }
-
-  return "internal";
+function isExternalLink(link?: RouteLocationRaw) {
+  return "externalLink" in getLinkAttr(link);
 }
 </script>
 
