@@ -1,4 +1,3 @@
-import { useLocalStorage } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
@@ -17,11 +16,9 @@ const MODULE_KEYS = {
   ID: "VirtoCommerce.PushMessages",
   FCM_SETTINGS: "PushMessages.FcmSettings",
 };
-const FCM_TOKEN_DEFAULT_VALUE = { userId: "", token: "" };
 
 export function useWebPushNotifications() {
-  const { isAuthenticated, user } = useUser();
-  const savedFcmToken = useLocalStorage<{ userId: string; token: string }>("fcmToken", FCM_TOKEN_DEFAULT_VALUE);
+  const { isAuthenticated } = useUser();
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
 
@@ -60,10 +57,6 @@ export function useWebPushNotifications() {
     }
 
     const firebaseApp = initializeApp(firebaseConfig);
-    const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(
-      "/firebase-cloud-messaging-push-scope",
-    );
-    serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
     messaging = getMessaging(firebaseApp);
 
     onMessage(messaging, (payload) => {
@@ -73,46 +66,43 @@ export function useWebPushNotifications() {
         tag: payload?.messageId,
       });
     });
-
     await getFcmToken(messaging, fcmSettings.vapidKey);
+    const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(
+      "/firebase-cloud-messaging-push-scope",
+    );
+    serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
     initialized = true;
+  }
+
+  let retryCount = 0;
+  // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693
+  async function tryGetToken(messagingInstance: Messaging, vapidKey: string) {
+    console.log("retry", retryCount);
+    try {
+      return await getToken(messagingInstance, { vapidKey });
+    } catch (e) {
+      if (retryCount >= 3) {
+        return;
+      }
+      retryCount++;
+      await await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
+      return await tryGetToken(messagingInstance, vapidKey);
+    }
   }
 
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
     try {
-      currentToken = await getToken(messagingInstance, {
-        vapidKey,
-      });
+      currentToken = await tryGetToken(messagingInstance, vapidKey);
       console.log("currentToken", currentToken);
       if (currentToken) {
-        void updateFcmToken(currentToken);
+        await addFcmTokenMutation({ command: { token: currentToken } });
         return;
       }
       await Notification.requestPermission();
     } catch (e) {
       Logger.warn(getFcmToken.name, e);
-    }
-  }
-
-  async function updateFcmToken(token: string) {
-    const userId = user.value?.id;
-    const identicalUsers = savedFcmToken.value.userId === userId;
-    const identicalUserAndToken = identicalUsers && savedFcmToken.value.token === token;
-    if (!userId || identicalUserAndToken || !isAuthenticated.value) {
-      return;
-    }
-    if (identicalUsers) {
-      await deleteFcmToken(false);
-    }
-    void addFcmToken(token, userId);
-  }
-
-  async function addFcmToken(token: string, userId: string) {
-    try {
-      savedFcmToken.value = { userId, token };
-      await addFcmTokenMutation({ command: { token } });
-    } catch (e) {
-      Logger.warn(addFcmToken.name, e);
     }
   }
 
@@ -122,7 +112,6 @@ export function useWebPushNotifications() {
         await deleteToken(messaging!);
       }
       await deleteFcmTokenMutation({ command: { token: currentToken! } });
-      savedFcmToken.value = FCM_TOKEN_DEFAULT_VALUE;
     } catch (e) {
       Logger.warn(deleteFcmToken.name, e);
     }
