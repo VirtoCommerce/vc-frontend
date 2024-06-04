@@ -12,17 +12,16 @@ import type { Messaging } from "firebase/messaging";
 let initialized = false;
 let messaging: Messaging | undefined;
 let currentToken: string | undefined;
-let firebaseApp: ReturnType<typeof initializeApp>;
-let serviceWorkerRegistration: ServiceWorkerRegistration | undefined;
 
 const MODULE_KEYS = {
   ID: "VirtoCommerce.PushMessages",
   FCM_SETTINGS: "PushMessages.FcmSettings",
 };
+const FCM_TOKEN_DEFAULT_VALUE = { userId: "", token: "" };
 
 export function useWebPushNotifications() {
   const { isAuthenticated, user } = useUser();
-  const savedFcmToken = useLocalStorage<{ userId: string; token: string }>("fcmToken", { userId: "", token: "" });
+  const savedFcmToken = useLocalStorage<{ userId: string; token: string }>("fcmToken", FCM_TOKEN_DEFAULT_VALUE);
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
 
@@ -59,12 +58,13 @@ export function useWebPushNotifications() {
       await getFcmToken(messaging!, fcmSettings.vapidKey);
       return;
     }
-    firebaseApp = initializeApp(firebaseConfig);
-    serviceWorkerRegistration = await navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope");
-    await serviceWorkerRegistration?.update();
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(
+      "/firebase-cloud-messaging-push-scope",
+    );
     serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
     messaging = getMessaging(firebaseApp);
-    initialized = true;
 
     onMessage(messaging, (payload) => {
       new Notification(payload?.notification?.title ?? "", {
@@ -74,7 +74,8 @@ export function useWebPushNotifications() {
       });
     });
 
-    await getFcmToken(messaging!, fcmSettings.vapidKey);
+    await getFcmToken(messaging, fcmSettings.vapidKey);
+    initialized = true;
   }
 
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
@@ -82,14 +83,12 @@ export function useWebPushNotifications() {
       currentToken = await getToken(messagingInstance, {
         vapidKey,
       });
+      console.log("currentToken", currentToken);
       if (currentToken) {
         void updateFcmToken(currentToken);
         return;
       }
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        void deleteFcmToken(false);
-      }
+      await Notification.requestPermission();
     } catch (e) {
       Logger.warn(getFcmToken.name, e);
     }
@@ -123,7 +122,7 @@ export function useWebPushNotifications() {
         await deleteToken(messaging!);
       }
       await deleteFcmTokenMutation({ command: { token: currentToken! } });
-      savedFcmToken.value = { userId: "", token: "" };
+      savedFcmToken.value = FCM_TOKEN_DEFAULT_VALUE;
     } catch (e) {
       Logger.warn(deleteFcmToken.name, e);
     }
