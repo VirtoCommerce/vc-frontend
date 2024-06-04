@@ -1,7 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
-import { ref } from "vue";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
 import { useThemeContext } from "@/core/composables/useThemeContext";
@@ -10,7 +9,7 @@ import { useUser } from "@/shared/account/composables/useUser";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
-const initialized = ref(false);
+let initialized = false;
 let messaging: Messaging | undefined;
 let currentToken: string | undefined;
 let firebaseApp: ReturnType<typeof initializeApp>;
@@ -32,6 +31,10 @@ export function useWebPushNotifications() {
       Logger.warn("Firebase messaging is not supported in this browser");
       return;
     }
+    if (isAuthenticated.value === false) {
+      return;
+    }
+
     const { modulesSettings } = useThemeContext();
 
     // TODO: Replace with config from module settings
@@ -52,18 +55,16 @@ export function useWebPushNotifications() {
       (moduleSettings?.settings?.find(({ name }) => name === MODULE_KEYS.FCM_SETTINGS)
         ?.value as unknown as FcmSettingsType) ?? firebaseConfig;
 
-    if (initialized.value) {
+    if (initialized) {
       await getFcmToken(messaging!, fcmSettings.vapidKey);
-      return;
-    }
-    if (isAuthenticated.value === false) {
       return;
     }
     firebaseApp = initializeApp(firebaseConfig);
     serviceWorkerRegistration = await navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope");
+    await serviceWorkerRegistration?.update();
     serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
     messaging = getMessaging(firebaseApp);
-    initialized.value = true;
+    initialized = true;
 
     onMessage(messaging, (payload) => {
       new Notification(payload?.notification?.title ?? "", {
@@ -82,7 +83,6 @@ export function useWebPushNotifications() {
         vapidKey,
       });
       if (currentToken) {
-        console.log({ currentToken: currentToken });
         void updateFcmToken(currentToken);
         return;
       }
@@ -129,5 +129,5 @@ export function useWebPushNotifications() {
     }
   }
 
-  return { deleteFcmToken, init, initialized };
+  return { deleteFcmToken, init };
 }
