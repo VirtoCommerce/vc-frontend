@@ -1,17 +1,21 @@
 import { useLocalStorage } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
+import { ref } from "vue";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
+import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
-let initialized = false;
+const initialized = ref(false);
+const loading = ref(false);
 let messaging: Messaging | undefined;
 let currentToken: string | undefined;
 let firebaseApp: ReturnType<typeof initializeApp>;
+let serviceWorkerRegistration: ServiceWorkerRegistration | undefined;
 
 const MODULE_KEYS = {
   ID: "VirtoCommerce.PushMessages",
@@ -23,44 +27,49 @@ export function useWebPushNotifications() {
   const savedFcmToken = useLocalStorage<{ userId: string; token: string }>("fcmToken", { userId: "", token: "" });
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
-  const { modulesSettings } = useThemeContext();
-
-  const moduleSettings = modulesSettings?.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
-  const fcmSettings = getSettingsValue(moduleSettings?.settings, MODULE_KEYS.FCM_SETTINGS);
-  console.log(fcm);
-
-  // TODO: Replace with config from module settings
-  const firebaseConfig = {
-    apiKey: "AIzaSyAh1GH8SFIx4ULiaZUNZRnxNNM2jFLGdaE",
-    authDomain: "test-97e05.firebaseapp.com",
-    projectId: "test-97e05",
-    storageBucket: "test-97e05.appspot.com",
-    messagingSenderId: "518395609520",
-    appId: "1:518395609520:web:53952423cba605aa771675",
-    vapidKey: "BE1iGYmRsbdI1FB-qTiIUvGrWvC91GCfnXSHtfzcPLgXfQ28fbpKFlD8YlbI7w-aHVepW3Ih17oRB53ceYNaM6k",
-  };
 
   async function init() {
     if (!(await isSupported())) {
       Logger.warn("Firebase messaging is not supported in this browser");
       return;
     }
-    if (initialized) {
+    const { modulesSettings } = useThemeContext();
+
+    // console.log({ modulesSettings });
+
+    // TODO: Replace with config from module settings
+    const firebaseConfig = {
+      apiKey: "AIzaSyAh1GH8SFIx4ULiaZUNZRnxNNM2jFLGdaE",
+      authDomain: "test-97e05.firebaseapp.com",
+      projectId: "test-97e05",
+      storageBucket: "test-97e05.appspot.com",
+      messagingSenderId: "518395609520",
+      appId: "1:518395609520:web:53952423cba605aa771675",
+      vapidKey: "BE1iGYmRsbdI1FB-qTiIUvGrWvC91GCfnXSHtfzcPLgXfQ28fbpKFlD8YlbI7w-aHVepW3Ih17oRB53ceYNaM6k",
+    };
+
+    const moduleSettings = modulesSettings?.value?.find(({ moduleId }) => moduleId === MODULE_KEYS.ID) ?? {
+      settings: [],
+    };
+    const fcmSettings =
+      (moduleSettings?.settings?.find(({ name }) => name === MODULE_KEYS.FCM_SETTINGS)
+        ?.value as unknown as FcmSettingsType) ?? firebaseConfig;
+    // console.log(fcmSettings);
+
+    if (initialized.value) {
+      loading.value = true;
       await getFcmToken(messaging!, fcmSettings.vapidKey);
+      loading.value = false;
       return;
     }
     if (isAuthenticated.value === false) {
       return;
     }
-
+    loading.value = true;
     firebaseApp = initializeApp(firebaseConfig);
-    messaging = getMessaging(firebaseApp);
-
-    const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(
-      "/firebase-cloud-messaging-push-scope",
-    );
+    serviceWorkerRegistration = await navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope");
     serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
-    initialized = true;
+    messaging = getMessaging(firebaseApp);
 
     onMessage(messaging, (payload) => {
       console.log("Message received. ", payload);
@@ -71,7 +80,18 @@ export function useWebPushNotifications() {
       });
     });
 
-    await getFcmToken(messaging, vapidKey);
+    // navigator.serviceWorker.addEventListener("message", async (event: MessageEvent) => {
+    //   if (event.data.type === "activate") {
+    //     console.log("activate");
+    //     // await getFcmToken(messaging!, fcmSettings.vapidKey);
+    //     // initialized.value = true;
+    //     // loading.value = false;
+    //   }
+    // });
+
+    await getFcmToken(messaging, fcmSettings.vapidKey);
+    initialized.value = true;
+    loading.value = false;
   }
 
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
@@ -119,7 +139,7 @@ export function useWebPushNotifications() {
 
   async function deleteFcmToken(revokeCurrentToken = true) {
     try {
-      if (revokeCurrentToken) {
+      if (revokeCurrentToken && initialized) {
         await deleteToken(messaging!);
       }
       await deleteFcmTokenMutation({ command: { token: currentToken! } });
@@ -130,5 +150,5 @@ export function useWebPushNotifications() {
     console.log("deleteFcmToken");
   }
 
-  return { init, deleteFcmToken };
+  return { deleteFcmToken, init, initialized };
 }

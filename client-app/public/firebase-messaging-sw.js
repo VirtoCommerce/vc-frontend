@@ -6,17 +6,31 @@ const VERSION = "10.12.2";
 importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`);
 importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`);
 
+console.log("register");
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener("activate", (event) => {
+  console.log("Service worker activated");
+  event.waitUntil(self.clients.claim());
+  // const clients = await self.clients.matchAll();
+  // clients.forEach((client) => {
+  //   client.postMessage({ type: "activate" });
+  // });
+});
+
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
-    console.log("initialize", event.data);
     const { config } = event.data;
     initialize(config);
   }
 });
 
-function initialize(config) {
+async function initialize(config) {
   const app = firebase.initializeApp(config);
-  const messaging = firebase.messaging(app);
+  const messaging = await firebase.messaging(app);
 
   messaging.onBackgroundMessage(function (payload) {
     console.log("background message received", payload);
