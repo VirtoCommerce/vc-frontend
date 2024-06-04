@@ -11,7 +11,6 @@ import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
 const initialized = ref(false);
-const loading = ref(false);
 let messaging: Messaging | undefined;
 let currentToken: string | undefined;
 let firebaseApp: ReturnType<typeof initializeApp>;
@@ -35,8 +34,6 @@ export function useWebPushNotifications() {
     }
     const { modulesSettings } = useThemeContext();
 
-    // console.log({ modulesSettings });
-
     // TODO: Replace with config from module settings
     const firebaseConfig = {
       apiKey: "AIzaSyAh1GH8SFIx4ULiaZUNZRnxNNM2jFLGdaE",
@@ -54,25 +51,21 @@ export function useWebPushNotifications() {
     const fcmSettings =
       (moduleSettings?.settings?.find(({ name }) => name === MODULE_KEYS.FCM_SETTINGS)
         ?.value as unknown as FcmSettingsType) ?? firebaseConfig;
-    // console.log(fcmSettings);
 
     if (initialized.value) {
-      loading.value = true;
       await getFcmToken(messaging!, fcmSettings.vapidKey);
-      loading.value = false;
       return;
     }
     if (isAuthenticated.value === false) {
       return;
     }
-    loading.value = true;
     firebaseApp = initializeApp(firebaseConfig);
     serviceWorkerRegistration = await navigator.serviceWorker.getRegistration("/firebase-cloud-messaging-push-scope");
     serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
     messaging = getMessaging(firebaseApp);
+    initialized.value = true;
 
     onMessage(messaging, (payload) => {
-      console.log("Message received. ", payload);
       new Notification(payload?.notification?.title ?? "", {
         body: payload?.notification?.body ?? "",
         icon: "/static/icons/favicon.svg",
@@ -80,18 +73,7 @@ export function useWebPushNotifications() {
       });
     });
 
-    // navigator.serviceWorker.addEventListener("message", async (event: MessageEvent) => {
-    //   if (event.data.type === "activate") {
-    //     console.log("activate");
-    //     // await getFcmToken(messaging!, fcmSettings.vapidKey);
-    //     // initialized.value = true;
-    //     // loading.value = false;
-    //   }
-    // });
-
-    await getFcmToken(messaging, fcmSettings.vapidKey);
-    initialized.value = true;
-    loading.value = false;
+    await getFcmToken(messaging!, fcmSettings.vapidKey);
   }
 
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
@@ -126,15 +108,13 @@ export function useWebPushNotifications() {
     void addFcmToken(token, userId);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async function addFcmToken(token: string, userId: string) {
     try {
-      await addFcmTokenMutation({ command: { token } });
       savedFcmToken.value = { userId, token };
+      await addFcmTokenMutation({ command: { token } });
     } catch (e) {
       Logger.warn(addFcmToken.name, e);
     }
-    console.log("addFcmToken", token);
   }
 
   async function deleteFcmToken(revokeCurrentToken = true) {
@@ -147,7 +127,6 @@ export function useWebPushNotifications() {
     } catch (e) {
       Logger.warn(deleteFcmToken.name, e);
     }
-    console.log("deleteFcmToken");
   }
 
   return { deleteFcmToken, init, initialized };
