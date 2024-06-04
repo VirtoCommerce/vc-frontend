@@ -1,5 +1,7 @@
+import { provideApolloClient } from "@vue/apollo-composable";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
+import { apolloClient } from "@/core/api/graphql";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
 import { useThemeContext } from "@/core/composables/useThemeContext";
@@ -16,6 +18,8 @@ const MODULE_KEYS = {
   ID: "VirtoCommerce.PushMessages",
   FCM_SETTINGS: "PushMessages.FcmSettings",
 };
+
+provideApolloClient(apolloClient);
 
 export function useWebPushNotifications() {
   const { isAuthenticated } = useUser();
