@@ -1,14 +1,12 @@
 <template>
-  <template v-if="'to' in linkAttrs">
-    <router-link class="footer-link" :to="linkAttrs.to">
-      <slot>{{ title }}</slot>
-    </router-link>
-  </template>
-  <template v-if="'externalLink' in linkAttrs">
-    <a class="footer-link" target="_blank" :href="linkAttrs.externalLink">
+  <span>
+    <a v-if="isExternalLink" class="footer-link" target="_blank" :href="props.to">
       {{ title }}
     </a>
-  </template>
+    <router-link v-else class="footer-link" :to="props.to">
+      <slot>{{ title }}</slot>
+    </router-link>
+  </span>
 </template>
 
 <script setup lang="ts">
@@ -22,8 +20,8 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const linkAttrs = computed(() => {
-  return getLinkAttr(props.to);
+const isExternalLink = computed(() => {
+  return "externalLink" in getLinkAttr(props.to);
 });
 </script>
 
