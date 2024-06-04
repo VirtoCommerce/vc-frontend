@@ -71,25 +71,28 @@ export function useWebPushNotifications() {
   }
 
   // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693
-  let retryCount = 0;
-  async function tryGetToken(messagingInstance: Messaging, vapidKey: string) {
-    try {
-      return await getToken(messagingInstance, { vapidKey });
-    } catch (e) {
-      if (retryCount >= 3) {
-        return;
+  function tryGetToken(count: number = 3) {
+    const TIMEOUT = 1000;
+    let retryCount = 0;
+    return async function retry(messagingInstance: Messaging, vapidKey: string) {
+      try {
+        return await getToken(messagingInstance, { vapidKey });
+      } catch (e) {
+        if (retryCount >= count) {
+          return;
+        }
+        retryCount++;
+        await await new Promise((resolve) => {
+          setTimeout(resolve, TIMEOUT);
+        });
+        return await retry(messagingInstance, vapidKey);
       }
-      retryCount++;
-      await await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
-      });
-      return await tryGetToken(messagingInstance, vapidKey);
-    }
+    };
   }
 
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
     try {
-      currentToken = await tryGetToken(messagingInstance, vapidKey);
+      currentToken = await tryGetToken()(messagingInstance, vapidKey);
       if (currentToken) {
         await addFcmTokenMutation({ command: { token: currentToken } });
         return;
