@@ -228,5 +228,9 @@ watchEffect(() => {
       @apply hidden;
     }
   }
+
+  .vc-layout-with-right-sidebar {
+    @apply block;
+  }
 }
 </style>
