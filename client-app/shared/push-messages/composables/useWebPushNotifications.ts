@@ -18,6 +18,7 @@ const MODULE_KEYS = {
   ID: "VirtoCommerce.PushMessages",
   FCM_SETTINGS: "PushMessages.FcmSettings",
 };
+const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 
 provideApolloClient(apolloClient);
 
@@ -60,9 +61,7 @@ export function useWebPushNotifications() {
     messaging = getMessaging(firebaseApp);
 
     await getFcmToken(messaging, fcmSettings.vapidKey);
-    const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(
-      "/firebase-cloud-messaging-push-scope",
-    );
+    const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
     serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
     initialized = true;
 
@@ -103,7 +102,7 @@ export function useWebPushNotifications() {
       }
       await Notification.requestPermission();
     } catch (e) {
-      Logger.warn(getFcmToken.name, e);
+      Logger.error(getFcmToken.name, e);
     }
   }
 
@@ -116,7 +115,7 @@ export function useWebPushNotifications() {
         await deleteFcmTokenMutation({ command: { token: currentToken } });
       }
     } catch (e) {
-      Logger.warn(deleteFcmToken.name, e);
+      Logger.error(deleteFcmToken.name, e);
     }
   }
 
