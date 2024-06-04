@@ -23,11 +23,7 @@ export function useWebPushNotifications() {
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
 
   async function init() {
-    if (!(await isSupported())) {
-      Logger.warn("Firebase messaging is not supported in this browser");
-      return;
-    }
-    if (isAuthenticated.value === false) {
+    if (isAuthenticated.value === false || !(await isSupported())) {
       return;
     }
 
@@ -59,23 +55,23 @@ export function useWebPushNotifications() {
     const firebaseApp = initializeApp(firebaseConfig);
     messaging = getMessaging(firebaseApp);
 
-    onMessage(messaging, (payload) => {
-      new Notification(payload?.notification?.title ?? "", {
-        body: payload?.notification?.body ?? "",
-        icon: "/static/icons/favicon.svg",
-        tag: payload?.messageId,
-      });
-    });
     await getFcmToken(messaging, fcmSettings.vapidKey);
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(
       "/firebase-cloud-messaging-push-scope",
     );
     serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
     initialized = true;
+
+    onMessage(messaging, (payload) => {
+      new Notification(payload?.notification?.title ?? "", {
+        body: payload?.notification?.body ?? "",
+        icon: "/static/icons/favicon.svg",
+      });
+    });
   }
 
-  let retryCount = 0;
   // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693
+  let retryCount = 0;
   async function tryGetToken(messagingInstance: Messaging, vapidKey: string) {
     console.log("retry", retryCount);
     try {
@@ -95,7 +91,6 @@ export function useWebPushNotifications() {
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
     try {
       currentToken = await tryGetToken(messagingInstance, vapidKey);
-      console.log("currentToken", currentToken);
       if (currentToken) {
         await addFcmTokenMutation({ command: { token: currentToken } });
         return;

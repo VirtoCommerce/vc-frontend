@@ -22,7 +22,6 @@ async function initialize(config) {
     const notificationOptions = {
       body: payload?.notification?.body ?? "",
       icon: "/static/icons/favicon.svg",
-      tag: payload.messageId,
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
