@@ -29,7 +29,7 @@ export function useWebPushNotifications() {
 
     const { modulesSettings } = useThemeContext();
 
-    // TODO: Replace with config from module settings
+    // TODO: Delete when the module settings are available in the theme context
     const firebaseConfig = {
       apiKey: "AIzaSyAh1GH8SFIx4ULiaZUNZRnxNNM2jFLGdaE",
       authDomain: "test-97e05.firebaseapp.com",
@@ -73,7 +73,6 @@ export function useWebPushNotifications() {
   // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693
   let retryCount = 0;
   async function tryGetToken(messagingInstance: Messaging, vapidKey: string) {
-    console.log("retry", retryCount);
     try {
       return await getToken(messagingInstance, { vapidKey });
     } catch (e) {
@@ -106,7 +105,9 @@ export function useWebPushNotifications() {
       if (revokeCurrentToken && initialized) {
         await deleteToken(messaging!);
       }
-      await deleteFcmTokenMutation({ command: { token: currentToken! } });
+      if (currentToken) {
+        await deleteFcmTokenMutation({ command: { token: currentToken } });
+      }
     } catch (e) {
       Logger.warn(deleteFcmToken.name, e);
     }
