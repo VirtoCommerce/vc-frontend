@@ -1,11 +1,11 @@
 <template>
-  <router-link v-slot="{ href, navigate, isActive, isExactActive }" :to="link.route ?? ''" custom>
+  <router-link v-slot="{ href, navigate, isActive, isExactActive }" :to="toValue" custom>
     <component
       :is="isLink ? 'a' : 'button'"
-      :href="isLink ? href : null"
+      :href="getHrefValue(href)"
       :class="[
-        'flex min-h-[2.25rem] items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]',
-        isLink && (isActive || isExactActive)
+        'flex min-h-9 items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]',
+        isLink && !isExternalLink && (isActive || isExactActive)
           ? 'text-[--mobile-menu-link-active-color]'
           : 'text-[--mobile-menu-link-color]',
         $attrs.class,
@@ -43,6 +43,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { getLinkAttr } from "@/core/utilities";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { NavigationFailure } from "vue-router";
 
@@ -68,8 +69,30 @@ function click(navigate: () => Promise<void | NavigationFailure>) {
   if (isParent.value) {
     emit("select");
   } else {
-    navigate();
+    if (isExternalLink.value) {
+      window.open(props.link.route as string, "_blank")!.focus();
+    } else {
+      void navigate();
+    }
     emit("close");
   }
 }
+
+const isExternalLink = computed(() => {
+  return isLink.value && "externalLink" in getLinkAttr(props.link.route);
+});
+
+function getHrefValue(href?: string) {
+  if (isExternalLink.value) {
+    return props.link.route;
+  }
+  return href;
+}
+
+const toValue = computed(() => {
+  if (isExternalLink.value) {
+    return "";
+  }
+  return props.link.route ?? "";
+});
 </script>
