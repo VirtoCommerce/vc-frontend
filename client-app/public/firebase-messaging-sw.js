@@ -20,6 +20,7 @@ async function initialize(config, icon) {
   messaging.onBackgroundMessage(function (payload) {
     const notificationTitle = payload?.notification?.title ?? "";
     const notificationOptions = {
+      badge: icon,
       body: payload?.notification?.body ?? "",
       icon,
     };

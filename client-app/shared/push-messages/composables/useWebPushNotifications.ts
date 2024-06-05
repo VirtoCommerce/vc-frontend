@@ -17,7 +17,7 @@ const MODULE_KEYS = {
   FCM_SETTINGS: "PushMessages.FcmSettings",
 };
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
-const DEFAULT_ICON_URL = "/static/icons/favicon.svg";
+const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
 
 provideApolloClient(apolloClient);
@@ -76,6 +76,7 @@ function _useWebPushNotifications() {
 
     onMessage(messaging, (payload) => {
       new Notification(payload?.notification?.title ?? "", {
+        badge: icon,
         body: payload?.notification?.body ?? "",
         icon,
       });
