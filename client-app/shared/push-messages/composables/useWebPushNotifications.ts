@@ -4,6 +4,7 @@ import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "fir
 import { apolloClient } from "@/core/api/graphql";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
+import { useWhiteLabeling } from "@/core/composables";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -19,6 +20,14 @@ const MODULE_KEYS = {
   FCM_SETTINGS: "PushMessages.FcmSettings",
 };
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
+const DEFAULT_ICON_URL = "/static/icons/favicon.svg";
+const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
+
+const { favIcons } = useWhiteLabeling();
+const icon =
+  favIcons.value?.find(
+    ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
+  )?.href ?? DEFAULT_ICON_URL;
 
 provideApolloClient(apolloClient);
 
@@ -62,13 +71,13 @@ export function useWebPushNotifications() {
 
     await getFcmToken(messaging, fcmSettings.vapidKey);
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
-    serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig });
+    serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: firebaseConfig, icon });
     initialized = true;
 
     onMessage(messaging, (payload) => {
       new Notification(payload?.notification?.title ?? "", {
         body: payload?.notification?.body ?? "",
-        icon: "/static/icons/favicon.svg",
+        icon,
       });
     });
   }

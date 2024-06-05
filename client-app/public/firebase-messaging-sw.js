@@ -8,12 +8,12 @@ importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat
 
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
-    const { config } = event.data;
-    initialize(config);
+    const { config, icon } = event.data;
+    initialize(config, icon);
   }
 });
 
-async function initialize(config) {
+async function initialize(config, icon) {
   const app = firebase.initializeApp(config);
   const messaging = await firebase.messaging(app);
 
@@ -21,7 +21,7 @@ async function initialize(config) {
     const notificationTitle = payload?.notification?.title ?? "";
     const notificationOptions = {
       body: payload?.notification?.body ?? "",
-      icon: "/static/icons/favicon.svg",
+      icon,
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
