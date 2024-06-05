@@ -44,8 +44,6 @@ function _useWebPushNotifications() {
     const vapidKey = fcmSettings.value?.vapidKey as string;
     const firebaseConfig = omit(fcmSettings.value, "vapidKey") as FcmSettingsType;
 
-    console.log(firebaseConfig);
-
     if (initialized) {
       await getFcmToken(messaging!, vapidKey);
       return;
