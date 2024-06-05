@@ -1,19 +1,16 @@
 import { provideApolloClient } from "@vue/apollo-composable";
+import { createGlobalState } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
 import { apolloClient } from "@/core/api/graphql";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
-import { useWhiteLabeling } from "@/core/composables";
 import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
-
-let initialized = false;
-let messaging: Messaging | undefined;
-let currentToken: string | undefined;
 
 const MODULE_KEYS = {
   ID: "VirtoCommerce.PushMessages",
@@ -23,25 +20,28 @@ const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const DEFAULT_ICON_URL = "/static/icons/favicon.svg";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
 
-const { favIcons } = useWhiteLabeling();
-const icon =
-  favIcons.value?.find(
-    ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-  )?.href ?? DEFAULT_ICON_URL;
-
 provideApolloClient(apolloClient);
 
-export function useWebPushNotifications() {
+function _useWebPushNotifications() {
+  let initialized = false;
+  let messaging: Messaging | undefined;
+  let currentToken: string | undefined;
+
+  const { favIcons } = useWhiteLabeling();
   const { isAuthenticated } = useUser();
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
+  const { modulesSettings } = useThemeContext();
+
+  const icon =
+    favIcons.value?.find(
+      ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
+    )?.href ?? DEFAULT_ICON_URL;
 
   async function init() {
     if (isAuthenticated.value === false || !(await isSupported())) {
       return;
     }
-
-    const { modulesSettings } = useThemeContext();
 
     // TODO: Delete when the module settings are available in the theme context
     const firebaseConfig = {
@@ -130,3 +130,5 @@ export function useWebPushNotifications() {
 
   return { deleteFcmToken, init };
 }
+
+export const useWebPushNotifications = createGlobalState(_useWebPushNotifications);
