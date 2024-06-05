@@ -1,0 +1,11 @@
+query GetFcmSettings {
+  fcmSettings {
+    apiKey
+    authDomain
+    projectId
+    storageBucket
+    messagingSenderId
+    appId
+    vapidKey
+  }
+}
