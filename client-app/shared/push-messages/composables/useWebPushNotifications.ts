@@ -2,14 +2,14 @@ import { provideApolloClient } from "@vue/apollo-composable";
 import { createGlobalState } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
-import { watch, computed } from "vue";
+import omit from "lodash/omit";
 import { apolloClient } from "@/core/api/graphql";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
-import { useGetFcmSettings } from "@/core/api/graphql/push-messages/queries/getFcmSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
+import { useFcmSettings } from "@/shared/notification/composables/useFcmSettings";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
@@ -39,43 +39,34 @@ function _useWebPushNotifications() {
       return;
     }
 
-    // TODO: Delete when the module settings are available in the theme context
-    const firebaseConfig = {
-      apiKey: "AIzaSyAh1GH8SFIx4ULiaZUNZRnxNNM2jFLGdaE",
-      authDomain: "test-97e05.firebaseapp.com",
-      projectId: "test-97e05",
-      storageBucket: "test-97e05.appspot.com",
-      messagingSenderId: "518395609520",
-      appId: "1:518395609520:web:53952423cba605aa771675",
-      vapidKey: "BE1iGYmRsbdI1FB-qTiIUvGrWvC91GCfnXSHtfzcPLgXfQ28fbpKFlD8YlbI7w-aHVepW3Ih17oRB53ceYNaM6k",
-    };
+    const { fcmSettings, fetchFcmSettings } = useFcmSettings();
+    await fetchFcmSettings();
+    const vapidKey = fcmSettings.value?.vapidKey as string;
+    const firebaseConfig = omit(fcmSettings.value, "vapidKey") as FcmSettingsType;
 
-    const { result, loading } = useGetFcmSettings();
-    await new Promise((resolve) => {
-      watch(
-        () => loading.value,
-        (value) => !value && resolve(value),
-      );
-    });
-    const fcmSettings = computed(() => (result.value?.fcmSettings ?? {}) as FcmSettingsType);
-    console.log(fcmSettings.value);
+    console.log(firebaseConfig);
+
     if (initialized) {
-      await getFcmToken(messaging!, fcmSettings.value?.vapidKey);
+      await getFcmToken(messaging!, vapidKey);
       return;
     }
 
     const firebaseApp = initializeApp(firebaseConfig);
     messaging = getMessaging(firebaseApp);
 
-    await getFcmToken(messaging, fcmSettings.value.vapidKey);
+    await getFcmToken(messaging, vapidKey);
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
-    serviceWorkerRegistration?.active?.postMessage({ type: "initialize", config: fcmSettings.value, icon });
+    serviceWorkerRegistration?.active?.postMessage({
+      type: "initialize",
+      config: firebaseConfig,
+      icon,
+    });
     initialized = true;
 
     onMessage(messaging, (payload) => {
       new Notification(payload?.notification?.title ?? "", {
         badge: icon,
-        body: payload?.notification?.body ?? "",
+        body: payload?.notification?.body?.replace(/(<([^>]+)>)/gi, "") ?? "",
         icon,
       });
     });

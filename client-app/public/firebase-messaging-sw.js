@@ -13,6 +13,12 @@ self.addEventListener("message", (event) => {
   }
 });
 
+// TODO: Remove handler when the link will be provided by backend https://firebase.google.com/docs/cloud-messaging/js/send-multiple#setting_notification_options_in_the_send_request
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(self.location.origin));
+});
+
 async function initialize(config, icon) {
   const app = firebase.initializeApp(config);
   const messaging = await firebase.messaging(app);
@@ -21,7 +27,7 @@ async function initialize(config, icon) {
     const notificationTitle = payload?.notification?.title ?? "";
     const notificationOptions = {
       badge: icon,
-      body: payload?.notification?.body ?? "",
+      body: payload?.notification?.body?.replace(/(<([^>]+)>)/gi, "") ?? "",
       icon,
     };
 
