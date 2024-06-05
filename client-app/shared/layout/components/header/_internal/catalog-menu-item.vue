@@ -15,7 +15,7 @@
     <div>
       <template v-for="(child, index) in visibleChildren" :key="index">
         <a
-          v-if="isExternalLink(item.route)"
+          v-if="isExternalLink(child.route)"
           class="catalog-menu-child-link"
           :href="child.route as string"
           target="_blank"
