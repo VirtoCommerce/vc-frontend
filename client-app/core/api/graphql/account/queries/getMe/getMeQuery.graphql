@@ -14,10 +14,13 @@ query GetMe($after: String, $first: Int, $sort: String) {
     forcePasswordChange
     lockedState
     contact {
+      id
       firstName
       lastName
       fullName
       organizationId
+      defaultLanguage
+      currencyCode
       organizations(after: $after, first: $first, sort: $sort) {
         items {
           id

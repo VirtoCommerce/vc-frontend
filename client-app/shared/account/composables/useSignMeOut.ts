@@ -1,5 +1,5 @@
 import { useApolloClient } from "@vue/apollo-composable";
-import { useAuth } from "@/core/composables";
+import { useAuth } from "@/core/composables/useAuth";
 import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
 
 export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: true }) {
@@ -12,6 +12,9 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
     await unauthorize();
 
     await client.clearStore();
+
+    localStorage.removeItem("locale");
+    localStorage.removeItem("currency");
 
     if (options.reloadPage) {
       broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
