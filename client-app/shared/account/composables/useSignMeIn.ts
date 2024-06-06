@@ -16,8 +16,8 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
   const { cart } = useShortCart();
   const { result: me, load: getMe } = useGetMeQuery();
   const { mutate: mergeCart } = useMergeCartMutation();
-  const { supportedLanguages, saveLocaleAndReload } = useLanguages();
-  const { supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
+  const { supportedLanguages, saveLocale } = useLanguages();
+  const { supportedCurrencies, saveCurrencyCode } = useCurrency();
 
   const { isLoading: loading, execute: signIn } = useAsyncState(
     async () => {
@@ -33,7 +33,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
         );
 
         if (contactLanguage) {
-          saveLocaleAndReload(contactLanguage.twoLetterLanguageName);
+          saveLocale(contactLanguage.twoLetterLanguageName, false);
         }
       }
 
@@ -43,7 +43,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
         );
 
         if (contactCurrency) {
-          saveCurrencyCodeAndReload(contactCurrency.code);
+          saveCurrencyCode(contactCurrency.code), false;
         }
       }
 

@@ -98,7 +98,7 @@ import { useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { useErrorsTranslator, usePageHead, useThemeContext } from "@/core/composables";
+import { useCurrency, useErrorsTranslator, useLanguages, usePageHead, useThemeContext } from "@/core/composables";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -109,6 +109,8 @@ const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
+const { supportedLanguages, saveLocale } = useLanguages();
+const { supportedCurrencies, saveCurrencyCode } = useCurrency();
 
 const responseErrors = ref<IdentityErrorType[]>();
 
@@ -146,12 +148,42 @@ const [lastName] = defineField("lastName");
 const [defaultLanguage] = defineField("defaultLanguage");
 const [currencyCode] = defineField("currencyCode");
 
+function applyLanguage(): void {
+  if (user.value?.contact?.defaultLanguage) {
+    const contactLanguage = supportedLanguages.value.find(
+      (item) => item.cultureName === user.value.contact!.defaultLanguage,
+    );
+
+    if (contactLanguage) {
+      saveLocale(contactLanguage.twoLetterLanguageName, false);
+    }
+  }
+}
+
+function applyCurrency(): void {
+  if (user.value?.contact?.currencyCode) {
+    const contactCurrency = supportedCurrencies.value.find((item) => item.code === user.value!.contact!.currencyCode);
+
+    if (contactCurrency) {
+      saveCurrencyCode(contactCurrency.code, false);
+    }
+  }
+}
+
 const onSubmit = handleSubmit(async (data) => {
   await updateUser(data);
 
   resetForm({ values: initialValues() });
   openModal({
     component: ProfileUpdateSuccessModal,
+    props: {
+      onClose() {
+        applyLanguage();
+        applyCurrency();
+
+        location.reload();
+      },
+    },
   });
 });
 </script>

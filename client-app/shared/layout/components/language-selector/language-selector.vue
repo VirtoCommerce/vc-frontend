@@ -77,7 +77,7 @@ import { useLanguages } from "@/core/composables";
 import { languageToCountryMap } from "@/core/constants";
 import type { ILanguage } from "@/core/types";
 
-const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
+const { currentLanguage, supportedLanguages, saveLocale } = useLanguages();
 
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
@@ -102,7 +102,7 @@ function toggle() {
 }
 
 function select(locale: string) {
-  saveLocaleAndReload(locale);
+  saveLocale(locale);
   hideList();
 }
 

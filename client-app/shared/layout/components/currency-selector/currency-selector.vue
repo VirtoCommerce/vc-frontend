@@ -42,7 +42,7 @@
 import { ref } from "vue";
 import { useCurrency } from "@/core/composables";
 
-const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
+const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 
 const open = ref(false);
 
@@ -52,7 +52,7 @@ function toggle(value: boolean) {
 
 function select(code: string) {
   if (currentCurrency.value?.code !== code) {
-    saveCurrencyCodeAndReload(code);
+    saveCurrencyCode(code);
   }
 }
 </script>

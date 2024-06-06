@@ -47,9 +47,7 @@
                 :model-value="currentCurrency?.code"
                 :value="currencyItem.code"
                 class="py-2.5"
-                @click="
-                  currentCurrency?.code === currencyItem.code ? null : saveCurrencyCodeAndReload(currencyItem.code)
-                "
+                @click="currentCurrency?.code === currencyItem.code ? null : saveCurrencyCode(currencyItem.code)"
               >
                 <span :class="{ 'text-additional-50': currentCurrency?.code === currencyItem.code }" class="uppercase">
                   {{ currencyItem.code }}
@@ -252,7 +250,7 @@ const { t } = useI18n();
 const { cart } = useShortCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
-const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
+const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { user, operator, isAuthenticated, organization, isCorporateMember } = useUser();
 const { signMeOut } = useSignMeOut();
 const {

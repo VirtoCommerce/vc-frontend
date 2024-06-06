@@ -21,9 +21,12 @@ const currentCurrency = computed<ICurrency>(
     defaultCurrency.value,
 );
 
-function saveCurrencyCodeAndReload(code: string) {
+function saveCurrencyCode(code: string, needToReload: boolean = true) {
   savedCurrencyCode.value = code;
-  location.reload();
+
+  if (needToReload) {
+    location.reload();
+  }
 }
 
 export function useCurrency() {
@@ -32,6 +35,6 @@ export function useCurrency() {
     defaultCurrency,
     supportedCurrencies,
     currentCurrency,
-    saveCurrencyCodeAndReload,
+    saveCurrencyCode,
   };
 }

@@ -86,7 +86,7 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
   document.documentElement.setAttribute("lang", locale);
 }
 
-function saveLocaleAndReload(locale: string) {
+function saveLocale(locale: string, needToReload: boolean = true) {
   const { pathname } = location;
   const splitPathname = pathname.split("/");
   const localeInPath = splitPathname[1];
@@ -96,7 +96,10 @@ function saveLocaleAndReload(locale: string) {
     : pathname;
 
   savedLocale.value = locale;
-  location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
+
+  if (needToReload) {
+    location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
+  }
 }
 
 export function useLanguages() {
@@ -109,7 +112,7 @@ export function useLanguages() {
     currentLocale,
     currentLanguage,
     setLocale,
-    saveLocaleAndReload,
+    saveLocale,
     fetchLocaleMessages,
   };
 }
