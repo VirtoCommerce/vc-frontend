@@ -6,20 +6,22 @@ import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
 export function useClearAllPushMessages() {
   const { client } = useApolloClient();
   const result = useMutation(ClearAllPushMessagesDocument, {
-    // TODO: Remove all code below in next iteration when XAPI will return objects from mutations
-    // https://virtocommerce.atlassian.net/browse/VCST-833
     optimisticResponse: {
       clearAllPushMessages: true,
     },
+    // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
     updateQueries: {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
         const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
         if (mutationResult.data?.clearAllPushMessages) {
           return {
             ...pushMessagesQueryResult,
-            // TODO: Move this code to optimisticResponse in next iteration for better UX responsitibility
             pushMessages: {
               items: [],
+              totalCount: 0,
+            },
+            unreadCount: {
+              totalCount: 0,
             },
           } satisfies GetPushMessagesQuery;
         } else {
