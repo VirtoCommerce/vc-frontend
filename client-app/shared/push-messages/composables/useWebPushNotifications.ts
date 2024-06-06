@@ -106,8 +106,8 @@ function _useWebPushNotifications() {
 
   async function deleteFcmToken() {
     try {
-      if (initialized) {
-        await deleteToken(messaging!);
+      if (initialized && messaging) {
+        await deleteToken(messaging);
       }
       if (currentToken) {
         await deleteFcmTokenMutation({ command: { token: currentToken } });

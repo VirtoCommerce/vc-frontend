@@ -17,7 +17,7 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification?.data?.url || self.location.origin));
+  event.waitUntil(self.clients.openWindow(event.notification?.data?.url || self.location.origin));
 });
 
 async function initialize(config, icon) {
