@@ -46,7 +46,7 @@
       </template>
 
       <template #content>
-        <div class="max-w-[16rem] rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
+        <div class="max-w-64 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
           {{ product.name }}
         </div>
       </template>
