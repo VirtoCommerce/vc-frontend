@@ -10,7 +10,7 @@
           class="flex items-center gap-x-1.5 text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
         >
           <span class="uppercase">
-            {{ currentCurrency?.code }}
+            {{ currentCurrency.code }}
           </span>
 
           <VcIcon class="text-[--color-primary-500]" size="xxs" :name="open ? 'chevron-up' : 'chevron-down'" />
@@ -21,7 +21,7 @@
         <VcMenuItem
           v-for="item in supportedCurrencies"
           :key="item.code"
-          :active="item.code === currentCurrency?.code"
+          :active="item.code === currentCurrency.code"
           color="secondary"
           @click="select(item.code)"
         >

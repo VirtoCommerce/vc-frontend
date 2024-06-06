@@ -33,7 +33,7 @@
         />
 
         <VcInput
-          :model-value="email"
+          :model-value="user.email"
           :label="$t('common.labels.email')"
           :placeholder="$t('common.placeholders.first_name')"
           name="email"
@@ -53,6 +53,28 @@
         >
           {{ error.translation }}
         </VcAlert>
+
+        <div class="flex gap-4">
+          <div class="grow">
+            <VcSelect
+              v-model="defaultLanguage"
+              :items="themeContext.availableLanguages"
+              :label="$t('common.labels.default_language')"
+              text-field="nativeName"
+              value-field="cultureName"
+            />
+          </div>
+
+          <div class="grow">
+            <VcSelect
+              v-model="currencyCode"
+              :items="themeContext.availableCurrencies"
+              :label="$t('common.labels.default_currency')"
+              text-field="code"
+              value-field="code"
+            />
+          </div>
+        </div>
 
         <!-- Form actions -->
         <div class="mt-5 w-1/2 self-center lg:self-auto">
@@ -76,7 +98,7 @@ import { useForm } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { useErrorsTranslator, usePageHead } from "@/core/composables";
+import { useErrorsTranslator, usePageHead, useThemeContext } from "@/core/composables";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -85,9 +107,11 @@ const MAX_NAME_LENGTH = 64;
 
 const { t } = useI18n();
 const { user, updateUser } = useUser();
+const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 
 const responseErrors = ref<IdentityErrorType[]>();
+
 const { translatedErrors } = useErrorsTranslator("identity_error", responseErrors);
 
 usePageHead({
@@ -98,7 +122,8 @@ const validationSchema = toTypedSchema(
   yup.object({
     firstName: yup.string().trim().required().max(MAX_NAME_LENGTH),
     lastName: yup.string().trim().required().max(MAX_NAME_LENGTH),
-    email: yup.string(),
+    defaultLanguage: yup.string(),
+    currencyCode: yup.string(),
   }),
 );
 
@@ -106,7 +131,8 @@ function initialValues() {
   return {
     firstName: user.value.contact?.firstName ?? "",
     lastName: user.value.contact?.lastName ?? "",
-    email: user.value.email,
+    defaultLanguage: user.value?.contact?.defaultLanguage ?? themeContext.value?.defaultLanguage?.cultureName,
+    currencyCode: user.value?.contact?.currencyCode ?? themeContext.value?.defaultCurrency?.code,
   };
 }
 
@@ -117,20 +143,15 @@ const { defineField, errors, isSubmitting, meta, handleSubmit, resetForm } = use
 
 const [firstName] = defineField("firstName");
 const [lastName] = defineField("lastName");
-const [email] = defineField("email");
+const [defaultLanguage] = defineField("defaultLanguage");
+const [currencyCode] = defineField("currencyCode");
 
 const onSubmit = handleSubmit(async (data) => {
-  responseErrors.value = [];
+  await updateUser(data);
 
-  const response = await updateUser(data);
-
-  responseErrors.value = response.errors ?? [];
-
-  if (response.succeeded) {
-    resetForm({ values: initialValues() });
-    openModal({
-      component: ProfileUpdateSuccessModal,
-    });
-  }
+  resetForm({ values: initialValues() });
+  openModal({
+    component: ProfileUpdateSuccessModal,
+  });
 });
 </script>
