@@ -104,9 +104,9 @@ function _useWebPushNotifications() {
     }
   }
 
-  async function deleteFcmToken(revokeCurrentToken = true) {
+  async function deleteFcmToken() {
     try {
-      if (revokeCurrentToken && initialized) {
+      if (initialized) {
         await deleteToken(messaging!);
       }
       if (currentToken) {
