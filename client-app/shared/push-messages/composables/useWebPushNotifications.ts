@@ -32,7 +32,7 @@ function _useWebPushNotifications() {
   const icon =
     favIcons.value?.find(
       ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-    )?.href ?? DEFAULT_ICON_URL;
+    )?.href || DEFAULT_ICON_URL;
 
   async function init() {
     if (isAuthenticated.value === false || !(await isSupported())) {
@@ -62,10 +62,10 @@ function _useWebPushNotifications() {
     initialized = true;
 
     onMessage(messaging, (payload) => {
-      new Notification(payload?.notification?.title ?? "", {
-        badge: icon,
-        body: payload?.notification?.body?.replace(/(<([^>]+)>)/gi, "") ?? "",
-        icon,
+      new Notification(payload?.data?.title ?? "", {
+        badge: payload.data?.icon || icon,
+        body: payload?.data?.body?.replace(/(<([^>]+)>)/gi, "")?.trim() ?? "",
+        icon: payload.data?.icon || icon,
       });
     });
   }
