@@ -1,8 +1,9 @@
 import { syncRefs, useAsyncState } from "@vueuse/core";
 import { ref, toValue } from "vue";
 import { useGetMeQuery, useMergeCartMutation } from "@/core/api/graphql";
-import { useCurrency, useLanguages } from "@/core/composables";
 import { useAuth } from "@/core/composables/useAuth";
+import { useCurrency } from "@/core/composables/useCurrency";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { TabsType, openReturnUrl, useBroadcast } from "@/shared/broadcast";
 import { useShortCart } from "@/shared/cart/composables";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
