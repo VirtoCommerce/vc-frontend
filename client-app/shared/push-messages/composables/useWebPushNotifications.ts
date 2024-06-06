@@ -16,6 +16,7 @@ import type { Messaging } from "firebase/messaging";
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
+const HTML_TAG_REGEX = /(<([^>]+)>)/gi;
 
 provideApolloClient(apolloClient);
 
@@ -64,7 +65,7 @@ function _useWebPushNotifications() {
     onMessage(messaging, (payload) => {
       new Notification(payload?.data?.title ?? "", {
         badge: payload.data?.icon || icon,
-        body: payload?.data?.body?.replace(/(<([^>]+)>)/gi, "")?.trim() ?? "",
+        body: payload?.data?.body?.replace(HTML_TAG_REGEX, "")?.trim() ?? "",
         icon: payload.data?.icon || icon,
       });
     });

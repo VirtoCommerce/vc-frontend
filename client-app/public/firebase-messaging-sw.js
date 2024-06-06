@@ -6,6 +6,8 @@ const VERSION = "10.12.2";
 importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`);
 importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`);
 
+const HTML_TAG_REGEX = /(<([^>]+)>)/gi;
+
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
     const { config, icon } = event.data;
@@ -27,7 +29,7 @@ async function initialize(config, icon) {
     const notificationOptions = {
       data: payload?.data,
       badge: payload?.data?.icon || icon,
-      body: payload?.data?.body?.replace(/(<([^>]+)>)/gi, "")?.trim() ?? "",
+      body: payload?.data?.body?.replace(HTML_TAG_REGEX, "")?.trim() ?? "",
       icon: payload?.data?.icon || icon,
     };
 
