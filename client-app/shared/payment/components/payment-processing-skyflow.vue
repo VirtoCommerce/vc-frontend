@@ -45,7 +45,7 @@
         <div ref="cvvOnlyContainer" class="-ml-1 mt-4"></div>
         <div class="mt-6 flex justify-center md:justify-start">
           <VcButton
-            :disabled="isNewCardPayBtnDisabled"
+            :disabled="isSavedCardPayBtnDisabled"
             :loading="loading"
             class="shrink"
             @click="payWithSavedCreditCard"
@@ -364,23 +364,20 @@ function isNewCard(card: { skyflowId: string }) {
 // NEW CARD END
 
 // CVV only START
-const isNewCardCvvRequired = computed(() => {
+const isSavedCardCvvRequired = computed(() => {
   // todo add "isCvvRequired" flag to saved cards
   // return selectedSkyflowCard.value?.isCvvRequired
   return themeContext.value.settings.isCVVinSkyflowRequired;
 });
 
-const isNewCardPayBtnDisabled = computed(() => {
-  return (
-    !selectedSkyflowCard.value ||
-    (isNewCardCvvRequired.value && cvvCollectorStatus.value.ready && !cvvCollectorStatus.value.valid)
-  );
+const isSavedCardPayBtnDisabled = computed(() => {
+  return !selectedSkyflowCard.value || (isSavedCardCvvRequired.value && !cvvCollectorStatus.value.valid);
 });
 
 const cvvCollectorStatus = ref({ valid: false, ready: false });
 
 async function initCvvForm() {
-  if (!isNewCardCvvRequired.value) {
+  if (!isSavedCardCvvRequired.value) {
     return;
   }
 
@@ -554,7 +551,7 @@ async function payWithSavedCreditCard() {
     return;
   }
 
-  if (isNewCardCvvRequired.value) {
+  if (isSavedCardCvvRequired.value) {
     await updateCvvInVault();
   }
 
