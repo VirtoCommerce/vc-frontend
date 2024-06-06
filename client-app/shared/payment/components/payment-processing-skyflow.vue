@@ -42,7 +42,13 @@
       </VcSelect>
 
       <div v-show="!addNewCardSelected">
-        <div ref="cvvOnlyContainer" class="-ml-1 mt-4"></div>
+        <div v-if="isSavedCardCvvRequired && selectedSkyflowCard" class="-ml-1 mt-4 h-20">
+        <div v-if="isSavedCardCvvRequired && selectedSkyflowCard" class="-ml-1 mt-4 h-20">
+          <div v-show="cvvCollectorStatus.ready" ref="cvvOnlyContainer"></div>
+          <div v-if="!cvvCollectorStatus.ready" class="ml-1">
+            <VcLoaderWithText />
+          </div>
+        </div>
         <div class="mt-6 flex justify-center md:justify-start">
           <VcButton
             :disabled="isSavedCardPayBtnDisabled"
