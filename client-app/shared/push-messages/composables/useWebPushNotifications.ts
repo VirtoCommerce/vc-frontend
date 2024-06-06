@@ -9,6 +9,7 @@ import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/de
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
+import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import { useFcmSettings } from "@/shared/notification/composables/useFcmSettings";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
@@ -25,6 +26,7 @@ function _useWebPushNotifications() {
   let messaging: Messaging | undefined;
   let currentToken: string | undefined;
 
+  const broadcast = useBroadcast();
   const { favIcons } = useWhiteLabeling();
   const { isAuthenticated } = useUser();
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
@@ -61,6 +63,8 @@ function _useWebPushNotifications() {
       icon,
     });
     initialized = true;
+
+    broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
 
     onMessage(messaging, (payload) => {
       new Notification(payload?.data?.title ?? "", {
