@@ -43,7 +43,6 @@
 
       <div v-show="!addNewCardSelected">
         <div v-if="isSavedCardCvvRequired && selectedSkyflowCard" class="-ml-1 mt-4 h-20">
-        <div v-if="isSavedCardCvvRequired && selectedSkyflowCard" class="-ml-1 mt-4 h-20">
           <div v-show="cvvCollectorStatus.ready" ref="cvvOnlyContainer"></div>
           <div v-if="!cvvCollectorStatus.ready" class="ml-1">
             <VcLoaderWithText />
