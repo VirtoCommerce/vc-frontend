@@ -76,11 +76,16 @@
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
           <div class="my-5 h-px bg-gradient-to-r from-[--color-accent-500] to-transparent"></div>
 
-          <router-link
-            class="text-lg tracking-[0.01em] text-[--color-additional-50]"
-            :to="openedItem.route"
+          <a
+            v-if="isExternalLink(openedItem.route)"
+            class="view-all-link"
+            :href="openedItem.route as string"
+            target="_blank"
             @click="$emit('close')"
           >
+            {{ $t("shared.layout.header.mobile.view_all_catalog") }}
+          </a>
+          <router-link v-else class="view-all-link" :to="openedItem.route" @click="$emit('close')">
             {{ $t("shared.layout.header.mobile.view_all_catalog") }}
           </router-link>
         </template>
@@ -228,12 +233,14 @@
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
+import { getLinkAttr } from "@/core/utilities";
 import { useSignMeOut, useUser } from "@/shared/account";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (event: "close"): void;
@@ -284,6 +291,10 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
       },
 );
 
+function isExternalLink(link?: RouteLocationRaw) {
+  return "externalLink" in getLinkAttr(link);
+}
+
 onMounted(() => {
   goMainMenu();
 
@@ -292,3 +303,9 @@ onMounted(() => {
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.view-all-link {
+  @apply text-lg tracking-[0.01em] text-[--color-additional-50];
+}
+</style>

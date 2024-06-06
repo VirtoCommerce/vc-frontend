@@ -1,5 +1,31 @@
 import { describe, it, expect } from "vitest";
-import { replaceXFromBeginning, extractHostname } from "./index";
+import { replaceXFromBeginning, extractHostname, getLinkAttr } from "./index";
+
+describe("getLinkAttr", () => {
+  it("should return an empty object if no link is provided", () => {
+    expect(getLinkAttr()).toEqual({});
+  });
+
+  it('should return an object with "to" property if the link starts with "/"', () => {
+    const link = "/internal-link";
+    expect(getLinkAttr(link)).toEqual({ to: link });
+  });
+
+  it('should return an object with "externalLink" property if the link does not start with "/"', () => {
+    const link = "https://external-link.com";
+    expect(getLinkAttr(link)).toEqual({ externalLink: link });
+  });
+
+  it('should return an object with "externalLink" property for a full URL with http', () => {
+    const link = "http://external-link.com";
+    expect(getLinkAttr(link)).toEqual({ externalLink: link });
+  });
+
+  it('should return an object with "externalLink" property for a full URL with https', () => {
+    const link = "https://external-link.com";
+    expect(getLinkAttr(link)).toEqual({ externalLink: link });
+  });
+});
 
 describe("extractHostname function", () => {
   it("should extract hostname from a simple URL", () => {

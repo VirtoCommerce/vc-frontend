@@ -9,7 +9,6 @@ export function getBaseUrl(supportedLocales: string[]): string {
 
 export function getReturnUrlValue(): string | null {
   const { searchParams } = new URL(location.href);
-  // FIXME: The `ReturnUrl` parameter is hardcoded in vc-storefront
   return searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
 }
 
@@ -106,3 +105,18 @@ export function objectToKeyValues(object: { [key: string]: string }): KeyValueTy
 export function replaceXFromBeginning(input: string, by: string = "•••• "): string {
   return input.replace(/^X+/, by);
 }
+
+import type { RouteLocationRaw } from "vue-router";
+
+type LinkAttrType = { to: RouteLocationRaw } | { externalLink: string } | object;
+
+export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
+  if (typeof link === "string") {
+    if (link.startsWith("/")) {
+      return { to: link };
+    } else {
+      return { externalLink: link };
+    }
+  }
+  return {};
+};
