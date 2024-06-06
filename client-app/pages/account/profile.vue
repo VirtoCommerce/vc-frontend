@@ -42,18 +42,6 @@
           disabled
         />
 
-        <VcAlert
-          v-for="error in translatedErrors"
-          :key="error.code"
-          color="danger"
-          class="my-4 text-xs"
-          size="sm"
-          variant="solid-light"
-          icon
-        >
-          {{ error.translation }}
-        </VcAlert>
-
         <div class="flex gap-4">
           <div class="grow">
             <VcSelect
@@ -95,13 +83,12 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { useForm } from "vee-validate";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { useCurrency, useErrorsTranslator, useLanguages, usePageHead, useThemeContext } from "@/core/composables";
+import { useCurrency, useLanguages, usePageHead, useThemeContext } from "@/core/composables";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { useModal } from "@/shared/modal";
-import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const MAX_NAME_LENGTH = 64;
 
@@ -111,10 +98,6 @@ const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const { supportedLanguages, saveLocale } = useLanguages();
 const { supportedCurrencies, saveCurrencyCode } = useCurrency();
-
-const responseErrors = ref<IdentityErrorType[]>();
-
-const { translatedErrors } = useErrorsTranslator("identity_error", responseErrors);
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),

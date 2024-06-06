@@ -43,7 +43,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
         );
 
         if (contactCurrency) {
-          saveCurrencyCode(contactCurrency.code), false;
+          saveCurrencyCode(contactCurrency.code, false);
         }
       }
 
