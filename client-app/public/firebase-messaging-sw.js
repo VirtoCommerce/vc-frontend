@@ -8,10 +8,13 @@ importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat
 
 const HTML_TAG_REGEX = /(<([^>]+)>)/gi;
 
+let icon;
+
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
-    const { config, icon } = event.data;
-    initialize(config, icon);
+    const { config, icon: iconUrl } = event.data;
+    icon = iconUrl;
+    initialize(config);
   }
 });
 
@@ -20,19 +23,21 @@ self.addEventListener("notificationclick", function (event) {
   event.waitUntil(self.clients.openWindow(event.notification?.data?.url || self.location.origin));
 });
 
-async function initialize(config, icon) {
+self.addEventListener("push", function (event) {
+  const { data } = event.data.json();
+  event.waitUntil(
+    registration.pushManager.getSubscription().then(function () {
+      return self.registration.showNotification(data?.title ?? "", {
+        data: data.data,
+        badge: data?.icon || icon,
+        body: data?.body?.replace(HTML_TAG_REGEX, "")?.trim() ?? "",
+        icon: data?.icon || icon,
+      });
+    }),
+  );
+});
+
+async function initialize(config) {
   const app = firebase.initializeApp(config);
-  const messaging = await firebase.messaging(app);
-
-  messaging.onBackgroundMessage(function (payload) {
-    const notificationTitle = payload?.data?.title ?? "";
-    const notificationOptions = {
-      data: payload?.data,
-      badge: payload?.data?.icon || icon,
-      body: payload?.data?.body?.replace(HTML_TAG_REGEX, "")?.trim() ?? "",
-      icon: payload?.data?.icon || icon,
-    };
-
-    return self.registration.showNotification(notificationTitle, notificationOptions);
-  });
+  await firebase.messaging(app);
 }
