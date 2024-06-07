@@ -93,22 +93,23 @@ export default async () => {
     };
 
     const hotjarSettings = getModuleSettings("VirtoCommerce.Hotjar", HOTJAR_SETTINGS_MAPPING) as HotjarSettingsType;
+    if (hotjarSettings.isEnabled) {
+      try {
+        const { useHotjar } = await import("vc-module-front-hotjar");
+        const { init: initHotjar } = useHotjar();
+        const { canUseDOM } = await import("@apollo/client/utilities");
 
-    if (!hotjarSettings.isEnabled) {
-      return;
+        initHotjar({
+          ...hotjarSettings,
+          canUseDOM,
+          isDevelopment: false,
+          logger: Logger,
+          userId: user.value.id,
+        });
+      } catch (e) {
+        Logger.error("Hotjar module initialization", e);
+      }
     }
-
-    const { useHotjar } = await import("vc-module-front-hotjar");
-    const { init: initHotjar } = useHotjar();
-    const { canUseDOM } = await import("@apollo/client/utilities");
-
-    initHotjar({
-      ...hotjarSettings,
-      canUseDOM,
-      isDevelopment: false,
-      logger: Logger,
-      userId: user.value.id,
-    });
   }
 
   /**
