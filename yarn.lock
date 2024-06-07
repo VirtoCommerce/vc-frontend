@@ -16020,7 +16020,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git":
+"vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git#v1.0.0":
   version: 1.0.0
   resolution: "vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git#commit=1aba3ab5457c2e2256502a80cf5ed9f854c768c3"
   dependencies:
@@ -16120,7 +16120,7 @@ __metadata:
     typescript: "npm:~5.4.0"
     utility-types: "npm:^3.11.0"
     uuid: "npm:^9.0.1"
-    vc-module-front-hotjar: "git@github.com:VirtoCommerce/vc-module-front-hotjar.git"
+    vc-module-front-hotjar: "git@github.com:VirtoCommerce/vc-module-front-hotjar.git#v1.0.0"
     vee-validate: "npm:~4.12.6"
     vite: "npm:^5.2.10"
     vite-node: "npm:~1.2.2"
