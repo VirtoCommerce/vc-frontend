@@ -3,9 +3,6 @@
   <div v-else-if="canShowContent">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
-  <div v-else>
-    <slot></slot>
-  </div>
 </template>
 
 <script setup lang="ts">
