@@ -29,7 +29,6 @@ const SETTINGS_MAPPING = {
   "PushMessages.FcmReceiverOptions.VapidKey": "vapidKey",
 } as const;
 type SettingNameType = keyof typeof SETTINGS_MAPPING;
-type SettingType = Partial<Record<(typeof SETTINGS_MAPPING)[SettingNameType], unknown>>;
 
 provideApolloClient(apolloClient);
 
@@ -57,9 +56,9 @@ function _useWebPushNotifications() {
       return;
     }
 
-    const fcmSettings = moduleSettings.settings.reduce((settings: SettingType, { name, value }) => {
+    const fcmSettings = moduleSettings.settings.reduce((settings: Partial<FcmSettingsType>, { name, value }) => {
       const settingName = SETTINGS_MAPPING[name as SettingNameType];
-      settings[settingName] = value;
+      settings[settingName] = value as string;
       return settings;
     }, {});
 
