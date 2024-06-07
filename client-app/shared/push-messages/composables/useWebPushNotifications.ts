@@ -6,11 +6,11 @@ import omit from "lodash/omit";
 import { apolloClient } from "@/core/api/graphql";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
-import { useFcmSettings } from "@/shared/notification/composables/useFcmSettings";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
@@ -18,6 +18,18 @@ const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
 const HTML_TAG_REGEX = /(<([^>]+)>)/gi;
+const MODULE_ID = "VirtoCommerce.PushMessages";
+const SETTINGS_MAPPING = {
+  "PushMessages.FcmReceiverOptions.ApiKey": "apiKey",
+  "PushMessages.FcmReceiverOptions.AuthDomain": "authDomain",
+  "PushMessages.FcmReceiverOptions.ProjectId": "projectId",
+  "PushMessages.FcmReceiverOptions.StorageBucket": "storageBucket",
+  "PushMessages.FcmReceiverOptions.MessagingSenderId": "messagingSenderId",
+  "PushMessages.FcmReceiverOptions.AppId": "appId",
+  "PushMessages.FcmReceiverOptions.VapidKey": "vapidKey",
+} as const;
+type SettingNameType = keyof typeof SETTINGS_MAPPING;
+type SettingType = Partial<Record<(typeof SETTINGS_MAPPING)[SettingNameType], unknown>>;
 
 provideApolloClient(apolloClient);
 
@@ -38,14 +50,21 @@ function _useWebPushNotifications() {
     )?.href || DEFAULT_ICON_URL;
 
   async function init() {
-    if (isAuthenticated.value === false || !(await isSupported())) {
+    const { modulesSettings } = useThemeContext();
+    const moduleSettings = modulesSettings?.value?.find(({ moduleId }) => moduleId === MODULE_ID);
+
+    if (isAuthenticated.value === false || !moduleSettings || !(await isSupported())) {
       return;
     }
 
-    const { fcmSettings, fetchFcmSettings } = useFcmSettings();
-    await fetchFcmSettings();
-    const vapidKey = fcmSettings.value?.vapidKey as string;
-    const firebaseConfig = omit(fcmSettings.value, "vapidKey") as FcmSettingsType;
+    const fcmSettings = moduleSettings.settings.reduce((settings: SettingType, { name, value }) => {
+      const settingName = SETTINGS_MAPPING[name as SettingNameType];
+      settings[settingName] = value;
+      return settings;
+    }, {});
+
+    const vapidKey = fcmSettings?.vapidKey as string;
+    const firebaseConfig = omit(fcmSettings, "vapidKey") as FcmSettingsType;
 
     if (initialized) {
       await getFcmToken(messaging!, vapidKey);
