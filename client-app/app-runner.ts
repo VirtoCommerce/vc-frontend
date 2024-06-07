@@ -79,7 +79,7 @@ export default async () => {
 
   initializeGoogleAnalytics();
 
-  if (hasModuleSettings("VirtoCommerce.PushMessages")) {
+  if (hasModuleSettings("VirtoCommerce.Hotjar")) {
     const HOTJAR_SETTINGS_MAPPING = {
       "Hotjar.EnableTracking": "isEnabled",
       "Hotjar.SiteId": "id",
