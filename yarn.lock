@@ -16020,6 +16020,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git":
+  version: 1.0.0
+  resolution: "vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git#commit=1aba3ab5457c2e2256502a80cf5ed9f854c768c3"
+  dependencies:
+    "@hotjar/browser": "npm:^1.0.9"
+  checksum: 10c0/2631518c1b928755451864fdace5cf3b737e956c3501738767a977e5b8c3cf982f31fa2aa7b86747bb992ea59d461e519ce89f61e3315e2283a42b8f58af560c
+  languageName: node
+  linkType: hard
+
 "vc-theme-b2b-vue@workspace:.":
   version: 0.0.0-use.local
   resolution: "vc-theme-b2b-vue@workspace:."
@@ -16036,7 +16045,6 @@ __metadata:
     "@graphql-codegen/typescript": "npm:4.0.4"
     "@graphql-codegen/typescript-operations": "npm:4.1.2"
     "@headlessui/vue": "npm:^1.7.17"
-    "@hotjar/browser": "npm:^1.0.9"
     "@popperjs/core": "npm:^2.11.8"
     "@rollup/plugin-graphql": "npm:^2.0.4"
     "@rushstack/eslint-patch": "npm:^1.8.0"
@@ -16112,6 +16120,7 @@ __metadata:
     typescript: "npm:~5.4.0"
     utility-types: "npm:^3.11.0"
     uuid: "npm:^9.0.1"
+    vc-module-front-hotjar: "git@github.com:VirtoCommerce/vc-module-front-hotjar.git"
     vee-validate: "npm:~4.12.6"
     vite: "npm:^5.2.10"
     vite-node: "npm:~1.2.2"

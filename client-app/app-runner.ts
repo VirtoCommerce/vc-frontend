@@ -7,7 +7,6 @@ import {
   useLanguages,
   useThemeContext,
   useGoogleAnalytics,
-  useHotjar,
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
@@ -53,11 +52,10 @@ export default async () => {
   app.use(authPlugin);
 
   const { fetchUser, user } = useUser();
-  const { themeContext, fetchThemeContext } = useThemeContext();
+  const { themeContext, fetchThemeContext, hasModuleSettings, getModuleSettings } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
-  const { init: initHotjar } = useHotjar();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
@@ -80,7 +78,36 @@ export default async () => {
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
   initializeGoogleAnalytics();
-  initHotjar();
+
+  if (hasModuleSettings("VirtoCommerce.PushMessages")) {
+    const HOTJAR_SETTINGS_MAPPING = {
+      "Hotjar.EnableTracking": "isEnabled",
+      "Hotjar.SiteId": "id",
+      "Hotjar.SnippetVersion": "version",
+    } as const;
+
+    const hotjarSettings = getModuleSettings("VirtoCommerce.Hotjar", HOTJAR_SETTINGS_MAPPING) as {
+      isEnabled: boolean;
+      id: string;
+      version: string;
+    };
+
+    if (!hotjarSettings.isEnabled) {
+      return;
+    }
+
+    const { useHotjar } = await import("vc-module-front-hotjar");
+    const { init: initHotjar } = useHotjar();
+    const { canUseDOM } = await import("@apollo/client/utilities");
+
+    initHotjar({
+      ...hotjarSettings,
+      canUseDOM,
+      isDevelopment: false,
+      logger: Logger,
+      userId: user.value.id,
+    });
+  }
 
   /**
    * Creating plugin instances
