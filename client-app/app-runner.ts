@@ -86,11 +86,13 @@ export default async () => {
       "Hotjar.SnippetVersion": "version",
     } as const;
 
-    const hotjarSettings = getModuleSettings("VirtoCommerce.Hotjar", HOTJAR_SETTINGS_MAPPING) as {
+    type HotjarSettingsType = {
       isEnabled: boolean;
       id: string;
       version: string;
     };
+
+    const hotjarSettings = getModuleSettings("VirtoCommerce.Hotjar", HOTJAR_SETTINGS_MAPPING) as HotjarSettingsType;
 
     if (!hotjarSettings.isEnabled) {
       return;
