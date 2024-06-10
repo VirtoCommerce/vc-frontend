@@ -7,6 +7,7 @@
           v-if="selectable"
           :name="$t('common.labels.toggle_vendor_select')"
           :model-value="isAllItemsSelected"
+          :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
           @change="($event) => selectAllItems($event as boolean)"
         />
@@ -171,6 +172,9 @@ const selectedItemIds = computed(() =>
   props.sharedSelectedItemIds ? intersection(props.sharedSelectedItemIds, itemIds.value) : itemIds.value,
 );
 const isAllItemsSelected = computed(() => selectedItemIds.value.length === props.items.length);
+const isSomeItemsSelected = computed(
+  () => selectedItemIds.value.length > 0 && selectedItemIds.value.length < props.items.length,
+);
 
 function selectSingleItem(itemId: string, value: boolean) {
   emit("select:items", { itemIds: [itemId], selected: value });
