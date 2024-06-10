@@ -1,20 +1,29 @@
 <template>
   <div>
-    <router-link
-      class="mb-2 block px-2 py-1 text-base font-bold hover:bg-neutral-100"
-      :to="item.route ?? '#'"
+    <a
+      v-if="isExternalLink(item.route)"
+      class="catalog-menu-link"
+      :href="item.route as string"
+      target="_blank"
       @click="select"
     >
       {{ item.title }}
+    </a>
+    <router-link v-else class="catalog-menu-link" :to="item.route ?? '#'" @click="select">
+      {{ item.title }}
     </router-link>
-
     <div>
       <template v-for="(child, index) in visibleChildren" :key="index">
-        <router-link
-          class="mb-1 block truncate px-2 py-1 text-sm !leading-4 text-neutral hover:bg-neutral-100"
-          :to="child.route ?? '#'"
+        <a
+          v-if="isExternalLink(child.route)"
+          class="catalog-menu-child-link"
+          :href="child.route as string"
+          target="_blank"
           @click="select"
         >
+          {{ child.title }}
+        </a>
+        <router-link v-else class="catalog-menu-child-link" :to="child.route ?? '#'" @click="select">
           {{ child.title }}
         </router-link>
       </template>
@@ -38,7 +47,9 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { getLinkAttr } from "@/core/utilities";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
   (event: "select"): void;
@@ -71,4 +82,18 @@ function toggleShowAll() {
 function select() {
   emit("select");
 }
+
+function isExternalLink(link?: RouteLocationRaw) {
+  return "externalLink" in getLinkAttr(link);
+}
 </script>
+
+<style scoped lang="scss">
+.catalog-menu-link {
+  @apply mb-2 block px-2 py-1 text-base font-bold hover:bg-neutral-100;
+}
+
+.catalog-menu-child-link {
+  @apply mb-1 block truncate px-2 py-1 text-sm leading-4 text-neutral hover:bg-neutral-100;
+}
+</style>

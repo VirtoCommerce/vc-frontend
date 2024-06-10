@@ -14,20 +14,23 @@
         />
 
         <span class="language-selector__text">
-          {{ currentLanguage?.twoLetterLanguageName }}
+          {{ currentLanguage.twoLetterLanguageName }}
         </span>
 
         <VcIcon class="language-selector__arrow" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
       </button>
     </template>
 
-    <template #content>
+    <template #content="{ close }">
       <VcMenuItem
         v-for="item in supportedLanguages"
         :key="item.twoLetterLanguageName"
-        :active="item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName"
+        :active="item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName"
         color="secondary"
-        @click="select(item.twoLetterLanguageName)"
+        @click="
+          select(item.twoLetterLanguageName);
+          close();
+        "
       >
         <VcImage
           :src="`/static/icons/flags/${getCountryCode(item)}.svg`"
@@ -49,11 +52,11 @@ import { useLanguages } from "@/core/composables";
 import { languageToCountryMap } from "@/core/constants";
 import type { ILanguage } from "@/core/types";
 
-const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
+const { currentLanguage, supportedLanguages, saveLocale } = useLanguages();
 
 function select(locale: string) {
   if (locale !== currentLanguage.value.twoLetterLanguageName) {
-    saveLocaleAndReload(locale);
+    saveLocale(locale);
   }
 }
 

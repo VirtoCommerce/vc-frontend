@@ -582,7 +582,7 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
 onClickOutside(
   filtersDropdownElement,
   () => {
-    hideFilters();
+    filtersVisible.value = false;
   },
   { ignore: [filtersButtonElement] },
 );
