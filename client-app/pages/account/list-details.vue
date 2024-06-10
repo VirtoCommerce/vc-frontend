@@ -198,7 +198,7 @@ async function addAllListItemsToCart(): Promise<void> {
   const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
   await addItemsToCart(items);
 
-  ga.addItemsToCart(wishlistItems.value);
+  ga.addItemsToCart(wishlistItems.value.map((item) => item.product!));
 
   showResultModal(wishlistItems.value);
 }
