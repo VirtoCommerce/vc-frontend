@@ -44,6 +44,7 @@
         :step="stepValue"
         :autocomplete="autocomplete"
         :aria-label="ariaLabel ?? label"
+        :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
         @keydown="keyDown($event)"
         @click.prevent.stop="inputClick()"
@@ -108,6 +109,7 @@ export interface IProps {
   type?: "text" | "password" | "number" | "email";
   size?: "sm" | "md" | "auto";
   clearable?: boolean;
+  browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
 }
 
@@ -118,6 +120,7 @@ defineOptions({
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",
   size: "md",
+  browserTooltip: "disabled",
 });
 
 const componentId = useComponentId("input");

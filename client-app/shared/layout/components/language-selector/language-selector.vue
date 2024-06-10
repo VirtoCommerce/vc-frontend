@@ -19,7 +19,7 @@
       </span>
 
       <span class="hidden uppercase lg:inline">
-        {{ currentLanguage?.twoLetterLanguageName }}
+        {{ currentLanguage.twoLetterLanguageName }}
       </span>
 
       <VcIcon
@@ -38,13 +38,13 @@
             v-for="item in supportedLanguages"
             :key="item.twoLetterLanguageName"
             :class="[
-              item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
+              item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName
                 ? 'cursor-default bg-primary'
                 : 'cursor-pointer hover:bg-gray-100',
             ]"
             class="flex items-center space-x-2 p-2.5 pr-3 font-normal text-additional-950"
             @click="
-              item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName
+              item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName
                 ? null
                 : select(item.twoLetterLanguageName)
             "
@@ -59,7 +59,7 @@
 
             <span
               :class="{
-                'font-bold text-additional-950': item.twoLetterLanguageName === currentLanguage?.twoLetterLanguageName,
+                'font-bold text-additional-950': item.twoLetterLanguageName === currentLanguage.twoLetterLanguageName,
               }"
             >
               {{ item.nativeName.replace(/ *\([^)]*\) */g, "") }}
@@ -77,7 +77,7 @@ import { useLanguages } from "@/core/composables";
 import { languageToCountryMap } from "@/core/constants";
 import type { ILanguage } from "@/core/types";
 
-const { currentLanguage, supportedLanguages, saveLocaleAndReload } = useLanguages();
+const { currentLanguage, supportedLanguages, saveLocale } = useLanguages();
 
 const open = ref(false);
 const listElement = shallowRef<HTMLElement | null>(null);
@@ -102,7 +102,7 @@ function toggle() {
 }
 
 function select(locale: string) {
-  saveLocaleAndReload(locale);
+  saveLocale(locale);
   hideList();
 }
 

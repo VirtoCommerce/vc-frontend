@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "1.59.0",
+  "version": "1.60.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -101,7 +101,7 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/adm-zip": "^0.5.5",
     "@types/dompurify": "^3.0.5",
-    "@types/gtag.js": "^0.0.18",
+    "@types/gtag.js": "^0.0.19",
     "@types/jsdom": "^21.1.6",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.12.5",
