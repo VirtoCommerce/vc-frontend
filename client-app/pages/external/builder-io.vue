@@ -1,6 +1,5 @@
 <template>
-  <VcLoaderOverlay v-if="isLoading" no-bg />
-  <div v-else-if="canShowContent">
+  <div v-if="canShowContent">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
 </template>
@@ -12,6 +11,13 @@ import { onBeforeRouteUpdate } from "vue-router";
 import { useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { builderIOComponents } from "@/shared/static-content";
+import type { StateType } from "./priorityManager";
+
+interface IEmits {
+  (event: "setState", value: StateType): void;
+}
+
+const emit = defineEmits<IEmits>();
 
 const { modulesSettings } = useThemeContext();
 
@@ -52,6 +58,8 @@ async function tryLoadContent(urlPath: string) {
   if (isEnabled.value && typeof apiKey.value === "string") {
     isLoading.value = true;
 
+    emit("setState", "loading");
+
     content.value = await fetchOneEntry({
       model: "page",
       cacheSeconds: IS_DEVELOPMENT ? 1 : 60,
@@ -65,6 +73,12 @@ async function tryLoadContent(urlPath: string) {
     isLoading.value = false;
 
     canShowContent.value = !!content.value || isPreviewing();
+
+    if (canShowContent.value) {
+      emit("setState", "ready");
+    } else {
+      emit("setState", "empty");
+    }
   }
 }
 

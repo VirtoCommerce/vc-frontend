@@ -1,16 +1,23 @@
 <template>
   <div>
-    <SlugContent :seo-url="seoUrl" />
-    <BuilderIo />
-    <NotFound />
+    <SlugContent
+      v-show="visibleComponent === 'slugContent'"
+      :seo-url="seoUrl"
+      @set-state="updateState($event, 'slugContent')"
+    />
+    <BuilderIo v-show="visibleComponent === 'builderIo'" @set-state="updateState($event, 'builderIo')" />
+    <div v-if="visibleComponent === 'loader'" class="min-h-[80vh]">
+      <VcLoaderOverlay />
+    </div>
+    <NotFound v-show="!visibleComponent" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { getVisiblePreviewer } from "./priorityManager";
-import type { PreviewerStateType } from "./priorityManager";
+import type { StateType, PreviewerStateType } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
 import BuilderIo from "@/pages/external/builder-io.vue";
 import SlugContent from "@/pages/external/slug-content.vue";
@@ -29,24 +36,19 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
+// The highest priority has the previewer whose 'priority' value is closer to zero
 const previewers = ref<{ [key in string]: PreviewerStateType }>({
   slugContent: {
     id: "slugContent",
     priority: 1,
     state: "initial",
     isActive: true,
-    meta: {
-      title: "",
-    },
   },
   builderIo: {
     id: "builderIo",
     priority: 2,
     state: "initial",
     isActive: true,
-    meta: {
-      title: "",
-    },
   },
 });
 
@@ -54,9 +56,9 @@ const visibleComponent = computed(() =>
   getVisiblePreviewer(Object.keys(previewers.value).map((key) => previewers.value[key])),
 );
 
-watch(props, () => {
-  console.log(visibleComponent.value);
-  previewers.value.builderIo.state = "loading";
-  previewers.value.slugContent.state = "loading";
-});
+function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
+  if (previewers.value[previewerId]) {
+    previewers.value[previewerId].state = state;
+  }
+}
 </script>

@@ -8,14 +8,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, watchEffect } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, watch, watchEffect } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
+import type { StateType } from "@/pages/external/priorityManager";
 
 interface IProps {
   seoUrl: string;
 }
+
+interface IEmits {
+  (event: "setState", value: StateType): void;
+}
+
+const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
@@ -28,6 +35,12 @@ const { setMatchingRouteName } = useNavigations();
 const { staticPage } = useStaticPage();
 
 const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo(computed(() => props.seoUrl));
+
+watch(loading, () => {
+  if (loading.value) {
+    emit("setState", "loading");
+  }
+});
 
 const objectType = computed(() => {
   return slugInfo.value?.entityInfo?.objectType;
@@ -44,16 +57,26 @@ watchEffect(async () => {
     await fetchContent();
     if (pageContent.value) {
       staticPage.value = pageContent.value;
+      emit("setState", "ready");
+    } else {
+      emit("setState", "empty");
     }
+    return;
   }
 
   switch (slugInfo.value?.entityInfo?.objectType) {
     case "CatalogProduct":
       matchingRouteName = "Product";
+      emit("setState", "ready");
       break;
     case "Category":
       matchingRouteName = "Category";
+      emit("setState", "ready");
       break;
+    default:
+      if (!loading.value) {
+        emit("setState", "empty");
+      }
   }
 
   setMatchingRouteName(matchingRouteName);
