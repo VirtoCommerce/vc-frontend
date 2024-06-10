@@ -149,8 +149,8 @@ function addItemToCart(item: Product | VariationType, quantity = 1, params?: Eve
 }
 
 function addItemsToCart(items: (Product | VariationType)[], params?: EventParamsExtendedType): void {
-  const subtotal: number = sumBy(items, (item) => item.price?.actual?.amount);
-  const inputItems = items.map((item) => productToGtagItem(item));
+  const subtotal: number = sumBy(items, (item) => item?.price?.actual?.amount);
+  const inputItems = items.filter((item) => item).map((item) => productToGtagItem(item));
 
   sendEvent("add_to_cart", {
     ...params,
