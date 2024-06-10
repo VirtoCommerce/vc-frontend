@@ -2,6 +2,7 @@
   <div
     :class="[
       'vc-product-title',
+      `vc-product-title--lines--${linesNumber}`,
       {
         'vc-product-title--link': linkTo,
         'vc-product-title--disabled': disabled,
@@ -34,12 +35,14 @@ interface IProps {
   target?: "_blank" | "_self";
   title?: string;
   disabled?: boolean;
+  linesNumber?: number | string;
 }
 
 defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   to: null,
+  linesNumber: 3,
 });
 
 const componentType = computed(() => (!props.disabled && props.to ? "router-link" : "div"));
@@ -56,6 +59,20 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   @apply text-[length:var(--font-size)] font-bold line-clamp-3;
 
   @apply leading-[1.17] #{!important};
+
+  &--lines {
+    &--1 {
+      @apply line-clamp-1;
+    }
+
+    &--2 {
+      @apply line-clamp-2;
+    }
+
+    &--3 {
+      @apply line-clamp-3;
+    }
+  }
 
   &--disabled {
     $disabled: &;

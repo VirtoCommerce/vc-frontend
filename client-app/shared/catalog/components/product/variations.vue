@@ -3,47 +3,34 @@
     v-if="!model.hidden && product.variations?.length"
     class="variations"
     size="lg"
-    :title="model.title || $t('shared.catalog.product_details.variations_block_title')"
+    :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
   >
-    <VcLineItems :with-header="false">
-      <template #line-items>
-        <VcLineItem
-          v-for="variation in [product, ...product.variations]"
-          :key="variation.code"
-          with-image
-          with-price
-          with-properties
-          :image-url="variation.images[0]?.url"
-          :name="variation.name"
-          :properties="getProperties(variation)"
-          :list-price="variation.price.list"
-          :actual-price="variation.price.actual"
-          :vendor="$cfg.vendor_enabled ? product.vendor : undefined"
-        >
-          <AddToCart :product="variation" />
+    <div class="variations__views" role="group">
+      <button type="button" class="variations__view" :disabled="!isTableView" @click="toggleView">
+        <VcIcon name="list" class="variations__icon" />
 
-          <div class="variations__badges">
-            <InStock
-              :is-in-stock="variation.availabilityData?.isInStock"
-              :quantity="variation.availabilityData?.availableQuantity"
-            />
+        {{ $t("shared.catalog.product_details.variations.list") }}
+      </button>
 
-            <CountInCart :product-id="variation.id" />
-          </div>
-        </VcLineItem>
-      </template>
-    </VcLineItems>
+      <button type="button" class="variations__view" :disabled="isTableView" @click="toggleView">
+        <VcIcon name="table" class="variations__icon" />
+
+        {{ $t("shared.catalog.product_details.variations.table") }}
+      </button>
+    </div>
+
+    <VariationsDefault v-if="!isTableView" :product="product" />
+
+    <VariationsTable v-else :product="product" />
   </VcWidget>
 </template>
 
 <script setup lang="ts">
-import { PropertyType } from "@/core/api/graphql/types";
-import { getPropertiesGroupedByName } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
-import CountInCart from "../count-in-cart.vue";
-import InStock from "../in-stock.vue";
-import type { Product, VariationType } from "@/core/api/graphql/types";
+import { ref } from "vue";
+import VariationsDefault from "./variations-default.vue";
+import VariationsTable from "./variations-table.vue";
+import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
@@ -55,15 +42,37 @@ interface IProps {
 
 defineProps<IProps>();
 
-function getProperties(variation: VariationType) {
-  return Object.values(getPropertiesGroupedByName(variation.properties ?? [], PropertyType.Product)).slice(0, 3);
+const isTableView = ref(false);
+
+function toggleView() {
+  isTableView.value = !isTableView.value;
 }
 </script>
 
 <style lang="scss">
 .variations {
-  &__badges {
-    @apply flex items-center flex-wrap gap-1 mt-1.5;
+  &__views {
+    @apply space-y-2;
+  }
+
+  &__view {
+    @apply p-2 rounded bg-transparent text-sm text-neutral font-bold;
+
+    &:hover {
+      @apply bg-neutral-50;
+    }
+
+    &:disabled {
+      @apply bg-neutral-100 text-neutral-950;
+    }
+  }
+
+  &__icon {
+    @apply size-5;
+
+    *:disabled > & {
+      @apply text-primary;
+    }
   }
 }
 </style>
