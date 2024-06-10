@@ -1,7 +1,6 @@
 import { computed, toValue } from "vue";
 import { useGetPage, useGetSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
-import { Logger } from "@/core/utilities";
 import type { PageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -45,10 +44,8 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
   const pageContent = computed(() => {
     let content: unknown;
 
-    try {
-      content = JSON.parse(contentResult?.value?.page?.content || "");
-    } catch (e) {
-      Logger.error(e as string);
+    if (typeof contentResult?.value?.page?.content === "string") {
+      content = JSON.parse(contentResult.value.page.content);
     }
 
     if (isPageContent(content)) {
