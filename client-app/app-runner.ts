@@ -10,6 +10,7 @@ import {
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
+import { useHotjar } from "@/core/composables/useHotjar";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -52,10 +53,11 @@ export default async () => {
   app.use(authPlugin);
 
   const { fetchUser, user } = useUser();
-  const { themeContext, fetchThemeContext, hasModuleSettings, getModuleSettings } = useThemeContext();
+  const { themeContext, fetchThemeContext } = useThemeContext();
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
+  const { init: initializeHotjar } = useHotjar();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
@@ -78,39 +80,7 @@ export default async () => {
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
   initializeGoogleAnalytics();
-
-  if (hasModuleSettings("VirtoCommerce.Hotjar")) {
-    const HOTJAR_SETTINGS_MAPPING = {
-      "Hotjar.EnableTracking": "isEnabled",
-      "Hotjar.SiteId": "id",
-      "Hotjar.SnippetVersion": "version",
-    } as const;
-
-    type HotjarSettingsType = {
-      isEnabled: boolean;
-      id: string;
-      version: string;
-    };
-
-    const hotjarSettings = getModuleSettings("VirtoCommerce.Hotjar", HOTJAR_SETTINGS_MAPPING) as HotjarSettingsType;
-    if (hotjarSettings.isEnabled) {
-      try {
-        const { useHotjar } = await import("vc-module-front-hotjar");
-        const { init: initHotjar } = useHotjar();
-        const { canUseDOM } = await import("@apollo/client/utilities");
-
-        initHotjar({
-          ...hotjarSettings,
-          canUseDOM,
-          isDevelopment: false,
-          logger: Logger,
-          userId: user.value.id,
-        });
-      } catch (e) {
-        Logger.error("Hotjar module initialization", e);
-      }
-    }
-  }
+  void initializeHotjar();
 
   /**
    * Creating plugin instances
