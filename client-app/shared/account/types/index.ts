@@ -53,6 +53,8 @@ export type CheckoutDefaults = {
 export type UserPersonalData = {
   firstName: string;
   lastName: string;
+  defaultLanguage?: string;
+  currencyCode?: string;
 };
 
 export type OrdersFilterData = {

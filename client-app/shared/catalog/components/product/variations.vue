@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import { sortBy } from "lodash";
 import { PropertyType } from "@/core/api/graphql/types";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
@@ -56,7 +57,9 @@ interface IProps {
 defineProps<IProps>();
 
 function getProperties(variation: VariationType) {
-  return Object.values(getPropertiesGroupedByName(variation.properties ?? [], PropertyType.Product)).slice(0, 3);
+  return Object.values(
+    getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
+  );
 }
 </script>
 

@@ -12,6 +12,7 @@ import {
   changePassword as _changePassword,
   sendVerifyEmail as _sendVerifyEmail,
   confirmEmailByToken,
+  updateContact,
 } from "@/core/api/graphql/account";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
@@ -146,17 +147,17 @@ export function useUser() {
     }
   }
 
-  async function updateUser(personalData: UserPersonalData): Promise<IdentityResultType> {
+  async function updateUser(personalData: UserPersonalData): Promise<void> {
     try {
       loading.value = true;
 
-      const result = await updatePersonalData(personalData);
+      await updateContact({
+        ...personalData,
+        id: user.value!.contact!.id,
+        organizations: user.value?.contact?.organizations?.items?.map((item) => item.id),
+      });
 
-      if (result.succeeded) {
-        await fetchUser({ withBroadcast: true });
-      }
-
-      return result;
+      await fetchUser({ withBroadcast: true });
     } catch (e) {
       Logger.error(`${useUser.name}.${updatePersonalData.name}`, e);
       throw e;
