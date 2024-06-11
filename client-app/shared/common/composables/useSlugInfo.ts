@@ -28,6 +28,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     if (!isReserved && RESERVED_URLS.includes(toValue(seoUrl))) {
       return null;
     }
+
     return result.value?.slugInfo;
   });
 

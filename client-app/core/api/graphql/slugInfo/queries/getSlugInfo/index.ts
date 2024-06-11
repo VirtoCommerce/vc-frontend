@@ -4,5 +4,5 @@ import type { QuerySlugInfoArgs } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
 export function useGetSlugInfo(payload: MaybeRefOrGetter<QuerySlugInfoArgs>) {
-  return useQuery(GetSlugInfoDocument, payload, { fetchPolicy: "cache-and-network" });
+  return useQuery(GetSlugInfoDocument, payload);
 }
