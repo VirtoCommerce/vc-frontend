@@ -1,4 +1,4 @@
-import { useModule } from "@/core/composables/useModule";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -17,19 +17,23 @@ type HotjarSettingsType = {
   version: string;
 };
 
-const { getModuleSettings, hasModuleSettings, isEnabled } = useModule(MODULE_ID);
+const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
 
 export function useHotjar() {
   async function init(): Promise<void> {
-    if (hasModuleSettings && isEnabled) {
+    if (hasModuleSettings) {
       try {
+        const settings = getModuleSettings(HOTJAR_SETTINGS_MAPPING) as HotjarSettingsType;
+        if (!settings.isEnabled) {
+          return;
+        }
         const { user } = useUser();
         const { useHotjarModule } = await import("vc-module-front-hotjar");
         const { initModule } = useHotjarModule();
         const { canUseDOM } = await import("@apollo/client/utilities");
 
         initModule({
-          settings: { ...(getModuleSettings(HOTJAR_SETTINGS_MAPPING) as HotjarSettingsType) },
+          settings,
           dependencies: {
             canUseDOM,
             isDevelopment: IS_DEVELOPMENT,
