@@ -56,7 +56,7 @@ function toggleView() {
   }
 
   &__view {
-    @apply p-2 rounded bg-transparent text-sm text-neutral font-bold;
+    @apply mb-6 p-2 rounded bg-transparent text-sm text-neutral font-bold;
 
     &:hover {
       @apply bg-neutral-50;

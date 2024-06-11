@@ -1,5 +1,5 @@
 <template>
-  <Category is-search-page />
+  <Category is-search-page hide-breadcrumbs />
 </template>
 
 <script setup lang="ts">
