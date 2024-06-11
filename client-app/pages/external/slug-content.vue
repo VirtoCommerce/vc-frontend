@@ -48,12 +48,12 @@ enum ObjectType {
 watchEffect(() => {
   if (loading.value) {
     emit("setState", "loading");
-  }
-  if (pageContent.value) {
+  } else if ([ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)) {
     emit("setState", "ready");
-  }
-  if ([ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)) {
+  } else if (pageContent.value) {
     emit("setState", "ready");
+  } else {
+    emit("setState", "empty");
   }
 });
 
