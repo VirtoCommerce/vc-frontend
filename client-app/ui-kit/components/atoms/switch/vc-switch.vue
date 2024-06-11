@@ -75,8 +75,8 @@ function change() {
   $checked: "";
   $disabled: "";
   $bg: "";
-  $left: left;
-  $right: right;
+  $left: "";
+  $right: "";
 
   --color: var(--color-neutral-300);
 
