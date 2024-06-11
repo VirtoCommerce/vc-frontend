@@ -16022,10 +16022,10 @@ __metadata:
 
 "vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git":
   version: 1.0.0
-  resolution: "vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git#commit=d2ef0384286be9c890a4c818e37107de2581d332"
+  resolution: "vc-module-front-hotjar@git@github.com:VirtoCommerce/vc-module-front-hotjar.git#commit=aa00786219258cfa88444b57886d67e2ece73aff"
   dependencies:
     "@hotjar/browser": "npm:^1.0.9"
-  checksum: 10c0/e9b41682d300940de298d1093555644739243dc05aab1b9d18fd2c88332eee504be7d47fb6ff1d92088cdbdaaf6ea5f52c650105b01da94663e18ee5528558aa
+  checksum: 10c0/6900bf9f7e8eda0dbb215db36ec6ccf1149328df89b0c33d204f21efbd5cd78fdd0f1e6277123962d2b1a18c6a7e8f4966d8be0151f04a140d06f95e71f2baab
   languageName: node
   linkType: hard
 

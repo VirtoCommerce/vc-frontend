@@ -13,6 +13,10 @@ function _useModuleSettings(moduleId: string) {
     return themeContext.value?.storeSettings?.modules.find((obj) => obj.moduleId === moduleId)?.settings;
   });
 
+  function isEnabled(key: string): boolean {
+    return moduleSettings.value?.find((obj) => obj.name === key)?.value === true;
+  }
+
   type SettingValueType = string | number | boolean | null;
   /**
    * Get normalized module settings
@@ -22,9 +26,9 @@ function _useModuleSettings(moduleId: string) {
    */
   function getModuleSettings<T extends Record<string, string>>(
     settingsMapping: T,
-  ): { [K in T[keyof T]]: SettingValueType } | null {
+  ): { [K in T[keyof T]]?: SettingValueType } {
     if (!moduleSettings.value) {
-      return null;
+      return {};
     }
 
     // Map settings based on the provided settingsMapping
@@ -41,8 +45,10 @@ function _useModuleSettings(moduleId: string) {
   }
 
   return {
-    hasModuleSettings: computed(() => modulesSettings.value.some((obj) => obj.moduleId === moduleId) || false),
     getModuleSettings,
+    hasModuleSettings: computed(() => modulesSettings.value.some((obj) => obj.moduleId === moduleId) || false),
+    isEnabled,
+    moduleSettings,
   };
 }
 
