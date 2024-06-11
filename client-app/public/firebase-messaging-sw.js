@@ -24,11 +24,11 @@ self.addEventListener("notificationclick", function (event) {
   event.waitUntil(self.clients.openWindow(event.notification?.data?.url || self.location.origin));
 });
 
-self.addEventListener("push", async function (event) {
+self.addEventListener("push", function (event) {
   const { data } = event.data.json();
-  const defaultIcon = await getDefaultIcon();
   event.waitUntil(
-    registration.pushManager.getSubscription().then(function () {
+    registration.pushManager.getSubscription().then(async () => {
+      const defaultIcon = await getDefaultIcon();
       return self.registration.showNotification(data?.title ?? "", {
         data: data.data,
         badge: data?.icon || defaultIcon,
