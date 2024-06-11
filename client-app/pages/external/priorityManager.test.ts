@@ -121,4 +121,42 @@ describe("getVisiblePreviewer", () => {
 
     expect(getVisiblePreviewer(test6)).toBe("loader");
   });
+
+  it("returns low priority but active previewer id with ready state", () => {
+    const test7: PreviewerStateType[] = [
+      {
+        id: "builderIo",
+        priority: 1,
+        state: "loading",
+        isActive: false,
+      },
+      {
+        id: "someOther",
+        priority: 10,
+        state: "ready",
+        isActive: true,
+      },
+    ];
+
+    expect(getVisiblePreviewer(test7)).toBe("someOther");
+  });
+
+  it("returns loader if max priority previewer is still loading", () => {
+    const test7: PreviewerStateType[] = [
+      {
+        id: "builderIo",
+        priority: 1,
+        state: "loading",
+        isActive: true,
+      },
+      {
+        id: "someOther",
+        priority: 10,
+        state: "ready",
+        isActive: true,
+      },
+    ];
+
+    expect(getVisiblePreviewer(test7)).toBe("loader");
+  });
 });

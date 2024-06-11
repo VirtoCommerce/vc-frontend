@@ -40,13 +40,13 @@ const seoUrl = computedEager(() => {
 const previewers = ref<{ [key in string]: PreviewerStateType }>({
   slugContent: {
     id: "slugContent",
-    priority: 1,
+    priority: 2,
     state: "initial",
     isActive: true,
   },
   builderIo: {
     id: "builderIo",
-    priority: 2,
+    priority: 1,
     state: "initial",
     isActive: true,
   },
