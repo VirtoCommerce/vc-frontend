@@ -68,6 +68,7 @@
     "utility-types": "^3.11.0",
     "uuid": "^9.0.1",
     "vc-module-front-hotjar": "git@github.com:VirtoCommerce/vc-module-front-hotjar.git",
+    "vc-modules-front-hotjar": "^1.0.12",
     "vee-validate": "~4.12.6",
     "vue": "^3.4.21",
     "vue-html-secure": "^1.0.10",

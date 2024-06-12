@@ -16029,6 +16029,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vc-modules-front-hotjar@npm:^1.0.12":
+  version: 1.0.12
+  resolution: "vc-modules-front-hotjar@npm:1.0.12"
+  dependencies:
+    "@hotjar/browser": "npm:^1.0.9"
+  checksum: 10c0/c33362003f384ad7dd3ca8f4c4ccb668241ceab13cc832d4dce6fa9649fd599ebf6161332a646aa0f3111c8790a59cc544ae70a8c869590dcacc2b6c02ddf519
+  languageName: node
+  linkType: hard
+
 "vc-theme-b2b-vue@workspace:.":
   version: 0.0.0-use.local
   resolution: "vc-theme-b2b-vue@workspace:."
@@ -16121,6 +16130,7 @@ __metadata:
     utility-types: "npm:^3.11.0"
     uuid: "npm:^9.0.1"
     vc-module-front-hotjar: "git@github.com:VirtoCommerce/vc-module-front-hotjar.git"
+    vc-modules-front-hotjar: "npm:^1.0.12"
     vee-validate: "npm:~4.12.6"
     vite: "npm:^5.2.10"
     vite-node: "npm:~1.2.2"
