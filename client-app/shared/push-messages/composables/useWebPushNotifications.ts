@@ -38,15 +38,9 @@ function _useWebPushNotifications() {
   let currentToken: string | undefined;
 
   const broadcast = useBroadcast();
-  const { favIcons } = useWhiteLabeling();
   const { isAuthenticated } = useUser();
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
-
-  const icon =
-    favIcons.value?.find(
-      ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-    )?.href || DEFAULT_ICON_URL;
 
   async function init() {
     const { modulesSettings } = useThemeContext();
@@ -55,6 +49,12 @@ function _useWebPushNotifications() {
     if (isAuthenticated.value === false || !moduleSettings || !(await isSupported())) {
       return;
     }
+
+    const { favIcons } = useWhiteLabeling();
+    const icon =
+      favIcons.value?.find(
+        ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
+      )?.href || DEFAULT_ICON_URL;
 
     const fcmSettings = moduleSettings.settings.reduce((settings: Partial<FcmSettingsType>, { name, value }) => {
       const settingName = SETTINGS_MAPPING[name as SettingNameType];

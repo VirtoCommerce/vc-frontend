@@ -83,7 +83,6 @@ export default async () => {
 
   initializeGoogleAnalytics();
   initHotjar();
-  void initializeWebPushNotifications();
 
   /**
    * Creating plugin instances
@@ -114,6 +113,7 @@ export default async () => {
   await setLocale(i18n, currentLocale.value);
 
   await fetchWhiteLabelingSettings();
+  void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
 
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
