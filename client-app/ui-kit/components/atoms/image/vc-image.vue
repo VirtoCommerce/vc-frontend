@@ -1,6 +1,6 @@
 <template>
   <img
-    :src="preparedSrc"
+    :src="addVersion(preparedSrc)"
     :alt="alt"
     :loading="lazy ? 'lazy' : 'eager'"
     :data-src="fallbackEnabled ? src : null"
@@ -15,12 +15,14 @@ import { computed, inject, ref, watch } from "vue";
 import { NO_IMAGE_URL } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { appendSuffixToFilename } from "@/core/utilities";
+import pkg from "../../../../../package.json";
 
 export interface IProps {
   lazy?: boolean;
   src?: string;
   alt?: string;
   fallbackSrc?: string;
+  cacheBusting?: boolean;
   /**
    * First you need to generate thumbnails in admin panel, section "Thumbnails" (vc-module-image-tools).
    * You can also set suffixes there.
@@ -68,6 +70,15 @@ function setFallback(): void {
     fallbackEnabled.value = true;
     originalEnabled.value = false;
   }
+}
+
+const { version } = pkg;
+
+function addVersion(src: string) {
+  if (props.cacheBusting) {
+    return `${src}?v=${version}`;
+  }
+  return src;
 }
 
 watch(
