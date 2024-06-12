@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 
 interface IProps {
   isInStock?: boolean;
@@ -40,8 +41,6 @@ const props = withDefaults(defineProps<IProps>(), {
   size: "xs",
   textEnabled: true,
 });
-
-const MAX_DISPLAY_IN_STOCK_QUANTITY = 9999;
 
 const inStockQuantityLabel = computed<string>(() =>
   props.quantity && props.quantity > MAX_DISPLAY_IN_STOCK_QUANTITY

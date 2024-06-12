@@ -72,8 +72,6 @@
       <div v-if="$slots.append" class="vc-input__decorator">
         <slot name="append" />
       </div>
-
-      <div class="vc-input__bg"></div>
     </div>
 
     <VcInputDetails :show-empty="showEmptyDetails" :message="message" :error="error" :single-line="singleLineMessage" />
@@ -227,7 +225,7 @@ function inputClick() {
   }
 
   &__container {
-    @apply z-0 relative flex items-stretch select-none;
+    @apply flex items-stretch border rounded bg-[--color-additional-50] select-none;
 
     #{$sizeSm} & {
       @apply h-9 text-sm;
@@ -237,9 +235,25 @@ function inputClick() {
       @apply h-11 text-base;
     }
 
+    &:has(input:focus) {
+      @apply ring ring-[--color-primary-100];
+
+      #{$error} & {
+        @apply ring-[--color-danger-100];
+      }
+    }
+
     #{$disabled} &,
-    &:disabled {
-      @apply cursor-not-allowed;
+    &:has(input:disabled) {
+      @apply bg-[--color-neutral-50] cursor-not-allowed;
+    }
+
+    #{$error} & {
+      @apply border-[--color-danger-500];
+    }
+
+    #{$noBorder} & {
+      @apply border-none;
     }
   }
 
@@ -307,31 +321,6 @@ function inputClick() {
 
   &__clear {
     @apply flex items-center p-3 text-[--color-primary-500];
-  }
-
-  &__bg {
-    @apply content-[''] z-[-1] absolute inset-0 bg-[--color-additional-50] border rounded;
-
-    input:focus ~ & {
-      @apply ring ring-[--color-primary-100];
-
-      #{$error} & {
-        @apply ring-[--color-danger-100];
-      }
-    }
-
-    #{$disabled} &,
-    input:disabled ~ & {
-      @apply bg-[--color-neutral-50];
-    }
-
-    #{$error} & {
-      @apply -inset-px border-[--color-danger-500];
-    }
-
-    #{$noBorder} & {
-      @apply border-none;
-    }
   }
 
   &__password-icon {
