@@ -5161,6 +5161,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@virto-commerce/front-modules-hotjar@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@virto-commerce/front-modules-hotjar@npm:1.0.2"
+  dependencies:
+    "@hotjar/browser": "npm:^1.0.9"
+  checksum: 10c0/6d387179b6997b4d84c8afc87679e7278e0d0ac4d2b33e4efe2379c31fc6a3a40563b06866cf4b46311efad790613f02adc1ffb2ea355d6a041e1fcdd8ff1e8c
+  languageName: node
+  linkType: hard
+
 "@vitejs/plugin-vue@npm:^5.0.4":
   version: 5.0.4
   resolution: "@vitejs/plugin-vue@npm:5.0.4"
@@ -16020,15 +16029,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vc-modules-front-hotjar@npm:^1.0.13":
-  version: 1.0.13
-  resolution: "vc-modules-front-hotjar@npm:1.0.13"
-  dependencies:
-    "@hotjar/browser": "npm:^1.0.9"
-  checksum: 10c0/b3ce80e219585dcc0b02cd826fc462faf3ad6b609ed0e532a639bf7f822abbd944feeed2a8ba0b5964109e552b23a2eb03c1ae5cab2c4a136edfc4098eedbdec
-  languageName: node
-  linkType: hard
-
 "vc-theme-b2b-vue@workspace:.":
   version: 0.0.0-use.local
   resolution: "vc-theme-b2b-vue@workspace:."
@@ -16071,6 +16071,7 @@ __metadata:
     "@unhead/vue": "npm:^1.8.10"
     "@vee-validate/rules": "npm:~4.12.6"
     "@vee-validate/yup": "npm:~4.12.6"
+    "@virto-commerce/front-modules-hotjar": "npm:^1.0.2"
     "@vitejs/plugin-vue": "npm:^5.0.4"
     "@vue/apollo-composable": "npm:^4.0.1"
     "@vue/eslint-config-prettier": "npm:^9.0.0"
@@ -16120,7 +16121,6 @@ __metadata:
     typescript: "npm:~5.4.0"
     utility-types: "npm:^3.11.0"
     uuid: "npm:^9.0.1"
-    vc-modules-front-hotjar: "npm:^1.0.13"
     vee-validate: "npm:~4.12.6"
     vite: "npm:^5.2.10"
     vite-node: "npm:~1.2.2"
