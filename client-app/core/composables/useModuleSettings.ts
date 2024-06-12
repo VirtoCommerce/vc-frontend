@@ -13,6 +13,8 @@ function _useModuleSettings(moduleId: string) {
     return themeContext.value?.storeSettings?.modules.find((obj) => obj.moduleId === moduleId)?.settings;
   });
 
+  const hasModuleSettings = computed(() => modulesSettings.value.some((obj) => obj.moduleId === moduleId) || false);
+
   function isEnabled(key: string): boolean {
     return moduleSettings.value?.find((obj) => obj.name === key)?.value === true;
   }
@@ -46,7 +48,7 @@ function _useModuleSettings(moduleId: string) {
 
   return {
     getModuleSettings,
-    hasModuleSettings: computed(() => modulesSettings.value.some((obj) => obj.moduleId === moduleId) || false),
+    hasModuleSettings,
     isEnabled,
     moduleSettings,
   };

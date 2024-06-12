@@ -50,7 +50,7 @@
     "@unhead/vue": "^1.8.10",
     "@vee-validate/rules": "~4.12.6",
     "@vee-validate/yup": "~4.12.6",
-    "@virto-commerce/front-modules-hotjar": "^1.0.2",
+    "@virto-commerce/front-modules-hotjar": "^1.0.4",
     "@vue/apollo-composable": "^4.0.1",
     "@vueuse/components": "^10.7.2",
     "@vueuse/core": "^10.7.2",
