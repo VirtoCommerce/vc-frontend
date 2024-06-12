@@ -34,7 +34,10 @@ function _useThemeContext() {
     if (IS_DEVELOPMENT) {
       const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
 
-      return getThemePreset(themeConfig, themePresetName);
+      const themePreset = getThemePreset(themeConfig, themePresetName);
+      themePreset.show_details_in_separate_tab = false;
+
+      return themePreset;
     } else {
       const { data } = await useFetch(`/cms-content/Themes/${storeId}/default/config/settings_data.json`)
         .get()
