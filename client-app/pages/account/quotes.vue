@@ -85,7 +85,9 @@
               @keyup.enter="goToQuoteDetails(itemData.item)"
             >
               <div class="flex flex-col">
-                <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400" />
+                <span class="text-sm text-gray-400">
+                  {{ $t("pages.account.quotes.quote_number_label") }}
+                </span>
 
                 <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
                   {{ itemData.item.number }}
@@ -97,7 +99,9 @@
               </div>
 
               <div class="flex flex-col">
-                <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400" />
+                <span class="text-sm text-gray-400">
+                  {{ $t("pages.account.quotes.date_label") }}
+                </span>
 
                 <span class="overflow-hidden text-ellipsis">
                   {{ $d(itemData.item?.createdDate) }}
@@ -105,7 +109,9 @@
               </div>
 
               <div class="flex flex-col">
-                <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400" />
+                <span class="text-sm text-gray-400">
+                  {{ $t("pages.account.quotes.total_label") }}
+                </span>
 
                 <span class="overflow-hidden text-ellipsis font-extrabold">
                   {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
@@ -117,22 +123,30 @@
           <template #mobile-skeleton>
             <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
               <div class="flex flex-col">
-                <span v-t="'pages.account.quotes.quote_number_label'" class="text-sm text-gray-400"></span>
+                <span class="text-sm text-gray-400">
+                  {{ $t("pages.account.quotes.quote_number_label") }}
+                </span>
                 <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
               </div>
 
               <div class="flex flex-col">
-                <span v-t="'pages.account.quotes.date_label'" class="text-sm text-gray-400"></span>
+                <span class="text-sm text-gray-400">
+                  {{ $t("pages.account.quotes.date_label") }}
+                </span>
                 <div class="h-6 animate-pulse bg-gray-200"></div>
               </div>
 
               <div class="flex flex-col">
-                <span v-t="'pages.account.quotes.total_label'" class="text-sm text-gray-400"></span>
+                <span class="text-sm text-gray-400">
+                  {{ $t("pages.account.quotes.total_label") }}
+                </span>
                 <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
               </div>
 
               <div class="flex flex-col">
-                <span v-t="'pages.account.quotes.status_label'" class="text-sm text-gray-400"></span>
+                <span class="text-sm text-gray-400">
+                  {{ $t("pages.account.quotes.status_label") }}
+                </span>
                 <div class="h-6 animate-pulse bg-gray-200"></div>
               </div>
             </div>

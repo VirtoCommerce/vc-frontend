@@ -11,7 +11,7 @@
       <template v-if="organization">
         <div class="hidden h-6 w-0.5 bg-primary xl:block"></div>
 
-        <div class="hidden max-w-[9rem] text-base font-medium italic leading-[18px] text-neutral-800 xl:line-clamp-2">
+        <div class="hidden max-w-36 text-base font-medium italic leading-[18px] text-neutral-800 xl:line-clamp-2">
           {{ organization?.name }}
         </div>
       </template>
@@ -24,10 +24,9 @@
         class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
         @click="toggleCatalogDropdown"
       >
-        <span
-          v-t="'shared.layout.header.bottom_header.catalog_menu_button'"
-          class="font-bold uppercase tracking-wide"
-        />
+        <span class="font-bold uppercase tracking-wide">
+          {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
+        </span>
 
         <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 text-primary" />
       </a>

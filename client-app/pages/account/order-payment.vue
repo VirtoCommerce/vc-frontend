@@ -45,12 +45,13 @@
             class="-mx-6 -mb-6 -mt-16 md:-mt-6 lg:-mx-9 lg:pl-14"
           >
             <template #description>
-              <h2
-                v-t="'pages.account.order_payment.success.title'"
-                class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left"
-              />
+              <h2 class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left">
+                {{ $t("pages.account.order_payment.success.title") }}
+              </h2>
 
-              <p v-t="'pages.account.order_payment.success.text'" class="mb-8 max-w-md text-center lg:text-left" />
+              <p class="mb-8 max-w-md text-center lg:text-left">
+                {{ $t("pages.account.order_payment.success.text") }}
+              </p>
             </template>
 
             <template #actions>
@@ -82,12 +83,13 @@
             class="-mx-9 -mb-6 -mt-16 md:-mt-6 lg:pl-14"
           >
             <template #description>
-              <h2
-                v-t="'pages.account.order_payment.failure.title'"
-                class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left"
-              />
+              <h2 class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left">
+                {{ $t("pages.account.order_payment.failure.title") }}
+              </h2>
 
-              <p v-t="'pages.account.order_payment.failure.text'" class="mb-8 max-w-md text-center lg:text-left" />
+              <p class="mb-8 max-w-md text-center lg:text-left">
+                {{ $t("pages.account.order_payment.failure.text") }}
+              </p>
             </template>
 
             <template #actions>
@@ -100,7 +102,9 @@
           <!-- Main content -->
           <template v-else>
             <!-- region Billing address -->
-            <h5 v-t="'pages.account.order_payment.billing_address_label'" class="mb-1 font-extrabold" />
+            <h5 class="mb-1 font-extrabold">
+              {{ $t("pages.account.order_payment.billing_address_label") }}
+            </h5>
 
             <div class="mb-6 rounded border">
               <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
@@ -121,12 +125,16 @@
                   </p>
 
                   <p class="truncate">
-                    <span v-t="'pages.account.order_payment.phone_label'" class="font-extrabold" />
+                    <span class="font-extrabold">
+                      {{ $t("pages.account.order_payment.phone_label") }}
+                    </span>
                     {{ payment?.billingAddress?.phone }}
                   </p>
 
                   <p class="truncate">
-                    <span v-t="'pages.account.order_payment.email_label'" class="font-extrabold" />
+                    <span class="font-extrabold">
+                      {{ $t("pages.account.order_payment.email_label") }}
+                    </span>
                     {{ payment?.billingAddress?.email }}
                   </p>
                 </div>
@@ -157,7 +165,9 @@
             <!-- endregion Billing address -->
 
             <!-- region Payment method -->
-            <h5 v-t="'pages.account.order_payment.payment_method_label'" class="mb-1 font-extrabold" />
+            <h5 class="mb-1 font-extrabold">
+              {{ $t("pages.account.order_payment.payment_method_label") }}
+            </h5>
 
             <div class="rounded border">
               <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">

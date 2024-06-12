@@ -9,17 +9,15 @@
     class="flex grow flex-col"
   >
     <template #title>
-      <h1
-        v-t="isPaymentSuccess ? 'pages.payment_result.title.success' : 'pages.payment_result.title.failed'"
-        class="mb-3 text-center text-2xl font-bold uppercase lg:hidden lg:text-left"
-      />
+      <h1 class="mb-3 text-center text-2xl font-bold uppercase lg:hidden lg:text-left">
+        {{ $t(isPaymentSuccess ? "pages.payment_result.title.success" : "pages.payment_result.title.failed") }}
+      </h1>
     </template>
 
     <template #description>
-      <h1
-        v-t="isPaymentSuccess ? 'pages.payment_result.title.success' : 'pages.payment_result.title.failed'"
-        class="mb-8 hidden text-center text-3xl font-bold uppercase lg:block lg:text-left"
-      />
+      <h1 class="mb-8 hidden text-center text-3xl font-bold uppercase lg:block lg:text-left">
+        {{ $t(isPaymentSuccess ? "pages.payment_result.title.success" : "pages.payment_result.title.failed") }}
+      </h1>
 
       <div class="mb-10 flex flex-col gap-4 lg:flex-row">
         <VcIcon
@@ -32,15 +30,15 @@
         <VcIcon v-else name="x-circle" size="md" class="hidden size-12 shrink-0 text-danger lg:flex" />
 
         <div class="max-w-md text-center text-lg lg:text-left">
-          <strong
-            v-t="{
-              path: isPaymentSuccess ? 'pages.payment_result.subtitle.success' : 'pages.payment_result.subtitle.failed',
-              args: [placedOrder!.number],
-            }"
-            class="mb-4 block"
-          />
+          <strong class="mb-4 block">
+            {{
+              $t(isPaymentSuccess ? "pages.payment_result.subtitle.success" : "pages.payment_result.subtitle.failed", [
+                placedOrder!.number,
+              ])
+            }}
+          </strong>
 
-          <span v-t="isPaymentSuccess ? 'pages.payment_result.text.success' : 'pages.payment_result.text.failed'" />
+          {{ $t(isPaymentSuccess ? "pages.payment_result.text.success" : "pages.payment_result.text.failed") }}
 
           <div class="mt-10 flex flex-wrap justify-center gap-3 lg:justify-start">
             <VcButton

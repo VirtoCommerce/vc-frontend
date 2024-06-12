@@ -182,7 +182,9 @@
         <svg class="size-3 shrink-0 text-primary lg:size-2.5">
           <use href="/static/images/link.svg#main"></use>
         </svg>
-        <span v-t="'pages.catalog.show_on_a_separate_page'" class="truncate"></span>
+        <span class="truncate">
+          {{ $t("pages.catalog.show_on_a_separate_page") }}
+        </span>
       </router-link>
     </div>
 
