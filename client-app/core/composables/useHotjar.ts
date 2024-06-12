@@ -13,16 +13,14 @@ export function useHotjar() {
     if (hasModuleSettings && isEnabled(IS_ENABLED_KEY)) {
       try {
         const { user } = useUser();
-        const { useHotjarModule } = await import("vc-module-front-hotjar");
+        const { useHotjarModule } = await import("vc-modules-front-hotjar");
         const { initModule } = useHotjarModule();
 
         initModule({
-          dependencies: {
-            getModuleSettings,
-            isDevelopment: IS_DEVELOPMENT,
-            logger: Logger,
-            userId: user.value.id,
-          },
+          getModuleSettings,
+          isDevelopment: IS_DEVELOPMENT,
+          logger: Logger,
+          userId: user.value.id,
         });
       } catch (e) {
         Logger.error(useHotjar.name, e);
