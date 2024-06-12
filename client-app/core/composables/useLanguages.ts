@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { useUser } from "@/shared/account/composables/useUser";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -8,6 +9,7 @@ import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
+const { user } = useUser();
 
 const savedLocale = useLocalStorage<string>("locale", "");
 
@@ -15,6 +17,7 @@ const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLang
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
+const contactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
 
 const currentLocale = computed<string>(() => {
   const localeInPath = location.pathname.split("/")[1];
@@ -24,6 +27,8 @@ const currentLocale = computed<string>(() => {
     locale = localeInPath;
   } else if (supportedLocales.value.includes(savedLocale.value)) {
     locale = savedLocale.value;
+  } else if (contactLocale.value && supportedLocales.value.includes(contactLocale.value)) {
+    locale = contactLocale.value;
   }
 
   return locale;
@@ -81,7 +86,7 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
   document.documentElement.setAttribute("lang", locale);
 }
 
-function saveLocaleAndReload(locale: string) {
+function saveLocale(locale: string, needToReload: boolean = true) {
   const { pathname } = location;
   const splitPathname = pathname.split("/");
   const localeInPath = splitPathname[1];
@@ -91,7 +96,10 @@ function saveLocaleAndReload(locale: string) {
     : pathname;
 
   savedLocale.value = locale;
-  location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
+
+  if (needToReload) {
+    location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
+  }
 }
 
 export function useLanguages() {
@@ -104,7 +112,7 @@ export function useLanguages() {
     currentLocale,
     currentLanguage,
     setLocale,
-    saveLocaleAndReload,
+    saveLocale,
     fetchLocaleMessages,
   };
 }

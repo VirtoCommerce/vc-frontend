@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { getLinkAttr } from "@/shared/static-content/utils";
+import { getLinkAttr } from "@/core/utilities/common";
 
 type ButtonType = {
   label: string;

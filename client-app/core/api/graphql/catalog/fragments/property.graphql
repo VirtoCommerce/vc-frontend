@@ -5,4 +5,5 @@ fragment property on Property {
   hidden
   propertyValueType
   label
+  displayOrder
 }
