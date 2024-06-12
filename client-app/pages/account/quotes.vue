@@ -185,6 +185,7 @@ import { useCreateQuoteMutation } from "@/core/api/graphql";
 import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { Sort } from "@/core/types";
+import { getLinkTarget } from "@/core/utilities";
 import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
 import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
@@ -245,11 +246,11 @@ function goToQuoteDetails(payload: { id: string; status?: string }): void {
   const pathName: string = payload.status === "Draft" ? "EditQuote" : "ViewQuote";
   const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
 
-  if (themeContext.value.settings?.show_details_in_separate_tab) {
-    window.open(quoteRoute.fullPath, "_blank")!.focus();
-  } else {
-    location.href = quoteRoute.fullPath;
-  }
+  const target = themeContext.value.settings.show_details_in_separate_tab
+    ? getLinkTarget(themeContext.value.settings.show_details_in_separate_tab)
+    : "_blank";
+
+  window.open(quoteRoute.fullPath, target)!.focus();
 }
 
 async function applyKeyword(): Promise<void> {

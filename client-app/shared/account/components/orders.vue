@@ -306,7 +306,7 @@ import { usePageHead } from "@/core/composables/usePageHead";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { Sort } from "@/core/types";
-import { toDateISOString } from "@/core/utilities";
+import { getLinkTarget, toDateISOString } from "@/core/utilities";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import DateFilterSelect from "./date-filter-select.vue";
@@ -449,11 +449,11 @@ function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
 
-  if (themeContext.value.settings?.show_details_in_separate_tab) {
-    window.open(orderRoute.fullPath, "_blank")!.focus();
-  } else {
-    location.href = orderRoute.fullPath;
-  }
+  const target = themeContext.value.settings.show_details_in_separate_tab
+    ? getLinkTarget(themeContext.value.settings.show_details_in_separate_tab)
+    : "_blank";
+
+  window.open(orderRoute.fullPath, target)!.focus();
 }
 
 function applyOrderFilters(): void {
