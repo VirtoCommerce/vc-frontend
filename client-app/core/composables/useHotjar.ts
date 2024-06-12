@@ -3,7 +3,7 @@ import Hotjar from "@hotjar/browser";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 
 const { modulesSettings } = useThemeContext();
 
