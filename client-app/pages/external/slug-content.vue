@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, watchEffect } from "vue";
 import { useNavigations } from "@/core/composables";
+import { Logger } from "@/core/utilities";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType } from "@/pages/external/priorityManager";
@@ -65,7 +66,12 @@ watchEffect(async () => {
   let matchingRouteName = "";
 
   if (hasContent.value) {
-    await fetchContent();
+    try {
+      await fetchContent();
+    } catch (e) {
+      Logger.error(e as string);
+      emit("setState", "empty");
+    }
     staticPage.value = pageContent.value || undefined;
     return;
   }
