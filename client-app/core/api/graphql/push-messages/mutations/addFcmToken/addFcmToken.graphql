@@ -1,0 +1,3 @@
+mutation AddFcmToken($command: InputAddFcmTokenType!) {
+  addFcmToken(command: $command)
+}
