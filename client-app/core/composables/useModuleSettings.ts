@@ -39,7 +39,7 @@ function _useModuleSettings(moduleId: string) {
     for (const setting of moduleSettings.value) {
       const mappedKey = settingsMapping[setting.name];
       if (mappedKey) {
-        result[mappedKey as keyof typeof result] = setting.value ?? null;
+        result[mappedKey as keyof typeof result] = setting.value;
       }
     }
 
