@@ -1445,7 +1445,7 @@
       "view_all": "View all notifications",
       "show_unread_only": "Show unread only"
     },
-    "infinity_scroll": {
+    "reach_limit": {
       "end_list": "You have reached the end of the list.",
       "page_limit": "No more results. Please try to change filters."
     }

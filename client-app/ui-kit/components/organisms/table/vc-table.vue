@@ -63,6 +63,7 @@
 
   <!-- Table footer -->
   <slot name="footer">
+    <p v-if="page === PAGE_LIMIT" class="mt-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
     <VcPagination
       v-if="!hideDefaultFooter && items.length && pages > 1"
       :page="page"
@@ -77,7 +78,7 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { PAGE_LIMIT, SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { toggleSortDirection } from "@/core/utilities";
 import type { ISortInfo } from "@/core/types";
 
