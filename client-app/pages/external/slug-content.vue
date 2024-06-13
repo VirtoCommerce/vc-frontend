@@ -82,5 +82,3 @@ watchEffect(async () => {
   setMatchingRouteName(matchingRouteName);
 });
 </script>
-
-<style scoped lang="scss"></style>

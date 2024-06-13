@@ -72,9 +72,7 @@ const previewers = ref<{ [key in string]: PreviewerStateType }>({
   },
 });
 
-const visibleComponent = computed(() =>
-  getVisiblePreviewer(Object.keys(previewers.value).map((key) => previewers.value[key])),
-);
+const visibleComponent = computed(() => getVisiblePreviewer(Object.values(previewers.value)));
 
 function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
   if (previewers.value[previewerId]) {
