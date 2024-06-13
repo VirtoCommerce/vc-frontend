@@ -244,6 +244,7 @@
             :loading="loadingMore"
             distance="400"
             class="mt-8"
+            :is-page-limit-reached="page === PAGE_LIMIT"
             @visible="loadMoreProducts"
           />
 
@@ -299,7 +300,7 @@ import {
   useRouteQueryParam,
   useThemeContext,
 } from "@/core/composables";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {

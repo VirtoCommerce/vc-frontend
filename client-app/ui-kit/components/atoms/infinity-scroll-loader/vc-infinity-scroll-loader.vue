@@ -19,7 +19,8 @@
           <use href="/static/images/badge-check.svg#badge-check" />
         </svg>
 
-        <span class="ml-3">You have reached the end of the list</span>
+        <span v-if="isPageLimitReached" class="ml-3">{{ $t("ui_kit.infinity_scroll.page_limit") }}</span>
+        <span v-else class="ml-3">{{ $t("ui_kit.infinity_scroll.end_list") }}</span>
       </p>
     </slot>
   </div>
@@ -27,26 +28,25 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, shallowRef, watch } from "vue";
-import type { PropType } from "vue";
 
-const emit = defineEmits<{ (event: "visible"): void }>();
+const emit = defineEmits<IEmits>();
 
-const props = defineProps({
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-
-  viewport: {
-    type: Object as PropType<Element | Document | null>,
-    default: null,
-  },
-
-  distance: {
-    type: [Number, String],
-    default: 0,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  loading: false,
+  viewport: null,
+  distance: 0,
 });
+
+interface IEmits {
+  (event: "visible"): void;
+}
+
+interface IProps {
+  loading?: boolean;
+  viewport?: Element | Document | null;
+  distance?: string | number;
+  isPageLimitReached?: boolean;
+}
 
 let observer: IntersectionObserver | null = null;
 const target = shallowRef<HTMLElement | null>(null);
