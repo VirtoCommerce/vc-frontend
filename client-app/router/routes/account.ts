@@ -19,6 +19,8 @@ const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const Notifications = () => import("@/pages/account/notifications.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
 
+const { themeContext } = useThemeContext();
+
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
   { path: "change-password", name: "ChangePasswordAccount", component: ChangePassword },
@@ -99,8 +101,6 @@ export const accountRoutes: RouteRecordRaw[] = [
       },
     ],
     beforeEnter(_to, _from, next) {
-      const { themeContext } = useThemeContext();
-
       if (themeContext.value.settings.quotes_enabled) {
         next();
       } else {
@@ -117,6 +117,13 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: "notifications",
     name: "Notifications",
     component: Notifications,
+    beforeEnter(_to, _from, next) {
+      if (themeContext.value?.settings?.push_messages_enabled) {
+        next();
+      } else {
+        next({ name: "Dashboard" });
+      }
+    },
   },
   {
     path: "impersonate/:userId",
