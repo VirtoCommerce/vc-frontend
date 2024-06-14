@@ -1,6 +1,6 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { getOrders } from "@/core/api/graphql/orders";
-import { DEFAULT_ORDERS_PER_PAGE, STATUS_ORDERS_FACET_NAME, PAGE_LIMIT } from "@/core/constants";
+import { DEFAULT_ORDERS_PER_PAGE, STATUS_ORDERS_FACET_NAME } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { Logger, toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
@@ -43,7 +43,7 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
         facet: STATUS_ORDERS_FACET_NAME,
       });
       orders.value = response.items ?? [];
-      pages.value = Math.min(Math.ceil((response.totalCount ?? 0) / itemsPerPage.value), PAGE_LIMIT);
+      pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
       facets.value = response.term_facets?.find((item) => item.name === STATUS_ORDERS_FACET_NAME)?.terms;
       setFacetsLocalization(facets.value);
     } catch (e) {

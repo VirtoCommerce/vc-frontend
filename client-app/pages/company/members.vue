@@ -307,6 +307,9 @@
               </div>
             </div>
           </template>
+          <template #page-limit-message>
+            {{ $t("ui_kit.reach_limit.page_limit_filters") }}
+          </template>
         </VcTable>
       </template>
     </VcWidget>
@@ -479,7 +482,7 @@ async function resetFilters() {
 function resetFiltersWithKeyword() {
   localKeyword.value = "";
   keyword.value = "";
-  resetFilters();
+  void resetFilters();
 }
 
 function hideFilters() {
@@ -493,7 +496,7 @@ function openInviteModal() {
     props: {
       onResult(succeed: boolean) {
         if (succeed) {
-          fetchContacts();
+          void fetchContacts();
         }
       },
     },
@@ -588,6 +591,6 @@ onClickOutside(
 );
 
 onMounted(() => {
-  fetchContacts();
+  void fetchContacts();
 });
 </script>

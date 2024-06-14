@@ -19,7 +19,8 @@
           <use href="/static/images/badge-check.svg#badge-check" />
         </svg>
 
-        <span v-if="isPageLimitReached" class="ml-3">{{ $t("ui_kit.reach_limit.page_limit") }}</span>
+        <span v-if="isPageLimitReached" class="ml-3">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
+
         <span v-else class="ml-3">{{ $t("ui_kit.reach_limit.end_list") }}</span>
       </p>
     </slot>

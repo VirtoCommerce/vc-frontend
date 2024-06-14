@@ -63,11 +63,15 @@
 
   <!-- Table footer -->
   <slot name="footer">
-    <p v-if="page === PAGE_LIMIT" class="mt-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+    <p v-if="pageLimit && page >= pageLimit" class="mt-3 text-center">
+      <slot name="page-limit-message">
+        {{ $t("ui_kit.reach_limit.page_limit") }}
+      </slot>
+    </p>
     <VcPagination
       v-if="!hideDefaultFooter && items.length && pages > 1"
       :page="page"
-      :pages="pages"
+      :pages="Math.min(pages, pageLimit || pages)"
       class="self-start"
       :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
       @update:page="onPageUpdate"
@@ -100,6 +104,7 @@ interface IProps {
   hideDefaultFooter?: boolean;
   layout?: string;
   description?: string;
+  pageLimit?: number | null;
 }
 
 const emit = defineEmits<IEmits>();
@@ -110,6 +115,7 @@ withDefaults(defineProps<IProps>(), {
   pages: 0,
   page: 0,
   layout: "table-fixed",
+  pageLimit: PAGE_LIMIT,
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
