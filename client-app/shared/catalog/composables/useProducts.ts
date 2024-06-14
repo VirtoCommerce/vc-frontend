@@ -1,5 +1,6 @@
 import { computed, inject, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
+import { PAGE_LIMIT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { Logger, rangeFacetToCommonFacet, termFacetToCommonFacet } from "@/core/utilities";
@@ -77,7 +78,10 @@ export function useProducts(
 
       products.value = items;
       total.value = totalCount;
-      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
+      pages.value = Math.min(
+        Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
+        PAGE_LIMIT,
+      );
 
       if (withFacets) {
         setFacets({
@@ -101,7 +105,10 @@ export function useProducts(
 
       products.value = products.value.concat(items);
       total.value = totalCount;
-      pages.value = Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE));
+      pages.value = Math.min(
+        Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
+        PAGE_LIMIT,
+      );
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
