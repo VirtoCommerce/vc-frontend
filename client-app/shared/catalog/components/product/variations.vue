@@ -6,7 +6,7 @@
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
   >
-    <div v-if="!isSmallScreen" class="variations__views" role="group">
+    <div v-if="!isSmallScreen" class="variations__views">
       <button type="button" class="variations__view" :disabled="!isTableView" @click="toggleView">
         <VcIcon name="list" class="variations__icon" />
 
