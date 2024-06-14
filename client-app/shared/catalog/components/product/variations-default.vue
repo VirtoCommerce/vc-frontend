@@ -18,8 +18,8 @@
 
         <div class="variations-default__badges">
           <InStock
-            :is-in-stock="variation.availabilityData?.isInStock"
-            :quantity="variation.availabilityData?.availableQuantity"
+            :is-in-stock="variation.availabilityData.isInStock"
+            :quantity="variation.availabilityData.availableQuantity"
           />
 
           <CountInCart :product-id="variation.id" />

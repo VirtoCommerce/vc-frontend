@@ -1,6 +1,6 @@
 <template>
   <div class="variations-table">
-    <VcTable :items="[product, ...variations]" :columns="columns" layout="table-fixed min-w-full w-auto">
+    <VcTable :items="variations" :columns="columns" layout="table-fixed min-w-full w-auto">
       <template #desktop-body>
         <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
           <td class="variations-table__col variations-table__col--title">
@@ -171,11 +171,11 @@ function getTableProperties() {
   const names = _.uniqBy(
     propertiesCombined.map((prop) => {
       return {
-        name: prop!.name,
-        label: prop!.label!,
+        name: prop.name,
+        label: prop.label,
       };
     }),
-    (obj) => obj.name,
+    "name",
   );
 
   _.each(names, ({ name, label }) => {

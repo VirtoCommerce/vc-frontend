@@ -2,7 +2,6 @@
   <div
     :class="[
       'vc-product-title',
-      `vc-product-title--lines--${linesNumber}`,
       {
         'vc-product-title--link': linkTo,
         'vc-product-title--disabled': disabled,
@@ -56,23 +55,9 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
   --font-size: var(--vc-product-title-font-size);
 
-  @apply text-[length:var(--font-size)] font-bold line-clamp-3;
+  @apply text-[length:var(--font-size)] font-bold line-clamp-[v-bind(linesNumber)];
 
   @apply leading-[1.17] #{!important};
-
-  &--lines {
-    &--1 {
-      @apply line-clamp-1;
-    }
-
-    &--2 {
-      @apply line-clamp-2;
-    }
-
-    &--3 {
-      @apply line-clamp-3;
-    }
-  }
 
   &--disabled {
     $disabled: &;
