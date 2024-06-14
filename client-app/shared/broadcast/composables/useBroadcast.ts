@@ -24,7 +24,7 @@ interface IUseBroadcastReturn {
      * Enum indicating whether an event will be send to the current or to the other or to the all tabs.
      */
     tabsType?: TabsType,
-  ) => void;
+  ) => Promise<void> | void;
 }
 
 const CHANNEL_NAME = "vc_cast";
@@ -53,22 +53,29 @@ function on(event: string, listener: (data: any) => void) {
   tryOnScopeDispose(() => off(event, listener));
 }
 
-function broadcast(event: string, data: any) {
+function isAsync(fn: (...args: unknown[]) => unknown): boolean {
+  return fn.constructor.name === "AsyncFunction";
+}
+
+async function broadcast(event: string, data: any) {
   Logger.debug("[Broadcast][Event]", event, data);
 
   if (!listeners[event]) {
     return;
   }
 
-  listeners[event].forEach((listener) => listener(data));
+  const asyncListeners = listeners[event].filter(isAsync);
+  const syncListeners = listeners[event].filter((listener) => !isAsync(listener));
+  await Promise.allSettled(asyncListeners.map((listener) => listener(data)));
+  syncListeners.forEach((listener) => listener(data));
 }
 
 function broadcastChannelApiFactory(): IUseBroadcastReturn {
   const channel = new BroadcastChannel(CHANNEL_NAME);
 
-  channel.onmessage = ({ data: { event, data } }) => broadcast(event, data);
+  channel.onmessage = async ({ data: { event, data } }) => await broadcast(event, data);
 
-  function emit(event: string, data: any, tabsType: TabsType = TabsType.OTHERS) {
+  async function emit(event: string, data: any, tabsType: TabsType = TabsType.OTHERS) {
     Logger.debug("[Broadcast][Emit]", event, data);
 
     if ([TabsType.ALL, TabsType.OTHERS].includes(tabsType)) {
@@ -76,7 +83,7 @@ function broadcastChannelApiFactory(): IUseBroadcastReturn {
     }
 
     if ([TabsType.ALL, TabsType.CURRENT].includes(tabsType)) {
-      broadcast(event, data);
+      return await broadcast(event, data);
     }
   }
 
