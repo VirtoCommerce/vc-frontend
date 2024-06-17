@@ -224,7 +224,10 @@
       </div>
     </section>
     <!-- endregion Main menu section -->
-    <div class="overlay fixed inset-y-0 right-0 hidden bg-black/5 backdrop-blur-lg md:block" @click="$emit('close')" />
+    <div
+      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-black/5 backdrop-blur-lg md:block"
+      @click="$emit('close')"
+    />
   </nav>
 </template>
 
@@ -315,11 +318,11 @@ onMounted(() => {
   @apply text-lg tracking-[0.01em] text-[--color-additional-50];
 }
 
-.overlay {
+.mobile-menu__overlay {
   @apply left-[var(--sidebar-max-width)];
 }
 
-.is-visible .overlay {
+.is-visible .mobile-menu__overlay {
   animation: fadeIn 0.4s forwards;
 }
 
