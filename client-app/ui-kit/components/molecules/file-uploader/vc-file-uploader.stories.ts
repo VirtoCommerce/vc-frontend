@@ -1,17 +1,19 @@
 import { VcFileUploader } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
+const VIEW_OPTIONS = ["horizontal", "vertical"];
+
 export default {
   title: "Components/Molecules/VcFileUploader",
   component: VcFileUploader,
   argTypes: {
     view: {
       control: "inline-radio",
-      options: ["horizontal", "vertical"],
+      options: VIEW_OPTIONS,
       type: { name: "string", required: false },
       table: {
         type: {
-          summary: ["horizontal", "vertical"],
+          summary: VIEW_OPTIONS.join(" | "),
         },
       },
     },
