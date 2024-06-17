@@ -5,6 +5,7 @@ module.exports = {
   root: true,
   env: {
     node: true,
+    worker: true
   },
   extends: [
     "eslint:recommended", // See rules: https://eslint.org/docs/latest/rules/

@@ -1,3 +1,8 @@
 .vc-layout-with-right-sidebar {
-  @apply p-0;
+  @apply p-0 flex-col items-stretch;
+
+  &__main,
+  &__sidebar {
+    @apply contents;
+  }
 }
