@@ -293,6 +293,9 @@
           </td>
         </tr>
       </template>
+      <template #page-limit-message>
+        {{ $t("ui_kit.reach_limit.page_limit_filters") }}
+      </template>
     </VcTable>
   </div>
 </template>
