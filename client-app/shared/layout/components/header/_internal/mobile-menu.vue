@@ -1,7 +1,5 @@
 <template>
-  <nav
-    class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-accent-200 shadow-lg md:shadow-md"
-  >
+  <nav class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-accent-200">
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
         <span
@@ -308,6 +306,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .mobile-menu {
   --sidebar-max-width: 430px;
+  box-shadow: 5px 0 15px 0 rgba(0, 0, 0, 0.5);
 
   @apply md:max-w-[var(--sidebar-max-width)];
 }
@@ -321,7 +320,7 @@ onMounted(() => {
 }
 
 .is-visible .overlay {
-  animation: fadeIn 0.3s forwards;
+  animation: fadeIn 0.4s forwards;
 }
 
 @keyframes fadeIn {
