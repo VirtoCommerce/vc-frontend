@@ -5802,6 +5802,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@virto-commerce/front-modules-hotjar@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@virto-commerce/front-modules-hotjar@npm:1.0.4"
+  dependencies:
+    "@hotjar/browser": "npm:^1.0.9"
+  checksum: 10c0/46ad13f4b8c483d073a9e1ae8d7768ed9707ece1a361604c2b9f8a7bbeaa1ffd05e83973b5eccbe7d1499c61be32137c85773d040fa86a44ba16817952a0e4bb
+  languageName: node
+  linkType: hard
+
 "@vitejs/plugin-vue@npm:^5.0.4":
   version: 5.0.4
   resolution: "@vitejs/plugin-vue@npm:5.0.4"
@@ -16771,7 +16780,6 @@ __metadata:
     "@graphql-codegen/typescript": "npm:4.0.4"
     "@graphql-codegen/typescript-operations": "npm:4.1.2"
     "@headlessui/vue": "npm:^1.7.17"
-    "@hotjar/browser": "npm:^1.0.9"
     "@popperjs/core": "npm:^2.11.8"
     "@rollup/plugin-graphql": "npm:^2.0.4"
     "@rushstack/eslint-patch": "npm:^1.8.0"
@@ -16798,6 +16806,7 @@ __metadata:
     "@unhead/vue": "npm:^1.8.10"
     "@vee-validate/rules": "npm:~4.12.6"
     "@vee-validate/yup": "npm:~4.12.6"
+    "@virto-commerce/front-modules-hotjar": "npm:^1.0.4"
     "@vitejs/plugin-vue": "npm:^5.0.4"
     "@vue/apollo-composable": "npm:^4.0.1"
     "@vue/eslint-config-prettier": "npm:^9.0.0"
