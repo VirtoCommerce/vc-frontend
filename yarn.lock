@@ -13493,12 +13493,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^11.2.0":
-  version: 11.2.0
-  resolution: "marked@npm:11.2.0"
+"marked@npm:13.0.0":
+  version: 13.0.0
+  resolution: "marked@npm:13.0.0"
   bin:
     marked: bin/marked.js
-  checksum: 10c0/4713cceabdcd0b4de9a156d601a55ae7e9091cd89ba75d8283042ddbbedb7cd765e02445a80be01131aa24a79003346fc650d66bf4423f7aa186dcc46b403849
+  checksum: 10c0/ddae525b0f4ad3805b6bce5e12a65d6286ca557e4357006aedd92494e9613113b4773a8821894d63947818686853e40177d654e53a85cb4999de4003adf1472d
   languageName: node
   linkType: hard
 
@@ -18150,7 +18150,7 @@ __metadata:
     jsdom: "npm:^24.1.0"
     lint-staged: "npm:^15.2.7"
     lodash: "npm:^4.17.21"
-    marked: "npm:^11.2.0"
+    marked: "npm:13.0.0"
     maska: "npm:^2.1.11"
     npm-run-all2: "npm:^6.2.0"
     postcss: "npm:^8.4.38"
