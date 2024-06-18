@@ -7,10 +7,10 @@ import {
   useLanguages,
   useThemeContext,
   useGoogleAnalytics,
-  useHotjar,
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
+import { useHotjar } from "@/core/composables/useHotjar";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -58,7 +58,7 @@ export default async () => {
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
-  const { init: initHotjar } = useHotjar();
+  const { init: initializeHotjar } = useHotjar();
   const { init: initializeWebPushNotifications } = useWebPushNotifications();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
@@ -82,7 +82,7 @@ export default async () => {
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
   initializeGoogleAnalytics();
-  initHotjar();
+  void initializeHotjar();
 
   /**
    * Creating plugin instances
