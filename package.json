@@ -68,7 +68,7 @@
     "swiper": "11.1.4",
     "tw-elements": "^1.1.0",
     "utility-types": "^3.11.0",
-    "uuid": "^9.0.1",
+    "uuid": "^10.0.0",
     "vee-validate": "~4.13.1",
     "vue": "^3.4.29",
     "vue-html-secure": "^1.0.10",

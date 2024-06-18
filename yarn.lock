@@ -18033,7 +18033,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^9.0.0, uuid@npm:^9.0.1":
+"uuid@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "uuid@npm:10.0.0"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 10c0/eab18c27fe4ab9fb9709a5d5f40119b45f2ec8314f8d4cf12ce27e4c6f4ffa4a6321dc7db6c515068fa373c075b49691ba969f0010bf37f44c37ca40cd6bf7fe
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^9.0.0":
   version: 9.0.1
   resolution: "uuid@npm:9.0.1"
   bin:
@@ -18158,7 +18167,7 @@ __metadata:
     tw-elements: "npm:^1.1.0"
     typescript: "npm:~5.4.5"
     utility-types: "npm:^3.11.0"
-    uuid: "npm:^9.0.1"
+    uuid: "npm:^10.0.0"
     vee-validate: "npm:~4.13.1"
     vite: "npm:^5.3.1"
     vite-node: "npm:~1.6.0"
