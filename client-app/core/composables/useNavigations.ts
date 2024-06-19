@@ -8,6 +8,7 @@ import {
   getFilterExpressionForZeroPrice,
   Logger,
 } from "@/core/utilities";
+import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
 import { categoryToExtendedMenuLink, getTranslatedMenuLink } from "../utilities/menu";
 import type { ExtendedMenuLinkType } from "../types";
@@ -49,6 +50,10 @@ const mobileAccountMenuItem = computed<ExtendedMenuLinkType | null>(() =>
 
 const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | null>(() =>
   menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : null,
+);
+
+const mobileContactOrganizationsMenu = computed(() =>
+  mobileAccountMenuItem.value?.children?.find((item) => item.id === "contact-organizations"),
 );
 
 const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | null>(() => {
@@ -93,6 +98,19 @@ export function useNavigations() {
     }
   }
 
+  function fetchMobileContactOrganizationsMenu() {
+    const { user } = useUser();
+
+    if (mobileContactOrganizationsMenu.value) {
+      mobileContactOrganizationsMenu.value.children =
+        user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
+          id: item.id,
+          title: item.name,
+          isContactOrganizationsItem: true,
+        }));
+    }
+  }
+
   async function fetchCatalogMenu() {
     const { catalog_menu_link_list_name, catalog_empty_categories_enabled, zero_price_product_enabled } =
       themeContext.value.settings;
@@ -133,6 +151,7 @@ export function useNavigations() {
   async function fetchMenus() {
     loading.value = true;
     await Promise.all([fetchMenuSchema(), fetchCatalogMenu(), fetchFooterLinks()]);
+    fetchMobileContactOrganizationsMenu();
     loading.value = false;
   }
 
@@ -171,6 +190,7 @@ export function useNavigations() {
     mobileCatalogMenuItem,
     mobileAccountMenuItem,
     mobileCorporateMenuItem,
+    mobileContactOrganizationsMenu,
     mobilePreSelectedMenuItem,
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),

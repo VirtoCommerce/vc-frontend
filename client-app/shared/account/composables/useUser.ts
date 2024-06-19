@@ -1,6 +1,7 @@
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
+import { useFetch } from "@/core/api/common";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -14,9 +15,17 @@ import {
   confirmEmailByToken,
   updateContact,
 } from "@/core/api/graphql/account";
+import { useAuth } from "@/core/composables/useAuth";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { TabsType, useBroadcast, userLockedEvent, userReloadEvent, passwordExpiredEvent } from "@/shared/broadcast";
+import {
+  TabsType,
+  useBroadcast,
+  userLockedEvent,
+  userReloadEvent,
+  passwordExpiredEvent,
+  reloadAndOpenMainPage,
+} from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
@@ -29,6 +38,7 @@ import type {
   Organization,
   UserType,
 } from "@/core/api/graphql/types";
+import type { ConnectTokenResponseType } from "@/core/types";
 import type {
   ForgotPassword,
   RegisterOrganization,
@@ -43,7 +53,10 @@ const user = ref<UserType>();
 
 const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
-const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
+const organization = eagerComputed<Organization | null>(
+  () =>
+    user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
+);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 interface IPasswordExpirationEntry {
@@ -54,6 +67,7 @@ interface IPasswordExpirationEntry {
 export function useUser() {
   const broadcast = useBroadcast();
   const { openModal, closeModal } = useModal();
+  const { setTokenType, setAccessToken, setExpiresAt } = useAuth();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -322,6 +336,41 @@ export function useUser() {
     }
   }
 
+  async function switchOrganization(organizationId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      const { error, data } = await useFetch("/connect/token")
+        .post(
+          new URLSearchParams({
+            grant_type: "switch_organization",
+            user_id: globals.userId,
+            organization_id: organizationId,
+          }),
+          "application/x-www-form-urlencoded",
+        )
+        .json<ConnectTokenResponseType>();
+
+      if (data.value && !error.value) {
+        const { access_token, token_type, expires_in } = data.value;
+
+        setAccessToken(access_token);
+        setExpiresAt(expires_in);
+        setTokenType(token_type);
+
+        setTimeout(() => {
+          broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+        }, 1000);
+      } else {
+        Logger.error(switchOrganization.name, error.value);
+      }
+    } catch (e) {
+      Logger.error(switchOrganization.name, e);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     isAuthenticated,
     isCorporateMember,
@@ -339,6 +388,7 @@ export function useUser() {
     registerByInvite,
     changePassword,
     sendVerifyEmail,
+    switchOrganization,
     loading: readonly(loading),
     user: computed({
       get() {

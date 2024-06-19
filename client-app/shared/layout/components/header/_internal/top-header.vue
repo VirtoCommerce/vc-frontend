@@ -57,9 +57,9 @@
 
           <div
             v-if="loginMenuVisible"
-            class="absolute right-0 top-full z-10 flex w-60 flex-col space-y-3 rounded-md bg-additional-50 px-3 py-4 text-black shadow-md"
+            class="absolute right-0 top-full z-10 flex w-60 flex-col rounded-md bg-additional-50 text-black shadow-md"
           >
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between p-3">
               <router-link
                 to="/account/dashboard"
                 class="flex items-center hover:text-primary"
@@ -83,6 +83,25 @@
               >
                 <VcIcon name="logout" />
               </VcButton>
+            </div>
+
+            <div
+              v-if="user.contact?.organizations?.items && user.contact.organizations.items.length > 1"
+              class="border-t py-3"
+            >
+              <div class="px-3 py-1 text-xs text-neutral-600">
+                {{ $t("common.labels.organizations") }}
+              </div>
+
+              <VcRadioButton
+                v-for="organization in user.contact?.organizations?.items"
+                :key="organization.id"
+                v-model="contactOrganizationId"
+                :label="organization.name"
+                :value="organization.id"
+                class="px-3 py-1 text-sm"
+                @change="selectOrganization"
+              />
             </div>
           </div>
         </div>
@@ -117,11 +136,21 @@ import { useSignMeOut, useUser } from "@/shared/account";
 import { CurrencySelector, LanguageSelector } from "@/shared/layout";
 import TopHeaderLink from "./top-header-link.vue";
 
-const { isAuthenticated, user, operator } = useUser();
+const { isAuthenticated, user, operator, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
+const contactOrganizationId = ref(user.value?.contact?.organizationId);
+
+async function selectOrganization(): Promise<void> {
+  if (!contactOrganizationId.value) {
+    return;
+  }
+
+  await switchOrganization(contactOrganizationId.value);
+  loginMenuVisible.value = false;
+}
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;

@@ -83,6 +83,12 @@
             "icon": "/static/images/dashboard/icons/profile.svg#main"
           },
           {
+            "id": "contact-organizations",
+            "route": { "name": "Profile" },
+            "title": "common.labels.my_organizations",
+            "icon": "/static/images/dashboard/icons/company.svg#main"
+          },
+          {
             "route": { "name": "ChangePassword" },
             "title": "shared.layout.header.mobile.account_menu.change_password",
             "icon": "/static/images/dashboard/icons/pass.svg#main"
