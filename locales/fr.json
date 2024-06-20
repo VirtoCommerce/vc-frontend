@@ -168,5 +168,21 @@
         }
       }
     }
+  },
+  "validation_error": {
+    "PRODUCT_QTY_CHANGED": "Vous pouvez commander au maximum {availQty} article(s)",
+    "CART_PRODUCT_UNAVAILABLE": "Le produit n'est plus disponible à l'achat.",
+    "CART_PRODUCT_INACTIVE": "Le produit est inactif.",
+    "PRODUCT_PRICE_INVALID": "Le prix est invalide.",
+    "PRODUCT_FFC_QTY": "Le produit est en rupture de stock",
+    "PRODUCT_MIN_QTY": "Vous pouvez commander au minimum {minQty} article(s)",
+    "PRODUCT_MAX_QTY": "Vous pouvez commander au maximum {maxQty} article(s)",
+    "PRODUCT_MIN_MAX_QTY": "Vous pouvez commander de {minQty} à {maxQty} article(s)",
+    "UNABLE_SET_LESS_PRICE": "Impossible de fixer un prix inférieur.",
+    "LINE_ITEM_NOT_FOUND": "Élément de ligne introuvable.",
+    "LINE_ITEM_IS_READ_ONLY": "L'élément de ligne est en lecture seule.",
+    "PRODUCT_QTY_INSUFFICIENT": "La quantité disponible du produit {availQty} est insuffisante pour la quantité demandée {new_qty}",
+    "PRODUCT_MIN_QTY_NOT_AVAILABLE": "La quantité minimale de commande {minQty} article(s) n'est pas disponible en stock",
+    "PRODUCT_EXACT_QTY": "Vous pouvez commander {minQty} article(s)"
   }
 }
