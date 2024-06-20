@@ -174,8 +174,8 @@
 
       <router-link
         :to="link"
+        :target="target"
         class="mt-2.5 flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-[1.35rem] lg:text-xs"
-        target="_blank"
       >
         <svg class="size-3 shrink-0 text-primary lg:size-2.5">
           <use href="/static/images/link.svg#main"></use>

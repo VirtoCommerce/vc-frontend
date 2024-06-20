@@ -224,7 +224,7 @@
             :view-mode="savedViewMode"
             :items-per-page="itemsPerPage"
             :products="products"
-            open-product-in-new-tab
+            :open-product-in-new-tab="$cfg.show_details_in_separate_tab"
             :card-type="cardType"
             :columns-amount-desktop="columnsAmountDesktop"
             :columns-amount-tablet="columnsAmountTablet"
