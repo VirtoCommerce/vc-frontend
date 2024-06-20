@@ -6,12 +6,10 @@
         'vc-dropdown-menu--disabled': disabled,
       },
     ]"
-    :placement="placement"
-    :x-offset="xOffset"
-    :y-offset="yOffset"
-    :z-index="zIndex"
     :width="width"
-    :trigger="trigger"
+    :placement="placement"
+    :offset-options="offsetOptions"
+    :z-index="zIndex"
     :disabled="disabled"
     :disable-trigger-events="disableTriggerEvents"
     @toggle="$emit('toggle', $event)"
@@ -36,11 +34,10 @@ interface IEmits {
 }
 
 interface IProps {
-  placement?: VcDropdownMenuPlacement;
+  placement?: VcDropdownMenuPlacementType;
   maxHeight?: string;
-  xOffset?: number | string;
-  yOffset?: number | string;
-  trigger?: "hover" | "click";
+  offsetOptions?: VcDropdownMenuOffsetOptionsType;
+  hover?: boolean;
   disabled?: boolean;
   width?: string;
   zIndex?: number | string;
@@ -52,10 +49,8 @@ defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   placement: "bottom-start",
   maxHeight: "12rem",
-  yOffset: "4",
-  trigger: "click",
+  offsetOptions: 4,
   width: "auto",
-  zIndex: 1,
 });
 </script>
 

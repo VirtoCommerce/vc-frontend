@@ -33,7 +33,7 @@
     </div>
 
     <!-- Product title -->
-    <VcTooltip class="w-full" placement="bottom" strategy="fixed">
+    <VcTooltip class="w-full" placement="bottom-start">
       <template #trigger>
         <router-link
           :to="link"
@@ -46,9 +46,7 @@
       </template>
 
       <template #content>
-        <div class="max-w-64 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs shadow-md">
-          {{ product.name }}
-        </div>
+        {{ product.name }}
       </template>
     </VcTooltip>
 
@@ -116,8 +114,8 @@
 
         <router-link
           :to="link"
+          :target="target"
           class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
-          target="_blank"
         >
           <svg class="size-3 shrink-0 text-primary lg:size-2.5">
             <use href="/static/images/link.svg#main"></use>
