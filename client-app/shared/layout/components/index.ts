@@ -4,5 +4,3 @@ export { default as NestedMobileHeader } from "./nested-mobile-header/nested-mob
 export { default as SearchBar } from "./search-bar/search-bar.vue";
 export { default as SecureLayout } from "./secure-layout/secure-layout.vue";
 export { default as TwoColumn } from "./two-column.vue";
-export { default as VcFooter } from "./footer/vc-footer.vue";
-export { default as VcHeader } from "./header/vc-header.vue";
