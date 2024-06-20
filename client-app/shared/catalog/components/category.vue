@@ -140,7 +140,7 @@
               @click.prevent="openBranchesModal(false)"
               @keyup.enter.prevent="openBranchesModal(false)"
             >
-              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
+              <VcTooltip placement="bottom-start" width="13rem">
                 <template #trigger>
                   <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
                     <i18n-t
