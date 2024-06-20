@@ -152,6 +152,7 @@
     },
     "account": {
       "navigation": {
+        "corporate_title": "Entreprise",
         "links": {
           "dashboard": "@:common.links.dashboard",
           "profile": "@:common.links.profile",
