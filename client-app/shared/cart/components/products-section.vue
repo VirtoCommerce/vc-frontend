@@ -52,9 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import CartLineItems from "./cart-line-items.vue";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { LineItemsGroupByVendorType } from "@/core/types";
+import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
 interface IEmits {
   (event: "change:itemQuantity", value: { itemId: string; quantity: number }): void;
