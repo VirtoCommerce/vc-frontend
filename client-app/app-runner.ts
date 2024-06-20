@@ -7,10 +7,10 @@ import {
   useLanguages,
   useThemeContext,
   useGoogleAnalytics,
-  useHotjar,
   useWhiteLabeling,
   useNavigations,
 } from "@/core/composables";
+import { useHotjar } from "@/core/composables/useHotjar";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
@@ -19,6 +19,7 @@ import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
+import { useWebPushNotifications } from "@/shared/push-messages/composables/useWebPushNotifications";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
@@ -57,7 +58,8 @@ export default async () => {
   const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
-  const { init: initHotjar } = useHotjar();
+  const { init: initializeHotjar } = useHotjar();
+  const { init: initializeWebPushNotifications } = useWebPushNotifications();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
@@ -80,7 +82,7 @@ export default async () => {
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
   initializeGoogleAnalytics();
-  initHotjar();
+  void initializeHotjar();
 
   /**
    * Creating plugin instances
@@ -111,6 +113,7 @@ export default async () => {
   await setLocale(i18n, currentLocale.value);
 
   await fetchWhiteLabelingSettings();
+  void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
 
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);

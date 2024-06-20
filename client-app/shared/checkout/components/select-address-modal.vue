@@ -190,7 +190,13 @@
 
       <template #footer>
         <div v-if="pages > 1" class="flex justify-start border-b border-neutral-200">
-          <VcPagination v-model:page="page" :pages="pages" class="mt-5 self-start px-5 pb-5"></VcPagination>
+          <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+
+          <VcPagination
+            v-model:page="page"
+            :pages="Math.min(pages, PAGE_LIMIT)"
+            class="mt-5 self-start px-5 pb-5"
+          ></VcPagination>
         </div>
       </template>
     </VcTable>
@@ -201,6 +207,7 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { computed, watchEffect, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { PAGE_LIMIT } from "@/core/constants";
 import { isEqualAddresses, isMemberAddressType } from "@/core/utilities";
 import type { AnyAddressType } from "@/core/types";
 

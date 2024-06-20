@@ -7,7 +7,7 @@
         </span>
 
         <span class="uppercase text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]">
-          {{ currentCurrency?.code }}
+          {{ currentCurrency.code }}
         </span>
 
         <VcIcon class="text-primary" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
@@ -18,7 +18,7 @@
       <VcMenuItem
         v-for="item in supportedCurrencies"
         :key="item.code"
-        :active="item.code === currentCurrency?.code"
+        :active="item.code === currentCurrency.code"
         color="secondary"
         @click="
           select(item.code);
@@ -40,11 +40,11 @@
 <script setup lang="ts">
 import { useCurrency } from "@/core/composables";
 
-const { currentCurrency, supportedCurrencies, saveCurrencyCodeAndReload } = useCurrency();
+const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 
 function select(code: string) {
   if (currentCurrency.value?.code !== code) {
-    saveCurrencyCodeAndReload(code);
+    saveCurrencyCode(code);
   }
 }
 </script>

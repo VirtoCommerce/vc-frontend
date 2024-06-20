@@ -247,6 +247,7 @@
 </template>
 
 <script setup lang="ts">
+import { cloneDeep } from "lodash";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -260,7 +261,8 @@ import {
   PaymentProcessingManual,
   PaymentProcessingRedirection,
 } from "@/shared/payment";
-import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
+import type { MemberAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
+import type { Optional } from "utility-types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
@@ -312,15 +314,20 @@ function showEditAddressModal() {
     component: AddOrUpdateAddressModal,
     props: {
       address: payment.value?.billingAddress,
-      async onResult(address: InputOrderAddressType) {
+      async onResult(address: Optional<MemberAddressType, "isFavorite" | "isDefault" | "description">) {
         closeModal();
         changeAddressLoading.value = true;
+
+        const billingAddress = cloneDeep(address);
+        delete billingAddress.isFavorite;
+        delete billingAddress.isDefault;
+        delete billingAddress.description;
 
         await addOrUpdatePayment({
           orderId: props.orderId,
           payment: {
             id: payment.value!.id,
-            billingAddress: address,
+            billingAddress,
           },
         });
 

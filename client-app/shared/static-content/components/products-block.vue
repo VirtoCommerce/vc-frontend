@@ -47,7 +47,7 @@ interface IProps {
   count?: number;
   query?: string;
   filter?: string;
-  cardType?: string;
+  cardType?: "full" | "short";
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
 }

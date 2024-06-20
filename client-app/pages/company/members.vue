@@ -285,7 +285,7 @@
 
               <div v-if="userCanEditOrganization" class="w-7 flex-none">
                 <MembersDropdownMenu
-                  v-if="item.extended.id !== user.memberId"
+                  v-if="item.id !== user.memberId"
                   :contact-status="item.status"
                   placement="left-start"
                   @edit="openEditCustomerRoleModal(item)"
@@ -306,6 +306,9 @@
                 <div class="animate-pulse bg-gray-200 py-6 pl-4"></div>
               </div>
             </div>
+          </template>
+          <template #page-limit-message>
+            {{ $t("ui_kit.reach_limit.page_limit_filters") }}
           </template>
         </VcTable>
       </template>
@@ -479,7 +482,7 @@ async function resetFilters() {
 function resetFiltersWithKeyword() {
   localKeyword.value = "";
   keyword.value = "";
-  resetFilters();
+  void resetFilters();
 }
 
 function hideFilters() {
@@ -493,7 +496,7 @@ function openInviteModal() {
     props: {
       onResult(succeed: boolean) {
         if (succeed) {
-          fetchContacts();
+          void fetchContacts();
         }
       },
     },
@@ -582,12 +585,12 @@ function openEditCustomerRoleModal(contact: ExtendedContactType): void {
 onClickOutside(
   filtersDropdownElement,
   () => {
-    hideFilters();
+    filtersVisible.value = false;
   },
   { ignore: [filtersButtonElement] },
 );
 
 onMounted(() => {
-  fetchContacts();
+  void fetchContacts();
 });
 </script>

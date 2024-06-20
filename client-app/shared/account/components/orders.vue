@@ -291,6 +291,9 @@
           </td>
         </tr>
       </template>
+      <template #page-limit-message>
+        {{ $t("ui_kit.reach_limit.page_limit_filters") }}
+      </template>
     </VcTable>
   </div>
 </template>
@@ -300,11 +303,12 @@ import { breakpointsTailwind, useBreakpoints, onClickOutside, useElementVisibili
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { usePageHead } from "@/core/composables/usePageHead";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
-import { useUserOrdersFilter, useUserOrders } from "@/shared/account/composables";
+import { useUserOrders } from "@/shared/account/composables/useUserOrders";
+import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import DateFilterSelect from "./date-filter-select.vue";
 import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
