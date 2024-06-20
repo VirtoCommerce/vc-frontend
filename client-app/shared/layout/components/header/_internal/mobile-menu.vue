@@ -230,7 +230,8 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
+import { useCurrency, useNavigations } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { getLinkAttr } from "@/core/utilities";
 import { useSignMeOut, useUser } from "@/shared/account";
 import { useShortCart } from "@/shared/cart";

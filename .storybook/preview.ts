@@ -1,6 +1,6 @@
 import { setup } from "@storybook/vue3";
 import { vueRouter } from "storybook-vue3-router";
-import { useLanguages } from "../client-app/core/composables";
+import { useLanguages } from "../client-app/core/composables/useLanguages";
 import { setGlobals } from "../client-app/core/globals";
 import { configPlugin } from "../client-app/core/plugins";
 import { createI18n } from "../client-app/i18n";

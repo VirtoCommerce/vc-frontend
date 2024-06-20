@@ -86,7 +86,8 @@ import { useForm } from "vee-validate";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { useCurrency, useLanguages, usePageHead, useThemeContext } from "@/core/composables";
+import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { useModal } from "@/shared/modal";
 
