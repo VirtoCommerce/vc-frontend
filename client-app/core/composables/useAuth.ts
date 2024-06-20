@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
 import { globals } from "@/core/globals";
-import { TabsType, unauthorizedErrorEvent, useBroadcast } from "@/shared/broadcast";
+import { TabsType, unauthorizedErrorEvent, useBroadcast, userBeforeUnauthorizeEvent } from "@/shared/broadcast";
 import type { AfterFetchContext } from "@vueuse/core";
 
 type IdentityErrorType = {
@@ -119,6 +119,7 @@ function _useAuth() {
   }
 
   async function unauthorize() {
+    await broadcast.emit(userBeforeUnauthorizeEvent, undefined, TabsType.CURRENT);
     await useFetch("/revoke/token").post();
     state.value = { ...INITIAL_STATE };
   }

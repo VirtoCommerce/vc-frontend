@@ -196,7 +196,7 @@
               <template #desktop-body>
                 <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
                   <td class="px-4 py-3 text-center">
-                    <VcTooltip placement="bottom-start" strategy="fixed">
+                    <VcTooltip placement="bottom-start" width="max-content">
                       <template #trigger>
                         <VcIcon
                           :class="[
@@ -213,13 +213,11 @@
                       </template>
 
                       <template #content>
-                        <div class="w-44 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs font-light shadow-sm">
-                          {{
-                            address.isFavorite
-                              ? $t("pages.company.info.remove_from_favorites")
-                              : $t("pages.company.info.add_to_favorites")
-                          }}
-                        </div>
+                        {{
+                          address.isFavorite
+                            ? $t("pages.company.info.remove_from_favorites")
+                            : $t("pages.company.info.add_to_favorites")
+                        }}
                       </template>
                     </VcTooltip>
                   </td>

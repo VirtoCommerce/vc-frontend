@@ -1,49 +1,33 @@
-import { canUseDOM } from "@apollo/client/utilities";
-import Hotjar from "@hotjar/browser";
-import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
 
-const { modulesSettings } = useThemeContext();
+const MODULE_ID = "VirtoCommerce.Hotjar";
+const IS_ENABLED_KEY = "Hotjar.EnableTracking";
 
-const DEBUG_PREFIX = "[Hotjar]";
-
-const MODULE_KEYS = {
-  ID: "VirtoCommerce.Hotjar",
-  ENABLE_STATE: "Hotjar.EnableTracking",
-  TRACK_ID: "Hotjar.SiteId",
-  SNIPPET_VERSION: "Hotjar.SnippetVersion",
-};
-
-function init() {
-  if (!canUseDOM) {
-    return;
-  }
-  const moduleSettings = modulesSettings?.value?.find((el) => el.moduleId === MODULE_KEYS.ID);
-
-  const [isEnabled, id, version] = [
-    !!getSettingsValue(moduleSettings?.settings, MODULE_KEYS.ENABLE_STATE),
-    Number(getSettingsValue(moduleSettings?.settings, MODULE_KEYS.TRACK_ID)),
-    Number(getSettingsValue(moduleSettings?.settings, MODULE_KEYS.SNIPPET_VERSION)),
-  ];
-
-  if (isEnabled && id && version) {
-    if (!IS_DEVELOPMENT) {
-      Hotjar.init(id, version);
-      const { user } = useUser();
-      Hotjar.identify(user.value?.id, {});
-    } else {
-      Logger.debug(DEBUG_PREFIX, "Hotjar enabled but not initialized");
-    }
-  }
-}
-
-function getSettingsValue(settings: { name: string; value?: unknown }[] | undefined, settingsKey: string): unknown {
-  return settings?.find((el) => el.name === settingsKey)?.value;
-}
+const { getModuleSettings, hasModuleSettings, isEnabled } = useModuleSettings(MODULE_ID);
 
 export function useHotjar() {
+  async function init(): Promise<void> {
+    if (hasModuleSettings && isEnabled(IS_ENABLED_KEY)) {
+      try {
+        const { user } = useUser();
+        const { useHotjarModule } = await import("@virto-commerce/front-modules-hotjar");
+        const { initModule } = useHotjarModule();
+
+        initModule({
+          getModuleSettings,
+          isDevelopment: IS_DEVELOPMENT,
+          logger: Logger,
+          userId: user.value.id,
+        });
+      } catch (e) {
+        Logger.error(useHotjar.name, e);
+      }
+    }
+  }
+
   return {
     init,
   };

@@ -1,8 +1,8 @@
 <template>
-  <VcTooltip :placement="tooltipPlacement" strategy="fixed">
+  <VcTooltip width="max-content">
     <template #trigger>
       <slot :is-in-compare-list="isInCompareList" :toggle="toggle">
-        <button :aria-label="tooltipText" type="button" class="flex" @click="toggle">
+        <button :aria-label="tooltipText" type="button" class="flex" tabindex="0" @click="toggle">
           <VcIcon
             :class="[customClass, isInCompareList ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
             name="compare"
@@ -12,9 +12,7 @@
     </template>
 
     <template #content>
-      <div class="rounded-sm bg-white px-3.5 py-1.5 text-xs text-neutral-800 shadow-md">
-        {{ tooltipText }}
-      </div>
+      {{ tooltipText }}
     </template>
   </VcTooltip>
 </template>
@@ -29,7 +27,7 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   product: Product;
   customClass?: string;
-  tooltipPlacement?: VcTooltipPlacement;
+  tooltipPlacement?: VcTooltipPlacementType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
