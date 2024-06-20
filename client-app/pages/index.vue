@@ -1,6 +1,6 @@
 <template>
   <StaticPage v-if="staticPage" />
-  <template v-else-if="!loading">
+  <template v-else-if="!loading && !hasContent">
     <LoginFormSection />
 
     <!-- Main content -->
@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, watch } from "vue";
+import { defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
@@ -108,13 +108,17 @@ usePageHead({
 
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const { staticPage } = useStaticPage();
-const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
+staticPage.value = undefined;
 
-watch(slugInfo, async () => {
+const { loading, hasContent, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
+
+watchEffect(async () => {
   if (hasContent.value) {
     await fetchContent();
     if (pageContent.value) {
       staticPage.value = pageContent.value;
+    } else {
+      staticPage.value = undefined;
     }
   }
 });
