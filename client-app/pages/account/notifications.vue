@@ -64,10 +64,12 @@
             />
           </div>
 
+          <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+
           <VcPagination
             v-if="items.length && pages > 1"
             :page="page"
-            :pages="pages"
+            :pages="Math.min(pages, PAGE_LIMIT)"
             class="mt-6"
             @update:page="changePage"
           />
@@ -95,6 +97,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
+import { PAGE_LIMIT } from "@/core/constants";
 import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import PushMessage from "@/shared/push-messages/components/push-message.vue";
 const { t } = useI18n();

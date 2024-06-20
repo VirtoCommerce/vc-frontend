@@ -63,10 +63,15 @@
 
   <!-- Table footer -->
   <slot name="footer">
+    <p v-if="pageLimit && page >= pageLimit" class="mt-3 text-center">
+      <slot name="page-limit-message">
+        {{ $t("ui_kit.reach_limit.page_limit") }}
+      </slot>
+    </p>
     <VcPagination
       v-if="!hideDefaultFooter && items.length && pages > 1"
       :page="page"
-      :pages="pages"
+      :pages="Math.min(pages, pageLimit || pages)"
       class="self-start"
       :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
       @update:page="onPageUpdate"
@@ -77,7 +82,7 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
+import { PAGE_LIMIT, SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
 import { toggleSortDirection } from "@/core/utilities";
 import type { ISortInfo } from "@/core/types";
 
@@ -99,6 +104,7 @@ interface IProps {
   hideDefaultFooter?: boolean;
   layout?: string;
   description?: string;
+  pageLimit?: number | null;
 }
 
 const emit = defineEmits<IEmits>();
@@ -109,6 +115,7 @@ withDefaults(defineProps<IProps>(), {
   pages: 0,
   page: 0,
   layout: "table-fixed w-full",
+  pageLimit: PAGE_LIMIT,
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

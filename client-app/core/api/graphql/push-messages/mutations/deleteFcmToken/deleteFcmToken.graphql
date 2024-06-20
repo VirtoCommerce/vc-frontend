@@ -1,0 +1,3 @@
+mutation DeleteFcmToken($command: InputDeleteFcmTokenType!) {
+  deleteFcmToken(command: $command)
+}

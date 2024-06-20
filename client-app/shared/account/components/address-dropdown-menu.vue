@@ -53,7 +53,7 @@ interface IEmit {
 
 export interface IProps {
   address: MemberAddressType;
-  placement?: VcDropdownMenuPlacement;
+  placement?: VcDropdownMenuPlacementType;
 }
 
 const emit = defineEmits<IEmit>();

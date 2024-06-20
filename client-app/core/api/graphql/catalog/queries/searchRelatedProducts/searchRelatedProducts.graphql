@@ -42,6 +42,7 @@ query SearchRelatedProducts(
             availableQuantity
             isAvailable
             isInStock
+            isBuyable
           }
           minQuantity
           maxQuantity

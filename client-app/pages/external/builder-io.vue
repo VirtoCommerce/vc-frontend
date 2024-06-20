@@ -1,22 +1,28 @@
 <template>
-  <VcLoaderOverlay v-if="isLoading" no-bg />
-  <div v-else-if="canShowContent">
+  <div v-if="canShowContent">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
-  </div>
-  <div v-else>
-    <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
-import { computed, onMounted, ref, shallowRef } from "vue";
+import { onMounted, ref, shallowRef } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
-import { useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { builderIOComponents } from "@/shared/static-content";
+import type { StateType } from "./priorityManager";
 
-const { modulesSettings } = useThemeContext();
+interface IEmits {
+  (event: "setState", value: StateType): void;
+}
+
+interface IProps {
+  apiKey?: string;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
 
 const canShowContent = shallowRef(false);
 const content = shallowRef();
@@ -39,26 +45,16 @@ onBeforeRouteUpdate((to, from) => {
   }
 });
 
-const moduleSettings = computed(() => {
-  return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
-});
-
-const apiKey = computed(() => {
-  return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value;
-});
-
-const isEnabled = computed(() => {
-  return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.Enable")?.value;
-});
-
 async function tryLoadContent(urlPath: string) {
-  if (isEnabled.value && typeof apiKey.value === "string") {
+  if (props.apiKey) {
     isLoading.value = true;
+
+    emit("setState", "loading");
 
     content.value = await fetchOneEntry({
       model: "page",
       cacheSeconds: IS_DEVELOPMENT ? 1 : 60,
-      apiKey: apiKey.value,
+      apiKey: props.apiKey,
       options: getBuilderSearchParams(new URLSearchParams(location.search)),
       userAttributes: {
         urlPath,
@@ -68,6 +64,12 @@ async function tryLoadContent(urlPath: string) {
     isLoading.value = false;
 
     canShowContent.value = !!content.value || isPreviewing();
+
+    if (canShowContent.value) {
+      emit("setState", "ready");
+    } else {
+      emit("setState", "empty");
+    }
   }
 }
 

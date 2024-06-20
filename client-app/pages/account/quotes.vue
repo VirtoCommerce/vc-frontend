@@ -182,7 +182,7 @@ import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useCreateQuoteMutation } from "@/core/api/graphql";
-import { useRouteQueryParam, usePageHead } from "@/core/composables";
+import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
@@ -190,6 +190,7 @@ import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 
 const { t } = useI18n();
+const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -243,7 +244,12 @@ async function changePage(newPage: number): Promise<void> {
 function goToQuoteDetails(payload: { id: string; status?: string }): void {
   const pathName: string = payload.status === "Draft" ? "EditQuote" : "ViewQuote";
   const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
-  window.open(quoteRoute.fullPath, "_blank")!.focus();
+
+  if (themeContext.value.settings?.show_details_in_separate_tab) {
+    window.open(quoteRoute.fullPath, "_blank")!.focus();
+  } else {
+    window.location.href = quoteRoute.fullPath;
+  }
 }
 
 async function applyKeyword(): Promise<void> {

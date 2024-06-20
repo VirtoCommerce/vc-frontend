@@ -140,7 +140,7 @@
               @click.prevent="openBranchesModal(false)"
               @keyup.enter.prevent="openBranchesModal(false)"
             >
-              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
+              <VcTooltip placement="bottom-start" width="13rem">
                 <template #trigger>
                   <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
                     <i18n-t
@@ -160,16 +160,14 @@
                 </template>
 
                 <template #content>
-                  <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
-                    {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
-                  </div>
+                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
                 </template>
               </VcTooltip>
             </div>
 
             <!-- In Stock -->
             <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
-              <VcTooltip :x-offset="28" placement="bottom-start" strategy="fixed">
+              <VcTooltip placement="bottom-start" width="12rem">
                 <template #trigger>
                   <VcCheckbox v-model="savedInStock" :disabled="loading">
                     <span
@@ -184,9 +182,7 @@
                 </template>
 
                 <template #content>
-                  <div class="w-52 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y">
-                    {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
-                  </div>
+                  {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
                 </template>
               </VcTooltip>
             </div>
@@ -228,7 +224,7 @@
             :view-mode="savedViewMode"
             :items-per-page="itemsPerPage"
             :products="products"
-            open-product-in-new-tab
+            :open-product-in-new-tab="$cfg.show_details_in_separate_tab"
             :card-type="cardType"
             :columns-amount-desktop="columnsAmountDesktop"
             :columns-amount-tablet="columnsAmountTablet"
@@ -244,6 +240,7 @@
             :loading="loadingMore"
             distance="400"
             class="mt-8"
+            :is-page-limit-reached="page === PAGE_LIMIT"
             @visible="loadMoreProducts"
           />
 
@@ -299,7 +296,7 @@ import {
   useRouteQueryParam,
   useThemeContext,
 } from "@/core/composables";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
