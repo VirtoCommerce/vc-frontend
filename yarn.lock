@@ -1601,7 +1601,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/sdk-vue@npm:^1.0.29":
+"@builder.io/sdk-vue@npm:^1.0.31":
   version: 1.0.31
   resolution: "@builder.io/sdk-vue@npm:1.0.31"
   dependencies:
@@ -5431,7 +5431,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=12.12.47, @types/node@npm:>=13.7.0, @types/node@npm:^20.14.5":
+"@types/node@npm:*, @types/node@npm:>=12.12.47, @types/node@npm:>=13.7.0, @types/node@npm:^20.14.6":
   version: 20.14.6
   resolution: "@types/node@npm:20.14.6"
   dependencies:
@@ -5783,7 +5783,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unhead/vue@npm:^1.9.13":
+"@unhead/vue@npm:^1.9.14":
   version: 1.9.14
   resolution: "@unhead/vue@npm:1.9.14"
   dependencies:
@@ -16674,7 +16674,7 @@ __metadata:
   resolution: "vc-theme-b2b-vue@workspace:."
   dependencies:
     "@apollo/client": "npm:^3.10.5"
-    "@builder.io/sdk-vue": "npm:^1.0.29"
+    "@builder.io/sdk-vue": "npm:^1.0.31"
     "@commitlint/cli": "npm:^19.3.0"
     "@commitlint/config-conventional": "npm:^19.2.2"
     "@floating-ui/vue": "npm:^1.0.6"
@@ -16706,9 +16706,9 @@ __metadata:
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jsdom": "npm:^21.1.7"
     "@types/lodash": "npm:^4.17.5"
-    "@types/node": "npm:^20.14.5"
+    "@types/node": "npm:^20.14.6"
     "@types/uuid": "npm:^9.0.8"
-    "@unhead/vue": "npm:^1.9.13"
+    "@unhead/vue": "npm:^1.9.14"
     "@vee-validate/rules": "npm:~4.13.1"
     "@vee-validate/yup": "npm:~4.13.1"
     "@virto-commerce/front-modules-hotjar": "npm:^1.0.4"
