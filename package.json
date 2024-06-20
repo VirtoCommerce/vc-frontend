@@ -44,8 +44,8 @@
   "dependencies": {
     "@apollo/client": "^3.10.5",
     "@builder.io/sdk-vue": "^1.0.29",
+    "@floating-ui/vue": "^1.0.6",
     "@headlessui/vue": "^1.7.22",
-    "@popperjs/core": "^2.11.8",
     "@tailwindcss/container-queries": "^0.1.1",
     "@unhead/vue": "^1.9.13",
     "@vee-validate/rules": "~4.13.1",

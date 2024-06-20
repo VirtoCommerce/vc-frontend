@@ -14,13 +14,13 @@
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="!singleLine" class="vc-input-details__message" v-html="message"></div>
 
-      <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start" strategy="absolute">
+      <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start">
         <template #trigger>
           <div class="vc-input-details__message">{{ message }}</div>
         </template>
 
         <template #content>
-          <div class="vc-input-details__tooltip">{{ message }}</div>
+          {{ message }}
         </template>
       </VcTooltip>
     </template>
