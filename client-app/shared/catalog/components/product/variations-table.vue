@@ -20,14 +20,20 @@
           <td class="variations-table__col variations-table__col--in-stock">
             <VcChip
               v-if="variation.availabilityData?.isInStock"
+              color="success"
               size="xs"
               variant="outline-dark"
-              color="success"
               class="variations-table__chip"
               truncate
               rounded
             >
-              {{ getStockQuantity(variation) }}
+              <template v-if="variation.availabilityData?.availableQuantity > 0">
+                {{ getStockQuantity(variation) }}
+              </template>
+
+              <template v-else>
+                {{ $t("common.labels.in_stock") }}
+              </template>
             </VcChip>
 
             <VcChip
@@ -38,8 +44,9 @@
               class="variations-table__chip"
               truncate
               rounded
-              >0</VcChip
             >
+              0
+            </VcChip>
           </td>
 
           <td class="variations-table__col variations-table__col--price">
@@ -50,7 +57,11 @@
             <VcQuantity
               :model-value="getCountInCart(variation)"
               :name="variation.id"
-              :disabled="!variation.availabilityData?.isInStock"
+              :disabled="
+                !variation.availabilityData?.isInStock ||
+                !variation.availabilityData?.isAvailable ||
+                !variation.availabilityData?.isBuyable
+              "
               :error="!!getLineItem(variation) && !!idErrors[getLineItem(variation)!.id]"
               @update:model-value="changeCart(variation, $event)"
             >
