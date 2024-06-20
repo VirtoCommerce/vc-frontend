@@ -18,7 +18,6 @@
 
     <VcDropdownMenu
       class="vc-select__container"
-      placement="bottom"
       width="100%"
       :disabled="!enabled"
       disable-trigger-events

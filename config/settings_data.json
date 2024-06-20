@@ -2,6 +2,8 @@
   "current": "Mercury",
   "presets": {
     "Mercury": {
+      "show_details_in_separate_tab": true,
+
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",
@@ -251,6 +253,8 @@
     },
 
     "Watermelon": {
+      "show_details_in_separate_tab": true,
+
       "page_title_with_store_name": true,
       "page_title_store_name_align": "start",
       "page_title_divider": " · ",

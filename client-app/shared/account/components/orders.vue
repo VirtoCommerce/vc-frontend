@@ -253,9 +253,7 @@
               </template>
 
               <template #content>
-                <div class="rounded-sm bg-[--color-additional-50] px-3.5 py-1.5 text-xs shadow-sm-x-y">
-                  {{ order.statusDisplayValue }}
-                </div>
+                {{ order.statusDisplayValue }}
               </template>
             </VcTooltip>
           </td>
@@ -293,6 +291,9 @@
           </td>
         </tr>
       </template>
+      <template #page-limit-message>
+        {{ $t("ui_kit.reach_limit.page_limit_filters") }}
+      </template>
     </VcTable>
   </div>
 </template>
@@ -302,11 +303,13 @@ import { breakpointsTailwind, useBreakpoints, onClickOutside, useElementVisibili
 import { computed, onMounted, ref, shallowRef, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { usePageHead } from "@/core/composables";
+import { usePageHead } from "@/core/composables/usePageHead";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { Sort } from "@/core/types";
 import { toDateISOString } from "@/core/utilities";
-import { useUserOrdersFilter, useUserOrders } from "@/shared/account/composables";
+import { useUserOrders } from "@/shared/account/composables/useUserOrders";
+import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import DateFilterSelect from "./date-filter-select.vue";
 import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
@@ -330,6 +333,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { itemsPerPage } = toRefs(props);
 
 const { t } = useI18n();
+const { themeContext } = useThemeContext();
 const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { loading: ordersLoading, orders, fetchOrders, sort, pages, page, keyword } = useUserOrders({ itemsPerPage });
@@ -445,7 +449,12 @@ function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
 
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
-  window.open(orderRoute.fullPath, "_blank")!.focus();
+
+  if (themeContext.value.settings.show_details_in_separate_tab) {
+    window.open(orderRoute.fullPath, "_blank")!.focus();
+  } else {
+    window.location.href = orderRoute.fullPath;
+  }
 }
 
 function applyOrderFilters(): void {

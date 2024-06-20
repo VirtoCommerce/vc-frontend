@@ -1,5 +1,5 @@
 <template>
-  <VcTooltip :placement="tooltipPlacement" strategy="fixed">
+  <VcTooltip :placement="tooltipPlacement" width="max-content">
     <template #trigger>
       <slot :open-modal="openAddToListModal" :is-authenticated="isAuthenticated" :is-in-wishlist="product.inWishlist">
         <button
@@ -18,11 +18,7 @@
     </template>
 
     <template #content>
-      <div
-        class="max-w-32 rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-neutral-800 shadow-sm-x-y xs:max-w-40"
-      >
-        {{ tooltipText }}
-      </div>
+      {{ tooltipText }}
     </template>
   </VcTooltip>
 </template>
@@ -39,7 +35,7 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   product: Product;
   customClass?: string;
-  tooltipPlacement?: VcTooltipPlacement;
+  tooltipPlacement?: VcTooltipPlacementType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {

@@ -1,5 +1,9 @@
-import type { Placement } from "@popperjs/core";
+import type { FlipOptions, OffsetOptions, Placement, ShiftOptions, Strategy } from "@floating-ui/vue";
 
 declare global {
-  type VcPopoverPlacement = Placement;
+  type VcPopoverPlacementType = Placement;
+  type VcPopoverStrategyType = Strategy;
+  type VcPopoverFlipOptionsType = FlipOptions;
+  type VcPopoverOffsetOptionsType = OffsetOptions;
+  type VcPopoverShiftOptionsType = ShiftOptions;
 }
