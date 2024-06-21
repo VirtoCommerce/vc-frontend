@@ -12,19 +12,17 @@
         truncate
       />
 
-      <div class="-me-1 space-y-3 overflow-y-auto pe-1" :style="{ maxHeight }">
-        <VcCheckbox
-          v-for="item in searchedValues"
-          :key="item.value"
-          v-model="item.selected"
-          :disabled="loading"
-          @change="changeFacetValues"
-        >
-          <div :class="['flex text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
-            <span class="truncate">{{ item.label }}</span>
-            <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
-          </div>
-        </VcCheckbox>
+      <div class="-me-1 overflow-y-auto pe-1" :style="{ maxHeight }">
+        <VcMenuItem v-for="item in searchedValues" :key="item.value" class="facet-filter__item" size="sm">
+          <VcCheckbox v-model="item.selected" class="w-full" :disabled="loading" @change="changeFacetValues">
+            <div class="flex">
+              <div :class="['text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
+                <span class="truncate">{{ item.label }}</span>
+              </div>
+              <VcChip class="ml-auto" variant="outline" size="sm" rounded color="secondary">{{ item.count }}</VcChip>
+            </div>
+          </VcCheckbox>
+        </VcMenuItem>
 
         <div v-if="isNoResults" class="text-sm font-medium">{{ $t("pages.catalog.no_facet_found_message") }}</div>
 
@@ -123,6 +121,20 @@ const hasFade = computed(
     @media print {
       @apply content-none;
     }
+  }
+}
+
+.facet-filter__item {
+  :deep(.vc-menu-item__inner) {
+    @apply bg-transparent p-0;
+  }
+
+  :deep(.vc-checkbox__label) {
+    @apply w-full;
+  }
+
+  :deep(.vc-checkbox__container) {
+    @apply py-1.5;
   }
 }
 </style>
