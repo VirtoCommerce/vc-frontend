@@ -114,7 +114,12 @@
     enter-active-class="will-change-transform"
     leave-active-class="will-change-transform"
   >
-    <MobileMenu v-if="mobileMenuVisible" class="transition-transform print:hidden" @close="mobileMenuVisible = false" />
+    <MobileMenu
+      v-if="mobileMenuVisible"
+      class="transition-transform print:hidden"
+      :class="{ 'is-visible': mobileMenuVisible }"
+      @close="mobileMenuVisible = false"
+    />
   </transition>
 </template>
 
