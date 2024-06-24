@@ -15,11 +15,17 @@
         <div
           class="flex flex-col items-center justify-center space-y-2 text-xl md:flex-row md:space-x-7 md:space-y-0 md:text-2xl lg:justify-start"
         >
-          <div v-t="'pages.home.main_banner_block.key_feature_1'"></div>
-          <div class="size-2.5 rounded-full bg-primary"></div>
-          <div v-t="'pages.home.main_banner_block.key_feature_2'"></div>
-          <div class="size-2.5 rounded-full bg-primary"></div>
-          <div v-t="'pages.home.main_banner_block.key_feature_3'"></div>
+          <div>
+            {{ $t("pages.home.main_banner_block.key_feature_1") }}
+          </div>
+          <div class="size-2.5 rounded-full bg-primary" />
+          <div>
+            {{ $t("pages.home.main_banner_block.key_feature_2") }}
+          </div>
+          <div class="size-2.5 rounded-full bg-primary" />
+          <div>
+            {{ $t("pages.home.main_banner_block.key_feature_3") }}
+          </div>
         </div>
       </div>
     </div>

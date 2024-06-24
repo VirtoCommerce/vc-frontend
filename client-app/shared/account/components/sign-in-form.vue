@@ -61,11 +61,9 @@
         {{ $t("shared.account.sign_in_form.remember_me_label") }}
       </VcCheckbox>
 
-      <router-link
-        v-t="'shared.account.sign_in_form.forgot_password_link'"
-        to="/forgot-password"
-        class="text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]"
-      />
+      <router-link to="/forgot-password" class="text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
+        {{ $t("shared.account.sign_in_form.forgot_password_link") }}
+      </router-link>
     </div>
 
     <!-- Form actions -->

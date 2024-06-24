@@ -151,7 +151,9 @@
                     {{ operator.contact?.fullName || operator.userName }}
                   </span>
 
-                  <span v-t="'shared.layout.header.top_header.logged_in_as'" class="text-accent-200" />
+                  <span class="text-accent-200">
+                    {{ $t("shared.layout.header.top_header.logged_in_as") }}
+                  </span>
                 </template>
 
                 <span class="line-clamp-3 font-bold [word-break:break-word]">
@@ -160,12 +162,9 @@
               </div>
 
               <div>
-                <button
-                  v-t="'shared.layout.header.link_logout'"
-                  type="button"
-                  class="font-bold text-primary"
-                  @click="() => signMeOut()"
-                />
+                <button type="button" class="font-bold text-primary" @click="() => signMeOut()">
+                  {{ $t("shared.layout.header.link_logout") }}
+                </button>
               </div>
             </div>
           </div>
