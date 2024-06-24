@@ -6,7 +6,7 @@ export default {
   title: "Components/Molecules/VcCollapsibleContent",
   component: VcCollapsibleContent,
   argTypes: {
-    maxHeight: { control: "string" },
+    maxHeight: { control: "text" },
     collapse: { control: "boolean" },
   },
   args: {

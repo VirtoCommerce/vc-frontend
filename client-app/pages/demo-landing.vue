@@ -108,11 +108,11 @@
 
     <div class="bg-neutral-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-        <VcTypography tag="h2" variant="h1" class="mb-2 lg:mb-4">
+        <VcTypography tag="h2" variant="h1" class="mb-2 text-center lg:mb-4">
           {{ $t("pages.demo_landing.products_block.title") }}
         </VcTypography>
 
-        <div class="text-center lg:text-lg">
+        <div class="mb-10 text-center lg:text-lg">
           {{ $t("pages.demo_landing.products_block.message") }}
         </div>
 

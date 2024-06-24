@@ -72,20 +72,22 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { maxQuantity, validateQuantity } from "@/shared/bulk-order";
+import { maxQuantity, validateQuantity } from "@/shared/bulk-order/utils";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
 type InputNewBulkItemExtendedType = { [prop in keyof InputNewBulkItemType]: string };
 
 const emit = defineEmits<{
-  (event: "add-to-cart", value: InputNewBulkItemType[]): void;
+  (event: "addToCart", value: InputNewBulkItemType[]): void;
   (event: "error", value: InputNewBulkItemType[]): void;
 }>();
 
-defineProps({
-  loading: Boolean,
-});
+defineProps<IProps>();
+
+interface IProps {
+  loading: boolean;
+}
 
 const items: Ref<InputNewBulkItemExtendedType[]> = ref(createItems(5));
 
@@ -123,7 +125,7 @@ function addToCart() {
   }
 
   if (customItems.length) {
-    emit("add-to-cart", customItems);
+    emit("addToCart", customItems);
   }
 }
 

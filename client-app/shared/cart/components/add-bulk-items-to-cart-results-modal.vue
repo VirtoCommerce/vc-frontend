@@ -109,7 +109,7 @@ import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
 import { VcButton } from "@/ui-kit/components";
-import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart";
+import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";
 
 type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsModalType[] };
 

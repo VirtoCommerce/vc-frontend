@@ -28,6 +28,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     if (!isReserved && RESERVED_URLS.includes(toValue(seoUrl))) {
       return null;
     }
+
     return result.value?.slugInfo;
   });
 
@@ -42,7 +43,11 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
   const { load: fetchContent, result: contentResult, loading: contentLoading } = useGetPage(getPageParams);
 
   const pageContent = computed(() => {
-    const content: unknown = JSON.parse(contentResult?.value?.page?.content || "");
+    let content: unknown;
+
+    if (typeof contentResult?.value?.page?.content === "string") {
+      content = JSON.parse(contentResult.value.page.content);
+    }
 
     if (isPageContent(content)) {
       return content;

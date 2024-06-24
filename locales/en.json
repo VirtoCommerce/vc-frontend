@@ -584,6 +584,17 @@
           "add_to_list_button": "Add to list",
           "product_email_title": "Please have a look on the product: {0}"
         },
+        "variations": {
+          "title": "Product variations",
+          "columns": {
+            "item": "Item",
+            "stock": "Stock",
+            "price": "Price",
+            "quantity": "Quantity"
+          },
+          "list": "List",
+          "table": "Table"
+        },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price",
@@ -1444,6 +1455,11 @@
       "clear_all": "Clear all",
       "view_all": "View all notifications",
       "show_unread_only": "Show unread only"
+    },
+    "reach_limit": {
+      "end_list": "You have reached the end of the list.",
+      "page_limit_filters": "No more results. Please try to change filters.",
+      "page_limit": "No more results could be shown."
     }
   },
   "identity_error": {

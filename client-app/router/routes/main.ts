@@ -27,7 +27,7 @@ const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const DemoLanding = () => import("@/pages/demo-landing.vue");
 const Welcome = () => import("@/pages/welcome.vue");
-const Matcher = () => import("@/pages/matcher.vue");
+const Matcher = () => import("@/pages/external/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
   { path: "/", name: "Home", component: Home, meta: { public: true } },

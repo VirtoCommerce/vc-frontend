@@ -257,6 +257,7 @@
 </template>
 
 <script setup lang="ts">
+import { cloneDeep } from "lodash";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -264,14 +265,11 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder } from "@/shared/account";
 import { OrderSummary, SelectPaymentMethodModal } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
-import {
-  PaymentProcessingAuthorizeNet,
-  PaymentActionType,
-  PaymentProcessingManual,
-  PaymentProcessingRedirection,
-} from "@/shared/payment";
-import type { InputOrderAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
+import { PaymentActionType, PaymentProcessingManual, PaymentProcessingRedirection } from "@/shared/payment";
+import type { MemberAddressType, OrderPaymentMethodType, PaymentInType } from "@/core/api/graphql/types";
+import type { Optional } from "utility-types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
+import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 interface IProps {
@@ -322,15 +320,20 @@ function showEditAddressModal() {
     component: AddOrUpdateAddressModal,
     props: {
       address: payment.value?.billingAddress,
-      async onResult(address: InputOrderAddressType) {
+      async onResult(address: Optional<MemberAddressType, "isFavorite" | "isDefault" | "description">) {
         closeModal();
         changeAddressLoading.value = true;
+
+        const billingAddress = cloneDeep(address);
+        delete billingAddress.isFavorite;
+        delete billingAddress.isDefault;
+        delete billingAddress.description;
 
         await addOrUpdatePayment({
           orderId: props.orderId,
           payment: {
             id: payment.value!.id,
-            billingAddress: address,
+            billingAddress,
           },
         });
 

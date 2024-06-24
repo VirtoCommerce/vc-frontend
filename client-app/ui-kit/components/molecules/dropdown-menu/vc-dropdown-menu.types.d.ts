@@ -1,5 +1,6 @@
-import type { VcPopoverPlacement } from "../../atoms/popover/vc-popover.types.d";
+import type { VcPopoverPlacementType, VcPopoverOffsetOptionsType } from "../../atoms/popover/vc-popover.types.d";
 
 declare global {
-  type VcDropdownMenuPlacement = VcPopoverPlacement;
+  type VcDropdownMenuPlacementType = VcPopoverPlacementType;
+  type VcDropdownMenuOffsetOptionsType = VcPopoverOffsetOptionsType;
 }

@@ -73,10 +73,12 @@
                 @remove:items="openDeleteProductModal"
               />
 
+              <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+
               <VcPagination
                 v-if="pagesCount > 1"
                 v-model:page="page"
-                :pages="pagesCount"
+                :pages="Math.min(pagesCount, PAGE_LIMIT)"
                 :scroll-target="listElement"
                 :scroll-offset="60"
               />
@@ -113,9 +115,10 @@ import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { PAGE_LIMIT } from "@/core/constants";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import { useShortCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
+import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -133,6 +136,7 @@ import type {
   LineItemType,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
 
 interface IProps {
   listId: string;
@@ -293,7 +297,7 @@ function openDeleteProductModal(values: string[]): void {
         async onResult(): Promise<void> {
           const previousPagesCount = pagesCount.value;
 
-          broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
+          void broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
 
           wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
 
