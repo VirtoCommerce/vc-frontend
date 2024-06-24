@@ -7,15 +7,16 @@
 </template>
 
 <script setup lang="ts">
+import { computedEager } from "@vueuse/core";
 import { computed, defineAsyncComponent, onBeforeUnmount, watchEffect } from "vue";
 import { useNavigations } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
-import type { StateType } from "@/pages/external/priorityManager";
+import type { StateType } from "@/pages/matcher/priorityManager";
 
 interface IProps {
-  seoUrl: string;
+  pathMatch?: string[];
 }
 
 interface IEmits {
@@ -34,7 +35,21 @@ const { setMatchingRouteName } = useNavigations();
 
 const { staticPage } = useStaticPage();
 
-const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo(computed(() => props.seoUrl));
+const MAIN_PAGE_RESERVED_SLUG = "__index__home__page__";
+
+const seoUrl = computedEager(() => {
+  if (!props.pathMatch) {
+    return MAIN_PAGE_RESERVED_SLUG;
+  }
+  // Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
+  const paths = props.pathMatch.filter(Boolean);
+  return paths.join("/");
+});
+
+const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo(
+  computed(() => seoUrl.value),
+  seoUrl.value === MAIN_PAGE_RESERVED_SLUG,
+);
 
 const objectType = computed(() => {
   return slugInfo.value?.entityInfo?.objectType || "";
