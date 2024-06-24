@@ -239,10 +239,10 @@ import { getLinkAttr } from "@/core/utilities";
 import { useSignMeOut, useUser } from "@/shared/account";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
-import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
+import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 interface IEmits {
   (event: "close"): void;

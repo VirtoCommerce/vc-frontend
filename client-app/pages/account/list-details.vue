@@ -118,7 +118,7 @@ import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import { useShortCart, getItemsForAddBulkItemsToCartResultsModal, AddBulkItemsToCartResultsModal } from "@/shared/cart";
+import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -136,6 +136,7 @@ import type {
   LineItemType,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
 
 interface IProps {
   listId: string;
