@@ -1,12 +1,13 @@
 <template>
   <section class="flex flex-col">
-    <h2
-      v-t="'shared.bulk_order.copy_n_paste.title'"
-      class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block"
-    ></h2>
+    <h2 class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block">
+      {{ $t("shared.bulk_order.copy_n_paste.title") }}
+    </h2>
 
     <div class="h-full p-6 pb-5 pt-4 md:p-5">
-      <p v-t="'shared.bulk_order.copy_n_paste.subtitle_message'" class="mb-2 text-sm font-bold"></p>
+      <p class="mb-2 text-sm font-bold">
+        {{ $t("shared.bulk_order.copy_n_paste.subtitle_message") }}
+      </p>
 
       <p v-html-safe="$t('shared.bulk_order.copy_n_paste.guide_message')" class="mb-2 text-sm text-gray-500"></p>
 

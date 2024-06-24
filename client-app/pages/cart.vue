@@ -148,7 +148,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
-import { GiftsSection, ProductsSection, useFullCart, useCoupon } from "@/shared/cart";
+import { useFullCart, useCoupon } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
 import {
   BillingDetailsSection,
@@ -161,6 +161,8 @@ import {
 } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
 import type { LineItemType } from "@/core/api/graphql/types";
+import GiftsSection from "@/shared/cart/components/gifts-section.vue";
+import ProductsSection from "@/shared/cart/components/products-section.vue";
 
 const config = inject(configInjectionKey, {});
 

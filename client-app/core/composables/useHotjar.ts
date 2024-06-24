@@ -1,7 +1,7 @@
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables/useUser";
 
 const MODULE_ID = "VirtoCommerce.Hotjar";
 const IS_ENABLED_KEY = "Hotjar.EnableTracking";

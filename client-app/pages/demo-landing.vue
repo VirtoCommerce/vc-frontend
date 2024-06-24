@@ -10,11 +10,12 @@
       <div class="mx-auto w-full max-w-screen-2xl px-5 md:px-12">
         <div class="grid grid-cols-1 items-center gap-x-20 gap-y-10 lg:grid-cols-2">
           <div class="order-2 lg:order-1">
-            <div
-              v-t="'pages.demo_landing.primary_block.primary_text'"
-              class="mb-4 text-2xl font-bold lg:text-5xl"
-            ></div>
-            <div v-t="'pages.demo_landing.primary_block.secondary_text'" class="text-lg"></div>
+            <div class="mb-4 text-2xl font-bold lg:text-5xl">
+              {{ $t("pages.demo_landing.primary_block.primary_text") }}
+            </div>
+            <div class="text-lg">
+              {{ $t("pages.demo_landing.primary_block.secondary_text") }}
+            </div>
             <div class="mt-6 flex gap-6 lg:mt-14">
               <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com" target="_blank">
                 {{ $t("pages.demo_landing.primary_block.first_button") }}
@@ -37,45 +38,50 @@
 
     <div class="bg-additional-50 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-14 lg:px-32">
-        <div
-          v-t="'pages.demo_landing.secondary_block.primary_text'"
-          class="mb-6 text-center text-2xl font-bold lg:text-4xl"
-        ></div>
-        <div v-t="'pages.demo_landing.secondary_block.secondary_text'" class="text-center text-base"></div>
+        <div class="mb-6 text-center text-2xl font-bold lg:text-4xl">
+          {{ $t("pages.demo_landing.secondary_block.primary_text") }}
+        </div>
+        <div class="text-center text-base">
+          {{ $t("pages.demo_landing.secondary_block.secondary_text") }}
+        </div>
       </div>
     </div>
 
     <div class="bg-neutral-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
-        <div
-          v-t="'pages.demo_landing.features_block.primary_text'"
-          class="mb-6 text-center text-2xl font-bold lg:text-5xl"
-        ></div>
-        <div v-t="'pages.demo_landing.features_block.secondary_text'" class="text-center text-base"></div>
+        <div class="mb-6 text-center text-2xl font-bold lg:text-5xl">
+          {{ $t("pages.demo_landing.features_block.primary_text") }}
+        </div>
+        <div class="text-center text-base">
+          {{ $t("pages.demo_landing.features_block.secondary_text") }}
+        </div>
         <div class="mt-16 grid grid-cols-1 items-center gap-x-20 gap-y-10 px-8 lg:grid-cols-3 lg:px-0">
           <div class="text-center">
             <VcImage src="/static/images/demo-landing/feat-1.svg" class="mx-auto mb-9 h-24" lazy />
-            <div
-              v-t="'pages.demo_landing.features_block.feature_1.title'"
-              class="mb-3 font-roboto-condensed text-2xl font-bold uppercase"
-            ></div>
-            <div v-t="'pages.demo_landing.features_block.feature_1.text'" class="text-sm"></div>
+            <div class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+              {{ $t("pages.demo_landing.features_block.feature_1.title") }}
+            </div>
+            <div class="text-sm">
+              {{ $t("pages.demo_landing.features_block.feature_1.text") }}
+            </div>
           </div>
           <div class="text-center">
             <VcImage src="/static/images/demo-landing/feat-2.svg" class="mx-auto mb-9 h-24" lazy />
-            <div
-              v-t="'pages.demo_landing.features_block.feature_2.title'"
-              class="mb-3 font-roboto-condensed text-2xl font-bold uppercase"
-            ></div>
-            <div v-t="'pages.demo_landing.features_block.feature_2.text'" class="text-sm"></div>
+            <div class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+              {{ $t("pages.demo_landing.features_block.feature_2.title") }}
+            </div>
+            <div class="text-sm">
+              {{ $t("pages.demo_landing.features_block.feature_2.text") }}
+            </div>
           </div>
           <div class="text-center">
             <VcImage src="/static/images/demo-landing/feat-3.svg" class="mx-auto mb-9 h-24" lazy />
-            <div
-              v-t="'pages.demo_landing.features_block.feature_3.title'"
-              class="mb-3 font-roboto-condensed text-2xl font-bold uppercase"
-            ></div>
-            <div v-t="'pages.demo_landing.features_block.feature_3.text'" class="text-sm"></div>
+            <div class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+              {{ $t("pages.demo_landing.features_block.feature_3.title") }}
+            </div>
+            <div class="text-sm">
+              {{ $t("pages.demo_landing.features_block.feature_3.text") }}
+            </div>
           </div>
         </div>
       </div>
@@ -84,10 +90,9 @@
     <div class="bg-neutral-800 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-5 md:px-12">
         <div class="flex flex-col items-center justify-between space-y-10 lg:block">
-          <div
-            v-t="'pages.demo_landing.booking_block.message'"
-            class="text-center text-2xl font-bold text-additional-50 lg:text-3xl"
-          ></div>
+          <div class="text-center text-2xl font-bold text-additional-50 lg:text-3xl">
+            {{ $t("pages.demo_landing.booking_block.message") }}
+          </div>
           <div class="flex w-full justify-center gap-6">
             <VcButton class="flex-1 lg:flex-none" external-link="https://virtocommerce.com">
               {{ $t("pages.demo_landing.booking_block.first_button") }}
@@ -107,7 +112,9 @@
           {{ $t("pages.demo_landing.products_block.title") }}
         </VcTypography>
 
-        <div v-t="'pages.demo_landing.products_block.message'" class="mb-10 text-center lg:text-lg"></div>
+        <div class="mb-10 text-center lg:text-lg">
+          {{ $t("pages.demo_landing.products_block.message") }}
+        </div>
 
         <div class="grid gap-6 xs:grid-cols-2 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
           <ProductCardGrid v-for="item in products" :key="item.id" :product="item">
@@ -125,24 +132,23 @@
 
     <div class="bg-additional-50 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-14 lg:px-32">
-        <div
-          v-t="'pages.demo_landing.after_products_block.primary_text'"
-          class="mb-6 text-center text-2xl font-bold lg:text-4xl"
-        ></div>
-        <div v-t="'pages.demo_landing.after_products_block.secondary_text'" class="text-center text-base"></div>
+        <div class="mb-6 text-center text-2xl font-bold lg:text-4xl">
+          {{ $t("pages.demo_landing.after_products_block.primary_text") }}
+        </div>
+        <div class="text-center text-base">
+          {{ $t("pages.demo_landing.after_products_block.secondary_text") }}
+        </div>
       </div>
     </div>
 
     <div class="bg-neutral-100 py-10 lg:py-24">
       <div class="mx-auto w-full max-w-screen-xl px-14 lg:px-32">
-        <div
-          v-t="'pages.demo_landing.subscription_block.primary_text'"
-          class="mb-4 text-center text-2xl font-bold lg:text-4xl"
-        ></div>
-        <div
-          v-t="'pages.demo_landing.subscription_block.secondary_text'"
-          class="mb-8 text-center text-lg font-bold"
-        ></div>
+        <div class="mb-4 text-center text-2xl font-bold lg:text-4xl">
+          {{ $t("pages.demo_landing.subscription_block.primary_text") }}
+        </div>
+        <div class="mb-8 text-center text-lg font-bold">
+          {{ $t("pages.demo_landing.subscription_block.secondary_text") }}
+        </div>
         <VcInput
           class="mx-auto max-w-lg"
           :placeholder="$t('pages.demo_landing.subscription_block.input_placeholder')"

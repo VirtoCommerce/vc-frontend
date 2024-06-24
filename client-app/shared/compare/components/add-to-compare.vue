@@ -7,16 +7,14 @@
 <script setup lang="ts">
 import { eagerComputed, useDebounceFn } from "@vueuse/core";
 import { nextTick, ref } from "vue";
-import { useCompareProducts } from "@/shared/compare";
+import { useCompareProducts } from "@/shared/compare/composables";
 import type { Product } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-});
+interface IProps {
+  product: Product;
+}
+
+const props = defineProps<IProps>();
 
 const { productsIds, addToCompareList, removeFromCompareList } = useCompareProducts();
 

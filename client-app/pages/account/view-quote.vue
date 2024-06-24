@@ -55,7 +55,9 @@
       <template #sidebar>
         <VcWidget :title="$t('pages.account.quote_details.quote_summary')">
           <div class="flex justify-between text-base">
-            <span v-t="'pages.account.quote_details.subTotal'" class="font-bold" />
+            <span class="font-bold">
+              {{ $t("pages.account.quote_details.subTotal") }}
+            </span>
 
             <span class="text-18 font-extrabold text-[color:var(--color-price)]">
               <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
@@ -63,21 +65,21 @@
           </div>
           <div class="border-y py-2 text-base font-normal">
             <div class="flex justify-between text-base">
-              <span v-t="'pages.account.quote_details.discountTotal'" />
+              {{ $t("pages.account.quote_details.discountTotal") }}
 
               <span>
                 <VcPriceDisplay :value="quote.totals?.discountTotal" />
               </span>
             </div>
             <div class="flex justify-between text-base">
-              <span v-t="'pages.account.quote_details.shippingTotal'" />
+              {{ $t("pages.account.quote_details.shippingTotal") }}
 
               <span>
                 <VcPriceDisplay :value="quote.totals?.shippingTotal" />
               </span>
             </div>
             <div class="flex justify-between text-base">
-              <span v-t="'pages.account.quote_details.taxTotal'" />
+              {{ $t("pages.account.quote_details.taxTotal") }}
 
               <span class="">
                 <VcPriceDisplay :value="quote.totals?.taxTotal" />
@@ -85,7 +87,9 @@
             </div>
           </div>
           <div class="flex justify-between text-base">
-            <span v-t="'pages.account.quote_details.total'" class="font-bold" />
+            <span class="font-bold">
+              {{ $t("pages.account.quote_details.total") }}
+            </span>
 
             <span class="text-lg font-extrabold text-success-700">
               <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
