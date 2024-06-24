@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { useLanguages } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
 import type { ILanguage } from "@/core/types";
 
