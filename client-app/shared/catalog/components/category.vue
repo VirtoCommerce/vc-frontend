@@ -6,7 +6,11 @@
     <div class="flex items-stretch lg:gap-6">
       <template v-if="!hideSidebar">
         <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar v-if="isMobile" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
+        <VcPopupSidebar
+          v-if="isMobile || filtersOrientation === 'horizontal'"
+          :is-visible="mobileSidebarVisible"
+          @hide="hideMobileSidebar()"
+        >
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
@@ -49,6 +53,7 @@
             />
 
             <ProductsFiltersSidebar
+              :orientation="filtersOrientation"
               :keyword="keywordQueryParam"
               :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
               :loading="loading"
@@ -58,7 +63,7 @@
         </div>
       </template>
       <!-- Content -->
-      <div ref="contentElement" class="grow">
+      <div ref="contentElement" class="w-full grow">
         <div class="flex">
           <VcTypography tag="h1">
             <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
@@ -216,6 +221,15 @@
             <VcIcon name="reset" />
           </VcChip>
         </div>
+
+        <ProductsFiltersSidebar
+          class="w-full"
+          :orientation="filtersOrientation"
+          :keyword="keywordQueryParam"
+          :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+          :loading="loading"
+          @change="applyFilters($event)"
+        />
 
         <!-- Products -->
         <template v-if="products.length || loading">
@@ -419,6 +433,8 @@ const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescri
 const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 
+const filtersOrientation = ref<"vertical" | "horizontal">("horizontal" as const);
+
 usePageHead({
   title: seoTitle,
   meta: {
@@ -610,6 +626,9 @@ function openBranchesModal(fromMobileFilter: boolean) {
 const setFiltersPosition = throttle(_setFiltersPosition, 100);
 
 function _setFiltersPosition() {
+  if (filtersOrientation.value === "horizontal") {
+    return;
+  }
   const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
 
   const scrollBottom = scrollTop + clientHeight;

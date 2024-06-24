@@ -1,5 +1,10 @@
 <template>
   <VcWidget size="xs" collapsible :title="facet.label" collapsed>
+    <template v-if="selectedFiltersCount > 0" #append>
+      <span class="flex items-center gap-1">
+        <VcChip size="sm" rounded color="info">{{ selectedFiltersCount }}</VcChip>
+      </span>
+    </template>
     <div :class="{ 'fade-bottom': hasFade }">
       <VcInput
         v-if="searchFieldVisible"
@@ -68,6 +73,7 @@ const isMobile = breakpoints.smaller("lg");
 
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
+const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 

@@ -33,21 +33,36 @@
 
     <!-- Facet Filters -->
     <template v-else>
-      <FacetFilter
-        v-for="facet in localFilters.facets"
-        :key="facet.paramName"
-        :facet="facet"
-        :loading="loading"
-        @update:facet="onFacetFilterChanged"
-      />
+      <div
+        ref="facetFiltersContainer"
+        class="flex gap-4"
+        :class="[
+          isHorizontal && 'relative z-10 h-10 flex-row items-start',
+          !isHorizontal && 'flex-col items-stretch lg:gap-5',
+        ]"
+      >
+        <template v-for="facet in localFilters.facets.slice(0, filtersToShow)" :key="facet.paramName">
+          <FacetFilter
+            :no-wrap="isHorizontal"
+            :facet="facet"
+            :loading="loading"
+            :class="[isHorizontal && 'min-w-44 shrink-0']"
+            @update:facet="onFacetFilterChanged"
+          />
+        </template>
+      </div>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits<IEmits>();
+const props = withDefaults(defineProps<IProps>(), {
+  orientation: "vertical",
+});
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { watch, shallowReactive } from "vue";
+import { watch, shallowReactive, shallowRef, computed } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFilters } from "@/shared/catalog";
@@ -60,14 +75,36 @@ interface IEmits {
 interface IProps {
   loading?: boolean;
   filters: ProductsFilters;
+  orientation?: "vertical" | "horizontal";
 }
 
-const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
 const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, branches: [] });
+const isHorizontal = props.orientation === "horizontal";
+
+const filtersToShow = computed(() => {
+  const totalFilters = localFilters.facets.length;
+  if (props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value) {
+    return totalFilters;
+  }
+  const containerRight = facetFiltersContainer.value?.getBoundingClientRect().right || Infinity;
+  let filtersCount = 0;
+  for (let i = 0; i < totalFilters; i++) {
+    const facetFilter = facetFiltersContainer?.value?.children[i] as HTMLElement;
+    if (!facetFilter) {
+      filtersCount++;
+      break;
+    }
+    if (facetFilter.getBoundingClientRect().right > containerRight) {
+      break;
+    }
+    filtersCount++;
+  }
+  return filtersCount;
+});
 
 watch(
   () => props.filters.facets,
