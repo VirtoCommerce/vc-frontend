@@ -6,11 +6,7 @@
     <div class="flex items-stretch lg:gap-6">
       <template v-if="!hideSidebar">
         <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar
-          v-if="isMobile || filtersOrientation === 'horizontal'"
-          :is-visible="mobileSidebarVisible"
-          @hide="hideMobileSidebar()"
-        >
+        <VcPopupSidebar v-if="isMobile || isHorizontal" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
           <ProductsFiltersSidebar
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
@@ -132,7 +128,7 @@
 
           <!-- View options -->
           <ViewMode
-            v-if="!hideViewModeSelector"
+            v-if="!hideViewModeSelector || (!isMobile && !isHorizontal)"
             v-model:mode="savedViewMode"
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
@@ -140,7 +136,7 @@
           <template v-if="!hideControls">
             <!-- Branch availability -->
             <div
-              v-if="!isMobile"
+              v-if="!isMobile && !isHorizontal"
               class="order-3 ml-4 flex items-center xl:ml-6"
               @click.prevent="openBranchesModal(false)"
               @keyup.enter.prevent="openBranchesModal(false)"
@@ -171,7 +167,7 @@
             </div>
 
             <!-- In Stock -->
-            <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
+            <div v-if="!isMobile && !isHorizontal" class="order-2 ml-4 flex items-center xl:ml-8">
               <VcTooltip placement="bottom-start" width="12rem">
                 <template #trigger>
                   <VcCheckbox v-model="savedInStock" :disabled="loading">
@@ -193,6 +189,22 @@
             </div>
           </template>
         </div>
+
+        <ProductsFiltersSidebar
+          v-if="isHorizontal && !isMobile"
+          class="mb-4.5"
+          :orientation="filtersOrientation"
+          :keyword="keywordQueryParam"
+          :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+          :loading="loading"
+          @change="applyFilters($event)"
+        >
+          <template #prepend>
+            <VcButton class="shrink-0">Some Button</VcButton>
+            <VcButton class="shrink-0">Some Button 2</VcButton>
+            <VcButton class="shrink-0">Some Button 3</VcButton>
+          </template>
+        </ProductsFiltersSidebar>
 
         <!-- Filters chips -->
         <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
@@ -221,15 +233,6 @@
             <VcIcon name="reset" />
           </VcChip>
         </div>
-
-        <ProductsFiltersSidebar
-          class="w-full"
-          :orientation="filtersOrientation"
-          :keyword="keywordQueryParam"
-          :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-          :loading="loading"
-          @change="applyFilters($event)"
-        />
 
         <!-- Products -->
         <template v-if="products.length || loading">
@@ -434,6 +437,7 @@ const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords)
 const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 
 const filtersOrientation = ref<"vertical" | "horizontal">("horizontal" as const);
+const isHorizontal = computed(() => filtersOrientation.value === "horizontal");
 
 usePageHead({
   title: seoTitle,
@@ -626,7 +630,7 @@ function openBranchesModal(fromMobileFilter: boolean) {
 const setFiltersPosition = throttle(_setFiltersPosition, 100);
 
 function _setFiltersPosition() {
-  if (filtersOrientation.value === "horizontal") {
+  if (isHorizontal.value) {
     return;
   }
   const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;

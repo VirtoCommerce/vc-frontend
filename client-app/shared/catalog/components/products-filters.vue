@@ -36,17 +36,20 @@
       <div
         ref="facetFiltersContainer"
         class="flex gap-4"
-        :class="[
-          isHorizontal && 'relative z-10 h-10 flex-row items-start',
-          !isHorizontal && 'flex-col items-stretch lg:gap-5',
-        ]"
+        :class="[isHorizontal && ' flex-row items-start', !isHorizontal && 'flex-col items-stretch lg:gap-5']"
       >
-        <template v-for="facet in localFilters.facets.slice(0, filtersToShow)" :key="facet.paramName">
+        <slot name="prepend" />
+        <template v-for="(facet, i) in filtersToShow" :key="facet.paramName">
           <FacetFilter
+            :collapse-on-change="isHorizontal"
+            :collapse-on-click-outside="isHorizontal"
             :no-wrap="isHorizontal"
             :facet="facet"
             :loading="loading"
-            :class="[isHorizontal && 'min-w-44 shrink-0']"
+            :class="[
+              isHorizontal && 'shrink-0',
+              filterCalculationInProgress && i === filtersToShow.length - 1 && 'invisible',
+            ]"
             @update:facet="onFacetFilterChanged"
           />
         </template>
@@ -60,9 +63,9 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   orientation: "vertical",
 });
-import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind, useElementBounding } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { watch, shallowReactive, shallowRef, computed } from "vue";
+import { watch, shallowReactive, shallowRef, ref, nextTick, computed } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
 import type { ProductsFilters } from "@/shared/catalog";
@@ -85,25 +88,42 @@ const isMobile = breakpoints.smaller("lg");
 const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, branches: [] });
 const isHorizontal = props.orientation === "horizontal";
 
-const filtersToShow = computed(() => {
-  const totalFilters = localFilters.facets.length;
+const filterCalculationInProgress = ref(false);
+const filtersCountToShow = ref(1);
+const filtersToShow = computed(() =>
+  props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value
+    ? localFilters.facets
+    : localFilters.facets.slice(0, filtersCountToShow.value),
+);
+const { right: containerRight } = useElementBounding(facetFiltersContainer);
+
+watch([containerRight, () => localFilters.facets], async () => {
   if (props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value) {
-    return totalFilters;
+    return;
   }
-  const containerRight = facetFiltersContainer.value?.getBoundingClientRect().right || Infinity;
-  let filtersCount = 0;
-  for (let i = 0; i < totalFilters; i++) {
-    const facetFilter = facetFiltersContainer?.value?.children[i] as HTMLElement;
-    if (!facetFilter) {
+  async function calculate() {
+    filterCalculationInProgress.value = true;
+    const facetsElements =
+      (facetFiltersContainer?.value?.querySelectorAll(".vc-widget") as NodeListOf<HTMLElement>) || [];
+    let filtersCount = 1;
+    for (let i = 0; i < localFilters.facets.length; i++) {
+      const facetFilter = facetsElements[i] as HTMLElement;
+      if (!facetFilter) {
+        filtersCountToShow.value++;
+        await nextTick();
+        await calculate();
+        return;
+      }
+      if (useElementBounding(facetFilter, { windowScroll: false }).right.value > containerRight.value) {
+        filtersCount--;
+        break;
+      }
       filtersCount++;
-      break;
     }
-    if (facetFilter.getBoundingClientRect().right > containerRight) {
-      break;
-    }
-    filtersCount++;
+    filtersCountToShow.value = filtersCount;
+    filterCalculationInProgress.value = false;
   }
-  return filtersCount;
+  await calculate();
 });
 
 watch(

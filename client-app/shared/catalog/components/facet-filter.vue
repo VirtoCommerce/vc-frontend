@@ -1,6 +1,13 @@
 <template>
-  <VcWidget size="xs" collapsible :title="facet.label" collapsed>
-    <template v-if="selectedFiltersCount > 0" #append>
+  <VcWidget
+    ref="widgetElement"
+    size="xs"
+    collapsible
+    :title="facet.label"
+    :collapsed="isCollapsed"
+    @toggle-collapse="toggleCollapseHandler"
+  >
+    <template v-if="hasSelected" #append>
       <span class="flex items-center gap-1">
         <VcChip size="sm" rounded color="info">{{ selectedFiltersCount }}</VcChip>
       </span>
@@ -21,8 +28,11 @@
         <VcMenuItem v-for="item in searchedValues" :key="item.value" class="facet-filter__item" size="sm">
           <VcCheckbox v-model="item.selected" class="w-full" :disabled="loading" @change="changeFacetValues">
             <div class="flex">
-              <div :class="['text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
-                <span class="truncate">{{ item.label }}</span>
+              <div
+                :class="['mr-5 truncate text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']"
+                :title="item.label"
+              >
+                {{ item.label }}
               </div>
               <VcChip class="ml-auto" variant="outline" size="sm" rounded color="secondary">{{ item.count }}</VcChip>
             </div>
@@ -44,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useElementVisibility, onClickOutside } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef } from "vue";
 import type { FacetItemType } from "@/core/types";
@@ -56,10 +66,15 @@ interface IEmits {
 interface IProps {
   facet: FacetItemType;
   loading?: boolean;
+  collapseOnChange?: boolean;
+  collapseOnClickOutside?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  collapseOnChange: false,
+  collapseOnClickOutside: false,
+});
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
@@ -74,17 +89,24 @@ const isMobile = breakpoints.smaller("lg");
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
+const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
+
+  if (props.collapseOnChange) {
+    isCollapsed.value = true;
+  }
 }
 watchEffect(() => {
   facet.value = cloneDeep(props.facet);
 });
 
 const isExpanded = ref(false);
+const isCollapsed = ref(true);
+const widgetElement = shallowRef<HTMLElement | null>(null);
 
 const searchKeyword = ref("");
 
@@ -113,6 +135,16 @@ const hasFade = computed(
     (searchedValues.value.length > SHOW_MORE_AMOUNT && !isExpanded.value) ||
     (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value),
 );
+
+function toggleCollapseHandler(value: boolean) {
+  isCollapsed.value = value;
+}
+
+onClickOutside(widgetElement, () => {
+  if (props.collapseOnClickOutside) {
+    isCollapsed.value = true;
+  }
+});
 </script>
 
 <style scoped lang="scss">
@@ -142,5 +174,17 @@ const hasFade = computed(
   :deep(.vc-checkbox__container) {
     @apply py-1.5;
   }
+}
+
+:deep(.vc-widget__header-container) {
+  @apply border-secondary-600 border-2 shadow-none text-secondary-600;
+}
+
+:deep(.vc-widget__slot-container) {
+  @apply absolute z-10 min-w-full max-w-72 bg-[--color-additional-50]  shadow-xl mt-1 rounded;
+}
+
+.vc-widget:last-child :deep(.vc-widget__slot-container) {
+  @apply right-0 left-auto;
 }
 </style>
