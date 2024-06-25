@@ -59,7 +59,9 @@
       "remove_all": "Alle entfernen",
       "resend_link": "Link erneut senden",
       "approve": "Billigen",
-      "decline": "Ablehnen"
+      "decline": "Ablehnen",
+      "all_filters": "Alle Filter",
+      "sort_by": "Sortieren nach"
     },
     "links": {
       "home": "Startseite",

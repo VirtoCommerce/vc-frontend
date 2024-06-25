@@ -5,12 +5,22 @@
     collapsible
     :title="facet.label"
     :collapsed="isCollapsed"
+    :class="{ 'border-0': true }"
     @toggle-collapse="toggleCollapseHandler"
   >
     <template v-if="hasSelected" #append>
       <span class="flex items-center gap-1">
         <VcChip size="sm" rounded color="info">{{ selectedFiltersCount }}</VcChip>
       </span>
+    </template>
+    <template v-if="true" #header-container="{ collapsed }">
+      <VcButton
+        size="sm"
+        :color="hasSelected ? 'accent' : 'secondary'"
+        variant="outline"
+        :append-icon="collapsed ? 'chevron-down' : 'chevron-up'"
+        >{{ facet.label }}</VcButton
+      >
     </template>
     <div :class="{ 'fade-bottom': hasFade }">
       <VcInput
@@ -47,7 +57,7 @@
 
     <template v-if="isShowMoreVisible" #footer-container>
       <div class="px-2 py-0.5">
-        <VcButtonSeeMoreLess v-model="isExpanded" />
+        <VcButtonSeeMoreLess v-model="isExpanded" class="w-full" />
       </div>
     </template>
   </VcWidget>
@@ -176,15 +186,11 @@ onClickOutside(widgetElement, () => {
   }
 }
 
-:deep(.vc-widget__header-container) {
-  @apply border-secondary-600 border-2 shadow-none text-secondary-600;
-}
-
-:deep(.vc-widget__slot-container) {
+:deep(.vc-widget__collapsable) {
   @apply absolute z-10 min-w-full max-w-72 bg-[--color-additional-50]  shadow-xl mt-1 rounded;
 }
 
-.vc-widget:last-child :deep(.vc-widget__slot-container) {
+.vc-widget:last-child :deep(.vc-widget__collapsable) {
   @apply right-0 left-auto;
 }
 </style>

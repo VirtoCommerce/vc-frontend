@@ -47,21 +47,22 @@
         </span>
       </slot>
     </component>
+    <div class="vc-widget__collapsable">
+      <div v-show="!_collapsed" class="vc-widget__slot-container">
+        <slot name="default-container">
+          <div class="vc-widget__slot">
+            <slot />
+          </div>
+        </slot>
+      </div>
 
-    <div v-show="!_collapsed" class="vc-widget__slot-container">
-      <slot name="default-container">
-        <div class="vc-widget__slot">
-          <slot />
-        </div>
-      </slot>
-    </div>
-
-    <div v-if="$slots.footer || $slots['footer-container']" v-show="!_collapsed" class="vc-widget__footer-container">
-      <slot name="footer-container">
-        <div v-if="$slots.footer" class="vc-widget__footer">
-          <slot name="footer" />
-        </div>
-      </slot>
+      <div v-if="$slots.footer || $slots['footer-container']" v-show="!_collapsed" class="vc-widget__footer-container">
+        <slot name="footer-container">
+          <div v-if="$slots.footer" class="vc-widget__footer">
+            <slot name="footer" />
+          </div>
+        </slot>
+      </div>
     </div>
   </div>
 </template>

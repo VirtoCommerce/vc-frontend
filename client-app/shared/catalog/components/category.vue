@@ -89,6 +89,8 @@
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
           </VcTypography>
+          <!-- View options top facets view -->
+          <ViewMode v-if="!hideViewModeSelector && isHorizontal" v-model:mode="savedViewMode" class="ml-auto flex" />
         </div>
 
         <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
@@ -109,7 +111,10 @@
           />
 
           <!-- Sorting -->
-          <div v-if="!hideSorting" class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
+          <div
+            v-if="!hideSorting && !isHorizontal"
+            class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8"
+          >
             <span
               v-t="'pages.catalog.sort_by_label'"
               class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block"
@@ -128,7 +133,7 @@
 
           <!-- View options -->
           <ViewMode
-            v-if="!hideViewModeSelector || (!isMobile && !isHorizontal)"
+            v-if="!hideViewModeSelector && !isHorizontal"
             v-model:mode="savedViewMode"
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
@@ -200,9 +205,12 @@
           @change="applyFilters($event)"
         >
           <template #prepend>
-            <VcButton class="shrink-0">Some Button</VcButton>
-            <VcButton class="shrink-0">Some Button 2</VcButton>
-            <VcButton class="shrink-0">Some Button 3</VcButton>
+            <VcButton prepend-icon="filter" size="sm" variant="outline" class="shrink-0" @click="showMobileSidebar">{{
+              $t("common.buttons.all_filters")
+            }}</VcButton>
+            <VcButton prepend-icon="switch-vertical" size="sm" variant="outline" class="shrink-0">{{
+              $t("common.buttons.sort_by")
+            }}</VcButton>
           </template>
         </ProductsFiltersSidebar>
 
@@ -437,7 +445,7 @@ const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords)
 const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 
 const filtersOrientation = ref<"vertical" | "horizontal">("horizontal" as const);
-const isHorizontal = computed(() => filtersOrientation.value === "horizontal");
+const isHorizontal = computed(() => !isMobile.value && filtersOrientation.value === "horizontal");
 
 usePageHead({
   title: seoTitle,
