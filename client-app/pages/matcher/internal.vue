@@ -11,10 +11,9 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 
-const Home = defineAsyncComponent(() => import("./internal/home.vue"));
-
 const pages = {
-  "/": Home,
+  "/": defineAsyncComponent(() => import("@/pages/home.vue")),
+  "/demo-landing": defineAsyncComponent(() => import("@/pages/demo-landing.vue")),
 } as const;
 
 const page = computed(() => {

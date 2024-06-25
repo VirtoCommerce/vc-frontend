@@ -24,7 +24,6 @@ const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
-const DemoLanding = () => import("@/pages/demo-landing.vue");
 const Welcome = () => import("@/pages/welcome.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
@@ -60,7 +59,6 @@ export const mainRoutes: RouteRecordRaw[] = [
       requiresOrganization: true,
     },
   },
-  { path: "/demo-landing", name: "DemoLanding", component: DemoLanding, meta: { public: true } },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
