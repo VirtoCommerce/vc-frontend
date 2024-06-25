@@ -3,8 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount } from "vue";
+import { useRoute } from "vue-router";
 import type { StateType } from "@/pages/matcher/priorityManager";
+
 interface IEmits {
   (event: "setState", value: StateType): void;
 }
@@ -16,16 +18,19 @@ const pages = {
   "/demo-landing": defineAsyncComponent(() => import("@/pages/demo-landing.vue")),
 } as const;
 
+const route = useRoute();
 const page = computed(() => {
-  const path = window.location.pathname;
-  if (Object.keys(pages).includes(path)) {
+  if (Object.keys(pages).includes(route.path)) {
     emit("setState", "ready");
-
-    return pages[path as keyof typeof pages];
+    return pages[route.path as keyof typeof pages];
   }
 
   emit("setState", "empty");
   return null;
+});
+
+onBeforeUnmount(() => {
+  emit("setState", "initial");
 });
 </script>
 

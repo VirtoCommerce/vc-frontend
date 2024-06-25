@@ -1,3 +1,5 @@
+import type { MaybeRef } from "@vueuse/core";
+
 export type StateType = "initial" | "loading" | "ready" | "empty";
 
 export type PreviewerStateType = {
@@ -5,6 +7,7 @@ export type PreviewerStateType = {
   priority: number;
   state: StateType;
   isActive: boolean;
+  meta?: Record<string, MaybeRef<string | undefined>>;
 };
 
 export function getVisiblePreviewer(previewers: PreviewerStateType[]): PreviewerStateType["id"] | "loader" | null {

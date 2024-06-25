@@ -20,13 +20,13 @@
     <div v-if="visibleComponent === 'loader'" class="min-h-[80vh]">
       <VcLoaderOverlay />
     </div>
-    <NotFound v-show="!visibleComponent" />
+    <NotFound v-if="!visibleComponent" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { computed, ref, unref } from "vue";
+import { usePageHead, useThemeContext } from "@/core/composables";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { StateType, PreviewerStateType } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
@@ -73,10 +73,19 @@ const previewers = ref<{ [key in string]: PreviewerStateType }>({
     priority: 3,
     state: "initial",
     isActive: true,
+    meta: {
+      title: ref("Test"),
+    },
   },
 });
 
 const visibleComponent = computed(() => getVisiblePreviewer(Object.values(previewers.value)));
+
+const pageMeta = computed(() => {
+  return visibleComponent.value ? previewers.value[visibleComponent.value]?.meta : {};
+});
+
+usePageHead({ title: computed(() => unref(pageMeta.value?.title)) });
 
 function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
   if (previewers.value[previewerId]) {
