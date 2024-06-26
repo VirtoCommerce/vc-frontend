@@ -1,7 +1,7 @@
 <template>
-  <label class="inline-flex cursor-pointer flex-row items-center space-x-2">
+  <label :class="['vc-radio-button', `vc-radio-button--size--${size}`, checked && 'vc-radio-button--checked']">
     <input
-      class="size-6 cursor-pointer appearance-none rounded-full border-2 border-neutral-300 bg-additional-50 checked:border-8 checked:border-primary focus:outline-none"
+      class="vc-radio-button__input"
       type="radio"
       :value="value"
       :checked="checked"
@@ -9,7 +9,7 @@
       @change="$emit('update:modelValue', value)"
     />
     <slot v-bind="{ checked, value, label }">
-      <span class="text-base font-normal" :class="{ 'text-neutral-500': !checked }">{{ label }}</span>
+      <span class="vc-radio-button__text">{{ label }}</span>
     </slot>
   </label>
 </template>
@@ -17,24 +17,56 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-defineEmits(["update:modelValue"]);
+defineEmits<{
+  (event: "update:modelValue", value: string): void;
+}>();
 
-const props = defineProps({
-  label: {
-    type: String,
-    default: "",
-  },
-
-  value: {
-    type: String,
-    required: true,
-  },
-
-  modelValue: {
-    type: String,
-    default: undefined,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  size: "md",
 });
+
+interface IProps {
+  label?: string;
+  value: string;
+  modelValue?: string;
+  size?: "sm" | "md";
+}
 
 const checked = computed(() => props.modelValue === props.value);
 </script>
+
+<style lang="scss">
+.vc-radio-button {
+  @apply inline-flex cursor-pointer items-center gap-2;
+
+  &--size {
+    &--sm {
+      --size: 1.125rem;
+      --border-width: 5px;
+
+      @apply text-sm;
+    }
+
+    &--md {
+      --size: 1.25rem;
+      --border-width: 6px;
+
+      @apply text-base;
+    }
+  }
+
+  &--checked {
+    @apply text-neutral-500;
+  }
+
+  &__input {
+    @apply size-[--size] appearance-none rounded-full border-neutral-300 bg-additional-50 checked:border-primary focus:outline-none focus:ring focus:ring-primary-100;
+
+    border-width: var(--border-width);
+  }
+
+  &__text {
+    @apply font-normal;
+  }
+}
+</style>
