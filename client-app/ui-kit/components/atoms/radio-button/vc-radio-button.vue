@@ -17,20 +17,22 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-defineEmits<{
-  (event: "update:modelValue", value: string): void;
-}>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  size: "md",
-});
-
 interface IProps {
   label?: string;
   value: string;
   modelValue?: string;
   size?: "sm" | "md";
 }
+
+interface IEmits {
+  (event: "update:modelValue", value: IProps["modelValue"]): void;
+}
+
+defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  size: "md",
+});
 
 const checked = computed(() => props.modelValue === props.value);
 </script>
