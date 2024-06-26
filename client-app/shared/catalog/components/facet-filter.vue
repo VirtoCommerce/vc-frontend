@@ -213,5 +213,9 @@ onClickOutside(widgetElement, () => {
       @apply right-0 left-auto;
     }
   }
+
+  & :deep(.vc-widget__collapsable) {
+    @apply border-none;
+  }
 }
 </style>

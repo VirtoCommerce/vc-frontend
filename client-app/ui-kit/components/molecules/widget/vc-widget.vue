@@ -232,9 +232,5 @@ watchEffect(() => {
   &__footer {
     @apply py-4 px-[--p-x];
   }
-
-  &__collapsable {
-    @apply border-none;
-  }
 }
 </style>
