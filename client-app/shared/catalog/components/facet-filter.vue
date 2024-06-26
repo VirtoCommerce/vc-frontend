@@ -5,15 +5,15 @@
     collapsible
     :title="facet.label"
     :collapsed="isCollapsed"
-    :class="{ 'border-0': true }"
+    :class="`facet-filter facet-filter--${props.mode}`"
     @toggle-collapse="toggleCollapseHandler"
   >
-    <template v-if="hasSelected" #append>
+    <template v-if="hasSelected && isDropdown" #append>
       <span class="flex items-center gap-1">
         <VcChip size="sm" rounded color="info">{{ selectedFiltersCount }}</VcChip>
       </span>
     </template>
-    <template v-if="true" #header-container="{ collapsed }">
+    <template v-if="isDropdown" #header-container="{ collapsed }">
       <VcButton
         size="sm"
         :color="hasSelected ? 'accent' : 'secondary'"
@@ -34,20 +34,36 @@
         truncate
       />
 
-      <div class="-me-1 overflow-y-auto pe-1" :style="{ maxHeight }">
-        <VcMenuItem v-for="item in searchedValues" :key="item.value" class="facet-filter__item" size="sm">
-          <VcCheckbox v-model="item.selected" class="w-full" :disabled="loading" @change="changeFacetValues">
-            <div class="flex">
-              <div
-                :class="['mr-5 truncate text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']"
-                :title="item.label"
-              >
-                {{ item.label }}
+      <div class="-me-1 overflow-y-auto pe-1" :class="!isDropdown && 'space-y-3'" :style="{ maxHeight }">
+        <template v-if="isDropdown">
+          <VcMenuItem v-for="item in searchedValues" :key="item.value + '_'" class="facet-filter__item" size="sm">
+            <VcCheckbox v-model="item.selected" class="w-full" :disabled="loading" @change="changeFacetValues">
+              <div class="flex">
+                <div
+                  :class="['mr-5 truncate text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']"
+                  :title="item.label"
+                >
+                  {{ item.label }}
+                </div>
+                <VcChip class="ml-auto" variant="outline" size="sm" rounded color="secondary">{{ item.count }}</VcChip>
               </div>
-              <VcChip class="ml-auto" variant="outline" size="sm" rounded color="secondary">{{ item.count }}</VcChip>
+            </VcCheckbox>
+          </VcMenuItem>
+        </template>
+        <template v-else>
+          <VcCheckbox
+            v-for="item in searchedValues"
+            :key="item.value"
+            v-model="item.selected"
+            :disabled="loading"
+            @change="changeFacetValues"
+          >
+            <div :class="['flex text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
+              <span class="truncate">{{ item.label }}</span>
+              <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
             </div>
           </VcCheckbox>
-        </VcMenuItem>
+        </template>
 
         <div v-if="isNoResults" class="text-sm font-medium">{{ $t("pages.catalog.no_facet_found_message") }}</div>
 
@@ -74,16 +90,14 @@ interface IEmits {
 }
 
 interface IProps {
+  mode?: "dropdown" | "collapsable";
   facet: FacetItemType;
   loading?: boolean;
-  collapseOnChange?: boolean;
-  collapseOnClickOutside?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
-  collapseOnChange: false,
-  collapseOnClickOutside: false,
+  mode: "collapsable",
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -95,6 +109,7 @@ const MAX_ITEMS_VISIBLE = 14;
 const INNER_MARGIN = 16;
 
 const isMobile = breakpoints.smaller("lg");
+const isDropdown = computed(() => props.mode === "dropdown");
 
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
@@ -106,7 +121,7 @@ const facet = ref<FacetItemType>(cloneDeep(props.facet));
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
 
-  if (props.collapseOnChange) {
+  if (isDropdown.value) {
     isCollapsed.value = true;
   }
 }
@@ -151,7 +166,7 @@ function toggleCollapseHandler(value: boolean) {
 }
 
 onClickOutside(widgetElement, () => {
-  if (props.collapseOnClickOutside) {
+  if (isDropdown.value) {
     isCollapsed.value = true;
   }
 });
@@ -172,25 +187,31 @@ onClickOutside(widgetElement, () => {
   }
 }
 
-.facet-filter__item {
-  :deep(.vc-menu-item__inner) {
-    @apply bg-transparent p-0;
+.facet-filter {
+  &--dropdown {
+    @apply border-none;
+
+    .facet-filter__item {
+      :deep(.vc-menu-item__inner) {
+        @apply bg-transparent p-0;
+      }
+
+      :deep(.vc-checkbox__label) {
+        @apply w-full;
+      }
+
+      :deep(.vc-checkbox__container) {
+        @apply py-1.5;
+      }
+    }
+
+    :deep(.vc-widget__collapsable) {
+      @apply absolute z-10 min-w-full max-w-72 bg-[--color-additional-50]  shadow-xl mt-1 rounded;
+    }
+
+    .vc-widget:last-child :deep(.vc-widget__collapsable) {
+      @apply right-0 left-auto;
+    }
   }
-
-  :deep(.vc-checkbox__label) {
-    @apply w-full;
-  }
-
-  :deep(.vc-checkbox__container) {
-    @apply py-1.5;
-  }
-}
-
-:deep(.vc-widget__collapsable) {
-  @apply absolute z-10 min-w-full max-w-72 bg-[--color-additional-50]  shadow-xl mt-1 rounded;
-}
-
-.vc-widget:last-child :deep(.vc-widget__collapsable) {
-  @apply right-0 left-auto;
 }
 </style>

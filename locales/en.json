@@ -1253,6 +1253,9 @@
         "branches": "branches | {n} branch | {n} branches",
         "select_branch_text": "Select a pickup branch to see the products that are in stock now"
       },
+      "facet_card": {
+        "item_count_format": "({0})"
+      },
       "products_found_message": "result | results",
       "filters_button": "@:common.buttons.filters",
       "sort_by_label": "@:common.labels.sort_by",

@@ -111,7 +111,10 @@
           />
 
           <!-- Sorting -->
-          <div v-if="!hideSorting && !isHorizontal" class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
+          <div
+            v-if="!hideSorting && !isHorizontal"
+            class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8"
+          >
             <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
               {{ $t("pages.catalog.sort_by_label") }}
             </span>
@@ -204,9 +207,31 @@
             <VcButton prepend-icon="filter" size="sm" variant="outline" class="shrink-0" @click="showMobileSidebar">{{
               $t("common.buttons.all_filters")
             }}</VcButton>
-            <VcButton prepend-icon="switch-vertical" size="sm" variant="outline" class="shrink-0">{{
-              $t("common.buttons.sort_by")
-            }}</VcButton>
+            <VcDropdownMenu :offset-options="4" class="z-10" max-height="20rem">
+              <template #trigger="">
+                <VcButton prepend-icon="switch-vertical" size="sm" variant="outline" class="shrink-0">{{
+                  $t("common.buttons.sort_by")
+                }}</VcButton>
+              </template>
+              <template #content>
+                <div class="py-2">
+                  <VcMenuItem
+                    v-for="sortingOption in PRODUCT_SORTING_LIST"
+                    :key="sortingOption.id"
+                    class="border-none"
+                    color="secondary"
+                  >
+                    <VcRadioButton
+                      v-model="sortQueryParam"
+                      size="sm"
+                      :value="sortingOption.id"
+                      :label="sortingOption.name"
+                      class="pl-1 pr-5"
+                    />
+                  </VcMenuItem>
+                </div>
+              </template>
+            </VcDropdownMenu>
           </template>
         </ProductsFiltersSidebar>
 

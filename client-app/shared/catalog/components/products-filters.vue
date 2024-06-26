@@ -41,6 +41,7 @@
         <slot name="prepend" />
         <template v-for="(facet, i) in filtersToShow" :key="facet.paramName">
           <FacetFilter
+            :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :collapse-on-change="isHorizontal"
             :collapse-on-click-outside="isHorizontal"
             :no-wrap="isHorizontal"
