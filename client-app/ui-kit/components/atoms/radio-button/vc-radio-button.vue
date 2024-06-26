@@ -1,12 +1,12 @@
 <template>
   <label :class="['vc-radio-button', `vc-radio-button--size--${size}`, checked && 'vc-radio-button--checked']">
     <input
+      v-model="model"
       class="vc-radio-button__input"
       type="radio"
       :value="value"
       :checked="checked"
       :aria-checked="checked"
-      @change="$emit('update:modelValue', value)"
     />
     <slot v-bind="{ checked, value, label }">
       <span class="vc-radio-button__text">{{ label }}</span>
@@ -20,21 +20,16 @@ import { computed } from "vue";
 interface IProps {
   label?: string;
   value: string;
-  modelValue?: string;
   size?: "sm" | "md";
 }
-
-interface IEmits {
-  (event: "update:modelValue", value: IProps["modelValue"]): void;
-}
-
-defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
 });
 
-const checked = computed(() => props.modelValue === props.value);
+const model = defineModel<IProps["value"]>();
+
+const checked = computed(() => model.value === props.value);
 </script>
 
 <style lang="scss">
@@ -58,17 +53,21 @@ const checked = computed(() => props.modelValue === props.value);
   }
 
   &--checked {
-    @apply text-neutral-500;
+    .vc-radio-button__text {
+      @apply text-neutral-950;
+    }
+
+    .vc-radio-button__input {
+      border-width: var(--border-width);
+    }
   }
 
   &__input {
-    @apply size-[--size] appearance-none rounded-full border-neutral-300 bg-additional-50 checked:border-primary focus:outline-none focus:ring focus:ring-primary-100;
-
-    border-width: var(--border-width);
+    @apply size-[--size] appearance-none border-2 rounded-full border-neutral-300 bg-additional-50 checked:border-primary focus:outline-none focus:ring focus:ring-primary-100;
   }
 
   &__text {
-    @apply font-normal;
+    @apply font-normal text-neutral-500;
   }
 }
 </style>
