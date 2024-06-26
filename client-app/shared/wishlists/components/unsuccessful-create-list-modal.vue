@@ -6,7 +6,9 @@
       </VcButton>
     </template>
     <div class="px-5 py-10 text-center">
-      <span v-t="'shared.wishlists.unsuccessful_create_wishlist_modal.message'" class="text-lg"></span>
+      <span class="text-lg">
+        {{ $t("shared.wishlists.unsuccessful_create_wishlist_modal.message") }}
+      </span>
     </div>
   </VcModal>
 </template>

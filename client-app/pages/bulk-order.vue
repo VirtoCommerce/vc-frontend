@@ -30,7 +30,7 @@
           variant="solid-light"
           icon
         >
-          <span v-t="'pages.bulk_order.data_is_invalid_alert'"></span>
+          {{ $t("pages.bulk_order.data_is_invalid_alert") }}
         </VcAlert>
       </transition>
 

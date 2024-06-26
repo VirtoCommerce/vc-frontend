@@ -1,24 +1,25 @@
 <template>
   <section>
-    <h2
-      v-t="'shared.bulk_order.manually.title'"
-      class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block"
-    ></h2>
+    <h2 class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block">
+      {{ $t("shared.bulk_order.manually.title") }}
+    </h2>
 
     <div class="p-6 pb-5 pt-4 md:p-5">
       <p class="text-sm">
         {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
-        <router-link
-          v-t="'shared.bulk_order.manually.cart_link'"
-          :to="{ name: 'Cart' }"
-          class="text-[--link-color] hover:text-[--link-hover-color]"
-        ></router-link>
+        <router-link :to="{ name: 'Cart' }" class="text-[--link-color] hover:text-[--link-hover-color]">
+          {{ $t("shared.bulk_order.manually.cart_link") }}
+        </router-link>
         {{ $t("shared.bulk_order.manually.subtitle_message_end") }}
       </p>
 
       <div class="mb-1.5 mt-3 flex flex-row gap-x-5">
-        <div v-t="'shared.bulk_order.manually.product_sku_label'" class="w-full font-bold"></div>
-        <div v-t="'shared.bulk_order.manually.quantity_label'" class="w-1/3 max-w-[164px] font-bold xl:w-1/4"></div>
+        <div class="w-full font-bold">
+          {{ $t("shared.bulk_order.manually.product_sku_label") }}
+        </div>
+        <div class="w-1/3 max-w-[164px] font-bold xl:w-1/4">
+          {{ $t("shared.bulk_order.manually.quantity_label") }}
+        </div>
       </div>
 
       <div class="flex flex-col gap-y-4">
@@ -71,20 +72,22 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { maxQuantity, validateQuantity } from "@/shared/bulk-order";
+import { maxQuantity, validateQuantity } from "@/shared/bulk-order/utils";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
 type InputNewBulkItemExtendedType = { [prop in keyof InputNewBulkItemType]: string };
 
 const emit = defineEmits<{
-  (event: "add-to-cart", value: InputNewBulkItemType[]): void;
+  (event: "addToCart", value: InputNewBulkItemType[]): void;
   (event: "error", value: InputNewBulkItemType[]): void;
 }>();
 
-defineProps({
-  loading: Boolean,
-});
+defineProps<IProps>();
+
+interface IProps {
+  loading: boolean;
+}
 
 const items: Ref<InputNewBulkItemExtendedType[]> = ref(createItems(5));
 
@@ -122,7 +125,7 @@ function addToCart() {
   }
 
   if (customItems.length) {
-    emit("add-to-cart", customItems);
+    emit("addToCart", customItems);
   }
 }
 

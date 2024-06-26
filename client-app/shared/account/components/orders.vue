@@ -162,7 +162,9 @@
           @keyup.enter="goToOrderDetails(itemData.item)"
         >
           <div class="flex flex-col">
-            <span v-t="'pages.account.orders.order_number_label'" class="text-sm text-gray-400" />
+            <span class="text-sm text-gray-400">
+              {{ $t("pages.account.orders.order_number_label") }}
+            </span>
 
             <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
               {{ itemData.item.number }}
@@ -178,7 +180,9 @@
           </div>
 
           <div class="flex flex-col">
-            <span v-t="'pages.account.orders.date_label'" class="text-sm text-gray-400" />
+            <span class="text-sm text-gray-400">
+              {{ $t("pages.account.orders.date_label") }}
+            </span>
 
             <span class="overflow-hidden text-ellipsis">
               {{ $d(itemData.item?.createdDate) }}
@@ -186,7 +190,9 @@
           </div>
 
           <div class="flex flex-col">
-            <span v-t="'pages.account.orders.total_label'" class="text-sm text-gray-400" />
+            <span class="text-sm text-gray-400">
+              {{ $t("pages.account.orders.total_label") }}
+            </span>
 
             <span class="overflow-hidden text-ellipsis font-extrabold">
               {{ itemData.item.total?.formattedAmount }}
@@ -198,23 +204,31 @@
       <template #mobile-skeleton>
         <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
           <div class="flex flex-col">
-            <span v-t="'pages.account.orders.order_number_label'" class="text-sm text-gray-400"></span>
-            <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
+            <span class="text-sm text-gray-400">
+              {{ $t("pages.account.orders.order_number_label") }}
+            </span>
+            <div class="mr-4 h-6 animate-pulse bg-gray-200" />
           </div>
 
           <div class="flex flex-col">
-            <span v-t="'pages.account.orders.date_label'" class="text-sm text-gray-400"></span>
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <span class="text-sm text-gray-400">
+              {{ $t("pages.account.orders.date_label") }}
+            </span>
+            <div class="h-6 animate-pulse bg-gray-200" />
           </div>
 
           <div class="flex flex-col">
-            <span v-t="'pages.account.orders.total_label'" class="text-sm text-gray-400"></span>
-            <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
+            <span class="text-sm text-gray-400">
+              {{ $t("pages.account.orders.total_label") }}
+            </span>
+            <div class="mr-4 h-6 animate-pulse bg-gray-200" />
           </div>
 
           <div class="flex flex-col">
-            <span v-t="'pages.account.orders.status_label'" class="text-sm text-gray-400"></span>
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <span class="text-sm text-gray-400">
+              {{ $t("pages.account.orders.status_label") }}
+            </span>
+            <div class="h-6 animate-pulse bg-gray-200" />
           </div>
         </div>
       </template>

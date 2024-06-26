@@ -107,7 +107,8 @@
 <script setup lang="ts">
 import { sumBy } from "lodash";
 import { computed, ref } from "vue";
-import { useCurrency, useLanguages } from "@/core/composables";
+import { useCurrency } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
 import type {

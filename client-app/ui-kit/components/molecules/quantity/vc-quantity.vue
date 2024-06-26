@@ -4,7 +4,7 @@
     :name="name"
     :readonly="readonly"
     :disabled="disabled"
-    :error="!!errorMessage"
+    :error="error || !!errorMessage"
     :message="errorMessage"
     :aria-label="$t('common.labels.product_quantity')"
     single-line-message
@@ -17,7 +17,15 @@
     @keyup.enter="changeQuantity"
     @input="onQuantityChanged"
     @blur="onFocusOut"
-  />
+  >
+    <template #prepend>
+      <slot name="prepend" />
+    </template>
+
+    <template #append>
+      <slot name="append" />
+    </template>
+  </VcInput>
 </template>
 
 <script setup lang="ts">

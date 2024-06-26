@@ -54,13 +54,13 @@ import { clone } from "lodash";
 import { computed, onMounted, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics } from "@/core/composables/useGoogleAnalytics";
 import { Logger } from "@/core/utilities";
-import BankCardForm from "../components/bank-card-form.vue";
-import { useAuthorizeNet } from "../composables/useAuthorizeNet";
-import { PaymentActionType } from "../types";
+import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
+import { PaymentActionType } from "@/shared/payment/types";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import type { BankCardErrorsType, BankCardType } from "@/shared/payment";
+import BankCardForm from "@/shared/payment/components/bank-card-form.vue";
 import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 interface IEmits {
