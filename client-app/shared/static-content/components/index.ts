@@ -50,6 +50,13 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         showIf: `options.get('hideViewModeSelector') === false`,
       },
       {
+        name: "filtersOrientation",
+        type: "string",
+        defaultValue: "vertical",
+        enum: ["vertical", "horizontal"],
+        helperText: "Show filters vertically or horizontally",
+      },
+      {
         name: "cardType",
         type: "string",
         defaultValue: "full",

@@ -7,20 +7,20 @@
       <template v-if="!hideSidebar">
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
-          v-if="isMobile || isHorizontal"
+          v-if="isMobile || areHorizontalFilters"
           :class="[!isMobile && 'desktop-popup-sidebar w-[358px]']"
           :is-visible="mobileSidebarVisible"
           @hide="hideMobileSidebar()"
         >
           <ProductsFilters
-            :show-common-filters="isHorizontal"
+            :show-common-filters="areHorizontalFilters"
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
             @change="updateMobileFilters($event)"
             @open-branches="openBranchesModal(true)"
           >
-            <template v-if="isHorizontal" #prepend="{ loading }">
+            <template v-if="areHorizontalFilters" #prepend="{ loading }">
               <span class="text-sm font-bold text-neutral-900">
                 {{ $t("pages.catalog.sort_by_label") }}
               </span>
@@ -130,7 +130,11 @@
             </sup>
           </VcTypography>
           <!-- View options top facets view -->
-          <ViewMode v-if="!hideViewModeSelector && isHorizontal" v-model:mode="savedViewMode" class="ml-auto flex" />
+          <ViewMode
+            v-if="!hideViewModeSelector && areHorizontalFilters"
+            v-model:mode="savedViewMode"
+            class="ml-auto flex"
+          />
         </div>
 
         <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
@@ -152,7 +156,7 @@
 
           <!-- Sorting -->
           <div
-            v-if="!hideSorting && !isHorizontal"
+            v-if="!hideSorting && !areHorizontalFilters"
             class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8"
           >
             <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
@@ -172,7 +176,7 @@
 
           <!-- View options -->
           <ViewMode
-            v-if="!hideViewModeSelector && !isHorizontal"
+            v-if="!hideViewModeSelector && !areHorizontalFilters"
             v-model:mode="savedViewMode"
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
@@ -180,7 +184,7 @@
           <template v-if="!hideControls">
             <!-- Branch availability -->
             <div
-              v-if="!isMobile && !isHorizontal"
+              v-if="!isMobile && !areHorizontalFilters"
               role="button"
               tabindex="0"
               class="order-3 ml-4 flex items-center xl:ml-6"
@@ -213,7 +217,7 @@
             </div>
 
             <!-- In Stock -->
-            <div v-if="!isMobile && !isHorizontal" class="order-2 ml-4 flex items-center xl:ml-8">
+            <div v-if="!isMobile && !areHorizontalFilters" class="order-2 ml-4 flex items-center xl:ml-8">
               <VcTooltip placement="bottom-start" width="12rem">
                 <template #trigger>
                   <VcCheckbox v-model="savedInStock" :disabled="loading">
@@ -238,7 +242,7 @@
 
         <!-- Horizontal Filters -->
         <ProductsFilters
-          v-if="isHorizontal && !isMobile"
+          v-if="areHorizontalFilters && !isMobile"
           class="mb-4.5"
           :orientation="filtersOrientation"
           :keyword="keywordQueryParam"
@@ -424,6 +428,7 @@ interface IProps {
   hideControls?: boolean;
   hideSorting?: boolean;
   viewMode?: ViewModeType;
+  filtersOrientation?: "vertical" | "horizontal";
   cardType?: "full" | "short";
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
@@ -509,8 +514,7 @@ const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescri
 const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 
-const filtersOrientation = ref<"vertical" | "horizontal">("horizontal" as const);
-const isHorizontal = computed(() => !isMobile.value && filtersOrientation.value === "horizontal");
+const areHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 
 usePageHead({
   title: seoTitle,
@@ -703,7 +707,7 @@ function openBranchesModal(fromMobileFilter: boolean) {
 const setFiltersPosition = throttle(_setFiltersPosition, 100);
 
 function _setFiltersPosition() {
-  if (isHorizontal.value) {
+  if (areHorizontalFilters.value) {
     return;
   }
   const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
