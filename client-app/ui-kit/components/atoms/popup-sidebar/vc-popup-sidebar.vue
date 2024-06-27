@@ -15,7 +15,7 @@
       <div
         v-if="isVisible"
         v-bind="$attrs"
-        class="fixed inset-0 z-50 flex w-72 flex-col bg-[--color-additional-50] transition-transform"
+        class="vc-popup-sidebar fixed inset-0 z-50 flex w-72 flex-col bg-[--color-additional-50] transition-transform"
       >
         <div class="relative z-[1] flex items-center justify-between gap-2 ps-5 shadow-sm">
           <slot name="header" :hide="onHide">
@@ -24,7 +24,7 @@
             </div>
 
             <button type="button" class="appearance-none px-5 py-4" @click="onHide">
-              <VcIcon class="text-[--color-danger-400]" name="x" />
+              <VcIcon class="text-[--close-button-color]" name="x" />
             </button>
           </slot>
         </div>
@@ -68,3 +68,9 @@ function onHide() {
   emit("hide");
 }
 </script>
+
+<style lang="scss" scoped>
+.vc-popup-sidebar {
+  --close-button-color: var(--color-danger-400);
+}
+</style>

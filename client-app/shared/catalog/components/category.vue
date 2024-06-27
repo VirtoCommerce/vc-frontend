@@ -8,11 +8,11 @@
         <!-- Mobile sidebar back cover -->
         <VcPopupSidebar
           v-if="isMobile || isHorizontal"
-          :class="[!isMobile && 'w-[358px]']"
+          :class="[!isMobile && 'desktop-popup-sidebar w-[358px]']"
           :is-visible="mobileSidebarVisible"
           @hide="hideMobileSidebar()"
         >
-          <ProductsFiltersSidebar
+          <ProductsFilters
             :show-common-filters="isHorizontal"
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
@@ -53,7 +53,7 @@
                 </VcCheckbox>
               </button>
             </template>
-          </ProductsFiltersSidebar>
+          </ProductsFilters>
 
           <template #footer>
             <VcButton
@@ -88,8 +88,7 @@
               :loading="!currentCategory && loadingCategory"
             />
 
-            <ProductsFiltersSidebar
-              :orientation="filtersOrientation"
+            <ProductsFilters
               :keyword="keywordQueryParam"
               :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
               :loading="loading"
@@ -100,7 +99,7 @@
       </template>
 
       <!-- Content -->
-      <div ref="contentElement" class="w-full grow">
+      <div ref="contentElement" class="grow">
         <div class="flex">
           <VcTypography tag="h1">
             <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
@@ -237,7 +236,8 @@
           </template>
         </div>
 
-        <ProductsFiltersSidebar
+        <!-- Horizontal Filters -->
+        <ProductsFilters
           v-if="isHorizontal && !isMobile"
           class="mb-4.5"
           :orientation="filtersOrientation"
@@ -276,7 +276,7 @@
               </template>
             </VcDropdownMenu>
           </template>
-        </ProductsFiltersSidebar>
+        </ProductsFilters>
 
         <!-- Filters chips -->
         <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
@@ -402,11 +402,11 @@ import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import DisplayProducts from "./display-products.vue";
-import ProductsFiltersSidebar from "./products-filters.vue";
+import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
-import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
+import type { ProductsFilters as ProductsFiltersType, ProductsSearchParams } from "@/shared/catalog";
 import type { StyleValue } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
@@ -481,7 +481,7 @@ const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
 const mobileSidebarVisible = ref(false);
-const mobileFilters = shallowReactive<ProductsFilters>({
+const mobileFilters = shallowReactive<ProductsFiltersType>({
   facets: [],
   inStock: savedInStock.value,
   branches: savedBranches.value,
@@ -561,7 +561,7 @@ const isMobileFilterDirty = computedEager<boolean>(
       facets: facets.value,
       inStock: savedInStock.value,
       branches: savedBranches.value,
-    } as ProductsFilters),
+    } as ProductsFiltersType),
 );
 
 function sendGASelectItemEvent(product: Product) {
@@ -579,7 +579,7 @@ function hideMobileSidebar() {
   mobileSidebarVisible.value = false;
 }
 
-function applyFilters(newFilters: ProductsFilters) {
+function applyFilters(newFilters: ProductsFiltersType) {
   const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
 
   if (facetsQueryParam.value !== facetsFilterExpression) {
@@ -597,7 +597,7 @@ function applyFilters(newFilters: ProductsFilters) {
   setFiltersPosition();
 }
 
-async function updateMobileFilters(newFilters: ProductsFilters) {
+async function updateMobileFilters(newFilters: ProductsFiltersType) {
   const searchParamsForFacets: ProductsSearchParams = {
     ...searchParams.value,
     filter: [
@@ -685,7 +685,7 @@ function openBranchesModal(fromMobileFilter: boolean) {
       selectedBranches: fromMobileFilter ? mobileFilters.branches : savedBranches.value,
       onSave(branches: string[]) {
         if (fromMobileFilter) {
-          const newFilters: ProductsFilters = {
+          const newFilters: ProductsFiltersType = {
             branches,
             facets: mobileFilters.facets,
             inStock: mobileFilters.inStock,
@@ -845,5 +845,9 @@ watchDebounced(
 <style scoped lang="scss">
 .vc-typography--variant--h1 {
   @apply normal-case;
+}
+
+:global(.vc-popup-sidebar.desktop-popup-sidebar) {
+  --close-button-color: var(--color_neutral_600);
 }
 </style>
