@@ -8,12 +8,12 @@
     :class="`facet-filter facet-filter--${props.mode}`"
     @toggle-collapse="toggleCollapseHandler"
   >
-    <template v-if="hasSelected && isDropdown" #append>
+    <template v-if="hasSelected && isDropdownMode" #append>
       <span class="flex items-center gap-1">
         <VcChip size="sm" rounded color="info">{{ selectedFiltersCount }}</VcChip>
       </span>
     </template>
-    <template v-if="isDropdown" #header-container="{ collapsed }">
+    <template v-if="isDropdownMode" #header-container="{ collapsed }">
       <VcButton
         size="sm"
         :color="hasSelected ? 'accent' : 'secondary'"
@@ -34,8 +34,8 @@
         truncate
       />
 
-      <div class="-me-1 overflow-y-auto pe-1" :class="!isDropdown && 'space-y-3'" :style="{ maxHeight }">
-        <template v-if="isDropdown">
+      <div class="-me-1 overflow-y-auto pe-1" :class="!isDropdownMode && 'space-y-3'" :style="{ maxHeight }">
+        <template v-if="isDropdownMode">
           <VcMenuItem v-for="item in searchedValues" :key="item.value + '_'" class="facet-filter__item" size="sm">
             <VcCheckbox v-model="item.selected" class="w-full" :disabled="loading" @change="changeFacetValues">
               <div class="flex">
@@ -109,7 +109,7 @@ const MAX_ITEMS_VISIBLE = 14;
 const INNER_MARGIN = 16;
 
 const isMobile = breakpoints.smaller("lg");
-const isDropdown = computed(() => props.mode === "dropdown");
+const isDropdownMode = computed(() => props.mode === "dropdown");
 
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
@@ -121,7 +121,7 @@ const facet = ref<FacetItemType>(cloneDeep(props.facet));
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
 
-  if (isDropdown.value) {
+  if (isDropdownMode.value) {
     isCollapsed.value = true;
   }
 }
@@ -166,7 +166,7 @@ function toggleCollapseHandler(value: boolean) {
 }
 
 onClickOutside(widgetElement, () => {
-  if (isDropdown.value) {
+  if (isDropdownMode.value) {
     isCollapsed.value = true;
   }
 });
