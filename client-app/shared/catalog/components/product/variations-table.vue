@@ -62,20 +62,22 @@
                 !variation.availabilityData?.isAvailable ||
                 !variation.availabilityData?.isBuyable
               "
-              :error="!!getLineItem(variation) && !!idErrors[getLineItem(variation)!.id]"
+              :error="!!idErrors[variation.id]"
               @update:model-value="changeCart(variation, $event)"
             >
               <template #append>
-                <VcTooltip v-if="getLineItem(variation) && idErrors[getLineItem(variation)!.id]" placement="bottom-end">
+                <VcTooltip v-if="!!idErrors[variation.id]" placement="bottom-end">
                   <template #trigger>
                     <VcIcon class="variations-table__quantity-icon" name="warning" />
                   </template>
 
                   <template #content>
-                    <div class="w-max rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-danger shadow-md">
-                      <div v-for="error in idErrors[getLineItem(variation)!.id]" :key="error.id">
-                        {{ error.translation }}
-                      </div>
+                    <div
+                      v-for="error in idErrors[variation.id]"
+                      :key="error.id"
+                      class="w-max px-3.5 py-1.5 text-xs text-danger"
+                    >
+                      {{ error.translation }}
                     </div>
                   </template>
                 </VcTooltip>
