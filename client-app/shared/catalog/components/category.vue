@@ -6,14 +6,54 @@
     <div class="flex items-stretch lg:gap-6">
       <template v-if="!hideSidebar">
         <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar v-if="isMobile || isHorizontal" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
+        <VcPopupSidebar
+          v-if="isMobile || isHorizontal"
+          :class="[!isMobile && 'w-[358px]']"
+          :is-visible="mobileSidebarVisible"
+          @hide="hideMobileSidebar()"
+        >
           <ProductsFiltersSidebar
+            :show-common-filters="isHorizontal"
             :keyword="keywordQueryParam"
             :filters="mobileFilters"
             :loading="loading || facetsLoading"
             @change="updateMobileFilters($event)"
             @open-branches="openBranchesModal(true)"
-          />
+          >
+            <template v-if="isHorizontal" #prepend="{ loading }">
+              <span class="text-sm font-bold text-neutral-900">
+                {{ $t("pages.catalog.sort_by_label") }}
+              </span>
+              <VcSelect
+                v-model="sortQueryParam"
+                text-field="name"
+                value-field="id"
+                :disabled="loading"
+                :items="PRODUCT_SORTING_LIST"
+                class="mb-4"
+              />
+              <VcCheckbox
+                v-model="mobileFilters.inStock"
+                :disabled="loading"
+                @change="(e) => updateMobileFilters(mobileFilters)"
+              >
+                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
+              </VcCheckbox>
+              <button type="button" @click.prevent="openBranchesModal(true)">
+                <VcCheckbox :model-value="!!mobileFilters.branches.length" :disabled="loading">
+                  <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
+                    <span>
+                      {{
+                        $t("pages.catalog.branch_availability_filter_card.branches", {
+                          n: mobileFilters.branches.length,
+                        })
+                      }}
+                    </span>
+                  </i18n-t>
+                </VcCheckbox>
+              </button>
+            </template>
+          </ProductsFiltersSidebar>
 
           <template #footer>
             <VcButton
@@ -58,6 +98,7 @@
           </div>
         </div>
       </template>
+
       <!-- Content -->
       <div ref="contentElement" class="w-full grow">
         <div class="flex">
@@ -141,6 +182,8 @@
             <!-- Branch availability -->
             <div
               v-if="!isMobile && !isHorizontal"
+              role="button"
+              tabindex="0"
               class="order-3 ml-4 flex items-center xl:ml-6"
               @click.prevent="openBranchesModal(false)"
               @keyup.enter.prevent="openBranchesModal(false)"

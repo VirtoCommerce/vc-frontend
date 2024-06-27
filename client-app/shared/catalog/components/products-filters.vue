@@ -38,7 +38,7 @@
         class="flex gap-4"
         :class="[isHorizontal && ' flex-row items-start', !isHorizontal && 'flex-col items-stretch lg:gap-5']"
       >
-        <slot name="prepend" />
+        <slot name="prepend" :loading="loading" />
         <template v-for="(facet, i) in filtersToShow" :key="facet.paramName">
           <FacetFilter
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
