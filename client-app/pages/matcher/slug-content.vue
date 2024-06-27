@@ -1,7 +1,7 @@
 <template>
   <div v-if="!loading && (hasContent || objectType)" class="slug-content">
-    <CategoryComponent v-if="objectType === 'Category'" :category-id="slugInfo?.entityInfo?.objectId" />
-    <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" />
+    <CategoryComponent v-if="objectType === 'Category'" :category-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+    <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
     <StaticPage v-else-if="hasContent" />
   </div>
 </template>

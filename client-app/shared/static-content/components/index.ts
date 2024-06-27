@@ -108,6 +108,12 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         showIf: `options.get('countLimitation') === false`,
         helperText: "hidden if Count Limitation is active",
       },
+      {
+        name: "allowSetMeta",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Allow the component to set SEO meta tags based on fetched category",
+      },
     ],
   },
   {

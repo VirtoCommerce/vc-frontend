@@ -287,7 +287,17 @@ import {
   whenever,
 } from "@vueuse/core";
 import { cloneDeep, isEqual, throttle } from "lodash";
-import { computed, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowReactive,
+  shallowRef,
+  triggerRef,
+  watch,
+  watchEffect,
+} from "vue";
 import {
   useBreadcrumbs,
   useGoogleAnalytics,
@@ -340,6 +350,7 @@ interface IProps {
   keyword?: string;
   filter?: string;
   fixedProductsCount?: string;
+  allowSetMeta?: boolean;
 }
 
 const { catalogId, currencyCode } = globals;
@@ -422,8 +433,8 @@ const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
-watch(categoryComponentAnchorIsVisible, (value) => {
-  if (value) {
+watchEffect(() => {
+  if (props.allowSetMeta && categoryComponentAnchorIsVisible.value) {
     usePageHead({
       title: seoTitle,
       meta: {
