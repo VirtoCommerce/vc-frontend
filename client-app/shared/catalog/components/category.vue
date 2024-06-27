@@ -21,37 +21,43 @@
             @open-branches="openBranchesModal(true)"
           >
             <template v-if="areHorizontalFilters" #prepend="{ loading }">
-              <span class="text-sm font-bold text-neutral-900">
-                {{ $t("pages.catalog.sort_by_label") }}
-              </span>
-              <VcSelect
-                v-model="sortQueryParam"
-                text-field="name"
-                value-field="id"
-                :disabled="loading"
-                :items="PRODUCT_SORTING_LIST"
-                class="mb-4"
-              />
-              <VcCheckbox
-                v-model="mobileFilters.inStock"
-                :disabled="loading"
-                @change="(e) => updateMobileFilters(mobileFilters)"
-              >
-                {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-              </VcCheckbox>
-              <button type="button" @click.prevent="openBranchesModal(true)">
-                <VcCheckbox :model-value="!!mobileFilters.branches.length" :disabled="loading">
-                  <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
-                    <span>
-                      {{
-                        $t("pages.catalog.branch_availability_filter_card.branches", {
-                          n: mobileFilters.branches.length,
-                        })
-                      }}
-                    </span>
-                  </i18n-t>
+              <div>
+                <span class="text-sm font-bold text-neutral-900">
+                  {{ $t("pages.catalog.sort_by_label") }}
+                </span>
+                <VcSelect
+                  v-model="sortQueryParam"
+                  text-field="name"
+                  value-field="id"
+                  :disabled="loading"
+                  :items="PRODUCT_SORTING_LIST"
+                  class="mb-4"
+                />
+                <VcCheckbox
+                  v-model="mobileFilters.inStock"
+                  :disabled="loading"
+                  @change="(e) => updateMobileFilters(mobileFilters)"
+                >
+                  {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
                 </VcCheckbox>
-              </button>
+                <button type="button" @click.prevent="openBranchesModal(true)">
+                  <VcCheckbox :model-value="!!mobileFilters.branches.length" :disabled="loading">
+                    <i18n-t
+                      keypath="pages.catalog.branch_availability_filter_card.available_in"
+                      tag="div"
+                      scope="global"
+                    >
+                      <span>
+                        {{
+                          $t("pages.catalog.branch_availability_filter_card.branches", {
+                            n: mobileFilters.branches.length,
+                          })
+                        }}
+                      </span>
+                    </i18n-t>
+                  </VcCheckbox>
+                </button>
+              </div>
             </template>
           </ProductsFilters>
 
@@ -311,59 +317,19 @@
         </div>
 
         <!-- Products -->
-        <template v-if="products.length || loading">
-          <DisplayProducts
-            :loading="loading"
-            :view-mode="savedViewMode"
-            :items-per-page="itemsPerPage"
-            :products="products"
-            :open-product-in-new-tab="$cfg.show_details_in_separate_tab"
-            :card-type="cardType"
-            :columns-amount-desktop="columnsAmountDesktop"
-            :columns-amount-tablet="columnsAmountTablet"
-            @item-link-click="sendGASelectItemEvent"
-          >
-            <template #cart-handler="{ item }">
-              <AddToCart :product="item" :reserved-space="savedViewMode === 'grid'" />
-            </template>
-          </DisplayProducts>
-
-          <VcInfinityScrollLoader
-            v-if="!loading && !Number(fixedProductsCount)"
-            :loading="loadingMore"
-            distance="400"
-            class="mt-8"
-            :is-page-limit-reached="page === PAGE_LIMIT"
-            @visible="loadMoreProducts"
-          />
-
-          <VcScrollTopButton />
-        </template>
-
-        <!-- Empty view -->
-        <VcEmptyView
-          v-else
-          :text="
-            isExistSelectedFacets || savedInStock || savedBranches.length || keywordQueryParam
-              ? $t('pages.catalog.no_products_filtered_message')
-              : $t('pages.catalog.no_products_message')
-          "
-          class="h-96"
-        >
-          <template #icon>
-            <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
-          </template>
-
-          <template #button>
-            <VcButton
-              v-if="isExistSelectedFacets || keywordQueryParam"
-              prepend-icon="reset"
-              @click="resetFacetFiltersWithKeyword"
-            >
-              {{ $t("pages.catalog.no_products_button") }}
-            </VcButton>
-          </template>
-        </VcEmptyView>
+        <CategoryProducts
+          is-exist-selected-facets
+          :saved-in-stock="savedInStock"
+          :has-saved-branches="!!savedBranches.length"
+          :fixed-products-count="fixedProductsCount"
+          :saved-view-mode="savedViewMode"
+          :items-per-page="itemsPerPage"
+          :card-type="cardType"
+          :columns-amount-desktop="columnsAmountDesktop"
+          :columns-amount-tablet="columnsAmountTablet"
+          :search-params="searchParams"
+          :reset-facet-filters="resetFacetFilters"
+        />
       </div>
     </div>
   </VcContainer>
@@ -371,24 +337,11 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import {
-  computedEager,
-  useBreakpoints,
-  useElementVisibility,
-  useLocalStorage,
-  watchDebounced,
-  whenever,
-} from "@vueuse/core";
+import { computedEager, useBreakpoints, useElementVisibility, useLocalStorage, whenever } from "@vueuse/core";
 import { cloneDeep, isEqual } from "lodash";
 import { computed, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
-import {
-  useBreadcrumbs,
-  useGoogleAnalytics,
-  usePageHead,
-  useRouteQueryParam,
-  useThemeContext,
-} from "@/core/composables";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { useBreadcrumbs, usePageHead, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
@@ -399,18 +352,16 @@ import {
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
 import { useStickyFilters } from "@/shared/catalog/composables/useStickyFilters";
 import { FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
-import DisplayProducts from "./display-products.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
-import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters as ProductsFiltersType, ProductsSearchParams } from "@/shared/catalog";
+import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const props = defineProps<IProps>();
@@ -441,19 +392,7 @@ const { catalogId, currencyCode } = globals;
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const breakpoints = useBreakpoints(BREAKPOINTS);
-const ga = useGoogleAnalytics();
-const {
-  fetchProducts,
-  fetchMoreProducts,
-  getFacets,
-  loading,
-  loadingMore,
-  facetsLoading,
-  products,
-  total,
-  pages,
-  facets,
-} = useProducts({
+const { getFacets, loading, facetsLoading, products, total, facets } = useProducts({
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
@@ -481,7 +420,6 @@ const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
 
 const isMobile = breakpoints.smaller("lg");
 
-const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
 const mobileSidebarVisible = ref(false);
@@ -555,10 +493,6 @@ const isMobileFilterDirty = computedEager<boolean>(
     } as ProductsFiltersType),
 );
 
-function sendGASelectItemEvent(product: Product) {
-  ga.selectItem(product);
-}
-
 function showMobileSidebar() {
   mobileFilters.facets = cloneDeep(facets.value);
   mobileFilters.inStock = savedInStock.value;
@@ -626,49 +560,6 @@ function resetFacetFilters() {
   triggerRef(facets);
 }
 
-function resetFacetFiltersWithKeyword() {
-  keywordQueryParam.value = "";
-  // FIXME: `setTimeout` is a hack to apply the value of `useRouteQueryParam` in parallel
-  setTimeout(resetFacetFilters, 0);
-}
-
-async function loadProducts() {
-  page.value = 1;
-
-  await fetchProducts(searchParams.value);
-
-  /**
-   * Send Google Analytics event for products.
-   */
-  ga.viewItemList(products.value, {
-    item_list_id: currentCategory.value?.slug,
-    item_list_name: currentCategory.value?.name,
-  });
-}
-
-async function loadMoreProducts() {
-  if (page.value === pages.value) {
-    return;
-  }
-
-  const nextPage = page.value + 1;
-
-  page.value = nextPage;
-
-  await fetchMoreProducts({
-    ...searchParams.value,
-    page: nextPage,
-  });
-
-  /**
-   * Send Google Analytics event for products on next page.
-   */
-  ga.viewItemList(products.value, {
-    item_list_id: `${currentCategory.value?.slug}_page_${nextPage}`,
-    item_list_name: `${currentCategory.value?.name} (page ${nextPage})`,
-  });
-}
-
 function openBranchesModal(fromMobileFilter: boolean) {
   openModal({
     component: BranchesModal,
@@ -729,16 +620,6 @@ watch(props, ({ viewMode }) => {
 const hideViewModeSelector = computed(() => {
   return props.viewMode && viewModes.includes(props.viewMode);
 });
-
-watchDebounced(
-  computed(() => JSON.stringify(searchParams.value)),
-  loadProducts,
-  {
-    immediate: true,
-    flush: "post",
-    debounce: 20,
-  },
-);
 </script>
 
 <style scoped lang="scss">
