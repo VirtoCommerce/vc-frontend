@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="homePageAnchor">
     <LoginFormSection />
     <!-- Main content -->
     <div class="main">
@@ -82,18 +82,28 @@
 </template>
 
 <script setup lang="ts">
-// import { useI18n } from "vue-i18n";
+import { useElementVisibility } from "@vueuse/core";
+import { shallowRef, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { usePageHead } from "@/core/composables";
 import { LoginFormSection } from "@/shared/layout";
 
-/* const { t } = useI18n();
+const { t } = useI18n();
 
-usePageHead({
-  title: t("pages.home.meta.title"),
-  meta: {
-    keywords: t("pages.home.meta.keywords"),
-    description: t("pages.home.meta.description"),
-  },
-}); */
+const homePageAnchor = shallowRef<HTMLElement | null>(null);
+const homePageAnchorIsVisible = useElementVisibility(homePageAnchor);
+
+watch(homePageAnchorIsVisible, (value) => {
+  if (value) {
+    usePageHead({
+      title: t("pages.home.meta.title"),
+      meta: {
+        keywords: t("pages.home.meta.keywords"),
+        description: t("pages.home.meta.description"),
+      },
+    });
+  }
+});
 </script>
 
 <style scoped>

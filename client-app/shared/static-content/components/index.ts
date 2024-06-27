@@ -1,3 +1,4 @@
+import { defineAsyncComponent } from "vue";
 import CallToActionWithImage from "./call-to-action-with-image.vue";
 import CallToAction from "./call-to-action.vue";
 import DemoProductList from "./demo-product-list.vue";
@@ -5,15 +6,16 @@ import Features from "./features.vue";
 import ImageBlock from "./image-block.vue";
 import Login from "./login.vue";
 import ProductInfo from "./product-info.vue";
-import ProductsBlock from "./products-block.vue";
 import PromoText from "./promo-text.vue";
 import RelatedProducts from "./related-products.vue";
-import Slider from "./slider.vue";
 import SubscribeForm from "./subscribe-form.vue";
 import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
-import Category from "@/shared/catalog/components/category.vue";
+
+const Category = defineAsyncComponent(() => import("@/shared/catalog/components/category.vue"));
+const Slider = defineAsyncComponent(() => import("./slider.vue"));
+const ProductsBlock = defineAsyncComponent(() => import("./products-block.vue"));
 
 export const builderIOComponents: Array<BuilderIOComponentType> = [
   {
