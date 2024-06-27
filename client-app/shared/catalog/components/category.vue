@@ -374,14 +374,13 @@ import { useSeoMeta } from "@unhead/vue";
 import {
   computedEager,
   useBreakpoints,
-  useElementBounding,
   useElementVisibility,
   useLocalStorage,
   watchDebounced,
   whenever,
 } from "@vueuse/core";
-import { cloneDeep, isEqual, throttle } from "lodash";
-import { computed, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
+import { cloneDeep, isEqual } from "lodash";
+import { computed, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
 import {
   useBreadcrumbs,
   useGoogleAnalytics,
@@ -401,6 +400,7 @@ import {
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
+import { useStickyFilters } from "@/shared/catalog/composables/useStickyFilters";
 import { FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
@@ -411,7 +411,6 @@ import ViewMode from "./view-mode.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters as ProductsFiltersType, ProductsSearchParams } from "@/shared/catalog";
-import type { StyleValue } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const props = defineProps<IProps>();
@@ -496,25 +495,13 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-let scrollOld = 0;
-const maxOffsetTop = 108;
-const maxOffsetBottom = 20;
-
-const contentElement = ref<HTMLElement | null>(null);
-const filtersElement = ref<HTMLElement | null>(null);
-const filtersStyle = ref<StyleValue | undefined>();
-
-const BOUNDING_OPTIONS = { windowResize: false, immediate: false };
-
-const { top: cTop, height: cHeight } = useElementBounding(contentElement, BOUNDING_OPTIONS);
-const { height: fHeight, top: fTop } = useElementBounding(filtersElement, BOUNDING_OPTIONS);
-
 const seoTitle = computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name);
 const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 
 const areHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
+const { setFiltersPosition, filtersStyle } = useStickyFilters({ areHorizontalFilters });
 
 usePageHead({
   title: seoTitle,
@@ -704,80 +691,6 @@ function openBranchesModal(fromMobileFilter: boolean) {
   });
 }
 
-const setFiltersPosition = throttle(_setFiltersPosition, 100);
-
-function _setFiltersPosition() {
-  if (areHorizontalFilters.value) {
-    return;
-  }
-  const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
-
-  const scrollBottom = scrollTop + clientHeight;
-
-  const contentHeight = cHeight.value;
-  const contentTop = scrollTop + cTop.value;
-  const contentBottom = contentTop + contentHeight;
-
-  const filterHeight = fHeight.value;
-  const filterTop = scrollTop + fTop.value;
-  const filterBottom = filterTop + filterHeight;
-
-  const down = scrollTop > scrollOld;
-  const up = scrollTop < scrollOld;
-
-  const zoomCorrection = window.devicePixelRatio === 1 ? 0 : 1;
-
-  const offsetTop = maxOffsetTop - zoomCorrection;
-  const offsetBottom = maxOffsetBottom - zoomCorrection;
-
-  let action = "BETWEEN";
-
-  if (
-    (up && scrollTop <= filterTop - offsetTop) ||
-    filterHeight <= clientHeight - offsetTop ||
-    filterHeight >= contentHeight ||
-    contentTop > filterTop
-  ) {
-    action = "TOP";
-  } else if (
-    (down && scrollBottom >= filterBottom + offsetBottom && scrollBottom <= contentBottom + offsetBottom) ||
-    (scrollBottom >= contentBottom + offsetBottom && filterBottom < contentBottom) ||
-    (!up && scrollBottom > filterBottom + offsetBottom && filterBottom < contentBottom) ||
-    filterBottom > contentBottom
-  ) {
-    action = "BOTTOM";
-  }
-
-  switch (action) {
-    case "BOTTOM":
-      filtersStyle.value = {
-        alignSelf: "flex-end",
-        bottom: `${maxOffsetBottom}px`,
-      };
-
-      break;
-    case "BETWEEN":
-      filtersStyle.value = {
-        marginTop: `${filterTop - contentTop}px`,
-      };
-      break;
-    default:
-      filtersStyle.value = {
-        top: `${maxOffsetTop}px`,
-      };
-  }
-
-  scrollOld = scrollTop;
-}
-
-onMounted(() => {
-  window.addEventListener("scroll", setFiltersPosition);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", setFiltersPosition);
-});
-
 whenever(() => !isMobile.value, hideMobileSidebar);
 
 watch(
@@ -805,24 +718,6 @@ watch(
     }
   },
   { immediate: true },
-);
-
-watch(
-  () => fHeight.value,
-  (value, oldValue) => {
-    if (value !== oldValue) {
-      setFiltersPosition();
-    }
-  },
-);
-
-watch(
-  () => cHeight.value,
-  (value, oldValue) => {
-    if (value !== oldValue) {
-      setFiltersPosition();
-    }
-  },
 );
 
 watch(props, ({ viewMode }) => {
