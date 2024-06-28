@@ -5,7 +5,7 @@
 
     <div class="flex items-stretch lg:gap-6">
       <template v-if="!hideSidebar">
-        <!-- Popup Sidebar For Mobile And Horizontal Desktop -->
+        <!-- Popup sidebar for mobile and horizontal desktop view -->
         <FiltersPopupSidebar
           v-if="isMobile || areHorizontalFilters"
           :is-exist-selected-facets="isExistSelectedFacets"
@@ -25,7 +25,7 @@
           @apply-filters="applyFilters"
         />
 
-        <!-- Regular Desktop Sidebar -->
+        <!-- Regular desktop sidebar (vertical view) -->
         <div v-else class="relative flex w-60 shrink-0 items-start">
           <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
             <CategorySelector
@@ -91,7 +91,7 @@
             'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
           }"
         >
-          <!-- Popup Sidebar filters toggler -->
+          <!-- Popup sidebar filters toggler -->
           <VcButton
             v-if="!hideSidebar"
             class="mr-2.5 flex-none lg:!hidden"
@@ -127,6 +127,7 @@
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
 
+          <!-- In stock and branches -->
           <CategoryControls
             v-if="!hideControls && !isMobile && !areHorizontalFilters"
             v-model="savedInStock"
@@ -136,7 +137,7 @@
           />
         </div>
 
-        <!-- Horizontal Filters -->
+        <!-- Horizontal filters -->
         <CategoryHorizontalFilters
           v-if="areHorizontalFilters && !isMobile"
           :facets-loading="facetsLoading"
