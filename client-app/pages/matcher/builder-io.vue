@@ -1,13 +1,15 @@
 <template>
-  <div v-if="canShowContent">
+  <div v-if="canShowContent" ref="builderIoAnchor">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
-import { onMounted, ref, shallowRef } from "vue";
+import { useElementVisibility } from "@vueuse/core";
+import { onMounted, ref, shallowRef, watchEffect } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
+import { usePageHead } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { builderIOComponents } from "@/shared/static-content";
 import type { StateType } from "./priorityManager";
@@ -72,6 +74,26 @@ async function tryLoadContent(urlPath: string) {
     }
   }
 }
+
+const builderIoAnchor = shallowRef<HTMLElement | null>(null);
+const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
+
+watchEffect(() => {
+  const data = content.value?.data as { title?: string; keywords?: string; description?: string };
+
+  if (typeof data === "object" && builderIoAnchorIsVisible.value) {
+    const { title, keywords, description } = data;
+
+    usePageHead({
+      title,
+      meta: {
+        title,
+        keywords,
+        description,
+      },
+    });
+  }
+});
 
 const getRegisteredComponents = () => {
   return builderIOComponents;
