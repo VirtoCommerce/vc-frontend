@@ -5,6 +5,7 @@
 
     <div class="flex items-stretch lg:gap-6">
       <template v-if="!hideSidebar">
+        <!-- Popup Sidebar For Mobile And Horizontal Desktop -->
         <FiltersPopupSidebar
           v-if="isMobile || areHorizontalFilters"
           :is-exist-selected-facets="isExistSelectedFacets"
@@ -24,7 +25,7 @@
           @apply-filters="applyFilters"
         />
 
-        <!-- Sidebar -->
+        <!-- Regular Desktop Sidebar -->
         <div v-else class="relative flex w-60 shrink-0 items-start">
           <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
             <CategorySelector
@@ -126,106 +127,27 @@
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
 
-          <template v-if="!hideControls">
-            <!-- Branch availability -->
-            <div
-              v-if="!isMobile && !areHorizontalFilters"
-              role="button"
-              tabindex="0"
-              class="order-3 ml-4 flex items-center xl:ml-6"
-              @click.prevent="openBranchesModal(false)"
-              @keyup.enter.prevent="openBranchesModal(false)"
-            >
-              <VcTooltip placement="bottom-start" width="13rem">
-                <template #trigger>
-                  <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                    <i18n-t
-                      keypath="pages.catalog.branch_availability_filter_card.available_in"
-                      tag="div"
-                      class="text-sm"
-                      :class="{
-                        'text-neutral': !savedBranches.length,
-                      }"
-                      scope="global"
-                    >
-                      <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
-                        {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
-                      </span>
-                    </i18n-t>
-                  </VcCheckbox>
-                </template>
-
-                <template #content>
-                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
-                </template>
-              </VcTooltip>
-            </div>
-
-            <!-- In Stock -->
-            <div v-if="!isMobile && !areHorizontalFilters" class="order-2 ml-4 flex items-center xl:ml-8">
-              <VcTooltip placement="bottom-start" width="12rem">
-                <template #trigger>
-                  <VcCheckbox v-model="savedInStock" :disabled="loading">
-                    <span
-                      class="whitespace-nowrap text-sm"
-                      :class="{
-                        'text-neutral': !savedInStock,
-                      }"
-                    >
-                      {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-                    </span>
-                  </VcCheckbox>
-                </template>
-
-                <template #content>
-                  {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
-                </template>
-              </VcTooltip>
-            </div>
-          </template>
+          <CategoryControls
+            v-if="!hideControls && !isMobile && !areHorizontalFilters"
+            v-model="savedInStock"
+            :loading="loading"
+            :saved-branches="savedBranches"
+            @open-branches-modal="openBranchesModal"
+          />
         </div>
 
         <!-- Horizontal Filters -->
-        <ProductsFilters
+        <CategoryHorizontalFilters
           v-if="areHorizontalFilters && !isMobile"
-          class="mb-4.5"
-          :orientation="filtersOrientation"
-          :keyword="keywordQueryParam"
+          :facets-loading="facetsLoading"
+          :keyword-query-param="keywordQueryParam"
+          :sort-query-param="sortQueryParam"
+          :loading="loading || facetsLoading"
           :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
-          :loading="loading"
-          @change="applyFilters($event)"
-        >
-          <template #prepend>
-            <VcButton prepend-icon="filter" size="sm" variant="outline" class="shrink-0" @click="showPopupSidebar">{{
-              $t("common.buttons.all_filters")
-            }}</VcButton>
-            <VcDropdownMenu :offset-options="4" class="z-10" max-height="20rem">
-              <template #trigger="">
-                <VcButton prepend-icon="switch-vertical" size="sm" variant="outline" class="shrink-0">{{
-                  $t("common.buttons.sort_by")
-                }}</VcButton>
-              </template>
-              <template #content>
-                <div class="py-2">
-                  <VcMenuItem
-                    v-for="sortingOption in PRODUCT_SORTING_LIST"
-                    :key="sortingOption.id"
-                    class="border-none"
-                    color="secondary"
-                  >
-                    <VcRadioButton
-                      v-model="sortQueryParam"
-                      size="sm"
-                      :value="sortingOption.id"
-                      :label="sortingOption.name"
-                      class="pl-1 pr-5"
-                    />
-                  </VcMenuItem>
-                </div>
-              </template>
-            </VcDropdownMenu>
-          </template>
-        </ProductsFilters>
+          @reset-facet-filters="resetFacetFilters"
+          @apply-filters="applyFilters"
+          @show-popup-sidebar="showPopupSidebar"
+        />
 
         <!-- Filters chips -->
         <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
@@ -299,6 +221,8 @@ import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters as ProductsFiltersType, ProductsSearchParams } from "@/shared/catalog";
+import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
+import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";

@@ -47,7 +47,7 @@
           size="sm"
           :color="hasSelected ? 'accent' : 'secondary'"
           variant="outline"
-          :append-icon="!hasSelected && (opened ? 'chevron-up' : 'chevron-down')"
+          :append-icon="hasSelected ? '' : (opened && 'chevron-up') || 'chevron-down'"
         >
           <span class="flex items-center gap-2">
             {{ facet.label }}
