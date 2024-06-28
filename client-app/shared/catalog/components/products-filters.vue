@@ -105,7 +105,7 @@ watch([containerRight, () => localFilters.facets], async () => {
   async function calculate() {
     filterCalculationInProgress.value = true;
     const facetsElements =
-      (facetFiltersContainer?.value?.querySelectorAll(".vc-widget") as NodeListOf<HTMLElement>) || [];
+      (facetFiltersContainer?.value?.querySelectorAll(".facet-filter__trigger") as NodeListOf<HTMLElement>) || [];
     let filtersCount = 1;
     for (let i = 0; i < localFilters.facets.length; i++) {
       const facetFilter = facetsElements[i] as HTMLElement;
@@ -161,3 +161,11 @@ function onOpenBranches(): void {
   emit("openBranches");
 }
 </script>
+
+<style scoped lang="scss">
+:deep(.facet-filter--dropdown:last-child) {
+  .vc-popover__content {
+    @apply right-0 left-auto #{!important};
+  }
+}
+</style>

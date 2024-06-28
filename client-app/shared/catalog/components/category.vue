@@ -303,7 +303,9 @@ import CategoryProducts from "@/shared/catalog/components/category/category-prod
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  filtersOrientation: "horizontal", // TODO: remove this default value??
+});
 const viewModes = ["grid", "list"] as const;
 type ViewModeType = (typeof viewModes)[number];
 

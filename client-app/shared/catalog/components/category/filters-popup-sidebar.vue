@@ -13,37 +13,40 @@
       @open-branches="$emit('openBranchesModal', true)"
     >
       <template v-if="areHorizontalFilters" #prepend="{ loading }">
-        <div>
-          <span class="text-sm font-bold text-neutral-900">
-            {{ $t("pages.catalog.sort_by_label") }}
-          </span>
-          <VcSelect
-            v-model="sortQueryParam"
-            text-field="name"
-            value-field="id"
-            :disabled="loading"
-            :items="PRODUCT_SORTING_LIST"
-            class="mb-4"
-          />
+        <div class="space-y-4">
+          <div>
+            <span class="text-sm font-bold text-neutral-900">
+              {{ $t("pages.catalog.sort_by_label") }}
+            </span>
+            <VcSelect
+              v-model="sortQueryParam"
+              text-field="name"
+              value-field="id"
+              :disabled="loading"
+              :items="PRODUCT_SORTING_LIST"
+            />
+          </div>
           <VcCheckbox
             :disabled="loading"
             @change="$emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: $event as boolean })"
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
-          <button type="button" @click.prevent="$emit('openBranchesModal', true)">
-            <VcCheckbox :model-value="!!popupSidebarFilters.branches.length" :disabled="loading">
-              <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
-                <span>
-                  {{
-                    $t("pages.catalog.branch_availability_filter_card.branches", {
-                      n: popupSidebarFilters.branches.length,
-                    })
-                  }}
-                </span>
-              </i18n-t>
-            </VcCheckbox>
-          </button>
+          <VcCheckbox
+            :model-value="!!popupSidebarFilters.branches.length"
+            :disabled="loading"
+            @change="$emit('openBranchesModal', true)"
+          >
+            <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
+              <span>
+                {{
+                  $t("pages.catalog.branch_availability_filter_card.branches", {
+                    n: popupSidebarFilters.branches.length,
+                  })
+                }}
+              </span>
+            </i18n-t>
+          </VcCheckbox>
         </div>
       </template>
     </ProductsFilters>
