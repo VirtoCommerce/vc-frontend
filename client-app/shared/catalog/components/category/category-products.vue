@@ -33,7 +33,7 @@
     <VcEmptyView
       v-else
       :text="
-        isExistSelectedFacets || savedInStock || hasSavedBranches || keywordQueryParam
+        hasActiveFilters || keywordQueryParam
           ? $t('pages.catalog.no_products_filtered_message')
           : $t('pages.catalog.no_products_message')
       "
@@ -69,12 +69,13 @@ import type { Product } from "@/core/api/graphql/types";
 import type { ProductsSearchParams } from "@/shared/catalog";
 import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 
+const emit = defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
 
 interface IProps {
   isExistSelectedFacets: boolean;
-  savedInStock: boolean;
-  hasSavedBranches: boolean;
+  hasActiveFilters: boolean;
   fixedProductsCount?: string;
   savedViewMode: "grid" | "list";
   itemsPerPage: number;
@@ -82,7 +83,10 @@ interface IProps {
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
   searchParams: ProductsSearchParams;
-  resetFacetFilters: () => void;
+}
+
+interface IEmits {
+  (event: "resetFacetFilters"): void;
 }
 
 const ga = useGoogleAnalytics();
@@ -126,7 +130,9 @@ function sendGASelectItemEvent(product: Product) {
 function resetFacetFiltersWithKeyword() {
   keywordQueryParam.value = "";
   // FIXME: `setTimeout` is a hack to apply the value of `useRouteQueryParam` in parallel
-  setTimeout(props.resetFacetFilters, 0);
+  setTimeout(() => {
+    emit("resetFacetFilters");
+  }, 0);
 }
 
 async function loadProducts() {

@@ -318,9 +318,8 @@
 
         <!-- Products -->
         <CategoryProducts
-          is-exist-selected-facets
-          :saved-in-stock="savedInStock"
-          :has-saved-branches="!!savedBranches.length"
+          :is-exist-selected-facets="isExistSelectedFacets"
+          :has-active-filters="isExistSelectedFacets || savedInStock || !!savedBranches.length"
           :fixed-products-count="fixedProductsCount"
           :saved-view-mode="savedViewMode"
           :items-per-page="itemsPerPage"
@@ -328,7 +327,7 @@
           :columns-amount-desktop="columnsAmountDesktop"
           :columns-amount-tablet="columnsAmountTablet"
           :search-params="searchParams"
-          :reset-facet-filters="resetFacetFilters"
+          @reset-facet-filters="resetFacetFilters"
         />
       </div>
     </div>
@@ -336,11 +335,10 @@
 </template>
 
 <script setup lang="ts">
-import { useSeoMeta } from "@unhead/vue";
 import { computedEager, useBreakpoints, useElementVisibility, useLocalStorage, whenever } from "@vueuse/core";
 import { cloneDeep, isEqual } from "lodash";
 import { computed, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
-import { useBreadcrumbs, usePageHead, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useBreadcrumbs, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -352,6 +350,7 @@ import {
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
+import { useSeo } from "@/shared/catalog/composables/useSeo";
 import { useStickyFilters } from "@/shared/catalog/composables/useStickyFilters";
 import { FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { useModal } from "@/shared/modal";
@@ -396,6 +395,7 @@ const { getFacets, loading, facetsLoading, products, total, facets } = useProduc
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
+useSeo();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
@@ -433,27 +433,11 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-const seoTitle = computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name);
-const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
-const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
-const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
-
 const areHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
-const { setFiltersPosition, filtersStyle } = useStickyFilters({ areHorizontalFilters });
 
-usePageHead({
-  title: seoTitle,
-  meta: {
-    keywords: seoKeywords,
-    description: seoDescription,
-  },
-});
-
-useSeoMeta({
-  ogTitle: seoTitle,
-  ogDescription: seoDescription,
-  ogImage: seoImageUrl,
-});
+const contentElement = ref<HTMLElement | null>(null);
+const filtersElement = ref<HTMLElement | null>(null);
+const { setFiltersPosition, filtersStyle } = useStickyFilters({ areHorizontalFilters, contentElement, filtersElement });
 
 const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);

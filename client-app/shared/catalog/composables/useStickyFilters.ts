@@ -6,15 +6,15 @@ import type { Ref, StyleValue } from "vue";
 const BOUNDING_OPTIONS = { windowResize: false, immediate: false };
 type PropsType = {
   areHorizontalFilters: Ref<boolean>;
+  contentElement: Ref<HTMLElement | null>;
+  filtersElement: Ref<HTMLElement | null>;
 };
 
-export function useStickyFilters({ areHorizontalFilters }: PropsType) {
+export function useStickyFilters({ areHorizontalFilters, contentElement, filtersElement }: PropsType) {
   let scrollOld = 0;
   const maxOffsetTop = 108;
   const maxOffsetBottom = 20;
 
-  const contentElement = ref<HTMLElement | null>(null);
-  const filtersElement = ref<HTMLElement | null>(null);
   const filtersStyle = ref<StyleValue | undefined>();
 
   const { top: cTop, height: cHeight } = useElementBounding(contentElement, BOUNDING_OPTIONS);
