@@ -33,5 +33,3 @@ onBeforeUnmount(() => {
   emit("setState", "initial");
 });
 </script>
-
-<style scoped lang="scss"></style>
