@@ -4,14 +4,10 @@ import { globals } from "@/core/globals";
 import type { PageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
-const RESERVED_URLS = ["__index__home__page__"];
-
 /**
  * @param seoUrl path after domain without slash at the beginning
- * @param isReserved shows whether seoUrl is included in the reserved urls
- * It's needed for the Theme to show a 404 page if a user tries to open, for example, /index__home__page.
- */
-export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boolean) {
+ **/
+export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   const { storeId, userId, cultureName } = globals;
   const variables = computed(() => {
     return {
@@ -22,13 +18,9 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     };
   });
 
-  const { result, loading: slugLoading } = useGetSlugInfo(variables);
+  const { load: loadSlugInfo, result, loading: slugLoading } = useGetSlugInfo(variables);
 
   const slugInfo = computed(() => {
-    if (!isReserved && RESERVED_URLS.includes(toValue(seoUrl))) {
-      return null;
-    }
-
     return result.value?.slugInfo;
   });
 
@@ -37,14 +29,22 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
   });
 
   const getPageParams = computed(() => {
-    return { id: slugInfo?.value?.entityInfo?.objectId || "", cultureName, storeId };
+    return { id: slugInfo?.value?.entityInfo?.objectId || "?", cultureName, storeId };
   });
 
-  const { load: fetchContent, result: contentResult, loading: contentLoading } = useGetPage(getPageParams);
+  const {
+    load: loadContent,
+    result: contentResult,
+    loading: contentLoading,
+    error: contentError,
+  } = useGetPage(getPageParams);
 
   const pageContent = computed(() => {
-    let content: unknown;
+    if (contentError.value) {
+      return null;
+    }
 
+    let content: unknown;
     if (typeof contentResult?.value?.page?.content === "string") {
       content = JSON.parse(contentResult.value.page.content);
     }
@@ -67,6 +67,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>, isReserved?: boole
     slugInfo,
     hasContent,
     pageContent,
-    fetchContent,
+    fetchContent: loadContent,
+    fetchSlugInfo: loadSlugInfo,
   };
 }

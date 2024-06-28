@@ -8,9 +8,9 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { computed, defineAsyncComponent, onBeforeUnmount, watchEffect } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, watch, watchEffect } from "vue";
+import { onBeforeRouteUpdate } from "vue-router";
 import { useNavigations } from "@/core/composables";
-import { Logger } from "@/core/utilities";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
 import type { StateType } from "@/pages/matcher/priorityManager";
@@ -46,9 +46,8 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
-const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo(
+const { loading, slugInfo, hasContent, pageContent, fetchSlugInfo, fetchContent } = useSlugInfo(
   computed(() => seoUrl.value),
-  seoUrl.value === MAIN_PAGE_RESERVED_SLUG,
 );
 
 const objectType = computed(() => {
@@ -58,6 +57,7 @@ const objectType = computed(() => {
 enum ObjectType {
   CatalogProduct = "CatalogProduct",
   Category = "Category",
+  ContentFile = "ContentFile",
 }
 
 watchEffect(() => {
@@ -72,33 +72,47 @@ watchEffect(() => {
   }
 });
 
-onBeforeUnmount(() => {
-  setMatchingRouteName("");
-});
-
-watchEffect(async () => {
-  let matchingRouteName = "";
-
-  if (hasContent.value) {
-    try {
-      await fetchContent();
-    } catch (e) {
-      Logger.error(e as string);
-      emit("setState", "empty");
-    }
-    staticPage.value = pageContent.value || undefined;
-    return;
-  }
-
-  switch (slugInfo.value?.entityInfo?.objectType) {
+watch(slugInfo, () => {
+  const type = slugInfo.value?.entityInfo?.objectType;
+  switch (type) {
     case ObjectType.CatalogProduct:
-      matchingRouteName = "Product";
+      setMatchingRouteName("Product");
       break;
     case ObjectType.Category:
-      matchingRouteName = "Category";
+      setMatchingRouteName("Category");
       break;
+    case ObjectType.ContentFile:
+      void fetchContent();
+      break;
+    default:
+      clearState();
   }
+});
 
-  setMatchingRouteName(matchingRouteName);
+watch(pageContent, (value) => {
+  if (value) {
+    staticPage.value = value;
+  } else {
+    clearState();
+  }
+});
+
+function clearState() {
+  staticPage.value = undefined;
+}
+
+onMounted(() => {
+  void fetchSlugInfo();
+});
+
+onBeforeRouteUpdate((to, from) => {
+  if (to.path !== from.path) {
+    clearState();
+    void fetchSlugInfo();
+  }
+});
+
+onBeforeUnmount(() => {
+  setMatchingRouteName("");
 });
 </script>
