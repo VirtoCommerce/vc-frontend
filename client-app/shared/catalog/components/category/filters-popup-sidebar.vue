@@ -2,14 +2,14 @@
   <VcPopupSidebar
     :class="[!isMobile && 'desktop-popup-sidebar w-[358px]']"
     :is-visible="isVisible"
-    @hide="$emit('hideMobileSidebar')"
+    @hide="$emit('hidePopupSidebar')"
   >
     <ProductsFilters
       :show-common-filters="areHorizontalFilters"
       :keyword="keywordQueryParam"
-      :filters="mobileFilters"
+      :filters="popupSidebarFilters"
       :loading="loading || facetsLoading"
-      @change="$emit('updateMobileFilters', $event)"
+      @change="$emit('updatePopupSidebarFilters', $event)"
       @open-branches="$emit('openBranchesModal', true)"
     >
       <template v-if="areHorizontalFilters" #prepend="{ loading }">
@@ -27,17 +27,17 @@
           />
           <VcCheckbox
             :disabled="loading"
-            @change="$emit('updateMobileFilters', { ...mobileFilters, inStock: $event as boolean })"
+            @change="$emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: $event as boolean })"
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
           <button type="button" @click.prevent="$emit('openBranchesModal', true)">
-            <VcCheckbox :model-value="!!mobileFilters.branches.length" :disabled="loading">
+            <VcCheckbox :model-value="!!popupSidebarFilters.branches.length" :disabled="loading">
               <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
                 <span>
                   {{
                     $t("pages.catalog.branch_availability_filter_card.branches", {
-                      n: mobileFilters.branches.length,
+                      n: popupSidebarFilters.branches.length,
                     })
                   }}
                 </span>
@@ -51,20 +51,20 @@
     <template #footer>
       <VcButton
         variant="outline"
-        :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
+        :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
         @click="
           $emit('resetFacetFilters');
-          $emit('hideMobileSidebar');
+          $emit('hidePopupSidebar');
         "
       >
         {{ $t("common.buttons.reset") }}
       </VcButton>
 
       <VcButton
-        :disabled="!isMobileFilterDirty"
+        :disabled="!isPopupSidebarFilterDirty"
         @click="
-          $emit('applyFilters', mobileFilters);
-          $emit('hideMobileSidebar');
+          $emit('applyFilters', popupSidebarFilters);
+          $emit('hidePopupSidebar');
         "
       >
         {{ $t("common.buttons.apply") }}
@@ -85,9 +85,9 @@ defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 interface IEmits {
-  (event: "hideMobileSidebar"): void;
-  (event: "updateMobileFilters", filters: ProductsFiltersType): void;
-  (event: "openBranchesModal", fromMobileFilter: boolean): void;
+  (event: "hidePopupSidebar"): void;
+  (event: "updatePopupSidebarFilters", filters: ProductsFiltersType): void;
+  (event: "openBranchesModal", fromPopupSidebarFilter: boolean): void;
   (event: "resetFacetFilters"): void;
   (event: "applyFilters", filters: ProductsFiltersType): void;
 }
@@ -96,12 +96,12 @@ interface IProps {
   areHorizontalFilters: boolean;
   isExistSelectedFacets: boolean;
   isMobile: boolean;
-  isMobileFilterDirty: boolean;
+  isPopupSidebarFilterDirty: boolean;
   isVisible: boolean;
   loading: boolean;
   facetsLoading: boolean;
   keywordQueryParam: string;
-  mobileFilters: ProductsFiltersType;
+  popupSidebarFilters: ProductsFiltersType;
 }
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
@@ -109,7 +109,7 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 
-const isExistSelectedMobileFacets = computedEager<boolean>(() =>
-  props.mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
+const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
+  props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 </script>

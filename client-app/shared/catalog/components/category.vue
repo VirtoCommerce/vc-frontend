@@ -8,19 +8,19 @@
         <FiltersPopupSidebar
           v-if="isMobile || areHorizontalFilters"
           :is-exist-selected-facets="isExistSelectedFacets"
-          :is-mobile-filter-dirty="isMobileFilterDirty"
-          :mobile-filters="mobileFilters"
+          :is-popup-sidebar-filter-dirty="isPopupSidebarFiltersDirty"
+          :popup-sidebar-filters="popupSidebarFilters"
           :are-horizontal-filters="areHorizontalFilters"
           :facets-loading="facetsLoading"
           :is-mobile="isMobile"
-          :is-visible="mobileSidebarVisible"
+          :is-visible="popupSidebarVisible"
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
           :loading="loading"
-          @hide-mobile-sidebar="hideMobileSidebar"
+          @hide-popup-sidebar="hidePopupSidebar"
           @reset-facet-filters="resetFacetFilters"
           @open-branches-modal="openBranchesModal"
-          @update-mobile-filters="updateMobileFilters"
+          @update-popup-sidebar-filters="updatePopupSidebarFilters"
           @apply-filters="applyFilters"
         />
 
@@ -90,13 +90,13 @@
             'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
           }"
         >
-          <!-- Mobile filters toggler -->
+          <!-- Popup Sidebar filters toggler -->
           <VcButton
             v-if="!hideSidebar"
             class="mr-2.5 flex-none lg:!hidden"
             icon="filter"
             size="sm"
-            @click="showMobileSidebar"
+            @click="showPopupSidebar"
           />
 
           <!-- Sorting -->
@@ -196,7 +196,7 @@
           @change="applyFilters($event)"
         >
           <template #prepend>
-            <VcButton prepend-icon="filter" size="sm" variant="outline" class="shrink-0" @click="showMobileSidebar">{{
+            <VcButton prepend-icon="filter" size="sm" variant="outline" class="shrink-0" @click="showPopupSidebar">{{
               $t("common.buttons.all_filters")
             }}</VcButton>
             <VcDropdownMenu :offset-options="4" class="z-10" max-height="20rem">
@@ -362,8 +362,8 @@ const isMobile = breakpoints.smaller("lg");
 
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
-const mobileSidebarVisible = ref(false);
-const mobileFilters = shallowReactive<ProductsFiltersType>({
+const popupSidebarVisible = ref(false);
+const popupSidebarFilters = shallowReactive<ProductsFiltersType>({
   facets: [],
   inStock: savedInStock.value,
   branches: savedBranches.value,
@@ -403,9 +403,9 @@ const isExistSelectedFacets = computedEager<boolean>(() =>
   facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
 
-const isMobileFilterDirty = computedEager<boolean>(
+const isPopupSidebarFiltersDirty = computedEager<boolean>(
   () =>
-    JSON.stringify(mobileFilters) !==
+    JSON.stringify(popupSidebarFilters) !==
     JSON.stringify({
       facets: facets.value,
       inStock: savedInStock.value,
@@ -413,15 +413,15 @@ const isMobileFilterDirty = computedEager<boolean>(
     } as ProductsFiltersType),
 );
 
-function showMobileSidebar() {
-  mobileFilters.facets = cloneDeep(facets.value);
-  mobileFilters.inStock = savedInStock.value;
-  mobileFilters.branches = savedBranches.value.slice();
-  mobileSidebarVisible.value = true;
+function showPopupSidebar() {
+  popupSidebarFilters.facets = cloneDeep(facets.value);
+  popupSidebarFilters.inStock = savedInStock.value;
+  popupSidebarFilters.branches = savedBranches.value.slice();
+  popupSidebarVisible.value = true;
 }
 
-function hideMobileSidebar() {
-  mobileSidebarVisible.value = false;
+function hidePopupSidebar() {
+  popupSidebarVisible.value = false;
 }
 
 function applyFilters(newFilters: ProductsFiltersType) {
@@ -442,7 +442,7 @@ function applyFilters(newFilters: ProductsFiltersType) {
   setFiltersPosition();
 }
 
-async function updateMobileFilters(newFilters: ProductsFiltersType) {
+async function updatePopupSidebarFilters(newFilters: ProductsFiltersType) {
   const searchParamsForFacets: ProductsSearchParams = {
     ...searchParams.value,
     filter: [
@@ -454,9 +454,9 @@ async function updateMobileFilters(newFilters: ProductsFiltersType) {
       .join(" "),
   };
 
-  mobileFilters.inStock = newFilters.inStock;
-  mobileFilters.branches = newFilters.branches;
-  mobileFilters.facets = await getFacets(searchParamsForFacets);
+  popupSidebarFilters.inStock = newFilters.inStock;
+  popupSidebarFilters.branches = newFilters.branches;
+  popupSidebarFilters.facets = await getFacets(searchParamsForFacets);
 }
 
 function removeFacetFilterItem(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
@@ -480,20 +480,20 @@ function resetFacetFilters() {
   triggerRef(facets);
 }
 
-function openBranchesModal(fromMobileFilter: boolean) {
+function openBranchesModal(fromPopupSidebarFilter: boolean) {
   openModal({
     component: BranchesModal,
     props: {
-      selectedBranches: fromMobileFilter ? mobileFilters.branches : savedBranches.value,
+      selectedBranches: fromPopupSidebarFilter ? popupSidebarFilters.branches : savedBranches.value,
       onSave(branches: string[]) {
-        if (fromMobileFilter) {
+        if (fromPopupSidebarFilter) {
           const newFilters: ProductsFiltersType = {
             branches,
-            facets: mobileFilters.facets,
-            inStock: mobileFilters.inStock,
+            facets: popupSidebarFilters.facets,
+            inStock: popupSidebarFilters.inStock,
           };
 
-          void updateMobileFilters(newFilters);
+          void updatePopupSidebarFilters(newFilters);
         } else {
           savedBranches.value = branches;
         }
@@ -502,7 +502,7 @@ function openBranchesModal(fromMobileFilter: boolean) {
   });
 }
 
-whenever(() => !isMobile.value, hideMobileSidebar);
+whenever(() => !isMobile.value, hidePopupSidebar);
 
 watch(
   () => props.categoryId,
