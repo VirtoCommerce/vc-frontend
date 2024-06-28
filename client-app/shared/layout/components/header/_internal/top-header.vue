@@ -51,7 +51,10 @@
             class="flex cursor-pointer items-center py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="font-bold">{{ user.contact?.fullName || user.userName }}</span>
+            <span class="font-bold">
+              <template v-if="isMultiOrganization">{{ organization?.name }} /</template>
+              {{ user.contact?.fullName || user.userName }}
+            </span>
 
             <VcIcon
               class="ms-1.5 text-[--color-accent-200] [--vc-icon-size:1rem] lg:text-[--color-primary-500] lg:[--vc-icon-size:0.625rem]"
@@ -71,7 +74,9 @@
               >
                 <VcIcon class="text-[--color-primary-500]" name="user-circle" />
 
-                <span class="ml-2">{{ user.contact?.fullName }}</span>
+                <span class="ml-2">
+                  {{ user.contact?.fullName }}
+                </span>
               </router-link>
 
               <div class="grow"></div>
@@ -89,10 +94,7 @@
               </VcButton>
             </div>
 
-            <div
-              v-if="user.contact?.organizations?.items && user.contact.organizations.items.length > 1"
-              class="border-t py-3"
-            >
+            <div v-if="isMultiOrganization" class="border-t py-3">
               <div class="px-3 py-1 text-xs text-neutral-600">
                 {{ $t("common.labels.organizations") }}
               </div>
@@ -141,7 +143,7 @@ import TopHeaderLink from "./top-header-link.vue";
 import CurrencySelector from "@/shared/layout/components/currency-selector/currency-selector.vue";
 import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
-const { isAuthenticated, user, operator, switchOrganization } = useUser();
+const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
 
 const loginMenu = ref(null);

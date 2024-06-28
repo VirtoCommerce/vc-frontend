@@ -99,10 +99,11 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
-  async function refresh() {
+  async function refresh(organizationId?: string) {
     getTokenParams.value = new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: state.value.refresh_token!,
+      organization_id: organizationId ?? "",
     });
 
     try {

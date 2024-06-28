@@ -19,6 +19,7 @@ const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
+const mobileContactOrganizationsMenu = shallowRef<ExtendedMenuLinkType | undefined>();
 
 const openedItem = computed<ExtendedMenuLinkType | undefined>(
   () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
@@ -50,10 +51,6 @@ const mobileAccountMenuItem = computed<ExtendedMenuLinkType | null>(() =>
 
 const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | null>(() =>
   menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : null,
-);
-
-const mobileContactOrganizationsMenu = computed(() =>
-  mobileAccountMenuItem.value?.children?.find((item) => item.id === "contact-organizations"),
 );
 
 const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | null>(() => {
@@ -101,13 +98,21 @@ export function useNavigations() {
   function fetchMobileContactOrganizationsMenu() {
     const { user } = useUser();
 
-    if (mobileContactOrganizationsMenu.value) {
-      mobileContactOrganizationsMenu.value.children =
-        user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
-          id: item.id,
-          title: item.name,
-          isContactOrganizationsItem: true,
-        }));
+    const organizationsMenuItems = user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
+      id: item.id,
+      title: item.name,
+      isContactOrganizationsItem: true,
+    }));
+
+    if (organizationsMenuItems && organizationsMenuItems?.length > 1) {
+      mobileContactOrganizationsMenu.value = {
+        id: "contact-organizations",
+        title: "common.labels.my_organizations",
+        icon: "/static/images/dashboard/icons/company.svg#main",
+        children: organizationsMenuItems,
+      };
+
+      mobileAccountMenuItem.value?.children?.splice(1, 0, mobileContactOrganizationsMenu.value);
     }
   }
 

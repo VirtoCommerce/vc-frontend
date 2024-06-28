@@ -1,7 +1,6 @@
 import { eagerComputed, useLocalStorage } from "@vueuse/core";
 import { remove } from "lodash";
 import { computed, readonly, ref } from "vue";
-import { useFetch } from "@/core/api/common";
 import {
   getMe,
   inviteUser as _inviteUser,
@@ -38,7 +37,6 @@ import type {
   Organization,
   UserType,
 } from "@/core/api/graphql/types";
-import type { ConnectTokenResponseType } from "@/core/types";
 import type {
   ForgotPassword,
   RegisterOrganization,
@@ -66,8 +64,8 @@ interface IPasswordExpirationEntry {
 
 export function useUser() {
   const broadcast = useBroadcast();
+  const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
-  const { setTokenType, setAccessToken, setExpiresAt } = useAuth();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
@@ -340,7 +338,11 @@ export function useUser() {
     loading.value = true;
 
     try {
-      const { error, data } = await useFetch("/connect/token")
+      await refresh(organizationId);
+
+      broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+
+      /*const { error, data } = await useFetch("/connect/token")
         .post(
           new URLSearchParams({
             grant_type: "switch_organization",
@@ -363,7 +365,7 @@ export function useUser() {
         }, 1000);
       } else {
         Logger.error(switchOrganization.name, error.value);
-      }
+      }*/
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {
@@ -374,6 +376,9 @@ export function useUser() {
   return {
     isAuthenticated,
     isCorporateMember,
+    isMultiOrganization: computed(
+      () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
+    ),
     organization,
     operator,
     checkPermissions,
