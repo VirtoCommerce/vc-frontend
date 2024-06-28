@@ -34,13 +34,13 @@ import BuilderIo from "@/pages/matcher/builder-io.vue";
 import Internal from "@/pages/matcher/internal.vue";
 import SlugContent from "@/pages/matcher/slug-content.vue";
 
-defineProps<IProps>();
-
-const { modulesSettings } = useThemeContext();
-
 interface IProps {
   pathMatch?: string[];
 }
+
+defineProps<IProps>();
+
+const { modulesSettings } = useThemeContext();
 
 const moduleSettings = computed(() => {
   return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
