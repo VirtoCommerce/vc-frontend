@@ -8,8 +8,7 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, watch, watchEffect } from "vue";
-import { onBeforeRouteUpdate } from "vue-router";
+import { defineAsyncComponent, onBeforeUnmount, watch, watchEffect } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
 import { useStaticPage } from "@/shared/static-content";
@@ -46,13 +45,7 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
-const { loading, slugInfo, hasContent, pageContent, fetchSlugInfo, fetchContent } = useSlugInfo(
-  computed(() => seoUrl.value),
-);
-
-const objectType = computed(() => {
-  return slugInfo.value?.entityInfo?.objectType || "";
-});
+const { loading, slugInfo, objectType, hasContent, pageContent, fetchContent } = useSlugInfo(seoUrl);
 
 enum ObjectType {
   CatalogProduct = "CatalogProduct",
@@ -100,17 +93,6 @@ watch(pageContent, (value) => {
 function clearState() {
   staticPage.value = undefined;
 }
-
-onMounted(() => {
-  void fetchSlugInfo();
-});
-
-onBeforeRouteUpdate((to, from) => {
-  if (to.path !== from.path) {
-    clearState();
-    void fetchSlugInfo();
-  }
-});
 
 onBeforeUnmount(() => {
   setMatchingRouteName("");

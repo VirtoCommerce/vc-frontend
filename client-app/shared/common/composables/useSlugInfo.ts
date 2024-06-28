@@ -18,14 +18,21 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     };
   });
 
-  const { load: loadSlugInfo, result, loading: slugLoading } = useGetSlugInfo(variables);
+  const { result, loading: slugLoading, error: slugError } = useGetSlugInfo(variables);
 
   const slugInfo = computed(() => {
+    if (slugError.value) {
+      return null;
+    }
     return result.value?.slugInfo;
   });
 
+  const objectType = computed(() => {
+    return slugInfo.value?.entityInfo?.objectType;
+  });
+
   const hasContent = computed(() => {
-    return slugInfo.value?.entityInfo?.objectType === "ContentFile";
+    return objectType.value === "ContentFile";
   });
 
   const getPageParams = computed(() => {
@@ -65,9 +72,9 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
       return slugLoading.value || contentLoading.value;
     }),
     slugInfo,
+    objectType,
     hasContent,
     pageContent,
     fetchContent: loadContent,
-    fetchSlugInfo: loadSlugInfo,
   };
 }
