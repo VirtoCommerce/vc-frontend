@@ -116,3 +116,9 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 </script>
+
+<style lang="scss">
+.vc-popup-sidebar.desktop-popup-sidebar {
+  --close-button-color: var(--color-neutral-600);
+}
+</style>

@@ -42,9 +42,6 @@
         <template v-for="(facet, i) in filtersToShow" :key="facet.paramName">
           <FacetFilter
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
-            :collapse-on-change="isHorizontal"
-            :collapse-on-click-outside="isHorizontal"
-            :no-wrap="isHorizontal"
             :facet="facet"
             :loading="loading"
             :class="[
@@ -64,7 +61,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   orientation: "vertical",
 });
-import { useBreakpoints, breakpointsTailwind, useElementBounding } from "@vueuse/core";
+import { useBreakpoints, breakpointsTailwind, useElementBounding, watchDebounced } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { watch, shallowReactive, shallowRef, ref, nextTick, computed } from "vue";
 import FacetFilter from "./facet-filter.vue";
@@ -98,34 +95,38 @@ const filtersToShow = computed(() =>
 );
 const { right: containerRight } = useElementBounding(facetFiltersContainer);
 
-watch([containerRight, () => localFilters.facets], async () => {
-  if (props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value) {
-    return;
-  }
-  async function calculate() {
-    filterCalculationInProgress.value = true;
-    const facetsElements =
-      (facetFiltersContainer?.value?.querySelectorAll(".facet-filter__trigger") as NodeListOf<HTMLElement>) || [];
-    let filtersCount = 1;
-    for (let i = 0; i < localFilters.facets.length; i++) {
-      const facetFilter = facetsElements[i] as HTMLElement;
-      if (!facetFilter) {
-        filtersCountToShow.value++;
-        await nextTick();
-        await calculate();
-        return;
-      }
-      if (useElementBounding(facetFilter, { windowScroll: false }).right.value > containerRight.value) {
-        filtersCount--;
-        break;
-      }
-      filtersCount++;
+watchDebounced(
+  [containerRight, () => localFilters.facets],
+  async () => {
+    if (props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value) {
+      return;
     }
-    filtersCountToShow.value = filtersCount;
-    filterCalculationInProgress.value = false;
-  }
-  await calculate();
-});
+    async function calculate() {
+      filterCalculationInProgress.value = true;
+      const facetsElements =
+        (facetFiltersContainer?.value?.querySelectorAll(".facet-filter__trigger") as NodeListOf<HTMLElement>) || [];
+      let filtersCount = 1;
+      for (let i = 0; i < localFilters.facets.length; i++) {
+        const facetFilter = facetsElements[i] as HTMLElement;
+        if (!facetFilter) {
+          filtersCountToShow.value++;
+          await nextTick();
+          await calculate();
+          return;
+        }
+        if (useElementBounding(facetFilter, { windowScroll: false }).right.value > containerRight.value) {
+          filtersCount--;
+          break;
+        }
+        filtersCount++;
+      }
+      filtersCountToShow.value = filtersCount;
+      filterCalculationInProgress.value = false;
+    }
+    await calculate();
+  },
+  { debounce: 500, maxWait: 1000, immediate: true },
+);
 
 watch(
   () => props.filters.facets,

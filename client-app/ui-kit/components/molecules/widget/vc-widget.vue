@@ -47,6 +47,7 @@
         </span>
       </slot>
     </component>
+
     <div v-show="!_collapsed" class="vc-widget__slot-container">
       <slot name="default-container">
         <div class="vc-widget__slot">

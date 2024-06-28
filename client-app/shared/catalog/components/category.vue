@@ -75,7 +75,7 @@
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
           </VcTypography>
-          <!-- View options top facets view -->
+          <!-- View options - horizontal view -->
           <ViewMode
             v-if="!hideViewModeSelector && areHorizontalFilters"
             v-model:mode="savedViewMode"
@@ -472,9 +472,5 @@ const hideViewModeSelector = computed(() => {
 <style scoped lang="scss">
 .vc-typography--variant--h1 {
   @apply normal-case;
-}
-
-:global(.vc-popup-sidebar.desktop-popup-sidebar) {
-  --close-button-color: var(--color_neutral_600);
 }
 </style>
