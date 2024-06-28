@@ -1,5 +1,5 @@
 <template>
-  <nav class="fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-accent-200">
+  <nav class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-accent-200">
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
         <span
@@ -61,7 +61,7 @@
               <VcRadioButton
                 v-for="currencyItem in supportedCurrencies"
                 :key="currencyItem.code"
-                :model-value="currentCurrency?.code"
+                v-model="currentCurrency.code"
                 :value="currencyItem.code"
                 class="py-2.5"
                 @click="currentCurrency?.code === currencyItem.code ? null : saveCurrencyCode(currencyItem.code)"
@@ -169,7 +169,9 @@
                     {{ operator.contact?.fullName || operator.userName }}
                   </span>
 
-                  <span v-t="'shared.layout.header.top_header.logged_in_as'" class="text-accent-200" />
+                  <span class="text-accent-200">
+                    {{ $t("shared.layout.header.top_header.logged_in_as") }}
+                  </span>
                 </template>
 
                 <span class="line-clamp-3 font-bold [word-break:break-word]">
@@ -178,12 +180,9 @@
               </div>
 
               <div>
-                <button
-                  v-t="'shared.layout.header.link_logout'"
-                  type="button"
-                  class="font-bold text-primary"
-                  @click="() => signMeOut()"
-                />
+                <button type="button" class="font-bold text-primary" @click="() => signMeOut()">
+                  {{ $t("shared.layout.header.link_logout") }}
+                </button>
               </div>
             </div>
           </div>
@@ -242,21 +241,26 @@
       </div>
     </section>
     <!-- endregion Main menu section -->
+    <div
+      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-black/5 backdrop-blur-lg md:block"
+      @click="$emit('close')"
+    />
   </nav>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useCurrency, useLanguages, useNavigations } from "@/core/composables";
+import { useCurrency, useNavigations } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { getLinkAttr } from "@/core/utilities";
 import { useSignMeOut, useUser } from "@/shared/account";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
-import { LanguageSelector } from "@/shared/layout";
 import MobileMenuLink from "./mobile-menu-link.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
+import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 interface IEmits {
   (event: "close"): void;
@@ -331,7 +335,31 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.mobile-menu {
+  --sidebar-max-width: 430px;
+  box-shadow: 5px 0 15px 0 rgba(0, 0, 0, 0.5);
+
+  @apply md:max-w-[var(--sidebar-max-width)];
+}
+
 .view-all-link {
   @apply text-lg tracking-[0.01em] text-[--color-additional-50];
+}
+
+.mobile-menu__overlay {
+  @apply left-[var(--sidebar-max-width)];
+}
+
+.is-visible .mobile-menu__overlay {
+  animation: fadeIn 0.4s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    @apply opacity-0;
+  }
+  to {
+    @apply opacity-100;
+  }
 }
 </style>

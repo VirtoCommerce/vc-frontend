@@ -6,7 +6,9 @@
       </VcTypography>
 
       <div v-if="!isSucceeded">
-        <div v-t="'pages.forgot_password.email_will_be_sended_message'" class="mb-4 text-lg md:text-base"></div>
+        <div class="mb-4 text-lg md:text-base">
+          {{ $t("pages.forgot_password.email_will_be_sended_message") }}
+        </div>
         <ForgotPasswordForm @succeeded="onSucceeded()" />
       </div>
 

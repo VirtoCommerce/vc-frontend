@@ -8,7 +8,9 @@
         :value="value?.actual"
       />
       <VcPriceDisplay v-else class="font-bold text-[--price-color]" :value="value?.list" />
-      <span v-t="'common.suffixes.per_item'" class="hidden sm:inline md:hidden xl:inline print:!block"></span>
+      <span class="hidden sm:inline md:hidden xl:inline print:!block">
+        {{ $t("common.suffixes.per_item") }}
+      </span>
     </div>
     <div class="leading-4">
       <VcPriceDisplay

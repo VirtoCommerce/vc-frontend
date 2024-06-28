@@ -2,15 +2,9 @@ import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { apolloClient, getStore } from "@/core/api/graphql";
-import {
-  useCurrency,
-  useLanguages,
-  useThemeContext,
-  useGoogleAnalytics,
-  useWhiteLabeling,
-  useNavigations,
-} from "@/core/composables";
+import { useCurrency, useThemeContext, useGoogleAnalytics, useWhiteLabeling, useNavigations } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";

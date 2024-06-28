@@ -122,9 +122,10 @@
 import { eagerComputed } from "@vueuse/core";
 import { watchEffect } from "vue";
 import { useRoute } from "vue-router";
+import { useUser } from "@/shared/account/composables/useUser";
+import { useUserOrders } from "@/shared/account/composables/useUserOrders";
+import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import { useWishlists } from "@/shared/wishlists";
-import { useUserOrders, useUserOrdersFilter } from "..";
-import { useUser } from "../composables/useUser";
 import AccountNavigationLink from "./account-navigation-link.vue";
 
 const route = useRoute();

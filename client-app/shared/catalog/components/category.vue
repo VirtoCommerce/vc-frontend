@@ -109,10 +109,9 @@
 
           <!-- Sorting -->
           <div v-if="!hideSorting" class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
-            <span
-              v-t="'pages.catalog.sort_by_label'"
-              class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block"
-            />
+            <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
+              {{ $t("pages.catalog.sort_by_label") }}
+            </span>
 
             <VcSelect
               v-model="sortQueryParam"
@@ -308,7 +307,7 @@ import {
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
-import { BranchesModal, FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
+import { FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
@@ -319,6 +318,7 @@ import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
 import type { StyleValue } from "vue";
+import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const props = defineProps<IProps>();
 const viewModes = ["grid", "list"] as const;

@@ -8,7 +8,9 @@
       <div v-if="$cfg.support_phone_number" class="flex items-center">
         <VcIcon class="me-1.5 text-[--color-primary-500]" name="phone" size="sm" />
 
-        <span v-t="'shared.layout.header.top_header.call_us_label'" class="mr-1 font-thin" />
+        <span class="mr-1 font-thin">
+          {{ $t("shared.layout.header.top_header.call_us_label") }}
+        </span>
 
         <a
           class="py-1 font-semibold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
@@ -39,7 +41,9 @@
           <!-- Operator -->
           <template v-if="operator">
             <span class="font-bold">{{ operator.contact?.fullName || operator.userName }}</span>
-            <span v-t="'shared.layout.header.top_header.logged_in_as'" class="text-neutral-400" />
+            <span class="text-neutral-400">
+              {{ $t("shared.layout.header.top_header.logged_in_as") }}
+            </span>
           </template>
 
           <button
@@ -133,8 +137,9 @@
 import { onClickOutside } from "@vueuse/core";
 import { ref } from "vue";
 import { useSignMeOut, useUser } from "@/shared/account";
-import { CurrencySelector, LanguageSelector } from "@/shared/layout";
 import TopHeaderLink from "./top-header-link.vue";
+import CurrencySelector from "@/shared/layout/components/currency-selector/currency-selector.vue";
+import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 const { isAuthenticated, user, operator, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();

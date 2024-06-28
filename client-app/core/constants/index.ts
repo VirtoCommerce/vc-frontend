@@ -8,4 +8,5 @@ export * from "./products";
 export * from "./search";
 export * from "./security";
 export * from "./tailwind";
+export * from "./variations";
 export * from "./wishlists";

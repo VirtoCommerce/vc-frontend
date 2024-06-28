@@ -97,20 +97,20 @@
 
           <div v-else class="w-1/4">
             <button
-              v-t="'shared.checkout.select_address_modal.select_button'"
               type="button"
               class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-primary px-3 font-roboto-condensed text-base font-bold uppercase text-primary hover:bg-primary hover:text-additional-50 focus:outline-none"
               @click="setAddress(itemData.item)"
-            ></button>
+            >
+              {{ $t("shared.checkout.select_address_modal.select_button") }}
+            </button>
           </div>
         </div>
       </template>
 
       <template #mobile-empty>
-        <div
-          v-t="'shared.checkout.select_address_modal.no_addresses_message'"
-          class="flex items-center space-x-3 border-b border-neutral-200 p-6"
-        ></div>
+        <div class="flex items-center space-x-3 border-b border-neutral-200 p-6">
+          {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+        </div>
       </template>
 
       <template #desktop-body>
@@ -161,11 +161,12 @@
           </td>
           <td v-else class="p-5">
             <button
-              v-t="'shared.checkout.select_address_modal.select_button'"
               type="button"
               class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-primary px-3 font-roboto-condensed text-base font-bold uppercase text-primary hover:bg-primary hover:text-additional-50 focus:outline-none"
               @click="setAddress(address)"
-            ></button>
+            >
+              {{ $t("shared.checkout.select_address_modal.select_button") }}
+            </button>
           </td>
         </tr>
       </template>
@@ -182,7 +183,9 @@
         <tr>
           <td colspan="5">
             <div class="flex items-center border-b border-neutral-200 p-5">
-              <span v-t="'shared.checkout.select_address_modal.no_addresses_message'" class="text-base"></span>
+              <span class="text-base">
+                {{ $t("shared.checkout.select_address_modal.no_addresses_message") }}
+              </span>
             </div>
           </td>
         </tr>

@@ -1,4 +1,3 @@
-import { Category } from "@/shared/catalog";
 import CallToActionWithImage from "./call-to-action-with-image.vue";
 import CallToAction from "./call-to-action.vue";
 import DemoProductList from "./demo-product-list.vue";
@@ -14,6 +13,7 @@ import SubscribeForm from "./subscribe-form.vue";
 import TextBlock from "./text-block.vue";
 import TitleBlock from "./title-block.vue";
 import type { Component } from "vue";
+import Category from "@/shared/catalog/components/category.vue";
 
 export const builderIOComponents: Array<BuilderIOComponentType> = [
   {

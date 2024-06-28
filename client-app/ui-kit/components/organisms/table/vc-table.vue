@@ -14,7 +14,7 @@
   </div>
 
   <!-- Desktop table view -->
-  <table v-else :class="[layout, 'w-full text-left text-sm']" :aria-describedby="description">
+  <table v-else :class="[layout, 'text-left text-sm']" :aria-describedby="description">
     <slot name="header">
       <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-gray-200">
         <tr>
@@ -114,7 +114,7 @@ withDefaults(defineProps<IProps>(), {
   items: () => [],
   pages: 0,
   page: 0,
-  layout: "table-fixed",
+  layout: "table-fixed w-full",
   pageLimit: PAGE_LIMIT,
 });
 

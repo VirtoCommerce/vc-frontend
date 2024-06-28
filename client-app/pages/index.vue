@@ -1,12 +1,14 @@
 <template>
   <StaticPage v-if="staticPage" />
-  <template v-else-if="!loading">
+  <template v-else-if="!loading && !hasContent">
     <LoginFormSection />
 
     <!-- Main content -->
     <div class="main">
       <div class="container mx-auto px-6 pb-40 pt-32 md:px-12">
-        <div v-t="'pages.home.feature_descriptions_block.title'" class="px-6 text-center text-3xl font-bold"></div>
+        <div class="px-6 text-center text-3xl font-bold">
+          {{ $t("pages.home.feature_descriptions_block.title") }}
+        </div>
         <div class="mx-auto mt-24 flex flex-wrap justify-between">
           <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
             <VcImage
@@ -15,10 +17,9 @@
               class="mx-auto w-full"
               lazy
             />
-            <div
-              v-t="'pages.home.feature_descriptions_block.feature_1'"
-              class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
-            ></div>
+            <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
+              {{ $t("pages.home.feature_descriptions_block.feature_1") }}
+            </div>
           </div>
           <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
             <VcImage
@@ -27,10 +28,9 @@
               class="mx-auto w-full"
               lazy
             />
-            <div
-              v-t="'pages.home.feature_descriptions_block.feature_2'"
-              class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
-            ></div>
+            <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
+              {{ $t("pages.home.feature_descriptions_block.feature_2") }}
+            </div>
           </div>
           <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
             <VcImage
@@ -39,10 +39,9 @@
               class="mx-auto w-full"
               lazy
             />
-            <div
-              v-t="'pages.home.feature_descriptions_block.feature_3'"
-              class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
-            ></div>
+            <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
+              {{ $t("pages.home.feature_descriptions_block.feature_3") }}
+            </div>
           </div>
           <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
             <VcImage
@@ -51,10 +50,9 @@
               class="mx-auto w-full"
               lazy
             />
-            <div
-              v-t="'pages.home.feature_descriptions_block.feature_4'"
-              class="mt-5 px-8 text-center text-2xl font-bold md:text-xl"
-            ></div>
+            <div class="mt-5 px-8 text-center text-2xl font-bold md:text-xl">
+              {{ $t("pages.home.feature_descriptions_block.feature_4") }}
+            </div>
           </div>
         </div>
       </div>
@@ -63,10 +61,9 @@
     <!-- CTA -->
     <div class="bg-primary py-6 lg:py-10">
       <div class="container mx-auto flex flex-col items-center space-y-2 px-6 md:px-12 lg:flex-row lg:space-x-10">
-        <div
-          v-t="'pages.home.subscription_block.subscribe_now'"
-          class="whitespace-nowrap text-3xl font-extrabold uppercase text-additional-50"
-        ></div>
+        <div class="whitespace-nowrap text-3xl font-extrabold uppercase text-additional-50">
+          {{ $t("pages.home.subscription_block.subscribe_now") }}
+        </div>
         <div
           v-html-safe="$t('pages.home.subscription_block.info_message')"
           class="max-w-max text-base font-medium leading-tight text-additional-50 lg:max-w-min"
@@ -75,10 +72,11 @@
           <VcInput :placeholder="$t('pages.home.subscription_block.email_placeholder')" class="grow" no-border />
           <!-- todo: use VcButton -->
           <button
-            v-t="'pages.home.subscription_block.subscribe_button'"
             type="button"
             class="h-11 rounded bg-additional-50 px-6 font-roboto text-sm font-bold uppercase shadow-md hover:bg-neutral-200"
-          ></button>
+          >
+            {{ $t("pages.home.subscription_block.subscribe_button") }}
+          </button>
         </div>
       </div>
     </div>
@@ -89,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, watch } from "vue";
+import { defineAsyncComponent, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { useSlugInfo } from "@/shared/common";
@@ -108,13 +106,17 @@ usePageHead({
 
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 const { staticPage } = useStaticPage();
-const { loading, slugInfo, hasContent, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
+staticPage.value = undefined;
 
-watch(slugInfo, async () => {
+const { loading, hasContent, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
+
+watchEffect(async () => {
   if (hasContent.value) {
     await fetchContent();
     if (pageContent.value) {
       staticPage.value = pageContent.value;
+    } else {
+      staticPage.value = undefined;
     }
   }
 });

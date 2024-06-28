@@ -7,7 +7,6 @@ export * from "./useErrorsTranslator";
 export * from "./useGoogleAnalytics";
 export * from "./useIdentityErrorTranslator";
 export * from "./useImpersonate";
-export * from "./useLanguages";
 export * from "./useNavigations";
 export * from "./usePageHead";
 export * from "./useProductsRoutes";

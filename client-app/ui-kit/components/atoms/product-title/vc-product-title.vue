@@ -34,12 +34,14 @@ interface IProps {
   target?: "_blank" | "_self";
   title?: string;
   disabled?: boolean;
+  linesNumber?: number | string;
 }
 
 defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   to: null,
+  linesNumber: 3,
 });
 
 const componentType = computed(() => (!props.disabled && props.to ? "router-link" : "div"));
@@ -53,7 +55,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
   --font-size: var(--vc-product-title-font-size);
 
-  @apply text-[length:var(--font-size)] font-bold line-clamp-3;
+  @apply text-[length:var(--font-size)] font-bold line-clamp-[v-bind(linesNumber)];
 
   @apply leading-[1.17] #{!important};
 

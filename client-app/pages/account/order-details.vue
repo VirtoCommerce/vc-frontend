@@ -137,10 +137,11 @@ import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
-import { AddBulkItemsToCartResultsModal, getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
+import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
+import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
 
 interface IProps {
   orderId: string;

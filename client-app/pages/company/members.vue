@@ -333,8 +333,8 @@ import {
   MembersDropdownMenu,
   RoleIcon,
   useOrganizationContacts,
-  useOrganizationContactsFilterFacets,
 } from "@/shared/company";
+import { useOrganizationContactsFilterFacets } from "@/shared/company/composables/useOrganizationContactsFilterFacets";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
