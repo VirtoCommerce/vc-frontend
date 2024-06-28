@@ -96,7 +96,7 @@ export function useNavigations() {
   }
 
   function fetchMobileContactOrganizationsMenu() {
-    const { user } = useUser();
+    const { isMultiOrganization, user } = useUser();
 
     const organizationsMenuItems = user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
       id: item.id,
@@ -104,7 +104,7 @@ export function useNavigations() {
       isContactOrganizationsItem: true,
     }));
 
-    if (organizationsMenuItems && organizationsMenuItems?.length > 1) {
+    if (isMultiOrganization.value) {
       mobileContactOrganizationsMenu.value = {
         id: "contact-organizations",
         title: "common.labels.my_organizations",
