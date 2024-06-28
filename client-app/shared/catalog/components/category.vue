@@ -5,85 +5,24 @@
 
     <div class="flex items-stretch lg:gap-6">
       <template v-if="!hideSidebar">
-        <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar
+        <FiltersPopupSidebar
           v-if="isMobile || areHorizontalFilters"
-          :class="[!isMobile && 'desktop-popup-sidebar w-[358px]']"
+          :is-exist-selected-facets="isExistSelectedFacets"
+          :is-mobile-filter-dirty="isMobileFilterDirty"
+          :mobile-filters="mobileFilters"
+          :are-horizontal-filters="areHorizontalFilters"
+          :facets-loading="facetsLoading"
+          :is-mobile="isMobile"
           :is-visible="mobileSidebarVisible"
-          @hide="hideMobileSidebar()"
-        >
-          <ProductsFilters
-            :show-common-filters="areHorizontalFilters"
-            :keyword="keywordQueryParam"
-            :filters="mobileFilters"
-            :loading="loading || facetsLoading"
-            @change="updateMobileFilters($event)"
-            @open-branches="openBranchesModal(true)"
-          >
-            <template v-if="areHorizontalFilters" #prepend="{ loading }">
-              <div>
-                <span class="text-sm font-bold text-neutral-900">
-                  {{ $t("pages.catalog.sort_by_label") }}
-                </span>
-                <VcSelect
-                  v-model="sortQueryParam"
-                  text-field="name"
-                  value-field="id"
-                  :disabled="loading"
-                  :items="PRODUCT_SORTING_LIST"
-                  class="mb-4"
-                />
-                <VcCheckbox
-                  v-model="mobileFilters.inStock"
-                  :disabled="loading"
-                  @change="(e) => updateMobileFilters(mobileFilters)"
-                >
-                  {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-                </VcCheckbox>
-                <button type="button" @click.prevent="openBranchesModal(true)">
-                  <VcCheckbox :model-value="!!mobileFilters.branches.length" :disabled="loading">
-                    <i18n-t
-                      keypath="pages.catalog.branch_availability_filter_card.available_in"
-                      tag="div"
-                      scope="global"
-                    >
-                      <span>
-                        {{
-                          $t("pages.catalog.branch_availability_filter_card.branches", {
-                            n: mobileFilters.branches.length,
-                          })
-                        }}
-                      </span>
-                    </i18n-t>
-                  </VcCheckbox>
-                </button>
-              </div>
-            </template>
-          </ProductsFilters>
-
-          <template #footer>
-            <VcButton
-              variant="outline"
-              :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
-              @click="
-                resetFacetFilters();
-                hideMobileSidebar();
-              "
-            >
-              {{ $t("common.buttons.reset") }}
-            </VcButton>
-
-            <VcButton
-              :disabled="!isMobileFilterDirty"
-              @click="
-                applyFilters(mobileFilters);
-                hideMobileSidebar();
-              "
-            >
-              {{ $t("common.buttons.apply") }}
-            </VcButton>
-          </template>
-        </VcPopupSidebar>
+          :keyword-query-param="keywordQueryParam"
+          :sort-query-param="sortQueryParam"
+          :loading="loading"
+          @hide-mobile-sidebar="hideMobileSidebar"
+          @reset-facet-filters="resetFacetFilters"
+          @open-branches-modal="openBranchesModal"
+          @update-mobile-filters="updateMobileFilters"
+          @apply-filters="applyFilters"
+        />
 
         <!-- Sidebar -->
         <div v-else class="relative flex w-60 shrink-0 items-start">
@@ -361,6 +300,7 @@ import ViewMode from "./view-mode.vue";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductsFilters as ProductsFiltersType, ProductsSearchParams } from "@/shared/catalog";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
+import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const props = defineProps<IProps>();
@@ -461,10 +401,6 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
 
 const isExistSelectedFacets = computedEager<boolean>(() =>
   facets.value.some((facet) => facet.values.some((value) => value.selected)),
-);
-
-const isExistSelectedMobileFacets = computedEager<boolean>(() =>
-  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 
 const isMobileFilterDirty = computedEager<boolean>(
