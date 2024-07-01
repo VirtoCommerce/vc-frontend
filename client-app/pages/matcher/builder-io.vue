@@ -79,10 +79,12 @@ async function tryLoadContent(urlPath: string) {
 const builderIoAnchor = shallowRef<HTMLElement | null>(null);
 const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
 
-watchEffect(() => {
-  const data = content.value?.data as { title?: string; keywords?: string; description?: string };
+type MetaDataType = { title?: string; keywords?: string; description?: string };
 
-  if (typeof data === "object" && builderIoAnchorIsVisible.value) {
+watchEffect(() => {
+  const data: MetaDataType | undefined = content.value?.data;
+
+  if (data && builderIoAnchorIsVisible.value) {
     const { title, keywords, description } = data;
 
     usePageHead({
