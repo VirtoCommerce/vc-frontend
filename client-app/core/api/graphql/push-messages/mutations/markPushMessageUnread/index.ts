@@ -2,7 +2,7 @@ import { useMutation } from "@/core/api/graphql/composables/useMutation";
 import { MarkPushMessageUnreadDocument, OperationNames, PushMessageFragmentDoc } from "@/core/api/graphql/types";
 import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
 
-export function useMarkPushMessageUnread() {
+export function useMarkPushMessageUnread(optimistic = true) {
   return useMutation(MarkPushMessageUnreadDocument, {
     optimisticResponse: {
       markPushMessageUnread: true,
@@ -19,7 +19,7 @@ export function useMarkPushMessageUnread() {
       }
     },
     // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
-    updateQueries: {
+    updateQueries: (!optimistic && {}) || {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
         const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
         return {

@@ -113,5 +113,6 @@ declare global {
     createdDate: number | Date;
     isRead?: boolean;
     shortMessage: string;
+    isHidden?: boolean;
   };
 }
