@@ -212,7 +212,6 @@
           :pages="pages"
           :page="page"
           :description="$t('pages.company.members.meta.table_description')"
-          layout="table-fixed"
           @header-click="applySorting"
           @page-changed="changePage"
         >
