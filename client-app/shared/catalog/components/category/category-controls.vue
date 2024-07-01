@@ -1,15 +1,14 @@
 <template>
   <!-- Branch availability -->
-  <div
-    role="button"
-    tabindex="0"
-    class="order-3 ml-4 flex items-center xl:ml-6"
-    @click.prevent="$emit('openBranchesModal', false)"
-    @keyup.enter.prevent="$emit('openBranchesModal', false)"
-  >
+  <div class="order-3 ml-4 flex items-center xl:ml-6">
     <VcTooltip placement="bottom-start" width="13rem">
       <template #trigger>
-        <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
+        <VcCheckbox
+          :model-value="!!savedBranches.length"
+          :disabled="loading"
+          @click.prevent="$emit('openBranchesModal', false)"
+          @keyup.enter.prevent="$emit('openBranchesModal', false)"
+        >
           <i18n-t
             keypath="pages.catalog.branch_availability_filter_card.available_in"
             tag="div"
