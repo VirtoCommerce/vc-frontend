@@ -8,15 +8,21 @@
     @change="$emit('applyFilters', $event)"
   >
     <template #prepend>
-      <VcButton prepend-icon="filter" size="sm" variant="outline" class="shrink-0" @click="$emit('showPopupSidebar')">{{
-        $t("common.buttons.all_filters")
-      }}</VcButton>
+      <VcButton size="sm" variant="outline" class="shrink-0" @click="$emit('showPopupSidebar')">
+        <template #prepend>
+          <VcIcon name="filter" class="mr-2" />
+        </template>
+        {{ $t("common.buttons.all_filters") }}</VcButton
+      >
 
       <VcDropdownMenu :offset-options="4" class="z-10" max-height="20rem">
-        <template #trigger="">
-          <VcButton prepend-icon="switch-vertical" size="sm" variant="outline" class="shrink-0">{{
-            $t("common.buttons.sort_by")
-          }}</VcButton>
+        <template #trigger>
+          <VcButton size="sm" variant="outline" class="shrink-0">
+            <template #prepend>
+              <VcIcon name="switch-vertical" class="mr-2" />
+            </template>
+            {{ $t("common.buttons.sort_by") }}</VcButton
+          >
         </template>
         <template #content="{ close }">
           <div class="py-2">
@@ -25,6 +31,7 @@
               :key="sortingOption.id"
               class="border-none"
               color="secondary"
+              size="sm"
             >
               <VcRadioButton
                 v-model="sortQueryParam"
@@ -68,3 +75,13 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
 </script>
+
+<style scoped lang="scss">
+:deep(.vc-menu-item__inner) {
+  @apply p-0;
+}
+
+:deep(.vc-radio-button) {
+  @apply py-2 ps-4 pe-8;
+}
+</style>

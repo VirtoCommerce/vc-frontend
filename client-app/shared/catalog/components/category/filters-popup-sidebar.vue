@@ -4,6 +4,15 @@
     :is-visible="isVisible"
     @hide="$emit('hidePopupSidebar')"
   >
+    <template v-if="!isMobile" #header>
+      <div class="text-2xl font-bold">
+        {{ $t("common.buttons.allFilters") }}
+      </div>
+      <button type="button" class="appearance-none px-5 py-4" @click="$emit('hidePopupSidebar')">
+        <VcIcon class="text-neutral-600" size="sm" name="x" />
+      </button>
+    </template>
+
     <ProductsFilters
       :show-common-filters="areHorizontalFilters"
       :keyword="keywordQueryParam"
@@ -15,11 +24,12 @@
       <template v-if="areHorizontalFilters" #prepend="{ loading }">
         <div class="space-y-4">
           <div>
-            <span class="text-sm font-bold text-neutral-900">
+            <span class="text-md font-bold text-neutral-900">
               {{ $t("pages.catalog.sort_by_label") }}
             </span>
             <VcSelect
               v-model="sortQueryParam"
+              size="sm"
               text-field="name"
               value-field="id"
               :disabled="loading"
@@ -116,9 +126,3 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 </script>
-
-<style lang="scss">
-.vc-popup-sidebar.desktop-popup-sidebar {
-  --close-button-color: var(--color-neutral-600);
-}
-</style>

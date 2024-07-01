@@ -35,7 +35,7 @@
     <template v-else>
       <div
         ref="facetFiltersContainer"
-        class="flex gap-4"
+        class="flex gap-3"
         :class="[isHorizontal && ' flex-row items-start', !isHorizontal && 'flex-col items-stretch lg:gap-5']"
       >
         <slot name="prepend" :loading="loading" />

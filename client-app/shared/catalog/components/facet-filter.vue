@@ -1,5 +1,6 @@
 <template>
   <div :class="`facet-filter facet-filter--${mode}`">
+    <!-- Collapsable mode -->
     <VcWidget v-if="mode === 'collapsable'" size="xs" collapsible :title="facet.label" collapsed>
       <div :class="{ 'fade-bottom': hasFade }">
         <VcInput
@@ -40,26 +41,40 @@
       </template>
     </VcWidget>
 
-    <VcDropdownMenu v-if="mode === 'dropdown'" :offset-options="4" class="relative z-10" max-height="20rem">
+    <!-- Dropdown mode -->
+    <VcDropdownMenu v-if="mode === 'dropdown'" :offset-options="4" class="relative z-10" :max-height="maxHeight">
       <template #trigger="{ opened }">
         <VcButton
           class="facet-filter__trigger border-2 border-r-4"
           size="sm"
           :color="hasSelected ? 'accent' : 'secondary'"
           variant="outline"
-          :append-icon="hasSelected ? '' : (opened && 'chevron-up') || 'chevron-down'"
         >
           <span class="flex items-center gap-2">
             {{ facet.label }}
             <VcBadge v-if="hasSelected" size="sm" rounded color="info">{{ selectedFiltersCount }}</VcBadge>
           </span>
+          <template v-if="!hasSelected" #append>
+            <VcIcon name="chevron-down" class="ml-2 transition-transform" :class="{ 'rotate-180': opened }" />
+          </template>
         </VcButton>
       </template>
+
       <template #content="{ close }">
-        <div class="max-w-72 py-2">
+        <div class="max-w-72 overflow-y-auto py-2" :style="{ maxHeight }">
+          <VcInput
+            v-if="searchFieldVisible"
+            v-model.trim="searchKeyword"
+            size="sm"
+            class="mx-4 my-2"
+            maxlength="30"
+            :disabled="loading"
+            :placeholder="$t('common.labels.search', [facet.label])"
+            truncate
+          />
           <VcMenuItem
             v-for="item in searchedValues"
-            :key="item.value + '_'"
+            :key="item.value"
             class="facet-filter__item"
             size="sm"
             @click="close"
@@ -78,6 +93,15 @@
               </div>
             </VcCheckbox>
           </VcMenuItem>
+          <div v-if="isNoResults" class="px-4 py-2 text-sm font-medium">
+            {{ $t("pages.catalog.no_facet_found_message") }}
+          </div>
+
+          <template v-if="isShowMoreVisible">
+            <div class="px-4 py-2">
+              <VcButtonSeeMoreLess v-model="isExpanded" />
+            </div>
+          </template>
         </div>
       </template>
     </VcDropdownMenu>
@@ -175,7 +199,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 .facet-filter--dropdown {
   :deep(.vc-popover__content) {
-    @apply min-w-full;
+    @apply min-w-44;
   }
 
   :deep(.vc-checkbox__label) {
@@ -188,6 +212,10 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   :deep(.vc-menu-item__inner) {
     @apply p-0;
+  }
+
+  :deep(.vc-button--color--secondary) {
+    color: var(--color-secondary-600);
   }
 }
 </style>
