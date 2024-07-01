@@ -420,7 +420,7 @@ function openBranchesModal(fromPopupSidebarFilter: boolean) {
             inStock: popupSidebarFilters.inStock,
           };
 
-          void updatePopupSidebarFilters(newFilters);
+          updatePopupSidebarFilters(newFilters);
         } else {
           savedBranches.value = branches;
         }
