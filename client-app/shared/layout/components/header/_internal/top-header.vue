@@ -100,12 +100,12 @@
               </div>
 
               <VcRadioButton
-                v-for="organization in user.contact?.organizations?.items"
-                :key="organization.id"
+                v-for="item in user.contact?.organizations?.items"
+                :key="item.id"
                 v-model="contactOrganizationId"
-                :label="organization.name"
-                :value="organization.id"
-                class="px-3 py-1 text-sm"
+                :label="item.name"
+                :value="item.id"
+                class="flex px-3 py-1 text-sm"
                 @change="selectOrganization"
               />
             </div>

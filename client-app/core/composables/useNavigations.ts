@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { computed, readonly, ref, shallowRef, triggerRef, watch } from "vue";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import {
@@ -41,25 +41,35 @@ const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   }),
 );
 
-const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | null>(
-  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || null,
+const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | undefined>(
+  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
 );
 
-const mobileAccountMenuItem = computed<ExtendedMenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account) : null,
+const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
+  if (!menuSchema.value) {
+    return undefined;
+  }
+
+  const translatedMenuLink = getTranslatedMenuLink(menuSchema.value.header.mobile.account);
+
+  if (translatedMenuLink && translatedMenuLink.children && mobileContactOrganizationsMenu.value) {
+    translatedMenuLink.children.splice(1, 0, mobileContactOrganizationsMenu.value);
+  }
+
+  return translatedMenuLink;
+});
+
+const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
 );
 
-const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : null,
-);
-
-const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | null>(() => {
+const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
   const matchedRouteNames = globals.router.currentRoute.value.matched
     .map((item) => item.name)
     .concat(matchingRouteName.value)
     .filter(Boolean);
 
-  let preSelectedLink: ExtendedMenuLinkType | null = null;
+  let preSelectedLink: ExtendedMenuLinkType | undefined;
 
   if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
     preSelectedLink = mobileCatalogMenuItem.value;
@@ -96,6 +106,7 @@ export function useNavigations() {
   }
 
   function getMobileContactOrganizationsMenu() {
+    const { t } = globals.i18n.global;
     const { isMultiOrganization, user } = useUser();
 
     const organizationsMenuItems = user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
@@ -107,12 +118,10 @@ export function useNavigations() {
     if (isMultiOrganization.value) {
       mobileContactOrganizationsMenu.value = {
         id: "contact-organizations",
-        title: "common.labels.my_organizations",
+        title: t("common.labels.my_organizations"),
         icon: "/static/images/dashboard/icons/company.svg#main",
         children: organizationsMenuItems,
       };
-
-      mobileAccountMenuItem.value?.children?.splice(1, 0, mobileContactOrganizationsMenu.value);
     }
   }
 
@@ -181,6 +190,11 @@ export function useNavigations() {
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
+
+  watch(
+    () => menuSchema,
+    (newValue) => (newValue.value ? getTranslatedMenuLink(newValue.value.header.mobile.account) : null),
+  );
 
   return {
     fetchMenus,
