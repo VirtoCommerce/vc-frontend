@@ -95,7 +95,7 @@ export function useNavigations() {
     }
   }
 
-  function fetchMobileContactOrganizationsMenu() {
+  function getMobileContactOrganizationsMenu() {
     const { isMultiOrganization, user } = useUser();
 
     const organizationsMenuItems = user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
@@ -156,7 +156,7 @@ export function useNavigations() {
   async function fetchMenus() {
     loading.value = true;
     await Promise.all([fetchMenuSchema(), fetchCatalogMenu(), fetchFooterLinks()]);
-    fetchMobileContactOrganizationsMenu();
+    getMobileContactOrganizationsMenu();
     loading.value = false;
   }
 

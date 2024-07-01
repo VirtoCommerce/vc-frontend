@@ -341,31 +341,6 @@ export function useUser() {
       await refresh(organizationId);
 
       broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
-
-      /*const { error, data } = await useFetch("/connect/token")
-        .post(
-          new URLSearchParams({
-            grant_type: "switch_organization",
-            user_id: globals.userId,
-            organization_id: organizationId,
-          }),
-          "application/x-www-form-urlencoded",
-        )
-        .json<ConnectTokenResponseType>();
-
-      if (data.value && !error.value) {
-        const { access_token, token_type, expires_in } = data.value;
-
-        setAccessToken(access_token);
-        setExpiresAt(expires_in);
-        setTokenType(token_type);
-
-        setTimeout(() => {
-          broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
-        }, 1000);
-      } else {
-        Logger.error(switchOrganization.name, error.value);
-      }*/
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {
