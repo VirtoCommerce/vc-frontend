@@ -1,4 +1,4 @@
-import { computed, readonly, ref, shallowRef, triggerRef, watch } from "vue";
+import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import {
@@ -190,11 +190,6 @@ export function useNavigations() {
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
-
-  watch(
-    () => menuSchema,
-    (newValue) => (newValue.value ? getTranslatedMenuLink(newValue.value.header.mobile.account) : null),
-  );
 
   return {
     fetchMenus,
