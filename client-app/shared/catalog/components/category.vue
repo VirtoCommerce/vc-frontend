@@ -214,7 +214,7 @@ import {
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
-import { useSeo } from "@/shared/catalog/composables/useSeo";
+import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useStickyFilters } from "@/shared/catalog/composables/useStickyFilters";
 import { FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { useModal } from "@/shared/modal";
@@ -262,7 +262,7 @@ const { getFacets, loading, facetsLoading, products, total, facets } = useProduc
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
-useSeo();
+useCategorySeo();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
