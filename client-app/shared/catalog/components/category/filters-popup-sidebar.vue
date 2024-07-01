@@ -21,7 +21,7 @@
       @change="$emit('updatePopupSidebarFilters', $event)"
       @open-branches="$emit('openBranchesModal', true)"
     >
-      <template v-if="areHorizontalFilters" #prepend="{ loading }">
+      <template v-if="areHorizontalFilters && !hideSorting" #prepend="{ loading }">
         <div class="space-y-4">
           <div>
             <span class="text-md font-bold text-neutral-900">
@@ -37,12 +37,14 @@
             />
           </div>
           <VcCheckbox
+            v-if="!hideControls"
             :disabled="loading"
             @change="$emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: $event as boolean })"
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
           <VcCheckbox
+            v-if="!hideControls"
             :model-value="!!popupSidebarFilters.branches.length"
             :disabled="loading"
             @change="$emit('openBranchesModal', true)"
@@ -113,6 +115,8 @@ interface IProps {
   isVisible: boolean;
   loading: boolean;
   facetsLoading: boolean;
+  hideSorting?: boolean;
+  hideControls?: boolean;
   keywordQueryParam: string;
   popupSidebarFilters: ProductsFiltersType;
 }

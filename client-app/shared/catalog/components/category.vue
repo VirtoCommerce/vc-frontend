@@ -18,6 +18,8 @@
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
           :loading="loading"
+          :hide-sorting="hideSorting"
+          :hide-controls="hideControls"
           @hide-popup-sidebar="hidePopupSidebar"
           @reset-facet-filters="resetFacetFilters"
           @open-branches-modal="openBranchesModal"
@@ -228,9 +230,7 @@ import CategoryProducts from "@/shared/catalog/components/category/category-prod
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
-const props = withDefaults(defineProps<IProps>(), {
-  filtersOrientation: "horizontal", // TODO: remove this default value??
-});
+const props = defineProps<IProps>();
 const viewModes = ["grid", "list"] as const;
 type ViewModeType = (typeof viewModes)[number];
 

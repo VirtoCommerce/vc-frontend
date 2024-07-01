@@ -101,7 +101,7 @@ watchDebounced(
     if (props.orientation === "vertical" || !facetFiltersContainer.value || isMobile.value) {
       return;
     }
-    async function calculate() {
+    async function calculateFiltersCountToShow() {
       filterCalculationInProgress.value = true;
       const facetsElements =
         (facetFiltersContainer?.value?.querySelectorAll(".facet-filter__trigger") as NodeListOf<HTMLElement>) || [];
@@ -111,7 +111,7 @@ watchDebounced(
         if (!facetFilter) {
           filtersCountToShow.value++;
           await nextTick();
-          await calculate();
+          await calculateFiltersCountToShow();
           return;
         }
         if (useElementBounding(facetFilter, { windowScroll: false }).right.value > containerRight.value) {
@@ -123,7 +123,7 @@ watchDebounced(
       filtersCountToShow.value = filtersCount;
       filterCalculationInProgress.value = false;
     }
-    await calculate();
+    await calculateFiltersCountToShow();
   },
   { debounce: 500, maxWait: 1000, immediate: true },
 );
