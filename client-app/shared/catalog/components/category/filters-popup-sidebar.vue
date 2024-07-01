@@ -14,14 +14,14 @@
     </template>
 
     <ProductsFilters
-      :show-common-filters="areHorizontalFilters"
+      :show-common-filters="isHorizontalFilters"
       :keyword="keywordQueryParam"
       :filters="popupSidebarFilters"
       :loading="loading || facetsLoading"
       @change="$emit('updatePopupSidebarFilters', $event)"
       @open-branches="$emit('openBranchesModal', true)"
     >
-      <template v-if="areHorizontalFilters && !hideSorting" #prepend="{ loading }">
+      <template v-if="isHorizontalFilters && !hideSorting" #prepend="{ loading }">
         <div class="space-y-4">
           <div>
             <span class="text-md font-bold text-neutral-900">
@@ -108,7 +108,7 @@ interface IEmits {
 }
 
 interface IProps {
-  areHorizontalFilters: boolean;
+  isHorizontalFilters: boolean;
   isExistSelectedFacets: boolean;
   isMobile: boolean;
   isPopupSidebarFilterDirty: boolean;

@@ -5,12 +5,12 @@ import type { Ref, StyleValue } from "vue";
 
 const BOUNDING_OPTIONS = { windowResize: false, immediate: false };
 type PropsType = {
-  areHorizontalFilters: Ref<boolean>;
+  isHorizontalFilters: Ref<boolean>;
   contentElement: Ref<HTMLElement | null>;
   filtersElement: Ref<HTMLElement | null>;
 };
 
-export function useStickyFilters({ areHorizontalFilters, contentElement, filtersElement }: PropsType) {
+export function useStickyFilters({ isHorizontalFilters, contentElement, filtersElement }: PropsType) {
   let scrollOld = 0;
   const maxOffsetTop = 108;
   const maxOffsetBottom = 20;
@@ -23,7 +23,7 @@ export function useStickyFilters({ areHorizontalFilters, contentElement, filters
   const setFiltersPosition = throttle(_setFiltersPosition, 100);
 
   function _setFiltersPosition() {
-    if (areHorizontalFilters.value) {
+    if (isHorizontalFilters.value) {
       return;
     }
     const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;

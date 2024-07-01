@@ -7,11 +7,11 @@
       <template v-if="!hideSidebar">
         <!-- Popup sidebar for mobile and horizontal desktop view -->
         <FiltersPopupSidebar
-          v-if="isMobile || areHorizontalFilters"
+          v-if="isMobile || isHorizontalFilters"
           :is-exist-selected-facets="isExistSelectedFacets"
           :is-popup-sidebar-filter-dirty="isPopupSidebarFiltersDirty"
           :popup-sidebar-filters="popupSidebarFilters"
-          :are-horizontal-filters="areHorizontalFilters"
+          :is-horizontal-filters="isHorizontalFilters"
           :facets-loading="facetsLoading"
           :is-mobile="isMobile"
           :is-visible="popupSidebarVisible"
@@ -79,7 +79,7 @@
           </VcTypography>
           <!-- View options - horizontal view -->
           <ViewMode
-            v-if="!hideViewModeSelector && areHorizontalFilters"
+            v-if="!hideViewModeSelector && isHorizontalFilters"
             v-model:mode="savedViewMode"
             class="ml-auto flex"
           />
@@ -104,7 +104,7 @@
 
           <!-- Sorting -->
           <div
-            v-if="!hideSorting && !areHorizontalFilters"
+            v-if="!hideSorting && !isHorizontalFilters"
             class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8"
           >
             <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
@@ -124,14 +124,14 @@
 
           <!-- View options -->
           <ViewMode
-            v-if="!hideViewModeSelector && !areHorizontalFilters"
+            v-if="!hideViewModeSelector && !isHorizontalFilters"
             v-model:mode="savedViewMode"
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
 
           <!-- In stock and branches -->
           <CategoryControls
-            v-if="!hideControls && !isMobile && !areHorizontalFilters"
+            v-if="!hideControls && !isMobile && !isHorizontalFilters"
             v-model="savedInStock"
             :loading="loading"
             :saved-branches="savedBranches"
@@ -141,7 +141,7 @@
 
         <!-- Horizontal filters -->
         <CategoryHorizontalFilters
-          v-if="areHorizontalFilters && !isMobile"
+          v-if="isHorizontalFilters && !isMobile"
           :facets-loading="facetsLoading"
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
@@ -300,11 +300,11 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-const areHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
+const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 
 const contentElement = ref<HTMLElement | null>(null);
 const filtersElement = ref<HTMLElement | null>(null);
-const { setFiltersPosition, filtersStyle } = useStickyFilters({ areHorizontalFilters, contentElement, filtersElement });
+const { setFiltersPosition, filtersStyle } = useStickyFilters({ isHorizontalFilters, contentElement, filtersElement });
 
 const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
