@@ -28,7 +28,12 @@
 
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !localFilters.facets.length">
-      <VcWidgetSkeleton v-for="i in 6" :key="i" size="xs" head />
+      <template v-if="!isHorizontal">
+        <VcWidgetSkeleton v-for="i in 6" :key="i" size="xs" head />
+      </template>
+      <div v-else class="flex gap-3">
+        <div v-for="i in 6" :key="i" class="h-8 w-36 animate-pulse rounded-sm bg-neutral-200" />
+      </div>
     </template>
 
     <!-- Facet Filters -->
