@@ -9,7 +9,7 @@
         {{ $t("common.buttons.allFilters") }}
       </div>
       <button type="button" class="appearance-none px-5 py-4" @click="$emit('hidePopupSidebar')">
-        <VcIcon class="text-neutral-600" size="sm" name="x" />
+        <VcIcon class="!text-neutral-600" size="sm" name="x" />
       </button>
     </template>
 
