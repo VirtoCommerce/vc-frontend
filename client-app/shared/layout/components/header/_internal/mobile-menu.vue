@@ -44,7 +44,7 @@
               <VcRadioButton
                 v-for="currencyItem in supportedCurrencies"
                 :key="currencyItem.code"
-                :model-value="currentCurrency?.code"
+                v-model="currentCurrency.code"
                 :value="currencyItem.code"
                 class="py-2.5"
                 @click="currentCurrency?.code === currencyItem.code ? null : saveCurrencyCode(currencyItem.code)"
