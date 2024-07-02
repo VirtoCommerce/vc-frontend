@@ -1,7 +1,6 @@
-/**
- * @deprecated Use Sort instead
- */
+import type { SortDirection } from "@/core/enums";
+
 export interface ISortInfo {
   column: string;
-  direction: string;
+  direction: SortDirection;
 }

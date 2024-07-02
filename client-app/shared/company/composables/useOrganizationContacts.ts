@@ -8,7 +8,8 @@ import {
   unlockOrganizationContact,
   changeOrganizationContactRole,
 } from "@/core/api/graphql";
-import { DEFAULT_PAGE_SIZE, SORT_ASCENDING } from "@/core/constants";
+import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import { convertToExtendedContact } from "../utils";
@@ -32,7 +33,7 @@ export function useOrganizationContacts(organizationId: MaybeRef<string>) {
   const contacts = shallowRef<ExtendedContactType[]>([]);
   const sort = ref<ISortInfo>({
     column: "name",
-    direction: SORT_ASCENDING,
+    direction: SortDirection.Ascending,
   });
 
   const { t } = useI18n();
