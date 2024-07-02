@@ -147,6 +147,8 @@
           :sort-query-param="sortQueryParam"
           :loading="loading || facetsLoading"
           :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+          :hide-sorting="hideSorting"
+          :hide-all-filters="hideSidebar"
           @reset-facet-filters="resetFacetFilters"
           @apply-filters="applyFilters"
           @show-popup-sidebar="showPopupSidebar"

@@ -8,14 +8,14 @@
     @change="$emit('applyFilters', $event)"
   >
     <template #prepend>
-      <VcButton size="sm" variant="outline" class="shrink-0" @click="$emit('showPopupSidebar')">
+      <VcButton v-if="!hideAllFilters" size="sm" variant="outline" class="shrink-0" @click="$emit('showPopupSidebar')">
         <template #prepend>
           <VcIcon name="filter" class="mr-2" />
         </template>
         {{ $t("common.buttons.all_filters") }}</VcButton
       >
 
-      <VcDropdownMenu :offset-options="4" class="z-10" max-height="20rem">
+      <VcDropdownMenu v-if="!hideSorting" :offset-options="4" class="z-10" max-height="20rem">
         <template #trigger>
           <VcButton size="sm" variant="outline" class="shrink-0">
             <template #prepend>
@@ -57,7 +57,10 @@ import type { ProductsFilters as ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
 defineEmits<IEmits>();
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  hideAllFilters: false,
+  hideSorting: false,
+});
 
 interface IEmits {
   (event: "applyFilters", filters: ProductsFiltersType): void;
@@ -68,6 +71,8 @@ interface IProps {
   loading: boolean;
   keywordQueryParam: string;
   filters: ProductsFiltersType;
+  hideSorting?: boolean;
+  hideAllFilters?: boolean;
 }
 
 const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
