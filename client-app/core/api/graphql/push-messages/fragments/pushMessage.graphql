@@ -3,4 +3,5 @@ fragment pushMessage on PushMessageType {
   createdDate
   shortMessage
   isRead
+  isHidden
 }
