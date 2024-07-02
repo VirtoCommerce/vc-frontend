@@ -4,6 +4,7 @@ import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast, userBeforeUnauthorizeEvent } from "@/shared/broadcast";
+import { ORGANIZATION_ID_LOCAL_STORAGE_KEY } from "../constants";
 import type { AfterFetchContext } from "@vueuse/core";
 
 type IdentityErrorType = {
@@ -87,7 +88,7 @@ function _useAuth() {
   async function authorize(username: string, password: string): Promise<void> {
     const { storeId } = globals;
 
-    getTokenParams.value = new URLSearchParams({
+    const params = new URLSearchParams({
       grant_type: "password",
       scope: "offline_access",
       storeId,
@@ -95,16 +96,27 @@ function _useAuth() {
       password,
     });
 
+    const organizationId = localStorage.getItem(ORGANIZATION_ID_LOCAL_STORAGE_KEY);
+
+    if (organizationId) {
+      params.set("organization_id", organizationId);
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await (getTokenRequest = getToken(true));
   }
 
   async function refresh(organizationId?: string) {
-    getTokenParams.value = new URLSearchParams({
+    const params = new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: state.value.refresh_token!,
-      organization_id: organizationId ?? "",
     });
+
+    if (organizationId) {
+      params.set("organization_id", organizationId);
+    }
+
+    getTokenParams.value = params;
 
     try {
       if (!isAuthorizing.value) {
@@ -112,6 +124,10 @@ function _useAuth() {
         await (getTokenRequest = getToken(true));
       } else {
         await getTokenRequest;
+      }
+
+      if (organizationId) {
+        localStorage.setItem(ORGANIZATION_ID_LOCAL_STORAGE_KEY, organizationId);
       }
     } catch {
       state.value = { ...INITIAL_STATE };

@@ -15,6 +15,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
+import { ORGANIZATION_ID_LOCAL_STORAGE_KEY } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -151,6 +152,8 @@ export function useUser() {
       if (user.value?.lockedState) {
         broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
       }
+
+      localStorage.setItem(ORGANIZATION_ID_LOCAL_STORAGE_KEY, user.value?.contact?.organizationId ?? "");
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
       throw e;

@@ -63,3 +63,5 @@ export const ALL_ROLES: ExtendedRoleType[] = [
   STORE_ADMINISTRATOR,
   STORE_MANAGER,
 ];
+
+export const ORGANIZATION_ID_LOCAL_STORAGE_KEY = "vcst-organization-id";
