@@ -102,6 +102,8 @@ function _useAuth() {
       params.set("organization_id", organizationId);
     }
 
+    getTokenParams.value = params;
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await (getTokenRequest = getToken(true));
   }
