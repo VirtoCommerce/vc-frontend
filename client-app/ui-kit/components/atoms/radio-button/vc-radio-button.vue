@@ -2,7 +2,7 @@
   <label :class="['vc-radio-button', `vc-radio-button--size--${size}`, checked && 'vc-radio-button--checked']">
     <input
       v-model="model"
-      class="vc-radio-button__input"
+      class="vc-radio-button__input flex-none"
       type="radio"
       :value="value"
       :checked="checked"
