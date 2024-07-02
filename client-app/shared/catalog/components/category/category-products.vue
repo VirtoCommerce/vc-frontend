@@ -129,7 +129,6 @@ function sendGASelectItemEvent(product: Product) {
 
 function resetFacetFiltersWithKeyword() {
   keywordQueryParam.value = "";
-  // FIXME: `setTimeout` is a hack to apply the value of `useRouteQueryParam` in parallel
   setTimeout(() => {
     emit("resetFacetFilters");
   }, 0);
