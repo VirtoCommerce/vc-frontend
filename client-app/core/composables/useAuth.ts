@@ -4,7 +4,6 @@ import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast, userBeforeUnauthorizeEvent } from "@/shared/broadcast";
-import { ORGANIZATION_ID_LOCAL_STORAGE_KEY } from "../constants";
 import type { AfterFetchContext } from "@vueuse/core";
 
 type IdentityErrorType = {
@@ -96,7 +95,7 @@ function _useAuth() {
       password,
     });
 
-    const organizationId = localStorage.getItem(ORGANIZATION_ID_LOCAL_STORAGE_KEY);
+    const organizationId = localStorage.getItem(`organization-id-${username}`);
 
     if (organizationId) {
       params.set("organization_id", organizationId);
@@ -126,10 +125,6 @@ function _useAuth() {
         await (getTokenRequest = getToken(true));
       } else {
         await getTokenRequest;
-      }
-
-      if (organizationId) {
-        localStorage.setItem(ORGANIZATION_ID_LOCAL_STORAGE_KEY, organizationId);
       }
     } catch {
       state.value = { ...INITIAL_STATE };

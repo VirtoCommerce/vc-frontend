@@ -340,6 +340,8 @@ export function useUser() {
     try {
       await refresh(organizationId);
 
+      localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
+
       broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
     } catch (e) {
       Logger.error(switchOrganization.name, e);
