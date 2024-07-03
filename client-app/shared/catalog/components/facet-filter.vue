@@ -61,7 +61,7 @@
       </template>
 
       <template #content="{ close }">
-        <div class="max-w-72 overflow-y-auto py-2" :style="{ maxHeight }">
+        <div class="max-w-72 overflow-y-auto py-2">
           <VcInput
             v-if="searchFieldVisible"
             v-model.trim="searchKeyword"
