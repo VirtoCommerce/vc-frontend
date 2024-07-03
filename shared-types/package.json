@@ -1,0 +1,21 @@
+{
+  "name": "front-modules-types",
+  "author": {
+    "email": "info@virtocommerce.com",
+    "name": "Virto Commerce",
+    "url": "https://virtocommerce.com"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "version": "1.0.3",
+  "main": "./dist/types.d.ts",
+  "types": "./dist/types.d.ts",
+  "devDependencies": {
+    "typescript": "~5.4.5"
+  },
+  "files": [
+    "dist/types.d.ts",
+    "README.md"
+  ]
+}

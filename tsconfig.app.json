@@ -1,7 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["client-app/**/*", "client-app/**/*.vue", "config/*.json", "locales/*.json", "package.json"],
+  "include": [
+    "client-app/**/*",
+    "client-app/**/*.vue",
+    "config/*.json",
+    "locales/*.json",
+    "shared-types/index.d.ts",
+    "package.json"
+  ],
   "exclude": [
     "artifacts",
     "assets",

@@ -75,7 +75,7 @@ export default async () => {
 
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
-  initializeGoogleAnalytics();
+  void initializeGoogleAnalytics();
   void initializeHotjar();
 
   /**

@@ -39,8 +39,13 @@
     "storybook:dev": "yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn storybook:styles && storybook build",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
-    "postinstall": "husky"
+    "postinstall": "husky",
+    "build-shared-types": "cd shared-types && rm -rf dist && yarn build",
+    "publish-shared-types": "yarn build-shared-types && npm publish --access public"
   },
+  "workspaces": [
+    "./shared-types"
+  ],
   "dependencies": {
     "@apollo/client": "^3.10.5",
     "@builder.io/sdk-vue": "^1.0.31",
@@ -50,6 +55,7 @@
     "@unhead/vue": "^1.9.14",
     "@vee-validate/rules": "~4.13.1",
     "@vee-validate/yup": "~4.13.1",
+    "@virto-commerce/front-modules-google-ecommerce-analytics": "^0.0.2",
     "@virto-commerce/front-modules-hotjar": "^1.0.4",
     "@vue/apollo-composable": "^4.0.2",
     "@vueuse/components": "^10.11.0",
