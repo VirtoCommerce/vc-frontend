@@ -27,11 +27,11 @@ defineProps<IProps>();
   }
 
   &__text {
-    @apply text-13 text-gray-800 font-semibold;
+    @apply text-sm text-gray-800 font-bold;
   }
 
   &__current-rating {
-    @apply font-extrabold;
+    @apply font-black;
   }
 }
 </style>
