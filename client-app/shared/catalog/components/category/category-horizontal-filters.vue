@@ -1,6 +1,6 @@
 <template>
   <ProductsFilters
-    class="mb-4.5"
+    class="category-horizontal-filters"
     orientation="horizontal"
     :keyword="keywordQueryParam"
     :filters="filters"
@@ -8,18 +8,29 @@
     @change="$emit('applyFilters', $event)"
   >
     <template #prepend>
-      <VcButton v-if="!hideAllFilters" size="sm" variant="outline" class="shrink-0" @click="$emit('showPopupSidebar')">
+      <VcButton
+        v-if="!hideAllFilters"
+        size="sm"
+        variant="outline"
+        class="category-horizontal-filters__show-all"
+        @click="$emit('showPopupSidebar')"
+      >
         <template #prepend>
-          <VcIcon name="filter" class="mr-2" />
+          <VcIcon name="filter" class="category-horizontal-filters__show-all-icon" />
         </template>
         {{ $t("common.buttons.all_filters") }}</VcButton
       >
 
-      <VcDropdownMenu v-if="!hideSorting" :offset-options="4" class="z-10" max-height="20rem">
+      <VcDropdownMenu
+        v-if="!hideSorting"
+        :offset-options="4"
+        class="category-horizontal-filters__sorting"
+        max-height="20rem"
+      >
         <template #trigger>
-          <VcButton size="sm" variant="outline" class="shrink-0">
+          <VcButton size="sm" variant="outline" class="category-horizontal-filters__sorting-trigger">
             <template #prepend>
-              <VcIcon name="switch-vertical" class="mr-2" />
+              <VcIcon name="switch-vertical" class="category-horizontal-filters__sorting-trigger-icon" />
             </template>
             {{ $t("common.buttons.sort_by") }}</VcButton
           >
@@ -29,7 +40,7 @@
             <VcMenuItem
               v-for="sortingOption in PRODUCT_SORTING_LIST"
               :key="sortingOption.id"
-              class="border-none"
+              class="category-horizontal-filters__sorting-list"
               color="secondary"
               size="sm"
             >
@@ -38,7 +49,7 @@
                 size="sm"
                 :value="sortingOption.id"
                 :label="sortingOption.name"
-                class="pl-1 pr-5"
+                class="category-horizontal-filters__sorting-item"
                 @change="close"
               />
             </VcMenuItem>
@@ -81,12 +92,44 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
 });
 </script>
 
-<style scoped lang="scss">
-:deep(.vc-menu-item__inner) {
-  @apply p-0;
-}
+<style lang="scss">
+.category-horizontal-filters {
+  @apply mb-4.5;
 
-:deep(.vc-radio-button) {
-  @apply py-2 ps-4 pe-8;
+  &__show-all {
+    @apply shrink-0;
+  }
+
+  &__show-all-icon {
+    @apply mr-2;
+  }
+
+  &__sorting {
+    @apply z-10;
+  }
+
+  &__sorting-trigger {
+    @apply shrink-0;
+  }
+
+  &__sorting-trigger-icon {
+    @apply mr-2;
+  }
+
+  &__sorting-list {
+    @apply border-none;
+  }
+
+  &__sorting-item {
+    @apply pl-1 pr-5;
+  }
+
+  .vc-menu-item__inner {
+    @apply p-0;
+  }
+
+  .vc-radio-button {
+    @apply py-2 ps-4 pe-8;
+  }
 }
 </style>
