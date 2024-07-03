@@ -9,7 +9,7 @@
 
     <!-- Mobile item view -->
     <template v-else>
-      <slot v-for="item in items" :key="item.id" name="mobile-item" :item="item" />
+      <slot v-for="(item, index) in items" :key="item.id || index" name="mobile-item" :item="item" />
     </template>
   </div>
 
@@ -24,17 +24,22 @@
             class="px-5 py-3 font-bold"
             :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
             @click="
-              column.sortable
-                ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort!.direction) })
+              column.sortable && sort
+                ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort.direction) })
                 : null
             "
           >
             {{ column.title }}
 
             <template v-if="column.sortable && sort && sort.column === column.id">
-              <VcIcon v-if="sort.direction === SORT_DESCENDING" class="ms-1 mt-1.5" name="chevron-up" size="xxs" />
               <VcIcon
-                v-else-if="sort.direction === SORT_ASCENDING"
+                v-if="sort.direction === SortDirection.Descending"
+                class="ms-1 mt-1.5"
+                name="chevron-up"
+                size="xxs"
+              />
+              <VcIcon
+                v-else-if="sort.direction === SortDirection.Ascending"
                 class="ms-1 mt-1.5"
                 name="chevron-down"
                 size="xxs"
@@ -79,23 +84,26 @@
   </slot>
 </template>
 
-<script setup lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any */
+<script setup lang="ts" generic="T extends ItemType">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { PAGE_LIMIT, SORT_ASCENDING, SORT_DESCENDING } from "@/core/constants";
-import { toggleSortDirection } from "@/core/utilities";
+import { PAGE_LIMIT } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 
+export type ItemType = {
+  id?: string | number;
+  [key: string]: unknown;
+};
+
 interface IEmits {
-  (event: "itemClick", item: any): void;
+  (event: "itemClick", item: T): void;
   (event: "headerClick", item: ISortInfo): void;
   (event: "pageChanged", page: number): void;
 }
 
 interface IProps {
   columns?: ITableColumn[];
-  items?: any[];
-  itemActionsBuilder?: (inputObject: any) => SlidingActionsItem[];
+  items?: T[];
   sort?: ISortInfo;
   pages?: number;
   page?: number;
@@ -124,4 +132,8 @@ const isMobile = breakpoints.smaller("md");
 const onPageUpdate = (newPage: number) => {
   emit("pageChanged", newPage);
 };
+
+function toggleSortDirection(currentDirection: SortDirection): SortDirection {
+  return currentDirection === SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;
+}
 </script>
