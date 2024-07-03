@@ -1,5 +1,5 @@
 <template>
-  <Category filters-orientation="horizontal" />
+  <Category />
 </template>
 
 <script setup lang="ts">
