@@ -13,12 +13,14 @@ const { getModuleSettings, hasModuleSettings, isEnabled } = useModuleSettings(MO
 const { currentCurrency } = useCurrency();
 const { currencyCode } = globals;
 
+let ga;
+
 export function useGoogleAnalytics() {
   async function init(): Promise<void> {
     if (hasModuleSettings && isEnabled(IS_ENABLED_KEY)) {
       try {
         const { useGoogleAnalyticsModule } = await import("@virto-commerce/front-modules-google-ecommerce-analytics");
-        const { initModule } = useGoogleAnalyticsModule();
+        const { initModule, ...methods } = useGoogleAnalyticsModule();
 
         initModule({
           getModuleSettings,
@@ -28,6 +30,7 @@ export function useGoogleAnalytics() {
           currentCurrency,
           currencyCode,
         });
+        ga = methods;
       } catch (e) {
         Logger.error(useGoogleAnalytics.name, e);
       }
@@ -36,5 +39,6 @@ export function useGoogleAnalytics() {
 
   return {
     init,
+    ...ga,
   };
 }
