@@ -25,9 +25,9 @@
           >
             <div class="facet-filter__item-wrapper">
               <span class="facet-filter__item-label">{{ item.label }}</span>
-              <span class="facet-filter__item-count">{{
-                $t("pages.catalog.facet_card.item_count_format", [item.count])
-              }}</span>
+              <VcBadge class="facet-filter__item-count" variant="outline" size="sm" rounded color="secondary">{{
+                item.count
+              }}</VcBadge>
             </div>
           </VcCheckbox>
 
@@ -198,6 +198,10 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 <style lang="scss">
 .facet-filter {
+  .vc-checkbox__label {
+    @apply w-full;
+  }
+
   &__trigger {
     @apply border-2 border-r-4;
 
@@ -235,8 +239,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
         position: relative;
         &:after {
-          width: calc(100% - var(--scrollbar-width));
-          @apply absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
+          @apply w-full absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
 
           @media print {
             @apply content-none;
@@ -264,7 +267,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     }
 
     .facet-filter__item-count {
-      @apply ml-1;
+      @apply ml-auto;
     }
 
     .facet-filter__item-label {
@@ -272,7 +275,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     }
 
     .facet-filter__item-wrapper {
-      @apply flex text-13 font-medium text-gray-500;
+      @apply flex text-13 items-center font-medium text-gray-500;
     }
 
     .facet-filter__no-results {
@@ -287,10 +290,6 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   &--dropdown {
     .vc-popover__content {
       @apply min-w-44;
-    }
-
-    .vc-checkbox__label {
-      @apply w-full;
     }
 
     .vc-checkbox__container {

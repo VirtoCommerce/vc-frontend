@@ -1,15 +1,15 @@
 <template>
   <VcPopupSidebar
-    :class="[!isMobile && 'desktop-popup-sidebar w-[358px]']"
+    :class="['filters-popup-sidebar', !isMobile && 'filters-popup-sidebar--desktop']"
     :is-visible="isVisible"
     @hide="$emit('hidePopupSidebar')"
   >
     <template v-if="!isMobile" #header>
-      <div class="text-2xl font-bold">
+      <div class="filters-popup-sidebar__title">
         {{ $t("common.buttons.allFilters") }}
       </div>
-      <button type="button" class="appearance-none px-5 py-4" @click="$emit('hidePopupSidebar')">
-        <VcIcon class="!text-neutral-600" size="sm" name="x" />
+      <button type="button" class="filters-popup-sidebar__close-btn" @click="$emit('hidePopupSidebar')">
+        <VcIcon class="filters-popup-sidebar__close-icon" size="sm" name="x" />
       </button>
     </template>
 
@@ -21,10 +21,10 @@
       @change="$emit('updatePopupSidebarFilters', $event)"
       @open-branches="$emit('openBranchesModal', true)"
     >
-      <template v-if="isHorizontalFilters && !hideSorting" #prepend="{ loading }">
-        <div class="space-y-4">
-          <div>
-            <span class="text-md font-bold text-neutral-900">
+      <template v-if="isHorizontalFilters" #prepend="{ loading }">
+        <div class="filters-popup-sidebar__container">
+          <div v-if="!hideSorting" class="filters-popup-sidebar__sorting">
+            <span class="filters-popup-sidebar__sorting-label">
               {{ $t("pages.catalog.sort_by_label") }}
             </span>
             <VcSelect
@@ -38,6 +38,7 @@
           </div>
           <VcCheckbox
             v-if="!hideControls"
+            class="filters-popup-sidebar__control"
             :disabled="loading"
             @change="$emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: $event as boolean })"
           >
@@ -45,6 +46,7 @@
           </VcCheckbox>
           <VcCheckbox
             v-if="!hideControls"
+            class="filters-popup-sidebar__control"
             :model-value="!!popupSidebarFilters.branches.length"
             :disabled="loading"
             @change="$emit('openBranchesModal', true)"
@@ -65,6 +67,7 @@
 
     <template #footer>
       <VcButton
+        class="filters-popup-sidebar__footer-btn"
         variant="outline"
         :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
         @click="
@@ -76,6 +79,7 @@
       </VcButton>
 
       <VcButton
+        class="filters-popup-sidebar__footer-btn"
         :disabled="!isPopupSidebarFilterDirty"
         @click="
           $emit('applyFilters', popupSidebarFilters);
@@ -130,3 +134,31 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   props.popupSidebarFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
 );
 </script>
+
+<style lang="scss">
+.filters-popup-sidebar {
+  &--desktop {
+    @apply w-[358px] #{!important};
+  }
+
+  &__title {
+    @apply text-2xl font-bold;
+  }
+
+  &__close-btn {
+    @apply appearance-none px-5 py-4;
+  }
+
+  &__close-icon {
+    @apply text-neutral-600 #{!important};
+  }
+
+  &__container {
+    @apply space-y-4;
+  }
+
+  &__sorting-label {
+    @apply font-bold text-neutral-900;
+  }
+}
+</style>
