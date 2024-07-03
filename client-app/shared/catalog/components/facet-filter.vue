@@ -2,7 +2,7 @@
   <div :class="`facet-filter facet-filter--${mode}`">
     <!-- Collapsable mode -->
     <VcWidget v-if="mode === 'collapsable'" size="xs" collapsible :title="facet.label" collapsed>
-      <div :class="{ 'fade-bottom': hasFade }">
+      <div :class="['facet-filter__content', hasFade && 'facet-filter__content--fade-bottom']">
         <VcInput
           v-if="searchFieldVisible"
           v-model.trim="searchKeyword"
@@ -14,7 +14,7 @@
           truncate
         />
 
-        <div class="-me-1 space-y-3 overflow-y-auto pe-1" :style="{ maxHeight }">
+        <div class="facet-filter__items-container">
           <VcCheckbox
             v-for="item in searchedValues"
             :key="item.value"
@@ -183,39 +183,49 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 </script>
 
 <style scoped lang="scss">
-.fade-bottom {
-  --scrollbar-width: 15px;
+.facet-filter {
+  &__content {
+    &--fade-bottom {
+      --scrollbar-width: 15px;
 
-  position: relative;
-  &:after {
-    width: calc(100% - var(--scrollbar-width));
-    @apply absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
+      position: relative;
+      &:after {
+        width: calc(100% - var(--scrollbar-width));
+        @apply absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
 
-    @media print {
-      @apply content-none;
+        @media print {
+          @apply content-none;
+        }
+      }
     }
   }
-}
 
-.facet-filter--dropdown {
-  :deep(.vc-popover__content) {
-    @apply min-w-44;
+  &__items-container {
+    @apply -me-1 space-y-3 overflow-y-auto pe-1;
+
+    max-height: v-bind(maxHeight);
   }
 
-  :deep(.vc-checkbox__label) {
-    @apply w-full;
-  }
+  &--dropdown {
+    :deep(.vc-popover__content) {
+      @apply min-w-44;
+    }
 
-  :deep(.vc-checkbox__container) {
-    @apply px-4 py-1.5;
-  }
+    :deep(.vc-checkbox__label) {
+      @apply w-full;
+    }
 
-  :deep(.vc-menu-item__inner) {
-    @apply p-0;
-  }
+    :deep(.vc-checkbox__container) {
+      @apply px-4 py-1.5;
+    }
 
-  :deep(.vc-button--color--secondary) {
-    color: var(--color-secondary-600);
+    :deep(.vc-menu-item__inner) {
+      @apply p-0;
+    }
+
+    :deep(.vc-button--color--secondary) {
+      color: var(--color-secondary-600);
+    }
   }
 }
 </style>
