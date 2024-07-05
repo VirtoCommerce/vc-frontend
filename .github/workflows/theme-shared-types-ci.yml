@@ -1,10 +1,10 @@
-name: Node.js Package
+name: Theme Shared Types CI
 
 on:
   workflow_dispatch:
   push:
     branches:
-      [main]
+      [main, feat/VCST-860-separate-google-analytics]
     paths:
       - 'shared-types/index.ts'
 
