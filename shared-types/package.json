@@ -1,5 +1,5 @@
 {
-  "name": "front-modules-types",
+  "name": "@virto-commerce/front-modules-shared-types",
   "author": {
     "email": "info@virtocommerce.com",
     "name": "Virto Commerce",
@@ -8,7 +8,7 @@
   "scripts": {
     "build": "npx dts-bundle-generator index.ts -o dist/types.d.ts"
   },
-  "version": "1.0.5",
+  "version": "1.0.0",
   "main": "./dist/types.d.ts",
   "types": "./dist/types.d.ts",
   "devDependencies": {

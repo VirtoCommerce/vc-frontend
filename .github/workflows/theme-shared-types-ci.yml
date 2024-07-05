@@ -1,0 +1,35 @@
+name: Node.js Package
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      [main]
+    paths:
+      - 'shared-types/index.ts'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.0
+      - name: Install dependencies
+        run: cd shared-types && yarn install
+      - name: Build type declarations file
+        run: cd shared-types && yarn build
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.0
+          registry-url: https://registry.npmjs.org/
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

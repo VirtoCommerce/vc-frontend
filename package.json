@@ -39,9 +39,7 @@
     "storybook:dev": "yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn storybook:styles && storybook build",
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
-    "postinstall": "husky",
-    "build-shared-types": "cd shared-types && rm -rf dist && yarn build",
-    "publish-shared-types": "yarn build-shared-types && cd shared-types && npm publish --access public"
+    "postinstall": "husky"
   },
   "workspaces": [
     "./shared-types"
