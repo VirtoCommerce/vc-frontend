@@ -15,7 +15,7 @@
             <VcIcon class="text-[--color-primary-500]" name="menu" :size="32" />
           </button>
 
-          <router-link to="/">
+          <router-link :to="$context.settings.default_return_url ?? '/'">
             <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
         </div>

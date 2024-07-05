@@ -42,6 +42,10 @@
       "checkout_coupon_enabled": true,
       "checkout_gifts_enabled": true,
 
+      "isCVVinSkyflowRequired": false,
+
+      "default_return_url": "/",
+
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
       "favicon_image": "/static/icons/favicon-32x32.png",
@@ -248,8 +252,7 @@
       "color_info_950": "#0E212A",
 
       "color_additional_50": "#FFFFFF",
-      "color_additional_950": "#000000",
-      "isCVVinSkyflowRequired": false
+      "color_additional_950": "#000000"
     },
 
     "Watermelon": {
@@ -292,6 +295,10 @@
       "checkout_purchase_order_enabled": true,
       "checkout_coupon_enabled": true,
       "checkout_gifts_enabled": true,
+
+      "isCVVinSkyflowRequired": false,
+
+      "default_return_url": "/",
 
       "logo_image": "/static/images/common/logo.svg",
       "logo_inverted_image": "/static/images/common/logo-white.svg",
@@ -515,9 +522,7 @@
       "color_footer_top_bg": "#332829",
 
       "color_footer_bottom_bg": "#141010",
-      "color_footer_bottom_link": "#d4c9c9",
-
-      "isCVVinSkyflowRequired": false
+      "color_footer_bottom_link": "#d4c9c9"
     }
   }
 }
