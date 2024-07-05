@@ -32,7 +32,7 @@ export type { ICurrency } from "../client-app/core/types/currency.js";
 
 ## Publishing the Package
 
-To publish the package, push a commit where:
+To publish the package, draft a new release. Ensure that that the version in `package.json` was changed accordingly in advance. After release package will be published automatically. On any concerns please see workflows in the **Actions** tab.
 
 1. `shared-types/index.ts` is changed
 2. The commit message contains `publish-shared-types`

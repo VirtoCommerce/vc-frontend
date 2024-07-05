@@ -6,8 +6,8 @@
     "client-app/**/*.vue",
     "config/*.json",
     "locales/*.json",
-    "shared-types/index.ts",
-    "package.json"
+    "package.json",
+    "shared-types/index.ts"
   ],
   "exclude": [
     "artifacts",

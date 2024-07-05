@@ -4,8 +4,8 @@ export type {
   CustomerOrderType,
   LineItemType,
   OrderLineItemType,
-  VariationType,
   Product,
-} from "../client-app/core/api/graphql/types.js";
-export type { LoggerType } from "../client-app/core/utilities/logger/logger.type.js";
-export type { ICurrency } from "../client-app/core/types/currency.js";
+  VariationType,
+} from "../client-app/core/api/graphql/types";
+export type { LoggerType } from "../client-app/core/utilities/logger/logger.type";
+export type { ICurrency } from "../client-app/core/types/currency";
