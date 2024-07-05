@@ -5,6 +5,8 @@ on:
   push:
     paths:
       - 'shared-types/index.ts'
+    types:
+      - committed
 
 jobs:
   build:
