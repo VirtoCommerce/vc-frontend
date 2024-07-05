@@ -3,14 +3,13 @@ name: Theme Shared Types CI
 on:
   workflow_dispatch:
   push:
-    branches:
-      [main, feat/VCST-860-separate-google-analytics]
     paths:
       - 'shared-types/index.ts'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[publish-shared-types]')
     steps:
       - name: Set up Node 20
         uses: actions/setup-node@v4
@@ -33,6 +32,7 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[publish-shared-types]')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

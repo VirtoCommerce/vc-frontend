@@ -5817,14 +5817,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@virto-commerce/front-modules-google-ecommerce-analytics@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:0.0.8"
+"@virto-commerce/front-modules-google-ecommerce-analytics@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:1.0.0"
   dependencies:
-    front-modules-types: "npm:^1.0.5"
+    "@virto-commerce/front-modules-shared-types": "npm:^1.0.1"
     lodash: "npm:^4.17.21"
     vue: "npm:^3.4.31"
-  checksum: 10c0/7292bae4a6aeb82c8fa2f851c5b58c2627f274f9ade9ff6eb8fa7a28f2f06bc1f713bef96144f4aba3c4d013057f10c62231d158c13758c29698a859ee926bc3
+  checksum: 10c0/8c3da564e2322070711e04792b7ef8c2b537bc1947bc0f423f85c3b13fbbaf518fddfb906c7893982b6cd5b874fc4ae0c8082c51ca717400f37bc042ffeca155
   languageName: node
   linkType: hard
 
@@ -5837,7 +5837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@virto-commerce/front-modules-shared-types@workspace:shared-types":
+"@virto-commerce/front-modules-shared-types@npm:^1.0.1, @virto-commerce/front-modules-shared-types@workspace:shared-types":
   version: 0.0.0-use.local
   resolution: "@virto-commerce/front-modules-shared-types@workspace:shared-types"
   dependencies:
@@ -9957,13 +9957,6 @@ __metadata:
   version: 0.5.2
   resolution: "fresh@npm:0.5.2"
   checksum: 10c0/c6d27f3ed86cc5b601404822f31c900dd165ba63fff8152a3ef714e2012e7535027063bc67ded4cb5b3a49fa596495d46cacd9f47d6328459cf570f08b7d9e5a
-  languageName: node
-  linkType: hard
-
-"front-modules-types@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "front-modules-types@npm:1.0.5"
-  checksum: 10c0/8dcec9245db89870a124a59b13fdc5402fa54423daf75122a5e41daef1d382ba0d62f933d75228961269ba00086407e523cd09b50f391a4bf8c54950fe84e04f
   languageName: node
   linkType: hard
 
@@ -16826,7 +16819,7 @@ __metadata:
     "@unhead/vue": "npm:^1.9.14"
     "@vee-validate/rules": "npm:~4.13.1"
     "@vee-validate/yup": "npm:~4.13.1"
-    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^0.0.8"
+    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^1.0.0"
     "@virto-commerce/front-modules-hotjar": "npm:^1.0.4"
     "@vitejs/plugin-vue": "npm:^5.0.5"
     "@vue/apollo-composable": "npm:^4.0.2"
