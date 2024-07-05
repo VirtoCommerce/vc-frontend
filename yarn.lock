@@ -5817,14 +5817,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@virto-commerce/front-modules-google-ecommerce-analytics@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:0.0.7"
+"@virto-commerce/front-modules-google-ecommerce-analytics@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:0.0.8"
   dependencies:
-    front-modules-types: "npm:^1.0.4"
+    front-modules-types: "npm:^1.0.5"
     lodash: "npm:^4.17.21"
     vue: "npm:^3.4.31"
-  checksum: 10c0/0fadaaa00c0ed37acb7054e73ed178b73c9c89774c2982142de1a10d94815cbbe046786de60bd731029d4b0bb0f72ee2bcb8cab1e172eff3355994f17bca5787
+  checksum: 10c0/7292bae4a6aeb82c8fa2f851c5b58c2627f274f9ade9ff6eb8fa7a28f2f06bc1f713bef96144f4aba3c4d013057f10c62231d158c13758c29698a859ee926bc3
   languageName: node
   linkType: hard
 
@@ -8585,6 +8585,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dts-bundle-generator@npm:^9.5.1":
+  version: 9.5.1
+  resolution: "dts-bundle-generator@npm:9.5.1"
+  dependencies:
+    typescript: "npm:>=5.0.2"
+    yargs: "npm:^17.6.0"
+  bin:
+    dts-bundle-generator: dist/bin/dts-bundle-generator.js
+  checksum: 10c0/3685d3797b6cd252c5a27174a504193469e2a8d82188224767e522e2e8eb03de431107836232a0ac89bcfbc38caa0dcf2ec7fb81716e781185f8ea840b956bc2
+  languageName: node
+  linkType: hard
+
 "duplexify@npm:^3.5.0, duplexify@npm:^3.6.0":
   version: 3.7.1
   resolution: "duplexify@npm:3.7.1"
@@ -9940,11 +9952,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"front-modules-types@npm:^1.0.4, front-modules-types@workspace:shared-types":
+"front-modules-types@npm:^1.0.5, front-modules-types@workspace:shared-types":
   version: 0.0.0-use.local
   resolution: "front-modules-types@workspace:shared-types"
   dependencies:
-    typescript: "npm:~5.4.5"
+    dts-bundle-generator: "npm:^9.5.1"
   languageName: unknown
   linkType: soft
 
@@ -16332,6 +16344,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:>=5.0.2":
+  version: 5.5.3
+  resolution: "typescript@npm:5.5.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/f52c71ccbc7080b034b9d3b72051d563601a4815bf3e39ded188e6ce60813f75dbedf11ad15dd4d32a12996a9ed8c7155b46c93a9b9c9bad1049766fe614bbdd
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^5.0.0, typescript@npm:~5.4.5":
   version: 5.4.5
   resolution: "typescript@npm:5.4.5"
@@ -16339,6 +16361,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10c0/2954022ada340fd3d6a9e2b8e534f65d57c92d5f3989a263754a78aba549f7e6529acc1921913560a4b816c46dce7df4a4d29f9f11a3dc0d4213bb76d043251e
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A>=5.0.2#optional!builtin<compat/typescript>":
+  version: 5.5.3
+  resolution: "typescript@patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=d69c25"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/5a437c416251334deeaf29897157032311f3f126547cfdc4b133768b606cb0e62bcee733bb97cf74c42fe7268801aea1392d8e40988cdef112e9546eba4c03c5
   languageName: node
   linkType: hard
 
@@ -16787,7 +16819,7 @@ __metadata:
     "@unhead/vue": "npm:^1.9.14"
     "@vee-validate/rules": "npm:~4.13.1"
     "@vee-validate/yup": "npm:~4.13.1"
-    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^0.0.7"
+    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^0.0.8"
     "@virto-commerce/front-modules-hotjar": "npm:^1.0.4"
     "@vitejs/plugin-vue": "npm:^5.0.5"
     "@vue/apollo-composable": "npm:^4.0.2"
@@ -17716,7 +17748,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.0.0, yargs@npm:^17.5.1, yargs@npm:^17.7.2":
+"yargs@npm:^17.0.0, yargs@npm:^17.5.1, yargs@npm:^17.6.0, yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:

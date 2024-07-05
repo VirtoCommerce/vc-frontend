@@ -6,7 +6,7 @@
     "client-app/**/*.vue",
     "config/*.json",
     "locales/*.json",
-    "shared-types/index.d.ts",
+    "shared-types/index.ts",
     "package.json"
   ],
   "exclude": [

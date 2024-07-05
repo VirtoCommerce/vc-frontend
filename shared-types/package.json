@@ -6,13 +6,13 @@
     "url": "https://virtocommerce.com"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "npx dts-bundle-generator index.ts -o dist/types.d.ts"
   },
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "./dist/types.d.ts",
   "types": "./dist/types.d.ts",
   "devDependencies": {
-    "typescript": "~5.4.5"
+    "dts-bundle-generator": "^9.5.1"
   },
   "files": [
     "dist/types.d.ts",

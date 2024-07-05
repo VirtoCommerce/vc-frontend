@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outFile": "./dist/types.d.ts",
-    "baseUrl": "."
-  }
-}

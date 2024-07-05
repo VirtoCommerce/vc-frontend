@@ -46,6 +46,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 shared-types/.npmrc
+shared-types/dist
 
 # System Files
 .DS_Store
