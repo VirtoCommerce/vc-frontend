@@ -13,7 +13,10 @@ const { getModuleSettings, hasModuleSettings, isEnabled } = useModuleSettings(MO
 const { currentCurrency } = useCurrency();
 const { currencyCode } = globals;
 
-let ga;
+type GoogleAnalyticsMethodsType = ReturnType<
+  typeof import("@virto-commerce/front-modules-google-ecommerce-analytics").useGoogleAnalyticsModule
+>;
+let googleAnalyticsMethods: Omit<GoogleAnalyticsMethodsType, "initModule">;
 
 export function useGoogleAnalytics() {
   async function init(): Promise<void> {
@@ -30,7 +33,7 @@ export function useGoogleAnalytics() {
           currentCurrency,
           currencyCode,
         });
-        ga = methods;
+        googleAnalyticsMethods = methods;
       } catch (e) {
         Logger.error(useGoogleAnalytics.name, e);
       }
@@ -39,6 +42,6 @@ export function useGoogleAnalytics() {
 
   return {
     init,
-    ...ga,
+    ...googleAnalyticsMethods,
   };
 }
