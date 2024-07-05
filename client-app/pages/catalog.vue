@@ -1,5 +1,5 @@
 <template>
-  <Category />
+  <Category allow-set-meta />
 </template>
 
 <script setup lang="ts">

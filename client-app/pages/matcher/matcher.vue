@@ -3,7 +3,7 @@
     <SlugContent
       v-if="previewers.slugContent.isActive"
       v-show="visibleComponent === 'slugContent'"
-      :seo-url="seoUrl"
+      :path-match="pathMatch"
       @set-state="updateState($event, 'slugContent')"
     />
     <BuilderIo
@@ -12,37 +12,35 @@
       :api-key="builderIoApiKey"
       @set-state="updateState($event, 'builderIo')"
     />
+    <Internal
+      v-if="previewers.internal.isActive"
+      v-show="visibleComponent === 'internal'"
+      @set-state="updateState($event, 'internal')"
+    />
     <div v-if="visibleComponent === 'loader'" class="min-h-[80vh]">
       <VcLoaderOverlay />
     </div>
-    <NotFound v-show="!visibleComponent" />
+    <NotFound v-if="!visibleComponent" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computedEager } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { StateType, PreviewerStateType } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
-import BuilderIo from "@/pages/external/builder-io.vue";
-import SlugContent from "@/pages/external/slug-content.vue";
-const props = withDefaults(defineProps<IProps>(), {
-  pathMatch: () => [],
-});
-
-const { modulesSettings } = useThemeContext();
+import BuilderIo from "@/pages/matcher/builder-io.vue";
+import Internal from "@/pages/matcher/internal.vue";
+import SlugContent from "@/pages/matcher/slug-content.vue";
 
 interface IProps {
   pathMatch?: string[];
 }
 
-const seoUrl = computedEager(() => {
-  // Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
-  const paths = props.pathMatch.filter(Boolean);
-  return paths.join("/");
-});
+defineProps<IProps>();
+
+const { modulesSettings } = useThemeContext();
 
 const moduleSettings = computed(() => {
   return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
@@ -58,17 +56,23 @@ const builderIoApiKey = computed(() => {
 
 // The highest priority has the previewer whose 'priority' value is closer to zero
 const previewers = ref<{ [key in string]: PreviewerStateType }>({
+  builderIo: {
+    id: "builderIo",
+    priority: 1,
+    state: "initial",
+    isActive: isBuilderIOEnabled.value,
+  },
   slugContent: {
     id: "slugContent",
     priority: 2,
     state: "initial",
     isActive: true,
   },
-  builderIo: {
-    id: "builderIo",
-    priority: 1,
+  internal: {
+    id: "internal",
+    priority: 3,
     state: "initial",
-    isActive: isBuilderIOEnabled.value,
+    isActive: true,
   },
 });
 

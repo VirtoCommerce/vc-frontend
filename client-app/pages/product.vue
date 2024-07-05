@@ -1,5 +1,9 @@
 <template>
-  <VcContainer v-if="product && template" class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]">
+  <VcContainer
+    v-if="product && template"
+    ref="productComponentAnchor"
+    class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
+  >
     <!-- Breadcrumbs -->
     <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
@@ -59,7 +63,8 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { computed, defineAsyncComponent, watchEffect } from "vue";
+import { useElementVisibility } from "@vueuse/core";
+import { computed, defineAsyncComponent, shallowRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { buildBreadcrumbs, productHasVariations } from "@/core/utilities";
@@ -74,6 +79,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 interface IProps {
   productId?: string;
+  allowSetMeta?: boolean;
 }
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
@@ -109,18 +115,25 @@ const relatedProductsSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "related-products"),
 );
 
-usePageHead({
-  title: seoTitle,
-  meta: {
-    keywords: seoKeywords,
-    description: seoDescription,
-  },
-});
+const productComponentAnchor = shallowRef<HTMLElement | null>(null);
+const productComponentAnchorIsVisible = useElementVisibility(productComponentAnchor);
 
-useSeoMeta({
-  ogTitle: seoTitle,
-  ogDescription: seoDescription,
-  ogImage: seoImageUrl,
+watchEffect(() => {
+  if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
+    usePageHead({
+      title: seoTitle,
+      meta: {
+        keywords: seoKeywords,
+        description: seoDescription,
+      },
+    });
+
+    useSeoMeta({
+      ogTitle: seoTitle,
+      ogDescription: seoDescription,
+      ogImage: seoImageUrl,
+    });
+  }
 });
 
 const breadcrumbs = useBreadcrumbs(() => {
