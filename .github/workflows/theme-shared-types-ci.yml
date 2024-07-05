@@ -9,6 +9,33 @@ on:
       - committed
 
 jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.11.0
+
+      - name: Configure git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          cd shared-types && npm version patch -m "ci: bump shared types package version to %s"
+
+      - name: Push changes
+        run: |
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build:
     runs-on: ubuntu-latest
     if: contains(github.event.head_commit.message, '[publish-shared-types]')
