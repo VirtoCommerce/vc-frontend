@@ -12,10 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.11.0
+          node-version: 20
+      - name: Enable corepack
+        run: |
+          corepack enable
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: yarn install
       - name: Build type declarations file
@@ -28,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20.11.0
+          node-version: 20
           registry-url: https://registry.npmjs.org/
       - run: npm publish --access public
         env:
