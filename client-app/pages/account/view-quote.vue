@@ -132,7 +132,8 @@ import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { QuoteLineItems, useUserQuote, QuoteStatus } from "@/shared/account";
+import { QuoteLineItems, QuoteStatus } from "@/shared/account";
+import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import type { QuoteAttachmentType } from "@/core/api/graphql/types";
@@ -194,6 +195,6 @@ function getFile(attachment: QuoteAttachmentType): IAttachedFile {
 }
 
 function onDownload(file: FileType) {
-  downloadFile(file.url!, file.name);
+  void downloadFile(file.url!, file.name);
 }
 </script>

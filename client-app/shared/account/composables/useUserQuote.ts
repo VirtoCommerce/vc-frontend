@@ -10,7 +10,7 @@ import {
   updateQuoteAddresses,
   submitQuoteRequest,
   updateQuoteAttachments,
-} from "@/core/api/graphql";
+} from "@/core/api/graphql/quotes";
 import { AddressType } from "@/core/enums";
 import { convertToType, Logger } from "@/core/utilities";
 import { toAttachedFile } from "@/ui-kit/utilities";

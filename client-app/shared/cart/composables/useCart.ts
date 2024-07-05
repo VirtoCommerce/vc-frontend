@@ -15,7 +15,6 @@ import {
   useChangeFullCartItemQuantityMutation,
   useChangePurchaseOrderNumberMutation,
   useClearCartMutation,
-  useCreateQuoteFromCartMutation,
   useGetFullCartQuery,
   useRejectGiftItemsMutation,
   useRemoveCartItemsMutation,
@@ -29,10 +28,8 @@ import {
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
-import { globals } from "@/core/globals";
 import { groupByVendor } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
-import { useNotifications } from "@/shared/notification";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
 import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
@@ -43,7 +40,6 @@ import type {
   CartType,
   InputPaymentType,
   InputShipmentType,
-  QuoteType,
   AddOrUpdateCartPaymentMutation,
   AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
@@ -138,7 +134,6 @@ export function useShortCart() {
 }
 
 export function _useFullCart() {
-  const notifications = useNotifications();
   const { openModal } = useModal();
   const ga = useGoogleAnalytics();
 
@@ -381,23 +376,6 @@ export function _useFullCart() {
     }
   }
 
-  const { mutate: _createQuoteFromCart, loading: createQuoteFromCartLoading } = useCreateQuoteFromCartMutation();
-  async function createQuoteFromCart(comment = ""): Promise<QuoteType | undefined> {
-    const result = await _createQuoteFromCart({ command: { cartId: cart.value!.id, comment } });
-
-    const quote = result?.data?.createQuoteFromCart as QuoteType | undefined;
-
-    if (!quote) {
-      notifications.error({
-        text: globals.i18n.global.t("common.messages.creating_quote_error"),
-        duration: 15000,
-        single: true,
-      });
-    }
-
-    return quote;
-  }
-
   function openClearCartModal() {
     openModal({
       component: ClearCartModal,
@@ -440,7 +418,6 @@ export function _useFullCart() {
     updatePayment,
     updatePurchaseOrderNumber,
     clearCart,
-    createQuoteFromCart,
     addGiftsToCart,
     removeGiftsFromCart,
     toggleGift,
@@ -464,7 +441,6 @@ export function _useFullCart() {
         addGiftItemsLoading.value ||
         rejectGiftItemsLoading.value,
     ),
-    createQuoteFromCartLoading,
   };
 }
 
@@ -507,7 +483,6 @@ function _useCart() {
     removeShipment,
     updatePayment,
     updatePurchaseOrderNumber,
-    createQuoteFromCart,
     addGiftsToCart,
     removeGiftsFromCart,
     toggleGift,
@@ -560,7 +535,6 @@ function _useCart() {
     clearCart: async (cartId: string) => {
       return await deprecatedClearCart(cartId);
     },
-    createQuoteFromCart,
     addGiftsToCart,
     removeGiftsFromCart,
     toggleGift,

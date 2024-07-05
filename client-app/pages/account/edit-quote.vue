@@ -131,7 +131,8 @@ import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
-import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses, useUserQuote } from "@/shared/account";
+import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses } from "@/shared/account";
+import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
@@ -260,7 +261,7 @@ const commentValidationSchema = computed<StringSchema>(() =>
     .max(1000)
     .test({
       message: t("common.messages.required_field"),
-      test: (value) => Promise.resolve(!!hasItems.value || (!hasItems.value && !!value)),
+      test: (value) => Promise.resolve(hasItems.value || (!hasItems.value && !!value)),
     }),
 );
 
@@ -440,7 +441,7 @@ async function fetchAddresses(): Promise<void> {
 
 function onFileDownload(file: FileType) {
   if (file && file.url) {
-    downloadFile(file.url, file.name);
+    void downloadFile(file.url, file.name);
   }
 }
 
