@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "1.62.0",
+  "version": "1.63.0",
   "private": true,
   "type": "module",
   "scripts": {
