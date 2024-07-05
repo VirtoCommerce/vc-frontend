@@ -27,7 +27,7 @@ jobs:
       - name: Bump version
         id: bump_version
         run: |
-          cd shared-types && npm version patch -m "ci: bump shared types package version to %s"
+          cd shared-types && npm version patch && git commit -am "ci: bump shared types package version to %s"
 
       - name: Push changes
         run: |
