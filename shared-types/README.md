@@ -37,7 +37,7 @@ To publish the package, push a commit where:
 1. `shared-types/index.ts` is changed
 2. The commit message contains `publish-shared-types`
 
-The types declaration file will be built and published automatically.
+The types declaration file will be built and published automatically. The patch version of the package will be increased automatically - ensure that you pull changes (`shared-types/package.json`) after CI jobs are done.
 
 ## Example of Using in Other Modules
 

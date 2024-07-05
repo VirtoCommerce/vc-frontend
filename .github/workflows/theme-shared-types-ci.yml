@@ -27,7 +27,9 @@ jobs:
       - name: Bump version
         id: bump_version
         run: |
-          cd shared-types && npm version patch && git commit -am "ci: bump shared types package version to %s"
+          cd shared-types
+          NEW_VERSION=$(npm version patch)
+          git commit -am "ci: bump @virto-commerce/front-modules-shared-types version to ${NEW_VERSION}"
 
       - name: Push changes
         run: |
