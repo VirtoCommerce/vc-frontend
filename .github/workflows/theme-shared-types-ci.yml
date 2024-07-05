@@ -31,7 +31,7 @@ jobs:
 
       - name: Push changes
         run: |
-          git push
+          git push --follow-tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -73,6 +73,11 @@ jobs:
         with:
           name: types-artifacts
           path: shared-types/dist
+      - name: Pull latest changes
+        run: |
+          git pull
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: cd shared-types && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
