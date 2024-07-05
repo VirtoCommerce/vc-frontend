@@ -85,7 +85,7 @@
     <!-- endregion Default slot -->
 
     <!-- region Mobile Search Bar -->
-    <div v-show="searchBarVisible" class="flex select-none items-center bg-[color:var(--color-search-bar-bg)] p-4">
+    <div v-show="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
       <VcInput
         v-model.trim="searchPhrase"
         maxlength="64"
