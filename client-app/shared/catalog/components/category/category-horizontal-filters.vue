@@ -26,6 +26,7 @@
         :offset-options="4"
         class="category-horizontal-filters__sorting"
         max-height="20rem"
+        z-index="3"
       >
         <template #trigger>
           <VcButton size="sm" variant="outline" class="category-horizontal-filters__sorting-trigger">
@@ -102,10 +103,6 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
 
   &__show-all-icon {
     @apply mr-2;
-  }
-
-  &__sorting {
-    @apply z-10;
   }
 
   &__sorting-trigger {

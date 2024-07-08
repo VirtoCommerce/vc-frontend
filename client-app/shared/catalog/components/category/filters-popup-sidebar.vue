@@ -1,9 +1,5 @@
 <template>
-  <VcPopupSidebar
-    :class="['filters-popup-sidebar', !isMobile && 'filters-popup-sidebar--desktop']"
-    :is-visible="isVisible"
-    @hide="$emit('hidePopupSidebar')"
-  >
+  <VcPopupSidebar class="filters-popup-sidebar" :is-visible="isVisible" @hide="$emit('hidePopupSidebar')">
     <template v-if="!isMobile" #header>
       <div class="filters-popup-sidebar__title">
         {{ $t("common.buttons.allFilters") }}
@@ -137,9 +133,7 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
 
 <style lang="scss">
 .filters-popup-sidebar {
-  &--desktop {
-    @apply w-[358px] #{!important};
-  }
+  @apply lg:w-[22rem] #{!important};
 
   &__title {
     @apply text-2xl font-bold;
