@@ -219,6 +219,18 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   &--dropdown {
     $dropdown: &;
+
+    .vc-popover__content {
+      @apply min-w-44;
+    }
+
+    .vc-menu-item__inner {
+      @apply py-1.5 px-4;
+    }
+
+    .vc-button--color--secondary {
+      @apply text-[var(--color-secondary-600)] #{!important};
+    }
   }
 
   &--fade-bottom {
@@ -349,20 +361,6 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
     #{$fadeBottom}#{$dropdown} & {
       @apply mt-2;
-    }
-  }
-
-  &--dropdown {
-    .vc-popover__content {
-      @apply min-w-44;
-    }
-
-    .vc-menu-item__inner {
-      @apply py-1.5 px-4;
-    }
-
-    .vc-button--color--secondary {
-      @apply text-[var(--color-secondary-600)] #{!important};
     }
   }
 }
