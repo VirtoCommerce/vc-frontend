@@ -198,6 +198,24 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 <style lang="scss">
 .facet-filter {
+  $collapsable: "";
+  $dropdown: "";
+  $selected-item: "";
+  $fade-bottom: "";
+  $trigger-opened: "";
+
+  &--collapsable {
+    $collapsable: &;
+  }
+
+  &--dropdown {
+    $dropdown: &;
+  }
+
+  &--fade-bottom {
+    $fade-bottom: &;
+  }
+
   .vc-checkbox__label {
     @apply w-full;
   }
@@ -206,9 +224,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     @apply border-2 border-r-4;
 
     &--opened {
-      .facet-filter__trigger-arrow {
-        @apply rotate-180;
-      }
+      $trigger-opened: &;
     }
   }
 
@@ -222,68 +238,100 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   &__trigger-arrow {
     @apply ml-2 transition-transform;
+
+    #{$trigger-opened} & {
+      @apply rotate-180;
+    }
   }
 
   &__item-input {
     @apply w-full;
   }
 
+  &__item {
+    &--selected {
+      $selected-item: &;
+    }
+  }
+
   &__item-inner {
     @apply flex items-center;
   }
 
-  &--collapsable {
-    .facet-filter__content {
-      &--fade-bottom {
-        --scrollbar-width: 15px;
+  &__item-count {
+    @apply ml-auto;
+  }
 
-        position: relative;
-        &:after {
-          @apply w-full absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
+  &__content {
+    #{$dropdown} & {
+      @apply max-w-72 overflow-y-auto py-2;
+    }
 
-          @media print {
-            @apply content-none;
-          }
+    #{$fade-bottom} & {
+      --scrollbar-width: 15px;
+      @apply relative;
+
+      &:after {
+        @apply w-full absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
+
+        @media print {
+          @apply content-none;
         }
       }
     }
+  }
 
-    .facet-filter__search {
+  &__search {
+    #{$collapsable} & {
       @apply mb-4;
     }
 
-    .facet-filter__items-container {
+    #{$dropdown} & {
+      @apply mx-4 my-2;
+    }
+  }
+
+  &__items-container {
+    #{$collapsable} & {
       @apply -me-1 space-y-3 overflow-y-auto pe-1;
 
       max-height: v-bind(maxHeight);
     }
+  }
 
-    .facet-filter__item {
-      &--selected {
-        .facet-filter__item-label {
-          @apply font-semibold;
-        }
-      }
+  &__item-label {
+    @apply truncate;
+
+    #{$dropdown} & {
+      @apply mr-5 text-13 font-medium text-gray-500;
     }
 
-    .facet-filter__item-count {
-      @apply ml-auto;
+    #{$selected-item} & {
+      @apply font-semibold;
     }
+  }
 
-    .facet-filter__item-label {
-      @apply truncate;
-    }
-
-    .facet-filter__item-wrapper {
+  &__item-wrapper {
+    #{$collapsable} & {
       @apply flex text-13 items-center font-medium text-gray-500;
     }
+  }
 
-    .facet-filter__no-results {
-      @apply text-sm font-medium;
+  &__no-results {
+    @apply text-sm font-medium;
+
+    #{$dropdown} & {
+      @apply px-4 py-2;
+    }
+  }
+
+  &__more {
+    #{$collapsable} & {
+      @apply px-2 py-0.5;
     }
 
-    .facet-filter__more {
-      @apply px-2 py-0.5;
+    #{$dropdown} & {
+      @apply px-4 py-2;
     }
   }
 
@@ -301,39 +349,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     }
 
     .vc-button--color--secondary {
-      color: var(--color-secondary-600);
-    }
-
-    .facet-filter__search {
-      @apply mx-4 my-2;
-    }
-
-    .facet-filter__content {
-      @apply max-w-72 overflow-y-auto py-2;
-    }
-
-    .facet-filter__item {
-      &--selected {
-        .facet-filter__item-label {
-          @apply font-semibold;
-        }
-      }
-    }
-
-    .facet-filter__item-count {
-      @apply ml-auto;
-    }
-
-    .facet-filter__item-label {
-      @apply mr-5 truncate text-13 font-medium text-gray-500;
-    }
-
-    .facet-filter__no-results {
-      @apply px-4 py-2 text-sm font-medium;
-    }
-
-    .facet-filter__more {
-      @apply px-4 py-2;
+      @apply text-[var(--color-secondary-600)] #{!important};
     }
   }
 }
