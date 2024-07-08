@@ -9,18 +9,18 @@
 </template>
 
 <script setup lang="ts">
-interface Prop {
-  label: string;
+interface IProps {
+  label?: string;
 }
 
-withDefaults(defineProps<Prop>(), {
+withDefaults(defineProps<IProps>(), {
   label: () => "",
 });
 </script>
 
 <style lang="scss">
 .vc-line-item-property {
-  @apply grid grid-cols-[auto_1fr_auto] gap-1.5 text-13;
+  @apply grid grid-cols-[auto_1fr_auto] gap-1.5 text-sm;
 
   @media (min-width: theme("screens.md")) {
     @apply grid-cols-[45%_1fr];
@@ -31,10 +31,10 @@ withDefaults(defineProps<Prop>(), {
   }
 
   &__label {
-    @apply grow min-w-0 font-medium capitalize text-gray-600 truncate;
+    @apply grow min-w-0 font-bold capitalize text-gray-600 truncate;
 
     @media (min-width: theme("screens.md")) {
-      @apply font-bold text-gray-800;
+      @apply text-gray-800;
     }
   }
 
@@ -47,7 +47,7 @@ withDefaults(defineProps<Prop>(), {
   }
 
   &__value {
-    @apply min-w-0 font-semibold truncate;
+    @apply min-w-0 font-bold truncate;
 
     @media (min-width: theme("screens.md")) {
       @apply font-normal;

@@ -188,6 +188,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   table {
     table-layout: auto;
     width: 100%;
+    max-width: 100%;
 
     th {
       padding: 8px 12px;

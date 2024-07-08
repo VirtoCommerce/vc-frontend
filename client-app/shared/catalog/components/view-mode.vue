@@ -13,7 +13,7 @@
       <svg class="size-5">
         <use href="/static/images/common/grid-view.svg#main"></use>
       </svg>
-      <span class="ml-1.5 hidden text-15 font-semibold lg:block">{{ $t("shared.catalog.view_mode.grid_label") }}</span>
+      <span class="ml-1.5 hidden text-base font-bold lg:block">{{ $t("shared.catalog.view_mode.grid_label") }}</span>
     </button>
 
     <button
@@ -29,7 +29,7 @@
       <svg class="size-5">
         <use href="/static/images/common/list-view.svg#main"></use>
       </svg>
-      <span class="ml-1.5 hidden text-15 font-semibold lg:block">{{ $t("shared.catalog.view_mode.list_label") }}</span>
+      <span class="ml-1.5 hidden text-base font-bold lg:block">{{ $t("shared.catalog.view_mode.list_label") }}</span>
     </button>
   </div>
 </template>

@@ -20,13 +20,13 @@
           :disabled="loading"
           @change="changeFacetValues"
         >
-          <div :class="['flex text-13', item.selected ? 'font-semibold' : 'font-medium text-gray-500']">
+          <div :class="['flex text-sm', item.selected ? 'font-bold' : 'font-normal text-gray-500']">
             <span class="truncate">{{ item.label }}</span>
             <span class="ml-1">{{ $t("pages.catalog.facet_card.item_count_format", [item.count]) }}</span>
           </div>
         </VcCheckbox>
 
-        <div v-if="isNoResults" class="text-sm font-medium">{{ $t("pages.catalog.no_facet_found_message") }}</div>
+        <div v-if="isNoResults" class="text-sm">{{ $t("pages.catalog.no_facet_found_message") }}</div>
 
         <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor" class="!mt-0 h-px"></div>
       </div>

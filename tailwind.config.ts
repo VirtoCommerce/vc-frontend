@@ -149,13 +149,6 @@ module.exports = {
         "2xl": "0 25px 50px -12px rgb(0 0 0 / 0.25)",
         inner: "inset 0 2px 4px 0 rgb(0 0 0 / 0.05)",
         none: "0 0 #0000",
-
-        /** @deprecated Use the shadows listed above */
-        "t-3sm": "1px 2px 4px rgba(0, 0, 0, 0.05)",
-        "md-x": "1px 2px 8px rgba(0, 0, 0, 0.05)",
-        "t-mds": "1px 1px 3px rgba(0, 0, 0, 0.25)",
-        "t-lgs": "0px -8px 15px rgba(0, 0, 0, 0.1)",
-        "sm-x-y": "1px 2px 9px rgba(0, 0, 0, 0.1)",
       },
 
       fontSize: {
@@ -235,86 +228,6 @@ module.exports = {
           "6rem", //96px
           {
             lineHeight: "6rem", //96px
-          },
-        ],
-
-        /** @deprecated Use the fonts listed above */
-
-        11: [
-          "0.6875rem", //11px
-          {
-            lineHeight: "0.875rem", //14px
-          },
-        ],
-        13: [
-          "0.8125rem", //13px
-          {
-            lineHeight: "1.25rem", //20px
-          },
-        ],
-        14: [
-          "0.875rem", //14px
-          {
-            lineHeight: "1.25rem", //20px
-          },
-        ],
-        15: [
-          "0.9375rem", //15px
-          {
-            lineHeight: "1.25rem", //20px
-          },
-        ],
-        17: [
-          "1.0625rem", //17px
-          {
-            lineHeight: "1.25rem", //20px
-          },
-        ],
-        18: [
-          "1.125rem", //18px
-          {
-            lineHeight: "1.5rem", //24px
-          },
-        ],
-        19: [
-          "1.1875rem", //19px
-          {
-            letterSpacing: "0.01em",
-            lineHeight: "1.438rem", //23px
-          },
-        ],
-        21: [
-          "1.3125rem", //21px
-          {
-            letterSpacing: "0.01em",
-            lineHeight: "1.563rem", //25px
-          },
-        ],
-        25: [
-          "1.5625rem", //25px
-          {
-            lineHeight: "1.875rem", //30px
-            letterSpacing: "0.02em",
-          },
-        ],
-        26: [
-          "1.625rem", //26px
-          {
-            lineHeight: "2.063rem", //33px
-          },
-        ],
-        28: [
-          "1.75rem", //28px
-          {
-            letterSpacing: "0.02em",
-            lineHeight: "2.125rem", //34px
-          },
-        ],
-        34: [
-          "2.125rem", //34px
-          {
-            letterSpacing: "0.02em",
-            lineHeight: "2.563rem", //41px
           },
         ],
       },

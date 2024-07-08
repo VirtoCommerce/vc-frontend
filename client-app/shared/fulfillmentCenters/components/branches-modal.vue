@@ -7,7 +7,7 @@
         :class="[selectedBranchesIds.length ? 'w-1/2' : 'w-full']"
       >
         <div class="flex h-11 items-center bg-neutral-50 py-2 pl-4 pr-3.5">
-          <div class="text-15">
+          <div class="text-base">
             {{ $t("shared.catalog.branches_modal.all_branches") }}
           </div>
 
@@ -36,7 +36,7 @@
         <div v-else class="flex h-[23.8rem] max-h-screen-60 grow flex-col items-center justify-center space-y-3">
           <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
 
-          <div class="text-17">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
+          <div class="text-lg">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
 
           <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
             {{ $t("shared.catalog.branches_modal.reset_search_button") }}
@@ -84,7 +84,7 @@
 
     <!-- MOBILE content BEGIN -->
     <div class="flex max-h-full grow flex-col sm:hidden">
-      <div class="flex min-h-[2.75rem] items-stretch bg-neutral-50 px-6 text-sm">
+      <div class="flex min-h-11 items-stretch bg-neutral-50 px-6 text-sm">
         <button
           type="button"
           class="mr-auto flex items-center py-2 font-bold"
