@@ -195,11 +195,12 @@ import { useBreakpoints, breakpointsTailwind, useElementVisibility } from "@vueu
 import { computed, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { useCreateQuoteMutation } from "@/core/api/graphql";
+import { useCreateQuoteMutation } from "@/core/api/graphql/quotes";
 import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
 import { Sort } from "@/core/types";
-import { PageToolbarBlock, useUserQuotes, QuoteStatus } from "@/shared/account";
+import { PageToolbarBlock, QuoteStatus } from "@/shared/account";
+import { useUserQuotes } from "@/shared/account/composables/useUserQuotes";
 import type { SortDirection } from "@/core/enums";
 import type { ISortInfo } from "@/core/types";
 

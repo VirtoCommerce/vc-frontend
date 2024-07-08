@@ -8,6 +8,7 @@ import {
   getFilterExpressionForZeroPrice,
   Logger,
 } from "@/core/utilities";
+import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
 import { categoryToExtendedMenuLink, getTranslatedMenuLink } from "../utilities/menu";
 import type { ExtendedMenuLinkType } from "../types";
@@ -18,6 +19,7 @@ const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
+const mobileContactOrganizationsMenu = shallowRef<ExtendedMenuLinkType | undefined>();
 
 const openedItem = computed<ExtendedMenuLinkType | undefined>(
   () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
@@ -39,25 +41,35 @@ const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   }),
 );
 
-const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | null>(
-  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || null,
+const mobileCatalogMenuItem = computed<ExtendedMenuLinkType | undefined>(
+  () => mobileMainMenuItems.value.find((item) => item.id === "catalog") || undefined,
 );
 
-const mobileAccountMenuItem = computed<ExtendedMenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.account) : null,
+const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
+  if (!menuSchema.value) {
+    return undefined;
+  }
+
+  const translatedMenuLink = getTranslatedMenuLink(menuSchema.value.header.mobile.account);
+
+  if (translatedMenuLink && translatedMenuLink.children && mobileContactOrganizationsMenu.value) {
+    translatedMenuLink.children.splice(1, 0, mobileContactOrganizationsMenu.value);
+  }
+
+  return translatedMenuLink;
+});
+
+const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
+  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : undefined,
 );
 
-const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | null>(() =>
-  menuSchema.value ? getTranslatedMenuLink(menuSchema.value.header.mobile.corporate) : null,
-);
-
-const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | null>(() => {
+const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
   const matchedRouteNames = globals.router.currentRoute.value.matched
     .map((item) => item.name)
     .concat(matchingRouteName.value)
     .filter(Boolean);
 
-  let preSelectedLink: ExtendedMenuLinkType | null = null;
+  let preSelectedLink: ExtendedMenuLinkType | undefined;
 
   if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
     preSelectedLink = mobileCatalogMenuItem.value;
@@ -90,6 +102,26 @@ export function useNavigations() {
       footerLinks.value = (await getMenu("footer-links")).map((item) => convertToExtendedMenuLink(item, false));
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchFooterLinks.name}`, e);
+    }
+  }
+
+  function getMobileContactOrganizationsMenu() {
+    const { t } = globals.i18n.global;
+    const { isMultiOrganization, user } = useUser();
+
+    const organizationsMenuItems = user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
+      id: item.id,
+      title: item.name,
+      isContactOrganizationsItem: true,
+    }));
+
+    if (isMultiOrganization.value) {
+      mobileContactOrganizationsMenu.value = {
+        id: "contact-organizations",
+        title: t("common.labels.my_organizations"),
+        icon: "/static/images/dashboard/icons/company.svg#main",
+        children: organizationsMenuItems,
+      };
     }
   }
 
@@ -133,6 +165,7 @@ export function useNavigations() {
   async function fetchMenus() {
     loading.value = true;
     await Promise.all([fetchMenuSchema(), fetchCatalogMenu(), fetchFooterLinks()]);
+    getMobileContactOrganizationsMenu();
     loading.value = false;
   }
 
@@ -171,6 +204,7 @@ export function useNavigations() {
     mobileCatalogMenuItem,
     mobileAccountMenuItem,
     mobileCorporateMenuItem,
+    mobileContactOrganizationsMenu,
     mobilePreSelectedMenuItem,
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),

@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-7">
+  <div ref="demoPageAnchor" class="pt-7">
     <div class="mx-auto w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10">
       <VcTypography tag="h1">
         {{ $t("pages.demo_landing.header") }}
@@ -174,7 +174,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { useElementVisibility } from "@vueuse/core";
+import { onMounted, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead, useProductsRoutes } from "@/core/composables";
 import { AddToCart } from "@/shared/cart";
@@ -185,8 +186,15 @@ const { products, fetchProducts } = useProducts();
 
 const productsRoutes = useProductsRoutes(products);
 
-usePageHead({
-  title: t("pages.demo_landing.meta.title"),
+const demoPageAnchor = shallowRef<HTMLElement | null>(null);
+const demoPageAnchorIsVisible = useElementVisibility(demoPageAnchor);
+
+watch(demoPageAnchorIsVisible, (value) => {
+  if (value) {
+    usePageHead({
+      title: t("pages.demo_landing.meta.title"),
+    });
+  }
 });
 
 useBreadcrumbs([{ title: t("shared.layout.footer.demo_landing_link") }]);

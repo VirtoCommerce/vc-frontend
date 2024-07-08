@@ -1,5 +1,5 @@
 <template>
-  <VcContainer :class="{ 'polygon-gray-bg': !products.length && !loading }">
+  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
@@ -203,7 +203,7 @@
 <script setup lang="ts">
 import { computedEager, useBreakpoints, useElementVisibility, useLocalStorage, whenever } from "@vueuse/core";
 import { cloneDeep, isEqual } from "lodash";
-import { computed, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
+import { computed, ref, shallowReactive, shallowRef, toRefs, triggerRef, watch } from "vue";
 import { useBreadcrumbs, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
@@ -253,6 +253,7 @@ interface IProps {
   keyword?: string;
   filter?: string;
   fixedProductsCount?: string;
+  allowSetMeta?: boolean;
 }
 
 const { catalogId, currencyCode } = globals;
@@ -264,7 +265,6 @@ const { getFacets, loading, facetsLoading, products, total, facets } = useProduc
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
-useCategorySeo();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
@@ -307,6 +307,11 @@ const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrien
 const contentElement = ref<HTMLElement | null>(null);
 const filtersElement = ref<HTMLElement | null>(null);
 const { setFiltersPosition, filtersStyle } = useStickyFilters({ isHorizontalFilters, contentElement, filtersElement });
+
+const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
+const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
+const { allowSetMeta } = toRefs(props);
+useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible });
 
 const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);

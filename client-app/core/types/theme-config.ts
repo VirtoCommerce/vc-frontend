@@ -157,6 +157,7 @@ export interface IThemeConfigPreset {
   color_footer_bottom_link?: string;
   color_footer_bottom_link_hover?: string;
   isCVVinSkyflowRequired?: boolean;
+  default_return_url?: string;
 }
 
 export interface IThemeConfig {

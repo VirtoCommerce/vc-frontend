@@ -6,7 +6,7 @@ import {
   updateMemberAddresses,
 } from "@/core/api/graphql/account";
 import { getOrganizationAddresses } from "@/core/api/graphql/organization";
-import { SORT_DESCENDING } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
 import { getSortingExpression, Logger, toInputAddress } from "@/core/utilities";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
@@ -18,7 +18,7 @@ const loading = ref(false);
 const addresses = shallowRef<MemberAddressType[]>([]);
 const sort = ref<ISortInfo>({
   column: "isFavorite",
-  direction: SORT_DESCENDING,
+  direction: SortDirection.Descending,
 });
 
 export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
@@ -26,10 +26,8 @@ export function useOrganizationAddresses(organizationId: MaybeRef<string>) {
     try {
       loading.value = true;
 
-      const sortingExpression = getSortingExpression(sort.value);
-
       const { items = [] } = await getOrganizationAddresses(unref(organizationId), {
-        sort: sortingExpression,
+        sort: getSortingExpression(sort.value),
         first: requestedAddressesQuantity,
       });
 

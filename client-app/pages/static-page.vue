@@ -1,5 +1,5 @@
 <template>
-  <div v-if="template">
+  <div v-if="template" ref="staticPageAnchor">
     <div
       v-if="!template.settings?.hideBreadcrumbs || template.settings?.header"
       class="mx-auto mt-7 w-full max-w-screen-2xl px-5 pb-5 md:px-12 lg:pb-10"
@@ -25,7 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, unref } from "vue";
+import { useElementVisibility } from "@vueuse/core";
+import { computed, shallowRef, unref, watchEffect } from "vue";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useStaticPage } from "@/shared/static-content";
 
@@ -34,12 +35,19 @@ const templateName = computed(() => unref(template)?.settings?.name || unref(tem
 
 const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }]);
 
-usePageHead({
-  title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
-  meta: {
-    keywords: computed(() => unref(template)?.settings?.seoInfo?.metaKeywords),
-    description: computed(() => unref(template)?.settings?.seoInfo?.metaDescription),
-  },
+const staticPageAnchor = shallowRef<HTMLElement | null>(null);
+const staticPageAnchorIsVisible = useElementVisibility(staticPageAnchor);
+
+watchEffect(() => {
+  if (staticPageAnchorIsVisible.value) {
+    usePageHead({
+      title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
+      meta: {
+        keywords: computed(() => unref(template)?.settings?.seoInfo?.metaKeywords),
+        description: computed(() => unref(template)?.settings?.seoInfo?.metaDescription),
+      },
+    });
+  }
 });
 
 function getBlockType(type: string): string {
