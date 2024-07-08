@@ -2,45 +2,10 @@ name: Theme Shared Types CI
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'shared-types/index.ts'
 
 jobs:
-  bump-version:
-    runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, 'publish-shared-types')
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.11.0
-
-      - name: Configure git
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-      - name: Bump version
-        id: bump_version
-        run: |
-          cd shared-types
-          NEW_VERSION=$(npm version patch)
-          git commit -am "ci: bump @virto-commerce/front-modules-shared-types version to ${NEW_VERSION}"
-
-      - name: Push changes
-        run: |
-          git push --follow-tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   build:
-    needs: bump-version
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, 'publish-shared-types')
     steps:
       - name: Set up Node 20
         uses: actions/setup-node@v4
@@ -63,7 +28,6 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, 'publish-shared-types')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -75,9 +39,6 @@ jobs:
         with:
           name: types-artifacts
           path: shared-types/dist
-      - name: Pull latest changes
-        run: |
-          git pull
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: cd shared-types && npm publish --access public

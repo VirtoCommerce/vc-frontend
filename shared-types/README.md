@@ -32,12 +32,7 @@ export type { ICurrency } from "../client-app/core/types/currency.js";
 
 ## Publishing the Package
 
-To publish the package, draft a new release. Ensure that that the version in `package.json` was changed accordingly in advance. After release package will be published automatically. On any concerns please see workflows in the **Actions** tab.
-
-1. `shared-types/index.ts` is changed
-2. The commit message contains `publish-shared-types`
-
-The types declaration file will be built and published automatically. The patch version of the package will be increased automatically - ensure that you pull changes (`shared-types/package.json`) after CI jobs are done.
+To publish the package, run Theme Shared Types CI action in [GitHub Actions](https://github.com/VirtoCommerce/vc-theme-b2b-vue/actions) manually. Ensure that that the version in `shared-types/package.json` was changed accordingly in advance.
 
 ## Example of Using in Other Modules
 
