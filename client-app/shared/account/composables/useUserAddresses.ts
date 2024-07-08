@@ -1,6 +1,6 @@
 import { computed, readonly, ref, shallowRef } from "vue";
 import { deleteMemberAddresses, getMyAddresses, updateMemberAddresses } from "@/core/api/graphql/account";
-import { SORT_ASCENDING } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
 import { getSortingExpression, isEqualAddresses, Logger, toInputAddress } from "@/core/utilities";
 import { useUser } from "./useUser";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
@@ -10,7 +10,7 @@ const loading = ref(false);
 const addresses = shallowRef<MemberAddressType[]>([]);
 const sort = ref<ISortInfo>({
   column: "lastName",
-  direction: SORT_ASCENDING,
+  direction: SortDirection.Ascending,
 });
 
 export function useUserAddresses() {

@@ -2,6 +2,7 @@ import { useApolloClient } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { filterActiveQueryNames } from "@/core/api/graphql";
 import { OperationNames } from "@/core/api/graphql/types";
+import { useThemeContext } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { getReturnUrlValue } from "@/core/utilities";
@@ -36,6 +37,7 @@ export function setupBroadcastGlobalListeners() {
   const notifications = useNotifications();
   const { fetchUser, user } = useUser();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
+  const { themeContext } = useThemeContext();
 
   on(pageReloadEvent, () => location.reload());
   on(reloadAndOpenMainPage, () => {
@@ -86,7 +88,7 @@ export function setupBroadcastGlobalListeners() {
     });
   });
   on(openReturnUrl, () => {
-    location.href = getReturnUrlValue() ?? "/";
+    location.href = getReturnUrlValue() ?? themeContext.value.settings.default_return_url ?? "/";
   });
 
   on(forbiddenEvent, () => {

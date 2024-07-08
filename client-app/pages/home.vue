@@ -1,8 +1,6 @@
 <template>
-  <StaticPage v-if="staticPage" />
-  <template v-else-if="!loading && !hasContent">
+  <div ref="homePageAnchor">
     <LoginFormSection />
-
     <!-- Main content -->
     <div class="main">
       <div class="container mx-auto px-6 pb-40 pt-32 md:px-12">
@@ -80,52 +78,38 @@
         </div>
       </div>
     </div>
-  </template>
-  <div v-else-if="loading" class="min-h-[80vh]">
-    <VcLoaderOverlay />
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, watchEffect } from "vue";
+import { useElementVisibility } from "@vueuse/core";
+import { shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
-import { useSlugInfo } from "@/shared/common";
 import { LoginFormSection } from "@/shared/layout";
-import { useStaticPage } from "@/shared/static-content";
 
 const { t } = useI18n();
 
-usePageHead({
-  title: t("pages.home.meta.title"),
-  meta: {
-    keywords: t("pages.home.meta.keywords"),
-    description: t("pages.home.meta.description"),
-  },
-});
+const homePageAnchor = shallowRef<HTMLElement | null>(null);
+const homePageAnchorIsVisible = useElementVisibility(homePageAnchor);
 
-const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
-const { staticPage } = useStaticPage();
-staticPage.value = undefined;
-
-const { loading, hasContent, pageContent, fetchContent } = useSlugInfo("__index__home__page__", true);
-
-watchEffect(async () => {
-  if (hasContent.value) {
-    await fetchContent();
-    if (pageContent.value) {
-      staticPage.value = pageContent.value;
-    } else {
-      staticPage.value = undefined;
-    }
+watch(homePageAnchorIsVisible, (value) => {
+  if (value) {
+    usePageHead({
+      title: t("pages.home.meta.title"),
+      meta: {
+        keywords: t("pages.home.meta.keywords"),
+        description: t("pages.home.meta.description"),
+      },
+    });
   }
 });
 </script>
 
 <style scoped>
 .main {
-  background-image: url(/static/images/home/bevel-top.webp), url(/static/images/home/bevel-bottom.webp),
-    url(/static/images/home/hexa-left.webp), url(/static/images/home/hexa-right.webp);
+  background-image: url(/images/home/bevel-top.webp), url(/images/home/bevel-bottom.webp),
+    url(/images/home/hexa-left.webp), url(/images/home/hexa-right.webp);
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
   background-size: 100%, 100%, auto, auto;
   background-position:

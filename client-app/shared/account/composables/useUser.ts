@@ -14,9 +14,17 @@ import {
   confirmEmailByToken,
   updateContact,
 } from "@/core/api/graphql/account";
+import { useAuth } from "@/core/composables/useAuth";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { TabsType, useBroadcast, userLockedEvent, userReloadEvent, passwordExpiredEvent } from "@/shared/broadcast";
+import {
+  TabsType,
+  useBroadcast,
+  userLockedEvent,
+  userReloadEvent,
+  passwordExpiredEvent,
+  reloadAndOpenMainPage,
+} from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
 import type {
@@ -43,7 +51,10 @@ const user = ref<UserType>();
 
 const isAuthenticated = computed<boolean>(() => !!user.value?.userName && user.value.userName !== "Anonymous");
 const isCorporateMember = computed<boolean>(() => !!user.value?.contact?.organizationId);
-const organization = eagerComputed<Organization | null>(() => user.value?.contact?.organizations?.items?.[0] ?? null);
+const organization = eagerComputed<Organization | null>(
+  () =>
+    user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
+);
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 interface IPasswordExpirationEntry {
@@ -53,6 +64,7 @@ interface IPasswordExpirationEntry {
 
 export function useUser() {
   const broadcast = useBroadcast();
+  const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
@@ -322,9 +334,28 @@ export function useUser() {
     }
   }
 
+  async function switchOrganization(organizationId: string): Promise<void> {
+    loading.value = true;
+
+    try {
+      await refresh(organizationId);
+
+      localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
+
+      broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+    } catch (e) {
+      Logger.error(switchOrganization.name, e);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     isAuthenticated,
     isCorporateMember,
+    isMultiOrganization: computed(
+      () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
+    ),
     organization,
     operator,
     checkPermissions,
@@ -339,6 +370,7 @@ export function useUser() {
     registerByInvite,
     changePassword,
     sendVerifyEmail,
+    switchOrganization,
     loading: readonly(loading),
     user: computed({
       get() {

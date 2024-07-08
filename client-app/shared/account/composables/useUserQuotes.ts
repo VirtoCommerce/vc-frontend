@@ -1,6 +1,6 @@
 import { ref, shallowRef } from "vue";
 import { getQuotes } from "@/core/api/graphql/quotes";
-import { DEFAULT_SORT_INFO } from "@/core/constants";
+import { DEFAULT_SORT } from "@/core/constants";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import type { QuoteType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
@@ -15,7 +15,7 @@ export function useUserQuotes() {
   const pages: Ref<number> = ref(0);
   const page: Ref<number> = ref(1);
   const keyword: Ref<string> = ref("");
-  const sort: Ref<ISortInfo> = ref(DEFAULT_SORT_INFO);
+  const sort: Ref<ISortInfo> = ref(DEFAULT_SORT);
 
   async function fetchQuotes(): Promise<void> {
     fetching.value = true;
