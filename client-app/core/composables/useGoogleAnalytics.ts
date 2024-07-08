@@ -2,8 +2,8 @@ import { useScriptTag } from "@vueuse/core";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { globals } from "../globals";
 
 const MODULE_ID = "VirtoCommerce.GoogleEcommerceAnalytics";
 const IS_ENABLED_KEY = "GoogleAnalytics4.EnableTracking";

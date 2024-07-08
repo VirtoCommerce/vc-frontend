@@ -5,6 +5,7 @@
     "name": "Virto Commerce",
     "url": "https://virtocommerce.com"
   },
+  "description": "Shared Types Module For VirtoCommerce Frontend",
   "scripts": {
     "build": "npx dts-bundle-generator index.ts -o dist/types.d.ts"
   },

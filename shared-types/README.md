@@ -32,7 +32,7 @@ export type { ICurrency } from "../client-app/core/types/currency.js";
 
 ## Publishing the Package
 
-To publish the package, run Theme Shared Types CI action in [GitHub Actions](https://github.com/VirtoCommerce/vc-theme-b2b-vue/actions) manually. Ensure that that the version in `shared-types/package.json` was changed accordingly in advance.
+To publish the package, run `Theme Shared Types CI` action in [GitHub Actions](https://github.com/VirtoCommerce/vc-theme-b2b-vue/actions) manually. Ensure that that the version in `shared-types/package.json` was changed accordingly in advance.
 
 ## Example of Using in Other Modules
 
