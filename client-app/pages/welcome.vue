@@ -11,7 +11,7 @@
     </template>
     <template #actions>
       <div class="flex justify-center lg:justify-start">
-        <VcButton :to="{ name: 'Home' }">
+        <VcButton to="/">
           {{ $t("common.buttons.home") }}
         </VcButton>
       </div>
