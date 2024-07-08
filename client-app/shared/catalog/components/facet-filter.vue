@@ -21,7 +21,7 @@
             v-model="item.selected"
             :class="['facet-filter__item', item.selected && 'facet-filter__item--selected']"
             :disabled="loading"
-            @change="changeFacetValues"
+            @change="() => changeFacetValues()"
           >
             <div class="facet-filter__item-wrapper">
               <span class="facet-filter__item-label">{{ item.label }}</span>
@@ -72,7 +72,7 @@
         </VcButton>
       </template>
 
-      <template #content>
+      <template #content="{ close }">
         <div class="facet-filter__content">
           <VcInput
             v-if="searchFieldVisible"
@@ -89,13 +89,13 @@
             :key="item.value"
             :class="['facet-filter__item', item.selected && 'facet-filter__item--selected']"
             size="sm"
-            @click="handleFacetItemClick(item)"
+            @click="() => handleFacetItemClick(item, close)"
           >
             <VcCheckbox
               v-model="item.selected"
               class="facet-filter__item-input"
               :disabled="loading"
-              @change="changeFacetValues"
+              @change="() => changeFacetValues(close)"
               @click.stop
             >
               <div class="facet-filter__item-inner">
@@ -157,13 +157,16 @@ const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`))
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 
-function changeFacetValues(): void {
+function changeFacetValues(close?: (() => void) | undefined): void {
   emit("update:facet", facet.value);
+  if (close) {
+    close();
+  }
 }
-function handleFacetItemClick(item: FacetValueItemType): void {
-  close();
+function handleFacetItemClick(item: FacetValueItemType, close: () => void): void {
   item.selected = !item.selected;
   changeFacetValues();
+  close();
 }
 watchEffect(() => {
   facet.value = cloneDeep(props.facet);

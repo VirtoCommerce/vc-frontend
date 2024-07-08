@@ -41,17 +41,19 @@
             <VcMenuItem
               v-for="sortingOption in PRODUCT_SORTING_LIST"
               :key="sortingOption.id"
-              class="category-horizontal-filters__sorting-list"
+              class="category-horizontal-filters__sorting-input"
               color="secondary"
               size="sm"
+              @click="sortingItemClickHandler(sortingOption.id, close)"
             >
               <VcRadioButton
                 v-model="sortQueryParam"
                 size="sm"
                 :value="sortingOption.id"
                 :label="sortingOption.name"
-                class="category-horizontal-filters__sorting-item"
+                class="category-horizontal-filters__sorting-input"
                 @change="close"
+                @click.stop
               />
             </VcMenuItem>
           </div>
@@ -91,6 +93,11 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
   defaultValue: PRODUCT_SORTING_LIST[0].id,
   validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
 });
+
+function sortingItemClickHandler(id: string, close: () => void) {
+  sortQueryParam.value = id;
+  close();
+}
 </script>
 
 <style lang="scss">
@@ -105,7 +112,7 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     @apply mr-2;
   }
 
-  &__sorting-trigger {
+  &__sorting {
     @apply shrink-0;
   }
 
@@ -113,16 +120,12 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     @apply mr-2;
   }
 
-  &__sorting-list {
+  &__sorting-input {
     @apply border-none;
   }
 
-  &__sorting-item {
-    @apply pl-1 pr-5;
-  }
-
-  .vc-radio-button {
-    @apply py-2 ps-4 pe-8;
+  .vc-menu-item__inner {
+    @apply py-2 px-4 min-w-60;
   }
 }
 </style>
