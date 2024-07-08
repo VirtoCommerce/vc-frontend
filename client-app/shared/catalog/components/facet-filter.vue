@@ -1,8 +1,8 @@
 <template>
-  <div :class="`facet-filter facet-filter--${mode}`">
+  <div :class="['facet-filter', `facet-filter--${mode}`, hasFade && 'facet-filter--fade-bottom']">
     <!-- Collapsable mode -->
     <VcWidget v-if="mode === 'collapsable'" size="xs" collapsible :title="facet.label" collapsed>
-      <div :class="['facet-filter__content', hasFade && 'facet-filter__content--fade-bottom']">
+      <div class="facet-filter__content">
         <VcInput
           v-if="searchFieldVisible"
           v-model.trim="searchKeyword"
@@ -72,7 +72,7 @@
         </VcButton>
       </template>
 
-      <template #content="{ close }">
+      <template #content>
         <div class="facet-filter__content">
           <VcInput
             v-if="searchFieldVisible"
@@ -89,13 +89,14 @@
             :key="item.value"
             :class="['facet-filter__item', item.selected && 'facet-filter__item--selected']"
             size="sm"
-            @click="close"
+            @click="handleFacetItemClick(item)"
           >
             <VcCheckbox
               v-model="item.selected"
               class="facet-filter__item-input"
               :disabled="loading"
               @change="changeFacetValues"
+              @click.stop
             >
               <div class="facet-filter__item-inner">
                 <div class="facet-filter__item-label" :title="item.label">
@@ -110,13 +111,13 @@
           <div v-if="isNoResults" class="facet-filter__no-results">
             {{ $t("pages.catalog.no_facet_found_message") }}
           </div>
-
-          <template v-if="isShowMoreVisible">
-            <div class="facet-filter__more">
-              <VcButtonSeeMoreLess v-model="isExpanded" />
-            </div>
-          </template>
+          <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor" class="!mt-0 h-px"></div>
         </div>
+        <template v-if="isShowMoreVisible">
+          <div class="facet-filter__more">
+            <VcButtonSeeMoreLess v-model="isExpanded" />
+          </div>
+        </template>
       </template>
     </VcDropdownMenu>
   </div>
@@ -126,7 +127,7 @@
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
 import { computed, ref, watchEffect, shallowRef } from "vue";
-import type { FacetItemType } from "@/core/types";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
   (event: "update:facet", facet: FacetItemType): void;
@@ -159,6 +160,11 @@ const facet = ref<FacetItemType>(cloneDeep(props.facet));
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
 }
+function handleFacetItemClick(item: FacetValueItemType): void {
+  close();
+  item.selected = !item.selected;
+  changeFacetValues();
+}
 watchEffect(() => {
   facet.value = cloneDeep(props.facet);
 });
@@ -168,15 +174,15 @@ const isExpanded = ref(false);
 const searchKeyword = ref("");
 
 const searchFieldVisible = computed<boolean>(() => facet.value.values.length > SEARCH_FIELD_AMOUNT);
+const filtered = computed(() => {
+  return facet.value.values.filter((item) => item.label.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) >= 0);
+});
 const searchedValues = computed(() => {
-  const filtered = facet.value.values.filter(
-    (item) => item.label.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) >= 0,
-  );
   // 1 - for fade at the bottom
-  return isExpanded.value ? filtered : filtered.slice(0, SHOW_MORE_AMOUNT + 1);
+  return isExpanded.value ? filtered.value : filtered.value.slice(0, SHOW_MORE_AMOUNT + 1);
 });
 
-const isShowMoreVisible = computed(() => searchedValues.value.length > SHOW_MORE_AMOUNT);
+const isShowMoreVisible = computed(() => filtered.value.length > SHOW_MORE_AMOUNT + 1);
 
 const isSearchPerformed = computed(() => searchKeyword.value.length);
 
@@ -189,7 +195,7 @@ const isAnchorAdded = computed(() => searchedValues.value.length > MAX_ITEMS_VIS
 
 const hasFade = computed(
   () =>
-    (searchedValues.value.length > SHOW_MORE_AMOUNT && !isExpanded.value) ||
+    (filtered.value.length > SHOW_MORE_AMOUNT + 1 && !isExpanded.value) ||
     (isAnchorAdded.value && !fadeVisibilityAnchorIsVisible.value),
 );
 const selectedFiltersCount = computed(() => facet.value.values.filter((item) => item.selected)?.length);
@@ -200,9 +206,9 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 .facet-filter {
   $collapsable: "";
   $dropdown: "";
-  $selected-item: "";
-  $fade-bottom: "";
-  $trigger-opened: "";
+  $selectedItem: "";
+  $fadeBottom: "";
+  $triggerOpened: "";
 
   &--collapsable {
     $collapsable: &;
@@ -213,7 +219,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   }
 
   &--fade-bottom {
-    $fade-bottom: &;
+    $fadeBottom: &;
   }
 
   .vc-checkbox__label {
@@ -224,7 +230,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     @apply border-2 border-r-4;
 
     &--opened {
-      $trigger-opened: &;
+      $triggerOpened: &;
     }
   }
 
@@ -239,7 +245,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   &__trigger-arrow {
     @apply ml-2 transition-transform;
 
-    #{$trigger-opened} & {
+    #{$triggerOpened} & {
       @apply rotate-180;
     }
   }
@@ -250,7 +256,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   &__item {
     &--selected {
-      $selected-item: &;
+      $selectedItem: &;
     }
   }
 
@@ -267,7 +273,11 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
       @apply max-w-72 overflow-y-auto py-2;
     }
 
-    #{$fade-bottom} & {
+    #{$fadeBottom}#{$dropdown} & {
+      @apply pb-0;
+    }
+
+    #{$fadeBottom} & {
       --scrollbar-width: 15px;
       @apply relative;
 
@@ -306,7 +316,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
       @apply mr-5 text-13 font-medium text-gray-500;
     }
 
-    #{$selected-item} & {
+    #{$selectedItem} & {
       @apply font-semibold;
     }
   }
@@ -333,6 +343,10 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     #{$dropdown} & {
       @apply px-4 py-2;
     }
+
+    #{$fadeBottom}#{$dropdown} & {
+      @apply mt-2;
+    }
   }
 
   &--dropdown {
@@ -340,12 +354,8 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
       @apply min-w-44;
     }
 
-    .vc-checkbox__container {
-      @apply px-4 py-1.5;
-    }
-
     .vc-menu-item__inner {
-      @apply p-0;
+      @apply py-1.5 px-4;
     }
 
     .vc-button--color--secondary {

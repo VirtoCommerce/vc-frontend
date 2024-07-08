@@ -121,10 +121,6 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
     @apply pl-1 pr-5;
   }
 
-  .vc-menu-item__inner {
-    @apply p-0;
-  }
-
   .vc-radio-button {
     @apply py-2 ps-4 pe-8;
   }
