@@ -6,13 +6,13 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "1.62.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:expose": "yarn dev --host",
-    "build": "yarn validate && yarn generate:routes && yarn build-only",
+    "build": "yarn validate && yarn build-only",
     "build:dev": "yarn build-only --mode=development",
     "build:watch": "yarn build-only --watch",
     "build-only": "vite build",
