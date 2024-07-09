@@ -22,7 +22,7 @@ self.addEventListener("message", (event) => {
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
   const url = event.notification?.data?.url || "/";
-  event.waitUntil(self.clients.openWindow(`/push-message/${event.notification?.data?.id}/?redirect=${url}`));
+  event.waitUntil(self.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?redirect=${url}`));
 });
 
 self.addEventListener("push", function (event) {
@@ -31,7 +31,7 @@ self.addEventListener("push", function (event) {
     registration.pushManager.getSubscription().then(async () => {
       const defaultIcon = await getDefaultIcon();
       return self.registration.showNotification(data?.title ?? "", {
-        data: data.data,
+        data: { messageId: data.messageId, url: data.url },
         badge: data?.icon || defaultIcon,
         body: data?.body?.replace(HTML_TAG_REGEX, "")?.trim() ?? "",
         icon: data?.icon || defaultIcon,
