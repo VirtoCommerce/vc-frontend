@@ -1,10 +1,6 @@
 [![stage](https://img.shields.io/badge/Stage-EDGE-blue)](https://virtocommerce.atlassian.net/wiki/spaces/DE/pages/2329018420/Classification) ![ci](https://github.com/VirtoCommerce/vc-theme-b2b-vue/actions/workflows/theme-ci.yml/badge.svg) ![size](https://img.shields.io/github/repo-size/VirtoCommerce/vue-starter-theme) ![version](https://img.shields.io/github/package-json/v/VirtoCommerce/vue-starter-theme) ![discord](https://img.shields.io/discord/932283445596553228)
 
-# B2B Mercury theme for VirtoCommerce Storefront
-
-![mercury-theme-preview](https://user-images.githubusercontent.com/619699/161065622-163bb3e9-0078-4e9d-9231-eb9d34f5d146.jpeg)
-
-**B2B Mercury theme** is a fresh look on the field of eCommerce solutions. This is a place where common B2B and B2C scenarios are combined with the most bleeding edge technologies to deliver blazing fast and fully functional solution. It implements common business use-cases needed for a vast majority of projects we build.
+# 1.62 Support version
 
 This theme is designed to be used as-is within actual **VC Storefront**. You can modify it by implementing desired components, pages, shared logic to correspond with your project goals.
 
