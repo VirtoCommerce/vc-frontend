@@ -34,9 +34,14 @@
           </div>
           <VcCheckbox
             v-if="!hideControls"
+            :model-value="popupSidebarFilters.inStock"
             class="filters-popup-sidebar__control"
             :disabled="loading"
-            @change="$emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: $event as boolean })"
+            @change="
+              (value) => {
+                $emit('updatePopupSidebarFilters', { ...popupSidebarFilters, inStock: value as boolean });
+              }
+            "
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
