@@ -1,5 +1,5 @@
 import { provideApolloClient } from "@vue/apollo-composable";
-import { createGlobalState } from "@vueuse/core";
+import { createGlobalState, useLocalStorage } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
 import omit from "lodash/omit";
@@ -41,6 +41,7 @@ function _useWebPushNotifications() {
   const { isAuthenticated } = useUser();
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
+  const savedFcmToken = useLocalStorage<string | null>("saved-fcm-token", null);
 
   async function init() {
     const { modulesSettings } = useThemeContext();
@@ -116,8 +117,11 @@ function _useWebPushNotifications() {
   async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
     try {
       currentToken = await tryGetToken()(messagingInstance, vapidKey);
-      if (currentToken) {
+      if (currentToken && currentToken !== savedFcmToken.value) {
         await addFcmTokenMutation({ command: { token: currentToken } });
+        savedFcmToken.value = currentToken;
+      }
+      if (currentToken) {
         return;
       }
       await Notification.requestPermission();
