@@ -21,7 +21,8 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
-  event.waitUntil(self.clients.openWindow(event.notification?.data?.url || self.location.origin));
+  const url = event.notification?.data?.url || self.location.origin;
+  event.waitUntil(self.clients.openWindow(`/push-message/${event.notification?.data?.id}/?redirect=${url}`));
 });
 
 self.addEventListener("push", function (event) {
