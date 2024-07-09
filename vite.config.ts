@@ -31,7 +31,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
 
   return {
     envPrefix: "APP_",
-    base: isServe ? "/" : "/themes/assets/",
     publicDir: "./client-app/public",
     plugins: [
       isServe
@@ -89,25 +88,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
       __VUE_I18N_LEGACY_API__: false,
     },
     build: {
-      outDir: "assets",
-      assetsDir: "./",
       emptyOutDir: true,
       sourcemap: true,
-      rollupOptions: {
-        input: {
-          main: path.resolve(__dirname, "index.html"),
-        },
-        output: {
-          entryFileNames: "[name].js",
-          assetFileNames: "[name][extname]",
-          manualChunks: (id) => {
-            // Force app-runner to have separate chunk to temporarely eliminate caveats of liquid-based hashing
-            if (id.includes("app-runner")) {
-              return "app-runner";
-            }
-          },
-        },
-      },
     },
     optimizeDeps: {
       exclude: ["swiper/vue", "swiper/types"],
@@ -116,7 +98,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       port: 3000,
       proxy: {
         "^/api": getProxy(process.env.APP_BACKEND_URL),
-        "^/(xapi|storefrontapi)": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
+        "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
         "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
         "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
       },

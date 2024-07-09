@@ -12,13 +12,14 @@ import type { App } from "vue";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
-
+import { useFetch } from "../client-app/core/api/common";
 const i18n: I18n = createI18n("en", "USD");
 
 setGlobals({ i18n });
 
 async function configureThemeSettings(app: App) {
-  const settings: IThemeConfig = await import("../config/settings_data.json");
+  const { data } = await useFetch("/config/settings_data.json").get().json();
+  const settings = data.value as IThemeConfig;
   const themeSettings = settings.presets[settings.current as string];
 
   app.use(configPlugin, themeSettings);
