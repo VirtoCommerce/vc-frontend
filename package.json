@@ -6,13 +6,13 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "1.62.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "dev:expose": "yarn dev --host",
-    "build": "yarn validate && yarn generate:routes && yarn build-only",
+    "build": "yarn validate && yarn build-only",
     "build:dev": "yarn build-only --mode=development",
     "build:watch": "yarn build-only --watch",
     "build-only": "vite build",
@@ -41,9 +41,6 @@
     "storybook:compress": "vite-node --mode production scripts/compress-storybook.ts --",
     "postinstall": "husky"
   },
-  "workspaces": [
-    "./shared-types"
-  ],
   "dependencies": {
     "@apollo/client": "^3.10.5",
     "@builder.io/sdk-vue": "^1.0.31",
@@ -53,7 +50,7 @@
     "@unhead/vue": "^1.9.14",
     "@vee-validate/rules": "~4.13.1",
     "@vee-validate/yup": "~4.13.1",
-    "@virto-commerce/front-modules-google-ecommerce-analytics": "^1.0.0",
+    "@virto-commerce/front-modules-google-ecommerce-analytics": "^1.0.2",
     "@virto-commerce/front-modules-hotjar": "^1.0.4",
     "@vue/apollo-composable": "^4.0.2",
     "@vueuse/components": "^10.11.0",
@@ -74,7 +71,7 @@
     "utility-types": "^3.11.0",
     "uuid": "^10.0.0",
     "vee-validate": "~4.13.1",
-    "vue": "^3.4.31",
+    "vue": "^3.4.29",
     "vue-html-secure": "^1.0.10",
     "vue-i18n": "^9.13.1",
     "vue-router": "^4.3.3",
