@@ -12,7 +12,7 @@
       <VcImage
         v-if="!hasIdentityProviders"
         :alt="$t('common.labels.background_image')"
-        class="hidden max-w-md lg:block"
+        class="max-w-md"
         src="/static/images/sign-in/sign-in-page-image.webp"
         lazy
       />
