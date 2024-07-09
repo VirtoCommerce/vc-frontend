@@ -1,6 +1,6 @@
 <template>
   <!-- Branch availability -->
-  <div class="order-3 ml-4 flex items-center xl:ml-6">
+  <div class="order-3 ms-4 flex items-center xl:ms-6">
     <VcTooltip placement="bottom-start" width="13rem">
       <template #trigger>
         <VcCheckbox
@@ -32,7 +32,7 @@
   </div>
 
   <!-- In Stock -->
-  <div class="order-2 ml-4 flex items-center xl:ml-8">
+  <div class="order-2 ms-4 flex items-center xl:ms-8">
     <VcTooltip placement="bottom-start" width="12rem">
       <template #trigger>
         <VcCheckbox v-model="savedInStock" :disabled="loading">

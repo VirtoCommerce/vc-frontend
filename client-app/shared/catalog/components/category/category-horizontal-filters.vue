@@ -109,7 +109,7 @@ function sortingItemClickHandler(id: string, close: () => void) {
   }
 
   &__show-all-icon {
-    @apply mr-2;
+    @apply me-2;
   }
 
   &__sorting {
@@ -117,7 +117,7 @@ function sortingItemClickHandler(id: string, close: () => void) {
   }
 
   &__sorting-trigger-icon {
-    @apply mr-2;
+    @apply me-2;
   }
 
   &__sorting-input {
@@ -125,7 +125,7 @@ function sortingItemClickHandler(id: string, close: () => void) {
   }
 
   .vc-menu-item__inner {
-    @apply py-2 px-4 min-w-60;
+    @apply py-1.5 px-4 min-w-60;
   }
 }
 </style>

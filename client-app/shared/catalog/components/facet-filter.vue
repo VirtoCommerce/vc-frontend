@@ -258,7 +258,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   }
 
   &__trigger-arrow {
-    @apply ml-2 transition-transform;
+    @apply ms-2 transition-transform;
 
     #{$triggerOpened} & {
       @apply rotate-180;
@@ -280,7 +280,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   }
 
   &__item-count {
-    @apply ml-auto;
+    @apply ms-auto;
   }
 
   &__content {
@@ -328,22 +328,22 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     @apply truncate;
 
     #{$dropdown} & {
-      @apply mr-5 text-13 font-medium text-gray-500;
+      @apply me-5 text-sm;
     }
 
     #{$selectedItem} & {
-      @apply font-semibold;
+      @apply font-bold;
     }
   }
 
   &__item-wrapper {
     #{$collapsable} & {
-      @apply flex text-13 items-center font-medium text-gray-500;
+      @apply flex text-sm items-center;
     }
   }
 
   &__no-results {
-    @apply text-sm font-medium;
+    @apply text-sm;
 
     #{$dropdown} & {
       @apply px-4 py-2;
