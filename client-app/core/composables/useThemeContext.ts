@@ -9,7 +9,7 @@ function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
   async function fetchThemeContext(store: StoreResponseType, themePresetName?: string) {
-    const themeConfig = await fetchThemeConfig(store.storeId);
+    const themeConfig = await fetchThemeConfig();
 
     if (!themeConfig) {
       throw new Error("Can't get theme context");
@@ -39,16 +39,12 @@ function _useThemeContext() {
     return preset;
   }
 
-  async function fetchThemeConfig(storeId: string) {
-    if (IS_DEVELOPMENT) {
-      const config = (await import("../../../config/settings_data.json")) as IThemeConfig;
-      config.settings.show_details_in_separate_tab = false;
+  async function fetchThemeConfig() {
+    const { data } = await useFetch("/config/settings_data.json").get().json<IThemeConfig>();
 
-      return config;
+    if (IS_DEVELOPMENT && data.value) {
+      data.value.settings.show_details_in_separate_tab = false;
     }
-    const { data } = await useFetch(`/cms-content/Themes/${storeId}/default/config/settings_data.json`)
-      .get()
-      .json<IThemeConfig>();
 
     return data.value;
   }
