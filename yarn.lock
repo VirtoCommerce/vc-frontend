@@ -5817,13 +5817,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@virto-commerce/front-modules-google-ecommerce-analytics@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:1.0.2"
+"@virto-commerce/front-modules-google-ecommerce-analytics@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:1.0.4"
   dependencies:
     lodash: "npm:^4.17.21"
     vue: "npm:^3.4.31"
-  checksum: 10c0/d2487a98f114691cd5ad5dd3700ffed73ebc1c1fbb607b2fd48c82ac2e226544e06fb6747fba9d119dbf6227917cc0d8865918dd2d3ca744619ffe4dd1d95362
+  checksum: 10c0/d580d10fc70ca5b9848f787caa6a71222eddce31abd2f42d7611425b72dcacdc9079551a1a32e581ef6e8e833432c8e9b69d5bb2f6935b0f8cc1d6b877390fe1
   languageName: node
   linkType: hard
 
@@ -16778,7 +16778,7 @@ __metadata:
     "@unhead/vue": "npm:^1.9.14"
     "@vee-validate/rules": "npm:~4.13.1"
     "@vee-validate/yup": "npm:~4.13.1"
-    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^1.0.2"
+    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^1.0.4"
     "@virto-commerce/front-modules-hotjar": "npm:^1.0.4"
     "@vitejs/plugin-vue": "npm:^5.0.5"
     "@vue/apollo-composable": "npm:^4.0.2"
