@@ -9,42 +9,48 @@ function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
   async function fetchThemeContext(store: StoreResponseType, themePresetName?: string) {
-    const themeSettings = await fetchThemeSettings(store.storeId, themePresetName);
+    const themeConfig = await fetchThemeConfig(store.storeId);
 
-    if (!themeSettings) {
+    if (!themeConfig) {
       throw new Error("Can't get theme context");
     }
 
+    const themePreset = await getThemePreset(themeConfig, themePresetName);
+
     themeContext.value = {
       ...store,
-      settings: themeSettings,
+      settings: themeConfig.settings,
+      preset: themePreset,
       storeSettings: store.settings,
     };
   }
 
-  function getThemePreset(themeConfig: IThemeConfig, themePresetName?: string): IThemeConfigPreset {
-    if (themePresetName && themeConfig.presets[themePresetName]) {
-      return themeConfig.presets[themePresetName];
+  async function getThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
+    const preset = themePresetName
+      ? themePresetName.toLowerCase()
+      : typeof themeConfig.current === "string"
+        ? themeConfig.current.toLowerCase()
+        : themeConfig.current;
+
+    if (typeof preset === "string") {
+      return (await import(`../../../config/presets/${preset}.json`)) as IThemeConfigPreset;
     }
 
-    return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
+    return preset;
   }
 
-  async function fetchThemeSettings(storeId: string, themePresetName?: string) {
+  async function fetchThemeConfig(storeId: string) {
     if (IS_DEVELOPMENT) {
-      const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
+      const config = (await import("../../../config/settings_data.json")) as IThemeConfig;
+      config.settings.show_details_in_separate_tab = false;
 
-      const themePreset = getThemePreset(themeConfig, themePresetName);
-      themePreset.show_details_in_separate_tab = false;
-
-      return themePreset;
-    } else {
-      const { data } = await useFetch(`/cms-content/Themes/${storeId}/default/config/settings_data.json`)
-        .get()
-        .json<IThemeConfig>();
-
-      return getThemePreset(data.value!, themePresetName);
+      return config;
     }
+    const { data } = await useFetch(`/cms-content/Themes/${storeId}/default/config/settings_data.json`)
+      .get()
+      .json<IThemeConfig>();
+
+    return data.value;
   }
 
   return {
