@@ -1,8 +1,9 @@
-import { resolve } from "path";
+import { resolve, join } from "path";
 import packageJson from "../package.json";
 import { compress } from "./compress";
 
 const cwd = process.cwd();
+const path = join(cwd, "dist");
 
 const name = packageJson.name;
 const version = packageJson.version;
@@ -14,10 +15,8 @@ await compress(artifactFileName, (archive) => {
     { folder: "assets", filter: /.*(?<!index\.html)$/ },
     { folder: "config" },
     { folder: "content" },
-    { folder: "layout" },
-    { folder: "locales" },
-    { folder: "snippets" },
-    { folder: "templates" },
+    { folder: "static" },
+    { folder: "./" },
   ];
-  entries.forEach(({ folder, filter }) => archive.addLocalFolder(resolve(cwd, folder), `default/${folder}`, filter));
+  entries.forEach(({ folder, filter }) => archive.addLocalFolder(resolve(path, folder), `default/${folder}`, filter));
 });

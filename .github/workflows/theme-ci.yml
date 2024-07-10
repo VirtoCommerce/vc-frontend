@@ -1,4 +1,3 @@
-# v1.1.1.vcst
 name: Theme CI
 
 on:
@@ -116,9 +115,13 @@ jobs:
         if: success()
         run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
 
-      - name: Packaging
+      - name: Add files to zip
         run: |
-          yarn compress
+          mkdir -p ./tmp/default
+          mkdir ./artifacts
+          mv ./dist/* ./tmp/default
+          cd ./tmp
+          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./default
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
@@ -199,14 +202,3 @@ jobs:
         if: success()
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
-
-  deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
-    needs: ci
-    uses: ./.github/workflows/deploy-cloud.yml
-    with:
-      artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
-      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'qa' }}
-      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
-      forceCommit: ${{github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
-    secrets: inherit
