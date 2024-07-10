@@ -26,11 +26,9 @@ function _useThemeContext() {
   }
 
   async function getThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
-    const preset = themePresetName
-      ? themePresetName.toLowerCase()
-      : typeof themeConfig.current === "string"
-        ? themeConfig.current.toLowerCase()
-        : themeConfig.current;
+    const currentPreset =
+      typeof themeConfig.current === "string" ? themeConfig.current.toLowerCase() : themeConfig.current;
+    const preset = themePresetName ? themePresetName.toLowerCase() : currentPreset;
 
     if (typeof preset === "string") {
       return (await import(`../../../config/presets/${preset}.json`)) as IThemeConfigPreset;
