@@ -1,5 +1,5 @@
 <template>
-  <VcContainer :class="{ 'polygon-gray-bg': !products.length && !loading }">
+  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-gray-bg': !products.length && !loading }">
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
@@ -287,7 +287,17 @@ import {
   whenever,
 } from "@vueuse/core";
 import { cloneDeep, isEqual, throttle } from "lodash";
-import { computed, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, triggerRef, watch } from "vue";
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  shallowReactive,
+  shallowRef,
+  triggerRef,
+  watch,
+  watchEffect,
+} from "vue";
 import {
   useBreadcrumbs,
   useGoogleAnalytics,
@@ -340,6 +350,7 @@ interface IProps {
   keyword?: string;
   filter?: string;
   fixedProductsCount?: string;
+  allowSetMeta?: boolean;
 }
 
 const { catalogId, currencyCode } = globals;
@@ -419,18 +430,25 @@ const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescri
 const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
 
-usePageHead({
-  title: seoTitle,
-  meta: {
-    keywords: seoKeywords,
-    description: seoDescription,
-  },
-});
+const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
+const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
-useSeoMeta({
-  ogTitle: seoTitle,
-  ogDescription: seoDescription,
-  ogImage: seoImageUrl,
+watchEffect(() => {
+  if (props.allowSetMeta && categoryComponentAnchorIsVisible.value) {
+    usePageHead({
+      title: seoTitle,
+      meta: {
+        keywords: seoKeywords,
+        description: seoDescription,
+      },
+    });
+
+    useSeoMeta({
+      ogTitle: seoTitle,
+      ogDescription: seoDescription,
+      ogImage: seoImageUrl,
+    });
+  }
 });
 
 const breadcrumbs = useBreadcrumbs(() => {

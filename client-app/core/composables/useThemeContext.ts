@@ -31,20 +31,12 @@ function _useThemeContext() {
   }
 
   async function fetchThemeSettings(storeId: string, themePresetName?: string) {
+    const { data } = await useFetch("/config/settings_data.json").get().json<IThemeConfig>();
+    const themePreset = getThemePreset(data.value!, themePresetName);
     if (IS_DEVELOPMENT) {
-      const themeConfig = (await import("../../../config/settings_data.json")) as IThemeConfig;
-
-      const themePreset = getThemePreset(themeConfig, themePresetName);
       themePreset.show_details_in_separate_tab = false;
-
-      return themePreset;
-    } else {
-      const { data } = await useFetch(`/cms-content/Themes/${storeId}/default/config/settings_data.json`)
-        .get()
-        .json<IThemeConfig>();
-
-      return getThemePreset(data.value!, themePresetName);
     }
+    return themePreset;
   }
 
   return {

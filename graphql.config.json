@@ -5,7 +5,7 @@
   "extensions": {
     "endpoints": {
       "GraphQL Endpoint": {
-        "url": "${env:APP_BACKEND_URL}/xapi/graphql",
+        "url": "${env:APP_BACKEND_URL}/graphql",
         "headers": {
           "user-agent": "JS GraphQL"
         },

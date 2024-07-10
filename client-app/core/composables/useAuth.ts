@@ -87,7 +87,7 @@ function _useAuth() {
   async function authorize(username: string, password: string): Promise<void> {
     const { storeId } = globals;
 
-    getTokenParams.value = new URLSearchParams({
+    const params = new URLSearchParams({
       grant_type: "password",
       scope: "offline_access",
       storeId,
@@ -95,15 +95,29 @@ function _useAuth() {
       password,
     });
 
+    const organizationId = localStorage.getItem(`organization-id-${username}`);
+
+    if (organizationId) {
+      params.set("organization_id", organizationId);
+    }
+
+    getTokenParams.value = params;
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await (getTokenRequest = getToken(true));
   }
 
-  async function refresh() {
-    getTokenParams.value = new URLSearchParams({
+  async function refresh(organizationId?: string) {
+    const params = new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: state.value.refresh_token!,
     });
+
+    if (organizationId) {
+      params.set("organization_id", organizationId);
+    }
+
+    getTokenParams.value = params;
 
     try {
       if (!isAuthorizing.value) {

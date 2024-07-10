@@ -6,7 +6,6 @@ import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
 
-const Home = () => import("@/pages/index.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
 const SignUpPage = () => import("@/pages/sign-up.vue");
 const ConfirmEmail = () => import("@/pages/confirm-email.vue");
@@ -25,12 +24,10 @@ const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
-const DemoLanding = () => import("@/pages/demo-landing.vue");
 const Welcome = () => import("@/pages/welcome.vue");
-const Matcher = () => import("@/pages/external/matcher.vue");
+const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/", name: "Home", component: Home, meta: { public: true } },
   { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
   { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
   { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
@@ -62,7 +59,6 @@ export const mainRoutes: RouteRecordRaw[] = [
       requiresOrganization: true,
     },
   },
-  { path: "/demo-landing", name: "DemoLanding", component: DemoLanding, meta: { public: true } },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },

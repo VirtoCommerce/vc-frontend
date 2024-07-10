@@ -26,7 +26,6 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
   const page: Ref<number> = ref(1);
   const keyword: Ref<string> = ref("");
 
-  // TODO: refine the sorting logic
   const sort: Ref<Sort> = ref(new Sort("createdDate", SortDirection.Descending));
 
   async function fetchOrders() {

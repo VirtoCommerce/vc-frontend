@@ -51,7 +51,10 @@
             class="flex cursor-pointer items-center py-1 text-[--header-top-text-color] hover:text-[--header-top-link-color]"
             @click="loginMenuVisible = !loginMenuVisible"
           >
-            <span class="font-bold">{{ user.contact?.fullName || user.userName }}</span>
+            <span class="font-bold">
+              <template v-if="isMultiOrganization">{{ organization?.name }} /</template>
+              {{ user.contact?.fullName || user.userName }}
+            </span>
 
             <VcIcon
               class="ms-1.5 text-[--color-accent-200] [--vc-icon-size:1rem] lg:text-[--color-primary-500] lg:[--vc-icon-size:0.625rem]"
@@ -61,9 +64,9 @@
 
           <div
             v-if="loginMenuVisible"
-            class="absolute right-0 top-full z-10 flex w-60 flex-col space-y-3 rounded-md bg-additional-50 px-3 py-4 text-black shadow-md"
+            class="absolute right-0 top-full z-10 flex w-60 flex-col rounded-md bg-additional-50 text-black shadow-md"
           >
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between p-3">
               <router-link
                 to="/account/dashboard"
                 class="flex items-center hover:text-primary"
@@ -71,7 +74,9 @@
               >
                 <VcIcon class="text-[--color-primary-500]" name="user-circle" />
 
-                <span class="ml-2">{{ user.contact?.fullName }}</span>
+                <span class="ml-2">
+                  {{ user.contact?.fullName }}
+                </span>
               </router-link>
 
               <div class="grow"></div>
@@ -87,6 +92,22 @@
               >
                 <VcIcon name="logout" />
               </VcButton>
+            </div>
+
+            <div v-if="isMultiOrganization" class="border-t py-3">
+              <div class="px-3 py-1 text-xs text-neutral-600">
+                {{ $t("common.labels.organizations") }}
+              </div>
+
+              <VcRadioButton
+                v-for="item in user.contact?.organizations?.items"
+                :key="item.id"
+                v-model="contactOrganizationId"
+                :label="item.name"
+                :value="item.id"
+                class="flex px-3 py-1 text-sm"
+                @change="selectOrganization"
+              />
             </div>
           </div>
         </div>
@@ -122,11 +143,21 @@ import TopHeaderLink from "./top-header-link.vue";
 import CurrencySelector from "@/shared/layout/components/currency-selector/currency-selector.vue";
 import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
-const { isAuthenticated, user, operator } = useUser();
+const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
+const contactOrganizationId = ref(user.value?.contact?.organizationId);
+
+async function selectOrganization(): Promise<void> {
+  if (!contactOrganizationId.value) {
+    return;
+  }
+
+  await switchOrganization(contactOrganizationId.value);
+  loginMenuVisible.value = false;
+}
 
 onClickOutside(loginMenu, () => {
   loginMenuVisible.value = false;

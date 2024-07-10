@@ -6,13 +6,7 @@ import { useAuth } from "@/core/composables/useAuth";
 import { Logger } from "@/core/utilities";
 import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
-
-type ConnectTokenResponseType = {
-  expires_in: number;
-  access_token: string;
-  token_type: string;
-  error?: string;
-};
+import type { ConnectTokenResponseType } from "../types";
 
 export function _useImpersonate() {
   const { setTokenType, setAccessToken, setExpiresAt } = useAuth();

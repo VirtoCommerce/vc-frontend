@@ -9,8 +9,9 @@ export function useMarkAllPushMessagesUnread() {
     },
     // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
     updateQueries: {
-      [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult }) => {
+      [OperationNames.Query.GetPushMessages]: (previousQueryResult, { mutationResult, queryVariables }) => {
         const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
+        const { withHidden } = queryVariables;
         if (mutationResult.data?.markAllPushMessagesUnread) {
           return {
             ...pushMessagesQueryResult,
@@ -22,10 +23,7 @@ export function useMarkAllPushMessagesUnread() {
               totalCount: pushMessagesQueryResult.pushMessages?.items?.length ?? 0,
             },
             unreadCount: {
-              totalCount:
-                pushMessagesQueryResult.pushMessages?.items?.length ??
-                pushMessagesQueryResult?.unreadCount?.totalCount ??
-                0,
+              totalCount: !withHidden ? pushMessagesQueryResult.pushMessages?.items?.length : 0,
             },
           } satisfies GetPushMessagesQuery;
         } else {

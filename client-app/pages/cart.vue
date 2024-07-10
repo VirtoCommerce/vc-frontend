@@ -145,7 +145,9 @@ import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { useCreateQuoteFromCartMutation } from "@/core/api/graphql/quotes";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
@@ -160,7 +162,8 @@ import {
   useCheckout,
 } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
-import type { LineItemType } from "@/core/api/graphql/types";
+import { useNotifications } from "@/shared/notification";
+import type { LineItemType, QuoteType } from "@/core/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 
@@ -188,11 +191,12 @@ const {
   removeItems,
   toggleGift,
   openClearCartModal,
-  createQuoteFromCart,
 } = useFullCart();
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
+
+const notifications = useNotifications();
 
 usePageHead({
   title: t("pages.cart.meta.title"),
@@ -224,8 +228,8 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
     selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
   }
 }
+const { mutate: createQuoteFromCart } = useCreateQuoteFromCartMutation();
 
-// FIXME: Move to composable
 async function createQuote(): Promise<void> {
   if (cartContainsDeletedProducts.value) {
     openModal({
@@ -237,12 +241,19 @@ async function createQuote(): Promise<void> {
 
   creatingQuote.value = true;
 
-  const quote = await createQuoteFromCart();
+  const result = await createQuoteFromCart({ command: { cartId: cart.value!.id, comment: "" } });
+  const quote = result?.data?.createQuoteFromCart as QuoteType | undefined;
 
   if (quote) {
     await router.push({
       name: "EditQuote",
       params: { quoteId: quote.id },
+    });
+  } else {
+    notifications.error({
+      text: globals.i18n.global.t("common.messages.creating_quote_error"),
+      duration: 15000,
+      single: true,
     });
   }
 

@@ -1,16 +1,19 @@
 <template>
-  <div v-if="canShowContent">
+  <div v-if="canShowContent" ref="builderIoAnchor">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { Content, fetchOneEntry, getBuilderSearchParams, isPreviewing } from "@builder.io/sdk-vue";
-import { onMounted, ref, shallowRef } from "vue";
+import { useElementVisibility } from "@vueuse/core";
+import { onMounted, ref, shallowRef, watchEffect } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
+import { usePageHead } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { builderIOComponents } from "@/shared/static-content";
 import type { StateType } from "./priorityManager";
+import type { BuilderContent } from "@builder.io/sdk-vue";
 
 interface IEmits {
   (event: "setState", value: StateType): void;
@@ -25,7 +28,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const canShowContent = shallowRef(false);
-const content = shallowRef();
+const content = shallowRef<BuilderContent | null>(null);
 const isLoading = ref(false);
 
 function clearState() {
@@ -72,6 +75,28 @@ async function tryLoadContent(urlPath: string) {
     }
   }
 }
+
+const builderIoAnchor = shallowRef<HTMLElement | null>(null);
+const builderIoAnchorIsVisible = useElementVisibility(builderIoAnchor);
+
+type MetaDataType = { title?: string; keywords?: string; description?: string };
+
+watchEffect(() => {
+  const data: MetaDataType | undefined = content.value?.data;
+
+  if (data && builderIoAnchorIsVisible.value) {
+    const { title, keywords, description } = data;
+
+    usePageHead({
+      title,
+      meta: {
+        title,
+        keywords,
+        description,
+      },
+    });
+  }
+});
 
 const getRegisteredComponents = () => {
   return builderIOComponents;

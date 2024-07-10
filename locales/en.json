@@ -147,7 +147,9 @@
       "toggle_vendor_select": "Toggle vendor select",
       "quote_request_comment": "Quote request comment",
       "default_language": "Default language",
-      "default_currency": "Default currency"
+      "default_currency": "Default currency",
+      "organizations": "Organizations",
+      "my_organizations": "My organizations"
     },
     "prefixes": {
       "please": "Please",

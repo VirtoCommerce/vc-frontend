@@ -35,6 +35,23 @@
 
         <ul class="mt-4 flex flex-col gap-y-2">
           <li v-for="childItem in openedItem?.children" :key="childItem.title">
+            <!-- Contact organizations -->
+            <div
+              v-if="openedItem.id === 'contact-organizations' && !!childItem.id"
+              class="flex grow flex-col gap-y-1 font-normal"
+            >
+              <VcRadioButton
+                v-model="contactOrganizationId"
+                :value="childItem.id"
+                class="py-2.5"
+                @change="selectOrganization"
+              >
+                <span class="uppercase">
+                  {{ childItem.title }}
+                </span>
+              </VcRadioButton>
+            </div>
+
             <!-- Currency setting -->
             <div v-if="childItem.id === 'currency-setting'" class="flex grow flex-col gap-y-1 font-normal">
               <header class="-mt-1 mb-1 text-2xl uppercase text-additional-50">
@@ -59,7 +76,8 @@
             <MobileMenuLink
               v-else-if="
                 (childItem.id !== 'quotes' || $cfg.quotes_enabled) &&
-                (childItem.id !== 'addresses' || !isCorporateMember)
+                (childItem.id !== 'addresses' || !isCorporateMember) &&
+                openedItem.id !== 'contact-organizations'
               "
               :link="childItem"
               class="py-1 text-lg"
@@ -231,7 +249,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -255,7 +273,7 @@ const { cart } = useShortCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
-const { user, operator, isAuthenticated, organization, isCorporateMember } = useUser();
+const { user, operator, isAuthenticated, organization, isCorporateMember, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
 const {
   mobileMainMenuItems,
@@ -267,6 +285,8 @@ const {
   goBack,
   goMainMenu,
 } = useNavigations();
+
+const contactOrganizationId = ref(user.value?.contact?.organizationId);
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
@@ -295,6 +315,14 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
 
 function isExternalLink(link?: RouteLocationRaw) {
   return "externalLink" in getLinkAttr(link);
+}
+
+async function selectOrganization(): Promise<void> {
+  if (!contactOrganizationId.value) {
+    return;
+  }
+
+  await switchOrganization(contactOrganizationId.value);
 }
 
 onMounted(() => {
