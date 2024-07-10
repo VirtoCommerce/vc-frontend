@@ -1,34 +1,32 @@
 [![stage](https://img.shields.io/badge/Stage-EDGE-blue)](https://virtocommerce.atlassian.net/wiki/spaces/DE/pages/2329018420/Classification) ![ci](https://github.com/VirtoCommerce/vc-theme-b2b-vue/actions/workflows/theme-ci.yml/badge.svg) ![size](https://img.shields.io/github/repo-size/VirtoCommerce/vue-starter-theme) ![version](https://img.shields.io/github/package-json/v/VirtoCommerce/vue-starter-theme) ![discord](https://img.shields.io/discord/932283445596553228)
 
-# B2B Mercury theme for VirtoCommerce Storefront
+# Virto Commerce Frontend
 
 ![mercury-theme-preview](https://user-images.githubusercontent.com/619699/161065622-163bb3e9-0078-4e9d-9231-eb9d34f5d146.jpeg)
 
-**B2B Mercury theme** is a fresh look on the field of eCommerce solutions. This is a place where common B2B and B2C scenarios are combined with the most bleeding edge technologies to deliver blazing fast and fully functional solution. It implements common business use-cases needed for a vast majority of projects we build.
+**Virto Commerce Frontend** is a single-page web application (SPA) with a fresh look on eCommerce solutions. This is where common B2B and B2C scenarios are combined with the most bleeding-edge technologies to deliver blazing-fast and fully functional solutions. It implements common business use cases needed for a vast majority of projects we build.
 
-This theme is designed to be used as-is within actual **VC Storefront**. You can modify it by implementing desired components, pages, shared logic to correspond with your project goals.
-
-**VC Storefront Team** is proud to present **B2B Mercury theme** as a good starting point for new projects.
+Virto Commerce Frontend is designed to be used as-is within the actual **Virto Commerce Platform**. You can modify it by implementing desired components, pages, and shared logic to correspond with your project goals.
 
 ## Technologies used
 
 - **Vue3.** Progressive frontend framework with its key features allows to build fast applications.
 - **Typescript.** All components and composables have type definitions, so IDE can help you to build clean and working code.
-- **TailwindCSS.** The most popular and growing CSS framework providing wonderful flexible structure to speed up styling.
-- **Husky + ESLint + Prettier.** Autoformat, check and fix your code and prevent ugly codestyle within repository.
+- **TailwindCSS.** The most popular and growing CSS framework provides a wonderful flexible structure to speed up styling.
+- **Husky + ESLint + Prettier.** Autoformat, check and fix your code and prevent ugly code style within the repository.
 - **Vite.** It is faster than Webpack. Really FASTER. Use it to develop with HMR benefits and to build for production.
-- **GraphQL.** Forget about REST, use flexible GraphQL queries and mutations to safely work with backend.
+- **GraphQL.** Forget about REST, use flexible GraphQL queries and mutations to safely work with the backend.
 - **vite-plugin-favicon2** Generate all necessary favicon files during build. The favicon will not appear during `DEVELOPMENT` mode
 
 ## Non-functional key features
 
-- **Development performance.** Really fast development using the most effective solution. Enroll starter theme in seconds and start to modify code with HMR features.
+- **Development performance.** Really fast development using the most effective solution. Enrol SPA in seconds and start to modify code with HMR features.
 - **Client performance.** We are supposed to reach and hold green metrics provided by Google PageSpeed Insights.
-- **Decoupled structure.** Presentation layer is decoupled from backend. Shared logic is decoupled from visual components. Developer can concentrate on single task without the need of massive code manipulations.
+- **Decoupled structure.** The presentation layer is decoupled from the backend. Shared logic is decoupled from visual components. Developers can concentrate on a single task without the need of massive code manipulations.
 - **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** Theme UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
-- **Simple styling and theme customization.** We use TailwindCSS to provide the easiest and convinient way of CSS usage. Write as less of code as possible, reuse existing highly-customizable framework features.
-- **Fully aligned with VirtoCommerce Storefront.** Thus theme is just a visual representation, we are fully aligned with VC Storefront to provide all common B2B and B2C scenarios processed by VC Platform.
-- **Fully responsive.** We made our theme working on a number of devices from Desktops to Mobile phones, concentrated both on UI and UX.
+- **Simple styling and theme customization.** We use TailwindCSS to provide the easiest and most convenient way of CSS usage. Write as less of code as possible, and reuse existing highly customizable framework features.
+- **Fully aligned with Virto Commerce Platform.** SPA is just a visual representation, we are fully aligned with Virto Commerce Platform to provide all common B2B and B2C scenarios. 
+- **Fully responsive.** We made our theme work on miltiple devices from Desktops to Mobile phones, concentrating both on UI and UX.
 
 ## Theme structure
 
@@ -168,40 +166,12 @@ This theme is designed to be used as-is within actual **VC Storefront**. You can
      - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on *macOs*
      - Native package manager such as `apt` on *Linux*
 
-### Install the `vc-storefront`
-
-- Clone [https://github.com/VirtoCommerce/vc-storefront](https://github.com/VirtoCommerce/vc-storefront) in to a local folder
-- Open the **appsettings.json** file in a text editor
-- In the **Endpoint** section change **Url**, **UserName**, **Password** with correct path and credentials for Virto Commerce Platform:
-
-```
-  ...
-  "Endpoint": {
-    "Url": "https://localhost:5001",
-    "UserName": "admin",
-    "Password": "store",
-  ...
-```
-
-### Run `vc-storefront` application
-
-```bash
-# change the current directory
-cd C:\vc-storefront\VirtoCommerce.Storefront
-# build and run storefront application
-dotnet run
-# In future, if you don't need to rebuild you can use that
-dotnet run --no-build
-```
-
 ### Clone repository
 
 ```bash
-# Clone repo into the folder where storefront is installed
+# Clone repo 
 # `store-code` can be found in the platform running locally. More -> Shops -> Shop Name -> Code
-git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default"
-# Change the current directory
-cd C:\vc-storefront\VirtoCommerce.Storefront\VirtoCommerce.Storefront\wwwroot\cms-content\themes\{store-code}\default
+git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-theme-b2b-vue\"
 ```
 
 ### Check yarn version
@@ -220,11 +190,11 @@ yarn install
 #### Run with hot reload for development
 
 - Add new **.env.local** file
-- Copy **APP_BACKEND_URL** from **.env** file and chanage it's value to the correct endpoint to `vc-storefront`:
+- Copy **APP_BACKEND_URL** from **.env** file and change it's value to the correct endpoint to `Virto Commerce Platform`:
 
 ```dotenv
 # .env.local file
-APP_BACKEND_URL=https://localhost:2083
+APP_BACKEND_URL=https://localhost:5001
 ```
 
 - Run command: `yarn dev` or `yarn dev-expose`
@@ -248,7 +218,7 @@ yarn build:dev
 yarn build:watch
 ```
 
-#### Create artifact to install from already built code
+#### Create artefact to install from already built code
 
 ```bash
 yarn compress
