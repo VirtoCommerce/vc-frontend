@@ -24,6 +24,6 @@ const redirectQueryParam = useRouteQueryParam<string>("redirect", {
 
 onMounted(async () => {
   await markRead({ command: { messageId: props.messageId } });
-  void router.push({ path: redirectQueryParam.value });
+  await router.push({ path: redirectQueryParam.value });
 });
 </script>
