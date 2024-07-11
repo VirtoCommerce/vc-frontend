@@ -5,41 +5,29 @@
 
     <div class="flex items-stretch lg:gap-6">
       <template v-if="!hideSidebar">
-        <!-- Mobile sidebar back cover -->
-        <VcPopupSidebar v-if="isMobile" :is-visible="mobileSidebarVisible" @hide="hideMobileSidebar()">
-          <ProductsFiltersSidebar
-            :keyword="keywordQueryParam"
-            :filters="mobileFilters"
-            :loading="loading || facetsLoading"
-            @change="updateMobileFilters($event)"
-            @open-branches="openBranchesModal(true)"
-          />
+        <!-- Popup sidebar for mobile and horizontal desktop view -->
+        <FiltersPopupSidebar
+          v-if="isMobile || isHorizontalFilters"
+          :is-exist-selected-facets="isExistSelectedFacets"
+          :is-popup-sidebar-filter-dirty="isPopupSidebarFiltersDirty"
+          :popup-sidebar-filters="popupSidebarFilters"
+          :is-horizontal-filters="isHorizontalFilters"
+          :facets-loading="facetsLoading"
+          :is-mobile="isMobile"
+          :is-visible="popupSidebarVisible"
+          :keyword-query-param="keywordQueryParam"
+          :sort-query-param="sortQueryParam"
+          :loading="loading"
+          :hide-sorting="hideSorting"
+          :hide-controls="hideControls"
+          @hide-popup-sidebar="hidePopupSidebar"
+          @reset-facet-filters="resetFacetFilters"
+          @open-branches-modal="openBranchesModal"
+          @update-popup-sidebar-filters="updatePopupSidebarFilters"
+          @apply-filters="applyFilters"
+        />
 
-          <template #footer>
-            <VcButton
-              variant="outline"
-              :disabled="!isExistSelectedFacets && !isExistSelectedMobileFacets"
-              @click="
-                resetFacetFilters();
-                hideMobileSidebar();
-              "
-            >
-              {{ $t("common.buttons.reset") }}
-            </VcButton>
-
-            <VcButton
-              :disabled="!isMobileFilterDirty"
-              @click="
-                applyFilters(mobileFilters);
-                hideMobileSidebar();
-              "
-            >
-              {{ $t("common.buttons.apply") }}
-            </VcButton>
-          </template>
-        </VcPopupSidebar>
-
-        <!-- Sidebar -->
+        <!-- Regular desktop sidebar (vertical view) -->
         <div v-else class="relative flex w-60 shrink-0 items-start">
           <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
             <CategorySelector
@@ -48,7 +36,7 @@
               :loading="!currentCategory && loadingCategory"
             />
 
-            <ProductsFiltersSidebar
+            <ProductsFilters
               :keyword="keywordQueryParam"
               :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
               :loading="loading"
@@ -57,6 +45,7 @@
           </div>
         </div>
       </template>
+
       <!-- Content -->
       <div ref="contentElement" class="grow">
         <div class="flex">
@@ -88,6 +77,12 @@
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
           </VcTypography>
+          <!-- View options - horizontal view -->
+          <ViewMode
+            v-if="!hideViewModeSelector && isHorizontalFilters"
+            v-model:mode="savedViewMode"
+            class="ml-auto flex"
+          />
         </div>
 
         <div ref="stickyMobileHeaderAnchor" class="-mt-px"></div>
@@ -98,17 +93,20 @@
             'z-40 -mx-5 bg-additional-50 px-5 md:-mx-12 md:px-12': stickyMobileHeaderIsVisible,
           }"
         >
-          <!-- Mobile filters toggler -->
+          <!-- Popup sidebar filters toggler -->
           <VcButton
             v-if="!hideSidebar"
             class="mr-2.5 flex-none lg:!hidden"
             icon="filter"
             size="sm"
-            @click="showMobileSidebar"
+            @click="showPopupSidebar"
           />
 
           <!-- Sorting -->
-          <div v-if="!hideSorting" class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8">
+          <div
+            v-if="!hideSorting && !isHorizontalFilters"
+            class="z-10 ml-auto flex grow items-center lg:order-4 lg:ml-4 lg:grow-0 xl:ml-8"
+          >
             <span class="mr-2 hidden shrink-0 text-sm font-bold text-neutral-900 lg:block">
               {{ $t("pages.catalog.sort_by_label") }}
             </span>
@@ -126,67 +124,35 @@
 
           <!-- View options -->
           <ViewMode
-            v-if="!hideViewModeSelector"
+            v-if="!hideViewModeSelector && !isHorizontalFilters"
             v-model:mode="savedViewMode"
             class="ml-3 inline-flex lg:order-1 lg:ml-0 lg:mr-auto"
           />
 
-          <template v-if="!hideControls">
-            <!-- Branch availability -->
-            <div
-              v-if="!isMobile"
-              class="order-3 ml-4 flex items-center xl:ml-6"
-              @click.prevent="openBranchesModal(false)"
-              @keyup.enter.prevent="openBranchesModal(false)"
-            >
-              <VcTooltip placement="bottom-start" width="13rem">
-                <template #trigger>
-                  <VcCheckbox :model-value="!!savedBranches.length" :disabled="loading">
-                    <i18n-t
-                      keypath="pages.catalog.branch_availability_filter_card.available_in"
-                      tag="div"
-                      class="text-sm"
-                      :class="{
-                        'text-neutral': !savedBranches.length,
-                      }"
-                      scope="global"
-                    >
-                      <span :class="{ 'font-bold text-[--link-color]': savedBranches.length }">
-                        {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: savedBranches.length }) }}
-                      </span>
-                    </i18n-t>
-                  </VcCheckbox>
-                </template>
-
-                <template #content>
-                  {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
-                </template>
-              </VcTooltip>
-            </div>
-
-            <!-- In Stock -->
-            <div v-if="!isMobile" class="order-2 ml-4 flex items-center xl:ml-8">
-              <VcTooltip placement="bottom-start" width="12rem">
-                <template #trigger>
-                  <VcCheckbox v-model="savedInStock" :disabled="loading">
-                    <span
-                      class="whitespace-nowrap text-sm"
-                      :class="{
-                        'text-neutral': !savedInStock,
-                      }"
-                    >
-                      {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-                    </span>
-                  </VcCheckbox>
-                </template>
-
-                <template #content>
-                  {{ $t("pages.catalog.instock_filter_card.tooltip_text") }}
-                </template>
-              </VcTooltip>
-            </div>
-          </template>
+          <!-- In stock and branches -->
+          <CategoryControls
+            v-if="!hideControls && !isMobile && !isHorizontalFilters"
+            v-model="savedInStock"
+            :loading="loading"
+            :saved-branches="savedBranches"
+            @open-branches-modal="openBranchesModal"
+          />
         </div>
+
+        <!-- Horizontal filters -->
+        <CategoryHorizontalFilters
+          v-if="isHorizontalFilters && !isMobile"
+          :facets-loading="facetsLoading"
+          :keyword-query-param="keywordQueryParam"
+          :sort-query-param="sortQueryParam"
+          :loading="loading || facetsLoading"
+          :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+          :hide-sorting="hideSorting"
+          :hide-all-filters="hideSidebar"
+          @reset-facet-filters="resetFacetFilters"
+          @apply-filters="applyFilters"
+          @show-popup-sidebar="showPopupSidebar"
+        />
 
         <!-- Filters chips -->
         <div v-if="isExistSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
@@ -217,95 +183,29 @@
         </div>
 
         <!-- Products -->
-        <template v-if="products.length || loading">
-          <DisplayProducts
-            :loading="loading"
-            :view-mode="savedViewMode"
-            :items-per-page="itemsPerPage"
-            :products="products"
-            :open-product-in-new-tab="$cfg.show_details_in_separate_tab"
-            :card-type="cardType"
-            :columns-amount-desktop="columnsAmountDesktop"
-            :columns-amount-tablet="columnsAmountTablet"
-            @item-link-click="sendGASelectItemEvent"
-          >
-            <template #cart-handler="{ item }">
-              <AddToCart :product="item" :reserved-space="savedViewMode === 'grid'" />
-            </template>
-          </DisplayProducts>
-
-          <VcInfinityScrollLoader
-            v-if="!loading && !Number(fixedProductsCount)"
-            :loading="loadingMore"
-            distance="400"
-            class="mt-8"
-            :is-page-limit-reached="page === PAGE_LIMIT"
-            @visible="loadMoreProducts"
-          />
-
-          <VcScrollTopButton />
-        </template>
-
-        <!-- Empty view -->
-        <VcEmptyView
-          v-else
-          :text="
-            isExistSelectedFacets || savedInStock || savedBranches.length || keywordQueryParam
-              ? $t('pages.catalog.no_products_filtered_message')
-              : $t('pages.catalog.no_products_message')
-          "
-          class="h-96"
-        >
-          <template #icon>
-            <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
-          </template>
-
-          <template #button>
-            <VcButton
-              v-if="isExistSelectedFacets || keywordQueryParam"
-              prepend-icon="reset"
-              @click="resetFacetFiltersWithKeyword"
-            >
-              {{ $t("pages.catalog.no_products_button") }}
-            </VcButton>
-          </template>
-        </VcEmptyView>
+        <CategoryProducts
+          :is-exist-selected-facets="isExistSelectedFacets"
+          :has-active-filters="isExistSelectedFacets || savedInStock || !!savedBranches.length"
+          :fixed-products-count="fixedProductsCount"
+          :saved-view-mode="savedViewMode"
+          :items-per-page="itemsPerPage"
+          :card-type="cardType"
+          :columns-amount-desktop="columnsAmountDesktop"
+          :columns-amount-tablet="columnsAmountTablet"
+          :search-params="searchParams"
+          @reset-facet-filters="resetFacetFilters"
+        />
       </div>
     </div>
   </VcContainer>
 </template>
 
 <script setup lang="ts">
-import { useSeoMeta } from "@unhead/vue";
-import {
-  computedEager,
-  useBreakpoints,
-  useElementBounding,
-  useElementVisibility,
-  useLocalStorage,
-  watchDebounced,
-  whenever,
-} from "@vueuse/core";
-import { cloneDeep, isEqual, throttle } from "lodash";
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  shallowReactive,
-  shallowRef,
-  triggerRef,
-  watch,
-  watchEffect,
-} from "vue";
-import {
-  useBreadcrumbs,
-  useGoogleAnalytics,
-  usePageHead,
-  useRouteQueryParam,
-  useThemeContext,
-} from "@/core/composables";
-import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { computedEager, useBreakpoints, useElementVisibility, useLocalStorage, whenever } from "@vueuse/core";
+import { cloneDeep, isEqual } from "lodash";
+import { computed, ref, shallowReactive, shallowRef, toRefs, triggerRef, watch } from "vue";
+import { useBreadcrumbs, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
@@ -316,18 +216,20 @@ import {
   getFilterExpressionForZeroPrice,
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
+import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
+import { useStickyFilters } from "@/shared/catalog/composables/useStickyFilters";
 import { FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
 import { useModal } from "@/shared/modal";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
-import DisplayProducts from "./display-products.vue";
-import ProductsFiltersSidebar from "./products-filters.vue";
+import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
-import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
-import type { ProductsFilters, ProductsSearchParams } from "@/shared/catalog";
-import type { StyleValue } from "vue";
+import type { ProductsFilters as ProductsFiltersType, ProductsSearchParams } from "@/shared/catalog";
+import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
+import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
+import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
+import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const props = defineProps<IProps>();
@@ -344,6 +246,7 @@ interface IProps {
   hideControls?: boolean;
   hideSorting?: boolean;
   viewMode?: ViewModeType;
+  filtersOrientation?: "vertical" | "horizontal";
   cardType?: "full" | "short";
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
@@ -358,19 +261,7 @@ const { catalogId, currencyCode } = globals;
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const breakpoints = useBreakpoints(BREAKPOINTS);
-const ga = useGoogleAnalytics();
-const {
-  fetchProducts,
-  fetchMoreProducts,
-  getFacets,
-  loading,
-  loadingMore,
-  facetsLoading,
-  products,
-  total,
-  pages,
-  facets,
-} = useProducts({
+const { getFacets, loading, facetsLoading, products, total, facets } = useProducts({
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
@@ -398,11 +289,10 @@ const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
 
 const isMobile = breakpoints.smaller("lg");
 
-const page = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
-const mobileSidebarVisible = ref(false);
-const mobileFilters = shallowReactive<ProductsFilters>({
+const popupSidebarVisible = ref(false);
+const popupSidebarFilters = shallowReactive<ProductsFiltersType>({
   facets: [],
   inStock: savedInStock.value,
   branches: savedBranches.value,
@@ -412,44 +302,16 @@ const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
 const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
-let scrollOld = 0;
-const maxOffsetTop = 108;
-const maxOffsetBottom = 20;
+const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
 
 const contentElement = ref<HTMLElement | null>(null);
 const filtersElement = ref<HTMLElement | null>(null);
-const filtersStyle = ref<StyleValue | undefined>();
-
-const BOUNDING_OPTIONS = { windowResize: false, immediate: false };
-
-const { top: cTop, height: cHeight } = useElementBounding(contentElement, BOUNDING_OPTIONS);
-const { height: fHeight, top: fTop } = useElementBounding(filtersElement, BOUNDING_OPTIONS);
-
-const seoTitle = computed(() => currentCategory.value?.seoInfo?.pageTitle || currentCategory.value?.name);
-const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
-const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
-const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
+const { setFiltersPosition, filtersStyle } = useStickyFilters({ isHorizontalFilters, contentElement, filtersElement });
 
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
-
-watchEffect(() => {
-  if (props.allowSetMeta && categoryComponentAnchorIsVisible.value) {
-    usePageHead({
-      title: seoTitle,
-      meta: {
-        keywords: seoKeywords,
-        description: seoDescription,
-      },
-    });
-
-    useSeoMeta({
-      ogTitle: seoTitle,
-      ogDescription: seoDescription,
-      ogImage: seoImageUrl,
-    });
-  }
-});
+const { allowSetMeta } = toRefs(props);
+useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible });
 
 const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
@@ -475,36 +337,28 @@ const isExistSelectedFacets = computedEager<boolean>(() =>
   facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
 
-const isExistSelectedMobileFacets = computedEager<boolean>(() =>
-  mobileFilters.facets.some((facet) => facet.values.some((value) => value.selected)),
-);
-
-const isMobileFilterDirty = computedEager<boolean>(
+const isPopupSidebarFiltersDirty = computedEager<boolean>(
   () =>
-    JSON.stringify(mobileFilters) !==
+    JSON.stringify(popupSidebarFilters) !==
     JSON.stringify({
       facets: facets.value,
       inStock: savedInStock.value,
       branches: savedBranches.value,
-    } as ProductsFilters),
+    } as ProductsFiltersType),
 );
 
-function sendGASelectItemEvent(product: Product) {
-  ga.selectItem(product);
+function showPopupSidebar() {
+  popupSidebarFilters.facets = cloneDeep(facets.value);
+  popupSidebarFilters.inStock = savedInStock.value;
+  popupSidebarFilters.branches = savedBranches.value.slice();
+  popupSidebarVisible.value = true;
 }
 
-function showMobileSidebar() {
-  mobileFilters.facets = cloneDeep(facets.value);
-  mobileFilters.inStock = savedInStock.value;
-  mobileFilters.branches = savedBranches.value.slice();
-  mobileSidebarVisible.value = true;
+function hidePopupSidebar() {
+  popupSidebarVisible.value = false;
 }
 
-function hideMobileSidebar() {
-  mobileSidebarVisible.value = false;
-}
-
-function applyFilters(newFilters: ProductsFilters) {
+function applyFilters(newFilters: ProductsFiltersType) {
   const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
 
   if (facetsQueryParam.value !== facetsFilterExpression) {
@@ -522,7 +376,7 @@ function applyFilters(newFilters: ProductsFilters) {
   setFiltersPosition();
 }
 
-async function updateMobileFilters(newFilters: ProductsFilters) {
+async function updatePopupSidebarFilters(newFilters: ProductsFiltersType) {
   const searchParamsForFacets: ProductsSearchParams = {
     ...searchParams.value,
     filter: [
@@ -534,9 +388,9 @@ async function updateMobileFilters(newFilters: ProductsFilters) {
       .join(" "),
   };
 
-  mobileFilters.inStock = newFilters.inStock;
-  mobileFilters.branches = newFilters.branches;
-  mobileFilters.facets = await getFacets(searchParamsForFacets);
+  popupSidebarFilters.inStock = newFilters.inStock;
+  popupSidebarFilters.branches = newFilters.branches;
+  popupSidebarFilters.facets = await getFacets(searchParamsForFacets);
 }
 
 function removeFacetFilterItem(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
@@ -560,63 +414,20 @@ function resetFacetFilters() {
   triggerRef(facets);
 }
 
-function resetFacetFiltersWithKeyword() {
-  keywordQueryParam.value = "";
-  // FIXME: `setTimeout` is a hack to apply the value of `useRouteQueryParam` in parallel
-  setTimeout(resetFacetFilters, 0);
-}
-
-async function loadProducts() {
-  page.value = 1;
-
-  await fetchProducts(searchParams.value);
-
-  /**
-   * Send Google Analytics event for products.
-   */
-  ga.viewItemList(products.value, {
-    item_list_id: currentCategory.value?.slug,
-    item_list_name: currentCategory.value?.name,
-  });
-}
-
-async function loadMoreProducts() {
-  if (page.value === pages.value) {
-    return;
-  }
-
-  const nextPage = page.value + 1;
-
-  page.value = nextPage;
-
-  await fetchMoreProducts({
-    ...searchParams.value,
-    page: nextPage,
-  });
-
-  /**
-   * Send Google Analytics event for products on next page.
-   */
-  ga.viewItemList(products.value, {
-    item_list_id: `${currentCategory.value?.slug}_page_${nextPage}`,
-    item_list_name: `${currentCategory.value?.name} (page ${nextPage})`,
-  });
-}
-
-function openBranchesModal(fromMobileFilter: boolean) {
+function openBranchesModal(fromPopupSidebarFilter: boolean) {
   openModal({
     component: BranchesModal,
     props: {
-      selectedBranches: fromMobileFilter ? mobileFilters.branches : savedBranches.value,
+      selectedBranches: fromPopupSidebarFilter ? popupSidebarFilters.branches : savedBranches.value,
       onSave(branches: string[]) {
-        if (fromMobileFilter) {
-          const newFilters: ProductsFilters = {
+        if (fromPopupSidebarFilter) {
+          const newFilters: ProductsFiltersType = {
             branches,
-            facets: mobileFilters.facets,
-            inStock: mobileFilters.inStock,
+            facets: popupSidebarFilters.facets,
+            inStock: popupSidebarFilters.inStock,
           };
 
-          void updateMobileFilters(newFilters);
+          updatePopupSidebarFilters(newFilters);
         } else {
           savedBranches.value = branches;
         }
@@ -625,78 +436,7 @@ function openBranchesModal(fromMobileFilter: boolean) {
   });
 }
 
-const setFiltersPosition = throttle(_setFiltersPosition, 100);
-
-function _setFiltersPosition() {
-  const { clientHeight, scrollTop } = document.documentElement || document.body.scrollTop;
-
-  const scrollBottom = scrollTop + clientHeight;
-
-  const contentHeight = cHeight.value;
-  const contentTop = scrollTop + cTop.value;
-  const contentBottom = contentTop + contentHeight;
-
-  const filterHeight = fHeight.value;
-  const filterTop = scrollTop + fTop.value;
-  const filterBottom = filterTop + filterHeight;
-
-  const down = scrollTop > scrollOld;
-  const up = scrollTop < scrollOld;
-
-  const zoomCorrection = window.devicePixelRatio === 1 ? 0 : 1;
-
-  const offsetTop = maxOffsetTop - zoomCorrection;
-  const offsetBottom = maxOffsetBottom - zoomCorrection;
-
-  let action = "BETWEEN";
-
-  if (
-    (up && scrollTop <= filterTop - offsetTop) ||
-    filterHeight <= clientHeight - offsetTop ||
-    filterHeight >= contentHeight ||
-    contentTop > filterTop
-  ) {
-    action = "TOP";
-  } else if (
-    (down && scrollBottom >= filterBottom + offsetBottom && scrollBottom <= contentBottom + offsetBottom) ||
-    (scrollBottom >= contentBottom + offsetBottom && filterBottom < contentBottom) ||
-    (!up && scrollBottom > filterBottom + offsetBottom && filterBottom < contentBottom) ||
-    filterBottom > contentBottom
-  ) {
-    action = "BOTTOM";
-  }
-
-  switch (action) {
-    case "BOTTOM":
-      filtersStyle.value = {
-        alignSelf: "flex-end",
-        bottom: `${maxOffsetBottom}px`,
-      };
-
-      break;
-    case "BETWEEN":
-      filtersStyle.value = {
-        marginTop: `${filterTop - contentTop}px`,
-      };
-      break;
-    default:
-      filtersStyle.value = {
-        top: `${maxOffsetTop}px`,
-      };
-  }
-
-  scrollOld = scrollTop;
-}
-
-onMounted(() => {
-  window.addEventListener("scroll", setFiltersPosition);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("scroll", setFiltersPosition);
-});
-
-whenever(() => !isMobile.value, hideMobileSidebar);
+whenever(() => !isMobile.value, hidePopupSidebar);
 
 watch(
   () => props.categoryId,
@@ -725,24 +465,6 @@ watch(
   { immediate: true },
 );
 
-watch(
-  () => fHeight.value,
-  (value, oldValue) => {
-    if (value !== oldValue) {
-      setFiltersPosition();
-    }
-  },
-);
-
-watch(
-  () => cHeight.value,
-  (value, oldValue) => {
-    if (value !== oldValue) {
-      setFiltersPosition();
-    }
-  },
-);
-
 watch(props, ({ viewMode }) => {
   if (viewMode && viewModes.includes(viewMode)) {
     savedViewMode.value = viewMode;
@@ -752,16 +474,6 @@ watch(props, ({ viewMode }) => {
 const hideViewModeSelector = computed(() => {
   return props.viewMode && viewModes.includes(props.viewMode);
 });
-
-watchDebounced(
-  computed(() => JSON.stringify(searchParams.value)),
-  loadProducts,
-  {
-    immediate: true,
-    flush: "post",
-    debounce: 20,
-  },
-);
 </script>
 
 <style scoped lang="scss">
