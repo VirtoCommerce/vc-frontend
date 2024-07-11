@@ -25,8 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { useRefHistory } from "@vueuse/core";
+import { computed, nextTick, ref, watch } from "vue";
+import { useThemeContext, useRouteQueryParam } from "@/core/composables";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { StateType, PreviewerStateType } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
@@ -41,6 +42,8 @@ interface IProps {
 defineProps<IProps>();
 
 const { modulesSettings } = useThemeContext();
+
+const viewQueryParam = useRouteQueryParam<string>("view");
 
 const moduleSettings = computed(() => {
   return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
@@ -75,6 +78,7 @@ const previewers = ref<{ [key in string]: PreviewerStateType }>({
     isActive: true,
   },
 });
+const { undo: undoPreviewersChange } = useRefHistory(previewers, { deep: true });
 
 const visibleComponent = computed(() => getVisiblePreviewer(Object.values(previewers.value)));
 
@@ -83,4 +87,22 @@ function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
     previewers.value[previewerId].state = state;
   }
 }
+
+watch(
+  () => viewQueryParam.value,
+  async (value) => {
+    if (value === "default") {
+      // for cases when we have a custom category page with the same url as a default category,  and we want to have the opportunity to switch to the default view (eg. clicking "Show all results" button)
+      previewers.value.slugContent.priority = 0;
+    } else {
+      undoPreviewersChange();
+    }
+    await nextTick();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  },
+  { immediate: true },
+);
 </script>

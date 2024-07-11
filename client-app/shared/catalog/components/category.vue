@@ -195,6 +195,11 @@
           :search-params="searchParams"
           @reset-facet-filters="resetFacetFilters"
         />
+        <div class="text-center">
+          <VcButton v-if="showButtonToDefaultView" class="my-8" color="secondary" :to="{ query: { view: 'default' } }">
+            {{ $t("pages.catalog.show_all_results") }}
+          </VcButton>
+        </div>
       </div>
     </div>
   </VcContainer>
@@ -254,6 +259,7 @@ interface IProps {
   filter?: string;
   fixedProductsCount?: string;
   allowSetMeta?: boolean;
+  showButtonToDefaultView?: boolean;
 }
 
 const { catalogId, currencyCode } = globals;

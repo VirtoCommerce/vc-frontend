@@ -121,6 +121,12 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         defaultValue: false,
         helperText: "Allow the component to set SEO meta tags based on fetched category",
       },
+      {
+        name: "showButtonToDefaultView",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Show button to default category view",
+      },
     ],
   },
   {
