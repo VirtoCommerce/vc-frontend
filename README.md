@@ -2,7 +2,7 @@
 
 # Virto Commerce Frontend
 
-![mercury-theme-preview](https://user-images.githubusercontent.com/619699/161065622-163bb3e9-0078-4e9d-9231-eb9d34f5d146.jpeg)
+<img src="demo.jpg" width="800" alt="catalog view">
 
 **Virto Commerce Frontend** is a single-page web application (SPA) with a fresh look on eCommerce solutions. This is where common B2B and B2C scenarios are combined with the most bleeding-edge technologies to deliver blazing-fast and fully functional solutions. It implements common business use cases needed for a vast majority of projects we build.
 
@@ -21,12 +21,12 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 
 - **Development performance.** Really fast development using the most effective solution. Enrol SPA in seconds and start to modify code with [HMR features](https://vitejs.dev/guide/api-hmr).
 - **Client performance.** We are supposed to reach and hold green metrics provided by Google PageSpeed Insights.
-- **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** Theme UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
-- **Fully responsive.** We made our theme work on miltiple devices from Desktops to Mobile phones, concentrating both on UI and UX.
-- **Simple styling and theme customization.** We use TailwindCSS to provide the easiest and most convenient way of CSS usage. Write as less of code as possible, and reuse existing highly customizable framework features.
+- **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** The Frontend Application UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
+- **Fully responsive.** We made our Frontend Application work on multiple devices from Desktops to Mobile phones, concentrating both on UI and UX.
+- **Simple styling and customization.** We use TailwindCSS to provide the easiest and most convenient way of CSS usage. Write as less of code as possible, and reuse existing highly customizable framework features.
 - **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios. 
 
-## Theme structure
+## The Application structure
 
 ```text
 ├── assets                           // Scripts, styles and other assets compiled and minified for production.
@@ -89,11 +89,11 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 |   ├── vue.d.ts                     // Definition file to provide IDE IntelliSense support for additional global Vue properties.
 |   └── vue-router.d.ts              // Definition file to provide IDE IntelliSense support for additional global Vue Router properties.
 |
-├── config                           // The Virto theme settings.
-|   ├── menu.json                    // Theme menu settings file.
-|   └── settings_data.json           // Theme config file.
+├── config
+|   ├── menu.json
+|   └── settings_data.json
 |   
-├── locales                          // Locale files used to provide translated content for the theme.
+├── locales                          // Locale files used to provide translated content.
 |   └──...
 |
 ├── scripts                          // Auxiliary build files that run in the Node environment.
@@ -160,10 +160,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
      - Native package manager such as `apt` on *Linux*
 
 ### Clone repository
-
 ```bash
-# Clone repo 
-# `store-code` can be found in the platform running locally. More -> Shops -> Shop Name -> Code
 git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-theme-b2b-vue\"
 ```
 
