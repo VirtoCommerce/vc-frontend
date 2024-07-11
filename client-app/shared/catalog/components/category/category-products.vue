@@ -76,7 +76,7 @@ const props = defineProps<IProps>();
 interface IProps {
   isExistSelectedFacets: boolean;
   hasActiveFilters: boolean;
-  fixedProductsCount?: string;
+  fixedProductsCount?: number;
   savedViewMode: "grid" | "list";
   itemsPerPage: number;
   cardType?: "full" | "short";

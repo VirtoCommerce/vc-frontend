@@ -70,7 +70,7 @@
             </span>
 
             <sup
-              v-if="!loading && !hideTotal && !Number(fixedProductsCount)"
+              v-if="!loading && !hideTotal && !fixedProductsCount"
               class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
               <b class="font-extrabold">{{ total }}</b>
@@ -257,7 +257,7 @@ interface IProps {
   columnsAmountTablet?: string;
   keyword?: string;
   filter?: string;
-  fixedProductsCount?: string;
+  fixedProductsCount?: number;
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
 }
@@ -325,7 +325,7 @@ const breadcrumbs = useBreadcrumbs(() => {
 
 const searchParams = computedEager<ProductsSearchParams>(() => ({
   categoryId: props.categoryId,
-  itemsPerPage: Number(props.fixedProductsCount) || itemsPerPage.value,
+  itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: props.keyword || (props.isSearchPage ? searchQueryParam.value : keywordQueryParam.value),
   filter:
