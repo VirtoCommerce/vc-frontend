@@ -125,7 +125,8 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         name: "showButtonToDefaultView",
         type: "boolean",
         defaultValue: false,
-        helperText: "Show button to default category view",
+        helperText:
+          "Toggle this switch to add a button that, when clicked, shows the default category view. Applicable for pages with an URL overlapping the existing category page URL (e.g., /printers).",
       },
     ],
   },

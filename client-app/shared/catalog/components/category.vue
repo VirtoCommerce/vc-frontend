@@ -196,7 +196,7 @@
           @reset-facet-filters="resetFacetFilters"
         />
         <div class="text-center">
-          <VcButton v-if="showButtonToDefaultView" class="my-8" color="secondary" :to="{ query: { view: 'default' } }">
+          <VcButton v-if="showButtonToDefaultView" class="my-8" color="primary" :to="{ query: { view: 'default' } }">
             {{ $t("pages.catalog.show_all_results") }}
           </VcButton>
         </div>

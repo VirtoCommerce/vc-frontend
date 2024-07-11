@@ -25,8 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRefHistory } from "@vueuse/core";
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useThemeContext, useRouteQueryParam } from "@/core/composables";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { StateType, PreviewerStateType } from "./priorityManager";
@@ -40,6 +39,12 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+const PRIORITIES = {
+  builderIo: 1,
+  slugContent: 2,
+  internal: 3,
+};
 
 const { modulesSettings } = useThemeContext();
 
@@ -61,24 +66,23 @@ const builderIoApiKey = computed(() => {
 const previewers = ref<{ [key in string]: PreviewerStateType }>({
   builderIo: {
     id: "builderIo",
-    priority: 1,
+    priority: PRIORITIES.builderIo,
     state: "initial",
     isActive: isBuilderIOEnabled.value,
   },
   slugContent: {
     id: "slugContent",
-    priority: 2,
+    priority: PRIORITIES.slugContent,
     state: "initial",
     isActive: true,
   },
   internal: {
     id: "internal",
-    priority: 3,
+    priority: PRIORITIES.internal,
     state: "initial",
     isActive: true,
   },
 });
-const { undo: undoPreviewersChange } = useRefHistory(previewers, { deep: true });
 
 const visibleComponent = computed(() => getVisiblePreviewer(Object.values(previewers.value)));
 
@@ -89,15 +93,14 @@ function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
 }
 
 watch(
-  () => viewQueryParam.value,
-  async (value) => {
+  viewQueryParam,
+  (value) => {
     if (value === "default") {
-      // for cases when we have a custom category page with the same url as a default category,  and we want to have the opportunity to switch to the default view (eg. clicking "Show all results" button)
+      // for cases when we have a custom category page with the same url as a default category page, and we want to have the opportunity to switch to the default view (eg. clicking "Show all results" button, technically by setting search query URL parameter view to "default")
       previewers.value.slugContent.priority = 0;
     } else {
-      undoPreviewersChange();
+      previewers.value.slugContent.priority = PRIORITIES.slugContent;
     }
-    await nextTick();
     window.scrollTo({
       top: 0,
       behavior: "smooth",
