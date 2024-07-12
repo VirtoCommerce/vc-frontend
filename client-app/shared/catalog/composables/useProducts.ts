@@ -1,3 +1,4 @@
+import { createGlobalState } from "@vueuse/core";
 import { computed, inject, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { PAGE_LIMIT } from "@/core/constants";
@@ -12,7 +13,7 @@ import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
-export function useProducts(
+function _useProducts(
   options: {
     /** @default false */
     withFacets?: boolean;
@@ -173,3 +174,5 @@ export function useProducts(
     products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
   };
 }
+
+export const useProducts = createGlobalState(_useProducts);
