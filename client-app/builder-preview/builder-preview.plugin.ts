@@ -101,7 +101,7 @@ let templateUrl: string | undefined;
 
 // eslint-disable-next-line no-restricted-exports
 export default {
-  install: (app: App, options: { router: Router }) => {
+  install: (app: App, options: { router: Router; builderOrigin: string }) => {
     const { onRequest } = useGlobalInterceptors();
 
     onRequest.value.push((_, init) => {
@@ -125,7 +125,7 @@ export default {
     }
 
     window.addEventListener("message", async (event: MessageEvent<TransferDataType>) => {
-      if (event.origin !== document.location.origin || event.data.source !== "builder") {
+      if (event.origin !== options.builderOrigin || event.data.source !== "builder") {
         // note: it can be cause of some problems. investigate it.
         // eslint-disable-next-line no-console
         console.log("cancel message");
@@ -172,6 +172,6 @@ export default {
     options.router.removeRoute("Matcher");
     options.router.addRoute({ path: "/designer-preview", name: "StaticPage", component: StaticPage, props: true });
     options.router.addRoute(matcher);
-    window.parent.postMessage({ source: "preview", type: "loaded" }, window.location.origin);
+    window.parent.postMessage({ source: "preview", type: "loaded" }, options.builderOrigin);
   },
 };
