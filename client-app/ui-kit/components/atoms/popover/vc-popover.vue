@@ -20,6 +20,7 @@
       @mouseenter="hover && open()"
       @mouseleave="hover && close()"
       @focusin="hover && open()"
+      @focusout="hover && close()"
       @blur="hover && close()"
       @click="!hover && toggle()"
       @keyup="!hover && toggle()"
@@ -88,6 +89,7 @@ const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${mid
 const { floatingStyles, middlewareData } = useFloating(reference, floating, {
   placement,
   strategy,
+  transform: false,
   middleware: [
     flip(flipOptions.value),
     offset(offsetOptions.value),
