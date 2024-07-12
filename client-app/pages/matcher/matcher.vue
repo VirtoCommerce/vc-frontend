@@ -3,12 +3,14 @@
     <SlugContent
       v-if="previewers.slugContent.isActive"
       v-show="visibleComponent === 'slugContent'"
+      :is-visible="visibleComponent === 'slugContent'"
       :path-match="pathMatch"
       @set-state="updateState($event, 'slugContent')"
     />
     <BuilderIo
       v-if="previewers.builderIo.isActive"
       v-show="visibleComponent === 'builderIo'"
+      :is-visible="visibleComponent === 'builderIo'"
       :api-key="builderIoApiKey"
       @set-state="updateState($event, 'builderIo')"
     />
