@@ -26,12 +26,12 @@ function _useThemeContext() {
   }
 
   async function getThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
-    const currentPreset =
-      typeof themeConfig.current === "string" ? themeConfig.current.toLowerCase() : themeConfig.current;
-    const preset = themePresetName ? themePresetName.toLowerCase() : currentPreset;
+    const preset = themePresetName ? themePresetName : themeConfig.current;
 
     if (typeof preset === "string") {
-      return (await import(`../../../config/presets/${preset}.json`)) as IThemeConfigPreset;
+      const presetFileName = preset.toLowerCase().replace(" ", "-");
+
+      return (await import(`../../../config/presets/${presetFileName}.json`)) as IThemeConfigPreset;
     }
 
     return preset;
