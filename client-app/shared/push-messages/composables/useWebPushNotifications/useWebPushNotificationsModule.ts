@@ -1,15 +1,14 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createGlobalState } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
-import { isSupported, getMessaging, getToken, deleteToken, onMessage } from "firebase/messaging";
+import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
 import omit from "lodash/omit";
 import { apolloClient } from "@/core/api/graphql";
 import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
-import { useThemeContext } from "@/core/composables/useThemeContext";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { Logger } from "@/core/utilities";
-import { useUser } from "@/shared/account/composables/useUser";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
@@ -17,7 +16,6 @@ import type { Messaging } from "firebase/messaging";
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
-const HTML_TAG_REGEX = /(<([^>]+)>)/gi;
 const MODULE_ID = "VirtoCommerce.PushMessages";
 const SETTINGS_MAPPING = {
   "PushMessages.FcmReceiverOptions.ApiKey": "apiKey",
@@ -28,9 +26,10 @@ const SETTINGS_MAPPING = {
   "PushMessages.FcmReceiverOptions.AppId": "appId",
   "PushMessages.FcmReceiverOptions.VapidKey": "vapidKey",
 } as const;
-type SettingNameType = keyof typeof SETTINGS_MAPPING;
 
 provideApolloClient(apolloClient);
+
+const { getModuleSettings } = useModuleSettings(MODULE_ID);
 
 function _useWebPushNotifications() {
   let initialized = false;
@@ -38,15 +37,12 @@ function _useWebPushNotifications() {
   let currentToken: string | undefined;
 
   const broadcast = useBroadcast();
-  const { isAuthenticated } = useUser();
   const { mutate: addFcmTokenMutation } = useAddFcmToken();
   const { mutate: deleteFcmTokenMutation } = useDeleteFcmToken();
 
-  async function init() {
-    const { modulesSettings } = useThemeContext();
-    const moduleSettings = modulesSettings?.value?.find(({ moduleId }) => moduleId === MODULE_ID);
-
-    if (isAuthenticated.value === false || !moduleSettings || !(await isSupported())) {
+  async function initModule() {
+    if (!(await isSupported())) {
+      useModuleSettings.delete(MODULE_ID);
       return;
     }
 
@@ -56,11 +52,7 @@ function _useWebPushNotifications() {
         ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
       )?.href || DEFAULT_ICON_URL;
 
-    const fcmSettings = moduleSettings.settings.reduce((settings: Partial<FcmSettingsType>, { name, value }) => {
-      const settingName = SETTINGS_MAPPING[name as SettingNameType];
-      settings[settingName] = value as string;
-      return settings;
-    }, {});
+    const fcmSettings = getModuleSettings(SETTINGS_MAPPING);
 
     const vapidKey = fcmSettings?.vapidKey as string;
     const firebaseConfig = omit(fcmSettings, "vapidKey") as FcmSettingsType;
@@ -83,19 +75,11 @@ function _useWebPushNotifications() {
     initialized = true;
 
     broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
-
-    onMessage(messaging, (payload) => {
-      new Notification(payload?.data?.title ?? "", {
-        badge: payload.data?.icon || icon,
-        body: payload?.data?.body?.replace(HTML_TAG_REGEX, "")?.trim() ?? "",
-        icon: payload.data?.icon || icon,
-      });
-    });
   }
 
   // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693
   function tryGetToken(count: number = 3) {
-    const TIMEOUT = 1000;
+    const TIMEOUT = 3000;
     let retryCount = 0;
     return async function retry(messagingInstance: Messaging, vapidKey: string) {
       try {
@@ -139,7 +123,7 @@ function _useWebPushNotifications() {
     }
   }
 
-  return { deleteFcmToken, init };
+  return { initModule };
 }
 
-export const useWebPushNotifications = createGlobalState(_useWebPushNotifications);
+export const useWebPushNotificationsModule = createGlobalState(_useWebPushNotifications);

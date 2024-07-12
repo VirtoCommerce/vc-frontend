@@ -10,21 +10,23 @@ const { getModuleSettings, hasModuleSettings, isEnabled } = useModuleSettings(MO
 
 export function useHotjar() {
   async function init(): Promise<void> {
-    if (hasModuleSettings && isEnabled(IS_ENABLED_KEY)) {
-      try {
-        const { user } = useUser();
-        const { useHotjarModule } = await import("@virto-commerce/front-modules-hotjar");
-        const { initModule } = useHotjarModule();
+    if (!hasModuleSettings && !isEnabled(IS_ENABLED_KEY)) {
+      useModuleSettings.delete(MODULE_ID);
+      return;
+    }
+    try {
+      const { user } = useUser();
+      const { useHotjarModule } = await import("@virto-commerce/front-modules-hotjar");
+      const { initModule } = useHotjarModule();
 
-        initModule({
-          getModuleSettings,
-          isDevelopment: IS_DEVELOPMENT,
-          logger: Logger,
-          userId: user.value.id,
-        });
-      } catch (e) {
-        Logger.error(useHotjar.name, e);
-      }
+      initModule({
+        getModuleSettings,
+        isDevelopment: IS_DEVELOPMENT,
+        logger: Logger,
+        userId: user.value.id,
+      });
+    } catch (e) {
+      Logger.error(useHotjar.name, e);
     }
   }
 
