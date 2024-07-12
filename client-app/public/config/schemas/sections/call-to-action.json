@@ -2,7 +2,7 @@
   "name": "Call to Action",
   "icon": "article",
   "displayField": "name",
-  "includeShared": [ "buttons" ],
+  "includeShared": ["buttons"],
   "settings": [
     {
       "id": "title",
