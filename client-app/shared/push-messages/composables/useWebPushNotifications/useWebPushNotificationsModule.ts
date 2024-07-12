@@ -42,7 +42,6 @@ function _useWebPushNotifications() {
 
   async function initModule() {
     if (!(await isSupported())) {
-      useModuleSettings.delete(MODULE_ID);
       return;
     }
 

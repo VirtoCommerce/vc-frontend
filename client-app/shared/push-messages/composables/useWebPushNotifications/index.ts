@@ -9,7 +9,6 @@ export function useWebPushNotifications() {
     const { isAuthenticated } = useUser();
 
     if (isAuthenticated.value === false || !hasModuleSettings.value) {
-      useModuleSettings.delete(MODULE_ID);
       return;
     }
 

@@ -11,7 +11,6 @@ const { getModuleSettings, hasModuleSettings, isEnabled } = useModuleSettings(MO
 export function useHotjar() {
   async function init(): Promise<void> {
     if (!hasModuleSettings && !isEnabled(IS_ENABLED_KEY)) {
-      useModuleSettings.delete(MODULE_ID);
       return;
     }
     try {
