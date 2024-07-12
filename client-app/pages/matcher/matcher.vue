@@ -97,7 +97,7 @@ watch(
   (value) => {
     if (value === "default") {
       // for cases when we have a custom category page with the same url as a default category page, and we want to have the opportunity to switch to the default view (eg. clicking "Show all results" button, technically by setting search query URL parameter view to "default")
-      previewers.value.slugContent.priority = 0;
+      previewers.value.slugContent.priority = Math.min(...Object.values(PRIORITIES)) - 1;
     } else {
       previewers.value.slugContent.priority = PRIORITIES.slugContent;
     }
