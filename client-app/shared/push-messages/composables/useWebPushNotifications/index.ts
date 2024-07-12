@@ -13,7 +13,8 @@ export function useWebPushNotifications() {
     }
 
     const { useWebPushNotificationsModule } = await import("./useWebPushNotificationsModule");
-    await useWebPushNotificationsModule().initModule();
+    const { initModule } = useWebPushNotificationsModule();
+    await initModule();
   }
 
   return { init };
