@@ -6,7 +6,7 @@
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useMarkPushMessageRead } from "@/core/api/graphql/push-messages/mutations/markPushMessageRead";
-import { useRouteQueryParam } from "@/core/composables";
+import { getReturnUrlValue } from "@/core/utilities";
 
 const props = withDefaults(defineProps<IProps>(), {
   messageId: "",
@@ -18,12 +18,10 @@ interface IProps {
 
 const router = useRouter();
 const { mutate: markRead } = useMarkPushMessageRead();
-const redirectQueryParam = useRouteQueryParam<string>("redirect", {
-  defaultValue: "/",
-});
+const returnUrl = getReturnUrlValue() ?? "/";
 
 onMounted(async () => {
   await markRead({ command: { messageId: props.messageId } });
-  await router.push({ path: redirectQueryParam.value });
+  await router.push({ path: returnUrl });
 });
 </script>
