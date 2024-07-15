@@ -134,16 +134,20 @@ const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; s
 
 const creditCards = computed(() => {
   const cards =
-    skyflowCards.value?.map((el) => {
-      return {
-        ...el,
-        cardNumber: replaceXFromBeginning(el.cardNumber),
-      };
-    }) || [];
+    skyflowCards.value
+      ?.map((el) => {
+        return {
+          ...el,
+          cardNumber: replaceXFromBeginning(el.cardNumber),
+        };
+      })
+      .filter((el) => el.active) || [];
+
   return cards.concat([
     {
       cardNumber: t("common.labels.add_new_card"),
       skyflowId: "",
+      active: false,
     },
   ]);
 });

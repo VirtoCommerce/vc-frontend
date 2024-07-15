@@ -54,11 +54,11 @@ defineProps<IProps>();
   mask: url(/static/images/dashboard/icons/quotes.svg) no-repeat center / contain;
 }
 
-.credit-card > div {
+.credit-card-icon > div {
   mask: url(/static/images/dashboard/icons/credit-card.svg) no-repeat center / contain;
 }
 
-.notifications > div {
+.notifications-icon > div {
   mask: url(/static/icons/basic/bell.svg) no-repeat center / contain;
 }
 

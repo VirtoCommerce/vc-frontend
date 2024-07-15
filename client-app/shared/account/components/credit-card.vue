@@ -1,25 +1,30 @@
 <template>
   <div
-    class="relative rounded bg-[--color-additional-50] p-4 text-sm shadow-md md:flex md:items-center md:gap-6 md:px-5"
+    :class="[
+      'credit-card',
+      {
+        'credit-card--disabled': !cardActive,
+      },
+    ]"
   >
-    <div class="flex grow items-center gap-2 pe-10">
-      <VcIcon class="text-warning" name="credit-card" size="lg" />
+    <VcIcon class="credit-card__icon" name="credit-card" />
+
+    <div class="credit-card__number">
       {{ cardNumber }}
     </div>
 
-    <div v-if="cardExpiration" class="flex items-center max-md:pt-4">
-      {{ $t("common.prefixes.expires") }} {{ cardExpiration }}
-    </div>
+    <VcButton
+      class="credit-card__remove"
+      :aria-label="$t('common.buttons.remove_credit_card')"
+      color="neutral"
+      size="xs"
+      variant="no-background"
+      icon="x"
+      @click="$emit('remove')"
+    />
 
-    <div class="absolute right-4 top-4 md:relative md:right-auto md:top-auto">
-      <VcButton
-        :aria-label="$t('common.buttons.remove_credit_card')"
-        color="neutral"
-        size="sm"
-        variant="no-background"
-        icon="delete-2"
-        @click="$emit('remove')"
-      />
+    <div v-if="cardExpiration" class="credit-card__expire">
+      {{ $t("common.prefixes.expires") }} <span class="credit-card__expiration-date">{{ cardExpiration }}</span>
     </div>
   </div>
 </template>
@@ -32,9 +37,64 @@ interface IEmits {
 interface IProps {
   cardNumber: string;
   cardExpiration?: string;
+  cardActive: boolean;
 }
 
 defineEmits<IEmits>();
 
 defineProps<IProps>();
 </script>
+
+<style lang="scss">
+.credit-card {
+  $disabled: "";
+
+  @apply relative flex flex-wrap items-center gap-2 rounded bg-additional-50 p-4 pe-2 text-sm text-neutral-900 shadow-md;
+
+  &--disabled {
+    $disabled: &;
+
+    @apply text-neutral-400;
+  }
+
+  &__icon.vc-icon {
+    @apply size-6 text-primary;
+
+    @media (width > theme("screens.xs")) {
+      @apply size-8;
+    }
+
+    #{$disabled} & {
+      @apply text-inherit;
+    }
+  }
+
+  &__number {
+    @apply grow font-bold;
+  }
+
+  &__expire {
+    @apply w-full;
+
+    @media (width > theme("screens.xs")) {
+      @apply w-auto;
+    }
+
+    @media (width > theme("screens.lg")) {
+      @apply me-8;
+    }
+  }
+
+  &__expiration-date {
+    @apply font-bold;
+  }
+
+  &__remove {
+    @apply -mt-1;
+
+    @media (width > theme("screens.xs")) {
+      @apply order-last mt-0;
+    }
+  }
+}
+</style>
