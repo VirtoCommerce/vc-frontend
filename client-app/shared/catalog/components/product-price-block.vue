@@ -60,7 +60,7 @@
 
           <template #content="{ close }">
             <div
-              class="rounded border bg-white p-5 shadow-lg before:absolute before:-top-2 before:left-[calc(50%-0.5rem)] before:size-4 before:rotate-45 before:border-l before:border-t before:bg-inherit"
+              class="rounded border bg-white p-5 shadow-lg md:before:absolute md:before:-top-2 md:before:left-[calc(50%-0.5rem)] md:before:size-4 md:before:rotate-45 md:before:border-l md:before:border-t md:before:bg-inherit"
             >
               <h3 class="flex justify-between text-lg font-bold">
                 <span class="flex grow">
