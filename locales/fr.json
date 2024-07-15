@@ -59,7 +59,9 @@
       "remove_all": "Tout supprimer",
       "resend_link": "Renvoyer le lien",
       "approve": "Approuver",
-      "decline": "Décliner"
+      "decline": "Décliner",
+      "all_filters": "Tous les filtres",
+      "sort_by": "Trier par"
     },
     "links": {
       "home": "Accueil",
