@@ -2,8 +2,7 @@
   <component :is="layout">
     <RouterView />
   </component>
-  {{ $permissions.storefront }}
-  {{ $permissions.xApi }}
+
   <ModalHost />
   <NotificationsHost />
   <EnvironmentBadge />
