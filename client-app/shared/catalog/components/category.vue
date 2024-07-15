@@ -328,15 +328,14 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: props.keyword || (props.isSearchPage ? searchQueryParam.value : keywordQueryParam.value),
-  filter:
-    props.filter ||
-    [
-      facetsQueryParam.value,
-      getFilterExpressionForInStock(savedInStock),
-      getFilterExpressionForAvailableIn(savedBranches),
-    ]
-      .filter(Boolean)
-      .join(" "),
+  filter: [
+    props.filter,
+    facetsQueryParam.value,
+    getFilterExpressionForInStock(savedInStock),
+    getFilterExpressionForAvailableIn(savedBranches),
+  ]
+    .filter(Boolean)
+    .join(" "),
 }));
 
 const isExistSelectedFacets = computedEager<boolean>(() =>
