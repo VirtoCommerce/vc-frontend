@@ -59,9 +59,7 @@
           </template>
 
           <template #content="{ close }">
-            <div
-              class="rounded border bg-white p-5 shadow-lg before:absolute before:-top-2 before:left-[calc(50%-0.5rem)] before:size-4 before:rotate-45 before:border-l before:border-t before:bg-inherit"
-            >
+            <div class="rounded border bg-white p-5 shadow-lg">
               <h3 class="flex justify-between text-lg font-bold">
                 <span class="flex grow">
                   {{ $t("shared.catalog.product_details.share_product_label") }}

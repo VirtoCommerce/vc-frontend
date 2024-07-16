@@ -75,7 +75,7 @@ export default async () => {
 
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
-  initializeGoogleAnalytics();
+  void initializeGoogleAnalytics();
   void initializeHotjar();
 
   /**
@@ -122,11 +122,19 @@ export default async () => {
   app.use(configPlugin, themeContext.value.settings);
   app.use(uiKit);
 
-  if (window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {
+  const referrer = document.referrer?.replace(/\/$/, "");
+  const ep = document.location.search
+    ?.substring(1)
+    .split("?")
+    .map((x) => x.split("="))
+    .find((x) => x[0] === "ep")?.[1]
+    ?.replace(/\/$/, "");
+
+  if (referrer && ep && referrer === ep) {
     const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, { router });
+      app.use(builderPreviewPlugin, { router, builderOrigin: ep });
     }
   }
 
