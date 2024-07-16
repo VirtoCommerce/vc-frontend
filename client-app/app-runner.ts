@@ -119,7 +119,7 @@ export default async () => {
   app.use(router);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value.settings);
+  app.use(configPlugin, themeContext.value);
   app.use(uiKit);
 
   const referrer = document.referrer?.replace(/\/$/, "");
