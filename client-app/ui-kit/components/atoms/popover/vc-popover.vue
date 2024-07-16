@@ -23,7 +23,8 @@
       @focusout="hover && close()"
       @blur="hover && close()"
       @click="!hover && toggle()"
-      @keyup="!hover && toggle()"
+      @keyup.enter="!hover && open()"
+      @keyup.esc="!hover && close()"
     >
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
