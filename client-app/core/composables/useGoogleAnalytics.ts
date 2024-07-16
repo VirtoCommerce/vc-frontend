@@ -13,10 +13,26 @@ const { getModuleSettings, hasModuleSettings, isEnabled } = useModuleSettings(MO
 const { currentCurrency } = useCurrency();
 const { currencyCode } = globals;
 
-type GoogleAnalyticsMethodsType = ReturnType<
-  typeof import("@virto-commerce/front-modules-google-ecommerce-analytics").useGoogleAnalyticsModule
+type GoogleAnalyticsMethodsType = Omit<
+  ReturnType<typeof import("@virto-commerce/front-modules-google-ecommerce-analytics").useGoogleAnalyticsModule>,
+  "initModule"
 >;
-let googleAnalyticsMethods: Omit<GoogleAnalyticsMethodsType, "initModule">;
+type GoogleAnalyticsMethodsArgumentsType = Parameters<GoogleAnalyticsMethodsType[keyof GoogleAnalyticsMethodsType]>;
+// needs to queue methods until the module is initialized
+const methodsQueue: Array<{
+  method: keyof GoogleAnalyticsMethodsType;
+  args: GoogleAnalyticsMethodsArgumentsType;
+}> = [];
+let googleAnalyticsMethods: GoogleAnalyticsMethodsType = new Proxy({} as GoogleAnalyticsMethodsType, {
+  get(target, prop) {
+    if (prop !== "init") {
+      return (...args: GoogleAnalyticsMethodsArgumentsType) => {
+        methodsQueue.push({ method: prop as keyof GoogleAnalyticsMethodsType, args });
+      };
+    }
+    return Reflect.get(target, prop);
+  },
+});
 
 export function useGoogleAnalytics() {
   async function init(): Promise<void> {
@@ -34,14 +50,17 @@ export function useGoogleAnalytics() {
           currencyCode,
         });
         googleAnalyticsMethods = methods;
+        if (methodsQueue.length) {
+          methodsQueue.forEach(({ method, args }) => {
+            googleAnalyticsMethods[method](...args);
+          });
+          methodsQueue.length = 0;
+        }
       } catch (e) {
         Logger.error(useGoogleAnalytics.name, e);
       }
     }
   }
 
-  return {
-    init,
-    ...googleAnalyticsMethods,
-  };
+  return Object.assign(googleAnalyticsMethods, { init });
 }
