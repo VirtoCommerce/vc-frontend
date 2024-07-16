@@ -126,6 +126,11 @@ function htmlToText(html) {
     return "\n> " + p1.trim().replace(/\n/g, "\n> ") + "\n";
   }
 
+  // Function to handle paragraphs
+  function handleParagraphs(match, p1) {
+    return "\n" + p1.trim() + "\n";
+  }
+
   // Replace links
   html = html.replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g, handleLinks);
 
@@ -137,6 +142,9 @@ function htmlToText(html) {
 
   // Replace blockquotes
   html = html.replace(/<blockquote[^>]*>(.*?)<\/blockquote>/gs, handleBlockquotes);
+
+  // Replace paragraphs
+  html = html.replace(/<p[^>]*>(.*?)<\/p>/gs, handleParagraphs);
 
   // Remove remaining HTML tags
   html = html.replace(/<\/?[^>]+(>|$)/g, "");
