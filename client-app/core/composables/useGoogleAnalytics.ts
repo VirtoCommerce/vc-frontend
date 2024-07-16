@@ -18,19 +18,20 @@ type GoogleAnalyticsMethodsType = Omit<
   "initModule"
 >;
 type MethodNamesType = keyof GoogleAnalyticsMethodsType;
-type MethodArgsType<M extends MethodNamesType> = Parameters<GoogleAnalyticsMethodsType[M]>;
-type MethodQueueEntryType<M extends MethodNamesType> = {
-  method: M;
-  args: MethodArgsType<M>;
+type MethodArgsType = unknown[];
+type MethodQueueEntryType = {
+  method: MethodNamesType;
+  args: MethodArgsType;
 };
 
 // needs to queue methods until the module is initialized
-const methodsQueue: Array<MethodQueueEntryType<MethodNamesType>> = [];
+const methodsQueue: Array<MethodQueueEntryType> = [];
+
 let googleAnalyticsMethods: GoogleAnalyticsMethodsType = new Proxy({} as GoogleAnalyticsMethodsType, {
   get(target, prop) {
     if (prop !== "init") {
-      return (...args: MethodArgsType<MethodNamesType>) => {
-        methodsQueue.push({ method: prop as keyof GoogleAnalyticsMethodsType, args });
+      return (...args: MethodArgsType) => {
+        methodsQueue.push({ method: prop as MethodNamesType, args });
       };
     }
     return Reflect.get(target, prop);
@@ -53,9 +54,11 @@ export function useGoogleAnalytics() {
           currencyCode,
         });
         googleAnalyticsMethods = methods;
+
+        // it there are any methods in the queue, execute them, then clear the queue
         if (methodsQueue.length) {
           methodsQueue.forEach(({ method, args }) => {
-            googleAnalyticsMethods[method](...args);
+            (googleAnalyticsMethods[method] as (...args: MethodArgsType) => void)(...args);
           });
           methodsQueue.length = 0;
         }
