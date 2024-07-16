@@ -1,6 +1,6 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 
 function _useModuleSettings(moduleId: string) {
   const { themeContext } = useThemeContext();
