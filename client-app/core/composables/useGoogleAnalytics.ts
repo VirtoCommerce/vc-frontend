@@ -17,16 +17,19 @@ type GoogleAnalyticsMethodsType = Omit<
   ReturnType<typeof import("@virto-commerce/front-modules-google-ecommerce-analytics").useGoogleAnalyticsModule>,
   "initModule"
 >;
-type GoogleAnalyticsMethodsArgumentsType = Parameters<GoogleAnalyticsMethodsType[keyof GoogleAnalyticsMethodsType]>;
+type MethodNamesType = keyof GoogleAnalyticsMethodsType;
+type MethodArgsType<M extends MethodNamesType> = Parameters<GoogleAnalyticsMethodsType[M]>;
+type MethodQueueEntryType<M extends MethodNamesType> = {
+  method: M;
+  args: MethodArgsType<M>;
+};
+
 // needs to queue methods until the module is initialized
-const methodsQueue: Array<{
-  method: keyof GoogleAnalyticsMethodsType;
-  args: GoogleAnalyticsMethodsArgumentsType;
-}> = [];
+const methodsQueue: Array<MethodQueueEntryType<MethodNamesType>> = [];
 let googleAnalyticsMethods: GoogleAnalyticsMethodsType = new Proxy({} as GoogleAnalyticsMethodsType, {
   get(target, prop) {
     if (prop !== "init") {
-      return (...args: GoogleAnalyticsMethodsArgumentsType) => {
+      return (...args: MethodArgsType<MethodNamesType>) => {
         methodsQueue.push({ method: prop as keyof GoogleAnalyticsMethodsType, args });
       };
     }
