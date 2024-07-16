@@ -1,9 +1,8 @@
 <template>
-  <section>
-    <h2 class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block">
+  <article>
+    <VcTypography tag="h2" class="hidden border-b px-5 py-2 lg:block">
       {{ $t("shared.bulk_order.manually.title") }}
-    </h2>
-
+    </VcTypography>
     <div class="p-6 pb-5 pt-4 md:p-5">
       <p class="text-sm">
         {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
@@ -58,16 +57,22 @@
       </div>
 
       <div class="mb-2 mt-6 flex flex-row flex-wrap justify-between gap-3 md:mb-0 md:flex-nowrap">
-        <VcButton :disabled="!dirty || loading" color="secondary" variant="outline" @click="resetItems">
+        <VcButton
+          :disabled="!dirty || loading"
+          color="secondary"
+          variant="outline"
+          min-width="9rem"
+          @click="resetItems"
+        >
           {{ $t("shared.bulk_order.manually.reset_button") }}
         </VcButton>
 
-        <VcButton :disabled="!valid" :loading="loading" @click="addToCart">
+        <VcButton :disabled="!valid" :loading="loading" min-width="9rem" @click="addToCart">
           {{ $t("shared.bulk_order.manually.add_to_cart_button") }}
         </VcButton>
       </div>
     </div>
-  </section>
+  </article>
 </template>
 
 <script setup lang="ts">

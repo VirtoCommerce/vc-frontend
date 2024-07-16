@@ -699,6 +699,21 @@
         "text_area_placeholder": "Format example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
         "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart"
+      },
+      "from_file": {
+        "title": "Upload file",
+        "upload": {
+          "message": "Upload photos of documents, screenshots, or handwritten notes to get data for a new order.",
+          "examples": {
+            "title": "Examples",
+            "alt": "Examples"
+          }
+        },
+        "processing": {
+          "message": "You can upload image files or pdf files with product listings in any form for quick ordering of items",
+          "loading_message": "Recognizing an uploaded document...",
+          "cancel": "@:common.buttons.cancel"
+        }
       }
     },
     "payment": {
@@ -1316,8 +1331,9 @@
       "title": "Bulk Order Pad",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
       "data_is_invalid_alert": "The details you provided are invalid.",
-      "manually_tab": "Enter Manually",
-      "copy_n_paste_tab": "Copy and Paste"
+      "manually_tab": "Manually",
+      "copy_n_paste_tab": "Copy and Paste",
+      "from_file_tab": "Upload file"
     },
     "demo_landing": {
       "meta": {

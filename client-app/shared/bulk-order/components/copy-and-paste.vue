@@ -1,9 +1,8 @@
 <template>
-  <section class="flex flex-col">
-    <h2 class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block">
+  <article class="flex flex-col">
+    <VcTypography tag="h2" class="hidden border-b px-5 py-2 lg:block">
       {{ $t("shared.bulk_order.copy_n_paste.title") }}
-    </h2>
-
+    </VcTypography>
     <div class="h-full p-6 pb-5 pt-4 md:p-5">
       <p class="mb-2 text-sm font-bold">
         {{ $t("shared.bulk_order.copy_n_paste.subtitle_message") }}
@@ -19,16 +18,16 @@
       />
 
       <div class="mb-2 mt-5 flex flex-wrap justify-between gap-3 md:mb-0 md:mt-2">
-        <VcButton :disabled="!text || loading" color="secondary" variant="outline" @click="text = ''">
+        <VcButton :disabled="!text || loading" color="secondary" variant="outline" min-width="9rem" @click="text = ''">
           {{ $t("shared.bulk_order.copy_n_paste.reset_button") }}
         </VcButton>
 
-        <VcButton :disabled="!text" :loading="loading" @click="addToCart">
+        <VcButton :disabled="!text" :loading="loading" min-width="9rem" @click="addToCart">
           {{ $t("shared.bulk_order.copy_n_paste.add_to_cart_button") }}
         </VcButton>
       </div>
     </div>
-  </section>
+  </article>
 </template>
 
 <script setup lang="ts">

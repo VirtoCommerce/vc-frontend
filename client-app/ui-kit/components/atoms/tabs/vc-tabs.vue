@@ -1,24 +1,24 @@
 <template>
-  <div>
+  <nav>
     <button
       v-for="(item, index) in items"
       :key="index"
       :disabled="isDisabled"
       :class="isActiveItem(item) ? 'cursor-default' : 'text-[--link-color] hover:text-[--link-hover-color]'"
       type="button"
-      class="appearance-none px-2.5 disabled:opacity-40"
+      class="appearance-none disabled:opacity-40"
       @click="select(item)"
     >
-      <span
-        :class="{ [isDisabled ? '!border-neutral-400' : '!border-primary']: isActiveItem(item) }"
-        class="block appearance-none border-b-[3px] border-transparent pb-2.5 pt-3 font-bold"
-      >
-        <slot name="item" v-bind="{ item, index }">
+      <slot name="item" v-bind="{ item, index, isActive: isActiveItem(item) }">
+        <span
+          :class="{ [isDisabled ? '!border-neutral-400' : '!border-primary']: isActiveItem(item) }"
+          class="mx-2.5 block appearance-none border-b-[3px] border-transparent pb-2.5 pt-3 font-bold"
+        >
           {{ textField && item ? item[textField] : item }}
-        </slot>
-      </span>
+        </span>
+      </slot>
     </button>
-  </div>
+  </nav>
 </template>
 
 <script setup lang="ts">

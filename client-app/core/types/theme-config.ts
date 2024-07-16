@@ -23,7 +23,8 @@ export interface IThemeConfigPreset {
   quotes_enabled?: boolean;
   quotes_files_scope?: string;
 
-  bulk_order_enabled?: boolean;
+  purchase_request_file_scope?: string;
+
   product_compare_enabled?: boolean;
   product_compare_limit?: number;
   product_filters_sorting?: boolean;

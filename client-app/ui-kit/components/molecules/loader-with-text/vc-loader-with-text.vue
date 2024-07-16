@@ -3,13 +3,16 @@
     <VcLoader class="inline-block size-6 text-primary" />
 
     <span class="animate-pulse font-bold">
-      {{ $t("common.messages.loading_text") }}
+      {{ text ?? $t("common.messages.loading_text") }}
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps({
-  centered: Boolean,
-});
+interface IProps {
+  centered?: boolean;
+  text?: string;
+}
+
+defineProps<IProps>();
 </script>
