@@ -1,6 +1,6 @@
 <template>
   <VcWidget
-    v-if="!model.hidden && product.variations?.length"
+    v-if="!model.hidden && variations?.length"
     class="variations"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
@@ -20,9 +20,9 @@
       </button>
     </div>
 
-    <VariationsDefault v-if="isSmallScreen || (!isSmallScreen && !isTableView)" :product="product" />
+    <VariationsDefault v-if="isSmallScreen || (!isSmallScreen && !isTableView)" :variations="variations" />
 
-    <VariationsTable v-else :product="product" />
+    <VariationsTable v-else :variations="variations" :sort="sort" @apply-sorting="applySorting" />
   </VcWidget>
 </template>
 
@@ -33,14 +33,22 @@ import { BREAKPOINTS } from "@/core/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { ISortInfo } from "@/core/types";
+
+interface IEmits {
+  (event: "applySorting", item: ISortInfo): void;
+}
 
 interface IProps {
-  product: Product;
+  variations: Product[];
+  sort: ISortInfo;
   model: {
     title?: string;
     hidden?: boolean;
   };
 }
+
+const emit = defineEmits<IEmits>();
 
 defineProps<IProps>();
 
@@ -51,6 +59,10 @@ const isSmallScreen = breakpoints.smaller("xl");
 
 function toggleView() {
   isTableView.value = !isTableView.value;
+}
+
+function applySorting(sortInfo: ISortInfo): void {
+  emit("applySorting", sortInfo);
 }
 </script>
 

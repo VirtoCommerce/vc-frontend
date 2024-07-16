@@ -1,6 +1,12 @@
 <template>
   <div class="variations-table">
-    <VcTable :items="variations" :columns="columns" layout="table-fixed min-w-full w-auto">
+    <VcTable
+      :items="variations"
+      :columns="columns"
+      :sort="sort"
+      layout="table-fixed min-w-full w-auto"
+      @header-click="applySorting"
+    >
       <template #desktop-body>
         <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
           <td class="variations-table__col variations-table__col--title">
@@ -10,7 +16,7 @@
           </td>
 
           <td
-            v-for="(property, index) in properties"
+            v-for="(property, index) in productProperties"
             :key="index"
             class="variations-table__col variations-table__col--property"
           >
@@ -91,8 +97,8 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
-import { ref, computed, onMounted } from "vue";
+import { flatten, sortBy, uniqBy } from "lodash";
+import { ref, computed, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useErrorsTranslator } from "@/core/composables";
@@ -102,53 +108,62 @@ import { useShortCart } from "@/shared/cart/composables";
 import CountInCart from "../count-in-cart.vue";
 import type { Product, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
 import type { ErrorType } from "@/core/composables";
+import type { ISortInfo } from "@/core/types";
 import type { NamedValue } from "vue-i18n";
 
-interface IProps {
-  product: Product;
+interface IEmits {
+  (event: "applySorting", item: ISortInfo): void;
 }
 
-interface IProperties {
+interface IProps {
+  variations: Product[];
+  sort: ISortInfo;
+}
+
+interface IProductProperties {
   name: string;
   label: string;
   values: string[];
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const properties = ref<IProperties[]>([]);
-const propTitles = ref<ITableColumn[]>([]);
+const variations = toRef(props, "variations");
+
+const productProperties = ref<IProductProperties[]>([]);
+const propertiesTitles = ref<ITableColumn[]>([]);
 
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 
-const variations = computed(() => [props.product, ...props.product.variations]);
-
 const columns = computed<ITableColumn[]>(() => [
   {
-    id: "item",
+    id: "name",
     title: t("shared.catalog.product_details.variations.columns.item"),
     sortable: true,
     classes: "min-w-52",
   },
-  ...propTitles.value,
+  ...propertiesTitles.value,
   {
-    id: "stock",
+    id: "instock_quantity",
     title: t("shared.catalog.product_details.variations.columns.stock"),
     align: "center",
+    sortable: true,
     classes: "min-w-[4.375rem] w-[4.375rem]",
   },
   {
     id: "price",
     title: t("shared.catalog.product_details.variations.columns.price"),
     align: "right",
+    sortable: true,
     classes: "min-w-32 w-32",
   },
   {
     id: "quantity",
     title: t("shared.catalog.product_details.variations.columns.quantity"),
-    sortable: true,
     align: "center",
     classes: "min-w-32 w-32",
   },
@@ -173,13 +188,13 @@ const validationErrors = computed<ErrorType[]>(() => {
 const { idErrors } = useErrorsTranslator("validation_error", validationErrors);
 
 function getTableProperties() {
-  if (!variations.value.length) {
+  if (!props.variations.length) {
     return;
   }
 
-  const propertiesCombined = _.flatten(variations.value.map((variation) => getProperties(variation)));
+  const propertiesCombined = flatten(props.variations.map((variation) => getProperties(variation)));
 
-  const names = _.uniqBy(
+  const names = uniqBy(
     propertiesCombined.map((prop) => {
       return {
         name: prop.name,
@@ -189,18 +204,18 @@ function getTableProperties() {
     "name",
   );
 
-  _.each(names, ({ name, label }) => {
-    properties.value.push({
+  names.forEach(({ name, label }) => {
+    productProperties.value.push({
       name,
       label,
-      values: _.map(variations.value, (variation) => {
-        const property = _.find(variation.properties, ["name", name]);
+      values: props.variations.map((variation) => {
+        const property = variation.properties.find((item) => item.name === name);
         return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
       }),
     });
   });
 
-  propTitles.value = properties.value.map((item) => ({
+  propertiesTitles.value = productProperties.value.map((item) => ({
     id: item.name,
     title: item.label,
     sortable: true,
@@ -222,7 +237,7 @@ function getStockQuantity(variation: VariationType) {
 
 function getProperties(variation: VariationType) {
   return Object.values(
-    getPropertiesGroupedByName(_.sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
+    getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
   );
 }
 
@@ -238,6 +253,10 @@ async function changeCart(variation: VariationType, quantity: number) {
   } else {
     await addToCart(variation.id, quantity);
   }
+}
+
+function applySorting(sortInfo: ISortInfo): void {
+  emit("applySorting", sortInfo);
 }
 
 onMounted(() => {

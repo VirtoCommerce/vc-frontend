@@ -2,7 +2,7 @@
   <VcLineItems :with-header="false" class="variations-default">
     <template #line-items>
       <VcLineItem
-        v-for="variation in [product, ...product.variations]"
+        v-for="variation in variations"
         :key="variation.code"
         with-image
         with-price
@@ -12,7 +12,7 @@
         :properties="getProperties(variation)"
         :list-price="variation.price.list"
         :actual-price="variation.price.actual"
-        :vendor="$cfg.vendor_enabled ? product.vendor : undefined"
+        :vendor="$cfg.vendor_enabled ? variation.vendor : undefined"
       >
         <AddToCart :product="variation" />
 
@@ -39,7 +39,7 @@ import InStock from "../in-stock.vue";
 import type { Product, VariationType } from "@/core/api/graphql/types";
 
 interface IProps {
-  product: Product;
+  variations: Product[];
 }
 
 defineProps<IProps>();
