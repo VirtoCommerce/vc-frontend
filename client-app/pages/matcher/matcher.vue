@@ -2,21 +2,19 @@
   <div>
     <SlugContent
       v-if="previewers.slugContent.isActive"
-      v-show="visibleComponent === 'slugContent'"
       :is-visible="visibleComponent === 'slugContent'"
       :path-match="pathMatch"
       @set-state="updateState($event, 'slugContent')"
     />
     <BuilderIo
       v-if="previewers.builderIo.isActive"
-      v-show="visibleComponent === 'builderIo'"
       :is-visible="visibleComponent === 'builderIo'"
       :api-key="builderIoApiKey"
       @set-state="updateState($event, 'builderIo')"
     />
     <Internal
       v-if="previewers.internal.isActive"
-      v-show="visibleComponent === 'internal'"
+      :is-visible="visibleComponent === 'internal'"
       @set-state="updateState($event, 'internal')"
     />
     <div v-if="visibleComponent === 'loader'" class="min-h-[80vh]">
