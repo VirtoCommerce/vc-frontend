@@ -4,4 +4,3 @@ content
 node_modules
 storybook-static
 client-app/core/api/graphql/types.ts
-scripts/generate-routes.ts
