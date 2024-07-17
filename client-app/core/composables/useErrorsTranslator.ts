@@ -31,7 +31,7 @@ export function useErrorsTranslator(
      * `errorParameters can be array or object.
      * examples: ['foo', 'bar'], { first: 'foo', second: 'bar' }
      */
-    const errorParameters = error.parameters ? error.parameters : error.parameter ? [error.parameter] : [];
+    const errorParameters = error.parameters ?? (error.parameter ? [error.parameter] : []);
     return te(translationKey) ? t(translationKey, errorParameters as NamedValue) : error.description;
   }
 
