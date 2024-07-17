@@ -11,7 +11,7 @@ import { onMounted, ref, shallowRef, watchEffect } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import { builderIOComponents } from "./customCompunents";
+import { builderIOComponents } from "./customComponents";
 import type { StateType } from "../priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
 
