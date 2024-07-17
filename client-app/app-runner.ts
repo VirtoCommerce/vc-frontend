@@ -1,6 +1,7 @@
 import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
+import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/builder-preview/utils";
 import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useGoogleAnalytics, useWhiteLabeling, useNavigations } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
@@ -75,7 +76,7 @@ export default async () => {
 
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
-  initializeGoogleAnalytics();
+  void initializeGoogleAnalytics();
   void initializeHotjar();
 
   /**
@@ -119,22 +120,15 @@ export default async () => {
   app.use(router);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value.settings);
+  app.use(configPlugin, themeContext.value);
   app.use(uiKit);
 
-  const referrer = document.referrer?.replace(/\/$/, "");
-  const ep = document.location.search
-    ?.substring(1)
-    .split("?")
-    .map((x) => x.split("="))
-    .find((x) => x[0] === "ep")?.[1]
-    ?.replace(/\/$/, "");
-
-  if (referrer && ep && referrer === ep) {
+  const builderOrigin = getEpParam();
+  if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
     const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, { router, builderOrigin: ep });
+      app.use(builderPreviewPlugin, { router, builderOrigin });
     }
   }
 

@@ -47,7 +47,7 @@
 
             <!-- NAME -->
             <div
-              class="vc-quote-line-items__name text-sm font-extrabold md:grow lg:font-bold lg:leading-4"
+              class="vc-quote-line-items__name text-sm font-extrabold max-md:pb-2 max-md:pe-7 md:grow lg:font-bold lg:leading-4"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
@@ -141,17 +141,16 @@
           <!-- REMOVE BUTTON -->
           <div
             v-if="!readonly"
-            class="vc-quote-line-items__remove-button absolute -right-3 -top-3 md:static md:flex md:w-8 md:justify-end"
+            class="vc-quote-line-items__remove-button absolute right-1.5 top-1 md:static md:flex md:w-8 md:justify-end"
           >
-            <button
-              type="button"
-              class="flex size-[26px] items-center justify-center rounded-full border bg-additional-50 text-danger hover:bg-neutral-100 md:size-7 md:rounded md:border-2"
+            <VcButton
+              :aria-label="$t('common.buttons.remove_from_cart')"
+              color="neutral"
+              size="sm"
+              variant="no-background"
+              icon="x"
               @click="$emit('remove:item', item)"
-            >
-              <svg class="size-3.5">
-                <use href="/static/images/delete.svg#main"></use>
-              </svg>
-            </button>
+            />
           </div>
         </div>
       </div>

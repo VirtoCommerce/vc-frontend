@@ -27,14 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, defineAsyncComponent, ref, watch } from "vue";
 import { useThemeContext, useRouteQueryParam } from "@/core/composables";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { StateType, PreviewerStateType } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
-import BuilderIo from "@/pages/matcher/builder-io.vue";
-import Internal from "@/pages/matcher/internal.vue";
-import SlugContent from "@/pages/matcher/slug-content.vue";
 
 interface IProps {
   pathMatch?: string[];
@@ -47,6 +44,10 @@ const PRIORITIES = {
   slugContent: 2,
   internal: 3,
 };
+
+const BuilderIo = defineAsyncComponent(() => import("@/pages/matcher/builderIo/builder-io.vue"));
+const SlugContent = defineAsyncComponent(() => import("@/pages/matcher/slug-content.vue"));
+const Internal = defineAsyncComponent(() => import("@/pages/matcher/internal.vue"));
 
 const { modulesSettings } = useThemeContext();
 
