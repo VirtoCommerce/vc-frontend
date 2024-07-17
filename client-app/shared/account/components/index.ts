@@ -4,7 +4,6 @@ export { default as ChangePasswordForm } from "./change-password-form.vue";
 export { default as CheckoutDefaultsSuccessModal } from "./checkout-default-success-modal.vue";
 export { default as CreditCard } from "./credit-card.vue";
 export { default as CreditCardSkeleton } from "./credit-card-skeleton.vue";
-export { default as DateFilterSelect } from "./date-filter-select.vue";
 export { default as ForgotPasswordForm } from "./forgot-password-form.vue";
 export { default as OrderLineItems } from "./order-line-items.vue";
 export { default as OrderStatus } from "./order-status.vue";

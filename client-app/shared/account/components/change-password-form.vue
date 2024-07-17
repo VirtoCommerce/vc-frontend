@@ -103,11 +103,11 @@ const { value: oldPassword } = useField<string>("oldPassword");
 const { value: newPassword } = useField<string>("newPassword");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
-const ApiErrors = ref<IdentityErrorType[]>([]);
-const { translatedErrors } = useErrorsTranslator("identity_error", ApiErrors);
+const apiErrors = ref<IdentityErrorType[]>([]);
+const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
 
 const onSubmit = handleSubmit(async (data) => {
-  ApiErrors.value = [];
+  apiErrors.value = [];
 
   const result = await changePassword({
     userId: user.value.id,
@@ -119,7 +119,7 @@ const onSubmit = handleSubmit(async (data) => {
     resetForm();
     emit("succeeded");
   } else if (result.errors?.length) {
-    ApiErrors.value = result.errors;
+    apiErrors.value = result.errors;
   }
 });
 </script>
