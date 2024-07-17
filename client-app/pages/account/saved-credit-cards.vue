@@ -16,6 +16,7 @@
         :key="index"
         :card-number="replaceXFromBeginning(creditCard.cardNumber)"
         :card-expiration="creditCard.cardExpiration"
+        :card-active="creditCard.active"
         @remove="removeCreditCard(creditCard.skyflowId)"
       />
     </div>

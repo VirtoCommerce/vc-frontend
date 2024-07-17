@@ -91,14 +91,14 @@
       <AccountNavigationLink
         :to="{ name: 'SavedCreditCards' }"
         :text="$t('shared.account.navigation.links.saved_credit_cards')"
-        class="credit-card"
+        class="credit-card-icon"
       />
 
       <AccountNavigationLink
         v-if="$cfg.push_messages_enabled"
         :to="{ name: 'Notifications' }"
         :text="$t('shared.account.navigation.links.notifications')"
-        class="notifications"
+        class="notifications-icon"
       />
     </VcWidget>
 
