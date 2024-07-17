@@ -1,5 +1,7 @@
 <template>
-  <div class="flex h-[39px] items-center gap-x-5 bg-[--header-top-bg-color] px-5 text-sm text-additional-50 xl:px-12">
+  <div
+    class="flex h-[39px] items-center gap-x-5 bg-[--header-top-bg-color] px-5 text-sm text-[--header-top-text-color] xl:px-12"
+  >
     <LanguageSelector v-if="$context.availableLanguages && $context.availableLanguages.length > 1" />
     <CurrencySelector v-if="$context.availableCurrencies && $context.availableCurrencies.length > 1" class="h-full" />
 

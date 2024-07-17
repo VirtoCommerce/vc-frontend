@@ -9,10 +9,7 @@
           :disabled="!isAuthenticated"
           @click="openAddToListModal"
         >
-          <VcIcon
-            :class="[customClass, product.inWishlist ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
-            name="whishlist"
-          />
+          <VcIcon :class="[customClass, product.inWishlist ? 'text-primary' : 'text-neutral-400']" name="whishlist" />
         </button>
       </slot>
     </template>

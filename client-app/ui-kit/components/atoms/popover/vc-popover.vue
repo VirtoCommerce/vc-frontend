@@ -20,9 +20,11 @@
       @mouseenter="hover && open()"
       @mouseleave="hover && close()"
       @focusin="hover && open()"
+      @focusout="hover && close()"
       @blur="hover && close()"
       @click="!hover && toggle()"
-      @keyup="!hover && toggle()"
+      @keyup.enter="!hover && open()"
+      @keyup.esc="!hover && close()"
     >
       <slot name="trigger" :open="open" :close="close" :toggle="toggle" :opened="opened" />
     </div>
@@ -88,6 +90,7 @@ const arrowLeft = computed(() => (middlewareData.value.arrow?.x != null ? `${mid
 const { floatingStyles, middlewareData } = useFloating(reference, floating, {
   placement,
   strategy,
+  transform: false,
   middleware: [
     flip(flipOptions.value),
     offset(offsetOptions.value),
