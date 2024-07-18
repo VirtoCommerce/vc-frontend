@@ -11,12 +11,6 @@ on:
       - '.vscode'
       - 'README.md'
       - 'LICENSE'
-  pull_request:
-    paths-ignore:
-      - '.idea'
-      - '.vscode'
-      - 'README.md'
-      - 'LICENSE'
 
 jobs:
   ci:
