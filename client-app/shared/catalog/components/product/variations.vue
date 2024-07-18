@@ -1,6 +1,6 @@
 <template>
   <VcWidget
-    v-if="!model.hidden && product.variations?.length"
+    v-if="!model.hidden"
     class="variations"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
@@ -20,9 +20,25 @@
       </button>
     </div>
 
-    <VariationsDefault v-if="isSmallScreen || (!isSmallScreen && !isTableView)" :product="product" />
+    <VariationsDefault
+      v-if="isSmallScreen || (!isSmallScreen && !isTableView)"
+      :variations="variations"
+      :fetching="fetchingVariations"
+      :page-number="pageNumber"
+      :pages-count="pagesCount"
+      @change-page="changePage"
+    />
 
-    <VariationsTable v-else :product="product" />
+    <VariationsTable
+      v-else
+      :variations="variations"
+      :sort="sort"
+      :fetching="fetchingVariations"
+      :page-number="pageNumber"
+      :pages-count="pagesCount"
+      @apply-sorting="applySorting"
+      @change-page="changePage"
+    />
   </VcWidget>
 </template>
 
@@ -33,14 +49,26 @@ import { BREAKPOINTS } from "@/core/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { ISortInfo } from "@/core/types";
+
+interface IEmits {
+  (event: "applySorting", item: ISortInfo): void;
+  (event: "changePage", pageNumber: number): void;
+}
 
 interface IProps {
-  product: Product;
+  variations: Product[];
+  fetchingVariations: boolean;
+  sort: ISortInfo;
   model: {
     title?: string;
     hidden?: boolean;
   };
+  pageNumber: number;
+  pagesCount: number;
 }
+
+const emit = defineEmits<IEmits>();
 
 defineProps<IProps>();
 
@@ -51,6 +79,14 @@ const isSmallScreen = breakpoints.smaller("xl");
 
 function toggleView() {
   isTableView.value = !isTableView.value;
+}
+
+function applySorting(sortInfo: ISortInfo): void {
+  emit("applySorting", sortInfo);
+}
+
+function changePage(page: number): void {
+  emit("changePage", page);
 }
 </script>
 
