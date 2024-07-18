@@ -130,7 +130,6 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── tsconfig.node.json               // Typescript configuration for Node.js.
 ├── tsconfig.vitest.json
 ├── vite.config.ts                   // Vite configuration file.
-├── vite.routes.config.ts
 ├── vitest.config.ts
 └── yarn.lock                        // Yarn dependencies lock file.
 ```
