@@ -35,7 +35,7 @@
 
         <component
           :is="productVariationsBlock?.type"
-          v-if="productVariationsBlock && !productVariationsBlock.hidden && variations?.length"
+          v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
           :variations="variations"
           :sort="variationSortInfo"
           :model="productVariationsBlock"
