@@ -35,7 +35,7 @@
 
         <component
           :is="productVariationsBlock?.type"
-          v-if="productVariationsBlock && !productVariationsBlock.hidden"
+          v-if="productVariationsBlock && !productVariationsBlock.hidden && variations?.length"
           :variations="variations"
           :sort="variationSortInfo"
           :model="productVariationsBlock"
@@ -86,7 +86,7 @@ const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
 
-const variationsPerPage = 10;
+const variationsPerPage = 50;
 
 interface IProps {
   productId?: string;
