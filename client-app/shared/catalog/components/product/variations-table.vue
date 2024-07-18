@@ -4,9 +4,18 @@
       :items="variations"
       :columns="columns"
       :sort="sort"
+      :loading="fetching"
       layout="table-fixed min-w-full w-auto"
       @header-click="applySorting"
     >
+      <template #desktop-skeleton>
+        <tr v-for="rowIndex in 5" :key="rowIndex" class="variations-table__row even:bg-gray-50">
+          <td v-for="columnIndex in columns.length" :key="columnIndex" class="p-5">
+            <div class="h-6 animate-pulse bg-gray-200" />
+          </td>
+        </tr>
+      </template>
+
       <template #desktop-body>
         <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
           <td class="variations-table__col variations-table__col--title">
@@ -98,7 +107,7 @@
 
 <script setup lang="ts">
 import { flatten, sortBy, uniqBy } from "lodash";
-import { ref, computed, onMounted, toRef } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useErrorsTranslator } from "@/core/composables";
@@ -118,6 +127,7 @@ interface IEmits {
 interface IProps {
   variations: Product[];
   sort: ISortInfo;
+  fetching: boolean;
 }
 
 interface IProductProperties {
@@ -132,10 +142,45 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const variations = toRef(props, "variations");
+const variations = computed(() => props.variations);
+const productProperties = computed<IProductProperties[]>(() => {
+  const properties: IProductProperties[] = [];
 
-const productProperties = ref<IProductProperties[]>([]);
-const propertiesTitles = ref<ITableColumn[]>([]);
+  const propertiesCombined = flatten(variations.value.map((variation) => getProperties(variation)));
+
+  const names = uniqBy(
+    propertiesCombined.map((prop) => {
+      return {
+        name: prop.name,
+        label: prop.label,
+      };
+    }),
+    "name",
+  );
+
+  names.forEach(({ name, label }) => {
+    properties.push({
+      name,
+      label,
+      values: variations.value.map((variation) => {
+        const property = variation.properties.find((item) => item.name === name);
+        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
+      }),
+    });
+  });
+
+  return properties;
+});
+
+const propertiesTitles = computed<ITableColumn[]>(() =>
+  productProperties.value.map((item) => ({
+    id: item.name,
+    title: item.label,
+    sortable: true,
+    align: "center",
+    classes: "min-w-24 w-24",
+  })),
+);
 
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 
@@ -187,43 +232,6 @@ const validationErrors = computed<ErrorType[]>(() => {
 
 const { idErrors } = useErrorsTranslator("validation_error", validationErrors);
 
-function getTableProperties() {
-  if (!props.variations.length) {
-    return;
-  }
-
-  const propertiesCombined = flatten(props.variations.map((variation) => getProperties(variation)));
-
-  const names = uniqBy(
-    propertiesCombined.map((prop) => {
-      return {
-        name: prop.name,
-        label: prop.label,
-      };
-    }),
-    "name",
-  );
-
-  names.forEach(({ name, label }) => {
-    productProperties.value.push({
-      name,
-      label,
-      values: props.variations.map((variation) => {
-        const property = variation.properties.find((item) => item.name === name);
-        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
-      }),
-    });
-  });
-
-  propertiesTitles.value = productProperties.value.map((item) => ({
-    id: item.name,
-    title: item.label,
-    sortable: true,
-    align: "center",
-    classes: "min-w-24 w-24",
-  }));
-}
-
 function getCountInCart(variation: VariationType) {
   return getLineItem(variation)?.quantity || 0;
 }
@@ -258,10 +266,6 @@ async function changeCart(variation: VariationType, quantity: number) {
 function applySorting(sortInfo: ISortInfo): void {
   emit("applySorting", sortInfo);
 }
-
-onMounted(() => {
-  getTableProperties();
-});
 </script>
 
 <style lang="scss">

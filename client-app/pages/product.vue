@@ -39,6 +39,7 @@
           :variations="variations"
           :sort="variationSortInfo"
           :model="productVariationsBlock"
+          :fetching-variations="fetchingVariations"
           @apply-sorting="sortVariations"
         />
 
@@ -82,6 +83,8 @@ const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
 
+const variationsPerPage = 1000;
+
 interface IProps {
   productId?: string;
   allowSetMeta?: boolean;
@@ -91,7 +94,7 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
-const { products: variations, fetchProducts } = useProducts();
+const { loading: fetchingVariations, products: variations, fetchProducts } = useProducts();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
@@ -158,6 +161,7 @@ async function sortVariations(sortInfo: ISortInfo): Promise<void> {
   await fetchProducts({
     sort: getSortingExpression(sortInfo),
     filter: variationsFilterExpression.value,
+    itemsPerPage: variationsPerPage,
   });
 }
 
@@ -171,6 +175,7 @@ watchEffect(async () => {
   if (product.value?.hasVariations) {
     await fetchProducts({
       filter: variationsFilterExpression.value,
+      itemsPerPage: variationsPerPage,
     });
   }
 });

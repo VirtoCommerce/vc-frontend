@@ -1,6 +1,6 @@
 <template>
   <VcWidget
-    v-if="!model.hidden && variations?.length"
+    v-if="!model.hidden"
     class="variations"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
@@ -20,9 +20,19 @@
       </button>
     </div>
 
-    <VariationsDefault v-if="isSmallScreen || (!isSmallScreen && !isTableView)" :variations="variations" />
+    <VariationsDefault
+      v-if="isSmallScreen || (!isSmallScreen && !isTableView)"
+      :variations="variations"
+      :fetching="fetchingVariations"
+    />
 
-    <VariationsTable v-else :variations="variations" :sort="sort" @apply-sorting="applySorting" />
+    <VariationsTable
+      v-else
+      :variations="variations"
+      :sort="sort"
+      :fetching="fetchingVariations"
+      @apply-sorting="applySorting"
+    />
   </VcWidget>
 </template>
 
@@ -41,6 +51,7 @@ interface IEmits {
 
 interface IProps {
   variations: Product[];
+  fetchingVariations: boolean;
   sort: ISortInfo;
   model: {
     title?: string;
