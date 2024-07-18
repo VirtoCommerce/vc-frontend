@@ -40,7 +40,10 @@
           :sort="variationSortInfo"
           :model="productVariationsBlock"
           :fetching-variations="fetchingVariations"
+          :page-number="variationsPageNumber"
+          :pages-count="variationsPagesCount"
           @apply-sorting="sortVariations"
+          @change-page="changeVariationsPage"
         />
 
         <component
@@ -83,7 +86,7 @@ const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
 
-const variationsPerPage = 1000;
+const variationsPerPage = 10;
 
 interface IProps {
   productId?: string;
@@ -94,7 +97,7 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
-const { loading: fetchingVariations, products: variations, fetchProducts } = useProducts();
+const { loading: fetchingVariations, products: variations, pages: variationsPagesCount, fetchProducts } = useProducts();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
@@ -115,6 +118,7 @@ const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
 });
+const variationsPageNumber = ref(1);
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} status:hidden,visible`);
 
 const productInfoSection = computed(() =>
@@ -155,14 +159,26 @@ const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
 });
 
-async function sortVariations(sortInfo: ISortInfo): Promise<void> {
-  variationSortInfo.value = sortInfo;
-
+async function fetchVariations(): Promise<void> {
   await fetchProducts({
-    sort: getSortingExpression(sortInfo),
+    sort: getSortingExpression(variationSortInfo.value),
     filter: variationsFilterExpression.value,
+    page: variationsPageNumber.value,
     itemsPerPage: variationsPerPage,
   });
+}
+
+async function sortVariations(sortInfo: ISortInfo): Promise<void> {
+  variationsPageNumber.value = 1;
+  variationSortInfo.value = sortInfo;
+
+  await fetchVariations();
+}
+
+async function changeVariationsPage(pageNumber: number): Promise<void> {
+  variationsPageNumber.value = pageNumber;
+
+  await fetchVariations();
 }
 
 watchEffect(async () => {

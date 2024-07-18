@@ -24,6 +24,9 @@
       v-if="isSmallScreen || (!isSmallScreen && !isTableView)"
       :variations="variations"
       :fetching="fetchingVariations"
+      :page-number="pageNumber"
+      :pages-count="pagesCount"
+      @change-page="changePage"
     />
 
     <VariationsTable
@@ -31,7 +34,10 @@
       :variations="variations"
       :sort="sort"
       :fetching="fetchingVariations"
+      :page-number="pageNumber"
+      :pages-count="pagesCount"
       @apply-sorting="applySorting"
+      @change-page="changePage"
     />
   </VcWidget>
 </template>
@@ -47,6 +53,7 @@ import type { ISortInfo } from "@/core/types";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;
+  (event: "changePage", pageNumber: number): void;
 }
 
 interface IProps {
@@ -57,6 +64,8 @@ interface IProps {
     title?: string;
     hidden?: boolean;
   };
+  pageNumber: number;
+  pagesCount: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -74,6 +83,10 @@ function toggleView() {
 
 function applySorting(sortInfo: ISortInfo): void {
   emit("applySorting", sortInfo);
+}
+
+function changePage(page: number): void {
+  emit("changePage", page);
 }
 </script>
 

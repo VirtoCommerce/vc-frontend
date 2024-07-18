@@ -25,12 +25,21 @@
           <CountInCart :product-id="variation.id" />
         </div>
       </VcLineItem>
+
+      <VcPagination
+        v-if="pagesCount > 1"
+        v-model:page="pageNumber"
+        :pages="pagesCount"
+        class="p-4"
+        @update:page="changePage"
+      />
     </template>
   </VcLineItems>
 </template>
 
 <script setup lang="ts">
 import { sortBy } from "lodash";
+import { toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
@@ -38,16 +47,30 @@ import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
 import type { Product, VariationType } from "@/core/api/graphql/types";
 
-interface IProps {
-  variations: Product[];
+interface IEmits {
+  (event: "changePage", page: number): void;
 }
 
-defineProps<IProps>();
+const emit = defineEmits<IEmits>();
+
+const props = defineProps<IProps>();
+
+interface IProps {
+  variations: Product[];
+  pageNumber: number;
+  pagesCount: number;
+}
+
+const pageNumber = toRef(props, "pageNumber");
 
 function getProperties(variation: VariationType) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
   );
+}
+
+function changePage(page: number): void {
+  emit("changePage", page);
 }
 </script>
 

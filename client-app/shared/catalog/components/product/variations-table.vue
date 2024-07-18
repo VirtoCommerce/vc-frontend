@@ -5,8 +5,12 @@
       :columns="columns"
       :sort="sort"
       :loading="fetching"
+      :page="pageNumber"
+      :pages="pagesCount"
+      :hide-default-footer="!pagesCount"
       layout="table-fixed min-w-full w-auto"
       @header-click="applySorting"
+      @page-changed="changePage"
     >
       <template #desktop-skeleton>
         <tr v-for="rowIndex in 5" :key="rowIndex" class="variations-table__row even:bg-gray-50">
@@ -122,12 +126,15 @@ import type { NamedValue } from "vue-i18n";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;
+  (event: "changePage", page: number): void;
 }
 
 interface IProps {
   variations: Product[];
   sort: ISortInfo;
   fetching: boolean;
+  pageNumber?: number;
+  pagesCount?: number;
 }
 
 interface IProductProperties {
@@ -265,6 +272,10 @@ async function changeCart(variation: VariationType, quantity: number) {
 
 function applySorting(sortInfo: ISortInfo): void {
   emit("applySorting", sortInfo);
+}
+
+function changePage(page: number): void {
+  emit("changePage", page);
 }
 </script>
 
