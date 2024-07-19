@@ -1,5 +1,5 @@
 <template>
-  <component :is="page" v-if="isVisible" />
+  <component :is="page" v-show="isVisible" />
 </template>
 
 <script setup lang="ts">
