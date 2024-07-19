@@ -135,8 +135,8 @@ onMounted(async () => {
   // Dynamic import is required to avoid SSR errors
   // SSR is used to generate routes.json
   // https://virtocommerce.atlassian.net/browse/ST-5051
-  const twElements = await import("tw-elements");
-  twElements.initTE({ Lightbox: twElements.Lightbox });
+  const { initTE, Lightbox } = await import("tw-elements");
+  initTE({ Lightbox });
 });
 </script>
 
