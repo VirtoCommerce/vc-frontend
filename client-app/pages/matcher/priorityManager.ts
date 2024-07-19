@@ -8,8 +8,8 @@ export type PreviewerStateType = {
 };
 
 export function getVisiblePreviewer(previewers: PreviewerStateType[]): PreviewerStateType["id"] | "loader" | null {
-  function is404(el: PreviewerStateType): boolean {
-    return el.id === "internal" && el.state === "empty";
+  function is404(previewer: PreviewerStateType): boolean {
+    return previewer.id === "internal" && previewer.state === "empty";
   }
 
   const activeUnits = previewers
