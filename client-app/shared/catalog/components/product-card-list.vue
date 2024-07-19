@@ -96,11 +96,11 @@
     </div>
 
     <div class="vc-product-card-list__price mt-2 w-full sm:mt-0 2xl:pr-2">
-      <VcItemPriceCatalog :has-variations="hasVariations" :value="price" class="md:flex-col md:gap-0" />
+      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" class="md:flex-col md:gap-0" />
     </div>
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
-      <template v-if="hasVariations">
+      <template v-if="product.hasVariations">
         <VcButton
           :to="link"
           :target="target"
@@ -147,7 +147,7 @@
 import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
-import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
+import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -174,8 +174,7 @@ const isDigital = computed(() => props.product.productType === ProductType.Digit
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
-const hasVariations = computed(() => productHasVariations(props.product));
-const price = computed(() => (hasVariations.value ? props.product.minVariationPrice : props.product.price));
+const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 </script>
 
 <style scoped lang="scss">

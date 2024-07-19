@@ -1,6 +1,6 @@
 import type { ICurrency } from "./currency";
 import type { ILanguage } from "./language";
-import type { IThemeConfigPreset } from "./theme-config";
+import type { IThemeConfigPreset, IThemeConfigSettings } from "./theme-config";
 import type { GetStoreQuery } from "../api/graphql/types";
 
 export interface IThemeContext {
@@ -11,6 +11,7 @@ export interface IThemeContext {
   defaultCurrency: ICurrency;
   availableLanguages: ILanguage[];
   availableCurrencies: ICurrency[];
-  settings: IThemeConfigPreset;
+  settings: IThemeConfigSettings;
+  preset: IThemeConfigPreset;
   storeSettings: NonNullable<GetStoreQuery["store"]>["settings"];
 }

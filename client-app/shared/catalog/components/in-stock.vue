@@ -8,7 +8,12 @@
       {{ inStockQuantityLabel }}
     </span>
 
-    <span v-if="textEnabled">
+    <span
+      v-if="textEnabled"
+      :class="{
+        'ms-1': quantity,
+      }"
+    >
       {{ quantity ? $t("common.suffixes.product_count_in_stock") : $t("common.labels.in_stock") }}
     </span>
   </VcChip>

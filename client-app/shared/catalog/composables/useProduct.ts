@@ -7,20 +7,20 @@ import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
 import type { Ref, ShallowRef } from "vue";
 
 export function useProduct() {
-  const loading: Ref<boolean> = ref(true);
+  const fetching: Ref<boolean> = ref(true);
   const product: ShallowRef<GetProductQuery["product"] | undefined> = shallowRef();
 
   const broadcast = useBroadcast();
 
-  async function loadProduct(id: string) {
-    loading.value = true;
+  async function fetchProduct(id: string) {
+    fetching.value = true;
     try {
       product.value = await getProduct(id);
     } catch (e) {
-      Logger.error(`${useProduct.name}.${loadProduct.name}`, e);
+      Logger.error(`${useProduct.name}.${fetchProduct.name}`, e);
       throw e;
     } finally {
-      loading.value = false;
+      fetching.value = false;
     }
   }
 
@@ -40,8 +40,8 @@ export function useProduct() {
   });
 
   return {
-    loadProduct,
-    loading: readonly(loading),
+    fetchProduct,
+    fetching: readonly(fetching),
     product: computed(() => product.value),
   };
 }

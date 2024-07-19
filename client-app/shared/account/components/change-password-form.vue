@@ -40,8 +40,8 @@
     />
     <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-    <VcAlert v-for="error in commonErrors" :key="error" color="danger" class="my-5 text-xs" icon>
-      {{ error }}
+    <VcAlert v-for="error in translatedErrors" :key="error.id" color="danger" class="my-5 text-xs" icon>
+      {{ error.translation }}
     </VcAlert>
 
     <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" type="submit" class="mt-5 w-full lg:w-48">
@@ -56,9 +56,10 @@ import { useField, useForm } from "vee-validate";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
-import { useIdentityErrorTranslator } from "@/core/composables";
+import { useErrorsTranslator } from "@/core/composables";
 import { usePasswordRequirements, useUser } from "../composables";
 import PasswordTips from "./password-tips.vue";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "succeeded"): void;
@@ -71,8 +72,6 @@ const MAX_PASS_LENGTH = 64;
 const { t } = useI18n();
 const { changePassword, loading, user } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
 
 const validationSchema = toTypedSchema(
   object({
@@ -104,10 +103,11 @@ const { value: oldPassword } = useField<string>("oldPassword");
 const { value: newPassword } = useField<string>("newPassword");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
-const commonErrors = ref<string[]>([]);
+const apiErrors = ref<IdentityErrorType[]>([]);
+const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
 
 const onSubmit = handleSubmit(async (data) => {
-  commonErrors.value = [];
+  apiErrors.value = [];
 
   const result = await changePassword({
     userId: user.value.id,
@@ -119,13 +119,7 @@ const onSubmit = handleSubmit(async (data) => {
     resetForm();
     emit("succeeded");
   } else if (result.errors?.length) {
-    result.errors.forEach((error) => {
-      const errorDescription = getIdentityErrorTranslation(error);
-
-      if (errorDescription) {
-        commonErrors.value.push(errorDescription);
-      }
-    });
+    apiErrors.value = result.errors;
   }
 });
 </script>

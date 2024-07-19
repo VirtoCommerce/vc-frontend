@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <ProductPriceBlock :product="product">
-      <template v-if="!!product.hasVariations">
+      <template v-if="product.hasVariations">
         <div class="flex flex-wrap justify-between gap-x-2 text-base font-bold">
           <span>
             {{ $t("pages.product.variations_total_label") }}
@@ -57,6 +57,7 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
+  variations?: Product[];
 }
 
 const props = defineProps<IProps>();
@@ -71,8 +72,7 @@ const variationsCartTotalAmount = computed<number>(() => {
     return 0;
   }
 
-  const variationsIds = props.product.variations!.map((variation) => variation.id!);
-  variationsIds.push(props.product.id);
+  const variationsIds = props.variations?.map((variation) => variation.id!) ?? [];
 
   return getItemsTotal(variationsIds);
 });

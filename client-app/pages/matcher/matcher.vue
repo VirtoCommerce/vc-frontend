@@ -25,20 +25,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, defineAsyncComponent, ref } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { getVisiblePreviewer } from "./priorityManager";
 import type { StateType, PreviewerStateType } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
-import BuilderIo from "@/pages/matcher/builder-io.vue";
-import Internal from "@/pages/matcher/internal.vue";
-import SlugContent from "@/pages/matcher/slug-content.vue";
 
 interface IProps {
   pathMatch?: string[];
 }
 
 defineProps<IProps>();
+
+const BuilderIo = defineAsyncComponent(() => import("@/pages/matcher/builderIo/builder-io.vue"));
+const SlugContent = defineAsyncComponent(() => import("@/pages/matcher/slug-content.vue"));
+const Internal = defineAsyncComponent(() => import("@/pages/matcher/internal.vue"));
 
 const { modulesSettings } = useThemeContext();
 
