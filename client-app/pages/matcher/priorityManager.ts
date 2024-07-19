@@ -16,7 +16,7 @@ export function getVisiblePreviewer(previewers: PreviewerStateType[]): Previewer
     .filter((el) => el.isActive && (el.state !== "empty" || is404(el)))
     .sort((a, b) => a.priority - b.priority);
 
-  // if there is no active previewers or the only active previewer is internal and empty (means 404 page)
+  // if there is no active previewers or the previewer with highest priority is internal and empty (means 404 page)
   if (!activeUnits.length || is404(activeUnits[0])) {
     return null;
   }
