@@ -1,5 +1,5 @@
 <template>
-  <div v-if="canShowContent" ref="builderIoAnchor">
+  <div v-if="isVisible && canShowContent" ref="builderIoAnchor">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
 </template>
@@ -21,6 +21,7 @@ interface IEmits {
 
 interface IProps {
   apiKey?: string;
+  isVisible?: boolean;
 }
 
 const emit = defineEmits<IEmits>();

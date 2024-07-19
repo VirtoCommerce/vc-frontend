@@ -1,5 +1,5 @@
 <template>
-  <component :is="page" />
+  <component :is="page" v-if="isVisible" />
 </template>
 
 <script setup lang="ts">
@@ -7,11 +7,16 @@ import { computed, defineAsyncComponent, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 import type { StateType } from "@/pages/matcher/priorityManager";
 
+interface IProps {
+  isVisible?: boolean;
+}
+
 interface IEmits {
   (event: "setState", value: StateType): void;
 }
 
 const emit = defineEmits<IEmits>();
+defineProps<IProps>();
 
 const pages = {
   "/": defineAsyncComponent(() => import("@/pages/home.vue")),

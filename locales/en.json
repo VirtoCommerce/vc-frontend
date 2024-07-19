@@ -1268,7 +1268,8 @@
       "no_products_filtered_message": "No results found",
       "no_facet_found_message": "No results",
       "no_products_button": "Reset search",
-      "products_icon": "Product icon"
+      "products_icon": "Product icon",
+      "show_all_results": "Show all results"
     },
     "product": {
       "sku_label": "@:common.labels.sku",

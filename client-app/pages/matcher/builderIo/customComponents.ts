@@ -109,6 +109,13 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         defaultValue: false,
         helperText: "Allow the component to set SEO meta tags based on fetched category",
       },
+      {
+        name: "showButtonToDefaultView",
+        type: "boolean",
+        defaultValue: false,
+        helperText:
+          "Toggle this switch to add a button that, when clicked, shows the default category view. Applicable for pages with an URL overlapping the existing category page URL (e.g., /printers).",
+      },
     ],
   },
   {
