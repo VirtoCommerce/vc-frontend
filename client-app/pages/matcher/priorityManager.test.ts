@@ -160,7 +160,7 @@ describe("getVisiblePreviewer", () => {
     expect(getVisiblePreviewer(test7)).toBe("loader");
   });
 
-  it("returns null if the highest priority previewer is 'internal' and has 'empty' state (means 404)", () => {
+  it("returns null if the there is no active or 'ready' previewer, but 'internal' with 'empty' state (means 404)", () => {
     const test8: PreviewerStateType[] = [
       {
         id: "internal",
