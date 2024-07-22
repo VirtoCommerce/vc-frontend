@@ -146,7 +146,7 @@
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
           :loading="loading || facetsLoading"
-          :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+          :filters="{ facets: facetsByOrder, inStock: savedInStock, branches: savedBranches }"
           :hide-sorting="hideSorting"
           :hide-all-filters="hideSidebar"
           @reset-facet-filters="resetFacetFilters"
@@ -260,6 +260,8 @@ interface IProps {
   fixedProductsCount?: number;
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
+  filtersDisplayOrder?: string;
+  filtersDisplayOrderShowRest?: boolean;
 }
 
 const { catalogId, currencyCode } = globals;
@@ -341,6 +343,30 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
 const isExistSelectedFacets = computedEager<boolean>(() =>
   facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
+
+const facetsByOrder = computed(() => {
+  if (props.filtersDisplayOrder) {
+    const order = props.filtersDisplayOrder
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter((item) => item);
+
+    const sorted: FacetItemType[] = [];
+
+    order.forEach((filter) => {
+      const facet = facets.value.find(({ label }) => label.toLowerCase() === filter);
+      if (facet) {
+        sorted.push(facet);
+      }
+    });
+
+    return props.filtersDisplayOrderShowRest
+      ? [...sorted, ...facets.value.filter(({ label }) => !order.includes(label.toLowerCase()))]
+      : sorted;
+  }
+
+  return facets.value;
+});
 
 const isPopupSidebarFiltersDirty = computedEager<boolean>(
   () =>
