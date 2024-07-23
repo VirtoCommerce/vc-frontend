@@ -8,6 +8,7 @@ importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
 );
 
+const DEFAULT_RETURN_URL = "/account/notifications";
 const DB_NAME = "fcm-auxiliary-database";
 const DB_STORE_OBJECT = "data";
 const DB_DEFAULT_ICON_ID = "defaultIcon";
@@ -22,7 +23,7 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
-  const url = event.notification?.data?.url || "/";
+  const url = event.notification?.data?.url || DEFAULT_RETURN_URL;
   event.waitUntil(self.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`));
 });
 
