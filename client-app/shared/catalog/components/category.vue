@@ -70,7 +70,7 @@
             </span>
 
             <sup
-              v-if="!loading && !hideTotal && !Number(fixedProductsCount)"
+              v-if="!loading && !hideTotal && !fixedProductsCount"
               class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
               <b class="font-extrabold">{{ total }}</b>
@@ -195,6 +195,11 @@
           :search-params="searchParams"
           @reset-facet-filters="resetFacetFilters"
         />
+        <div class="text-center">
+          <VcButton v-if="showButtonToDefaultView" class="my-8" color="primary" :to="{ query: { view: 'default' } }">
+            {{ $t("pages.catalog.show_all_results") }}
+          </VcButton>
+        </div>
       </div>
     </div>
   </VcContainer>
@@ -252,8 +257,9 @@ interface IProps {
   columnsAmountTablet?: string;
   keyword?: string;
   filter?: string;
-  fixedProductsCount?: string;
+  fixedProductsCount?: number;
   allowSetMeta?: boolean;
+  showButtonToDefaultView?: boolean;
 }
 
 const { catalogId, currencyCode } = globals;
@@ -319,18 +325,17 @@ const breadcrumbs = useBreadcrumbs(() => {
 
 const searchParams = computedEager<ProductsSearchParams>(() => ({
   categoryId: props.categoryId,
-  itemsPerPage: Number(props.fixedProductsCount) || itemsPerPage.value,
+  itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
   keyword: props.keyword || (props.isSearchPage ? searchQueryParam.value : keywordQueryParam.value),
-  filter:
-    props.filter ||
-    [
-      facetsQueryParam.value,
-      getFilterExpressionForInStock(savedInStock),
-      getFilterExpressionForAvailableIn(savedBranches),
-    ]
-      .filter(Boolean)
-      .join(" "),
+  filter: [
+    props.filter,
+    facetsQueryParam.value,
+    getFilterExpressionForInStock(savedInStock),
+    getFilterExpressionForAvailableIn(savedBranches),
+  ]
+    .filter(Boolean)
+    .join(" "),
 }));
 
 const isExistSelectedFacets = computedEager<boolean>(() =>

@@ -11,7 +11,7 @@
       {{ product.name }}
     </VcTypography>
 
-    <div v-if="!hasVariations" class="mt-2 flex flex-wrap gap-5">
+    <div v-if="!product.hasVariations" class="mt-2 flex flex-wrap gap-5">
       <VcCopyText :text="product.code" :notification="$t('pages.product.sku_copied_message')">
         <span class="text-base text-secondary-900">
           {{ $t("pages.product.sku_label") }}
@@ -35,9 +35,15 @@
 
         <component
           :is="productVariationsBlock?.type"
-          v-if="productVariationsBlock && !productVariationsBlock.hidden"
-          :product="product"
+          v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
+          :variations="variations"
+          :sort="variationSortInfo"
           :model="productVariationsBlock"
+          :fetching-variations="fetchingVariations"
+          :page-number="variationsPageNumber"
+          :pages-count="variationsPagesCount"
+          @apply-sorting="sortVariations"
+          @change-page="changeVariationsPage"
         />
 
         <component
@@ -51,31 +57,36 @@
       <ProductSidebar
         :class="[
           'flex-none md:sticky md:top-18 md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
-          { 'print:hidden': hasVariations },
+          { 'print:hidden': product.hasVariations },
         ]"
         :product="sideBarProduct"
+        :variations="variations"
       />
     </div>
   </VcContainer>
 
-  <Error404 v-else-if="!loading && template" />
+  <Error404 v-else-if="!fetchingProduct && template" />
 </template>
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, shallowRef, watchEffect } from "vue";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { buildBreadcrumbs, productHasVariations } from "@/core/utilities";
-import { useProduct, useRelatedProducts, useCategory, ProductSidebar } from "@/shared/catalog";
+import { SortDirection } from "@/core/enums";
+import { buildBreadcrumbs, getSortingExpression } from "@/core/utilities";
+import { useProduct, useRelatedProducts, useCategory, ProductSidebar, useProducts } from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
+import type { ISortInfo } from "@/core/types";
 import type { PageContent } from "@/shared/static-content";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
+
+const variationsPerPage = 50;
 
 interface IProps {
   productId?: string;
@@ -85,7 +96,8 @@ interface IProps {
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
-const { product, loading, loadProduct } = useProduct();
+const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
+const { loading: fetchingVariations, products: variations, pages: variationsPagesCount, fetchProducts } = useProducts();
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
@@ -96,11 +108,18 @@ const sideBarProduct = computed(() => {
   return product.value as Product;
 });
 
+const productId = toRef(props, "productId");
+
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
-const hasVariations = computed(() => productHasVariations(product.value));
+const variationSortInfo = ref<ISortInfo>({
+  column: "name",
+  direction: SortDirection.Ascending,
+});
+const variationsPageNumber = ref(1);
+const variationsFilterExpression = ref(`productfamilyid:${productId.value} status:hidden,visible`);
 
 const productInfoSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "product-info"),
@@ -140,11 +159,40 @@ const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
 });
 
+async function fetchVariations(): Promise<void> {
+  await fetchProducts({
+    sort: getSortingExpression(variationSortInfo.value),
+    filter: variationsFilterExpression.value,
+    page: variationsPageNumber.value,
+    itemsPerPage: variationsPerPage,
+  });
+}
+
+async function sortVariations(sortInfo: ISortInfo): Promise<void> {
+  variationsPageNumber.value = 1;
+  variationSortInfo.value = sortInfo;
+
+  await fetchVariations();
+}
+
+async function changeVariationsPage(pageNumber: number): Promise<void> {
+  variationsPageNumber.value = pageNumber;
+
+  await fetchVariations();
+}
+
 watchEffect(async () => {
-  const productId = props.productId;
-  await loadProduct(productId);
+  await fetchProduct(productId.value);
+
   if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
-    await fetchRelatedProducts({ productId, itemsPerPage: 30 });
+    await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
+  }
+
+  if (product.value?.hasVariations) {
+    await fetchProducts({
+      filter: variationsFilterExpression.value,
+      itemsPerPage: variationsPerPage,
+    });
   }
 });
 

@@ -39,49 +39,6 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     properties {
       ...property
     }
-    variations {
-      id
-      name
-      images {
-        url
-      }
-      minQuantity
-      maxQuantity
-      code
-      productType
-      properties {
-        ...property
-      }
-      vendor {
-        id
-        name
-        rating {
-          value
-          reviewCount
-        }
-      }
-      availabilityData {
-        ...availabilityData
-      }
-      price {
-        actual {
-          amount
-          formattedAmount
-        }
-        discountAmount {
-          amount
-          formattedAmount
-        }
-        sale {
-          amount
-          formattedAmount
-        }
-        list {
-          amount
-          formattedAmount
-        }
-      }
-    }
     vendor {
       id
       name

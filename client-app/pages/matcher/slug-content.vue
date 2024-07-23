@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading && (hasContent || objectType)" class="slug-content">
+  <div v-if="isVisible && !loading && (hasContent || objectType)" class="slug-content">
     <CategoryComponent v-if="objectType === 'Category'" :category-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
     <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
     <StaticPage v-else-if="hasContent" />
@@ -16,6 +16,7 @@ import type { StateType } from "@/pages/matcher/priorityManager";
 
 interface IProps {
   pathMatch?: string[];
+  isVisible?: boolean;
 }
 
 interface IEmits {

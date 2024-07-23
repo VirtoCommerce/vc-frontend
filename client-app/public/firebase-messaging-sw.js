@@ -3,10 +3,11 @@
 // TODO: Update the version number as needed
 // TODO: Refactor for using esm imports when firefox supports it https://caniuse.com/mdn-api_serviceworker_ecmascript_modules
 const VERSION = "10.12.2";
-importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`);
-importScripts(`//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`);
+importScripts(
+  `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
+  `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
+);
 
-const HTML_TAG_REGEX = /(<([^>]+)>)/gi;
 const DB_NAME = "fcm-auxiliary-database";
 const DB_STORE_OBJECT = "data";
 const DB_DEFAULT_ICON_ID = "defaultIcon";
@@ -21,7 +22,8 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
-  event.waitUntil(self.clients.openWindow(event.notification?.data?.url || self.location.origin));
+  const url = event.notification?.data?.url || "/";
+  event.waitUntil(self.clients.openWindow(`/push-message/${event.notification?.data?.messageId}/?returnUrl=${url}`));
 });
 
 self.addEventListener("push", function (event) {
@@ -30,9 +32,9 @@ self.addEventListener("push", function (event) {
     registration.pushManager.getSubscription().then(async () => {
       const defaultIcon = await getDefaultIcon();
       return self.registration.showNotification(data?.title ?? "", {
-        data: data.data,
+        data: { messageId: data.messageId, url: data.url },
         badge: data?.icon || defaultIcon,
-        body: data?.body?.replace(HTML_TAG_REGEX, "")?.trim() ?? "",
+        body: htmlToText(data?.body) ?? "",
         icon: data?.icon || defaultIcon,
       });
     }),
@@ -85,4 +87,68 @@ async function getDefaultIcon() {
       reject(null);
     };
   });
+}
+
+function htmlToText(html) {
+  // Function to handle links
+  function handleLinks(match, p1, p2) {
+    return `[${p2}](${p1})`;
+  }
+
+  // Function to handle unordered lists
+  function handleUnorderedList(match, p1) {
+    return (
+      "\n" +
+      p1
+        .split("</li>")
+        .map((item) => {
+          return item.replace(/<li[^>]*>/g, "• ").trim();
+        })
+        .join("\n")
+    );
+  }
+
+  // Function to handle ordered lists
+  function handleOrderedList(match, p1) {
+    let index = 1;
+    return (
+      "\n" +
+      p1
+        .split("</li>")
+        .map((item) => {
+          return item.replace(/<li[^>]*>/g, `${index++}. `).trim();
+        })
+        .join("\n")
+    );
+  }
+
+  // Function to handle blockquotes
+  function handleBlockquotes(match, p1) {
+    return "\n> " + p1.trim().replace(/\n/g, "\n> ") + "\n";
+  }
+
+  // Function to handle paragraphs
+  function handleParagraphs(match, p1) {
+    return "\n" + p1.trim() + "\n";
+  }
+
+  // Replace links
+  html = html.replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g, handleLinks);
+
+  // Replace unordered lists
+  html = html.replace(/<ul[^>]*>(.*?)<\/ul>/gs, handleUnorderedList);
+
+  // Replace ordered lists
+  html = html.replace(/<ol[^>]*>(.*?)<\/ol>/gs, handleOrderedList);
+
+  // Replace blockquotes
+  html = html.replace(/<blockquote[^>]*>(.*?)<\/blockquote>/gs, handleBlockquotes);
+
+  // Replace paragraphs
+  html = html.replace(/<p[^>]*>(.*?)<\/p>/gs, handleParagraphs);
+
+  // Remove remaining HTML tags
+  html = html.replace(/<\/?[^>]+(>|$)/g, "");
+
+  return html.trim();
 }

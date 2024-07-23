@@ -1,5 +1,5 @@
 <template>
-  <div v-if="canShowContent" ref="builderIoAnchor">
+  <div v-if="isVisible && canShowContent" ref="builderIoAnchor">
     <Content model="page" :content="content" :api-key="apiKey" :custom-components="getRegisteredComponents()" />
   </div>
 </template>
@@ -11,8 +11,8 @@ import { onMounted, ref, shallowRef, watchEffect } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import { builderIOComponents } from "@/shared/static-content";
-import type { StateType } from "./priorityManager";
+import { builderIOComponents } from "./customComponents";
+import type { StateType } from "../priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
 
 interface IEmits {
@@ -21,6 +21,7 @@ interface IEmits {
 
 interface IProps {
   apiKey?: string;
+  isVisible?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
