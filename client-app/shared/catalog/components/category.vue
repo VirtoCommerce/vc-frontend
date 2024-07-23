@@ -38,7 +38,7 @@
 
             <ProductsFilters
               :keyword="keywordQueryParam"
-              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+              :filters="{ facets: facetsByOrder, inStock: savedInStock, branches: savedBranches }"
               :loading="loading"
               @change="applyFilters($event)"
             />
@@ -260,8 +260,10 @@ interface IProps {
   fixedProductsCount?: number;
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
-  filtersDisplayOrder?: string;
-  filtersDisplayOrderShowRest?: boolean;
+  filtersDisplayOrder?: {
+    order?: string;
+    showRest?: boolean;
+  };
 }
 
 const { catalogId, currencyCode } = globals;
@@ -345,11 +347,15 @@ const isExistSelectedFacets = computedEager<boolean>(() =>
 );
 
 const facetsByOrder = computed(() => {
-  if (props.filtersDisplayOrder) {
-    const order = props.filtersDisplayOrder
+  if (props.filtersDisplayOrder?.order && props.filtersDisplayOrder?.order.length > 0) {
+    const order = props.filtersDisplayOrder.order
       .split(",")
       .map((item) => item.trim().toLowerCase())
       .filter((item) => item);
+
+    if (order.length === 0) {
+      return facets.value;
+    }
 
     const sorted: FacetItemType[] = [];
 
@@ -360,7 +366,7 @@ const facetsByOrder = computed(() => {
       }
     });
 
-    return props.filtersDisplayOrderShowRest
+    return props.filtersDisplayOrder.showRest
       ? [...sorted, ...facets.value.filter(({ label }) => !order.includes(label.toLowerCase()))]
       : sorted;
   }
@@ -372,14 +378,14 @@ const isPopupSidebarFiltersDirty = computedEager<boolean>(
   () =>
     JSON.stringify(popupSidebarFilters) !==
     JSON.stringify({
-      facets: facets.value,
+      facets: isMobile.value ? facetsByOrder.value : facets.value,
       inStock: savedInStock.value,
       branches: savedBranches.value,
     } as ProductsFiltersType),
 );
 
 function showPopupSidebar() {
-  popupSidebarFilters.facets = cloneDeep(facets.value);
+  popupSidebarFilters.facets = cloneDeep(isMobile.value ? facetsByOrder.value : facets.value);
   popupSidebarFilters.inStock = savedInStock.value;
   popupSidebarFilters.branches = savedBranches.value.slice();
   popupSidebarVisible.value = true;

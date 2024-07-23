@@ -48,17 +48,28 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       },
       {
         name: "filtersDisplayOrder",
-        type: "string",
-        defaultValue: "",
-        helperText:
-          'Order of filters in the catalog - comma-separated string of any case. Leave empty to show all filters in default order. Example: "price, brand, category".',
-        showIf: "options.get('filtersOrientation') === 'horizontal'",
-      },
-      {
-        friendlyName: "Show rest of filters",
-        name: "filtersDisplayOrderShowRest",
-        type: "boolean",
-        showIf: "options.get('filtersDisplayOrder') !== '' && options.get('filtersOrientation') === 'horizontal'",
+        type: "object",
+        defaultValue: {
+          value: "",
+          showRest: false,
+          applyToMobile: false,
+        },
+        subFields: [
+          {
+            friendlyName: "Filters order",
+            name: "order",
+            type: "string",
+            helperText:
+              'Order of the filters - comma-separated string of any case. Leave empty to show all filters in default order. Example: "price, brand, category".',
+          },
+          {
+            friendlyName: "Show rest of filters",
+            name: "showRest",
+            type: "boolean",
+            showIf: "options.get('value') !== ''",
+            helperText: "Show the rest of the filters.",
+          },
+        ],
       },
       {
         name: "cardType",
