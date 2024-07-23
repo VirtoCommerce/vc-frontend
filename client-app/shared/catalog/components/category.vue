@@ -346,12 +346,12 @@ const isExistSelectedFacets = computedEager<boolean>(() =>
   facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
 
-const facetsByOrder = computed(() => {
+const facetsByOrder = computed<FacetItemType[]>(() => {
   if (props.filtersDisplayOrder?.order && props.filtersDisplayOrder?.order.length > 0) {
     const order = props.filtersDisplayOrder.order
       .split(",")
       .map((item) => item.trim().toLowerCase())
-      .filter((item) => item);
+      .filter(Boolean);
 
     if (order.length === 0) {
       return facets.value;

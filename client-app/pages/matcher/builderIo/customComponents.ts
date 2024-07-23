@@ -52,7 +52,6 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         defaultValue: {
           value: "",
           showRest: false,
-          applyToMobile: false,
         },
         subFields: [
           {
@@ -66,8 +65,8 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
             friendlyName: "Show rest of filters",
             name: "showRest",
             type: "boolean",
-            showIf: "options.get('value') !== ''",
             helperText: "Show the rest of the filters.",
+            showIf: "options.get('value') !== ''",
           },
         ],
       },
