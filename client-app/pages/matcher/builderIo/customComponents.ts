@@ -49,7 +49,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       {
         name: "filtersDisplayOrder",
         type: "string",
-        defaultValue: "material, ...rest",
+        defaultValue: "",
         helperText:
           'Order of filters in the catalog - comma-separated string of any case. Leave empty to show all filters in default order. Example: "price, brand, category".',
         showIf: "options.get('filtersOrientation') === 'horizontal'",
