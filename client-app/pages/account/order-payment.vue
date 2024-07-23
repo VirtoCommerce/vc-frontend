@@ -34,7 +34,7 @@
       <!-- Main section -->
       <div class="w-full grow lg:w-3/4 xl:w-4/5">
         <div
-          :class="executed ? 'md:bg-white md:border md:shadow-sm' : 'bg-white border shadow-sm'"
+          :class="executed ? 'md:bg-additional-50 md:border md:shadow-sm' : 'bg-additional-50 border shadow-sm'"
           class="p-6 max-lg:-mx-6 md:rounded lg:px-9"
         >
           <!-- Successful payment -->

@@ -67,7 +67,7 @@ const checked = computed(() => model.value === props.value);
   }
 
   &__text {
-    @apply font-normal text-neutral-500;
+    @apply font-normal text-neutral;
   }
 }
 </style>

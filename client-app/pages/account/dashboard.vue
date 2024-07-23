@@ -39,7 +39,7 @@
             class="flex flex-col justify-center space-y-1 sm:flex-row sm:flex-wrap sm:items-center sm:space-x-5 sm:space-y-0 xl:space-x-7"
           >
             <div class="flex flex-col lg:items-center lg:space-y-3">
-              <span class="text-xs text-gray-400 lg:font-bold lg:text-gray-600">
+              <span class="text-xs text-neutral-400 lg:font-bold lg:text-neutral-600">
                 {{ $t("pages.account.dashboard.monthly_report_card.budget_title") }}
               </span>
 
@@ -47,7 +47,7 @@
             </div>
 
             <div class="flex flex-col lg:items-center lg:space-y-3">
-              <span class="text-xs text-gray-400 lg:font-bold lg:text-gray-600">
+              <span class="text-xs text-neutral-400 lg:font-bold lg:text-neutral-600">
                 {{ $t("pages.account.dashboard.monthly_report_card.total_spend_label") }}
               </span>
 

@@ -1,5 +1,5 @@
 <template>
-  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-gray-bg': !products.length && !loading }">
+  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-neutral-bg': !products.length && !loading }">
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
@@ -57,7 +57,7 @@
             </i18n-t>
 
             <!-- Skeleton -->
-            <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-gray-200 md:w-64">
+            <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-neutral-200 md:w-64">
               &nbsp;
             </span>
 

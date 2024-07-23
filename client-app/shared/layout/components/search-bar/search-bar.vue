@@ -33,7 +33,7 @@
         <template v-if="isExistResults">
           <!-- Suggestions -->
           <section v-if="suggestions.length">
-            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
+            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
               {{ $t("shared.layout.search_bar.suggestions_label") }}
             </header>
 
@@ -55,7 +55,7 @@
 
           <!-- Pages -->
           <section v-if="pages.length">
-            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
+            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
               {{ $t("shared.layout.search_bar.pages_label") }}
             </header>
 
@@ -72,7 +72,7 @@
 
           <!-- Categories -->
           <section v-if="categories.length">
-            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
+            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
               {{ $t("shared.layout.search_bar.categories_label") }}
             </header>
 
@@ -89,7 +89,7 @@
 
           <!-- Products -->
           <section v-if="products.length" class="pb-4">
-            <header class="bg-gray-100 px-5 py-2 text-xs text-gray-500">
+            <header class="bg-neutral-100 px-5 py-2 text-xs text-neutral">
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 

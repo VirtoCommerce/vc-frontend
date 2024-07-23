@@ -116,7 +116,7 @@
           :title="$t('common.titles.quote_request')"
           class="print:hidden"
         >
-          <p class="mb-5 text-xs font-normal text-gray-400">
+          <p class="mb-5 text-xs font-normal text-neutral-400">
             {{ $t("common.messages.quote_request") }}
           </p>
 
@@ -130,7 +130,7 @@
     <transition name="slide-fade-bottom">
       <div
         v-if="!isEmpty(selectedItemIds)"
-        class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 shadow-t-lgs md:hidden print:hidden"
+        class="shadow-t-lgs fixed bottom-0 left-0 z-10 flex w-full justify-center bg-[--color-additional-50] p-6 md:hidden print:hidden"
       >
         <VcButton variant="outline" prepend-icon="trash" @click="handleRemoveItems(selectedItemIds)">
           {{ $t("common.buttons.remove_selected") }}

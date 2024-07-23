@@ -12,9 +12,9 @@ const props = defineProps({
   },
 });
 
-const newStatusClass = "bg-green-500 text-white";
-const processingStatusClass = "border border-green-500 text-green-500";
-const pandingStatusCalss = "border border-blue-400 text-blue-400";
+const newStatusClass = "bg-success text-additional-50";
+const processingStatusClass = "border border-success text-success";
+const pandingStatusCalss = "border border-info-400 text-info-400";
 
 const badgeClass = computed(() => {
   return {

@@ -41,7 +41,7 @@ defineProps<IProps>();
   }
 
   &__dots {
-    @apply mb-[3px] border-b border-dotted border-[--color-neutral-200];
+    @apply mb-[3px] border-b border-dotted border-neutral-200;
   }
 
   &__value {

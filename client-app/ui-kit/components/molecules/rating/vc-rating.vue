@@ -27,7 +27,7 @@ defineProps<IProps>();
   }
 
   &__text {
-    @apply text-sm text-gray-800 font-bold;
+    @apply text-sm text-neutral-800 font-bold;
   }
 
   &__current-rating {

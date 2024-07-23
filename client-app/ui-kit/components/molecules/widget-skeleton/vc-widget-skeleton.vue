@@ -57,7 +57,7 @@ withDefaults(defineProps<IProps>(), {
 .vc-widget-skeleton {
   $sizeLG: "";
 
-  @apply relative border border-[--color-neutral-100] bg-[--color-additional-50] rounded divide-y shadow-md animate-pulse;
+  @apply relative border border-neutral-100 bg-additional-50 rounded divide-y shadow-md animate-pulse;
 
   &--size {
     &--xs {
@@ -99,7 +99,7 @@ withDefaults(defineProps<IProps>(), {
 
   &__header-container {
     *:not(:has(*)) {
-      @apply h-[--placeholder-h] rounded bg-[--color-neutral-100];
+      @apply h-[--placeholder-h] rounded bg-neutral-100;
 
       &:not([class*="w-"]) {
         @apply w-2/3;
@@ -113,7 +113,7 @@ withDefaults(defineProps<IProps>(), {
 
   &__slot-container {
     *:not(:has(*)) {
-      @apply mb-2 h-4 rounded bg-[--color-neutral-100] last:mb-0;
+      @apply mb-2 h-4 rounded bg-neutral-100 last:mb-0;
 
       &:not([class*="w-"]) {
         &:nth-child(even) {
@@ -155,7 +155,7 @@ withDefaults(defineProps<IProps>(), {
 
   &__footer-container {
     *:not(:has(*)) {
-      @apply h-4 rounded bg-[--color-neutral-100];
+      @apply h-4 rounded bg-neutral-100;
 
       &:not([class*="w-"]) {
         @apply w-1/3;

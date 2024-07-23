@@ -6,7 +6,7 @@
           {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
         </VcLabel>
 
-        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
+        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-neutral-50': disabled }]">
           <VcCheckbox
             v-if="!allItemsAreDigital"
             v-model="billingAddressEqualsShipping"

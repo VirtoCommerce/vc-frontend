@@ -105,7 +105,7 @@ const iconName = computed<string>(() => {
   }
 
   &--solid {
-    @apply text-[--color-additional-50];
+    @apply text-additional-50;
 
     @each $color in $colors {
       &--#{$color} {
@@ -115,7 +115,7 @@ const iconName = computed<string>(() => {
   }
 
   &--solid-light {
-    @apply text-[--color-neutral-900];
+    @apply text-neutral-900;
 
     @each $color in $colors {
       &--#{$color} {
@@ -127,7 +127,7 @@ const iconName = computed<string>(() => {
   }
 
   &--outline {
-    @apply bg-[--color-additional-50] text-[--color-neutral-900];
+    @apply bg-additional-50 text-neutral-900;
 
     @each $color in $colors {
       &--#{$color} {
@@ -139,7 +139,7 @@ const iconName = computed<string>(() => {
   }
 
   &--outline-dark {
-    @apply text-[--color-neutral-900];
+    @apply text-neutral-900;
 
     @each $color in $colors {
       &--#{$color} {

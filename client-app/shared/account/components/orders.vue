@@ -44,7 +44,7 @@
         <div
           v-if="filtersVisible && !isMobile"
           ref="filtersDropdownElement"
-          class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
+          class="absolute right-0 z-[1] mt-2 rounded border bg-additional-50 p-6 shadow-lg"
         >
           <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-3 align-top" @click="hideFilters">
             <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
@@ -134,7 +134,7 @@
   <div
     v-else
     :class="[
-      'flex flex-col bg-white shadow-sm',
+      'flex flex-col bg-additional-50 shadow-sm',
       {
         'max-lg:-mx-6 lg:rounded lg:border': withSearch,
       },
@@ -155,14 +155,14 @@
     >
       <template #mobile-item="itemData">
         <div
-          class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6"
+          class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
           role="button"
           tabindex="0"
           @click="goToOrderDetails(itemData.item)"
           @keyup.enter="goToOrderDetails(itemData.item)"
         >
           <div class="flex flex-col">
-            <span class="text-sm text-gray-400">
+            <span class="text-sm text-neutral-400">
               {{ $t("pages.account.orders.order_number_label") }}
             </span>
 
@@ -180,7 +180,7 @@
           </div>
 
           <div class="flex flex-col">
-            <span class="text-sm text-gray-400">
+            <span class="text-sm text-neutral-400">
               {{ $t("pages.account.orders.date_label") }}
             </span>
 
@@ -190,7 +190,7 @@
           </div>
 
           <div class="flex flex-col">
-            <span class="text-sm text-gray-400">
+            <span class="text-sm text-neutral-400">
               {{ $t("pages.account.orders.total_label") }}
             </span>
 
@@ -202,33 +202,33 @@
       </template>
 
       <template #mobile-skeleton>
-        <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
+        <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
           <div class="flex flex-col">
-            <span class="text-sm text-gray-400">
+            <span class="text-sm text-neutral-400">
               {{ $t("pages.account.orders.order_number_label") }}
             </span>
-            <div class="mr-4 h-6 animate-pulse bg-gray-200" />
+            <div class="mr-4 h-6 animate-pulse bg-neutral-200" />
           </div>
 
           <div class="flex flex-col">
-            <span class="text-sm text-gray-400">
+            <span class="text-sm text-neutral-400">
               {{ $t("pages.account.orders.date_label") }}
             </span>
-            <div class="h-6 animate-pulse bg-gray-200" />
+            <div class="h-6 animate-pulse bg-neutral-200" />
           </div>
 
           <div class="flex flex-col">
-            <span class="text-sm text-gray-400">
+            <span class="text-sm text-neutral-400">
               {{ $t("pages.account.orders.total_label") }}
             </span>
-            <div class="mr-4 h-6 animate-pulse bg-gray-200" />
+            <div class="mr-4 h-6 animate-pulse bg-neutral-200" />
           </div>
 
           <div class="flex flex-col">
-            <span class="text-sm text-gray-400">
+            <span class="text-sm text-neutral-400">
               {{ $t("pages.account.orders.status_label") }}
             </span>
-            <div class="h-6 animate-pulse bg-gray-200" />
+            <div class="h-6 animate-pulse bg-neutral-200" />
           </div>
         </div>
       </template>
@@ -237,7 +237,7 @@
         <tr
           v-for="order in orders"
           :key="order.id"
-          class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
+          class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
           @click="goToOrderDetails(order)"
         >
           <td class="overflow-hidden text-ellipsis p-5">
@@ -279,29 +279,29 @@
       </template>
 
       <template #desktop-skeleton>
-        <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
+        <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
           <td class="p-5">
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <div class="h-6 animate-pulse bg-neutral-200"></div>
           </td>
 
           <td class="w-4/12 p-5">
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <div class="h-6 animate-pulse bg-neutral-200"></div>
           </td>
 
           <td class="p-5">
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <div class="h-6 animate-pulse bg-neutral-200"></div>
           </td>
 
           <td class="p-5">
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <div class="h-6 animate-pulse bg-neutral-200"></div>
           </td>
 
           <td class="p-5">
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <div class="h-6 animate-pulse bg-neutral-200"></div>
           </td>
 
           <td class="p-5">
-            <div class="h-6 animate-pulse bg-gray-200"></div>
+            <div class="h-6 animate-pulse bg-neutral-200"></div>
           </td>
         </tr>
       </template>

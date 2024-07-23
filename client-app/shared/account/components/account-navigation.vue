@@ -42,7 +42,7 @@
 
           <a
             :class="{ 'font-bold': isSelectedOrderStatus(facet.term) }"
-            class="line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5 hover:text-black"
+            class="hover:text-black line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5"
             @click="applyOrderFilter(facet.term)"
           >
             <div class="grow overflow-hidden text-ellipsis text-nowrap">{{ facet.label }}</div>
@@ -67,7 +67,7 @@
 
           <router-link
             :to="{ name: 'ListDetails', params: { listId: list.id } }"
-            class="line-clamp-2 cursor-pointer py-0.5 font-semibold text-gray-500 hover:text-black"
+            class="line-clamp-2 cursor-pointer py-0.5 font-semibold text-neutral hover:text-additional-950"
             active-class="!text-black"
           >
             {{ list.name }}

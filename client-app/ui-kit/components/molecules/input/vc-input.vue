@@ -225,7 +225,7 @@ function inputClick() {
   }
 
   &__container {
-    @apply flex items-stretch border rounded bg-[--color-additional-50] select-none;
+    @apply flex items-stretch border rounded bg-additional-50 select-none;
 
     #{$sizeSm} & {
       @apply h-9 text-sm;
@@ -236,20 +236,20 @@ function inputClick() {
     }
 
     &:has(input:focus) {
-      @apply ring ring-[--color-primary-100];
+      @apply ring ring-primary-100;
 
       #{$error} & {
-        @apply ring-[--color-danger-100];
+        @apply ring-danger-100;
       }
     }
 
     #{$disabled} &,
     &:has(input:disabled) {
-      @apply bg-[--color-neutral-50] cursor-not-allowed;
+      @apply bg-neutral-50 cursor-not-allowed;
     }
 
     #{$error} & {
-      @apply border-[--color-danger-500];
+      @apply border-danger;
     }
 
     #{$noBorder} & {
@@ -297,12 +297,12 @@ function inputClick() {
 
     #{$disabled} &,
     &:disabled {
-      @apply text-[--color-neutral-600] cursor-not-allowed;
+      @apply text-neutral-600 cursor-not-allowed;
     }
 
     &::placeholder {
       #{$error} & {
-        @apply opacity-80 text-[--color-danger-500];
+        @apply opacity-80 text-danger;
       }
     }
 
@@ -315,19 +315,19 @@ function inputClick() {
     }
 
     #{$error} & {
-      @apply text-[--color-danger-500];
+      @apply text-danger;
     }
   }
 
   &__clear {
-    @apply flex items-center p-3 text-[--color-primary-500];
+    @apply flex items-center p-3 text-primary;
   }
 
   &__password-icon {
-    @apply h-full px-3 text-[--color-primary-500];
+    @apply h-full px-3 text-primary;
 
     #{$disabled} & {
-      @apply text-[--color-neutral-300] cursor-not-allowed;
+      @apply text-neutral-300 cursor-not-allowed;
     }
   }
 }

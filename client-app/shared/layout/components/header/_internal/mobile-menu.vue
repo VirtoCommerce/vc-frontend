@@ -241,7 +241,7 @@
     </section>
     <!-- endregion Main menu section -->
     <div
-      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-black/5 backdrop-blur-lg md:block"
+      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-additional-950/5 backdrop-blur-lg md:block"
       @click="$emit('close')"
     />
   </nav>

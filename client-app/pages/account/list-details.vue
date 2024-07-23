@@ -12,7 +12,7 @@
         </VcTypography>
 
         <!-- Title skeleton -->
-        <div v-else class="w-2/3 bg-gray-200 text-3xl md:w-1/3">&nbsp;</div>
+        <div v-else class="w-2/3 bg-neutral-200 text-3xl md:w-1/3">&nbsp;</div>
 
         <div class="order-last mt-8 flex flex-wrap gap-3 md:ms-0 md:mt-0 md:shrink-0 lg:my-0">
           <VcButton
@@ -56,8 +56,8 @@
             <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
           </div>
 
-          <div v-else class="flex flex-col rounded border bg-white shadow-sm">
-            <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-gray-50" />
+          <div v-else class="flex flex-col rounded border bg-additional-50 shadow-sm">
+            <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-neutral-50" />
           </div>
         </template>
 

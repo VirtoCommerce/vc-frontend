@@ -1,6 +1,6 @@
 <template>
   <div class="flex gap-x-3 text-sm">
-    <div class="w-1/2 text-gray-500 xl:w-2/5">
+    <div class="w-1/2 text-neutral xl:w-2/5">
       {{ label }}
     </div>
 

@@ -9,7 +9,7 @@
         {{ $t("pages.500.error_text") }}
       </VcTypography>
 
-      <p class="mb-10 text-base leading-relaxed text-gray-700 md:text-xl">
+      <p class="mb-10 text-base leading-relaxed text-neutral-700 md:text-xl">
         {{ $t("pages.500.message") }}
       </p>
       <div>

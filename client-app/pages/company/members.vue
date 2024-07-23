@@ -84,7 +84,7 @@
         <div
           v-if="filtersVisible && !isMobile"
           ref="filtersDropdownElement"
-          class="absolute right-0 z-[1] mt-2 rounded border bg-white p-6 shadow-lg"
+          class="absolute right-0 z-[1] mt-2 rounded border bg-additional-50 p-6 shadow-lg"
         >
           <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-2" @click="hideFilters">
             <VcIcon class="text-[--color-danger-500]" name="x" :size="18" />
@@ -216,7 +216,7 @@
           @page-changed="changePage"
         >
           <template #desktop-body>
-            <tr v-for="contact in contacts" :key="contact.id" class="even:bg-gray-50">
+            <tr v-for="contact in contacts" :key="contact.id" class="even:bg-neutral-50">
               <td class="py-2.5 pl-4 pr-0">
                 <RoleIcon :role-id="contact.extended.roles[0]?.id" />
               </td>
@@ -251,13 +251,13 @@
           </template>
 
           <template #desktop-skeleton>
-            <tr v-for="row in itemsPerPage" :key="row" class="even:bg-gray-50">
+            <tr v-for="row in itemsPerPage" :key="row" class="even:bg-neutral-50">
               <td class="py-2.5 pl-4 pr-0">
-                <div class="size-9 animate-pulse rounded-full bg-gray-200"></div>
+                <div class="size-9 animate-pulse rounded-full bg-neutral-200"></div>
               </td>
 
               <td v-for="column in columns.length - 1" :key="column" class="px-4 py-3">
-                <div class="h-5 animate-pulse bg-gray-200"></div>
+                <div class="h-5 animate-pulse bg-neutral-200"></div>
               </td>
             </tr>
           </template>
@@ -296,13 +296,17 @@
           </template>
 
           <template #mobile-skeleton>
-            <div v-for="row in itemsPerPage" :key="row" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
+            <div
+              v-for="row in itemsPerPage"
+              :key="row"
+              class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
+            >
               <div class="flex flex-col">
-                <div class="animate-pulse bg-gray-200 py-6 pl-6"></div>
+                <div class="animate-pulse bg-neutral-200 py-6 pl-6"></div>
               </div>
 
               <div class="flex flex-col">
-                <div class="animate-pulse bg-gray-200 py-6 pl-4"></div>
+                <div class="animate-pulse bg-neutral-200 py-6 pl-4"></div>
               </div>
             </div>
           </template>

@@ -45,7 +45,7 @@
 
         <VcPopover class="w-1/5" y-offset="20" trigger="click" z-index="3" @toggle="handleShareProductPopoverToggle">
           <template #trigger>
-            <div class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-[--color-neutral-50]">
+            <div class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50">
               <VcIcon
                 name="share"
                 size="sm"
@@ -59,7 +59,7 @@
           </template>
 
           <template #content="{ close }">
-            <div class="rounded border bg-white p-5 shadow-lg">
+            <div class="rounded border bg-additional-50 p-5 shadow-lg">
               <h3 class="flex justify-between text-lg font-bold">
                 <span class="flex grow">
                   {{ $t("shared.catalog.product_details.share_product_label") }}

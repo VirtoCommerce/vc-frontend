@@ -83,7 +83,7 @@
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
                 class="line-clamp-1 text-base"
-                :class="{ 'text-neutral-500': !selectedListsOtherIds.includes(list.id!) }"
+                :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
               >
                 {{ list.name }}
               </span>

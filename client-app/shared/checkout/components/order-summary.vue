@@ -32,7 +32,7 @@
 
         <template v-if="hasDiscounts">
           <div class="print:block" :class="{ hidden: discountsCollapsed }">
-            <ul class="list-disc pl-5 text-gray-400 print:text-[color:var(--color-additional-950)]">
+            <ul class="list-disc pl-5 text-neutral-400 print:text-[color:var(--color-additional-950)]">
               <li v-for="(discount, index) in cart.discounts!" :key="index">
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ discount.description || discount.coupon }}</span>
@@ -96,7 +96,7 @@
 
     <slot name="footer" />
 
-    <div v-if="footnote" class="mt-4 text-xs font-normal text-gray-400">
+    <div v-if="footnote" class="mt-4 text-xs font-normal text-neutral-400">
       <slot name="footnote">
         {{ $t("common.messages.checkout_pricing_warning") }}
       </slot>

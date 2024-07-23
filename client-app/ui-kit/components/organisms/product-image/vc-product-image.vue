@@ -145,10 +145,10 @@ function slideChanged(swiper: SwiperInstance) {
   }
 
   &__carousel-bullet {
-    @apply inline-block h-2 w-2 rounded-full border box-border border-gray-400 bg-white;
+    @apply inline-block h-2 w-2 rounded-full border box-border border-neutral-400 bg-additional-50;
 
     &--active {
-      @apply border-gray-400 bg-gray-400 outline outline-[1px] outline-white;
+      @apply border-neutral-400 bg-neutral-400 outline outline-[1px] outline-additional-50;
     }
   }
 

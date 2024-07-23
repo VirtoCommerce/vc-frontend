@@ -31,15 +31,15 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__label {
-    @apply grow min-w-0 font-bold capitalize text-gray-600 truncate;
+    @apply grow min-w-0 font-bold capitalize text-neutral-600 truncate;
 
     @media (min-width: theme("screens.md")) {
-      @apply text-gray-800;
+      @apply text-neutral-800;
     }
   }
 
   &__dots {
-    @apply grow mb-1 h-4 border-b-2 border-gray-200 border-dotted;
+    @apply grow mb-1 h-4 border-b-2 border-neutral-200 border-dotted;
 
     @media (min-width: theme("screens.md")) {
       @apply hidden;

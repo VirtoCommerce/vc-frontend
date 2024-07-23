@@ -5,7 +5,7 @@
     class="fixed bottom-10 right-3 z-20 opacity-60 hover:opacity-100"
     @click="scrollToTop"
   >
-    <VcIcon class="text-[--color-primary-500]" name="arrow-circle-up" size="xl" />
+    <VcIcon class="text-primary" name="arrow-circle-up" size="xl" />
   </button>
 </template>
 

@@ -213,7 +213,7 @@ function onFileDownload(file: FileType) {
   }
 
   &__list-container {
-    @apply px-3 py-4 border border-[--color-neutral-200] rounded;
+    @apply px-3 py-4 border border-neutral-200 rounded;
 
     #{$horizontal} & {
       @apply md:flex-1 md:shrink;
@@ -241,28 +241,28 @@ function onFileDownload(file: FileType) {
   }
 
   &__drop-area {
-    @apply flex-1 flex flex-col justify-center items-center gap-2 w-full rounded border border-dashed border-[--color-secondary-200] p-5;
-    @apply bg-[--color-secondary-50] #{!important};
+    @apply flex-1 flex flex-col justify-center items-center gap-2 w-full rounded border border-dashed border-secondary-200 p-5;
+    @apply bg-secondary-50 #{!important};
   }
 
   &__drop-icon {
-    @apply text-[--color-accent-500];
+    @apply text-accent;
   }
 
   &__desktop {
     @apply hidden;
 
     @media (hover: hover) {
-      @apply block text-sm text-[--color-neutral-900];
+      @apply block text-sm text-neutral-900;
 
       & > span {
-        @apply text-[--color-accent-500] font-bold;
+        @apply text-accent font-bold;
       }
     }
   }
 
   &__description {
-    @apply text-xs text-[--color-neutral-500] text-start;
+    @apply text-xs text-neutral text-start;
   }
 
   &__alert {
