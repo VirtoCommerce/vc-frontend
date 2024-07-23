@@ -45,7 +45,7 @@
             class="-mx-6 -mb-6 -mt-16 md:-mt-6 lg:-mx-9 lg:pl-14"
           >
             <template #description>
-              <h2 class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left">
+              <h2 class="mb-3 text-center text-2xl font-bold text-neutral-900 lg:text-left">
                 {{ $t("pages.account.order_payment.success.title") }}
               </h2>
 
@@ -83,7 +83,7 @@
             class="-mx-9 -mb-6 -mt-16 md:-mt-6 lg:pl-14"
           >
             <template #description>
-              <h2 class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left">
+              <h2 class="mb-3 text-center text-2xl font-bold text-neutral-900 lg:text-left">
                 {{ $t("pages.account.order_payment.failure.title") }}
               </h2>
 

@@ -38,11 +38,11 @@
           :key="facet.term"
           class="flex items-center space-x-1 overflow-hidden text-ellipsis px-3 text-sm"
         >
-          <VcIcon class="flex-none text-[--color-primary-500]" name="minus" />
+          <VcIcon class="flex-none text-primary" name="minus" />
 
           <a
             :class="{ 'font-bold': isSelectedOrderStatus(facet.term) }"
-            class="hover:text-black line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5"
+            class="line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5 hover:text-neutral-950"
             @click="applyOrderFilter(facet.term)"
           >
             <div class="grow overflow-hidden text-ellipsis text-nowrap">{{ facet.label }}</div>
@@ -68,7 +68,7 @@
           <router-link
             :to="{ name: 'ListDetails', params: { listId: list.id } }"
             class="line-clamp-2 cursor-pointer py-0.5 font-semibold text-neutral hover:text-additional-950"
-            active-class="!text-black"
+            active-class="!text-neutral-950"
           >
             {{ list.name }}
           </router-link>

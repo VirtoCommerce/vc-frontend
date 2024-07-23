@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-lg">
     <template #left>
-      <h1 class="text-black-800 mb-5 text-7xl font-black md:text-8xl">
+      <h1 class="mb-5 text-7xl font-black text-neutral-900 md:text-8xl">
         {{ $t("pages.500.error_code") }}
       </h1>
 

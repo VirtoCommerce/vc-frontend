@@ -20,7 +20,7 @@
           {{ error.translation }}
         </span>
         <!-- Keep the A tag to reinitialize the app -->
-        <a href="/change-password" class="text-sm font-semibold text-blue-700 hover:text-blue-500">
+        <a href="/change-password" class="text-sm font-semibold text-accent-700 hover:text-accent">
           {{ $t("common.buttons.set_new_password") }}
         </a>
       </span>
