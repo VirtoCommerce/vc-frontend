@@ -50,7 +50,7 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         name: "filtersDisplayOrder",
         type: "object",
         defaultValue: {
-          value: "",
+          order: "",
           showRest: false,
         },
         subFields: [
