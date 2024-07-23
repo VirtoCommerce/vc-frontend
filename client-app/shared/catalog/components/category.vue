@@ -38,7 +38,7 @@
 
             <ProductsFilters
               :keyword="keywordQueryParam"
-              :filters="{ facets: facetsByOrder, inStock: savedInStock, branches: savedBranches }"
+              :filters="{ facets: orderedFacets, inStock: savedInStock, branches: savedBranches }"
               :loading="loading"
               @change="applyFilters($event)"
             />
@@ -146,7 +146,7 @@
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
           :loading="loading || facetsLoading"
-          :filters="{ facets: facetsByOrder, inStock: savedInStock, branches: savedBranches }"
+          :filters="{ facets: orderedFacets, inStock: savedInStock, branches: savedBranches }"
           :hide-sorting="hideSorting"
           :hide-all-filters="hideSidebar"
           @reset-facet-filters="resetFacetFilters"
@@ -346,7 +346,7 @@ const isExistSelectedFacets = computedEager<boolean>(() =>
   facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
 
-const facetsByOrder = computed<FacetItemType[]>(() => {
+const orderedFacets = computed<FacetItemType[]>(() => {
   if (props.filtersDisplayOrder?.order && props.filtersDisplayOrder?.order.length > 0) {
     const order = props.filtersDisplayOrder.order
       .split(",")
@@ -378,14 +378,14 @@ const isPopupSidebarFiltersDirty = computedEager<boolean>(
   () =>
     JSON.stringify(popupSidebarFilters) !==
     JSON.stringify({
-      facets: isMobile.value ? facetsByOrder.value : facets.value,
+      facets: isMobile.value ? orderedFacets.value : facets.value,
       inStock: savedInStock.value,
       branches: savedBranches.value,
     } as ProductsFiltersType),
 );
 
 function showPopupSidebar() {
-  popupSidebarFilters.facets = cloneDeep(isMobile.value ? facetsByOrder.value : facets.value);
+  popupSidebarFilters.facets = cloneDeep(isMobile.value ? orderedFacets.value : facets.value);
   popupSidebarFilters.inStock = savedInStock.value;
   popupSidebarFilters.branches = savedBranches.value.slice();
   popupSidebarVisible.value = true;
