@@ -73,7 +73,7 @@
               v-if="!loading && !hideTotal && !fixedProductsCount"
               class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
-              <b class="font-extrabold">{{ total }}</b>
+              <b class="font-black">{{ total }}</b>
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
           </VcTypography>

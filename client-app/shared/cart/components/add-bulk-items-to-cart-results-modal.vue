@@ -26,7 +26,7 @@
 
           <div class="max-h-80 overflow-y-auto rounded-[inherit] md:max-h-72">
             <ul class="w-full md:table">
-              <li class="top-0 hidden bg-neutral-50 text-sm font-extrabold md:sticky md:table-row">
+              <li class="top-0 hidden bg-neutral-50 text-sm font-black md:sticky md:table-row">
                 <div class="table-cell border-b px-4 py-2.5">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </div>
@@ -49,7 +49,7 @@
                   <span class="text-neutral-400 md:hidden">
                     {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                   </span>
-                  <span class="font-semibold">{{ item.sku }}</span>
+                  <span class="font-bold">{{ item.sku }}</span>
                 </div>
 
                 <div
@@ -59,7 +59,7 @@
                     v-if="item.productExists"
                     :to="links[item.productId]"
                     target="_blank"
-                    class="font-semibold text-[--link-color] hover:text-[--link-hover-color]"
+                    class="font-bold text-[--link-color] hover:text-[--link-hover-color]"
                   >
                     {{ item.name }}
                   </router-link>

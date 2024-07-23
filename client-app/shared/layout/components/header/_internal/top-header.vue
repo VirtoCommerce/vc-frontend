@@ -15,7 +15,7 @@
         </span>
 
         <a
-          class="py-1 font-semibold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
+          class="py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
           :href="`tel:${$cfg.support_phone_number}`"
         >
           {{ $cfg.support_phone_number }}

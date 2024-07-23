@@ -7,7 +7,7 @@
   </div>
   <div v-else-if="shouldUseActualPrice(value?.list, value?.actual)" class="flex flex-wrap items-end gap-1.5">
     <VcPriceDisplayCatalog :class="priceColorClass" :value="value?.actual" class="text-xl font-bold" />
-    <VcPriceDisplayCatalog :value="value?.list" class="mb-px pb-0.5 text-xs font-semibold text-neutral" is-old-price />
+    <VcPriceDisplayCatalog :value="value?.list" class="mb-px pb-0.5 text-xs font-bold text-neutral" is-old-price />
   </div>
   <div v-else class="flex flex-wrap items-end gap-1.5">
     <VcPriceDisplayCatalog :class="priceColorClass" :value="value?.list" class="text-xl font-bold" />

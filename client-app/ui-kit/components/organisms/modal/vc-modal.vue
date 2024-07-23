@@ -41,7 +41,7 @@
               <!-- Title bar -->
               <DialogTitle
                 as="h3"
-                class="flex items-center px-6 py-3 text-lg font-extrabold text-additional-50"
+                class="flex items-center px-6 py-3 text-lg font-black text-additional-50"
                 :class="headerStyle"
               >
                 <slot name="title">

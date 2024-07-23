@@ -6,7 +6,7 @@
     <div class="relative">
       <VcLoaderOverlay :visible="changing" />
 
-      <div class="mb-4 flex justify-between text-base font-extrabold">
+      <div class="mb-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.subtotal") }}</span>
         <span><VcPriceDisplay :value="cart.subTotal!" /></span>
       </div>
@@ -86,7 +86,7 @@
         </div>
       </div>
 
-      <div class="mt-4 flex justify-between text-base font-extrabold">
+      <div class="mt-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.total") }}</span>
         <span class="text-[--price-color] print:text-inherit">
           <VcPriceDisplay :value="cart.total!" />

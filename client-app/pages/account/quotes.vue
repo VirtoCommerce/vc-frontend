@@ -89,7 +89,7 @@
                   {{ $t("pages.account.quotes.quote_number_label") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
+                <span class="overflow-hidden text-ellipsis pr-4 font-black">
                   {{ itemData.item.number }}
                 </span>
               </div>
@@ -113,7 +113,7 @@
                   {{ $t("pages.account.quotes.total_label") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis font-extrabold">
+                <span class="overflow-hidden text-ellipsis font-black">
                   {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
                 </span>
               </div>

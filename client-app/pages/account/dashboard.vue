@@ -43,7 +43,7 @@
                 {{ $t("pages.account.dashboard.monthly_report_card.budget_title") }}
               </span>
 
-              <span class="text-xl font-extrabold">$58,152</span>
+              <span class="text-xl font-black">$58,152</span>
             </div>
 
             <div class="flex flex-col lg:items-center lg:space-y-3">
@@ -51,7 +51,7 @@
                 {{ $t("pages.account.dashboard.monthly_report_card.total_spend_label") }}
               </span>
 
-              <span class="text-xl font-extrabold">$530,152</span>
+              <span class="text-xl font-black">$530,152</span>
             </div>
           </div>
         </div>

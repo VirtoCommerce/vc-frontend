@@ -102,7 +102,7 @@
           <!-- Main content -->
           <template v-else>
             <!-- region Billing address -->
-            <h5 class="mb-1 font-extrabold">
+            <h5 class="mb-1 font-black">
               {{ $t("pages.account.order_payment.billing_address_label") }}
             </h5>
 
@@ -110,7 +110,7 @@
               <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
                 <!-- TODO: create an atom component to display address -->
                 <div class="min-w-0 text-sm">
-                  <span class="line-clamp-2 font-extrabold">
+                  <span class="line-clamp-2 font-black">
                     {{ payment?.billingAddress?.firstName }}
                     {{ payment?.billingAddress?.lastName }}
                   </span>
@@ -125,14 +125,14 @@
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold">
+                    <span class="font-black">
                       {{ $t("pages.account.order_payment.phone_label") }}
                     </span>
                     {{ payment?.billingAddress?.phone }}
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold">
+                    <span class="font-black">
                       {{ $t("pages.account.order_payment.email_label") }}
                     </span>
                     {{ payment?.billingAddress?.email }}
@@ -165,7 +165,7 @@
             <!-- endregion Billing address -->
 
             <!-- region Payment method -->
-            <h5 class="mb-1 font-extrabold">
+            <h5 class="mb-1 font-black">
               {{ $t("pages.account.order_payment.payment_method_label") }}
             </h5>
 

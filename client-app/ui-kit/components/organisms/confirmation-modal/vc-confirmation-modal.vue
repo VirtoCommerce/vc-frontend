@@ -8,7 +8,7 @@
           name="exclamation-circle"
         />
 
-        <p class="lg:text-lg lg:font-semibold lg:leading-snug">
+        <p class="lg:text-lg lg:font-bold lg:leading-snug">
           {{ text }}
         </p>
       </div>

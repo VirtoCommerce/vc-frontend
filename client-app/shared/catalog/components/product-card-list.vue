@@ -38,7 +38,7 @@
         <router-link
           :to="link"
           :target="target"
-          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
+          class="vc-product-card-list__name w-full grow text-sm font-black text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
           {{ product.name }}

@@ -67,7 +67,7 @@
 
           <router-link
             :to="{ name: 'ListDetails', params: { listId: list.id } }"
-            class="line-clamp-2 cursor-pointer py-0.5 font-semibold text-neutral hover:text-additional-950"
+            class="line-clamp-2 cursor-pointer py-0.5 font-bold text-neutral hover:text-additional-950"
             active-class="!text-neutral-950"
           >
             {{ list.name }}

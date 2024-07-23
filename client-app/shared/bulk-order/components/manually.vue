@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h2 class="hidden border-b px-5 py-2 font-extrabold uppercase lg:block">
+    <h2 class="hidden border-b px-5 py-2 font-black uppercase lg:block">
       {{ $t("shared.bulk_order.manually.title") }}
     </h2>
 

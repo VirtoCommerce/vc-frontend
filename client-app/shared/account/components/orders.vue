@@ -166,7 +166,7 @@
               {{ $t("pages.account.orders.order_number_label") }}
             </span>
 
-            <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
+            <span class="overflow-hidden text-ellipsis pr-4 font-black">
               {{ itemData.item.number }}
             </span>
           </div>
@@ -194,7 +194,7 @@
               {{ $t("pages.account.orders.total_label") }}
             </span>
 
-            <span class="overflow-hidden text-ellipsis font-extrabold">
+            <span class="overflow-hidden text-ellipsis font-black">
               {{ itemData.item.total?.formattedAmount }}
             </span>
           </div>

@@ -77,7 +77,7 @@
 
             <p class="text-sm text-neutral-400">
               <span v-if="!isCorporateAddresses && !!itemData.item.phone">
-                <span class="font-semibold">{{ $t("common.labels.phone") }}: </span>
+                <span class="font-bold">{{ $t("common.labels.phone") }}: </span>
                 {{ itemData.item.phone }}
               </span>
             </p>
@@ -85,7 +85,7 @@
             <p class="text-sm text-neutral-400">
               <span v-if="isCorporateAddresses">{{ itemData.item.countryName }}</span>
               <span v-else-if="!!itemData.item.email">
-                <span class="font-semibold">{{ $t("common.labels.email") }}: </span>
+                <span class="font-bold">{{ $t("common.labels.email") }}: </span>
                 {{ itemData.item.email }}
               </span>
             </p>

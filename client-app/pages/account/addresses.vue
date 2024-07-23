@@ -45,7 +45,7 @@
                   {{ $t("common.labels.recipient_name") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
+                <span class="overflow-hidden text-ellipsis pr-4 font-black">
                   {{ itemData.item.firstName }} {{ itemData.item.lastName }}
                 </span>
               </div>
