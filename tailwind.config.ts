@@ -149,6 +149,10 @@ module.exports = {
     screens: BREAKPOINTS,
     fontFamily: {
       lato: ["Lato", "sans-serif"],
+
+      /*
+       * @deprecated fonts
+       * */
       roboto: ["Roboto", "sans-serif"],
       "roboto-condensed": ["Roboto Condensed", "sans-serif"],
     },
