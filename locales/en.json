@@ -1335,6 +1335,9 @@
       "copy_n_paste_tab": "Copy and Paste",
       "from_file_tab": "Upload file"
     },
+    "purchase_request": {
+      "title": "Purchase request"
+    },
     "demo_landing": {
       "meta": {
         "title": "Demo landing"

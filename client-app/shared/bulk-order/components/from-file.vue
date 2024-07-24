@@ -73,10 +73,10 @@ async function onAddFiles(items: INewFile[]) {
 
   const documentUrl = files.value[0]?.url;
   if (documentUrl) {
-    await createPurchaseRequestFromDocument({ command: { documentUrl } });
+    const result = await createPurchaseRequestFromDocument({ command: { documentUrl } });
+    const id = result?.data?.createPurchaseRequestFromDocument?.id;
+    await router.push({ name: "PurchaseRequest", params: { id } });
   }
-
-  await router.push({ name: "Cart" });
 
   processing.value = false;
 }

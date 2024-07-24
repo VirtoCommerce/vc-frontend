@@ -1,0 +1,12 @@
+query GetPurchaseRequest($id: String!) {
+  purchaseRequest(id: $id) {
+    id
+    number
+    sources {
+      name
+      url
+      contentType
+      size
+    }
+  }
+}

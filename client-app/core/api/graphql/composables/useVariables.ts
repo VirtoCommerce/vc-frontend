@@ -23,6 +23,8 @@ export function useAllGlobalVariables(): MaybeRefOrGetter<IAllGlobalVariables> {
     cultureName,
     currencyCode,
     userId,
+    // cartType: "PurchaseRequest",
+    // cartName: "PR240723-00026",
   };
 }
 
