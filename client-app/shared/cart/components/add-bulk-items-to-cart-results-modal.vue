@@ -8,8 +8,8 @@
       <VcExpansionPanels class="flex flex-col gap-y-4">
         <VcExpansionPanel v-for="(group, index) in groups" :key="group.name" :expanded="!index && groups.length === 1">
           <template #icon>
-            <VcIcon v-if="group.name === 'added'" class="text-[--color-success-500]" name="check-circle" />
-            <VcIcon v-else-if="group.name === 'not_added'" class="text-[--color-danger-500]" name="x-circle" />
+            <VcIcon v-if="group.name === 'added'" class="text-success" name="check-circle" />
+            <VcIcon v-else-if="group.name === 'not_added'" class="text-danger" name="x-circle" />
           </template>
 
           <template #header-content>
@@ -161,7 +161,7 @@ function getTableRowsHtml(groupedItems: ItemForAddBulkItemsToCartResultsModalTyp
 
   groupedItems.forEach((item: ItemForAddBulkItemsToCartResultsModalType) => {
     rows += `
-    <tr class="even:bg-[--color-neutral-50]">
+    <tr class="even:bg-neutral-50">
       <td class="px-2.5 py-2">${item.name}</td>
       <td class="px-2.5 py-2">${item.sku}</td>
       <td class="px-2.5 py-2">${item.quantity}</td>
@@ -181,7 +181,7 @@ function print() {
   <header class="flex justify-between items-start">
     <img class="h-7" src="${logoUrl.value}" alt="">
 
-    <div class="p-2 border border-[--color-neutral-100] rounded text-xs">
+    <div class="p-2 border border-neutral-100 rounded text-xs">
       <div class="font-black">${t("common.labels.created_date")}</div>
       <div class="mt-1">${d(new Date())}</div>
     </div>
@@ -201,15 +201,15 @@ function print() {
     contentHtml += `
     <div class="space-y-3">
       <h3 class="flex items-center gap-1.5 text-sm font-bold">
-        <svg class="vc-icon vc-icon--size--sm text-[--color-secondary-300] flex-none">
+        <svg class="vc-icon vc-icon--size--sm text-secondary-300 flex-none">
           <use href="/static/icons/basic/${iconName(group.name)}.svg#icon" />
         </svg>
         ${t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`)}
       </h3>
 
-      <div class="overflow-hidden border border-[--color-neutral-100] rounded">
+      <div class="overflow-hidden border border-neutral-100 rounded">
         <table class="w-full border-collapse text-xs">
-          <thead class="bg-[--color-neutral-50] font-bold text-left">
+          <thead class="bg-neutral-50 font-bold text-left">
             <th class="px-2.5 py-2 w-1/2">
               ${t("shared.cart.add_bulk_items_to_cart_results_modal.labels.product_name")}
             </th>

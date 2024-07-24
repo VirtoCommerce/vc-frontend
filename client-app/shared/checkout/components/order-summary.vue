@@ -21,7 +21,7 @@
             {{ $t("common.labels.discount") }}
             <VcIcon
               v-if="hasDiscounts"
-              class="ml-1 text-[--color-primary-500] print:hidden"
+              class="ml-1 text-primary print:hidden"
               :name="discountsCollapsed ? 'chevron-down' : 'chevron-up'"
               size="xs"
             />

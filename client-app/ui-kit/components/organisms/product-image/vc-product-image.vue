@@ -33,7 +33,7 @@
           data-btn="btn-prev"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="text-[--color-neutral-400]" name="chevron-left" size="xs" />
+            <VcIcon class="text-neutral-400" name="chevron-left" size="xs" />
           </span>
         </button>
 
@@ -44,7 +44,7 @@
           data-btn="btn-next"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="text-[--color-neutral-400]" name="chevron-right" size="xs" />
+            <VcIcon class="text-neutral-400" name="chevron-right" size="xs" />
           </span>
         </button>
 
@@ -114,7 +114,7 @@ function slideChanged(swiper: SwiperInstance) {
 
 <style lang="scss">
 .vc-product-image {
-  @apply relative max-w-full aspect-square border border-[--color-neutral-200] rounded;
+  @apply relative max-w-full aspect-square border border-neutral-200 rounded;
 
   &__carousel {
     @apply h-full w-full;
@@ -137,7 +137,7 @@ function slideChanged(swiper: SwiperInstance) {
   }
 
   &__carousel-arrow {
-    @apply flex h-6 w-6 items-center justify-center rounded-full bg-[--color-additional-50];
+    @apply flex h-6 w-6 items-center justify-center rounded-full bg-additional-50;
   }
 
   &__carousel-bullets {

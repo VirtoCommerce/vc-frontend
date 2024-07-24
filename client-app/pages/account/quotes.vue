@@ -37,7 +37,7 @@
               class="flex h-full items-center px-4"
               @click="resetKeyword"
             >
-              <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
+              <VcIcon class="text-primary" name="delete-2" size="xs" />
             </button>
 
             <VcButton

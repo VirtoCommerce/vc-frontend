@@ -92,7 +92,7 @@
           </div>
 
           <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4 text-center">
-            <VcIcon class="text-[--color-success-500]" name="check-circle" />
+            <VcIcon class="text-success" name="check-circle" />
           </div>
 
           <div v-else class="w-1/4">
@@ -157,7 +157,7 @@
           </td>
 
           <td v-if="address.id === selectedAddress?.id" class="p-5 text-center">
-            <VcIcon class="text-[--color-success-500]" name="check-circle" />
+            <VcIcon class="text-success" name="check-circle" />
           </td>
           <td v-else class="p-5">
             <button

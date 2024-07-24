@@ -8,7 +8,7 @@
     <div class="ms-auto flex items-center">
       <!-- Call us block -->
       <div v-if="$cfg.support_phone_number" class="flex items-center">
-        <VcIcon class="me-1.5 text-[--color-primary-500]" name="phone" size="sm" />
+        <VcIcon class="me-1.5 text-primary" name="phone" size="sm" />
 
         <span class="mr-1 font-thin">
           {{ $t("shared.layout.header.top_header.call_us_label") }}
@@ -59,7 +59,7 @@
             </span>
 
             <VcIcon
-              class="ms-1.5 text-[--color-accent-200] [--vc-icon-size:1rem] lg:text-[--color-primary-500] lg:[--vc-icon-size:0.625rem]"
+              class="ms-1.5 text-accent-200 [--vc-icon-size:1rem] lg:text-primary lg:[--vc-icon-size:0.625rem]"
               :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
@@ -74,7 +74,7 @@
                 class="flex items-center hover:text-primary"
                 @click="loginMenuVisible = false"
               >
-                <VcIcon class="text-[--color-primary-500]" name="user-circle" />
+                <VcIcon class="text-primary" name="user-circle" />
 
                 <span class="ml-2">
                   {{ user.contact?.fullName }}

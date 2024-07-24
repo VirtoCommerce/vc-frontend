@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="relative rounded bg-[--color-additional-50] p-4 text-sm shadow-md md:flex md:items-center md:gap-6 md:px-5"
-  >
+  <div class="relative rounded bg-additional-50 p-4 text-sm shadow-md md:flex md:items-center md:gap-6 md:px-5">
     <div class="flex items-center gap-2 pe-10 md:contents">
       <router-link
         :to="{ name: 'ListDetails', params: { listId: list.id } }"

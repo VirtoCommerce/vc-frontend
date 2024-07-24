@@ -45,7 +45,7 @@
                     class="flex items-center gap-2 py-1"
                     @click="hideSearchDropdown"
                   >
-                    <VcIcon name="search-circle" size="xs" class="shrink-0 text-[--color-neutral-300]" />
+                    <VcIcon name="search-circle" size="xs" class="shrink-0 text-neutral-300" />
                     <span v-html-safe="suggestion.label" class="truncate" />
                   </router-link>
                 </li>
