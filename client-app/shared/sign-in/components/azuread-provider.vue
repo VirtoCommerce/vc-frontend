@@ -12,10 +12,11 @@ import { getReturnUrlValue } from "@/core/utilities";
 import IdentityProvider from "./identity-provider.vue";
 
 const AUTHENTICATION_TYPE = "AzureAD";
+const DEFAULT_RETURN_URL = "/";
 
 function signIn() {
   const origin = location.origin;
-  const returnUrl = getReturnUrlValue() ?? "/";
+  const returnUrl = getReturnUrlValue() ?? DEFAULT_RETURN_URL;
 
   const oidcUrl = new URL("/signin-oidc", origin);
   const callbackUrl = new URL("/callback", origin);
