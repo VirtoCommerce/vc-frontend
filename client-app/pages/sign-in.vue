@@ -73,11 +73,11 @@ usePageHead({
   @apply max-w-screen-xl;
 
   &__title {
-    @apply mb-6 lg:mt-5;
+    @apply mb-6 lg:mt-5 text-center md:text-left;
   }
 
   &__divider {
-    @apply relative flex flex-col md:flex-row items-center;
+    @apply relative flex flex-col md:flex-row items-center uppercase;
 
     &::before,
     &::after {

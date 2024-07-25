@@ -14,9 +14,9 @@ defineProps<IProps>();
 const loadProviderComponent = (providerName: string) => {
   return defineAsyncComponent<Component>({
     loader: () => import(`@/shared/sign-in/components/${providerName.toLowerCase()}-provider.vue`),
-    onError(error, retry, fail) {
+    onError(error) {
       Logger.error(`Failed to load ${providerName} provider component`, error);
-      fail();
+      // fail();
     },
   });
 };
