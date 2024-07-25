@@ -41,9 +41,10 @@ import { SignInForm } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 
 const PASSWORD_AUTHENTICATION_TYPE = "Password";
+
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
 
-// const { themeContext } = useThemeContext();
+const { themeContext } = useThemeContext();
 
 const authenticationTypes: string[] = [PASSWORD_AUTHENTICATION_TYPE, "AzureAD"];
 
@@ -75,11 +76,11 @@ usePageHead({
 
     &::before,
     &::after {
-      @apply content-[''] absolute md:left-1/2 max-md:top-1/2 md:w-px h-px md:h-[calc(50%-4rem)] w-[calc(50%-2rem)] bg-neutral-300;
+      @apply content-[''] absolute md:left-1/2 md:w-px h-px md:h-[calc(50%-4rem)] w-[calc(50%-2rem)] bg-neutral-300;
     }
 
     &::before {
-      @apply md:top-4 max-md:left-0;
+      @apply md:top-4 max-md:left-0 max-md:top-1/2;
     }
 
     &::after {
