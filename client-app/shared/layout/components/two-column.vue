@@ -1,12 +1,28 @@
 <template>
   <div class="polygon-bg grow">
     <div class="container mx-auto px-7 pb-52 pt-5" :class="$attrs.class">
-      <div :class="[{ 'lg:flex-row': alwaysShowRight, 'flex-col': alwaysShowRight }, 'flex', 'gap-[5.625rem]']">
-        <div class="w-full lg:mt-8 lg:w-1/2">
+      <div
+        :class="[
+          'flex',
+          'gap-8',
+          `${breakpoint}:gap-[5.625rem]`,
+          {
+            [`${breakpoint}:flex-row`]: alwaysShowRight,
+            'flex-col': alwaysShowRight,
+          },
+        ]"
+      >
+        <div :class="`w-full ${breakpoint}:mt-8 ${breakpoint}:w-1/2`">
           <slot name="left"></slot>
         </div>
         <slot></slot>
-        <div :class="[{ hidden: !alwaysShowRight, 'lg:block': !alwaysShowRight }, 'w-full', 'lg:w-1/2']">
+        <div
+          :class="[
+            'w-full',
+            `${breakpoint}:w-1/2`,
+            { hidden: !alwaysShowRight, [`${breakpoint}:block`]: !alwaysShowRight },
+          ]"
+        >
           <slot name="right"></slot>
         </div>
       </div>
@@ -19,8 +35,11 @@ defineOptions({
   inheritAttrs: false,
 });
 
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  breakpoint: "lg",
+});
 interface IProps {
   alwaysShowRight?: boolean;
+  breakpoint?: string;
 }
 </script>
