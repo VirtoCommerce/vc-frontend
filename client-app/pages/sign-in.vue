@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { usePageHead, useThemeContext } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 
@@ -46,7 +46,7 @@ const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/co
 
 const { themeContext } = useThemeContext();
 
-const authenticationTypes: string[] = [PASSWORD_AUTHENTICATION_TYPE, "AzureAD"];
+const authenticationTypes = themeContext.value.settings?.authenticationTypes ?? [PASSWORD_AUTHENTICATION_TYPE];
 
 const identityProviders = computed(() => authenticationTypes.filter((type) => type !== PASSWORD_AUTHENTICATION_TYPE));
 
