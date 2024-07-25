@@ -12,8 +12,9 @@
         class="sign-in__providers sign-in__providers--left"
       />
     </template>
-    <div v-if="hasIdentityProviders && hasPasswordAuthentication" class="sign-in__divider">OR</div>
-    <!-- use I18n                                      ^^^ -->
+    <div v-if="hasIdentityProviders && hasPasswordAuthentication" class="sign-in__divider">
+      {{ $t("pages.sign_in.divider_text") }}
+    </div>
     <template #right>
       <VcImage
         v-if="!hasIdentityProviders"
@@ -46,9 +47,13 @@ const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/co
 
 const { themeContext } = useThemeContext();
 
-const authenticationTypes = themeContext.value.settings?.authenticationTypes ?? [PASSWORD_AUTHENTICATION_TYPE];
+const authenticationTypes: string[] = themeContext.value.settings?.authenticationTypes ?? [
+  PASSWORD_AUTHENTICATION_TYPE,
+];
 
-const identityProviders = computed(() => authenticationTypes.filter((type) => type !== PASSWORD_AUTHENTICATION_TYPE));
+const identityProviders = computed(() =>
+  authenticationTypes.filter((type: string) => type !== PASSWORD_AUTHENTICATION_TYPE),
+);
 
 const hasIdentityProviders = computed(() => identityProviders.value.length > 0);
 
