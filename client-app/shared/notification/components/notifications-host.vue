@@ -103,7 +103,7 @@ $status-colors: success, warning, danger;
   }
 
   &__close-button {
-    @apply absolute right-0 appearance-none px-4 py-2;
+    @apply absolute right-0 appearance-none px-4 py-2 text-additional-50;
 
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
   }
