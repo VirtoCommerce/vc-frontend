@@ -44,14 +44,22 @@ function breakpointClassName(className: string): string {
 
 <style lang="scss">
 .two-column {
-  @apply grow lg:mt-20;
+  @apply grow;
+
+  @media (width > theme("screens.lg")) {
+    @apply mt-20;
+  }
 
   &__container {
     @apply container mx-auto px-7 pb-52 pt-5;
   }
 
   &__content {
-    @apply flex gap-8 flex-col lg:gap-x-[5.625rem];
+    @apply flex gap-8 flex-col;
+
+    @media (width > theme("screens.lg")) {
+      @apply gap-x-[5.625rem];
+    }
   }
 
   &__column {

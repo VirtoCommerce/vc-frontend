@@ -7,7 +7,7 @@
 
       <SignInForm v-if="hasPasswordAuthentication" class="sign-in__form" />
       <IdentityProviders
-        v-else-if="hasIdentityProviders"
+        v-if="hasOnlyIdentityProviders"
         :providers="identityProviders"
         class="sign-in__providers sign-in__providers--left"
       />
@@ -23,12 +23,8 @@
         src="/static/images/sign-in/sign-in-page-image.webp"
         lazy
       />
-      <template v-if="hasIdentityProviders">
-        <IdentityProviders
-          v-if="hasPasswordAuthentication"
-          class="sign-in__providers sign-in__providers--right"
-          :providers="identityProviders"
-        />
+      <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders">
+        <IdentityProviders class="sign-in__providers sign-in__providers--right" :providers="identityProviders" />
       </template>
     </template>
   </TwoColumn>
@@ -73,23 +69,43 @@ usePageHead({
   @apply max-w-screen-xl;
 
   &__title {
-    @apply md:mb-6 mb-4 text-center md:text-left;
+    @apply mb-4 text-center;
+
+    @media (width > theme("screens.md")) {
+      @apply mb-6 text-left;
+    }
   }
 
   &__divider {
-    @apply relative flex flex-col md:flex-row items-center uppercase;
+    @apply relative flex flex-col items-center uppercase;
+
+    @media (width > theme("screens.md")) {
+      @apply flex-row;
+    }
 
     &::before,
     &::after {
-      @apply content-[''] absolute md:left-1/2 md:w-px h-px md:h-[calc(50%-2rem)] w-[calc(50%-2rem)] bg-neutral-300;
+      @apply content-[''] absolute h-px w-[calc(50%-2rem)] top-1/2 bg-neutral-300;
+
+      @media (width > theme("screens.md")) {
+        @apply h-[calc(50%-2rem)] w-px;
+      }
     }
 
     &::before {
-      @apply md:top-2 max-md:left-0 max-md:top-1/2;
+      @apply left-0;
+
+      @media (width > theme("screens.md")) {
+        @apply top-2 left-1/2;
+      }
     }
 
     &::after {
-      @apply md:bottom-2 right-0;
+      @apply right-0;
+
+      @media (width > theme("screens.md")) {
+        @apply top-auto bottom-2 left-1/2;
+      }
     }
   }
 
@@ -98,7 +114,11 @@ usePageHead({
   }
 
   &__providers {
-    @apply md:m-0 mx-auto;
+    @apply mx-auto;
+
+    @media (width > theme("screens.md")) {
+      @apply ml-0;
+    }
 
     &--left {
       @apply mt-9 max-w-80 w-full;

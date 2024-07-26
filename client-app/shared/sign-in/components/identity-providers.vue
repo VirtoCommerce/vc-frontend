@@ -16,7 +16,6 @@ const loadProviderComponent = (providerName: string) => {
     loader: () => import(`@/shared/sign-in/components/${providerName.toLowerCase()}-provider.vue`),
     onError(error) {
       Logger.error(`Failed to load ${providerName} provider component`, error);
-      // fail();
     },
   });
 };

@@ -28,7 +28,7 @@ defineProps<IProps>();
   @apply w-full;
 
   &__icon {
-    @apply mr-2;
+    @apply mr-2 size-5;
   }
 }
 </style>
