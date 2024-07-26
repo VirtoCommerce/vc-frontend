@@ -16,7 +16,7 @@
   <!-- Desktop table view -->
   <table v-else :class="[layout, 'text-left text-sm']" :aria-describedby="description">
     <slot name="header">
-      <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-gray-200">
+      <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-neutral-200">
         <tr>
           <th
             v-for="column in columns"

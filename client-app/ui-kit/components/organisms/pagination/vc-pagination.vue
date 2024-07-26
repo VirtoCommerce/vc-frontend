@@ -139,19 +139,19 @@ const setPage = (page: number) => {
     @apply flex items-center justify-center min-w-[2rem] h-8 p-1 rounded text-xs font-bold;
 
     &[type="button"] {
-      @apply bg-[--color-additional-50] text-[--color-neutral-950];
+      @apply bg-additional-50 text-neutral-950;
     }
 
     &:hover {
-      @apply bg-[--color-primary-50];
+      @apply bg-primary-50;
     }
 
     &--active {
-      @apply bg-[--color-primary-500] text-[--color-additional-50] pointer-events-none;
+      @apply bg-primary text-additional-50 pointer-events-none;
     }
 
     &--ellipsis {
-      @apply text-[--color-neutral-400] pointer-events-none;
+      @apply text-neutral-400 pointer-events-none;
     }
   }
 

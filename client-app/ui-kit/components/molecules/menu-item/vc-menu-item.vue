@@ -129,7 +129,7 @@ onMounted(() => {
     @apply block w-full text-left rounded-[inherit];
 
     &:not(:disabled) {
-      @apply bg-[--color-additional-50] text-[--color-neutral-950];
+      @apply bg-additional-50 text-neutral-950;
     }
 
     &--active {
@@ -185,7 +185,7 @@ onMounted(() => {
     &--disabled {
       --vc-icon-color: var(--color-neutral-400);
 
-      @apply bg-[--color-additional-50] text-[--color-neutral-400] cursor-not-allowed;
+      @apply bg-additional-50 text-neutral-400 cursor-not-allowed;
     }
   }
 

@@ -4,11 +4,11 @@
       v-bind="$attrs"
       :href="href"
       :class="[
-        isActive
+        isActive && link.route
           ? 'text-[--header-bottom-link-active-color]'
           : 'text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]',
       ]"
-      class="flex flex-col items-center px-3 text-13 font-bold tracking-wide"
+      class="flex flex-col items-center gap-0.5 px-3 text-sm font-bold tracking-wide"
       @click="navigate"
     >
       <span class="relative">

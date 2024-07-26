@@ -93,8 +93,7 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
   }
 
   &__btn {
-    @apply z-10 absolute flex items-center justify-center w-14 h-14 rounded-full bg-[--color-additional-50]
-    text-[--color-primary-500] shadow-xl cursor-pointer;
+    @apply z-10 absolute flex items-center justify-center w-14 h-14 rounded-full bg-additional-50 text-primary shadow-xl cursor-pointer;
 
     top: calc(50% - 1.75rem);
 
@@ -107,7 +106,7 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
     }
 
     &--disabled {
-      @apply text-[--color-neutral-300] cursor-auto pointer-events-none;
+      @apply text-neutral-300 cursor-auto pointer-events-none;
     }
 
     &--lock {
@@ -123,7 +122,7 @@ const paginationParams = computed<PaginationOptions | boolean>(() =>
   }
 
   .swiper-pagination-bullet {
-    @apply border-2 border-[--color-primary-500];
+    @apply border-2 border-primary;
   }
 }
 </style>

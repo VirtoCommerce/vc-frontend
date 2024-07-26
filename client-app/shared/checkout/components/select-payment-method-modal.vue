@@ -17,7 +17,7 @@
     </template>
 
     <template v-for="method in availableMethods" :key="method.code">
-      <div class="flex items-center justify-between space-x-4 border-b border-gray-300 px-5 py-6 lg:py-4">
+      <div class="flex items-center justify-between space-x-4 border-b border-neutral-300 px-5 py-6 lg:py-4">
         <VcImage :src="method.logoUrl" class="size-10 object-center" lazy />
         <div class="grow overflow-hidden text-ellipsis">
           {{ $t(`common.methods.payment_by_code.${method.code}`) }}
@@ -25,7 +25,7 @@
         <div class="flex w-20 items-center justify-end lg:justify-center">
           <div
             v-if="method.code === selectedMethod?.code"
-            class="flex size-6 items-center justify-center rounded-full bg-[--color-success-600] text-sm text-[--color-additional-50]"
+            class="flex size-6 items-center justify-center rounded-full bg-success-600 text-sm text-additional-50"
           >
             <VcIcon :size="16" name="check-bold" />
           </div>

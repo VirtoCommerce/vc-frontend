@@ -92,7 +92,7 @@ function isDisabledStep(step: IStepsItem) {
 
   &__icon {
     @apply flex shrink-0 items-center justify-center w-5 h-5 rounded-full
-    text-sm font-extrabold text-additional-50 bg-neutral-400;
+    text-sm font-black text-additional-50 bg-neutral-400;
 
     #{$itemActive}:not(#{$itemDisabled}) & {
       @apply bg-primary;
@@ -104,7 +104,7 @@ function isDisabledStep(step: IStepsItem) {
   }
 
   &__text {
-    @apply text-sm font-semibold text-neutral-600;
+    @apply text-sm font-bold text-neutral-600;
 
     #{$itemActive}:not(#{$itemDisabled}) & {
       @apply text-neutral-900;

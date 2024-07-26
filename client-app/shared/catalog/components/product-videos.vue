@@ -2,7 +2,7 @@
   <div v-if="videos?.items" class="-mx-2 flex flex-wrap">
     <div v-for="(video, index) in videos?.items" :key="index" class="w-1/2 p-2">
       <div
-        class="relative aspect-video cursor-pointer rounded border border-[--color-neutral-200] bg-[--color-additional-950]"
+        class="relative aspect-video cursor-pointer rounded border border-neutral-200 bg-additional-950"
         tabindex="0"
         role="button"
         @keydown="openVideoModal(video)"
@@ -10,9 +10,7 @@
       >
         <VcImage class="size-full rounded-sm object-cover object-center opacity-60" :src="video.thumbnailUrl" />
 
-        <div
-          class="absolute inset-0 flex items-center justify-center text-[--color-additional-50] hover:text-[--color-primary-500]"
-        >
+        <div class="absolute inset-0 flex items-center justify-center text-additional-50 hover:text-primary">
           <VcIcon :size="36" name="play" />
         </div>
       </div>

@@ -40,14 +40,14 @@
         :items="tabs"
         text-field="label"
         value-field="id"
-        class="col-span-1 border-y bg-white px-3.5 shadow-sm max-md:-mx-6 md:rounded-t md:border md:px-3 lg:hidden"
+        class="col-span-1 border-y bg-additional-50 px-3.5 shadow-sm max-md:-mx-6 md:rounded-t md:border md:px-3 lg:hidden"
       />
 
       <!-- Main section -->
       <div :class="{ hidden: activeTab !== 'manually' }" class="col-span-1 max-md:-mx-6 lg:col-span-2 lg:block">
         <Manually
           :loading="loadingManually"
-          class="bg-white shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
+          class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
           @add-to-cart="addManuallyItems"
           @error="showIncorrectDataError"
         />
@@ -57,7 +57,7 @@
       <div :class="{ hidden: activeTab !== 'copy&paste' }" class="col-span-1 max-md:-mx-6 lg:block">
         <CopyAndPaste
           :loading="loadingCSV"
-          class="bg-white shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
+          class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
           @add-to-cart="addItemsFromCSVText"
           @error="showIncorrectDataError"
         />

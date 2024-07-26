@@ -25,11 +25,11 @@ defineProps<IProps>();
   @apply marker:text-xl marker:text-primary;
 
   &__title {
-    @apply font-extrabold;
+    @apply font-black;
   }
 
   &__description {
-    @apply text-sm font-medium;
+    @apply text-sm;
   }
 }
 </style>

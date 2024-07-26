@@ -3,10 +3,7 @@
     <template #trigger>
       <slot :is-in-compare-list="isInCompareList" :toggle="toggle">
         <button :aria-label="tooltipText" type="button" class="flex" tabindex="0" @click="toggle">
-          <VcIcon
-            :class="[customClass, isInCompareList ? 'text-[--color-primary-500]' : 'text-[--color-neutral-400]']"
-            name="compare"
-          />
+          <VcIcon :class="[customClass, isInCompareList ? 'text-primary' : 'text-neutral-400']" name="compare" />
         </button>
       </slot>
     </template>

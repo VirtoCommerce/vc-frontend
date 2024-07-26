@@ -16,9 +16,9 @@
       </h1>
 
       <div class="mb-10 flex flex-col gap-5 lg:flex-row">
-        <VcIcon name="check-circle" :size="48" class="hidden text-[--color-success-500] lg:block" />
+        <VcIcon name="check-circle" :size="48" class="hidden text-success lg:block" />
 
-        <div class="max-w-md text-center text-19 lg:text-left">
+        <div class="max-w-md text-center text-xl lg:text-left">
           <strong class="mb-4 block">
             {{ $t("pages.checkout_complete.subtitle", [placedOrder?.number]) }}
           </strong>
