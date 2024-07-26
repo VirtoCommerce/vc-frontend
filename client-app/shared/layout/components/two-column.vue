@@ -4,8 +4,8 @@
       <div
         :class="[
           'flex',
-          'gap-8',
-          `${breakpoint}:gap-[5.625rem]`,
+          'gap-y-8',
+          'gap-x-[5.625rem]',
           {
             [`${breakpoint}:flex-row`]: alwaysShowRight,
             'flex-col': alwaysShowRight,
@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BREAKPOINTS } from "@/core/constants/tailwind";
+import type { BreakpointsType } from "@/core/constants/tailwind";
 
 defineOptions({
   inheritAttrs: false,
@@ -40,8 +40,9 @@ defineOptions({
 withDefaults(defineProps<IProps>(), {
   breakpoint: "lg",
 });
+
 interface IProps {
   alwaysShowRight?: boolean;
-  breakpoint?: keyof typeof BREAKPOINTS;
+  breakpoint?: BreakpointsType;
 }
 </script>
