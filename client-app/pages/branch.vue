@@ -4,41 +4,50 @@
       {{ fulfillmentCenter?.name }}
     </VcTypography>
 
-    <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcWidget>
-        <template #default-container>
-          <div class="p-5 text-base lg:px-8 lg:pb-5 lg:pt-6">
-            <div class="mb-1 mt-0.5 lg:mb-0.5">
-              <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
-              <div class="break-words">
-                {{ fulfillmentCenter?.address ? fulfillmentCenter?.address : "&ndash;" }}
-              </div>
-            </div>
-
-            <div class="mb-1 flex flex-wrap">
-              <div class="mr-1 font-bold">{{ $t("pages.branch.phone") }}</div>
-              <a v-if="fulfillmentCenter?.phone" :href="`tel:${fulfillmentCenter?.phone}`" class="hover:underline">
-                {{ fulfillmentCenter?.phone }}
-              </a>
-              <div v-else>&ndash;</div>
+    <div class="mt-4 lg:mt-6 lg:flex lg:items-start">
+      <div class="lg:drop-shadow-md-x lg:grow lg:rounded lg:border lg:bg-additional-50">
+        <div
+          class="rounded border bg-additional-50 p-5 text-base shadow-md lg:rounded-none lg:border-0 lg:bg-transparent lg:px-8 lg:pb-5 lg:pt-6 lg:shadow-none"
+        >
+          <div class="mb-1 mt-0.5 lg:mb-0.5">
+            <div class="mb-1 mr-1 font-bold lg:mb-2">{{ $t("pages.branch.address") }}</div>
+            <div class="break-words">
+              {{ fulfillmentCenter?.address ? fulfillmentCenter?.address : "&ndash;" }}
             </div>
           </div>
 
-          <div v-if="fulfillmentCenter?.description">
-            <div class="hidden h-[18px] bg-gradient-to-b from-[#94949421] lg:block"></div>
-
-            <VcMarkdownRender class="px-6" :src="fulfillmentCenter?.description" />
+          <div class="mb-1 flex flex-wrap">
+            <div class="mr-1 font-bold">{{ $t("pages.branch.phone") }}</div>
+            <a v-if="fulfillmentCenter?.phone" :href="`tel:${fulfillmentCenter?.phone}`" class="hover:underline">
+              {{ fulfillmentCenter?.phone }}
+            </a>
+            <div v-else>&ndash;</div>
           </div>
-        </template>
-      </VcWidget>
+        </div>
 
-      <template #sidebar>
-        <VcWidget :title="$t('pages.branch.other_branches')">
-          <ul class="ms-3 list-disc space-y-7">
+        <div
+          v-if="fulfillmentCenter?.description"
+          class="mt-6 rounded border bg-additional-50 text-base shadow-md lg:mt-0 lg:rounded-none lg:border-0 lg:bg-transparent lg:shadow-none"
+        >
+          <div class="hidden h-5 bg-gradient-to-b from-neutral/25 lg:block"></div>
+
+          <div id="description" v-html-safe="fulfillmentCenter?.description" class="break-words"></div>
+        </div>
+      </div>
+
+      <div
+        class="mt-6 rounded border bg-additional-50 text-base shadow-md lg:ml-8 lg:mt-0 lg:w-[21.125rem] lg:shrink-0"
+      >
+        <div class="border-b px-6 py-4">
+          <h2 class="text-xl font-black uppercase">{{ $t("pages.branch.other_branches") }}</h2>
+        </div>
+        <div class="px-11 pb-7 pt-5 lg:px-12 lg:pb-9 lg:pt-3.5">
+          <!-- TODO: Replace with VcList -->
+          <ul class="list-disc space-y-7">
             <li v-for="(branch, index) in otherBranches" :key="index" class="text-primary marker:text-xl">
               <router-link
                 :to="`/branch/${branch.id}`"
-                class="mb-1 text-lg font-black text-[--link-color] hover:text-[--link-hover-color] lg:text-base"
+                class="mb-1 text-[1.063rem] font-black text-[--link-color] hover:text-[--link-hover-color] lg:text-base"
               >
                 {{ branch.name }}
               </router-link>
@@ -52,9 +61,9 @@
               </div>
             </li>
           </ul>
-        </VcWidget>
-      </template>
-    </VcLayoutWithRightSidebar>
+        </div>
+      </div>
+    </div>
   </VcContainer>
 </template>
 
@@ -94,7 +103,7 @@ watch(
   }
 
   table {
-    @apply table-fixed border-separate border-0 w-full mt-[1.375rem] text-base lg:mt-1.5;
+    @apply table-fixed border-separate border-0 w-full mt-5 text-base font-medium lg:mt-1.5;
     border-spacing: 0px 0px;
   }
 
@@ -126,7 +135,7 @@ watch(
   }
 
   td {
-    @apply px-3.5 py-3.5 lg:px-5 lg:py-[1.035rem] border-b;
+    @apply px-3.5 py-3.5 lg:px-5 lg:py-4 border-b;
 
     &:first-child {
       @apply border-l;
