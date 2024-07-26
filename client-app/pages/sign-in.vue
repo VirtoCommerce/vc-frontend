@@ -1,5 +1,5 @@
 <template>
-  <TwoColumn class="sign-in" breakpoint="md" :always-show-right="hasIdentityProviders">
+  <TwoColumn class="sign-in" breakpoint="md" :always-show-right="hasIdentityProviders && !hasOnlyIdentityProviders">
     <template #left>
       <VcTypography tag="h1" class="sign-in__title">
         {{ $t("pages.sign_in.header") }}
@@ -17,13 +17,13 @@
     </div>
     <template #right>
       <VcImage
-        v-if="!hasIdentityProviders"
+        v-if="!hasIdentityProviders || hasOnlyIdentityProviders"
         :alt="$t('common.labels.background_image')"
         class="sign-in__image"
         src="/static/images/sign-in/sign-in-page-image.webp"
         lazy
       />
-      <template v-else>
+      <template v-if="hasIdentityProviders">
         <IdentityProviders
           v-if="hasPasswordAuthentication"
           class="sign-in__providers sign-in__providers--right"
@@ -56,7 +56,7 @@ const identityProviders = computed(() =>
 );
 
 const hasIdentityProviders = computed(() => identityProviders.value.length > 0);
-
+const hasOnlyIdentityProviders = computed(() => hasIdentityProviders.value && !hasPasswordAuthentication.value);
 const hasPasswordAuthentication = computed(() => {
   return authenticationTypes.includes(PASSWORD_AUTHENTICATION_TYPE);
 });
@@ -73,7 +73,7 @@ usePageHead({
   @apply max-w-screen-xl;
 
   &__title {
-    @apply mb-6 lg:mt-5 text-center md:text-left;
+    @apply md:mb-6 mb-4 text-center md:text-left;
   }
 
   &__divider {
@@ -81,15 +81,15 @@ usePageHead({
 
     &::before,
     &::after {
-      @apply content-[''] absolute md:left-1/2 md:w-px h-px md:h-[calc(50%-4rem)] w-[calc(50%-2rem)] bg-neutral-300;
+      @apply content-[''] absolute md:left-1/2 md:w-px h-px md:h-[calc(50%-2rem)] w-[calc(50%-2rem)] bg-neutral-300;
     }
 
     &::before {
-      @apply md:top-4 max-md:left-0 max-md:top-1/2;
+      @apply md:top-2 max-md:left-0 max-md:top-1/2;
     }
 
     &::after {
-      @apply md:bottom-4 right-0;
+      @apply md:bottom-2 right-0;
     }
   }
 

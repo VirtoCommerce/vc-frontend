@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <VcTypography tag="h1" class="lg:mt-5">
+      <VcTypography tag="h1">
         {{ $t(`pages.${localizationPageTerm}.header`) }}
       </VcTypography>
 
