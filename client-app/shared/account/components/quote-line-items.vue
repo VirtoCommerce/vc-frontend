@@ -25,7 +25,7 @@
       <div
         v-for="item in extendedItems"
         :key="item.id"
-        class="relative rounded border shadow-t-3sm md:rounded-none md:border-0 md:shadow-none"
+        class="relative rounded border shadow md:rounded-none md:border-0 md:shadow-none"
       >
         <div
           class="vc-quote-line-items__line-item grid gap-x-2.5 pb-4 pl-3 pr-3.5 pt-3 md:place-items-center md:gap-x-3 md:p-4"
@@ -47,7 +47,7 @@
 
             <!-- NAME -->
             <div
-              class="vc-quote-line-items__name text-sm font-extrabold max-md:pb-2 max-md:pe-7 md:grow lg:font-bold lg:leading-4"
+              class="vc-quote-line-items__name text-sm font-black max-md:pb-2 max-md:pe-7 md:grow lg:font-bold lg:leading-4"
               :class="{ 'opacity-25': !item.extended.isProductExists }"
             >
               <router-link
@@ -73,14 +73,14 @@
                 :key="property.id"
                 class="grid grid-cols-[auto_1fr_auto] gap-1.5 text-sm md:grid-cols-[33%_1fr] lg:text-xs"
               >
-                <div class="min-w-0 font-medium capitalize text-neutral-600 md:font-bold md:text-neutral-800">
+                <div class="min-w-0 capitalize text-neutral-600 md:font-bold md:text-neutral-800">
                   <div class="truncate">{{ property.label }}:</div>
                 </div>
 
                 <div class="mb-1 h-4 grow border-b-2 border-dotted border-neutral-200 md:hidden"></div>
 
                 <div class="min-w-0">
-                  <div class="truncate font-semibold md:font-normal">
+                  <div class="truncate font-bold md:font-normal">
                     {{ property.value }}
                   </div>
                 </div>
@@ -92,7 +92,7 @@
               class="vc-quote-line-items__price grid w-full grid-cols-[auto_1fr_auto] gap-1.5 md:grid-cols-[45%_1fr] xl:contents"
             >
               <div
-                class="min-w-0 text-sm font-medium capitalize text-neutral-600 md:font-bold md:text-neutral-800 lg:text-xs xl:hidden"
+                class="min-w-0 text-sm capitalize text-neutral-600 md:font-bold md:text-neutral-800 lg:text-xs xl:hidden"
               >
                 <div class="truncate">{{ $t("pages.account.quote_details.line_items.price_per_item") }}:</div>
               </div>
@@ -100,7 +100,7 @@
               <div class="mb-1 h-4 grow border-b-2 border-dotted border-neutral-200 md:hidden"></div>
 
               <div class="xl:w-full xl:pr-4 xl:text-right">
-                <div class="text-sm font-semibold md:font-normal lg:text-xs xl:font-medium">
+                <div class="text-sm font-bold md:font-normal lg:text-xs">
                   <!-- Price per item -->
                   <VcPriceDisplay :value="item.selectedTierPrice!.price" />
                 </div>
@@ -128,11 +128,11 @@
           >
             <!-- Total -->
             <div class="flex flex-wrap items-center justify-end gap-x-1 text-right">
-              <div class="text-14 font-bold text-neutral md:hidden">
+              <div class="text-sm font-bold text-neutral md:hidden">
                 {{ $t("pages.account.quote_details.line_items.total") }}:
               </div>
 
-              <div class="text-15 font-bold [word-break:break-word]">
+              <div class="text-base font-bold [word-break:break-word]">
                 {{ $n(item.selectedTierPrice!.price!.amount * item.selectedTierPrice!.quantity, "currency") }}
               </div>
             </div>

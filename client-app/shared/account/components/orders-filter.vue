@@ -2,7 +2,7 @@
   <div class="flex flex-col justify-between lg:justify-start">
     <div class="flex flex-col gap-4 space-y-8 lg:flex-row lg:space-y-0">
       <div v-if="!!facets" class="flex w-48 flex-col space-y-4">
-        <div class="font-bold uppercase lg:normal-case lg:text-gray-400">
+        <div class="font-bold uppercase lg:normal-case lg:text-neutral-400">
           {{ $t("shared.account.orders_filter.status_label") }}
         </div>
         <VcCheckbox
@@ -10,7 +10,7 @@
           :key="facet.term"
           v-model="filterData.statuses"
           :value="facet.term"
-          :class="{ 'font-bold': isSelectedStatus(facet.term), 'text-gray-500': !isSelectedStatus(facet.term) }"
+          :class="{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }"
         >
           <div class="flex w-full max-w-full gap-1">
             <div class="min-w-0 truncate">{{ facet.label }}</div>
@@ -19,7 +19,7 @@
         </VcCheckbox>
       </div>
       <div class="flex w-48 flex-col space-y-3">
-        <div class="font-bold uppercase lg:normal-case lg:text-gray-400">
+        <div class="font-bold uppercase lg:normal-case lg:text-neutral-400">
           {{ $t("shared.account.orders_filter.created_date_label") }}
         </div>
 

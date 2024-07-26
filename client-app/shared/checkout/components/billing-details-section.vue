@@ -6,7 +6,7 @@
           {{ $t("shared.checkout.billing_details_section.labels.billing_address") }}
         </VcLabel>
 
-        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
+        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-neutral-50': disabled }]">
           <VcCheckbox
             v-if="!allItemsAreDigital"
             v-model="billingAddressEqualsShipping"
@@ -44,10 +44,7 @@
         >
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage
-                class="size-12 rounded-sm bg-[--color-neutral-100]"
-                src="/static/icons/placeholders/select-payment.svg"
-              />
+              <VcImage class="size-12 rounded-sm bg-neutral-100" src="/static/icons/placeholders/select-payment.svg" />
 
               {{ $t("common.placeholders.select_payment_method") }}
             </div>

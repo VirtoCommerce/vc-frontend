@@ -1,11 +1,7 @@
 <template>
   <div class="flex flex-row gap-x-2.5">
     <!-- Product image -->
-    <router-link
-      :to="link"
-      class="size-[4.75rem] shrink-0 border border-neutral-200 p-1"
-      @click="$emit('linkClick', $event)"
-    >
+    <router-link :to="link" class="size-19 shrink-0 border border-neutral-200 p-1" @click="$emit('linkClick', $event)">
       <VcImage
         :src="product.imgSrc"
         :alt="product.name"
@@ -19,7 +15,7 @@
       <!-- Product title -->
       <router-link
         :to="link"
-        class="line-clamp-2 h-8 shrink-0 text-sm font-extrabold leading-[1.05rem] text-[--link-color]"
+        class="line-clamp-2 h-8 shrink-0 text-sm font-black leading-[1.05rem] text-[--link-color]"
         @click="$emit('linkClick', $event)"
       >
         {{ product.name }}

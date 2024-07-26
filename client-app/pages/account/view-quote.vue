@@ -34,7 +34,7 @@
         prepend-icon="document-text"
         size="lg"
       >
-        <div class="text-base font-medium">
+        <div class="text-base">
           {{ quote.comment }}
         </div>
       </VcWidget>
@@ -45,7 +45,7 @@
         size="lg"
         prepend-icon="document-text"
       >
-        <ul class="space-y-2 rounded border border-[--color-neutral-200] px-3 py-4">
+        <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
             <VcFile :file="getFile(attachment)" @download="onDownload" />
           </li>
@@ -59,7 +59,7 @@
               {{ $t("pages.account.quote_details.subTotal") }}
             </span>
 
-            <span class="text-18 font-extrabold text-[color:var(--color-price)]">
+            <span class="text-lg font-black text-[--price-color]">
               <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
             </span>
           </div>
@@ -91,7 +91,7 @@
               {{ $t("pages.account.quote_details.total") }}
             </span>
 
-            <span class="text-lg font-extrabold text-success-700">
+            <span class="text-lg font-black text-success-700">
               <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
             </span>
           </div>

@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex flex-col gap-2 bg-[--color-additional-50] xl:gap-4 xl:rounded xl:border xl:border-[--color-neutral-100] xl:p-5 xl:pb-1 xl:shadow-md"
+    class="flex flex-col gap-2 bg-additional-50 xl:gap-4 xl:rounded xl:border xl:border-neutral-100 xl:p-5 xl:pb-1 xl:shadow-md"
   >
     <VcProductImage :img-src="product.imgSrc" :images="product.images" :alt="product.name">
       <div
-        class="absolute -right-4 -top-2.5 z-[2] space-y-1.5 rounded-3xl bg-[--color-additional-50] px-1.5 py-2 empty:hidden lg:space-y-2"
+        class="absolute -right-4 -top-2.5 z-[2] space-y-1.5 rounded-3xl bg-additional-50 px-1.5 py-2 empty:hidden lg:space-y-2"
       >
         <AddToList :product="product" />
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" class="relative" :product="product" />

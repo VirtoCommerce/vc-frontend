@@ -42,7 +42,7 @@ const files = computed<FileType[]>(() =>
 <style lang="scss">
 .assets {
   &__list {
-    @apply px-3 py-4 border border-[--color-neutral-200] rounded space-y-2;
+    @apply px-3 py-4 border border-neutral-200 rounded space-y-2;
   }
 }
 </style>

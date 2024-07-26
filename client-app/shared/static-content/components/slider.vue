@@ -64,7 +64,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   height: "auto",
-  background: "bg-gray-100",
+  background: "bg-neutral-100",
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);

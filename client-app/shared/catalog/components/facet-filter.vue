@@ -229,7 +229,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     }
 
     .vc-button--color--secondary {
-      @apply text-[var(--color-secondary-600)] #{!important};
+      @apply text-secondary-600 #{!important};
     }
   }
 
@@ -297,7 +297,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
       @apply relative;
 
       &:after {
-        @apply w-full absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-white;
+        @apply w-full absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-additional-50;
 
         @media print {
           @apply content-none;

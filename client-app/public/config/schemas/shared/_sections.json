@@ -6,15 +6,15 @@
       "type": "select",
       "options": [
         {
-          "value": "bg-white",
+          "value": "bg-additional-50",
           "label": "White"
         },
         {
-          "value": "bg-gray-100",
+          "value": "bg-neutral-100",
           "label": "Light gray"
         },
         {
-          "value": "bg-gray-800",
+          "value": "bg-neutral-800",
           "label": "Dark gray"
         }
       ],

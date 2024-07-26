@@ -84,7 +84,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__counter {
-    @apply font-medium text-right whitespace-nowrap;
+    @apply text-right whitespace-nowrap;
   }
 }
 </style>

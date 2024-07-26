@@ -20,7 +20,7 @@
           </VcCheckbox>
         </button>
 
-        <div class="ml-0.5 mt-1 pl-6 text-xs font-medium">
+        <div class="ml-0.5 mt-1 pl-6 text-xs">
           {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
         </div>
       </VcWidget>

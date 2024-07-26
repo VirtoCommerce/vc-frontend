@@ -124,7 +124,7 @@ withDefaults(defineProps<IProps>(), {
 
   @each $color in $colors {
     &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500] text-[--color-additional-50];
+      @apply bg-[--color-#{$color}-500] border-[--color-#{$color}-500] text-additional-50;
 
       &#{$clickable} {
         &:hover {
@@ -144,7 +144,7 @@ withDefaults(defineProps<IProps>(), {
     }
 
     &--outline--#{$color} {
-      @apply bg-[--color-additional-50] text-[--color-#{$color}-800] border-[--color-#{$color}-500];
+      @apply bg-additional-50 text-[--color-#{$color}-800] border-[--color-#{$color}-500];
 
       &#{$clickable} {
         &:hover {
@@ -203,11 +203,11 @@ withDefaults(defineProps<IProps>(), {
   &:disabled,
   &--disabled {
     &[class*="--solid-"] {
-      @apply bg-[--color-neutral-100] border-[--color-neutral-100] text-[--color-neutral-400];
+      @apply bg-neutral-100 border-neutral-100 text-neutral-400;
     }
 
     &[class*="--outline-"] {
-      @apply text-[--color-neutral-400] border-current;
+      @apply text-neutral-400 border-current;
     }
   }
 }

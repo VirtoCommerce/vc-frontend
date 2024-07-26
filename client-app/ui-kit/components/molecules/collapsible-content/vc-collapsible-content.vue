@@ -77,7 +77,7 @@ watch(showAll, (value: boolean) => {
 
     &--end-gradient {
       &:after {
-        @apply absolute block bottom-0 content-[''] h-10 w-full bg-gradient-to-t from-white;
+        @apply absolute block bottom-0 content-[''] h-10 w-full bg-gradient-to-t from-additional-50;
 
         @media print {
           @apply content-none;

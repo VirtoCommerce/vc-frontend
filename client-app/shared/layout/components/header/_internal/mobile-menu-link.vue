@@ -36,7 +36,7 @@
         {{ $n(count, "decimal", { notation: "compact" }) }}
       </VcBadge>
 
-      <VcIcon v-if="isParent" class="ml-auto text-[--color-primary-500]" name="chevron-right" />
+      <VcIcon v-if="isParent" class="ml-auto text-primary" name="chevron-right" />
     </component>
   </router-link>
 </template>

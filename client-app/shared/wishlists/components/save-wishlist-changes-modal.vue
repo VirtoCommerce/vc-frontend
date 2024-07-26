@@ -6,7 +6,7 @@
     hide-actions
   >
     <div class="flex flex-row justify-center gap-x-4 px-6 py-10 lg:px-10">
-      <p class="lg:text-lg lg:font-semibold lg:leading-snug">
+      <p class="lg:text-lg lg:font-bold lg:leading-snug">
         {{ $t("pages.account.list_details.save_changes_message") }}
       </p>
     </div>

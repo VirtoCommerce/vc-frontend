@@ -12,5 +12,5 @@ export function highlightSearchText(text: string, rawSearchText: string): string
     preparedText.replace(new RegExp(`^[\\s${charactersToDelete}]+|[\\s${charactersToDelete}]+$`), ""),
   );
 
-  return text.replace(new RegExp(searchRegexp, "i"), "<span class='font-extrabold'>$&</span>");
+  return text.replace(new RegExp(searchRegexp, "i"), "<span class='font-black'>$&</span>");
 }

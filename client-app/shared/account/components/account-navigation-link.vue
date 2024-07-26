@@ -1,7 +1,7 @@
 <template>
   <router-link :to="to" class="icon flex items-center p-2.5">
     <div class="mr-2.5 size-5 flex-none"></div>
-    <span class="overflow-hidden text-ellipsis text-13 font-bold text-neutral">{{ text }}</span>
+    <span class="overflow-hidden text-ellipsis text-sm font-bold text-neutral">{{ text }}</span>
   </router-link>
 </template>
 

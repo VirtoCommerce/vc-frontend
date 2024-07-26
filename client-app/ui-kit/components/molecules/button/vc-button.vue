@@ -264,7 +264,7 @@ const attrs = computed(() => {
     &--solid--#{$color} {
       @apply bg-[--color-#{$color}-500]
       border-[--color-#{$color}-500]
-      text-[--color-additional-50];
+      text-additional-50;
 
       &:hover:not(#{$loading}, #{$disabled}) {
         @apply bg-[--color-#{$color}-700]
@@ -272,7 +272,7 @@ const attrs = computed(() => {
       }
 
       & #{$loaderIcon} {
-        @apply border-[--color-#{$color}-200] border-r-[--color-additional-50];
+        @apply border-[--color-#{$color}-200] border-r-additional-50;
       }
     }
 
@@ -285,7 +285,7 @@ const attrs = computed(() => {
     }
 
     &--outline--#{$color} {
-      @apply bg-[--color-additional-50]
+      @apply bg-additional-50
       text-[--color-#{$color}-500]
       border-current;
 
@@ -305,19 +305,19 @@ const attrs = computed(() => {
 
   &:disabled#{$disabled}:not(#{$loading}) {
     &[class*="--solid--"] {
-      @apply bg-[--color-neutral-200] border-[--color-neutral-200] text-[--color-neutral-400];
+      @apply bg-neutral-200 border-neutral-200 text-neutral-400;
     }
 
     &[class*="--no-border--"] {
-      @apply bg-[--color-neutral-50] border-[--color-neutral-50] text-[--color-neutral-400];
+      @apply bg-neutral-50 border-neutral-50 text-neutral-400;
     }
 
     &[class*="--outline--"] {
-      @apply text-[--color-neutral-400] border-[--color-neutral-300];
+      @apply text-neutral-400 border-neutral-300;
     }
 
     &[class*="--no-background--"] {
-      @apply text-[--color-neutral-400];
+      @apply text-neutral-400;
     }
   }
 

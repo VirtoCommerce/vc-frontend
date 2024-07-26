@@ -59,19 +59,19 @@
     <!-- CTA -->
     <div class="bg-primary py-6 lg:py-10">
       <div class="container mx-auto flex flex-col items-center space-y-2 px-6 md:px-12 lg:flex-row lg:space-x-10">
-        <div class="whitespace-nowrap text-3xl font-extrabold uppercase text-additional-50">
+        <div class="whitespace-nowrap text-3xl font-black uppercase text-additional-50">
           {{ $t("pages.home.subscription_block.subscribe_now") }}
         </div>
         <div
           v-html-safe="$t('pages.home.subscription_block.info_message')"
-          class="max-w-max text-base font-medium leading-tight text-additional-50 lg:max-w-min"
+          class="max-w-max text-base leading-tight text-additional-50 lg:max-w-min"
         />
         <div class="flex w-full grow space-x-6">
           <VcInput :placeholder="$t('pages.home.subscription_block.email_placeholder')" class="grow" no-border />
           <!-- todo: use VcButton -->
           <button
             type="button"
-            class="h-11 rounded bg-additional-50 px-6 font-roboto text-sm font-bold uppercase shadow-md hover:bg-neutral-200"
+            class="h-11 rounded bg-additional-50 px-6 text-sm font-bold uppercase shadow-md hover:bg-neutral-200"
           >
             {{ $t("pages.home.subscription_block.subscribe_button") }}
           </button>

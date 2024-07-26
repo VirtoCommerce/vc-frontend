@@ -37,7 +37,7 @@
               class="flex h-full items-center px-4"
               @click="resetKeyword"
             >
-              <VcIcon class="text-[--color-primary-500]" name="delete-2" size="xs" />
+              <VcIcon class="text-primary" name="delete-2" size="xs" />
             </button>
 
             <VcButton
@@ -78,18 +78,18 @@
         >
           <template #mobile-item="itemData">
             <div
-              class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-gray-200 p-6"
+              class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
               role="button"
               tabindex="0"
               @click="goToQuoteDetails(itemData.item)"
               @keyup.enter="goToQuoteDetails(itemData.item)"
             >
               <div class="flex flex-col">
-                <span class="text-sm text-gray-400">
+                <span class="text-sm text-neutral-400">
                   {{ $t("pages.account.quotes.quote_number_label") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-extrabold">
+                <span class="overflow-hidden text-ellipsis pr-4 font-black">
                   {{ itemData.item.number }}
                 </span>
               </div>
@@ -99,7 +99,7 @@
               </div>
 
               <div class="flex flex-col">
-                <span class="text-sm text-gray-400">
+                <span class="text-sm text-neutral-400">
                   {{ $t("pages.account.quotes.date_label") }}
                 </span>
 
@@ -109,11 +109,11 @@
               </div>
 
               <div class="flex flex-col">
-                <span class="text-sm text-gray-400">
+                <span class="text-sm text-neutral-400">
                   {{ $t("pages.account.quotes.total_label") }}
                 </span>
 
-                <span class="overflow-hidden text-ellipsis font-extrabold">
+                <span class="overflow-hidden text-ellipsis font-black">
                   {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
                 </span>
               </div>
@@ -121,33 +121,33 @@
           </template>
 
           <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-gray-200 p-6">
+            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
               <div class="flex flex-col">
-                <span class="text-sm text-gray-400">
+                <span class="text-sm text-neutral-400">
                   {{ $t("pages.account.quotes.quote_number_label") }}
                 </span>
-                <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
+                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
               <div class="flex flex-col">
-                <span class="text-sm text-gray-400">
+                <span class="text-sm text-neutral-400">
                   {{ $t("pages.account.quotes.date_label") }}
                 </span>
-                <div class="h-6 animate-pulse bg-gray-200"></div>
+                <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
               <div class="flex flex-col">
-                <span class="text-sm text-gray-400">
+                <span class="text-sm text-neutral-400">
                   {{ $t("pages.account.quotes.total_label") }}
                 </span>
-                <div class="mr-4 h-6 animate-pulse bg-gray-200"></div>
+                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
               <div class="flex flex-col">
-                <span class="text-sm text-gray-400">
+                <span class="text-sm text-neutral-400">
                   {{ $t("pages.account.quotes.status_label") }}
                 </span>
-                <div class="h-6 animate-pulse bg-gray-200"></div>
+                <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
             </div>
           </template>
@@ -156,7 +156,7 @@
             <tr
               v-for="quote in quotes"
               :key="quote.id"
-              class="cursor-pointer even:bg-gray-50 hover:bg-gray-200"
+              class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
               @click="goToQuoteDetails(quote)"
             >
               <td class="overflow-hidden text-ellipsis p-5">
@@ -178,9 +178,9 @@
           </template>
 
           <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-gray-50">
+            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
               <td v-for="column in columns" :key="column.id" class="p-5">
-                <div class="h-6 animate-pulse bg-gray-200"></div>
+                <div class="h-6 animate-pulse bg-neutral-200"></div>
               </td>
             </tr>
           </template>

@@ -3,7 +3,7 @@
     <div class="flex space-x-1">
       <VcPriceDisplay
         v-if="shouldUseActualPrice(value?.list, value?.actual)"
-        class="font-extrabold"
+        class="font-black"
         :class="priceColorClass"
         :value="value?.actual"
       />
@@ -15,7 +15,7 @@
     <div class="leading-4">
       <VcPriceDisplay
         v-if="shouldUseActualPrice(value?.list, value?.actual)"
-        class="text-xs font-semibold text-neutral-400 line-through"
+        class="text-xs font-bold text-neutral-400 line-through"
         :value="value?.list"
       />
     </div>
