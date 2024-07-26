@@ -103,7 +103,7 @@ watch(
   }
 
   table {
-    @apply table-fixed border-separate border-0 w-full mt-5 text-base font-medium lg:mt-1.5;
+    @apply table-fixed border-separate border-0 w-full mt-5 text-base lg:mt-1.5;
     border-spacing: 0px 0px;
   }
 
