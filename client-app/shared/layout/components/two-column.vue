@@ -31,6 +31,8 @@
 </template>
 
 <script setup lang="ts">
+import type { BREAKPOINTS } from "@/core/constants/tailwind";
+
 defineOptions({
   inheritAttrs: false,
 });
@@ -40,6 +42,6 @@ withDefaults(defineProps<IProps>(), {
 });
 interface IProps {
   alwaysShowRight?: boolean;
-  breakpoint?: string;
+  breakpoint?: keyof typeof BREAKPOINTS;
 }
 </script>
