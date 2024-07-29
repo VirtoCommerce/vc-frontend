@@ -43,7 +43,7 @@ const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/co
 
 const { themeContext } = useThemeContext();
 
-const authenticationTypes: string[] = themeContext.value.settings?.authenticationTypes ?? [
+const authenticationTypes: string[] = themeContext.value.storeSettings?.authenticationTypes || [
   PASSWORD_AUTHENTICATION_TYPE,
 ];
 
