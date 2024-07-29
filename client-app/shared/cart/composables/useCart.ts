@@ -1,6 +1,6 @@
 import { createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
-import { computed, readonly } from "vue";
+import { computed, readonly, ref } from "vue";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -22,7 +22,7 @@ import {
   useRemoveShipmentMutation,
   useSelectCartItemsMutation,
   useUnselectCartItemsMutation,
-  useValidateCouponMutation,
+  useValidateCouponQuery,
   clearCart as deprecatedClearCart,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
@@ -264,10 +264,13 @@ export function _useFullCart() {
     await _changeItemQuantity({ command: { lineItemId, quantity } });
   }
 
-  const { mutate: _validateCoupon, loading: validateCouponLoading } = useValidateCouponMutation(cart);
+  const validateCouponLoading = ref(false);
   async function validateCartCoupon(couponCode: string): Promise<boolean | undefined> {
-    const result = await _validateCoupon({ command: { coupon: couponCode } });
-    return result?.data?.validateCoupon;
+    const { result, load: _validateCoupon } = useValidateCouponQuery(couponCode, cart.value?.id ?? "");
+    validateCouponLoading.value = true;
+    await _validateCoupon();
+    validateCouponLoading.value = false;
+    return result.value?.validateCoupon || false;
   }
 
   const { mutate: _addCoupon, loading: addCouponLoading } = useAddCouponMutation(cart);
