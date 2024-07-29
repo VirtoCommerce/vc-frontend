@@ -30,7 +30,7 @@ const PushMessage = () => import("@/pages/push-message.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/callback", name: "AuthCallback", component: callback, meta: { public: true } },
+  { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true } },
   { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
   { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
   { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
