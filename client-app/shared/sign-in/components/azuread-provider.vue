@@ -19,7 +19,7 @@ function signIn() {
   const returnUrl = getReturnUrlValue() ?? DEFAULT_RETURN_URL;
 
   const oidcUrl = new URL("/signin-oidc", origin);
-  const callbackUrl = new URL("/callback", origin);
+  const callbackUrl = new URL("/auth/callback", origin);
   const url = new URL("/externalsignin", origin);
 
   callbackUrl.searchParams.set("returnUrl", returnUrl);

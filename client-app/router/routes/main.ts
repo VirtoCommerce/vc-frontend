@@ -6,7 +6,7 @@ import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
 
-const callback = () => import("@/pages/callback.vue");
+const callback = () => import("@/pages/auth/callback.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
 const SignUpPage = () => import("@/pages/sign-up.vue");
 const ConfirmEmail = () => import("@/pages/confirm-email.vue");
@@ -30,7 +30,7 @@ const PushMessage = () => import("@/pages/push-message.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
-  { path: "/callback", name: "ExternalSignInCallback", component: callback, meta: { public: true } },
+  { path: "/callback", name: "AuthCallback", component: callback, meta: { public: true } },
   { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
   { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
   { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
