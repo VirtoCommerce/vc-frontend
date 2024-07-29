@@ -28,6 +28,8 @@ const route = useRoute();
 onMounted(() => {
   if (!Object.keys(pages).includes(route.path)) {
     emit("setState", "empty");
+  } else {
+    emit("setState", "ready");
   }
 });
 

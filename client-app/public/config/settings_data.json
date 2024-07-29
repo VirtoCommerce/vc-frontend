@@ -152,6 +152,13 @@
         "icon": "/static/icons/social/telegram-icon.svg",
         "url_template": "https://t.me/share/url?url={0}"
       }
-    ]
+    ],
+    "previewers_settings": {
+      "priorities": {
+        "builderIo": 1,
+        "slugContent": 2,
+        "internal": 3
+      }
+    }
   }
 }
