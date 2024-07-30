@@ -1,7 +1,7 @@
 <template>
   <div class="banner flex items-center" :style="{ backgroundImage: `url(${$cfg.homepage_background_image})` }">
     <div class="container mx-auto flex flex-col items-center space-y-10 p-6 md:p-12 lg:flex-row lg:space-x-24">
-      <div class="w-full rounded bg-additional-50 p-6 shadow-lg md:p-10 lg:w-2/5">
+      <div v-if="!isAuthenticated" class="w-full rounded bg-additional-50 p-6 shadow-lg md:p-10 lg:w-2/5">
         <VcTypography tag="h1" class="mb-8">
           {{ $t("pages.home.sign_in_form_title") }}
         </VcTypography>
@@ -33,7 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { SignInForm } from "@/shared/account";
+import { SignInForm, useUser } from "@/shared/account";
+const { isAuthenticated } = useUser();
 </script>
 
 <style scoped>

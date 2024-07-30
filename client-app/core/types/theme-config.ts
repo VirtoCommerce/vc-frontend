@@ -249,6 +249,11 @@ export interface IThemeConfigSettings {
   homepage_background_image?: string;
   isCVVinSkyflowRequired?: boolean;
   default_return_url?: string;
+  previewers_settings?: {
+    priorities?: {
+      [key: string]: number;
+    };
+  };
 }
 
 export interface IThemeConfig {
