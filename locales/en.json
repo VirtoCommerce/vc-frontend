@@ -627,6 +627,9 @@
         "quantity_label": "@:common.labels.quantity",
         "title": "Accepted Gifts"
       },
+      "products_section": {
+        "title": "Products"
+      },
       "shipping_details_section": {
         "title": "Shipping details",
         "labels": {
@@ -1336,7 +1339,10 @@
       "from_file_tab": "Upload file"
     },
     "purchase_request": {
-      "title": "Purchase request"
+      "title": "Purchase request",
+      "files_section": {
+        "title": "Files"
+      }
     },
     "demo_landing": {
       "meta": {

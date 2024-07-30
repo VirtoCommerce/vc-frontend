@@ -1,5 +1,10 @@
 <template>
-  <VcWidget id="products" size="lg">
+  <VcWidget
+    id="products"
+    :title="withTitle ? $t('shared.checkout.products_section.title') : undefined"
+    prepend-icon="cube"
+    size="lg"
+  >
     <!-- Items grouped by Vendor -->
     <div v-if="grouped" class="space-y-5 md:space-y-7">
       <template v-for="(group, vendorId) in itemsGroupedByVendor" :key="vendorId">
@@ -38,6 +43,7 @@
 
     <div class="mt-2 flex justify-end md:mt-5">
       <VcButton
+        v-if="withClearCart"
         :disabled="disabled"
         color="secondary"
         size="sm"
@@ -71,6 +77,8 @@ interface IProps {
   itemsGroupedByVendor?: LineItemsGroupByVendorType<LineItemType>[];
   /** @deprecated */
   validationErrors?: ValidationErrorType[];
+  withTitle?: boolean;
+  withClearCart?: boolean;
 }
 
 defineEmits<IEmits>();

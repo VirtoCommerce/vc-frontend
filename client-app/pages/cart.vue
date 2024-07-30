@@ -32,6 +32,7 @@
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :selected-item-ids="selectedItemIds"
         :validation-errors="cart.validationErrors"
+        with-clear-cart
         @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity)"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
