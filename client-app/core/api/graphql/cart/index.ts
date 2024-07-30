@@ -19,8 +19,8 @@ export * from "./mutations/removeCoupon";
 export * from "./mutations/removeShipment";
 export * from "./mutations/selectCartItems";
 export * from "./mutations/unselectCartItems";
-export * from "./mutations/validateCoupon";
 
 export * from "./queries/getCart";
 export * from "./queries/getFullCart";
 export * from "./queries/getShortCart";
+export * from "./queries/validateCoupon";
