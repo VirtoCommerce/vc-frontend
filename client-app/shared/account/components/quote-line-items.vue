@@ -1,5 +1,6 @@
 <template>
   <VcLineItems
+    class="quote-line-items"
     :items="preparedLineItems"
     :removable="!readonly"
     :readonly="readonly"
@@ -19,7 +20,7 @@
     <template #default="{ item }">
       <VcQuantity
         :disabled="readonly"
-        class="ml-5"
+        class="quote-line-items__quantity"
         :model-value="item.quantity"
         :name="item.id"
         :min-quantity="item.minQuantity"
@@ -28,7 +29,7 @@
       />
     </template>
     <template #after-items>
-      <div v-if="!items.length" class="border-x p-3">
+      <div v-if="!items.length" class="quote-line-items__no-items">
         <VcAlert color="warning" size="sm" variant="outline-dark" icon>
           {{ $t("pages.account.quote_details.no_items_message") }}
         </VcAlert>
@@ -61,25 +62,37 @@ const { n } = useI18n();
 const preparedLineItems = computed(() =>
   prepareLineItems(props.items).map((item) => {
     const originalItem = props.items.find(({ id }) => id === item.id);
-    const selectedTierPrice = originalItem?.selectedTierPrice;
-    const selectedTierPriceAmount =
-      (selectedTierPrice && selectedTierPrice.price?.amount * selectedTierPrice.quantity) || 0;
+    const price = originalItem?.selectedTierPrice?.price;
+    const quantity = originalItem?.selectedTierPrice?.quantity || 0;
+    const priceTotal = (price && price.amount * quantity) || 0;
     return {
       ...item,
       actualPrice: undefined,
       listPrice: {
         ...(item.listPrice as MoneyType),
-        amount: selectedTierPrice?.price?.amount as number,
-        formattedAmount: n(selectedTierPrice?.price?.amount as number, "currency"),
+        amount: price?.amount as number,
+        formattedAmount: n(price?.amount as number, "currency"),
       },
       extendedPrice:
-        selectedTierPrice &&
+        price &&
         ({
-          ...selectedTierPrice.price,
-          amount: selectedTierPriceAmount,
-          formattedAmount: n(selectedTierPriceAmount, "currency"),
+          ...price,
+          amount: priceTotal,
+          formattedAmount: n(priceTotal, "currency"),
         } as MoneyType),
     };
   }),
 );
 </script>
+
+<style lang="scss">
+.quote-line-items {
+  &__quantity {
+    @apply ml-5;
+  }
+
+  &__no-items {
+    @apply border-x p-3;
+  }
+}
+</style>
