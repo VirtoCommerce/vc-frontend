@@ -74,23 +74,43 @@ function getCountryCode(language: ILanguage): string {
   @apply h-full;
 
   &__button {
-    @apply flex h-full items-center gap-x-1.5;
+    @apply flex h-full items-center gap-3;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply gap-1.5;
+    }
   }
 
   &__label {
-    @apply text-sm;
+    @apply hidden;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply block text-sm;
+    }
   }
 
   &__img {
-    @apply size-3.5;
+    @apply size-7;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply size-3.5;
+    }
   }
 
   &__text {
-    @apply uppercase text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
+    @apply hidden;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply block uppercase text-[--header-top-link-color] hover:text-[--header-top-link-hover-color];
+    }
   }
 
   &__arrow {
-    --vc-icon-color: var(--color-primary-500);
+    @apply size-4 text-additional-50;
+
+    @media (min-width: theme("screens.lg")) {
+      @apply size-2.5 text-primary;
+    }
   }
 
   &__item-img {
