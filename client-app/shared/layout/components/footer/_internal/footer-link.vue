@@ -28,7 +28,7 @@ const isExternalLink = computed(() => {
 
 <style lang="scss">
 .footer-link {
-  @apply text-xs font-medium text-[--footer-top-link-color];
+  @apply text-xs text-[--footer-top-link-color];
 
   &:hover {
     @apply text-[--footer-top-link-hover-color];

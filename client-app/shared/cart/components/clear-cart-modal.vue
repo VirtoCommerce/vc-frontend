@@ -18,7 +18,7 @@
     </template>
 
     <div class="flex items-center justify-center gap-4 px-5 py-10">
-      <VcIcon class="flex-none text-[--color-primary-500]" name="exclamation-circle" size="lg" />
+      <VcIcon class="flex-none text-primary" name="exclamation-circle" size="lg" />
 
       <span class="text-lg">
         {{ $t("shared.cart.clear_cart_modal.message") }}

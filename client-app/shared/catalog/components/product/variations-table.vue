@@ -13,9 +13,9 @@
       @page-changed="changePage"
     >
       <template #desktop-skeleton>
-        <tr v-for="rowIndex in 5" :key="rowIndex" class="variations-table__row even:bg-gray-50">
+        <tr v-for="rowIndex in 5" :key="rowIndex" class="variations-table__row even:bg-neutral-50">
           <td v-for="columnIndex in columns.length" :key="columnIndex" class="p-5">
-            <div class="h-6 animate-pulse bg-gray-200" />
+            <div class="h-6 animate-pulse bg-neutral-200" />
           </td>
         </tr>
       </template>

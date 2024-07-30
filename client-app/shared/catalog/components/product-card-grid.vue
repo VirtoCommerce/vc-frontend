@@ -38,7 +38,7 @@
                 <span
                   class="flex size-6 items-center justify-center rounded-full bg-additional-50 opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <VcIcon class="text-[--color-neutral-400]" name="chevron-left" size="xs" />
+                  <VcIcon class="text-neutral-400" name="chevron-left" size="xs" />
                 </span>
               </div>
 
@@ -49,7 +49,7 @@
                 <span
                   class="flex size-6 items-center justify-center rounded-full bg-additional-50 opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <VcIcon class="text-[--color-neutral-400]" name="chevron-right" size="xs" />
+                  <VcIcon class="text-neutral-400" name="chevron-right" size="xs" />
                 </span>
               </div>
 
@@ -101,7 +101,7 @@
           <router-link
             :to="link"
             :target="target"
-            class="my-px line-clamp-2 h-11 cursor-pointer text-lg font-extrabold text-[--link-color] hover:text-[--link-hover-color] lg:h-9 lg:text-sm"
+            class="my-px line-clamp-2 h-11 cursor-pointer text-lg font-black text-[--link-color] hover:text-[--link-hover-color] lg:h-9 lg:text-sm"
             @click="$emit('linkClick', $event)"
           >
             {{ product.name }}

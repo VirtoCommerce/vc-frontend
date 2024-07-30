@@ -29,7 +29,7 @@ withDefaults(defineProps<IProps>(), {
   @apply absolute inset-0 z-[996];
 
   &--with-bg {
-    @apply bg-[color:rgba(255,255,255,0.6)];
+    @apply bg-additional-50/60;
   }
 
   &__spinner {

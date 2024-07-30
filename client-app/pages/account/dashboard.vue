@@ -16,7 +16,7 @@
         >
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-          <VcIcon class="text-[--color-primary-500]" name="arrow-right" size="xs" />
+          <VcIcon class="text-primary" name="arrow-right" size="xs" />
         </router-link>
       </template>
 
@@ -39,19 +39,19 @@
             class="flex flex-col justify-center space-y-1 sm:flex-row sm:flex-wrap sm:items-center sm:space-x-5 sm:space-y-0 xl:space-x-7"
           >
             <div class="flex flex-col lg:items-center lg:space-y-3">
-              <span class="text-xs text-gray-400 lg:font-bold lg:text-gray-600">
+              <span class="text-xs text-neutral-400 lg:font-bold lg:text-neutral-600">
                 {{ $t("pages.account.dashboard.monthly_report_card.budget_title") }}
               </span>
 
-              <span class="text-xl font-extrabold">$58,152</span>
+              <span class="text-xl font-black">$58,152</span>
             </div>
 
             <div class="flex flex-col lg:items-center lg:space-y-3">
-              <span class="text-xs text-gray-400 lg:font-bold lg:text-gray-600">
+              <span class="text-xs text-neutral-400 lg:font-bold lg:text-neutral-600">
                 {{ $t("pages.account.dashboard.monthly_report_card.total_spend_label") }}
               </span>
 
-              <span class="text-xl font-extrabold">$530,152</span>
+              <span class="text-xl font-black">$530,152</span>
             </div>
           </div>
         </div>

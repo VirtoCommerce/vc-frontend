@@ -8,7 +8,7 @@
           :key="facet.term"
           v-model="filterData.statuses"
           :value="facet.term"
-          :class="[{ 'font-bold': isSelectedStatus(facet.term), 'text-gray-500': !isSelectedStatus(facet.term) }]"
+          :class="[{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }]"
         >
           <div class="flex gap-1">
             <div class="min-w-0 grow truncate">{{ facet.label }}</div>

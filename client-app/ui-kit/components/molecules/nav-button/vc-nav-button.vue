@@ -39,7 +39,7 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .vc-nav-button {
-  @apply flex-none flex items-center justify-center rounded-full shadow-xl bg-[--color-additional-50] text-[--color-primary-500];
+  @apply flex-none flex items-center justify-center rounded-full shadow-xl bg-additional-50 text-primary;
 
   &--size {
     &--xs {
@@ -62,12 +62,12 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &:hover {
-    @apply text-[--color-primary-700];
+    @apply text-primary-700;
   }
 
   &:disabled,
   &--disabled {
-    @apply text-[--color-neutral-300];
+    @apply text-neutral-300;
   }
 }
 </style>

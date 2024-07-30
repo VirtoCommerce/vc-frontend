@@ -1,6 +1,6 @@
 <template>
   <div
-    class="vc-product-card-list grid gap-x-3.5 bg-additional-50 px-4 pb-5 pt-4 md:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-neutral-200 lg:hover:shadow-lg"
+    class="vc-product-card-list grid gap-x-3.5 bg-additional-50 px-4 pb-5 pt-4 md:place-items-center lg:rounded lg:py-3.5 lg:shadow lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-neutral-200 lg:hover:shadow-lg"
   >
     <div class="vc-product-card-list__mobile-left sm:contents">
       <!-- Product image -->
@@ -38,7 +38,7 @@
         <router-link
           :to="link"
           :target="target"
-          class="vc-product-card-list__name w-full grow text-sm font-extrabold text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
+          class="vc-product-card-list__name w-full grow text-sm font-black text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
           {{ product.name }}

@@ -52,7 +52,7 @@
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
 
-        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]">
+        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="shippingAddress"
@@ -72,9 +72,7 @@
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
 
-        <div
-          :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]"
-        >
+        <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching || !shippingAddress"

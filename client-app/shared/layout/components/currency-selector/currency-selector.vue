@@ -26,7 +26,7 @@
         "
       >
         <span
-          class="flex size-5 shrink-0 items-center justify-center rounded-full bg-[--color-secondary-600] text-base font-bold text-additional-50"
+          class="flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary-600 text-base font-bold text-additional-50"
         >
           {{ item.symbol }}
         </span>

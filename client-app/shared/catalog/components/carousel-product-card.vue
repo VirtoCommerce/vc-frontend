@@ -18,7 +18,7 @@
       <router-link
         :to="link"
         :title="product.name"
-        class="mt-2 line-clamp-3 text-sm font-extrabold text-[--link-color] hover:text-[--link-hover-color]"
+        class="mt-2 line-clamp-3 text-sm font-black text-[--link-color] hover:text-[--link-hover-color]"
         @click="$emit('link-click', $event)"
       >
         {{ product.name }}
