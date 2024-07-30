@@ -7,7 +7,7 @@
       scope="global"
     >
       <template #listName>
-        <span class="font-extrabold">{{ list.name }}</span>
+        <span class="font-black">{{ list.name }}</span>
       </template>
     </i18n-t>
 

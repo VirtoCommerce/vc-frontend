@@ -77,7 +77,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__list {
-    @apply overflow-y-auto w-full rounded bg-[--color-additional-50] shadow-xl divide-y divide-[--color-neutral-100];
+    @apply overflow-y-auto w-full rounded bg-additional-50 shadow-xl divide-y divide-neutral-100;
 
     & > *:first-child {
       @apply rounded-t;

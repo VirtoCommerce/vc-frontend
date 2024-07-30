@@ -6,7 +6,7 @@
       </VcButton>
     </template>
     <div class="flex items-center justify-center gap-4 px-5 py-10">
-      <VcIcon class="text-[--color-success-500]" name="check-circle" size="lg" />
+      <VcIcon class="text-success" name="check-circle" size="lg" />
 
       <span class="text-lg">
         {{ $t("shared.account.registration_success_modal.message") }}

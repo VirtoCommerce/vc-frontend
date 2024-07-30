@@ -7,7 +7,7 @@
       class="border-b p-6 md:py-10"
     >
       <template #productName>
-        <b class="font-extrabold">{{ listItem.name }}</b>
+        <b class="font-black">{{ listItem.name }}</b>
       </template>
     </i18n-t>
 

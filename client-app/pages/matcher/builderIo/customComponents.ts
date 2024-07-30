@@ -47,6 +47,30 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         helperText: "Show filters vertically or horizontally",
       },
       {
+        name: "filtersDisplayOrder",
+        type: "object",
+        defaultValue: {
+          order: "",
+          showRest: false,
+        },
+        subFields: [
+          {
+            friendlyName: "Filters order",
+            name: "order",
+            type: "string",
+            helperText:
+              'Order of the filters - comma-separated string of any case. Leave empty to show all filters in default order. Example: "price, brand, category".',
+          },
+          {
+            friendlyName: "Show rest of filters",
+            name: "showRest",
+            type: "boolean",
+            helperText: "Show the rest of the filters.",
+            showIf: "options.get('value') !== ''",
+          },
+        ],
+      },
+      {
         name: "cardType",
         type: "string",
         defaultValue: "full",

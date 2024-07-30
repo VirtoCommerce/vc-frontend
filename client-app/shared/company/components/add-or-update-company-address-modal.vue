@@ -11,7 +11,7 @@
     is-mobile-fullscreen
   >
     <template #default="{ close }">
-      <h3 class="mx-6 mt-5 text-2xl font-extrabold uppercase">
+      <h3 class="mx-6 mt-5 text-2xl font-black uppercase">
         {{ $t("shared.company.add_or_update_address_modal.address_title") }}
       </h3>
 

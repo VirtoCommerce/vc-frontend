@@ -77,7 +77,7 @@ $status-colors: success, warning, danger;
     z-index: 5000;
 
     &--info {
-      @apply bg-white;
+      @apply bg-additional-50;
 
       text-shadow: none;
 
@@ -94,7 +94,7 @@ $status-colors: success, warning, danger;
   }
 
   &__button {
-    @apply h-[25px] inline-flex items-center justify-center appearance-none bg-white text-neutral-800
+    @apply h-[25px] inline-flex items-center justify-center appearance-none bg-additional-50 text-neutral-800
     uppercase text-xs font-bold px-3.5 shadow rounded font-roboto-condensed;
 
     --tw-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
@@ -103,7 +103,7 @@ $status-colors: success, warning, danger;
   }
 
   &__close-button {
-    @apply absolute right-0 appearance-none px-4 py-2;
+    @apply absolute right-0 appearance-none px-4 py-2 text-additional-50;
 
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
   }

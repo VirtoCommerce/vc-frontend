@@ -6,12 +6,12 @@
           {{ $t("shared.checkout.shipping_details_section.labels.shipping_address") }}
         </VcLabel>
 
-        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-gray-50': disabled }]">
+        <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-neutral-50': disabled }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="deliveryAddress"
             :disabled="disabled"
-            class="min-h-[4.5rem] px-3 py-1.5"
+            class="min-h-18 px-3 py-1.5"
             @change="onDeliveryAddressChange"
           />
         </div>
@@ -30,10 +30,7 @@
       >
         <template #placeholder>
           <div class="flex items-center gap-3 p-3 text-sm">
-            <VcImage
-              class="size-12 rounded-sm bg-[--color-neutral-100]"
-              src="/static/icons/placeholders/select-shipping.svg"
-            />
+            <VcImage class="size-12 rounded-sm bg-neutral-100" src="/static/icons/placeholders/select-shipping.svg" />
 
             {{ $t("common.placeholders.select_delivery_method") }}
           </div>

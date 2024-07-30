@@ -9,10 +9,10 @@
             <button
               :disabled="!isAuthenticated"
               :class="[
-                'w-full py-4 hover:bg-[--color-neutral-50] disabled:bg-transparent',
+                'w-full py-4 hover:bg-neutral-50 disabled:bg-transparent',
                 {
-                  'text-[--color-primary-500]': isInWishlist,
-                  'text-[--color-neutral-300]': !isInWishlist,
+                  'text-primary': isInWishlist,
+                  'text-neutral-300': !isInWishlist,
                 },
               ]"
               :aria-label="$t('pages.catalog.add_to_wishlist_tooltip')"
@@ -28,10 +28,10 @@
           <template #default="{ toggle, isInCompareList }">
             <button
               :class="[
-                'w-full py-4 hover:bg-[--color-neutral-50]',
+                'w-full py-4 hover:bg-neutral-50',
                 {
-                  'text-[--color-primary-500]': isInCompareList,
-                  'text-[--color-neutral-300]': !isInCompareList,
+                  'text-primary': isInCompareList,
+                  'text-neutral-300': !isInCompareList,
                 },
               ]"
               :aria-label="$t('shared.compare.add_to_compare.tooltips.add')"
@@ -45,31 +45,27 @@
 
         <VcPopover class="w-1/5" y-offset="20" trigger="click" z-index="3" @toggle="handleShareProductPopoverToggle">
           <template #trigger>
-            <div class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-[--color-neutral-50]">
+            <div class="flex cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50">
               <VcIcon
                 name="share"
                 size="sm"
                 :aria-label="$t('common.buttons.share')"
                 :class="{
-                  'text-[--color-primary-500]': !shareProductPopoverShown,
-                  'text-[--color-neutral-400]': shareProductPopoverShown,
+                  'text-primary': !shareProductPopoverShown,
+                  'text-neutral-400': shareProductPopoverShown,
                 }"
               />
             </div>
           </template>
 
           <template #content="{ close }">
-            <div class="rounded border bg-white p-5 shadow-lg">
+            <div class="rounded border bg-additional-50 p-5 shadow-lg">
               <h3 class="flex justify-between text-lg font-bold">
                 <span class="flex grow">
                   {{ $t("shared.catalog.product_details.share_product_label") }}
                 </span>
 
-                <button
-                  class="-me-1 flex p-1 text-[--color-danger-400] hover:text-[--color-danger-700]"
-                  type="button"
-                  @click="close()"
-                >
+                <button class="-me-1 flex p-1 text-danger-400 hover:text-danger-700" type="button" @click="close()">
                   <VcIcon name="x" size="sm" />
                 </button>
               </h3>
@@ -98,18 +94,18 @@
           :href="mailToLink"
           :aria-label="$t('common.buttons.send_link_email')"
           target="_blank"
-          class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-[--color-neutral-50]"
+          class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
         >
-          <VcIcon name="mail" size="sm" class="text-[--color-primary-500]" />
+          <VcIcon name="mail" size="sm" class="text-primary" />
         </a>
 
         <button
           :aria-label="$t('common.buttons.print')"
-          class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-[--color-neutral-50]"
+          class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
           type="button"
           @click="print()"
         >
-          <VcIcon name="printer" size="sm" class="text-[--color-primary-500]" />
+          <VcIcon name="printer" size="sm" class="text-primary" />
         </button>
       </div>
     </template>

@@ -4,7 +4,7 @@
     :title="model.title || $t('shared.catalog.product_details.description_block_title')"
     icon="document-text"
   >
-    <VcCollapsibleContent max-height="18.75rem" class="text-base text-[--color-neutral-600]">
+    <VcCollapsibleContent max-height="18.75rem" class="text-base text-neutral-600">
       <VcMarkdownRender :src="description" />
     </VcCollapsibleContent>
   </ProductTitledBlock>

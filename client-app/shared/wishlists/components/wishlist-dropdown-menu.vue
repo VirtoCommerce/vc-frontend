@@ -18,7 +18,7 @@
           nowrap
           @click="$emit('setScope', WishlistScopeType.Organization)"
         >
-          <VcIcon name="users" class="text-[--color-accent-500]" />
+          <VcIcon name="users" class="text-accent" />
 
           <span>{{ $t("shared.wishlists.list_card.share_button") }}</span>
         </VcMenuItem>
@@ -36,7 +36,7 @@
       </template>
 
       <VcMenuItem color="secondary" nowrap @click="$emit('remove')">
-        <VcIcon name="delete-2" class="text-[--color-danger-500]" />
+        <VcIcon name="delete-2" class="text-danger" />
 
         <span>{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>
       </VcMenuItem>

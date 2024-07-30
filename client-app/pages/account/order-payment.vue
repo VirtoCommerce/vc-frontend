@@ -34,7 +34,7 @@
       <!-- Main section -->
       <div class="w-full grow lg:w-3/4 xl:w-4/5">
         <div
-          :class="executed ? 'md:bg-white md:border md:shadow-sm' : 'bg-white border shadow-sm'"
+          :class="executed ? 'md:bg-additional-50 md:border md:shadow-sm' : 'bg-additional-50 border shadow-sm'"
           class="p-6 max-lg:-mx-6 md:rounded lg:px-9"
         >
           <!-- Successful payment -->
@@ -45,7 +45,7 @@
             class="-mx-6 -mb-6 -mt-16 md:-mt-6 lg:-mx-9 lg:pl-14"
           >
             <template #description>
-              <h2 class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left">
+              <h2 class="mb-3 text-center text-2xl font-bold text-neutral-900 lg:text-left">
                 {{ $t("pages.account.order_payment.success.title") }}
               </h2>
 
@@ -83,7 +83,7 @@
             class="-mx-9 -mb-6 -mt-16 md:-mt-6 lg:pl-14"
           >
             <template #description>
-              <h2 class="text-black-800 mb-3 text-center text-2xl font-semibold lg:text-left">
+              <h2 class="mb-3 text-center text-2xl font-bold text-neutral-900 lg:text-left">
                 {{ $t("pages.account.order_payment.failure.title") }}
               </h2>
 
@@ -102,7 +102,7 @@
           <!-- Main content -->
           <template v-else>
             <!-- region Billing address -->
-            <h5 class="mb-1 font-extrabold">
+            <h5 class="mb-1 font-black">
               {{ $t("pages.account.order_payment.billing_address_label") }}
             </h5>
 
@@ -110,7 +110,7 @@
               <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
                 <!-- TODO: create an atom component to display address -->
                 <div class="min-w-0 text-sm">
-                  <span class="line-clamp-2 font-extrabold">
+                  <span class="line-clamp-2 font-black">
                     {{ payment?.billingAddress?.firstName }}
                     {{ payment?.billingAddress?.lastName }}
                   </span>
@@ -125,14 +125,14 @@
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold">
+                    <span class="font-black">
                       {{ $t("pages.account.order_payment.phone_label") }}
                     </span>
                     {{ payment?.billingAddress?.phone }}
                   </p>
 
                   <p class="truncate">
-                    <span class="font-extrabold">
+                    <span class="font-black">
                       {{ $t("pages.account.order_payment.email_label") }}
                     </span>
                     {{ payment?.billingAddress?.email }}
@@ -165,7 +165,7 @@
             <!-- endregion Billing address -->
 
             <!-- region Payment method -->
-            <h5 class="mb-1 font-extrabold">
+            <h5 class="mb-1 font-black">
               {{ $t("pages.account.order_payment.payment_method_label") }}
             </h5>
 

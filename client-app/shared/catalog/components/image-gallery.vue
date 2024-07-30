@@ -153,7 +153,7 @@ onMounted(async () => {
   }
 
   &__images {
-    @apply w-full h-full bg-[--color-additional-50] rounded duration-300 ease-linear;
+    @apply w-full h-full bg-additional-50 rounded duration-300 ease-linear;
 
     &:hover {
       @apply opacity-50;
@@ -188,7 +188,7 @@ onMounted(async () => {
     @apply border rounded-sm w-full h-full object-center object-contain;
 
     &--active {
-      @apply border-[--color-primary-500] outline outline-1 outline-[--color-primary-500];
+      @apply border-primary outline outline-1 outline-primary;
     }
   }
 }

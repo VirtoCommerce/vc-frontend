@@ -56,11 +56,11 @@
         <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first">
           <div class="flex flex-col gap-1.5 text-sm">
             <p v-if="order.createdDate">
-              <span class="font-extrabold"> {{ $t("common.labels.created") }}: </span>
+              <span class="font-black"> {{ $t("common.labels.created") }}: </span>
               {{ $d(order.createdDate) }}
             </p>
             <p v-if="order.status" class="flex items-center">
-              <span class="mr-1 font-extrabold"> {{ $t("common.labels.status") }}: </span>
+              <span class="mr-1 font-black"> {{ $t("common.labels.status") }}: </span>
               <OrderStatus
                 class="min-w-[7.785rem] print:min-w-0"
                 :status="order.status"
@@ -90,12 +90,12 @@
 
         <!-- Billing Address Widget -->
         <VcWidget v-if="billingAddress" :title="$t('common.titles.billing_address')">
-          <VcAddressInfo :address="billingAddress" class="text-15" />
+          <VcAddressInfo :address="billingAddress" class="text-base" />
         </VcWidget>
 
         <!-- Shipping Method Card -->
         <VcWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')">
-          <div class="flex items-center gap-4 text-15">
+          <div class="flex items-center gap-4 text-base">
             <VcImage
               :alt="shipmentMethodName"
               :src="shipment.shippingMethod?.logoUrl"
@@ -112,12 +112,12 @@
 
         <!-- Shipping Address Card -->
         <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-          <VcAddressInfo :address="deliveryAddress" class="text-15" />
+          <VcAddressInfo :address="deliveryAddress" class="text-base" />
         </VcWidget>
 
         <!-- Payment Method section -->
         <VcWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')">
-          <div class="flex items-center gap-4 text-15">
+          <div class="flex items-center gap-4 text-base">
             <VcImage :alt="paymentMethodName" :src="payment.paymentMethod.logoUrl" class="size-12 print:hidden" lazy />
             <span class="min-w-0 break-words">
               {{ paymentMethodName }}

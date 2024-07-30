@@ -1,5 +1,5 @@
 <template>
-  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-gray-bg': !products.length && !loading }">
+  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-neutral-bg': !products.length && !loading }">
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
@@ -38,7 +38,7 @@
 
             <ProductsFilters
               :keyword="keywordQueryParam"
-              :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+              :filters="{ facets: orderedFacets, inStock: savedInStock, branches: savedBranches }"
               :loading="loading"
               @change="applyFilters($event)"
             />
@@ -57,7 +57,7 @@
             </i18n-t>
 
             <!-- Skeleton -->
-            <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-gray-200 md:w-64">
+            <span v-else-if="!currentCategory && loadingCategory" class="inline-block w-48 bg-neutral-200 md:w-64">
               &nbsp;
             </span>
 
@@ -73,7 +73,7 @@
               v-if="!loading && !hideTotal && !fixedProductsCount"
               class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
-              <b class="font-extrabold">{{ total }}</b>
+              <b class="font-black">{{ total }}</b>
               {{ $t("pages.catalog.products_found_message", total) }}
             </sup>
           </VcTypography>
@@ -146,7 +146,7 @@
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
           :loading="loading || facetsLoading"
-          :filters="{ facets, inStock: savedInStock, branches: savedBranches }"
+          :filters="{ facets: orderedFacets, inStock: savedInStock, branches: savedBranches }"
           :hide-sorting="hideSorting"
           :hide-all-filters="hideSidebar"
           @reset-facet-filters="resetFacetFilters"
@@ -260,6 +260,10 @@ interface IProps {
   fixedProductsCount?: number;
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
+  filtersDisplayOrder?: {
+    order?: string;
+    showRest?: boolean;
+  };
 }
 
 const { catalogId, currencyCode } = globals;
@@ -342,18 +346,46 @@ const isExistSelectedFacets = computedEager<boolean>(() =>
   facets.value.some((facet) => facet.values.some((value) => value.selected)),
 );
 
+const orderedFacets = computed<FacetItemType[]>(() => {
+  if (props.filtersDisplayOrder?.order && props.filtersDisplayOrder?.order.length > 0) {
+    const order = props.filtersDisplayOrder.order
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (order.length === 0) {
+      return facets.value;
+    }
+
+    const sorted: FacetItemType[] = [];
+
+    order.forEach((filter) => {
+      const facet = facets.value.find(({ label }) => label.toLowerCase() === filter);
+      if (facet) {
+        sorted.push(facet);
+      }
+    });
+
+    return props.filtersDisplayOrder.showRest
+      ? [...sorted, ...facets.value.filter(({ label }) => !order.includes(label.toLowerCase()))]
+      : sorted;
+  }
+
+  return facets.value;
+});
+
 const isPopupSidebarFiltersDirty = computedEager<boolean>(
   () =>
     JSON.stringify(popupSidebarFilters) !==
     JSON.stringify({
-      facets: facets.value,
+      facets: isMobile.value ? orderedFacets.value : facets.value,
       inStock: savedInStock.value,
       branches: savedBranches.value,
     } as ProductsFiltersType),
 );
 
 function showPopupSidebar() {
-  popupSidebarFilters.facets = cloneDeep(facets.value);
+  popupSidebarFilters.facets = cloneDeep(isMobile.value ? orderedFacets.value : facets.value);
   popupSidebarFilters.inStock = savedInStock.value;
   popupSidebarFilters.branches = savedBranches.value.slice();
   popupSidebarVisible.value = true;

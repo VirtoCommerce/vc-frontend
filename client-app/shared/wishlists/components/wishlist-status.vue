@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-1.5">
     <template v-if="scope === WishlistScopeType.Private">
-      <VcIcon :size="16" class="text-[--color-secondary-500]" name="lock-closed" />
+      <VcIcon :size="16" class="text-secondary" name="lock-closed" />
 
       <span>
         {{ $t("shared.wishlists.status.private") }}
@@ -9,7 +9,7 @@
     </template>
 
     <template v-else-if="scope === WishlistScopeType.Organization">
-      <VcIcon :size="16" class="text-[--color-accent-500]" name="users" />
+      <VcIcon :size="16" class="text-accent" name="users" />
 
       <span>
         {{ $t("shared.wishlists.status.shared") }}

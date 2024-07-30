@@ -3,7 +3,7 @@
     <div class="truncate font-bold">{{ vendor.name }}</div>
 
     <div v-if="$cfg.rating_enabled && displayRating" class="flex items-center gap-1">
-      <VcIcon class="flex-none text-[--color-primary-500]" name="star" size="xs" />
+      <VcIcon class="flex-none text-primary" name="star" size="xs" />
 
       <span class="whitespace-nowrap font-normal">
         <span class="font-black"> {{ vendor.rating?.value }} </span>/5 ({{ vendor.rating?.reviewCount }})

@@ -8,14 +8,14 @@
     <div class="ms-auto flex items-center">
       <!-- Call us block -->
       <div v-if="$cfg.support_phone_number" class="flex items-center">
-        <VcIcon class="me-1.5 text-[--color-primary-500]" name="phone" size="sm" />
+        <VcIcon class="me-1.5 text-primary" name="phone" size="sm" />
 
         <span class="mr-1 font-thin">
           {{ $t("shared.layout.header.top_header.call_us_label") }}
         </span>
 
         <a
-          class="py-1 font-semibold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
+          class="py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
           :href="`tel:${$cfg.support_phone_number}`"
         >
           {{ $cfg.support_phone_number }}
@@ -59,14 +59,14 @@
             </span>
 
             <VcIcon
-              class="ms-1.5 text-[--color-accent-200] [--vc-icon-size:1rem] lg:text-[--color-primary-500] lg:[--vc-icon-size:0.625rem]"
+              class="ms-1.5 text-accent-200 [--vc-icon-size:1rem] lg:text-primary lg:[--vc-icon-size:0.625rem]"
               :name="loginMenuVisible ? 'chevron-up' : 'chevron-down'"
             />
           </button>
 
           <div
             v-if="loginMenuVisible"
-            class="absolute right-0 top-full z-10 flex w-60 flex-col rounded-md bg-additional-50 text-black shadow-md"
+            class="absolute right-0 top-full z-10 flex w-60 flex-col rounded-md bg-additional-50 text-additional-950 shadow-md"
           >
             <div class="flex items-center justify-between p-3">
               <router-link
@@ -74,7 +74,7 @@
                 class="flex items-center hover:text-primary"
                 @click="loginMenuVisible = false"
               >
-                <VcIcon class="text-[--color-primary-500]" name="user-circle" />
+                <VcIcon class="text-primary" name="user-circle" />
 
                 <span class="ml-2">
                   {{ user.contact?.fullName }}

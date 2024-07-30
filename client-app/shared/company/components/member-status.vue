@@ -30,28 +30,28 @@ const memberStatus = computed(() => {
       return {
         icon: "/static/icons/contact-active.svg",
         label: "pages.company.members.statuses.active",
-        styles: "bg-[--color-success-500] text-[--color-additional-50]",
+        styles: "bg-success text-additional-50",
       };
 
     case ContactStatus.Invited:
       return {
         icon: "/static/icons/contact-invited.svg",
         label: "pages.company.members.statuses.invited",
-        styles: "bg-[--color-info-500] text-[--color-additional-50]",
+        styles: "bg-info text-additional-50",
       };
 
     case ContactStatus.Locked:
       return {
         icon: "/static/icons/contact-blocked.svg",
         label: "pages.company.members.statuses.blocked",
-        styles: "bg-[--color-danger-500] text-[--color-additional-50]",
+        styles: "bg-danger text-additional-50",
       };
 
     default:
       return {
         icon: "/static/icons/contact-inactive.svg",
         label: "pages.company.members.statuses.inactive",
-        styles: "border border-current text-[--color-neutral-500]",
+        styles: "border border-current text-neutral",
       };
   }
 });

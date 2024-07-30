@@ -84,7 +84,7 @@ export const PrependSlot: StoryFn<typeof VcWidget> = (args) => ({
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     <template #prepend>
-      <VcIcon class="text-[--color-danger-500]" name="cake" size="sm" />
+      <VcIcon class="text-danger" name="cake" size="sm" />
     </template>
 
     Widget text
@@ -102,8 +102,8 @@ export const AppendSlot: StoryFn<typeof VcWidget> = (args) => ({
 
     <template #append>
       <span class="flex items-center gap-1">
-        <a class="text-[--color-accent-600] text-sm underline" href="#">Link</a>
-        <VcIcon class="text-[--color-accent-600]" name="arrow-right" size="xs" />
+        <a class="text-accent-600 text-sm underline" href="#">Link</a>
+        <VcIcon class="text-accent-600" name="arrow-right" size="xs" />
       </span>
     </template>
   </VcWidget>`,
@@ -127,7 +127,7 @@ export const HeaderContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     <template #header-container>
-      <div class="p-4 bg-[--color-info-500] text-[--color-additional-50]">
+      <div class="p-4 bg-info text-additional-50">
         Header Container
       </div>
     </template>
@@ -141,7 +141,7 @@ export const DefaultContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     <template #default-container>
-      <div class="py-1 px-3 bg-[--color-neutral-100]">
+      <div class="py-1 px-3 bg-neutral-100">
         Default Container
       </div>
       <div class="flex border-t divide-x" v-for="item in [1, 2, 3]">
@@ -171,9 +171,9 @@ export const FooterContainerSlot: StoryFn<typeof VcWidget> = (args) => ({
 
     <template #footer-container>
       <div class="flex divide-x">
-        <div class="grow p-2 text-center rounded-bl bg-[--color-danger-100]">Text 1</div>
-        <div class="grow p-2 text-center bg-[--color-warning-100]">Text 2</div>
-        <div class="grow p-2 text-center rounded-br bg-[--color-success-100]">Text 3</div>
+        <div class="grow p-2 text-center rounded-bl bg-danger-100">Text 1</div>
+        <div class="grow p-2 text-center bg-warning-100">Text 2</div>
+        <div class="grow p-2 text-center rounded-br bg-success-100">Text 3</div>
       </div>
     </template>
   </VcWidget>`,

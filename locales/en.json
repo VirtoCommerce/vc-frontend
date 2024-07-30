@@ -480,7 +480,7 @@
           "total_label": "@:common.labels.total{':'}",
           "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
           "out_of_stock_message": "@:common.messages.product_out_of_stock",
-          "reduced_message": "The number of items in the order was <span class=\"text-gray-500\">reduced from {0} to {1}</span> due to stock restrictions",
+          "reduced_message": "The number of items in the order was <span class=\"text-neutral\">reduced from {0} to {1}</span> due to stock restrictions",
           "item_can_t_be_purchased_message": "@:common.messages.item_can_t_be_purchased",
           "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
         }

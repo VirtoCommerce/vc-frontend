@@ -20,7 +20,7 @@
                 :disabled="loading"
                 @update:model-value="listsRemoveUpdate(list.id || '', !!$event)"
               >
-                <span class="line-clamp-1 text-base font-medium sm:text-15">
+                <span class="line-clamp-1 text-base">
                   {{ list.name }}
                 </span>
               </VcCheckbox>
@@ -82,8 +82,8 @@
           >
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
-                class="line-clamp-1 text-base font-medium"
-                :class="{ 'text-neutral-500': !selectedListsOtherIds.includes(list.id!) }"
+                class="line-clamp-1 text-base"
+                :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
               >
                 {{ list.name }}
               </span>

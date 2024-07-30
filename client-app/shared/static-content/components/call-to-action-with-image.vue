@@ -17,7 +17,7 @@
           </div>
         </div>
         <div
-          class="aspect-video rounded bg-gray-200"
+          class="aspect-video rounded bg-neutral-200"
           :class="[imagePosition === 'right' ? 'order-1 lg:order-2' : 'order-2 lg:order-1']"
         >
           <img :src="image" :alt="imageDescription" />
