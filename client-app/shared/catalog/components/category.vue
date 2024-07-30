@@ -1,5 +1,9 @@
 <template>
-  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-neutral-bg': !products.length && !loading }">
+  <VcContainer
+    ref="categoryComponentAnchor"
+    :is-transparent="isTransparent"
+    :class="{ 'polygon-neutral-bg': !products.length && !loading }"
+  >
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
@@ -264,6 +268,7 @@ interface IProps {
     order?: string;
     showRest?: boolean;
   };
+  isTransparent?: boolean;
 }
 
 const { catalogId, currencyCode } = globals;
