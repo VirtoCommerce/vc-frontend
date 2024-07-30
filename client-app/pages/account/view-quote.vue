@@ -24,31 +24,7 @@
     <VcLayoutWithRightSidebar>
       <!-- Quote products -->
       <VcWidget size="lg">
-        <VcLineItems
-          :items="preparedLineItems"
-          readonly
-          removable
-          with-image
-          with-properties
-          with-price
-          with-total
-          with-subtotal
-        >
-          <template #titles>
-            <div class="text-center">
-              {{ $t("common.labels.quantity") }}
-            </div>
-          </template>
-
-          <template #default="{ item }">
-            <VcQuantity
-              v-model="item.quantity"
-              :name="item.id"
-              :min-quantity="item.minQuantity"
-              :max-quantity="item.maxQuantity"
-            />
-          </template>
-        </VcLineItems>
+        <QuoteLineItems :items="quote.items!" readonly />
       </VcWidget>
 
       <!-- Quote comment -->
@@ -58,7 +34,7 @@
         prepend-icon="document-text"
         size="lg"
       >
-        <div class="text-base font-medium">
+        <div class="text-base">
           {{ quote.comment }}
         </div>
       </VcWidget>
@@ -69,7 +45,7 @@
         size="lg"
         prepend-icon="document-text"
       >
-        <ul class="space-y-2 rounded border border-[--color-neutral-200] px-3 py-4">
+        <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
             <VcFile :file="getFile(attachment)" @download="onDownload" />
           </li>
@@ -83,7 +59,7 @@
               {{ $t("pages.account.quote_details.subTotal") }}
             </span>
 
-            <span class="text-18 font-extrabold text-[color:var(--color-price)]">
+            <span class="text-lg font-black text-[--price-color]">
               <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
             </span>
           </div>
@@ -115,7 +91,7 @@
               {{ $t("pages.account.quote_details.total") }}
             </span>
 
-            <span class="text-lg font-extrabold text-success-700">
+            <span class="text-lg font-black text-success-700">
               <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
             </span>
           </div>
@@ -152,12 +128,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watchEffect } from "vue";
+import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { prepareLineItems } from "@/core/utilities";
-import { QuoteStatus } from "@/shared/account";
+import { QuoteLineItems, QuoteStatus } from "@/shared/account";
 import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
@@ -178,10 +153,6 @@ const router = useRouter();
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
-
-const preparedLineItems = computed(() =>
-  prepareLineItems(quote.value!.items!).map((item) => ({ ...item, extendedPrice: item.actualPrice })),
-);
 
 async function approve() {
   try {

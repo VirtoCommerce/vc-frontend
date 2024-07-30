@@ -44,40 +44,7 @@
 
       <!-- Quote products -->
       <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
-        <VcLineItems
-          :items="preparedLineItems"
-          removable
-          with-image
-          with-properties
-          with-price
-          with-total
-          with-subtotal
-          @remove:items="onRemoveItems"
-        >
-          <template #titles>
-            <div class="text-center">
-              {{ $t("common.labels.quantity") }}
-            </div>
-          </template>
-
-          <template #default="{ item }">
-            <VcQuantity
-              class="ml-5"
-              :model-value="item.quantity"
-              :name="item.id"
-              :min-quantity="item.minQuantity"
-              :max-quantity="item.maxQuantity"
-              @update:model-value="changeQuantityHandler({ itemId: item.id, quantity: $event })"
-            />
-          </template>
-          <template #after-items>
-            <div v-if="!quote.items.length" class="border-x p-3">
-              <VcAlert color="warning" size="sm" variant="outline-dark" icon>
-                {{ $t("pages.account.quote_details.no_items_message") }}
-              </VcAlert>
-            </div>
-          </template>
-        </VcLineItems>
+        <QuoteLineItems :items="quote.items!" @update:item="onUpdateItem" @remove:item="onRemoveItem" />
       </VcWidget>
 
       <VcWidget :title="$t('pages.account.quote_details.shipping_address')" prepend-icon="truck" size="lg">
@@ -85,7 +52,7 @@
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
 
-        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]">
+        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="shippingAddress"
@@ -105,9 +72,7 @@
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
 
-        <div
-          :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]"
-        >
+        <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching || !shippingAddress"
@@ -163,21 +128,15 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { asyncForEach, convertToType, isEqualAddresses, prepareLineItems } from "@/core/utilities";
-import { DEFAULT_QUOTE_FILES_SCOPE, useUser, useUserAddresses } from "@/shared/account";
+import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
+import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses } from "@/shared/account";
 import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import type {
-  MemberAddressType,
-  MoneyType,
-  QuoteAddressType,
-  QuoteItemType,
-  QuoteType,
-} from "@/core/api/graphql/types";
+import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import type { StringSchema } from "yup";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
@@ -190,7 +149,7 @@ const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 const router = useRouter();
-const { n, t } = useI18n();
+const { t } = useI18n();
 const { openModal, closeModal } = useModal();
 const { user, isAuthenticated, isCorporateMember } = useUser();
 const {
@@ -249,31 +208,6 @@ const comment = ref<string>();
 const commentValid = ref(true);
 
 const hasItems = computed<boolean>(() => !!quote.value?.items?.length);
-
-const preparedLineItems = computed(() =>
-  prepareLineItems(quote.value!.items!).map((item) => {
-    const originalItem = quote.value!.items.find(({ id }) => id === item.id);
-    const selectedTierPrice = originalItem?.selectedTierPrice;
-    const selectedTierPriceAmount =
-      (selectedTierPrice && selectedTierPrice.price?.amount * selectedTierPrice.quantity) || 0;
-    return {
-      ...item,
-      actualPrice: undefined,
-      listPrice: {
-        ...(item.listPrice as MoneyType),
-        amount: selectedTierPrice?.price?.amount as number,
-        formattedAmount: n(selectedTierPrice?.price?.amount as number, "currency"),
-      },
-      extendedPrice:
-        selectedTierPrice &&
-        ({
-          ...selectedTierPrice.price,
-          amount: selectedTierPriceAmount,
-          formattedAmount: n(selectedTierPriceAmount, "currency"),
-        } as MoneyType),
-    };
-  }),
-);
 
 const accountAddresses = computed<AnyAddressType[]>(() => {
   const { firstName, lastName } = user.value.contact ?? {};
@@ -346,10 +280,8 @@ function accountAddressExists(address: AnyAddressType): boolean {
   return accountAddresses.value.some((item) => isEqualAddresses(item, address));
 }
 
-function onRemoveItems(itemsIds: string[]): void {
-  itemsIds.forEach((itemId) => {
-    remove(quote.value!.items!, ({ id }) => id === itemId);
-  });
+function onRemoveItem(itemId: string): void {
+  remove(quote.value!.items!, ({ id }) => id === itemId);
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
@@ -511,9 +443,8 @@ function onFileDownload(file: FileType) {
   }
 }
 
-function changeQuantityHandler({ itemId, quantity }: { itemId: string; quantity: number }): void {
+function onUpdateItem({ itemId, quantity }: { itemId: string; quantity: number }): void {
   const item = quote.value!.items!.find(({ id }) => id === itemId);
-
   if (item) {
     item.selectedTierPrice!.quantity = quantity;
   }
