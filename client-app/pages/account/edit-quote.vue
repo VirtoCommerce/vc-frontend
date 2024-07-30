@@ -44,7 +44,40 @@
 
       <!-- Quote products -->
       <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
-        <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
+        <VcLineItems
+          :items="preparedLineItems"
+          removable
+          with-image
+          with-properties
+          with-price
+          with-total
+          with-subtotal
+          @remove:items="onRemoveItems"
+        >
+          <template #titles>
+            <div class="text-center">
+              {{ $t("common.labels.quantity") }}
+            </div>
+          </template>
+
+          <template #default="{ item }">
+            <VcQuantity
+              class="ml-5"
+              :model-value="item.quantity"
+              :name="item.id"
+              :min-quantity="item.minQuantity"
+              :max-quantity="item.maxQuantity"
+              @update:model-value="changeQuantityHandler({ itemId: item.id, quantity: $event })"
+            />
+          </template>
+          <template #after-items>
+            <div v-if="!quote.items.length" class="border-x p-3">
+              <VcAlert color="warning" size="sm" variant="outline-dark" icon>
+                {{ $t("pages.account.quote_details.no_items_message") }}
+              </VcAlert>
+            </div>
+          </template>
+        </VcLineItems>
       </VcWidget>
 
       <VcWidget :title="$t('pages.account.quote_details.shipping_address')" prepend-icon="truck" size="lg">
@@ -130,15 +163,21 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
-import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses } from "@/shared/account";
+import { asyncForEach, convertToType, isEqualAddresses, prepareLineItems } from "@/core/utilities";
+import { DEFAULT_QUOTE_FILES_SCOPE, useUser, useUserAddresses } from "@/shared/account";
 import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
+import type {
+  MemberAddressType,
+  MoneyType,
+  QuoteAddressType,
+  QuoteItemType,
+  QuoteType,
+} from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import type { StringSchema } from "yup";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
@@ -151,7 +190,7 @@ const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 const router = useRouter();
-const { t } = useI18n();
+const { n, t } = useI18n();
 const { openModal, closeModal } = useModal();
 const { user, isAuthenticated, isCorporateMember } = useUser();
 const {
@@ -210,6 +249,31 @@ const comment = ref<string>();
 const commentValid = ref(true);
 
 const hasItems = computed<boolean>(() => !!quote.value?.items?.length);
+
+const preparedLineItems = computed(() =>
+  prepareLineItems(quote.value!.items!).map((item) => {
+    const originalItem = quote.value!.items.find(({ id }) => id === item.id);
+    const selectedTierPrice = originalItem?.selectedTierPrice;
+    const selectedTierPriceAmount =
+      (selectedTierPrice && selectedTierPrice.price?.amount * selectedTierPrice.quantity) || 0;
+    return {
+      ...item,
+      actualPrice: undefined,
+      listPrice: {
+        ...(item.listPrice as MoneyType),
+        amount: selectedTierPrice?.price?.amount as number,
+        formattedAmount: n(selectedTierPrice?.price?.amount as number, "currency"),
+      },
+      extendedPrice:
+        selectedTierPrice &&
+        ({
+          ...selectedTierPrice.price,
+          amount: selectedTierPriceAmount,
+          formattedAmount: n(selectedTierPriceAmount, "currency"),
+        } as MoneyType),
+    };
+  }),
+);
 
 const accountAddresses = computed<AnyAddressType[]>(() => {
   const { firstName, lastName } = user.value.contact ?? {};
@@ -282,8 +346,10 @@ function accountAddressExists(address: AnyAddressType): boolean {
   return accountAddresses.value.some((item) => isEqualAddresses(item, address));
 }
 
-function onRemoveItem(item: QuoteItemType): void {
-  remove(quote.value!.items!, (i: QuoteItemType) => i.id === item.id);
+function onRemoveItems(itemsIds: string[]): void {
+  itemsIds.forEach((itemId) => {
+    remove(quote.value!.items!, ({ id }) => id === itemId);
+  });
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
@@ -442,6 +508,14 @@ async function fetchAddresses(): Promise<void> {
 function onFileDownload(file: FileType) {
   if (file && file.url) {
     void downloadFile(file.url, file.name);
+  }
+}
+
+function changeQuantityHandler({ itemId, quantity }: { itemId: string; quantity: number }): void {
+  const item = quote.value!.items!.find(({ id }) => id === itemId);
+
+  if (item) {
+    item.selectedTierPrice!.quantity = quantity;
   }
 }
 

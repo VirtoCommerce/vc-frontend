@@ -24,7 +24,31 @@
     <VcLayoutWithRightSidebar>
       <!-- Quote products -->
       <VcWidget size="lg">
-        <QuoteLineItems :items="quote.items!" readonly />
+        <VcLineItems
+          :items="preparedLineItems"
+          readonly
+          removable
+          with-image
+          with-properties
+          with-price
+          with-total
+          with-subtotal
+        >
+          <template #titles>
+            <div class="text-center">
+              {{ $t("common.labels.quantity") }}
+            </div>
+          </template>
+
+          <template #default="{ item }">
+            <VcQuantity
+              v-model="item.quantity"
+              :name="item.id"
+              :min-quantity="item.minQuantity"
+              :max-quantity="item.maxQuantity"
+            />
+          </template>
+        </VcLineItems>
       </VcWidget>
 
       <!-- Quote comment -->
@@ -128,11 +152,12 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
+import { computed, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { QuoteLineItems, QuoteStatus } from "@/shared/account";
+import { prepareLineItems } from "@/core/utilities";
+import { QuoteStatus } from "@/shared/account";
 import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
@@ -153,6 +178,10 @@ const router = useRouter();
 usePageHead({
   title: t("pages.account.quote_details.title", [quote!.value?.number]),
 });
+
+const preparedLineItems = computed(() =>
+  prepareLineItems(quote.value!.items!).map((item) => ({ ...item, extendedPrice: item.actualPrice })),
+);
 
 async function approve() {
   try {

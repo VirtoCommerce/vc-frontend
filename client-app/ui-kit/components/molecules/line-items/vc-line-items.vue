@@ -84,6 +84,7 @@
           </VcLineItem>
         </slot>
       </div>
+      <slot name="after-items" />
 
       <!-- table footer -->
       <div v-if="selectable || withSubtotal" class="vc-line-items__foot">
