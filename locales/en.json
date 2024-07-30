@@ -898,7 +898,7 @@
       "divider_text": "Or",
       "providers": {
         "azure_ad": {
-          "button_text": "Sign in with Active Directory"
+          "button_text": "Sign in with Entra ID"
         }
       }
     },
