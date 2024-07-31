@@ -1,7 +1,7 @@
 <template>
   <VcLineItems
     class="quote-line-items"
-    :items="items"
+    :items="normalizedItems"
     :removable="!readonly"
     :readonly="readonly"
     with-image
@@ -18,14 +18,14 @@
 
     <template #line-items>
       <VcLineItem
-        v-for="item in items"
+        v-for="item in normalizedItems"
         :key="item.id"
         :image-url="item.imageUrl"
         :name="item.name"
         :route="getRoute(item)"
         :properties="getProperties(item)"
         :list-price="item.listPrice"
-        :total="getTotalPrice(item)"
+        :total="item.extendedPrice"
         with-image
         with-properties
         with-price
@@ -55,13 +55,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import type { MoneyType, QuoteItemType } from "@/core/api/graphql/types";
 
 defineEmits<IEmits>();
-
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const PROPERTIES_COUNT_TO_SHOW = 3;
 
@@ -69,13 +69,19 @@ interface IEmits {
   (event: "update:item", value: { itemId: string; quantity: number }): void;
   (event: "remove:item", value: string): void;
 }
-
 interface IProps {
   readonly?: boolean;
   items: QuoteItemType[];
 }
 
 const { n } = useI18n();
+
+const normalizedItems = computed(() => {
+  return props.items.map((item) => ({
+    ...item,
+    extendedPrice: getTotalPrice(item),
+  }));
+});
 
 function getRoute(item: QuoteItemType) {
   return getProductRoute(item.productId || item.product?.id || "", item.product?.slug);
