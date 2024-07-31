@@ -150,7 +150,7 @@ export function useProductFilters(options: {
   }
 
   function hasSelectedFacets(): boolean {
-    return productsFilters.value.facets.some((facet) => facet.values.some((value) => value.selected));
+    return facets.value?.some((facet) => facet.values.some((value) => value.selected));
   }
 
   watchEffect(() => {
