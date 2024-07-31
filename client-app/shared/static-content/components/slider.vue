@@ -60,6 +60,7 @@ interface IProps {
   slides?: SlideType[];
   title?: string;
   subtitle?: string;
+  isTransparent?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -101,7 +102,7 @@ const modules = [Navigation];
 
 const wrapperClasses = computed(() => {
   return {
-    [props.background]: true,
+    [props.background]: !props.isTransparent,
     "py-10 lg:py-24": props.title || props.subtitle,
   };
 });
