@@ -6,7 +6,7 @@ import { SortDirection } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { Logger, rangeFacetToCommonFacet, termFacetToCommonFacet } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import type { ProductsSearchParams } from "../types";
+import type { ProductsSearchParamsType } from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { FacetItemType } from "@/core/types";
 import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
@@ -63,7 +63,7 @@ function _useProducts(
     );
   }
 
-  async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
+  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>) {
     loading.value = true;
     products.value = [];
     total.value = 0;
@@ -98,7 +98,7 @@ function _useProducts(
     }
   }
 
-  async function fetchMoreProducts(searchParams: Partial<ProductsSearchParams>) {
+  async function fetchMoreProducts(searchParams: Partial<ProductsSearchParamsType>) {
     loadingMore.value = true;
 
     try {
@@ -118,7 +118,7 @@ function _useProducts(
     }
   }
 
-  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<FacetItemType[]> {
+  async function getFacets(searchParams: Partial<ProductsSearchParamsType>): Promise<FacetItemType[]> {
     facetsLoading.value = true;
 
     try {

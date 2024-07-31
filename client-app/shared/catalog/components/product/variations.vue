@@ -84,7 +84,7 @@ import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
-import type { ProductsFilters as ProductsFiltersType } from "@/shared/catalog";
+import type { ProductsFiltersType } from "@/shared/catalog";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;

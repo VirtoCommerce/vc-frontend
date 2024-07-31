@@ -8,7 +8,7 @@
         <!-- Popup sidebar for mobile and horizontal desktop view -->
         <FiltersPopupSidebar
           v-if="isMobile || isHorizontalFilters"
-          :is-exist-selected-facets="hasSelectedFilters"
+          :is-exist-selected-facets="hasSelectedFacets"
           :is-popup-sidebar-filter-dirty="isFiltersDirty"
           :popup-sidebar-filters="productsFilters"
           :is-horizontal-filters="isHorizontalFilters"
@@ -23,7 +23,7 @@
           @hide-popup-sidebar="hideFiltersSidebar"
           @reset-facet-filters="resetFacetFilters"
           @open-branches-modal="openBranchesModal"
-          @update-popup-sidebar-filters="updatePopupSidebarFilters"
+          @update-popup-sidebar-filters="updateFiltersSidebar"
           @apply-filters="applyFilters"
         />
 
@@ -38,7 +38,7 @@
 
             <ProductsFilters
               :keyword="keywordQueryParam"
-              :filters="{ facets: productsFilters.facets, inStock: savedInStock, branches: savedBranches }"
+              :filters="productsFilters"
               :loading="loading"
               @change="applyFilters($event)"
             />
@@ -132,9 +132,9 @@
           <!-- In stock and branches -->
           <CategoryControls
             v-if="!hideControls && !isMobile && !isHorizontalFilters"
-            v-model="savedInStock"
+            v-model="localStorageInStock"
             :loading="loading"
-            :saved-branches="savedBranches"
+            :saved-branches="localStorageBranches"
             @open-branches-modal="openBranchesModal"
           />
         </div>
@@ -146,7 +146,7 @@
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
           :loading="loading || facetsLoading"
-          :filters="{ facets: productsFilters.facets, inStock: savedInStock, branches: savedBranches }"
+          :filters="productsFilters"
           :hide-sorting="hideSorting"
           :hide-all-filters="hideSidebar"
           @reset-facet-filters="resetFacetFilters"
@@ -155,7 +155,7 @@
         />
 
         <!-- Filters chips -->
-        <div v-if="!facetsLoading && hasSelectedFilters" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+        <div v-if="hasSelectedFacets" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
           <template v-for="facet in productsFilters.facets">
             <template v-for="filterItem in facet.values">
               <VcChip
@@ -164,7 +164,7 @@
                 color="secondary"
                 closable
                 @close="
-                  removeFacetFilterItem({
+                  removeFacetFilter({
                     paramName: facet.paramName,
                     value: filterItem.value,
                   })
@@ -184,8 +184,8 @@
 
         <!-- Products -->
         <CategoryProducts
-          :is-exist-selected-facets="hasSelectedFilters"
-          :has-active-filters="hasSelectedFilters || savedInStock || !!savedBranches.length"
+          :is-exist-selected-facets="hasSelectedFacets"
+          :has-active-filters="hasSelectedFacets || localStorageInStock || !!localStorageBranches.length"
           :fixed-products-count="fixedProductsCount"
           :saved-view-mode="savedViewMode"
           :items-per-page="itemsPerPage"
@@ -207,14 +207,13 @@
 
 <script setup lang="ts">
 import { computedEager, useBreakpoints, useElementVisibility, useLocalStorage, whenever } from "@vueuse/core";
-import { isEqual } from "lodash";
-import { computed, ref, shallowRef, toRefs, triggerRef, watch } from "vue";
-import { useBreadcrumbs, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { useBreadcrumbs, useThemeContext } from "@/core/composables";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
-import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
+  getFilterExpression,
   getFilterExpressionForAvailableIn,
   getFilterExpressionForCategorySubtree,
   getFilterExpressionForInStock,
@@ -223,25 +222,18 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useStickyFilters } from "@/shared/catalog/composables/useStickyFilters";
-import { FFC_LOCAL_STORAGE } from "@/shared/fulfillmentCenters";
-import { useModal } from "@/shared/modal";
-import { useCategory, useProducts, useProductsFiltersSidebar } from "../composables";
+import { useCategory, useProductFilters, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
-import type { FacetItemType, FacetValueItemType } from "@/core/types";
-import type {
-  FiltersDisplayOrderType,
-  ProductsFilters as ProductsFiltersType,
-  ProductsSearchParams,
-} from "@/shared/catalog";
+import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
-import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const props = defineProps<IProps>();
+
 const viewModes = ["grid", "list"] as const;
 type ViewModeType = (typeof viewModes)[number];
 
@@ -267,51 +259,44 @@ interface IProps {
   filtersDisplayOrder?: FiltersDisplayOrderType;
 }
 
+const { allowSetMeta } = toRefs(props);
+const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
+
 const { catalogId, currencyCode } = globals;
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
-
 const isMobile = breakpoints.smaller("lg");
 
 const { themeContext } = useThemeContext();
-const { openModal } = useModal();
-const { getFacets, loading, facetsLoading, products, total, facets } = useProducts({
+const { getFacets, loading, facetsLoading, products, total } = useProducts({
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
 const {
-  hasSelectedFilters,
+  facetsQueryParam,
+  hasSelectedFacets,
   isFiltersDirty,
   isFiltersSidebarVisible,
+  keywordQueryParam,
+  localStorageBranches,
+  localStorageInStock,
   productsFilters,
+  searchQueryParam,
+  sortQueryParam,
+  applyFilters: _applyFilters,
   hideFiltersSidebar,
-  initializeFiltersSidebar,
+  openBranchesModal,
   removeFacetFilter,
-  resetFacetsFilters,
+  resetFacetFilters,
   showFiltersSidebar,
   updateProductsFilters,
-} = useProductsFiltersSidebar(isMobile);
+} = useProductFilters({
+  isMobile: isMobile.value,
+  filtersDisplayOrder: filtersDisplayOrder.value,
+  useQueryParams: true,
+});
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
-const savedInStock = useLocalStorage<boolean>("viewInStockProducts", true);
-const savedBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
-
-const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
-  defaultValue: PRODUCT_SORTING_LIST[0].id,
-  validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
-});
-
-const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
-  defaultValue: "",
-});
-
-const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
-  defaultValue: "",
-});
-
-const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
-  defaultValue: "",
-});
 
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
@@ -327,14 +312,14 @@ const { setFiltersPosition, filtersStyle } = useStickyFilters({ isHorizontalFilt
 
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
-const { allowSetMeta } = toRefs(props);
+
 useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible });
 
 const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
 });
 
-const searchParams = computedEager<ProductsSearchParams>(() => ({
+const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
@@ -342,33 +327,20 @@ const searchParams = computedEager<ProductsSearchParams>(() => ({
   filter: [
     props.filter,
     facetsQueryParam.value,
-    getFilterExpressionForInStock(savedInStock),
-    getFilterExpressionForAvailableIn(savedBranches),
+    getFilterExpressionForInStock(localStorageInStock.value),
+    getFilterExpressionForAvailableIn(localStorageBranches.value),
   ]
     .filter(Boolean)
     .join(" "),
 }));
 
-function applyFilters(newFilters: ProductsFiltersType) {
-  const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
-
-  if (facetsQueryParam.value !== facetsFilterExpression) {
-    facetsQueryParam.value = facetsFilterExpression;
-  }
-
-  if (savedInStock.value !== newFilters.inStock) {
-    savedInStock.value = newFilters.inStock;
-  }
-
-  if (!isEqual(savedBranches.value, newFilters.branches)) {
-    savedBranches.value = newFilters.branches;
-  }
-
+function applyFilters(newFilters: ProductsFiltersType): void {
+  _applyFilters(newFilters);
   setFiltersPosition();
 }
 
-async function updatePopupSidebarFilters(newFilters: ProductsFiltersType) {
-  const searchParamsForFacets: ProductsSearchParams = {
+async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<void> {
+  const searchParamsForFacets: ProductsSearchParamsType = {
     ...searchParams.value,
     filter: [
       getFilterExpressionFromFacets(newFilters.facets),
@@ -386,47 +358,6 @@ async function updatePopupSidebarFilters(newFilters: ProductsFiltersType) {
   });
 }
 
-function removeFacetFilterItem(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">) {
-  const isSuccess = removeFacetFilter(payload);
-  if (isSuccess) {
-    facetsQueryParam.value = getFilterExpressionFromFacets(facets);
-
-    // Instant update of the filter chips
-    triggerRef(facets);
-  }
-}
-
-function resetFacetFilters() {
-  facetsQueryParam.value = "";
-
-  resetFacetsFilters();
-
-  // Instant update of the filter chips
-  triggerRef(facets);
-}
-
-function openBranchesModal(fromPopupSidebarFilter: boolean) {
-  openModal({
-    component: BranchesModal,
-    props: {
-      selectedBranches: fromPopupSidebarFilter ? productsFilters.value.branches : savedBranches.value,
-      onSave(branches: string[]) {
-        if (fromPopupSidebarFilter) {
-          const newFilters: ProductsFiltersType = {
-            branches,
-            facets: productsFilters.value.facets,
-            inStock: productsFilters.value.inStock,
-          };
-
-          void updatePopupSidebarFilters(newFilters);
-        } else {
-          savedBranches.value = branches;
-        }
-      },
-    },
-  });
-}
-
 whenever(() => !isMobile.value, hideFiltersSidebar);
 
 watch(
@@ -437,13 +368,11 @@ watch(
 
       const productFilter = catalog_empty_categories_enabled
         ? undefined
-        : [
+        : getFilterExpression([
             getFilterExpressionForCategorySubtree({ catalogId, categoryId }),
             getFilterExpressionForZeroPrice(!!zero_price_product_enabled, currencyCode),
             getFilterExpressionForInStock(true),
-          ]
-            .filter(Boolean)
-            .join(" ");
+          ]);
 
       void fetchCategory({
         categoryId,
@@ -459,17 +388,6 @@ watch(
 watch(props, ({ viewMode }) => {
   if (viewMode && viewModes.includes(viewMode)) {
     savedViewMode.value = viewMode;
-  }
-});
-
-watch(facets, (newFacets) => {
-  if (newFacets) {
-    initializeFiltersSidebar({
-      branches: savedBranches.value,
-      inStock: savedInStock.value,
-      facets: newFacets,
-      filtersDisplayOrder: props.filtersDisplayOrder,
-    });
   }
 });
 
