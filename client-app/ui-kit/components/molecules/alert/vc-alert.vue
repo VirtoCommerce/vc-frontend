@@ -53,7 +53,6 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   color: "info",
   size: "md",
-  maxWidth: "auto",
 });
 
 const iconName = computed<string>(() => {
