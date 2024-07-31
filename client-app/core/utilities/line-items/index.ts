@@ -1,12 +1,6 @@
 import { getProductRoute } from "../product";
 import { getPropertiesGroupedByName } from "../properties";
-import type {
-  AnyLineItemType,
-  ExtendedLineItemType,
-  VendorGroupType,
-  VendorGroupByVendorIdType,
-  PreparedLineItemType,
-} from "../../types";
+import type { AnyLineItemType, VendorGroupType, VendorGroupByVendorIdType, PreparedLineItemType } from "../../types";
 import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
 
 export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
@@ -42,23 +36,6 @@ export function groupByVendor<T extends LineItemType | OrderLineItemType>(items:
   result.push(groupWithoutVendor);
 
   return result;
-}
-
-/** @deprecated Use {@link prepareLineItem} function */
-export function extendLineItem<T extends AnyLineItemType>(item: T): ExtendedLineItemType<T> {
-  return {
-    ...item,
-    extended: {
-      isProductExists: !!item.product,
-      route: getProductRoute(item.productId || item.product?.id || "", item.product?.slug),
-      displayProperties: Object.values(getPropertiesGroupedByName(item.product?.properties ?? [])).slice(0, 3),
-      minQuantity: item.product?.minQuantity,
-      maxQuantity:
-        item.product?.maxQuantity ??
-        (<LineItemType>item).inStockQuantity ??
-        item.product?.availabilityData?.availableQuantity,
-    },
-  };
 }
 
 function prepareItemPrices(item: AnyLineItemType) {
