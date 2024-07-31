@@ -109,7 +109,7 @@ export function useProductFilters(options: {
       facetValue.selected = false;
       facetsQueryParam.value = options.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
 
-      triggerRef(productsFilters);
+      triggerRef(facets);
     }
   }
 
@@ -120,7 +120,7 @@ export function useProductFilters(options: {
       filter.values.forEach((filterItem) => (filterItem.selected = false)),
     );
 
-    triggerRef(productsFilters);
+    triggerRef(facets);
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
