@@ -1,5 +1,8 @@
 <template>
-  <VcContainer ref="categoryComponentAnchor" :class="{ 'polygon-neutral-bg': !products.length && !loading }">
+  <VcContainer
+    ref="categoryComponentAnchor"
+    :class="{ 'polygon-neutral-bg': !products.length && !loading, '[--body-bg-color:transparent]': isTransparent }"
+  >
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
@@ -257,6 +260,7 @@ interface IProps {
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
   filtersDisplayOrder?: FiltersDisplayOrderType;
+  isTransparent?: boolean;
 }
 
 const { allowSetMeta } = toRefs(props);
