@@ -1,7 +1,7 @@
 <template>
   <VcLineItems
     class="quote-line-items"
-    :items="preparedLineItems"
+    :items="items"
     :removable="!readonly"
     :readonly="readonly"
     with-image
@@ -9,7 +9,6 @@
     with-price
     with-total
     with-subtotal
-    @remove:items="$emit('remove:item', $event[0])"
   >
     <template #titles>
       <div class="text-center">
@@ -17,16 +16,33 @@
       </div>
     </template>
 
-    <template #default="{ item }">
-      <VcQuantity
-        :disabled="readonly"
-        class="quote-line-items__quantity"
-        :model-value="item.quantity"
-        :name="item.id"
-        :min-quantity="item.minQuantity"
-        :max-quantity="item.maxQuantity"
-        @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
-      />
+    <template #line-items>
+      <VcLineItem
+        v-for="item in items"
+        :key="item.id"
+        :image-url="item.imageUrl"
+        :name="item.name"
+        :route="getRoute(item)"
+        :properties="item.product?.properties"
+        :list-price="item.listPrice"
+        :total="getTotalPrice(item)"
+        with-image
+        with-properties
+        with-price
+        with-total
+        :removable="!readonly"
+        @remove="() => $emit('remove:item', item.id)"
+      >
+        <VcQuantity
+          :disabled="readonly"
+          class="quote-line-items__quantity"
+          :model-value="item.selectedTierPrice?.quantity"
+          :name="item.id"
+          :min-quantity="item.product?.minQuantity"
+          :max-quantity="item.product?.maxQuantity"
+          @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
+        />
+      </VcLineItem>
     </template>
     <template #after-items>
       <div v-if="!items.length" class="quote-line-items__no-items">
@@ -39,9 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { prepareLineItems } from "@/core/utilities";
+import { getProductRoute } from "@/core/utilities";
 import type { MoneyType, QuoteItemType } from "@/core/api/graphql/types";
 
 interface IEmits {
@@ -55,34 +70,27 @@ interface IProps {
 }
 
 defineEmits<IEmits>();
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
 const { n } = useI18n();
 
-const preparedLineItems = computed(() =>
-  prepareLineItems(props.items).map((item) => {
-    const originalItem = props.items.find(({ id }) => id === item.id);
-    const price = originalItem?.selectedTierPrice?.price;
-    const quantity = originalItem?.selectedTierPrice?.quantity || 0;
-    const priceTotal = (price && price.amount * quantity) || 0;
-    return {
-      ...item,
-      actualPrice: undefined,
-      listPrice: {
-        ...(item.listPrice as MoneyType),
-        amount: price?.amount as number,
-        formattedAmount: n(price?.amount as number, "currency"),
-      },
-      extendedPrice:
-        price &&
-        ({
-          ...price,
-          amount: priceTotal,
-          formattedAmount: n(priceTotal, "currency"),
-        } as MoneyType),
-    };
-  }),
-);
+function getRoute(item: QuoteItemType) {
+  return getProductRoute(item.productId || item.product?.id || "", item.product?.slug);
+}
+
+function getTotalPrice(item: QuoteItemType) {
+  const price = item?.selectedTierPrice?.price;
+  const quantity = item?.selectedTierPrice?.quantity || 0;
+  const priceTotal = (price && price.amount * quantity) || 0;
+  return (
+    price &&
+    ({
+      ...price,
+      amount: priceTotal,
+      formattedAmount: n(priceTotal, "currency"),
+    } as MoneyType)
+  );
+}
 </script>
 
 <style lang="scss">
