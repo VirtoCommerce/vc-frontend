@@ -23,7 +23,7 @@
         :image-url="item.imageUrl"
         :name="item.name"
         :route="getRoute(item)"
-        :properties="item.product?.properties"
+        :properties="getProperties(item)"
         :list-price="item.listPrice"
         :total="getTotalPrice(item)"
         with-image
@@ -56,8 +56,14 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { getProductRoute } from "@/core/utilities";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import type { MoneyType, QuoteItemType } from "@/core/api/graphql/types";
+
+defineEmits<IEmits>();
+
+defineProps<IProps>();
+
+const PROPERTIES_COUNT_TO_SHOW = 3;
 
 interface IEmits {
   (event: "update:item", value: { itemId: string; quantity: number }): void;
@@ -68,9 +74,6 @@ interface IProps {
   readonly?: boolean;
   items: QuoteItemType[];
 }
-
-defineEmits<IEmits>();
-defineProps<IProps>();
 
 const { n } = useI18n();
 
@@ -90,6 +93,10 @@ function getTotalPrice(item: QuoteItemType) {
       formattedAmount: n(priceTotal, "currency"),
     } as MoneyType)
   );
+}
+
+function getProperties(item: QuoteItemType) {
+  return Object.values(getPropertiesGroupedByName(item.product?.properties ?? [])).slice(0, PROPERTIES_COUNT_TO_SHOW);
 }
 </script>
 
