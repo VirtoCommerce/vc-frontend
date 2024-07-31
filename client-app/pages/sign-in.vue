@@ -42,10 +42,9 @@ const PASSWORD_AUTHENTICATION_TYPE = "Password";
 const IdentityProviders = defineAsyncComponent(() => import("@/shared/sign-in/components/identity-providers.vue"));
 
 const { themeContext } = useThemeContext();
-
-const authenticationTypes: string[] = themeContext.value.storeSettings?.authenticationTypes || [
-  PASSWORD_AUTHENTICATION_TYPE,
-];
+const authenticationTypes: string[] = themeContext.value.storeSettings?.authenticationTypes?.length
+  ? (themeContext.value.storeSettings.authenticationTypes as string[])
+  : [PASSWORD_AUTHENTICATION_TYPE];
 
 const identityProviders = computed(() =>
   authenticationTypes.filter((type: string) => type !== PASSWORD_AUTHENTICATION_TYPE),
