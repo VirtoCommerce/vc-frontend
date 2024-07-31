@@ -12,7 +12,6 @@
           :size="notification.size"
           shadow
           :closable="notification.closeButton"
-          :max-width="notification.maxWidth"
           @close="close(notification.id!)"
         >
           <component :is="notification.component" v-if="notification.component" v-bind="notification.props" />
@@ -52,10 +51,29 @@ const { stack, close } = useNotifications();
 
 <style lang="scss">
 .notifications-host {
-  @apply z-[5000] fixed top-5 left-3 right-3 flex flex-col items-center h-0;
+  @apply z-[5000] overflow-y-auto fixed bottom-0 max-h-screen w-full empty:hidden;
+
+  -ms-overflow-style: none; /* for Edge */
+  scrollbar-width: none; /* for Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+  }
+
+  @media (min-width: theme("screens.sm")) {
+    @apply top-0 bottom-auto right-4 w-80 empty:hidden;
+  }
 
   &__wrapper {
-    @apply flex flex-col items-center gap-2 empty:hidden;
+    @apply space-y-2 p-3;
+
+    @media (min-width: theme("screens.sm")) {
+      @apply space-y-3 pt-5 pb-0 px-0;
+    }
+  }
+
+  &__item {
+    @apply z-10 relative w-full;
   }
 
   &__buttons {
@@ -67,16 +85,19 @@ const { stack, close } = useNotifications();
 .app-notifications-enter-active,
 .app-notifications-leave-active {
   transition: transform 0.25s ease-in-out;
-  will-change: transform;
   z-index: 4999;
 }
 
 .app-notifications-leave-active {
-  position: absolute;
+  @apply absolute z-[5];
 }
 
 .app-notifications-enter-from,
 .app-notifications-leave-to {
-  transform: translateY(-100%);
+  transform: translateY(150%);
+
+  @media (min-width: theme("screens.sm")) {
+    transform: translateY(-150%);
+  }
 }
 </style>
