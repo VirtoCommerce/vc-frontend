@@ -113,16 +113,16 @@ interface IEmits {
 }
 
 interface IProps {
-  isHorizontalFilters: boolean;
-  isExistSelectedFacets: boolean;
-  isMobile: boolean;
-  isPopupSidebarFilterDirty: boolean;
-  isVisible: boolean;
-  loading: boolean;
-  facetsLoading: boolean;
+  isHorizontalFilters?: boolean;
+  isExistSelectedFacets?: boolean;
+  isMobile?: boolean;
+  isPopupSidebarFilterDirty?: boolean;
+  isVisible?: boolean;
+  loading?: boolean;
+  facetsLoading?: boolean;
   hideSorting?: boolean;
   hideControls?: boolean;
-  keywordQueryParam: string;
+  keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
 }
 
