@@ -13,6 +13,9 @@ function open(options: INotificationExtended): CloseNotificationHandle {
     id,
     closeButton: true,
     type: "info",
+    variant: "solid",
+    maxWidth: "20rem",
+    size: "md",
     ...options,
   };
 

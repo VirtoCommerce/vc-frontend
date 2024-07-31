@@ -1,7 +1,7 @@
 <template>
   <div
-    class="vc-alert"
     :class="[
+      'vc-alert',
       `vc-alert--${variant}`,
       `vc-alert--${variant}--${color}`,
       `vc-alert--size--${size}`,
@@ -9,6 +9,7 @@
         'vc-alert--shadow': shadow,
       },
     ]"
+    :style="{ maxWidth }"
   >
     <slot name="main-icon">
       <VcIcon v-if="icon" :name="iconName" class="vc-alert__icon" />
@@ -45,6 +46,7 @@ interface IProps {
   title?: string;
   shadow?: boolean;
   closable?: boolean;
+  maxWidth?: string;
 }
 
 defineEmits<IEmits>();
@@ -53,6 +55,7 @@ const props = withDefaults(defineProps<IProps>(), {
   variant: "solid",
   color: "info",
   size: "md",
+  maxWidth: "auto",
 });
 
 const iconName = computed<string>(() => {
