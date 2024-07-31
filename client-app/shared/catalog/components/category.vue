@@ -1,8 +1,7 @@
 <template>
   <VcContainer
     ref="categoryComponentAnchor"
-    :is-transparent="isTransparent"
-    :class="{ 'polygon-neutral-bg': !products.length && !loading }"
+    :class="{ 'polygon-neutral-bg': !products.length && !loading, '[--body-bg-color:transparent]': isTransparent }"
   >
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
