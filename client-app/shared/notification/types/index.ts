@@ -28,11 +28,6 @@ export interface INotification {
   size?: "sm" | "md";
 
   /**
-   * @default 20rem
-   */
-  maxWidth?: string;
-
-  /**
    * @default solid
    */
   variant?: "solid" | "solid-light" | "outline" | "outline-dark";
