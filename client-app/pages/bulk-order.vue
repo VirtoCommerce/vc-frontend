@@ -10,7 +10,7 @@
       <!-- Error section -->
       <transition name="slide-fade-top" mode="out-in">
         <VcAlert
-          v-if="SKUsWithErrors.length"
+          v-if="addItemsErrors?.length"
           key="sku"
           class="col-span-1 mb-5 lg:col-span-2 lg:mb-0"
           color="danger"
@@ -18,7 +18,20 @@
           variant="solid-light"
           icon
         >
-          <span>{{ $t("pages.bulk_order.product_was_not_added_alert", [SKUsWithErrors.join(", ")]) }}</span>
+          <span v-if="addItemsErrors[0].errorCode === 'PRODUCT_DUPLICATE_SKU'">
+            {{ $t("pages.bulk_order.product_duplicate_sku_alert", [addItemsErrors[0].objectId]) }}
+            <template v-for="errorParameter in addItemsErrors[0].errorParameters" :key="errorParameter.key">
+              <div v-if="errorParameter.key === 'productIds'" class="mt-2">
+                <div v-for="productId in errorParameter.value.split(',')" :key="productId">
+                  {{ productId }}
+                </div>
+              </div>
+            </template>
+          </span>
+
+          <span v-else>
+            {{ $t("pages.bulk_order.product_was_not_added_alert", [skuWithErrors?.join(", ")]) }}
+          </span>
         </VcAlert>
 
         <VcAlert
@@ -67,13 +80,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useShortCart } from "@/shared/cart";
-import type { InputNewBulkItemType } from "@/core/api/graphql/types";
+import type { InputNewBulkItemType, ValidationErrorType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
 
@@ -99,16 +112,16 @@ const loadingManually = ref(false);
 const loadingCSV = ref(false);
 const activeTab = ref<"manually" | "copy&paste">(tabs[0].id as "manually");
 const incorrectData = ref(false);
-const SKUsWithErrors = ref<string[]>([]);
+const skuWithErrors = ref<string[]>();
+
+const addItemsErrors = shallowRef<ValidationErrorType[]>();
 
 function showIncorrectDataError() {
-  SKUsWithErrors.value = [];
   incorrectData.value = true;
 }
 
 async function addItems(items: InputNewBulkItemType[]) {
   incorrectData.value = false;
-  SKUsWithErrors.value = [];
 
   if (!items.length || loadingCart.value || cartChanging.value) {
     return;
@@ -116,9 +129,10 @@ async function addItems(items: InputNewBulkItemType[]) {
 
   const resultItems = await addBulkItemsToCart(items);
 
-  SKUsWithErrors.value = resultItems.filter((item) => !item.isAddedToCart).map((item) => item.productSku);
+  addItemsErrors.value = resultItems.flatMap((item) => item.errors ?? []);
+  skuWithErrors.value = addItemsErrors.value.flatMap((item) => item.objectId ?? []);
 
-  if (SKUsWithErrors.value.length) {
+  if (addItemsErrors.value?.length) {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
