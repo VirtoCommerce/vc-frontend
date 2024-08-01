@@ -3,7 +3,7 @@
     :class="[
       'vc-container',
       {
-        'vc-container__loading': loading,
+        'vc-container--loading': loading,
       },
     ]"
   >
