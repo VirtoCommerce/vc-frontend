@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 import { globals } from "@/core/globals";
-import { apolloClient } from "../../client";
+import { graphqlClient } from "../../client";
 import type { Query, QueryWhiteLabelingSettingsArgs } from "@/core/api/graphql/types";
 import type { DocumentNode } from "graphql";
 
@@ -55,7 +55,7 @@ export async function getGetWhiteLabelingSettings() {
     return undefined;
   }
 
-  const { data } = await apolloClient.query<
+  const { data } = await graphqlClient.query<
     Required<Pick<Query, "whiteLabelingSettings">>,
     QueryWhiteLabelingSettingsArgs
   >({

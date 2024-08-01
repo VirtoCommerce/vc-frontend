@@ -20,8 +20,6 @@ const wsLink = new WebSocketLink(
 
 const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
 
-export const deprecatedLink = from([sharedLink, httpLink]);
-
 // https://www.apollographql.com/docs/react/api/link/introduction/#composing-a-link-chain
 // Tree:
 //         removeTypenameLink
