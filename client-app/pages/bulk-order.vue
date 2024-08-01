@@ -63,6 +63,7 @@
           class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
           @add-to-cart="addManuallyItems"
           @error="showIncorrectDataError"
+          @reset="resetErrors"
         />
       </div>
 
@@ -152,5 +153,9 @@ async function addItemsFromCSVText(items: InputNewBulkItemType[]) {
   loadingCSV.value = true;
   await addItems(items);
   loadingCSV.value = false;
+}
+
+function resetErrors(): void {
+  addItemsErrors.value = [];
 }
 </script>
