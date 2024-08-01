@@ -8,6 +8,7 @@ import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFc
 import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
+import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
@@ -16,7 +17,6 @@ import type { Messaging } from "firebase/messaging";
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
-const MODULE_ID = "VirtoCommerce.PushMessages";
 const SETTINGS_MAPPING = {
   "PushMessages.FcmReceiverOptions.ApiKey": "apiKey",
   "PushMessages.FcmReceiverOptions.AuthDomain": "authDomain",
@@ -29,7 +29,7 @@ const SETTINGS_MAPPING = {
 
 provideApolloClient(apolloClient);
 
-const { getModuleSettings } = useModuleSettings(MODULE_ID);
+const { getModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
 
 function _useWebPushNotifications() {
   let initialized = false;

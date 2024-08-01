@@ -95,7 +95,7 @@
       />
 
       <AccountNavigationLink
-        v-if="$cfg.push_messages_enabled"
+        v-if="$cfg.push_messages_enabled && isPushMessagesActive"
         :to="{ name: 'Notifications' }"
         :text="$t('shared.account.navigation.links.notifications')"
         class="notifications-icon"
@@ -125,6 +125,7 @@ import { useRoute } from "vue-router";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
+import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import { useWishlists } from "@/shared/wishlists";
 import AccountNavigationLink from "./account-navigation-link.vue";
 
@@ -133,6 +134,7 @@ const { isCorporateMember } = useUser();
 const { lists, fetchWishlists } = useWishlists();
 const { facets } = useUserOrders({});
 const { filterData, applyFilters } = useUserOrdersFilter();
+const { isActive: isPushMessagesActive } = usePushMessages();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");
 const isOrdersPage = eagerComputed(() => route.name === "Orders");
