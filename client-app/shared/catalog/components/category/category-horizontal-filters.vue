@@ -67,7 +67,7 @@
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import type { ProductsFilters as ProductsFiltersType } from "@/shared/catalog";
+import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
 defineEmits<IEmits>();
