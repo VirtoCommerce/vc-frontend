@@ -4,7 +4,9 @@ import { useClearAllPushMessages } from "@/core/api/graphql/push-messages/mutati
 import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesRead";
 import { useMarkAllPushMessagesUnread } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesUnread";
 import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/getPushMessages";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
+import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
 import type { Ref, MaybeRef } from "vue";
 
@@ -14,15 +16,32 @@ export interface IUsePushMessagesOptions {
   itemsPerPage?: MaybeRef<number>;
 }
 
-export function usePushMessages(options: IUsePushMessagesOptions) {
-  const itemsPerPage = ref(options.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);
+export function usePushMessages(options?: IUsePushMessagesOptions) {
+  const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+
+  if (!hasModuleSettings.value) {
+    return {
+      isActive: false,
+      totalCount: computed(() => 0),
+      unreadCount: computed(() => 0),
+      unreadCountWithHidden: computed(() => 0),
+      items: computed(() => []),
+      markReadAll: async () => {},
+      markUnreadAll: async () => {},
+      clearAll: async () => {},
+      loading: computed(() => false),
+      pages: computed(() => 0),
+      page: ref(1),
+    };
+  }
+  const itemsPerPage = ref(options?.itemsPerPage ?? DEFAULT_ORDERS_PER_PAGE);
   const page: Ref<number> = ref(1);
 
   const getPushMessagesParams = computed<GetPushMessagesQueryVariables>(() => {
     return {
-      withHidden: toValue(options.withHidden),
+      withHidden: toValue(options?.withHidden),
       cultureName: toValue(useAllGlobalVariables()).cultureName,
-      unreadOnly: toValue(options.showUnreadOnly),
+      unreadOnly: toValue(options?.showUnreadOnly),
       first: itemsPerPage.value,
       after: String((page.value - 1) * itemsPerPage.value),
     };
@@ -43,6 +62,7 @@ export function usePushMessages(options: IUsePushMessagesOptions) {
   const { mutate: clearAll } = useClearAllPushMessages();
 
   return {
+    isActive: true,
     totalCount,
     unreadCount,
     unreadCountWithHidden,
