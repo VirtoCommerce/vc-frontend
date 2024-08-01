@@ -6,11 +6,11 @@
       {{ $t("pages.bulk_order.title") }}
     </VcTypography>
 
-    <VcTabs v-model="activeTab" :items="currentTabs" text-field="label" value-field="id" class="mb-5 flex gap-2.5">
+    <VcTabs v-model="activeTab" :items="tabs" text-field="label" value-field="id" class="mb-5 flex gap-2">
       <template #item="{ item, isActive }">
         <span
           :class="{ 'rounded-sm bg-white !text-black shadow-md': isActive }"
-          class="block appearance-none p-2 text-primary-700"
+          class="block appearance-none p-1.5 text-primary-700"
         >
           <VcIcon class="vc-button__icon" :name="item['icon']" /> {{ item["label"] }}
         </span>
@@ -83,15 +83,21 @@ const allTabs = [
   { id: "from-file", icon: "cloud-upload", label: t("pages.bulk_order.from_file_tab") },
   { id: "copy&paste", icon: "document-duplicate", label: t("pages.bulk_order.copy_n_paste_tab") },
   { id: "manually", icon: "hand", label: t("pages.bulk_order.manually_tab") },
-];
-const currentTabs = computed(() => (isAuthenticated.value ? allTabs : allTabs.slice(1)));
+] as const;
+const tabs = computed(() => (isAuthenticated.value ? [...allTabs] : allTabs.slice(1)));
+const _activeTab = ref<(typeof allTabs)[number]["id"]>();
+const activeTab = computed({
+  get: () => _activeTab.value ?? (isAuthenticated.value ? "from-file" : "manually"),
+  set: (value) => {
+    _activeTab.value = value;
+  },
+});
 
 const router = useRouter();
 const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
 
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
-const activeTab = ref<(typeof allTabs)[number]["id"]>(allTabs[0].id as "manually");
 const incorrectData = ref(false);
 const SKUsWithErrors = ref<string[]>([]);
 

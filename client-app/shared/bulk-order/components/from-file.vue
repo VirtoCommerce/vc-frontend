@@ -3,41 +3,45 @@
     <VcTypography tag="h2" class="hidden border-b px-5 py-2 lg:block">
       {{ $t("shared.bulk_order.from_file.title") }}
     </VcTypography>
-    <div class="flex gap-4 px-7 py-6">
-      <section v-if="processing" class="w-full">
-        <p class="mb-3 text-sm">
-          {{ $t("shared.bulk_order.from_file.processing.message") }}
-        </p>
-        <VcLoaderWithText
-          centered
-          :text="$t('shared.bulk_order.from_file.processing.loading_message')"
-          class="mb-6 min-h-[230px] w-full border border-neutral-200 bg-neutral-50"
-        />
-        <nav class="flex justify-end border-t py-3">
-          <VcButton min-width="9rem">{{ $t("shared.bulk_order.from_file.processing.cancel") }}</VcButton>
-        </nav>
-      </section>
-      <template v-else>
-        <section class="flex flex-1 flex-col items-stretch">
+    <VcWidget size="lg">
+      <div class="grid gap-4 md:grid-cols-[auto_290px]">
+        <section v-if="processing">
           <p class="mb-3 text-sm">
-            {{ $t("shared.bulk_order.from_file.upload.message") }}
+            {{ $t("shared.bulk_order.from_file.processing.message") }}
           </p>
-          <VcFileUploader class="h-full" v-bind="fileOptions" :files="files" @add-files="onAddFiles" />
+          <VcLoaderWithText
+            centered
+            :text="$t('shared.bulk_order.from_file.processing.loading_message')"
+            class="mb-6 min-h-[230px] w-full border border-neutral-200 bg-neutral-50"
+          />
+          <nav class="flex justify-end border-t py-3">
+            <VcButton min-width="9rem">{{ $t("shared.bulk_order.from_file.processing.cancel") }}</VcButton>
+          </nav>
         </section>
-        <aside>
-          <figure>
-            <figcaption class="mb-3 text-sm">{{ $t("shared.bulk_order.from_file.upload.examples.title") }}</figcaption>
-            <VcImage
-              id="example"
-              src="/static/images/bulk-order/documents-example.webp"
-              :alt="$t('shared.bulk_order.from_file.upload.examples.alt')"
-              class="h-[230px]"
-              lazy
-            />
-          </figure>
-        </aside>
-      </template>
-    </div>
+        <template v-else>
+          <header class="text-sm max-md:text-center">
+            {{ $t("shared.bulk_order.from_file.upload.message") }}
+          </header>
+          <aside class="row-span-2">
+            <figure>
+              <figcaption class="mb-3 hidden text-sm md:block">
+                {{ $t("shared.bulk_order.from_file.upload.examples.title") }}
+              </figcaption>
+              <VcImage
+                id="example"
+                src="/static/images/bulk-order/documents-example.webp"
+                :alt="$t('shared.bulk_order.from_file.upload.examples.alt')"
+                class="h-[230px] md:object-cover md:object-left"
+                lazy
+              />
+            </figure>
+          </aside>
+          <section class="items-stretch">
+            <VcFileUploader class="h-full" v-bind="fileOptions" :files="files" @add-files="onAddFiles" />
+          </section>
+        </template>
+      </div>
+    </VcWidget>
   </article>
 </template>
 
@@ -88,6 +92,8 @@ watchEffect(async () => {
 
 <style lang="scss">
 #example {
-  padding-bottom: calc(theme("spacing.3") + theme("fontSize.xs"));
+  @media (min-width: theme("screens.md")) {
+    padding-bottom: calc(theme("spacing.3") + theme("fontSize.xs"));
+  }
 }
 </style>

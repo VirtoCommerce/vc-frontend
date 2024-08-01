@@ -3,7 +3,7 @@
     <VcTypography tag="h2" class="hidden border-b px-5 py-2 lg:block">
       {{ $t("shared.bulk_order.manually.title") }}
     </VcTypography>
-    <div class="p-6 pb-5 pt-4 md:p-5">
+    <VcWidget size="lg">
       <p class="text-sm">
         {{ $t("shared.bulk_order.manually.subtitle_message_start") }}
         <router-link :to="{ name: 'Cart' }" class="text-[--link-color] hover:text-[--link-hover-color]">
@@ -71,7 +71,7 @@
           {{ $t("shared.bulk_order.manually.add_to_cart_button") }}
         </VcButton>
       </div>
-    </div>
+    </VcWidget>
   </article>
 </template>
 

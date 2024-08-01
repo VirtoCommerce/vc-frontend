@@ -3,7 +3,7 @@
     <VcTypography tag="h2" class="hidden border-b px-5 py-2 lg:block">
       {{ $t("shared.bulk_order.copy_n_paste.title") }}
     </VcTypography>
-    <div class="h-full p-6 pb-5 pt-4 md:p-5">
+    <VcWidget size="lg">
       <p class="mb-2 text-sm font-bold">
         {{ $t("shared.bulk_order.copy_n_paste.subtitle_message") }}
       </p>
@@ -26,7 +26,7 @@
           {{ $t("shared.bulk_order.copy_n_paste.add_to_cart_button") }}
         </VcButton>
       </div>
-    </div>
+    </VcWidget>
   </article>
 </template>
 
