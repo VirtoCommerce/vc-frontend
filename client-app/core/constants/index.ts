@@ -1,6 +1,7 @@
 export * from "./environment";
 export * from "./images";
 export * from "./line-items";
+export * from "./local-storage-keys";
 export * from "./locale";
 export * from "./notifications";
 export * from "./orders";

@@ -1,7 +1,7 @@
 <template>
   <div
-    class="vc-alert"
     :class="[
+      'vc-alert',
       `vc-alert--${variant}`,
       `vc-alert--${variant}--${color}`,
       `vc-alert--size--${size}`,

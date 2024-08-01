@@ -15,7 +15,7 @@ function _useThemeContext() {
       throw new Error("Can't get theme context");
     }
 
-    const themePreset = await getThemePreset(themeConfig, themePresetName);
+    const themePreset = await fetchThemePreset(themeConfig, themePresetName);
 
     themeContext.value = {
       ...store,
@@ -25,13 +25,15 @@ function _useThemeContext() {
     };
   }
 
-  async function getThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
+  async function fetchThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
     const preset = themePresetName ? themePresetName : themeConfig.current;
 
     if (typeof preset === "string") {
       const presetFileName = preset.toLowerCase().replace(" ", "-");
 
-      return (await import(`../../../config/presets/${presetFileName}.json`)) as IThemeConfigPreset;
+      const { data } = await useFetch(`/config/presets/${presetFileName}.json`).get().json<IThemeConfigPreset>();
+
+      return data.value!;
     }
 
     return preset;

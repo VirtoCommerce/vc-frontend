@@ -98,7 +98,7 @@ import { computedEager } from "@vueuse/core";
 import { useRouteQueryParam } from "@/core/composables";
 import { PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import type { ProductsFilters as ProductsFiltersType } from "@/shared/catalog";
+import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
 defineEmits<IEmits>();
@@ -113,16 +113,16 @@ interface IEmits {
 }
 
 interface IProps {
-  isHorizontalFilters: boolean;
-  isExistSelectedFacets: boolean;
-  isMobile: boolean;
-  isPopupSidebarFilterDirty: boolean;
-  isVisible: boolean;
-  loading: boolean;
-  facetsLoading: boolean;
+  isHorizontalFilters?: boolean;
+  isExistSelectedFacets?: boolean;
+  isMobile?: boolean;
+  isPopupSidebarFilterDirty?: boolean;
+  isVisible?: boolean;
+  loading?: boolean;
+  facetsLoading?: boolean;
   hideSorting?: boolean;
   hideControls?: boolean;
-  keywordQueryParam: string;
+  keywordQueryParam?: string;
   popupSidebarFilters: ProductsFiltersType;
 }
 
