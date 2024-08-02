@@ -74,6 +74,7 @@
           class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
           @add-to-cart="addItemsFromCSVText"
           @error="showIncorrectDataError"
+          @reset="resetErrors"
         />
       </div>
     </div>
