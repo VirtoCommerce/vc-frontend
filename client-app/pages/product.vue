@@ -166,8 +166,7 @@ const {
   showFiltersSidebar,
   updateProductsFilters,
 } = useProductFilters({
-  isMobile: isMobile.value,
-  filtersDisplayOrder: filtersDisplayOrder.value,
+  filtersDisplayOrder: filtersDisplayOrder,
 });
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} status:hidden,visible`);

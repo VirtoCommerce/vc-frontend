@@ -13,7 +13,6 @@ import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 export function useProductFilters(options: {
-  isMobile: boolean;
   filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
   useQueryParams?: boolean;
 }) {
