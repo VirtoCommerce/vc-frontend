@@ -70,7 +70,7 @@
     "header": null,
     "hideBreadcrumbs": true,
     "name": "Home",
-    "permalink": "/__index__home__page__",
+    "permalink": "/",
     "type": "settings"
   }
 }
