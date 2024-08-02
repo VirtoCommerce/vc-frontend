@@ -158,7 +158,7 @@ export function useProductFilters(options: {
       productsFilters.value = {
         inStock: localStorageInStock.value,
         branches: localStorageBranches.value.slice(),
-        facets: options.isMobile ? getSortedFacets(facets.value) : facets.value,
+        facets: getSortedFacets(facets.value),
       };
     }
   });
