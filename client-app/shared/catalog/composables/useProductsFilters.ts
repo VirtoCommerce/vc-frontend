@@ -167,12 +167,16 @@ export function useProductFilters(options: {
     hasSelectedFacets: computed(() => hasSelectedFacets()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
-    localStorageBranches: computed(() => localStorageBranches.value),
-    localStorageInStock: computed(() => localStorageInStock.value),
-    sortQueryParam: readonly(sortQueryParam),
-    searchQueryParam: readonly(searchQueryParam),
-    keywordQueryParam: readonly(keywordQueryParam),
-    facetsQueryParam: readonly(facetsQueryParam),
+
+    // Mutated outside of composable
+    localStorageBranches,
+    localStorageInStock,
+    sortQueryParam,
+    searchQueryParam,
+    keywordQueryParam,
+    facetsQueryParam,
+    // Need to be refactured
+
     productsFilters: computed(() => productsFilters.value),
     applyFilters,
     hideFiltersSidebar,
