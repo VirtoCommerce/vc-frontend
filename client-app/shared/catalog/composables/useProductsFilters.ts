@@ -9,11 +9,12 @@ import { useModal } from "@/shared/modal";
 import { useProducts } from "./useProducts";
 import type { FiltersDisplayOrderType, ProductsFiltersType } from "../types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 export function useProductFilters(options: {
   isMobile: boolean;
-  filtersDisplayOrder?: FiltersDisplayOrderType;
+  filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
   useQueryParams?: boolean;
 }) {
   const { openModal } = useModal();
@@ -49,8 +50,8 @@ export function useProductFilters(options: {
   const isFiltersSidebarVisible = ref(false);
 
   function getSortedFacets(allFacets: FacetItemType[]): FacetItemType[] {
-    if (options.filtersDisplayOrder?.order && options.filtersDisplayOrder?.order.length) {
-      const order = options.filtersDisplayOrder.order
+    if (options.filtersDisplayOrder?.value?.order && options.filtersDisplayOrder?.value?.order.length) {
+      const order = options.filtersDisplayOrder.value.order
         .split(",")
         .map((item) => item.trim().toLowerCase())
         .filter(Boolean);
@@ -68,7 +69,7 @@ export function useProductFilters(options: {
         }
       });
 
-      return options.filtersDisplayOrder?.showRest
+      return options.filtersDisplayOrder?.value?.showRest
         ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label.toLowerCase()))]
         : sortedFacets;
     }

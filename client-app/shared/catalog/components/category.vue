@@ -296,7 +296,7 @@ const {
   updateProductsFilters,
 } = useProductFilters({
   isMobile: isMobile.value,
-  filtersDisplayOrder: filtersDisplayOrder.value,
+  filtersDisplayOrder: filtersDisplayOrder,
   useQueryParams: true,
 });
 
