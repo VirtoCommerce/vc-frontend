@@ -295,7 +295,7 @@ const {
   showFiltersSidebar,
   updateProductsFilters,
 } = useProductFilters({
-  filtersDisplayOrder: filtersDisplayOrder,
+  filtersDisplayOrder,
   useQueryParams: true,
 });
 
