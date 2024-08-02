@@ -9,7 +9,6 @@ export * from "./mutations/changeCartComment";
 export * from "./mutations/changeCartItemQuantity";
 export * from "./mutations/changeFullCartItemQuantity";
 export * from "./mutations/changePurchaseOrderNumber";
-export * from "./mutations/changeSelectedCartItems";
 export * from "./mutations/changeShortCartItemQuantity";
 export * from "./mutations/clearCart";
 export * from "./mutations/mergeCart";
