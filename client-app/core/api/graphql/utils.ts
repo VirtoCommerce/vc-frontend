@@ -15,7 +15,8 @@ export function toServerError(
   networkError: NetworkError | undefined,
   graphQLErrors: GraphQLErrors | undefined,
 ): ServerError | undefined {
-  if (networkError || hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)) {
+  // AbortError is thrown when the request is aborted explicitly so we don't need to handle it
+  if ((networkError && networkError.name !== "AbortError") || hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)) {
     return ServerError.Unhandled;
   }
 

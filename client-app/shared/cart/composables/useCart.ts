@@ -260,8 +260,26 @@ export function _useFullCart() {
 
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } =
     useChangeFullCartItemQuantityMutation(cart);
+  const changeItemQuantityAbortControllers: Map<string, AbortController> = new Map();
   async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
-    await _changeItemQuantity({ command: { lineItemId, quantity } });
+    const abortController = changeItemQuantityAbortControllers.get(lineItemId);
+    if (abortController) {
+      abortController.abort();
+    }
+
+    const newAbortController = new AbortController();
+    changeItemQuantityAbortControllers.set(lineItemId, newAbortController);
+    await _changeItemQuantity(
+      { command: { lineItemId, quantity } },
+      {
+        context: {
+          fetchOptions: {
+            signal: newAbortController.signal,
+          },
+        },
+      },
+    );
+    changeItemQuantityAbortControllers.delete(lineItemId);
   }
 
   const validateCouponLoading = ref(false);
