@@ -1,6 +1,7 @@
-import { createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
+import { createSharedComposable, computedEager, useLastChanged, useDebounceFn } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
+import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -29,6 +30,7 @@ import {
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor } from "@/core/utilities";
+import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import { useModal } from "@/shared/modal";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
@@ -258,29 +260,34 @@ export function _useFullCart() {
     );
   }
 
-  const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } =
+  const { mutate: changeItemQuantityMutation, loading: changeItemQuantityLoading } =
     useChangeFullCartItemQuantityMutation(cart);
   const changeItemQuantityAbortControllers: Map<string, AbortController> = new Map();
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
+  async function _changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
     const abortController = changeItemQuantityAbortControllers.get(lineItemId);
     if (abortController) {
-      abortController.abort();
+      abortController.abort(AbortReason.Explicit);
     }
 
     const newAbortController = new AbortController();
     changeItemQuantityAbortControllers.set(lineItemId, newAbortController);
-    await _changeItemQuantity(
-      { command: { lineItemId, quantity } },
-      {
-        context: {
-          fetchOptions: {
-            signal: newAbortController.signal,
+    try {
+      await changeItemQuantityMutation(
+        { command: { lineItemId, quantity } },
+        {
+          context: {
+            fetchOptions: {
+              signal: newAbortController.signal,
+            },
           },
         },
-      },
-    );
+      );
+    } catch (error) {
+      return;
+    }
     changeItemQuantityAbortControllers.delete(lineItemId);
   }
+  const changeItemQuantity = useDebounceFn(_changeItemQuantity, DEFAULT_DEBOUNCE_IN_MS);
 
   const validateCouponLoading = ref(false);
   async function validateCartCoupon(couponCode: string): Promise<boolean | undefined> {
