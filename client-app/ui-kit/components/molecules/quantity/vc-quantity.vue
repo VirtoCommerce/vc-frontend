@@ -47,6 +47,7 @@ interface IProps {
   readonly?: boolean;
   error?: boolean;
   modelValue?: number;
+  onlyAwaitedValue?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -79,7 +80,9 @@ async function onQuantityChanged(): Promise<void> {
   if (!isQuantity(quantity.value)) {
     return;
   }
-  awaitedQuantity.value = quantity.value;
+  if (props.onlyAwaitedValue) {
+    awaitedQuantity.value = quantity.value;
+  }
 
   setValue(quantity.value);
 
@@ -111,6 +114,9 @@ function isQuantity(qty: unknown): qty is number {
 }
 
 watchEffect(() => {
+  if (!props.onlyAwaitedValue) {
+    quantity.value = props.modelValue;
+  }
   if (awaitedQuantity.value === props.modelValue || awaitedQuantity.value === null) {
     quantity.value = props.modelValue;
   }
