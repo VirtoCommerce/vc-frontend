@@ -10,7 +10,7 @@
               'text-info': iconVariant === 'info',
               'text-success': iconVariant === 'success',
               'text-warning': iconVariant === 'warning',
-              'text-dabger': iconVariant === 'danger',
+              'text-danger': iconVariant === 'danger',
             },
           ]"
           name="exclamation-circle"
