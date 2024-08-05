@@ -55,6 +55,7 @@ const props = defineProps<IProps>();
 let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>();
+const awaitQuantity = ref<number | null>(null);
 
 const { minQuantity, maxQuantity } = toRefs(props);
 
@@ -78,6 +79,7 @@ async function onQuantityChanged(): Promise<void> {
   if (!isQuantity(quantity.value)) {
     return;
   }
+  awaitQuantity.value = quantity.value;
 
   setValue(quantity.value);
 
@@ -109,7 +111,10 @@ function isQuantity(qty: unknown): qty is number {
 }
 
 watchEffect(() => {
-  quantity.value = props.modelValue;
+  if (awaitQuantity.value === props.modelValue || awaitQuantity.value === null) {
+    quantity.value = props.modelValue;
+  }
+  // quantity.value = props.modelValue;
 });
 </script>
 

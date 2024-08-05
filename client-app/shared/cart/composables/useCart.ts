@@ -262,15 +262,19 @@ export function _useFullCart() {
 
   const { mutate: changeItemQuantityMutation, loading: changeItemQuantityLoading } =
     useChangeFullCartItemQuantityMutation(cart);
-  const changeItemQuantityAbortControllers: Map<string, AbortController> = new Map();
-  async function _changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
-    const abortController = changeItemQuantityAbortControllers.get(lineItemId);
+  const changeItemQuantity = useDebounceFn((lineItemId: string, quantity: number): void => {
+    void updateItemQuantity(lineItemId, quantity);
+  }, DEFAULT_DEBOUNCE_IN_MS);
+
+  const updateItemQuantityAbortControllers: Map<string, AbortController> = new Map();
+  async function updateItemQuantity(lineItemId: string, quantity: number): Promise<void> {
+    const abortController = updateItemQuantityAbortControllers.get(lineItemId);
     if (abortController) {
       abortController.abort(AbortReason.Explicit);
     }
 
     const newAbortController = new AbortController();
-    changeItemQuantityAbortControllers.set(lineItemId, newAbortController);
+    updateItemQuantityAbortControllers.set(lineItemId, newAbortController);
     try {
       await changeItemQuantityMutation(
         { command: { lineItemId, quantity } },
@@ -285,9 +289,8 @@ export function _useFullCart() {
     } catch (error) {
       return;
     }
-    changeItemQuantityAbortControllers.delete(lineItemId);
+    updateItemQuantityAbortControllers.delete(lineItemId);
   }
-  const changeItemQuantity = useDebounceFn(_changeItemQuantity, DEFAULT_DEBOUNCE_IN_MS);
 
   const validateCouponLoading = ref(false);
   async function validateCartCoupon(couponCode: string): Promise<boolean | undefined> {
