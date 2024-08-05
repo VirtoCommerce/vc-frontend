@@ -47,16 +47,17 @@ interface IProps {
   readonly?: boolean;
   error?: boolean;
   modelValue?: number;
-  onlyAwaitedValue?: boolean;
+  changingTimeout?: number;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  changingTimeout: 900,
+});
 
 let timeoutIdOfQuantityChange: number;
 
 const quantity = ref<number | undefined>();
-const awaitedQuantity = ref<number | null>(null);
 
 const { minQuantity, maxQuantity } = toRefs(props);
 
@@ -80,9 +81,6 @@ async function onQuantityChanged(): Promise<void> {
   if (!isQuantity(quantity.value)) {
     return;
   }
-  if (props.onlyAwaitedValue) {
-    awaitedQuantity.value = quantity.value;
-  }
 
   setValue(quantity.value);
 
@@ -93,7 +91,7 @@ async function onQuantityChanged(): Promise<void> {
   }
 
   clearTimeout(timeoutIdOfQuantityChange);
-  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 900);
+  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, props.changingTimeout);
 }
 
 function onFocusOut() {
@@ -114,12 +112,7 @@ function isQuantity(qty: unknown): qty is number {
 }
 
 watchEffect(() => {
-  if (!props.onlyAwaitedValue) {
-    quantity.value = props.modelValue;
-  }
-  if (awaitedQuantity.value === props.modelValue || awaitedQuantity.value === null) {
-    quantity.value = props.modelValue;
-  }
+  quantity.value = props.modelValue;
 });
 </script>
 

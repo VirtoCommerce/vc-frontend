@@ -1,4 +1,4 @@
-import { createSharedComposable, computedEager, useLastChanged, useDebounceFn } from "@vueuse/core";
+import { createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
@@ -30,7 +30,6 @@ import {
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor } from "@/core/utilities";
-import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import { useModal } from "@/shared/modal";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
@@ -262,12 +261,9 @@ export function _useFullCart() {
 
   const { mutate: changeItemQuantityMutation, loading: changeItemQuantityLoading } =
     useChangeFullCartItemQuantityMutation(cart);
-  const changeItemQuantity = useDebounceFn((lineItemId: string, quantity: number): void => {
-    void updateItemQuantity(lineItemId, quantity);
-  }, DEFAULT_DEBOUNCE_IN_MS);
 
   const updateItemQuantityAbortControllers: Map<string, AbortController> = new Map();
-  async function updateItemQuantity(lineItemId: string, quantity: number): Promise<void> {
+  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
     const abortController = updateItemQuantityAbortControllers.get(lineItemId);
     if (abortController) {
       abortController.abort(AbortReason.Explicit);
