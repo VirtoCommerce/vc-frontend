@@ -170,7 +170,7 @@ export function useProductFilters(options: {
     hasSelectedFacets: computed(() => hasSelectedFacets()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
-    productsFilters: readonly(productsFilters),
+    productsFilters: computed(() => productsFilters.value),
 
     // Mutated outside of composable
     localStorageBranches,
