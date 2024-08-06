@@ -4,7 +4,7 @@ import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice 
 import { graphqlClient } from "../../../client";
 import searchProductsQueryDocument from "./searchProductsQuery.graphql";
 import type { ProductConnection, Query, QueryProductsArgs } from "@/core/api/graphql/types";
-import type { ProductsSearchParams } from "@/shared/catalog";
+import type { ProductsSearchParamsType } from "@/shared/catalog";
 
 export async function searchProducts(
   {
@@ -17,7 +17,7 @@ export async function searchProducts(
     fuzzy,
     fuzzyLevel,
     productIds,
-  }: Partial<ProductsSearchParams>,
+  }: Partial<ProductsSearchParamsType>,
   options: {
     /** @default false */
     withFacets?: boolean;

@@ -6,18 +6,52 @@
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
   >
-    <div v-if="!isSmallScreen" class="variations__views">
-      <button type="button" class="variations__view" :disabled="!isTableView" @click="toggleView">
-        <VcIcon name="list" class="variations__icon" />
+    <div class="variations__views flex justify-between">
+      <div v-if="!isSmallScreen">
+        <button type="button" class="variations__view" :disabled="!isTableView" @click="toggleView">
+          <VcIcon name="list" class="variations__icon" />
 
-        {{ $t("shared.catalog.product_details.variations.list") }}
-      </button>
+          {{ $t("shared.catalog.product_details.variations.list") }}
+        </button>
 
-      <button type="button" class="variations__view" :disabled="isTableView" @click="toggleView">
-        <VcIcon name="table" class="variations__icon" />
+        <button type="button" class="variations__view" :disabled="isTableView" @click="toggleView">
+          <VcIcon name="table" class="variations__icon" />
 
-        {{ $t("shared.catalog.product_details.variations.table") }}
-      </button>
+          {{ $t("shared.catalog.product_details.variations.table") }}
+        </button>
+      </div>
+
+      <VcButton variant="outline" @click="$emit('showFilters')">
+        {{ $t("common.buttons.filters") }}
+      </VcButton>
+    </div>
+
+    <!-- Filters chips -->
+    <div v-if="hasSelectedFilters" class="flex flex-wrap gap-x-3 gap-y-2 pb-6">
+      <template v-for="facet in productsFilters?.facets">
+        <template v-for="filterItem in facet.values">
+          <VcChip
+            v-if="filterItem.selected"
+            :key="facet.paramName + filterItem.value"
+            color="secondary"
+            closable
+            @close="
+              $emit('removeFacetFilter', {
+                paramName: facet.paramName,
+                value: filterItem.value,
+              })
+            "
+          >
+            {{ filterItem.label }}
+          </VcChip>
+        </template>
+      </template>
+
+      <VcChip color="secondary" variant="outline" clickable @click="$emit('resetFacetFilters')">
+        <span>{{ $t("common.buttons.reset_filters") }}</span>
+
+        <VcIcon name="reset" />
+      </VcChip>
     </div>
 
     <VariationsDefault
@@ -49,11 +83,15 @@ import { BREAKPOINTS } from "@/core/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
 import type { Product } from "@/core/api/graphql/types";
-import type { ISortInfo } from "@/core/types";
+import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
+import type { ProductsFiltersType } from "@/shared/catalog";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;
   (event: "changePage", pageNumber: number): void;
+  (event: "showFilters"): void;
+  (event: "removeFacetFilter", payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void;
+  (event: "resetFacetFilters"): void;
 }
 
 interface IProps {
@@ -66,6 +104,8 @@ interface IProps {
   };
   pageNumber: number;
   pagesCount: number;
+  productsFilters?: ProductsFiltersType;
+  hasSelectedFilters: boolean;
 }
 
 const emit = defineEmits<IEmits>();

@@ -66,7 +66,7 @@ import { AddToCart } from "@/shared/cart";
 import { useCategory } from "@/shared/catalog/composables/useCategory";
 import { useProducts } from "@/shared/catalog/composables/useProducts";
 import type { Product } from "@/core/api/graphql/types";
-import type { ProductsSearchParams } from "@/shared/catalog";
+import type { ProductsSearchParamsType } from "@/shared/catalog";
 import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 
 const emit = defineEmits<IEmits>();
@@ -82,7 +82,7 @@ interface IProps {
   cardType?: "full" | "short";
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
-  searchParams: ProductsSearchParams;
+  searchParams: ProductsSearchParamsType;
 }
 
 interface IEmits {
