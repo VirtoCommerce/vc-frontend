@@ -346,6 +346,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
   const searchParamsForFacets: ProductsSearchParamsType = {
     ...searchParams.value,
     filter: [
+      props.filter,
       getFilterExpressionFromFacets(newFilters.facets),
       getFilterExpressionForInStock(newFilters.inStock),
       getFilterExpressionForAvailableIn(newFilters.branches),
