@@ -12,6 +12,7 @@
   >
     <label class="vc-radio-button__container">
       <input
+        v-model="model"
         class="vc-radio-button__input"
         type="radio"
         :name="name"
