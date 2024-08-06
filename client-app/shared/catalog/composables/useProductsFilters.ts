@@ -124,7 +124,10 @@ export function useProductFilters(options: {
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
-    productsFilters.value = newFilters;
+    productsFilters.value = {
+      ...newFilters,
+      facets: getSortedFacets(newFilters.facets),
+    };
   }
 
   function openBranchesModal(fromPopupSidebarFilter: boolean) {
@@ -177,7 +180,7 @@ export function useProductFilters(options: {
     facetsQueryParam,
     // Need to be refactured
 
-    productsFilters: computed(() => productsFilters.value),
+    productsFilters,
     applyFilters,
     hideFiltersSidebar,
     openBranchesModal,
