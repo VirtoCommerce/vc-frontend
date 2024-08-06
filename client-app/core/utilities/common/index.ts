@@ -120,3 +120,22 @@ export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
   }
   return {};
 };
+
+export function debounceByParamsWithKeys(func: (...args: any[]) => any, delay: number, keyIndices: number[]) {
+  const timers: Map<string, ReturnType<typeof setTimeout>> = new Map();
+
+  return function (...args: unknown[]) {
+    const key = JSON.stringify(keyIndices.map((index) => args[index]));
+
+    if (timers.has(key)) {
+      clearTimeout(timers.get(key));
+    }
+
+    const timer = setTimeout(() => {
+      func(...args);
+      timers.delete(key);
+    }, delay);
+
+    timers.set(key, timer);
+  };
+}

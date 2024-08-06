@@ -32,7 +32,7 @@
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :selected-item-ids="selectedItemIds"
         :validation-errors="cart.validationErrors"
-        @change:item-quantity="changeItemQuantity($event.itemId, $event.quantity)"
+        @change:item-quantity="changeItemQuantityHandler($event.itemId, $event.quantity)"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"
@@ -149,8 +149,9 @@ import { useCreateQuoteFromCartMutation } from "@/core/api/graphql/quotes";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
+import { debounceByParamsWithKeys } from "@/core/utilities";
 import { useUser } from "@/shared/account";
-import { useFullCart, useCoupon } from "@/shared/cart";
+import { useFullCart, useCoupon, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
 import {
   BillingDetailsSection,
@@ -261,6 +262,8 @@ async function createQuote(): Promise<void> {
 
   creatingQuote.value = false;
 }
+
+const changeItemQuantityHandler = debounceByParamsWithKeys(changeItemQuantity, EXTENDED_DEBOUNCE_IN_MS, [0]);
 
 void (async () => {
   await forceFetch();

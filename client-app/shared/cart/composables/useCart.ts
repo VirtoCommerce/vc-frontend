@@ -1,7 +1,6 @@
 import { createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
-import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -27,6 +26,7 @@ import {
   clearCart as deprecatedClearCart,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
+import { FullCartFragmentDoc } from "@/core/api/graphql/types";
 import { useGoogleAnalytics } from "@/core/composables";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor } from "@/core/utilities";
@@ -262,30 +262,31 @@ export function _useFullCart() {
   const { mutate: changeItemQuantityMutation, loading: changeItemQuantityLoading } =
     useChangeFullCartItemQuantityMutation(cart);
 
-  const updateItemQuantityAbortControllers: Map<string, AbortController> = new Map();
+  const updateItemQuantityPending: Set<string> = new Set();
   async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
-    const abortController = updateItemQuantityAbortControllers.get(lineItemId);
-    if (abortController) {
-      abortController.abort(AbortReason.Explicit);
-    }
-
-    const newAbortController = new AbortController();
-    updateItemQuantityAbortControllers.set(lineItemId, newAbortController);
+    updateItemQuantityPending.add(lineItemId);
     try {
       await changeItemQuantityMutation(
         { command: { lineItemId, quantity } },
         {
-          context: {
-            fetchOptions: {
-              signal: newAbortController.signal,
-            },
+          update(cache, result, { variables }) {
+            if (result.data?.changeCartItemQuantity?.items !== undefined) {
+              cache.updateFragment(
+                {
+                  id: `CartType:${variables?.command?.cartId}`,
+                  fragment: FullCartFragmentDoc,
+                },
+                (cartData) =>
+                  updateItemQuantityPending.has(lineItemId) ? result.data?.changeCartItemQuantity : cartData,
+              );
+            }
           },
         },
       );
+      updateItemQuantityPending.delete(lineItemId);
     } catch (error) {
       return;
     }
-    updateItemQuantityAbortControllers.delete(lineItemId);
   }
 
   const validateCouponLoading = ref(false);
