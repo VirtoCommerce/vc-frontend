@@ -4,7 +4,15 @@
       <div class="flex flex-row justify-center gap-x-4 px-6 py-10 lg:px-10">
         <VcIcon
           v-if="!noIcon"
-          :class="`mt-0.5 size-11 flex-none text-[--color-${iconVariant}-500]`"
+          :class="[
+            'mt-0.5 size-11 flex-none',
+            {
+              'text-info': iconVariant === 'info',
+              'text-success': iconVariant === 'success',
+              'text-warning': iconVariant === 'warning',
+              'text-danger': iconVariant === 'danger',
+            },
+          ]"
           name="exclamation-circle"
         />
 
