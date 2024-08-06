@@ -47,13 +47,10 @@ interface IProps {
   readonly?: boolean;
   error?: boolean;
   modelValue?: number;
-  changingTimeout?: number;
 }
 
 const emit = defineEmits<IEmits>();
-const props = withDefaults(defineProps<IProps>(), {
-  changingTimeout: 900,
-});
+const props = defineProps<IProps>();
 
 let timeoutIdOfQuantityChange: number;
 
@@ -91,7 +88,7 @@ async function onQuantityChanged(): Promise<void> {
   }
 
   clearTimeout(timeoutIdOfQuantityChange);
-  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, props.changingTimeout);
+  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 900);
 }
 
 function onFocusOut() {

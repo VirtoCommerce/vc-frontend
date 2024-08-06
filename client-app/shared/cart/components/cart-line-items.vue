@@ -26,7 +26,6 @@
         :name="item.id"
         :disabled="disabled"
         :readonly="readonly"
-        :changing-timeout="0"
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
