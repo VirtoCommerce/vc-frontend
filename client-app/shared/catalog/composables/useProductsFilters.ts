@@ -170,6 +170,7 @@ export function useProductFilters(options: {
     hasSelectedFacets: computed(() => hasSelectedFacets()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
+    productsFilters: readonly(productsFilters),
 
     // Mutated outside of composable
     localStorageBranches,
@@ -178,9 +179,7 @@ export function useProductFilters(options: {
     searchQueryParam,
     keywordQueryParam,
     facetsQueryParam,
-    // Need to be refactured
 
-    productsFilters,
     applyFilters,
     hideFiltersSidebar,
     openBranchesModal,
