@@ -104,7 +104,7 @@ function change() {
   $left: "";
   $right: "";
 
-  @apply select-none;
+  @apply flex-none select-none;
 
   &--size {
     &--sm {

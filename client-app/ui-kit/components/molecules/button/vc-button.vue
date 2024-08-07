@@ -284,13 +284,19 @@ const attrs = computed(() => {
       }
     }
 
-    &--outline--#{$color} {
-      @apply bg-additional-50
-      text-[--color-#{$color}-500]
-      border-current;
+    &--outline {
+      &--#{$color} {
+        @apply bg-additional-50
+        text-[--color-#{$color}-500]
+        border-current;
 
-      &:hover:not(#{$loading}, #{$disabled}) {
-        @apply text-[--color-#{$color}-700];
+        &:hover:not(#{$loading}, #{$disabled}) {
+          @apply text-[--color-#{$color}-700];
+        }
+      }
+
+      &--secondary {
+        @apply text-secondary-600;
       }
     }
 

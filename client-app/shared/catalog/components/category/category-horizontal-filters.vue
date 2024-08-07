@@ -123,9 +123,5 @@ function sortingItemClickHandler(id: string, close: () => void) {
   &__sorting-input {
     @apply border-none;
   }
-
-  .vc-menu-item__inner {
-    @apply py-1.5 px-4 min-w-60;
-  }
 }
 </style>
