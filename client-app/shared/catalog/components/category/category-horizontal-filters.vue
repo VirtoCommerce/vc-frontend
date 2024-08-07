@@ -36,6 +36,7 @@
             {{ $t("common.buttons.sort_by") }}</VcButton
           >
         </template>
+
         <template #content="{ close }">
           <div class="py-2">
             <VcMenuItem
@@ -118,10 +119,6 @@ function sortingItemClickHandler(id: string, close: () => void) {
 
   &__sorting-trigger-icon {
     @apply me-2;
-  }
-
-  &__sorting-input {
-    @apply border-none;
   }
 }
 </style>
