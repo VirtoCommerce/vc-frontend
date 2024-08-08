@@ -1,76 +1,105 @@
+import { mergeWith, uniqBy } from "lodash";
 import { ref } from "vue";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
+import type { FetchResult } from "@apollo/client/core";
 import type { MutateFunction } from "@vue/apollo-composable";
 
 const DEFAULT_MAX_LENGTH = 10;
 
-export function useMutationBatcher<TResult, TVariables extends unknown[]>(
-  mutation: MutateFunction<TResult, TVariables>,
-  options: { debounce?: number; maxLength?: number } = {},
+/**
+ * @description Default merge strategy for batched mutation parameters.
+ * @note This function mutates the first argument! https://lodash.com/docs/4.17.15#mergeWith
+ */
+function DEFAULT_MERGE_STRATEGY<TVariables>(a: TVariables, b: TVariables) {
+  mergeWith(a, b, (objValue, srcValue) => {
+    if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+      return objValue.concat(srcValue);
+    }
+  });
+}
+
+/**
+ * @description Merge strategy to ensure unique items based on a key or function.
+ * @note This function mutates the first argument! https://lodash.com/docs/4.17.15#mergeWith
+ */
+export function getMergeStrategyUniqueBy<TVariables>(keyOrFn: string | ((...values: unknown[]) => unknown)) {
+  return (a: TVariables, b: TVariables) => {
+    mergeWith(a, b, (objValue, srcValue) => {
+      if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+        return uniqBy(objValue.concat(srcValue), keyOrFn);
+      }
+    });
+  };
+}
+
+/**
+ * @description Vue composable to batch Apollo Client mutations.
+ * @param mutation - Apollo Client mutation function.
+ * @param options - Options object with `debounce`, `maxLength`, and `merge` properties.
+ * @param options.merge - Function to merge two mutation parameters objects. See {@link DEFAULT_MERGE_STRATEGY} and {@link getMergeStrategyUniqueBy}
+ * @returns Object with `overflowed` boolean ref and `add` function to add a new mutation to the batch.
+ */
+export function useMutationBatcher<TData, TVariables>(
+  mutation: MutateFunction<TData, TVariables>,
+  options: {
+    debounce?: number;
+    maxLength?: number;
+    merge?: (a: TVariables, b: TVariables) => void;
+  } = {},
 ) {
-  const { debounce = DEFAULT_DEBOUNCE_IN_MS, maxLength = DEFAULT_MAX_LENGTH } = options;
+  const { debounce = DEFAULT_DEBOUNCE_IN_MS, maxLength = DEFAULT_MAX_LENGTH, merge = DEFAULT_MERGE_STRATEGY } = options;
 
   const overflowed = ref(false);
-
-  const batch: TVariables = [] as unknown[] as TVariables;
   let abortController: AbortController | null = null;
+  let batch: TVariables = {} as TVariables;
+  let calledCount = 0;
   let debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  function add(...args: TVariables[number][]) {
+  async function add(args: TVariables): Promise<FetchResult<TData> | null> {
     clearPreviousDebounce();
-    batch.push(args);
+    merge(batch, args);
+    calledCount += 1;
 
-    if (batch.length >= maxLength) {
+    if (calledCount >= maxLength) {
       overflowed.value = true;
     }
-
-    abortController = new AbortController();
-
-    debounceTimeoutId = setTimeout(async () => {
-      try {
-        await executeBatch();
-      } catch (error) {
-        handleError(error);
-      } finally {
-        resetBatchState();
-      }
-    }, debounce);
+    return new Promise((resolve, reject) => {
+      debounceTimeoutId = setTimeout(async () => {
+        try {
+          const result = await executeBatch();
+          resolve(result);
+          if (calledCount >= maxLength) {
+            resetBatchState();
+          }
+        } catch (error) {
+          if ((error as Error).name !== "AbortError") {
+            reject(error);
+          }
+        }
+      }, debounce);
+    });
   }
 
   function clearPreviousDebounce() {
-    if (abortController) {
-      abortController.abort();
-    }
+    abortController?.abort();
     if (debounceTimeoutId) {
       clearTimeout(debounceTimeoutId);
     }
   }
 
-  async function executeBatch() {
-    if (batch.length === 0) {
-      return;
-    }
-
-    await mutation(batch, {
-      context: { signal: abortController!.signal },
+  async function executeBatch(): Promise<FetchResult<TData> | null> {
+    abortController = new AbortController();
+    return await mutation(batch, {
+      context: { fetchOptions: { signal: abortController.signal } },
     });
-
-    batch.length = 0;
-  }
-
-  function handleError(error: unknown) {
-    if ((error as Error).name !== "AbortError") {
-      throw error;
-    }
   }
 
   function resetBatchState() {
     overflowed.value = false;
     abortController = null;
+    batch = {} as TVariables;
+    calledCount = 0;
   }
 
-  return {
-    overflowed,
-    add,
-  };
+  return { overflowed, add };
 }
