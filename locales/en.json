@@ -1519,7 +1519,8 @@
     "LINE_ITEM_IS_READ_ONLY": "Line item is read only.",
     "PRODUCT_QTY_INSUFFICIENT": "The product available quantity {availQty} is insufficient for requested {new_qty}",
     "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Min order {minQty} item(s) is not available in stock",
-    "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)"
+    "PRODUCT_EXACT_QTY": "You can order {minQty} item(s)",
+    "CART_INVALID_PRODUCT": "Invalid product"
   },
   "file_error": {
     "ALREADY_EXISTS": "Cannot upload file with the same name.",
