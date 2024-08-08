@@ -21,6 +21,7 @@
         :indeterminate="indeterminate"
         :aria-checked="checked"
         class="vc-checkbox__input"
+        :data-testid="testId"
         @change="change"
       />
 
@@ -56,6 +57,7 @@ interface IProps {
   message?: string;
   error?: boolean;
   singleLineMessage?: boolean;
+  testId?: string;
 }
 
 const emit = defineEmits<{

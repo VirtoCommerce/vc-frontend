@@ -6,6 +6,7 @@
     :type="type"
     :disabled="!enabled"
     :title="title"
+    :data-testid="testId"
     :class="[
       'vc-button',
       `vc-button--size--${size}`,
@@ -87,6 +88,7 @@ interface IProps {
   fullWidth?: boolean;
   noWrap?: boolean;
   minWidth?: string;
+  testId?: string;
 }
 
 defineEmits<IEmits>();
