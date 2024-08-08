@@ -13,9 +13,6 @@ export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
   return "proposalPrices" in item || "selectedTierPrice" in item;
 }
 
-/** @deprecated Use {@link groupByVendor} instead. */
-export const getLineItemsGroupedByVendor = groupByVendor;
-
 export function groupByVendor<T extends LineItemType | OrderLineItemType>(items: T[]): VendorGroupType<T>[] {
   // NOTE: The group without the vendor should be displayed last.
   const groupWithoutVendor: VendorGroupType<T> = { items: [] };

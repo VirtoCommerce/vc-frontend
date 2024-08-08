@@ -2,7 +2,7 @@ import { computed, ref, shallowRef } from "vue";
 import { addOrUpdateOrderPayment, getOrder } from "@/core/api/graphql";
 import { GetOrderFeldsType } from "@/core/api/graphql/orders/queries/getOrder";
 import { ProductType } from "@/core/enums";
-import { getLineItemsGroupedByVendor, Logger } from "@/core/utilities";
+import { groupByVendor, Logger } from "@/core/utilities";
 import type { GetOrderPayloadType } from "@/core/api/graphql/orders/queries/getOrder";
 import type {
   CustomerOrderType,
@@ -12,16 +12,14 @@ import type {
   OrderShipmentType,
   PaymentInType,
 } from "@/core/api/graphql/types";
-import type { LineItemsGroupByVendorType } from "@/core/types";
+import type { VendorGroupType } from "@/core/types";
 
 const loading = ref(false);
 const order = shallowRef<CustomerOrderType | null>(null);
 
 const giftItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => item.isGift));
 const orderItems = computed<OrderLineItemType[]>(() => (order.value?.items || []).filter((item) => !item.isGift));
-const orderItemsGroupedByVendor = computed<LineItemsGroupByVendorType<OrderLineItemType>[]>(() =>
-  getLineItemsGroupedByVendor(orderItems.value),
-);
+const orderItemsGroupedByVendor = computed<VendorGroupType<OrderLineItemType>[]>(() => groupByVendor(orderItems.value));
 const allItemsAreDigital = computed<boolean>(
   () => !!order.value?.items?.every((item) => item.productType === ProductType.Digital),
 );

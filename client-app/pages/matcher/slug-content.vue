@@ -35,11 +35,9 @@ const { setMatchingRouteName } = useNavigations();
 
 const { staticPage } = useStaticPage();
 
-const MAIN_PAGE_RESERVED_SLUG = "__index__home__page__";
-
 const seoUrl = computedEager(() => {
   if (!props.pathMatch) {
-    return MAIN_PAGE_RESERVED_SLUG;
+    return "/";
   }
   // Because URL `/printers/` is an array of paths ["printers", ""], empty paths must be removed.
   const paths = props.pathMatch.filter(Boolean);
