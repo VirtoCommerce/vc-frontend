@@ -1,4 +1,3 @@
-import { createGlobalState } from "@vueuse/core";
 import { computed, inject, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { PAGE_LIMIT } from "@/core/constants";
@@ -13,7 +12,15 @@ import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
-function _useProducts(
+const loading = ref(true);
+const loadingMore = ref(false);
+const facetsLoading = ref(false);
+const products = shallowRef<Product[]>([]);
+const facets = shallowRef<FacetItemType[]>([]);
+const total = ref(0);
+const pages = ref(1);
+
+export function useProducts(
   options: {
     /** @default false */
     withFacets?: boolean;
@@ -30,14 +37,6 @@ function _useProducts(
     withZeroPrice = config.zero_price_product_enabled,
   } = options;
   const broadcast = useBroadcast();
-
-  const loading = ref(true);
-  const loadingMore = ref(false);
-  const facetsLoading = ref(false);
-  const products = shallowRef<Product[]>([]);
-  const facets = shallowRef<FacetItemType[]>([]);
-  const total = ref(0);
-  const pages = ref(1);
 
   const productsById = computed(() =>
     products.value.reduce(
@@ -174,5 +173,3 @@ function _useProducts(
     products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
   };
 }
-
-export const useProducts = createGlobalState(_useProducts);
