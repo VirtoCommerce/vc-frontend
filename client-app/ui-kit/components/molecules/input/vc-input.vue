@@ -46,7 +46,7 @@
         :aria-label="ariaLabel ?? label"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
-        :data-testid="testIdInput"
+        :data-test-id="testIdInput"
         @keydown="keyDown($event)"
         @click.prevent.stop="inputClick()"
       />

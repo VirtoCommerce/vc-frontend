@@ -40,6 +40,7 @@
           :disabled="disabled"
           size="auto"
           required
+          test-id-dropdown="payment-method-select"
           @change="(value) => setPaymentMethod(value)"
         >
           <template #placeholder>

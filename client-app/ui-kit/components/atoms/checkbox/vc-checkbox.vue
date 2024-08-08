@@ -21,7 +21,7 @@
         :indeterminate="indeterminate"
         :aria-checked="checked"
         class="vc-checkbox__input"
-        :data-testid="testId"
+        :data-test-id="testId"
         @change="change"
       />
 
