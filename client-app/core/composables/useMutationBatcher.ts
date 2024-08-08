@@ -36,8 +36,15 @@ export function getMergeStrategyUniqueBy<TVariables>(keyOrFn: string | ((...valu
  * @description Vue composable to batch Apollo Client mutations.
  * @param mutation - Apollo Client mutation function.
  * @param options - Options object with `debounce`, `maxLength`, and `merge` properties.
+ * @param options.debounce - Debounce time in milliseconds. Default is {@link DEFAULT_DEBOUNCE_IN_MS}.
+ * @param options.length - Maximum number of mutations to batch. Default is {@link DEFAULT_MAX_LENGTH}. After reaching this number, `overflowed` ref will be set to `true`.
  * @param options.merge - Function to merge two mutation parameters objects. See {@link DEFAULT_MERGE_STRATEGY} and {@link getMergeStrategyUniqueBy}
  * @returns Object with `overflowed` boolean ref and `add` function to add a new mutation to the batch.
+ * @example ```ts
+ * const { mutate: changeCartItemsQuantity, loading } = useChangeCartItemsQuantity();
+ * const { overflowed, add } = useMutationBatcher(changeCartItemsQuantity);
+ * const result = await add({ command { cartItems: [{ productId: "1", quantity: 1}] }});
+ * ```
  */
 export function useMutationBatcher<TData, TVariables>(
   mutation: MutateFunction<TData, TVariables>,
