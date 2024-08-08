@@ -89,7 +89,7 @@
       <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
 
       <VcMenuItem
-        v-for="item in searchedValues"
+        v-for="item in filtered"
         :key="item.value"
         size="sm"
         color="secondary"
