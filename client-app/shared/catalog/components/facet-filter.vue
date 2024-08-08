@@ -1,119 +1,115 @@
 <template>
-  <div class="facet-filter">
-    <!-- Collapsable mode -->
-    <VcWidget v-if="mode === 'collapsable'" size="xs" collapsible :title="facet.label" collapsed>
-      <template #default-container>
-        <div v-if="searchFieldVisible" class="facet-filter__search">
-          <VcInput
-            v-model.trim="searchKeyword"
-            size="sm"
-            maxlength="30"
-            :disabled="loading"
-            :placeholder="$t('common.labels.search', [facet.label])"
-            truncate
-          />
-        </div>
+  <!-- Collapsable mode -->
+  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-w" size="xs" collapsible :title="facet.label" collapsed>
+    <template #default-container>
+      <div v-if="searchFieldVisible" class="facet-filter-w__search">
+        <VcInput
+          v-model.trim="searchKeyword"
+          size="sm"
+          maxlength="30"
+          :disabled="loading"
+          :placeholder="$t('common.labels.search', [facet.label])"
+          truncate
+        />
+      </div>
 
-        <div class="facet-filter__items-container" :style="{ maxHeight }">
-          <VcMenuItem
-            v-for="item in searchedValues"
-            :key="item.value"
-            size="xs"
-            color="secondary"
-            @click="() => handleFacetItemClick(item)"
-          >
-            <VcCheckbox v-model="item.selected" size="sm" :disabled="loading" @change="() => changeFacetValues()" />
-
-            <span class="facet-filter__item-label">{{ item.label }}</span>
-
-            <VcBadge variant="outline" size="sm" rounded color="secondary">
-              {{ item.count }}
-            </VcBadge>
-          </VcMenuItem>
-
-          <div v-if="isNoResults" class="facet-filter__no-results">
-            {{ $t("pages.catalog.no_facet_found_message") }}
-          </div>
-
-          <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor" class="facet-filter__anchor"></div>
-          <div v-if="hasFade" class="facet-filter__fade"></div>
-        </div>
-      </template>
-
-      <template v-if="isShowMoreVisible" #footer-container>
-        <VcButtonSeeMoreLess v-model="isExpanded" class="m-1" />
-      </template>
-    </VcWidget>
-
-    <!-- Dropdown mode -->
-    <VcDropdownMenu v-if="mode === 'dropdown'" :offset-options="4" :max-height="maxHeight" width="15rem" z-index="10">
-      <template #trigger="{ opened }">
-        <VcButton size="sm" :color="hasSelected ? 'accent' : 'secondary'" variant="outline">
-          {{ facet.label }}
-
-          <template #append>
-            <VcBadge v-if="hasSelected" size="sm" rounded color="info">
-              {{ selectedFiltersCount }}
-            </VcBadge>
-
-            <VcIcon
-              v-else
-              name="chevron-down"
-              :class="[
-                'facet-filter__arrow',
-                {
-                  'facet-filter__arrow--rotate': opened,
-                },
-              ]"
-            />
-          </template>
-        </VcButton>
-      </template>
-
-      <template #content="{ close }">
-        <div v-if="searchFieldVisible" class="facet-filter__search">
-          <VcInput
-            v-model.trim="searchKeyword"
-            size="sm"
-            class="facet-filter__search"
-            maxlength="30"
-            :disabled="loading"
-            :placeholder="$t('common.labels.search', [facet.label])"
-            truncate
-          />
-        </div>
-
+      <div class="facet-filter-w__container" :style="{ maxHeight }">
         <VcMenuItem
           v-for="item in searchedValues"
           :key="item.value"
-          size="sm"
-          truncate
-          :active="item.selected"
-          :title="item.label"
-          @click="() => handleFacetItemClick(item, close)"
+          size="xs"
+          color="secondary"
+          @click="() => handleFacetItemClick(item)"
         >
-          <VcCheckbox
-            v-model="item.selected"
-            :disabled="loading"
-            @change="() => changeFacetValues(close)"
-            @click.stop
-          />
+          <VcCheckbox v-model="item.selected" size="sm" :disabled="loading" @change="() => changeFacetValues()" />
 
-          <div class="facet-filter__item-label">
-            {{ item.label }}
-          </div>
+          <span class="facet-filter-w__label">{{ item.label }}</span>
 
           <VcBadge variant="outline" size="sm" rounded color="secondary">
             {{ item.count }}
           </VcBadge>
         </VcMenuItem>
 
-        <div v-if="isNoResults" class="facet-filter__no-results">
-          {{ $t("pages.catalog.no_facet_found_message") }}
+        <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
+
+        <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor"></div>
+        <div v-if="hasFade" class="facet-filter-w__fade"></div>
+      </div>
+    </template>
+
+    <template v-if="isShowMoreVisible" #footer-container>
+      <VcButtonSeeMoreLess v-model="isExpanded" class="facet-filter-w__more" />
+    </template>
+  </VcWidget>
+
+  <!-- Dropdown mode -->
+  <VcDropdownMenu
+    v-if="mode === 'dropdown'"
+    :offset-options="4"
+    class="facet-filter-dd"
+    z-index="10"
+    max-height="20rem"
+    width="15rem"
+    :dividers="false"
+    data-facet-filter
+  >
+    <template #trigger="{ opened }">
+      <VcButton
+        :class="['facet-filter-dd__trigger', { 'facet-filter-dd__trigger--opened': opened }]"
+        size="sm"
+        :color="hasSelected ? 'accent' : 'secondary'"
+        variant="outline"
+      >
+        {{ facet.label }}
+
+        <template #append>
+          <span class="facet-filter-dd__append">
+            <VcBadge v-if="hasSelected" size="sm" rounded color="info">
+              {{ selectedFiltersCount }}
+            </VcBadge>
+
+            <VcIcon v-else name="chevron-down" class="facet-filter-dd__arrow" />
+          </span>
+        </template>
+      </VcButton>
+    </template>
+
+    <template #content="{ close }">
+      <div v-if="searchFieldVisible" class="facet-filter-dd__search">
+        <VcInput
+          v-model.trim="searchKeyword"
+          size="sm"
+          maxlength="30"
+          :disabled="loading"
+          :placeholder="$t('common.labels.search', [facet.label])"
+          truncate
+        />
+      </div>
+
+      <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
+
+      <VcMenuItem
+        v-for="item in searchedValues"
+        :key="item.value"
+        size="sm"
+        color="secondary"
+        truncate
+        :active="item.selected"
+        :title="item.label"
+        @click="() => handleFacetItemClick(item, close)"
+      >
+        <VcCheckbox v-model="item.selected" :disabled="loading" @change="() => changeFacetValues(close)" @click.stop />
+
+        <div class="facet-filter-dd__label">
+          {{ item.label }}
         </div>
-      </template>
-    </VcDropdownMenu>
-  </div>
+
+        <VcBadge variant="outline" size="sm" rounded color="secondary">
+          {{ item.count }}
+        </VcBadge>
+      </VcMenuItem>
+    </template>
+  </VcDropdownMenu>
 </template>
 
 <script lang="ts" setup>
@@ -204,30 +200,10 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 </script>
 
 <style lang="scss">
-.facet-filter {
-  &__trigger-arrow {
-    @apply ms-2 transition-transform;
-
-    &--rotate {
-      @apply rotate-180;
-    }
-  }
-
+//Widget classes
+.facet-filter-w {
   &__search {
     @apply p-3 border-b;
-  }
-
-  &__items-container {
-    --scrollbar-width: 1rem;
-    @apply relative overflow-y-auto pt-2;
-  }
-
-  &__item-label {
-    @apply flex-grow;
-  }
-
-  &__no-results {
-    @apply text-sm px-4 py-2;
   }
 
   &__fade {
@@ -239,6 +215,50 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
       @media print {
         @apply content-none;
       }
+    }
+  }
+
+  &__container {
+    --scrollbar-width: 0.875rem;
+    @apply relative overflow-y-auto pt-2;
+  }
+
+  &__label {
+    @apply flex-grow;
+  }
+
+  &__more {
+    @apply m-1;
+  }
+}
+
+//Dropdown classes
+.facet-filter-dd {
+  $opened: "";
+
+  &__trigger {
+    &--opened {
+      $opened: &;
+    }
+  }
+
+  &__search {
+    @apply p-3 border-b;
+  }
+
+  &__label {
+    @apply flex-grow;
+  }
+
+  &__append {
+    @apply ms-2;
+  }
+
+  &__arrow {
+    @apply transition-transform;
+
+    #{$opened} & {
+      @apply rotate-180;
     }
   }
 }

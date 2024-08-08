@@ -4,6 +4,7 @@
       'vc-dropdown-menu',
       {
         'vc-dropdown-menu--disabled': disabled,
+        'vc-dropdown-menu--dividers': dividers,
       },
     ]"
     :width="width"
@@ -42,6 +43,7 @@ interface IProps {
   width?: string;
   zIndex?: number | string;
   disableTriggerEvents?: boolean;
+  dividers?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -51,17 +53,23 @@ withDefaults(defineProps<IProps>(), {
   maxHeight: "12rem",
   offsetOptions: 4,
   width: "auto",
+  dividers: true,
 });
 </script>
 
 <style lang="scss">
 .vc-dropdown-menu {
   $disabled: "";
+  $dividers: "";
 
   @apply select-none;
 
   &--disabled {
     $disabled: &;
+  }
+
+  &--dividers {
+    $dividers: &;
   }
 
   & > [role="button"] {
@@ -77,7 +85,11 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__list {
-    @apply overflow-y-auto w-full rounded bg-additional-50 shadow-xl divide-y divide-neutral-100;
+    @apply overflow-y-auto w-full rounded bg-additional-50 shadow-xl;
+
+    #{$dividers} & {
+      @apply divide-y divide-neutral-100;
+    }
 
     & > *:first-child {
       @apply rounded-t;

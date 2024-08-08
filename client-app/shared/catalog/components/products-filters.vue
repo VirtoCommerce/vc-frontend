@@ -109,7 +109,7 @@ watchDebounced(
     async function calculateFiltersCountToShow() {
       filterCalculationInProgress.value = true;
       const facetsElements =
-        (facetFiltersContainer?.value?.querySelectorAll(".facet-filter__trigger") as NodeListOf<HTMLElement>) || [];
+        (facetFiltersContainer?.value?.querySelectorAll("[data-facet-filter]") as NodeListOf<HTMLElement>) || [];
       let filtersCount = 1;
       for (let i = 0; i < localFilters.facets.length; i++) {
         const facetFilter = facetsElements[i] as HTMLElement;
