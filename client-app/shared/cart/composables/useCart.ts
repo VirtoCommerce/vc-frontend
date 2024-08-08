@@ -12,7 +12,7 @@ import {
   useAddOrUpdateCartPaymentMutation,
   useAddOrUpdateCartShipmentMutation,
   useChangeCartCommentMutation,
-  useChangeFullCartItemQuantityMutation,
+  useChangeFullCartItemsQuantityMutation,
   useChangePurchaseOrderNumberMutation,
   useClearCartMutation,
   useGetFullCartQuery,
@@ -27,6 +27,7 @@ import {
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
+import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
@@ -258,10 +259,14 @@ export function _useFullCart() {
     );
   }
 
-  const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } =
-    useChangeFullCartItemQuantityMutation(cart);
+  const { mutate: _changeItemsQuantity, loading: changeItemsQuantityLoading } =
+    useChangeFullCartItemsQuantityMutation(cart);
+  const { add, overflowed: changeFullCartItemQuantityOverflowed } = useMutationBatcher(_changeItemsQuantity, {
+    merge: getMergeStrategyUniqueBy("lineItemId"),
+    maxLength: 2,
+  });
   async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
-    await _changeItemQuantity({ command: { lineItemId, quantity } });
+    await add({ command: { cartItems: [{ lineItemId, quantity }] } });
   }
 
   const validateCouponLoading = ref(false);
@@ -411,6 +416,7 @@ export function _useFullCart() {
     refetch,
     forceFetch,
     changeItemQuantity,
+    changeFullCartItemQuantityOverflowed,
     removeItems,
     validateCartCoupon,
     addCartCoupon,
@@ -432,7 +438,7 @@ export function _useFullCart() {
         unselectCartItemsLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
-        changeItemQuantityLoading.value ||
+        changeItemsQuantityLoading.value ||
         validateCouponLoading.value ||
         addCouponLoading.value ||
         removeCouponLoading.value ||
