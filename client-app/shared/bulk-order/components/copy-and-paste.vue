@@ -39,7 +39,6 @@ import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 const emit = defineEmits<{
   (event: "addToCart", value: InputNewBulkItemType[]): void;
   (event: "error", value?: string): void;
-  (event: "reset"): void;
 }>();
 
 defineProps<IProps>();
@@ -77,6 +76,5 @@ function addToCart(): void {
 
 function resetItems() {
   text.value = "";
-  emit("reset");
 }
 </script>

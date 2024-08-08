@@ -79,7 +79,8 @@
       "approve": "Approve",
       "decline": "Decline",
       "all_filters": "All filters",
-      "sort_by": "Sort by"
+      "sort_by": "Sort by",
+      "add_items_to_cart": "Add items to cart"
     },
     "labels": {
       "actions": "Actions",
@@ -152,7 +153,8 @@
       "default_language": "Default language",
       "default_currency": "Default currency",
       "organizations": "Organizations",
-      "my_organizations": "My organizations"
+      "my_organizations": "My organizations",
+      "select_product": "Please select a product"
     },
     "prefixes": {
       "please": "Please",
@@ -699,6 +701,16 @@
         "text_area_placeholder": "Format example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
         "reset_button": "@:common.buttons.reset",
         "add_to_cart_button": "@:common.buttons.add_to_cart"
+      },
+      "add_to_cart_sku_errors_modal": {
+        "title": "Add to cart SKU errors",
+        "common_message": "There were several issues while adding items to the cart.",
+        "duplicate_skus_message": "Duplicate SKUs detected. Please check the items for the relevant SKUs to add to cart.",
+        "content": {
+          "sku": "SKU",
+          "products": "Products",
+          "quantity": "Quantity"
+        }
       }
     },
     "payment": {
@@ -1315,7 +1327,7 @@
         "description": "Bulk order page"
       },
       "title": "Bulk Order Pad",
-      "product_duplicate_sku_alert": "There are multiple products with SKU \"{0}\":",
+      "product_duplicate_sku_alert": "There are multiple products with SKU \"{0}\". Please choose one to add to cart:",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
       "data_is_invalid_alert": "The details you provided are invalid.",
       "manually_tab": "Enter Manually",

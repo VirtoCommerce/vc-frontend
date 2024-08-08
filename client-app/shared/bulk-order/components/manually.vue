@@ -81,7 +81,6 @@ type InputNewBulkItemExtendedType = { [prop in keyof InputNewBulkItemType]: stri
 const emit = defineEmits<{
   (event: "addToCart", value: InputNewBulkItemType[]): void;
   (event: "error", value: InputNewBulkItemType[]): void;
-  (event: "reset"): void;
 }>();
 
 defineProps<IProps>();
@@ -104,7 +103,6 @@ function createItems(quantity: number): InputNewBulkItemExtendedType[] {
 
 function resetItems() {
   items.value = createItems(items.value.length);
-  emit("reset");
 }
 
 function increment() {

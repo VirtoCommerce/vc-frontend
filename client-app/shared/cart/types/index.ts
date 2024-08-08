@@ -5,6 +5,7 @@ export type ExtendedGiftItemType = GiftItemType & { isAddedInCart?: boolean };
 export type OutputBulkItemType = {
   productSku: string;
   quantity?: number;
+  duplicateSkuErrors?: ValidationErrorType[];
   errors?: ValidationErrorType[];
 };
 
