@@ -11,9 +11,6 @@ import type { RouteLocationRaw } from "vue-router";
 
 export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
 
-/** @deprecated Use {@link VendorGroupType} instead. */
-export type LineItemsGroupByVendorType<T extends LineItemType | OrderLineItemType> = VendorGroupType<T>;
-
 export type VendorGroupType<T extends LineItemType | OrderLineItemType> = {
   items: T[];
   vendor?: CommonVendor;

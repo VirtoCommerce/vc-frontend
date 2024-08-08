@@ -9,11 +9,11 @@ import { useModal } from "@/shared/modal";
 import { useProducts } from "./useProducts";
 import type { FiltersDisplayOrderType, ProductsFiltersType } from "../types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
+import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 export function useProductFilters(options: {
-  isMobile: boolean;
-  filtersDisplayOrder?: FiltersDisplayOrderType;
+  filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
   useQueryParams?: boolean;
 }) {
   const { openModal } = useModal();
@@ -49,8 +49,8 @@ export function useProductFilters(options: {
   const isFiltersSidebarVisible = ref(false);
 
   function getSortedFacets(allFacets: FacetItemType[]): FacetItemType[] {
-    if (options.filtersDisplayOrder?.order && options.filtersDisplayOrder?.order.length) {
-      const order = options.filtersDisplayOrder.order
+    if (options.filtersDisplayOrder?.value?.order && options.filtersDisplayOrder?.value?.order.length) {
+      const order = options.filtersDisplayOrder.value.order
         .split(",")
         .map((item) => item.trim().toLowerCase())
         .filter(Boolean);
@@ -68,7 +68,7 @@ export function useProductFilters(options: {
         }
       });
 
-      return options.filtersDisplayOrder?.showRest
+      return options.filtersDisplayOrder?.value?.showRest
         ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label.toLowerCase()))]
         : sortedFacets;
     }
@@ -124,7 +124,10 @@ export function useProductFilters(options: {
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
-    productsFilters.value = newFilters;
+    productsFilters.value = {
+      ...newFilters,
+      facets: getSortedFacets(newFilters.facets),
+    };
   }
 
   function openBranchesModal(fromPopupSidebarFilter: boolean) {
@@ -158,7 +161,7 @@ export function useProductFilters(options: {
       productsFilters.value = {
         inStock: localStorageInStock.value,
         branches: localStorageBranches.value.slice(),
-        facets: options.isMobile ? getSortedFacets(facets.value) : facets.value,
+        facets: getSortedFacets(facets.value),
       };
     }
   });
@@ -167,13 +170,16 @@ export function useProductFilters(options: {
     hasSelectedFacets: computed(() => hasSelectedFacets()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
-    localStorageBranches: computed(() => localStorageBranches.value),
-    localStorageInStock: computed(() => localStorageInStock.value),
-    sortQueryParam: readonly(sortQueryParam),
-    searchQueryParam: readonly(searchQueryParam),
-    keywordQueryParam: readonly(keywordQueryParam),
-    facetsQueryParam: readonly(facetsQueryParam),
     productsFilters: computed(() => productsFilters.value),
+
+    // Mutated outside of composable
+    localStorageBranches,
+    localStorageInStock,
+    sortQueryParam,
+    searchQueryParam,
+    keywordQueryParam,
+    facetsQueryParam,
+
     applyFilters,
     hideFiltersSidebar,
     openBranchesModal,

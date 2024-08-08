@@ -7,6 +7,7 @@ import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/get
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
+import { useUser } from "@/shared/account";
 import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
 import type { Ref, MaybeRef } from "vue";
 
@@ -17,9 +18,10 @@ export interface IUsePushMessagesOptions {
 }
 
 export function usePushMessages(options?: IUsePushMessagesOptions) {
+  const { isAuthenticated } = useUser();
   const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
 
-  if (!hasModuleSettings.value) {
+  if (!hasModuleSettings.value || !isAuthenticated.value) {
     return {
       isActive: false,
       totalCount: computed(() => 0),

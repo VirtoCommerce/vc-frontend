@@ -1,4 +1,4 @@
-import { createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
+import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
 import {
@@ -23,7 +23,6 @@ import {
   useSelectCartItemsMutation,
   useUnselectCartItemsMutation,
   useValidateCouponQuery,
-  clearCart as deprecatedClearCart,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
@@ -32,7 +31,6 @@ import { groupByVendor } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
-import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
   InputNewBulkItemType,
   InputNewCartItemType,
@@ -438,104 +436,3 @@ export function _useFullCart() {
 }
 
 export const useFullCart = createSharedComposable(_useFullCart);
-
-function _useCart() {
-  const {
-    cart: shortCart,
-    refetch: fetchShortCart,
-    addToCart,
-    addItemsToCart,
-    addBulkItemsToCart,
-    getItemsTotal,
-    changeItemQuantity: changeShortCartItemQuantity,
-  } = useShortCart();
-
-  const {
-    cart: fullCart,
-    shipment,
-    payment,
-    availableShippingMethods,
-    availablePaymentMethods,
-    selectedItemIds,
-    lineItemsGroupedByVendor,
-    selectedLineItems,
-    selectedLineItemsGroupedByVendor,
-    allItemsAreDigital,
-    addedGiftsByIds,
-    availableExtendedGifts,
-    hasValidationErrors,
-    hasOnlyUnselectedValidationError,
-    forceFetch: fetchFullCart,
-    changeItemQuantity: changeFullCartItemQuantity,
-    removeItems,
-    validateCartCoupon,
-    addCartCoupon,
-    removeCartCoupon,
-    changeComment,
-    updateShipment,
-    removeShipment,
-    updatePayment,
-    updatePurchaseOrderNumber,
-    addGiftsToCart,
-    removeGiftsFromCart,
-    toggleGift,
-    openClearCartModal,
-    loading,
-    changing,
-  } = useFullCart();
-
-  const lastChangedShortCart = useLastChanged(shortCart, { immediate: true });
-  const lastChangedFullCart = useLastChanged(fullCart, { immediate: true });
-
-  return {
-    shipment,
-    payment,
-    availableShippingMethods,
-    availablePaymentMethods,
-    selectedItemIds,
-    lineItemsGroupedByVendor,
-    selectedLineItems,
-    selectedLineItemsGroupedByVendor,
-    allItemsAreDigital,
-    addedGiftsByIds,
-    availableExtendedGifts,
-    hasValidationErrors,
-    hasOnlyUnselectedValidationError,
-    getItemsTotal,
-    fetchShortCart,
-    fetchFullCart,
-    addToCart,
-    addItemsToCart,
-    addBulkItemsToCart,
-    changeItemQuantity: async (
-      lineItemId: string,
-      quantity: number,
-      options: ChangeCartItemQuantityOptionsType = {},
-    ) => {
-      return await (options.reloadFullCart
-        ? changeFullCartItemQuantity(lineItemId, quantity)
-        : changeShortCartItemQuantity(lineItemId, quantity));
-    },
-    removeItems,
-    validateCartCoupon,
-    addCartCoupon,
-    removeCartCoupon,
-    changeComment,
-    updateShipment,
-    removeShipment,
-    updatePayment,
-    updatePurchaseOrderNumber,
-    clearCart: async (cartId: string) => {
-      return await deprecatedClearCart(cartId);
-    },
-    addGiftsToCart,
-    removeGiftsFromCart,
-    toggleGift,
-    openClearCartModal,
-    loading: computedEager(() => loading.value || changing.value),
-    cart: computed(() => (lastChangedShortCart.value < lastChangedFullCart.value ? fullCart.value : shortCart.value)),
-  };
-}
-
-/** @deprecated Use {@link useSortCart} for adding products to cart and {@link useFullCart} for cart & checkout pages */
-export const useCart = createSharedComposable(_useCart);
