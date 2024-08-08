@@ -80,7 +80,7 @@ export function useShortCart() {
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
       quantity,
-      errors: result?.data?.addBulkItemsCart?.errors,
+      errors: result?.data?.addBulkItemsCart?.errors?.filter((error) => error.objectId === productSku),
     }));
   }
 

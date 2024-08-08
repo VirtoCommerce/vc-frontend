@@ -1,13 +1,15 @@
 <template>
   <VcModal :title="$t('shared.bulk_order.add_to_cart_sku_errors_modal.title')" class="p-6" variant="warn">
     <div class="p-6">
-      <p>
-        {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.common_message") }}
-      </p>
+      <div class="mb-4">
+        <p>
+          {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.common_message") }}
+        </p>
 
-      <p v-if="duplicateSkuItems?.length">
-        {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.duplicate_skus_message") }}
-      </p>
+        <p v-if="duplicateSkuItems?.length">
+          {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.duplicate_skus_message") }}
+        </p>
+      </div>
 
       <table class="w-full table-auto">
         <thead>
@@ -44,12 +46,12 @@
           </tr>
 
           <!-- Other SKU errors -->
-          <tr v-for="errorItem in otherErrorItems" :key="errorItem.productSku">
+          <tr v-for="errorItem in otherErrorItems" :key="errorItem.productSku" class="my-4">
             <td>
               {{ errorItem.productSku }}
             </td>
-            <td colspan="2">
-              {{ $t("errorItem.errors[0].errorCode") }}
+            <td class="text-danger" colspan="2">
+              {{ $t(`validation_error.${errorItem.errors?.[0]?.errorCode}`) }}
             </td>
           </tr>
         </tbody>
@@ -65,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, shallowRef, toRef } from "vue";
+import { computed, onMounted, ref, toRef } from "vue";
 import { useProducts } from "@/shared/catalog";
 import type { DuplicateSkuProductType } from "../types";
 import type { OutputBulkItemType } from "@/shared/cart";
@@ -88,8 +90,8 @@ const PRODUCT_DUPLICATE_SKU_ID = "PRODUCT_DUPLICATE_SKU";
 
 const errorItems = toRef(props, "errorItems");
 
-const duplicateSkuItems = shallowRef<DuplicateSkuProductType[]>();
-const otherErrorItems = shallowRef<OutputBulkItemType[]>(
+const duplicateSkuItems = ref<DuplicateSkuProductType[]>();
+const otherErrorItems = ref<OutputBulkItemType[]>(
   errorItems.value.filter((item) => item.errors?.some((error) => error.errorCode !== PRODUCT_DUPLICATE_SKU_ID)),
 );
 
@@ -114,8 +116,6 @@ onMounted(async () => {
   const itemsWithDuplicateProducts = errorItems.value.filter((item) =>
     item.errors?.some((error) => error.errorCode === PRODUCT_DUPLICATE_SKU_ID),
   );
-
-  console.log(errorItems.value);
 
   await fetchProducts({
     productIds: getDuplicateProductIds(itemsWithDuplicateProducts),
