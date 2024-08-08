@@ -2,13 +2,11 @@ import { setup } from "@storybook/vue3";
 import { vueRouter } from "storybook-vue3-router";
 import { useLanguages } from "../client-app/core/composables/useLanguages";
 import { setGlobals } from "../client-app/core/globals";
-import { configPlugin } from "../client-app/core/plugins";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
-import type { IThemeConfig } from "../client-app/core/types";
+import type { IThemeConfig, IThemeConfigPreset } from "../client-app/core/types";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3";
-import type { App } from "vue";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
@@ -17,12 +15,27 @@ const i18n: I18n = createI18n("en", "USD");
 
 setGlobals({ i18n });
 
-async function configureThemeSettings(app: App) {
+async function configureThemeSettings() {
   const { data } = await useFetch("/config/settings_data.json").get().json();
-  const settings = data.value as IThemeConfig;
-  const themeSettings = settings.presets[settings.current as string];
+  const themeConfig = data.value as IThemeConfig;
 
-  app.use(configPlugin, themeSettings);
+  let preset;
+
+  if (typeof themeConfig.current === "string") {
+    const presetFileName = themeConfig.current.toLowerCase().replace(" ", "-");
+    const { data: data_ } = await useFetch(`/config/presets/${presetFileName}.json`).get().json<IThemeConfigPreset>();
+    preset = data_.value;
+  } else {
+    preset = themeConfig.current;
+  }
+
+  const styleElement = document.createElement("style");
+  styleElement.innerText = ":root {";
+  Object.entries(preset).forEach(([key, value]) => {
+    styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
+  });
+  styleElement.innerText += "}";
+  document.head.prepend(styleElement);
 }
 
 async function configureI18N() {
@@ -32,7 +45,7 @@ async function configureI18N() {
 }
 
 setup((app) => {
-  configureThemeSettings(app);
+  configureThemeSettings();
 
   configureI18N();
   app.use(i18n);

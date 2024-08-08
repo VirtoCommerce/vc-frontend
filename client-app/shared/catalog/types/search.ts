@@ -1,6 +1,6 @@
 import type { FacetItemType } from "@/core/types";
 
-export type ProductsSearchParams = {
+export type ProductsSearchParamsType = {
   page?: number;
   itemsPerPage?: number;
   keyword?: string;
@@ -12,7 +12,7 @@ export type ProductsSearchParams = {
   productIds?: string[];
 };
 
-export type ProductsFilters = {
+export type ProductsFiltersType = {
   facets: FacetItemType[];
   inStock: boolean;
   branches: string[];

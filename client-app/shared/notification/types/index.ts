@@ -6,7 +6,8 @@ export type CloseNotificationHandle = () => void;
 export type NotificationCustomButton = {
   text?: string;
   html?: string;
-  classes?: string;
+  color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
+  variant?: "solid" | "outline" | "no-border" | "no-background";
   to?: RouteLocationRaw;
   clickHandler?: (notificationId: string, event: Event) => void;
 };
@@ -20,6 +21,16 @@ export interface INotification {
   button?: NotificationCustomButton;
   component?: Component;
   props?: ComponentObjectPropsOptions;
+
+  /**
+   * @default md
+   */
+  size?: "sm" | "md";
+
+  /**
+   * @default solid
+   */
+  variant?: "solid" | "solid-light" | "outline" | "outline-dark";
 
   /**
    * in milliseconds
@@ -58,5 +69,6 @@ export interface INotificationExtended extends INotification {
    * @default info
    */
   type?: "info" | "success" | "warning" | "danger";
+
   autoCloseTimeout?: number;
 }
