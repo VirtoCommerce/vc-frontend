@@ -285,7 +285,13 @@ async function initNewCardForm(): Promise<void> {
       base: {
         ...baseInputStyles,
         textSecurity: "none",
+        textIndent: "initial",
         padding: "0.75rem",
+      },
+      cardIcon: {
+        position: "absolute",
+        left: "8px",
+        bottom: "calc(50% - 12px)",
       },
       global,
     },
@@ -298,17 +304,20 @@ async function initNewCardForm(): Promise<void> {
     },
   };
 
+  const cardNameStyles = cloneDeep(collectStylesOptions);
+  cardNameStyles.inputStyles.base.textIndent = "42px";
+
   const cardName = container.create(
     {
       table: skyflowTableName,
       column: "card_number",
-      ...collectStylesOptions,
+      ...cardNameStyles,
       placeholder: "1111 1111 1111 1111",
       label: t("shared.payment.bank_card_form.number_label"),
       type: Skyflow.ElementType.CARD_NUMBER,
     },
     {
-      enableCardIcon: false,
+      enableCardIcon: true,
       required: true,
     },
   );
