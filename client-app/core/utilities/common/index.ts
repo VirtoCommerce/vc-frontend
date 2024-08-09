@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { cloneDeep } from "lodash";
+import { uniqBy, cloneDeep } from "lodash";
 import type { KeyValueType } from "@/core/api/graphql/types";
 
 export function getBaseUrl(supportedLocales: string[]): string {
@@ -121,9 +121,7 @@ export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
   return {};
 };
 
-import uniqBy from "lodash/uniqBy";
-
-type Iteratee<T> = keyof T | ((item: T) => unknown);
-export function uniqByLast<T>(arr: T[], iteratee: Iteratee<T>): T[] {
+export type UniqByLastIterateeType<T> = keyof T | ((item: T) => unknown);
+export function uniqByLast<T>(arr: T[], iteratee: UniqByLastIterateeType<T>): T[] {
   return uniqBy(arr.slice().reverse(), iteratee).reverse();
 }

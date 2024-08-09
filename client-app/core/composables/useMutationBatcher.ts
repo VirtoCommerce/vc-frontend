@@ -2,8 +2,9 @@ import cloneDeep from "lodash/cloneDeep";
 import mergeWith from "lodash/mergeWith";
 import { ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
+import { uniqByLast } from "@/core/utilities/common";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
-import { uniqByLast } from "../utilities/common";
+import type { UniqByLastIterateeType } from "@/core/utilities/common";
 import type { FetchResult } from "@apollo/client/core";
 import type { MutateFunction } from "@vue/apollo-composable";
 
@@ -25,12 +26,12 @@ function DEFAULT_MERGE_STRATEGY<TVariables>(a: TVariables, b: TVariables): TVari
 /**
  * @description Merge strategy to ensure unique items based on a key or function.
  */
-export function getMergeStrategyUniqueBy<TVariables>(keyOrFn: string | ((...values: unknown[]) => unknown)) {
-  return (a: TVariables, b: TVariables): TVariables => {
+export function getMergeStrategyUniqueBy(keyOrFn: string | ((item: unknown) => unknown)) {
+  return <TVariables>(a: TVariables, b: TVariables): TVariables => {
     const result = cloneDeep(a);
     mergeWith(result, b, (objValue, srcValue) => {
       if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-        return uniqByLast(objValue.concat(srcValue), keyOrFn);
+        return uniqByLast(objValue.concat(srcValue), keyOrFn as UniqByLastIterateeType<TVariables>);
       }
     });
     return result;
