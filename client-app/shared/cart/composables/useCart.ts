@@ -270,7 +270,6 @@ export function _useFullCart() {
     useChangeFullCartItemsQuantityMutation(cart);
   const { add, overflowed: changeItemQuantityBatchedOverflowed } = useMutationBatcher(_changeItemsQuantity, {
     merge: getMergeStrategyUniqueBy("lineItemId"),
-    maxLength: 2,
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     await add({ command: { cartItems: [{ lineItemId, quantity }] } });
