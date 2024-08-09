@@ -1,5 +1,6 @@
 import { mergeWith, uniqBy } from "lodash";
 import { ref } from "vue";
+import { AbortReason } from "@/core/api/common/enums";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import type { FetchResult } from "@apollo/client/core";
 import type { MutateFunction } from "@vue/apollo-composable";
@@ -88,7 +89,7 @@ export function useMutationBatcher<TData, TVariables>(
   }
 
   function clearPreviousDebounce() {
-    abortController?.abort();
+    abortController?.abort(AbortReason.Explicit);
     if (debounceTimeoutId) {
       clearTimeout(debounceTimeoutId);
     }
