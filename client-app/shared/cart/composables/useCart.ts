@@ -268,7 +268,7 @@ export function _useFullCart() {
 
   const { mutate: _changeItemsQuantity, loading: changeItemsQuantityLoading } =
     useChangeFullCartItemsQuantityMutation(cart);
-  const { add, overflowed: changeFullCartItemQuantityBatchedOverflowed } = useMutationBatcher(_changeItemsQuantity, {
+  const { add, overflowed: changeItemQuantityBatchedOverflowed } = useMutationBatcher(_changeItemsQuantity, {
     merge: getMergeStrategyUniqueBy("lineItemId"),
     maxLength: 2,
   });
@@ -424,7 +424,7 @@ export function _useFullCart() {
     forceFetch,
     changeItemQuantity,
     changeItemQuantityBatched,
-    changeFullCartItemQuantityBatchedOverflowed,
+    changeItemQuantityBatchedOverflowed,
     removeItems,
     validateCartCoupon,
     addCartCoupon,
