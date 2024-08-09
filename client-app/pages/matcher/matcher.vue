@@ -3,7 +3,7 @@
     <SlugContent
       v-if="previewers.slugContent.isActive"
       :is-visible="visibleComponent === 'slugContent'"
-      :path-match="pathMatch"
+      :path-match="pathMatch || ['/']"
       @set-state="updateState($event, 'slugContent')"
     />
     <BuilderIo
@@ -37,7 +37,7 @@ interface IProps {
 
 defineProps<IProps>();
 
-const PRIORITIES = {
+const DEFAULT_PRIORITIES = {
   builderIo: 1,
   slugContent: 2,
   internal: 3,
@@ -47,7 +47,11 @@ const BuilderIo = defineAsyncComponent(() => import("@/pages/matcher/builderIo/b
 const SlugContent = defineAsyncComponent(() => import("@/pages/matcher/slug-content.vue"));
 const Internal = defineAsyncComponent(() => import("@/pages/matcher/internal.vue"));
 
-const { modulesSettings } = useThemeContext();
+const { modulesSettings, themeContext } = useThemeContext();
+
+const PRIORITIES = computed(() => {
+  return { ...DEFAULT_PRIORITIES, ...themeContext.value.settings.previewers_settings?.priorities };
+});
 
 const viewQueryParam = useRouteQueryParam<string>("view");
 
@@ -67,19 +71,19 @@ const builderIoApiKey = computed(() => {
 const previewers = ref<{ [key in string]: PreviewerStateType }>({
   builderIo: {
     id: "builderIo",
-    priority: PRIORITIES.builderIo,
+    priority: PRIORITIES.value.builderIo,
     state: "initial",
     isActive: isBuilderIOEnabled.value,
   },
   slugContent: {
     id: "slugContent",
-    priority: PRIORITIES.slugContent,
+    priority: PRIORITIES.value.slugContent,
     state: "initial",
     isActive: true,
   },
   internal: {
     id: "internal",
-    priority: PRIORITIES.internal,
+    priority: PRIORITIES.value.internal,
     state: "initial",
     isActive: true,
   },
@@ -98,9 +102,9 @@ watch(
   (value) => {
     if (value === "default") {
       // for cases when we have a custom category page with the same url as a default category page, and we want to have the opportunity to switch to the default view (eg. clicking "Show all results" button, technically by setting search query URL parameter view to "default")
-      previewers.value.slugContent.priority = Math.min(...Object.values(PRIORITIES)) - 1;
+      previewers.value.slugContent.priority = Math.min(...Object.values(PRIORITIES.value)) - 1;
     } else {
-      previewers.value.slugContent.priority = PRIORITIES.slugContent;
+      previewers.value.slugContent.priority = PRIORITIES.value.slugContent;
     }
     window.scrollTo({
       top: 0,

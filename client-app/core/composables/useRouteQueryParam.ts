@@ -34,7 +34,7 @@ export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNull
       return value;
     },
 
-    async set(value) {
+    set(value) {
       const { hash, params, query } = router.currentRoute.value;
       const newLocation: Required<RouteQueryAndHash & Pick<LocationAsRelativeRaw, "params">> = {
         hash,
@@ -57,7 +57,7 @@ export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNull
       const mustBeDone = router.currentRoute.value.fullPath !== router.resolve(newLocation).fullPath;
 
       if (mustBeDone) {
-        await router[updateMethod](newLocation);
+        void router[updateMethod](newLocation);
       }
     },
   });

@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import type { StateType } from "@/pages/matcher/priorityManager";
 
 interface IProps {
@@ -25,20 +25,27 @@ const pages = {
 
 const route = useRoute();
 
+const page = computed(() => {
+  if (Object.keys(pages).includes(route.path)) {
+    return pages[route.path as keyof typeof pages];
+  }
+  return null;
+});
+
 onMounted(() => {
   if (!Object.keys(pages).includes(route.path)) {
     emit("setState", "empty");
+  } else {
+    emit("setState", "ready");
   }
 });
 
-const page = computed(() => {
-  if (Object.keys(pages).includes(route.path)) {
+onBeforeRouteUpdate((to) => {
+  if (Object.keys(pages).includes(to.path)) {
     emit("setState", "ready");
-    return pages[route.path as keyof typeof pages];
+  } else {
+    emit("setState", "empty");
   }
-
-  emit("setState", "empty");
-  return null;
 });
 
 onBeforeUnmount(() => {

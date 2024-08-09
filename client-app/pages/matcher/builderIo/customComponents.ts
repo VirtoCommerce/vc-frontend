@@ -47,6 +47,30 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         helperText: "Show filters vertically or horizontally",
       },
       {
+        name: "filtersDisplayOrder",
+        type: "object",
+        defaultValue: {
+          order: "",
+          showRest: false,
+        },
+        subFields: [
+          {
+            friendlyName: "Filters order",
+            name: "order",
+            type: "string",
+            helperText:
+              'Order of the filters - comma-separated string of any case. Leave empty to show all filters in default order. Example: "price, brand, category".',
+          },
+          {
+            friendlyName: "Show rest of filters",
+            name: "showRest",
+            type: "boolean",
+            helperText: "Show the rest of the filters.",
+            showIf: "options.get('value') !== ''",
+          },
+        ],
+      },
+      {
         name: "cardType",
         type: "string",
         defaultValue: "full",
@@ -115,6 +139,12 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         defaultValue: false,
         helperText:
           "Toggle this switch to add a button that, when clicked, shows the default category view. Applicable for pages with an URL overlapping the existing category page URL (e.g., /printers).",
+      },
+      {
+        name: "isTransparent",
+        type: "boolean",
+        defaultValue: true,
+        helperText: "Removes original background",
       },
     ],
   },
@@ -216,6 +246,12 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
             type: "string",
           },
         ],
+      },
+      {
+        name: "isTransparent",
+        type: "boolean",
+        defaultValue: true,
+        helperText: "Removes original background",
       },
     ],
   },

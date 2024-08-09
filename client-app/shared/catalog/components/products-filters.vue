@@ -71,16 +71,16 @@ import { cloneDeep } from "lodash";
 import { watch, shallowReactive, shallowRef, ref, nextTick, computed } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
-import type { ProductsFilters } from "@/shared/catalog";
+import type { ProductsFiltersType } from "@/shared/catalog";
 
 interface IEmits {
-  (event: "change", value: ProductsFilters): void;
+  (event: "change", value: ProductsFiltersType): void;
   (event: "openBranches"): void;
 }
 
 interface IProps {
   loading?: boolean;
-  filters: ProductsFilters;
+  filters: ProductsFiltersType;
   orientation?: "vertical" | "horizontal";
 }
 
@@ -88,7 +88,7 @@ const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
-const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, branches: [] });
+const localFilters = shallowReactive<ProductsFiltersType>({ facets: [], inStock: false, branches: [] });
 const isHorizontal = props.orientation === "horizontal";
 
 const filterCalculationInProgress = ref(false);
