@@ -3,7 +3,7 @@
     <SlugContent
       v-if="previewers.slugContent.isActive"
       :is-visible="visibleComponent === 'slugContent'"
-      :path-match="pathMatch"
+      :path-match="pathMatch || ['/']"
       @set-state="updateState($event, 'slugContent')"
     />
     <BuilderIo

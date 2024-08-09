@@ -1,17 +1,42 @@
 <template>
-  <label :class="['vc-radio-button', `vc-radio-button--size--${size}`, checked && 'vc-radio-button--checked']">
-    <input
-      v-model="model"
-      class="vc-radio-button__input flex-none"
-      type="radio"
-      :value="value"
-      :checked="checked"
-      :aria-checked="checked"
+  <div
+    :class="[
+      'vc-radio-button',
+      `vc-radio-button--size--${size}`,
+      `vc-radio-button--label--${labelPosition}`,
+      {
+        'vc-radio-button--disabled': disabled,
+        'vc-radio-button--checked': checked,
+      },
+    ]"
+  >
+    <label class="vc-radio-button__container">
+      <input
+        v-model="model"
+        class="vc-radio-button__input"
+        type="radio"
+        :name="name"
+        :value="value"
+        :checked="checked"
+        :disabled="disabled"
+        :aria-checked="checked"
+      />
+
+      <span class="vc-radio-button__label">
+        <slot v-bind="{ checked, value, label }">
+          {{ label }}
+        </slot>
+      </span>
+    </label>
+
+    <VcInputDetails
+      class="vc-radio-button__details"
+      :show-empty="showEmptyDetails"
+      :message="message"
+      :error="error"
+      :single-line="singleLineMessage"
     />
-    <slot v-bind="{ checked, value, label }">
-      <span class="vc-radio-button__text">{{ label }}</span>
-    </slot>
-  </label>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -19,12 +44,20 @@ import { computed } from "vue";
 
 interface IProps {
   label?: string;
+  name?: string;
   value: string;
-  size?: "sm" | "md";
+  disabled?: boolean;
+  size?: "xs" | "sm" | "md";
+  labelPosition?: "left" | "right";
+  showEmptyDetails?: boolean;
+  message?: string;
+  error?: boolean;
+  singleLineMessage?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
+  labelPosition: "right",
 });
 
 const model = defineModel<IProps["value"]>();
@@ -34,40 +67,96 @@ const checked = computed(() => model.value === props.value);
 
 <style lang="scss">
 .vc-radio-button {
-  @apply inline-flex cursor-pointer items-center gap-2;
+  $checked: "";
+  $disabled: "";
+  $left: "";
+  $right: "";
+
+  @apply select-none;
 
   &--size {
+    &--xs {
+      --size: 0.875rem;
+      --border-width: 0.25rem;
+
+      @apply text-xs;
+    }
+
     &--sm {
-      --size: 1.125rem;
-      --border-width: 5px;
+      --size: 1rem;
+      --border-width: 0.3rem;
 
       @apply text-sm;
     }
 
     &--md {
       --size: 1.25rem;
-      --border-width: 6px;
+      --border-width: 0.375rem;
 
       @apply text-base;
     }
   }
 
-  &--checked {
-    .vc-radio-button__text {
-      @apply text-neutral-950;
+  &--label {
+    &--left {
+      $left: &;
     }
 
-    .vc-radio-button__input {
-      border-width: var(--border-width);
+    &--right {
+      $right: &;
+    }
+  }
+
+  &--checked {
+    $checked: &;
+  }
+
+  &--disabled {
+    $disabled: &;
+  }
+
+  &__container {
+    @apply flex items-center cursor-pointer;
+
+    #{$disabled} & {
+      @apply cursor-not-allowed;
     }
   }
 
   &__input {
-    @apply size-[--size] appearance-none border-2 rounded-full border-neutral-300 bg-additional-50 checked:border-primary focus:outline-none focus:ring focus:ring-primary-100;
+    @apply flex-none size-[--size] appearance-none border-2 rounded-full border-neutral-400 bg-additional-50;
+
+    &:checked {
+      @apply border-primary border-[length:var(--border-width)];
+    }
+
+    &:focus {
+      @apply outline-none ring ring-primary-500/20;
+    }
+
+    &:disabled {
+      @apply border-neutral-400 bg-neutral-50;
+    }
   }
 
-  &__text {
-    @apply font-normal text-neutral;
+  &__label {
+    @apply min-w-0;
+
+    #{$left} & {
+      @apply order-first me-2;
+    }
+
+    #{$right} & {
+      @apply order-last ms-2;
+    }
+
+    #{$disabled} & {
+      @apply opacity-60;
+    }
+  }
+
+  &__details {
+    @apply min-w-full;
   }
 }
 </style>

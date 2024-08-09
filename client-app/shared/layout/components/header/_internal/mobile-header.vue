@@ -33,7 +33,10 @@
             <VcIcon class="text-primary" name="search" :size="28" />
           </button>
 
-          <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" class="px-1 py-2 xs:px-2">
+          <PushMessages
+            v-if="$cfg.push_messages_enabled && isAuthenticated && isPushMessagesActive"
+            class="px-1 py-2 xs:px-2"
+          >
             <template #trigger="{ totalCount, unreadCount }">
               <div class="relative">
                 <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
@@ -131,6 +134,7 @@ import { QueryParamName } from "@/core/enums";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -147,6 +151,7 @@ const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
+const { isActive: isPushMessagesActive } = usePushMessages();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

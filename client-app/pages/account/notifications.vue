@@ -9,7 +9,7 @@
         </VcBadge>
       </VcTypography>
 
-      <VcDropdownMenu placement="bottom-end">
+      <VcDropdownMenu placement="bottom-end" width="max-content">
         <template #trigger>
           <VcButton
             :aria-label="$t('common.buttons.toggle_dropdown')"

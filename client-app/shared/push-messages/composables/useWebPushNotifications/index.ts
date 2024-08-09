@@ -1,12 +1,12 @@
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { useUser } from "@/shared/account/composables/useUser";
 
-const MODULE_ID = "VirtoCommerce.PushMessages";
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 
 export function useWebPushNotifications() {
   async function init() {
-    const { hasModuleSettings } = useModuleSettings(MODULE_ID);
+    const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
     const { isAuthenticated } = useUser();
 
     if (isAuthenticated.value === false || !hasModuleSettings.value) {

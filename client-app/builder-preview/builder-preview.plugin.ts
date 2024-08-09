@@ -139,6 +139,7 @@ export default {
       switch (event.data.type) {
         case "changed":
         case "page":
+        case "swap":
         case "preview":
           await updatePreview(event.data, options);
           break;
