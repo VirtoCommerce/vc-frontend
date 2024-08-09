@@ -268,14 +268,11 @@ export function _useFullCart() {
 
   const { mutate: _changeItemsQuantity, loading: changeItemsQuantityLoading } =
     useChangeFullCartItemsQuantityMutation(cart);
-  const { add, overflowed: changeFullCartItemQuantityOverflowed } = useMutationBatcher(_changeItemsQuantity, {
+  const { add, overflowed: changeFullCartItemQuantityBatchedOverflowed } = useMutationBatcher(_changeItemsQuantity, {
     merge: getMergeStrategyUniqueBy("lineItemId"),
     maxLength: 2,
   });
-  /**
-   * description: Bulk, batched change cart items quantity. Uses {@link useMutationBatcher} under the hood.
-   */
-  async function changeItemsQuantity(lineItemId: string, quantity: number): Promise<void> {
+  async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
     await add({ command: { cartItems: [{ lineItemId, quantity }] } });
   }
 
@@ -426,8 +423,8 @@ export function _useFullCart() {
     refetch,
     forceFetch,
     changeItemQuantity,
-    changeItemsQuantity,
-    changeFullCartItemQuantityOverflowed,
+    changeItemQuantityBatched,
+    changeFullCartItemQuantityBatchedOverflowed,
     removeItems,
     validateCartCoupon,
     addCartCoupon,

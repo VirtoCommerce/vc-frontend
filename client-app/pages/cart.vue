@@ -32,8 +32,8 @@
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :selected-item-ids="selectedItemIds"
         :validation-errors="cart.validationErrors"
-        :disabled="changeFullCartItemsQuantityOverflowed"
-        @change:item-quantity="changeItemsQuantity($event.itemId, $event.quantity)"
+        :disabled="changeItemQuantityBatchedOverflowed"
+        @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
         @clear:cart="openClearCartModal"
@@ -188,8 +188,8 @@ const {
   allItemsAreDigital,
   forceFetch,
   refetch,
-  changeItemsQuantity,
-  changeFullCartItemsQuantityOverflowed,
+  changeItemQuantityBatched,
+  changeItemQuantityBatchedOverflowed,
   removeItems,
   toggleGift,
   openClearCartModal,
