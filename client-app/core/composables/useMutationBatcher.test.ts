@@ -2,13 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import { useMutationBatcher, getMergeStrategyUniqueBy } from "./useMutationBatcher";
 
-const mutationMock = (value: unknown) =>
-  new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(value);
-    }, DEFAULT_DEBOUNCE_IN_MS);
-  });
-
+const DUMMY_TEXT_ARGUMENTS = { data: "test" };
 const INITIAL_DELAY_MS = DEFAULT_DEBOUNCE_IN_MS;
 const SHORT_INITIAL_DELAY_MS = DEFAULT_DEBOUNCE_IN_MS / 2;
 const SIMULATED_REQUEST_DURATION_MS = DEFAULT_DEBOUNCE_IN_MS;
@@ -16,6 +10,13 @@ const TOTAL_PROCESSING_DELAY_MS = INITIAL_DELAY_MS + SIMULATED_REQUEST_DURATION_
 const MUTATION_OVERRIDE_OPTIONS = {
   context: { fetchOptions: { signal: expect.any(AbortSignal) } },
 };
+
+const mutationMock = (value: unknown) =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(value);
+    }, SIMULATED_REQUEST_DURATION_MS);
+  });
 
 const getTestArguments = (productId: string, quantity: number = 1) => ({
   command: { cartItems: [{ productId, quantity: quantity }] },
@@ -33,24 +34,24 @@ describe("useMutationBatcher", () => {
   it("should call one mutation after delay", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation);
-    add(getTestArguments("product_id_1"));
+    void add(DUMMY_TEXT_ARGUMENTS);
     expect(mutation).not.toBeCalled();
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
-    expect(mutation).toBeCalledWith(getTestArguments("product_id_1"), MUTATION_OVERRIDE_OPTIONS);
+    expect(mutation).toBeCalledWith(DUMMY_TEXT_ARGUMENTS, MUTATION_OVERRIDE_OPTIONS);
   });
 
   it("should return value from mutation", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation);
-    const promise = add({ data: "test" });
+    const promise = add(DUMMY_TEXT_ARGUMENTS);
     vi.advanceTimersByTime(TOTAL_PROCESSING_DELAY_MS);
-    expect(promise).resolves.toEqual({ data: "test" });
+    void expect(promise).resolves.toEqual(DUMMY_TEXT_ARGUMENTS);
   });
 
   it("should apply debounce option correctly", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation, { debounce: SHORT_INITIAL_DELAY_MS });
-    add(getTestArguments("product_id_1"));
+    void add(DUMMY_TEXT_ARGUMENTS);
     expect(mutation).not.toBeCalled();
     vi.advanceTimersByTime(SHORT_INITIAL_DELAY_MS);
     expect(mutation).toBeCalled();
@@ -60,11 +61,11 @@ describe("useMutationBatcher", () => {
     const abortSpy = vi.spyOn(AbortController.prototype, "abort");
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation);
-    add(getTestArguments("product_id_1"));
+    void add(DUMMY_TEXT_ARGUMENTS);
     await vi.advanceTimersByTimeAsync(INITIAL_DELAY_MS);
-    add(getTestArguments("product_id_2"));
+    void add(DUMMY_TEXT_ARGUMENTS);
     await vi.advanceTimersByTimeAsync(INITIAL_DELAY_MS);
-    add(getTestArguments("product_id_3"));
+    void add(DUMMY_TEXT_ARGUMENTS);
     expect(abortSpy).toBeCalledTimes(2);
   });
 
@@ -72,9 +73,9 @@ describe("useMutationBatcher", () => {
     const abortSpy = vi.spyOn(AbortController.prototype, "abort");
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add, overflowed } = useMutationBatcher(mutation, { maxLength: 1 });
-    add(getTestArguments("product_id_1"));
+    void add(DUMMY_TEXT_ARGUMENTS);
     await vi.advanceTimersByTimeAsync(INITIAL_DELAY_MS);
-    add(getTestArguments("product_id_2"));
+    void add(DUMMY_TEXT_ARGUMENTS);
     expect(overflowed.value).toBe(true);
     expect(abortSpy).toBeCalled();
   });
@@ -82,8 +83,8 @@ describe("useMutationBatcher", () => {
   it("should set correct overflowed state", async () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add, overflowed } = useMutationBatcher(mutation, { maxLength: 1 });
-    add(getTestArguments("product_id_1"));
-    add(getTestArguments("product_id_2"));
+    expect(overflowed.value).toBe(false);
+    void add(getTestArguments("product_id_1"));
     expect(overflowed.value).toBe(true);
     await vi.advanceTimersByTimeAsync(TOTAL_PROCESSING_DELAY_MS);
     expect(overflowed.value).toBe(false);
@@ -92,8 +93,8 @@ describe("useMutationBatcher", () => {
   it("should call mutation with batched arguments", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation);
-    add(getTestArguments("product_id_1"));
-    add(getTestArguments("product_id_1"));
+    void add(getTestArguments("product_id_1"));
+    void add(getTestArguments("product_id_1"));
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
     expect(mutation).toBeCalledWith(
       {
@@ -118,9 +119,9 @@ describe("useMutationBatcher", () => {
         return { command: { cartItems: [{ productId: itemB.productId, quantity: sum }] } };
       },
     });
-    add(getTestArguments("product_id_1"));
-    add(getTestArguments("product_id_1"));
-    add(getTestArguments("product_id_1"));
+    void add(getTestArguments("product_id_1"));
+    void add(getTestArguments("product_id_1"));
+    void add(getTestArguments("product_id_1"));
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
     expect(mutation).toBeCalledWith(
       {
@@ -139,14 +140,14 @@ describe("useMutationBatcher", () => {
       maxLength: 1,
     });
     const { add: add2, overflowed: overflowed2 } = useMutationBatcher(mutation2);
-    add1(getTestArguments("product_id_1"));
-    add1(getTestArguments("product_id_1"));
+    void add1(getTestArguments("product_id_1"));
+    void add1(getTestArguments("product_id_1"));
     expect(overflowed1.value).toBe(true);
     expect(overflowed2.value).toBe(false);
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
     expect(mutation1).toBeCalled();
     expect(mutation2).not.toBeCalled();
-    add2(getTestArguments("product_id_2"));
+    void add2(getTestArguments("product_id_2"));
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
     expect(mutation2).toBeCalled();
   });
