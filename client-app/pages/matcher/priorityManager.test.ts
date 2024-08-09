@@ -184,4 +184,14 @@ describe("getVisiblePreviewer", () => {
 
     expect(getVisiblePreviewer(test8)).toBe(null);
   });
+
+  it("returns slugContent if internal empty", () => {
+    const test9: PreviewerStateType[] = [
+      { id: "builderIo", priority: 3, state: "ready", isActive: true },
+      { id: "slugContent", priority: 2, state: "ready", isActive: true },
+      { id: "internal", priority: 1, state: "empty", isActive: true },
+    ];
+
+    expect(getVisiblePreviewer(test9)).toBe("slugContent");
+  });
 });

@@ -124,7 +124,10 @@ export function useProductFilters(options: {
   }
 
   function updateProductsFilters(newFilters: ProductsFiltersType): void {
-    productsFilters.value = newFilters;
+    productsFilters.value = {
+      ...newFilters,
+      facets: getSortedFacets(newFilters.facets),
+    };
   }
 
   function openBranchesModal(fromPopupSidebarFilter: boolean) {
@@ -167,6 +170,7 @@ export function useProductFilters(options: {
     hasSelectedFacets: computed(() => hasSelectedFacets()),
     isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
     isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
+    productsFilters: computed(() => productsFilters.value),
 
     // Mutated outside of composable
     localStorageBranches,
@@ -175,9 +179,7 @@ export function useProductFilters(options: {
     searchQueryParam,
     keywordQueryParam,
     facetsQueryParam,
-    // Need to be refactured
 
-    productsFilters: computed(() => productsFilters.value),
     applyFilters,
     hideFiltersSidebar,
     openBranchesModal,

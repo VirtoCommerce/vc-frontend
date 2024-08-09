@@ -10,7 +10,6 @@ export * from "./mutations/changeCartItemQuantity";
 export * from "./mutations/changeFullCartItemQuantity";
 export * from "./mutations/changeFullCartItemsQuantity";
 export * from "./mutations/changePurchaseOrderNumber";
-export * from "./mutations/changeSelectedCartItems";
 export * from "./mutations/changeShortCartItemQuantity";
 export * from "./mutations/clearCart";
 export * from "./mutations/mergeCart";
@@ -21,7 +20,6 @@ export * from "./mutations/removeShipment";
 export * from "./mutations/selectCartItems";
 export * from "./mutations/unselectCartItems";
 
-export * from "./queries/getCart";
 export * from "./queries/getFullCart";
 export * from "./queries/getShortCart";
 export * from "./queries/validateCoupon";
