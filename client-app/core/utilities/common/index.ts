@@ -121,7 +121,7 @@ export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
   return {};
 };
 
-type IterateeType<T> = keyof T | ((item: T) => unknown);
-export function uniqByLast<T>(arr: T[], iteratee: IterateeType<T>): T[] {
+export type UniqByLastIterateeType<T> = keyof T | ((item: T) => unknown);
+export function uniqByLast<T>(arr: T[], iteratee: UniqByLastIterateeType<T>): T[] {
   return uniqBy(arr.slice().reverse(), iteratee).reverse();
 }
