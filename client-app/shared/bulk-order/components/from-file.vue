@@ -4,7 +4,7 @@
       {{ $t("shared.bulk_order.from_file.title") }}
     </VcTypography>
     <VcWidget size="lg">
-      <div class="grid gap-4 md:grid-cols-[auto_290px]">
+      <div :class="{ 'grid gap-4 md:grid-cols-[auto_290px]': !processing }">
         <section v-if="processing">
           <p class="mb-3 text-sm">
             {{ $t("shared.bulk_order.from_file.processing.message") }}
