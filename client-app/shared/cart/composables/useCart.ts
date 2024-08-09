@@ -1,6 +1,8 @@
+import { ApolloError } from "@apollo/client/core";
 import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
+import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -29,7 +31,7 @@ import {
 import { useGoogleAnalytics } from "@/core/composables";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
-import { groupByVendor } from "@/core/utilities";
+import { groupByVendor, Logger } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
@@ -270,7 +272,14 @@ export function _useFullCart() {
     merge: getMergeStrategyUniqueBy("lineItemId"),
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
-    await add({ command: { cartItems: [{ lineItemId, quantity }] } });
+    try {
+      await add({ command: { cartItems: [{ lineItemId, quantity }] } });
+    } catch (error) {
+      if (error instanceof ApolloError && error.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
+      Logger.error(changeItemQuantityBatched.name, error);
+    }
   }
 
   const validateCouponLoading = ref(false);
