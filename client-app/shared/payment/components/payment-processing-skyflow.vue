@@ -63,8 +63,7 @@
 
     <div v-show="(newCardFormInitialized && !skyflowCards?.length) || addNewCardSelected">
       <div class="flex flex-col xl:flex-row">
-        <div ref="cardContainer" class="grow"></div>
-        <CardLabels class="mt-6" />
+        <div ref="cardContainer" class="md:w-2/3"></div>
       </div>
 
       <div class="mt-6 flex items-center">
@@ -103,7 +102,6 @@ import type CollectContainer from "skyflow-js/types/core/external/collect/collec
 import type CollectElement from "skyflow-js/types/core/external/collect/collect-element";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
-import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 interface IProps {
   order: CustomerOrderType;
