@@ -1,7 +1,9 @@
-import { mergeWith, uniqBy } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import mergeWith from "lodash/mergeWith";
 import { ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
+import { uniqByLast } from "../utilities/common";
 import type { FetchResult } from "@apollo/client/core";
 import type { MutateFunction } from "@vue/apollo-composable";
 
@@ -9,27 +11,29 @@ const DEFAULT_MAX_LENGTH = 10;
 
 /**
  * @description Default merge strategy for batched mutation parameters.
- * @note This function mutates the first argument! https://lodash.com/docs/4.17.15#mergeWith
  */
-function DEFAULT_MERGE_STRATEGY<TVariables>(a: TVariables, b: TVariables) {
-  mergeWith(a, b, (objValue, srcValue) => {
+function DEFAULT_MERGE_STRATEGY<TVariables>(a: TVariables, b: TVariables): TVariables {
+  const result = cloneDeep(a);
+  mergeWith(result, b, (objValue, srcValue) => {
     if (Array.isArray(objValue) && Array.isArray(srcValue)) {
       return objValue.concat(srcValue);
     }
   });
+  return result;
 }
 
 /**
  * @description Merge strategy to ensure unique items based on a key or function.
- * @note This function mutates the first argument! https://lodash.com/docs/4.17.15#mergeWith
  */
 export function getMergeStrategyUniqueBy<TVariables>(keyOrFn: string | ((...values: unknown[]) => unknown)) {
-  return (a: TVariables, b: TVariables) => {
-    mergeWith(a, b, (objValue, srcValue) => {
+  return (a: TVariables, b: TVariables): TVariables => {
+    const result = cloneDeep(a);
+    mergeWith(result, b, (objValue, srcValue) => {
       if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-        return uniqBy(objValue.concat(srcValue), keyOrFn);
+        return uniqByLast(objValue.concat(srcValue), keyOrFn);
       }
     });
+    return result;
   };
 }
 
@@ -52,7 +56,7 @@ export function useMutationBatcher<TData, TVariables>(
   options: {
     debounce?: number;
     maxLength?: number;
-    merge?: (a: TVariables, b: TVariables) => void;
+    merge?: (a: TVariables, b: TVariables) => TVariables;
   } = {},
 ) {
   const { debounce = DEFAULT_DEBOUNCE_IN_MS, maxLength = DEFAULT_MAX_LENGTH, merge = DEFAULT_MERGE_STRATEGY } = options;
@@ -65,7 +69,7 @@ export function useMutationBatcher<TData, TVariables>(
 
   async function add(args: TVariables): Promise<FetchResult<TData> | null> {
     clearPreviousDebounce();
-    merge(batch, args);
+    batch = merge(batch, args);
     calledCount += 1;
 
     if (calledCount >= maxLength) {

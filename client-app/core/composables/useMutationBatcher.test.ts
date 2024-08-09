@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
-import { useMutationBatcher } from "./useMutationBatcher";
+import { useMutationBatcher, getMergeStrategyUniqueBy } from "./useMutationBatcher";
 
 const mutationMock = (value: unknown) =>
   new Promise((resolve) => {
@@ -17,7 +17,9 @@ const MUTATION_OVERRIDE_OPTIONS = {
   context: { fetchOptions: { signal: expect.any(AbortSignal) } },
 };
 
-const getTestArguments = (productId: string) => ({ command: { cartItems: [{ productId, quantity: 1 }] } });
+const getTestArguments = (productId: string, quantity: number = 1) => ({
+  command: { cartItems: [{ productId, quantity: quantity }] },
+});
 
 describe("useMutationBatcher", () => {
   beforeEach(() => {
@@ -91,20 +93,81 @@ describe("useMutationBatcher", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation);
     add(getTestArguments("product_id_1"));
-    add(getTestArguments("product_id_2"));
-    add(getTestArguments("product_id_3"));
+    add(getTestArguments("product_id_1"));
     vi.advanceTimersByTime(INITIAL_DELAY_MS);
     expect(mutation).toBeCalledWith(
       {
         command: {
           cartItems: [
             { productId: "product_id_1", quantity: 1 },
-            { productId: "product_id_2", quantity: 1 },
-            { productId: "product_id_3", quantity: 1 },
+            { productId: "product_id_1", quantity: 1 },
           ],
         },
       },
       MUTATION_OVERRIDE_OPTIONS,
     );
+  });
+
+  it("should apply custom merge strategy", () => {
+    const mutation = vi.fn().mockImplementation(mutationMock);
+    const { add } = useMutationBatcher(mutation, {
+      merge: (a, b) => {
+        const itemA = a?.command?.cartItems?.[0];
+        const itemB = b?.command?.cartItems?.[0];
+        const sum = itemA?.productId === itemB.productId ? itemA.quantity + itemB.quantity : itemB.quantity;
+        return { command: { cartItems: [{ productId: itemB.productId, quantity: sum }] } };
+      },
+    });
+    add(getTestArguments("product_id_1"));
+    add(getTestArguments("product_id_1"));
+    add(getTestArguments("product_id_1"));
+    vi.advanceTimersByTime(INITIAL_DELAY_MS);
+    expect(mutation).toBeCalledWith(
+      {
+        command: {
+          cartItems: [{ productId: "product_id_1", quantity: 3 }],
+        },
+      },
+      MUTATION_OVERRIDE_OPTIONS,
+    );
+  });
+
+  it("should handle instances independently", () => {
+    const mutation1 = vi.fn().mockImplementation(mutationMock);
+    const mutation2 = vi.fn().mockImplementation(mutationMock);
+    const { add: add1, overflowed: overflowed1 } = useMutationBatcher(mutation1, {
+      maxLength: 1,
+    });
+    const { add: add2, overflowed: overflowed2 } = useMutationBatcher(mutation2);
+    add1(getTestArguments("product_id_1"));
+    add1(getTestArguments("product_id_1"));
+    expect(overflowed1.value).toBe(true);
+    expect(overflowed2.value).toBe(false);
+    vi.advanceTimersByTime(INITIAL_DELAY_MS);
+    expect(mutation1).toBeCalled();
+    expect(mutation2).not.toBeCalled();
+    add2(getTestArguments("product_id_2"));
+    vi.advanceTimersByTime(INITIAL_DELAY_MS);
+    expect(mutation2).toBeCalled();
+  });
+});
+
+describe("getMergeStrategyUniqueBy", () => {
+  it("should merge items with the same productId", () => {
+    const a = getTestArguments("product_id_1", 1);
+    const b = getTestArguments("product_id_1", 2);
+    const c = getTestArguments("product_id_2", 3);
+    const mergeStrategy = getMergeStrategyUniqueBy("productId");
+    const result = mergeStrategy(a, b);
+    expect(result).toEqual({ command: { cartItems: [{ productId: "product_id_1", quantity: 2 }] } });
+    const result2 = mergeStrategy(result, c);
+    expect(result2).toEqual({
+      command: {
+        cartItems: [
+          { productId: "product_id_1", quantity: 2 },
+          { productId: "product_id_2", quantity: 3 },
+        ],
+      },
+    });
   });
 });

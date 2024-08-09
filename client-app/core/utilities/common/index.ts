@@ -120,3 +120,10 @@ export const getLinkAttr = (link?: RouteLocationRaw): LinkAttrType => {
   }
   return {};
 };
+
+import uniqBy from "lodash/uniqBy";
+
+type Iteratee<T> = keyof T | ((item: T) => unknown);
+export function uniqByLast<T>(arr: T[], iteratee: Iteratee<T>): T[] {
+  return uniqBy(arr.slice().reverse(), iteratee).reverse();
+}
