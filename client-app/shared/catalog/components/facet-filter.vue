@@ -103,7 +103,7 @@
                   {{ item.label }}
                 </div>
                 <VcBadge class="facet-filter__item-count" variant="outline" size="sm" rounded color="secondary">{{
-                  item.count
+                  $n(item.count as number, "decimal")
                 }}</VcBadge>
               </div>
             </VcCheckbox>
