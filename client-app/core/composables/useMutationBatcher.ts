@@ -80,11 +80,9 @@ export function useMutationBatcher<TData, TVariables>(
         try {
           const result = await executeBatch();
           resolve(result);
-          if (calledCount >= maxLength) {
-            resetBatchState();
-          }
+          resetBatchState();
         } catch (error) {
-          if ((error as Error).name !== "AbortError") {
+          if ((error as Error).toString() !== (AbortReason.Explicit as string)) {
             reject(error);
           }
         }
