@@ -12,6 +12,7 @@ import {
   useAddOrUpdateCartPaymentMutation,
   useAddOrUpdateCartShipmentMutation,
   useChangeCartCommentMutation,
+  useChangeFullCartItemQuantityMutation,
   useChangeFullCartItemsQuantityMutation,
   useChangePurchaseOrderNumberMutation,
   useClearCartMutation,
@@ -259,13 +260,22 @@ export function _useFullCart() {
     );
   }
 
+  const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } =
+    useChangeFullCartItemQuantityMutation(cart);
+  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
+    await _changeItemQuantity({ command: { lineItemId, quantity } });
+  }
+
   const { mutate: _changeItemsQuantity, loading: changeItemsQuantityLoading } =
     useChangeFullCartItemsQuantityMutation(cart);
   const { add, overflowed: changeFullCartItemQuantityOverflowed } = useMutationBatcher(_changeItemsQuantity, {
     merge: getMergeStrategyUniqueBy("lineItemId"),
     maxLength: 2,
   });
-  async function changeItemQuantity(lineItemId: string, quantity: number): Promise<void> {
+  /**
+   * description: Bulk, batched change cart items quantity. Uses {@link useMutationBatcher} under the hood.
+   */
+  async function changeItemsQuantity(lineItemId: string, quantity: number): Promise<void> {
     await add({ command: { cartItems: [{ lineItemId, quantity }] } });
   }
 
@@ -416,6 +426,7 @@ export function _useFullCart() {
     refetch,
     forceFetch,
     changeItemQuantity,
+    changeItemsQuantity,
     changeFullCartItemQuantityOverflowed,
     removeItems,
     validateCartCoupon,
@@ -438,6 +449,7 @@ export function _useFullCart() {
         unselectCartItemsLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
+        changeItemQuantityLoading.value ||
         changeItemsQuantityLoading.value ||
         validateCouponLoading.value ||
         addCouponLoading.value ||
