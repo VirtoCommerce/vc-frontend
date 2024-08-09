@@ -25,7 +25,7 @@ function DEFAULT_MERGE_STRATEGY<TVariables>(a: TVariables, b: TVariables): TVari
 /**
  * @description Merge strategy to ensure unique items based on a key or function.
  */
-export function getMergeStrategyUniqueBy<TVariables>(keyOrFn: string | ((...values: unknown[]) => unknown)) {
+export function getMergeStrategyUniqueBy<TVariables>(keyOrFn: keyof TVariables | ((item: unknown) => unknown)) {
   return (a: TVariables, b: TVariables): TVariables => {
     const result = cloneDeep(a);
     mergeWith(result, b, (objValue, srcValue) => {
