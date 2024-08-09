@@ -1,8 +1,8 @@
 <template>
   <div>
-    <template v-if="products.length || loading">
+    <template v-if="products.length || fetchingProducts">
       <DisplayProducts
-        :loading="loading"
+        :loading="fetchingProducts"
         :view-mode="savedViewMode"
         :items-per-page="itemsPerPage"
         :products="products"
@@ -18,12 +18,12 @@
       </DisplayProducts>
 
       <VcInfinityScrollLoader
-        v-if="!loading && !Number(fixedProductsCount)"
-        :loading="loadingMore"
+        v-if="!fetchingProducts && !Number(fixedProductsCount)"
+        :loading="fetchingMoreProducts"
         distance="400"
         class="mt-8"
-        :is-page-limit-reached="page === PAGE_LIMIT"
-        @visible="loadMoreProducts"
+        :is-page-limit-reached="pageNumber === PAGE_LIMIT"
+        @visible="$emit('changePage', pageNumber++)"
       />
 
       <VcScrollTopButton />
@@ -45,9 +45,9 @@
 
       <template #button>
         <VcButton
-          v-if="isExistSelectedFacets || keywordQueryParam"
+          v-if="hasSelectedFacets || keywordQueryParam"
           prepend-icon="reset"
-          @click="resetFacetFiltersWithKeyword"
+          @click="$emit('resetFilterKeyword')"
         >
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
@@ -57,16 +57,12 @@
 </template>
 
 <script setup lang="ts">
-import { watchDebounced } from "@vueuse/core";
-import { computed, ref } from "vue";
-import { useRouteQueryParam, useGoogleAnalytics } from "@/core/composables";
+import { toRef } from "vue";
+import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { AddToCart } from "@/shared/cart";
-import { useCategory } from "@/shared/catalog/composables/useCategory";
-import { useProducts } from "@/shared/catalog/composables/useProducts";
 import type { Product } from "@/core/api/graphql/types";
-import type { ProductsSearchParamsType } from "@/shared/catalog";
 import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 
 const emit = defineEmits<IEmits>();
@@ -74,87 +70,35 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 interface IProps {
-  isExistSelectedFacets: boolean;
-  hasActiveFilters: boolean;
-  fixedProductsCount?: number;
-  savedViewMode: "grid" | "list";
-  itemsPerPage: number;
   cardType?: "full" | "short";
   columnsAmountDesktop?: string;
   columnsAmountTablet?: string;
-  searchParams: ProductsSearchParamsType;
+  fetchingMoreProducts: boolean;
+  fetchingProducts: boolean;
+  fixedProductsCount?: number;
+  hasActiveFilters: boolean;
+  hasSelectedFacets: boolean;
+  itemsPerPage: number;
+  pagesCount: number;
+  pageNumber: number;
+  products: Product[];
+  savedViewMode: "grid" | "list";
 }
 
 interface IEmits {
   (event: "resetFacetFilters"): void;
+  (event: "changePage", pageNumber: number): void;
+  (event: "selectProduct", product: Product): void;
+  (event: "resetFilterKeyword"): void;
 }
-
-const ga = useGoogleAnalytics();
-const { loading, loadingMore, products, fetchMoreProducts, pages, fetchProducts } = useProducts({
-  withFacets: true,
-});
-const { category: currentCategory } = useCategory();
 
 const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
   defaultValue: "",
 });
-const page = ref(1);
 
-async function loadMoreProducts() {
-  if (page.value === pages.value) {
-    return;
-  }
+const pageNumber = toRef(props, "pageNumber");
 
-  const nextPage = page.value + 1;
-
-  page.value = nextPage;
-
-  await fetchMoreProducts({
-    ...props.searchParams,
-    page: nextPage,
-  });
-
-  /**
-   * Send Google Analytics event for products on next page.
-   */
-  ga.viewItemList(products.value, {
-    item_list_id: `${currentCategory.value?.slug}_page_${nextPage}`,
-    item_list_name: `${currentCategory.value?.name} (page ${nextPage})`,
-  });
+function sendGASelectItemEvent(product: Product): void {
+  emit("selectProduct", product);
 }
-
-function sendGASelectItemEvent(product: Product) {
-  ga.selectItem(product);
-}
-
-function resetFacetFiltersWithKeyword() {
-  keywordQueryParam.value = "";
-  setTimeout(() => {
-    emit("resetFacetFilters");
-  }, 0);
-}
-
-async function loadProducts() {
-  page.value = 1;
-
-  await fetchProducts(props.searchParams);
-
-  /**
-   * Send Google Analytics event for products.
-   */
-  ga.viewItemList(products.value, {
-    item_list_id: currentCategory.value?.slug,
-    item_list_name: currentCategory.value?.name,
-  });
-}
-
-watchDebounced(
-  computed(() => JSON.stringify(props.searchParams)),
-  loadProducts,
-  {
-    immediate: true,
-    flush: "post",
-    debounce: 20,
-  },
-);
 </script>

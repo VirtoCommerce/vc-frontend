@@ -8,7 +8,7 @@
       :is-exist-selected-facets="hasSelectedFacets"
       :is-popup-sidebar-filter-dirty="isFiltersDirty"
       :popup-sidebar-filters="productsFilters"
-      :facets-loading="facetsLoading"
+      :facets-loading="fetchingFacets"
       :is-mobile="isMobile"
       :is-visible="isFiltersSidebarVisible"
       :loading="fetchingVariations"
@@ -104,14 +104,7 @@ import {
   getFilterExpression,
   getSortingExpression,
 } from "@/core/utilities";
-import {
-  useProduct,
-  useRelatedProducts,
-  useCategory,
-  ProductSidebar,
-  useProducts,
-  useProductFilters,
-} from "@/shared/catalog";
+import { useProduct, useRelatedProducts, useCategory, ProductSidebar, useProducts } from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
@@ -140,20 +133,12 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
 const {
-  loading: fetchingVariations,
+  fetchingProducts: fetchingVariations,
   products: variations,
-  pages: variationsPagesCount,
-  facetsLoading,
+  pagesCount: variationsPagesCount,
+  fetchingFacets,
   fetchProducts,
   getFacets,
-} = useProducts({
-  withFacets: true,
-});
-const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
-const template = useTemplate("product");
-const ga = useGoogleAnalytics();
-const { catalogBreadcrumb } = useCategory();
-const {
   hasSelectedFacets,
   isFiltersDirty,
   isFiltersSidebarVisible,
@@ -165,9 +150,14 @@ const {
   resetFacetFilters: _resetFacetFilters,
   showFiltersSidebar,
   updateProductsFilters,
-} = useProductFilters({
+} = useProducts({
+  withFacets: true,
   filtersDisplayOrder,
 });
+const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
+const template = useTemplate("product");
+const ga = useGoogleAnalytics();
+const { catalogBreadcrumb } = useCategory();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} status:hidden,visible`);
 const variationSortInfo = ref<ISortInfo>({

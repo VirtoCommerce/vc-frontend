@@ -1,7 +1,10 @@
 <template>
   <VcContainer
     ref="categoryComponentAnchor"
-    :class="{ 'polygon-neutral-bg': !products.length && !loading, '[--body-bg-color:transparent]': isTransparent }"
+    :class="{
+      'polygon-neutral-bg': !products.length && !fetchingProducts,
+      '[--body-bg-color:transparent]': isTransparent,
+    }"
   >
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
@@ -15,12 +18,12 @@
           :is-popup-sidebar-filter-dirty="isFiltersDirty"
           :popup-sidebar-filters="productsFilters"
           :is-horizontal-filters="isHorizontalFilters"
-          :facets-loading="facetsLoading"
+          :facets-loading="fetchingFacets"
           :is-mobile="isMobile"
           :is-visible="isFiltersSidebarVisible"
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
-          :loading="loading"
+          :loading="fetchingProducts"
           :hide-sorting="hideSorting"
           :hide-controls="hideControls"
           @hide-popup-sidebar="hideFiltersSidebar"
@@ -42,7 +45,7 @@
             <ProductsFilters
               :keyword="keywordQueryParam"
               :filters="productsFilters"
-              :loading="loading"
+              :loading="fetchingProducts"
               @change="applyFilters($event)"
             />
           </div>
@@ -73,11 +76,11 @@
             </span>
 
             <sup
-              v-if="!loading && !hideTotal && !fixedProductsCount"
+              v-if="!fetchingProducts && !hideTotal && !fixedProductsCount"
               class="-top-1 ml-2 whitespace-nowrap text-sm font-normal normal-case text-neutral lg:top-[-0.5em] lg:text-base"
             >
-              <b class="font-black">{{ total }}</b>
-              {{ $t("pages.catalog.products_found_message", total) }}
+              <b class="font-black">{{ totalProductsCount }}</b>
+              {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
             </sup>
           </VcTypography>
           <!-- View options - horizontal view -->
@@ -118,7 +121,7 @@
               v-model="sortQueryParam"
               text-field="name"
               value-field="id"
-              :disabled="loading"
+              :disabled="fetchingProducts"
               :items="PRODUCT_SORTING_LIST"
               class="w-0 grow lg:w-48"
               size="sm"
@@ -136,7 +139,7 @@
           <CategoryControls
             v-if="!hideControls && !isMobile && !isHorizontalFilters"
             v-model="localStorageInStock"
-            :loading="loading"
+            :loading="fetchingProducts"
             :saved-branches="localStorageBranches"
             @open-branches-modal="openBranchesModal"
           />
@@ -145,10 +148,10 @@
         <!-- Horizontal filters -->
         <CategoryHorizontalFilters
           v-if="isHorizontalFilters && !isMobile"
-          :facets-loading="facetsLoading"
+          :facets-loading="fetchingFacets"
           :keyword-query-param="keywordQueryParam"
           :sort-query-param="sortQueryParam"
-          :loading="loading || facetsLoading"
+          :loading="fetchingProducts || fetchingFacets"
           :filters="productsFilters"
           :hide-sorting="hideSorting"
           :hide-all-filters="hideSidebar"
@@ -187,16 +190,24 @@
 
         <!-- Products -->
         <CategoryProducts
-          :is-exist-selected-facets="hasSelectedFacets"
-          :has-active-filters="hasSelectedFacets || localStorageInStock || !!localStorageBranches.length"
-          :fixed-products-count="fixedProductsCount"
-          :saved-view-mode="savedViewMode"
-          :items-per-page="itemsPerPage"
           :card-type="cardType"
           :columns-amount-desktop="columnsAmountDesktop"
           :columns-amount-tablet="columnsAmountTablet"
+          :fetching-more-products="fetchingMoreProducts"
+          :fetching-products="fetchingProducts"
+          :fixed-products-count="fixedProductsCount"
+          :has-active-filters="hasSelectedFacets || localStorageInStock || !!localStorageBranches.length"
+          :has-selected-facets="hasSelectedFacets"
+          :items-per-page="itemsPerPage"
+          :pages-count="pagesCount"
+          :page-number="productsPageNumber"
+          :products="products"
+          :saved-view-mode="savedViewMode"
           :search-params="searchParams"
+          @change-page="changeProductsPage"
           @reset-facet-filters="resetFacetFilters"
+          @reset-filter-keyword="resetFilterKeyword"
+          @select-product="selectProduct"
         />
         <div class="text-center">
           <VcButton v-if="showButtonToDefaultView" class="my-8" color="primary" :to="{ query: { view: 'default' } }">
@@ -209,9 +220,16 @@
 </template>
 
 <script setup lang="ts">
-import { computedEager, useBreakpoints, useElementVisibility, useLocalStorage, whenever } from "@vueuse/core";
+import {
+  computedEager,
+  useBreakpoints,
+  useElementVisibility,
+  useLocalStorage,
+  watchDebounced,
+  whenever,
+} from "@vueuse/core";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
-import { useBreadcrumbs, useThemeContext } from "@/core/composables";
+import { useBreadcrumbs, useGoogleAnalytics, useThemeContext } from "@/core/composables";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { globals } from "@/core/globals";
 import {
@@ -225,10 +243,11 @@ import {
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
 import { useStickyFilters } from "@/shared/catalog/composables/useStickyFilters";
-import { useCategory, useProductFilters, useProducts } from "../composables";
+import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
 import ViewMode from "./view-mode.vue";
+import type { Product } from "@/core/api/graphql/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import CategoryControls from "@/shared/catalog/components/category/category-controls.vue";
 import CategoryHorizontalFilters from "@/shared/catalog/components/category/category-horizontal-filters.vue";
@@ -272,35 +291,46 @@ const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("lg");
 
 const { themeContext } = useThemeContext();
-const { getFacets, loading, facetsLoading, products, total } = useProducts({
-  withFacets: true,
-});
-const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
 const {
+  getFacets,
   facetsQueryParam,
+  fetchingMoreProducts,
+  fetchingProducts,
+  fetchingFacets,
   hasSelectedFacets,
   isFiltersDirty,
   isFiltersSidebarVisible,
   keywordQueryParam,
   localStorageBranches,
   localStorageInStock,
+  pagesCount,
+  products,
   productsFilters,
   searchQueryParam,
   sortQueryParam,
+  totalProductsCount,
+
   applyFilters: _applyFilters,
+  fetchProducts: _fetchProducts,
+  fetchMoreProducts,
   hideFiltersSidebar,
   openBranchesModal,
   removeFacetFilter,
   resetFacetFilters,
+  resetFilterKeyword,
   showFiltersSidebar,
   updateProductsFilters,
-} = useProductFilters({
+} = useProducts({
   filtersDisplayOrder,
   useQueryParams: true,
+  withFacets: true,
 });
+const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
+const ga = useGoogleAnalytics();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
+const productsPageNumber = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
@@ -308,6 +338,9 @@ const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeade
 const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 const isHorizontalFilters = computed(() => !isMobile.value && props.filtersOrientation === "horizontal");
+const hideViewModeSelector = computed(() => {
+  return props.viewMode && viewModes.includes(props.viewMode);
+});
 
 const contentElement = ref<HTMLElement | null>(null);
 const filtersElement = ref<HTMLElement | null>(null);
@@ -362,6 +395,43 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
   });
 }
 
+async function changeProductsPage(pageNumber: number): Promise<void> {
+  if (pageNumber === pagesCount.value) {
+    return;
+  }
+
+  productsPageNumber.value = pageNumber;
+
+  await fetchMoreProducts({
+    ...searchParams.value,
+    page: productsPageNumber.value,
+  });
+
+  /**
+   * Send Google Analytics event for products on next page.
+   */
+  ga.viewItemList(products.value, {
+    item_list_id: `${currentCategory.value?.slug}_page_${productsPageNumber.value}`,
+    item_list_name: `${currentCategory.value?.name} (page ${productsPageNumber.value})`,
+  });
+}
+
+async function fetchProducts(): Promise<void> {
+  await _fetchProducts(searchParams.value);
+
+  /**
+   * Send Google Analytics event for products.
+   */
+  ga.viewItemList(products.value, {
+    item_list_id: currentCategory.value?.slug,
+    item_list_name: currentCategory.value?.name,
+  });
+}
+
+function selectProduct(product: Product): void {
+  ga.selectItem(product);
+}
+
 whenever(() => !isMobile.value, hideFiltersSidebar);
 
 watch(
@@ -395,9 +465,15 @@ watch(props, ({ viewMode }) => {
   }
 });
 
-const hideViewModeSelector = computed(() => {
-  return props.viewMode && viewModes.includes(props.viewMode);
-});
+watchDebounced(
+  computed(() => JSON.stringify(searchParams.value)),
+  fetchProducts,
+  {
+    debounce: 20,
+    flush: "post",
+    immediate: true,
+  },
+);
 </script>
 
 <style scoped lang="scss">
