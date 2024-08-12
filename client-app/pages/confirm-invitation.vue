@@ -17,8 +17,6 @@
           :disabled="loading"
           :maxlength="64"
           class="mb-4"
-          type="text"
-          name="firstName"
           autocomplete="given-name"
           required
         />
@@ -32,8 +30,6 @@
           :disabled="loading"
           :maxlength="64"
           class="mb-4"
-          type="text"
-          name="lastName"
           autocomplete="family-name"
           required
         />
