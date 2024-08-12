@@ -21,6 +21,7 @@
         class="vc-line-item__checkbox"
         :name="$t('common.labels.toggle_vendor_select')"
         :disabled="disabled"
+        test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
 

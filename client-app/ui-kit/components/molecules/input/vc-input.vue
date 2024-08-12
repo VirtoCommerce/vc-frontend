@@ -46,6 +46,7 @@
         :aria-label="ariaLabel ?? label"
         :title="browserTooltip === 'enabled' ? message : ''"
         class="vc-input__input"
+        :data-test-id="testIdInput"
         @keydown="keyDown($event)"
         @click.prevent.stop="inputClick()"
       />
@@ -109,6 +110,7 @@ export interface IProps {
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
+  testIdInput?: string;
 }
 
 defineOptions({
