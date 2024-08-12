@@ -169,7 +169,7 @@ const {
   filtersDisplayOrder,
 });
 
-const variationsFilterExpression = ref(`productfamilyid:${productId.value} status:hidden,visible`);
+const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:variation`);
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
