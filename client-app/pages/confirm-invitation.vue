@@ -39,6 +39,7 @@
           :error="!!errors.email"
           class="mb-4"
           autocomplete="email"
+          name="email"
           required
           disabled
         />
