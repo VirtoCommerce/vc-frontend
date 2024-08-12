@@ -40,6 +40,7 @@
           class="mb-4"
           autocomplete="email"
           name="email"
+          type="email"
           required
           disabled
         />
