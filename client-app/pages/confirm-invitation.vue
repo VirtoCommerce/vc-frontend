@@ -17,7 +17,7 @@
           :disabled="loading"
           :maxlength="64"
           class="mb-4"
-          name="firstName"
+          type="text"
           autocomplete="given-name"
           required
         />
@@ -31,7 +31,7 @@
           :disabled="loading"
           :maxlength="64"
           class="mb-4"
-          name="lastName"
+          type="text"
           autocomplete="family-name"
           required
         />
@@ -42,9 +42,8 @@
           :message="errors.email"
           :error="!!errors.email"
           class="mb-4"
-          autocomplete="email"
-          name="email"
           type="email"
+          autocomplete="email"
           required
           disabled
         />
