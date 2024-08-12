@@ -57,10 +57,14 @@ export function useMutationBatcher<TData, TVariables extends object>(
   options: {
     debounce?: number;
     maxLength?: number;
-    merge?: (a: TVariables, b: TVariables) => TVariables;
+    mergeStrategy?: (a: TVariables, b: TVariables) => TVariables;
   } = {},
 ) {
-  const { debounce = DEFAULT_DEBOUNCE_IN_MS, maxLength = DEFAULT_MAX_LENGTH, merge = DEFAULT_MERGE_STRATEGY } = options;
+  const {
+    debounce = DEFAULT_DEBOUNCE_IN_MS,
+    maxLength = DEFAULT_MAX_LENGTH,
+    mergeStrategy: merge = DEFAULT_MERGE_STRATEGY,
+  } = options;
 
   const overflowed = ref(false);
   let abortController: AbortController | null = null;
