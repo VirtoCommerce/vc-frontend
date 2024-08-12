@@ -23,7 +23,7 @@
         distance="400"
         class="mt-8"
         :is-page-limit-reached="pageNumber === PAGE_LIMIT"
-        @visible="$emit('changePage', pageNumber++)"
+        @visible="$emit('changePage', ++pageNumber)"
       />
 
       <VcScrollTopButton />
