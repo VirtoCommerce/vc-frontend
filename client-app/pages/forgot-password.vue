@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <VcTypography tag="h1" class="mb-6 lg:mt-5">
+      <VcTypography tag="h1" class="mb-6">
         {{ $t("pages.forgot_password.header") }}
       </VcTypography>
 

@@ -101,6 +101,8 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "^/graphql": getProxy(process.env.APP_BACKEND_URL, { ws: true }),
         "^/(connect|revoke)/token": getProxy(process.env.APP_BACKEND_URL),
         "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
+        "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
+        "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
       },
     },
   };
