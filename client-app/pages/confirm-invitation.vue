@@ -9,7 +9,7 @@
 
       <form @submit="onSubmit">
         <VcInput
-          v-model.trim="firstName"
+          v-model="firstName"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :message="errors.firstName"
@@ -21,9 +21,9 @@
         />
 
         <VcInput
-          v-model.trim="lastName"
+          v-model="lastName"
           :label="$t('common.labels.last_name')"
-          :placeholder="$t('common.placeholders.first_name')"
+          :placeholder="$t('common.placeholders.last_name')"
           :message="errors.lastName"
           :error="!!errors.lastName"
           :disabled="loading"
@@ -38,8 +38,9 @@
           :message="errors.email"
           :error="!!errors.email"
           class="mb-4"
-          disabled
+          autocomplete="email"
           required
+          disabled
         />
 
         <div class="flex flex-col gap-x-6 gap-y-4 md:flex-row">
@@ -130,8 +131,8 @@ const token = useRouteQueryParam<string>("token");
 
 const schema = toTypedSchema(
   object({
-    firstName: string().required().max(64),
-    lastName: string().required().max(64),
+    firstName: string().trim().required().max(64),
+    lastName: string().trim().required().max(64),
     email: string().required().email(),
     password: string().required(),
     confirmPassword: string()
@@ -163,9 +164,9 @@ const onSubmit = handleSubmit(async (data) => {
     userId: userId.value,
     token: token.value,
     username: email.value,
-    firstName: data.firstName!,
-    lastName: data.lastName!,
-    password: data.password!,
+    firstName: data.firstName?.trim() || "",
+    lastName: data.lastName?.trim() || "",
+    password: data.password || "",
   });
 
   if (result.succeeded) {
