@@ -1,6 +1,6 @@
 <template>
   <TransitionRoot appear :show="isOpen" as="template">
-    <Dialog as="div" :initial-focus="getActiveElement()" @close="() => {}">
+    <Dialog as="div" :initial-focus="getActiveElement()" @close="!isPersistent && close()">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -10,7 +10,7 @@
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <DialogOverlay class="fixed inset-0 z-50 bg-neutral-900 opacity-30" />
+        <div class="fixed inset-0 z-50 bg-neutral-900 opacity-30" />
       </TransitionChild>
 
       <div
@@ -31,7 +31,7 @@
             leave-to="opacity-0 scale-95"
             @after-leave="$emit('close')"
           >
-            <div
+            <DialogPanel
               class="inline-block w-full overflow-hidden bg-additional-50 text-left transition-all sm:rounded-md sm:shadow-xl"
               :class="[
                 modalWidth,
@@ -69,7 +69,7 @@
                   </VcButton>
                 </slot>
               </div>
-            </div>
+            </DialogPanel>
           </TransitionChild>
         </div>
       </div>
@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { TransitionRoot, TransitionChild, Dialog, DialogOverlay, DialogTitle } from "@headlessui/vue";
+import { TransitionRoot, TransitionChild, Dialog, DialogTitle, DialogPanel } from "@headlessui/vue";
 import { computed, ref, watchSyncEffect } from "vue";
 
 interface IEmits {

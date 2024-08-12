@@ -26,6 +26,7 @@
         item-size="lg"
         class="lg:w-2/5"
         required
+        test-id-dropdown="shipping-method-select"
         @change="(value) => setShippingMethod(value)"
       >
         <template #placeholder>
