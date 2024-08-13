@@ -14,8 +14,6 @@
       :keyword="keywordQueryParam"
       :filters="popupSidebarFilters"
       :loading="loading || facetsLoading"
-      @change="$emit('updatePopupSidebarFilters', $event)"
-      @open-branches="$emit('openBranchesModal', true)"
     >
       <template #prepend="{ loading }">
         <div class="filters-popup-sidebar__container">
