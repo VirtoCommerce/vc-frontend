@@ -24,7 +24,7 @@
         <VcMenuItem
           v-for="item in searchedValues"
           :key="item.value"
-          size="xs"
+          size="sm"
           color="secondary"
           @click="handleFacetItemClick(item)"
         >
@@ -37,7 +37,7 @@
           </VcBadge>
         </VcMenuItem>
 
-        <VcMenuItem v-if="isNoResults" disabled>
+        <VcMenuItem v-if="isNoResults" size="sm" disabled>
           {{ $t("pages.catalog.no_facet_found_message") }}
         </VcMenuItem>
 
@@ -155,9 +155,9 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const SHOW_MORE_AMOUNT = 8;
 const SEARCH_FIELD_AMOUNT = 10;
-const ITEM_HEIGHT = 30;
+const ITEM_HEIGHT = 38;
 const MAX_ITEMS_VISIBLE = 14;
-const INNER_MARGIN = 16;
+const INNER_MARGIN = 0;
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -232,7 +232,8 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   &__container {
     --scrollbar-width: 0.875rem;
-    @apply relative overflow-y-auto pt-2;
+
+    @apply overflow-y-auto relative;
   }
 
   &__label {
