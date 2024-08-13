@@ -1,8 +1,15 @@
 <template>
   <!-- Collapsable mode -->
-  <VcWidget v-if="mode === 'collapsable'" class="facet-filter-w" size="xs" collapsible :title="facet.label" collapsed>
+  <VcWidget
+    v-if="mode === 'collapsable'"
+    class="facet-filter-widget"
+    size="xs"
+    collapsible
+    :title="facet.label"
+    collapsed
+  >
     <template #default-container>
-      <div v-if="searchFieldVisible" class="facet-filter-w__search">
+      <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
           v-model.trim="searchKeyword"
           size="sm"
@@ -13,32 +20,34 @@
         />
       </div>
 
-      <div class="facet-filter-w__container" :style="{ maxHeight }">
+      <div class="facet-filter-widget__container" :style="{ maxHeight }">
         <VcMenuItem
           v-for="item in searchedValues"
           :key="item.value"
           size="xs"
           color="secondary"
-          @click="() => handleFacetItemClick(item)"
+          @click="handleFacetItemClick(item)"
         >
-          <VcCheckbox v-model="item.selected" size="sm" :disabled="loading" @change="() => changeFacetValues()" />
+          <VcCheckbox v-model="item.selected" size="sm" :disabled="loading" @change="changeFacetValues" />
 
-          <span class="facet-filter-w__label">{{ item.label }}</span>
+          <span class="facet-filter-widget__label">{{ item.label }}</span>
 
           <VcBadge variant="outline" size="sm" rounded color="secondary">
             {{ item.count }}
           </VcBadge>
         </VcMenuItem>
 
-        <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
+        <VcMenuItem v-if="isNoResults" disabled>
+          {{ $t("pages.catalog.no_facet_found_message") }}
+        </VcMenuItem>
 
         <div v-if="isAnchorAdded" ref="fadeVisibilityAnchor"></div>
-        <div v-if="hasFade" class="facet-filter-w__fade"></div>
+        <div v-if="hasFade" class="facet-filter-widget__fade"></div>
       </div>
     </template>
 
     <template v-if="isShowMoreVisible" #footer-container>
-      <VcButtonSeeMoreLess v-model="isExpanded" class="facet-filter-w__more" />
+      <VcButtonSeeMoreLess v-model="isExpanded" class="facet-filter-widget__more" />
     </template>
   </VcWidget>
 
@@ -46,16 +55,16 @@
   <VcDropdownMenu
     v-if="mode === 'dropdown'"
     :offset-options="4"
-    class="facet-filter-dd"
+    class="facet-filter-dropdown"
     z-index="10"
     max-height="20rem"
     width="15rem"
     :dividers="false"
-    data-facet-filter
+    data-facet-filter-dropdown
   >
     <template #trigger="{ opened }">
       <VcButton
-        :class="['facet-filter-dd__trigger', { 'facet-filter-dd__trigger--opened': opened }]"
+        :class="['facet-filter-dropdown__trigger', { 'facet-filter-dropdown__trigger--opened': opened }]"
         size="sm"
         :color="hasSelected ? 'accent' : 'secondary'"
         variant="outline"
@@ -63,19 +72,19 @@
         {{ facet.label }}
 
         <template #append>
-          <span class="facet-filter-dd__append">
+          <span class="facet-filter-dropdown__append">
             <VcBadge v-if="hasSelected" size="sm" rounded color="info">
               {{ selectedFiltersCount }}
             </VcBadge>
 
-            <VcIcon v-else name="chevron-down" class="facet-filter-dd__arrow" />
+            <VcIcon v-else name="chevron-down" class="facet-filter-dropdown__arrow" />
           </span>
         </template>
       </VcButton>
     </template>
 
     <template #content="{ close }">
-      <div v-if="searchFieldVisible" class="facet-filter-dd__search">
+      <div v-if="searchFieldVisible" class="facet-filter-dropdown__search">
         <VcInput
           v-model.trim="searchKeyword"
           size="sm"
@@ -96,11 +105,22 @@
         truncate
         :active="item.selected"
         :title="item.label"
-        @click="() => handleFacetItemClick(item, close)"
+        @click="
+          handleFacetItemClick(item);
+          close();
+        "
       >
-        <VcCheckbox v-model="item.selected" :disabled="loading" @change="() => changeFacetValues(close)" @click.stop />
+        <VcCheckbox
+          v-model="item.selected"
+          :disabled="loading"
+          @change="
+            changeFacetValues();
+            close();
+          "
+          @click.stop
+        />
 
-        <div class="facet-filter-dd__label">
+        <div class="facet-filter-dropdown__label">
           {{ item.label }}
         </div>
 
@@ -146,20 +166,13 @@ const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`))
 
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 
-function changeFacetValues(close?: (() => void) | undefined): void {
+function changeFacetValues(): void {
   emit("update:facet", facet.value);
-  if (close) {
-    close();
-  }
 }
 
-function handleFacetItemClick(item: FacetValueItemType, close?: () => void): void {
+function handleFacetItemClick(item: FacetValueItemType): void {
   item.selected = !item.selected;
   changeFacetValues();
-
-  if (close) {
-    close();
-  }
 }
 
 watchEffect(() => {
@@ -200,8 +213,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 </script>
 
 <style lang="scss">
-//Widget classes
-.facet-filter-w {
+.facet-filter-widget {
   &__search {
     @apply p-3 border-b;
   }
@@ -232,8 +244,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   }
 }
 
-//Dropdown classes
-.facet-filter-dd {
+.facet-filter-dropdown {
   $opened: "";
 
   &__trigger {
