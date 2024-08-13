@@ -5321,6 +5321,7 @@ export type StoreResponseType = {
 export type StoreSettingsType = {
   /** Allow anonymous users to visit the store  */
   anonymousUsersAllowed: Scalars['Boolean']['output'];
+  authenticationTypes: Array<Maybe<Scalars['String']['output']>>;
   /** Allow anonymous users to create orders (XAPI) */
   createAnonymousOrderEnabled: Scalars['Boolean']['output'];
   /** Default "Selected for checkout" state for new line items and gifts */
