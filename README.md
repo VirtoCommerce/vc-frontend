@@ -227,3 +227,29 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
 implied.
+
+## Dependency Analysis
+
+### Bundle Size Analysis
+
+To examine the sizes of various chunks such as `vendor.js` or `index.js`, execute the following command:
+```
+yarn generate:bundle-map
+```
+The results will be located in the `artifacts` folder.
+
+### Visualizing the Dependency Graph
+
+To create a visual representation of the dependency graph, use the following command:
+```
+yarn generate:dependency-graph
+```
+**Note**: This command requires parameters to run successfully. For example:
+```
+yarn generate:dependency-graph client-app/main.ts client-app/shared/account/components/checkout-default-success-modal.vue
+```
+The generated graph will also be saved in the `artifacts` folder.
+
+### Troubleshooting
+
+If you encounter an error such as `dot command not found` on Windows, ensure that [Graphviz](https://graphviz.gitlab.io/download/) is installed on your system.
