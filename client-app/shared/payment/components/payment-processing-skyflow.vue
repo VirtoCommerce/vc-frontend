@@ -76,7 +76,13 @@
       </div>
 
       <div class="mt-6 flex items-center justify-center gap-4 md:justify-start">
-        <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="payWithNewCreditCard">
+        <VcButton
+          data-test-id="pay-now-button"
+          :disabled="hasInvalid"
+          :loading="loading"
+          class="shrink"
+          @click="payWithNewCreditCard"
+        >
           {{ $t("shared.payment.skyflow.pay_now_button") }}
         </VcButton>
       </div>

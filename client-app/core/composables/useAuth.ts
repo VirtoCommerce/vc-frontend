@@ -107,6 +107,18 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
+  async function externalSignInCallback(): Promise<void> {
+    const params = new URLSearchParams({
+      grant_type: "external_sign_in",
+      scope: "offline_access",
+    });
+
+    getTokenParams.value = params;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    await (getTokenRequest = getToken(true));
+  }
+
   async function refresh(organizationId?: string) {
     const params = new URLSearchParams({
       grant_type: "refresh_token",
@@ -168,6 +180,7 @@ function _useAuth() {
     errors,
     isAuthorizing,
     authorize,
+    externalSignInCallback,
     refresh,
     unauthorize,
 

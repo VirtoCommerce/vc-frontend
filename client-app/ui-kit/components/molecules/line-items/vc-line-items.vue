@@ -9,6 +9,7 @@
           :model-value="isAllItemsSelected"
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
+          test-id="vc-line-items-head-checkbox"
           @change="($event) => selectAllItems($event as boolean)"
         />
 

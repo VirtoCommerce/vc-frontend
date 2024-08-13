@@ -64,7 +64,7 @@ const { stack, close } = useNotifications();
     @apply top-0 bottom-auto right-4 w-80 empty:hidden;
   }
 
-  &__wrapper {
+  &__wrapper:not(:empty) {
     @apply space-y-2 p-3;
 
     @media (min-width: theme("screens.sm")) {
