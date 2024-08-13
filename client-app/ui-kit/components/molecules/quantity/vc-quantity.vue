@@ -13,6 +13,7 @@
     type="number"
     center
     truncate
+    test-id-input="vc-quantity-input"
     @keydown="onKeydown"
     @keyup.enter="changeQuantity"
     @input="onQuantityChanged"

@@ -21,6 +21,7 @@
       width="100%"
       :disabled="!enabled"
       disable-trigger-events
+      :data-test-id="testIdDropdown"
       @toggle="toggled"
     >
       <template #trigger="{ open, close, toggle }">
@@ -145,6 +146,7 @@ interface IProps {
   singleLineMessage?: boolean;
   multiple?: boolean;
   clearable?: boolean;
+  testIdDropdown?: string;
 }
 
 interface IEmits {
