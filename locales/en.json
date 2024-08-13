@@ -906,7 +906,13 @@
       "meta": {
         "title": "@:pages.sign_in.header"
       },
-      "header": "Sign in"
+      "header": "Sign in",
+      "divider_text": "Or",
+      "providers": {
+        "azure_ad": {
+          "button_text": "Sign in with Entra ID"
+        }
+      }
     },
     "sign_up": {
       "meta": {

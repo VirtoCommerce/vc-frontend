@@ -38,6 +38,7 @@
         :disabled="!isValidBankCard || disabled"
         :loading="loading"
         class="flex-1 md:order-first md:flex-none"
+        data-test-id="pay-now-button"
         @click="sendPaymentData"
       >
         {{ $t("shared.payment.authorize_net.pay_now_button") }}
