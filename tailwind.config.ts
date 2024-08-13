@@ -277,6 +277,10 @@ module.exports = {
     },
 
     extend: {
+      containers: {
+        xxs: "12rem", //192px
+      },
+
       spacing: {
         4.5: "1.125rem", //18px
         17: "4.25rem", //68px

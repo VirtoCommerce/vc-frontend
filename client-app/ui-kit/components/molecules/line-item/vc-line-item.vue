@@ -358,7 +358,11 @@ watchEffect(() => {
     }
 
     &:has(.vc-add-to-cart, * .vc-add-to-cart) {
-      @apply w-[13rem];
+      @apply w-full;
+
+      @container (width > theme("containers.xs")) {
+        @apply w-[13rem];
+      }
 
       @container (width > theme("containers.2xl")) {
         @apply w-[15.7rem];

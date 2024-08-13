@@ -42,7 +42,7 @@ import { sortBy } from "lodash";
 import { toRef } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { getPropertiesGroupedByName } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
+import { AddToCart } from "@/shared/common";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
 import type { Product, VariationType } from "@/core/api/graphql/types";

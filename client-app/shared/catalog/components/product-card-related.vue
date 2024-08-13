@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { getProductRoute } from "@/core/utilities";
-import { AddToCart } from "@/shared/cart";
+import { AddToCart } from "@/shared/common";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import type { Product } from "@/core/api/graphql/types";

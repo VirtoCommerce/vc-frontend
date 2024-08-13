@@ -1,26 +1,37 @@
 <template>
   <VcInput
     v-model.number="quantity"
-    :disabled="disabled"
-    :min="minQuantity"
-    :max="maxQuantity"
+    class="vc-add-to-cart"
+    size="sm"
+    type="number"
     :aria-label="$t('common.labels.product_quantity')"
+    :disabled="disabled"
+    :max="maxQuantity"
+    :min="minQuantity"
     single-line-message
     center
-    class="vc-add-to-cart"
-    type="number"
-    size="sm"
     @input="onChange"
     @blur="onFocusOut"
   >
     <template #append>
       <VcButton
+        class="vc-add-to-cart__icon-button"
+        :variant="isButtonOutlined ? 'outline' : 'solid'"
+        :loading="loading"
+        :disabled="disabled || !!errorMessage"
+        :title="buttonText"
+        :icon="icon"
+        size="sm"
+        @click.stop="$emit('update:cartItemQuantity', quantity!)"
+      />
+
+      <VcButton
+        class="vc-add-to-cart__text-button"
         :variant="isButtonOutlined ? 'outline' : 'solid'"
         :loading="loading"
         :disabled="disabled || !!errorMessage"
         :title="buttonText"
         size="sm"
-        class="vc-add-to-cart__button"
         truncate
         @click.stop="$emit('update:cartItemQuantity', quantity!)"
       >
@@ -67,6 +78,8 @@ const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 const buttonText = computed<string>(() =>
   props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
+
+const icon = computed<string>(() => (props.countInCart ? "refresh" : "cart"));
 
 const quantity = ref<number | undefined>();
 
@@ -125,10 +138,22 @@ watchEffect(async () => {
 
 <style lang="scss">
 .vc-add-to-cart {
-  @apply w-full;
+  @apply @container w-full;
 
-  &__button {
-    @apply w-28;
+  &__icon-button.vc-button {
+    @apply w-14;
+
+    @container (width > theme("containers.xxs")) {
+      @apply hidden;
+    }
+  }
+
+  &__text-button.vc-button {
+    @apply hidden;
+
+    @container (width > theme("containers.xxs")) {
+      @apply block w-28;
+    }
   }
 }
 </style>
