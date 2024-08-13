@@ -159,7 +159,7 @@ const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
 
-const variationsFilterExpression = ref(`productfamilyid:${productId.value} status:hidden,visible`);
+const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
