@@ -9,12 +9,7 @@
       </button>
     </template>
 
-    <ProductsFilters
-      show-common-filters
-      :keyword="keywordQueryParam"
-      :filters="popupSidebarFilters"
-      :loading="loading || facetsLoading"
-    >
+    <ProductsFilters :keyword="keywordQueryParam" :filters="popupSidebarFilters" :loading="loading || facetsLoading">
       <template #prepend="{ loading }">
         <div class="filters-popup-sidebar__container">
           <div v-if="!hideSorting && isHorizontalFilters" class="filters-popup-sidebar__sorting">
@@ -48,6 +43,7 @@
             class="filters-popup-sidebar__control"
             :model-value="!!popupSidebarFilters.branches.length"
             :disabled="loading"
+            :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
             @change="$emit('openBranchesModal', true)"
           >
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
