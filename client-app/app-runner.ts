@@ -71,7 +71,8 @@ export default async () => {
   )) as StoreResponseType;
 
   if (!store) {
-    throw new Error("Can't get store");
+    alert("Related store not found. Please contact your site administrator.");
+    throw new Error("Store not found. Check graphql request, GetStore query");
   }
 
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
