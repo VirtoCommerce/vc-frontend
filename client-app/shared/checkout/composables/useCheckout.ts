@@ -454,6 +454,7 @@ export function _useCheckout() {
       clearState();
 
       ga.placeOrder(placedOrder.value);
+      console.log("placedOrder.value", placedOrder.value);
 
       await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {
