@@ -38,7 +38,14 @@
                 :placeholder="$t('common.labels.select_product')"
                 text-field="name"
                 value-field="id"
+                @change="duplicateSkuItem.errors = undefined"
               />
+
+              <div v-if="duplicateSkuItem.errors?.length" class="text-danger">
+                <div v-for="error in duplicateSkuItem.errors" :key="error.errorCode">
+                  {{ $t(`validation_error.${error.errorCode}`) }}
+                </div>
+              </div>
             </td>
             <td class="text-center">
               {{ duplicateSkuItem.quantity }}
@@ -132,9 +139,17 @@ async function addDuplicateSkuItemsToCart(itemsToAdd: DuplicateSkuProductType[])
       }) as InputNewCartItemType,
   );
 
-  await addItemsToCart(productsToAdd);
+  const result = await addItemsToCart(productsToAdd);
 
   addingToCart.value = false;
+
+  if (result?.validationErrors?.length) {
+    duplicateSkuItems.value?.forEach((item) => {
+      item.errors = result.validationErrors.filter((error) => error.objectId === item.productId);
+    });
+
+    return;
+  }
 
   emit("confirm");
 }

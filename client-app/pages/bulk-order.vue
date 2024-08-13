@@ -89,8 +89,9 @@ async function addItems(items: InputNewBulkItemType[]) {
       component: AddToCartSkuErrorsModal,
       props: {
         errorItems: itemsWithErrors.value,
-        onConfirm(): void {
+        async onConfirm(): Promise<void> {
           closeAddToCartSkuErrorsModal();
+          await router.push({ name: "Cart" });
         },
       },
     });

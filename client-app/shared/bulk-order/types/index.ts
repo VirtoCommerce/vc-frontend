@@ -1,3 +1,5 @@
+import type { ValidationErrorType } from "@/core/api/graphql/types";
+
 export type DuplicateSkuProductType = {
   sku: string;
   productId?: string;
@@ -6,4 +8,5 @@ export type DuplicateSkuProductType = {
     name: string;
   }[];
   quantity: number;
+  errors?: ValidationErrorType[];
 };
