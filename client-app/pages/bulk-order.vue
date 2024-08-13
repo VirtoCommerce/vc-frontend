@@ -45,15 +45,13 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useShortCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
-import type { InputNewBulkItemType, InputNewCartItemType } from "@/core/api/graphql/types";
-import type { DuplicateSkuProductType } from "@/shared/bulk-order";
+import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 import type { OutputBulkItemType } from "@/shared/cart";
 import AddToCartSkuErrorsModal from "@/shared/bulk-order/components/add-to-cart-sku-errors-modal.vue";
 
 const router = useRouter();
 const { t } = useI18n();
 const { openModal } = useModal();
-const { addItemsToCart } = useShortCart();
 const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
 
 usePageHead({
@@ -87,20 +85,12 @@ async function addItems(items: InputNewBulkItemType[]) {
   itemsWithErrors.value = resultItems.filter((item) => !!item.errors?.length);
 
   if (itemsWithErrors.value?.length) {
-    openModal({
+    const closeAddToCartSkuErrorsModal = openModal({
       component: AddToCartSkuErrorsModal,
       props: {
         errorItems: itemsWithErrors.value,
-        async onConfirm(itemsToAdd: DuplicateSkuProductType[]) {
-          const productsToAdd = itemsToAdd.map(
-            (item) =>
-              ({
-                productId: item.productId,
-                quantity: item.quantity,
-              }) as InputNewCartItemType,
-          );
-
-          await addItemsToCart(productsToAdd);
+        onConfirm(): void {
+          closeAddToCartSkuErrorsModal();
         },
       },
     });

@@ -59,7 +59,12 @@
     </div>
 
     <template v-if="duplicateSkuItems?.length" #actions>
-      <VcButton :disabled="!isValid" class="mx-auto" @click="$emit('confirm', duplicateSkuItems)">
+      <VcButton
+        :disabled="!isValid || addingToCart"
+        :loading="addingToCart"
+        class="mx-auto"
+        @click="addDuplicateSkuItemsToCart(duplicateSkuItems)"
+      >
         {{ $t("common.buttons.add_items_to_cart") }}
       </VcButton>
     </template>
@@ -68,15 +73,17 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, toRef } from "vue";
+import { useShortCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import type { DuplicateSkuProductType } from "../types";
+import type { InputNewCartItemType } from "@/core/api/graphql/types";
 import type { OutputBulkItemType } from "@/shared/cart";
 
 interface IEmits {
-  (event: "confirm", items: DuplicateSkuProductType[]): void;
+  (event: "confirm"): void;
 }
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
@@ -85,15 +92,19 @@ interface IProps {
 }
 
 const { products, fetchProducts } = useProducts();
+const { addItemsToCart } = useShortCart();
 
 const PRODUCT_DUPLICATE_SKU_ID = "PRODUCT_DUPLICATE_SKU";
 
 const errorItems = toRef(props, "errorItems");
 
+const addingToCart = ref(false);
 const duplicateSkuItems = ref<DuplicateSkuProductType[]>();
 const otherErrorItems = ref<OutputBulkItemType[]>(
   errorItems.value.filter((item) => item.errors?.some((error) => error.errorCode !== PRODUCT_DUPLICATE_SKU_ID)),
 );
+
+const isValid = computed(() => duplicateSkuItems.value?.every((item) => !!item.productId));
 
 function getDuplicateProductIds(items: OutputBulkItemType[]): string[] {
   const productIds: string[] = [];
@@ -110,7 +121,23 @@ function getDuplicateProductIds(items: OutputBulkItemType[]): string[] {
   return [...new Set(productIds)];
 }
 
-const isValid = computed(() => duplicateSkuItems.value?.every((item) => !!item.productId));
+async function addDuplicateSkuItemsToCart(itemsToAdd: DuplicateSkuProductType[]): Promise<void> {
+  addingToCart.value = true;
+
+  const productsToAdd = itemsToAdd.map(
+    (item) =>
+      ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }) as InputNewCartItemType,
+  );
+
+  await addItemsToCart(productsToAdd);
+
+  addingToCart.value = false;
+
+  emit("confirm");
+}
 
 onMounted(async () => {
   const itemsWithDuplicateProducts = errorItems.value.filter((item) =>
