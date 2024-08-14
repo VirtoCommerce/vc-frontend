@@ -11,6 +11,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "preview": "vite preview",
     "dev:expose": "yarn dev --host",
     "build": "yarn validate && yarn build-only",
     "build:dev": "yarn build-only --mode=development",
