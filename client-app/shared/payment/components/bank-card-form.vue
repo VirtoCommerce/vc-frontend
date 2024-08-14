@@ -13,6 +13,7 @@
       minlength="12"
       maxlength="19"
       required
+      test-id-input="card-number-input"
       @update:model-value="updateValue($event)"
       @input="input"
     />
@@ -25,6 +26,7 @@
       :readonly="readonly"
       :disabled="disabled"
       required
+      test-id-input="card-holder-input"
       @input="input"
     />
 
@@ -45,6 +47,7 @@
         maxlength="7"
         class="basis-1/4"
         required
+        test-id-input="expiration-date-input"
         @input="input"
       />
 
@@ -66,6 +69,7 @@
         class="basis-1/4"
         hide-password-switcher
         required
+        test-id-input="security-code-input"
         @input="input"
         @keyup.enter="$emit('submit')"
       />

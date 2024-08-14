@@ -2,6 +2,7 @@ import { isDefined } from "@vueuse/core";
 import { intersection } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { ServerError } from "@/core/api/common";
+import { AbortReason } from "@/core/api/common/enums";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
 import type { ApolloClient } from "@apollo/client/core";
 import type { GraphQLErrors, NetworkError } from "@apollo/client/errors";
@@ -15,7 +16,10 @@ export function toServerError(
   networkError: NetworkError | undefined,
   graphQLErrors: GraphQLErrors | undefined,
 ): ServerError | undefined {
-  if (networkError || hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)) {
+  if (
+    (networkError && networkError.toString() !== (AbortReason.Explicit as string)) ||
+    hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)
+  ) {
     return ServerError.Unhandled;
   }
 
