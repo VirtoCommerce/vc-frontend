@@ -53,7 +53,7 @@ withDefaults(defineProps<IProps>(), {
   $error: "";
   $singleLine: "";
 
-  @apply flex mt-0.5 gap-2 min-h-[0.875rem] text-xs;
+  @apply flex mt-1 gap-2 min-h-[0.875rem] text-xs;
 
   &--error {
     $error: &;

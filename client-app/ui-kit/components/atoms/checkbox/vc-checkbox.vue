@@ -190,8 +190,8 @@ function change() {
     }
   }
 
-  &__details.vc-input-details {
-    @apply min-w-full mt-1;
+  &__details {
+    @apply min-w-full;
   }
 }
 </style>
