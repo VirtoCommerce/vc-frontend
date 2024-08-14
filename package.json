@@ -17,7 +17,6 @@
     "build:dev": "yarn build-only --mode=development",
     "build:watch": "yarn build-only --watch",
     "build-only": "vite build",
-    "compress": "vite-node --mode production scripts/compress-theme.ts --",
     "validate:types": "vue-tsc --build --force",
     "validate:dependencies": "depcruise client-app",
     "validate": "yarn validate:types && yarn validate:dependencies",
