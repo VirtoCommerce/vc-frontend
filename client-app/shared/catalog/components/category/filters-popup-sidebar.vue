@@ -147,7 +147,7 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   }
 
   &__container {
-    @apply space-y-5 mt-3 mb-4;
+    @apply space-y-5 mb-4;
   }
 
   &__sorting-label {
