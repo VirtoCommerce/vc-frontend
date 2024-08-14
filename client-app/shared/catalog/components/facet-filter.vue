@@ -33,7 +33,7 @@
           <span class="facet-filter-widget__label">{{ item.label }}</span>
 
           <VcBadge variant="outline" size="sm" rounded color="secondary">
-            {{ item.count }}
+            {{ $n(item.count as number, "decimal") }}
           </VcBadge>
         </VcMenuItem>
 
@@ -125,7 +125,7 @@
         </div>
 
         <VcBadge variant="outline" size="sm" rounded color="secondary">
-          {{ item.count }}
+          {{ $n(item.count as number, "decimal") }}
         </VcBadge>
       </VcMenuItem>
     </template>
