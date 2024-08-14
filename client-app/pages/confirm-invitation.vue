@@ -81,7 +81,7 @@
             color="danger"
             size="sm"
             variant="solid-light"
-            class="mb-4 text-xs"
+            class="my-4 text-xs"
             icon
           >
             {{ error }}
