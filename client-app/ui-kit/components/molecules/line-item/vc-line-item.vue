@@ -287,7 +287,11 @@ watchEffect(() => {
     }
 
     #{$removable} & {
-      @apply pr-10 md:pr-0;
+      @apply pr-10;
+
+      @container (width > theme("containers.2xl")) {
+        @apply pr-0;
+      }
     }
   }
 
@@ -361,11 +365,15 @@ watchEffect(() => {
     &:has(.vc-add-to-cart, * .vc-add-to-cart) {
       @apply w-full;
 
-      @container (width > theme("containers.xs")) {
-        @apply w-[13rem];
+      @container (width > theme("containers.md")) {
+        @apply w-72;
       }
 
       @container (width > theme("containers.2xl")) {
+        @apply w-48;
+      }
+
+      @container (width > theme("containers.3xl")) {
         @apply w-[15.7rem];
       }
     }

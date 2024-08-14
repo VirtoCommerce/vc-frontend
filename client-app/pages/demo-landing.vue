@@ -178,8 +178,8 @@ import { useElementVisibility } from "@vueuse/core";
 import { onMounted, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, usePageHead, useProductsRoutes } from "@/core/composables";
+import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
-import { AddToCart } from "@/shared/common";
 
 const { t } = useI18n();
 const { products, fetchProducts } = useProducts();

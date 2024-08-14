@@ -1,4 +1,5 @@
 <template>
+  <!-- @deprecated Replace VcInput with VcAddToCart https://virtocommerce.atlassian.net/browse/VCST-1657 -->
   <VcInput
     v-model.number="enteredQuantity"
     class="add-to-cart"
@@ -231,18 +232,8 @@ function onBlur() {
 .add-to-cart {
   @apply @container w-full flex-none;
 
-  /*
-  .vc-line-item__slot:has(&, * &) {
-    @apply w-[13rem];
-
-    @container (width > theme("containers.2xl")) {
-      @apply w-[15.7rem];
-    }
-  }
-  */
-
   &__icon-button.vc-button {
-    @apply w-14;
+    @apply w-24;
 
     @container (width > theme("containers.xxs")) {
       @apply hidden;
@@ -253,7 +244,7 @@ function onBlur() {
     @apply hidden;
 
     @container (width > theme("containers.xxs")) {
-      @apply block w-28;
+      @apply block w-32;
     }
   }
 }

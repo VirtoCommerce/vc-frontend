@@ -61,7 +61,7 @@ import { toRef } from "vue";
 import { useRouteQueryParam } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
-import { AddToCart } from "@/shared/common";
+import { AddToCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
 import DisplayProducts from "@/shared/catalog/components/display-products.vue";
 

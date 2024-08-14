@@ -49,8 +49,7 @@
 import { computed } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
-import { useShortCart } from "@/shared/cart";
-import { AddToCart } from "@/shared/common";
+import { AddToCart, useShortCart } from "@/shared/cart";
 import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";

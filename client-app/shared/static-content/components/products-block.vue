@@ -36,8 +36,8 @@
 <script setup lang="ts">
 import { watchEffect } from "vue";
 import { useProductsRoutes } from "@/core/composables";
+import { AddToCart } from "@/shared/cart";
 import { ProductCardGrid, useProducts } from "@/shared/catalog";
-import { AddToCart } from "@/shared/common";
 
 interface IProps {
   id?: string;

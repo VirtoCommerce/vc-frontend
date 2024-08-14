@@ -62,7 +62,7 @@ import { computed } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
-import { AddToCart } from "@/shared/common";
+import { AddToCart } from "@/shared/cart";
 import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import type { Product } from "@/core/api/graphql/types";

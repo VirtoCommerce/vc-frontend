@@ -141,7 +141,7 @@ watchEffect(async () => {
   @apply @container w-full;
 
   &__icon-button.vc-button {
-    @apply w-14;
+    @apply w-24;
 
     @container (width > theme("containers.xxs")) {
       @apply hidden;
@@ -152,7 +152,7 @@ watchEffect(async () => {
     @apply hidden;
 
     @container (width > theme("containers.xxs")) {
-      @apply block w-28;
+      @apply block w-32;
     }
   }
 }
