@@ -51,7 +51,7 @@ export function useFulfillmentCenters() {
           name: item.name,
           description: item.description,
           shortDescription: item.shortDescription,
-          address: `${line1}, ${city}, ${countryName} ${postalCode || ""}`,
+          address: `${line1}, ${city}, ${countryName} ${postalCode ?? ""}`,
           phone: phone,
         };
       });
