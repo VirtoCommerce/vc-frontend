@@ -112,7 +112,7 @@ describe("useMutationBatcher", () => {
   it("should apply custom merge strategy", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation, {
-      merge: (a, b) => {
+      mergeStrategy: (a, b) => {
         const itemA = a?.command?.cartItems?.[0];
         const itemB = b?.command?.cartItems?.[0];
         const sum = itemA?.productId === itemB.productId ? itemA.quantity + itemB.quantity : itemB.quantity;

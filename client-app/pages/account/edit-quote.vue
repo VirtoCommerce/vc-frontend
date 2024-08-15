@@ -44,7 +44,7 @@
 
       <!-- Quote products -->
       <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
-        <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
+        <QuoteLineItems :items="quote.items!" @update:item="onUpdateItem" @remove:item="onRemoveItem" />
       </VcWidget>
 
       <VcWidget :title="$t('pages.account.quote_details.shipping_address')" prepend-icon="truck" size="lg">
@@ -280,8 +280,8 @@ function accountAddressExists(address: AnyAddressType): boolean {
   return accountAddresses.value.some((item) => isEqualAddresses(item, address));
 }
 
-function onRemoveItem(item: QuoteItemType): void {
-  remove(quote.value!.items!, (i: QuoteItemType) => i.id === item.id);
+function onRemoveItem(itemId: string): void {
+  remove(quote.value!.items!, ({ id }) => id === itemId);
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
@@ -440,6 +440,13 @@ async function fetchAddresses(): Promise<void> {
 function onFileDownload(file: FileType) {
   if (file && file.url) {
     void downloadFile(file.url, file.name);
+  }
+}
+
+function onUpdateItem({ itemId, quantity }: { itemId: string; quantity: number }): void {
+  const item = quote.value!.items!.find(({ id }) => id === itemId);
+  if (item) {
+    item.selectedTierPrice!.quantity = quantity;
   }
 }
 
