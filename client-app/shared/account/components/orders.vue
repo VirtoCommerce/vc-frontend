@@ -508,9 +508,9 @@ onMounted(() => {
 
 watch(
   appliedFilterData,
-  () => {
+  async () => {
     page.value = 1;
-    void fetchOrders();
+    await fetchOrders();
   },
   { deep: true },
 );

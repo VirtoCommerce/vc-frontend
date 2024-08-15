@@ -128,7 +128,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
+import { asyncForEach, convertToType, isEqualAddresses, Logger } from "@/core/utilities";
 import { DEFAULT_QUOTE_FILES_SCOPE, QuoteLineItems, useUser, useUserAddresses } from "@/shared/account";
 import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { SelectAddressModal } from "@/shared/checkout";
@@ -422,7 +422,7 @@ async function submit(): Promise<void> {
 
   await submitQuote(quote.value!.id, comment.value || "");
 
-  void router.replace({ name: "Quotes" });
+  router.replace({ name: "Quotes" }).catch(Logger.error);
 }
 
 async function fetchAddresses(): Promise<void> {
@@ -437,9 +437,9 @@ async function fetchAddresses(): Promise<void> {
   }
 }
 
-function onFileDownload(file: FileType) {
+async function onFileDownload(file: FileType) {
   if (file && file.url) {
-    void downloadFile(file.url, file.name);
+    await downloadFile(file.url, file.name);
   }
 }
 
@@ -452,7 +452,7 @@ function onUpdateItem({ itemId, quantity }: { itemId: string; quantity: number }
 
 onMounted(() => {
   if (quote.value && quote.value.status !== "Draft") {
-    void router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } });
+    router.replace({ name: "ViewQuote", params: { quoteId: quote.value.id } }).catch(Logger.error);
   }
 });
 

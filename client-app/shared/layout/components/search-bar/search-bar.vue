@@ -138,7 +138,7 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
-import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
+import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice, Logger } from "@/core/utilities";
 import { useSearchBar } from "../../composables";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
@@ -276,7 +276,7 @@ function getSearchRoute(phrase: string): RouteLocationRaw {
 function goToSearchResultsPage() {
   if (trimmedSearchPhrase.value) {
     hideSearchDropdown();
-    void router.push(getSearchRoute(trimmedSearchPhrase.value));
+    router.push(getSearchRoute(trimmedSearchPhrase.value)).catch(Logger.error);
     ga.search(trimmedSearchPhrase.value, products.value, total.value);
   }
 }
@@ -286,15 +286,15 @@ function reset() {
   hideSearchDropdown();
 }
 
-const searchProductsDebounced = useDebounceFn(() => {
+const searchProductsDebounced = useDebounceFn(async () => {
   if (!isApplied.value) {
-    void searchAndShowDropdownResults();
+    await searchAndShowDropdownResults();
   }
 }, SEARCH_BAR_DEBOUNCE_TIME);
 
-function onSearchPhraseChanged() {
+async function onSearchPhraseChanged() {
   hideSearchDropdown();
-  void searchProductsDebounced();
+  await searchProductsDebounced();
 }
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
