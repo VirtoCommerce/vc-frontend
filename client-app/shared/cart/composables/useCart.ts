@@ -81,20 +81,10 @@ export function useShortCart() {
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
     const result = await _addBulkItemsToCart({ command: { cartItems: items } });
 
-    const cartFragment = result?.data?.addBulkItemsCart?.cart;
-
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
       quantity,
-      // Workaround as we don't know product IDs on bulk order
-      isAddedToCart: cartFragment?.items.some(
-        (item) =>
-          item.sku === productSku &&
-          !cartFragment?.validationErrors.some(
-            (error) =>
-              error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
-          ),
-      ),
+      errors: result?.data?.addBulkItemsCart?.errors?.filter((error) => error.objectId === productSku),
     }));
   }
 
