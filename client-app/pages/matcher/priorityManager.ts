@@ -7,7 +7,7 @@ export type PreviewerStateType = {
   isActive: boolean;
 };
 
-export function getVisiblePreviewer(previewers: PreviewerStateType[]): PreviewerStateType["id"] | "loader" | null {
+export function getVisiblePreviewer(previewers: PreviewerStateType[]): PreviewerStateType["id"] | null {
   const activeUnits = previewers
     .filter((el) => el.isActive && el.state !== "empty")
     .sort((a, b) => a.priority - b.priority);
