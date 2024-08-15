@@ -68,13 +68,9 @@
         />
         <div class="flex w-full grow space-x-6">
           <VcInput :placeholder="$t('pages.home.subscription_block.email_placeholder')" class="grow" no-border />
-          <!-- todo: use VcButton -->
-          <button
-            type="button"
-            class="h-11 rounded bg-additional-50 px-6 text-sm font-bold uppercase shadow-md hover:bg-neutral-200"
-          >
+          <VcButton variant="outline" min-width="8rem">
             {{ $t("pages.home.subscription_block.subscribe_button") }}
-          </button>
+          </VcButton>
         </div>
       </div>
     </div>
