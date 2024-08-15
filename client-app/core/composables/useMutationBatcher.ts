@@ -13,7 +13,7 @@ const DEFAULT_MAX_LENGTH = 10;
 /**
  * @description Default merge strategy for batched mutation parameters.
  */
-function DEFAULT_MERGE_STRATEGY<TVariables>(a: TVariables, b: TVariables): TVariables {
+function DEFAULT_MERGE_STRATEGY<TVariables extends object>(a: TVariables, b: TVariables): TVariables {
   const result = cloneDeep(a);
   mergeWith(result, b, (objValue, srcValue) => {
     if (Array.isArray(objValue) && Array.isArray(srcValue)) {
@@ -52,15 +52,19 @@ export function getMergeStrategyUniqueBy(keyOrFn: string | ((item: unknown) => u
  * const result = await add({ command { cartItems: [{ productId: "1", quantity: 1}] }});
  * ```
  */
-export function useMutationBatcher<TData, TVariables>(
+export function useMutationBatcher<TData, TVariables extends object>(
   mutation: MutateFunction<TData, TVariables>,
   options: {
     debounce?: number;
     maxLength?: number;
-    merge?: (a: TVariables, b: TVariables) => TVariables;
+    mergeStrategy?: (a: TVariables, b: TVariables) => TVariables;
   } = {},
 ) {
-  const { debounce = DEFAULT_DEBOUNCE_IN_MS, maxLength = DEFAULT_MAX_LENGTH, merge = DEFAULT_MERGE_STRATEGY } = options;
+  const {
+    debounce = DEFAULT_DEBOUNCE_IN_MS,
+    maxLength = DEFAULT_MAX_LENGTH,
+    mergeStrategy: merge = DEFAULT_MERGE_STRATEGY,
+  } = options;
 
   const overflowed = ref(false);
   let abortController: AbortController | null = null;
@@ -83,7 +87,7 @@ export function useMutationBatcher<TData, TVariables>(
           resolve(result);
           resetBatchState();
         } catch (error) {
-          if ((error as Error).toString() !== (AbortReason.Explicit as string)) {
+          if (error instanceof Error && error.toString() !== (AbortReason.Explicit as string)) {
             reject(error);
           }
         }
