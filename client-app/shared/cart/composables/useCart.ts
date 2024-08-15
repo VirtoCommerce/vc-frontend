@@ -1,6 +1,8 @@
+import { ApolloError } from "@apollo/client/core";
 import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
 import { computed, readonly, ref } from "vue";
+import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -13,6 +15,7 @@ import {
   useAddOrUpdateCartShipmentMutation,
   useChangeCartCommentMutation,
   useChangeFullCartItemQuantityMutation,
+  useChangeFullCartItemsQuantityMutation,
   useChangePurchaseOrderNumberMutation,
   useClearCartMutation,
   useGetFullCartQuery,
@@ -26,8 +29,9 @@ import {
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
+import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
-import { groupByVendor } from "@/core/utilities";
+import { groupByVendor, Logger } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
@@ -77,20 +81,10 @@ export function useShortCart() {
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
     const result = await _addBulkItemsToCart({ command: { cartItems: items } });
 
-    const cartFragment = result?.data?.addBulkItemsCart?.cart;
-
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
       quantity,
-      // Workaround as we don't know product IDs on bulk order
-      isAddedToCart: cartFragment?.items.some(
-        (item) =>
-          item.sku === productSku &&
-          !cartFragment?.validationErrors.some(
-            (error) =>
-              error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
-          ),
-      ),
+      errors: result?.data?.addBulkItemsCart?.errors?.filter((error) => error.objectId === productSku),
     }));
   }
 
@@ -262,6 +256,22 @@ export function _useFullCart() {
     await _changeItemQuantity({ command: { lineItemId, quantity } });
   }
 
+  const { mutate: _changeItemsQuantity, loading: changeItemsQuantityLoading } =
+    useChangeFullCartItemsQuantityMutation(cart);
+  const { add, overflowed: changeItemQuantityBatchedOverflowed } = useMutationBatcher(_changeItemsQuantity, {
+    mergeStrategy: getMergeStrategyUniqueBy("lineItemId"),
+  });
+  async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
+    try {
+      await add({ command: { cartItems: [{ lineItemId, quantity }] } });
+    } catch (error) {
+      if (error instanceof ApolloError && error.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
+      Logger.error(changeItemQuantityBatched.name, error);
+    }
+  }
+
   const validateCouponLoading = ref(false);
   async function validateCartCoupon(couponCode: string): Promise<boolean | undefined> {
     const { result, load: _validateCoupon } = useValidateCouponQuery(couponCode, cart.value?.id ?? "");
@@ -409,6 +419,8 @@ export function _useFullCart() {
     refetch,
     forceFetch,
     changeItemQuantity,
+    changeItemQuantityBatched,
+    changeItemQuantityBatchedOverflowed,
     removeItems,
     validateCartCoupon,
     addCartCoupon,
@@ -431,6 +443,7 @@ export function _useFullCart() {
         clearCartLoading.value ||
         removeItemsLoading.value ||
         changeItemQuantityLoading.value ||
+        changeItemsQuantityLoading.value ||
         validateCouponLoading.value ||
         addCouponLoading.value ||
         removeCouponLoading.value ||
