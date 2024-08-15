@@ -54,7 +54,7 @@ const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
 
   const translatedMenuLink = getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
 
-  if (translatedMenuLink && translatedMenuLink.children && mobileContactOrganizationsMenu.value) {
+  if (translatedMenuLink?.children && mobileContactOrganizationsMenu.value) {
     translatedMenuLink.children.splice(1, 0, mobileContactOrganizationsMenu.value);
   }
 
