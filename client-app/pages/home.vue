@@ -68,7 +68,7 @@
         />
         <div class="flex w-full grow space-x-6">
           <VcInput :placeholder="$t('pages.home.subscription_block.email_placeholder')" class="grow" no-border />
-          <VcButton variant="outline" min-width="8rem">
+          <VcButton variant="outline" min-width="8rem" class="shadow-md">
             {{ $t("pages.home.subscription_block.subscribe_button") }}
           </VcButton>
         </div>
