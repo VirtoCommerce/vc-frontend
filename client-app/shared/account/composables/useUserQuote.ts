@@ -47,8 +47,8 @@ export function useUserQuote() {
   }
 
   function setQuoteAddress(newAddress: QuoteAddressType): void {
-    remove(quote.value!.addresses!, (address: QuoteAddressType) => address.addressType === newAddress.addressType);
-    quote.value!.addresses!.push(newAddress);
+    remove(quote.value!.addresses, (address: QuoteAddressType) => address.addressType === newAddress.addressType);
+    quote.value!.addresses.push(newAddress);
   }
 
   async function fetchQuote(payload: QueryQuoteArgs): Promise<void> {
