@@ -28,7 +28,7 @@
           color="secondary"
           @click="handleFacetItemClick(item)"
         >
-          <VcCheckbox v-model="item.selected" size="sm" :disabled="loading" @change="changeFacetValues" />
+          <VcCheckbox v-model="item.selected" size="sm" :disabled="loading" @change="changeFacetValues" @click.stop />
 
           <span class="facet-filter-widget__label">{{ item.label }}</span>
 
