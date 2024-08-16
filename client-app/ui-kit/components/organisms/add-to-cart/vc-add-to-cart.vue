@@ -79,7 +79,7 @@ const buttonText = computed<string>(() =>
   props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
 
-const icon = computed<string>(() => (props.countInCart ? "refresh" : "cart"));
+const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
 
 const quantity = ref<number | undefined>();
 

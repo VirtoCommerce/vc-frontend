@@ -111,7 +111,7 @@ const maxQty = computed<number>(() =>
 
 const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
 
-const icon = computed<string>(() => (countInCart.value ? "refresh" : "cart"));
+const icon = computed<"refresh" | "cart">(() => (countInCart.value ? "refresh" : "cart"));
 
 const buttonText = computed<string>(() =>
   countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
