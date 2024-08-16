@@ -145,7 +145,7 @@ const attrs = computed(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .vc-button {
   --min-w: var(--vc-button-min-width, auto);
 
