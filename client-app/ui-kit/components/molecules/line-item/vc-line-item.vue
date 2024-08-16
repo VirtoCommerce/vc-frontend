@@ -362,7 +362,9 @@ watchEffect(() => {
       @apply w-[6.5rem];
     }
 
-    &:has(.vc-add-to-cart, * .vc-add-to-cart) {
+    // FIXME: remove ".add-to-cart, * .add-to-cart" after AddToCart refactoring
+    // https://virtocommerce.atlassian.net/browse/VCST-1657
+    &:has(.vc-add-to-cart, * .vc-add-to-cart, .add-to-cart, * .add-to-cart) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {
