@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
-const graphQLCodegenTypesConfig: CodegenConfig = {
+const services = ["client-app/**/push-messages/**/*.graphql"];
+
+const graphqlCodegenGeneralTypesConfig: CodegenConfig = {
   schema: `client-app/core/api/graphql/schema.json`,
-  documents: "client-app/**/*.(graphql|gql)",
+  documents: ["client-app/**/*.(graphql|gql)", ...services.map((el) => "!" + el)],
   generates: {
     "client-app/core/api/graphql/types.ts": {
       plugins: [
@@ -17,13 +19,6 @@ const graphQLCodegenTypesConfig: CodegenConfig = {
         "typed-document-node",
         "named-operations-object",
       ],
-    },
-    "client-app/": {
-      preset: "near-operation-file",
-      presetConfig: {
-        baseTypesPath: "core/api/graphql/types.ts",
-      },
-      plugins: ["typescript-operations", "typed-document-node"],
     },
   },
   config: {
@@ -58,7 +53,8 @@ const graphQLCodegenTypesConfig: CodegenConfig = {
     skipTypename: true,
     useTypeImports: true,
     skipGraphQLImport: true,
+    // documentsAsTypes: true,
   },
 };
 
-export default graphQLCodegenTypesConfig;
+export default graphqlCodegenGeneralTypesConfig;
