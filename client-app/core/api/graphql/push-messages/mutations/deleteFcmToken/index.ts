@@ -1,5 +1,5 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { DeleteFcmTokenDocument } from "@/core/api/graphql/types";
+import { DeleteFcmTokenDocument } from "../../types";
 
 export function useDeleteFcmToken() {
   return useMutation(DeleteFcmTokenDocument);

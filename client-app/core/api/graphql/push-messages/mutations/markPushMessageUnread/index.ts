@@ -1,6 +1,6 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { MarkPushMessageUnreadDocument, OperationNames, PushMessageFragmentDoc } from "@/core/api/graphql/types";
-import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
+import { MarkPushMessageUnreadDocument, OperationNames, PushMessageFragmentDoc } from "../../types";
+import type { GetPushMessagesQuery } from "../../types";
 
 export function useMarkPushMessageUnread(optimistic = true) {
   return useMutation(MarkPushMessageUnreadDocument, {

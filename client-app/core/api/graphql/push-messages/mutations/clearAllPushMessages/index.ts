@@ -1,7 +1,7 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { ClearAllPushMessagesDocument, OperationNames } from "@/core/api/graphql/types";
-import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
+import { ClearAllPushMessagesDocument, OperationNames } from "../../types";
+import type { GetPushMessagesQuery } from "../../types";
 
 export function useClearAllPushMessages() {
   const { client } = useApolloClient();

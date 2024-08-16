@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
-const services = ["client-app/**/push-messages/**/*.graphql"];
+// const services = ["client-app/**/push-messages/**/*.graphql"];
 
 const graphqlCodegenGeneralTypesConfig: CodegenConfig = {
   schema: `client-app/core/api/graphql/schema.json`,
-  documents: [...services],
+  documents: "client-app/core/api/graphql/push-messages/**/*.graphql",
   generates: {
-    "client-app/**/push-messages/types.ts": {
+    "client-app/core/api/graphql/push-messages/types.ts": {
       plugins: [
         {
           add: {
