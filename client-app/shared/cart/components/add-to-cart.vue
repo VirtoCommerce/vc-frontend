@@ -1,6 +1,9 @@
 <template>
+  <!-- @deprecated Replace VcInput with VcAddToCart https://virtocommerce.atlassian.net/browse/VCST-1657 -->
   <VcInput
     v-model.number="enteredQuantity"
+    class="add-to-cart"
+    size="sm"
     type="number"
     :aria-label="$t('common.labels.product_quantity')"
     :disabled="disabled"
@@ -12,21 +15,32 @@
     center
     show-empty-details
     select-on-click
-    size="sm"
-    class="add-to-cart"
     @input="onInput"
     @keypress="onKeypress"
     @blur="onBlur"
   >
     <template #append>
       <VcButton
+        class="add-to-cart__icon-button"
+        :variant="countInCart ? 'solid' : 'outline'"
+        :loading="loading"
+        :disabled="disabled || !!errorMessage"
+        :title="buttonText"
+        size="sm"
+        :icon="icon"
+        @click="onChange"
+      >
+        {{ buttonText }}
+      </VcButton>
+
+      <VcButton
+        class="add-to-cart__text-button"
         :variant="countInCart ? 'solid' : 'outline'"
         :loading="loading"
         :disabled="disabled || !!errorMessage"
         :title="buttonText"
         size="sm"
         truncate
-        class="add-to-cart__button"
         @click="onChange"
       >
         {{ buttonText }}
@@ -96,6 +110,8 @@ const maxQty = computed<number>(() =>
 );
 
 const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
+
+const icon = computed<"refresh" | "cart">(() => (countInCart.value ? "refresh" : "cart"));
 
 const buttonText = computed<string>(() =>
   countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
@@ -214,18 +230,22 @@ function onBlur() {
 
 <style lang="scss">
 .add-to-cart {
-  @apply w-full;
+  @apply @container w-full flex-none;
 
-  .vc-line-item__slot:has(&, * &) {
-    @apply w-[13rem];
+  &__icon-button.vc-button {
+    @apply w-24;
 
-    @container (width > theme("containers.2xl")) {
-      @apply w-[15.7rem];
+    @container (width > theme("containers.xxs")) {
+      @apply hidden;
     }
   }
 
-  &__button {
-    @apply w-28;
+  &__text-button.vc-button {
+    @apply hidden;
+
+    @container (width > theme("containers.xxs")) {
+      @apply block w-32;
+    }
   }
 }
 </style>
