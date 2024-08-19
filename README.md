@@ -115,9 +115,10 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .prettierignore                  // Ignore some files from Prettier.
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
-├── graphql-codegen.schema.config.ts // Configuration file to generate GraphQL schema.
-├── graphql-codegen.types.types.ts   // Configuration file to generate GraphQL types.
-├── graphql.config.json              // GraphQL configuration (https://the-guild.dev/graphql/config/docs) to use generated schema and types.
+├── graphql-codegen
+|   ├── schema.ts // Configuration file to generate GraphQL schema.
+|   ├── generator.ts // Generate types based on schema.json
+|   └── config.cjs // Environment configuration 
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
