@@ -1,4 +1,6 @@
+import { provideApolloClient } from "@vue/apollo-composable";
 import { computed, ref, toValue } from "vue";
+import { apolloClient } from "@/core/api/graphql";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
 import { useClearAllPushMessages } from "@/core/api/graphql/push-messages/mutations/clearAllPushMessages";
 import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesRead";
@@ -16,6 +18,8 @@ export interface IUsePushMessagesOptions {
   withHidden?: MaybeRef<boolean>;
   itemsPerPage?: MaybeRef<number>;
 }
+
+provideApolloClient(apolloClient);
 
 export function usePushMessages(options?: IUsePushMessagesOptions) {
   const { isAuthenticated } = useUser();
