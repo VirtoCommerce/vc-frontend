@@ -1,6 +1,14 @@
 import { generate } from "@graphql-codegen/cli";
 
-const services = ["client-app/**/push-messages/**/*.graphql"];
+const allModulesPath = "client-app/core/api/graphql";
+
+const independentModules = [
+  {
+    id: "PushMessages",
+    apiPath: "client-app/core/api/graphql/push-messages",
+    isInstalled: false,
+  },
+];
 
 const SCHEMA_PATH = "client-app/core/api/graphql/schema.json";
 
@@ -54,9 +62,12 @@ async function runCodegen() {
   await generate(
     {
       schema: SCHEMA_PATH,
-      documents: ["client-app/**/*.(graphql|gql)", ...services.map((el) => "!" + el)],
+      documents: [
+        addExtension(allModulesPath),
+        ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
+      ],
       generates: {
-        "client-app/core/api/graphql/types.ts": {
+        [`${allModulesPath}/types.ts`]: {
           plugins: GENERAL_PLUGINS,
           config: GENERAL_CONFIG,
         },
@@ -65,21 +76,32 @@ async function runCodegen() {
     true,
   );
 
-  await generate(
-    {
-      schema: SCHEMA_PATH,
-      documents: "client-app/**/push-messages/**/*.graphql",
-      generates: {
-        "client-app/core/api/graphql/push-messages/types.ts": {
-          plugins: GENERAL_PLUGINS,
-          config: GENERAL_CONFIG,
+  const installedIndependentModules = independentModules.filter((el) => el.isInstalled);
+
+  for (let i = 0; i < installedIndependentModules.length; i++) {
+    const module = independentModules[i];
+
+    await generate(
+      {
+        schema: SCHEMA_PATH,
+        documents: addExtension(module.apiPath),
+        generates: {
+          [`${module.apiPath}/types.ts`]: {
+            plugins: GENERAL_PLUGINS,
+            config: GENERAL_CONFIG,
+          },
         },
       },
-    },
-    true,
-  );
+      true,
+    );
+  }
 }
 
 runCodegen().catch((err) => {
+  // eslint-disable-next-line no-console
   console.error(err);
 });
+
+function addExtension(path: string): string {
+  return `${path}/**/*.(graphql|gql)`;
+}
