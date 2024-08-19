@@ -215,9 +215,9 @@ function print() {
   window.print();
 }
 
-watchEffect(async () => {
+watchEffect(() => {
   clearOrder();
-  await fetchFullOrder({ id: props.orderId });
+  void fetchFullOrder({ id: props.orderId });
 });
 </script>
 

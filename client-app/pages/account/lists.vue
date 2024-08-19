@@ -111,8 +111,8 @@ function openDeleteListModal(list: WishlistType) {
   });
 }
 
-async function setScope(listId: string, scope: WishlistScopeType) {
-  await updateWishlist({ listId, scope });
+function setScope(listId: string, scope: WishlistScopeType) {
+  void updateWishlist({ listId, scope });
 }
 
 fetchWishlists();

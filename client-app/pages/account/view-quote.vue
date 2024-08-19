@@ -194,7 +194,7 @@ function getFile(attachment: QuoteAttachmentType): IAttachedFile {
   };
 }
 
-async function onDownload(file: FileType) {
-  await downloadFile(file.url!, file.name);
+function onDownload(file: FileType) {
+  void downloadFile(file.url!, file.name);
 }
 </script>
