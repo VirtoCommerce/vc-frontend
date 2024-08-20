@@ -154,9 +154,9 @@
       @page-changed="changePage"
     >
       <template #mobile-item="itemData">
-        <div
-          class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
-          role="button"
+        <button
+          class="grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
+          type="button"
           tabindex="0"
           @click="goToOrderDetails(itemData.item)"
           @keyup.enter="goToOrderDetails(itemData.item)"
@@ -198,7 +198,7 @@
               {{ itemData.item.total?.formattedAmount }}
             </span>
           </div>
-        </div>
+        </button>
       </template>
 
       <template #mobile-skeleton>

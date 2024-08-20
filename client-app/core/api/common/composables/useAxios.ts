@@ -14,7 +14,7 @@ export const useAxios = (() => {
       await Promise.all(onRequest.value.map((intercept) => intercept(config.url!, config)));
       return config;
     },
-    (error: AxiosError | undefined) => {
+    (error: AxiosError) => {
       errorHandler(toServerError(error?.cause, undefined));
       return Promise.reject(error);
     },
@@ -25,7 +25,7 @@ export const useAxios = (() => {
       await Promise.all(onResponse.value.map((intercept) => intercept(response)));
       return response;
     },
-    (error: AxiosError | undefined) => {
+    (error: AxiosError) => {
       errorHandler(toServerError(error?.cause, error?.response?.status));
       return Promise.reject(error);
     },

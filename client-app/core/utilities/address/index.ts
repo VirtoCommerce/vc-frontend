@@ -2,7 +2,6 @@ import { clone, isEqual, pick } from "lodash";
 import type { AnyAddressType } from "../../types";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 
-// FIXME: https://virtocommerce.atlassian.net/browse/ST-5122
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const newAddress = clone(address) as Record<keyof MemberAddressType, any>;
