@@ -1,16 +1,15 @@
+import fs from "fs/promises";
 import { generate } from "@graphql-codegen/cli";
+import { SCHEMA_PATH } from "./schema";
 
 const allModulesPath = "client-app/core/api/graphql";
 
 const independentModules = [
   {
-    id: "PushMessages",
+    searchKey: "PushMessages",
     apiPath: "client-app/core/api/graphql/push-messages",
-    isInstalled: false,
   },
 ];
-
-const SCHEMA_PATH = "client-app/core/api/graphql/schema.json";
 
 const GENERAL_CONFIG = {
   dedupeFragments: true,
@@ -76,7 +75,9 @@ async function runCodegen() {
     true,
   );
 
-  const installedIndependentModules = independentModules.filter((el) => el.isInstalled);
+  const JSONString = await readJsonAndReturnString(SCHEMA_PATH);
+
+  const installedIndependentModules = independentModules.filter((el) => JSONString?.includes(el.searchKey));
 
   for (let i = 0; i < installedIndependentModules.length; i++) {
     const module = independentModules[i];
@@ -104,4 +105,17 @@ runCodegen().catch((err) => {
 
 function addExtension(path: string): string {
   return `${path}/**/*.(graphql|gql)`;
+}
+
+async function readJsonAndReturnString(filePath: string) {
+  try {
+    const data = await fs.readFile(filePath, "utf8");
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const jsonData = JSON.parse(data);
+    return JSON.stringify(jsonData);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("Error reading or parsing JSON:", err);
+    return null;
+  }
 }
