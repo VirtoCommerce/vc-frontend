@@ -1052,6 +1052,16 @@ export type FaviconType = {
   type?: Maybe<Scalars['String']['output']>;
 };
 
+export type FcmSettingsType = {
+  apiKey: Scalars['String']['output'];
+  appId: Scalars['String']['output'];
+  authDomain: Scalars['String']['output'];
+  messagingSenderId: Scalars['String']['output'];
+  projectId: Scalars['String']['output'];
+  storageBucket: Scalars['String']['output'];
+  vapidKey: Scalars['String']['output'];
+};
+
 export type FileUploadScopeOptionsType = {
   allowAnonymousUpload: Scalars['Boolean']['output'];
   allowedExtensions: Array<Maybe<Scalars['String']['output']>>;
@@ -1257,6 +1267,10 @@ export type InputAddCouponType = {
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
+};
+
+export type InputAddFcmTokenType = {
+  token: Scalars['String']['input'];
 };
 
 export type InputAddGiftItemsType = {
@@ -1760,6 +1774,10 @@ export type InputDeleteContactType = {
   contactId: Scalars['String']['input'];
 };
 
+export type InputDeleteFcmTokenType = {
+  token: Scalars['String']['input'];
+};
+
 export type InputDeleteMemberAddressType = {
   addresses: Array<InputMaybe<InputMemberAddressType>>;
   memberId: Scalars['String']['input'];
@@ -1813,6 +1831,14 @@ export type InputKeyValueType = {
 
 export type InputLockUnlockOrganizationContactType = {
   userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type InputMarkPushMessageReadType = {
+  messageId: Scalars['String']['input'];
+};
+
+export type InputMarkPushMessageUnreadType = {
+  messageId: Scalars['String']['input'];
 };
 
 export type InputMemberAddressType = {
@@ -2781,6 +2807,7 @@ export type Mutations = {
   addBulkItemsCart?: Maybe<BulkCartType>;
   addCartAddress?: Maybe<CartType>;
   addCoupon?: Maybe<CartType>;
+  addFcmToken?: Maybe<Scalars['Boolean']['output']>;
   addGiftItems?: Maybe<CartType>;
   addItem?: Maybe<CartType>;
   addItemsCart?: Maybe<CartType>;
@@ -2808,6 +2835,7 @@ export type Mutations = {
   changeQuoteComment?: Maybe<QuoteType>;
   changeQuoteItemQuantity?: Maybe<QuoteType>;
   changeWishlist?: Maybe<WishlistType>;
+  clearAllPushMessages?: Maybe<Scalars['Boolean']['output']>;
   clearCart?: Maybe<CartType>;
   clearPayments?: Maybe<CartType>;
   clearShipments?: Maybe<CartType>;
@@ -2824,6 +2852,7 @@ export type Mutations = {
   createWishlist?: Maybe<WishlistType>;
   declineQuoteRequest?: Maybe<QuoteType>;
   deleteContact?: Maybe<Scalars['Boolean']['output']>;
+  deleteFcmToken?: Maybe<Scalars['Boolean']['output']>;
   deleteFile?: Maybe<Scalars['Boolean']['output']>;
   deleteMemberAddresses?: Maybe<MemberType>;
   deleteQuoteAttachments?: Maybe<QuoteType>;
@@ -2832,6 +2861,10 @@ export type Mutations = {
   initializePayment?: Maybe<InitializePaymentResultType>;
   inviteUser?: Maybe<CustomIdentityResultType>;
   lockOrganizationContact?: Maybe<ContactType>;
+  markAllPushMessagesRead?: Maybe<Scalars['Boolean']['output']>;
+  markAllPushMessagesUnread?: Maybe<Scalars['Boolean']['output']>;
+  markPushMessageRead?: Maybe<Scalars['Boolean']['output']>;
+  markPushMessageUnread?: Maybe<Scalars['Boolean']['output']>;
   mergeCart?: Maybe<CartType>;
   moveWishlistItem?: Maybe<WishlistType>;
   /** @deprecated Obsolete. Use 'initializePayment' mutation */
@@ -2901,6 +2934,11 @@ export type MutationsAddCartAddressArgs = {
 
 export type MutationsAddCouponArgs = {
   command: InputAddCouponType;
+};
+
+
+export type MutationsAddFcmTokenArgs = {
+  command: InputAddFcmTokenType;
 };
 
 
@@ -3119,6 +3157,11 @@ export type MutationsDeleteContactArgs = {
 };
 
 
+export type MutationsDeleteFcmTokenArgs = {
+  command: InputDeleteFcmTokenType;
+};
+
+
 export type MutationsDeleteFileArgs = {
   command: DeleteFileCommandType;
 };
@@ -3156,6 +3199,16 @@ export type MutationsInviteUserArgs = {
 
 export type MutationsLockOrganizationContactArgs = {
   command: InputLockUnlockOrganizationContactType;
+};
+
+
+export type MutationsMarkPushMessageReadArgs = {
+  command: InputMarkPushMessageReadType;
+};
+
+
+export type MutationsMarkPushMessageUnreadArgs = {
+  command: InputMarkPushMessageUnreadType;
 };
 
 
@@ -4307,6 +4360,34 @@ export enum PropertyValueTypes {
   ShortText = 'SHORT_TEXT'
 }
 
+/** A connection from an object to a list of objects of type `PushMessage`. */
+export type PushMessageConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<PushMessageEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<PushMessageType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `PushMessage`. */
+export type PushMessageEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<PushMessageType>;
+};
+
+export type PushMessageType = {
+  createdDate: Scalars['DateTime']['output'];
+  id: Scalars['String']['output'];
+  isHidden: Scalars['Boolean']['output'];
+  isRead: Scalars['Boolean']['output'];
+  shortMessage: Scalars['String']['output'];
+};
+
 export type Query = {
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
@@ -4322,6 +4403,7 @@ export type Query = {
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
+  fcmSettings?: Maybe<FcmSettingsType>;
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
@@ -4345,6 +4427,7 @@ export type Query = {
   products?: Maybe<ProductConnection>;
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
+  pushMessages?: Maybe<PushMessageConnection>;
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
   quotes?: Maybe<QuoteConnection>;
@@ -4665,6 +4748,17 @@ export type QueryPropertiesArgs = {
 export type QueryPropertyArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
+};
+
+
+export type QueryPushMessagesArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  unreadOnly?: InputMaybe<Scalars['Boolean']['input']>;
+  withHidden?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -5260,6 +5354,7 @@ export type SubmitQuoteCommandType = {
 
 export type Subscriptions = {
   ping?: Maybe<Scalars['String']['output']>;
+  pushMessageCreated: PushMessageType;
 };
 
 export type TaxDetailType = {

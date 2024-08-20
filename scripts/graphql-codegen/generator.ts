@@ -6,6 +6,7 @@ const allModulesPath = "client-app/core/api/graphql";
 
 const independentModules = [
   {
+    name: "PushMessages",
     searchKey: "PushMessages",
     apiPath: "client-app/core/api/graphql/push-messages",
   },
@@ -58,6 +59,9 @@ const GENERAL_PLUGINS = [
 ];
 
 async function runCodegen() {
+  // eslint-disable-next-line no-console
+  console.log("\nGenerate types for general modules:");
+  const typesPath = `${allModulesPath}/types.ts`;
   await generate(
     {
       schema: SCHEMA_PATH,
@@ -66,7 +70,7 @@ async function runCodegen() {
         ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
       ],
       generates: {
-        [`${allModulesPath}/types.ts`]: {
+        [typesPath]: {
           plugins: GENERAL_PLUGINS,
           config: GENERAL_CONFIG,
         },
@@ -74,20 +78,27 @@ async function runCodegen() {
     },
     true,
   );
+  // eslint-disable-next-line no-console
+  console.log(`Types for general modules have been generated in "${typesPath}"`);
 
   const JSONString = await readJsonAndReturnString(SCHEMA_PATH);
 
   const installedIndependentModules = independentModules.filter((el) => JSONString?.includes(el.searchKey));
 
+  if (installedIndependentModules.length) {
+    // eslint-disable-next-line no-console
+    console.log("\nGenerate types for independent modules:");
+  }
+
   for (let i = 0; i < installedIndependentModules.length; i++) {
     const module = independentModules[i];
-
+    const moduleTypesPath = `${module.apiPath}/types.ts`;
     await generate(
       {
         schema: SCHEMA_PATH,
         documents: addExtension(module.apiPath),
         generates: {
-          [`${module.apiPath}/types.ts`]: {
+          [moduleTypesPath]: {
             plugins: GENERAL_PLUGINS,
             config: GENERAL_CONFIG,
           },
@@ -95,6 +106,8 @@ async function runCodegen() {
       },
       true,
     );
+    // eslint-disable-next-line no-console
+    console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"`);
   }
 }
 
