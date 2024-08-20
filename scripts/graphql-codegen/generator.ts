@@ -4,7 +4,13 @@ import { SCHEMA_PATH } from "./schema";
 
 const allModulesPath = "client-app/core/api/graphql";
 
-const independentModules = [
+type ModuleType = {
+  name: string;
+  searchKey: string;
+  apiPath: string;
+};
+
+const independentModules: ModuleType[] = [
   {
     name: "PushMessages",
     searchKey: "PushMessages",
@@ -67,6 +73,7 @@ async function runCodegen() {
       schema: SCHEMA_PATH,
       documents: [
         addExtension(allModulesPath),
+        // exclude independent modules from general modules
         ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
       ],
       generates: {

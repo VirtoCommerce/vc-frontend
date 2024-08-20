@@ -116,9 +116,9 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
 ├── graphql-codegen
-|   ├── schema.ts // Configuration file to generate GraphQL schema.
-|   ├── generator.ts // Generate types based on schema.json
-|   └── config.cjs // Environment configuration 
+|   ├── schema.ts                    // Configuration file to generate GraphQL schema.
+|   ├── generator.ts                 // Generate types based on schema.json
+|   └── config.cjs                   // Environment configuration 
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
@@ -214,20 +214,17 @@ yarn build:watch
 yarn compress
 ```
 
-## License
+## Types generation
 
-Copyright (c) Virtosoftware Ltd. All rights reserved.
+Command:
+```
+yarn generate:graphql
+```
+makes two steps:
+1. Downloads `schema.json` from GraphQL server located at the `APP_BACKEND_URL`
+2. Generates the `types.ts` file separately for general modules and independent modules.
 
-Licensed under the Virto Commerce Open Software License (the "License"); you
-may not use this file except in compliance with the License. You may
-obtain a copy of the License at
-
-[https://virtocommerce.com/opensourcelicense](https://virtocommerce.com/opensourcelicense)
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-implied.
+If independent modules are not installed on `The Platform`, types can still be safely generated.
 
 ## Dependency Analysis
 
@@ -254,3 +251,18 @@ The generated graph will also be saved in the `artifacts` folder.
 ### Troubleshooting
 
 If you encounter an error such as `dot command not found` on Windows, ensure that [Graphviz](https://graphviz.gitlab.io/download/) is installed on your system.
+
+## License
+
+Copyright (c) Virtosoftware Ltd. All rights reserved.
+
+Licensed under the Virto Commerce Open Software License (the "License"); you
+may not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+[https://virtocommerce.com/opensourcelicense](https://virtocommerce.com/opensourcelicense)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied.
