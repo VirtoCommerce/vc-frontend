@@ -221,3 +221,21 @@ jobs:
             export PARAMETER_NAME=$(echo "themes.${{ matrix.store }}" | xargs)
             export PARAMETER_VALUE=$(echo "${{ needs.ci.outputs.artifactUrl }}" | xargs)
             echo "vc-build CloudEnvSetParameter -EnvironmentName ${{ env.ARGO_APP_NAME }} -CloudToken ${{ secrets.VCST_PLATFORM_TOKEN }} -HelmParameters $PARAMETER_NAME=$PARAMETER_VALUE"
+
+  createPR:
+    # if: ${{ github.ref == 'refs/heads/dev' && github.event_name == 'pull_request' }}
+    if: ${{ github.ref == 'refs/heads/VCST-1573' }}
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create deploy step
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+        with:
+            deployRepo: "vc-deploy-dev"
+            deployBranch: "vcst-qa"
+            artifactKey: "URL"
+            artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
+            taskNumber: "${{ needs.ci.outputs.jira-keys }}"
+            githubToken: ${{ secrets.REPO_TOKEN }}
+            cmPath: "theme/artifact.json"
