@@ -79,9 +79,6 @@ withDefaults(defineProps<IProps>(), {
       }
     }
 
-    #{$padding}#{$border} & {
-    }
-
     #{$grid} & {
       @apply items-center;
 
