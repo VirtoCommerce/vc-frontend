@@ -284,7 +284,6 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
 }
 
 function openDeleteProductModal(values: string[]): void {
-  // FIXME: Make wishlist items selectable and support multiple removal
   const item = list.value?.items?.find((i) => values.includes(i.id));
 
   if (item) {
