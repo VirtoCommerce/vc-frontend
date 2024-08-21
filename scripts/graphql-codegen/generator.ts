@@ -97,25 +97,31 @@ async function runCodegen() {
     console.log("\nGenerate types for independent modules:");
   }
 
-  for (let i = 0; i < installedIndependentModules.length; i++) {
-    const module = independentModules[i];
-    const moduleTypesPath = `${module.apiPath}/types.ts`;
-    await generate(
-      {
-        schema: SCHEMA_PATH,
-        documents: addExtension(module.apiPath),
-        generates: {
-          [moduleTypesPath]: {
-            plugins: GENERAL_PLUGINS,
-            config: GENERAL_CONFIG,
+  await Promise.allSettled(
+    installedIndependentModules.map(async (module) => {
+      const moduleTypesPath = `${module.apiPath}/types.ts`;
+      try {
+        await generate(
+          {
+            schema: SCHEMA_PATH,
+            documents: addExtension(module.apiPath),
+            generates: {
+              [moduleTypesPath]: {
+                plugins: GENERAL_PLUGINS,
+                config: GENERAL_CONFIG,
+              },
+            },
           },
-        },
-      },
-      true,
-    );
-    // eslint-disable-next-line no-console
-    console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"`);
-  }
+          true,
+        );
+        // eslint-disable-next-line no-console
+        console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"`);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error(`Error during types generation for "${module.name} module"`, err);
+      }
+    }),
+  );
 }
 
 runCodegen().catch((err) => {
