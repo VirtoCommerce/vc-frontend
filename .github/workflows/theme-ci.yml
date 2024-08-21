@@ -258,7 +258,7 @@ jobs:
         uses: VirtoCommerce/vc-github-actions/get-artifact-link@master
         id: artifactLink
         with:
-          downloadComment: 'Artifact URL:'
+          downloadComment: "Artifact URL:"
 
       - name: Create deploy PR in QA
         # if: github.event.action != 'closed' && contains(github.event.pull_request.labels.*.name, 'deploy-qa')
