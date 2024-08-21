@@ -71,6 +71,10 @@ export const cache = new InMemoryCache({
     Query: {
       fields: {
         pushMessages: {
+          keyArgs: (args) =>
+            args?.after
+              ? ["withHidden", "unreadOnly", "after", "first", "cultureName"]
+              : ["withHidden", "unreadOnly", "after", "first"],
           merge(existing, incoming) {
             return { ...existing, ...incoming };
           },
