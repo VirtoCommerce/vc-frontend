@@ -21,13 +21,13 @@ export interface IUsePushMessagesOptions {
 
 provideApolloClient(apolloClient);
 
-export function usePushMessages(options?: IUsePushMessagesOptions) {
-  const { isAuthenticated } = useUser();
-  const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+const { isAuthenticated } = useUser();
+const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+const isActive = computed(() => hasModuleSettings.value && isAuthenticated.value);
 
-  if (!hasModuleSettings.value || !isAuthenticated.value) {
+function usePushMessages(options?: IUsePushMessagesOptions) {
+  if (!isActive.value) {
     return {
-      isActive: false,
       totalCount: computed(() => 0),
       unreadCount: computed(() => 0),
       unreadCountWithHidden: computed(() => 0),
@@ -68,7 +68,6 @@ export function usePushMessages(options?: IUsePushMessagesOptions) {
   const { mutate: clearAll } = useClearAllPushMessages();
 
   return {
-    isActive: true,
     totalCount,
     unreadCount,
     unreadCountWithHidden,
@@ -81,3 +80,5 @@ export function usePushMessages(options?: IUsePushMessagesOptions) {
     page,
   };
 }
+
+export { isActive, usePushMessages };

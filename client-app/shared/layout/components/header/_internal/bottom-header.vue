@@ -99,7 +99,7 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
+import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
@@ -111,7 +111,6 @@ const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
-const { isActive: isPushMessagesActive } = usePushMessages();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
