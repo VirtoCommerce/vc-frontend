@@ -28,9 +28,7 @@
         </div>
 
         <div class="mt-4 print:hidden">
-          <AddToCart :product="product" />
-
-          <div class="mt-2 flex items-center gap-1">
+          <AddToCart :product="product">
             <InStock
               :is-in-stock="product.availabilityData?.isInStock"
               :is-digital="isDigital"
@@ -38,7 +36,7 @@
             />
 
             <CountInCart :product-id="product.id" />
-          </div>
+          </AddToCart>
         </div>
       </template>
     </ProductPriceBlock>
