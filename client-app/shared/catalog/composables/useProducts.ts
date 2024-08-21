@@ -92,7 +92,7 @@ export function useProducts(
   );
 
   function getSortedFacets(allFacets: FacetItemType[]): FacetItemType[] {
-    if (options?.filtersDisplayOrder?.value?.order && options.filtersDisplayOrder?.value?.order.length) {
+    if (options.filtersDisplayOrder?.value?.order?.length) {
       const order = options.filtersDisplayOrder.value.order
         .split(",")
         .map((item) => item.trim().toLowerCase())

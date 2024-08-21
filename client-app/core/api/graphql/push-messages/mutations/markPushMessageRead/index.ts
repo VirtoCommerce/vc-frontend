@@ -18,7 +18,6 @@ export function useMarkPushMessageRead(optimistic = true) {
         );
       }
     },
-    // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
     updateQueries: (!optimistic && {}) || {
       [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
         const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;

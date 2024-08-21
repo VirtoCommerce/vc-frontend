@@ -7,33 +7,6 @@
     </VcTypography>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-5">
-      <!-- Error section -->
-      <transition name="slide-fade-top" mode="out-in">
-        <VcAlert
-          v-if="SKUsWithErrors.length"
-          key="sku"
-          class="col-span-1 mb-5 lg:col-span-2 lg:mb-0"
-          color="danger"
-          size="sm"
-          variant="solid-light"
-          icon
-        >
-          <span>{{ $t("pages.bulk_order.product_was_not_added_alert", [SKUsWithErrors.join(", ")]) }}</span>
-        </VcAlert>
-
-        <VcAlert
-          v-else-if="incorrectData"
-          key="incorrect"
-          class="col-span-1 mb-5 lg:col-span-2 lg:mb-0"
-          color="danger"
-          size="sm"
-          variant="solid-light"
-          icon
-        >
-          {{ $t("pages.bulk_order.data_is_invalid_alert") }}
-        </VcAlert>
-      </transition>
-
       <!-- Mobile Tabs -->
       <VcTabs
         v-model="activeTab"
@@ -49,7 +22,6 @@
           :loading="loadingManually"
           class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
           @add-to-cart="addManuallyItems"
-          @error="showIncorrectDataError"
         />
       </div>
 
@@ -59,7 +31,6 @@
           :loading="loadingCSV"
           class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
           @add-to-cart="addItemsFromCSVText"
-          @error="showIncorrectDataError"
         />
       </div>
     </div>
@@ -67,15 +38,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useShortCart } from "@/shared/cart";
+import { useModal } from "@/shared/modal";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
+import type { OutputBulkItemType } from "@/shared/cart";
+import AddToCartSkuErrorsModal from "@/shared/bulk-order/components/add-to-cart-sku-errors-modal.vue";
 
+const router = useRouter();
 const { t } = useI18n();
+const { openModal } = useModal();
+const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
 
 usePageHead({
   title: t("pages.bulk_order.meta.title"),
@@ -92,36 +69,31 @@ const tabs = [
   { id: "copy&paste", label: t("pages.bulk_order.copy_n_paste_tab") },
 ];
 
-const router = useRouter();
-const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
-
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
 const activeTab = ref<"manually" | "copy&paste">(tabs[0].id as "manually");
-const incorrectData = ref(false);
-const SKUsWithErrors = ref<string[]>([]);
 
-function showIncorrectDataError() {
-  SKUsWithErrors.value = [];
-  incorrectData.value = true;
-}
+const itemsWithErrors = shallowRef<OutputBulkItemType[]>();
 
 async function addItems(items: InputNewBulkItemType[]) {
-  incorrectData.value = false;
-  SKUsWithErrors.value = [];
-
   if (!items.length || loadingCart.value || cartChanging.value) {
     return;
   }
 
   const resultItems = await addBulkItemsToCart(items);
 
-  SKUsWithErrors.value = resultItems.filter((item) => !item.isAddedToCart).map((item) => item.productSku);
+  itemsWithErrors.value = resultItems.filter((item) => !!item.errors?.length);
 
-  if (SKUsWithErrors.value.length) {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+  if (itemsWithErrors.value?.length) {
+    const closeAddToCartSkuErrorsModal = openModal({
+      component: AddToCartSkuErrorsModal,
+      props: {
+        errorItems: itemsWithErrors.value,
+        async onConfirm(): Promise<void> {
+          closeAddToCartSkuErrorsModal();
+          await router.push({ name: "Cart" });
+        },
+      },
     });
   } else {
     await router.push({ name: "Cart" });

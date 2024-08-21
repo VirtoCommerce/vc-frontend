@@ -27,10 +27,6 @@ export function useErrorsTranslator(
   function getTranslation(error: ErrorType) {
     const translationKey = `${keyInLocale}.${error.code}`;
 
-    /**
-     * `errorParameters can be array or object.
-     * examples: ['foo', 'bar'], { first: 'foo', second: 'bar' }
-     */
     const errorParameters = error.parameters ?? (error.parameter ? [error.parameter] : []);
     return te(translationKey) ? t(translationKey, errorParameters as NamedValue) : error.description;
   }
