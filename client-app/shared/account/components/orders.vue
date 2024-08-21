@@ -60,12 +60,12 @@
 
       <div class="flex grow">
         <VcInput
-          v-model.trim="localKeyword"
+          v-model="localKeyword"
           maxlength="64"
           class="w-full"
           :disabled="ordersLoading"
           :placeholder="$t('pages.account.orders.search_placeholder')"
-          @keypress.enter="applyKeyword"
+          @keydown.enter="applyKeyword"
         >
           <template #append>
             <button
@@ -426,7 +426,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 async function applyKeyword() {
-  keyword.value = localKeyword.value;
+  keyword.value = localKeyword.value.trim();
   page.value = 1;
   await fetchOrders();
 }
