@@ -51,10 +51,10 @@ export function useMarkAllPushMessagesUnread() {
       cache.modify<Record<string, UnreadCountType>>({
         fields: {
           [UNREAD_COUNT_CACHE_ID]: () => ({
-            totalCount: messagesCount as number,
+            totalCount: messagesCount,
           }),
           [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: () => ({
-            totalCount: messagesWithHiddenCount as number,
+            totalCount: messagesWithHiddenCount,
           }),
         },
       });
