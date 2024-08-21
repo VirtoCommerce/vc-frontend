@@ -35,6 +35,7 @@ export function useMarkAllPushMessagesUnread() {
 
       // read current messages count and messages with hidden count from cache
       const rootQueryEntries = Object.entries((cacheData[ROOT_QUERY_CACHE_ID] ?? {}) as Record<string, unknown>);
+
       const messages = rootQueryEntries.find(
         ([key]) =>
           key.startsWith(PUSH_MESSAGES_CACHE_ID) && key.includes("after") && !key.includes('"withHidden":true'),
@@ -42,6 +43,7 @@ export function useMarkAllPushMessagesUnread() {
       const messagesWithHidden = rootQueryEntries.find(
         ([key]) => key.startsWith(PUSH_MESSAGES_CACHE_ID) && key.includes("after") && key.includes('"withHidden":true'),
       ) as [string, PushMessageConnection] | undefined;
+
       const messagesCount = messages?.[1]?.totalCount ?? 0;
       const messagesWithHiddenCount = messagesWithHidden?.[1]?.totalCount ?? 0;
 
