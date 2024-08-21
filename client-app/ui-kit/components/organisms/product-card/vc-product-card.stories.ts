@@ -1,6 +1,7 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcProductCard, VcProductImage, VcAddToCart } from "..";
-import { VcChip } from "../../molecules";
+import { VcProductVendor, VcProductProperties, VcProductTitle } from "../../atoms";
+import { VcChip, VcProductPrice } from "../../molecules";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -9,9 +10,15 @@ export default {
   argTypes: {},
 } as Meta<typeof VcProductCard>;
 
+const image = {
+  imgSrc: "https://vcst-dev.govirto.com/cms-content/assets/catalog/SAUN65JS9500/1426804677000_1122018.jpg",
+  lazy: true,
+  alt: "Product image",
+};
+
 const title = {
   linesNumber: 2,
-  to: "somelink.com",
+  to: "#",
 };
 
 const price = {
@@ -46,9 +53,9 @@ export const Basic = BasicTemplate.bind({});
 
 const ImageTemplate: StoryFn<typeof VcProductCard> = (args) => ({
   components: { VcProductCard, VcProductImage },
-  setup: () => ({ args, title }),
+  setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
-    <VcProductImage v-bind="{imgSrc: 'https://vcst-dev.govirto.com/cms-content/assets/catalog/SAUN65JS9500/1426804677000_1122018.jpg'}" />
+    <VcProductImage v-bind="image" />
 
     <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
   </VcProductCard>`,
@@ -57,10 +64,10 @@ const ImageTemplate: StoryFn<typeof VcProductCard> = (args) => ({
 export const Image = ImageTemplate.bind({});
 
 const ImageVendorTemplate: StoryFn<typeof VcProductCard> = (args) => ({
-  components: { VcProductCard, VcProductImage, VcAddToCart, VcChip },
-  setup: () => ({ args, title }),
+  components: { VcProductCard, VcProductImage, VcProductVendor },
+  setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
-    <VcProductImage img-src="https://vcst-dev.govirto.com/cms-content/assets/catalog/SAUN65JS9500/1426804677000_1122018.jpg" />
+    <VcProductImage v-bind="image" />
     <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
     <VcProductVendor>Product Vendor</VcProductVendor>
   </VcProductCard>`,
@@ -69,10 +76,10 @@ const ImageVendorTemplate: StoryFn<typeof VcProductCard> = (args) => ({
 export const ImageVendor = ImageVendorTemplate.bind({});
 
 const ImageVendorPropertiesTemplate: StoryFn<typeof VcProductCard> = (args) => ({
-  components: { VcProductCard, VcProductImage, VcAddToCart, VcChip },
-  setup: () => ({ args, title }),
+  components: { VcProductCard, VcProductImage, VcProductVendor, VcProductProperties },
+  setup: () => ({ args, title, image }),
   template: `<VcProductCard v-bind="args">
-    <VcProductImage img-src="https://vcst-dev.govirto.com/cms-content/assets/catalog/SAUN65JS9500/1426804677000_1122018.jpg" />
+    <VcProductImage v-bind="image" />
     <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
     <VcProductVendor>Product Vendor</VcProductVendor>
 
@@ -87,10 +94,10 @@ const ImageVendorPropertiesTemplate: StoryFn<typeof VcProductCard> = (args) => (
 export const ImageVendorProperties = ImageVendorPropertiesTemplate.bind({});
 
 const ImageVendorPriceTemplate: StoryFn<typeof VcProductCard> = (args) => ({
-  components: { VcProductCard, VcProductImage, VcAddToCart, VcChip },
-  setup: () => ({ args, title, price }),
+  components: { VcProductCard, VcProductImage, VcProductTitle, VcProductPrice, VcProductVendor },
+  setup: () => ({ args, title, price, image }),
   template: `<VcProductCard v-bind="args">
-    <VcProductImage img-src="https://vcst-dev.govirto.com/cms-content/assets/catalog/SAUN65JS9500/1426804677000_1122018.jpg" />
+    <VcProductImage v-bind="image" />
     <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
     <VcProductPrice v-bind="price" />
     <VcProductVendor>Product Vendor</VcProductVendor>
@@ -108,10 +115,18 @@ ImageVendorPriceList.args = {
 };
 
 const FullTemplate: StoryFn<typeof VcProductCard> = (args) => ({
-  components: { VcProductCard, VcProductImage, VcAddToCart, VcChip },
-  setup: () => ({ args, title, price, chip1, chip2 }),
+  components: {
+    VcProductCard,
+    VcProductImage,
+    VcProductTitle,
+    VcProductVendor,
+    VcProductProperties,
+    VcAddToCart,
+    VcChip,
+  },
+  setup: () => ({ args, title, price, chip1, chip2, image }),
   template: `<VcProductCard v-bind="args">
-    <VcProductImage img-src="https://vcst-dev.govirto.com/cms-content/assets/catalog/SAUN65JS9500/1426804677000_1122018.jpg" />
+    <VcProductImage v-bind="image" />
 
     <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
     <VcProductVendor>Product Vendor</VcProductVendor>

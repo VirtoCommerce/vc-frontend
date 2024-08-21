@@ -4,7 +4,7 @@
       'vc-product-card',
       `vc-product-card--view-mode--${viewMode}`,
       {
-        'vc-product-card--padding': padding,
+        'vc-product-card--background': background,
         'vc-product-card--border': border,
       },
     ]"
@@ -18,25 +18,25 @@
 <script setup lang="ts">
 interface IProps {
   viewMode?: "grid" | "list";
-  padding?: boolean;
+  background?: boolean;
   border?: boolean;
 }
 
 withDefaults(defineProps<IProps>(), {
   viewMode: "grid",
-  padding: true,
+  background: true,
 });
 </script>
 
 <style lang="scss">
 .vc-product-card {
   $self: &;
-  $padding: "";
+  $background: "";
   $border: "";
   $grid: "";
   $list: "";
 
-  @apply @container bg-additional-50;
+  @apply @container;
 
   &--view-mode {
     &--grid {
@@ -48,8 +48,10 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  &--padding {
-    $padding: &;
+  &--background {
+    $background: &;
+
+    @apply bg-additional-50;
   }
 
   &--border {
@@ -63,7 +65,7 @@ withDefaults(defineProps<IProps>(), {
   &__wrapper {
     @apply grid h-full;
 
-    #{$padding}#{$grid} & {
+    #{$background}#{$grid} & {
       @apply p-5;
 
       @container (width > theme(containers.xs)) {
@@ -71,7 +73,7 @@ withDefaults(defineProps<IProps>(), {
       }
     }
 
-    #{$padding}#{$list} & {
+    #{$background}#{$list} & {
       @apply p-3;
 
       @container (width > theme(containers.xl)) {
