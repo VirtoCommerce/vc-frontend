@@ -253,12 +253,12 @@ jobs:
           deployConfigPath: '.deployment/theme/cloudDeploy.json'
           envName: 'qa'
 
-      - name: Get artifact link
-        # if: contains(github.event.pull_request.labels.*.name, 'deploy-qa')
-        uses: VirtoCommerce/vc-github-actions/get-artifact-link@master
-        id: artifactLink
-        with:
-          downloadComment: "Artifact URL:"
+      # - name: Get artifact link
+      #   # if: contains(github.event.pull_request.labels.*.name, 'deploy-qa')
+      #   uses: VirtoCommerce/vc-github-actions/get-artifact-link@master
+      #   id: artifactLink
+      #   with:
+      #     downloadComment: "Artifact URL:"
 
       - name: Create deploy PR in QA
         # if: github.event.action != 'closed' && contains(github.event.pull_request.labels.*.name, 'deploy-qa')
@@ -267,6 +267,8 @@ jobs:
           deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
           deployBranch: ${{ fromJSON(steps.deployConfig.outputs.deployConfig).qa.deployBranch }}
           artifactKey: ${{ steps.deployConfig.outputs.artifactKey }}
-          artifactUrl: ${{ steps.artifactLink.outputs.artifactUrl }}
-          taskNumber: ${{ steps.artifactLink.outputs.qaTaskNumber }}
+          # artifactUrl: ${{ steps.artifactLink.outputs.artifactUrl }}
+          artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
+          # taskNumber: ${{ steps.artifactLink.outputs.qaTaskNumber }}
+          taskNumber: ${{ needs.ci.outputs.jira-keys }}
           cmPath: ${{ steps.deployConfig.outputs.cmPath }}
