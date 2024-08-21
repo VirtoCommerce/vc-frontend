@@ -40,7 +40,7 @@ withDefaults(defineProps<IProps>(), {
 
   $truncate: "";
 
-  @apply flex-none inline-flex align-top border rounded-sm font-bold text-center;
+  @apply flex-none inline-flex align-top border rounded-sm font-bold;
 
   &--size {
     &--sm {
@@ -109,7 +109,7 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__content {
-    @apply grow;
+    @apply grow text-center;
 
     &:has(.vc-icon):has(:not(.vc-icon)) {
       @apply inline-flex items-center gap-[inherit];
