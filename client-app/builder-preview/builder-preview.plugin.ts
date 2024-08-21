@@ -59,7 +59,7 @@ function updateSettings(app: App, settings: IThemeConfig) {
   });
 
   keys
-    .filter(([key]) => /^color/.test(key))
+    .filter(([key]) => key.startsWith("color"))
     .forEach(([key, value]) => {
       document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
     });
