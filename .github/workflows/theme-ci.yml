@@ -228,8 +228,9 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     steps:
-      - name: Create deploy step
-        if: ${{ github.event_name == 'pull_request' }}
+      - name: Create PR
+        # if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.ref == 'refs/heads/VCST-1573' }}
         uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
         with:
             deployRepo: "vc-deploy-dev"
