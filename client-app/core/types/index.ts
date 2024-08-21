@@ -10,6 +10,7 @@ export * from "./language";
 export * from "./line-items";
 export * from "./menu";
 export * from "./modify";
+export * from "./notifications";
 export * from "./options";
 export * from "./order-status";
 export * from "./password-options";

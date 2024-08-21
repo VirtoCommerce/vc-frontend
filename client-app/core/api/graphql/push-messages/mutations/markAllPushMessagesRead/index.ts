@@ -1,5 +1,11 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
 import { MarkAllPushMessagesReadDocument, OperationNames } from "@/core/api/graphql/types";
+import {
+  PUSH_MESSAGE_CACHE_ID,
+  UNREAD_COUNT_CACHE_ID,
+  UNREAD_COUNT_WITH_HIDDEN_CACHE_ID,
+} from "@/core/constants/notifications";
+import type { UnreadCountType } from "@/core/types/notifications";
 
 export function useMarkAllPushMessagesRead() {
   return useMutation(MarkAllPushMessagesReadDocument, {
@@ -11,8 +17,9 @@ export function useMarkAllPushMessagesRead() {
         return;
       }
       const cacheData = cache.extract() as Record<string, unknown>;
+      // update all push messages to be read
       Object.keys(cacheData).forEach((id) => {
-        if (id.startsWith("PushMessageType:")) {
+        if (id.startsWith(PUSH_MESSAGE_CACHE_ID)) {
           cache.modify({
             id: id,
             fields: {
@@ -23,15 +30,16 @@ export function useMarkAllPushMessagesRead() {
           });
         }
       });
-      cache.modify({
+      // update unreadCount and unreadCountWithHidden count to 0
+      cache.modify<Record<string, UnreadCountType>>({
         fields: {
-          'pushMessages:{"unreadOnly":true}': (data) => {
+          [UNREAD_COUNT_CACHE_ID]: (data) => {
             return {
               ...data,
               totalCount: 0,
             };
           },
-          'pushMessages:{"withHidden":true,"unreadOnly":true}': (data) => {
+          [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: (data) => {
             return {
               ...data,
               totalCount: 0,

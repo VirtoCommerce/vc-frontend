@@ -1,5 +1,7 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
 import { MarkPushMessageUnreadDocument, OperationNames, PushMessageFragmentDoc } from "@/core/api/graphql/types";
+import { UNREAD_COUNT_CACHE_ID, UNREAD_COUNT_WITH_HIDDEN_CACHE_ID } from "@/core/constants/notifications";
+import type { PushMessageType } from "@/core/api/graphql/types";
 
 export function useMarkPushMessageUnread() {
   return useMutation(MarkPushMessageUnreadDocument, {
@@ -10,21 +12,28 @@ export function useMarkPushMessageUnread() {
       if (!result.data?.markPushMessageUnread) {
         return;
       }
+      let message: PushMessageType | null = null;
       cache.updateFragment(
         {
           id: `PushMessageType:${variables?.command?.messageId}`,
           fragment: PushMessageFragmentDoc,
         },
-        (pushMessage) => ({ ...pushMessage!, isRead: false }),
+        (pushMessage) => {
+          message = pushMessage;
+          return { ...pushMessage!, isRead: false };
+        },
       );
       cache.modify({
         fields: {
-          'pushMessages:{"unreadOnly":true}': (value) => {
+          [UNREAD_COUNT_CACHE_ID]: (value) => {
+            if (message?.isHidden) {
+              return value;
+            }
             return {
               totalCount: (value.totalCount ?? 0) + 1,
             };
           },
-          'pushMessages:{"withHidden":true,"unreadOnly":true}': (value) => {
+          [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: (value) => {
             return {
               totalCount: (value.totalCount ?? 0) + 1,
             };

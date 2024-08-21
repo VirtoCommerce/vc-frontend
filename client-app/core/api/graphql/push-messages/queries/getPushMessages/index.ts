@@ -3,8 +3,13 @@ import { GetPushMessagesDocument, OnPushMessageCreatedDocument } from "@/core/ap
 import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
+let subscribed = false;
+
 export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQueryVariables>) {
   const result = useQuery(GetPushMessagesDocument, payload, { fetchPolicy: "cache-and-network" });
+  if (subscribed) {
+    return result;
+  }
   result.subscribeToMore({
     document: OnPushMessageCreatedDocument,
     updateQuery: (previousQueryResult, { subscriptionData }) => {
@@ -13,6 +18,8 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
       }
       const newPushMessage = subscriptionData.data.pushMessageCreated;
       const items = previousQueryResult.pushMessages?.items ?? [];
+      const unreadCount = previousQueryResult.unreadCount?.totalCount;
+      const unreadCountWithHidden = previousQueryResult.unreadCountWithHidden?.totalCount;
       return {
         ...previousQueryResult,
         pushMessages: {
@@ -20,10 +27,14 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
           totalCount: items.length + 1,
         },
         unreadCount: {
-          totalCount: previousQueryResult.unreadCount?.totalCount ? previousQueryResult.unreadCount.totalCount + 1 : 1,
+          totalCount: unreadCount ? unreadCount + 1 : 1,
+        },
+        unreadCountWithHidden: {
+          totalCount: unreadCountWithHidden ? unreadCountWithHidden + 1 : 1,
         },
       };
     },
   });
+  subscribed = true;
   return result;
 }
