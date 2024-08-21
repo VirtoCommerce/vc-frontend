@@ -228,15 +228,43 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     steps:
-      - name: Create PR
-        # if: ${{ github.event_name == 'pull_request' }}
-        if: ${{ github.ref == 'refs/heads/VCST-1573' }}
+      # - name: Create PR
+      #   # if: ${{ github.event_name == 'pull_request' }}
+      #   if: ${{ github.ref == 'refs/heads/VCST-1573' }}
+      #   uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+      #   with:
+      #       deployRepo: "vc-deploy-dev"
+      #       deployBranch: "vcst-qa"
+      #       artifactKey: "URL"
+      #       artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
+      #       taskNumber: "${{ needs.ci.outputs.jira-keys }}"
+      #       githubToken: ${{ secrets.REPO_TOKEN }}
+      #       cmPath: "theme/artifact.json"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read deployment config
+        # if: contains(github.event.pull_request.labels.*.name, 'deploy-qa')
+        uses: VirtoCommerce/vc-github-actions/get-deploy-param@master
+        id: deployConfig
+        with:
+          deployConfigPath: '.deployment/theme/cloudDeploy.json'
+          envName: 'qa'
+
+      - name: Gets artifact link
+        # if: contains(github.event.pull_request.labels.*.name, 'deploy-qa')
+        uses: VirtoCommerce/vc-github-actions/get-artifact-link@master
+        id: artifactLink
+        with:
+          downloadComment: 'Artifact URL:'
+
+      - name: Create deploy PR in QA
+        # if: github.event.action != 'closed' && contains(github.event.pull_request.labels.*.name, 'deploy-qa')
         uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
         with:
-            deployRepo: "vc-deploy-dev"
-            deployBranch: "vcst-qa"
-            artifactKey: "URL"
-            artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
-            taskNumber: "${{ needs.ci.outputs.jira-keys }}"
-            githubToken: ${{ secrets.REPO_TOKEN }}
-            cmPath: "theme/artifact.json"
+          deployRepo: ${{ steps.deployConfig.outputs.deployRepo }}
+          deployBranch: ${{ fromJSON(steps.deployConfig.outputs.deployConfig).qa.deployBranch }}
+          artifactKey: ${{ steps.deployConfig.outputs.artifactKey }}
+          artifactUrl: ${{ steps.artifactLink.outputs.artifactUrl }}
+          taskNumber: ${{ steps.artifactLink.outputs.qaTaskNumber }}
+          cmPath: ${{ steps.deployConfig.outputs.cmPath }}
