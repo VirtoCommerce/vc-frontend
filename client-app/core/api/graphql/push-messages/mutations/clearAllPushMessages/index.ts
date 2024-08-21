@@ -1,7 +1,7 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
 import { ClearAllPushMessagesDocument, OperationNames } from "@/core/api/graphql/types";
-import { ROOT_QUERY_CACHE_ID } from "@/core/constants/notifications";
+import { PUSH_MESSAGES_CACHE_ID, ROOT_QUERY_CACHE_ID } from "@/core/constants/notifications";
 
 export function useClearAllPushMessages() {
   const { client } = useApolloClient();
@@ -15,7 +15,7 @@ export function useClearAllPushMessages() {
       }
       const cacheData = cache.extract() as Record<string, unknown>;
       const pushMessagesIds = Object.keys(cacheData[ROOT_QUERY_CACHE_ID] ?? {}).filter(([key]) =>
-        key.startsWith("pushMessages:"),
+        key.startsWith(PUSH_MESSAGES_CACHE_ID),
       );
       pushMessagesIds?.forEach((id) => {
         cache.modify<Record<string, unknown>>({

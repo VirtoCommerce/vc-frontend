@@ -16,10 +16,12 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
       if (!subscriptionData.data) {
         return previousQueryResult;
       }
+
       const newPushMessage = subscriptionData.data.pushMessageCreated;
       const items = previousQueryResult.pushMessages?.items ?? [];
       const unreadCount = previousQueryResult.unreadCount?.totalCount;
       const unreadCountWithHidden = previousQueryResult.unreadCountWithHidden?.totalCount;
+
       return {
         ...previousQueryResult,
         pushMessages: {

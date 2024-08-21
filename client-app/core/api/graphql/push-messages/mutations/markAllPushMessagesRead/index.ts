@@ -17,6 +17,7 @@ export function useMarkAllPushMessagesRead() {
         return;
       }
       const cacheData = cache.extract() as Record<string, unknown>;
+
       // update all push messages to be read
       Object.keys(cacheData).forEach((id) => {
         if (id.startsWith(PUSH_MESSAGE_CACHE_ID)) {
@@ -30,18 +31,17 @@ export function useMarkAllPushMessagesRead() {
           });
         }
       });
+
       // update unreadCount and unreadCountWithHidden count to 0
       cache.modify<Record<string, UnreadCountType>>({
         fields: {
-          [UNREAD_COUNT_CACHE_ID]: (data) => {
+          [UNREAD_COUNT_CACHE_ID]: () => {
             return {
-              ...data,
               totalCount: 0,
             };
           },
-          [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: (data) => {
+          [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: () => {
             return {
-              ...data,
               totalCount: 0,
             };
           },

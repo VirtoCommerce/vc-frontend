@@ -1,7 +1,12 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
 import { MarkPushMessageReadDocument, OperationNames, PushMessageFragmentDoc } from "@/core/api/graphql/types";
-import { UNREAD_COUNT_CACHE_ID, UNREAD_COUNT_WITH_HIDDEN_CACHE_ID } from "@/core/constants/notifications";
+import {
+  PUSH_MESSAGE_CACHE_ID,
+  UNREAD_COUNT_CACHE_ID,
+  UNREAD_COUNT_WITH_HIDDEN_CACHE_ID,
+} from "@/core/constants/notifications";
 import type { PushMessageType } from "@/core/api/graphql/types";
+import type { UnreadCountType } from "@/core/types/notifications";
 
 export function useMarkPushMessageRead() {
   return useMutation(MarkPushMessageReadDocument, {
@@ -12,10 +17,13 @@ export function useMarkPushMessageRead() {
       if (!result.data?.markPushMessageRead) {
         return;
       }
+
       let message: PushMessageType | null = null;
+
+      // update push message to be read
       cache.updateFragment(
         {
-          id: `PushMessageType:${variables?.command?.messageId}`,
+          id: `${PUSH_MESSAGE_CACHE_ID}${variables?.command?.messageId}`,
           fragment: PushMessageFragmentDoc,
         },
         (pushMessage) => {
@@ -23,19 +31,23 @@ export function useMarkPushMessageRead() {
           return { ...pushMessage!, isRead: true };
         },
       );
+
+      // update unreadCount and unreadCountWithHidden value
       cache.modify({
         fields: {
           [UNREAD_COUNT_CACHE_ID]: (value) => {
+            const unreadCount = value as UnreadCountType;
             if (message?.isHidden) {
-              return value;
+              return unreadCount;
             }
             return {
-              totalCount: value.totalCount ? value.totalCount - 1 : 0,
+              totalCount: unreadCount.totalCount ? unreadCount.totalCount - 1 : 0,
             };
           },
           [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: (value) => {
+            const unreadCountWithHidden = value as UnreadCountType;
             return {
-              totalCount: value.totalCount ? value.totalCount - 1 : 0,
+              totalCount: unreadCountWithHidden.totalCount ? unreadCountWithHidden.totalCount - 1 : 0,
             };
           },
         },
