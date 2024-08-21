@@ -28,7 +28,7 @@ export function useMarkPushMessageUnread() {
         },
         (pushMessage) => {
           message = pushMessage;
-          return { ...pushMessage!, isRead: false };
+          return pushMessage ? { ...pushMessage, isRead: false } : null;
         },
       );
 

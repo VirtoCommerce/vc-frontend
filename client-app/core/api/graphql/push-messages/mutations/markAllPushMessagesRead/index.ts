@@ -24,9 +24,7 @@ export function useMarkAllPushMessagesRead() {
           cache.modify({
             id: id,
             fields: {
-              isRead() {
-                return true;
-              },
+              isRead: () => true,
             },
           });
         }
@@ -35,16 +33,12 @@ export function useMarkAllPushMessagesRead() {
       // update unreadCount and unreadCountWithHidden count to 0
       cache.modify<Record<string, UnreadCountType>>({
         fields: {
-          [UNREAD_COUNT_CACHE_ID]: () => {
-            return {
-              totalCount: 0,
-            };
-          },
-          [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: () => {
-            return {
-              totalCount: 0,
-            };
-          },
+          [UNREAD_COUNT_CACHE_ID]: () => ({
+            totalCount: 0,
+          }),
+          [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: () => ({
+            totalCount: 0,
+          }),
         },
       });
     },
