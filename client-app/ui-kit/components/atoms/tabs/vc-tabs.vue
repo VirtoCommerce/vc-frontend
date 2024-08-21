@@ -22,7 +22,6 @@
 </template>
 
 <script setup lang="ts">
-// FIXME: https://virtocommerce.atlassian.net/browse/ST-5118
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { PropType } from "vue";
 

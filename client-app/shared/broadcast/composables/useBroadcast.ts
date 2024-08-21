@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,sonarjs/cognitive-complexity */
 import { noop, tryOnScopeDispose, useEventListener } from "@vueuse/core";
 import { Logger } from "@/core/utilities";
-import type { InjectionEvent } from "../types";
 
 export enum TabsType {
   CURRENT = "current",
@@ -10,14 +9,14 @@ export enum TabsType {
 }
 interface IUseBroadcastReturn {
   /** Add a listener function for the specified event. Automatic deletion on unmounting. */
-  on: <T>(event: InjectionEvent<T>, listener: (data: T) => void) => void;
+  on: <T>(event: string, listener: (data: T) => void) => void;
 
   /** Remove the listener function for the specified event. */
-  off: <T>(event: InjectionEvent<T>, listener?: (data: T) => void) => void;
+  off: <T>(event: string, listener?: (data: T) => void) => void;
 
   /** Send data to other browser tabs subscribed to the specified event. */
   emit: <T>(
-    event: InjectionEvent<T>,
+    event: string,
     /** The data to be sent. This must be a JSON-serializable object. */
     data?: T,
     /**

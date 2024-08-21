@@ -41,7 +41,6 @@
 </template>
 
 <script setup lang="ts">
-// FIXME: https://virtocommerce.atlassian.net/browse/ST-3812
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { computed } from "vue";
 
@@ -106,7 +105,7 @@ function change() {
   $left: "";
   $right: "";
 
-  @apply select-none;
+  @apply flex-none select-none;
 
   &--size {
     &--sm {

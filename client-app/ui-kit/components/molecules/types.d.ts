@@ -36,7 +36,6 @@ declare module "vue" {
     VcNavButton: typeof Components.VcNavButton;
     VcProductPrice: typeof Components.VcProductPrice;
     // @deprecated
-    // FIXME: https://virtocommerce.atlassian.net/browse/VCST-1658
     VcQuantity: typeof Components.VcQuantity;
     VcSelect: typeof Components.VcSelect;
     VcSteps: typeof Components.VcSteps;

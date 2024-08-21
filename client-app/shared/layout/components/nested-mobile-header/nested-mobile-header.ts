@@ -1,7 +1,6 @@
 import { defineComponent, onBeforeUnmount, warn, h, createCommentVNode, useSlots, watchEffect, watch } from "vue";
 import { useNestedMobileHeader } from "@/shared/layout/composables";
 
-// FIXME: Refactor to SFC
 // eslint-disable-next-line no-restricted-exports
 export default defineComponent({
   name: "NestedMobileHeader",
