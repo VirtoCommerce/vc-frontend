@@ -24,6 +24,7 @@ import {
   userReloadEvent,
   passwordExpiredEvent,
   reloadAndOpenMainPage,
+  userBeforeSwitchOrganizationEvent,
 } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import PasswordExpirationModal from "../components/password-expiration-modal.vue";
@@ -336,13 +337,13 @@ export function useUser() {
 
   async function switchOrganization(organizationId: string): Promise<void> {
     loading.value = true;
-
     try {
+      await broadcast.emit(userBeforeSwitchOrganizationEvent, undefined, TabsType.CURRENT);
       await refresh(organizationId);
 
       localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
 
-      broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+      void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {

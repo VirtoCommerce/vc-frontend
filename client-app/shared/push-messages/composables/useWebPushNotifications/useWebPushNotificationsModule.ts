@@ -10,7 +10,7 @@ import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { Logger } from "@/core/utilities";
-import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
+import { userBeforeUnauthorizeEvent, useBroadcast, userBeforeSwitchOrganizationEvent } from "@/shared/broadcast";
 import type { FcmSettingsType } from "@/core/api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
@@ -75,6 +75,7 @@ function _useWebPushNotifications() {
     initialized = true;
 
     broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
+    broadcast.on(userBeforeSwitchOrganizationEvent, deleteFcmToken);
   }
 
   // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693

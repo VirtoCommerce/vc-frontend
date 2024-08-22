@@ -14,6 +14,7 @@
 export const pageReloadEvent = "page_reload" as string;
 export const userReloadEvent = "user_reload" as string;
 export const userBeforeUnauthorizeEvent = "user_before_unauthorize" as string;
+export const userBeforeSwitchOrganizationEvent = "user_before_switch_organization" as string;
 export const userLockedEvent = "user_locked" as string;
 export const cartReloadEvent = "cart_reload" as string;
 export const productsInWishlistEvent = "products_in_wishlist" as string;
