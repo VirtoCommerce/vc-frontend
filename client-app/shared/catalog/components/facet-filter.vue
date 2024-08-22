@@ -249,6 +249,8 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   $opened: "";
 
   &__trigger {
+    width: max-content;
+
     &--opened {
       $opened: &;
     }
