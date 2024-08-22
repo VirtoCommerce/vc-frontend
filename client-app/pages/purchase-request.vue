@@ -9,7 +9,13 @@
     >
     <VcLayoutWithRightSidebar v-if="cart" is-sidebar-sticky>
       <VcWidget :title="$t('pages.purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
-        <VcFileUploader class="h-full" v-bind="fileOptions" :files="files" @add-files="onAddFiles" />
+        <VcFileUploader
+          class="h-full"
+          v-bind="fileOptions"
+          :files="files"
+          @add-files="onAddFiles"
+          @download="onFileDownload"
+        />
       </VcWidget>
       <ProductsSection
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
@@ -45,6 +51,7 @@ import { configInjectionKey } from "@/core/injection-keys";
 import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/constants";
 import { useFullCart } from "@/shared/cart/composables/useCart";
 import { useFiles } from "@/shared/files/composables/useFiles";
+import { downloadFile } from "@/shared/files/utils";
 import { usePurchaseRequest } from "@/shared/purchase-request/composables/usePurchaseRequest";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import OrderSummary from "@/shared/checkout/components/order-summary.vue";
@@ -101,6 +108,12 @@ async function onAddFiles(items: INewFile[]) {
   }
 
   processing.value = false;
+}
+
+function onFileDownload(file: FileType) {
+  if (file && file.url) {
+    void downloadFile(file.url, file.name);
+  }
 }
 
 watchEffect(async () => {

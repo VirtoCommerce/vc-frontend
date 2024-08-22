@@ -15,7 +15,7 @@
           <VcFile
             :native-download="nativeDownload"
             :file="file"
-            removable
+            :removable="removable"
             @remove="onRemove([file])"
             @download="onFileDownload"
           />
@@ -89,6 +89,7 @@ interface IProps {
   allowedExtensions: Readonly<string[]>;
   view?: "horizontal" | "vertical";
   files: FileType[];
+  removable?: boolean;
   nativeDownload?: boolean;
 }
 
