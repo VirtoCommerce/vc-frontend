@@ -63,7 +63,6 @@ import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 import type { Product, ShortCartFragment, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
-import type { NamedValue } from "vue-i18n";
 
 const emit = defineEmits<IEmits>();
 
@@ -90,7 +89,7 @@ const maxQuantity = computed(() => props.product.maxQuantity);
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
-const { getTranslation } = useErrorsTranslator("validation_error");
+const { translate } = useErrorsTranslator("validation_error");
 const { quantitySchema } = useQuantityValidationSchema({
   isInStock,
   availableQuantity,
@@ -173,14 +172,7 @@ async function onChange() {
                 validationError.objectType === ValidationErrorObjectType.CatalogProduct,
             )
             .map((el) => {
-              return getTranslation({
-                code: el.errorCode,
-                parameters: el.errorParameters?.reduce((acc, err) => {
-                  acc[err.key] = err.value;
-                  return acc;
-                }, {} as NamedValue),
-                description: el.errorMessage,
-              });
+              return translate(el);
             })
             .join(" "),
         },

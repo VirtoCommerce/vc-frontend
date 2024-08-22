@@ -126,7 +126,7 @@ usePageHead({
 const { openModal } = useModal();
 const { loading, registerByInvite } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-const { getTranslation } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator("identity_error");
 
 const userId = useRouteQueryParam<string>("userId");
 const email = useRouteQueryParam<string>("email");
@@ -178,7 +178,7 @@ const onSubmit = handleSubmit(async (data) => {
     });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
-      const errorDescription = getTranslation(error);
+      const errorDescription = translate(error);
 
       switch (error.code) {
         case "PasswordTooShort":

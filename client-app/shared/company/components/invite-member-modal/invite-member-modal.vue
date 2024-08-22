@@ -91,7 +91,7 @@ const { t } = useI18n();
 const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
-const { getTranslation } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator("identity_error");
 
 const roles = B2B_ROLES.map((role) => {
   role.normalizedName = t("common.roles." + role.id);
@@ -174,7 +174,7 @@ const send = handleSubmit(async (data) => {
         return;
       }
 
-      const errorDescription = getTranslation(error);
+      const errorDescription = translate(error);
 
       if (errorDescription) {
         commonErrors.value.push(errorDescription);

@@ -40,8 +40,8 @@
     />
     <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
-    <VcAlert v-for="error in translatedErrors" :key="error.id" color="danger" class="my-5 text-xs" icon>
-      {{ error.translation }}
+    <VcAlert v-for="error in result?.errors" :key="error.code" color="danger" class="my-5 text-xs" icon>
+      {{ translate(error) }}
     </VcAlert>
 
     <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" type="submit" class="mt-5 w-full lg:w-48">
@@ -59,7 +59,7 @@ import { object, ref as yupRef, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { usePasswordRequirements, useUser } from "../composables";
 import PasswordTips from "./password-tips.vue";
-import type { IdentityErrorType } from "@/core/api/graphql/types";
+import type { IdentityResultType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "succeeded"): void;
@@ -72,6 +72,7 @@ const MAX_PASS_LENGTH = 64;
 const { t } = useI18n();
 const { changePassword, loading, user } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
+const { translate } = useErrorsTranslator("identity_error");
 
 const validationSchema = toTypedSchema(
   object({
@@ -103,23 +104,18 @@ const { value: oldPassword } = useField<string>("oldPassword");
 const { value: newPassword } = useField<string>("newPassword");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
-const apiErrors = ref<IdentityErrorType[]>([]);
-const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
+const result = ref<IdentityResultType>();
 
 const onSubmit = handleSubmit(async (data) => {
-  apiErrors.value = [];
-
-  const result = await changePassword({
+  result.value = await changePassword({
     userId: user.value.id,
     newPassword: data.newPassword,
     oldPassword: data.oldPassword,
   });
 
-  if (result.succeeded) {
+  if (result.value.succeeded) {
     resetForm();
     emit("succeeded");
-  } else if (result.errors?.length) {
-    apiErrors.value = result.errors;
   }
 });
 </script>

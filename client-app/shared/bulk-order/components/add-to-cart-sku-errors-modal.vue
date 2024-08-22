@@ -42,8 +42,8 @@
               />
 
               <div v-if="duplicateSkuItem.errors?.length" class="text-danger">
-                <div v-for="error in duplicateSkuItem.errors" :key="error.code">
-                  {{ getTranslation(error) }}
+                <div v-for="error in duplicateSkuItem.errors" :key="error.objectId">
+                  {{ translate(error) }}
                 </div>
               </div>
             </td>
@@ -59,7 +59,7 @@
             </td>
             <td class="text-danger" colspan="2">
               <div v-for="error in errorItem.errors" :key="error.errorCode">
-                {{ getTranslation(mapToErrorType(error)) }}
+                {{ translate(error) }}
               </div>
               {{ $t(`validation_error.${errorItem.errors?.[0]?.errorCode}`) }}
             </td>
@@ -87,10 +87,8 @@ import { useErrorsTranslator } from "@/core/composables";
 import { useShortCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import type { DuplicateSkuProductType } from "../types";
-import type { InputNewCartItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { ErrorType } from "@/core/composables";
+import type { InputNewCartItemType } from "@/core/api/graphql/types";
 import type { OutputBulkItemType } from "@/shared/cart";
-import type { NamedValue } from "vue-i18n";
 
 interface IEmits {
   (event: "confirm"): void;
@@ -106,7 +104,7 @@ interface IProps {
 
 const { products, fetchProducts } = useProducts();
 const { addItemsToCart } = useShortCart();
-const { getTranslation } = useErrorsTranslator("validation_error");
+const { translate } = useErrorsTranslator("validation_error");
 
 const PRODUCT_DUPLICATE_SKU_ID = "PRODUCT_DUPLICATE_SKU";
 
@@ -135,18 +133,6 @@ function getDuplicateProductIds(items: OutputBulkItemType[]): string[] {
   return [...new Set(productIds)];
 }
 
-function mapToErrorType(error: ValidationErrorType): ErrorType {
-  return {
-    id: error.objectId,
-    code: error.errorCode,
-    description: error.errorMessage,
-    parameters: error.errorParameters?.reduce((acc, err) => {
-      acc[err.key] = err.value;
-      return acc;
-    }, {} as NamedValue),
-  };
-}
-
 async function addDuplicateSkuItemsToCart(itemsToAdd: DuplicateSkuProductType[]): Promise<void> {
   addingToCart.value = true;
 
@@ -164,9 +150,7 @@ async function addDuplicateSkuItemsToCart(itemsToAdd: DuplicateSkuProductType[])
 
   if (result?.validationErrors?.length) {
     duplicateSkuItems.value?.forEach((item) => {
-      item.errors = result.validationErrors
-        .filter((error) => error.objectId === item.productId)
-        .map((error) => mapToErrorType(error));
+      item.errors = result.validationErrors.filter((error) => error.objectId === item.productId);
     });
 
     return;

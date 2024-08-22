@@ -81,19 +81,22 @@
                 !variation.availabilityData?.isAvailable ||
                 !variation.availabilityData?.isBuyable
               "
-              :error="!!getLineItem(variation) && !!idErrors[getLineItem(variation)!.id]"
+              :error="!!getLineItem(variation) && !!localizedItemsErrors[getLineItem(variation)!.id]"
               @update:model-value="changeCart(variation, $event)"
             >
               <template #append>
-                <VcTooltip v-if="getLineItem(variation) && idErrors[getLineItem(variation)!.id]" placement="bottom-end">
+                <VcTooltip
+                  v-if="getLineItem(variation) && localizedItemsErrors[getLineItem(variation)!.id]"
+                  placement="bottom-end"
+                >
                   <template #trigger>
                     <VcIcon class="variations-table__quantity-icon" name="warning" />
                   </template>
 
                   <template #content>
                     <div class="w-max rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-danger shadow-md">
-                      <div v-for="error in idErrors[getLineItem(variation)!.id]" :key="error.id">
-                        {{ error.translation }}
+                      <div v-for="(error, index) in localizedItemsErrors[getLineItem(variation)!.id]" :key="index">
+                        {{ error }}
                       </div>
                     </div>
                   </template>
@@ -120,9 +123,7 @@ import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import CountInCart from "../count-in-cart.vue";
 import type { Product, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
-import type { ErrorType } from "@/core/composables";
 import type { ISortInfo } from "@/core/types";
-import type { NamedValue } from "vue-i18n";
 
 interface IEmits {
   (event: "applySorting", item: ISortInfo): void;
@@ -221,23 +222,7 @@ const columns = computed<ITableColumn[]>(() => [
   },
 ]);
 
-const validationErrors = computed<ErrorType[]>(() => {
-  return (
-    cart.value?.validationErrors.map((el) => {
-      return {
-        id: el.objectId,
-        code: el.errorCode,
-        parameters: el.errorParameters?.reduce((acc, err) => {
-          acc[err.key] = err.value;
-          return acc;
-        }, {} as NamedValue),
-        description: el.errorMessage,
-      };
-    }) || []
-  );
-});
-
-const { idErrors } = useErrorsTranslator("validation_error", validationErrors);
+const { localizedItemsErrors } = useErrorsTranslator("validation_error", cart.value?.validationErrors);
 
 function getCountInCart(variation: VariationType) {
   return getLineItem(variation)?.quantity || 0;

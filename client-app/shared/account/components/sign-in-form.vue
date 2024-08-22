@@ -2,7 +2,7 @@
   <form @submit="onSubmit">
     <!-- Errors block -->
     <VcAlert
-      v-for="error in translatedErrors"
+      v-for="error in errors"
       :key="error.code"
       class="mb-4"
       color="danger"
@@ -11,13 +11,13 @@
       icon
     >
       <span v-if="error?.code === IdentityErrors.USER_IS_LOCKED_OUT">
-        {{ error.translation }}
+        {{ translate(error) }}
         <ContactAdministratorLink />.
       </span>
 
       <span v-else-if="error?.code === IdentityErrors.PASSWORD_EXPIRED" class="flex place-items-center justify-between">
         <span>
-          {{ error.translation }}
+          {{ translate(error) }}
         </span>
         <!-- Keep the A tag to reinitialize the app -->
         <a href="/change-password" class="text-sm font-bold text-accent-700 hover:text-accent">
@@ -26,7 +26,7 @@
       </span>
 
       <span v-else>
-        {{ error.translation }}
+        {{ translate(error) }}
       </span>
     </VcAlert>
 
@@ -106,6 +106,8 @@ const {
   validationSchema: schema,
 });
 
+const { translate } = useErrorsTranslator("shared.account.sign_in_form.errors");
+
 const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");
 
@@ -114,8 +116,6 @@ const rememberMe = ref(false);
 const model = toRef({ email, password, rememberMe });
 
 const { errors, loading, signIn, resetErrors } = useSignMeIn(model);
-
-const { translatedErrors } = useErrorsTranslator("shared.account.sign_in_form.errors", errors);
 
 const onSubmit = handleSubmit(async () => {
   await signIn();

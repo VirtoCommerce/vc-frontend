@@ -165,7 +165,7 @@ const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 const { t } = useI18n();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-const { getTranslation } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator("identity_error");
 
 usePageHead({
   title: t("pages.sign_up.meta.title"),
@@ -267,7 +267,7 @@ const onSubmit = handleSubmit(async (data) => {
     void router.push({ name: "Welcome" });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
-      const errorDescription = getTranslation(error);
+      const errorDescription = translate(error);
 
       switch (error.code) {
         case "PasswordTooShort":
