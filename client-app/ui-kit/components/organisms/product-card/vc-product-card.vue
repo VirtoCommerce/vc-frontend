@@ -239,7 +239,6 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
-  //remove ".add-to-cart" after removing AddToCart
   @at-root .vc-add-to-cart,
     .add-to-cart {
     #{$self} & {
