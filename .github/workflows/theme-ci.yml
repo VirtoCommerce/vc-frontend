@@ -229,27 +229,16 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
     steps:
-      # - name: Create PR
-      #   uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
-      #   with:
-      #       deployRepo: "vc-deploy-dev"
-      #       deployBranch: "vcst-qa"
-      #       artifactKey: "URL"
-      #       artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
-      #       taskNumber: "${{ needs.ci.outputs.jira-keys }}"
-      #       cmPath: "theme/artifact.json"
-
       - name: Create PR
-        uses: VirtoCommerce/vc-github-actions/cloud-create-deployment@VCST-1573
+        uses: VirtoCommerce/vc-github-actions/create-deploy-pr@VCST-1573
         with:
             deployRepo: "vc-deploy-dev"
             deployBranch: "vcst-qa"
-            releaseSource: "module"
-            releaseType: "AzureBlob"
             artifactKey: "URL"
-            moduleVer: "${{ needs.ci.outputs.artifactUrl }}"
+            artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
             taskNumber: "${{ needs.ci.outputs.jira-keys }}"
-            configPath: "theme/artifact.json"
+            cmPath: "theme/artifact.json"
+
       # - uses: actions/checkout@v4
       #   with:
       #     fetch-depth: 0
