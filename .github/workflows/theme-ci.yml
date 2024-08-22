@@ -229,15 +229,27 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
     steps:
+      # - name: Create PR
+      #   uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+      #   with:
+      #       deployRepo: "vc-deploy-dev"
+      #       deployBranch: "vcst-qa"
+      #       artifactKey: "URL"
+      #       artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
+      #       taskNumber: "${{ needs.ci.outputs.jira-keys }}"
+      #       cmPath: "theme/artifact.json"
+
       - name: Create PR
-        uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+        uses: VirtoCommerce/vc-github-actions/cloud-create-deployment@master
         with:
             deployRepo: "vc-deploy-dev"
             deployBranch: "vcst-qa"
+            releaseSource: "module"
+            releaseType: "alpha"
             artifactKey: "URL"
-            artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
+            moduleVer: "${{ needs.ci.outputs.artifactUrl }}"
             taskNumber: "${{ needs.ci.outputs.jira-keys }}"
-            cmPath: "theme/artifact.json"
+            configPath: "theme/artifact.json"
       # - uses: actions/checkout@v4
       #   with:
       #     fetch-depth: 0
