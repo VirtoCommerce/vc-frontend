@@ -77,9 +77,9 @@
           @page-changed="changePage"
         >
           <template #mobile-item="itemData">
-            <div
-              class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
-              role="button"
+            <button
+              type="button"
+              class="grid w-full cursor-pointer appearance-none grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
               tabindex="0"
               @click="goToQuoteDetails(itemData.item)"
               @keyup.enter="goToQuoteDetails(itemData.item)"
@@ -117,7 +117,7 @@
                   {{ itemData.item.totals?.grandTotalInclTax?.formattedAmount }}
                 </span>
               </div>
-            </div>
+            </button>
           </template>
 
           <template #mobile-skeleton>

@@ -36,7 +36,7 @@ interface IEmits {
 
 interface IProps {
   color?: VcMenuItemColorType;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   to?: RouteLocationRaw | null;
   externalLink?: string;
   target?: "_self" | "_blank";
@@ -126,7 +126,7 @@ onMounted(() => {
   @apply block list-none select-none;
 
   &__inner {
-    @apply block w-full text-left rounded-[inherit];
+    @apply block w-full px-3 text-left rounded-[inherit];
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
@@ -147,22 +147,28 @@ onMounted(() => {
     }
 
     &--size {
+      &--xs {
+        --content-height: 0.875rem;
+
+        @apply gap-1.5 py-2 text-xs/[0.875rem];
+      }
+
       &--sm {
         --content-height: 1rem;
 
-        @apply gap-2 px-2 py-2.5 text-sm/[1rem];
+        @apply gap-1.5 py-2.5 text-sm/[1rem];
       }
 
       &--md {
         --content-height: 1.25rem;
 
-        @apply gap-2 px-3 py-2.5 text-sm/[1rem];
+        @apply gap-1.5 py-2.5 text-sm/[1rem];
       }
 
       &--lg {
         --content-height: 2rem;
 
-        @apply gap-1.5 px-3 py-2 text-sm/[1rem];
+        @apply gap-2 py-2 text-sm/[1rem];
       }
     }
 
@@ -170,13 +176,12 @@ onMounted(() => {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
 
-        &#{$active} {
-          @apply bg-[--color-#{$color}-100];
+        &:hover {
+          @apply bg-[--color-#{$color}-50] outline-none;
         }
 
-        &:hover,
-        &:focus {
-          @apply bg-[--color-#{$color}-50] outline-none;
+        &#{$active} {
+          @apply bg-[--color-#{$color}-100];
         }
       }
     }

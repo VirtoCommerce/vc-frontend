@@ -12,7 +12,7 @@
     <!-- Message -->
     <template v-if="message">
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div v-if="!singleLine" class="vc-input-details__message" v-html="message"></div>
+      <div v-if="!singleLine" v-html-safe="message" class="vc-input-details__message"></div>
 
       <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start">
         <template #trigger>

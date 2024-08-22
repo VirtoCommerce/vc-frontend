@@ -378,7 +378,7 @@ export function useUser() {
           throw new Error("User is missing.");
         }
 
-        return user.value!;
+        return user.value;
       },
 
       set() {

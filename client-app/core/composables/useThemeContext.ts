@@ -26,7 +26,7 @@ function _useThemeContext() {
   }
 
   async function fetchThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
-    const preset = themePresetName ? themePresetName : themeConfig.current;
+    const preset = themePresetName ?? themeConfig.current;
 
     if (typeof preset === "string") {
       const presetFileName = preset.toLowerCase().replace(" ", "-");
@@ -57,7 +57,7 @@ function _useThemeContext() {
           throw new Error("Theme context is missing.");
         }
 
-        return themeContext.value!;
+        return themeContext.value;
       },
 
       set() {
