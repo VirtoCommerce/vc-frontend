@@ -343,7 +343,7 @@ export function useUser() {
 
       localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
 
-      void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+      broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {
