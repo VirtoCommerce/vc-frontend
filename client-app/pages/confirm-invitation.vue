@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <VcTypography tag="h1" class="mb-3 lg:mt-5">
+      <VcTypography tag="h1" class="mb-3">
         {{ $t("pages.confirm_invitation.header") }}
       </VcTypography>
 
@@ -81,7 +81,7 @@
             color="danger"
             size="sm"
             variant="solid-light"
-            class="mb-4 text-xs"
+            class="my-4 text-xs"
             icon
           >
             {{ error }}
@@ -106,7 +106,7 @@ import { useField, useForm } from "vee-validate";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
-import { useIdentityErrorTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
+import { useErrorsTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { PasswordTips, RegistrationSuccessModal, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
@@ -122,7 +122,7 @@ usePageHead({
 const { openModal } = useModal();
 const { loading, registerByInvite } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
+const { getTranslation } = useErrorsTranslator("identity_error");
 
 const userId = useRouteQueryParam<string>("userId");
 const email = useRouteQueryParam<string>("email");
@@ -174,7 +174,7 @@ const onSubmit = handleSubmit(async (data) => {
     });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
-      const errorDescription = getIdentityErrorTranslation(error);
+      const errorDescription = getTranslation(error);
 
       switch (error.code) {
         case "PasswordTooShort":

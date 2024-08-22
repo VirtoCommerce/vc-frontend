@@ -78,15 +78,15 @@ module.exports = {
       { selector: "interface", format: ["PascalCase"], prefix: ["I"] },
       { selector: "typeAlias", format: ["PascalCase"], suffix: ["Type"] },
     ],
-    "@typescript-eslint/no-floating-promises": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-floating-promises": "warn",
     "@typescript-eslint/no-misused-promises": [
-      "warn",
+      "error",
       {
         "checksVoidReturn": {
           "arguments": false,
         }
       }
-    ], // TODO: Switch to error
+    ],
     "@typescript-eslint/no-unsafe-argument": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-assignment": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-call": "warn", // TODO: Switch to error
@@ -94,7 +94,7 @@ module.exports = {
     "@typescript-eslint/no-unsafe-member-access": "warn", // TODO: Switch to error
     "@typescript-eslint/no-unsafe-return": "warn", // TODO: Switch to error
     "import/consistent-type-specifier-style": "warn",
-    "import/no-cycle": "warn", // TODO: Switch to error
+    "import/no-cycle": "error",
     "import/order": [
       "warn",
       {

@@ -4,6 +4,23 @@
     ref="productComponentAnchor"
     class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
   >
+    <FiltersPopupSidebar
+      :is-exist-selected-facets="hasSelectedFacets"
+      :is-popup-sidebar-filter-dirty="isFiltersDirty"
+      :popup-sidebar-filters="productsFilters"
+      :facets-loading="fetchingFacets"
+      :is-mobile="isMobile"
+      :is-visible="isFiltersSidebarVisible"
+      :loading="fetchingVariations"
+      :hide-sorting="false"
+      :hide-controls="false"
+      @hide-popup-sidebar="hideFiltersSidebar"
+      @reset-facet-filters="resetFacetFilters"
+      @open-branches-modal="openBranchesModal"
+      @update-popup-sidebar-filters="updateFiltersSidebar"
+      @apply-filters="applyFilters"
+    />
+
     <!-- Breadcrumbs -->
     <VcBreadcrumbs class="mb-3" :items="breadcrumbs" />
 
@@ -11,7 +28,7 @@
       {{ product.name }}
     </VcTypography>
 
-    <div v-if="!hasVariations" class="mt-2 flex flex-wrap gap-5">
+    <div v-if="!product.hasVariations" class="mt-2 flex flex-wrap gap-5">
       <VcCopyText :text="product.code" :notification="$t('pages.product.sku_copied_message')">
         <span class="text-base text-secondary-900">
           {{ $t("pages.product.sku_label") }}
@@ -35,9 +52,20 @@
 
         <component
           :is="productVariationsBlock?.type"
-          v-if="productVariationsBlock && !productVariationsBlock.hidden"
-          :product="product"
+          v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
+          :variations="variations"
+          :sort="variationSortInfo"
           :model="productVariationsBlock"
+          :fetching-variations="fetchingVariations"
+          :page-number="variationsSearchParams.page"
+          :pages-count="variationsPagesCount"
+          :products-filters="productsFilters"
+          :has-selected-filters="hasSelectedFacets"
+          @apply-sorting="sortVariations"
+          @change-page="changeVariationsPage"
+          @show-filters="showFiltersSidebar"
+          @remove-facet-filter="removeFacetFilter"
+          @reset-facet-filters="resetFacetFilters"
         />
 
         <component
@@ -51,27 +79,38 @@
       <ProductSidebar
         :class="[
           'flex-none md:sticky md:top-18 md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
-          { 'print:hidden': hasVariations },
+          { 'print:hidden': product.hasVariations },
         ]"
         :product="sideBarProduct"
+        :variations="variations"
       />
     </div>
   </VcContainer>
 
-  <Error404 v-else-if="!loading && template" />
+  <Error404 v-else-if="!fetchingProduct && template" />
 </template>
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, shallowRef, watchEffect } from "vue";
+import { useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { buildBreadcrumbs, productHasVariations } from "@/core/utilities";
-import { useProduct, useRelatedProducts, useCategory, ProductSidebar } from "@/shared/catalog";
+import { BREAKPOINTS } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
+import {
+  buildBreadcrumbs,
+  getFilterExpressionFromFacets,
+  getFilterExpression,
+  getSortingExpression,
+} from "@/core/utilities";
+import { useProduct, useRelatedProducts, useCategory, ProductSidebar, useProducts } from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
+import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
+import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { PageContent } from "@/shared/static-content";
+import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
@@ -80,16 +119,58 @@ const props = withDefaults(defineProps<IProps>(), {
 interface IProps {
   productId?: string;
   allowSetMeta?: boolean;
+  filtersDisplayOrder?: FiltersDisplayOrderType;
 }
+
+const breakpoints = useBreakpoints(BREAKPOINTS);
+const isMobile = breakpoints.smaller("lg");
+
+const productId = toRef(props, "productId");
+const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
-const { product, loading, loadProduct } = useProduct();
+const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
+const {
+  fetchingProducts: fetchingVariations,
+  products: variations,
+  pagesCount: variationsPagesCount,
+  fetchingFacets,
+  fetchProducts,
+  getFacets,
+  hasSelectedFacets,
+  isFiltersDirty,
+  isFiltersSidebarVisible,
+  productsFilters,
+  applyFilters: _applyFilters,
+  hideFiltersSidebar,
+  openBranchesModal,
+  removeFacetFilter: _removeFacetFilter,
+  resetFacetFilters: _resetFacetFilters,
+  showFiltersSidebar,
+  updateProductsFilters,
+} = useProducts({
+  withFacets: true,
+  filtersDisplayOrder,
+});
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
+
+const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
+const variationSortInfo = ref<ISortInfo>({
+  column: "name",
+  direction: SortDirection.Ascending,
+});
+
+const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
+  page: 1,
+  itemsPerPage: 50,
+  sort: getSortingExpression(variationSortInfo.value),
+  filter: variationsFilterExpression.value,
+});
 
 // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1099
 const sideBarProduct = computed(() => {
@@ -100,7 +181,6 @@ const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.val
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
-const hasVariations = computed(() => productHasVariations(product.value));
 
 const productInfoSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "product-info"),
@@ -115,8 +195,74 @@ const relatedProductsSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "related-products"),
 );
 
+const breadcrumbs = useBreadcrumbs(() => {
+  return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
+});
+
 const productComponentAnchor = shallowRef<HTMLElement | null>(null);
 const productComponentAnchorIsVisible = useElementVisibility(productComponentAnchor);
+
+async function sortVariations(sortInfo: ISortInfo): Promise<void> {
+  variationSortInfo.value = sortInfo;
+
+  variationsSearchParams.value.page = 1;
+  variationsSearchParams.value.sort = getSortingExpression(sortInfo);
+
+  await fetchProducts(variationsSearchParams.value);
+}
+
+async function changeVariationsPage(pageNumber: number): Promise<void> {
+  variationsSearchParams.value.page = pageNumber;
+
+  await fetchProducts(variationsSearchParams.value);
+}
+
+async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<void> {
+  const searchParamsForFacets: ProductsSearchParamsType = {
+    filter: getFilterExpression([variationsFilterExpression.value, getFilterExpressionFromFacets(newFilters.facets)]),
+  };
+
+  updateProductsFilters({
+    branches: newFilters.branches,
+    inStock: newFilters.inStock,
+    facets: await getFacets(searchParamsForFacets),
+  });
+}
+
+async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
+  _applyFilters(newFilters);
+
+  variationsSearchParams.value.page = 1;
+  variationsSearchParams.value.filter = getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionFromFacets(newFilters.facets),
+  ]);
+
+  await fetchProducts(variationsSearchParams.value);
+}
+
+async function removeFacetFilter(
+  payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">,
+): Promise<void> {
+  _removeFacetFilter(payload);
+
+  variationsSearchParams.value.page = 1;
+  variationsSearchParams.value.filter = getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionFromFacets(productsFilters.value.facets),
+  ]);
+
+  await fetchProducts(variationsSearchParams.value);
+}
+
+async function resetFacetFilters(): Promise<void> {
+  _resetFacetFilters();
+
+  variationsSearchParams.value.page = 1;
+  variationsSearchParams.value.filter = getFilterExpression([variationsFilterExpression.value]);
+
+  await fetchProducts(variationsSearchParams.value);
+}
 
 watchEffect(() => {
   if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
@@ -136,15 +282,15 @@ watchEffect(() => {
   }
 });
 
-const breadcrumbs = useBreadcrumbs(() => {
-  return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
-});
-
 watchEffect(async () => {
-  const productId = props.productId;
-  await loadProduct(productId);
+  await fetchProduct(productId.value);
+
   if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
-    await fetchRelatedProducts({ productId, itemsPerPage: 30 });
+    await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
+  }
+
+  if (product.value?.hasVariations) {
+    await fetchProducts(variationsSearchParams.value);
   }
 });
 

@@ -1,13 +1,13 @@
 {
   "content": [
     {
-      "background": "bg-gray-100",
+      "background": "bg-neutral-100",
       "hidden": true,
       "id": "loginh27b",
       "type": "login"
     },
     {
-      "background": "bg-gray-100",
+      "background": "bg-neutral-100",
       "id": "slider2e19",
       "slides": [
         {
@@ -36,7 +36,7 @@
       "type": "products"
     },
     {
-      "background": "bg-gray-100",
+      "background": "bg-neutral-100",
       "columns": [
         {
           "image": "/static/images/home/hexa-1.webp",
@@ -70,7 +70,7 @@
     "header": null,
     "hideBreadcrumbs": true,
     "name": "Home",
-    "permalink": "/__index__home__page__",
+    "permalink": "/",
     "type": "settings"
   }
 }

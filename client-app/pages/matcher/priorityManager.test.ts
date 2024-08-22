@@ -159,4 +159,39 @@ describe("getVisiblePreviewer", () => {
 
     expect(getVisiblePreviewer(test7)).toBe("loader");
   });
+
+  it("returns null if the there is no active or 'ready' previewer, but 'internal' with 'empty' state (means 404)", () => {
+    const test8: PreviewerStateType[] = [
+      {
+        id: "internal",
+        priority: 3,
+        state: "empty",
+        isActive: true,
+      },
+      {
+        id: "builderIo",
+        priority: 2,
+        state: "empty",
+        isActive: true,
+      },
+      {
+        id: "slugContent",
+        priority: 1,
+        state: "empty",
+        isActive: true,
+      },
+    ];
+
+    expect(getVisiblePreviewer(test8)).toBe(null);
+  });
+
+  it("returns slugContent if internal empty", () => {
+    const test9: PreviewerStateType[] = [
+      { id: "builderIo", priority: 3, state: "ready", isActive: true },
+      { id: "slugContent", priority: 2, state: "ready", isActive: true },
+      { id: "internal", priority: 1, state: "empty", isActive: true },
+    ];
+
+    expect(getVisiblePreviewer(test9)).toBe("slugContent");
+  });
 });

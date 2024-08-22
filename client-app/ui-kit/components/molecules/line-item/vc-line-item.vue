@@ -21,6 +21,7 @@
         class="vc-line-item__checkbox"
         :name="$t('common.labels.toggle_vendor_select')"
         :disabled="disabled"
+        test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
       />
 
@@ -286,7 +287,11 @@ watchEffect(() => {
     }
 
     #{$removable} & {
-      @apply pr-10 md:pr-0;
+      @apply pr-10;
+
+      @container (width > theme("containers.2xl")) {
+        @apply pr-0;
+      }
     }
   }
 
@@ -357,10 +362,20 @@ watchEffect(() => {
       @apply w-[6.5rem];
     }
 
-    &:has(.vc-add-to-cart, * .vc-add-to-cart) {
-      @apply w-[13rem];
+    // FIXME: remove ".add-to-cart, * .add-to-cart" after AddToCart refactoring
+    // https://virtocommerce.atlassian.net/browse/VCST-1657
+    &:has(.vc-add-to-cart, * .vc-add-to-cart, .add-to-cart, * .add-to-cart) {
+      @apply w-full;
+
+      @container (width > theme("containers.md")) {
+        @apply w-72;
+      }
 
       @container (width > theme("containers.2xl")) {
+        @apply w-48;
+      }
+
+      @container (width > theme("containers.3xl")) {
         @apply w-[15.7rem];
       }
     }

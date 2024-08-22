@@ -20,7 +20,7 @@
           </VcCheckbox>
         </button>
 
-        <div class="ml-0.5 mt-1 pl-6 text-xs font-medium">
+        <div class="ml-0.5 mt-1 pl-6 text-xs">
           {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
         </div>
       </VcWidget>
@@ -71,16 +71,16 @@ import { cloneDeep } from "lodash";
 import { watch, shallowReactive, shallowRef, ref, nextTick, computed } from "vue";
 import FacetFilter from "./facet-filter.vue";
 import type { FacetItemType } from "@/core/types";
-import type { ProductsFilters } from "@/shared/catalog";
+import type { ProductsFiltersType } from "@/shared/catalog";
 
 interface IEmits {
-  (event: "change", value: ProductsFilters): void;
+  (event: "change", value: ProductsFiltersType): void;
   (event: "openBranches"): void;
 }
 
 interface IProps {
   loading?: boolean;
-  filters: ProductsFilters;
+  filters: ProductsFiltersType;
   orientation?: "vertical" | "horizontal";
 }
 
@@ -88,7 +88,7 @@ const facetFiltersContainer = shallowRef<HTMLDivElement | null>(null);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
-const localFilters = shallowReactive<ProductsFilters>({ facets: [], inStock: false, branches: [] });
+const localFilters = shallowReactive<ProductsFiltersType>({ facets: [], inStock: false, branches: [] });
 const isHorizontal = props.orientation === "horizontal";
 
 const filterCalculationInProgress = ref(false);

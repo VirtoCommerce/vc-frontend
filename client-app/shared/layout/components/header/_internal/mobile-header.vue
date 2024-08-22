@@ -12,7 +12,7 @@
 
         <div v-else class="flex h-full items-center">
           <button type="button" class="h-full pe-3 ps-5 sm:pe-5" @click="mobileMenuVisible = true">
-            <VcIcon class="text-[--color-primary-500]" name="menu" :size="32" />
+            <VcIcon class="text-primary" name="menu" :size="32" />
           </button>
 
           <router-link :to="$context.settings.default_return_url ?? '/'">
@@ -26,14 +26,17 @@
 
         <div v-else class="flex h-full flex-row items-center pr-4">
           <a v-if="$cfg.support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${$cfg.support_phone_number}`">
-            <VcIcon class="text-[--color-primary-500]" name="phone" :size="28" />
+            <VcIcon class="text-primary" name="phone" :size="28" />
           </a>
 
           <button type="button" class="px-1 py-2 xs:px-2" @click="toggleSearchBar">
-            <VcIcon class="text-[--color-primary-500]" name="search" :size="28" />
+            <VcIcon class="text-primary" name="search" :size="28" />
           </button>
 
-          <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" class="px-1 py-2 xs:px-2">
+          <PushMessages
+            v-if="$cfg.push_messages_enabled && isAuthenticated && isPushMessagesActive"
+            class="px-1 py-2 xs:px-2"
+          >
             <template #trigger="{ totalCount, unreadCount }">
               <div class="relative">
                 <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
@@ -57,7 +60,7 @@
 
           <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
             <span class="relative block">
-              <VcIcon class="text-[--color-primary-500]" name="cart" :size="28" />
+              <VcIcon class="text-primary" name="cart" :size="28" />
 
               <transition
                 mode="out-in"
@@ -98,7 +101,7 @@
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 
       <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-        <VcIcon name="x" class="text-[--color-additional-50]" />
+        <VcIcon name="x" class="text-additional-50" />
       </button>
     </div>
     <!-- endregion Mobile Search Bar -->
@@ -131,6 +134,7 @@ import { QueryParamName } from "@/core/enums";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
@@ -147,6 +151,7 @@ const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
+const { isActive: isPushMessagesActive } = usePushMessages();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,

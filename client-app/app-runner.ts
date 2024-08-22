@@ -1,6 +1,7 @@
 import { createHead } from "@unhead/vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
+import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/builder-preview/utils";
 import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useGoogleAnalytics, useWhiteLabeling, useNavigations } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
@@ -70,12 +71,13 @@ export default async () => {
   )) as StoreResponseType;
 
   if (!store) {
-    throw new Error("Can't get store");
+    alert("Related store not found. Please contact your site administrator.");
+    throw new Error("Store not found. Check graphql request, GetStore query");
   }
 
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
-  initializeGoogleAnalytics();
+  void initializeGoogleAnalytics();
   void initializeHotjar();
 
   /**
@@ -119,14 +121,15 @@ export default async () => {
   app.use(router);
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
-  app.use(configPlugin, themeContext.value.settings);
+  app.use(configPlugin, themeContext.value);
   app.use(uiKit);
 
-  if (window?.frameElement?.getAttribute("data-view-mode") === "page-builder") {
+  const builderOrigin = getEpParam();
+  if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
     const builderPreviewPlugin = (await import("@/builder-preview/builder-preview.plugin").catch(Logger.error))
       ?.default;
     if (builderPreviewPlugin) {
-      app.use(builderPreviewPlugin, { router });
+      app.use(builderPreviewPlugin, { router, builderOrigin });
     }
   }
 

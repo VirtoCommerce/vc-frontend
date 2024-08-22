@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <VcTypography tag="h1" class="lg:mt-5">
+      <VcTypography tag="h1">
         {{ $t(`pages.${localizationPageTerm}.header`) }}
       </VcTypography>
 
@@ -21,7 +21,7 @@
 
         <div v-else class="space-y-10 text-center lg:mt-12 lg:space-y-12 lg:text-left">
           <div class="space-x-0 space-y-10 lg:flex lg:items-center lg:space-x-3 lg:space-y-0">
-            <VcIcon class="text-[--color-success-500]" name="check-circle" :size="36" />
+            <VcIcon class="text-success" name="check-circle" :size="36" />
             <p class="text-lg">
               {{ $t(`pages.${localizationPageTerm}.success_message`) }}
             </p>
@@ -35,7 +35,7 @@
 
       <div v-else class="space-y-10 text-center lg:mt-12 lg:space-y-12 lg:text-left">
         <div class="space-x-0 space-y-10 lg:flex lg:items-center lg:space-x-3 lg:space-y-0">
-          <VcIcon class="text-[--color-danger-500]" name="x-circle" :size="36" />
+          <VcIcon class="text-danger" name="x-circle" :size="36" />
           <p class="text-lg">
             {{ $t("common.messages.invalid_user_id_or_token") }}
           </p>

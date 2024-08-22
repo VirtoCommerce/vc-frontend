@@ -4,12 +4,12 @@
 
   <!-- Desktop header -->
   <template v-else>
-    <TopHeader class="relative z-[21] print:hidden" />
+    <TopHeader class="relative z-[21] border-b border-neutral-300 print:hidden" />
     <BottomHeader class="sticky top-0 z-20 shadow-md print:hidden" />
   </template>
 
   <div class="hidden items-start justify-between print:flex">
-    <VcImage :src="logoUrl" :alt="$context.storeName" class="h-[3rem]" />
+    <VcImage :src="logoUrl" :alt="$context.storeName" class="h-12" />
 
     <Created />
   </div>

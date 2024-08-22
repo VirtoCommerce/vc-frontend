@@ -1,530 +1,166 @@
 {
   "current": "Mercury",
-  "presets": {
-    "Mercury": {
-      "show_details_in_separate_tab": true,
+  "settings": {
+    "show_details_in_separate_tab": true,
 
-      "page_title_with_store_name": true,
-      "page_title_store_name_align": "start",
-      "page_title_divider": " · ",
+    "page_title_with_store_name": true,
+    "page_title_store_name_align": "start",
+    "page_title_divider": " · ",
 
-      "catalog_menu_link_list_name": "catalog-menu",
-      "catalog_empty_categories_enabled": false,
+    "catalog_menu_link_list_name": "catalog-menu",
+    "catalog_empty_categories_enabled": false,
 
-      "files_enabled": true,
+    "files_enabled": true,
 
-      "push_messages_enabled": true,
+    "push_messages_enabled": true,
 
-      "quotes_enabled": true,
-      "quotes_files_scope": "quote-attachments",
+    "quotes_enabled": true,
+    "quotes_files_scope": "quote-attachments",
 
-      "purchase_request_files_scope": "purchase-request-sources",
+    "purchase_request_files_scope": "purchase-request-sources",
 
-      "product_compare_enabled": true,
-      "product_compare_limit": 5,
-      "product_filters_sorting": false,
-      "product_filters_sorting_direction": "asc",
+    "product_compare_enabled": true,
+    "product_compare_limit": 5,
+    "product_filters_sorting": false,
+    "product_filters_sorting_direction": "asc",
 
-      "vendor_enabled": true,
-      "rating_enabled": true,
-      "categories_limit": 499,
-      "wishlists_limit": 10,
+    "vendor_enabled": true,
+    "rating_enabled": true,
+    "categories_limit": 499,
+    "wishlists_limit": 10,
 
-      "search_min_chars": 2,
-      "search_max_chars": 400,
-      "search_static_content_suggestions_enabled": true,
-      "search_product_phrase_suggestions_enabled": false,
+    "search_min_chars": 2,
+    "search_max_chars": 400,
+    "search_static_content_suggestions_enabled": true,
+    "search_product_phrase_suggestions_enabled": false,
 
-      "support_phone_number": "+31 416 652 803",
-      "zero_price_product_enabled": false,
+    "support_phone_number": "+31 416 652 803",
+    "zero_price_product_enabled": false,
 
-      "checkout_multistep_enabled": true,
-      "checkout_comment_enabled": true,
-      "checkout_purchase_order_enabled": true,
-      "checkout_coupon_enabled": true,
-      "checkout_gifts_enabled": true,
+    "checkout_multistep_enabled": true,
+    "checkout_comment_enabled": true,
+    "checkout_purchase_order_enabled": true,
+    "checkout_coupon_enabled": true,
+    "checkout_gifts_enabled": true,
 
-      "isCVVinSkyflowRequired": false,
+    "isCVVinSkyflowRequired": false,
 
-      "default_return_url": "/",
+    "default_return_url": "/",
 
-      "logo_image": "/static/images/common/logo.svg",
-      "logo_inverted_image": "/static/images/common/logo-white.svg",
-      "favicon_image": "/static/icons/favicon-32x32.png",
-      "homepage_background_image": "/static/images/home/main-banner.webp",
+    "logo_image": "/static/images/common/logo.svg",
+    "logo_inverted_image": "/static/images/common/logo-white.svg",
+    "favicon_image": "/static/icons/favicon-32x32.png",
+    "homepage_background_image": "/static/images/home/main-banner.webp",
 
-      "image_thumbnails_enabled": true,
-      "image_thumbnails_original_fallback_enabled": true,
-      "image_thumbnails_suffixes": {
-        "sm": "sm",
-        "md": "md",
-        "lg": "lg"
-      },
-      "image_carousel_in_product_card_enabled": true,
-
-      "orders_statuses": [
-        {
-          "code": "New",
-          "color": "success",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Processing",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Pending",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Cancelled",
-          "color": "danger",
-          "variant": "outline"
-        },
-        {
-          "code": "Completed",
-          "color": "success",
-          "variant": "outline"
-        },
-        {
-          "code": "Payment required",
-          "color": "warning",
-          "variant": "outline-dark"
-        }
-      ],
-
-      "quote_statuses": [
-        {
-          "code": "New",
-          "color": "success",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Processing",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Ordered",
-          "color": "success",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Proposal sent",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "On hold",
-          "color": "warning",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Draft",
-          "color": "neutral",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Declined",
-          "color": "danger",
-          "variant": "outline-dark"
-        }
-      ],
-
-      "line_items_group_by_vendor_enabled": true,
-      "social_sharing_services": [
-        {
-          "name": "Facebook",
-          "icon": "/static/icons/social/facebook-icon.svg",
-          "url_template": "https://www.facebook.com/sharer.php?u={0}"
-        },
-        {
-          "name": "Twitter",
-          "icon": "/static/icons/social/twitter-icon.svg",
-          "url_template": "https://twitter.com/share?url={0}"
-        },
-        {
-          "name": "Pinterest",
-          "icon": "/static/icons/social/pinterest-icon.svg",
-          "url_template": "https://pinterest.com/pin/create/bookmarklet/?url={0}"
-        },
-        {
-          "name": "Telegram",
-          "icon": "/static/icons/social/telegram-icon.svg",
-          "url_template": "https://t.me/share/url?url={0}"
-        }
-      ],
-
-      "color_primary_50": "#FFF8EB",
-      "color_primary_100": "#FBEAD2",
-      "color_primary_200": "#F8DBB1",
-      "color_primary_300": "#F6CB90",
-      "color_primary_400": "#F3BC6F",
-      "color_primary_500": "#F0AD4E",
-      "color_primary_600": "#EB9016",
-      "color_primary_700": "#B46B0F",
-      "color_primary_800": "#7C480B",
-      "color_primary_900": "#432606",
-      "color_primary_950": "#271603",
-
-      "color_secondary_50": "#F7F9FB",
-      "color_secondary_100": "#E7EEF3",
-      "color_secondary_200": "#D3DFE9",
-      "color_secondary_300": "#BED0DF",
-      "color_secondary_400": "#AAC1D5",
-      "color_secondary_500": "#9CB1C3",
-      "color_secondary_600": "#688198",
-      "color_secondary_700": "#516577",
-      "color_secondary_800": "#3A4956",
-      "color_secondary_900": "#202E3A",
-      "color_secondary_950": "#181E23",
-
-      "color_accent_50": "#EAF7FB",
-      "color_accent_100": "#D2EDF7",
-      "color_accent_200": "#A2DAEF",
-      "color_accent_300": "#72C7E7",
-      "color_accent_400": "#42B4DF",
-      "color_accent_500": "#229AC7",
-      "color_accent_600": "#1B789B",
-      "color_accent_700": "#135770",
-      "color_accent_800": "#0C3544",
-      "color_accent_900": "#041319",
-      "color_accent_950": "#010203",
-
-      "color_neutral_50": "#FAFAFA",
-      "color_neutral_100": "#F5F5F5",
-      "color_neutral_200": "#EBEBEB",
-      "color_neutral_300": "#D4D4D4",
-      "color_neutral_400": "#A3A3A3",
-      "color_neutral_500": "#737373",
-      "color_neutral_600": "#525252",
-      "color_neutral_700": "#404040",
-      "color_neutral_800": "#262626",
-      "color_neutral_900": "#171717",
-      "color_neutral_950": "#0A0A0A",
-
-      "color_warning_50": "#FFF6D6",
-      "color_warning_100": "#FFF2C4",
-      "color_warning_200": "#FFE7A0",
-      "color_warning_300": "#FFDA7C",
-      "color_warning_400": "#FFCB59",
-      "color_warning_500": "#FFBA35",
-      "color_warning_600": "#FC9E00",
-      "color_warning_700": "#B46B0F",
-      "color_warning_800": "#8C4F00",
-      "color_warning_900": "#542D00",
-      "color_warning_950": "#381D00",
-
-      "color_danger_50": "#FFE9E8",
-      "color_danger_100": "#FFD9D9",
-      "color_danger_200": "#FFB5B5",
-      "color_danger_300": "#FF9191",
-      "color_danger_400": "#FF6E6E",
-      "color_danger_500": "#FF4A4A",
-      "color_danger_600": "#FF0808",
-      "color_danger_700": "#C40000",
-      "color_danger_800": "#820000",
-      "color_danger_900": "#400000",
-      "color_danger_950": "#1F0000",
-
-      "color_success_50": "#E4F4E2",
-      "color_success_100": "#C8E9CB",
-      "color_success_200": "#A9D4BA",
-      "color_success_300": "#8DC6A4",
-      "color_success_400": "#72B98F",
-      "color_success_500": "#57AB79",
-      "color_success_600": "#43875F",
-      "color_success_700": "#316144",
-      "color_success_800": "#1E3C2A",
-      "color_success_900": "#0B1610",
-      "color_success_950": "#020403",
-
-      "color_info_50": "#EDF8FD",
-      "color_info_100": "#E3EFF5",
-      "color_info_200": "#C4DEEB",
-      "color_info_300": "#A6CDE1",
-      "color_info_400": "#87BCD6",
-      "color_info_500": "#69ABCC",
-      "color_info_600": "#4093BD",
-      "color_info_700": "#327393",
-      "color_info_800": "#245269",
-      "color_info_900": "#15313F",
-      "color_info_950": "#0E212A",
-
-      "color_additional_50": "#FFFFFF",
-      "color_additional_950": "#000000"
+    "image_thumbnails_enabled": true,
+    "image_thumbnails_original_fallback_enabled": true,
+    "image_thumbnails_suffixes": {
+      "sm": "sm",
+      "md": "md",
+      "lg": "lg"
     },
+    "image_carousel_in_product_card_enabled": true,
 
-    "Watermelon": {
-      "show_details_in_separate_tab": true,
-
-      "page_title_with_store_name": true,
-      "page_title_store_name_align": "start",
-      "page_title_divider": " · ",
-
-      "catalog_menu_link_list_name": "catalog-menu",
-      "catalog_empty_categories_enabled": false,
-
-      "files_enabled": true,
-
-      "push_messages_enabled": true,
-
-      "quotes_enabled": true,
-      "quotes_files_scope": "quote-attachments",
-
-      "product_compare_enabled": true,
-      "product_compare_limit": 5,
-      "product_filters_sorting": false,
-      "product_filters_sorting_direction": "asc",
-
-      "vendor_enabled": true,
-      "rating_enabled": true,
-      "categories_limit": 499,
-      "wishlists_limit": 10,
-
-      "search_min_chars": 2,
-      "search_max_chars": 400,
-      "search_static_content_suggestions_enabled": true,
-      "search_product_phrase_suggestions_enabled": false,
-
-      "support_phone_number": "+31 416 652 803",
-      "zero_price_product_enabled": false,
-
-      "checkout_multistep_enabled": true,
-      "checkout_comment_enabled": true,
-      "checkout_purchase_order_enabled": true,
-      "checkout_coupon_enabled": true,
-      "checkout_gifts_enabled": true,
-
-      "isCVVinSkyflowRequired": false,
-
-      "default_return_url": "/",
-
-      "logo_image": "/static/images/common/logo.svg",
-      "logo_inverted_image": "/static/images/common/logo-white.svg",
-      "favicon_image": "/static/icons/favicon-32x32.png",
-      "homepage_background_image": "/static/images/home/main-banner.webp",
-
-      "image_thumbnails_enabled": true,
-      "image_thumbnails_original_fallback_enabled": true,
-      "image_thumbnails_suffixes": {
-        "sm": "sm",
-        "md": "md",
-        "lg": "lg"
+    "orders_statuses": [
+      {
+        "code": "New",
+        "color": "success",
+        "variant": "outline-dark"
       },
-      "image_carousel_in_product_card_enabled": true,
+      {
+        "code": "Processing",
+        "color": "info",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "Pending",
+        "color": "info",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "Cancelled",
+        "color": "danger",
+        "variant": "outline"
+      },
+      {
+        "code": "Completed",
+        "color": "success",
+        "variant": "outline"
+      },
+      {
+        "code": "Payment required",
+        "color": "warning",
+        "variant": "outline-dark"
+      }
+    ],
 
-      "orders_statuses": [
-        {
-          "code": "New",
-          "color": "success",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Processing",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Pending",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Cancelled",
-          "color": "danger",
-          "variant": "outline"
-        },
-        {
-          "code": "Completed",
-          "color": "success",
-          "variant": "outline"
-        },
-        {
-          "code": "Payment required",
-          "color": "warning",
-          "variant": "outline-dark"
-        }
-      ],
+    "quote_statuses": [
+      {
+        "code": "New",
+        "color": "success",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "Processing",
+        "color": "info",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "Ordered",
+        "color": "success",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "Proposal sent",
+        "color": "info",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "On hold",
+        "color": "warning",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "Draft",
+        "color": "neutral",
+        "variant": "outline-dark"
+      },
+      {
+        "code": "Declined",
+        "color": "danger",
+        "variant": "outline-dark"
+      }
+    ],
 
-      "quote_statuses": [
-        {
-          "code": "New",
-          "color": "success",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Processing",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Ordered",
-          "color": "success",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Proposal sent",
-          "color": "info",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "On hold",
-          "color": "warning",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Draft",
-          "color": "neutral",
-          "variant": "outline-dark"
-        },
-        {
-          "code": "Declined",
-          "color": "danger",
-          "variant": "outline-dark"
-        }
-      ],
-
-      "line_items_group_by_vendor_enabled": true,
-      "social_sharing_services": [
-        {
-          "name": "Facebook",
-          "icon": "/static/icons/social/facebook-icon.svg",
-          "url_template": "https://www.facebook.com/sharer.php?u={0}"
-        },
-        {
-          "name": "Twitter",
-          "icon": "/static/icons/social/twitter-icon.svg",
-          "url_template": "https://twitter.com/share?url={0}"
-        },
-        {
-          "name": "Pinterest",
-          "icon": "/static/icons/social/pinterest-icon.svg",
-          "url_template": "https://pinterest.com/pin/create/bookmarklet/?url={0}"
-        },
-        {
-          "name": "Telegram",
-          "icon": "/static/icons/social/telegram-icon.svg",
-          "url_template": "https://t.me/share/url?url={0}"
-        }
-      ],
-
-      "color_primary_50": "#EEF0DE",
-      "color_primary_100": "#E7EAD0",
-      "color_primary_200": "#D9DEB4",
-      "color_primary_300": "#CBD198",
-      "color_primary_400": "#BCC57B",
-      "color_primary_500": "#AEB85F",
-      "color_primary_600": "#919A45",
-      "color_primary_700": "#6C7433",
-      "color_primary_800": "#484D22",
-      "color_primary_900": "#232611",
-      "color_primary_950": "#111208",
-
-      "color_secondary_50": "#F6F4F4",
-      "color_secondary_100": "#EBE5E5",
-      "color_secondary_200": "#D4C9C9",
-      "color_secondary_300": "#BEACAD",
-      "color_secondary_400": "#A79090",
-      "color_secondary_500": "#917374",
-      "color_secondary_600": "#725A5B",
-      "color_secondary_700": "#534142",
-      "color_secondary_800": "#332829",
-      "color_secondary_900": "#141010",
-      "color_secondary_950": "#040303",
-
-      "color_accent_50": "#FEF5F5",
-      "color_accent_100": "#FCE5E5",
-      "color_accent_200": "#F8C5C5",
-      "color_accent_300": "#F4A6A5",
-      "color_accent_400": "#F18685",
-      "color_accent_500": "#ED6665",
-      "color_accent_600": "#E73433",
-      "color_accent_700": "#CA1918",
-      "color_accent_800": "#981312",
-      "color_accent_900": "#660D0C",
-      "color_accent_950": "#4D0909",
-
-      "color_neutral_50": "#FCFBFA",
-      "color_neutral_100": "#F7F5F2",
-      "color_neutral_200": "#EEEEEC",
-      "color_neutral_300": "#DFDDD7",
-      "color_neutral_400": "#B5B3B0",
-      "color_neutral_500": "#7E7C76",
-      "color_neutral_600": "#5F5B53",
-      "color_neutral_700": "#464441",
-      "color_neutral_800": "#2A2825",
-      "color_neutral_900": "#201F1C",
-      "color_neutral_950": "#0A0A0A",
-
-      "color_warning_50": "#FFF6D6",
-      "color_warning_100": "#FFF2C4",
-      "color_warning_200": "#FFE7A0",
-      "color_warning_300": "#FFDA7C",
-      "color_warning_400": "#FFCB59",
-      "color_warning_500": "#FFBA35",
-      "color_warning_600": "#FC9E00",
-      "color_warning_700": "#B46B0F",
-      "color_warning_800": "#8C4F00",
-      "color_warning_900": "#542D00",
-      "color_warning_950": "#381D00",
-
-      "color_danger_50": "#FFE9E8",
-      "color_danger_100": "#FFD9D9",
-      "color_danger_200": "#FFB5B5",
-      "color_danger_300": "#FF9191",
-      "color_danger_400": "#FF6E6E",
-      "color_danger_500": "#FF4A4A",
-      "color_danger_600": "#FF0808",
-      "color_danger_700": "#C40000",
-      "color_danger_800": "#820000",
-      "color_danger_900": "#400000",
-      "color_danger_950": "#1F0000",
-
-      "color_success_50": "#E4F4E2",
-      "color_success_100": "#C8E9CB",
-      "color_success_200": "#A9D4BA",
-      "color_success_300": "#8DC6A4",
-      "color_success_400": "#72B98F",
-      "color_success_500": "#57AB79",
-      "color_success_600": "#43875F",
-      "color_success_700": "#316144",
-      "color_success_800": "#1E3C2A",
-      "color_success_900": "#0B1610",
-      "color_success_950": "#020403",
-
-      "color_info_50": "#EDF8FD",
-      "color_info_100": "#E3EFF5",
-      "color_info_200": "#C4DEEB",
-      "color_info_300": "#A6CDE1",
-      "color_info_400": "#87BCD6",
-      "color_info_500": "#69ABCC",
-      "color_info_600": "#4093BD",
-      "color_info_700": "#327393",
-      "color_info_800": "#245269",
-      "color_info_900": "#15313F",
-      "color_info_950": "#0E212A",
-
-      "color_additional_50": "#FFFFFF",
-      "color_additional_950": "#000000",
-
-      "color_link": "#1b789b",
-      "color_link_hover": "#135770",
-
-      "color_hexagon_icon_bg": "#ed6665",
-
-      "color_mobile_menu_icon": "#f18685",
-
-      "color_header_top_bg": "#332829",
-      "color_header_top_link": "#d4c9c9",
-      "color_header_top_link_hover": "#f4a6a5",
-
-      "color_footer_top_bg": "#332829",
-
-      "color_footer_bottom_bg": "#141010",
-      "color_footer_bottom_link": "#d4c9c9"
+    "line_items_group_by_vendor_enabled": true,
+    "social_sharing_services": [
+      {
+        "name": "Facebook",
+        "icon": "/static/icons/social/facebook-icon.svg",
+        "url_template": "https://www.facebook.com/sharer.php?u={0}"
+      },
+      {
+        "name": "Twitter",
+        "icon": "/static/icons/social/twitter-icon.svg",
+        "url_template": "https://twitter.com/share?url={0}"
+      },
+      {
+        "name": "Pinterest",
+        "icon": "/static/icons/social/pinterest-icon.svg",
+        "url_template": "https://pinterest.com/pin/create/bookmarklet/?url={0}"
+      },
+      {
+        "name": "Telegram",
+        "icon": "/static/icons/social/telegram-icon.svg",
+        "url_template": "https://t.me/share/url?url={0}"
+      }
+    ],
+    "previewers_settings": {
+      "priorities": {
+        "builderIo": 1,
+        "slugContent": 2,
+        "internal": 3
+      }
     }
   }
 }

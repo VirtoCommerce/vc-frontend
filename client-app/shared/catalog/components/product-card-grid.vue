@@ -38,7 +38,7 @@
                 <span
                   class="flex size-6 items-center justify-center rounded-full bg-additional-50 opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <VcIcon class="text-[--color-neutral-400]" name="chevron-left" size="xs" />
+                  <VcIcon class="text-neutral-400" name="chevron-left" size="xs" />
                 </span>
               </div>
 
@@ -49,7 +49,7 @@
                 <span
                   class="flex size-6 items-center justify-center rounded-full bg-additional-50 opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <VcIcon class="text-[--color-neutral-400]" name="chevron-right" size="xs" />
+                  <VcIcon class="text-neutral-400" name="chevron-right" size="xs" />
                 </span>
               </div>
 
@@ -101,7 +101,7 @@
           <router-link
             :to="link"
             :target="target"
-            class="my-px line-clamp-2 h-11 cursor-pointer text-lg font-extrabold text-[--link-color] hover:text-[--link-hover-color] lg:h-9 lg:text-sm"
+            class="my-px line-clamp-2 h-11 cursor-pointer text-lg font-black text-[--link-color] hover:text-[--link-hover-color] lg:h-9 lg:text-sm"
             @click="$emit('linkClick', $event)"
           >
             {{ product.name }}
@@ -164,10 +164,10 @@
 
     <!-- Product price -->
     <div class="my-4 lg:my-3">
-      <VcItemPriceCatalog :has-variations="hasVariations" :value="price" />
+      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" />
     </div>
 
-    <div v-if="hasVariations" class="flex flex-col">
+    <div v-if="product.hasVariations" class="flex flex-col">
       <VcButton :to="link" :target="target" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
         {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
       </VcButton>
@@ -208,7 +208,7 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
-import { getLinkTarget, getProductRoute, getPropertiesGroupedByName, productHasVariations } from "@/core/utilities";
+import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -240,8 +240,7 @@ const isDigital = computed(() => props.product.productType === ProductType.Digit
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
-const hasVariations = computed(() => productHasVariations(props.product));
-const price = computed(() => (hasVariations.value ? props.product.minVariationPrice : props.product.price));
+const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

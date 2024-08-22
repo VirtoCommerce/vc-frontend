@@ -1,4 +1,5 @@
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
+import { useFetch } from "@/core/api/common";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import {
@@ -7,15 +8,16 @@ import {
   getFilterExpressionForInStock,
   getFilterExpressionForZeroPrice,
   Logger,
+  categoryToExtendedMenuLink,
+  getTranslatedMenuLink,
 } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
-import { categoryToExtendedMenuLink, getTranslatedMenuLink } from "../utilities/menu";
-import type { ExtendedMenuLinkType } from "../types";
+import type { ExtendedMenuLinkType, MenuType } from "../types";
 
 const loading = ref(false);
 const matchingRouteName = ref("");
-const menuSchema = shallowRef<typeof import("../../../config/menu.json")>();
+const menuSchema = shallowRef<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -26,11 +28,11 @@ const openedItem = computed<ExtendedMenuLinkType | undefined>(
 );
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
+  (menuSchema.value?.header?.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
 );
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header.mobile.main || []).map((item: ExtendedMenuLinkType) => {
+  (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
     const menuLink: ExtendedMenuLinkType = getTranslatedMenuLink(item);
 
     if (menuLink.id === "catalog") {
@@ -50,7 +52,7 @@ const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
     return undefined;
   }
 
-  const translatedMenuLink = getTranslatedMenuLink(menuSchema.value.header.mobile.account);
+  const translatedMenuLink = getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
 
   if (translatedMenuLink && translatedMenuLink.children && mobileContactOrganizationsMenu.value) {
     translatedMenuLink.children.splice(1, 0, mobileContactOrganizationsMenu.value);
@@ -87,11 +89,8 @@ export function useNavigations() {
 
   async function fetchMenuSchema() {
     try {
-      /**
-       * FIXME: Don't use import
-       * Fetch file (json) from Storefront to be able to edit file in Admin panel
-       */
-      menuSchema.value = await import("../../../config/menu.json");
+      const { data } = await useFetch("/config/menu.json").get().json<MenuType>();
+      menuSchema.value = data.value;
     } catch (e) {
       Logger.error(`${useNavigations.name}.${fetchMenuSchema.name}`, e);
     }

@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <VcTypography tag="h1" class="mb-8 lg:mt-5">
+      <VcTypography tag="h1" class="mb-8">
         {{ $t("pages.change_password.header") }}
       </VcTypography>
 
@@ -10,7 +10,7 @@
       </div>
 
       <div v-else class="flex flex-col items-center gap-10 lg:flex-row lg:gap-3">
-        <VcIcon class="text-[--color-success-500]" name="check-circle" :size="36" />
+        <VcIcon class="text-success" name="check-circle" :size="36" />
 
         <div class="text-lg">{{ $t("pages.change_password.success_message") }}</div>
       </div>

@@ -7,6 +7,7 @@ export type ErrorType = {
   id?: string;
   code?: string;
   description?: string;
+  parameter?: string;
   parameters?: string[] | NamedValue;
 };
 
@@ -26,11 +27,8 @@ export function useErrorsTranslator(
   function getTranslation(error: ErrorType) {
     const translationKey = `${keyInLocale}.${error.code}`;
 
-    /**
-     * `t` function has overload where second parameter can be array or object.
-     * examples: ['foo', 'bar'], { first: 'foo', second: 'bar' }
-     */
-    return te(translationKey) ? t(translationKey, error.parameters as NamedValue) : error.description;
+    const errorParameters = error.parameters ?? (error.parameter ? [error.parameter] : []);
+    return te(translationKey) ? t(translationKey, errorParameters as NamedValue) : error.description;
   }
 
   const { t, te } = useI18n();

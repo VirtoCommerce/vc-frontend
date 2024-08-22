@@ -9,65 +9,51 @@
     <VcTabs v-model="activeTab" :items="tabs" text-field="label" value-field="id" class="mb-5 flex gap-2">
       <template #item="{ item, isActive }">
         <span
-          :class="{ 'rounded-sm bg-white !text-black shadow-md': isActive }"
+          :class="{ 'rounded-sm bg-additional-50 shadow-md': isActive }"
           class="block appearance-none p-1.5 text-primary-700"
         >
-          <VcIcon class="vc-button__icon" :name="item['icon']" /> {{ item["label"] }}
+          <VcIcon class="vc-button__icon me-1" :name="item['icon']" />
+          <span :class="{ 'text-additional-950': isActive }">{{ item["label"] }}</span>
         </span>
       </template>
     </VcTabs>
 
-    <!-- Error section -->
-    <transition name="slide-fade-top" mode="out-in">
-      <VcAlert v-if="SKUsWithErrors.length" key="sku" class="mb-5" color="danger" size="sm" variant="solid-light" icon>
-        <span>{{ $t("pages.bulk_order.product_was_not_added_alert", [SKUsWithErrors.join(", ")]) }}</span>
-      </VcAlert>
-
-      <VcAlert
-        v-else-if="incorrectData"
-        key="incorrect"
-        class="mb-5"
-        color="danger"
-        size="sm"
-        variant="solid-light"
-        icon
-      >
-        {{ $t("pages.bulk_order.data_is_invalid_alert") }}
-      </VcAlert>
-    </transition>
-
-    <FromFile class="bg-white shadow-sm" :class="{ hidden: activeTab !== 'from-file' }" />
+    <FromFile class="bg-additional-50 shadow-sm" :class="{ hidden: activeTab !== 'from-file' }" />
 
     <Manually
       :loading="loadingManually"
       :class="{ hidden: activeTab !== 'manually' }"
-      class="bg-white shadow-sm"
+      class="bg-additional-50 shadow-sm"
       @add-to-cart="addManuallyItems"
-      @error="showIncorrectDataError"
     />
 
     <CopyAndPaste
       :loading="loadingCSV"
       :class="{ hidden: activeTab !== 'copy&paste' }"
-      class="bg-white shadow-sm"
+      class="bg-additional-50 shadow-sm"
       @add-to-cart="addItemsFromCSVText"
-      @error="showIncorrectDataError"
     />
   </VcContainer>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { FromFile, CopyAndPaste, Manually } from "@/shared/bulk-order";
 import { useShortCart } from "@/shared/cart";
+import { useModal } from "@/shared/modal";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
+import type { OutputBulkItemType } from "@/shared/cart";
+import AddToCartSkuErrorsModal from "@/shared/bulk-order/components/add-to-cart-sku-errors-modal.vue";
 
+const router = useRouter();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
+const { openModal } = useModal();
+const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
 
 usePageHead({
   title: t("pages.bulk_order.meta.title"),
@@ -93,35 +79,30 @@ const activeTab = computed({
   },
 });
 
-const router = useRouter();
-const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
-
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
-const incorrectData = ref(false);
-const SKUsWithErrors = ref<string[]>([]);
 
-function showIncorrectDataError() {
-  SKUsWithErrors.value = [];
-  incorrectData.value = true;
-}
+const itemsWithErrors = shallowRef<OutputBulkItemType[]>();
 
 async function addItems(items: InputNewBulkItemType[]) {
-  incorrectData.value = false;
-  SKUsWithErrors.value = [];
-
   if (!items.length || loadingCart.value || cartChanging.value) {
     return;
   }
 
   const resultItems = await addBulkItemsToCart(items);
 
-  SKUsWithErrors.value = resultItems.filter((item) => !item.isAddedToCart).map((item) => item.productSku);
+  itemsWithErrors.value = resultItems.filter((item) => !!item.errors?.length);
 
-  if (SKUsWithErrors.value.length) {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+  if (itemsWithErrors.value?.length) {
+    const closeAddToCartSkuErrorsModal = openModal({
+      component: AddToCartSkuErrorsModal,
+      props: {
+        errorItems: itemsWithErrors.value,
+        async onConfirm(): Promise<void> {
+          closeAddToCartSkuErrorsModal();
+          await router.push({ name: "Cart" });
+        },
+      },
     });
   } else {
     await router.push({ name: "Cart" });

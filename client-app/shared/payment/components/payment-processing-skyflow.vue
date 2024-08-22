@@ -63,8 +63,7 @@
 
     <div v-show="(newCardFormInitialized && !skyflowCards?.length) || addNewCardSelected">
       <div class="flex flex-col xl:flex-row">
-        <div ref="cardContainer" class="grow"></div>
-        <CardLabels class="mt-6" />
+        <div ref="cardContainer" class="md:w-2/3"></div>
       </div>
 
       <div class="mt-6 flex items-center">
@@ -76,7 +75,13 @@
       </div>
 
       <div class="mt-6 flex items-center justify-center gap-4 md:justify-start">
-        <VcButton :disabled="hasInvalid" :loading="loading" class="shrink" @click="payWithNewCreditCard">
+        <VcButton
+          data-test-id="pay-now-button"
+          :disabled="hasInvalid"
+          :loading="loading"
+          class="shrink"
+          @click="payWithNewCreditCard"
+        >
           {{ $t("shared.payment.skyflow.pay_now_button") }}
         </VcButton>
       </div>
@@ -103,7 +108,6 @@ import type CollectContainer from "skyflow-js/types/core/external/collect/collec
 import type CollectElement from "skyflow-js/types/core/external/collect/collect-element";
 import type ComposableContainer from "skyflow-js/types/core/external/collect/compose-collect-container";
 import type { IInsertRecordInput, IInsertResponse } from "skyflow-js/types/utils/common";
-import CardLabels from "@/shared/payment/components/card-labels.vue";
 
 interface IProps {
   order: CustomerOrderType;
@@ -134,16 +138,20 @@ const selectedSkyflowCard = ref<{ cardNumber: string; cardExpiration?: string; s
 
 const creditCards = computed(() => {
   const cards =
-    skyflowCards.value?.map((el) => {
-      return {
-        ...el,
-        cardNumber: replaceXFromBeginning(el.cardNumber),
-      };
-    }) || [];
+    skyflowCards.value
+      ?.map((el) => {
+        return {
+          ...el,
+          cardNumber: replaceXFromBeginning(el.cardNumber),
+        };
+      })
+      .filter((el) => el.active) || [];
+
   return cards.concat([
     {
       cardNumber: t("common.labels.add_new_card"),
       skyflowId: "",
+      active: false,
     },
   ]);
 });
@@ -281,7 +289,13 @@ async function initNewCardForm(): Promise<void> {
       base: {
         ...baseInputStyles,
         textSecurity: "none",
+        textIndent: "initial",
         padding: "0.75rem",
+      },
+      cardIcon: {
+        position: "absolute",
+        left: "8px",
+        bottom: "calc(50% - 12px)",
       },
       global,
     },
@@ -294,17 +308,20 @@ async function initNewCardForm(): Promise<void> {
     },
   };
 
+  const cardNameStyles = cloneDeep(collectStylesOptions);
+  cardNameStyles.inputStyles.base.textIndent = "42px";
+
   const cardName = container.create(
     {
       table: skyflowTableName,
       column: "card_number",
-      ...collectStylesOptions,
+      ...cardNameStyles,
       placeholder: "1111 1111 1111 1111",
       label: t("shared.payment.bank_card_form.number_label"),
       type: Skyflow.ElementType.CARD_NUMBER,
     },
     {
-      enableCardIcon: false,
+      enableCardIcon: true,
       required: true,
     },
   );

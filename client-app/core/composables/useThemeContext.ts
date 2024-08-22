@@ -9,34 +9,44 @@ function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
   async function fetchThemeContext(store: StoreResponseType, themePresetName?: string) {
-    const themeSettings = await fetchThemeSettings(store.storeId, themePresetName);
+    const themeConfig = await fetchThemeConfig();
 
-    if (!themeSettings) {
+    if (!themeConfig) {
       throw new Error("Can't get theme context");
     }
 
+    const themePreset = await fetchThemePreset(themeConfig, themePresetName);
+
     themeContext.value = {
       ...store,
-      settings: themeSettings,
+      settings: themeConfig.settings,
+      preset: themePreset,
       storeSettings: store.settings,
     };
   }
 
-  function getThemePreset(themeConfig: IThemeConfig, themePresetName?: string): IThemeConfigPreset {
-    if (themePresetName && themeConfig.presets[themePresetName]) {
-      return themeConfig.presets[themePresetName];
+  async function fetchThemePreset(themeConfig: IThemeConfig, themePresetName?: string): Promise<IThemeConfigPreset> {
+    const preset = themePresetName ? themePresetName : themeConfig.current;
+
+    if (typeof preset === "string") {
+      const presetFileName = preset.toLowerCase().replace(" ", "-");
+
+      const { data } = await useFetch(`/config/presets/${presetFileName}.json`).get().json<IThemeConfigPreset>();
+
+      return data.value!;
     }
 
-    return typeof themeConfig.current === "string" ? themeConfig.presets[themeConfig.current] : themeConfig.current;
+    return preset;
   }
 
-  async function fetchThemeSettings(storeId: string, themePresetName?: string) {
+  async function fetchThemeConfig() {
     const { data } = await useFetch("/config/settings_data.json").get().json<IThemeConfig>();
-    const themePreset = getThemePreset(data.value!, themePresetName);
-    if (IS_DEVELOPMENT) {
-      themePreset.show_details_in_separate_tab = false;
+
+    if (IS_DEVELOPMENT && data.value) {
+      data.value.settings.show_details_in_separate_tab = false;
     }
-    return themePreset;
+
+    return data.value;
   }
 
   return {

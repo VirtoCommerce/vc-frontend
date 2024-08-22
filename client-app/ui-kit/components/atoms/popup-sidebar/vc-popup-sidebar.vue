@@ -2,7 +2,7 @@
   <teleport to="body">
     <!-- Sidebar back cover -->
     <transition name="fade">
-      <div v-if="isVisible" class="fixed inset-0 z-50 size-full bg-gray-900/30" @click="onHide" />
+      <div v-if="isVisible" class="fixed inset-0 z-50 size-full bg-neutral-900/30" @click="onHide" />
     </transition>
 
     <!-- Sidebar content -->
@@ -15,7 +15,7 @@
       <div
         v-if="isVisible"
         v-bind="$attrs"
-        class="fixed inset-0 z-50 flex w-72 flex-col bg-[--color-additional-50] transition-transform"
+        class="fixed inset-0 z-50 flex w-72 flex-col bg-additional-50 transition-transform"
       >
         <div class="relative z-[1] flex items-center justify-between gap-2 ps-5 shadow-sm">
           <slot name="header" :hide="onHide">
@@ -24,7 +24,7 @@
             </div>
 
             <button type="button" class="appearance-none px-5 py-4" @click="onHide">
-              <VcIcon class="text-[--color-danger-400]" name="x" />
+              <VcIcon class="text-danger-400" name="x" />
             </button>
           </slot>
         </div>

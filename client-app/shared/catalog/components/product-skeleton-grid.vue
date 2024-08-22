@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex w-full flex-col rounded bg-additional-50 p-6 shadow-t-3sm outline outline-1 outline-offset-0 outline-neutral-200 hover:shadow-lg lg:px-5 lg:pb-3.5 lg:pt-5"
+    class="flex w-full flex-col rounded bg-additional-50 p-6 shadow outline outline-1 outline-offset-0 outline-neutral-200 hover:shadow-lg lg:px-5 lg:pb-3.5 lg:pt-5"
   >
     <!-- Product image -->
     <div class="relative flex flex-col items-center justify-center pb-[87%]">

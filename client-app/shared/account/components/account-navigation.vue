@@ -38,11 +38,11 @@
           :key="facet.term"
           class="flex items-center space-x-1 overflow-hidden text-ellipsis px-3 text-sm"
         >
-          <VcIcon class="flex-none text-[--color-primary-500]" name="minus" />
+          <VcIcon class="flex-none text-primary" name="minus" />
 
           <a
             :class="{ 'font-bold': isSelectedOrderStatus(facet.term) }"
-            class="line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5 hover:text-black"
+            class="line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5 hover:text-neutral-950"
             @click="applyOrderFilter(facet.term)"
           >
             <div class="grow overflow-hidden text-ellipsis text-nowrap">{{ facet.label }}</div>
@@ -63,12 +63,12 @@
           :key="list.id"
           class="ml-4 flex items-center space-x-2 overflow-hidden text-ellipsis px-3 text-sm"
         >
-          <VcIcon class="flex-none text-[--color-primary-500]" name="minus" />
+          <VcIcon class="flex-none text-primary" name="minus" />
 
           <router-link
             :to="{ name: 'ListDetails', params: { listId: list.id } }"
-            class="line-clamp-2 cursor-pointer py-0.5 font-semibold text-gray-500 hover:text-black"
-            active-class="!text-black"
+            class="line-clamp-2 cursor-pointer py-0.5 font-bold text-neutral hover:text-additional-950"
+            active-class="!text-neutral-950"
           >
             {{ list.name }}
           </router-link>
@@ -91,14 +91,14 @@
       <AccountNavigationLink
         :to="{ name: 'SavedCreditCards' }"
         :text="$t('shared.account.navigation.links.saved_credit_cards')"
-        class="credit-card"
+        class="credit-card-icon"
       />
 
       <AccountNavigationLink
-        v-if="$cfg.push_messages_enabled"
+        v-if="$cfg.push_messages_enabled && isPushMessagesActive"
         :to="{ name: 'Notifications' }"
         :text="$t('shared.account.navigation.links.notifications')"
-        class="notifications"
+        class="notifications-icon"
       />
     </VcWidget>
 
@@ -125,6 +125,7 @@ import { useRoute } from "vue-router";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
+import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import { useWishlists } from "@/shared/wishlists";
 import AccountNavigationLink from "./account-navigation-link.vue";
 
@@ -133,6 +134,7 @@ const { isCorporateMember } = useUser();
 const { lists, fetchWishlists } = useWishlists();
 const { facets } = useUserOrders({});
 const { filterData, applyFilters } = useUserOrdersFilter();
+const { isActive: isPushMessagesActive } = usePushMessages();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");
 const isOrdersPage = eagerComputed(() => route.name === "Orders");

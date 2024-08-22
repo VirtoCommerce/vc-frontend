@@ -1,6 +1,6 @@
 <template>
   <div
-    class="vc-product-skeleton-list grid gap-x-3.5 bg-white px-4 pb-5 pt-4 lg:place-items-center lg:rounded lg:py-3.5 lg:shadow-t-3sm lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-neutral-200 lg:hover:shadow-lg"
+    class="vc-product-skeleton-list grid gap-x-3.5 bg-additional-50 px-4 pb-5 pt-4 lg:place-items-center lg:rounded lg:py-3.5 lg:shadow lg:outline lg:outline-1 lg:outline-offset-0 lg:outline-neutral-200 lg:hover:shadow-lg"
   >
     <div class="vc-product-skeleton-list__mobile-left sm:contents">
       <!-- Product image -->

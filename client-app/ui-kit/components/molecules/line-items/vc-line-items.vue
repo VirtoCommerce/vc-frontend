@@ -9,6 +9,7 @@
           :model-value="isAllItemsSelected"
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
+          test-id="vc-line-items-head-checkbox"
           @change="($event) => selectAllItems($event as boolean)"
         />
 
@@ -84,6 +85,7 @@
           </VcLineItem>
         </slot>
       </div>
+      <slot name="after-items" />
 
       <!-- table footer -->
       <div v-if="selectable || withSubtotal" class="vc-line-items__foot">

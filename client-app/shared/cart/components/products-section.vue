@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { LineItemsGroupByVendorType } from "@/core/types";
+import type { VendorGroupType } from "@/core/types";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
 interface IEmits {
@@ -74,8 +74,7 @@ interface IProps {
   disabled?: boolean;
   items?: LineItemType[];
   selectedItemIds?: string[];
-  itemsGroupedByVendor?: LineItemsGroupByVendorType<LineItemType>[];
-  /** @deprecated */
+  itemsGroupedByVendor?: VendorGroupType<LineItemType>[];
   validationErrors?: ValidationErrorType[];
   withTitle?: boolean;
   withClearCart?: boolean;

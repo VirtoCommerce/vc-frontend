@@ -22,10 +22,6 @@ import type { Component } from "vue";
 import EnvironmentBadge from "@/shared/layout/components/environmentBadge/environment-badge.vue";
 import MainLayout from "@/shared/layout/components/main-layout/main-layout.vue";
 
-/** NOTE: As an example, here is the code for getting the settings from Liquid work context. */
-const _props = withDefaults(defineProps<{ settings?: string }>(), { settings: "{}" });
-const _settings = JSON.parse(_props.settings); // eslint-disable-line @typescript-eslint/no-unused-vars
-
 const route = useRoute();
 const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();

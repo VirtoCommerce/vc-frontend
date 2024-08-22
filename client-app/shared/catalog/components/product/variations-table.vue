@@ -1,6 +1,25 @@
 <template>
   <div class="variations-table">
-    <VcTable :items="variations" :columns="columns" layout="table-fixed min-w-full w-auto">
+    <VcTable
+      :items="variations"
+      :columns="columns"
+      :sort="sort"
+      :loading="fetching"
+      :page="pageNumber"
+      :pages="pagesCount"
+      :hide-default-footer="!pagesCount"
+      layout="table-fixed min-w-full w-auto"
+      @header-click="applySorting"
+      @page-changed="changePage"
+    >
+      <template #desktop-skeleton>
+        <tr v-for="rowIndex in 5" :key="rowIndex" class="variations-table__row even:bg-neutral-50">
+          <td v-for="columnIndex in columns.length" :key="columnIndex" class="p-5">
+            <div class="h-6 animate-pulse bg-neutral-200" />
+          </td>
+        </tr>
+      </template>
+
       <template #desktop-body>
         <tr v-for="(variation, variationIndex) in variations" :key="variation.code" class="variations-table__row">
           <td class="variations-table__col variations-table__col--title">
@@ -10,7 +29,7 @@
           </td>
 
           <td
-            v-for="(property, index) in properties"
+            v-for="(property, index) in productProperties"
             :key="index"
             class="variations-table__col variations-table__col--property"
           >
@@ -91,8 +110,8 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
-import { ref, computed, onMounted } from "vue";
+import { flatten, sortBy, uniqBy } from "lodash";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useErrorsTranslator } from "@/core/composables";
@@ -102,53 +121,101 @@ import { useShortCart } from "@/shared/cart/composables";
 import CountInCart from "../count-in-cart.vue";
 import type { Product, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
 import type { ErrorType } from "@/core/composables";
+import type { ISortInfo } from "@/core/types";
 import type { NamedValue } from "vue-i18n";
 
-interface IProps {
-  product: Product;
+interface IEmits {
+  (event: "applySorting", item: ISortInfo): void;
+  (event: "changePage", page: number): void;
 }
 
-interface IProperties {
+interface IProps {
+  variations: Product[];
+  sort: ISortInfo;
+  fetching: boolean;
+  pageNumber?: number;
+  pagesCount?: number;
+}
+
+interface IProductProperties {
   name: string;
   label: string;
   values: string[];
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const properties = ref<IProperties[]>([]);
-const propTitles = ref<ITableColumn[]>([]);
+const variations = computed(() => props.variations);
+const productProperties = computed<IProductProperties[]>(() => {
+  const properties: IProductProperties[] = [];
+
+  const propertiesCombined = flatten(variations.value.map((variation) => getProperties(variation)));
+
+  const names = uniqBy(
+    propertiesCombined.map((prop) => {
+      return {
+        name: prop.name,
+        label: prop.label,
+      };
+    }),
+    "name",
+  );
+
+  names.forEach(({ name, label }) => {
+    properties.push({
+      name,
+      label,
+      values: variations.value.map((variation) => {
+        const property = variation.properties.find((item) => item.name === name);
+        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
+      }),
+    });
+  });
+
+  return properties;
+});
+
+const propertiesTitles = computed<ITableColumn[]>(() =>
+  productProperties.value.map((item) => ({
+    id: item.name,
+    title: item.label,
+    sortable: true,
+    align: "center",
+    classes: "min-w-24 w-24",
+  })),
+);
 
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 
-const variations = computed(() => [props.product, ...props.product.variations]);
-
 const columns = computed<ITableColumn[]>(() => [
   {
-    id: "item",
+    id: "name",
     title: t("shared.catalog.product_details.variations.columns.item"),
     sortable: true,
     classes: "min-w-52",
   },
-  ...propTitles.value,
+  ...propertiesTitles.value,
   {
-    id: "stock",
+    id: "instock_quantity",
     title: t("shared.catalog.product_details.variations.columns.stock"),
     align: "center",
+    sortable: true,
     classes: "min-w-[4.375rem] w-[4.375rem]",
   },
   {
     id: "price",
     title: t("shared.catalog.product_details.variations.columns.price"),
     align: "right",
+    sortable: true,
     classes: "min-w-32 w-32",
   },
   {
     id: "quantity",
     title: t("shared.catalog.product_details.variations.columns.quantity"),
-    sortable: true,
     align: "center",
     classes: "min-w-32 w-32",
   },
@@ -172,43 +239,6 @@ const validationErrors = computed<ErrorType[]>(() => {
 
 const { idErrors } = useErrorsTranslator("validation_error", validationErrors);
 
-function getTableProperties() {
-  if (!variations.value.length) {
-    return;
-  }
-
-  const propertiesCombined = _.flatten(variations.value.map((variation) => getProperties(variation)));
-
-  const names = _.uniqBy(
-    propertiesCombined.map((prop) => {
-      return {
-        name: prop.name,
-        label: prop.label,
-      };
-    }),
-    "name",
-  );
-
-  _.each(names, ({ name, label }) => {
-    properties.value.push({
-      name,
-      label,
-      values: _.map(variations.value, (variation) => {
-        const property = _.find(variation.properties, ["name", name]);
-        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
-      }),
-    });
-  });
-
-  propTitles.value = properties.value.map((item) => ({
-    id: item.name,
-    title: item.label,
-    sortable: true,
-    align: "center",
-    classes: "min-w-24 w-24",
-  }));
-}
-
 function getCountInCart(variation: VariationType) {
   return getLineItem(variation)?.quantity || 0;
 }
@@ -222,7 +252,7 @@ function getStockQuantity(variation: VariationType) {
 
 function getProperties(variation: VariationType) {
   return Object.values(
-    getPropertiesGroupedByName(_.sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
+    getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
   );
 }
 
@@ -240,9 +270,13 @@ async function changeCart(variation: VariationType, quantity: number) {
   }
 }
 
-onMounted(() => {
-  getTableProperties();
-});
+function applySorting(sortInfo: ISortInfo): void {
+  emit("applySorting", sortInfo);
+}
+
+function changePage(page: number): void {
+  emit("changePage", page);
+}
 </script>
 
 <style lang="scss">

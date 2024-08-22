@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-[--header-bottom-bg-color]">
+  <div class="relative bg-[--header-bottom-bg-color] text-[--header-bottom-text-color]">
     <nav
       ref="bottomHeader"
       class="relative z-[2] flex min-h-[5.5rem] items-center gap-x-5 bg-inherit px-5 py-3 xl:px-12"
@@ -11,7 +11,7 @@
       <template v-if="organization">
         <div class="hidden h-6 w-0.5 bg-primary xl:block"></div>
 
-        <div class="hidden max-w-36 text-base font-medium italic leading-[18px] text-neutral-800 xl:line-clamp-2">
+        <div class="hidden max-w-36 text-base italic leading-[18px] text-neutral-800 xl:line-clamp-2">
           {{ organization?.name }}
         </div>
       </template>
@@ -44,7 +44,10 @@
           </BottomHeaderLink>
 
           <template v-else-if="item.id === 'push-messages'">
-            <PushMessages v-if="$cfg.push_messages_enabled && isAuthenticated" :offset-options="20">
+            <PushMessages
+              v-if="$cfg.push_messages_enabled && isAuthenticated && isPushMessagesActive"
+              :offset-options="20"
+            >
               <template #trigger="{ totalCount, unreadCount }">
                 <BottomHeaderLink :link="item" :count="unreadCount">
                   <template #icon>
@@ -96,6 +99,7 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
+import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
@@ -107,6 +111,7 @@ const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
+const { isActive: isPushMessagesActive } = usePushMessages();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);

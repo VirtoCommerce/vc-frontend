@@ -115,21 +115,21 @@ export const Custom: StoryFn<typeof VcSelect> = (args) => ({
   template: `<VcSelect v-bind="args" v-model="args.modelValue" class="mb-32">
     <template #placeholder>
       <div class="flex items-center gap-3 p-3 text-sm">
-        <div class="w-8 h-8 rounded-full bg-[--color-neutral-200]"></div>
+        <div class="w-8 h-8 rounded-full bg-neutral-200"></div>
         Select an item
       </div>
     </template>
 
     <template #selected="{ item }">
       <div class="flex items-center gap-3 p-3 text-sm">
-        <div class="flex items-center justify-center w-8 h-8 rounded-full text-[--color-additional-50] bg-[--color-danger-500]">{{ item[0] }}</div>
+        <div class="flex items-center justify-center w-8 h-8 rounded-full text-additional-50 bg-danger">{{ item[0] }}</div>
 
         {{ item }}
       </div>
     </template>
 
     <template #item="{ item }">
-      <div class="flex items-center justify-center w-8 h-8 rounded-full text-[--color-additional-50] bg-[--color-info-500]">{{ item[0] }}</div>
+      <div class="flex items-center justify-center w-8 h-8 rounded-full text-additional-50 bg-info">{{ item[0] }}</div>
 
       {{ item }}
     </template>

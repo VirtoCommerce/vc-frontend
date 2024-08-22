@@ -4,6 +4,151 @@ import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
 
 export interface IThemeConfigPreset {
+  primary_font_family?: string;
+  secondary_font_family?: string;
+
+  color_primary_50: string;
+  color_primary_100: string;
+  color_primary_200: string;
+  color_primary_300: string;
+  color_primary_400: string;
+  color_primary_500: string;
+  color_primary_600: string;
+  color_primary_700: string;
+  color_primary_800: string;
+  color_primary_900: string;
+  color_primary_950: string;
+
+  color_secondary_50: string;
+  color_secondary_100: string;
+  color_secondary_200: string;
+  color_secondary_300: string;
+  color_secondary_400: string;
+  color_secondary_500: string;
+  color_secondary_600: string;
+  color_secondary_700: string;
+  color_secondary_800: string;
+  color_secondary_900: string;
+  color_secondary_950: string;
+
+  color_accent_50: string;
+  color_accent_100: string;
+  color_accent_200: string;
+  color_accent_300: string;
+  color_accent_400: string;
+  color_accent_500: string;
+  color_accent_600: string;
+  color_accent_700: string;
+  color_accent_800: string;
+  color_accent_900: string;
+  color_accent_950: string;
+
+  color_neutral_50: string;
+  color_neutral_100: string;
+  color_neutral_200: string;
+  color_neutral_300: string;
+  color_neutral_400: string;
+  color_neutral_500: string;
+  color_neutral_600: string;
+  color_neutral_700: string;
+  color_neutral_800: string;
+  color_neutral_900: string;
+  color_neutral_950: string;
+
+  color_warning_50: string;
+  color_warning_100: string;
+  color_warning_200: string;
+  color_warning_300: string;
+  color_warning_400: string;
+  color_warning_500: string;
+  color_warning_600: string;
+  color_warning_700: string;
+  color_warning_800: string;
+  color_warning_900: string;
+  color_warning_950: string;
+
+  color_danger_50: string;
+  color_danger_100: string;
+  color_danger_200: string;
+  color_danger_300: string;
+  color_danger_400: string;
+  color_danger_500: string;
+  color_danger_600: string;
+  color_danger_700: string;
+  color_danger_800: string;
+  color_danger_900: string;
+  color_danger_950: string;
+
+  color_success_50: string;
+  color_success_100: string;
+  color_success_200: string;
+  color_success_300: string;
+  color_success_400: string;
+  color_success_500: string;
+  color_success_600: string;
+  color_success_700: string;
+  color_success_800: string;
+  color_success_900: string;
+  color_success_950: string;
+
+  color_info_50: string;
+  color_info_100: string;
+  color_info_200: string;
+  color_info_300: string;
+  color_info_400: string;
+  color_info_500: string;
+  color_info_600: string;
+  color_info_700: string;
+  color_info_800: string;
+  color_info_900: string;
+  color_info_950: string;
+
+  color_additional_50: string;
+  color_additional_950: string;
+
+  color_body_bg?: string;
+  color_body_text?: string;
+
+  color_link?: string;
+  color_link_hover?: string;
+
+  color_price?: string;
+
+  color_hexagon_icon_bg?: string;
+  color_hexagon_icon?: string;
+
+  color_header_top_bg?: string;
+  color_header_top_text?: string;
+  color_header_top_link?: string;
+  color_header_top_link_hover?: string;
+
+  color_header_bottom_bg?: string;
+  color_header_bottom_text?: string;
+  color_header_bottom_link?: string;
+  color_header_bottom_link_hover?: string;
+  color_header_bottom_link_active?: string;
+
+  color_footer_top_bg?: string;
+  color_footer_top_text?: string;
+  color_footer_top_link?: string;
+  color_footer_top_link_hover?: string;
+  color_footer_top_link_active?: string;
+
+  color_footer_bottom_bg?: string;
+  color_footer_bottom_text?: string;
+  color_footer_bottom_link?: string;
+  color_footer_bottom_link_hover?: string;
+
+  color_mobile_search_bar_bg?: string;
+  color_mobile_menu_bg?: string;
+  color_mobile_menu_text?: string;
+  color_mobile_menu_link?: string;
+  color_mobile_menu_link_active?: string;
+  color_mobile_menu_icon?: string;
+  color_mobile_menu_icon_active?: string;
+}
+
+export interface IThemeConfigSettings {
   show_details_in_separate_tab?: boolean;
 
   search_by_static_content_enabled?: boolean;
@@ -103,65 +248,16 @@ export interface IThemeConfigPreset {
   logo_inverted_image?: string;
   favicon_image?: string;
   homepage_background_image?: string;
-  primary_font_family?: string;
-  secondary_font_family?: string;
-  color_primary?: string;
-  color_primary_hover?: string;
-  color_secondary?: string;
-  color_secondary_hover?: string;
-  color_link?: string;
-  color_link_hover?: string;
-  color_body_bg?: string;
-  color_body_text?: string;
-  color_modal_danger_bg?: string;
-  color_modal_success_bg?: string;
-  color_modal_warning_bg?: string;
-  color_modal_info_bg?: string;
-  color_alert_danger_bg?: string;
-  color_alert_success_bg?: string;
-  color_alert_warning_bg?: string;
-  color_alert_info_bg?: string;
-  color_alert_danger_text?: string;
-  color_alert_success_text?: string;
-  color_alert_warning_text?: string;
-  color_alert_info_text?: string;
-  color_danger?: string;
-  color_danger_hover?: string;
-  color_success?: string;
-  color_success_hover?: string;
-  color_warning?: string;
-  color_warning_hover?: string;
-  color_price?: string;
-  color_mobile_menu_bg?: string;
-  color_mobile_menu_link?: string;
-  color_mobile_menu_icon?: string;
-  color_header_top_bg?: string;
-  color_header_top_text?: string;
-  color_header_top_link?: string;
-  color_header_top_link_hover?: string;
-  color_header_bottom_bg?: string;
-  color_header_bottom_text?: string;
-  color_header_bottom_link?: string;
-  color_header_bottom_link_hover?: string;
-  color_header_bottom_link_active?: string;
-  color_header_bottom_dropdown_bg?: string;
-  color_header_bottom_dropdown_link?: string;
-  color_header_bottom_dropdown_link_hover?: string;
-  color_search_bar_bg?: string;
-  color_footer_top_bg?: string;
-  color_footer_top_text?: string;
-  color_footer_top_link?: string;
-  color_footer_top_link_hover?: string;
-  color_footer_top_link_active?: string;
-  color_footer_bottom_bg?: string;
-  color_footer_bottom_text?: string;
-  color_footer_bottom_link?: string;
-  color_footer_bottom_link_hover?: string;
   isCVVinSkyflowRequired?: boolean;
   default_return_url?: string;
+  previewers_settings?: {
+    priorities?: {
+      [key: string]: number;
+    };
+  };
 }
 
 export interface IThemeConfig {
   current: string | IThemeConfigPreset;
-  presets: Record<string, IThemeConfigPreset>;
+  settings: IThemeConfigSettings;
 }

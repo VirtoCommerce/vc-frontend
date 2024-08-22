@@ -31,6 +31,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   img,
   blockquote,
   pre,
+  table,
   ul,
   ol,
   dl,
@@ -186,29 +187,23 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   }
 
   table {
-    table-layout: auto;
-    width: 100%;
+    @apply table-auto rounded border-separate border border-spacing-0 w-full text-base;
 
-    th {
-      padding: 8px 12px;
-      background: theme("colors.neutral.100");
-      font-weight: 700;
-      text-align: left;
+    tr {
+      @apply even:bg-neutral-50;
     }
 
-    td {
-      width: 50%;
-      padding: 8px 12px;
-      border-bottom: 1px solid theme("colors.neutral.100");
-      vertical-align: top;
+    td,
+    th {
+      @apply align-top px-2 py-3 border-t;
 
-      &:first-child {
-        width: 40%;
+      @media (screen(lg)) {
+        @apply p-3;
       }
+    }
 
-      &:not(:first-child) {
-        border-left: 1px solid theme("colors.neutral.100");
-      }
+    th {
+      @apply font-bold text-start border-0;
     }
   }
 }

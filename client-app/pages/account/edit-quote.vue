@@ -44,7 +44,7 @@
 
       <!-- Quote products -->
       <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
-        <QuoteLineItems :items="quote.items!" @remove:item="onRemoveItem" />
+        <QuoteLineItems :items="quote.items!" @update:item="onUpdateItem" @remove:item="onRemoveItem" />
       </VcWidget>
 
       <VcWidget :title="$t('pages.account.quote_details.shipping_address')" prepend-icon="truck" size="lg">
@@ -52,7 +52,7 @@
           {{ $t("pages.account.quote_details.shipping_address") }}
         </h4>
 
-        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]">
+        <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <VcAddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="shippingAddress"
@@ -72,9 +72,7 @@
           {{ $t("pages.account.quote_details.billing_address") }}
         </h4>
 
-        <div
-          :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-[--color-neutral-50]': fetching }]"
-        >
+        <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
           <VcCheckbox
             :model-value="billingAddressEqualsShipping"
             :disabled="fetching || !shippingAddress"
@@ -282,8 +280,8 @@ function accountAddressExists(address: AnyAddressType): boolean {
   return accountAddresses.value.some((item) => isEqualAddresses(item, address));
 }
 
-function onRemoveItem(item: QuoteItemType): void {
-  remove(quote.value!.items!, (i: QuoteItemType) => i.id === item.id);
+function onRemoveItem(itemId: string): void {
+  remove(quote.value!.items!, ({ id }) => id === itemId);
 }
 
 function toggleBillingAddressEqualsShippingAddress(): void {
@@ -442,6 +440,13 @@ async function fetchAddresses(): Promise<void> {
 function onFileDownload(file: FileType) {
   if (file && file.url) {
     void downloadFile(file.url, file.name);
+  }
+}
+
+function onUpdateItem({ itemId, quantity }: { itemId: string; quantity: number }): void {
+  const item = quote.value!.items!.find(({ id }) => id === itemId);
+  if (item) {
+    item.selectedTierPrice!.quantity = quantity;
   }
 }
 

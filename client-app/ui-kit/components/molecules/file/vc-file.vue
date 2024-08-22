@@ -168,22 +168,22 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__size {
-    @apply flex-none pt-0.5 text-xs text-[--color-neutral-400];
+    @apply flex-none pt-0.5 text-xs text-neutral-400;
   }
 
   &__progress {
-    @apply overflow-hidden h-1 rounded-xl bg-[--color-neutral-200];
+    @apply overflow-hidden h-1 rounded-xl bg-neutral-200;
   }
 
   &__progress-value {
-    @apply h-full rounded-xl bg-[--color-accent-400] transition-all;
+    @apply h-full rounded-xl bg-accent-400 transition-all;
   }
 
   &__message {
-    @apply text-xxs text-[--color-neutral-600];
+    @apply text-xxs text-neutral-600;
 
     &--error {
-      @apply text-[--color-danger-500];
+      @apply text-danger;
     }
   }
 

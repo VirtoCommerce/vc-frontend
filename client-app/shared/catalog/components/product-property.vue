@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-x-3">
     <div class="flex w-1/2 gap-x-3">
-      <div class="shrink text-gray-500">
+      <div class="shrink text-neutral">
         {{ label }}
       </div>
 

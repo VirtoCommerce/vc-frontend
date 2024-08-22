@@ -1,6 +1,8 @@
-import { createSharedComposable, computedEager, useLastChanged } from "@vueuse/core";
+import { ApolloError } from "@apollo/client/core";
+import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge } from "lodash";
-import { computed, readonly } from "vue";
+import { computed, readonly, ref } from "vue";
+import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
   useAddItemToCartMutation,
@@ -13,6 +15,7 @@ import {
   useAddOrUpdateCartShipmentMutation,
   useChangeCartCommentMutation,
   useChangeFullCartItemQuantityMutation,
+  useChangeFullCartItemsQuantityMutation,
   useChangePurchaseOrderNumberMutation,
   useClearCartMutation,
   useGetFullCartQuery,
@@ -22,17 +25,16 @@ import {
   useRemoveShipmentMutation,
   useSelectCartItemsMutation,
   useUnselectCartItemsMutation,
-  useValidateCouponMutation,
-  clearCart as deprecatedClearCart,
+  useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
+import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
-import { groupByVendor } from "@/core/utilities";
+import { groupByVendor, Logger } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
 import ClearCartModal from "../components/clear-cart-modal.vue";
 import { CartValidationErrors } from "../enums";
-import type { ChangeCartItemQuantityOptionsType } from "@/core/api/graphql";
 import type {
   InputNewBulkItemType,
   InputNewCartItemType,
@@ -79,20 +81,10 @@ export function useShortCart() {
   async function addBulkItemsToCart(items: InputNewBulkItemType[]): Promise<OutputBulkItemType[]> {
     const result = await _addBulkItemsToCart({ command: { cartItems: items } });
 
-    const cartFragment = result?.data?.addBulkItemsCart?.cart;
-
     return items.map<OutputBulkItemType>(({ productSku, quantity }) => ({
       productSku,
       quantity,
-      // Workaround as we don't know product IDs on bulk order
-      isAddedToCart: cartFragment?.items.some(
-        (item) =>
-          item.sku === productSku &&
-          !cartFragment?.validationErrors.some(
-            (error) =>
-              error.objectType == ValidationErrorObjectType.CatalogProduct && error.objectId === item.productId,
-          ),
-      ),
+      errors: result?.data?.addBulkItemsCart?.errors?.filter((error) => error.objectId === productSku),
     }));
   }
 
@@ -265,10 +257,29 @@ export function _useFullCart() {
     await _changeItemQuantity({ command: { lineItemId, quantity } });
   }
 
-  const { mutate: _validateCoupon, loading: validateCouponLoading } = useValidateCouponMutation(cart);
+  const { mutate: _changeItemsQuantity, loading: changeItemsQuantityLoading } =
+    useChangeFullCartItemsQuantityMutation(cart);
+  const { add, overflowed: changeItemQuantityBatchedOverflowed } = useMutationBatcher(_changeItemsQuantity, {
+    mergeStrategy: getMergeStrategyUniqueBy("lineItemId"),
+  });
+  async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
+    try {
+      await add({ command: { cartItems: [{ lineItemId, quantity }] } });
+    } catch (error) {
+      if (error instanceof ApolloError && error.networkError?.toString() === (AbortReason.Explicit as string)) {
+        return;
+      }
+      Logger.error(changeItemQuantityBatched.name, error);
+    }
+  }
+
+  const validateCouponLoading = ref(false);
   async function validateCartCoupon(couponCode: string): Promise<boolean | undefined> {
-    const result = await _validateCoupon({ command: { coupon: couponCode } });
-    return result?.data?.validateCoupon;
+    const { result, load: _validateCoupon } = useValidateCouponQuery(couponCode, cart.value?.id ?? "");
+    validateCouponLoading.value = true;
+    await _validateCoupon();
+    validateCouponLoading.value = false;
+    return result.value?.validateCoupon || false;
   }
 
   const { mutate: _addCoupon, loading: addCouponLoading } = useAddCouponMutation(cart);
@@ -409,6 +420,8 @@ export function _useFullCart() {
     refetch,
     forceFetch,
     changeItemQuantity,
+    changeItemQuantityBatched,
+    changeItemQuantityBatchedOverflowed,
     removeItems,
     validateCartCoupon,
     addCartCoupon,
@@ -431,6 +444,7 @@ export function _useFullCart() {
         clearCartLoading.value ||
         removeItemsLoading.value ||
         changeItemQuantityLoading.value ||
+        changeItemsQuantityLoading.value ||
         validateCouponLoading.value ||
         addCouponLoading.value ||
         removeCouponLoading.value ||
@@ -446,104 +460,3 @@ export function _useFullCart() {
 }
 
 export const useFullCart = createSharedComposable(_useFullCart);
-
-function _useCart() {
-  const {
-    cart: shortCart,
-    refetch: fetchShortCart,
-    addToCart,
-    addItemsToCart,
-    addBulkItemsToCart,
-    getItemsTotal,
-    changeItemQuantity: changeShortCartItemQuantity,
-  } = useShortCart();
-
-  const {
-    cart: fullCart,
-    shipment,
-    payment,
-    availableShippingMethods,
-    availablePaymentMethods,
-    selectedItemIds,
-    lineItemsGroupedByVendor,
-    selectedLineItems,
-    selectedLineItemsGroupedByVendor,
-    allItemsAreDigital,
-    addedGiftsByIds,
-    availableExtendedGifts,
-    hasValidationErrors,
-    hasOnlyUnselectedValidationError,
-    forceFetch: fetchFullCart,
-    changeItemQuantity: changeFullCartItemQuantity,
-    removeItems,
-    validateCartCoupon,
-    addCartCoupon,
-    removeCartCoupon,
-    changeComment,
-    updateShipment,
-    removeShipment,
-    updatePayment,
-    updatePurchaseOrderNumber,
-    addGiftsToCart,
-    removeGiftsFromCart,
-    toggleGift,
-    openClearCartModal,
-    loading,
-    changing,
-  } = useFullCart();
-
-  const lastChangedShortCart = useLastChanged(shortCart, { immediate: true });
-  const lastChangedFullCart = useLastChanged(fullCart, { immediate: true });
-
-  return {
-    shipment,
-    payment,
-    availableShippingMethods,
-    availablePaymentMethods,
-    selectedItemIds,
-    lineItemsGroupedByVendor,
-    selectedLineItems,
-    selectedLineItemsGroupedByVendor,
-    allItemsAreDigital,
-    addedGiftsByIds,
-    availableExtendedGifts,
-    hasValidationErrors,
-    hasOnlyUnselectedValidationError,
-    getItemsTotal,
-    fetchShortCart,
-    fetchFullCart,
-    addToCart,
-    addItemsToCart,
-    addBulkItemsToCart,
-    changeItemQuantity: async (
-      lineItemId: string,
-      quantity: number,
-      options: ChangeCartItemQuantityOptionsType = {},
-    ) => {
-      return await (options.reloadFullCart
-        ? changeFullCartItemQuantity(lineItemId, quantity)
-        : changeShortCartItemQuantity(lineItemId, quantity));
-    },
-    removeItems,
-    validateCartCoupon,
-    addCartCoupon,
-    removeCartCoupon,
-    changeComment,
-    updateShipment,
-    removeShipment,
-    updatePayment,
-    updatePurchaseOrderNumber,
-    clearCart: async (cartId: string) => {
-      return await deprecatedClearCart(cartId);
-    },
-    addGiftsToCart,
-    removeGiftsFromCart,
-    toggleGift,
-    openClearCartModal,
-    loading: computedEager(() => loading.value || changing.value),
-    cart: computed(() => (lastChangedShortCart.value < lastChangedFullCart.value ? fullCart.value : shortCart.value)),
-  };
-}
-
-/** @deprecated Use {@link useSortCart} for adding products to cart and {@link useFullCart} for cart & checkout pages */
-export const useCart = createSharedComposable(_useCart);

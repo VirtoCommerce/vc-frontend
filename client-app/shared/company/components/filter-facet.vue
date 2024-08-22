@@ -1,12 +1,12 @@
 <template>
   <dl>
-    <dt class="mb-1.5 text-17 font-bold leading-5 text-[#92897C]">
+    <dt class="mb-1.5 text-lg font-bold leading-5 text-neutral">
       {{ facet.label }}
     </dt>
 
     <dd v-for="(facetValue, index) in facet.values" :key="index">
       <VcCheckbox v-model="facetValue.selected" class="py-2" @change="change">
-        <span :class="{ 'text-gray-500': !facetValue.selected }" class="whitespace-nowrap font-medium leading-5">
+        <span :class="{ 'text-neutral': !facetValue.selected }" class="whitespace-nowrap leading-5">
           {{ facetValue.label }}
         </span>
       </VcCheckbox>

@@ -1,17 +1,22 @@
 <template>
-  <component :is="page" />
+  <component :is="page" v-if="isVisible" />
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount } from "vue";
-import { useRoute } from "vue-router";
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted } from "vue";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import type { StateType } from "@/pages/matcher/priorityManager";
+
+interface IProps {
+  isVisible?: boolean;
+}
 
 interface IEmits {
   (event: "setState", value: StateType): void;
 }
 
 const emit = defineEmits<IEmits>();
+defineProps<IProps>();
 
 const pages = {
   "/": defineAsyncComponent(() => import("@/pages/home.vue")),
@@ -19,14 +24,28 @@ const pages = {
 } as const;
 
 const route = useRoute();
+
 const page = computed(() => {
   if (Object.keys(pages).includes(route.path)) {
-    emit("setState", "ready");
     return pages[route.path as keyof typeof pages];
   }
-
-  emit("setState", "empty");
   return null;
+});
+
+onMounted(() => {
+  if (!Object.keys(pages).includes(route.path)) {
+    emit("setState", "empty");
+  } else {
+    emit("setState", "ready");
+  }
+});
+
+onBeforeRouteUpdate((to) => {
+  if (Object.keys(pages).includes(to.path)) {
+    emit("setState", "ready");
+  } else {
+    emit("setState", "empty");
+  }
 });
 
 onBeforeUnmount(() => {

@@ -30,7 +30,7 @@ import type { MaybeRef, WatchSource } from "vue";
  */
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
-  const { getTranslation: getErrorTranlation } = useErrorsTranslator("file_error");
+  const { getTranslation: getErrorTranslation } = useErrorsTranslator("file_error");
   const { t, n } = useI18n();
 
   const { data, execute: _uploadFiles } = useAxios<
@@ -192,7 +192,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       parameters = [errorParameter as string];
     }
 
-    return getErrorTranlation({
+    return getErrorTranslation({
       code: errorCode,
       description: errorMessage,
       parameters: parameters,

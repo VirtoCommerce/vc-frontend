@@ -1,11 +1,10 @@
 <template>
-  <nav class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-accent-200">
+  <nav
+    class="mobile-menu fixed z-50 flex size-full flex-col bg-[--mobile-menu-bg-color] text-[--mobile-menu-text-color]"
+  >
     <header class="flex h-16 shrink-0 items-center gap-x-3 px-6">
       <div class="grow pr-6">
-        <span
-          v-if="organization"
-          class="line-clamp-2 text-xl font-medium italic leading-[22px] text-[--mobile-menu-text-color]"
-        >
+        <span v-if="organization" class="line-clamp-2 text-xl italic leading-[22px] text-[--mobile-menu-text-color]">
           {{ organization?.name }}
         </span>
 
@@ -25,7 +24,7 @@
     <!-- region Children links section -->
     <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
-        <button type="button" class="appearance-none self-start text-[--color-accent-100]" @click="goBack">
+        <button type="button" class="appearance-none self-start text-accent-100" @click="goBack">
           <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
@@ -90,7 +89,7 @@
         </ul>
 
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
-          <div class="my-5 h-px bg-gradient-to-r from-[--color-accent-500] to-transparent"></div>
+          <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>
 
           <a
             v-if="isExternalLink(openedItem.route)"
@@ -156,7 +155,7 @@
           <!-- Account -->
           <div class="mb-4 mt-2 flex flex-row gap-4 text-xl">
             <div
-              class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-[--color-accent-300]"
+              class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
             >
               <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-12" lazy />
               <VcIcon v-else name="user" />
@@ -242,7 +241,7 @@
     </section>
     <!-- endregion Main menu section -->
     <div
-      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-black/5 backdrop-blur-lg md:block"
+      class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-additional-950/5 backdrop-blur-lg md:block"
       @click="$emit('close')"
     />
   </nav>
@@ -343,7 +342,7 @@ onMounted(() => {
 }
 
 .view-all-link {
-  @apply text-lg tracking-[0.01em] text-[--color-additional-50];
+  @apply text-lg tracking-[0.01em] text-additional-50;
 }
 
 .mobile-menu__overlay {

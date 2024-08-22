@@ -6,6 +6,7 @@ import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
 
+const callback = () => import("@/pages/auth/callback.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
 const SignUpPage = () => import("@/pages/sign-up.vue");
 const ConfirmEmail = () => import("@/pages/confirm-email.vue");
@@ -26,9 +27,11 @@ const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
+const PushMessage = () => import("@/pages/push-message.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
+  { path: "/auth/callback", name: "AuthCallback", component: callback, meta: { public: true } },
   { path: "/403", name: "NoAccess", component: Error403, meta: { public: true } },
   { path: "/404", name: "NotFound", component: Error404, meta: { public: true } },
   { path: "/500", name: "InternalError", component: Error500, meta: { public: true } },
@@ -71,6 +74,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   { path: "/product/:productId", name: "Product", component: Product, props: true },
+  { path: "/push-message/:messageId", name: "PushMessage", component: PushMessage, props: true },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },

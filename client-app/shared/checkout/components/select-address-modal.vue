@@ -77,7 +77,7 @@
 
             <p class="text-sm text-neutral-400">
               <span v-if="!isCorporateAddresses && !!itemData.item.phone">
-                <span class="font-semibold">{{ $t("common.labels.phone") }}: </span>
+                <span class="font-bold">{{ $t("common.labels.phone") }}: </span>
                 {{ itemData.item.phone }}
               </span>
             </p>
@@ -85,14 +85,14 @@
             <p class="text-sm text-neutral-400">
               <span v-if="isCorporateAddresses">{{ itemData.item.countryName }}</span>
               <span v-else-if="!!itemData.item.email">
-                <span class="font-semibold">{{ $t("common.labels.email") }}: </span>
+                <span class="font-bold">{{ $t("common.labels.email") }}: </span>
                 {{ itemData.item.email }}
               </span>
             </p>
           </div>
 
           <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4 text-center">
-            <VcIcon class="text-[--color-success-500]" name="check-circle" />
+            <VcIcon class="text-success" name="check-circle" />
           </div>
 
           <div v-else class="w-1/4">
@@ -157,7 +157,7 @@
           </td>
 
           <td v-if="address.id === selectedAddress?.id" class="p-5 text-center">
-            <VcIcon class="text-[--color-success-500]" name="check-circle" />
+            <VcIcon class="text-success" name="check-circle" />
           </td>
           <td v-else class="p-5">
             <button

@@ -1,7 +1,7 @@
 <template>
   <TwoColumn class="max-w-screen-xl">
     <template #left>
-      <VcTypography tag="h1" class="mb-6 lg:mt-5">
+      <VcTypography tag="h1" class="mb-6">
         {{ $t("pages.sign_up.header") }}
       </VcTypography>
 
@@ -154,7 +154,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { object, ref as yupRef, string } from "yup";
 import { checkEmailUniqueness } from "@/core/api/graphql/account";
-import { useIdentityErrorTranslator, usePageHead } from "@/core/composables";
+import { usePageHead, useErrorsTranslator } from "@/core/composables";
 import { PasswordTips, RegistrationKind, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import type { AccountCreationResultType } from "@/core/api/graphql/types";
@@ -165,7 +165,7 @@ const ASYNC_VALIDATION_TIMEOUT_IN_MS = 500;
 const { t } = useI18n();
 const { registerUser, registerOrganization, loading } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-const getIdentityErrorTranslation = useIdentityErrorTranslator();
+const { getTranslation } = useErrorsTranslator("identity_error");
 
 usePageHead({
   title: t("pages.sign_up.meta.title"),
@@ -261,10 +261,10 @@ const onSubmit = handleSubmit(async (data) => {
   }
 
   if (result.succeeded) {
-    router.push({ name: "Welcome" });
+    void router.push({ name: "Welcome" });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
-      const errorDescription = getIdentityErrorTranslation(error);
+      const errorDescription = getTranslation(error);
 
       switch (error.code) {
         case "PasswordTooShort":

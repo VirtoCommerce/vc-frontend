@@ -1,19 +1,29 @@
-import { createGlobalState } from "@vueuse/core";
+import { useLocalStorage } from "@vueuse/core";
+import { cloneDeep, isEqual } from "lodash";
 import { computed, inject, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
-import { PAGE_LIMIT } from "@/core/constants";
-import { SortDirection } from "@/core/enums";
+import { useRouteQueryParam } from "@/core/composables";
+import { FFC_LOCAL_STORAGE, IN_STOCK_PRODUCTS_LOCAL_STORAGE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { QueryParamName, SortDirection } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { Logger, rangeFacetToCommonFacet, termFacetToCommonFacet } from "@/core/utilities";
+import {
+  getFilterExpressionFromFacets,
+  Logger,
+  rangeFacetToCommonFacet,
+  termFacetToCommonFacet,
+} from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import type { ProductsSearchParams } from "../types";
+import { useModal } from "@/shared/modal";
+import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
-import type { FacetItemType } from "@/core/types";
+import type { FacetItemType, FacetValueItemType } from "@/core/types";
 import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
+import type { Ref } from "vue";
+import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
 const DEFAULT_ITEMS_PER_PAGE = 16;
 
-function _useProducts(
+export function useProducts(
   options: {
     /** @default false */
     withFacets?: boolean;
@@ -21,6 +31,8 @@ function _useProducts(
     withImages?: boolean;
     /** @default config.zero_price_product_enabled */
     withZeroPrice?: boolean;
+    filtersDisplayOrder?: Ref<FiltersDisplayOrderType | undefined>;
+    useQueryParams?: boolean;
   } = {},
 ) {
   const config = inject(configInjectionKey, {});
@@ -30,14 +42,44 @@ function _useProducts(
     withZeroPrice = config.zero_price_product_enabled,
   } = options;
   const broadcast = useBroadcast();
+  const { openModal } = useModal();
 
-  const loading = ref(true);
-  const loadingMore = ref(false);
-  const facetsLoading = ref(false);
+  const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
+  const localStorageBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
+
+  const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
+    defaultValue: PRODUCT_SORTING_LIST[0].id,
+    validator: (value) => PRODUCT_SORTING_LIST.some((item) => item.id === value),
+  });
+
+  const searchQueryParam = useRouteQueryParam<string>(QueryParamName.SearchPhrase, {
+    defaultValue: "",
+  });
+
+  const keywordQueryParam = useRouteQueryParam<string>(QueryParamName.Keyword, {
+    defaultValue: "",
+  });
+
+  const facetsQueryParam = useRouteQueryParam<string>(QueryParamName.Facets, {
+    defaultValue: "",
+  });
+
+  const fetchingProducts = ref(true);
+  const fetchingMoreProducts = ref(false);
+  const fetchingFacets = ref(false);
+  const totalProductsCount = ref(0);
+  const pagesCount = ref(1);
+  const isFiltersSidebarVisible = ref(false);
+
   const products = shallowRef<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
-  const total = ref(0);
-  const pages = ref(1);
+
+  const prevProductsFilters = shallowRef<ProductsFiltersType>();
+  const productsFilters = shallowRef<ProductsFiltersType>({
+    branches: localStorageBranches.value,
+    inStock: localStorageInStock.value,
+    facets: [],
+  });
 
   const productsById = computed(() =>
     products.value.reduce(
@@ -48,6 +90,120 @@ function _useProducts(
       {} as Record<string, { index: number; product: Product }>,
     ),
   );
+
+  function getSortedFacets(allFacets: FacetItemType[]): FacetItemType[] {
+    if (options?.filtersDisplayOrder?.value?.order && options.filtersDisplayOrder?.value?.order.length) {
+      const order = options.filtersDisplayOrder.value.order
+        .split(",")
+        .map((item) => item.trim().toLowerCase())
+        .filter(Boolean);
+
+      if (!order.length) {
+        return allFacets;
+      }
+
+      const sortedFacets: FacetItemType[] = [];
+
+      order.forEach((filter) => {
+        const facet = allFacets.find(({ label }) => label.toLowerCase() === filter);
+        if (facet) {
+          sortedFacets.push(facet);
+        }
+      });
+
+      return options.filtersDisplayOrder?.value?.showRest
+        ? [...sortedFacets, ...allFacets.filter(({ label }) => !order.includes(label.toLowerCase()))]
+        : sortedFacets;
+    }
+
+    return allFacets;
+  }
+
+  function showFiltersSidebar(): void {
+    prevProductsFilters.value = cloneDeep(productsFilters.value);
+    isFiltersSidebarVisible.value = true;
+  }
+
+  function hideFiltersSidebar(): void {
+    isFiltersSidebarVisible.value = false;
+  }
+
+  function applyFilters(newFilters: ProductsFiltersType): void {
+    const facetsFilterExpression: string = getFilterExpressionFromFacets(newFilters.facets);
+
+    if (options?.useQueryParams && facetsQueryParam.value !== facetsFilterExpression) {
+      facetsQueryParam.value = facetsFilterExpression;
+    }
+
+    if (localStorageInStock.value !== newFilters.inStock) {
+      localStorageInStock.value = newFilters.inStock;
+    }
+
+    if (!isEqual(localStorageBranches.value, newFilters.branches)) {
+      localStorageBranches.value = newFilters.branches;
+    }
+  }
+
+  function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void {
+    const facet = productsFilters.value.facets.find((item) => item.paramName === payload.paramName);
+    const facetValue = facet?.values.find((item) => item.value === payload.value);
+
+    if (facetValue) {
+      facetValue.selected = false;
+      facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
+
+      triggerRef(facets);
+    }
+  }
+
+  function resetFacetFilters(): void {
+    facetsQueryParam.value = "";
+
+    productsFilters.value.facets.forEach((filter) =>
+      filter.values.forEach((filterItem) => (filterItem.selected = false)),
+    );
+
+    triggerRef(facets);
+  }
+
+  function resetFilterKeyword(): void {
+    keywordQueryParam.value = "";
+
+    triggerRef(facets);
+  }
+
+  function updateProductsFilters(newFilters: ProductsFiltersType): void {
+    productsFilters.value = {
+      ...newFilters,
+      facets: getSortedFacets(newFilters.facets),
+    };
+  }
+
+  function openBranchesModal(fromPopupSidebarFilter: boolean) {
+    openModal({
+      component: BranchesModal,
+      props: {
+        selectedBranches: fromPopupSidebarFilter ? productsFilters.value.branches : localStorageBranches.value,
+        onSave(branches: string[]) {
+          if (fromPopupSidebarFilter) {
+            const newFilters: ProductsFiltersType = {
+              branches,
+              facets: productsFilters.value.facets,
+              inStock: productsFilters.value.inStock,
+            };
+
+            updateProductsFilters(newFilters);
+          } else {
+            localStorageBranches.value = branches;
+          }
+        },
+      },
+    });
+  }
+
+  function hasSelectedFacets(): boolean {
+    return facets.value?.some((facet) => facet.values.some((value) => value.selected));
+  }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
     if (config.product_filters_sorting) {
@@ -63,11 +219,11 @@ function _useProducts(
     );
   }
 
-  async function fetchProducts(searchParams: Partial<ProductsSearchParams>) {
-    loading.value = true;
+  async function fetchProducts(searchParams: Partial<ProductsSearchParamsType>) {
+    fetchingProducts.value = true;
     products.value = [];
-    total.value = 0;
-    pages.value = 1;
+    totalProductsCount.value = 0;
+    pagesCount.value = 1;
 
     try {
       const {
@@ -78,9 +234,9 @@ function _useProducts(
       } = await searchProducts(searchParams, { withFacets, withImages, withZeroPrice });
 
       products.value = items;
-      total.value = totalCount;
-      pages.value = Math.min(
-        Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
+      totalProductsCount.value = totalCount;
+      pagesCount.value = Math.min(
+        Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
         PAGE_LIMIT,
       );
 
@@ -89,37 +245,43 @@ function _useProducts(
           termFacets: term_facets,
           rangeFacets: range_facets,
         });
+
+        productsFilters.value = {
+          inStock: localStorageInStock.value,
+          branches: localStorageBranches.value.slice(),
+          facets: getSortedFacets(facets.value),
+        };
       }
     } catch (e) {
       Logger.error(`useProducts.${fetchProducts.name}`, e);
       throw e;
     } finally {
-      loading.value = false;
+      fetchingProducts.value = false;
     }
   }
 
-  async function fetchMoreProducts(searchParams: Partial<ProductsSearchParams>) {
-    loadingMore.value = true;
+  async function fetchMoreProducts(searchParams: Partial<ProductsSearchParamsType>) {
+    fetchingMoreProducts.value = true;
 
     try {
       const { items = [], totalCount = 0 } = await searchProducts(searchParams, { withImages, withZeroPrice });
 
       products.value = products.value.concat(items);
-      total.value = totalCount;
-      pages.value = Math.min(
-        Math.ceil(total.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
+      totalProductsCount.value = totalCount;
+      pagesCount.value = Math.min(
+        Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
         PAGE_LIMIT,
       );
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
     } finally {
-      loadingMore.value = false;
+      fetchingMoreProducts.value = false;
     }
   }
 
-  async function getFacets(searchParams: Partial<ProductsSearchParams>): Promise<FacetItemType[]> {
-    facetsLoading.value = true;
+  async function getFacets(searchParams: Partial<ProductsSearchParamsType>): Promise<FacetItemType[]> {
+    fetchingFacets.value = true;
 
     try {
       const _searchParams = { ...searchParams, page: 0, itemsPerPage: 0 };
@@ -139,7 +301,7 @@ function _useProducts(
       Logger.error(`useProducts.${getFacets.name}`, e);
       throw e;
     } finally {
-      facetsLoading.value = false;
+      fetchingFacets.value = false;
     }
   }
 
@@ -162,17 +324,34 @@ function _useProducts(
 
   return {
     facets,
-    productsById,
-    fetchProducts,
-    fetchMoreProducts,
-    getFacets,
-    total: readonly(total),
-    pages: readonly(pages),
-    loading: readonly(loading),
-    loadingMore: readonly(loadingMore),
-    facetsLoading: readonly(facetsLoading),
+    facetsQueryParam,
+    fetchingFacets: readonly(fetchingFacets),
+    fetchingMoreProducts: readonly(fetchingMoreProducts),
+    fetchingProducts: readonly(fetchingProducts),
+    hasSelectedFacets: computed(() => hasSelectedFacets()),
+    isFiltersDirty: computed(() => !isEqual(prevProductsFilters.value, productsFilters.value)),
+    isFiltersSidebarVisible: readonly(isFiltersSidebarVisible),
+    keywordQueryParam,
+    localStorageBranches,
+    localStorageInStock,
+    pagesCount: readonly(pagesCount),
     products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
+    productsById,
+    productsFilters: computed(() => productsFilters.value),
+    searchQueryParam,
+    sortQueryParam,
+    totalProductsCount: readonly(totalProductsCount),
+
+    applyFilters,
+    getFacets,
+    fetchMoreProducts,
+    fetchProducts,
+    hideFiltersSidebar,
+    openBranchesModal,
+    removeFacetFilter,
+    resetFacetFilters,
+    resetFilterKeyword,
+    showFiltersSidebar,
+    updateProductsFilters,
   };
 }
-
-export const useProducts = createGlobalState(_useProducts);

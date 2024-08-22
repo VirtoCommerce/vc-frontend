@@ -8,7 +8,7 @@
         {{ $t("shared.bulk_order.copy_n_paste.subtitle_message") }}
       </p>
 
-      <p v-html-safe="$t('shared.bulk_order.copy_n_paste.guide_message')" class="mb-2 text-sm text-gray-500"></p>
+      <p v-html-safe="$t('shared.bulk_order.copy_n_paste.guide_message')" class="mb-2 text-sm text-neutral"></p>
 
       <VcTextarea
         v-model.trim="text"
@@ -18,7 +18,7 @@
       />
 
       <div class="mb-2 mt-5 flex flex-wrap justify-between gap-3 md:mb-0 md:mt-2">
-        <VcButton :disabled="!text || loading" color="secondary" variant="outline" min-width="9rem" @click="text = ''">
+        <VcButton :disabled="!text || loading" color="secondary" variant="outline" min-width="9rem" @click="resetItems">
           {{ $t("shared.bulk_order.copy_n_paste.reset_button") }}
         </VcButton>
 
@@ -36,13 +36,15 @@ import { validateQuantity } from "../utils";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<{
-  (event: "add-to-cart", value: InputNewBulkItemType[]): void;
+  (event: "addToCart", value: InputNewBulkItemType[]): void;
   (event: "error", value?: string): void;
 }>();
 
-defineProps({
-  loading: Boolean,
-});
+defineProps<IProps>();
+
+interface IProps {
+  loading: boolean;
+}
 
 const text = ref("");
 
@@ -67,7 +69,11 @@ function addToCart(): void {
     });
 
   if (validItems.length) {
-    emit("add-to-cart", validItems);
+    emit("addToCart", validItems);
   }
+}
+
+function resetItems() {
+  text.value = "";
 }
 </script>

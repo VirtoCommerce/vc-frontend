@@ -60,11 +60,12 @@ interface IProps {
   slides?: SlideType[];
   title?: string;
   subtitle?: string;
+  isTransparent?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   height: "auto",
-  background: "bg-gray-100",
+  background: "bg-neutral-100",
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
@@ -101,7 +102,7 @@ const modules = [Navigation];
 
 const wrapperClasses = computed(() => {
   return {
-    [props.background]: true,
+    [props.background]: !props.isTransparent,
     "py-10 lg:py-24": props.title || props.subtitle,
   };
 });

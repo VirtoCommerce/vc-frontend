@@ -13,6 +13,7 @@
     type="number"
     center
     truncate
+    test-id-input="vc-quantity-input"
     @keydown="onKeydown"
     @keyup.enter="changeQuantity"
     @input="onQuantityChanged"
@@ -47,10 +48,13 @@ interface IProps {
   readonly?: boolean;
   error?: boolean;
   modelValue?: number;
+  timeout?: number;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  timeout: 900,
+});
 
 let timeoutIdOfQuantityChange: number;
 
@@ -88,7 +92,7 @@ async function onQuantityChanged(): Promise<void> {
   }
 
   clearTimeout(timeoutIdOfQuantityChange);
-  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, 900);
+  timeoutIdOfQuantityChange = +setTimeout(changeQuantity, props.timeout);
 }
 
 function onFocusOut() {
