@@ -49,7 +49,6 @@ import type { ProductsFiltersType } from "@/shared/catalog";
 
 interface IEmits {
   (event: "change", value: ProductsFiltersType): void;
-  (event: "openBranches"): void;
 }
 
 interface IProps {

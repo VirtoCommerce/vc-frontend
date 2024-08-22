@@ -9,7 +9,12 @@
       </button>
     </template>
 
-    <ProductsFilters :keyword="keywordQueryParam" :filters="popupSidebarFilters" :loading="loading || facetsLoading">
+    <ProductsFilters
+      :keyword="keywordQueryParam"
+      :filters="popupSidebarFilters"
+      :loading="loading || facetsLoading"
+      @change="$emit('updatePopupSidebarFilters', $event)"
+    >
       <template #prepend="{ loading }">
         <div class="filters-popup-sidebar__container">
           <div v-if="!hideSorting && isHorizontalFilters" class="filters-popup-sidebar__sorting">
