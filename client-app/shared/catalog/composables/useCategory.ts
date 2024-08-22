@@ -18,7 +18,6 @@ function _useCategory() {
   const catalogUrl = router.resolve(catalogRoute).fullPath.slice(1);
   const catalogBreadcrumb: IBreadcrumb = { title: catalogName, route: catalogRoute };
 
-  // FIXME: Don't use fake XAPI object
   const catalog: Readonly<Category> = {
     id: catalogId,
     name: catalogName,

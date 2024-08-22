@@ -39,10 +39,6 @@ const currentLanguage = computed<ILanguage>(
 );
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
-  /**
-   * FIXME: Don't use import
-   * Fetch localization files (json) from Storefront to be able to edit localization files in Admin panel
-   */
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
   const path = `../../../locales/${locale}.json`;
 
