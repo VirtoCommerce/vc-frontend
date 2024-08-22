@@ -223,7 +223,7 @@ jobs:
             echo "vc-build CloudEnvSetParameter -EnvironmentName ${{ env.ARGO_APP_NAME }} -CloudToken ${{ secrets.VCST_PLATFORM_TOKEN }} -HelmParameters $PARAMETER_NAME=$PARAMETER_VALUE"
 
   createPR:
-    if: ${{ github.base_ref == 'dev' && github.event_name == 'pull_request' }}
+    # if: ${{ github.base_ref == 'dev' && github.event_name == 'pull_request' }}
     needs: ci
     runs-on: ubuntu-latest
     env:
