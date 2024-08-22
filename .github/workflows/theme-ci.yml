@@ -230,7 +230,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
     steps:
       - name: Create PR
-        uses: VirtoCommerce/vc-github-actions/create-deploy-pr@VCST-1573
+        uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
         with:
             deployRepo: "vc-deploy-dev"
             deployBranch: "vcst-qa"
