@@ -94,8 +94,6 @@ export function useShortCart() {
     return result?.data?.changeCartItemQuantity;
   }
 
-  // FIXME: https://virtocommerce.atlassian.net/browse/ST-5474
-  // Calculate total price of items in the cart for some set of products
   function getItemsTotal(productIds: string[]): number {
     if (!cart.value?.items.length) {
       return 0;

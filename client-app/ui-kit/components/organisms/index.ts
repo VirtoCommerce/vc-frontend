@@ -1,4 +1,3 @@
-// FIXME: Remove private exports
 export { default as TableStatusBadge } from "./table/_internal/table-status-badge/table-status-badge.vue";
 export { default as VcAddToCart } from "./add-to-cart/vc-add-to-cart.vue";
 export { default as VcConfirmationModal } from "./confirmation-modal/vc-confirmation-modal.vue";

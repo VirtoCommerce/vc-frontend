@@ -25,7 +25,7 @@
         </div>
 
         <VcInput
-          v-model.trim="firstName"
+          v-model="firstName"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :message="errors.firstName"
@@ -39,7 +39,7 @@
         />
 
         <VcInput
-          v-model.trim="lastName"
+          v-model="lastName"
           :label="$t('common.labels.last_name')"
           :placeholder="$t('common.placeholders.last_name')"
           :message="errors.lastName"
@@ -53,7 +53,7 @@
         />
 
         <VcInput
-          v-model.trim="email"
+          v-model="email"
           :label="$t('common.labels.email')"
           :placeholder="$t('common.placeholders.email')"
           :message="errors.email"
@@ -69,7 +69,7 @@
 
         <VcInput
           v-if="registrationKind === RegistrationKind.organization"
-          v-model.trim="organizationName"
+          v-model="organizationName"
           :label="$t('common.labels.company_name')"
           :placeholder="$t('common.placeholders.company_name')"
           :message="errors.organizationName"
@@ -174,11 +174,14 @@ usePageHead({
 const validationSchema = toTypedSchema(
   object({
     registrationKind: string().required(),
-    organizationName: string().when("registrationKind", {
-      is: RegistrationKind.organization,
-      then: (stringSchema) => stringSchema.required().max(64),
-    }),
+    organizationName: string()
+      .trim()
+      .when("registrationKind", {
+        is: RegistrationKind.organization,
+        then: (stringSchema) => stringSchema.required().max(64),
+      }),
     email: string()
+      .trim()
       .required()
       .email()
       .max(64)
@@ -193,8 +196,8 @@ const validationSchema = toTypedSchema(
             ),
           ),
       }),
-    firstName: string().required().max(64),
-    lastName: string().required().max(64),
+    firstName: string().trim().required().max(64),
+    lastName: string().trim().required().max(64),
     password: string().required(),
     confirmPassword: string()
       .required()
@@ -243,20 +246,20 @@ const onSubmit = handleSubmit(async (data) => {
 
   if (registrationKind.value === RegistrationKind.personal) {
     result = await registerUser({
-      email: data.email!,
-      firstName: data.firstName!,
-      lastName: data.lastName!,
-      userName: data.email!,
-      password: data.password!,
+      email: data.email.trim(),
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      userName: data.email.trim(),
+      password: data.password,
     });
   } else {
     result = await registerOrganization({
-      organizationName: data.organizationName,
-      email: data.email!,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      userName: data.email!,
-      password: data.password!,
+      organizationName: data.organizationName?.trim(),
+      email: data.email.trim(),
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      userName: data.email.trim(),
+      password: data.password,
     });
   }
 
