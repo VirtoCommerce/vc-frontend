@@ -109,7 +109,7 @@ jobs:
           # yarn storybook:compress
 
           mkdir ./artifacts
-          zip -r ../artifacts/$(jq -r .name ./package.json)-$(jq -r .version ./package.json).zip ./storybook-static
+          zip -r ./artifacts/$(jq -r .name ./package.json)-$(jq -r .version ./package.json).zip ./storybook-static
           echo "ls ./"
           ls ./
           echo "ls "./artifacts"
