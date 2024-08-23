@@ -104,14 +104,10 @@ jobs:
         if: success()
         run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
 
-      - name: Add files to zip
+      - name: Packaging
         run: |
-          # yarn storybook:compress
-
-          mkdir ./artifacts
-          cd ./storybook-static
-          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./*
-
+          yarn storybook:compress
+          
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
