@@ -106,8 +106,6 @@ jobs:
 
       - name: Add files to zip
         run: |
-          # yarn storybook:compress
-
           mkdir ./artifacts
           cd ./storybook-static
           zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./*
@@ -188,5 +186,5 @@ jobs:
       artifactUrl: ${{ needs.ci.outputs.tag }}
       environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
-      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/VCST-1661' }}
+      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit
