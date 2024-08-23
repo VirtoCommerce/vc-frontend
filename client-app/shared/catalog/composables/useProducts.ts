@@ -80,6 +80,9 @@ export function useProducts(
     inStock: localStorageInStock.value,
     facets: [],
   });
+  const productFiltersSorted = computed(() => {
+    return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
+  });
 
   const productsById = computed(() =>
     products.value.reduce(
@@ -337,7 +340,7 @@ export function useProducts(
     pagesCount: readonly(pagesCount),
     products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
     productsById,
-    productsFilters: computed(() => productsFilters.value),
+    productsFilters: productFiltersSorted,
     searchQueryParam,
     sortQueryParam,
     totalProductsCount: readonly(totalProductsCount),
