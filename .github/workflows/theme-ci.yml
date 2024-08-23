@@ -234,7 +234,7 @@ jobs:
         with:
             deployRepo: "vc-deploy-dev"
             deployBranch: "vcst-qa"
-            artifactKey: "URL"
-            artifactUrl: "${{ needs.ci.outputs.artifactUrl }}"
+            artifactKey: '"URL"'
+            artifactUrl: '"${{ needs.ci.outputs.artifactUrl }}"'
             taskNumber: "${{ needs.ci.outputs.jira-keys }}"
             cmPath: "theme/artifact.json"
