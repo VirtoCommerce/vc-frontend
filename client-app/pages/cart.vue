@@ -19,13 +19,17 @@
   <VcContainer v-else class="relative z-0">
     <VcLoaderOverlay :visible="creatingQuote" fixed-spinner />
 
-    <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
+    <template v-if="!hideHeader">
+      <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
-    <VcTypography tag="h1" class="mb-5">
-      {{ $t("pages.cart.title") }}
-    </VcTypography>
+      <VcTypography tag="h1" class="mb-5">
+        {{ $t("pages.cart.title") }}
+      </VcTypography>
+    </template>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
+      <slot name="main" />
+
       <ProductsSection
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
@@ -56,6 +60,8 @@
       </template>
 
       <template #sidebar>
+        <slot name="sidebar" />
+
         <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
             <!-- Promotion code -->
@@ -114,7 +120,7 @@
 
         <!-- Create quote widget -->
         <VcWidget
-          v-if="$cfg.quotes_enabled && isAuthenticated"
+          v-if="$cfg.quotes_enabled && isAuthenticated && !hideQuoteWidget"
           :title="$t('common.titles.quote_request')"
           class="print:hidden"
         >
@@ -168,6 +174,15 @@ import { useNotifications } from "@/shared/notification";
 import type { LineItemType, QuoteType } from "@/core/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
+
+interface IProps {
+  cartType?: string;
+  cartName?: string;
+  hideHeader?: boolean;
+  hideQuoteWidget?: boolean;
+}
+
+const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 
@@ -265,8 +280,10 @@ async function createQuote(): Promise<void> {
   creatingQuote.value = false;
 }
 
+const cartVariables = computed(() => ({ cartType: props.cartType, cartName: props.cartName }));
+
 void (async () => {
-  await forceFetch();
+  await forceFetch(cartVariables.value);
 
   /**
    * Send a Google Analytics shopping cart view event.
