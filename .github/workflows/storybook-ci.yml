@@ -109,7 +109,8 @@ jobs:
           # yarn storybook:compress
 
           mkdir ./artifacts
-          zip -r ./artifacts/$(jq -r .name ./package.json)-$(jq -r .version ./package.json).zip ./storybook-static/*
+          cd ./storybook-static
+          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./*
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
