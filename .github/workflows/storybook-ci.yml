@@ -182,7 +182,7 @@ jobs:
       cmPath: 'storybook/image.json'
       artifactKey: 'Tag'
       artifactUrl: ${{ needs.ci.outputs.tag }}
-      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'qa' }}
+      environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit
