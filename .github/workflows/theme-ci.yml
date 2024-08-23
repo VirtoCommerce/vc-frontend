@@ -208,7 +208,7 @@ jobs:
     needs: ci
     strategy:
       matrix:
-        store: [B2B-store,B2C]
+        store: [B2B-store]
     runs-on: ubuntu-latest
     env:
       ARGO_APP_NAME: 'vcst-dev'
