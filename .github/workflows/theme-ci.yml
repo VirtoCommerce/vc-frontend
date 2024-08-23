@@ -202,3 +202,39 @@ jobs:
         if: success()
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
+
+  gitops:
+    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+    needs: ci
+    strategy:
+      matrix:
+        store: [B2B-store]
+    runs-on: ubuntu-latest
+    env:
+      ARGO_APP_NAME: 'vcst-dev'
+    steps:
+      - name: Install vc-build
+        run: |
+          dotnet tool install --global VirtoCommerce.GlobalTool
+      - name: Update environment
+        run: |
+            export PARAMETER_NAME=$(echo "themes.${{ matrix.store }}" | xargs)
+            export PARAMETER_VALUE=$(echo "${{ needs.ci.outputs.artifactUrl }}" | xargs)
+            vc-build CloudEnvSetParameter -EnvironmentName ${{ env.ARGO_APP_NAME }} -CloudToken ${{ secrets.VCST_PLATFORM_TOKEN }} -HelmParameters $PARAMETER_NAME=$PARAMETER_VALUE
+
+  createPR:
+    if: ${{ github.base_ref == 'dev' && github.event_name == 'pull_request' }}
+    needs: ci
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+    steps:
+      - name: Create PR
+        uses: VirtoCommerce/vc-github-actions/create-deploy-pr@master
+        with:
+            deployRepo: "vc-deploy-dev"
+            deployBranch: "vcst-qa"
+            artifactKey: '"URL"'
+            artifactUrl: '"${{ needs.ci.outputs.artifactUrl }}"'
+            taskNumber: "${{ needs.ci.outputs.jira-keys }}"
+            cmPath: "theme/artifact.json"
