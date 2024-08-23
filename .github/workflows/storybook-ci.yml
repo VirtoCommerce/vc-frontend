@@ -107,7 +107,6 @@ jobs:
       - name: Packaging
         run: |
           yarn storybook:compress
-          
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
         id: blobRelease
