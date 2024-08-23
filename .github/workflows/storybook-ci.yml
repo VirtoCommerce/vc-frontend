@@ -112,7 +112,7 @@ jobs:
           zip -r ./artifacts/$(jq -r .name ./package.json)-$(jq -r .version ./package.json).zip ./storybook-static
           echo "ls ./"
           ls ./
-          echo "ls "./artifacts"
+          echo "ls ./artifacts"
           ls ./artifacts
 
       - name: Publish to Blob
