@@ -87,7 +87,7 @@ import { useErrorsTranslator } from "@/core/composables";
 import { useShortCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import type { DuplicateSkuProductType } from "../types";
-import type { InputNewCartItemType } from "@/core/api/graphql/types";
+import type { InputNewCartItemType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { OutputBulkItemType } from "@/shared/cart";
 
 interface IEmits {
@@ -104,7 +104,7 @@ interface IProps {
 
 const { products, fetchProducts } = useProducts();
 const { addItemsToCart } = useShortCart();
-const { translate } = useErrorsTranslator("validation_error");
+const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const PRODUCT_DUPLICATE_SKU_ID = "PRODUCT_DUPLICATE_SKU";
 

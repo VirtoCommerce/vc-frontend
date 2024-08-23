@@ -114,6 +114,7 @@ import { useErrorsTranslator, usePageHead, useRouteQueryParam } from "@/core/com
 import { PasswordTips, RegistrationSuccessModal, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
+import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 
 const commonErrors = ref<string[]>([]);
 
@@ -126,7 +127,7 @@ usePageHead({
 const { openModal } = useModal();
 const { loading, registerByInvite } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-const { translate } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
 const userId = useRouteQueryParam<string>("userId");
 const email = useRouteQueryParam<string>("email");

@@ -88,6 +88,7 @@ import { useErrorsTranslator } from "@/core/composables";
 import { IdentityErrors } from "@/core/enums";
 import { useSignMeIn } from "@/shared/account/composables";
 import { ContactAdministratorLink } from "@/shared/common";
+import type { IdentityErrorType } from "@/core/api/graphql/types";
 
 const props = withDefaults(defineProps<{ growButtons?: boolean }>(), { growButtons: false });
 
@@ -106,7 +107,7 @@ const {
   validationSchema: schema,
 });
 
-const { translate } = useErrorsTranslator("shared.account.sign_in_form.errors");
+const { translate } = useErrorsTranslator<IdentityErrorType>("shared.account.sign_in_form.errors");
 
 const { value: email } = useField<string>("email");
 const { value: password } = useField<string>("password");

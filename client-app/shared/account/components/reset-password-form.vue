@@ -57,7 +57,7 @@ import { object, ref as yupRef, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { usePasswordRequirements, useUser } from "../composables";
 import PasswordTips from "./password-tips.vue";
-import type { IdentityResultType } from "@/core/api/graphql/types";
+import type { IdentityResultType, IdentityErrorType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "succeeded"): void;
@@ -78,7 +78,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 const { resetPassword, loading } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-const { translate } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator<IdentityErrorType>("identity_error");
 
 const validationSchema = toTypedSchema(
   object({

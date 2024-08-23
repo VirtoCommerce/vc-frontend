@@ -88,7 +88,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const validationErrors = toRef(props, "validationErrors");
 
-const { localizedItemsErrors } = useErrorsTranslator("validation_error", validationErrors);
+const { localizedItemsErrors } = useErrorsTranslator<ValidationErrorType>("validation_error", validationErrors);
 
 const preparedLineItems = computed(() => prepareLineItems(props.items));
 </script>

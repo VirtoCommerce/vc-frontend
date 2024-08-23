@@ -1,78 +1,58 @@
 import { computed, unref } from "vue";
 import { useI18n } from "vue-i18n";
-import type {
-  IdentityErrorInfoType,
-  IdentityErrorType,
-  RegistrationErrorType,
-  ValidationErrorType,
-} from "../api/graphql/types";
-import type { ErrorType } from "../types";
 import type { MaybeRef } from "vue";
 import type { NamedValue } from "vue-i18n";
 
-export function useErrorsTranslator(
-  localeItemsGroupKey: string,
-  errors?: MaybeRef<IdentityErrorType[] | IdentityErrorInfoType[] | RegistrationErrorType[] | ValidationErrorType[]>,
-) {
+function asKey<T>(key: string): keyof T {
+  return key as keyof T;
+}
+
+export function useErrorsTranslator<T extends object>(localeItemsGroupKey: string, errors?: MaybeRef<T[]>) {
   const { t, te } = useI18n();
 
-  function mapToError(
-    error: IdentityErrorType | IdentityErrorInfoType | RegistrationErrorType | ValidationErrorType,
-  ): ErrorType {
-    const result: ErrorType = {
-      objectId: "objectId" in error ? error.objectId : undefined,
-      code: "code" in error ? error.code : "errorCode" in error ? error.errorCode : undefined,
-      description:
-        "description" in error ? error.description : "errorMessage" in error ? error.errorMessage : undefined,
-    };
-
-    if ("parameter" in error && !!error.parameter) {
-      result.parameters = [error.parameter];
-    }
-
-    if ("errorParameters" in error) {
-      result.parameters = error.errorParameters?.reduce((acc, err) => {
-        acc[err.key] = err.value;
-        return acc;
-      }, {} as NamedValue);
-    }
-
-    return result;
+  function getErrorValue<K extends keyof T>(error: T, keys: K[]): T[K] | undefined {
+    const keyInError = keys.find((key) => key in error);
+    return keyInError ? error[keyInError] : undefined;
   }
 
-  function translate(
-    errorToTranslate: IdentityErrorType | IdentityErrorInfoType | RegistrationErrorType | ValidationErrorType,
-  ): string | undefined {
-    const error = mapToError(errorToTranslate);
+  function getErrorParameters(error: T): string[] | NamedValue | undefined {
+    const parameter = getErrorValue(error, [asKey<T>("parameter")]);
+    if (parameter) {
+      return [parameter as string];
+    }
 
-    const localeKey = `${localeItemsGroupKey}.${error.code}`;
-    const parameters = error.parameters ?? [];
-
-    return te(localeKey) ? t(localeKey, parameters as NamedValue) : error.description;
+    const parameters = getErrorValue(error, [asKey<T>("errorParameters")]) as Array<{ key: string; value: string }>;
+    if (parameters) {
+      return parameters.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {} as NamedValue);
+    }
   }
 
-  const localizedItemsErrors = computed<Record<string, string[]>>(() => {
-    return (
+  function translate(error: T): string | undefined {
+    const code = getErrorValue(error, [asKey<T>("code"), asKey<T>("errorCode")]) as string;
+    const localeKey = `${localeItemsGroupKey}.${code}`;
+    const parameters = getErrorParameters(error) ?? [];
+
+    return te(localeKey)
+      ? t(localeKey, parameters as NamedValue)
+      : (getErrorValue(error, [asKey<T>("description"), asKey<T>("errorMessage")]) as string);
+  }
+
+  const localizedItemsErrors = computed<Record<string, string[]>>(
+    () =>
       unref(errors)?.reduce(
         (acc, err) => {
-          if ("objectId" in err && !!err.objectId) {
+          const objectId = getErrorValue(err, [asKey<T>("objectId")]) as string;
+          if (objectId) {
             const translatedError = translate(err);
-
             if (translatedError) {
-              if (acc[err.objectId]) {
-                acc[err.objectId].push(translatedError);
-              } else {
-                acc[err.objectId] = [translatedError];
-              }
+              acc[objectId] = acc[objectId] ? [...acc[objectId], translatedError] : [translatedError];
             }
           }
-
           return acc;
         },
         {} as Record<string, string[]>,
-      ) || {}
-    );
-  });
+      ) || {},
+  );
 
   return {
     localizedItemsErrors,

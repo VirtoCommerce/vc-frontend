@@ -11,9 +11,9 @@
     :min="minQty"
     :error="!!errorMessage"
     :message="errorMessage"
+    show-empty-details
     single-line-message
     center
-    show-empty-details
     select-on-click
     @input="onInput"
     @keypress="onKeypress"
@@ -62,7 +62,13 @@ import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
-import type { Product, ShortCartFragment, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
+import type {
+  Product,
+  ShortCartFragment,
+  ShortLineItemFragment,
+  VariationType,
+  ValidationErrorType,
+} from "@/core/api/graphql/types";
 
 const emit = defineEmits<IEmits>();
 
@@ -89,7 +95,7 @@ const maxQuantity = computed(() => props.product.maxQuantity);
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
-const { translate } = useErrorsTranslator("validation_error");
+const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const { quantitySchema } = useQuantityValidationSchema({
   isInStock,
   availableQuantity,
