@@ -104,9 +104,13 @@ jobs:
         if: success()
         run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
 
-      - name: Packaging
+      - name: Add files to zip
         run: |
-          yarn storybook:compress
+          # yarn storybook:compress
+
+          mkdir ./artifacts
+          cd ./storybook-static
+          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./*
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
@@ -182,7 +186,7 @@ jobs:
       cmPath: 'storybook/image.json'
       artifactKey: 'Tag'
       artifactUrl: ${{ needs.ci.outputs.tag }}
-      environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
+      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'qa' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit
