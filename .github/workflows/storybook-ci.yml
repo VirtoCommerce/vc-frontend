@@ -188,5 +188,5 @@ jobs:
       artifactUrl: ${{ needs.ci.outputs.tag }}
       environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
-      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
+      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/VCST-1661' }}
     secrets: inherit
