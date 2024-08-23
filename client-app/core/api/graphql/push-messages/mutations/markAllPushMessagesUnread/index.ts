@@ -1,6 +1,6 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { MarkAllPushMessagesUnreadDocument, OperationNames } from "@/core/api/graphql/types";
-import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
+import { MarkAllPushMessagesUnreadDocument, OperationNames } from "../../types";
+import type { GetPushMessagesQuery } from "../../types";
 
 export function useMarkAllPushMessagesUnread() {
   return useMutation(MarkAllPushMessagesUnreadDocument, {
