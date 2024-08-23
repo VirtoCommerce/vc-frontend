@@ -27,6 +27,6 @@ interface IProps {
 
 <style lang="scss">
 .identity-providers {
-  @apply flex items-center gap-5 justify-stretch;
+  @apply flex items-center gap-5 flex-col justify-center;
 }
 </style>
