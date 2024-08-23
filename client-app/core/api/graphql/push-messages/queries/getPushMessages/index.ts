@@ -1,6 +1,6 @@
 import { useQuery } from "@vue/apollo-composable";
-import { GetPushMessagesDocument, OnPushMessageCreatedDocument } from "@/core/api/graphql/types";
-import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
+import { GetPushMessagesDocument, OnPushMessageCreatedDocument } from "../../types";
+import type { GetPushMessagesQueryVariables } from "../../types";
 import type { MaybeRefOrGetter } from "vue";
 
 export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQueryVariables>) {

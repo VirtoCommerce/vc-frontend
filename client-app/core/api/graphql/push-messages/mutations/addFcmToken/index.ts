@@ -1,5 +1,5 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { AddFcmTokenDocument } from "@/core/api/graphql/types";
+import { AddFcmTokenDocument } from "../../types";
 
 export function useAddFcmToken() {
   return useMutation(AddFcmTokenDocument);

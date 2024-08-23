@@ -911,6 +911,9 @@
       "providers": {
         "azure_ad": {
           "button_text": "Sign in with Entra ID"
+        },
+        "google_sso": {
+          "button_text": "Sign in with Google"
         }
       }
     },
