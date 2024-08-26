@@ -208,12 +208,6 @@ yarn build:dev
 yarn build:watch
 ```
 
-#### Create artefact to install from already built code
-
-```bash
-yarn compress
-```
-
 ## Types generation
 
 Command:
