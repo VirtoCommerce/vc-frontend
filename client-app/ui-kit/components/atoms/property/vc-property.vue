@@ -26,6 +26,7 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-property {
+  --font-size: var(--vc-property-font-size, 0.75rem);
   --label-color: var(--vc-property-label-color, var(--color-neutral-700));
   --value-color: var(--vc-property-value-color, var(--color-neutral-950));
 
@@ -34,7 +35,7 @@ defineProps<IProps>();
     --value-color: var(--color-neutral-500);
   }
 
-  @apply grid grid-cols-[auto_1fr_auto] gap-1 text-xs leading-normal;
+  @apply grid grid-cols-[auto_1fr_auto] gap-1 text-[length:var(--font-size)] leading-[1.5];
 
   &__label {
     @apply min-w-0 truncate text-[--label-color];

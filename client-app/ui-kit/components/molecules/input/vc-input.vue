@@ -260,7 +260,7 @@ function inputClick() {
   }
 
   &__decorator {
-    @apply flex items-center h-full;
+    @apply flex items-center max-w-[50%] h-full;
 
     &:first-child > * {
       @apply rounded-r-none;
