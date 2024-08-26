@@ -177,7 +177,7 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+    if: ${{  github.ref == 'refs/heads/dev' }}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:
