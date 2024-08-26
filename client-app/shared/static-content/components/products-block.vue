@@ -25,7 +25,7 @@
               {{ $t("pages.demo_landing.products_block.choose_button") }}
             </VcButton>
 
-            <AddToCart v-else :product="item"></AddToCart>
+            <AddToCart v-else :product="item" />
           </template>
         </ProductCardGrid>
       </div>

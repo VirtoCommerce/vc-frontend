@@ -93,7 +93,7 @@
               {{ $t("shared.layout.search_bar.products_label") }}
             </header>
 
-            <div class="grid grid-cols-2 gap-5 px-5 pb-3 pt-[1.3rem] xl:gap-[1.9rem]">
+            <div class="grid grid-cols-2 gap-y-0.5 p-3">
               <SearchBarProductCard
                 v-for="product in products"
                 :key="product.id"
