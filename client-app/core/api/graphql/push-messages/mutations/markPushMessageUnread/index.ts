@@ -5,8 +5,9 @@ import {
   UNREAD_COUNT_WITH_HIDDEN_CACHE_ID,
 } from "@/core/constants/notifications";
 import { MarkPushMessageUnreadDocument, OperationNames, PushMessageFragmentDoc } from "../../types";
-import type { PushMessageType } from "../../types";
-import type { UnreadCountType } from "@/core/types/notifications";
+import type { PushMessageConnection, PushMessageType } from "../../types";
+
+type UnreadCountType = Pick<PushMessageConnection, "totalCount">;
 
 export function useMarkPushMessageUnread() {
   return useMutation(MarkPushMessageUnreadDocument, {

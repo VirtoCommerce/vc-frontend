@@ -8,7 +8,6 @@ import {
 } from "@/core/constants/notifications";
 import { MarkAllPushMessagesUnreadDocument, OperationNames } from "../../types";
 import type { PushMessageConnection } from "../../types";
-import type { UnreadCountType } from "@/core/types/notifications";
 
 export function useMarkAllPushMessagesUnread() {
   return useMutation(MarkAllPushMessagesUnreadDocument, {
@@ -48,7 +47,7 @@ export function useMarkAllPushMessagesUnread() {
       const messagesWithHiddenCount = messagesWithHidden?.[1]?.totalCount ?? 0;
 
       // update unreadCount and unreadCountWithHidden count
-      cache.modify<Record<string, UnreadCountType>>({
+      cache.modify<Record<string, Pick<PushMessageConnection, "totalCount">>>({
         fields: {
           [UNREAD_COUNT_CACHE_ID]: () => ({
             totalCount: messagesCount,
