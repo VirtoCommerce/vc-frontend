@@ -95,7 +95,7 @@
       />
 
       <AccountNavigationLink
-        v-if="$cfg.push_messages_enabled && isPushMessagesActive"
+        v-if="isPushMessagesActive"
         :to="{ name: 'Notifications' }"
         :text="$t('shared.account.navigation.links.notifications')"
         class="notifications-icon"

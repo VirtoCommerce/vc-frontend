@@ -119,7 +119,7 @@ export const accountRoutes: RouteRecordRaw[] = [
     name: "Notifications",
     component: Notifications,
     beforeEnter(_to, _from, next) {
-      if (themeContext.value?.settings?.push_messages_enabled && isPushMessagesActive.value) {
+      if (isPushMessagesActive.value) {
         next();
       } else {
         next({ name: "Dashboard" });

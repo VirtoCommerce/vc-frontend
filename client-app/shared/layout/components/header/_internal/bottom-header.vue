@@ -44,10 +44,7 @@
           </BottomHeaderLink>
 
           <template v-else-if="item.id === 'push-messages'">
-            <PushMessages
-              v-if="$cfg.push_messages_enabled && isAuthenticated && isPushMessagesActive"
-              :offset-options="20"
-            >
+            <PushMessages v-if="isPushMessagesActive" :offset-options="20">
               <template #trigger="{ totalCount, unreadCount }">
                 <BottomHeaderLink :link="item" :count="unreadCount">
                   <template #icon>
@@ -106,7 +103,7 @@ import type { StyleValue } from "vue";
 import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const router = useRouter();
-const { isAuthenticated, organization } = useUser();
+const { organization } = useUser();
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();

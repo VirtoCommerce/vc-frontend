@@ -7,6 +7,7 @@ import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mut
 import { useMarkAllPushMessagesUnread } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesUnread";
 import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/getPushMessages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { useUser } from "@/shared/account";
@@ -23,7 +24,11 @@ provideApolloClient(apolloClient);
 
 const { isAuthenticated } = useUser();
 const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
-const isActive = computed(() => hasModuleSettings.value && isAuthenticated.value);
+const { themeContext } = useThemeContext();
+
+const isActive = computed(
+  () => themeContext.value?.settings?.push_messages_enabled && hasModuleSettings.value && isAuthenticated.value,
+);
 
 function usePushMessages(options?: IUsePushMessagesOptions) {
   if (!isActive.value) {
