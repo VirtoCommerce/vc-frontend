@@ -1,5 +1,4 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { MarkAllPushMessagesUnreadDocument, OperationNames } from "@/core/api/graphql/types";
 import {
   PUSH_MESSAGE_CACHE_ID,
   PUSH_MESSAGES_CACHE_ID,
@@ -7,7 +6,8 @@ import {
   UNREAD_COUNT_CACHE_ID,
   UNREAD_COUNT_WITH_HIDDEN_CACHE_ID,
 } from "@/core/constants/notifications";
-import type { PushMessageConnection } from "@/core/api/graphql/types";
+import { MarkAllPushMessagesUnreadDocument, OperationNames } from "../../types";
+import type { PushMessageConnection } from "../../types";
 import type { UnreadCountType } from "@/core/types/notifications";
 
 export function useMarkAllPushMessagesUnread() {

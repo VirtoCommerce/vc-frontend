@@ -47,9 +47,7 @@
             @update:model-value="changeItemQuantity(item, $event)"
             @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
             @update:validation="setValidationStatus(item, $event)"
-          />
-
-          <div class="mt-1.5 flex gap-1.5">
+          >
             <InStock
               :is-in-stock="item.availabilityData?.isInStock"
               :is-available="!item.deleted"
@@ -58,7 +56,7 @@
             />
 
             <CountInCart :product-id="item.productId" />
-          </div>
+          </VcAddToCart>
         </div>
 
         <template #after>

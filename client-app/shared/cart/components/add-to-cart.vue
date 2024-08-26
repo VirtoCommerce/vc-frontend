@@ -1,52 +1,58 @@
 <template>
-  <!-- @deprecated Replace VcInput with VcAddToCart https://virtocommerce.atlassian.net/browse/VCST-1657 -->
-  <VcInput
-    v-model.number="enteredQuantity"
-    class="add-to-cart"
-    size="sm"
-    type="number"
-    :aria-label="$t('common.labels.product_quantity')"
-    :disabled="disabled"
-    :max="maxQty"
-    :min="minQty"
-    :error="!!errorMessage"
-    :message="errorMessage"
-    single-line-message
-    center
-    show-empty-details
-    select-on-click
-    @input="onInput"
-    @keypress="onKeypress"
-    @blur="onBlur"
-  >
-    <template #append>
-      <VcButton
-        class="add-to-cart__icon-button"
-        :variant="countInCart ? 'solid' : 'outline'"
-        :loading="loading"
-        :disabled="disabled || !!errorMessage"
-        :title="buttonText"
-        size="sm"
-        :icon="icon"
-        @click="onChange"
-      >
-        {{ buttonText }}
-      </VcButton>
+  <!-- @deprecated Use VcAddToCart https://virtocommerce.atlassian.net/browse/VCST-1657 -->
+  <div class="add-to-cart">
+    <VcInput
+      v-model.number="enteredQuantity"
+      class="add-to-cart"
+      type="number"
+      :aria-label="$t('common.labels.product_quantity')"
+      :disabled="disabled"
+      :max="maxQty"
+      :min="minQty"
+      :error="!!errorMessage"
+      :message="errorMessage"
+      size="sm"
+      single-line-message
+      center
+      show-empty-details
+      select-on-click
+      @input="onInput"
+      @keypress="onKeypress"
+      @blur="onBlur"
+    >
+      <template #append>
+        <VcButton
+          class="add-to-cart__icon-button"
+          :variant="countInCart ? 'solid' : 'outline'"
+          :loading="loading"
+          :disabled="disabled || !!errorMessage"
+          :title="buttonText"
+          :icon="icon"
+          size="sm"
+          @click="onChange"
+        >
+          {{ buttonText }}
+        </VcButton>
 
-      <VcButton
-        class="add-to-cart__text-button"
-        :variant="countInCart ? 'solid' : 'outline'"
-        :loading="loading"
-        :disabled="disabled || !!errorMessage"
-        :title="buttonText"
-        size="sm"
-        truncate
-        @click="onChange"
-      >
-        {{ buttonText }}
-      </VcButton>
-    </template>
-  </VcInput>
+        <VcButton
+          class="add-to-cart__text-button"
+          :variant="countInCart ? 'solid' : 'outline'"
+          :loading="loading"
+          :disabled="disabled || !!errorMessage"
+          :title="buttonText"
+          size="sm"
+          truncate
+          @click="onChange"
+        >
+          {{ buttonText }}
+        </VcButton>
+      </template>
+    </VcInput>
+
+    <div v-if="$slots.default" class="vc-add-to-cart__badges">
+      <slot></slot>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -230,7 +236,7 @@ function onBlur() {
 
 <style lang="scss">
 .add-to-cart {
-  @apply @container w-full flex-none;
+  @apply @container flex-none;
 
   &__icon-button.vc-button {
     @apply w-24;
@@ -246,6 +252,10 @@ function onBlur() {
     @container (width > theme("containers.xxs")) {
       @apply block w-32;
     }
+  }
+
+  &__badges {
+    @apply mt-1.5 flex flex-wrap gap-x-1.5 gap-y-0.5;
   }
 }
 </style>

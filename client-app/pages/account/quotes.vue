@@ -27,7 +27,7 @@
           :placeholder="$t('pages.account.quotes.search_placeholder')"
           maxlength="64"
           class="w-full"
-          @keypress.enter="applyKeyword"
+          @keydown.enter="applyKeyword"
         >
           <template #append>
             <button
