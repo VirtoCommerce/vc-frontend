@@ -1,7 +1,50 @@
 import { InMemoryCache } from "@apollo/client/core";
 
+const typesWithDisabledCache = [
+  "ApproveQuoteResultType",
+  "AuthorizePaymentResultType",
+  "BulkWishlistType",
+  "Category",
+  "ContactConnection",
+  "ContactType",
+  "CountryType",
+  "CustomerOrderConnection",
+  "CustomerOrderType",
+  "CustomIdentityResultType",
+  "FileUploadOptionsFragment",
+  "FulfillmentCenterConnection",
+  "FulfillmentCenterType",
+  "IdentityResultType",
+  "InitializePaymentResultType",
+  "MemberAddressConnection",
+  "MemberAddressType",
+  "MenuLinkListType",
+  "MenuLinkType",
+  "Organization",
+  "ProductAssociation",
+  "ProductConnection",
+  "QuoteConnection",
+  "QuoteType",
+  "RequestRegistrationType",
+  "SearchResultsType",
+  "UserType",
+  "WishlistConnection",
+  "WishlistType",
+];
+
+const typesWithDisabledCacheSettings = typesWithDisabledCache.reduce(
+  (acc, type) => {
+    acc[type] = {
+      keyFields: false,
+    };
+    return acc;
+  },
+  {} as Record<string, { keyFields: false }>,
+);
+
 export const cache = new InMemoryCache({
   typePolicies: {
+    ...typesWithDisabledCacheSettings,
     CartType: {
       fields: {
         availableGifts: {

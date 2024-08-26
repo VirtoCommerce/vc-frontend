@@ -24,11 +24,13 @@ export const deprecatedLink = from([sharedLink, httpLink]);
 
 // https://www.apollographql.com/docs/react/api/link/introduction/#composing-a-link-chain
 // Tree:
-//         removeTypenameLink
-//                  ↓
-//          errorHandlerLink
-//          ↓               ↓
-// (conditional links) → httpLink
+// removeTypenameLink
+// ↓
+// errorHandlerLink
+// ↓
+// (conditional links)
+// ↓
+// httpLink/wsLink
 export const link = from([
   sharedLink,
   // Add conditional links here
