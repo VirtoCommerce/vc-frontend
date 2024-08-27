@@ -205,7 +205,7 @@ jobs:
 
   deploy-cloud:
     # if: ${{ github.ref == 'refs/heads/dev' }}
-    if: ${{ github.ref == 'refs/heads/vcst-1573-1' }}
+    if: ${{ github.ref == 'refs/heads/vcst-1573-3' }}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:
