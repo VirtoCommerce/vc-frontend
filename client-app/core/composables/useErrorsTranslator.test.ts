@@ -2,10 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { useErrorsTranslator } from "./useErrorsTranslator";
 
 function mockI18n(): void {
-  vi.mock("vue-i18n", async (importOriginal) => {
-    const actualI18n = await importOriginal();
+  vi.mock("vue-i18n", () => {
     return {
-      ...{ actualI18n },
       useI18n: vi.fn().mockReturnValue({
         t: (key: string) => key,
         te: (key: string) => key,
@@ -17,9 +15,9 @@ function mockI18n(): void {
 describe("use-errors-translator", () => {
   mockI18n();
 
-  const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+  it("should return undefined error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
 
-  it("Test for unexisting error", () => {
     setErrors([
       {
         errorCode: "PRODUCT_QTY_INSUFFICIENT",
@@ -31,7 +29,9 @@ describe("use-errors-translator", () => {
     expect(localizedItemsErrors.value["123"]).toBeUndefined();
   });
 
-  it("Test for insufficient product quantity", () => {
+  it("should retrun insufficient product quantity error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_QTY_INSUFFICIENT",
@@ -58,7 +58,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product quantity changed error", () => {
+  it("should return product quantity changed error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_QTY_CHANGED",
@@ -79,7 +81,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product inactive error", () => {
+  it("should return product inactive error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "CART_PRODUCT_INACTIVE",
@@ -94,7 +98,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product price is invalid error", () => {
+  it("should return invalid product price error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_PRICE_INVALID",
@@ -109,7 +115,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product is out of stock error", () => {
+  it("should return product is out of stock error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_FFC_QTY",
@@ -124,7 +132,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product min quantity error", () => {
+  it("should return product min quantity error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_MIN_QTY",
@@ -145,7 +155,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product max quantity error", () => {
+  it("should return product max quantity error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_MAX_QTY",
@@ -166,7 +178,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product min/max quantity error", () => {
+  it("should return product min/max quantity error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_MIN_MAX_QTY",
@@ -191,7 +205,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for line item mot found error", () => {
+  it("should return line item not found error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "LINE_ITEM_NOT_FOUND",
@@ -206,7 +222,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product min order quantity is not available error", () => {
+  it("should return product min order quantity is not available error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_MIN_QTY_NOT_AVAILABLE",
@@ -229,7 +247,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for product exact quantity error", () => {
+  it("should return product exact quantity error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "PRODUCT_EXACT_QTY",
@@ -250,7 +270,9 @@ describe("use-errors-translator", () => {
     ).toBeTruthy();
   });
 
-  it("Test for invalid product error", () => {
+  it("should return invalid product error", () => {
+    const { localizedItemsErrors, setErrors } = useErrorsTranslator("validation_error");
+
     setErrors([
       {
         errorCode: "CART_INVALID_PRODUCT",
