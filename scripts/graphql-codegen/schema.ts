@@ -1,6 +1,6 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
 
-const GQL_SERVER_URI = `${process.env.APP_BACKEND_URL}/graphql`;
+const GQL_SERVER_URI = `${process.env.APP_BACKEND_URL}graphql`;
 export const SCHEMA_PATH = "client-app/core/api/graphql/schema.json";
 
 // eslint-disable-next-line no-console

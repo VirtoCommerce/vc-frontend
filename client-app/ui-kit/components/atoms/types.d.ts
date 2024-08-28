@@ -33,6 +33,7 @@ declare module "vue" {
     VcProductProperties: typeof Components.VcProductProperties;
     VcProductTitle: typeof Components.VcProductTitle;
     VcProductVendor: typeof Components.VcProductVendor;
+    VcProductsGrid: typeof Components.VcProductsGrid;
     VcProperty: typeof Components.VcProperty;
     VcRadioButton: typeof Components.VcRadioButton;
     VcScrollTopButton: typeof Components.VcScrollTopButton;

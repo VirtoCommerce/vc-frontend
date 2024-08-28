@@ -33,6 +33,11 @@
       "id": "section3",
       "type": "related-products",
       "hidden": false
+    },
+    {
+      "id": "section4",
+      "type": "recommended-products",
+      "hidden": false
     }
   ]
 }
