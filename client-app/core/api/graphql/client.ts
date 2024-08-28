@@ -1,22 +1,14 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client/core";
-import { cache, deprecatedLink, link, options } from "@/core/api/graphql/config";
+import { cache, link, options } from "@/core/api/graphql/config";
 
 const fetchPolicy = "no-cache";
 
 /**
  * Non-cached version of Apollo Client
- *
- * @deprecated
- *
- * Use {@link apolloClient} instead.
- *
- * **IMPORTANT!** Because of cache usage, query deduplication and `@vue/apollo-composable` usage,
- * you can't just replace {@link graphqlClient} with {@link apolloClient} in your code.
- * Look at https://github.com/VirtoCommerce/vc-theme-b2b-vue/pull/868 for more information.
  */
 export const graphqlClient = new ApolloClient({
   ...options,
-  link: deprecatedLink,
+  link,
 
   cache: new InMemoryCache({
     addTypename: false,
