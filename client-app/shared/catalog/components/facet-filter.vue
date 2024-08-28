@@ -11,7 +11,7 @@
     <template #default-container>
       <div v-if="searchFieldVisible" class="facet-filter-widget__search">
         <VcInput
-          v-model.trim="searchKeyword"
+          v-model="searchKeyword"
           size="sm"
           maxlength="30"
           :disabled="loading"
@@ -86,7 +86,7 @@
     <template #content="{ close }">
       <div v-if="searchFieldVisible" class="facet-filter-dropdown__search">
         <VcInput
-          v-model.trim="searchKeyword"
+          v-model="searchKeyword"
           size="sm"
           maxlength="30"
           :disabled="loading"
@@ -185,7 +185,9 @@ const searchKeyword = ref("");
 
 const searchFieldVisible = computed<boolean>(() => facet.value.values.length > SEARCH_FIELD_AMOUNT);
 const filtered = computed(() => {
-  return facet.value.values.filter((item) => item.label.toLowerCase().indexOf(searchKeyword.value.toLowerCase()) >= 0);
+  return facet.value.values.filter(
+    (item) => item.label.toLowerCase().indexOf(searchKeyword.value.trim().toLowerCase()) >= 0,
+  );
 });
 const searchedValues = computed(() => {
   // 1 - for fade at the bottom
@@ -194,7 +196,7 @@ const searchedValues = computed(() => {
 
 const isShowMoreVisible = computed(() => filtered.value.length > SHOW_MORE_AMOUNT + 1);
 
-const isSearchPerformed = computed(() => searchKeyword.value.length);
+const isSearchPerformed = computed(() => searchKeyword.value.trim().length);
 
 const isNoResults = computed(() => !searchedValues.value.length && isSearchPerformed.value);
 
