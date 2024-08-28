@@ -263,7 +263,6 @@ function changePage(page: number): void {
 watchEffect(() => {
   if (cart.value?.validationErrors) {
     setErrors(cart.value?.validationErrors);
-    console.log(localizedItemsErrors.value);
   }
 });
 </script>
