@@ -2,7 +2,7 @@
   <VcProductCard :background="false">
     <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
 
-    <VcProductTitle lines-number="2" fix-height :to="link" @click="$emit('linkClick', $event)">
+    <VcProductTitle lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
       {{ product.name }}
     </VcProductTitle>
 
