@@ -1,8 +1,8 @@
 <template>
   <VcPopupSidebar class="filters-popup-sidebar" :is-visible="isVisible" @hide="$emit('hidePopupSidebar')">
-    <template v-if="!isMobile" #header>
+    <template #header>
       <div class="filters-popup-sidebar__title">
-        {{ $t("common.buttons.allFilters") }}
+        {{ isMobile ? $t("common.buttons.filters") : $t("common.buttons.allFilters") }}
       </div>
       <button type="button" class="filters-popup-sidebar__close-btn" @click="$emit('hidePopupSidebar')">
         <VcIcon class="filters-popup-sidebar__close-icon" size="sm" name="x" />
@@ -10,16 +10,14 @@
     </template>
 
     <ProductsFilters
-      :show-common-filters="isHorizontalFilters"
       :keyword="keywordQueryParam"
       :filters="popupSidebarFilters"
       :loading="loading || facetsLoading"
       @change="$emit('updatePopupSidebarFilters', $event)"
-      @open-branches="$emit('openBranchesModal', true)"
     >
-      <template v-if="isHorizontalFilters" #prepend="{ loading }">
+      <template #prepend="{ loading }">
         <div class="filters-popup-sidebar__container">
-          <div v-if="!hideSorting" class="filters-popup-sidebar__sorting">
+          <div v-if="!hideSorting && isHorizontalFilters" class="filters-popup-sidebar__sorting">
             <span class="filters-popup-sidebar__sorting-label">
               {{ $t("pages.catalog.sort_by_label") }}
             </span>
@@ -50,6 +48,7 @@
             class="filters-popup-sidebar__control"
             :model-value="!!popupSidebarFilters.branches.length"
             :disabled="loading"
+            :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
             @change="$emit('openBranchesModal', true)"
           >
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
@@ -149,11 +148,11 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
   }
 
   &__close-icon {
-    @apply text-neutral-600 #{!important};
+    --vc-icon-color: var(--color-neutral-600);
   }
 
   &__container {
-    @apply space-y-4;
+    @apply space-y-5 mb-4;
   }
 
   &__sorting-label {

@@ -1,44 +1,49 @@
 <template>
-  <VcInput
-    v-model.number="quantity"
-    class="vc-add-to-cart"
-    size="sm"
-    type="number"
-    :aria-label="$t('common.labels.product_quantity')"
-    :disabled="disabled"
-    :max="maxQuantity"
-    :min="minQuantity"
-    single-line-message
-    center
-    @input="onChange"
-    @blur="onFocusOut"
-  >
-    <template #append>
-      <VcButton
-        class="vc-add-to-cart__icon-button"
-        :variant="isButtonOutlined ? 'outline' : 'solid'"
-        :loading="loading"
-        :disabled="disabled || !!errorMessage"
-        :title="buttonText"
-        :icon="icon"
-        size="sm"
-        @click.stop="$emit('update:cartItemQuantity', quantity!)"
-      />
+  <div class="vc-add-to-cart">
+    <VcInput
+      v-model.number="quantity"
+      type="number"
+      :aria-label="$t('common.labels.product_quantity')"
+      :disabled="disabled"
+      :max="maxQuantity"
+      :min="minQuantity"
+      size="sm"
+      single-line-message
+      center
+      @input="onChange"
+      @blur="onFocusOut"
+    >
+      <template #append>
+        <VcButton
+          class="vc-add-to-cart__icon-button"
+          :variant="isButtonOutlined ? 'outline' : 'solid'"
+          :loading="loading"
+          :disabled="disabled || !!errorMessage"
+          :title="buttonText"
+          :icon="icon"
+          size="sm"
+          @click.stop="$emit('update:cartItemQuantity', quantity!)"
+        />
 
-      <VcButton
-        class="vc-add-to-cart__text-button"
-        :variant="isButtonOutlined ? 'outline' : 'solid'"
-        :loading="loading"
-        :disabled="disabled || !!errorMessage"
-        :title="buttonText"
-        size="sm"
-        truncate
-        @click.stop="$emit('update:cartItemQuantity', quantity!)"
-      >
-        {{ buttonText }}
-      </VcButton>
-    </template>
-  </VcInput>
+        <VcButton
+          class="vc-add-to-cart__text-button"
+          :variant="isButtonOutlined ? 'outline' : 'solid'"
+          :loading="loading"
+          :disabled="disabled || !!errorMessage"
+          :title="buttonText"
+          size="sm"
+          truncate
+          @click.stop="$emit('update:cartItemQuantity', quantity!)"
+        >
+          {{ buttonText }}
+        </VcButton>
+      </template>
+    </VcInput>
+
+    <div v-if="$slots.default" class="vc-add-to-cart__badges">
+      <slot></slot>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -138,10 +143,10 @@ watchEffect(async () => {
 
 <style lang="scss">
 .vc-add-to-cart {
-  @apply @container w-full;
+  @apply @container flex-none;
 
   &__icon-button.vc-button {
-    @apply w-24;
+    @apply w-24 max-w-full;
 
     @container (width > theme("containers.xxs")) {
       @apply hidden;
@@ -154,6 +159,10 @@ watchEffect(async () => {
     @container (width > theme("containers.xxs")) {
       @apply block w-32;
     }
+  }
+
+  &__badges {
+    @apply mt-1.5 flex flex-wrap gap-x-1.5 gap-y-0.5;
   }
 }
 </style>

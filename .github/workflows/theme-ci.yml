@@ -202,3 +202,16 @@ jobs:
         if: success()
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
+
+  deploy-cloud:
+    if: ${{ github.ref == 'refs/heads/dev' }}
+    needs: ci
+    uses: ./.github/workflows/deploy-cloud.yml
+    with:
+      cmPath: 'theme/artifact.json'
+      artifactKey: 'URL'
+      artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
+      environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
+      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
+    secrets: inherit

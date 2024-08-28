@@ -133,7 +133,7 @@ export function _useCheckout() {
     set: (value: string) => {
       commentChanging.value = true;
       _comment.value = value;
-      void changeCommentDebounced(value);
+      void changeCommentDebounced(value.trim());
     },
   });
 

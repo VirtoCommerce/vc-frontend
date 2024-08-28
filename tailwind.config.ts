@@ -278,7 +278,7 @@ module.exports = {
 
     extend: {
       containers: {
-        xxs: "15rem", //240px
+        xxs: "14rem", //224px
       },
 
       spacing: {

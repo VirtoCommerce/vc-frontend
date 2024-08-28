@@ -51,10 +51,6 @@ function getQueryDocument(maxLevelFooterLinks: number): DocumentNode {
 export async function getGetWhiteLabelingSettings() {
   const { storeId, userId, organizationId, cultureName } = globals;
 
-  if (!organizationId) {
-    return undefined;
-  }
-
   const { data } = await graphqlClient.query<
     Required<Pick<Query, "whiteLabelingSettings">>,
     QueryWhiteLabelingSettingsArgs
