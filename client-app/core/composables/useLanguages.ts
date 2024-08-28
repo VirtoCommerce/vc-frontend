@@ -25,10 +25,10 @@ const currentLocale = computed<string>(() => {
 
   if (supportedLocales.value.includes(localeInPath)) {
     locale = localeInPath;
-  } else if (supportedLocales.value.includes(savedLocale.value)) {
-    locale = savedLocale.value;
   } else if (contactLocale.value && supportedLocales.value.includes(contactLocale.value)) {
     locale = contactLocale.value;
+  } else if (supportedLocales.value.includes(savedLocale.value)) {
+    locale = savedLocale.value;
   }
 
   return locale;
