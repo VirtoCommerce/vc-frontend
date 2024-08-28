@@ -14,16 +14,14 @@
         :actual-price="variation.price.actual"
         :vendor="$cfg.vendor_enabled ? variation.vendor : undefined"
       >
-        <AddToCart :product="variation" />
-
-        <div class="variations-default__badges">
+        <AddToCart :product="variation">
           <InStock
             :is-in-stock="variation.availabilityData.isInStock"
             :quantity="variation.availabilityData.availableQuantity"
           />
 
           <CountInCart :product-id="variation.id" />
-        </div>
+        </AddToCart>
       </VcLineItem>
 
       <VcPagination
@@ -73,11 +71,3 @@ function changePage(page: number): void {
   emit("changePage", page);
 }
 </script>
-
-<style lang="scss">
-.variations-default {
-  &__badges {
-    @apply flex items-center flex-wrap gap-1 mt-1.5;
-  }
-}
-</style>

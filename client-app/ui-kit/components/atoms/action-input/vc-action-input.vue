@@ -4,7 +4,7 @@
 
     <div class="flex items-start gap-3">
       <VcInput
-        v-model.trim="value"
+        v-model="value"
         :placeholder="placeholder"
         :readonly="readonly"
         :disabled="applied || disabled"

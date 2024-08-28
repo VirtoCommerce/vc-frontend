@@ -49,7 +49,7 @@ withDefaults(defineProps<IProps>(), {
 
   --font-size: var(--vc-product-price-font-size);
 
-  @apply flex flex-col text-[length:var(--font-size)] text-neutral-950 [word-break:break-word] leading-[1.2];
+  @apply flex flex-col text-[length:var(--font-size)] text-neutral-950 [word-break:break-word] leading-[1.335];
 
   &--align {
     &--start {

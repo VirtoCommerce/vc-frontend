@@ -104,9 +104,11 @@ jobs:
         if: success()
         run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
 
-      - name: Packaging
+      - name: Add files to zip
         run: |
-          yarn storybook:compress
+          mkdir ./artifacts
+          cd ./storybook-static
+          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./*
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
@@ -175,14 +177,14 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+    if: ${{ github.ref == 'refs/heads/dev' }}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:
       cmPath: 'storybook/image.json'
       artifactKey: 'Tag'
       artifactUrl: ${{ needs.ci.outputs.tag }}
-      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'qa' }}
+      environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit

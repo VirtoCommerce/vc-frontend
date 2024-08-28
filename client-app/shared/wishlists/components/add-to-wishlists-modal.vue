@@ -60,7 +60,7 @@
               <div class="absolute inset-0"></div>
             </button>
             <VcInput
-              v-model.trim="input.listName"
+              v-model="input.listName"
               class="ml-2.5 mr-3.5 grow"
               :class="{ 'mb-4.5': !input.errorMessage }"
               :disabled="loading"
@@ -242,7 +242,7 @@ async function createLists() {
   }
 
   await asyncForEach(newLists.value, async (newList) => {
-    const newListId = await createWishlist({ listName: newList.listName });
+    const newListId = await createWishlist({ listName: newList.listName.trim() });
 
     if (newListId) {
       selectedListsOtherIds.value.push(newListId);
