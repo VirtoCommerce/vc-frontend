@@ -1297,7 +1297,7 @@
       "sku_copied_message": "@:common.labels.sku successfully copied",
       "variations_total_label": "Total in your cart:",
       "view_cart_button": "View cart",
-      "recommended_products_section_title": "Products relaited to this item",
+      "recommended_products_section_title": "Products related to this item",
       "related_product_section_title": "Related products",
       "price_label": "@:common.labels.product_price{':'}"
     },
