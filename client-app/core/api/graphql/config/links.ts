@@ -28,7 +28,7 @@ const sharedLink = from([removeTypenameFromVariables(), errorHandlerLink]);
 // ↓
 // (conditional links)
 // ↓
-// httpLink
+// wsLink/httpLink
 export const link = from([
   sharedLink,
   // Add conditional links here
