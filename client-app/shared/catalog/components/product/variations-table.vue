@@ -74,28 +74,25 @@
 
           <td class="variations-table__col variations-table__col--quantity">
             <VcQuantity
-              :model-value="getCountInCart(variation)"
+              :model-value="mappedLineItems[variation.id]?.quantity ?? 0"
               :name="variation.id"
               :disabled="
                 !variation.availabilityData?.isInStock ||
                 !variation.availabilityData?.isAvailable ||
                 !variation.availabilityData?.isBuyable
               "
-              :error="!!getLineItem(variation) && !!localizedItemsErrors[getLineItem(variation)!.id]"
+              :error="!!localizedItemsErrors[variation.id]"
               @update:model-value="changeCart(variation, $event)"
             >
               <template #append>
-                <VcTooltip
-                  v-if="getLineItem(variation) && localizedItemsErrors[getLineItem(variation)!.id]"
-                  placement="bottom-end"
-                >
+                <VcTooltip v-if="!!localizedItemsErrors[variation.id]" placement="bottom-end">
                   <template #trigger>
                     <VcIcon class="variations-table__quantity-icon" name="warning" />
                   </template>
 
                   <template #content>
-                    <div class="w-max rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-danger shadow-md">
-                      <div v-for="(error, index) in localizedItemsErrors[getLineItem(variation)!.id]" :key="index">
+                    <div class="w-max rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-danger">
+                      <div v-for="(error, index) in localizedItemsErrors[variation.id]" :key="index">
                         {{ error }}
                       </div>
                     </div>
@@ -114,7 +111,7 @@
 
 <script setup lang="ts">
 import { flatten, sortBy, uniqBy } from "lodash";
-import { computed } from "vue";
+import { computed, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useErrorsTranslator } from "@/core/composables";
@@ -122,7 +119,7 @@ import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import CountInCart from "../count-in-cart.vue";
-import type { Product, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
+import type { Product, ShortLineItemFragment, VariationType, ValidationErrorType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
 interface IEmits {
@@ -149,6 +146,8 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
+const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const variations = computed(() => props.variations);
 const productProperties = computed<IProductProperties[]>(() => {
@@ -190,8 +189,6 @@ const propertiesTitles = computed<ITableColumn[]>(() =>
   })),
 );
 
-const { cart, addToCart, changeItemQuantity } = useShortCart();
-
 const columns = computed<ITableColumn[]>(() => [
   {
     id: "name",
@@ -222,11 +219,11 @@ const columns = computed<ITableColumn[]>(() => [
   },
 ]);
 
-const { localizedItemsErrors } = useErrorsTranslator("validation_error", cart.value?.validationErrors);
-
-function getCountInCart(variation: VariationType) {
-  return getLineItem(variation)?.quantity || 0;
-}
+const mappedLineItems = computed(() => {
+  const mapped: Record<string, ShortLineItemFragment | undefined> = {};
+  variations.value?.forEach((variation) => (mapped[variation.id] = getLineItem(variation)));
+  return mapped;
+});
 
 function getStockQuantity(variation: VariationType) {
   return variation.availabilityData.availableQuantity &&
@@ -262,6 +259,13 @@ function applySorting(sortInfo: ISortInfo): void {
 function changePage(page: number): void {
   emit("changePage", page);
 }
+
+watchEffect(() => {
+  if (cart.value?.validationErrors) {
+    setErrors(cart.value?.validationErrors);
+    console.log(localizedItemsErrors.value);
+  }
+});
 </script>
 
 <style lang="scss">

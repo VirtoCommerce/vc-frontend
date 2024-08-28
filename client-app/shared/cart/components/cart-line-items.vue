@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from "vue";
+import { computed, toRef, watchEffect } from "vue";
 import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
@@ -88,7 +88,9 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const validationErrors = toRef(props, "validationErrors");
 
-const { localizedItemsErrors } = useErrorsTranslator<ValidationErrorType>("validation_error", validationErrors);
+const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const preparedLineItems = computed(() => prepareLineItems(props.items));
+
+watchEffect(() => setErrors(validationErrors.value));
 </script>

@@ -1,14 +1,19 @@
-import { computed, unref } from "vue";
+import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
-import type { MaybeRef } from "vue";
 import type { NamedValue } from "vue-i18n";
 
 function asKey<T>(key: string): keyof T {
   return key as keyof T;
 }
 
-export function useErrorsTranslator<T extends object>(localeItemsGroupKey: string, errors?: MaybeRef<T[]>) {
+export function useErrorsTranslator<T extends object>(localeItemsGroupKey: string) {
   const { t, te } = useI18n();
+
+  const errors = ref<T[]>();
+
+  function setErrors(errs: T[]): void {
+    errors.value = errs;
+  }
 
   function getErrorValue<K extends keyof T>(error: T, keys: K[]): T[K] | undefined {
     const keyInError = keys.find((key) => key in error);
@@ -56,6 +61,7 @@ export function useErrorsTranslator<T extends object>(localeItemsGroupKey: strin
 
   return {
     localizedItemsErrors,
+    setErrors,
     translate,
   };
 }
