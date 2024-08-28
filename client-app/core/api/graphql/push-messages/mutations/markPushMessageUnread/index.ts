@@ -21,7 +21,6 @@ export function useMarkPushMessageUnread() {
 
       let message: PushMessageType | null = null;
 
-      // update push message to be unread
       cache.updateFragment(
         {
           id: `${PUSH_MESSAGE_CACHE_ID}${variables?.command?.messageId}`,
@@ -33,7 +32,6 @@ export function useMarkPushMessageUnread() {
         },
       );
 
-      // update unreadCount and unreadCountWithHidden value
       cache.modify({
         fields: {
           [UNREAD_COUNT_CACHE_ID]: (value) => {

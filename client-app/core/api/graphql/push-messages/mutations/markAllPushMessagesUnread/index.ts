@@ -1,8 +1,8 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
+import { ROOT_QUERY_CACHE_ID } from "@/core/api/graphql/consts";
 import {
   PUSH_MESSAGE_CACHE_ID,
   PUSH_MESSAGES_CACHE_ID,
-  ROOT_QUERY_CACHE_ID,
   UNREAD_COUNT_CACHE_ID,
   UNREAD_COUNT_WITH_HIDDEN_CACHE_ID,
 } from "@/core/constants/notifications";
@@ -46,7 +46,6 @@ export function useMarkAllPushMessagesUnread() {
       const messagesCount = messages?.[1]?.totalCount ?? 0;
       const messagesWithHiddenCount = messagesWithHidden?.[1]?.totalCount ?? 0;
 
-      // update unreadCount and unreadCountWithHidden count
       cache.modify<Record<string, Pick<PushMessageConnection, "totalCount">>>({
         fields: {
           [UNREAD_COUNT_CACHE_ID]: () => ({

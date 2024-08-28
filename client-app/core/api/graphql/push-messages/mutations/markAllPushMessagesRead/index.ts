@@ -30,7 +30,6 @@ export function useMarkAllPushMessagesRead() {
         }
       });
 
-      // update unreadCount and unreadCountWithHidden count to 0
       cache.modify<Record<string, Pick<PushMessageConnection, "totalCount">>>({
         fields: {
           [UNREAD_COUNT_CACHE_ID]: () => ({
