@@ -41,7 +41,7 @@ defineProps<IProps>();
     & > * {
       width: calc((100% - theme("space.6")) / 2);
 
-      @container (width > theme(containers.md)) {
+      @container (width > theme(containers.sm)) {
         width: calc((100% - 2 * theme("space.6")) / 3);
       }
 
@@ -67,7 +67,7 @@ defineProps<IProps>();
           @apply block;
         }
 
-        @container (width > theme(containers.md)) {
+        @container (width > theme(containers.sm)) {
           &:nth-child(4) {
             @apply hidden;
           }
