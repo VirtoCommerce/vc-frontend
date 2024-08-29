@@ -110,7 +110,7 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { cloneDeep, isEqual, keyBy } from "lodash";
+import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
@@ -182,7 +182,11 @@ const pagedListItems = computed<PreparedLineItemType[]>(() =>
   preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
-const isDirty = computed<boolean>(() => !isEqual(list.value?.items, wishlistItems.value));
+const isDirty = computed<boolean>(() => {
+  const originalItemsToCompare = (list.value?.items ?? []).map((item) => pick(item, ["productId", "quantity"]));
+  const changedItemsToCompare = (wishlistItems.value ?? []).map((item) => pick(item, ["productId", "quantity"]));
+  return !isEqual(originalItemsToCompare, changedItemsToCompare);
+});
 
 const isMobile = breakpoints.smaller("lg");
 
