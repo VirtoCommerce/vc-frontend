@@ -9,7 +9,7 @@ import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/get
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
-import { useUser } from "@/shared/account";
+import { useUser } from "@/shared/account/composables";
 import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/push-messages/types";
 import type { Ref, MaybeRef } from "vue";
 

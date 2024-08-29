@@ -74,6 +74,13 @@
           :related-products="relatedProducts"
           :model="relatedProductsSection"
         />
+
+        <component
+          :is="recommendedProductsSection?.type"
+          v-if="recommendedProductsSection && !recommendedProductsSection.hidden"
+          :recommended-products="recommendedProducts"
+          :model="recommendedProductsSection"
+        />
       </div>
 
       <ProductSidebar
@@ -104,7 +111,14 @@ import {
   getFilterExpression,
   getSortingExpression,
 } from "@/core/utilities";
-import { useProduct, useRelatedProducts, useCategory, ProductSidebar, useProducts } from "@/shared/catalog";
+import {
+  useProduct,
+  useRelatedProducts,
+  useCategory,
+  ProductSidebar,
+  useProducts,
+  useRecommendedProducts,
+} from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
@@ -155,6 +169,8 @@ const {
   filtersDisplayOrder,
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
+const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
+
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
@@ -193,6 +209,10 @@ const productVariationsBlock = computed(() =>
 
 const relatedProductsSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "related-products"),
+);
+
+const recommendedProductsSection = computed(() =>
+  template.value?.content.find((item: PageContent) => item.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {
@@ -287,6 +307,13 @@ watchEffect(async () => {
 
   if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
+  }
+
+  if (!recommendedProductsSection.value?.hidden) {
+    await fetchRecommendedProducts({
+      productId: productId.value,
+      model: "related-products",
+    });
   }
 
   if (product.value?.hasVariations) {
