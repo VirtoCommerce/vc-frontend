@@ -136,6 +136,7 @@ import type {
   LineItemType,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
 
 interface IProps {
@@ -315,8 +316,8 @@ function openDeleteProductModal(values: string[]): void {
   }
 }
 
-async function canChangeRoute() {
-  return !list.value || !isDirty.value || (await openSaveChangesModal());
+async function canChangeRoute(to: RouteLocationNormalized): Promise<boolean> {
+  return to.name === "NoAccess" || !list.value || !isDirty.value || (await openSaveChangesModal());
 }
 
 onBeforeRouteLeave(canChangeRoute);
