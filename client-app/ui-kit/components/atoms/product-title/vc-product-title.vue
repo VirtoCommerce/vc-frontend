@@ -5,6 +5,7 @@
       {
         'vc-product-title--link': linkTo,
         'vc-product-title--disabled': disabled,
+        'vc-product-title--fix-height': fixHeight,
       },
     ]"
   >
@@ -34,6 +35,7 @@ interface IProps {
   target?: "_blank" | "_self";
   title?: string;
   disabled?: boolean;
+  fixHeight?: boolean;
   linesNumber?: number | string;
 }
 
@@ -54,10 +56,15 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
   $link: "";
 
   --font-size: var(--vc-product-title-font-size);
+  --lines-number: v-bind(linesNumber);
 
-  @apply text-[length:var(--font-size)] font-bold line-clamp-[v-bind(linesNumber)];
+  @apply text-[length:var(--font-size)] font-bold line-clamp-[--lines-number];
 
-  @apply leading-[1.17] #{!important};
+  @apply leading-[1.17em] #{!important};
+
+  &--fix-height {
+    height: calc(1.17em * var(--lines-number));
+  }
 
   &--disabled {
     $disabled: &;
@@ -69,6 +76,7 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
   &__text {
     color: var(--body-text-color);
+    word-wrap: break-word;
 
     #{$link}:not(#{$disabled}) & {
       @apply cursor-pointer;
