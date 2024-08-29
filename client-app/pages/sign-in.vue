@@ -27,6 +27,7 @@
         <IdentityProviders class="sign-in__providers sign-in__providers--right" :providers="identityProviders" />
       </template>
     </template>
+    <button @click="removeLocaleFromUrl(false)">Test</button>
   </TwoColumn>
 </template>
 
@@ -34,6 +35,7 @@
 import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { SignInForm } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 
@@ -57,6 +59,7 @@ const hasPasswordAuthentication = computed(() => {
 });
 
 const { t } = useI18n();
+const { removeLocaleFromUrl } = useLanguages();
 
 usePageHead({
   title: t("pages.sign_in.meta.title"),

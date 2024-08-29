@@ -97,7 +97,7 @@ const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
-const { supportedLanguages, saveLocale } = useLanguages();
+const { supportedLanguages, unpinLocale, addOrRemoveLocaleInUrl } = useLanguages();
 const { supportedCurrencies, saveCurrencyCode } = useCurrency();
 
 usePageHead({
@@ -139,7 +139,8 @@ function applyLanguage(): void {
     );
 
     if (contactLanguage) {
-      saveLocale(contactLanguage.twoLetterLanguageName, false);
+      unpinLocale();
+      addOrRemoveLocaleInUrl(contactLanguage.twoLetterLanguageName);
     }
   }
 }
@@ -164,8 +165,6 @@ const onSubmit = handleSubmit(async (data) => {
       onClose() {
         applyLanguage();
         applyCurrency();
-
-        location.reload();
       },
     },
   });

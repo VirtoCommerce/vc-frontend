@@ -50,7 +50,7 @@ export default async () => {
 
   const { fetchUser, user } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
-  const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
+  const { currentLocale, currentLanguage, supportedLocales, initLocale, fetchLocaleMessages } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
@@ -106,7 +106,7 @@ export default async () => {
   /**
    * Other settings
    */
-  await setLocale(i18n, currentLocale.value);
+  await initLocale(i18n, currentLocale.value);
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched

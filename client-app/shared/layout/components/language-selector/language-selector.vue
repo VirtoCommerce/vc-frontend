@@ -52,11 +52,12 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
 import type { ILanguage } from "@/core/types";
 
-const { currentLanguage, supportedLanguages, saveLocale } = useLanguages();
+const { currentLanguage, supportedLanguages, pinLocale, addOrRemoveLocaleInUrl } = useLanguages();
 
 function select(locale: string) {
   if (locale !== currentLanguage.value.twoLetterLanguageName) {
-    saveLocale(locale);
+    pinLocale(locale);
+    addOrRemoveLocaleInUrl(locale);
   }
 }
 

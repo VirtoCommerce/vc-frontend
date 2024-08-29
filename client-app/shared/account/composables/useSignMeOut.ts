@@ -1,10 +1,12 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useAuth } from "@/core/composables/useAuth";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { TabsType, pageReloadEvent, useBroadcast } from "@/shared/broadcast";
 
 export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: true }) {
   const { client } = useApolloClient();
   const broadcast = useBroadcast();
+  const { removeLocaleFromUrl, unpinLocale } = useLanguages();
 
   const { unauthorize } = useAuth();
 
@@ -13,7 +15,9 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
 
     await client.clearStore();
 
-    localStorage.removeItem("locale");
+    unpinLocale();
+    removeLocaleFromUrl(false);
+
     localStorage.removeItem("currency");
 
     if (options.reloadPage) {

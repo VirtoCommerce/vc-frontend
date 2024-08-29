@@ -11,7 +11,7 @@ import type { Composer } from "vue-i18n";
 const { themeContext } = useThemeContext();
 const { user } = useUser();
 
-const savedLocale = useLocalStorage<string>("locale", "");
+const pinedLocale = useLocalStorage<string | null>("pinedLocale", null);
 
 const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
@@ -20,18 +20,20 @@ const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((
 const contactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
 
 const currentLocale = computed<string>(() => {
-  const localeInPath = location.pathname.split("/")[1];
-  let locale: string = defaultLocale.value;
-
-  if (supportedLocales.value.includes(localeInPath)) {
-    locale = localeInPath;
-  } else if (contactLocale.value && supportedLocales.value.includes(contactLocale.value)) {
-    locale = contactLocale.value;
-  } else if (supportedLocales.value.includes(savedLocale.value)) {
-    locale = savedLocale.value;
+  if (pinedLocale.value && isLocaleSupported(pinedLocale.value)) {
+    return pinedLocale.value;
   }
 
-  return locale;
+  if (contactLocale.value && isLocaleSupported(contactLocale.value)) {
+    return contactLocale.value;
+  }
+
+  const localeInPath = location.pathname.split("/")[1];
+  if (localeInPath && isLocaleSupported(localeInPath)) {
+    return localeInPath;
+  }
+
+  return defaultLocale.value;
 });
 
 const currentLanguage = computed<ILanguage>(
@@ -49,7 +51,7 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   return import("../../../locales/en.json");
 }
 
-async function setLocale(i18n: I18n, locale: string): Promise<void> {
+async function initLocale(i18n: I18n, locale: string): Promise<void> {
   let messages = i18n.global.getLocaleMessage(locale);
 
   if (!Object.keys(messages).length) {
@@ -58,8 +60,6 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
   }
 
   (i18n.global as unknown as Composer).locale.value = locale;
-
-  savedLocale.value = locale;
 
   setLocaleForYup({
     mixed: {
@@ -71,44 +71,70 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
     },
   });
 
-  /**
-   * NOTE:
-   * If you need to specify the language setting for headers, such as the "fetch" API, set it here.
-   * The following is an example for axios.
-   *
-   * axios.defaults.headers.common['Accept-Language'] = locale
-   */
-
   document.documentElement.setAttribute("lang", locale);
 }
 
-function saveLocale(locale: string, needToReload: boolean = true) {
-  const { pathname } = location;
-  const splitPathname = pathname.split("/");
-  const localeInPath = splitPathname[1];
-  const indexOfRemainingPath = 2;
-  const path = supportedLocales.value?.includes(localeInPath)
-    ? `/${splitPathname.slice(indexOfRemainingPath).join("/")}`
-    : pathname;
+function getUrlWithoutLocale(): string {
+  const fullPath = window.location.pathname + window.location.search + window.location.hash;
 
-  savedLocale.value = locale;
+  const localeRegex = /^\/([a-z]{2})(\/|$)/;
+  const locale = fullPath.match(localeRegex)?.[1];
 
-  if (needToReload) {
-    location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
+  if (locale && supportedLocales.value.includes(locale)) {
+    return fullPath.replace(localeRegex, "/$2");
   }
+
+  return fullPath;
+}
+
+function removeLocaleFromUrl(reloadPage = true) {
+  const newUrl = getUrlWithoutLocale();
+
+  if (reloadPage) {
+    location.href = newUrl;
+  } else {
+    history.pushState(null, "", newUrl);
+  }
+}
+
+function addOrRemoveLocaleInUrl(locale: string, reloadPage = true) {
+  const path = getUrlWithoutLocale();
+  const resultPath = locale === defaultLocale.value ? path : `/${locale}${path}`;
+
+  if (reloadPage) {
+    location.href = resultPath;
+  } else {
+    history.pushState(null, "", resultPath);
+  }
+}
+
+function pinLocale(locale: string) {
+  pinedLocale.value = locale;
+}
+
+function unpinLocale() {
+  pinedLocale.value = null;
+}
+
+function isLocaleSupported(locale: string): boolean {
+  return supportedLocales.value.includes(locale);
 }
 
 export function useLanguages() {
   return {
-    savedLocale,
+    pinedLocale,
     defaultLanguage,
     defaultLocale,
     supportedLanguages,
     supportedLocales,
     currentLocale,
     currentLanguage,
-    setLocale,
-    saveLocale,
+    initLocale,
     fetchLocaleMessages,
+
+    pinLocale,
+    unpinLocale,
+    addOrRemoveLocaleInUrl,
+    removeLocaleFromUrl,
   };
 }
