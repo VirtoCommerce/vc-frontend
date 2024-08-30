@@ -1,13 +1,16 @@
 import { useQuery } from "@vue/apollo-composable";
+import { toValue } from "vue";
 import { GetPushMessagesDocument, OnPushMessageCreatedDocument } from "../../types";
 import type { GetPushMessagesQueryVariables } from "../../types";
 import type { MaybeRefOrGetter } from "vue";
 
 let subscribed = false;
+let subscribedWithHidden = false;
 
 export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQueryVariables>) {
   const result = useQuery(GetPushMessagesDocument, payload, { fetchPolicy: "cache-and-network" });
-  if (subscribed) {
+  const payloadValue = toValue(payload);
+  if ((!payloadValue.withHidden && subscribed) || (payloadValue.withHidden && subscribedWithHidden)) {
     return result;
   }
   result.subscribeToMore({
@@ -29,14 +32,19 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
           totalCount: items.length + 1,
         },
         unreadCount: {
-          totalCount: unreadCount ? unreadCount + 1 : 1,
+          totalCount: !payloadValue.withHidden ? (unreadCount ?? 0) + 1 : unreadCount,
         },
         unreadCountWithHidden: {
-          totalCount: unreadCountWithHidden ? unreadCountWithHidden + 1 : 1,
+          totalCount: !payloadValue.withHidden ? (unreadCountWithHidden ?? 0) + 1 : unreadCountWithHidden,
         },
       };
     },
   });
-  subscribed = true;
+  if (!payloadValue.withHidden) {
+    subscribed = true;
+  }
+  if (payloadValue.withHidden) {
+    subscribedWithHidden = true;
+  }
   return result;
 }
