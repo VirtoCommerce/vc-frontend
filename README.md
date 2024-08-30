@@ -144,6 +144,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 - Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
 - Install [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api) module.
 - Install [vc-module-push-messages](https://github.com/VirtoCommerce/vc-module-push-messages) module.
+  Install [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
 - Install [Node.js v20](https://nodejs.org/en/download/) (**20.11.0** or later)
 - Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
   ```bash
@@ -206,12 +207,6 @@ yarn build:dev
 
 ```bash
 yarn build:watch
-```
-
-#### Create artefact to install from already built code
-
-```bash
-yarn compress
 ```
 
 ## Types generation

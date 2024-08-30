@@ -87,7 +87,7 @@
     <!-- region Mobile Search Bar -->
     <div v-show="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
       <VcInput
-        v-model.trim="searchPhrase"
+        v-model="searchPhrase"
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
@@ -154,7 +154,7 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 const searchPageLink = computed<RouteLocationRaw>(() => ({
   name: "Search",
   query: {
-    [QueryParamName.SearchPhrase]: searchPhrase.value,
+    [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
   },
 }));
 
