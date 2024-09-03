@@ -1,7 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
-import { useUser } from "@/shared/account/composables/useUser";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -9,7 +8,6 @@ import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
-const { user } = useUser();
 
 const pinedLocale = useLocalStorage<string | null>("pinedLocale", null);
 
@@ -17,27 +15,11 @@ const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLang
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
-const contactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
 
-const currentLocale = computed<string>(() => {
-  if (pinedLocale.value && isLocaleSupported(pinedLocale.value)) {
-    return pinedLocale.value;
-  }
-
-  if (contactLocale.value && isLocaleSupported(contactLocale.value)) {
-    return contactLocale.value;
-  }
-
-  const localeInPath = location.pathname.split("/")[1];
-  if (localeInPath && isLocaleSupported(localeInPath)) {
-    return localeInPath;
-  }
-
-  return defaultLocale.value;
-});
+let currentLocale: string;
 
 const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
+  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale) || defaultLanguage.value,
 );
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
@@ -98,6 +80,8 @@ function removeLocaleFromUrl(reloadPage = true) {
 }
 
 function addOrRemoveLocaleInUrl(locale: string, reloadPage = true) {
+  currentLocale = locale;
+
   const path = getUrlWithoutLocale();
   const resultPath = locale === defaultLocale.value ? path : `/${locale}${path}`;
 
@@ -120,6 +104,14 @@ function isLocaleSupported(locale: string): boolean {
   return supportedLocales.value.includes(locale);
 }
 
+function detectLocale(locales: unknown[]): string {
+  const stringLocales = locales
+    .filter((locale): locale is string => typeof locale === "string")
+    .filter(isLocaleSupported);
+
+  return stringLocales[0] || defaultLocale.value;
+}
+
 export function useLanguages() {
   return {
     pinedLocale,
@@ -127,7 +119,6 @@ export function useLanguages() {
     defaultLocale,
     supportedLanguages,
     supportedLocales,
-    currentLocale,
     currentLanguage,
     initLocale,
     fetchLocaleMessages,
@@ -136,5 +127,6 @@ export function useLanguages() {
     unpinLocale,
     addOrRemoveLocaleInUrl,
     removeLocaleFromUrl,
+    detectLocale,
   };
 }
