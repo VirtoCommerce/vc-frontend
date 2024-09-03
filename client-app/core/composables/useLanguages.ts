@@ -71,7 +71,7 @@ function removeLocaleFromUrl() {
 function getUrlWithoutLocale(fullPath: string): string {
   const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
 
-  if (locale && supportedLocales.value.includes(locale)) {
+  if (locale && isLocaleSupported(locale)) {
     return fullPath.replace(URL_LOCALE_REGEX, "/");
   }
 

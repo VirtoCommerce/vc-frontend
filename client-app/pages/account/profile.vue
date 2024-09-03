@@ -135,7 +135,6 @@ const [currencyCode] = defineField("currencyCode");
 function applyLanguage(): void {
   unpinLocale();
   removeLocaleFromUrl();
-  location.reload();
 }
 
 function applyCurrency(): void {
@@ -158,6 +157,8 @@ const onSubmit = handleSubmit(async (data) => {
       onClose() {
         applyLanguage();
         applyCurrency();
+
+        location.reload();
       },
     },
   });
