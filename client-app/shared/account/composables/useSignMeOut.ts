@@ -16,7 +16,7 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
     await client.clearStore();
 
     unpinLocale();
-    removeLocaleFromUrl(false);
+    removeLocaleFromUrl();
 
     localStorage.removeItem("currency");
 

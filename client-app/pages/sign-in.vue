@@ -27,7 +27,7 @@
         <IdentityProviders class="sign-in__providers sign-in__providers--right" :providers="identityProviders" />
       </template>
     </template>
-    <button @click="removeLocaleFromUrl(false)">Test</button>
+    <button @click="removeLocaleFromUrl()">Test</button>
   </TwoColumn>
 </template>
 

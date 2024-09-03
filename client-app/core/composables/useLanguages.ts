@@ -17,10 +17,10 @@ const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availa
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
 
-let currentLocale: string;
+let appLocale: string;
 
 const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale) || defaultLanguage.value,
+  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === appLocale) || defaultLanguage.value,
 );
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
@@ -67,24 +67,20 @@ function getUrlWithoutLocale(): string {
   const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
 
   if (locale && supportedLocales.value.includes(locale)) {
-    return fullPath.replace(URL_LOCALE_REGEX, "/$2");
+    return fullPath.replace(URL_LOCALE_REGEX, "/");
   }
 
   return fullPath;
 }
 
-function removeLocaleFromUrl(reloadPage = true) {
+function removeLocaleFromUrl() {
   const newUrl = getUrlWithoutLocale();
-
-  if (reloadPage) {
-    location.href = newUrl;
-  } else {
-    history.pushState(null, "", newUrl);
-  }
+  history.pushState(null, "", newUrl);
+  location.reload();
 }
 
 function addOrRemoveLocaleInUrl(locale: string, reloadPage = true) {
-  currentLocale = locale;
+  appLocale = locale;
 
   const path = getUrlWithoutLocale();
   const resultPath = locale === defaultLocale.value ? path : `/${locale}${path}`;

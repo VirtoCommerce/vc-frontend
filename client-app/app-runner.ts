@@ -88,11 +88,27 @@ export default async () => {
   void initializeGoogleAnalytics();
   void initializeHotjar();
 
+  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
+
+  const twoLetterAppLocale = detectLocale([
+    pinedLocale.value,
+    twoLetterContactLocale.value,
+    getLocaleFromUrl(),
+    themeContext.value.defaultLanguage.twoLetterLanguageName,
+  ]);
+
+  console.log(
+    pinedLocale.value,
+    twoLetterContactLocale.value,
+    getLocaleFromUrl(),
+    themeContext.value.defaultLanguage.twoLetterLanguageName,
+  );
+
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(currentLanguage.value.twoLetterLanguageName, currentCurrency.value.code, fallback);
+  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
   const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
   /**
@@ -111,22 +127,10 @@ export default async () => {
 
   await fetchMenus();
 
-  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-  console.log(
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  );
-  await initLocale(
-    i18n,
-    detectLocale([
-      pinedLocale.value,
-      twoLetterContactLocale.value,
-      getLocaleFromUrl(),
-      themeContext.value.defaultLanguage.twoLetterLanguageName,
-    ]),
-  );
+  /**
+   * Other settings
+   */
+  await initLocale(i18n, twoLetterAppLocale);
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
