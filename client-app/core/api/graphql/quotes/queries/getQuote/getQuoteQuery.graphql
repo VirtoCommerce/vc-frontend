@@ -43,5 +43,28 @@ query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: St
     adjustment {
       ...money
     }
+    totals {
+      grandTotalInclTax {
+        ...money
+      }
+      subTotalExlTax {
+        ...money
+      }
+      shippingTotal {
+        ...money
+      }
+      taxTotal {
+        ...money
+      }
+      adjustmentQuoteExlTax {
+        ...money
+      }
+      grandTotalExlTax {
+        ...money
+      }
+      discountTotal {
+        ...money
+      }
+    }
   }
 }
