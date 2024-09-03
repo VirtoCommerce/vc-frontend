@@ -15,6 +15,7 @@ const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLang
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
+const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
 
 let currentLocale: string;
 
@@ -56,14 +57,17 @@ async function initLocale(i18n: I18n, locale: string): Promise<void> {
   document.documentElement.setAttribute("lang", locale);
 }
 
+function getLocaleFromUrl(): string | undefined {
+  return window.location.pathname.match(URL_LOCALE_REGEX)?.[1];
+}
+
 function getUrlWithoutLocale(): string {
   const fullPath = window.location.pathname + window.location.search + window.location.hash;
 
-  const localeRegex = /^\/([a-z]{2})(\/|$)/;
-  const locale = fullPath.match(localeRegex)?.[1];
+  const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
 
   if (locale && supportedLocales.value.includes(locale)) {
-    return fullPath.replace(localeRegex, "/$2");
+    return fullPath.replace(URL_LOCALE_REGEX, "/$2");
   }
 
   return fullPath;
@@ -106,7 +110,7 @@ function isLocaleSupported(locale: string): boolean {
 
 function detectLocale(locales: unknown[]): string {
   const stringLocales = locales
-    .filter((locale): locale is string => typeof locale === "string")
+    .filter((locale): locale is string => typeof locale === "string" && locale.length === 2)
     .filter(isLocaleSupported);
 
   return stringLocales[0] || defaultLocale.value;
@@ -128,5 +132,6 @@ export function useLanguages() {
     addOrRemoveLocaleInUrl,
     removeLocaleFromUrl,
     detectLocale,
+    getLocaleFromUrl,
   };
 }
