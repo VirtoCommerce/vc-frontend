@@ -58,6 +58,7 @@ function select(locale: string) {
   if (locale !== pinedLocale.value) {
     pinLocale(locale);
     removeLocaleFromUrl();
+    location.reload();
   }
 }
 

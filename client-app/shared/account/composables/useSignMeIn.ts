@@ -16,7 +16,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
   const { cart } = useShortCart();
   const { result: me, load: getMe } = useGetMeQuery();
   const { mutate: mergeCart } = useMergeCartMutation();
-  const { unpinLocale, addOrRemoveLocaleInUrl, supportedLanguages } = useLanguages();
+  const { unpinLocale, removeLocaleFromUrl } = useLanguages();
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
 
   const { isLoading: loading, execute: signIn } = useAsyncState(
@@ -28,11 +28,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
       await mergeCart({ command: { userId: me.value!.me!.id, secondCartId: cart.value!.id } });
 
       unpinLocale();
-      const defaultLanguage = me.value?.me?.contact?.defaultLanguage;
-      const contactLanguage = supportedLanguages.value.find((item) => item.cultureName === defaultLanguage);
-      if (contactLanguage) {
-        addOrRemoveLocaleInUrl(contactLanguage.twoLetterLanguageName);
-      }
+      removeLocaleFromUrl();
 
       if (me.value?.me?.contact?.currencyCode) {
         const contactCurrency = supportedCurrencies.value.find(

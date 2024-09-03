@@ -19,10 +19,6 @@ const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
 
 const currentLanguage = ref<ILanguage>();
 
-/*const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === appLocale.value) || defaultLanguage.value,
-);*/
-
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
   const path = `../../../locales/${locale}.json`;
@@ -63,6 +59,15 @@ function getLocaleFromUrl(): string | undefined {
   return window.location.pathname.match(URL_LOCALE_REGEX)?.[1];
 }
 
+function removeLocaleFromUrl() {
+  const fullPath = window.location.pathname + window.location.search + window.location.hash;
+
+  const newUrl = getUrlWithoutLocale(fullPath);
+  if (fullPath !== newUrl) {
+    history.pushState(null, "", newUrl);
+  }
+}
+
 function getUrlWithoutLocale(fullPath: string): string {
   const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
 
@@ -71,29 +76,6 @@ function getUrlWithoutLocale(fullPath: string): string {
   }
 
   return fullPath;
-}
-
-function removeLocaleFromUrl() {
-  const fullPath = window.location.pathname + window.location.search + window.location.hash;
-
-  const newUrl = getUrlWithoutLocale(fullPath);
-  if (fullPath !== newUrl) {
-    history.pushState(null, "", newUrl);
-  }
-  location.reload();
-}
-
-function addOrRemoveLocaleInUrl(locale: string, reloadPage = true) {
-  const fullPath = window.location.pathname + window.location.search + window.location.hash;
-
-  const path = getUrlWithoutLocale(fullPath);
-  const resultPath = locale === defaultLocale.value ? path : `/${locale}${path}`;
-
-  if (reloadPage) {
-    location.href = resultPath;
-  } else {
-    history.pushState(null, "", resultPath);
-  }
 }
 
 function pinLocale(locale: string) {
@@ -137,7 +119,6 @@ export function useLanguages() {
 
     pinLocale,
     unpinLocale,
-    addOrRemoveLocaleInUrl,
     removeLocaleFromUrl,
     detectLocale,
     getLocaleFromUrl,
