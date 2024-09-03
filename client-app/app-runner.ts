@@ -89,20 +89,12 @@ export default async () => {
   void initializeHotjar();
 
   // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
-
   const twoLetterAppLocale = detectLocale([
     pinedLocale.value,
     twoLetterContactLocale.value,
     getLocaleFromUrl(),
     themeContext.value.defaultLanguage.twoLetterLanguageName,
   ]);
-
-  console.log(
-    pinedLocale.value,
-    twoLetterContactLocale.value,
-    getLocaleFromUrl(),
-    themeContext.value.defaultLanguage.twoLetterLanguageName,
-  );
 
   /**
    * Creating plugin instances
