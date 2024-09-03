@@ -1,5 +1,5 @@
 import { useLocalStorage } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
@@ -17,11 +17,11 @@ const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availa
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
 const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
 
-let appLocale: string;
+const currentLanguage = ref<ILanguage>();
 
-const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === appLocale) || defaultLanguage.value,
-);
+/*const currentLanguage = computed<ILanguage>(
+  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === appLocale.value) || defaultLanguage.value,
+);*/
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
@@ -35,6 +35,8 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
 }
 
 async function initLocale(i18n: I18n, locale: string): Promise<void> {
+  currentLanguage.value = supportedLanguages.value.find((x) => x.twoLetterLanguageName === locale);
+
   let messages = i18n.global.getLocaleMessage(locale);
 
   if (!Object.keys(messages).length) {
@@ -61,9 +63,7 @@ function getLocaleFromUrl(): string | undefined {
   return window.location.pathname.match(URL_LOCALE_REGEX)?.[1];
 }
 
-function getUrlWithoutLocale(): string {
-  const fullPath = window.location.pathname + window.location.search + window.location.hash;
-
+function getUrlWithoutLocale(fullPath: string): string {
   const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
 
   if (locale && supportedLocales.value.includes(locale)) {
@@ -74,15 +74,19 @@ function getUrlWithoutLocale(): string {
 }
 
 function removeLocaleFromUrl() {
-  const newUrl = getUrlWithoutLocale();
-  history.pushState(null, "", newUrl);
+  const fullPath = window.location.pathname + window.location.search + window.location.hash;
+
+  const newUrl = getUrlWithoutLocale(fullPath);
+  if (fullPath !== newUrl) {
+    history.pushState(null, "", newUrl);
+  }
   location.reload();
 }
 
 function addOrRemoveLocaleInUrl(locale: string, reloadPage = true) {
-  appLocale = locale;
+  const fullPath = window.location.pathname + window.location.search + window.location.hash;
 
-  const path = getUrlWithoutLocale();
+  const path = getUrlWithoutLocale(fullPath);
   const resultPath = locale === defaultLocale.value ? path : `/${locale}${path}`;
 
   if (reloadPage) {
@@ -119,7 +123,15 @@ export function useLanguages() {
     defaultLocale,
     supportedLanguages,
     supportedLocales,
-    currentLanguage,
+    currentLanguage: computed({
+      get() {
+        return currentLanguage.value || defaultLanguage.value;
+      },
+
+      set() {
+        throw new Error("currentLanguage is read only.");
+      },
+    }),
     initLocale,
     fetchLocaleMessages,
 

@@ -114,6 +114,8 @@ export default async () => {
   /**
    * Setting global variables
    */
+  await initLocale(i18n, twoLetterAppLocale);
+
   setGlobals({
     i18n,
     router,
@@ -130,7 +132,6 @@ export default async () => {
   /**
    * Other settings
    */
-  await initLocale(i18n, twoLetterAppLocale);
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
