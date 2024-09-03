@@ -3,6 +3,7 @@ query GetPurchaseRequest($id: String!) {
     id
     number
     cartId
+    quoteId
     sources {
       name
       url

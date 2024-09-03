@@ -18,6 +18,7 @@
           <CartLineItems
             :items="group.items"
             :shared-selected-item-ids="selectedItemIds"
+            selectable
             :disabled="disabled"
             :validation-errors="validationErrors"
             @change:item-quantity="$emit('change:itemQuantity', $event)"
@@ -33,6 +34,7 @@
       <CartLineItems
         :items="items"
         :shared-selected-item-ids="selectedItemIds"
+        selectable
         :disabled="disabled"
         :validation-errors="validationErrors"
         @change:item-quantity="$emit('change:itemQuantity', $event)"

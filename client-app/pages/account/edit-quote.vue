@@ -1,6 +1,6 @@
 <template>
   <div v-if="quote" class="!gap-y-4 lg:!gap-y-6">
-    <div class="space-y-3">
+    <div v-if="!hideHeader" class="space-y-3">
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <VcTypography tag="h1">
@@ -144,6 +144,7 @@ import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-a
 
 interface IProps {
   quoteId?: string;
+  hideHeader?: boolean;
 }
 
 const props = defineProps<IProps>();

@@ -72,6 +72,7 @@ interface IProps {
   readonly?: boolean;
   items?: LineItemType[];
   validationErrors?: ValidationErrorType[];
+  selectable?: boolean;
   sharedSelectedItemIds?: string[];
 }
 

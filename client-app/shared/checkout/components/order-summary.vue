@@ -8,7 +8,7 @@
 
       <div class="mb-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.subtotal") }}</span>
-        <span><VcPriceDisplay :value="cart.subTotal!" /></span>
+        <span><VcPriceDisplay :value="cart.subTotal" /></span>
       </div>
 
       <div class="border-y py-2 text-base font-normal">
@@ -27,42 +27,32 @@
             />
           </component>
 
-          <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal!" /></span>
+          <span><VcPriceDisplay :value="cart.discountTotal" prefix="-" /></span>
         </div>
 
         <template v-if="hasDiscounts">
           <div class="print:block" :class="{ hidden: discountsCollapsed }">
             <ul class="list-disc pl-5 text-neutral-400 print:text-[color:var(--color-additional-950)]">
-              <li v-for="(discount, index) in cart.discounts!" :key="index">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm">{{ discount.description || discount.coupon }}</span>
-                  <VcTotalDisplay
-                    :amount="-getDiscountAmount(discount)"
-                    :currency-code="currentCurrency.code"
-                    :culture-name="currentLanguage.cultureName"
-                  />
-                </div>
-              </li>
+              <template v-if="cart.discounts">
+                <li v-for="(discount, index) in cart.discounts" :key="index">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm">{{ discount.description || discount.coupon }}</span>
+                    <VcPriceDisplay :value="getDiscountAmount(discount)" prefix="-" />
+                  </div>
+                </li>
+              </template>
 
-              <li v-if="lineItemsDiscountTotal > 0">
+              <li v-if="cart.lineItemDiscountTotal && cart.lineItemDiscountTotal.amount > 0">
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ $t("common.labels.line_items") }}</span>
-                  <VcTotalDisplay
-                    :amount="-lineItemsDiscountTotal"
-                    :currency-code="currentCurrency.code"
-                    :culture-name="currentLanguage.cultureName"
-                  />
+                  <span><VcPriceDisplay :value="cart.lineItemDiscountTotal" prefix="-" /></span>
                 </div>
               </li>
 
-              <li v-if="shippingDiscountTotal > 0">
+              <li v-if="cart.shippingDiscountTotal && cart.shippingDiscountTotal.amount > 0">
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ $t("common.labels.shipping") }}</span>
-                  <VcTotalDisplay
-                    :amount="-shippingDiscountTotal"
-                    :currency-code="currentCurrency.code"
-                    :culture-name="currentLanguage.cultureName"
-                  />
+                  <span><VcPriceDisplay :value="cart.shippingDiscountTotal" prefix="-" /></span>
                 </div>
               </li>
             </ul>
@@ -72,16 +62,14 @@
         <div class="flex justify-between">
           <span>{{ $t("common.labels.tax") }}</span>
           <span>
-            {{ cart.taxTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="cart.taxTotal!" />
+            <VcPriceDisplay :value="cart.taxTotal" prefix="+" />
           </span>
         </div>
 
-        <div v-if="!noShipping" class="flex justify-between">
+        <div v-if="cart.shippingSubTotal" class="flex justify-between">
           <span>{{ $t("common.labels.shipping_cost") }}</span>
           <span>
-            {{ shippingPrice?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="shippingPrice" />
+            <VcPriceDisplay :value="cart.shippingSubTotal" prefix="+" />
           </span>
         </div>
       </div>
@@ -89,7 +77,7 @@
       <div class="mt-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.total") }}</span>
         <span class="text-[--price-color] print:text-inherit">
-          <VcPriceDisplay :value="cart.total!" />
+          <VcPriceDisplay :value="cart.total" />
         </span>
       </div>
     </div>
@@ -105,64 +93,38 @@
 </template>
 
 <script setup lang="ts">
-import { sumBy } from "lodash";
 import { computed, ref } from "vue";
-import { useCurrency } from "@/core/composables";
-import { useLanguages } from "@/core/composables/useLanguages";
-import { useFullCart } from "@/shared/cart";
-import { useCheckout } from "@/shared/checkout/composables";
-import type {
-  OrderShipmentType,
-  CartType,
-  CustomerOrderType,
-  LineItemType,
-  OrderLineItemType,
-  ShipmentType,
-  DiscountType,
-  OrderDiscountType,
-} from "@/core/api/graphql/types";
+import type { DiscountType, OrderDiscountType, MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
-  cart: CartType | CustomerOrderType;
-  selectedItems?: LineItemType[];
+  changing?: boolean;
+  cart: {
+    lineItemDiscountTotal?: MoneyType;
+    shippingDiscountTotal?: MoneyType;
+    discounts?: DiscountType[] | OrderDiscountType[];
+    discountTotal: MoneyType;
+    taxTotal: MoneyType;
+    shippingSubTotal?: MoneyType;
+    subTotal: MoneyType;
+    total: MoneyType;
+  };
   noShipping?: boolean;
   footnote?: boolean;
 }
 
 const props = defineProps<IProps>();
 
-const { currentLanguage } = useLanguages();
-const { currentCurrency } = useCurrency();
-const { changing: cartChanging } = useFullCart();
-const { changing: checkoutChanging } = useCheckout();
-
-const changing = computed(() => cartChanging.value || checkoutChanging.value);
-
 const discountsCollapsed = ref(true);
 
-const lineItemsDiscountTotal = computed(() =>
-  sumBy<LineItemType | OrderLineItemType>(
-    props.selectedItems ?? props.cart.items,
-    (item) => item.discountTotal?.amount ?? 0,
-  ),
-);
-
-// TODO: Change to shippingPrice when this property will be added to CustomerOrderType
-const shippingPrice = computed(() =>
-  "shippingPrice" in props.cart ? props.cart.shippingPrice : props.cart.shippingSubTotal,
-);
-
-const shippingDiscountTotal = computed(() =>
-  sumBy<ShipmentType | OrderShipmentType>(props.cart.shipments, (shipment) => shipment.discountAmount?.amount),
-);
-
 const hasDiscounts = computed(
-  () => props.cart.discounts?.length || lineItemsDiscountTotal.value > 0 || shippingDiscountTotal.value > 0,
+  () =>
+    props.cart.discounts?.length ||
+    props.cart.lineItemDiscountTotal?.amount ||
+    props.cart.shippingDiscountTotal?.amount,
 );
 
-// TODO: Need to remove this function because type of cart discount amount should be equal to order discount amount
-function getDiscountAmount(discount: DiscountType | OrderDiscountType): number {
-  return typeof discount?.amount === "object" && discount?.amount !== null ? discount?.amount.amount : discount?.amount;
+function getDiscountAmount(discount: DiscountType | OrderDiscountType): MoneyType {
+  return "moneyAmount" in discount ? discount.moneyAmount : discount.amount;
 }
 </script>
 

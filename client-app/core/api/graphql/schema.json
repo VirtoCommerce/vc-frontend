@@ -145,6 +145,53 @@
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "AddQuoteItemsCommandType",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "newQuoteItems",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "InputNewQuoteItemType",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "quoteId",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "ApproveQuoteCommandType",
         "description": null,
         "fields": null,
@@ -14457,6 +14504,97 @@
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "InputNewQuoteItemType",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "comment",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "dynamicProperties",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "InputDynamicPropertyValueType",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "price",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Decimal",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "productId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "quantity",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "InputNewWishlistItemType",
         "description": null,
         "fields": null,
@@ -21662,6 +21800,35 @@
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "AddQuoteAttachmentsCommandType",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "QuoteType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "addQuoteItems",
+            "description": null,
+            "args": [
+              {
+                "name": "command",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "AddQuoteItemsCommandType",
                     "ofType": null
                   }
                 },
@@ -31848,13 +32015,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -31903,6 +32066,18 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "quoteId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -36158,13 +36333,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -36270,13 +36441,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -36354,13 +36521,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -36745,6 +36908,22 @@
             "deprecationReason": null
           },
           {
+            "name": "adjustment",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "attachments",
             "description": null,
             "args": [],
@@ -36892,6 +37071,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "discountTotal",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -37222,6 +37417,22 @@
             "deprecationReason": null
           },
           {
+            "name": "originalSubTotal",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "reminderDate",
             "description": null,
             "args": [],
@@ -37241,6 +37452,22 @@
               "kind": "OBJECT",
               "name": "QuoteShipmentMethodType",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "shippingTotal",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -37267,6 +37494,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "subTotal",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
                 "ofType": null
               }
             },
@@ -37310,6 +37553,54 @@
             "deprecationReason": null
           },
           {
+            "name": "taxTotal",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "total",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "totalWithTax",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "MoneyType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "totals",
             "description": null,
             "args": [],
@@ -37322,8 +37613,8 @@
                 "ofType": null
               }
             },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "isDeprecated": true,
+            "deprecationReason": "Use separate fields instead"
           }
         ],
         "inputFields": null,

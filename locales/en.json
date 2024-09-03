@@ -1360,9 +1360,12 @@
     },
     "purchase_request": {
       "title": "Purchase request",
+      "failed_or_used_description": "We're sorry, but we was unable to create purchase request or you already used it to create an order",
+      "try_again": "Please try again",
       "files_section": {
         "title": "Files"
-      }
+      },
+      "go_to_quote": "Proceed to quote"
     },
     "demo_landing": {
       "meta": {
