@@ -152,10 +152,8 @@ withDefaults(defineProps<IProps>(), {
     }
 
     #{$grid} & {
-      @apply h-8 text-sm;
-
       @container (width > theme(containers.xxs)) {
-        @apply h-11 text-lg;
+        @apply text-lg;
       }
     }
 
@@ -228,7 +226,7 @@ withDefaults(defineProps<IProps>(), {
       @container (width > theme(containers.xl)) {
         --font-size: 0.875rem;
 
-        @apply mt-0 ms-3 w-[7.5rem] flex-col items-end;
+        @apply mt-0 ms-3 w-[7.5rem];
       }
 
       @container (width > theme(containers.4xl)) {

@@ -6,6 +6,6 @@
 
 <style lang="scss">
 .vc-product-vendor {
-  @apply text-xs font-bold;
+  @apply text-xs font-bold empty:hidden;
 }
 </style>

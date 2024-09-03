@@ -26,6 +26,7 @@ export { default as VcPriceDisplayCatalog } from "./price-display-catalog/vc-pri
 export { default as VcProductProperties } from "./product-properties/vc-product-properties.vue";
 export { default as VcProductTitle } from "./product-title/vc-product-title.vue";
 export { default as VcProductVendor } from "./product-vendor/vc-product-vendor.vue";
+export { default as VcProductsGrid } from "./products-grid/vc-products-grid.vue";
 export { default as VcProperty } from "./property/vc-property.vue";
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";

@@ -1,6 +1,6 @@
 import { useThemeContext } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
+import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
 import type { RouteRecordRaw } from "vue-router";
 
 const Dashboard = () => import("@/pages/account/dashboard.vue");
@@ -119,8 +119,7 @@ export const accountRoutes: RouteRecordRaw[] = [
     name: "Notifications",
     component: Notifications,
     beforeEnter(_to, _from, next) {
-      const { isActive } = usePushMessages();
-      if (themeContext.value?.settings?.push_messages_enabled && isActive) {
+      if (isPushMessagesActive.value) {
         next();
       } else {
         next({ name: "Dashboard" });
