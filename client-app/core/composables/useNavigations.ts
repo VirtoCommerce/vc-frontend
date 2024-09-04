@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { useFetch } from "@/core/api/common";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
@@ -190,6 +191,15 @@ export function useNavigations() {
     matchingRouteName.value = value;
   }
 
+  function mergeSchema(additionalSchema: MenuType) {
+    menuSchema.value = _.mergeWith(additionalSchema, menuSchema.value, (objValue: object, srcValue: object) => {
+      if (_.isArray(objValue) && _.isArray(srcValue)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return srcValue.concat(objValue);
+      }
+    });
+  }
+
   return {
     fetchMenus,
     fetchFooterLinks,
@@ -208,5 +218,7 @@ export function useNavigations() {
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),
     footerLinks: computed(() => footerLinks.value),
+
+    mergeSchema,
   };
 }

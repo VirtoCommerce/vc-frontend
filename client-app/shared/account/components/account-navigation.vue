@@ -82,7 +82,7 @@
       />
 
       <AccountNavigationLink
-        v-if="$cfg.quotes_enabled"
+        v-if="$cfg.quotes_enabled && isQuotesEnabled(QUOTES_ENABLED_KEY)"
         :to="{ name: 'Quotes' }"
         :text="$t('shared.account.navigation.links.quote_requests')"
         class="quotes-icon"
@@ -122,6 +122,8 @@
 import { eagerComputed } from "@vueuse/core";
 import { watchEffect } from "vue";
 import { useRoute } from "vue-router";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_ID as QUOTES_MODULE_ID, ENABLED_KEY as QUOTES_ENABLED_KEY } from "@/modules/quotes/constants";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
@@ -137,6 +139,8 @@ const { filterData, applyFilters } = useUserOrdersFilter();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");
 const isOrdersPage = eagerComputed(() => route.name === "Orders");
+
+const { isEnabled: isQuotesEnabled } = useModuleSettings(QUOTES_MODULE_ID);
 
 function isSelectedOrderStatus(status: string): boolean {
   return filterData.value.statuses.indexOf(status) !== -1;

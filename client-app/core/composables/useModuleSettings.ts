@@ -15,6 +15,12 @@ function _useModuleSettings(moduleId: string) {
 
   const hasModuleSettings = computed(() => modulesSettings.value.some((obj) => obj.moduleId === moduleId) || false);
 
+  /**
+   * Checks if a feature is enabled based on the provided key inside the module settings.
+   *
+   * @param {string} key - The feature flag key to check.
+   * @returns {boolean} Returns `true` if the feature is enabled, and `false` otherwise.
+   */
   function isEnabled(key: string): boolean {
     return moduleSettings.value?.find((obj) => obj.name === key)?.value === true;
   }
