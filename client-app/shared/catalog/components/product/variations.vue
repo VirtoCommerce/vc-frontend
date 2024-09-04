@@ -2,7 +2,7 @@
   <VcWidget
     v-if="!model.hidden"
     class="variations"
-    :class="{ 'variations--full-view': isFullView }"
+    :class="{ 'variations--full-view': isFullView && !isSmallScreen }"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
