@@ -345,10 +345,6 @@ watchEffect(() => {
 </script>
 
 <style scoped lang="scss">
-:global(:root) {
-  --container-offset: calc(((100dvw - 87.75rem) / 2));
-}
-
 .vc-typography--variant--h1 {
   @apply normal-case;
 }

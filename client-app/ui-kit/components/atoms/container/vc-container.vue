@@ -30,7 +30,8 @@ defineProps<IProps>();
   }
 
   &__wrapper {
-    @apply mx-auto max-w-[87.75rem];
+    --vc-container-wrapper-max-width: 87.75rem;
+    @apply mx-auto max-w-[var(--vc-container-wrapper-max-width)];
   }
 }
 </style>

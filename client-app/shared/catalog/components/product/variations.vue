@@ -158,6 +158,7 @@ function handleKeyUp(event: KeyboardEvent) {
   &--full-view {
     @media (width > theme("screens.xl")) {
       --horizontal-margin: 1rem;
+      --container-offset: calc(((100dvw - var(--vc-container-wrapper-max-width)) / 2));
       @apply z-10 shadow-2xl;
       width: calc((100vw - var(--horizontal-margin) * 2));
       margin-left: calc((var(--container-offset) - var(--horizontal-margin)) * -1);
