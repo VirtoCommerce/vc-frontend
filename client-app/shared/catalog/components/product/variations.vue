@@ -2,10 +2,16 @@
   <VcWidget
     v-if="!model.hidden"
     class="variations"
+    :class="{ 'variations--full-view': isFullView }"
     size="lg"
     :title="model.title || $t('shared.catalog.product_details.variations.title')"
     prepend-icon="cube"
   >
+    <template v-if="!isSmallScreen && isTableView" #append>
+      <button type="button" @click="isFullView = !isFullView">
+        <VcIcon size="md" class="text-neutral" :name="isFullView ? 'delete-mini' : 'arrows-expand'" />
+      </button>
+    </template>
     <div class="variations__views flex justify-between">
       <div v-if="!isSmallScreen">
         <button type="button" class="variations__view" :disabled="!isTableView" @click="toggleView">
@@ -70,6 +76,7 @@
       :fetching="fetchingVariations"
       :page-number="pageNumber"
       :pages-count="pagesCount"
+      :is-full-view="isFullView"
       @apply-sorting="applySorting"
       @change-page="changePage"
     />
@@ -78,7 +85,7 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { BREAKPOINTS } from "@/core/constants";
 import VariationsDefault from "./variations-default.vue";
 import VariationsTable from "./variations-table.vue";
@@ -114,11 +121,13 @@ defineProps<IProps>();
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 
+const isFullView = ref(false);
 const isTableView = ref(false);
 const isSmallScreen = breakpoints.smaller("xl");
 
 function toggleView() {
   isTableView.value = !isTableView.value;
+  isFullView.value = false;
 }
 
 function applySorting(sortInfo: ISortInfo): void {
@@ -128,10 +137,33 @@ function applySorting(sortInfo: ISortInfo): void {
 function changePage(page: number): void {
   emit("changePage", page);
 }
+
+onMounted(() => {
+  window.addEventListener("keyup", handleKeyUp);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keyup", handleKeyUp);
+});
+
+function handleKeyUp(event: KeyboardEvent) {
+  if (event.key === "Escape") {
+    isFullView.value = false;
+  }
+}
 </script>
 
 <style lang="scss">
 .variations {
+  &--full-view {
+    @media (width > theme("screens.xl")) {
+      --horizontal-margin: 1rem;
+      @apply z-10 shadow-2xl;
+      width: calc((100vw - var(--horizontal-margin) * 2));
+      margin-left: calc((var(--container-offset) - var(--horizontal-margin)) * -1);
+    }
+  }
+
   &__views {
     @apply mb-6 space-x-3;
   }
