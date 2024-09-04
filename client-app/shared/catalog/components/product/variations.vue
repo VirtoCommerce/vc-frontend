@@ -76,7 +76,6 @@
       :fetching="fetchingVariations"
       :page-number="pageNumber"
       :pages-count="pagesCount"
-      :is-full-view="isFullView"
       @apply-sorting="applySorting"
       @change-page="changePage"
     />
