@@ -158,10 +158,11 @@ function handleKeyUp(event: KeyboardEvent) {
     @media (width > theme("screens.xl")) {
       --table-horizontal-margin: 1rem;
       --vc-container-horizontal-padding: 2rem;
-      --vc-container-wrapper-width: calc(100vw - (var(--vc-container-horizontal-padding) * 2));
-      --container-offset: calc(
-        (100vw - min(var(--vc-container-wrapper-width), var(--vc-container-wrapper-max-width))) / 2
+      --vc-container-wrapper-width: min(
+        var(--vc-container-wrapper-max-width),
+        calc(100vw - (var(--vc-container-horizontal-padding) * 2 + var(--table-horizontal-margin)))
       );
+      --container-offset: calc((100vw - var(--vc-container-wrapper-width)) / 2);
       @apply z-10 shadow-2xl;
       width: calc((100vw - var(--table-horizontal-margin) * 2));
       margin-left: calc((var(--container-offset) - var(--table-horizontal-margin)) * -1);
