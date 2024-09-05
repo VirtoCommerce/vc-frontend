@@ -1,16 +1,21 @@
 <template>
-  <VcModal :title="$t('shared.bulk_order.add_to_cart_sku_errors_modal.title')" class="p-6" variant="warn">
-    <div class="p-6">
-      <div class="mb-4">
-        <p>
-          {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.common_message") }}
-        </p>
+  <VcModal
+    :title="$t('shared.bulk_order.add_to_cart_sku_errors_modal.title')"
+    variant="warning"
+    icon="warning"
+    dividers
+  >
+    <div class="mb-4">
+      <p>
+        {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.common_message") }}
+      </p>
 
-        <p v-if="duplicateSkuItems?.length">
-          {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.duplicate_skus_message") }}
-        </p>
-      </div>
+      <p v-if="duplicateSkuItems?.length">
+        {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.duplicate_skus_message") }}
+      </p>
+    </div>
 
+    <div class="rounded border">
       <table class="w-full table-auto">
         <thead>
           <tr>
@@ -28,10 +33,11 @@
         <tbody>
           <!-- Duplicate SKU errors -->
           <tr v-for="duplicateSkuItem in duplicateSkuItems" :key="duplicateSkuItem.sku">
-            <td>
+            <td class="px-2 py-1">
               {{ duplicateSkuItem.sku }}
             </td>
-            <td>
+
+            <td class="p-1">
               <VcSelect
                 v-model="duplicateSkuItem.productId"
                 :items="duplicateSkuItem.products"
@@ -47,17 +53,19 @@
                 </div>
               </div>
             </td>
-            <td class="text-center">
+
+            <td class="px-2 py-1 text-center">
               {{ duplicateSkuItem.quantity }}
             </td>
           </tr>
 
           <!-- Other SKU errors -->
-          <tr v-for="errorItem in otherErrorItems" :key="errorItem.productSku" class="my-4">
-            <td>
+          <tr v-for="errorItem in otherErrorItems" :key="errorItem.productSku">
+            <td class="px-2 py-1">
               {{ errorItem.productSku }}
             </td>
-            <td class="text-danger" colspan="2">
+
+            <td class="p-1 text-danger" colspan="2">
               <div v-for="error in errorItem.errors" :key="error.errorCode">
                 {{ getTranslation(mapToErrorType(error)) }}
               </div>

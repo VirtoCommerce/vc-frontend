@@ -1,7 +1,7 @@
 <template>
-  <VcModal :title="$t('shared.catalog.branches_modal.title')" modal-width="sm:max-w-[59.625rem]" is-mobile-fullscreen>
+  <VcModal :title="$t('shared.catalog.branches_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
     <!-- DESKTOP content BEGIN -->
-    <div class="hidden border-b sm:flex">
+    <div class="hidden border sm:flex sm:rounded">
       <div
         class="flex shrink-0 grow flex-col transition-all delay-100"
         :class="[selectedBranchesIds.length ? 'w-1/2' : 'w-full']"

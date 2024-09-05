@@ -14,6 +14,7 @@ declare module "vue" {
     VcCheckbox: typeof Components.VcCheckbox;
     VcContainer: typeof Components.VcContainer;
     VcDateSelector: typeof Components.VcDateSelector;
+    VcDialog: typeof Components.VcDialog;
     VcEmptyView: typeof Components.VcEmptyView;
     VcExpansionPanels: typeof Components.VcExpansionPanels;
     VcInputDetails: typeof Components.VcInputDetails;

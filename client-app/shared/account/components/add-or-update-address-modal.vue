@@ -1,18 +1,17 @@
 <template>
-  <VcModal :title="title" modal-width="max-w-5xl" hide-actions is-mobile-fullscreen>
+  <VcModal :title="title" max-width="60rem" hide-actions is-mobile-fullscreen>
     <template #default="{ close }">
       <VcAddressForm
         :model-value="editableAddress"
         :countries="countries"
         :disabled="loading"
-        class="px-6 py-4"
         with-personal-info
         required-email
         required-city
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex flex-wrap items-center justify-center gap-4 py-4 *:max-sm:flex-1 sm:justify-end">
+          <div class="flex flex-wrap items-center justify-center gap-4 py-3 *:max-sm:flex-1 sm:justify-end">
             <VcButton min-width="9rem" color="secondary" variant="outline" @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>

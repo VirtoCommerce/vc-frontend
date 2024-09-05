@@ -16,8 +16,12 @@
       </VcButton>
     </template>
 
-    <template v-for="method in availableMethods" :key="method.code">
-      <div class="flex items-center justify-between space-x-4 border-b border-neutral-300 px-5 py-6 lg:py-4">
+    <div class="divide-y rounded border">
+      <div
+        v-for="method in availableMethods"
+        :key="method.code"
+        class="flex items-center justify-between space-x-4 px-5 py-6 lg:py-4"
+      >
         <VcImage :src="method.logoUrl" class="size-10 object-center" lazy />
         <div class="grow overflow-hidden text-ellipsis">
           {{ $t(`common.methods.payment_by_code.${method.code}`) }}
@@ -35,7 +39,7 @@
           </VcButton>
         </div>
       </div>
-    </template>
+    </div>
   </VcModal>
 </template>
 
