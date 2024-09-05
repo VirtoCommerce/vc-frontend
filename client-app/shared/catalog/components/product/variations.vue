@@ -74,7 +74,7 @@
       @change-page="changePage"
     />
     <VcEmptyView
-      v-if="variations.length === 0"
+      v-if="variations.length === 0 && !fetchingVariations"
       class="mt-6"
       :text="$t('shared.catalog.product_details.variations.no_results')"
     >
