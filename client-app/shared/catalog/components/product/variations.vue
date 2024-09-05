@@ -155,7 +155,7 @@ function handleKeyUp(event: KeyboardEvent) {
 <style lang="scss">
 .variations {
   &--full-view {
-    @media (width > theme("screens.xl")) {
+    @media (width >= theme("screens.xl")) {
       --table-horizontal-margin: 1rem;
       --vc-container-horizontal-padding: 2rem;
       --vc-container-wrapper-width: min(
