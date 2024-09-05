@@ -73,6 +73,8 @@ export function useUser() {
     [],
   );
 
+  const savedUserId = useLocalStorage<string>("user-id", "");
+
   function handlePasswordExpiration(): void {
     if (!user.value?.passwordExpiryInDays) {
       return;
@@ -137,8 +139,10 @@ export function useUser() {
     try {
       loading.value = true;
 
-      user.value = await getMe();
-
+      user.value = await getMe(savedUserId.value);
+      if (user.value?.id !== savedUserId.value) {
+        savedUserId.value = user.value.id;
+      }
       handlePasswordExpiration();
 
       if (withBroadcast) {
