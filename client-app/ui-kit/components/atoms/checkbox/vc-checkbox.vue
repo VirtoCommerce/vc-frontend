@@ -23,6 +23,7 @@
         class="vc-checkbox__input"
         :data-test-id="testId"
         @change="change"
+        @click="clickHandler"
       />
 
       <span v-if="$slots.default" class="vc-checkbox__label">
@@ -57,6 +58,7 @@ interface IProps {
   error?: boolean;
   singleLineMessage?: boolean;
   testId?: string;
+  preventDefault?: boolean;
 }
 
 const emit = defineEmits<{
@@ -74,8 +76,7 @@ const checked = computed<boolean>(() =>
   typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value),
 );
 
-function change(event: InputEvent) {
-  event.preventDefault();
+function change() {
   if (props.disabled) {
     return;
   }
@@ -96,6 +97,13 @@ function change(event: InputEvent) {
 
     emit("update:modelValue", newArray);
     emit("change", newArray);
+  }
+}
+
+function clickHandler(event: MouseEvent) {
+  if (props.preventDefault) {
+    event.preventDefault();
+    change();
   }
 }
 </script>
