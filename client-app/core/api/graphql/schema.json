@@ -42085,18 +42085,6 @@
             "deprecationReason": null
           },
           {
-            "name": "storeId",
-            "description": "Store ID",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "themePresetName",
             "description": "Theme preset name",
             "args": [],

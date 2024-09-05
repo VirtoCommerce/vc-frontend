@@ -1,7 +1,7 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
 import getQuoteQueryDocument from "./getQuoteQuery.graphql";
-import type { Query, QueryQuoteArgs, QuoteType } from "@/core/api/graphql/types";
+import type { Query, QueryQuoteArgs, QuoteType } from "../../types";
 
 export async function getQuote(payload?: QueryQuoteArgs): Promise<QuoteType> {
   const { storeId, userId, cultureName, currencyCode } = globals;

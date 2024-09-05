@@ -1,8 +1,9 @@
 import { useApolloClient } from "@vue/apollo-composable";
 import { useMutation } from "@/core/api/graphql/composables";
-import { CreateQuoteFromCartDocument, OperationNames } from "@/core/api/graphql/types";
+import { OperationNames } from "@/core/api/graphql/types";
 import { filterActiveQueryNames } from "@/core/api/graphql/utils";
-import type { QuoteType } from "@/core/api/graphql/types";
+import { CreateQuoteFromCartDocument } from "../../types";
+import type { QuoteType } from "../../types";
 
 export function useCreateQuoteFromCartMutation() {
   const { client } = useApolloClient();

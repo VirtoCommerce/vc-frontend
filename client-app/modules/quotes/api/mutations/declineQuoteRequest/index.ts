@@ -1,6 +1,6 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import mutationDocument from "./declineQuoteRequestMutation.graphql";
-import type { Mutations, MutationsDeclineQuoteRequestArgs, QuoteType } from "@/core/api/graphql/types";
+import type { Mutations, MutationsDeclineQuoteRequestArgs, QuoteType } from "../../types";
 
 export async function declineQuoteRequest(payload: MutationsDeclineQuoteRequestArgs): Promise<QuoteType> {
   const { data } = await graphqlClient.mutate<

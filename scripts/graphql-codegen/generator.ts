@@ -16,6 +16,11 @@ const independentModules: ModuleType[] = [
     searchKey: "PushMessages",
     apiPath: "client-app/core/api/graphql/push-messages",
   },
+  {
+    name: "Quotes",
+    searchKey: "Quotes enabled",
+    apiPath: "client-app/modules/quotes/api",
+  },
 ];
 
 const GENERAL_CONFIG = {
