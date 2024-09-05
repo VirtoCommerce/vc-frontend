@@ -23,7 +23,7 @@
         class="vc-checkbox__input"
         :data-test-id="testId"
         @change="change"
-        @click="clickHandler"
+        @click="onClick"
       />
 
       <span v-if="$slots.default" class="vc-checkbox__label">
@@ -100,7 +100,7 @@ function change() {
   }
 }
 
-function clickHandler(event: MouseEvent) {
+function onClick(event: Event) {
   if (props.preventDefault) {
     event.preventDefault();
     change();
