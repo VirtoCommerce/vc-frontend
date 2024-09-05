@@ -3,7 +3,6 @@ export * from "./category-tree";
 export * from "./change-wishlist-payload";
 export * from "./connect-token-response";
 export * from "./create-wishlist-payload";
-export * from "../../modules/quotes/quote-status";
 export * from "./currency";
 export * from "./date-filter-type";
 export * from "./facet";

@@ -7,7 +7,12 @@
 <script setup lang="ts">
 import { inject, computed } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
-import type { IQuoteStatus } from "@/core/types";
+
+interface IQuoteStatus {
+  code: string;
+  color: VcChipColorType;
+  variant: VcChipVariantType;
+}
 
 interface IProps {
   status?: string;

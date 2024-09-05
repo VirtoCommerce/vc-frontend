@@ -132,12 +132,13 @@ import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { QuoteLineItems, QuoteStatus } from "@/shared/account";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
-import VcLayoutWithRightSidebar from "../../../ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
+import QuoteLineItems from "../components/quote-line-items.vue";
+import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuote } from "../useUserQuote";
 import type { QuoteAttachmentType } from "../api/types";
+import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {
   quoteId: string;
