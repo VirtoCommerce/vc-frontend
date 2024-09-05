@@ -74,7 +74,8 @@ const checked = computed<boolean>(() =>
   typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value),
 );
 
-function change() {
+function change(event: InputEvent) {
+  event.preventDefault();
   if (props.disabled) {
     return;
   }

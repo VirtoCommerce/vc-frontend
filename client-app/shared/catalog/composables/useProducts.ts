@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
 import { cloneDeep, isEqual } from "lodash";
-import { computed, inject, readonly, ref, shallowRef, triggerRef, watchEffect } from "vue";
+import { computed, inject, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
 import { useRouteQueryParam } from "@/core/composables";
 import { FFC_LOCAL_STORAGE, IN_STOCK_PRODUCTS_LOCAL_STORAGE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -323,12 +323,6 @@ export function useProducts(
     if (trigger) {
       triggerRef(products);
     }
-  });
-
-  watchEffect(() => {
-    console.log("prev", prevProductsFilters.value);
-    console.log("curr", productsFilters.value);
-    console.log("is equal", isEqual(productsFilters.value, prevProductsFilters.value));
   });
 
   return {
