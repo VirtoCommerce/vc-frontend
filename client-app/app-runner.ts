@@ -50,9 +50,17 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user } = useUser();
+  const { fetchUser, user, twoLetterContactLocale } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
-  const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
+  const {
+    detectLocale,
+    currentLanguage,
+    supportedLocales,
+    initLocale,
+    fetchLocaleMessages,
+    getLocaleFromUrl,
+    pinedLocale,
+  } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
@@ -82,16 +90,26 @@ export default async () => {
   void initializeGoogleAnalytics();
   void initializeHotjar();
 
+  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
+  const twoLetterAppLocale = detectLocale([
+    pinedLocale.value,
+    twoLetterContactLocale.value,
+    getLocaleFromUrl(),
+    themeContext.value.defaultLanguage.twoLetterLanguageName,
+  ]);
+
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(currentLanguage.value.twoLetterLanguageName, currentCurrency.value.code, fallback);
+  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
   const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
   /**
    * Setting global variables
    */
+  await initLocale(i18n, twoLetterAppLocale);
+
   setGlobals({
     i18n,
     router,
@@ -108,7 +126,6 @@ export default async () => {
   /**
    * Other settings
    */
-  await setLocale(i18n, currentLocale.value);
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
