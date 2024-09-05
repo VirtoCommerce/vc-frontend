@@ -73,6 +73,15 @@
       @apply-sorting="applySorting"
       @change-page="changePage"
     />
+    <VcEmptyView
+      v-if="variations.length === 0"
+      class="mt-6"
+      :text="$t('shared.catalog.product_details.variations.no_results')"
+    >
+      <template #icon>
+        <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
+      </template>
+    </VcEmptyView>
   </VcWidget>
 </template>
 
