@@ -136,8 +136,9 @@ import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useUserQuote } from "../useUserQuote";
-import type { MemberAddressType, QuoteAddressType, QuoteItemType, QuoteType } from "@/core/api/graphql/types";
+import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
+import type { QuoteAddressType, QuoteItemType, QuoteType } from "@/modules/quotes/api/types";
 import type { StringSchema } from "yup";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 

@@ -1,10 +1,5 @@
-import type {
-  CartAddressType,
-  InputAddressType,
-  MemberAddressType,
-  OrderAddressType,
-  QuoteAddressType,
-} from "@/core/api/graphql/types";
+import type { CartAddressType, InputAddressType, MemberAddressType, OrderAddressType } from "@/core/api/graphql/types";
+import type { QuoteAddressType } from "@/modules/quotes/api/types";
 
 export type AnyAddressType = (
   | MemberAddressType

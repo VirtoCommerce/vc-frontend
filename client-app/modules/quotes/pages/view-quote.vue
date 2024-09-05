@@ -137,7 +137,7 @@ import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import VcLayoutWithRightSidebar from "../../../ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 import { useUserQuote } from "../useUserQuote";
-import type { QuoteAttachmentType } from "@/core/api/graphql/types";
+import type { QuoteAttachmentType } from "../api/types";
 
 interface IProps {
   quoteId: string;

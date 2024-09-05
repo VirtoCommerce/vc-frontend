@@ -18,7 +18,7 @@ const independentModules: ModuleType[] = [
   },
   {
     name: "Quotes",
-    searchKey: "Quotes enabled",
+    searchKey: "QuoteType",
     apiPath: "client-app/modules/quotes/api",
   },
 ];

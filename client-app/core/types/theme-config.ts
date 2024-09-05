@@ -1,7 +1,8 @@
 import type { IOrderStatus } from "./order-status";
-import type { IQuoteStatus } from "./quote-status";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
+// todo create task
+import type { IQuoteStatus } from "@/modules/quotes/quote-status";
 
 export interface IThemeConfigPreset {
   primary_font_family?: string;
@@ -237,6 +238,7 @@ export interface IThemeConfigSettings {
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
   orders_statuses?: IOrderStatus[];
+  // todo add task remove quote statuses
   quote_statuses?: IQuoteStatus[];
   line_items_group_by_vendor_enabled?: boolean;
 

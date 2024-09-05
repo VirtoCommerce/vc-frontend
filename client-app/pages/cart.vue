@@ -164,7 +164,9 @@ import {
 } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import type { LineItemType, QuoteType } from "@/core/api/graphql/types";
+import type { LineItemType } from "@/core/api/graphql/types";
+// todo add extending point and remove
+import type { QuoteType } from "@/modules/quotes/api/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 

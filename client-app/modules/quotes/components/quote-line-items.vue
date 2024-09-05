@@ -58,7 +58,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import type { MoneyType, QuoteItemType } from "@/core/api/graphql/types";
+import type { MoneyType, QuoteItemType } from "../api/types";
 
 defineEmits<IEmits>();
 const props = defineProps<IProps>();

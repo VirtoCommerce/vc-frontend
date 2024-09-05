@@ -20,7 +20,7 @@ import type {
   QuoteAddressType,
   InputQuoteAddressType,
   ApproveQuoteResultType,
-} from "@/core/api/graphql/types";
+} from "../quotes/api/types";
 
 const fetching = ref<boolean>(false);
 
