@@ -128,6 +128,7 @@ export default async () => {
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
 
+  console.log("test");
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
   }
