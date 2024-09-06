@@ -15,6 +15,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
+import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -73,7 +74,7 @@ export function useUser() {
     [],
   );
 
-  const savedUserId = useLocalStorage<string>("user-id", "");
+  const savedUserId = useLocalStorage<string>(USER_ID_LOCAL_STORAGE, "");
 
   function handlePasswordExpiration(): void {
     if (!user.value?.passwordExpiryInDays) {
