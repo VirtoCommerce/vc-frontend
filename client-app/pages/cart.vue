@@ -113,7 +113,7 @@
 
         <!-- Create quote widget -->
         <VcWidget
-          v-if="$cfg.quotes_enabled && isAuthenticated"
+          v-if="$cfg.quotes_enabled && isAuthenticated && isQuotesEnabled(QUOTES_ENABLED_KEY)"
           :title="$t('common.titles.quote_request')"
           class="print:hidden"
         >
@@ -147,9 +147,11 @@ import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useCreateQuoteFromCartMutation } from "@/modules/quotes/api";
+import { ENABLED_KEY as QUOTES_ENABLED_KEY, MODULE_ID as QUOTES_MODULE_ID } from "@/modules/quotes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
@@ -198,6 +200,8 @@ const {
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
+
+const { isEnabled: isQuotesEnabled } = useModuleSettings(QUOTES_MODULE_ID);
 
 const notifications = useNotifications();
 
