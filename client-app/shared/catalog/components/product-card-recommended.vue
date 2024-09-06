@@ -1,14 +1,19 @@
 <template>
-  <VcProductCard view-mode="list">
-    <router-link :to="link" class="contents" @click="$emit('linkClick', $event)">
-      <VcProductImage :img-src="product.imgSrc" :alt="product.name" size-suffix="sm" lazy />
-    </router-link>
+  <VcProductCard :background="false">
+    <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
 
-    <VcProductTitle :lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
+    <VcProductTitle lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
       {{ product.name }}
     </VcProductTitle>
 
-    <VcProductPrice :actual-price="price?.actual" :has-variations="product.hasVariations" />
+    <VcProductVendor>{{ product.vendor?.name }}</VcProductVendor>
+
+    <VcProductPrice
+      :has-variations="product.hasVariations"
+      :actual-price="price?.actual"
+      :list-price="price?.list"
+      single-line
+    />
   </VcProductCard>
 </template>
 
@@ -19,7 +24,7 @@ import type { Product } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
-  (eventName: "linkClick", globalEvent: PointerEvent): void;
+  (event: "linkClick", globalEvent: MouseEvent): void;
 }
 
 interface IProps {
@@ -27,6 +32,7 @@ interface IProps {
 }
 
 defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
 
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));

@@ -15,5 +15,5 @@ const props = defineProps<IProps>();
 
 const { pushMessage: _pushMessage } = toRefs(props);
 
-const { toggleRead } = usePushMessage(_pushMessage, !_pushMessage.value.isHidden);
+const { toggleRead } = usePushMessage(_pushMessage);
 </script>

@@ -1167,6 +1167,10 @@ export type FulfillmentCenterTypeNearestArgs = {
   take?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type GetRecommendationsResponseType = {
+  products?: Maybe<Array<Maybe<Product>>>;
+};
+
 export type GiftItemType = {
   /** Product category ID */
   categoryId?: Maybe<Scalars['String']['output']>;
@@ -4431,6 +4435,7 @@ export type Query = {
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
   quotes?: Maybe<QuoteConnection>;
+  recommendations?: Maybe<GetRecommendationsResponseType>;
   regions: Array<CountryRegionType>;
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
   role?: Maybe<RoleType>;
@@ -4780,6 +4785,18 @@ export type QueryQuotesArgs = {
   keyword?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryRecommendationsArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  fallbackProductsFilter?: InputMaybe<Scalars['String']['input']>;
+  maxRecommendations?: InputMaybe<Scalars['String']['input']>;
+  model?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -5600,6 +5617,8 @@ export type WhiteLabelingSettingsType = {
   organizationId?: Maybe<Scalars['String']['output']>;
   /** Logo URL for footer */
   secondaryLogoUrl?: Maybe<Scalars['String']['output']>;
+  /** Store ID */
+  storeId?: Maybe<Scalars['String']['output']>;
   /** Theme preset name */
   themePresetName?: Maybe<Scalars['String']['output']>;
   /** User ID */
