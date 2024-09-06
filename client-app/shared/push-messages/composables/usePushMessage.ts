@@ -2,13 +2,13 @@ import { useMarkPushMessageRead } from "@/core/api/graphql/push-messages/mutatio
 import { useMarkPushMessageUnread } from "@/core/api/graphql/push-messages/mutations/markPushMessageUnread";
 import type { Ref } from "vue";
 
-export function usePushMessage(pushMessage: Ref<VcPushMessageType>, optimistic = true) {
-  const { mutate: _markRead } = useMarkPushMessageRead(optimistic);
+export function usePushMessage(pushMessage: Ref<VcPushMessageType>) {
+  const { mutate: _markRead } = useMarkPushMessageRead();
   async function markRead() {
     await _markRead({ command: { messageId: pushMessage.value.id } });
   }
 
-  const { mutate: _markUnread } = useMarkPushMessageUnread(optimistic);
+  const { mutate: _markUnread } = useMarkPushMessageUnread();
   async function markUnread() {
     await _markUnread({ command: { messageId: pushMessage.value.id } });
   }

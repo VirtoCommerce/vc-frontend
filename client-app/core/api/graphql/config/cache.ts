@@ -1,4 +1,5 @@
 import { InMemoryCache } from "@apollo/client/core";
+import { pushMessagesTypePolices } from "../push-messages/typePolices";
 
 export const cache = new InMemoryCache({
   typePolicies: {
@@ -70,11 +71,7 @@ export const cache = new InMemoryCache({
     },
     Query: {
       fields: {
-        pushMessages: {
-          merge(existing, incoming) {
-            return { ...existing, ...incoming };
-          },
-        },
+        ...pushMessagesTypePolices,
       },
     },
   },
