@@ -156,16 +156,12 @@ function handleKeyUp(event: KeyboardEvent) {
 .variations {
   &--full-view {
     @media (width >= theme("screens.xl")) {
-      --table-horizontal-margin: 1rem;
-      --vc-container-horizontal-padding: 2rem;
-      --vc-container-wrapper-width: min(
-        var(--vc-container-wrapper-max-width),
-        calc(100vw - (var(--vc-container-horizontal-padding) * 2 + var(--table-horizontal-margin)))
-      );
-      --container-offset: calc((100vw - var(--vc-container-wrapper-width)) / 2);
+      --variations-margin-x: theme("margin.4");
+
       @apply z-10 shadow-2xl;
-      width: calc((100vw - var(--table-horizontal-margin) * 2));
-      margin-left: calc((var(--container-offset) - var(--table-horizontal-margin)) * -1);
+
+      width: calc(100vw - var(--variations-margin-x) * 2);
+      margin-left: calc((var(--vc-container-offset) - var(--variations-margin-x)) * -1);
     }
   }
 
