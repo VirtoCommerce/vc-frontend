@@ -4,9 +4,9 @@ try {
   const version = execSync("yarn --version").toString().trim();
   const [major, minor] = version.split(".").map(Number);
 
-  // Check if major version is less than 4 or if the minor version is less than 1 when major is 4
-  if (major < 4 || (major === 4 && minor < 1)) {
-    console.error(`Your Yarn version is ${version}. Please upgrade to Yarn v4.1.0 or higher.`);
+  // Check if major version is less than 4 or if the minor version is less than 4 when major is 4
+  if (major < 4 || (major === 4 && minor < 4)) {
+    console.error(`Your Yarn version is ${version}. Please upgrade to Yarn v4.4.0 or higher.`);
     process.exit(1);
   }
 } catch (error) {
