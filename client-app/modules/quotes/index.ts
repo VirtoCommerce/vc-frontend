@@ -2,6 +2,7 @@ import { useThemeContext, useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID, ENABLED_KEY } from "@/modules/quotes/constants";
 import type { MenuType } from "@/core/types";
+import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
 
 const Quotes = () => import("@/modules/quotes/pages/quotes.vue");
@@ -10,7 +11,7 @@ const ViewQuote = () => import("@/modules/quotes/pages/view-quote.vue");
 
 const { themeContext } = useThemeContext();
 const { isEnabled } = useModuleSettings(MODULE_ID);
-const { mergeSchema } = useNavigations();
+const { mergeMenuSchema } = useNavigations();
 
 const route: RouteRecordRaw = {
   path: "quotes",
@@ -44,24 +45,10 @@ const route: RouteRecordRaw = {
   },
 };
 
-const menuItem: MenuType = {
-  footer: [],
+const mobileMenuItem: DeepPartial<MenuType> = {
   header: {
-    desktop: [],
     mobile: {
-      main: [],
-      corporate: {
-        id: "",
-        route: { name: "" },
-        title: "",
-        icon: "",
-        children: [],
-      },
       account: {
-        id: "",
-        route: { name: "" },
-        title: "",
-        icon: "",
         children: [
           {
             id: "quotes",
@@ -78,6 +65,6 @@ const menuItem: MenuType = {
 export function init(router: Router): void {
   if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
-    mergeSchema(menuItem);
+    mergeMenuSchema(mobileMenuItem);
   }
 }

@@ -15,6 +15,7 @@ import {
 import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
 import type { ExtendedMenuLinkType, MenuType } from "../types";
+import type { DeepPartial } from "utility-types";
 
 const loading = ref(false);
 const matchingRouteName = ref("");
@@ -191,11 +192,10 @@ export function useNavigations() {
     matchingRouteName.value = value;
   }
 
-  function mergeSchema(additionalSchema: MenuType) {
-    menuSchema.value = _.mergeWith(additionalSchema, menuSchema.value, (objValue: object, srcValue: object) => {
+  function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
+    menuSchema.value = _.mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
       if (_.isArray(objValue) && _.isArray(srcValue)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return srcValue.concat(objValue);
+        return objValue.concat(srcValue) as ExtendedMenuLinkType[];
       }
     });
   }
@@ -219,6 +219,6 @@ export function useNavigations() {
     catalogMenuItems: computed(() => catalogMenuItems.value),
     footerLinks: computed(() => footerLinks.value),
 
-    mergeSchema,
+    mergeMenuSchema,
   };
 }
