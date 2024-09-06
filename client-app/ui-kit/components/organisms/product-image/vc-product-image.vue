@@ -29,7 +29,7 @@
         <!-- Prev button -->
         <button
           type="button"
-          class="vc-product-image__carousel-btn vc-product-image__carousel-btn--prev print:hidden"
+          class="vc-product-image__carousel-btn vc-product-image__carousel-btn--prev"
           data-btn="btn-prev"
         >
           <span class="vc-product-image__carousel-arrow">
@@ -40,7 +40,7 @@
         <!-- Next button -->
         <button
           type="button"
-          class="vc-product-image__carousel-btn vc-product-image__carousel-btn--next print:hidden"
+          class="vc-product-image__carousel-btn vc-product-image__carousel-btn--next"
           data-btn="btn-next"
         >
           <span class="vc-product-image__carousel-arrow">
@@ -49,7 +49,7 @@
         </button>
 
         <!-- Bullets -->
-        <div v-if="images.length > 1" class="vc-product-image__carousel-bullets print:hidden">
+        <div v-if="images.length > 1" class="vc-product-image__carousel-bullets">
           <template v-for="(state, index) in swiperBulletsState" :key="index">
             <span
               v-if="index !== 1 || images.length !== 2"
