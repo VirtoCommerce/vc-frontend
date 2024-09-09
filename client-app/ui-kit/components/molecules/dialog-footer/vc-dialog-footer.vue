@@ -1,7 +1,7 @@
 <template>
   <div class="vc-dialog-footer">
     <slot>
-      <VcButton color="secondary" variant="outline" class="mx-auto">
+      <VcButton color="secondary" variant="outline" class="mx-auto" @click="$emit('close')">
         {{ $t("common.buttons.close") }}
       </VcButton>
     </slot>
