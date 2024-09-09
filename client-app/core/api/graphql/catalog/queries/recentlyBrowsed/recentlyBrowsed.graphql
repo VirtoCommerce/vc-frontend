@@ -1,0 +1,45 @@
+query GetRecentlyBrowsed($storeId: String!, $currencyCode: String, $cultureName: String, $maxProducts: Int) {
+  recentlyBrowsed(
+    storeId: $storeId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    maxProducts: $maxProducts
+  ) {
+    products {
+      id
+      name
+      code
+      hasVariations
+      imgSrc
+      vendor {
+        name
+      }
+      availabilityData {
+        availableQuantity
+        isInStock
+      }
+      minQuantity
+      maxQuantity
+      price {
+        actual {
+          amount
+          formattedAmount
+        }
+        list {
+          amount
+          formattedAmount
+        }
+      }
+      minVariationPrice {
+        actual {
+          amount
+          formattedAmount
+        }
+        list {
+          amount
+          formattedAmount
+        }
+      }
+    }
+  }
+}
