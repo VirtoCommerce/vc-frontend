@@ -6,7 +6,7 @@ import type {
   OrderLineItemType,
   Property,
 } from "@/core/api/graphql/types";
-import type { QuoteItemType } from "@/modules/quotes/api/types";
+import type { QuoteItemType } from "@/modules/quotes/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;

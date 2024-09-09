@@ -19,7 +19,7 @@ const independentModules: ModuleType[] = [
   {
     name: "Quotes",
     searchKey: "QuoteType",
-    apiPath: "client-app/modules/quotes/api",
+    apiPath: "client-app/modules/quotes/api/graphql",
   },
 ];
 

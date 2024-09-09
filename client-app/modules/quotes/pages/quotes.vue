@@ -199,7 +199,7 @@ import { useRouteQueryParam, usePageHead, useThemeContext } from "@/core/composa
 import { QueryParamName } from "@/core/enums";
 import { Sort } from "@/core/types";
 import { PageToolbarBlock } from "@/shared/account";
-import { useCreateQuoteMutation } from "../api";
+import { useCreateQuoteMutation } from "../api/graphql";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuotes } from "../useUserQuotes";
 import type { SortDirection } from "@/core/enums";

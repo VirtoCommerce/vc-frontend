@@ -150,7 +150,7 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
-import { useCreateQuoteFromCartMutation } from "@/modules/quotes/api";
+import { useCreateQuoteFromCartMutation } from "@/modules/quotes/api/graphql";
 import { ENABLED_KEY as QUOTES_ENABLED_KEY, MODULE_ID as QUOTES_MODULE_ID } from "@/modules/quotes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
@@ -167,7 +167,7 @@ import {
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { LineItemType } from "@/core/api/graphql/types";
-import type { QuoteType } from "@/modules/quotes/api/types";
+import type { QuoteType } from "@/modules/quotes/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 

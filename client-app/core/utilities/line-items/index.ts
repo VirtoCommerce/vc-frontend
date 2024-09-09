@@ -2,7 +2,7 @@ import { getProductRoute } from "../product";
 import { getPropertiesGroupedByName } from "../properties";
 import type { AnyLineItemType, VendorGroupType, VendorGroupByVendorIdType, PreparedLineItemType } from "../../types";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
-import type { QuoteItemType } from "@/modules/quotes/api/types";
+import type { QuoteItemType } from "@/modules/quotes/api/graphql/types";
 
 export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
   return "proposalPrices" in item || "selectedTierPrice" in item;

@@ -137,7 +137,7 @@ import { useNotifications } from "@/shared/notification";
 import QuoteLineItems from "../components/quote-line-items.vue";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuote } from "../useUserQuote";
-import type { QuoteAttachmentType } from "../api/types";
+import type { QuoteAttachmentType } from "../api/graphql/types";
 import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {

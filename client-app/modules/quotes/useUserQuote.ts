@@ -13,14 +13,14 @@ import {
   updateQuoteAddresses,
   submitQuoteRequest,
   updateQuoteAttachments,
-} from "./api";
+} from "./api/graphql";
 import type {
   QueryQuoteArgs,
   QuoteType,
   QuoteAddressType,
   InputQuoteAddressType,
   ApproveQuoteResultType,
-} from "../quotes/api/types";
+} from "../quotes/api/graphql/types";
 
 const fetching = ref<boolean>(false);
 

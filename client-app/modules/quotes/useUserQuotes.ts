@@ -1,8 +1,8 @@
 import { ref, shallowRef } from "vue";
 import { DEFAULT_SORT } from "@/core/constants";
 import { getSortingExpression, Logger } from "@/core/utilities";
-import { getQuotes } from "./api";
-import type { QuoteType } from "../quotes/api/types";
+import { getQuotes } from "./api/graphql";
+import type { QuoteType } from "../quotes/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { Ref } from "vue";
 
