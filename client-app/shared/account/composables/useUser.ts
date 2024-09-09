@@ -15,6 +15,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
+import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -72,6 +73,8 @@ export function useUser() {
     "vcst-password-expire-reminder-date",
     [],
   );
+
+  const savedUserId = useLocalStorage<string>(USER_ID_LOCAL_STORAGE, "");
 
   function handlePasswordExpiration(): void {
     if (!user.value?.passwordExpiryInDays) {
@@ -137,8 +140,10 @@ export function useUser() {
     try {
       loading.value = true;
 
-      user.value = await getMe();
-
+      user.value = await getMe(savedUserId.value);
+      if (user.value?.id !== savedUserId.value) {
+        savedUserId.value = user.value.id;
+      }
       handlePasswordExpiration();
 
       if (withBroadcast) {
