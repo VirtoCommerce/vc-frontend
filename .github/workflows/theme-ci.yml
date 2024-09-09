@@ -215,3 +215,4 @@ jobs:
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit
+    
