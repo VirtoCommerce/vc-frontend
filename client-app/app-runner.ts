@@ -11,6 +11,7 @@ import { setGlobals } from "@/core/globals";
 import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
+import { init as initModuleQuotes } from "@/modules/quotes";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -19,6 +20,7 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
 import type { StoreResponseType } from "./core/api/graphql/types";
+
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
   const appSelector = "#app";
@@ -127,7 +129,7 @@ export default async () => {
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
-
+  initModuleQuotes(router);
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
   }
