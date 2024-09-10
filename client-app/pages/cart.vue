@@ -115,7 +115,7 @@
 
         <!-- Create quote widget -->
         <VcWidget
-          v-if="$cfg.quotes_enabled && isAuthenticated"
+          v-if="$cfg.quotes_enabled && isAuthenticated && isQuotesEnabled(QUOTES_ENABLED_KEY)"
           :title="$t('common.titles.quote_request')"
           class="print:hidden"
         >
@@ -149,10 +149,12 @@ import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { useCreateQuoteFromCartMutation } from "@/core/api/graphql/quotes";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
+import { useCreateQuoteFromCartMutation } from "@/modules/quotes/api/graphql";
+import { ENABLED_KEY as QUOTES_ENABLED_KEY, MODULE_ID as QUOTES_MODULE_ID } from "@/modules/quotes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
@@ -167,7 +169,8 @@ import {
 } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import type { LineItemType, Product, QuoteType } from "@/core/api/graphql/types";
+import type { LineItemType, Product } from "@/core/api/graphql/types";
+import type { QuoteType } from "@/modules/quotes/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
@@ -201,6 +204,8 @@ const {
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
+
+const { isEnabled: isQuotesEnabled } = useModuleSettings(QUOTES_MODULE_ID);
 
 const notifications = useNotifications();
 
