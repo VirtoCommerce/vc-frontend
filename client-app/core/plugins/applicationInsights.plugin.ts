@@ -22,11 +22,11 @@ export const applicationInsightsPlugin: Plugin = {
       () => moduleSettings.value?.settings?.find((item) => item.name === MODULE_KEYS.INSTRUMENTATION_KEY)?.value,
     );
 
-    if (moduleEnabled.value && instrumentationKey.value) {
+    if (moduleEnabled.value && typeof instrumentationKey.value === "string" && instrumentationKey.value) {
       const options: AppInsightsPluginOptions = {
         appInsightsConfig: {
           config: {
-            instrumentationKey: instrumentationKey.value as string,
+            instrumentationKey: instrumentationKey.value,
           },
         },
         trackAppErrors: true,
