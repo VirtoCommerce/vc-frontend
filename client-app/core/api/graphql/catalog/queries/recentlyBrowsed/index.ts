@@ -1,6 +1,6 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
-import searchRecommendedProductsQueryDocument from "./recentlyBrowsed.graphql";
+import queryDocument from "./recentlyBrowsed.graphql";
 import type { Query, QueryRecentlyBrowsedArgs, GetRecentlyBrowsedResponseType } from "@/core/api/graphql/types";
 
 export type RecentlyBrowsedParamsType = {
@@ -13,7 +13,7 @@ export async function recentlyBrowsed({
   const { storeId, cultureName, currencyCode } = globals;
 
   const { data } = await graphqlClient.query<Required<Pick<Query, "recentlyBrowsed">>, QueryRecentlyBrowsedArgs>({
-    query: searchRecommendedProductsQueryDocument,
+    query: queryDocument,
     variables: {
       storeId,
       cultureName,
