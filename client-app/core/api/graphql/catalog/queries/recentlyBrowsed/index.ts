@@ -1,5 +1,5 @@
+import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
-import { graphqlClient } from "../../../client";
 import searchRecommendedProductsQueryDocument from "./recentlyBrowsed.graphql";
 import type { Query, QueryRecentlyBrowsedArgs, GetRecentlyBrowsedResponseType } from "@/core/api/graphql/types";
 

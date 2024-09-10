@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
@@ -76,4 +76,8 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
     errorMessage.value = undefined;
   }
 }
+
+watch(countInCart, (newCount) => {
+  quantity.value = newCount || 1;
+});
 </script>
