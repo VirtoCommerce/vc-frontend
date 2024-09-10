@@ -10,6 +10,8 @@
       size="sm"
       single-line-message
       center
+      :error="!isValid"
+      :message="message"
       @input="onChange"
       @blur="onFocusOut"
     >
@@ -69,12 +71,15 @@ interface IProps {
   countInCart?: number;
   availableQuantity?: number;
   isInStock?: boolean;
+  message?: string;
 }
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
+
+const isValid = ref(true);
 
 const { isInStock, minQuantity, maxQuantity, availableQuantity } = toRefs(props);
 
@@ -101,6 +106,7 @@ const { errorMessage, validate, setValue } = useField("quantity", rules);
 
 async function validateFields(): Promise<void> {
   const { valid } = await validate();
+  isValid.value = valid;
 
   if (!valid && errorMessage.value) {
     emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
