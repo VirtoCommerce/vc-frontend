@@ -54,7 +54,7 @@
         <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
       </template>
 
-      <RecentlyBrowsedProducts :products="recentlyBrowsedProducts" />
+      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
 
       <template #sidebar>
         <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -289,8 +289,10 @@ void (async () => {
     await initialize();
   }
 
-  recentlyBrowsedProductsLoading.value = true;
-  recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
-  recentlyBrowsedProductsLoading.value = false;
+  if (isAuthenticated.value) {
+    recentlyBrowsedProductsLoading.value = true;
+    recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
+    recentlyBrowsedProductsLoading.value = false;
+  }
 })();
 </script>
