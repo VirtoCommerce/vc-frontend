@@ -27,6 +27,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
       localStorage.removeItem(USER_ID_LOCAL_STORAGE);
 
       await getMe();
+      // test
       await mergeCart({ command: { userId: me.value!.me!.id, secondCartId: cart.value!.id } });
 
       unpinLocale();
