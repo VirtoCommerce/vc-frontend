@@ -1,5 +1,10 @@
 <template>
-  <VcWidget v-if="products.length" :title="$t('pages.cart.recently_browsed_products')" prepend-icon="cube" size="lg">
+  <VcWidget
+    v-if="products.length"
+    :title="$t('pages.cart.recently_browsed_products')"
+    prepend-icon="cursor-click"
+    size="lg"
+  >
     <VcProductsGrid short>
       <ProductCardRecentlyBrowsed
         v-for="product in products"
