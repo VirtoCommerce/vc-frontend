@@ -5,7 +5,7 @@ query GetProductRecommendations(
   $cultureName: String
   $productId: String
   $model: String
-  $maxRecommendations: String
+  $maxRecommendations: Int
   $fallbackProductsFilter: String
 ) {
   recommendations(

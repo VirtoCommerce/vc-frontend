@@ -1167,6 +1167,10 @@ export type FulfillmentCenterTypeNearestArgs = {
   take?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type GetRecentlyBrowsedResponseType = {
+  products?: Maybe<Array<Maybe<Product>>>;
+};
+
 export type GetRecommendationsResponseType = {
   products?: Maybe<Array<Maybe<Product>>>;
 };
@@ -2039,6 +2043,12 @@ export type InputProcessOrderPaymentType = {
   paymentId: Scalars['String']['input'];
 };
 
+export type InputPushHistoricalEventType = {
+  eventType?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputQuoteAddressType = {
   addressType?: InputMaybe<Scalars['Int']['input']>;
   city: Scalars['String']['input'];
@@ -2873,6 +2883,7 @@ export type Mutations = {
   moveWishlistItem?: Maybe<WishlistType>;
   /** @deprecated Obsolete. Use 'initializePayment' mutation */
   processOrderPayment?: Maybe<ProcessPaymentRequestResultType>;
+  pushHistoricalEvent?: Maybe<Scalars['Boolean']['output']>;
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
@@ -3228,6 +3239,11 @@ export type MutationsMoveWishlistItemArgs = {
 
 export type MutationsProcessOrderPaymentArgs = {
   command: InputProcessOrderPaymentType;
+};
+
+
+export type MutationsPushHistoricalEventArgs = {
+  command: InputPushHistoricalEventType;
 };
 
 
@@ -4092,7 +4108,7 @@ export type Product = {
   code: Scalars['String']['output'];
   description?: Maybe<DescriptionType>;
   descriptions: Array<DescriptionType>;
-  /** Global Trade Item Number (GTIN) */
+  /** Global Trade Item Number */
   gtin?: Maybe<Scalars['String']['output']>;
   hasVariations: Scalars['Boolean']['output'];
   /** The unique ID of the product. */
@@ -4104,8 +4120,6 @@ export type Product = {
   /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
   keyProperties: Array<Property>;
-  /** Manufacturer Part Number (MPN) */
-  manufacturerPartNumber?: Maybe<Scalars['String']['output']>;
   masterVariation?: Maybe<VariationType>;
   /** Max. quantity */
   maxQuantity?: Maybe<Scalars['Int']['output']>;
@@ -4437,6 +4451,7 @@ export type Query = {
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
   quotes?: Maybe<QuoteConnection>;
+  recentlyBrowsed?: Maybe<GetRecentlyBrowsedResponseType>;
   recommendations?: Maybe<GetRecommendationsResponseType>;
   regions: Array<CountryRegionType>;
   requestPasswordReset?: Maybe<Scalars['Boolean']['output']>;
@@ -4796,11 +4811,19 @@ export type QueryQuotesArgs = {
 };
 
 
+export type QueryRecentlyBrowsedArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  maxProducts?: InputMaybe<Scalars['Int']['input']>;
+  storeId: Scalars['String']['input'];
+};
+
+
 export type QueryRecommendationsArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   fallbackProductsFilter?: InputMaybe<Scalars['String']['input']>;
-  maxRecommendations?: InputMaybe<Scalars['String']['input']>;
+  maxRecommendations?: InputMaybe<Scalars['Int']['input']>;
   model?: InputMaybe<Scalars['String']['input']>;
   productId?: InputMaybe<Scalars['String']['input']>;
   storeId: Scalars['String']['input'];
@@ -5624,8 +5647,6 @@ export type WhiteLabelingSettingsType = {
   organizationId?: Maybe<Scalars['String']['output']>;
   /** Logo URL for footer */
   secondaryLogoUrl?: Maybe<Scalars['String']['output']>;
-  /** Store ID */
-  storeId?: Maybe<Scalars['String']['output']>;
   /** Theme preset name */
   themePresetName?: Maybe<Scalars['String']['output']>;
   /** User ID */
