@@ -39,9 +39,9 @@ async function configureThemeSettings() {
 }
 
 async function configureI18N() {
-  const { setLocale } = useLanguages();
+  const { initLocale } = useLanguages();
 
-  await setLocale(i18n, "en");
+  await initLocale(i18n, "en");
 }
 
 setup((app) => {

@@ -1,7 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
-import { useUser } from "@/shared/account/composables/useUser";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -9,34 +8,16 @@ import type { LocaleMessage } from "@intlify/core-base";
 import type { Composer } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
-const { user } = useUser();
 
-const savedLocale = useLocalStorage<string>("locale", "");
+const pinedLocale = useLocalStorage<string | null>("pinedLocale", null);
 
 const defaultLanguage = computed<ILanguage>(() => themeContext.value.defaultLanguage);
 const defaultLocale = computed<string>(() => defaultLanguage.value.twoLetterLanguageName);
 const supportedLanguages = computed<ILanguage[]>(() => themeContext.value.availableLanguages);
 const supportedLocales = computed<string[]>(() => supportedLanguages.value.map((item) => item.twoLetterLanguageName));
-const contactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
+const URL_LOCALE_REGEX = /^\/([a-z]{2})(\/|$)/;
 
-const currentLocale = computed<string>(() => {
-  const localeInPath = location.pathname.split("/")[1];
-  let locale: string = defaultLocale.value;
-
-  if (supportedLocales.value.includes(localeInPath)) {
-    locale = localeInPath;
-  } else if (supportedLocales.value.includes(savedLocale.value)) {
-    locale = savedLocale.value;
-  } else if (contactLocale.value && supportedLocales.value.includes(contactLocale.value)) {
-    locale = contactLocale.value;
-  }
-
-  return locale;
-});
-
-const currentLanguage = computed<ILanguage>(
-  () => supportedLanguages.value.find((x) => x.twoLetterLanguageName === currentLocale.value) || defaultLanguage.value,
-);
+const currentLanguage = ref<ILanguage>();
 
 function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   const locales = import.meta.glob<boolean, string, LocaleMessage>("../../../locales/*.json");
@@ -49,7 +30,9 @@ function fetchLocaleMessages(locale: string): Promise<LocaleMessage> {
   return import("../../../locales/en.json");
 }
 
-async function setLocale(i18n: I18n, locale: string): Promise<void> {
+async function initLocale(i18n: I18n, locale: string): Promise<void> {
+  currentLanguage.value = supportedLanguages.value.find((x) => x.twoLetterLanguageName === locale);
+
   let messages = i18n.global.getLocaleMessage(locale);
 
   if (!Object.keys(messages).length) {
@@ -58,8 +41,6 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
   }
 
   (i18n.global as unknown as Composer).locale.value = locale;
-
-  savedLocale.value = locale;
 
   setLocaleForYup({
     mixed: {
@@ -71,44 +52,75 @@ async function setLocale(i18n: I18n, locale: string): Promise<void> {
     },
   });
 
-  /**
-   * NOTE:
-   * If you need to specify the language setting for headers, such as the "fetch" API, set it here.
-   * The following is an example for axios.
-   *
-   * axios.defaults.headers.common['Accept-Language'] = locale
-   */
-
   document.documentElement.setAttribute("lang", locale);
 }
 
-function saveLocale(locale: string, needToReload: boolean = true) {
-  const { pathname } = location;
-  const splitPathname = pathname.split("/");
-  const localeInPath = splitPathname[1];
-  const indexOfRemainingPath = 2;
-  const path = supportedLocales.value?.includes(localeInPath)
-    ? `/${splitPathname.slice(indexOfRemainingPath).join("/")}`
-    : pathname;
+function getLocaleFromUrl(): string | undefined {
+  return window.location.pathname.match(URL_LOCALE_REGEX)?.[1];
+}
 
-  savedLocale.value = locale;
+function removeLocaleFromUrl() {
+  const fullPath = window.location.pathname + window.location.search + window.location.hash;
 
-  if (needToReload) {
-    location.href = locale === defaultLocale.value ? path : `/${locale}${path}`;
+  const newUrl = getUrlWithoutLocale(fullPath);
+  if (fullPath !== newUrl) {
+    history.pushState(null, "", newUrl);
   }
+}
+
+function getUrlWithoutLocale(fullPath: string): string {
+  const locale = fullPath.match(URL_LOCALE_REGEX)?.[1];
+
+  if (locale && isLocaleSupported(locale)) {
+    return fullPath.replace(URL_LOCALE_REGEX, "/");
+  }
+
+  return fullPath;
+}
+
+function pinLocale(locale: string) {
+  pinedLocale.value = locale;
+}
+
+function unpinLocale() {
+  pinedLocale.value = null;
+}
+
+function isLocaleSupported(locale: string): boolean {
+  return supportedLocales.value.includes(locale);
+}
+
+function detectLocale(locales: unknown[]): string {
+  const stringLocales = locales
+    .filter((locale): locale is string => typeof locale === "string" && locale.length === 2)
+    .filter(isLocaleSupported);
+
+  return stringLocales[0] || defaultLocale.value;
 }
 
 export function useLanguages() {
   return {
-    savedLocale,
+    pinedLocale,
     defaultLanguage,
     defaultLocale,
     supportedLanguages,
     supportedLocales,
-    currentLocale,
-    currentLanguage,
-    setLocale,
-    saveLocale,
+    currentLanguage: computed({
+      get() {
+        return currentLanguage.value || defaultLanguage.value;
+      },
+
+      set() {
+        throw new Error("currentLanguage is read only.");
+      },
+    }),
+    initLocale,
     fetchLocaleMessages,
+
+    pinLocale,
+    unpinLocale,
+    removeLocaleFromUrl,
+    detectLocale,
+    getLocaleFromUrl,
   };
 }
