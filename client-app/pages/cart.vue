@@ -217,7 +217,6 @@ const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { na
 
 const creatingQuote = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
-const recentlyBrowsedProductsLoading = ref(false);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
 const cartContainsDeletedProducts = computed(() => cart.value?.items?.some((item: LineItemType) => !item.product));
@@ -290,9 +289,7 @@ void (async () => {
   }
 
   if (isAuthenticated.value) {
-    recentlyBrowsedProductsLoading.value = true;
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
-    recentlyBrowsedProductsLoading.value = false;
   }
 })();
 </script>
