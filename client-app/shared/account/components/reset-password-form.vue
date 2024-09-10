@@ -30,7 +30,7 @@
       <PasswordTips v-if="passwordRequirements" :requirements="passwordRequirements" />
 
       <VcAlert
-        v-for="error in translatedErrors"
+        v-for="error in result?.errors"
         :key="error.code"
         class="my-5 text-xs"
         color="danger"
@@ -38,7 +38,7 @@
         variant="solid-light"
         icon
       >
-        {{ error.translation }}
+        {{ translate(error) }}
       </VcAlert>
 
       <VcButton type="submit" class="mt-6 w-full lg:w-52" :loading="loading" :disabled="!meta.valid || meta.pending">
@@ -57,7 +57,7 @@ import { object, ref as yupRef, string } from "yup";
 import { useErrorsTranslator } from "@/core/composables";
 import { usePasswordRequirements, useUser } from "../composables";
 import PasswordTips from "./password-tips.vue";
-import type { IdentityErrorType } from "@/core/api/graphql/types";
+import type { IdentityResultType, IdentityErrorType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "succeeded"): void;
@@ -78,6 +78,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const { t } = useI18n();
 const { resetPassword, loading } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
+const { translate } = useErrorsTranslator<IdentityErrorType>("identity_error");
 
 const validationSchema = toTypedSchema(
   object({
@@ -100,24 +101,19 @@ const { errors, meta, handleSubmit } = useForm({
 const { value: password } = useField<string>("password");
 const { value: confirmPassword } = useField<string>("confirmPassword");
 
-const apiErrors = ref<IdentityErrorType[]>([]);
-const { translatedErrors } = useErrorsTranslator("identity_error", apiErrors);
+const result = ref<IdentityResultType>();
 
 const isResetMode = computed(() => props.mode === "reset");
 
 const onSubmit = handleSubmit(async (data) => {
-  apiErrors.value = [];
-
-  const result = await resetPassword({
+  result.value = await resetPassword({
     userId: props.userId,
     token: props.token,
     password: `${data.password}`,
   });
 
-  if (result.succeeded) {
+  if (result.value.succeeded) {
     emit("succeeded");
-  } else if (result.errors?.length) {
-    apiErrors.value = result.errors;
   }
 });
 </script>

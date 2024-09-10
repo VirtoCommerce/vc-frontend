@@ -1,4 +1,4 @@
-import type { ErrorType } from "@/core/composables";
+import type { ValidationErrorType } from "@/core/api/graphql/types";
 
 export type DuplicateSkuProductType = {
   sku: string;
@@ -8,5 +8,5 @@ export type DuplicateSkuProductType = {
     name: string;
   }[];
   quantity: number;
-  errors?: ErrorType[];
+  errors?: ValidationErrorType[];
 };

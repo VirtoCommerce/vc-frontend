@@ -44,10 +44,7 @@
           </BottomHeaderLink>
 
           <template v-else-if="item.id === 'push-messages'">
-            <PushMessages
-              v-if="$cfg.push_messages_enabled && isAuthenticated && isPushMessagesActive"
-              :offset-options="20"
-            >
+            <PushMessages v-if="isPushMessagesActive" :offset-options="20">
               <template #trigger="{ totalCount, unreadCount }">
                 <BottomHeaderLink :link="item" :count="unreadCount">
                   <template #icon>
@@ -99,19 +96,18 @@ import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
+import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
 import BottomHeaderLink from "./bottom-header-link.vue";
 import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const router = useRouter();
-const { isAuthenticated, organization } = useUser();
+const { organization } = useUser();
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
-const { isActive: isPushMessagesActive } = usePushMessages();
 
 const bottomHeader = ref<HTMLElement | null>(null);
 const catalogMenuElement = shallowRef<HTMLElement | null>(null);
