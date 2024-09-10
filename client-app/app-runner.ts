@@ -8,7 +8,7 @@ import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
-import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { createRouter } from "@/router";
@@ -140,6 +140,7 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
   app.use(uiKit);
+  app.use(applicationInsightsPlugin, themeContext.value);
 
   const builderOrigin = getEpParam();
   if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
