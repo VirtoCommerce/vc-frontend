@@ -20,7 +20,7 @@
           class="vc-add-to-cart__icon-button"
           :variant="isButtonOutlined ? 'outline' : 'solid'"
           :loading="loading"
-          :disabled="disabled || !!errorMessage"
+          :disabled="disabled || !!errorMessage || !isInStock"
           :title="buttonText"
           :icon="icon"
           size="sm"
@@ -31,7 +31,7 @@
           class="vc-add-to-cart__text-button"
           :variant="isButtonOutlined ? 'outline' : 'solid'"
           :loading="loading"
-          :disabled="disabled || !!errorMessage"
+          :disabled="disabled || !!errorMessage || !isInStock"
           :title="buttonText"
           size="sm"
           truncate
