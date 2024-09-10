@@ -13,7 +13,6 @@ export * from "./modify";
 export * from "./options";
 export * from "./order-status";
 export * from "./password-options";
-export * from "./quote-status";
 export * from "./role";
 export * from "./search";
 export * from "./theme-config";

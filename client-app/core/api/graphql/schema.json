@@ -30411,7 +30411,7 @@
           },
           {
             "name": "gtin",
-            "description": "Global Trade Item Number",
+            "description": "Global Trade Item Number (GTIN)",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -30538,6 +30538,18 @@
                   }
                 }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "manufacturerPartNumber",
+            "description": "Manufacturer Part Number (MPN)",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -42088,6 +42100,18 @@
           {
             "name": "secondaryLogoUrl",
             "description": "Logo URL for footer",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "storeId",
+            "description": "Store ID",
             "args": [],
             "type": {
               "kind": "SCALAR",
