@@ -1245,7 +1245,7 @@
       },
       "title": "Cart",
       "empty_cart_description": "Your cart is empty",
-      "recently_browsed_products": "Recently viewed products"
+      "recently_browsed_products": "Recently browsed"
     },
     "checkout": {
       "meta": {
