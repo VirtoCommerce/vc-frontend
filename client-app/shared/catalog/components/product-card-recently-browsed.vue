@@ -23,6 +23,8 @@
       :min-quantity="product.minQuantity"
       :max-quantity="product.maxQuantity"
       :count-in-cart="countInCart"
+      :disabled="changing"
+      :loading="changing"
       @update:cart-item-quantity="changeCartItemQuantity"
       @update:validation="onValidationUpdate"
     />
@@ -50,7 +52,7 @@ const props = defineProps<IProps>();
 
 const errorMessage = ref<string | undefined>();
 
-const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { cart, addToCart, changeItemQuantity, changing } = useShortCart();
 
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
