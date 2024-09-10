@@ -15,12 +15,13 @@ function _useThemeContext() {
       throw new Error("Can't get theme context");
     }
 
+    const defaultThemePreset = await fetchThemePreset(themeConfig, "default");
     const themePreset = await fetchThemePreset(themeConfig, themePresetName);
 
     themeContext.value = {
       ...store,
       settings: themeConfig.settings,
-      preset: themePreset,
+      preset: themePreset ?? defaultThemePreset,
       storeSettings: store.settings,
     };
   }
