@@ -4108,7 +4108,7 @@ export type Product = {
   code: Scalars['String']['output'];
   description?: Maybe<DescriptionType>;
   descriptions: Array<DescriptionType>;
-  /** Global Trade Item Number (GTIN) */
+  /** Global Trade Item Number */
   gtin?: Maybe<Scalars['String']['output']>;
   hasVariations: Scalars['Boolean']['output'];
   /** The unique ID of the product. */
@@ -4120,8 +4120,6 @@ export type Product = {
   /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
   keyProperties: Array<Property>;
-  /** Manufacturer Part Number (MPN) */
-  manufacturerPartNumber?: Maybe<Scalars['String']['output']>;
   masterVariation?: Maybe<VariationType>;
   /** Max. quantity */
   maxQuantity?: Maybe<Scalars['Int']['output']>;
@@ -5649,8 +5647,6 @@ export type WhiteLabelingSettingsType = {
   organizationId?: Maybe<Scalars['String']['output']>;
   /** Logo URL for footer */
   secondaryLogoUrl?: Maybe<Scalars['String']['output']>;
-  /** Store ID */
-  storeId?: Maybe<Scalars['String']['output']>;
   /** Theme preset name */
   themePresetName?: Maybe<Scalars['String']['output']>;
   /** User ID */
