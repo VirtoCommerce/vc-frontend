@@ -23,6 +23,7 @@
         class="vc-checkbox__input"
         :data-test-id="testId"
         @change="change"
+        @click="onClick"
       />
 
       <span v-if="$slots.default" class="vc-checkbox__label">
@@ -57,6 +58,7 @@ interface IProps {
   error?: boolean;
   singleLineMessage?: boolean;
   testId?: string;
+  preventDefault?: boolean;
 }
 
 const emit = defineEmits<{
@@ -95,6 +97,13 @@ function change() {
 
     emit("update:modelValue", newArray);
     emit("change", newArray);
+  }
+}
+
+function onClick(event: Event) {
+  if (props.preventDefault) {
+    event.preventDefault();
+    change();
   }
 }
 </script>
