@@ -1,0 +1,9 @@
+fragment property on Property {
+  name
+  value
+  propertyType
+  hidden
+  propertyValueType
+  label
+  displayOrder
+}

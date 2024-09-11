@@ -97,7 +97,7 @@ const { t } = useI18n();
 const { user, updateUser } = useUser();
 const { themeContext } = useThemeContext();
 const { openModal } = useModal();
-const { supportedLanguages, saveLocale } = useLanguages();
+const { removeLocaleFromUrl, unpinLocale } = useLanguages();
 const { supportedCurrencies, saveCurrencyCode } = useCurrency();
 
 usePageHead({
@@ -133,15 +133,8 @@ const [defaultLanguage] = defineField("defaultLanguage");
 const [currencyCode] = defineField("currencyCode");
 
 function applyLanguage(): void {
-  if (user.value?.contact?.defaultLanguage) {
-    const contactLanguage = supportedLanguages.value.find(
-      (item) => item.cultureName === user.value.contact!.defaultLanguage,
-    );
-
-    if (contactLanguage) {
-      saveLocale(contactLanguage.twoLetterLanguageName, false);
-    }
-  }
+  unpinLocale();
+  removeLocaleFromUrl();
 }
 
 function applyCurrency(): void {
