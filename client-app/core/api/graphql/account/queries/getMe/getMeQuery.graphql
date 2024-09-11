@@ -1,5 +1,5 @@
-query GetMe($after: String, $first: Int, $sort: String) {
-  me {
+query GetMe($userId: String) {
+  me(userId: $userId) {
     id
     memberId
     userName
@@ -21,7 +21,7 @@ query GetMe($after: String, $first: Int, $sort: String) {
       organizationId
       defaultLanguage
       currencyCode
-      organizations(after: $after, first: $first, sort: $sort) {
+      organizations {
         items {
           id
           name

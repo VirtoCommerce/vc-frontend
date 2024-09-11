@@ -7,5 +7,6 @@ artifacts
 assets
 node_modules
 storybook-static
+client-app/modules/**/api/graphql/types.ts
 client-app/core/api/graphql/**/types.ts
 client-app/core/api/graphql/schema.json

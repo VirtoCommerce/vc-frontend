@@ -4,6 +4,7 @@ import { useGetMeQuery, useMergeCartMutation } from "@/core/api/graphql";
 import { useAuth } from "@/core/composables/useAuth";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { TabsType, openReturnUrl, useBroadcast } from "@/shared/broadcast";
 import { useShortCart } from "@/shared/cart/composables";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -23,6 +24,7 @@ export function useSignMeIn(payload: MaybeRefOrGetter<SignMeIn>) {
     async () => {
       const { email, password } = toValue(payload);
       await authorize(email, password);
+      localStorage.removeItem(USER_ID_LOCAL_STORAGE);
 
       await getMe();
       await mergeCart({ command: { userId: me.value!.me!.id, secondCartId: cart.value!.id } });
