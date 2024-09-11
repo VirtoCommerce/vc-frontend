@@ -1,5 +1,5 @@
 <template>
-  <div class="m-6 lg:m-10">
+  <VcContainer>
     <VcWidget
       size="lg"
       :style="{ backgroundColor: widgetBackground?.color, backgroundImage: `url(${widgetBackground?.image})` }"
@@ -20,7 +20,7 @@
             {{ item.name }}
           </VcProductTitle>
 
-          <VcProductVendor v-if="$cfg.vendor_enabled && item.vendor">
+          <VcProductVendor v-if="$cfg.vendor_enabled">
             {{ item.vendor?.name }}
           </VcProductVendor>
 
@@ -35,7 +35,7 @@
         </VcProductCard>
       </div>
     </VcWidget>
-  </div>
+  </VcContainer>
 </template>
 
 <script setup lang="ts">
