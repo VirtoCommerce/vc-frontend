@@ -221,8 +221,6 @@ withDefaults(defineProps<IProps>(), {
     #{$list} & {
       --font-size: 1.125rem;
 
-      @apply mt-3;
-
       @container (width > theme(containers.xl)) {
         --font-size: 0.875rem;
 
