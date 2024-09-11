@@ -12,7 +12,7 @@
       center
       :error="!isValid"
       :message="message"
-      show-empty-details="showEmptyDetails"
+      :show-empty-details="showEmptyDetails"
       @input="onChange"
       @blur="onFocusOut"
     >
