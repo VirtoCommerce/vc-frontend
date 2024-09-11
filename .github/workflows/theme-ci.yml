@@ -211,8 +211,7 @@ jobs:
       cmPath: 'theme/artifact.json'
       artifactKey: 'URL'
       artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
-      environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
+      environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit
-    
