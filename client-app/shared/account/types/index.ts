@@ -21,12 +21,6 @@ export type SignMeUp = {
   lastName: string;
 };
 
-export type SignMeIn = {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-};
-
 export type ForgotPassword = {
   email: string;
   resetPasswordUrlPath: string;
