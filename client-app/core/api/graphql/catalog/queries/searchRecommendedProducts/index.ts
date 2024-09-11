@@ -6,14 +6,14 @@ import type { Query, QueryRecommendationsArgs, GetRecommendationsResponseType } 
 export type RecommendedProductsSearchParamsType = {
   productId: string;
   model: string;
-  maxRecommendations?: string;
+  maxRecommendations?: number;
   fallbackProductsFilter?: string;
 };
 
 export async function searchRecommendedProducts({
   productId,
   model,
-  maxRecommendations = "6",
+  maxRecommendations = 6,
   fallbackProductsFilter,
 }: RecommendedProductsSearchParamsType): Promise<GetRecommendationsResponseType> {
   const { storeId, userId, cultureName, currencyCode } = globals;
