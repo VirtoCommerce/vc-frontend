@@ -25,6 +25,7 @@
       :count-in-cart="countInCart"
       :disabled="changing"
       :loading="changing"
+      show-empty-details
       @update:cart-item-quantity="changeCartItemQuantity"
       @update:validation="onValidationUpdate"
     />
@@ -59,7 +60,7 @@ const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, 
 const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === props.product.id));
 const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
 
-const quantity = ref(countInCart.value || 1);
+const quantity = ref(countInCart.value || props.product.minQuantity || 1);
 
 async function changeCartItemQuantity(qty: number) {
   if (cartLineItem.value && countInCart.value) {

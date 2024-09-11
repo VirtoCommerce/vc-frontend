@@ -12,6 +12,7 @@
       center
       :error="!isValid"
       :message="message"
+      show-empty-details="showEmptyDetails"
       @input="onChange"
       @blur="onFocusOut"
     >
@@ -72,6 +73,7 @@ interface IProps {
   availableQuantity?: number;
   isInStock?: boolean;
   message?: string;
+  showEmptyDetails?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
