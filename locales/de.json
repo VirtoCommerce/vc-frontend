@@ -83,6 +83,10 @@
       "company_members": "Unternehmensmitglieder",
       "quote_requests": "Angebotsanfragen",
       "contact_administrator": "den Website-Administrator kontaktieren"
+    },
+    "labels": {
+      "product_price": "Ihr Preis",
+      "sku": "SKU"
     }
   },
   "shared": {
@@ -169,6 +173,53 @@
           "quote_requests": "@:common.links.quote_requests"
         }
       }
+    },
+    "catalog": {
+      "product_card": {
+        "price_label": "@:common.labels.product_price",
+        "product_rating": "Bewertung:",
+        "product_vendor": "Verkäufer:"
+      },
+      "product_details": {
+        "technical_specs_block_title": "Eigenschaften",
+        "variations_block_title": "Produktvariationen",
+        "description_block_title": "Beschreibung",
+        "assets_block_title": "Dateien",
+        "vendor_label": "Verkäufer",
+        "share_product_label": "Produkt teilen",
+        "price_block": {
+          "title": "Preis und Lieferung",
+          "add_to_list_button": "Zur Liste hinzufügen",
+          "product_email_title": "Bitte schauen Sie sich das Produkt an: {0}"
+        },
+        "variations": {
+          "title": "Produktvariationen",
+          "columns": {
+            "item": "Artikel",
+            "stock": "Lager",
+            "price": "Preis",
+            "quantity": "Menge"
+          },
+          "list": "Liste",
+          "table": "Tabelle"
+        },
+        "product_variation_card": {
+          "variation_sku_label": "@:common.labels.sku",
+          "price_label": "@:common.labels.product_price",
+          "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        }
+      }
+    }
+  },
+  "pages": {
+    "product": {
+      "sku_label": "@:common.labels.sku",
+      "sku_copied_message": "@:common.labels.sku Erfolgreich kopiert",
+      "variations_total_label": "Gesamtbetrag in Ihrem Warenkorb:",
+      "view_cart_button": "Warenkorb anzeigen",
+      "recommended_products_section_title": "Produkte im Zusammenhang mit diesem Artikel",
+      "related_product_section_title": "Verwandte Produkte",
+      "price_label": "@:common.labels.product_price{':'}"
     }
   },
   "validation_error": {
