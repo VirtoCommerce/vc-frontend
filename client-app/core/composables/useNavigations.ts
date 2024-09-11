@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { useFetch } from "@/core/api/common";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
@@ -14,6 +15,7 @@ import {
 import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
 import type { ExtendedMenuLinkType, MenuType } from "../types";
+import type { DeepPartial } from "utility-types";
 
 const loading = ref(false);
 const matchingRouteName = ref("");
@@ -190,6 +192,14 @@ export function useNavigations() {
     matchingRouteName.value = value;
   }
 
+  function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
+    menuSchema.value = _.mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
+      if (_.isArray(objValue) && _.isArray(srcValue)) {
+        return objValue.concat(srcValue) as ExtendedMenuLinkType[];
+      }
+    });
+  }
+
   return {
     fetchMenus,
     fetchFooterLinks,
@@ -208,5 +218,7 @@ export function useNavigations() {
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),
     footerLinks: computed(() => footerLinks.value),
+
+    mergeMenuSchema,
   };
 }

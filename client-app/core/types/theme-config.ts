@@ -1,7 +1,11 @@
-import type { IOrderStatus } from "./order-status";
-import type { IQuoteStatus } from "./quote-status";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
+
+type StatusType = {
+  code: string;
+  color: VcChipColorType;
+  variant: VcChipVariantType;
+};
 
 export interface IThemeConfigPreset {
   primary_font_family?: string;
@@ -236,8 +240,8 @@ export interface IThemeConfigSettings {
   orders_search_enabled?: boolean;
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
-  orders_statuses?: IOrderStatus[];
-  quote_statuses?: IQuoteStatus[];
+  orders_statuses?: StatusType[];
+  quote_statuses?: StatusType[];
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];

@@ -73,6 +73,7 @@ import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
+import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (e: "result", succeed: boolean): void;
@@ -91,7 +92,7 @@ const { t } = useI18n();
 const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
-const { getTranslation } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
 const roles = B2B_ROLES.map((role) => {
   role.normalizedName = t("common.roles." + role.id);
@@ -174,7 +175,7 @@ const send = handleSubmit(async (data) => {
         return;
       }
 
-      const errorDescription = getTranslation(error);
+      const errorDescription = translate(error);
 
       if (errorDescription) {
         commonErrors.value.push(errorDescription);
