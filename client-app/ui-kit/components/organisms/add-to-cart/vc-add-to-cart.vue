@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-add-to-cart">
+  <div class="vc-add-to-cart" :class="{ 'vc-add-to-cart--show-empty-details': showEmptyDetails }">
     <VcInput
       v-model.number="quantity"
       type="number"
@@ -158,6 +158,9 @@ watchEffect(async () => {
 
 <style lang="scss">
 .vc-add-to-cart {
+  $self: &;
+  $show-empty-details: "";
+
   @apply @container flex-none;
 
   &__icon-button.vc-button {
@@ -178,6 +181,16 @@ watchEffect(async () => {
 
   &__badges {
     @apply mt-1.5 flex flex-wrap gap-x-1.5 gap-y-0.5;
+  }
+
+  &--show-empty-details {
+    $show-empty-details: &;
+  }
+
+  @at-root .vc-product-card--view-mode--list {
+    & #{$show-empty-details}#{$self} {
+      @apply mt-4.5;
+    }
   }
 }
 </style>
