@@ -84,7 +84,7 @@ async function onQuantityChanged(): Promise<void> {
   }
 
   if (quantity.value > LINE_ITEM_QUANTITY_LIMIT) {
-    quantity.value = Number(quantity.value.toString().slice(0, 6));
+    quantity.value = props.modelValue;
   }
 
   setValue(quantity.value);
