@@ -32,17 +32,18 @@
           </template>
         </transition-group>
 
-        <!-- NO RESULTS content BEGIN -->
-        <div v-else class="flex h-[23.8rem] max-h-screen-60 grow flex-col items-center justify-center space-y-3">
-          <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
-
-          <div class="text-lg">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
-
-          <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
-            {{ $t("shared.catalog.branches_modal.reset_search_button") }}
-          </VcButton>
-        </div>
-        <!-- NO RESULTS content END -->
+        <VcEmptyView
+          v-else
+          :text="$t('shared.catalog.branches_modal.no_results')"
+          icon="thin-stock"
+          class="h-[23.8rem] max-h-screen-60"
+        >
+          <template v-if="searchInput.length" #button>
+            <VcButton prepend-icon="reset" @click="searchInput = ''">
+              {{ $t("shared.catalog.branches_modal.reset_search_button") }}
+            </VcButton>
+          </template>
+        </VcEmptyView>
       </div>
 
       <div
@@ -124,7 +125,7 @@
         <BranchSearch :model-value="searchInput" @update:input="search($event)" />
       </div>
 
-      <div v-if="branches.length">
+      <div v-if="branches.length && false">
         <template v-for="(branch, index) in branches">
           <BranchItem
             v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
@@ -137,15 +138,13 @@
         </template>
       </div>
 
-      <!-- NO RESULTS content BEGIN -->
-      <div v-else class="flex grow flex-col items-center justify-center space-y-3 pb-16">
-        <img src="/static/images/common/stock.svg" alt="Product icon" class="w-20" />
-        <div class="text-base">{{ $t("shared.catalog.branches_modal.no_results") }}</div>
-        <VcButton v-if="searchInput.length" prepend-icon="reset" @click="searchInput = ''">
-          {{ $t("shared.catalog.branches_modal.reset_search_button") }}
-        </VcButton>
-      </div>
-      <!-- NO RESULTS content END -->
+      <VcEmptyView v-else :text="$t('shared.catalog.branches_modal.no_results')" icon="thin-stock">
+        <template v-if="searchInput.length" #button>
+          <VcButton prepend-icon="reset" @click="searchInput = ''">
+            {{ $t("shared.catalog.branches_modal.reset_search_button") }}
+          </VcButton>
+        </template>
+      </VcEmptyView>
     </div>
     <!-- MOBILE content END -->
 
