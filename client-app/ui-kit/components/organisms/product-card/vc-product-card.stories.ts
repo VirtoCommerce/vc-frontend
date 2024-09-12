@@ -41,6 +41,13 @@ const chip2 = {
   variant: "outline-dark",
 };
 
+const availabilityData = {
+  isAvailable: true,
+  isBuyable: true,
+  isInStock: true,
+  availableQuantity: 999999,
+};
+
 const BasicTemplate: StoryFn<typeof VcProductCard> = (args) => ({
   components: { VcProductCard },
   setup: () => ({ args, title }),
@@ -124,7 +131,7 @@ const FullTemplate: StoryFn<typeof VcProductCard> = (args) => ({
     VcAddToCart,
     VcChip,
   },
-  setup: () => ({ args, title, price, chip1, chip2, image }),
+  setup: () => ({ args, title, price, chip1, chip2, image, availabilityData }),
   template: `<VcProductCard v-bind="args">
     <VcProductImage v-bind="image" />
 
@@ -139,7 +146,7 @@ const FullTemplate: StoryFn<typeof VcProductCard> = (args) => ({
 
     <VcProductPrice v-bind="price" />
 
-    <VcAddToCart>
+    <VcAddToCart v-bind="availabilityData">
       <VcChip v-bind="chip1">1230 in Stock</VcChip>
       <VcChip v-bind="chip2">23 in Cart</VcChip>
     </VcAddToCart>

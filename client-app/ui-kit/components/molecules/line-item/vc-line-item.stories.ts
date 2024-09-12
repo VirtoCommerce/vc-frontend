@@ -75,7 +75,12 @@ export const AddToCart: StoryFn<typeof VcLineItem> = (args) => ({
   components: { VcLineItem },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
-    <VcAddToCart />
+    <VcAddToCart
+      is-available
+      is-buyable
+      is-in-stock
+      :available-quantity="999999"
+    />
   </VcLineItem>`,
 });
 AddToCart.args = {
