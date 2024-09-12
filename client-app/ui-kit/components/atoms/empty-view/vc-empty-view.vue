@@ -42,8 +42,5 @@ withDefaults(defineProps<IProp>(), {
   &__text {
     @apply text-xl leading-tight;
   }
-
-  &__buttons {
-  }
 }
 </style>
