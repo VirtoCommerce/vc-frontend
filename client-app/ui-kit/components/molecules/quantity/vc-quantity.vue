@@ -83,6 +83,10 @@ async function onQuantityChanged(): Promise<void> {
     return;
   }
 
+  if (quantity.value > LINE_ITEM_QUANTITY_LIMIT) {
+    quantity.value = Number(quantity.value.toString().slice(0, 6));
+  }
+
   setValue(quantity.value);
 
   const { valid } = await validate();
@@ -109,7 +113,7 @@ function onKeydown(e: KeyboardEvent) {
 
 function isQuantity(qty: unknown): qty is number {
   const qtyAsNumber = Number(quantity.value);
-  return !isNaN(qtyAsNumber) && Number(qtyAsNumber) >= 1 && Number(qtyAsNumber) <= LINE_ITEM_QUANTITY_LIMIT;
+  return !isNaN(qtyAsNumber) && Number(qtyAsNumber) >= 1;
 }
 
 watchEffect(() => {
