@@ -42,7 +42,7 @@
             :available-quantity="item.inStockQuantity"
             :count-in-cart="item.countInCart"
             :disabled="addToCartDisabled(item) || pendingItems[item.id]"
-            :is-available="item.availabilityData?.isAvailable"
+            :is-available="item.availabilityData?.isActive"
             :is-buyable="item.availabilityData?.isBuyable"
             :is-in-stock="item.availabilityData?.isInStock"
             :loading="pendingItems[item.id]"

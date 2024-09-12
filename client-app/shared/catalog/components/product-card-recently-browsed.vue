@@ -18,6 +18,7 @@
     <VcAddToCart
       :message="errorMessage"
       :model-value="quantity"
+      :is-active="product.availabilityData?.isActive"
       :is-available="product.availabilityData?.isAvailable"
       :is-buyable="product.availabilityData?.isBuyable"
       :is-in-stock="product.availabilityData?.isInStock"

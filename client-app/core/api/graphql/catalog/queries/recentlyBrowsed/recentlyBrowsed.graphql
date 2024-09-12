@@ -16,6 +16,7 @@ query GetRecentlyBrowsed($storeId: String!, $currencyCode: String, $cultureName:
       }
       availabilityData {
         availableQuantity
+        isActive
         isAvailable
         isBuyable
         isInStock

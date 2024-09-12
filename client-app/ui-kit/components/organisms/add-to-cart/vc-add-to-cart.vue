@@ -71,6 +71,7 @@ interface IProps {
   maxQuantity?: number;
   countInCart?: number;
   availableQuantity?: number;
+  isActive?: boolean;
   isAvailable?: boolean;
   isBuyable?: boolean;
   isInStock?: boolean;
@@ -85,7 +86,8 @@ const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isAvailable, isBuyable } = toRefs(props);
+const { disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
+  toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -106,7 +108,7 @@ const { quantitySchema } = useQuantityValidationSchema({
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 const isDisabled = computed(
-  () => !isValid.value || disabled.value || !isAvailable.value || !isBuyable.value || !isInStock.value,
+  () => !isValid.value || disabled.value || !isActive || !isAvailable.value || !isBuyable.value || !isInStock.value,
 );
 
 const { errorMessage, validate, setValue } = useField("quantity", rules);
