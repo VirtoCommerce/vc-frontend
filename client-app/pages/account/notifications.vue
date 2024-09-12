@@ -53,7 +53,13 @@
 
     <VcWidget size="lg" class="mt-4 lg:mt-5">
       <template #default-container>
-        <div class="p-3 lg:p-6">
+        <VcEmptyView
+          v-if="totalCount === 0 && !loading"
+          :text="$t('pages.account.notifications.empty_list')"
+          icon="thin-notifications"
+        />
+
+        <div v-else class="p-3 lg:p-6">
           <div class="divide-y rounded border empty:hidden">
             <PushMessage
               v-for="item in items"
@@ -73,19 +79,6 @@
             class="mt-6"
             @update:page="changePage"
           />
-
-          <VcEmptyView
-            v-if="totalCount === 0 && !loading"
-            class="min-h-80"
-            :text="$t('pages.account.notifications.empty_list')"
-          >
-            <template #icon>
-              <VcImage
-                src="/static/images/common/notifications.svg"
-                :alt="$t('pages.account.notifications.empty_list')"
-              />
-            </template>
-          </VcEmptyView>
         </div>
       </template>
     </VcWidget>

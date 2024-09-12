@@ -1,25 +1,49 @@
 <template>
-  <div class="mx-5 flex grow flex-col items-center justify-center space-y-5 lg:mx-0" :class="{ 'h-96': isMobile }">
-    <slot name="icon"></slot>
-    <slot>
-      <p class="text-xl leading-tight">
-        {{ text }}
-      </p>
+  <div class="vc-empty-view">
+    <slot name="icon">
+      <div class="vc-empty-view__icon">
+        <VcIcon :name="icon" />
+      </div>
     </slot>
-    <slot name="button"></slot>
+
+    <slot>
+      <div v-if="text" class="vc-empty-view__text">
+        {{ text }}
+      </div>
+    </slot>
+
+    <div v-if="$slots.button" class="vc-empty-view__buttons">
+      <slot name="button" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+interface IProp {
+  text?: string;
+  icon?: string;
+}
 
-defineProps({
-  text: {
-    type: String,
-    default: "",
-  },
+withDefaults(defineProps<IProp>(), {
+  icon: "thin-stock",
 });
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 </script>
+
+<style lang="scss">
+.vc-empty-view {
+  @apply flex grow flex-col items-center gap-4 py-20 px-6 text-center md:gap-5;
+
+  &__icon {
+    --vc-icon-size: 5.375rem;
+
+    @apply text-primary;
+  }
+
+  &__text {
+    @apply text-xl leading-tight;
+  }
+
+  &__buttons {
+  }
+}
+</style>

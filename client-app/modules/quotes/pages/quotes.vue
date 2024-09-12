@@ -55,11 +55,8 @@
     <VcEmptyView
       v-if="!fetching && !quotes.length"
       :text="$t(!!keyword ? 'pages.account.quotes.no_results_message' : 'pages.account.quotes.no_quotes_message')"
-    >
-      <template #icon>
-        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.no_orders_img_alt')" />
-      </template>
-    </VcEmptyView>
+      icon="thin-quotes"
+    />
 
     <!-- Content block -->
     <VcWidget v-else size="lg">
