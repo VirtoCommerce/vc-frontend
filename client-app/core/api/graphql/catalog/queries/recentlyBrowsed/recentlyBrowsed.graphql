@@ -10,6 +10,10 @@ query GetRecentlyBrowsed($storeId: String!, $currencyCode: String, $cultureName:
       name
       code
       hasVariations
+      variations {
+        id
+      }
+      slug
       imgSrc
       vendor {
         name

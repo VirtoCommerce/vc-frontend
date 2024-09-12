@@ -238,7 +238,13 @@ withDefaults(defineProps<IProps>(), {
   }
 
   @at-root .vc-add-to-cart,
-    .add-to-cart {
+    .vc-variations-button {
+    #{$self} & {
+      grid-area: add-to-cart;
+    }
+  }
+
+  .add-to-cart {
     #{$self} & {
       grid-area: add-to-cart;
     }

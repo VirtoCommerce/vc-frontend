@@ -15,7 +15,16 @@
       single-line
     />
 
+    <VcVariationsButton
+      v-if="product.hasVariations"
+      :link="link"
+      :variations-count="(product.variations?.length || 0) + 1"
+      class="pb-4.5"
+    >
+    </VcVariationsButton>
+
     <VcAddToCart
+      v-else
       :message="errorMessage"
       :model-value="quantity"
       :is-active="product.availabilityData?.isActive"
