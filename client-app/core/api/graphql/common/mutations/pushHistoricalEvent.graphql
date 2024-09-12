@@ -1,0 +1,3 @@
+mutation PushHistoricalEvent($command: InputPushHistoricalEventType!) {
+  pushHistoricalEvent(command: $command)
+}
