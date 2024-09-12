@@ -71,7 +71,7 @@ export function useProducts(
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
 
-  const products = shallowRef<Product[]>([]);
+  const products = ref<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
 
   const prevProductsFilters = shallowRef<ProductsFiltersType>();
@@ -309,20 +309,13 @@ export function useProducts(
   }
 
   broadcast.on(productsInWishlistEvent, (eventItems: ProductInWishlistEventDataType[]) => {
-    let trigger = false;
-
     eventItems.forEach(({ productId, inWishlist }) => {
       const { index, product } = productsById.value[productId] ?? {};
 
       if (product) {
         products.value.splice(index, 1, { ...product, inWishlist });
-        trigger = true;
       }
     });
-
-    if (trigger) {
-      triggerRef(products);
-    }
   });
 
   return {
@@ -338,7 +331,7 @@ export function useProducts(
     localStorageBranches,
     localStorageInStock,
     pagesCount: readonly(pagesCount),
-    products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
+    products: computed(() => products.value),
     productsById,
     productsFilters: productFiltersSorted,
     searchQueryParam,

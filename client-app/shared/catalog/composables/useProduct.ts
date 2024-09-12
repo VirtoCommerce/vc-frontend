@@ -1,14 +1,14 @@
-import { ref, computed, readonly, triggerRef, shallowRef } from "vue";
+import { ref, computed, readonly } from "vue";
 import { getProduct } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import type { GetProductQuery } from "@/core/api/graphql/types";
 import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
-import type { Ref, ShallowRef } from "vue";
+import type { Ref } from "vue";
 
 export function useProduct() {
   const fetching: Ref<boolean> = ref(true);
-  const product: ShallowRef<GetProductQuery["product"] | undefined> = shallowRef();
+  const product: Ref<GetProductQuery["product"] | undefined> = ref();
 
   const broadcast = useBroadcast();
 
@@ -25,18 +25,11 @@ export function useProduct() {
   }
 
   broadcast.on(productsInWishlistEvent, (eventItems: ProductInWishlistEventDataType[]) => {
-    let trigger = false;
-
     eventItems.forEach(({ productId, inWishlist }) => {
       if (product.value && product.value.id === productId) {
         product.value = { ...product.value, inWishlist };
-        trigger = true;
       }
     });
-
-    if (trigger) {
-      triggerRef(product);
-    }
   });
 
   return {
