@@ -6,8 +6,6 @@
       {{ product.name }}
     </VcProductTitle>
 
-    <VcProductVendor>{{ product.vendor?.name }}</VcProductVendor>
-
     <VcProductPrice
       :has-variations="product.hasVariations"
       :actual-price="price?.actual"
@@ -20,8 +18,8 @@
       :link="link"
       :variations-count="(product.variations?.length || 0) + 1"
       class="pb-4.5"
-    >
-    </VcVariationsButton>
+    />
+    <!-- pb-4.5 needed here to match vc-add-to-cart height (vc-input-details height and margin) -->
 
     <VcAddToCart
       v-else

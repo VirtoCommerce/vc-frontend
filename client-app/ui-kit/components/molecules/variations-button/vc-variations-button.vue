@@ -51,10 +51,10 @@ const iconSize = breakpoints.isGreater("lg") ? "xs" : "sm";
   @apply flex flex-col;
 
   &__link {
-    @apply flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color];
+    @apply flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] mt-2.5;
 
     @media (width > theme("screens.lg")) {
-      @apply text-xs;
+      @apply text-xs mt-[1.35rem];
     }
   }
 

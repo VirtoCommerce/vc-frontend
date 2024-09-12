@@ -173,7 +173,6 @@
       :target="target"
       :variations-count="(product.variations?.length || 0) + 1"
       show-link
-      class="mt-2.5 lg:mt-5"
       @link-click="$emit('linkClick', $event)"
     >
     </VcVariationsButton>
