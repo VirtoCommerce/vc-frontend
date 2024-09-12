@@ -42,6 +42,8 @@
             :available-quantity="item.inStockQuantity"
             :count-in-cart="item.countInCart"
             :disabled="addToCartDisabled(item) || pendingItems[item.id]"
+            :is-available="item.availabilityData?.isAvailable"
+            :is-buyable="item.availabilityData?.isBuyable"
             :is-in-stock="item.availabilityData?.isInStock"
             :loading="pendingItems[item.id]"
             @update:model-value="changeItemQuantity(item, $event)"

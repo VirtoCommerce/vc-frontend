@@ -21,7 +21,7 @@
           class="vc-add-to-cart__icon-button"
           :variant="isButtonOutlined ? 'outline' : 'solid'"
           :loading="loading"
-          :disabled="disabled || !!errorMessage || !isInStock"
+          :disabled="isDisabled"
           :title="buttonText"
           :icon="icon"
           size="sm"
@@ -32,7 +32,7 @@
           class="vc-add-to-cart__text-button"
           :variant="isButtonOutlined ? 'outline' : 'solid'"
           :loading="loading"
-          :disabled="disabled || !!errorMessage || !isInStock"
+          :disabled="isDisabled"
           :title="buttonText"
           size="sm"
           truncate
@@ -71,6 +71,8 @@ interface IProps {
   maxQuantity?: number;
   countInCart?: number;
   availableQuantity?: number;
+  isAvailable?: boolean;
+  isBuyable?: boolean;
   isInStock?: boolean;
   message?: string;
   showEmptyDetails?: boolean;
@@ -83,7 +85,7 @@ const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { isInStock, minQuantity, maxQuantity, availableQuantity } = toRefs(props);
+const { disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isAvailable, isBuyable } = toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -103,6 +105,9 @@ const { quantitySchema } = useQuantityValidationSchema({
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
+const isDisabled = computed(
+  () => !isValid.value || disabled.value || !isAvailable.value || !isBuyable.value || !isInStock.value,
+);
 
 const { errorMessage, validate, setValue } = useField("quantity", rules);
 
