@@ -600,7 +600,8 @@
             "quantity": "Quantity"
           },
           "list": "List",
-          "table": "Table"
+          "table": "Table",
+          "no_results": "No results found"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",

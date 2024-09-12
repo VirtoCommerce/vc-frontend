@@ -110,6 +110,8 @@ import {
   getFilterExpressionFromFacets,
   getFilterExpression,
   getSortingExpression,
+  getFilterExpressionForAvailableIn,
+  getFilterExpressionForInStock,
 } from "@/core/utilities";
 import {
   useProduct,
@@ -185,7 +187,11 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
   page: 1,
   itemsPerPage: 50,
   sort: getSortingExpression(variationSortInfo.value),
-  filter: variationsFilterExpression.value,
+  filter: getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionForAvailableIn(productsFilters.value.branches),
+    getFilterExpressionForInStock(productsFilters.value.inStock),
+  ]),
 });
 
 // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1099
@@ -256,6 +262,8 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
     getFilterExpressionFromFacets(newFilters.facets),
+    getFilterExpressionForInStock(newFilters.inStock),
+    getFilterExpressionForAvailableIn(newFilters.branches),
   ]);
 
   await fetchProducts(variationsSearchParams.value);
@@ -270,6 +278,8 @@ async function removeFacetFilter(
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
     getFilterExpressionFromFacets(productsFilters.value.facets),
+    getFilterExpressionForAvailableIn(productsFilters.value.branches),
+    getFilterExpressionForInStock(productsFilters.value.inStock),
   ]);
 
   await fetchProducts(variationsSearchParams.value);
