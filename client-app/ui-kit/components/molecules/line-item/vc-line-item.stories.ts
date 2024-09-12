@@ -76,6 +76,7 @@ export const AddToCart: StoryFn<typeof VcLineItem> = (args) => ({
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
     <VcAddToCart
+      is-active
       is-available
       is-buyable
       is-in-stock

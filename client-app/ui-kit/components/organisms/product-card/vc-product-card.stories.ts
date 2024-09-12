@@ -42,6 +42,7 @@ const chip2 = {
 };
 
 const availabilityData = {
+  isActive: true,
   isAvailable: true,
   isBuyable: true,
   isInStock: true,

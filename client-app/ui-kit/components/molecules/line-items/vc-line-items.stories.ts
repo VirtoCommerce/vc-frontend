@@ -44,6 +44,7 @@ const TemplateAddToCart: StoryFn<typeof VcLineItems> = (args) => ({
     <template #default="{ item }">
         <VcAddToCart
           :model-value="item.quantity"
+          is-active
           is-available
           is-buyable
           is-in-stock
