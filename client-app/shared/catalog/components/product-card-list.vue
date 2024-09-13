@@ -33,7 +33,7 @@
     </div>
 
     <!-- Product title -->
-    <VcTooltip class="w-full" placement="bottom-start" width="min-content">
+    <VcTooltip class="w-full" placement="bottom-start" width="16rem">
       <template #trigger>
         <router-link
           :to="link"
