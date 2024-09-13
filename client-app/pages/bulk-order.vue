@@ -67,11 +67,11 @@ const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
 const tabs = [
   { id: "manually", label: t("pages.bulk_order.manually_tab") },
   { id: "copy&paste", label: t("pages.bulk_order.copy_n_paste_tab") },
-];
+] as const;
 
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
-const activeTab = ref<"manually" | "copy&paste">(tabs[0].id as "manually");
+const activeTab = ref<"manually" | "copy&paste">(tabs[0].id);
 
 const itemsWithErrors = shallowRef<OutputBulkItemType[]>();
 
