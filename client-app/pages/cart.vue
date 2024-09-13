@@ -54,6 +54,8 @@
         <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
       </template>
 
+      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
+
       <template #sidebar>
         <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
@@ -146,6 +148,7 @@ import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { recentlyBrowsed } from "@/core/api/graphql";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
@@ -166,10 +169,11 @@ import {
 } from "@/shared/checkout";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import type { LineItemType } from "@/core/api/graphql/types";
+import type { LineItemType, Product } from "@/core/api/graphql/types";
 import type { QuoteType } from "@/modules/quotes/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
+import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
 const config = inject(configInjectionKey, {});
 
@@ -212,6 +216,7 @@ usePageHead({
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
 const creatingQuote = ref(false);
+const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
 const cartContainsDeletedProducts = computed(() => cart.value?.items?.some((item: LineItemType) => !item.product));
@@ -281,6 +286,10 @@ void (async () => {
 
   if (!config.checkout_multistep_enabled) {
     await initialize();
+  }
+
+  if (isAuthenticated.value) {
+    recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
   }
 })();
 </script>
