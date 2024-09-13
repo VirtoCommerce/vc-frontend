@@ -167,24 +167,15 @@
       <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" />
     </div>
 
-    <div v-if="product.hasVariations" class="flex flex-col">
-      <VcButton :to="link" :target="target" variant="outline" size="sm" full-width @click="$emit('linkClick', $event)">
-        {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
-      </VcButton>
-
-      <router-link
-        :to="link"
-        :target="target"
-        class="mt-2.5 flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-[1.35rem] lg:text-xs"
-      >
-        <svg class="size-3 shrink-0 text-primary lg:size-2.5">
-          <use href="/static/images/link.svg#main"></use>
-        </svg>
-        <span class="truncate">
-          {{ $t("pages.catalog.show_on_a_separate_page") }}
-        </span>
-      </router-link>
-    </div>
+    <VcVariationsButton
+      v-if="product.hasVariations"
+      :link="link"
+      :target="target"
+      :variations-count="(product.variations?.length || 0) + 1"
+      show-link
+      @link-click="$emit('linkClick', $event)"
+    >
+    </VcVariationsButton>
 
     <template v-else>
       <slot name="cart-handler" />

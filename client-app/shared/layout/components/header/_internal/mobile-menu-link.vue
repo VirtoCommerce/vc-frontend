@@ -32,11 +32,11 @@
         <slot v-bind="{ isActive, isExactActive }" />
       </span>
 
-      <VcBadge v-if="count" variant="solid-light" color="info" size="lg" rounded>
+      <VcBadge v-if="count" variant="solid-light" color="neutral" size="lg" rounded>
         {{ $n(count, "decimal", { notation: "compact" }) }}
       </VcBadge>
 
-      <VcIcon v-if="isParent" class="ml-auto text-primary" name="chevron-right" />
+      <VcIcon v-if="isParent" class="ml-auto text-[--mobile-menu-navigation]" name="chevron-right" />
     </component>
   </router-link>
 </template>

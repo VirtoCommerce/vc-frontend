@@ -600,7 +600,8 @@
             "quantity": "Quantity"
           },
           "list": "List",
-          "table": "Table"
+          "table": "Table",
+          "no_results": "No results found"
         },
         "product_variation_card": {
           "variation_sku_label": "@:common.labels.sku",
@@ -1244,7 +1245,8 @@
         "title": "@:pages.cart.title"
       },
       "title": "Cart",
-      "empty_cart_description": "Your cart is empty"
+      "empty_cart_description": "Your cart is empty",
+      "recently_browsed_products": "Recently browsed"
     },
     "checkout": {
       "meta": {

@@ -49,6 +49,7 @@
             :model-value="!!popupSidebarFilters.branches.length"
             :disabled="loading"
             :message="$t('pages.catalog.branch_availability_filter_card.select_branch_text')"
+            prevent-default
             @change="$emit('openBranchesModal', true)"
           >
             <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
