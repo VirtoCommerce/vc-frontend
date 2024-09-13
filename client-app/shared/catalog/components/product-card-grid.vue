@@ -96,7 +96,7 @@
 
     <div class="flex grow flex-col pt-3 lg:pt-2.5">
       <!-- Product title -->
-      <VcTooltip>
+      <VcTooltip width="min-content">
         <template #trigger>
           <router-link
             :to="link"
