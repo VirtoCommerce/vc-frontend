@@ -102,9 +102,11 @@ import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { pushHistoricalEvent } from "@/core/api/graphql/common/mutations";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
+import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
   getFilterExpressionFromFacets,
@@ -113,6 +115,7 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 import {
   useProduct,
   useRelatedProducts,
@@ -176,6 +179,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
+const { isAuthenticated } = useUser();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
@@ -338,6 +342,13 @@ watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
     ga.viewItem(product.value as Product);
+    if (isAuthenticated.value) {
+      void pushHistoricalEvent({
+        eventType: "click",
+        productId: product.value.id,
+        storeId: globals.storeId,
+      });
+    }
   }
 });
 

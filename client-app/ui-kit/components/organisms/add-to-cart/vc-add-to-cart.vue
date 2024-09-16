@@ -10,6 +10,9 @@
       size="sm"
       single-line-message
       center
+      :error="!isValid"
+      :message="message"
+      :show-empty-details="showEmptyDetails"
       @input="onChange"
       @blur="onFocusOut"
     >
@@ -18,7 +21,7 @@
           class="vc-add-to-cart__icon-button"
           :variant="isButtonOutlined ? 'outline' : 'solid'"
           :loading="loading"
-          :disabled="disabled || !!errorMessage"
+          :disabled="isDisabled"
           :title="buttonText"
           :icon="icon"
           size="sm"
@@ -29,7 +32,7 @@
           class="vc-add-to-cart__text-button"
           :variant="isButtonOutlined ? 'outline' : 'solid'"
           :loading="loading"
-          :disabled="disabled || !!errorMessage"
+          :disabled="isDisabled"
           :title="buttonText"
           size="sm"
           truncate
@@ -68,7 +71,12 @@ interface IProps {
   maxQuantity?: number;
   countInCart?: number;
   availableQuantity?: number;
+  isActive?: boolean;
+  isAvailable?: boolean;
+  isBuyable?: boolean;
   isInStock?: boolean;
+  message?: string;
+  showEmptyDetails?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -76,7 +84,10 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 
-const { isInStock, minQuantity, maxQuantity, availableQuantity } = toRefs(props);
+const isValid = ref(true);
+
+const { disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
+  toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -96,11 +107,15 @@ const { quantitySchema } = useQuantityValidationSchema({
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
+const isDisabled = computed(
+  () => !isValid.value || disabled.value || !isActive || !isAvailable.value || !isBuyable.value || !isInStock.value,
+);
 
 const { errorMessage, validate, setValue } = useField("quantity", rules);
 
 async function validateFields(): Promise<void> {
   const { valid } = await validate();
+  isValid.value = valid;
 
   if (!valid && errorMessage.value) {
     emit("update:validation", { isValid: false, errorMessage: errorMessage.value });

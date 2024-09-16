@@ -1245,7 +1245,8 @@
         "title": "@:pages.cart.title"
       },
       "title": "Cart",
-      "empty_cart_description": "Your cart is empty"
+      "empty_cart_description": "Your cart is empty",
+      "recently_browsed_products": "Recently browsed"
     },
     "checkout": {
       "meta": {
