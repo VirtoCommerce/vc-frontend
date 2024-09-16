@@ -42,6 +42,7 @@ withDefaults(defineProps<IProps>(), {
   placement: "bottom",
   offsetOptions: 6,
   hover: true,
+  width: "max-content",
 });
 </script>
 
