@@ -396,7 +396,7 @@ async function updateFiltersSidebar(newFilters: ProductsFiltersType): Promise<vo
 }
 
 async function changeProductsPage(pageNumber: number): Promise<void> {
-  if (pageNumber === pagesCount.value) {
+  if (pageNumber > pagesCount.value) {
     return;
   }
 
