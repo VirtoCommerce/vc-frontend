@@ -129,7 +129,8 @@ export default async () => {
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
-  initModuleQuotes(router);
+  void initModuleQuotes(router, i18n);
+
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
   }

@@ -1,6 +1,7 @@
 import { useLocalStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { Logger } from "@/core/utilities";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
@@ -98,6 +99,28 @@ function detectLocale(locales: unknown[]): string {
   return stringLocales[0] || defaultLocale.value;
 }
 
+async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
+  const locale = currentLanguage.value?.twoLetterLanguageName;
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const moduleMessages = await import(`../../modules/${moduleName}/locales/${locale}.json`);
+
+    const existingMessages = i18n.global.getLocaleMessage(locale as string);
+
+    i18n.global.setLocaleMessage(locale as string, {
+      ...existingMessages,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      [moduleName]: moduleMessages,
+    });
+
+    Logger.debug(`The "${moduleName}" module locale: "${locale}" was loaded successfully.`);
+  } catch (error) {
+    Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`);
+  }
+}
+1;
+
 export function useLanguages() {
   return {
     pinedLocale,
@@ -122,5 +145,7 @@ export function useLanguages() {
     removeLocaleFromUrl,
     detectLocale,
     getLocaleFromUrl,
+
+    loadModuleLocale,
   };
 }
