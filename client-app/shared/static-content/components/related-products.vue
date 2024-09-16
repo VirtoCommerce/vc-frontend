@@ -5,7 +5,7 @@
     :title="$t('pages.product.related_product_section_title')"
     prepend-icon="cube"
     size="lg"
-    class="order-last max-md:-mx-4.5 print:hidden"
+    class="order-last max-md:-mx-4.5"
   >
     <div v-if="lg" class="-mb-2 flex flex-wrap items-stretch gap-x-7 gap-y-4">
       <ProductCardRelated

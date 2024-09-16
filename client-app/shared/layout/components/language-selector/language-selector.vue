@@ -108,7 +108,7 @@ function getCountryCode(language: ILanguage): string {
   }
 
   &__arrow {
-    @apply size-4 text-additional-50;
+    @apply size-4 text-[--mobile-menu-navigation];
 
     @media (min-width: theme("screens.lg")) {
       @apply size-2.5 text-primary;

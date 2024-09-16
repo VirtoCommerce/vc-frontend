@@ -83,6 +83,10 @@
       "company_members": "Membres de l'entreprise",
       "quote_requests": "Demandes de devis",
       "contact_administrator": "contacter l'administrateur du site"
+    },
+    "labels": {
+      "product_price": "Votre prix",
+      "sku": "SKU"
     }
   },
   "shared": {
@@ -169,6 +173,53 @@
           "quote_requests": "@:common.links.quote_requests"
         }
       }
+    },
+    "catalog": {
+      "product_card": {
+        "price_label": "@:common.labels.product_price",
+        "product_rating": "Évaluation:",
+        "product_vendor": "Marchand:"
+      },
+      "product_details": {
+        "technical_specs_block_title": "Propriétés",
+        "variations_block_title": "Variantes de produits",
+        "description_block_title": "Description",
+        "assets_block_title": "Fichiers",
+        "vendor_label": "Marchand",
+        "share_product_label": "Partager le produit",
+        "price_block": {
+          "title": "Prix et livraison",
+          "add_to_list_button": "Ajouter à la liste",
+          "product_email_title": "S’il vous plaît jetez un coup d’œil sur le produit: {0}"
+        },
+        "variations": {
+          "title": "Variantes de produits",
+          "columns": {
+            "item": "Article",
+            "stock": "Stock",
+            "price": "Prix",
+            "quantity": "Quantité"
+          },
+          "list": "Liste",
+          "table": "Table"
+        },
+        "product_variation_card": {
+          "variation_sku_label": "@:common.labels.sku",
+          "price_label": "@:common.labels.product_price",
+          "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        }
+      }
+    }
+  },
+  "pages": {
+    "product": {
+      "sku_label": "@:common.labels.sku",
+      "sku_copied_message": "@:common.labels.sku copié avec succès",
+      "variations_total_label": "Total dans votre panier:",
+      "view_cart_button": "Voir le panier",
+      "recommended_products_section_title": "Produits liés à cet article",
+      "related_product_section_title": "Produits connexes",
+      "price_label": "@:common.labels.product_price{':'}"
     }
   },
   "validation_error": {

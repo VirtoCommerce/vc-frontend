@@ -1,32 +1,32 @@
-query GetProductRecommendations(
-  $storeId: String!
-  $userId: String
-  $currencyCode: String
-  $cultureName: String
-  $productId: String
-  $model: String
-  $maxRecommendations: Int
-  $fallbackProductsFilter: String
-) {
-  recommendations(
+query GetRecentlyBrowsed($storeId: String!, $currencyCode: String, $cultureName: String, $maxProducts: Int) {
+  recentlyBrowsed(
     storeId: $storeId
-    userId: $userId
-    productId: $productId
     currencyCode: $currencyCode
     cultureName: $cultureName
-    model: $model
-    maxRecommendations: $maxRecommendations
-    fallbackProductsFilter: $fallbackProductsFilter
+    maxProducts: $maxProducts
   ) {
     products {
       id
       name
       code
       hasVariations
+      variations {
+        id
+      }
+      slug
       imgSrc
       vendor {
         name
       }
+      availabilityData {
+        availableQuantity
+        isActive
+        isAvailable
+        isBuyable
+        isInStock
+      }
+      minQuantity
+      maxQuantity
       price {
         actual {
           amount
