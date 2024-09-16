@@ -90,10 +90,10 @@
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, ref, shallowRef } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useShortCart } from "@/shared/cart";
+import { useShortCart, useFullCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
 import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
@@ -104,7 +104,9 @@ import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const router = useRouter();
 const { organization } = useUser();
-const { cart } = useShortCart();
+const route = useRoute();
+const cartComposable = computed(() => (route.name === "Cart" ? useFullCart() : useShortCart()));
+const cart = computed(() => cartComposable.value.cart.value);
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
