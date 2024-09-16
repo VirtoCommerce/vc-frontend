@@ -60,6 +60,18 @@ describe("toInputAddress", () => {
     expect(result.lastName).toBeUndefined();
     expect(result.description).toBeUndefined();
   });
+
+  it("should throw an error when address is null", () => {
+    expect(() => {
+      toInputAddress(null as unknown as AnyAddressType);
+    }).toThrowError();
+  });
+
+  it("should throw an error when address is undefined", () => {
+    expect(() => {
+      toInputAddress(undefined as unknown as AnyAddressType);
+    }).toThrowError();
+  });
 });
 
 describe("getAddressName", () => {
@@ -93,6 +105,18 @@ describe("getAddressName", () => {
     const result = getAddressName(address);
 
     expect(result).toBe("");
+  });
+
+  it("should throw an error when address is null", () => {
+    expect(() => {
+      getAddressName(null as unknown as AnyAddressType);
+    }).toThrowError();
+  });
+
+  it("should throw an error when address is undefined", () => {
+    expect(() => {
+      getAddressName(undefined as unknown as AnyAddressType);
+    }).toThrowError();
   });
 });
 
@@ -225,5 +249,15 @@ describe("isMemberAddressType", () => {
     };
 
     expect(isMemberAddressType(addressWithUndefined)).toBe(true);
+  });
+
+  it("should return false when address is null", () => {
+    const result = isMemberAddressType(null as unknown as AnyAddressType);
+    expect(result).toBe(false);
+  });
+
+  it("should return false when address is undefined", () => {
+    const result = isMemberAddressType(undefined as unknown as AnyAddressType);
+    expect(result).toBe(false);
   });
 });
