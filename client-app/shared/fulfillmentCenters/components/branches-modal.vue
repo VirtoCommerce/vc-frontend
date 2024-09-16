@@ -125,7 +125,7 @@
         <BranchSearch :model-value="searchInput" @update:input="search($event)" />
       </div>
 
-      <div v-if="branches.length && false">
+      <div v-if="branches.length">
         <template v-for="(branch, index) in branches">
           <BranchItem
             v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
