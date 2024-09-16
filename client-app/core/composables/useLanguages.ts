@@ -108,13 +108,17 @@ async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
 
     const existingMessages = i18n.global.getLocaleMessage(locale as string);
 
-    i18n.global.setLocaleMessage(locale as string, {
-      ...existingMessages,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      [moduleName]: moduleMessages,
-    });
+    if (moduleName in existingMessages) {
+      console.error(`Locales for the ${moduleName} key already loaded`);
+    } else {
+      i18n.global.setLocaleMessage(locale as string, {
+        ...existingMessages,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        [moduleName]: moduleMessages,
+      });
 
-    Logger.debug(`The "${moduleName}" module locale: "${locale}" was loaded successfully.`);
+      Logger.debug(`The "${moduleName}" module locale: "${locale}" was loaded successfully.`);
+    }
   } catch (error) {
     Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`);
   }
