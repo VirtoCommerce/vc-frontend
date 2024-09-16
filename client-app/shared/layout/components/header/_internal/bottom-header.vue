@@ -89,11 +89,11 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
-import { useShortCart, useFullCart } from "@/shared/cart";
+import { useFullCart, useShortCart } from "@/shared/cart";
 import { useCompareProducts } from "@/shared/compare";
 import { SearchBar } from "@/shared/layout";
 import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
@@ -104,9 +104,6 @@ import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 const router = useRouter();
 const { organization } = useUser();
-const route = useRoute();
-const cartComposable = computed(() => (route.name === "Cart" ? useFullCart() : useShortCart()));
-const cart = computed(() => cartComposable.value.cart.value);
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
 const { productsIds } = useCompareProducts();
@@ -140,4 +137,19 @@ function toggleCatalogDropdown(event: Event) {
     catalogMenuVisible.value = !catalogMenuVisible.value;
   }
 }
+
+const route = useRoute();
+let cart: ReturnType<typeof useShortCart>["cart"] | ReturnType<typeof useFullCart>["cart"];
+
+watch(
+  () => route.name,
+  (newRouteName) => {
+    if (newRouteName !== "Cart") {
+      cart = useShortCart().cart;
+    } else {
+      cart = useFullCart().cart;
+    }
+  },
+  { immediate: true },
+);
 </script>
