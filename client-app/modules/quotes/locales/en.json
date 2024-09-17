@@ -12,7 +12,12 @@
     "total_label": "@:common.labels.total",
     "search_placeholder": "Enter keyword...",
     "no_results_message": "No results found",
-    "request_quote_button": "Request Quote"
+    "request_quote_button": "Request Quote",
+    "cart_widget": {
+      "quote_request_hint": "You can request items in your cart through a special service",
+      "create_quote_button": "Add cart items to quote",
+      "title": "Quote request"
+    }
   },
   "quote_details": {
     "title": "Quote Request #{0}",

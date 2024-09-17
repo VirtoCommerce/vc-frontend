@@ -116,15 +116,15 @@
         <!-- Create quote widget -->
         <VcWidget
           v-if="$cfg.quotes_enabled && isAuthenticated && isQuotesEnabled(QUOTES_ENABLED_KEY)"
-          :title="$t('common.titles.quote_request')"
+          :title="$t('quotes.cart_widget.title')"
           class="print:hidden"
         >
           <p class="mb-5 text-xs font-normal text-neutral-400">
-            {{ $t("common.messages.quote_request") }}
+            {{ $t("quotes.cart_widget.quote_request_hint") }}
           </p>
 
           <VcButton :loading="creatingQuote" full-width variant="outline" @click="createQuote">
-            {{ $t("common.buttons.create_quote") }}
+            {{ $t("quotes.cart_widget.create_quote_button") }}
           </VcButton>
         </VcWidget>
       </template>
