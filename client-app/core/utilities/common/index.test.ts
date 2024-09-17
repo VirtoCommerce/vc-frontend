@@ -316,7 +316,7 @@ describe("convertToType", () => {
   });
 
   it("should handle undefined value", () => {
-    const result = convertToType<unknown>(undefined);
+    const result = convertToType<unknown>();
     expect(result).toBeUndefined();
   });
 });
@@ -478,7 +478,7 @@ describe("getLinkAttr", () => {
   });
 
   it("should return empty object when link is undefined", () => {
-    const result = getLinkAttr(undefined);
+    const result = getLinkAttr();
     expect(result).toEqual({});
   });
 
