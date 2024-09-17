@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, ref, shallowRef, watch } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
@@ -139,17 +139,5 @@ function toggleCatalogDropdown(event: Event) {
 }
 
 const route = useRoute();
-let cart: ReturnType<typeof useShortCart>["cart"] | ReturnType<typeof useFullCart>["cart"];
-
-watch(
-  () => route.name,
-  (newRouteName) => {
-    if (newRouteName !== "Cart") {
-      cart = useShortCart().cart;
-    } else {
-      cart = useFullCart().cart;
-    }
-  },
-  { immediate: true },
-);
+const { cart } = (route.name === "Cart" ? useFullCart : useShortCart)();
 </script>
