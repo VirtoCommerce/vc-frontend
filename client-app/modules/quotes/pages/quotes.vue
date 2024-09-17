@@ -3,12 +3,12 @@
     <!-- Title block -->
     <div class="flex items-center justify-between gap-2">
       <VcTypography tag="h1">
-        {{ $t("pages.account.quotes.title") }}
+        {{ $t("quotes.title") }}
       </VcTypography>
 
       <VcButton size="sm" variant="outline" prepend-icon="plus" @click="requestQuote">
-        <span class="hidden sm:inline">{{ $t("pages.account.quotes.request_quote_button") }}</span>
-        <span class="sm:hidden">{{ $t("pages.account.quotes.request_quote_button") }}</span>
+        <span class="hidden sm:inline">{{ $t("quotes.request_quote_button") }}</span>
+        <span class="sm:hidden">{{ $t("quotes.request_quote_button") }}</span>
       </VcButton>
     </div>
 
@@ -24,7 +24,7 @@
         <VcInput
           v-model="keyword"
           :disabled="fetching"
-          :placeholder="$t('pages.account.quotes.search_placeholder')"
+          :placeholder="$t('quotes.search_placeholder')"
           maxlength="64"
           class="w-full"
           @keydown.enter="applyKeyword"
@@ -54,10 +54,10 @@
     <!-- Empty view -->
     <VcEmptyView
       v-if="!fetching && !quotes.length"
-      :text="$t(!!keyword ? 'pages.account.quotes.no_results_message' : 'pages.account.quotes.no_quotes_message')"
+      :text="$t(!!keyword ? 'quotes.no_results_message' : 'quotes.no_quotes_message')"
     >
       <template #icon>
-        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.no_orders_img_alt')" />
+        <VcImage src="/static/images/common/order.svg" :alt="$t('orders.no_orders_img_alt')" />
       </template>
     </VcEmptyView>
 
@@ -71,7 +71,7 @@
           :items="quotes"
           :pages="pages"
           :page="page"
-          :description="$t('pages.account.quotes.meta.table_description')"
+          :description="$t('quotes.meta.table_description')"
           @item-click="goToQuoteDetails"
           @header-click="applySorting"
           @page-changed="changePage"
@@ -86,7 +86,7 @@
             >
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.quote_number_label") }}
+                  {{ $t("quotes.quote_number_label") }}
                 </span>
 
                 <span class="overflow-hidden text-ellipsis pr-4 font-black">
@@ -100,7 +100,7 @@
 
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.date_label") }}
+                  {{ $t("quotes.date_label") }}
                 </span>
 
                 <span class="overflow-hidden text-ellipsis">
@@ -110,7 +110,7 @@
 
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.total_label") }}
+                  {{ $t("quotes.total_label") }}
                 </span>
 
                 <span class="overflow-hidden text-ellipsis font-black">
@@ -124,28 +124,28 @@
             <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.quote_number_label") }}
+                  {{ $t("quotes.quote_number_label") }}
                 </span>
                 <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.date_label") }}
+                  {{ $t("quotes.date_label") }}
                 </span>
                 <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.total_label") }}
+                  {{ $t("quotes.total_label") }}
                 </span>
                 <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
               </div>
 
               <div class="flex flex-col">
                 <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.status_label") }}
+                  {{ $t("quotes.status_label") }}
                 </span>
                 <div class="h-6 animate-pulse bg-neutral-200"></div>
               </div>
@@ -211,7 +211,7 @@ const router = useRouter();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 usePageHead({
-  title: t("pages.account.quotes.meta.title"),
+  title: t("quotes.meta.title"),
 });
 
 const { quotes, fetching, itemsPerPage, pages, page, keyword, sort, fetchQuotes } = useUserQuotes();
@@ -230,23 +230,23 @@ const sortQueryParam = useRouteQueryParam<string>(QueryParamName.Sort, {
 const columns = ref<ITableColumn[]>([
   {
     id: "number",
-    title: t("pages.account.quotes.quote_number_label"),
+    title: t("quotes.quote_number_label"),
     sortable: true,
   },
   {
     id: "createdDate",
-    title: t("pages.account.quotes.date_label"),
+    title: t("quotes.date_label"),
     sortable: true,
   },
   {
     id: "status",
-    title: t("pages.account.quotes.status_label"),
+    title: t("quotes.status_label"),
     sortable: true,
     align: "center",
   },
   {
     id: "total",
-    title: t("pages.account.quotes.total_label"),
+    title: t("quotes.total_label"),
     align: "right",
   },
 ]);

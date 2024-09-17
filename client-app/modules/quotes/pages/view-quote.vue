@@ -6,7 +6,7 @@
 
     <VcLayoutWithRightSidebar>
       <VcTypography tag="h1">
-        {{ $t("pages.account.quote_details.title", [quote.number]) }}
+        {{ $t("quote_details.title", [quote.number]) }}
       </VcTypography>
 
       <template #sidebar>
@@ -28,12 +28,7 @@
       </VcWidget>
 
       <!-- Quote comment -->
-      <VcWidget
-        v-if="quote.comment"
-        :title="$t('pages.account.quote_details.comment')"
-        prepend-icon="document-text"
-        size="lg"
-      >
+      <VcWidget v-if="quote.comment" :title="$t('quote_details.comment')" prepend-icon="document-text" size="lg">
         <div class="text-base">
           {{ quote.comment }}
         </div>
@@ -41,7 +36,7 @@
 
       <VcWidget
         v-if="quote.attachments?.length"
-        :title="$t('pages.account.quote_details.files')"
+        :title="$t('quote_details.files')"
         size="lg"
         prepend-icon="document-text"
       >
@@ -53,10 +48,10 @@
       </VcWidget>
 
       <template #sidebar>
-        <VcWidget :title="$t('pages.account.quote_details.quote_summary')">
+        <VcWidget :title="$t('quote_details.quote_summary')">
           <div class="flex justify-between text-base">
             <span class="font-bold">
-              {{ $t("pages.account.quote_details.subTotal") }}
+              {{ $t("quote_details.subTotal") }}
             </span>
 
             <span class="text-lg font-black text-[--price-color]">
@@ -65,21 +60,21 @@
           </div>
           <div class="border-y py-2 text-base font-normal">
             <div class="flex justify-between text-base">
-              {{ $t("pages.account.quote_details.discountTotal") }}
+              {{ $t("quote_details.discountTotal") }}
 
               <span>
                 <VcPriceDisplay :value="quote.totals?.discountTotal" />
               </span>
             </div>
             <div class="flex justify-between text-base">
-              {{ $t("pages.account.quote_details.shippingTotal") }}
+              {{ $t("quote_details.shippingTotal") }}
 
               <span>
                 <VcPriceDisplay :value="quote.totals?.shippingTotal" />
               </span>
             </div>
             <div class="flex justify-between text-base">
-              {{ $t("pages.account.quote_details.taxTotal") }}
+              {{ $t("quote_details.taxTotal") }}
 
               <span class="">
                 <VcPriceDisplay :value="quote.totals?.taxTotal" />
@@ -88,7 +83,7 @@
           </div>
           <div class="flex justify-between text-base">
             <span class="font-bold">
-              {{ $t("pages.account.quote_details.total") }}
+              {{ $t("quote_details.total") }}
             </span>
 
             <span class="text-lg font-black text-success-700">
@@ -97,27 +92,27 @@
           </div>
         </VcWidget>
 
-        <VcWidget :title="$t('pages.account.quote_details.quote_data')" class="-order-1 lg:order-none">
+        <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
           <div class="space-y-1">
             <div class="flex text-base">
-              <span class="mr-2 font-bold">{{ $t("pages.account.quote_details.created") }}:</span>
+              <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
 
               <span>{{ $d(quote.createdDate) }}</span>
             </div>
 
             <div class="flex items-center gap-2">
-              <span class="text-base font-bold">{{ $t("pages.account.quote_details.status") }}:</span>
+              <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
 
               <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
             </div>
           </div>
         </VcWidget>
 
-        <VcWidget v-if="shippingAddress" :title="$t('pages.account.quote_details.shipping_address')">
+        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
           <VcAddressInfo :address="shippingAddress!" />
         </VcWidget>
 
-        <VcWidget v-if="billingAddress" :title="$t('pages.account.quote_details.billing_address')">
+        <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
           <VcAddressInfo :address="billingAddress!" />
         </VcWidget>
       </template>
@@ -152,7 +147,7 @@ const notification = useNotifications();
 const router = useRouter();
 
 usePageHead({
-  title: t("pages.account.quote_details.title", [quote!.value?.number]),
+  title: t("quote_details.title", [quote!.value?.number]),
 });
 
 async function approve() {
@@ -161,7 +156,7 @@ async function approve() {
     await router.push({ name: "OrderDetails", params: { orderId: result.orderId } });
   } catch (e) {
     notification.error({
-      text: t("pages.account.quote_details.error.approve"),
+      text: t("quote_details.error.approve"),
     });
   }
 }
@@ -172,7 +167,7 @@ async function decline() {
     await fetchQuote({ id: props.quoteId });
   } catch (e) {
     notification.error({
-      text: t("pages.account.quote_details.error.decline"),
+      text: t("quote_details.error.decline"),
     });
   }
 }
@@ -180,7 +175,7 @@ async function decline() {
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+  { title: t("quote_details.title", [quote?.value?.number]) },
 ]);
 
 watchEffect(async () => {
