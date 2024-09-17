@@ -13,13 +13,22 @@
     "search_placeholder": "Enter keyword...",
     "no_results_message": "No results found",
     "request_quote_button": "Request Quote",
+    "search_quote_requests": "Search quote requests",
+    "reset_search": "Reset search",
     "cart_widget": {
       "quote_request_hint": "You can request items in your cart through a special service",
       "create_quote_button": "Add cart items to quote",
       "title": "Quote request"
+    },
+    "navigation": {
+      "route_name": "Quote Requests"
+    },
+    "errors": {
+      "creating_quote_error": "Error when creating an quote"
     }
   },
   "quote_details": {
+    "quote_request_comment": "Quote request comment",
     "title": "Quote Request #{0}",
     "comment": "Comment",
     "comment_field_label": "Do you have a general remark for this Quote Request?",

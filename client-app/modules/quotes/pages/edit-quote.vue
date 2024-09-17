@@ -20,7 +20,7 @@
           :required="!hasItems"
           :error="!commentValid"
           :message="commentErrorMessage"
-          :aria-label="$t('common.labels.quote_request_comment')"
+          :aria-label="$t('quote_details.quote_request_comment')"
           no-resize
           counter
           @input="editComment"
@@ -195,7 +195,7 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
+  { title: t("quotes.navigation.route_name"), route: { name: "Quotes" } },
   { title: t("quote_details.title", [quote?.value?.number]) },
 ]);
 

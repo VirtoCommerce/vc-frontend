@@ -97,7 +97,7 @@
       <AccountNavigationLink
         v-if="$cfg.quotes_enabled && isQuotesEnabled(QUOTES_ENABLED_KEY)"
         :to="{ name: 'Quotes' }"
-        :text="$t('shared.account.navigation.links.quote_requests')"
+        :text="$t('quotes.navigation.route_name')"
         class="quotes-icon"
       />
     </VcWidget>

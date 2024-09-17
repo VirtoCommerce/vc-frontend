@@ -263,7 +263,7 @@ async function createQuote(): Promise<void> {
     });
   } else {
     notifications.error({
-      text: globals.i18n.global.t("common.messages.creating_quote_error"),
+      text: globals.i18n.global.t("quotes.errors.creating_quote_error"),
       duration: 15000,
       single: true,
     });

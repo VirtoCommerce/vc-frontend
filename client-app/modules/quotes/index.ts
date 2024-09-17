@@ -56,7 +56,7 @@ const mobileMenuItem: DeepPartial<MenuType> = {
           {
             id: "quotes",
             route: { name: "Quotes" },
-            title: "shared.layout.header.mobile.account_menu.quote_requests",
+            title: "quotes.navigation.route_name",
             icon: "/static/images/dashboard/icons/quotes.svg#main",
           },
         ],

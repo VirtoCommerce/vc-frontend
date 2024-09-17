@@ -32,7 +32,7 @@
           <template #append>
             <button
               v-if="keyword"
-              :aria-label="$t('common.buttons.reset_search_quote_requests')"
+              :aria-label="$t('quotes.reset_search')"
               type="button"
               class="flex h-full items-center px-4"
               @click="resetKeyword"
@@ -41,7 +41,7 @@
             </button>
 
             <VcButton
-              :aria-label="$t('common.buttons.search_quote_requests')"
+              :aria-label="$t('quotes.search_quote_requests')"
               :disabled="fetching"
               icon="search"
               @click="applyKeyword"
