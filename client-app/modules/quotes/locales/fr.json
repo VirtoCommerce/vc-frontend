@@ -1,0 +1,8 @@
+{
+  "quotes": {
+    "request_quote_button": "Ajouter des articles au devis",
+    "navigation": {
+      "route_name": "Demandes de devis"
+    }
+  }
+}

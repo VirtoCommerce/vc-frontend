@@ -1,3 +1,8 @@
 {
-  "test": "testegrh"
+  "quotes": {
+    "request_quote_button": "Artikel zum Angebot hinzufügen",
+    "navigation": {
+      "route_name": "Angebotsanfragen"
+    }
+  }
 }
