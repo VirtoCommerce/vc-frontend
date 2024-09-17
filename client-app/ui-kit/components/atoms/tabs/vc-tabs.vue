@@ -21,9 +21,9 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="T extends ItemType | string | number, U extends string">
+<script setup lang="ts" generic="T extends ItemType | string | number, U extends string | number">
 export type ItemType = {
-  [key: string]: unknown;
+  [key: string | number]: unknown;
 };
 
 type EmitType = T extends ItemType ? T[U] : T;
