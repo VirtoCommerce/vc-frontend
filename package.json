@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -43,7 +43,7 @@
   "dependencies": {
     "@apollo/client": "^3.10.5",
     "@builder.io/sdk-vue": "^1.0.31",
-    "@floating-ui/vue": "^1.0.6",
+    "@floating-ui/vue": "^1.1.4",
     "@headlessui/vue": "^1.7.22",
     "@tailwindcss/container-queries": "^0.1.1",
     "@unhead/vue": "^1.9.14",
