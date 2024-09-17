@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { uniqBy } from "lodash";
-import type { KeyValueType } from "@/core/api/graphql/types";
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -29,10 +28,6 @@ export function extractHostname(url: string) {
   hostname = hostname.split("?")[0];
 
   return hostname;
-}
-
-export function sleep<T>(ms: number, resolvedValue?: T): Promise<T> {
-  return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }
 
 export function truncate(str: string, length: number): string {
@@ -78,23 +73,6 @@ export function extractNumberFromString(str: string): number {
   const regex = /\d+/;
   const match = regex.exec(str);
   return match ? parseInt(match[0]) : 0;
-}
-
-export function getValueByKey(data: KeyValueType[], key: string): string {
-  const param = data.find((el) => el.key === key);
-
-  if (!param?.value) {
-    throw new Error(`Missed parameter ${key}`);
-  }
-
-  return param.value;
-}
-
-export function objectToKeyValues(object: { [key: string]: string }): KeyValueType[] {
-  return Object.keys(object).map((key) => ({
-    key,
-    value: object[key],
-  }));
 }
 
 export function replaceXFromBeginning(input: string, by: string = "•••• "): string {

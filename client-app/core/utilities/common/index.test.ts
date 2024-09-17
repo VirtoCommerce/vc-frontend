@@ -1,22 +1,18 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import {
   getBaseUrl,
   getReturnUrlValue,
   extractHostname,
-  sleep,
   truncate,
   getLinkTarget,
   appendSuffixToFilename,
   stringFormat,
   asyncForEach,
   extractNumberFromString,
-  getValueByKey,
-  objectToKeyValues,
   replaceXFromBeginning,
   getLinkAttr,
   uniqByLast,
 } from "./index";
-import type { KeyValueType } from "@/core/api/graphql/types";
 
 describe("getBaseUrl", () => {
   const originalLocation = window.location;
@@ -146,50 +142,6 @@ describe("extractHostname", () => {
     const url = "localhost:3000";
     const result = extractHostname(url);
     expect(result).toBe("localhost");
-  });
-});
-
-describe("sleep", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("should resolve after the specified time", async () => {
-    const sleepPromise = sleep(1000);
-    let isResolved = false;
-
-    void sleepPromise.then(() => {
-      isResolved = true;
-    });
-
-    // Initially, the Promise should not be resolved
-    expect(isResolved).toBe(false);
-
-    // It should not be resolved before the specified time
-    await vi.advanceTimersByTimeAsync(500);
-    expect(isResolved).toBe(false);
-
-    // After advancing time by the remaining 500ms, the Promise should resolve
-    await vi.advanceTimersByTimeAsync(500);
-    expect(isResolved).toBe(true);
-  });
-
-  it("should resolve with the provided value", async () => {
-    const resolvedValue = "test value";
-    let result: string | undefined = undefined;
-
-    const sleepPromise = sleep(500, resolvedValue);
-    void sleepPromise.then((value) => {
-      result = value;
-    });
-
-    await vi.advanceTimersByTimeAsync(500);
-
-    expect(result).toBe(resolvedValue);
   });
 });
 
@@ -349,66 +301,6 @@ describe("extractNumberFromString", () => {
     const str = "abc456";
     const result = extractNumberFromString(str);
     expect(result).toBe(456);
-  });
-});
-
-describe("getValueByKey", () => {
-  it("should return the value for the given key", () => {
-    const data: KeyValueType[] = [
-      { key: "param1", value: "value1" },
-      { key: "param2", value: "value2" },
-    ];
-
-    const result = getValueByKey(data, "param1");
-    expect(result).toBe("value1");
-  });
-
-  it("should throw an error if key is not found", () => {
-    const data: KeyValueType[] = [{ key: "param1", value: "value1" }];
-
-    expect(() => {
-      getValueByKey(data, "param2");
-    }).toThrowError("Missed parameter param2");
-  });
-
-  it("should throw an error if value is undefined", () => {
-    const data: KeyValueType[] = [{ key: "param1", value: undefined }];
-
-    expect(() => {
-      getValueByKey(data, "param1");
-    }).toThrowError("Missed parameter param1");
-  });
-
-  it("should throw an error if value is null", () => {
-    const data: KeyValueType[] = [{ key: "param1", value: null as unknown as string }];
-
-    expect(() => {
-      getValueByKey(data, "param1");
-    }).toThrowError("Missed parameter param1");
-  });
-});
-
-describe("objectToKeyValues", () => {
-  it("should convert object to array of KeyValueType", () => {
-    const obj = {
-      param1: "value1",
-      param2: "value2",
-    };
-
-    const result = objectToKeyValues(obj);
-
-    expect(result).toEqual([
-      { key: "param1", value: "value1" },
-      { key: "param2", value: "value2" },
-    ]);
-  });
-
-  it("should handle empty object", () => {
-    const obj = {};
-
-    const result = objectToKeyValues(obj);
-
-    expect(result).toEqual([]);
   });
 });
 
