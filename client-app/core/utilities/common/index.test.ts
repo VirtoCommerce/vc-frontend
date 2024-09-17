@@ -8,7 +8,6 @@ import {
   getLinkTarget,
   appendSuffixToFilename,
   stringFormat,
-  convertToType,
   asyncForEach,
   extractNumberFromString,
   getValueByKey,
@@ -293,31 +292,6 @@ describe("stringFormat", () => {
     const template = "No placeholders here.";
     const result = stringFormat(template);
     expect(result).toBe("No placeholders here.");
-  });
-});
-
-describe("convertToType", () => {
-  it("should convert value to specified type", () => {
-    type TargetType = { a: number; b: string };
-
-    const value = { a: 1, b: "test" };
-    const result = convertToType<TargetType>(value);
-
-    expect(result).toEqual(value);
-  });
-
-  it("should clone the value", () => {
-    const value = { a: 1, b: { c: 2 } };
-    const result = convertToType<typeof value>(value);
-
-    expect(result).toEqual(value);
-    expect(result).not.toBe(value); // Should be a deep clone
-    expect(result.b).not.toBe(value.b); // Nested objects should be cloned
-  });
-
-  it("should handle undefined value", () => {
-    const result = convertToType<unknown>();
-    expect(result).toBeUndefined();
   });
 });
 

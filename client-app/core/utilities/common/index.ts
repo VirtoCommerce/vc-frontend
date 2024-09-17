@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { uniqBy, cloneDeep } from "lodash";
+import { uniqBy } from "lodash";
 import type { KeyValueType } from "@/core/api/graphql/types";
 
 export function getBaseUrl(supportedLocales: string[]): string {
@@ -63,10 +63,6 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
 
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
-}
-
-export function convertToType<To, From = Record<any, any>>(value?: From): To {
-  return cloneDeep<To>(value as any);
 }
 
 export async function asyncForEach<T>(
