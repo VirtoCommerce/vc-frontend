@@ -31,7 +31,7 @@ export function extractHostname(url: string) {
   return hostname;
 }
 
-export function sleep(ms: number, resolvedValue?: any): Promise<any> {
+export function sleep<T>(ms: number, resolvedValue?: T): Promise<T> {
   return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
 }
 
@@ -61,7 +61,6 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
 }
 
-//todo add unit test
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
 }
