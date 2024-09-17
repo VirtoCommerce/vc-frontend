@@ -338,9 +338,9 @@ describe("getLinkAttr", () => {
   });
 
   it("should return { externalLink: link } when link is an external URL", () => {
-    const link = "http://external.com";
+    const link = "https://external.com";
     const result = getLinkAttr(link);
-    expect(result).toEqual({ externalLink: "http://external.com" });
+    expect(result).toEqual({ externalLink: "https://external.com" });
   });
 
   it("should return empty object when link is undefined", () => {
