@@ -4,6 +4,7 @@
     variant="warning"
     icon="warning"
     dividers
+    is-mobile-fullscreen
   >
     <div class="mb-4">
       <p>
@@ -19,13 +20,13 @@
       <table class="w-full table-auto">
         <thead>
           <tr>
-            <th>
+            <th class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.sku") }}
             </th>
-            <th>
+            <th class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.products") }}
             </th>
-            <th class="text-center">
+            <th class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.quantity") }}
             </th>
           </tr>
@@ -37,7 +38,7 @@
               {{ duplicateSkuItem.sku }}
             </td>
 
-            <td class="p-1">
+            <td class="px-2 py-1">
               <VcSelect
                 v-model="duplicateSkuItem.productId"
                 :items="duplicateSkuItem.products"
@@ -65,7 +66,7 @@
               {{ errorItem.productSku }}
             </td>
 
-            <td class="p-1 text-danger" colspan="2">
+            <td class="px-2 py-1 text-danger" colspan="2">
               <div v-for="error in errorItem.errors" :key="error.errorCode">
                 {{ translate(error) }}
               </div>
