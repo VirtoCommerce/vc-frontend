@@ -1,0 +1,9 @@
+.vc-product-image {
+  &__carousel-btn {
+    @apply hidden;
+  }
+
+  &__carousel-bullets {
+    @apply hidden;
+  }
+}

@@ -102,15 +102,20 @@ import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { pushHistoricalEvent } from "@/core/api/graphql/common/mutations";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
+import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
   getFilterExpressionFromFacets,
   getFilterExpression,
   getSortingExpression,
+  getFilterExpressionForAvailableIn,
+  getFilterExpressionForInStock,
 } from "@/core/utilities";
+import { useUser } from "@/shared/account";
 import {
   useProduct,
   useRelatedProducts,
@@ -174,6 +179,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
+const { isAuthenticated } = useUser();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
@@ -185,7 +191,11 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
   page: 1,
   itemsPerPage: 50,
   sort: getSortingExpression(variationSortInfo.value),
-  filter: variationsFilterExpression.value,
+  filter: getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionForAvailableIn(productsFilters.value.branches),
+    getFilterExpressionForInStock(productsFilters.value.inStock),
+  ]),
 });
 
 // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1099
@@ -256,6 +266,8 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
     getFilterExpressionFromFacets(newFilters.facets),
+    getFilterExpressionForInStock(newFilters.inStock),
+    getFilterExpressionForAvailableIn(newFilters.branches),
   ]);
 
   await fetchProducts(variationsSearchParams.value);
@@ -270,6 +282,8 @@ async function removeFacetFilter(
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
     getFilterExpressionFromFacets(productsFilters.value.facets),
+    getFilterExpressionForAvailableIn(productsFilters.value.branches),
+    getFilterExpressionForInStock(productsFilters.value.inStock),
   ]);
 
   await fetchProducts(variationsSearchParams.value);
@@ -328,6 +342,13 @@ watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
     ga.viewItem(product.value as Product);
+    if (isAuthenticated.value) {
+      void pushHistoricalEvent({
+        eventType: "click",
+        productId: product.value.id,
+        storeId: globals.storeId,
+      });
+    }
   }
 });
 

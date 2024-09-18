@@ -15,7 +15,7 @@
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <svg class="text-primary" height="20" width="20">
+        <svg class="text-[--mobile-menu-navigation]" height="20" width="20">
           <use href="/static/images/close.svg#main" />
         </svg>
       </button>
@@ -24,7 +24,7 @@
     <!-- region Children links section -->
     <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
-        <button type="button" class="appearance-none self-start text-accent-100" @click="goBack">
+        <button type="button" class="appearance-none self-start text-[--mobile-menu-navigation]" @click="goBack">
           <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
@@ -179,7 +179,7 @@
               </div>
 
               <div>
-                <button type="button" class="font-bold text-primary" @click="() => signMeOut()">
+                <button type="button" class="font-bold text-[--mobile-menu-navigation]" @click="() => signMeOut()">
                   {{ $t("shared.layout.header.link_logout") }}
                 </button>
               </div>
