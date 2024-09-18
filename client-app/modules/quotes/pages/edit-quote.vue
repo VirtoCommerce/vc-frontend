@@ -128,7 +128,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
+import { asyncForEach, isEqualAddresses } from "@/core/utilities";
 import { DEFAULT_QUOTE_FILES_SCOPE, useUser, useUserAddresses } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
@@ -308,7 +308,7 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
       address: currentAddress,
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
-        const quoteAddress = convertToType<QuoteAddressType>({ ...updatedAddress, addressType });
+        const quoteAddress = cloneDeep({ ...updatedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
         closeModal();
@@ -337,13 +337,13 @@ function openSelectAddressModal(addressType: AddressType): void {
     component: SelectAddressModal,
     props: {
       addresses: accountAddresses.value,
-      currentAddress: convertToType<MemberAddressType>(
+      currentAddress: cloneDeep(
         addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value,
-      ),
+      ) as MemberAddressType,
       isCorporateAddresses: isCorporateMember.value,
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
+        const quoteAddress = cloneDeep({ ...selectedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
         setBillingAddressEqualsShipping();
