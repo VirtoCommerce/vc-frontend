@@ -46,7 +46,7 @@
                 <slot :close="close" />
               </VcDialogContent>
 
-              <VcDialogFooter v-if="!hideActions">
+              <VcDialogFooter v-if="!hideActions" @close="close">
                 <slot name="actions" :close="close" />
               </VcDialogFooter>
             </VcDialog>

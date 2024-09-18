@@ -1,44 +1,62 @@
 <template>
-  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="50rem" is-mobile-fullscreen dividers>
+  <VcModal :title="$t('shared.checkout.select_address_modal.title')" max-width="60rem" is-mobile-fullscreen dividers>
     <template #actions="{ close }">
-      <div v-if="pages > 1">
-        <p v-if="page >= PAGE_LIMIT" class="text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+      <div class="flex w-full flex-wrap items-center gap-3">
+        <div v-if="pages > 1" class="w-full sm:w-auto sm:grow">
+          <VcPagination
+            v-model:page="page"
+            class="flex justify-center sm:block"
+            :pages="Math.min(pages, PAGE_LIMIT)"
+            compact
+          />
 
-        <VcPagination v-model:page="page" :pages="Math.min(pages, PAGE_LIMIT)" />
+          <VcInputDetails v-if="page >= PAGE_LIMIT" :message="$t('ui_kit.reach_limit.page_limit')" />
+        </div>
+
+        <div class="flex w-full gap-3 sm:w-auto">
+          <VcButton
+            v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization) || true"
+            variant="outline"
+            no-wrap
+            min-width="8rem"
+            @click="
+              $emit('addNewAddress');
+              close();
+            "
+          >
+            {{ $t("shared.checkout.select_address_modal.add_address_button") }}
+          </VcButton>
+
+          <VcButton
+            v-else
+            no-wrap
+            min-width="8rem"
+            color="secondary"
+            variant="outline"
+            class="flex-none max-md:!hidden"
+            @click="close"
+          >
+            {{ $t("shared.checkout.select_address_modal.cancel_button") }}
+          </VcButton>
+
+          <VcButton
+            no-wrap
+            :disabled="!selectedAddress"
+            class="ms-auto sm:ms-3"
+            min-width="8rem"
+            @click="
+              save();
+              close();
+            "
+          >
+            {{
+              isMobile
+                ? $t("shared.checkout.select_address_modal.save_button")
+                : $t("shared.checkout.select_address_modal.ok_button")
+            }}
+          </VcButton>
+        </div>
       </div>
-
-      <VcButton
-        v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
-        class="me-auto"
-        variant="outline"
-        no-wrap
-        @click="
-          $emit('addNewAddress');
-          close();
-        "
-      >
-        {{ $t("shared.checkout.select_address_modal.add_address_button") }}
-      </VcButton>
-
-      <VcButton color="secondary" variant="outline" class="flex-none max-md:!hidden" @click="close">
-        {{ $t("shared.checkout.select_address_modal.cancel_button") }}
-      </VcButton>
-
-      <VcButton
-        class="xs:flex-none"
-        no-wrap
-        :disabled="!selectedAddress"
-        @click="
-          save();
-          close();
-        "
-      >
-        {{
-          isMobile
-            ? $t("shared.checkout.select_address_modal.save_button")
-            : $t("shared.checkout.select_address_modal.ok_button")
-        }}
-      </VcButton>
     </template>
 
     <div class="rounded border">
@@ -49,7 +67,7 @@
         @page-changed="onPageChange"
       >
         <template #mobile-item="itemData">
-          <div class="flex items-center space-x-3 border-b p-6">
+          <div class="flex items-center space-x-3 border-b p-6 last:border-none">
             <div class="w-1/2 grow truncate">
               <VcBadge v-if="itemData.item.isFavorite" size="sm" variant="outline-dark" rounded>
                 <VcIcon name="whishlist" />
