@@ -126,11 +126,9 @@
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
-import { useRoute } from "vue-router";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { QueryParamName } from "@/core/enums";
-import { useFullCart, useShortCart } from "@/shared/cart";
-import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import { useDeferShortCart, useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
@@ -145,6 +143,7 @@ const headerElement = ref(null);
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
+const { cart } = useDeferShortCart();
 const { logoUrl } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
@@ -162,10 +161,4 @@ syncRefs(mobileMenuVisible, useScrollLock(document.body));
 
 watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
-
-const route = useRoute();
-const { cart: fullCart, loading } = useFullCart();
-const cart = computed(() =>
-  route.name === "Cart" && (!fullCart.value || loading.value) ? null : useShortCart().cart.value,
-);
 </script>
