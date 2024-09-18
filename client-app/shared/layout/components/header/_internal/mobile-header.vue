@@ -164,5 +164,8 @@ watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 
 const route = useRoute();
-const { cart } = (route.name === "Cart" ? useFullCart : useShortCart)();
+const { cart: fullCart, loading } = useFullCart();
+const cart = computed(() =>
+  route.name === "Cart" && (!fullCart.value || loading.value) ? null : useShortCart().cart.value,
+);
 </script>

@@ -139,5 +139,8 @@ function toggleCatalogDropdown(event: Event) {
 }
 
 const route = useRoute();
-const { cart } = (route.name === "Cart" ? useFullCart : useShortCart)();
+const { cart: fullCart, loading } = useFullCart();
+const cart = computed(() =>
+  route.name === "Cart" && (!fullCart.value || loading.value) ? null : useShortCart().cart.value,
+);
 </script>
