@@ -47,8 +47,6 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .vc-tooltip {
-  @apply relative;
-
   &__content {
     @apply max-w-full rounded-sm bg-additional-50 py-1.5 px-3.5 text-xs text-neutral-800 shadow-md;
   }
