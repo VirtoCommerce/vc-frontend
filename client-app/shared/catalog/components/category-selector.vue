@@ -3,7 +3,7 @@
     <div v-for="i in 6" :key="i" />
   </VcWidgetSkeleton>
 
-  <VcWidget v-else size="xs">
+  <VcWidget v-else-if="!!parentCategory || category?.childCategories?.length" size="xs">
     <template v-if="!!parentCategory" #header>
       <router-link
         :to="getCategoryRoute(parentCategory!)"
