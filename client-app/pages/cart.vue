@@ -17,7 +17,7 @@
   </VcEmptyPage>
 
   <VcContainer v-else class="relative z-0">
-    <VcLoaderOverlay :visible="creatingQuote" fixed-spinner />
+    <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
@@ -123,12 +123,18 @@
             {{ $t("common.messages.quote_request") }}
           </p>
 
-          <VcButton :loading="creatingQuote" full-width variant="outline" @click="createQuote">
+          <VcButton :loading="isCartLoked" full-width variant="outline" @click="createQuote">
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcWidget>
 
-        <component :is="item.element" v-for="item in sidebarWidgets" :key="item.id" />
+        <component
+          :is="item.element"
+          v-for="item in sidebarWidgets"
+          :key="item.id"
+          @lock-cart="isCartLoked = true"
+          @unlock-cart="isCartLoked = false"
+        />
       </template>
     </VcLayoutWithRightSidebar>
 
@@ -220,7 +226,7 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
-const creatingQuote = ref(false);
+const isCartLoked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
@@ -256,7 +262,7 @@ async function createQuote(): Promise<void> {
     return;
   }
 
-  creatingQuote.value = true;
+  isCartLoked.value = true;
 
   const result = await createQuoteFromCart({ command: { cartId: cart.value!.id, comment: "" } });
   const quote = result?.data?.createQuoteFromCart as QuoteType | undefined;
@@ -276,7 +282,7 @@ async function createQuote(): Promise<void> {
 
   await refetch();
 
-  creatingQuote.value = false;
+  isCartLoked.value = false;
 }
 
 void (async () => {

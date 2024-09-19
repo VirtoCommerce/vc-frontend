@@ -17,14 +17,9 @@ function _useCartExtensionPoints() {
     }
   }
 
-  function unregisterSidebarWidget(id: string) {
-    sidebarWidgets.value = sidebarWidgets.value.filter((el) => el.id === id);
-  }
-
   return {
     sidebarWidgets,
     registerSidebarWidget,
-    unregisterSidebarWidget,
   };
 }
 
