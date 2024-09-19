@@ -219,7 +219,7 @@
       "view_cart_button": "Voir le panier",
       "recommended_products": {
         "related_products_section_title": "Produits liés à cet article",
-        "bought_together_section_title": "Avec cet article, achetez aussi"
+        "bought_together_section_title": "Les clients ont acheté ensemble"
       },
       "related_product_section_title": "Produits connexes",
       "price_label": "@:common.labels.product_price{':'}"
