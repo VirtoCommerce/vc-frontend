@@ -127,6 +127,8 @@
             {{ $t("common.buttons.create_quote") }}
           </VcButton>
         </VcWidget>
+
+        <component :is="item.element" v-for="item in sidebarWidgets" :key="item.id" />
       </template>
     </VcLayoutWithRightSidebar>
 
@@ -158,6 +160,7 @@ import { ENABLED_KEY as QUOTES_ENABLED_KEY, MODULE_ID as QUOTES_MODULE_ID } from
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { CartDeletedProductsModal } from "@/shared/cart/components";
+import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -208,6 +211,8 @@ const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeC
 const { isEnabled: isQuotesEnabled } = useModuleSettings(QUOTES_MODULE_ID);
 
 const notifications = useNotifications();
+
+const { sidebarWidgets } = useCartExtensionPoints();
 
 usePageHead({
   title: t("pages.cart.meta.title"),
