@@ -12,13 +12,17 @@
 import { useLink } from "vue-router";
 import type { RouteLocationRaw } from "vue-router";
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  text: "",
+  to: "/",
+  icon: "",
+});
 
 const { isActive } = useLink({ to: props.to });
 
 interface IProps {
-  text: string;
-  to: RouteLocationRaw;
+  text?: string;
+  to?: RouteLocationRaw;
   icon?: string;
 }
 </script>

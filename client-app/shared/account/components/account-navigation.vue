@@ -51,8 +51,8 @@
       <AccountNavigationLink
         v-for="link in desktopCorporateMenuItems?.children"
         :key="link.id"
-        :to="link.route!"
-        :text="link.title!"
+        :to="link.route"
+        :text="link.title"
         :icon="link.icon"
       />
     </VcWidget>
