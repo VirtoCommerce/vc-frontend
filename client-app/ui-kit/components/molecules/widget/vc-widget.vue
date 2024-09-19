@@ -111,7 +111,7 @@ watchEffect(() => {
 
   --p-x: theme("padding.4");
 
-  @apply relative border border-neutral-100 bg-additional-50 text-neutral-950 text-base rounded divide-y shadow-md;
+  @apply relative border border-neutral-100 bg-additional-50 text-neutral-950 text-base rounded divide-y shadow-md bg-center;
 
   @media (max-width: theme("screens.md")) {
     .vc-container & {
