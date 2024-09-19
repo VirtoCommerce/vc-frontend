@@ -114,8 +114,10 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
+import { pushHistoricalEvent } from "@/core/api/graphql/common/mutations";
 import { useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -207,7 +209,14 @@ async function addAllListItemsToCart(): Promise<void> {
   const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
   await addItemsToCart(items);
 
-  ga.addItemsToCart(wishlistItems.value.map((item) => item.product!));
+  const products = wishlistItems.value.map((item) => item.product!);
+  ga.addItemsToCart(products);
+  void pushHistoricalEvent({
+    eventType: "addToCart",
+    sessionId: cart.value?.id,
+    productIds: products.map((product) => product.id),
+    storeId: globals.storeId,
+  });
 
   showResultModal(wishlistItems.value);
 }
@@ -282,6 +291,12 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     await addToCart(lineItem.product.id, quantity);
 
     ga.addItemToCart(lineItem.product, quantity);
+    void pushHistoricalEvent({
+      eventType: "addToCart",
+      sessionId: cart.value?.id,
+      productId: lineItem.product.id,
+      storeId: globals.storeId,
+    });
   }
   pendingItems.value[lineItem.id] = false;
 
