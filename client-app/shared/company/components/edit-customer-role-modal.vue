@@ -1,6 +1,6 @@
 <template>
-  <VcModal :title="$t('common.titles.change_role')" modal-width="max-w-md">
-    <div class="space-y-4 p-6">
+  <VcModal :title="$t('common.titles.change_role')" dividers>
+    <div class="space-y-4">
       <div v-for="role in roles" :key="role.id" class="flex items-start gap-2">
         <div class="pt-0.5">
           <VcRadioButton v-model="selectedRoleId" :value="role.id" />

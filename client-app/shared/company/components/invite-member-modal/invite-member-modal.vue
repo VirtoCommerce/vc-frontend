@@ -1,15 +1,10 @@
 <template>
-  <VcModal
-    ref="modalComponent"
-    :title="$t('shared.account.invite_member_modal.title')"
-    modal-width="sm:max-w-[38rem]"
-    is-mobile-fullscreen
-  >
-    <VcAlert v-if="commonErrors.length" color="danger" size="sm" variant="solid-light" class="mx-6 mt-5 sm:mx-5">
+  <VcModal ref="modalComponent" :title="$t('shared.account.invite_member_modal.title')" is-mobile-fullscreen dividers>
+    <VcAlert v-if="commonErrors.length" color="danger" size="sm" variant="solid-light" class="mb-4">
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
-    <form class="h-full space-y-4 p-6 py-5 sm:border-b sm:p-5">
+    <form class="space-y-4">
       <VcSelect
         v-model="roleId"
         :items="roles"
