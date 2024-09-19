@@ -129,6 +129,30 @@
             "icon": "bell"
           }
         ]
+      },
+      "corporate": {
+        "id": "corporate",
+        "route": {
+          "name": "Company"
+        },
+        "title": "shared.layout.header.mobile.corporate",
+        "icon": "/static/images/dashboard/icons/company.svg#main",
+        "children": [
+          {
+            "route": {
+              "name": "CompanyInfo"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_info",
+            "icon": "case"
+          },
+          {
+            "route": {
+              "name": "CompanyMembers"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_members",
+            "icon": "user-group"
+          }
+        ]
       }
     },
     "mobile": {

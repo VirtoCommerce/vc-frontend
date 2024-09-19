@@ -34,10 +34,11 @@ const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
 );
 
 const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-  if (!menuSchema.value) {
-    return undefined;
-  }
-  return getTranslatedMenuLink(menuSchema.value?.header?.desktop?.account);
+  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.account) : undefined;
+});
+
+const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
 });
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
@@ -217,6 +218,7 @@ export function useNavigations() {
     openedItem,
     desktopMainMenuItems,
     desktopAccountMenuItems,
+    desktopCorporateMenuItems,
     mobileMainMenuItems,
     mobileCatalogMenuItem,
     mobileAccountMenuItem,

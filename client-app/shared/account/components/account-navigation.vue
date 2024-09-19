@@ -49,15 +49,11 @@
 
     <VcWidget v-if="isCorporateMember" :title="$t(`shared.account.navigation.corporate_title`)" size="sm">
       <AccountNavigationLink
-        :to="{ name: 'CompanyInfo' }"
-        :text="$t('shared.account.navigation.links.company_info')"
-        class="company-icon"
-      />
-
-      <AccountNavigationLink
-        :to="{ name: 'CompanyMembers' }"
-        :text="$t('shared.account.navigation.links.company_members')"
-        class="company-members-icon"
+        v-for="link in desktopCorporateMenuItems?.children"
+        :key="link.id"
+        :to="link.route!"
+        :text="link.title!"
+        :icon="link.icon"
       />
     </VcWidget>
   </div>
@@ -81,7 +77,7 @@ const { isCorporateMember } = useUser();
 const { lists, fetchWishlists } = useWishlists();
 const { facets } = useUserOrders({});
 const { filterData, applyFilters } = useUserOrdersFilter();
-const { desktopAccountMenuItems } = useNavigations();
+const { desktopAccountMenuItems, desktopCorporateMenuItems } = useNavigations();
 
 const isListDetails = eagerComputed(() => route.name === "ListDetails");
 const isOrdersPage = eagerComputed(() => route.name === "Orders");
