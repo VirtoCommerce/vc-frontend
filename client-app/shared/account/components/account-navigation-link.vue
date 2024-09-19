@@ -1,80 +1,70 @@
 <template>
-  <router-link :to="to" class="icon flex items-center p-2.5">
-    <div class="mr-2.5 size-5 flex-none"></div>
-    <span class="overflow-hidden text-ellipsis text-sm font-bold text-neutral">{{ text }}</span>
-  </router-link>
+  <div class="account-navigation-link" :class="{ 'account-navigation-link--active': isActive }">
+    <router-link :to="to" class="account-navigation-link__link">
+      <VcIcon size="sm" class="account-navigation-link__icon" :name="icon" />
+      <span class="account-navigation-link__text">{{ text }}</span>
+    </router-link>
+    <slot />
+  </div>
 </template>
 
 <script setup lang="ts">
+import { useLink } from "vue-router";
 import type { RouteLocationRaw } from "vue-router";
+
+const props = defineProps<IProps>();
+
+const { isActive } = useLink({ to: props.to });
 
 interface IProps {
   text: string;
   to: RouteLocationRaw;
+  icon?: string;
 }
-
-defineProps<IProps>();
 </script>
 
-<style scoped>
-/* Icons */
-.icon > div {
-  background-color: #808080;
-}
-.dashboard-icon > div {
-  mask: url(/static/images/dashboard/icons/dashboard.svg) no-repeat center / contain;
-}
-.profile-icon > div {
-  mask: url(/static/images/dashboard/icons/profile.svg) no-repeat center / contain;
-}
-.pass-icon > div {
-  mask: url(/static/images/dashboard/icons/pass.svg) no-repeat center / contain;
-}
-.addresses-icon > div {
-  mask: url(/static/images/dashboard/icons/building.svg) no-repeat center / contain;
-}
+<style lang="scss">
+.account-navigation-link {
+  $active: "";
+  $hover: "";
 
-.orders-icon > div {
-  mask: url(/static/images/dashboard/icons/orders.svg) no-repeat center / contain;
-}
-.list-icon > div {
-  mask: url(/static/images/dashboard/icons/list.svg) no-repeat center / contain;
-}
-.checkout-icon > div {
-  mask: url(/static/images/dashboard/icons/check-circle.svg) no-repeat center / contain;
-}
-.company-icon > div {
-  mask: url(/static/images/dashboard/icons/company.svg) no-repeat center / contain;
-}
-.company-members-icon > div {
-  mask: url(/static/images/dashboard/icons/members.svg) no-repeat center / contain;
-}
+  --color: var(--color-neutral-500);
 
-.quotes-icon > div {
-  mask: url(/static/images/dashboard/icons/quotes.svg) no-repeat center / contain;
-}
+  &--active {
+    $active: &;
+  }
 
-.credit-card-icon > div {
-  mask: url(/static/images/dashboard/icons/credit-card.svg) no-repeat center / contain;
-}
+  &:hover {
+    $hover: &;
+  }
 
-.notifications-icon > div {
-  mask: url(/static/icons/basic/bell.svg) no-repeat center / contain;
-}
+  &__link {
+    @apply flex items-center p-2.5;
 
-/* Active/hover state styles */
-.router-link-active > div,
-.icon:hover > div {
-  background-color: var(--color-primary-500);
-}
-.icon:hover span {
-  color: #4b5563;
-}
-.router-link-active.icon {
-  background-color: #f9f9f9;
-  border-radius: 3px;
-}
-.router-link-active span {
-  color: #1f222c;
+    #{$active} & {
+      @apply bg-neutral-100;
+    }
+  }
+
+  &__icon {
+    @apply mr-2.5 flex-none;
+
+    #{$active} &,
+    #{$hover} & {
+      --color: var(--color-primary-500);
+    }
+  }
+
+  &__text {
+    @apply overflow-hidden text-ellipsis text-sm font-bold text-neutral;
+
+    #{$active} & {
+      @apply text-neutral-900;
+    }
+
+    #{$hover} & {
+      @apply text-neutral-600;
+    }
+  }
 }
 </style>

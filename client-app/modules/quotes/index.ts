@@ -47,6 +47,18 @@ const route: RouteRecordRaw = {
 
 const mobileMenuItem: DeepPartial<MenuType> = {
   header: {
+    desktop: {
+      account: {
+        children: [
+          {
+            id: "quotes",
+            route: { name: "Quotes" },
+            title: "shared.layout.header.mobile.account_menu.quote_requests",
+            icon: "clipboard-copy",
+          },
+        ],
+      },
+    },
     mobile: {
       account: {
         children: [
