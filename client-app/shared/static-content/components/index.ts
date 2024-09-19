@@ -2,6 +2,7 @@ import { defineAsyncComponent } from "vue";
 import CallToActionWithImage from "./call-to-action-with-image.vue";
 import CallToAction from "./call-to-action.vue";
 import DemoProductList from "./demo-product-list.vue";
+import FavoriteProducts from "./favorite-products.vue";
 import Features from "./features.vue";
 import ImageBlock from "./image-block.vue";
 import Login from "./login.vue";
@@ -21,6 +22,7 @@ export const templateBlocks: { [key: string]: Component } = {
   "call-to-action-with-image": CallToActionWithImage,
   "call-to-action": CallToAction,
   "demo-product-list": DemoProductList,
+  "favorite-products": FavoriteProducts,
   features: Features,
   "image-block": ImageBlock,
   login: Login,
