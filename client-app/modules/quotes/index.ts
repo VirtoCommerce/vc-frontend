@@ -36,13 +36,6 @@ const route: RouteRecordRaw = {
       ],
     },
   ],
-  beforeEnter(_to, _from, next) {
-    if (themeContext.value.settings.quotes_enabled) {
-      next();
-    } else {
-      next({ name: "Dashboard" });
-    }
-  },
 };
 
 const mobileMenuItem: DeepPartial<MenuType> = {
@@ -75,7 +68,7 @@ const mobileMenuItem: DeepPartial<MenuType> = {
 };
 
 export function init(router: Router): void {
-  if (isEnabled(ENABLED_KEY)) {
+  if (isEnabled(ENABLED_KEY) && themeContext.value.settings.quotes_enabled) {
     router.addRoute("Account", route);
     mergeMenuSchema(mobileMenuItem);
   }
