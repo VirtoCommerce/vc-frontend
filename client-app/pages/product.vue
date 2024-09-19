@@ -75,12 +75,15 @@
           :model="relatedProductsSection"
         />
 
-        <component
-          :is="recommendedProductsSection?.type"
-          v-if="recommendedProductsSection && !recommendedProductsSection.hidden"
-          :recommended-products="recommendedProducts"
-          :model="recommendedProductsSection"
-        />
+        <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
+          <component
+            :is="recommendedProductsSection?.type"
+            v-for="{ model, id } in recommendedProductsSection.blocks"
+            :key="id"
+            :recommended-products="recommendedProducts[model]"
+            :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+          />
+        </template>
       </div>
 
       <ProductSidebar
@@ -324,10 +327,12 @@ watchEffect(async () => {
   }
 
   if (!recommendedProductsSection.value?.hidden) {
-    await fetchRecommendedProducts({
+    const recommendedProductsBlocks = recommendedProductsSection.value?.blocks as { model: string }[];
+    const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
       productId: productId.value,
-      model: "related-products",
-    });
+      model,
+    }));
+    await fetchRecommendedProducts(paramsToFetch);
   }
 
   if (product.value?.hasVariations) {
@@ -336,7 +341,7 @@ watchEffect(async () => {
 });
 
 /**
- * Send Google Analytics event for product.
+ * Send Google Analytics event and historical event for product.
  */
 watchEffect(() => {
   if (product.value) {

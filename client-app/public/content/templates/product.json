@@ -37,7 +37,17 @@
     {
       "id": "section4",
       "type": "recommended-products",
-      "hidden": false
+      "hidden": false,
+      "blocks": [
+        {
+          "id": "related_products",
+          "model": "related_products"
+        },
+        {
+          "id": "bought_together",
+          "model": "bought_together"
+        }
+      ]
     }
   ]
 }

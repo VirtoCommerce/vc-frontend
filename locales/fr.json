@@ -217,7 +217,10 @@
       "sku_copied_message": "@:common.labels.sku copié avec succès",
       "variations_total_label": "Total dans votre panier:",
       "view_cart_button": "Voir le panier",
-      "recommended_products_section_title": "Produits liés à cet article",
+      "recommended_products": {
+        "related_products_section_title": "Produits liés à cet article",
+        "bought_together_section_title": "Avec cet article, achetez aussi"
+      },
       "related_product_section_title": "Produits connexes",
       "price_label": "@:common.labels.product_price{':'}"
     }
