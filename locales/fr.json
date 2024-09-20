@@ -39,7 +39,6 @@
       "print": "Imprimer",
       "print_order": "Imprimer la commande",
       "place_order": "Passer la commande",
-      "create_quote": "Ajouter des articles au devis",
       "back_to_cart": "Retour au panier",
       "back_to_order_details": "Retour aux détails de la commande",
       "go_to_checkout": "Passer à la caisse",
@@ -81,7 +80,6 @@
       "cart": "Panier",
       "company_info": "Informations sur l'entreprise",
       "company_members": "Membres de l'entreprise",
-      "quote_requests": "Demandes de devis",
       "contact_administrator": "contacter l'administrateur du site"
     },
     "labels": {
@@ -123,8 +121,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
-            "quote_requests": "@:common.links.quote_requests"
+            "checkout_defaults": "@:common.links.checkout_defaults"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -169,8 +166,7 @@
           "list_details": "@:common.links.list_details",
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "quote_requests": "@:common.links.quote_requests"
+          "company_members": "@:common.links.company_members"
         }
       }
     },

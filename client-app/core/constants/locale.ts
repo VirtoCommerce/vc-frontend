@@ -76,3 +76,5 @@ export const languageToCountryMap: Record<string, string> = {
   zh: "cn",
   zu: "za",
 };
+
+export const FALLBACK_LOCALE = "en";

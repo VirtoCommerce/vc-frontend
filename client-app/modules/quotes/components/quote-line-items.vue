@@ -47,7 +47,7 @@
     <template #after-items>
       <div v-if="!items.length" class="quote-line-items__no-items">
         <VcAlert color="warning" size="sm" variant="outline-dark" icon>
-          {{ $t("pages.account.quote_details.no_items_message") }}
+          {{ $t("quote_details.no_items_message") }}
         </VcAlert>
       </div>
     </template>

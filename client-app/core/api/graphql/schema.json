@@ -15539,6 +15539,18 @@
             "deprecationReason": null
           },
           {
+            "name": "sessionId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "storeId",
             "description": null,
             "type": {
