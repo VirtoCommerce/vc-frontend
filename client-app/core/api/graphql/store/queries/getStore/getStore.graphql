@@ -24,7 +24,6 @@ query GetStore($domain: String!) {
       subscriptionEnabled
       taxCalculationEnabled
       anonymousUsersAllowed
-      isSpa
       environmentName
       emailVerificationEnabled
       emailVerificationRequired
