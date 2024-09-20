@@ -4,8 +4,7 @@ import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
-import { pushHistoricalEvent } from "@/core/api/graphql/common/mutations";
-import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
+import { useGoogleAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
@@ -100,6 +99,7 @@ export function _useCheckout() {
     clearState: clearGlobalCheckoutState,
   } = useGlobalCheckout();
   const { themeContext } = useThemeContext();
+  const { pushHistoricalEvent } = useHistoricalEvents();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const billingAddress = computed(() =>

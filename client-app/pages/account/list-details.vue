@@ -114,8 +114,7 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { pushHistoricalEvent } from "@/core/api/graphql/common/mutations";
-import { useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useGoogleAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
@@ -163,6 +162,7 @@ const {
   changeItemQuantity,
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),

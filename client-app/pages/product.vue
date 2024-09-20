@@ -105,8 +105,8 @@ import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { pushHistoricalEvent } from "@/core/api/graphql/common/mutations";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { BREAKPOINTS } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -181,6 +181,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
