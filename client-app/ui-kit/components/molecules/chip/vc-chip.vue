@@ -70,7 +70,7 @@ withDefaults(defineProps<IProps>(), {
   $truncate: "";
   $clickable: "";
 
-  @apply relative inline-flex justify-between rounded-sm border font-bold text-center;
+  @apply inline-flex justify-between rounded-sm border font-bold text-center;
 
   &--clickable {
     $clickable: &;

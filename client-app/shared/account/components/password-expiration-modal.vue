@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="$t('common.titles.password_expired')" variant="warn" is-persistent>
+  <VcModal :title="$t('common.titles.password_expired')" variant="warning" is-persistent>
     <template #actions>
       <VcButton @click="$emit('confirm')">
         {{ $t("common.buttons.set_new_password") }}

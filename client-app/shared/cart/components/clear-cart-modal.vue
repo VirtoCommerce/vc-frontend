@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="$t('shared.cart.clear_cart_modal.title')" modal-width="sm:max-w-[30rem]">
+  <VcModal :title="$t('shared.cart.clear_cart_modal.title')" icon="warning" variant="warning">
     <template #actions="{ close }">
       <VcButton
         color="secondary"
@@ -17,13 +17,7 @@
       </VcButton>
     </template>
 
-    <div class="flex items-center justify-center gap-4 px-5 py-10">
-      <VcIcon class="flex-none text-primary" name="exclamation-circle" size="lg" />
-
-      <span class="text-lg">
-        {{ $t("shared.cart.clear_cart_modal.message") }}
-      </span>
-    </div>
+    {{ $t("shared.cart.clear_cart_modal.message") }}
   </VcModal>
 </template>
 

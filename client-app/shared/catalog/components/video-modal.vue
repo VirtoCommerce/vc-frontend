@@ -1,8 +1,6 @@
 <template>
-  <VcModal :title="video.name" hide-actions>
-    <div class="p-4">
-      <iframe class="aspect-video w-full" :title="video.name" :src="`${video.embedUrl}?&autoplay=1`" allow="autoplay" />
-    </div>
+  <VcModal :title="video.name" hide-actions max-width="42rem">
+    <iframe class="aspect-video w-full" :title="video.name" :src="`${video.embedUrl}?&autoplay=1`" allow="autoplay" />
   </VcModal>
 </template>
 

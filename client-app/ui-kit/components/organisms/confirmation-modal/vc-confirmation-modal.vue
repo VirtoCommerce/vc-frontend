@@ -1,42 +1,15 @@
 <template>
-  <VcModal :title="title" :variant="variant" modal-width="sm:max-w-[30rem]" hide-actions @close="$emit('close')">
-    <template #default="{ close }">
-      <div class="flex flex-row justify-center gap-x-4 px-6 py-10 lg:px-10">
-        <VcIcon
-          v-if="!noIcon"
-          :class="[
-            'mt-0.5 size-11 flex-none',
-            {
-              'text-info': iconVariant === 'info',
-              'text-success': iconVariant === 'success',
-              'text-warning': iconVariant === 'warning',
-              'text-danger': iconVariant === 'danger',
-            },
-          ]"
-          name="exclamation-circle"
-        />
+  <VcModal :title="title" :variant="variant" :icon="icon" @close="$emit('close')">
+    {{ text }}
 
-        <p class="lg:text-lg lg:font-bold lg:leading-snug">
-          {{ text }}
-        </p>
-      </div>
+    <template #actions="{ close }">
+      <VcButton v-if="!singleButton" :disabled="loading" color="secondary" variant="outline" @click="close">
+        {{ $t("common.buttons.cancel") }}
+      </VcButton>
 
-      <div class="flex flex-wrap justify-center gap-4 px-6 pb-10">
-        <VcButton
-          v-if="!singleButton"
-          :disabled="loading"
-          min-width="9rem"
-          color="secondary"
-          variant="outline"
-          @click="close"
-        >
-          {{ $t("common.buttons.cancel") }}
-        </VcButton>
-
-        <VcButton :loading="loading" min-width="9rem" @click="$emit('confirm')">
-          {{ $t("common.buttons.ok") }}
-        </VcButton>
-      </div>
+      <VcButton :loading="loading" :color="variant" @click="$emit('confirm')">
+        {{ $t("common.buttons.ok") }}
+      </VcButton>
     </template>
   </VcModal>
 </template>
@@ -49,11 +22,10 @@ export interface IEmits {
 
 export interface IProps {
   singleButton?: boolean;
-  noIcon?: boolean;
+  icon?: string;
   title?: string;
   text?: string;
-  variant?: "info" | "success" | "warn" | "danger";
-  iconVariant?: "info" | "success" | "warning" | "danger";
+  variant?: "primary" | "secondary" | "info" | "success" | "warning" | "danger" | "neutral" | "accent";
   loading?: boolean;
 }
 
@@ -61,7 +33,7 @@ defineEmits<IEmits>();
 
 withDefaults(defineProps<IProps>(), {
   variant: "danger",
-  iconVariant: "danger",
   loading: false,
+  icon: "warning",
 });
 </script>

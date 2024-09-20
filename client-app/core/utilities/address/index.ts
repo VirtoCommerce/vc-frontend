@@ -50,5 +50,5 @@ export function isEqualAddresses(
 }
 
 export function isMemberAddressType(address: AnyAddressType): address is MemberAddressType {
-  return "description" in address;
+  return typeof address === "object" && address !== null && "description" in address;
 }

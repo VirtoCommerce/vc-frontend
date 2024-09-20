@@ -1,11 +1,6 @@
 <template>
-  <VcModal :title="$t('shared.wishlists.delete_wishlist_modal.title')" modal-width="max-w-lg" variant="danger">
-    <i18n-t
-      class="border-b p-6 md:py-10"
-      keypath="shared.wishlists.delete_wishlist_modal.message"
-      tag="p"
-      scope="global"
-    >
+  <VcModal :title="$t('shared.wishlists.delete_wishlist_modal.title')" variant="danger" icon="warning">
+    <i18n-t keypath="shared.wishlists.delete_wishlist_modal.message" tag="p" scope="global">
       <template #listName>
         <span class="font-black">{{ list.name }}</span>
       </template>

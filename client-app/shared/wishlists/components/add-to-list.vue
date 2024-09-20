@@ -1,23 +1,17 @@
 <template>
-  <VcTooltip :placement="tooltipPlacement" width="max-content">
-    <template #trigger>
-      <slot :open-modal="openAddToListModal" :is-authenticated="isAuthenticated" :is-in-wishlist="product.inWishlist">
-        <button
-          :aria-label="tooltipText"
-          type="button"
-          class="flex"
-          :disabled="!isAuthenticated"
-          @click="openAddToListModal"
-        >
-          <VcIcon :class="[customClass, product.inWishlist ? 'text-primary' : 'text-neutral-400']" name="whishlist" />
-        </button>
-      </slot>
-    </template>
-
-    <template #content>
-      {{ tooltipText }}
-    </template>
-  </VcTooltip>
+  <button
+    :aria-label="tooltipText"
+    :title="tooltipText"
+    type="button"
+    :class="[
+      'flex items-center justify-center disabled:text-neutral-300',
+      product.inWishlist ? 'text-primary' : 'text-neutral-400',
+    ]"
+    :disabled="!isAuthenticated"
+    @click="openAddToListModal"
+  >
+    <VcIcon :class="customClass" name="whishlist" />
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -36,7 +30,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  customClass: "w-5 h-5 lg:w-4 lg:h-4",
+  customClass: "size-5 lg:size-4",
   tooltipPlacement: "left",
 });
 
