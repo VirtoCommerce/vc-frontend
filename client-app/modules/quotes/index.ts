@@ -65,10 +65,10 @@ const mobileMenuItem: DeepPartial<MenuType> = {
   },
 };
 
-export async function init(router: Router, i18n: I18n): Promise<void> {
+export function init(router: Router, i18n: I18n) {
   if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(mobileMenuItem);
-    await loadModuleLocale(i18n, "quotes");
+    void loadModuleLocale(i18n, "quotes");
   }
 }
