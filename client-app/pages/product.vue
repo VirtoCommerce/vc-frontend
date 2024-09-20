@@ -118,7 +118,6 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
-import { useUser } from "@/shared/account";
 import {
   useProduct,
   useRelatedProducts,
@@ -182,7 +181,6 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
-const { isAuthenticated } = useUser();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
@@ -347,13 +345,11 @@ watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
     ga.viewItem(product.value as Product);
-    if (isAuthenticated.value) {
-      void pushHistoricalEvent({
-        eventType: "click",
-        productId: product.value.id,
-        storeId: globals.storeId,
-      });
-    }
+    void pushHistoricalEvent({
+      eventType: "click",
+      productId: product.value.id,
+      storeId: globals.storeId,
+    });
   }
 });
 

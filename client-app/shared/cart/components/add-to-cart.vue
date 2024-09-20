@@ -67,7 +67,6 @@ import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
@@ -111,7 +110,6 @@ const { quantitySchema } = useQuantityValidationSchema({
   minQuantity,
   maxQuantity,
 });
-const { isAuthenticated } = useUser();
 
 const loading = ref(false);
 
@@ -169,14 +167,12 @@ async function onChange() {
      * Send Google Analytics event for an item added to cart.
      */
     ga.addItemToCart(props.product, inputQuantity);
-    if (isAuthenticated.value) {
-      void pushHistoricalEvent({
-        eventType: "addToCart",
-        sessionId: cart.value?.id,
-        productId: props.product.id,
-        storeId: globals.storeId,
-      });
-    }
+    void pushHistoricalEvent({
+      eventType: "addToCart",
+      sessionId: cart.value?.id,
+      productId: props.product.id,
+      storeId: globals.storeId,
+    });
   }
 
   lineItem = clone(getLineItem(updatedCart?.items));
