@@ -116,25 +116,17 @@
         <!-- Create quote widget -->
         <VcWidget
           v-if="$cfg.quotes_enabled && isAuthenticated && isQuotesEnabled(QUOTES_ENABLED_KEY)"
-          :title="$t('common.titles.quote_request')"
+          :title="$t('quotes.cart_widget.title')"
           class="print:hidden"
         >
           <p class="mb-5 text-xs font-normal text-neutral-400">
-            {{ $t("common.messages.quote_request") }}
+            {{ $t("quotes.cart_widget.quote_request_hint") }}
           </p>
 
           <VcButton :loading="isCartLoked" full-width variant="outline" @click="createQuote">
-            {{ $t("common.buttons.create_quote") }}
+            {{ $t("quotes.cart_widget.create_quote_button") }}
           </VcButton>
         </VcWidget>
-
-        <component
-          :is="item.element"
-          v-for="item in sidebarWidgets"
-          :key="item.id"
-          @lock-cart="isCartLoked = true"
-          @unlock-cart="isCartLoked = false"
-        />
       </template>
     </VcLayoutWithRightSidebar>
 
@@ -274,7 +266,7 @@ async function createQuote(): Promise<void> {
     });
   } else {
     notifications.error({
-      text: globals.i18n.global.t("common.messages.creating_quote_error"),
+      text: globals.i18n.global.t("quotes.errors.creating_quote_error"),
       duration: 15000,
       single: true,
     });
