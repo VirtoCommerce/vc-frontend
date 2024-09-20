@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:pages.account.quotes.title",
+      "table_description": "requested quotes"
+    },
+    "title": "Quote Requests",
+    "no_quotes_message": "There are no quote requests yet",
+    "quote_number_label": "Quote number",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Enter keyword...",
+    "no_results_message": "No results found",
+    "request_quote_button": "Request Quote",
+    "search_quote_requests": "Search quote requests",
+    "reset_search": "Reset search",
+    "cart_widget": {
+      "quote_request_hint": "You can request items in your cart through a special service",
+      "create_quote_button": "Add cart items to quote",
+      "title": "Quote request"
+    },
+    "navigation": {
+      "route_name": "Quote Requests"
+    },
+    "errors": {
+      "creating_quote_error": "Error when creating an quote"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Quote request comment",
+    "title": "Quote Request #{0}",
+    "comment": "Comment",
+    "comment_field_label": "Do you have a general remark for this Quote Request?",
+    "products": "Products",
+    "shipping_address": "Shipping Address",
+    "billing_address": "Billing Address",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "You have not set an address. Please specify one.",
+    "same_as_shipping_address": "Same as shipping address",
+    "quote_summary": "Quote Summary",
+    "quote_data": "Quote Data",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "Quote request has no items",
+    "save_changes_notification_success": "The quote request has been successfully saved",
+    "select_shipping_address": "Select a shipping address",
+    "select_billing_address": "Select a billing address",
+    "files": "Files",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "The quote cannot be approved",
+      "decline": "The quote cannot be declined"
+    }
+  }
+}
