@@ -70,7 +70,6 @@
               <div v-for="error in errorItem.errors" :key="error.errorCode">
                 {{ translate(error) }}
               </div>
-              {{ $t(`validation_error.${errorItem.errors?.[0]?.errorCode}`) }}
             </td>
           </tr>
         </tbody>
