@@ -218,8 +218,8 @@
       "variations_total_label": "Gesamtbetrag in Ihrem Warenkorb:",
       "view_cart_button": "Warenkorb anzeigen",
       "recommended_products": {
-        "related_products_section_title": "Produkte im Zusammenhang mit diesem Artikel",
-        "bought_together_section_title": "Kunden kauften zusammen"
+        "related-products_section_title": "Produkte im Zusammenhang mit diesem Artikel",
+        "bought-together_section_title": "Kunden kauften zusammen"
       },
       "related_product_section_title": "Verwandte Produkte",
       "price_label": "@:common.labels.product_price{':'}"

@@ -1300,8 +1300,8 @@
       "variations_total_label": "Total in your cart:",
       "view_cart_button": "View cart",
       "recommended_products": {
-        "related_products_section_title": "Products related to this item",
-        "bought_together_section_title": "Customers bought together"
+        "related-products_section_title": "Products related to this item",
+        "bought-together_section_title": "Customers bought together"
       },
       "related_product_section_title": "Related products",
       "price_label": "@:common.labels.product_price{':'}"

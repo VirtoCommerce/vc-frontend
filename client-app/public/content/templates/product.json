@@ -41,11 +41,11 @@
       "blocks": [
         {
           "id": "related_products",
-          "model": "related_products"
+          "model": "related-products"
         },
         {
           "id": "bought_together",
-          "model": "bought_together"
+          "model": "bought-together"
         }
       ]
     }
