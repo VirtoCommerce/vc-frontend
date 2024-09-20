@@ -185,11 +185,8 @@
           ? $t('pages.company.members.no_results_message')
           : $t('pages.company.members.no_members_message')
       "
+      icon="thin-order"
     >
-      <template #icon>
-        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.company.members.no_members_img_alt')" />
-      </template>
-
       <template #button>
         <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
