@@ -130,7 +130,7 @@
         </template>
 
         <!-- Rating -->
-        <template v-if="productReviewsEnabled">
+        <template v-if="productReviewsEnabled && product.rating">
           <div class="min-w-0">
             <div class="truncate font-bold">
               {{ $t("shared.catalog.product_card.product_rating") }}
@@ -138,7 +138,7 @@
           </div>
           <div class="min-w-0">
             <div class="truncate">
-              <Rating :rating="2" />
+              <Rating :rating="product.rating" />
             </div>
           </div>
         </template>

@@ -7,24 +7,25 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import type { Rating } from "@/core/api/graphql/types";
 
 interface IProps {
-  rating?: number;
+  rating?: Rating;
 }
 
 const props = defineProps<IProps>();
 
-const rating = computed(() => `${props.rating}/5`);
+const rating = computed(() => `${props.rating?.value}/5`);
 const ratingIconColor = computed(() => {
   if (!props.rating) {
     return;
   }
 
-  if (props.rating <= 3) {
+  if (props.rating.value <= 3) {
     return "text-danger";
   }
 
-  if (props.rating >= 3.1 && props.rating <= 4) {
+  if (props.rating.value > 3 && props.rating.value <= 4) {
     return "text-warning";
   }
 

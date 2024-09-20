@@ -15,7 +15,7 @@
         :lazy="index >= lazyCardsCount"
         :open-in-new-tab="openProductInNewTab"
         :hide-properties="cardType === 'short'"
-        :product-reviews-enabled="false && productReviewsEnabled"
+        :product-reviews-enabled="productReviewsEnabled"
         @link-click="$emit('itemLinkClick', item, $event)"
       >
         <template #add-to-list-handler>

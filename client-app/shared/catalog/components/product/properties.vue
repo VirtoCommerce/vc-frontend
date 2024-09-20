@@ -12,11 +12,11 @@
 
         <!-- Rating -->
         <VcProperty
-          v-if="false && productReviewsEnabled"
+          v-if="productReviewsEnabled && product.rating"
           :label="$t('shared.catalog.product_card.product_rating')"
           class="text-base"
         >
-          <Rating :rating="3.9" />
+          <Rating :rating="product.rating" />
         </VcProperty>
 
         <!-- Vendor -->
