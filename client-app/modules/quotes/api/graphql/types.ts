@@ -2046,6 +2046,7 @@ export type InputProcessOrderPaymentType = {
 export type InputPushHistoricalEventType = {
   eventType?: InputMaybe<Scalars['String']['input']>;
   productId?: InputMaybe<Scalars['String']['input']>;
+  sessionId?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
