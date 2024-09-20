@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center gap-x-1">
-    <VcIcon :class="ratingIconColor" class="flex-none" name="star" size="xs" />
+    <VcIcon :class="ratingIconColor" class="flex-none" name="cup" size="xs" />
     {{ rating }}
   </div>
 </template>
