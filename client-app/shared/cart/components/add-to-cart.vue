@@ -3,7 +3,7 @@
   <div class="add-to-cart">
     <VcInput
       v-model.number="enteredQuantity"
-      class="add-to-cart"
+      class="add-to-cart__input"
       type="number"
       :aria-label="$t('common.labels.product_quantity')"
       :disabled="disabled"

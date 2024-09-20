@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="matcher">
     <SlugContent
       v-if="previewers.slugContent.isActive"
       :is-visible="visibleComponent === 'slugContent'"
@@ -114,3 +114,9 @@ watch(
   { immediate: true },
 );
 </script>
+
+<style lang="scss">
+.matcher {
+  @apply contents;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
-  <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" modal-width="sm:max-w-xl" is-mobile-fullscreen>
-    <div class="grow sm:max-h-screen-60 sm:overflow-y-auto sm:border-b lg:max-h-screen-75">
+  <VcModal :title="$t('shared.wishlists.add_to_wishlists_modal.title')" max-width="50rem" is-mobile-fullscreen dividers>
+    <div class="rounded border">
       <!-- Lists -->
       <template v-if="!loadingProductWishlists && !loadingLists">
         <template v-if="listsWithProduct.length">

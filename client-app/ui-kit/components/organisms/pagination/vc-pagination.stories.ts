@@ -71,3 +71,10 @@ ThreePages.args = {
   page: 2,
   pages: 3,
 };
+
+export const Compact = Template.bind({});
+Compact.args = {
+  page: 1,
+  pages: 9,
+  compact: true,
+};
