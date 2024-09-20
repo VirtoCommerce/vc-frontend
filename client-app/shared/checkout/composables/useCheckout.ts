@@ -456,12 +456,14 @@ export function _useCheckout() {
       clearState();
 
       ga.placeOrder(placedOrder.value);
-      void pushHistoricalEvent({
-        eventType: "placeOrder",
-        sessionId: placedOrder.value.id,
-        productIds: placedOrder.value.items?.map((item) => item.productId),
-        storeId: globals.storeId,
-      });
+      if (isAuthenticated.value) {
+        void pushHistoricalEvent({
+          eventType: "placeOrder",
+          sessionId: placedOrder.value.id,
+          productIds: placedOrder.value.items?.map((item) => item.productId),
+          storeId: globals.storeId,
+        });
+      }
 
       await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {
