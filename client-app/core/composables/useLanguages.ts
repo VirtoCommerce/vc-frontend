@@ -2,6 +2,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
+import { FALLBACK_LOCALE } from "@/core/constants";
 import { Logger } from "@/core/utilities";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
@@ -101,13 +102,11 @@ function detectLocale(locales: unknown[]): string {
 }
 
 async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
-  const FALLBACK_LOCALE = "en";
-
   const locale = currentLanguage.value?.twoLetterLanguageName || FALLBACK_LOCALE;
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const [moduleMessagesFallback, moduleMessages] = await Promise.all([
+    const [moduleFallbackMessages, moduleMessages] = await Promise.all([
       locale !== FALLBACK_LOCALE
         ? import(`../../modules/${moduleName}/locales/${FALLBACK_LOCALE}.json`).catch((error) => {
             Logger.error(`Fallback locale: ${FALLBACK_LOCALE} for the module ${moduleName} not found`, error);
@@ -124,10 +123,12 @@ async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
 
     const existingMessages = i18n.global.getLocaleMessage(locale as string);
 
-    i18n.global.setLocaleMessage(locale, {
-      ...existingMessages,
-      ...merge({}, moduleMessagesFallback, moduleMessages),
-    });
+    i18n.global.setLocaleMessage(locale, merge({}, existingMessages, moduleMessages));
+
+    if (locale !== FALLBACK_LOCALE) {
+      const existingFallbackMessages = i18n.global.getLocaleMessage(FALLBACK_LOCALE);
+      i18n.global.setLocaleMessage(FALLBACK_LOCALE, merge({}, existingFallbackMessages, moduleFallbackMessages));
+    }
 
     Logger.debug(`The "${moduleName}" module locale: "${locale}" was loaded successfully.`);
   } catch (error) {

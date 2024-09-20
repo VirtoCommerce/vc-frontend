@@ -6,7 +6,7 @@ import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useGoogleAnalytics, useWhiteLabeling, useNavigations } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { IS_DEVELOPMENT } from "@/core/constants";
+import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
@@ -69,7 +69,7 @@ export default async () => {
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
-    locale: "en",
+    locale: FALLBACK_LOCALE,
     message: {},
     async setMessage() {
       this.message = await fetchLocaleMessages(this.locale);
