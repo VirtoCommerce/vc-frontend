@@ -37,11 +37,7 @@
     </div>
 
     <!-- Empty -->
-    <VcEmptyView v-else :text="$t('pages.account.lists.no_lists')">
-      <template #icon>
-        <VcImage src="/static/images/common/lists.svg" :alt="$t('pages.account.lists.lists_icon')" />
-      </template>
-
+    <VcEmptyView v-else :text="$t('pages.account.lists.no_lists')" icon="thin-lists">
       <template #button>
         <VcButton prepend-icon="plus" @click="openCreateListModal">
           {{ $t("pages.account.lists.create_list_button") }}

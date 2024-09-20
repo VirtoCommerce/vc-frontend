@@ -5,3 +5,8 @@
  *   @apply normal-case;
  * }
  * */
+.builder-block {
+  .vc-container {
+    --body-bg-color: transparent;
+  }
+}

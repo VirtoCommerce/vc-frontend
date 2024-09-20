@@ -1,7 +1,7 @@
-import { omit, remove } from "lodash";
+import { cloneDeep, omit, remove } from "lodash";
 import { computed, ref } from "vue";
 import { AddressType } from "@/core/enums";
-import { convertToType, Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities";
 import { toAttachedFile } from "@/ui-kit/utilities";
 import {
   getQuote,
@@ -150,7 +150,7 @@ export function useUserQuote() {
     try {
       const inputAddresses: InputQuoteAddressType[] = addresses.map<InputQuoteAddressType>(
         (address: QuoteAddressType) =>
-          convertToType<InputQuoteAddressType>(omit(address, ["id", "isDefault", "description", "isFavorite"])),
+          cloneDeep(omit(address, ["id", "isDefault", "description", "isFavorite"]) as InputQuoteAddressType),
       );
 
       await updateQuoteAddresses({ command: { quoteId, addresses: inputAddresses } });

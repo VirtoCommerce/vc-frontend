@@ -27,13 +27,16 @@
             />
           </component>
 
-          <span>{{ cart.discountTotal?.amount > 0 ? "-" : "" }}<VcPriceDisplay :value="cart.discountTotal!" /></span>
+          <span v-if="cart.discountTotal">
+            {{ cart.discountTotal?.amount > 0 ? "-" : "" }}
+            <VcPriceDisplay :value="cart.discountTotal" />
+          </span>
         </div>
 
         <template v-if="hasDiscounts">
           <div class="print:block" :class="{ hidden: discountsCollapsed }">
             <ul class="list-disc pl-5 text-neutral-400 print:text-[color:var(--color-additional-950)]">
-              <li v-for="(discount, index) in cart.discounts!" :key="index">
+              <li v-for="(discount, index) in cart.discounts" :key="index">
                 <div class="flex items-center justify-between">
                   <span class="text-sm">{{ discount.description || discount.coupon }}</span>
                   <VcTotalDisplay
@@ -73,7 +76,7 @@
           <span>{{ $t("common.labels.tax") }}</span>
           <span>
             {{ cart.taxTotal?.amount > 0 ? "+" : "" }}
-            <VcPriceDisplay :value="cart.taxTotal!" />
+            <VcPriceDisplay v-if="cart.taxTotal" :value="cart.taxTotal" />
           </span>
         </div>
 
@@ -89,7 +92,7 @@
       <div class="mt-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.total") }}</span>
         <span class="text-[--price-color] print:text-inherit">
-          <VcPriceDisplay :value="cart.total!" />
+          <VcPriceDisplay v-if="cart.total" :value="cart.total" />
         </span>
       </div>
     </div>

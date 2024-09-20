@@ -1,5 +1,13 @@
 <template>
-  <div v-if="pages > 1" class="vc-pagination">
+  <div
+    v-if="pages > 1"
+    :class="[
+      'vc-pagination',
+      {
+        'vc-pagination--compact': compact,
+      },
+    ]"
+  >
     <div class="vc-pagination__container">
       <div class="vc-pagination__pages">
         <component
@@ -30,7 +38,7 @@
           @click="setPage(page - 1)"
         >
           <VcIcon name="chevron-left" />
-          <span>{{ $t("ui_kit.pagination.previous") }}</span>
+          <span v-if="!compact">{{ $t("ui_kit.pagination.previous") }}</span>
         </VcButton>
 
         <VcButton
@@ -41,7 +49,7 @@
           :disabled="page === pages"
           @click="setPage(page + 1)"
         >
-          <span>{{ $t("ui_kit.pagination.next") }}</span>
+          <span v-if="!compact">{{ $t("ui_kit.pagination.next") }}</span>
           <VcIcon name="chevron-right" />
         </VcButton>
       </div>
@@ -61,6 +69,7 @@ interface IProps {
   pages?: number;
   scrollTarget?: HTMLElement;
   scrollOffset?: number;
+  compact?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -125,14 +134,40 @@ const setPage = (page: number) => {
 
 <style lang="scss">
 .vc-pagination {
-  @apply flex mx-auto flex-col items-center lg:mx-0 lg:flex-row lg:gap-3;
+  $compact: "";
+
+  @apply @container;
+
+  &--compact {
+    $compact: &;
+  }
 
   &__container {
-    @apply lg:contents;
+    @apply flex min-w-max flex-wrap justify-center items-center;
+
+    #{$compact} & {
+      @container (width > theme("containers.sm")) {
+        @apply gap-3 justify-start;
+      }
+    }
+
+    @container (width > theme("containers.xl")) {
+      @apply gap-3 justify-start;
+    }
   }
 
   &__pages {
-    @apply flex flex-wrap justify-center;
+    @apply flex justify-center w-full;
+
+    #{$compact} & {
+      @container (width > theme("containers.sm")) {
+        @apply w-auto;
+      }
+    }
+
+    @container (width > theme("containers.xl")) {
+      @apply w-auto;
+    }
   }
 
   &__page {
@@ -156,11 +191,25 @@ const setPage = (page: number) => {
   }
 
   &__nav {
-    @apply flex gap-8 justify-between mt-1.5 lg:contents;
+    @apply flex gap-8 justify-between mt-1.5;
+
+    #{$compact} & {
+      @container (width > theme("containers.sm")) {
+        @apply contents;
+      }
+    }
+
+    @container (width > theme("containers.xl")) {
+      @apply contents;
+    }
   }
 
   &__button {
     @apply min-w-[6.5rem];
+
+    #{$compact} & {
+      @apply min-w-min;
+    }
 
     &--prev {
       @apply -order-1;
