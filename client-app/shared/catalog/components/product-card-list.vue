@@ -66,17 +66,16 @@
       </template>
 
       <!-- Rating -->
-      <template v-if="false">
+      <template v-if="productReviewsEnabled">
         <div class="min-w-0">
           <div class="truncate font-bold">
             {{ $t("shared.catalog.product_card.product_rating") }}
           </div>
         </div>
-        <div class="flex items-center gap-1">
-          <svg class="size-3 shrink-0 text-success">
-            <use href="/static/images/cup.svg#main"></use>
-          </svg>
-          <div class="font-bold">4,3/5</div>
+        <div class="min-w-0">
+          <div class="truncate">
+            <Rating :rating="3.5" />
+          </div>
         </div>
       </template>
 
@@ -153,6 +152,7 @@ import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
+import Rating from "./rating.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 
@@ -166,6 +166,7 @@ interface IProps {
   product: Product;
   lazy?: boolean;
   openInNewTab?: boolean;
+  productReviewsEnabled?: boolean;
 }
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));

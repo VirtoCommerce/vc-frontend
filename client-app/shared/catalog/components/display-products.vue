@@ -15,6 +15,7 @@
         :lazy="index >= lazyCardsCount"
         :open-in-new-tab="openProductInNewTab"
         :hide-properties="cardType === 'short'"
+        :product-reviews-enabled="false && productReviewsEnabled"
         @link-click="$emit('itemLinkClick', item, $event)"
       >
         <template #add-to-list-handler>
@@ -32,6 +33,7 @@
 import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { useCustomerReviews } from "@/shared/common";
 import ProductCardGrid from "./product-card-grid.vue";
 import ProductCardList from "./product-card-list.vue";
 import ProductSkeletonGrid from "./product-skeleton-grid.vue";
@@ -64,6 +66,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
+const { enabled: productReviewsEnabled } = useCustomerReviews();
 
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));

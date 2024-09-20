@@ -10,6 +10,15 @@
           {{ property.value }}
         </VcProperty>
 
+        <!-- Rating -->
+        <VcProperty
+          v-if="false && productReviewsEnabled"
+          :label="$t('shared.catalog.product_card.product_rating')"
+          class="text-base"
+        >
+          <Rating :rating="3.9" />
+        </VcProperty>
+
         <!-- Vendor -->
         <VcProperty v-if="showVendor" :label="$t('shared.catalog.product_details.vendor_label')" class="text-base">
           <Vendor :vendor="product.vendor!" with-rating />
@@ -25,7 +34,8 @@ import { computed, inject } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { configInjectionKey } from "@/core/injection-keys";
 import { getPropertiesGroupedByName } from "@/core/utilities";
-import { ProductTitledBlock, Vendor } from "@/shared/catalog";
+import { ProductTitledBlock, Rating, Vendor } from "@/shared/catalog";
+import { useCustomerReviews } from "@/shared/common";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -39,6 +49,8 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
+
+const { enabled: productReviewsEnabled } = useCustomerReviews();
 
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),
