@@ -325,8 +325,8 @@ watchEffect(async () => {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
   }
 
-  if (!recommendedProductsSection.value?.hidden) {
-    const recommendedProductsBlocks = recommendedProductsSection.value?.blocks as { model: string }[];
+  const recommendedProductsBlocks = (recommendedProductsSection.value?.blocks ?? []) as { model: string }[];
+  if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks.length) {
     const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
       productId: productId.value,
       model,
