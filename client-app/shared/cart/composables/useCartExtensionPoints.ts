@@ -12,7 +12,7 @@ function _useCartExtensionPoints() {
   const sidebarWidgets = ref<ElementType[]>([]);
 
   function registerSidebarWidget(element: ElementType) {
-    if (!sidebarWidgets.value.find((el) => el.id === element.id)) {
+    if (!sidebarWidgets.value.some((el) => el.id === element.id)) {
       sidebarWidgets.value.push(element);
     }
   }
