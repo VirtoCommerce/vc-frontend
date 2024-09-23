@@ -86,12 +86,8 @@ function canShowItem(item: ExtendedMenuLinkType) {
   if (isCorporateMember && item.id === "addresses") {
     return false;
   }
-  // eslint-disable-next-line sonarjs/prefer-single-boolean-return
-  if (!isPushMessagesActive && item.id === "notifications") {
-    return false;
-  }
 
-  return true;
+  return item.id !== "notifications" || isPushMessagesActive;
 }
 
 const filteredDesktopAccountMenuItems = computed(() => {
