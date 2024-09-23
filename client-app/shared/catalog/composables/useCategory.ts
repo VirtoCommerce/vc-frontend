@@ -11,7 +11,7 @@ function _useCategory() {
   const loading = ref(false);
   const category = shallowRef<Category>();
 
-  const { i18n } = globals;
+  const { catalogId, i18n } = globals;
 
   const catalogName = i18n.global.t("pages.catalog.title");
   const catalogRoute: RouteLocationRaw = { name: "Catalog" };
@@ -26,6 +26,7 @@ function _useCategory() {
         ...data.category,
         childCategories: data.childCategories.childCategories ?? [],
         name: data.category?.name || catalogName,
+        id: data.category?.id || catalogId,
       };
     } catch (e) {
       Logger.error(`${useCategory.name}.${fetchCategory.name}`, e);
