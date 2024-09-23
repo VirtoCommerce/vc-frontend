@@ -11,49 +11,21 @@ function _useCategory() {
   const loading = ref(false);
   const category = shallowRef<Category>();
 
-  const { catalogId, i18n, router } = globals;
+  const { i18n } = globals;
 
   const catalogName = i18n.global.t("pages.catalog.title");
   const catalogRoute: RouteLocationRaw = { name: "Catalog" };
-  const catalogUrl = router.resolve(catalogRoute).fullPath.slice(1);
   const catalogBreadcrumb: IBreadcrumb = { title: catalogName, route: catalogRoute };
-
-  const catalog: Readonly<Category> = {
-    id: catalogId,
-    name: catalogName,
-    slug: catalogUrl,
-    code: "",
-    priority: 0,
-    breadcrumbs: [],
-    childCategories: [],
-    descriptions: [],
-    hasParent: false,
-    images: [],
-    level: 0,
-    outlines: [],
-    properties: [],
-    seoInfo: {
-      id: "",
-      isActive: true,
-      objectId: catalogId,
-      objectType: "Catalog",
-      semanticUrl: catalogUrl,
-      pageTitle: catalogName,
-      metaKeywords: i18n.global.t("pages.catalog.meta.keywords"),
-      metaDescription: i18n.global.t("pages.catalog.meta.description"),
-    },
-  };
 
   async function fetchCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
     loading.value = true;
     try {
       const data = await getCategory(payload);
-      const parent = data.category && !data.category.parent ? catalog : data.category?.parent;
 
       category.value = {
-        ...(data.category ?? catalog),
-        parent,
+        ...data.category,
         childCategories: data.childCategories.childCategories ?? [],
+        name: data.category?.name || catalogName,
       };
     } catch (e) {
       Logger.error(`${useCategory.name}.${fetchCategory.name}`, e);
@@ -65,7 +37,6 @@ function _useCategory() {
 
   return {
     catalogBreadcrumb,
-    catalog,
     fetchCategory,
     loading: readonly(loading),
     category: computed(() => category.value),
