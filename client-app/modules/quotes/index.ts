@@ -1,4 +1,4 @@
-import { useNavigations } from "@/core/composables";
+import { useNavigations, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID, ENABLED_KEY } from "@/modules/quotes/constants";
@@ -14,6 +14,7 @@ const ViewQuote = () => import("@/modules/quotes/pages/view-quote.vue");
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
 const { loadModuleLocale } = useLanguages();
+const { themeContext } = useThemeContext();
 
 const route: RouteRecordRaw = {
   path: "quotes",
@@ -70,7 +71,7 @@ const mobileMenuItem: DeepPartial<MenuType> = {
 };
 
 export function init(router: Router, i18n: I18n) {
-  if (isEnabled(ENABLED_KEY)) {
+  if (themeContext.value.settings.quotes_enabled && isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(mobileMenuItem);
     void loadModuleLocale(i18n, "quotes");
