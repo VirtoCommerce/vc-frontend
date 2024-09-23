@@ -1,3 +1,3 @@
 # Restrictive policy for demo environments
 User-agent: *
-Allow: /
+Disallow: /
