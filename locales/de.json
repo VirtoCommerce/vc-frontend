@@ -39,7 +39,6 @@
       "print": "Drucken",
       "print_order": "Bestellung drucken",
       "place_order": "Bestellung aufgeben",
-      "create_quote": "Artikel zum Angebot hinzufügen",
       "back_to_cart": "Zurück zum Warenkorb",
       "back_to_order_details": "Zurück zu den Bestelldetails",
       "go_to_checkout": "Zur Kasse gehen",
@@ -81,7 +80,6 @@
       "cart": "Warenkorb",
       "company_info": "Unternehmensinformationen",
       "company_members": "Unternehmensmitglieder",
-      "quote_requests": "Angebotsanfragen",
       "contact_administrator": "den Website-Administrator kontaktieren"
     },
     "labels": {
@@ -123,8 +121,7 @@
             "addresses": "@:common.links.addresses",
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
-            "checkout_defaults": "@:common.links.checkout_defaults",
-            "quote_requests": "@:common.links.quote_requests"
+            "checkout_defaults": "@:common.links.checkout_defaults"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -169,8 +166,7 @@
           "list_details": "@:common.links.list_details",
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
-          "company_members": "@:common.links.company_members",
-          "quote_requests": "@:common.links.quote_requests"
+          "company_members": "@:common.links.company_members"
         }
       }
     },

@@ -5,9 +5,9 @@
         ? $t('shared.wishlists.add_or_update_wishlist_modal.edit_mode_title')
         : $t('shared.wishlists.add_or_update_wishlist_modal.title')
     "
-    modal-width="max-w-xl"
+    dividers
   >
-    <div class="px-6 pb-6 pt-5">
+    <div class="space-y-4">
       <VcInput
         v-model="name"
         :label="$t('shared.wishlists.add_or_update_wishlist_modal.list_name_label')"
@@ -17,9 +17,7 @@
         :error="!!errors.name && meta.dirty"
         required
       />
-    </div>
 
-    <div :class="{ 'border-b': !isCorporateMember }" class="px-6 pb-6">
       <VcTextarea
         v-model="description"
         :label="$t('common.labels.description')"
@@ -30,12 +28,12 @@
         counter
         :max-length="MAX_DESCRIPTION_LENGTH"
       />
-    </div>
 
-    <div v-if="isCorporateMember" class="border-b px-6 pb-6">
-      <VcSwitch v-model="isShared" label-position="right">
-        {{ $t("shared.wishlists.add_or_update_wishlist_modal.make_shared") }}
-      </VcSwitch>
+      <div v-if="isCorporateMember">
+        <VcSwitch v-model="isShared" label-position="right">
+          {{ $t("shared.wishlists.add_or_update_wishlist_modal.make_shared") }}
+        </VcSwitch>
+      </div>
     </div>
 
     <template #actions="{ close }">

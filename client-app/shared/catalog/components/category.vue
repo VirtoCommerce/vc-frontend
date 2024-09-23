@@ -3,7 +3,6 @@
     ref="categoryComponentAnchor"
     :class="{
       'polygon-neutral-bg': !products.length && !fetchingProducts,
-      '[--body-bg-color:transparent]': isTransparent,
     }"
   >
     <!-- Breadcrumbs -->
@@ -279,7 +278,6 @@ interface IProps {
   allowSetMeta?: boolean;
   showButtonToDefaultView?: boolean;
   filtersDisplayOrder?: FiltersDisplayOrderType;
-  isTransparent?: boolean;
 }
 
 const { allowSetMeta } = toRefs(props);

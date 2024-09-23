@@ -4,35 +4,30 @@
       <VcBreadcrumbs :items="breadcrumbs" />
 
       <VcTypography tag="h1">
-        {{ $t("pages.account.quote_details.title", [quote!.number]) }}
+        {{ $t("quote_details.title", [quote!.number]) }}
       </VcTypography>
     </div>
 
     <div class="space-y-5 lg:space-y-6">
       <!-- Quote comment -->
-      <VcWidget :title="$t('pages.account.quote_details.comment')" prepend-icon="document-text" size="lg">
+      <VcWidget :title="$t('quote_details.comment')" prepend-icon="document-text" size="lg">
         <VcTextarea
           v-model.trim="comment"
-          :label="$t('pages.account.quote_details.comment_field_label')"
+          :label="$t('quote_details.comment_field_label')"
           :disabled="fetching"
           :max-length="1000"
           :rows="4"
           :required="!hasItems"
           :error="!commentValid"
           :message="commentErrorMessage"
-          :aria-label="$t('common.labels.quote_request_comment')"
+          :aria-label="$t('quote_details.quote_request_comment')"
           no-resize
           counter
           @input="editComment"
         />
       </VcWidget>
 
-      <VcWidget
-        v-if="$cfg.files_enabled"
-        :title="$t('pages.account.quote_details.files')"
-        prepend-icon="document-add"
-        size="lg"
-      >
+      <VcWidget v-if="$cfg.files_enabled" :title="$t('quote_details.files')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           v-bind="fileOptions"
           :files="files"
@@ -43,13 +38,13 @@
       </VcWidget>
 
       <!-- Quote products -->
-      <VcWidget :title="$t('pages.account.quote_details.products')" prepend-icon="cube" size="lg">
+      <VcWidget :title="$t('quote_details.products')" prepend-icon="cube" size="lg">
         <QuoteLineItems :items="quote.items!" @update:item="onUpdateItem" @remove:item="onRemoveItem" />
       </VcWidget>
 
-      <VcWidget :title="$t('pages.account.quote_details.shipping_address')" prepend-icon="truck" size="lg">
+      <VcWidget :title="$t('quote_details.shipping_address')" prepend-icon="truck" size="lg">
         <h4 class="text-md font-bold leading-5">
-          {{ $t("pages.account.quote_details.shipping_address") }}
+          {{ $t("quote_details.shipping_address") }}
         </h4>
 
         <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
@@ -67,9 +62,9 @@
       </VcWidget>
 
       <!-- Quote billing address -->
-      <VcWidget :title="$t('pages.account.quote_details.billing_address')" prepend-icon="cash" size="lg">
+      <VcWidget :title="$t('quote_details.billing_address')" prepend-icon="cash" size="lg">
         <h4 class="text-md font-bold leading-5">
-          {{ $t("pages.account.quote_details.billing_address") }}
+          {{ $t("quote_details.billing_address") }}
         </h4>
 
         <div :class="['mt-2.5 space-y-1.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
@@ -78,14 +73,14 @@
             :disabled="fetching || !shippingAddress"
             @change="toggleBillingAddressEqualsShippingAddress"
           >
-            {{ $t("pages.account.quote_details.same_as_shipping_address") }}
+            {{ $t("quote_details.same_as_shipping_address") }}
           </VcCheckbox>
 
           <VcAddressSelection
             :placeholder="
               shippingAddress && billingAddressEqualsShipping
-                ? $t('pages.account.quote_details.select_shipping_address')
-                : $t('pages.account.quote_details.select_billing_address')
+                ? $t('quote_details.select_shipping_address')
+                : $t('quote_details.select_billing_address')
             "
             :address="billingAddressEqualsShipping ? shippingAddress : billingAddress"
             :readonly="billingAddressEqualsShipping"
@@ -103,11 +98,11 @@
 
     <div class="flex flex-wrap gap-5 py-7 *:max-lg:flex-1 lg:justify-end lg:[--vc-button-min-width:12.5rem]">
       <VcButton :disabled="!canSaveChanges || fetching" variant="outline" @click="saveChanges">
-        {{ $t("pages.account.quote_details.save_changes") }}
+        {{ $t("quote_details.save_changes") }}
       </VcButton>
 
       <VcButton :disabled="!canSubmit || fetching" @click="submit">
-        {{ $t("pages.account.quote_details.submit") }}
+        {{ $t("quote_details.submit") }}
       </VcButton>
     </div>
   </div>
@@ -128,7 +123,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
-import { asyncForEach, convertToType, isEqualAddresses } from "@/core/utilities";
+import { asyncForEach, isEqualAddresses } from "@/core/utilities";
 import { DEFAULT_QUOTE_FILES_SCOPE, useUser, useUserAddresses } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
@@ -195,13 +190,13 @@ const {
 const notifications = useNotifications();
 
 usePageHead({
-  title: t("pages.account.quote_details.title", [quote!.value?.number]),
+  title: t("quote_details.title", [quote!.value?.number]),
 });
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("common.links.quote_requests"), route: { name: "Quotes" } },
-  { title: t("pages.account.quote_details.title", [quote?.value?.number]) },
+  { title: t("quotes.navigation.route_name"), route: { name: "Quotes" } },
+  { title: t("quote_details.title", [quote?.value?.number]) },
 ]);
 
 const originalQuote = ref<QuoteType>();
@@ -308,7 +303,7 @@ function openAddOrUpdateAddressModal(addressType: AddressType, currentAddress?: 
       address: currentAddress,
 
       async onResult(updatedAddress: MemberAddressType): Promise<void> {
-        const quoteAddress = convertToType<QuoteAddressType>({ ...updatedAddress, addressType });
+        const quoteAddress = cloneDeep({ ...updatedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
         closeModal();
@@ -337,13 +332,13 @@ function openSelectAddressModal(addressType: AddressType): void {
     component: SelectAddressModal,
     props: {
       addresses: accountAddresses.value,
-      currentAddress: convertToType<MemberAddressType>(
+      currentAddress: cloneDeep(
         addressType === AddressType.Billing ? billingAddress.value : shippingAddress.value,
-      ),
+      ) as MemberAddressType,
       isCorporateAddresses: isCorporateMember.value,
 
       onResult(selectedAddress: MemberAddressType): void {
-        const quoteAddress = convertToType<QuoteAddressType>({ ...selectedAddress, addressType });
+        const quoteAddress = cloneDeep({ ...selectedAddress, addressType }) as QuoteAddressType;
 
         setQuoteAddress(quoteAddress);
         setBillingAddressEqualsShipping();
@@ -411,7 +406,7 @@ async function saveChanges(): Promise<void> {
   notifications.success({
     duration: DEFAULT_NOTIFICATION_DURATION,
     singleInGroup: true,
-    html: t("pages.account.quote_details.save_changes_notification_success"),
+    html: t("quote_details.save_changes_notification_success"),
   });
 
   originalQuote.value = cloneDeep(quote.value);

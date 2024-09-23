@@ -1,7 +1,9 @@
-import { useThemeContext, useNavigations } from "@/core/composables";
+import { useNavigations } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID, ENABLED_KEY } from "@/modules/quotes/constants";
 import type { MenuType } from "@/core/types";
+import type { I18n } from "@/i18n";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
 
@@ -9,9 +11,9 @@ const Quotes = () => import("@/modules/quotes/pages/quotes.vue");
 const EditQuote = () => import("@/modules/quotes/pages/edit-quote.vue");
 const ViewQuote = () => import("@/modules/quotes/pages/view-quote.vue");
 
-const { themeContext } = useThemeContext();
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
+const { loadModuleLocale } = useLanguages();
 
 const route: RouteRecordRaw = {
   path: "quotes",
@@ -46,7 +48,7 @@ const mobileMenuItem: DeepPartial<MenuType> = {
           {
             id: "quotes",
             route: { name: "Quotes" },
-            title: "shared.layout.header.mobile.account_menu.quote_requests",
+            title: "quotes.navigation.route_name",
             icon: "clipboard-copy",
           },
         ],
@@ -58,7 +60,7 @@ const mobileMenuItem: DeepPartial<MenuType> = {
           {
             id: "quotes",
             route: { name: "Quotes" },
-            title: "shared.layout.header.mobile.account_menu.quote_requests",
+            title: "quotes.navigation.route_name",
             icon: "/static/images/dashboard/icons/quotes.svg#main",
           },
         ],
@@ -67,9 +69,10 @@ const mobileMenuItem: DeepPartial<MenuType> = {
   },
 };
 
-export function init(router: Router): void {
-  if (isEnabled(ENABLED_KEY) && themeContext.value.settings.quotes_enabled) {
+export function init(router: Router, i18n: I18n) {
+  if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(mobileMenuItem);
+    void loadModuleLocale(i18n, "quotes");
   }
 }

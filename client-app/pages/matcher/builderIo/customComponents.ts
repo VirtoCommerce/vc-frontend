@@ -4,6 +4,7 @@ import type { Component } from "vue";
 const Category = defineAsyncComponent(() => import("@/shared/catalog/components/category.vue"));
 const Slider = defineAsyncComponent(() => import("@/shared/static-content/components/slider.vue"));
 const ProductsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/products-block.vue"));
+const FavoriteProducts = defineAsyncComponent(() => import("@/shared/static-content/components/favorite-products.vue"));
 
 export const builderIOComponents: Array<BuilderIOComponentType> = [
   {
@@ -140,12 +141,6 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         helperText:
           "Toggle this switch to add a button that, when clicked, shows the default category view. Applicable for pages with an URL overlapping the existing category page URL (e.g., /printers).",
       },
-      {
-        name: "isTransparent",
-        type: "boolean",
-        defaultValue: true,
-        helperText: "Removes original background",
-      },
     ],
   },
   {
@@ -252,6 +247,95 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "boolean",
         defaultValue: true,
         helperText: "Removes original background",
+      },
+    ],
+  },
+  {
+    name: "FavoriteProducts",
+    component: FavoriteProducts,
+    inputs: [
+      {
+        name: "widgetBackground",
+        type: "object",
+        defaultValue: { color: "#ffffff" },
+        subFields: [
+          {
+            name: "color",
+            type: "color",
+          },
+          {
+            name: "image",
+            type: "file",
+          },
+        ],
+      },
+      {
+        name: "title",
+        type: "object",
+        defaultValue: {
+          text: "Products Block",
+        },
+        subFields: [
+          {
+            name: "text",
+            type: "string",
+          },
+          {
+            name: "color",
+            type: "color",
+          },
+        ],
+      },
+      {
+        name: "subtitle",
+        type: "object",
+        defaultValue: {
+          text: "Subtitle",
+          color: "#81B87A",
+        },
+        subFields: [
+          {
+            name: "text",
+            type: "string",
+          },
+          {
+            name: "color",
+            type: "color",
+          },
+        ],
+      },
+      {
+        name: "viewMode",
+        type: "string",
+        defaultValue: "list",
+        enum: ["grid", "list"],
+      },
+      {
+        name: "count",
+        type: "number",
+        defaultValue: 4,
+        friendlyName: "Cards amount",
+        onChange: (options: Map<string, number>) => {
+          const count = options.get("count");
+          if (typeof count !== "number") {
+            return;
+          }
+          if (count > 12) {
+            options.set("count", 12);
+            alert("the maximum number of cards is 12");
+          }
+        },
+      },
+      {
+        name: "query",
+        friendlyName: "Keyword",
+        type: "string",
+      },
+      {
+        name: "filter",
+        type: "string",
+        helperText:
+          "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
       },
     ],
   },

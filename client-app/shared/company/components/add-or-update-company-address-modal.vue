@@ -9,9 +9,10 @@
     "
     hide-actions
     is-mobile-fullscreen
+    dividers
   >
     <template #default="{ close }">
-      <h3 class="mx-6 mt-5 text-2xl font-black uppercase">
+      <h3 class="mb-3 text-xl font-black uppercase">
         {{ $t("shared.company.add_or_update_address_modal.address_title") }}
       </h3>
 
@@ -19,7 +20,6 @@
         :model-value="address"
         :countries="countries"
         :disabled="loading"
-        class="px-6 py-4"
         with-description-field
         required-city
         @save="saveAddress"

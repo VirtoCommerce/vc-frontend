@@ -1,17 +1,17 @@
 <template>
-  <VcTooltip width="max-content">
-    <template #trigger>
-      <slot :is-in-compare-list="isInCompareList" :toggle="toggle">
-        <button :aria-label="tooltipText" type="button" class="flex" tabindex="0" @click="toggle">
-          <VcIcon :class="[customClass, isInCompareList ? 'text-primary' : 'text-neutral-400']" name="compare" />
-        </button>
-      </slot>
-    </template>
-
-    <template #content>
-      {{ tooltipText }}
-    </template>
-  </VcTooltip>
+  <button
+    :aria-label="tooltipText"
+    :title="tooltipText"
+    type="button"
+    :class="[
+      'flex items-center justify-center disabled:text-neutral-300',
+      product.inWishlist ? 'text-primary' : 'text-neutral-400',
+    ]"
+    tabindex="0"
+    @click="toggle"
+  >
+    <VcIcon :class="customClass" name="compare" />
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -28,7 +28,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  customClass: "w-5 h-5 lg:w-4 lg:h-4",
+  customClass: "size-5 lg:size-4",
   tooltipPlacement: "left",
 });
 
