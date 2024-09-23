@@ -21,11 +21,9 @@ query GetStore($domain: String!) {
     }
     settings {
       authenticationTypes
-      quotesEnabled
       subscriptionEnabled
       taxCalculationEnabled
       anonymousUsersAllowed
-      isSpa
       environmentName
       emailVerificationEnabled
       emailVerificationRequired

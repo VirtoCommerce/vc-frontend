@@ -56,16 +56,8 @@
           <VcEmptyView
             v-if="!addresses.length && !loadingAddresses"
             :text="$t('pages.company.info.no_addresses_message')"
-            class="py-16"
+            icon="thin-address"
           >
-            <template #icon>
-              <VcImage
-                src="/static/images/account/icons/no-addresses.svg"
-                :alt="$t('pages.company.info.no_addresses_message')"
-                lazy
-              />
-            </template>
-
             <template v-if="userCanEditOrganization" #button>
               <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
                 {{ $t("pages.company.info.buttons.add_new_address") }}

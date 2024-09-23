@@ -12,11 +12,11 @@
       </VcButton>
     </div>
 
-    <VcEmptyView v-if="!paginatedAddresses.length && !addressesLoading" :text="$t('common.messages.no_addresses')">
-      <template #icon>
-        <VcImage :alt="$t('common.labels.addresses_icon')" src="/static/images/account/icons/no-addresses.svg" />
-      </template>
-
+    <VcEmptyView
+      v-if="!paginatedAddresses.length && !addressesLoading"
+      :text="$t('common.messages.no_addresses')"
+      icon="thin-address"
+    >
       <template #button>
         <VcButton prepend-icon="plus" @click="openAddOrUpdateAddressModal()">
           {{ $t("common.buttons.add_new_address") }}

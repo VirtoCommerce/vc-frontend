@@ -90,18 +90,15 @@
         <VcEmptyView
           v-else-if="!listLoading && list?.items?.length === 0"
           :text="$t('shared.wishlists.list_details.empty_list')"
-          class="lg:mt-32"
+          icon="thin-lists"
         >
-          <template #icon>
-            <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
-          </template>
-
           <template #button>
             <VcButton :to="{ name: 'Catalog' }">
               {{ $t("shared.wishlists.list_details.empty_list_button") }}
             </VcButton>
           </template>
         </VcEmptyView>
+
         <Error404 v-else-if="!listLoading && !list" />
       </div>
     </div>

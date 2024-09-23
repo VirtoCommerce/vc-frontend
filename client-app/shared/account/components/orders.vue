@@ -113,12 +113,8 @@
         ? $t('pages.account.orders.no_results_message')
         : $t('pages.account.orders.no_orders_message')
     "
-    class="py-8"
+    icon="thin-order"
   >
-    <template #icon>
-      <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.no_orders_img_alt')" />
-    </template>
-
     <template #button>
       <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
         {{ $t("pages.account.orders.buttons.reset_search") }}

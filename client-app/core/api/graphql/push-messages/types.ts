@@ -4113,6 +4113,8 @@ export type Product = {
   /** Global Trade Item Number (GTIN) */
   gtin?: Maybe<Scalars['String']['output']>;
   hasVariations: Scalars['Boolean']['output'];
+  /** Height */
+  height?: Maybe<Scalars['Decimal']['output']>;
   /** The unique ID of the product. */
   id: Scalars['String']['output'];
   /** Product images */
@@ -4122,11 +4124,15 @@ export type Product = {
   /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
   keyProperties: Array<Property>;
+  /** Length */
+  length?: Maybe<Scalars['Decimal']['output']>;
   /** Manufacturer Part Number (MPN) */
   manufacturerPartNumber?: Maybe<Scalars['String']['output']>;
   masterVariation?: Maybe<VariationType>;
   /** Max. quantity */
   maxQuantity?: Maybe<Scalars['Int']['output']>;
+  /** Measure unit */
+  measureUnit?: Maybe<Scalars['String']['output']>;
   /** Min. quantity */
   minQuantity?: Maybe<Scalars['Int']['output']>;
   /** Minimum product variation price */
@@ -4146,6 +4152,8 @@ export type Product = {
   /** The type of product */
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
+  /** Product rating */
+  rating?: Maybe<Rating>;
   /** Request related SEO info */
   seoInfo: SeoInfo;
   /** Request related slug for product */
@@ -4154,6 +4162,12 @@ export type Product = {
   /** Product vendor */
   vendor?: Maybe<CommonVendor>;
   videos?: Maybe<VideoConnection>;
+  /** Weight */
+  weight?: Maybe<Scalars['Decimal']['output']>;
+  /** Weight unit */
+  weightUnit?: Maybe<Scalars['String']['output']>;
+  /** Width */
+  width?: Maybe<Scalars['Decimal']['output']>;
   /** List of wishlist ID with this product */
   wishlistIds: Array<Maybe<Scalars['String']['output']>>;
 };
@@ -5525,6 +5539,8 @@ export type VariationType = {
   /** The type of product */
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
+  /** Product raiting */
+  rating?: Maybe<Rating>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */

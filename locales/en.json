@@ -41,7 +41,6 @@
       "print": "Print",
       "print_order": "Print order",
       "place_order": "Place order",
-      "create_quote": "Add cart items to quote",
       "back_to_cart": "Back to Cart",
       "back_to_order_details": "Back to order details",
       "go_to_checkout": "Proceed to checkout",
@@ -66,8 +65,6 @@
       "remove_from_cart": "Remove from cart",
       "search_orders": "Search orders",
       "reset_orders_search_keyword": "Reset orders search keyword",
-      "search_quote_requests": "Search quote requests",
-      "reset_quote_requests_search_keyword": "Reset quote requests search keyword",
       "remove_credit_card": "Remove credit card",
       "search_company_members": "Search company members",
       "reset_company_members_search_keyword": "Reset company members search keyword",
@@ -149,7 +146,6 @@
       "background_image": "Background image",
       "product_quantity": "Product quantity",
       "toggle_vendor_select": "Toggle vendor select",
-      "quote_request_comment": "Quote request comment",
       "default_language": "Default language",
       "default_currency": "Default currency",
       "organizations": "Organizations",
@@ -173,7 +169,6 @@
       "email_not_unique": "This email is already registered with us",
       "max_length": "This field must not contain more than {max} characters",
       "creating_order_error": "Error when creating an order",
-      "creating_quote_error": "Error when creating an quote",
       "item_can_t_be_purchased": "This item cannot be purchased",
       "item_is_out_of_stock": "This item is out of stock",
       "invalid_value": "Invalid value",
@@ -188,7 +183,6 @@
       "fill_all_required": "Please complete all required information to proceed.",
       "something_went_wrong": "Oops! Something went wrong. Please double-check that everything is correct and try again.",
       "checkout_pricing_warning": "Availability, shipping, tax and promotions are not final until you complete your order.",
-      "quote_request": "You can request items in your cart through a special service",
       "wishlists_available_for_authorized": "Wishlists are available only for authenticated users",
       "no_addresses": "You do not have any addresses yet",
       "confirm_delete_address": "Are you sure you want to delete this address?",
@@ -243,7 +237,6 @@
       "cart": "Cart",
       "company_info": "Company Info",
       "company_members": "Company Members",
-      "quote_requests": "Quote Requests",
       "contact_administrator": "contact the site administrator",
       "push-messages": "Notifications",
       "saved_credit_cards": "Saved Credit Cards",
@@ -253,7 +246,6 @@
       "all_actions": "All actions",
       "other_actions": "Other actions",
       "order_summary": "Order summary",
-      "quote_request": "Quote request",
       "billing_address": "Billing address",
       "payment_method": "Payment method",
       "payment_details": "Payment details",
@@ -326,7 +318,6 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
-            "quote_requests": "@:common.links.quote_requests",
             "saved_credit_cards": "@:common.links.saved_credit_cards",
             "notifications": "@:common.links.notifications"
           },
@@ -406,7 +397,6 @@
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "quote_requests": "@:common.links.quote_requests",
           "saved_credit_cards": "@:common.links.saved_credit_cards",
           "notifications": "@:common.links.notifications"
         }
@@ -1107,59 +1097,6 @@
         "title": "Profile",
         "change_password_title": "Change Password",
         "update_error_alert": "There was an error during profile update"
-      },
-      "quotes": {
-        "meta": {
-          "title": "@:pages.account.quotes.title",
-          "table_description": "requested quotes"
-        },
-        "title": "Quote Requests",
-        "no_quotes_message": "There are no quote requests yet",
-        "quote_number_label": "Quote number",
-        "date_label": "@:common.labels.date",
-        "status_label": "@:common.labels.status",
-        "total_label": "@:common.labels.total",
-        "search_placeholder": "Enter keyword...",
-        "no_results_message": "No results found",
-        "request_quote_button": "Request Quote"
-      },
-      "quote_details": {
-        "title": "Quote Request #{0}",
-        "comment": "Comment",
-        "comment_field_label": "Do you have a general remark for this Quote Request?",
-        "products": "Products",
-        "shipping_address": "Shipping Address",
-        "billing_address": "Billing Address",
-        "save_changes": "@:common.buttons.save_changes",
-        "submit": "@:common.buttons.submit",
-        "no_address_message": "You have not set an address. Please specify one.",
-        "same_as_shipping_address": "Same as shipping address",
-        "quote_summary": "Quote Summary",
-        "quote_data": "Quote Data",
-        "subTotal": "@:common.labels.subtotal",
-        "discountTotal": "@:common.labels.discount",
-        "shippingTotal": "@:common.labels.shipping_cost",
-        "taxTotal": "@:common.labels.tax",
-        "total": "@:common.labels.total",
-        "created": "@:common.labels.created",
-        "status": "@:common.labels.status",
-        "no_items_message": "Quote request has no items",
-        "save_changes_notification_success": "The quote request has been successfully saved",
-        "select_shipping_address": "Select a shipping address",
-        "select_billing_address": "Select a billing address",
-        "files": "Files",
-        "line_items": {
-          "product": "@:common.labels.product",
-          "properties": "@:common.labels.properties",
-          "price_per_item": "@:common.labels.price_per_item",
-          "quantity": "@:common.labels.quantity",
-          "total": "@:common.labels.total",
-          "subtotal": "@:common.labels.subtotal"
-        },
-        "error": {
-          "approve": "The quote cannot be approved",
-          "decline": "The quote cannot be declined"
-        }
       },
       "notifications": {
         "meta": {
