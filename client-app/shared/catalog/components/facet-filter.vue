@@ -221,7 +221,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   }
 
   &__fade {
-    @apply sticky bottom-0;
+    @apply sticky bottom-0 pointer-events-none;
 
     &:after {
       @apply w-full absolute block bottom-0 content-[''] h-10 bg-gradient-to-t from-additional-50;
