@@ -15,7 +15,7 @@
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <svg class="text-[--mobile-menu-navigation]" height="20" width="20">
+        <svg class="text-[--mobile-menu-navigation-color]" height="20" width="20">
           <use href="/static/images/close.svg#main" />
         </svg>
       </button>
@@ -24,7 +24,7 @@
     <!-- region Children links section -->
     <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
-        <button type="button" class="appearance-none self-start text-[--mobile-menu-navigation]" @click="goBack">
+        <button type="button" class="appearance-none self-start text-[--mobile-menu-navigation-color]" @click="goBack">
           <VcIcon name="arrow-circle-left" size="lg" />
         </button>
 
@@ -179,7 +179,11 @@
               </div>
 
               <div>
-                <button type="button" class="font-bold text-[--mobile-menu-navigation]" @click="() => signMeOut()">
+                <button
+                  type="button"
+                  class="font-bold text-[--mobile-menu-navigation-color]"
+                  @click="() => signMeOut()"
+                >
                   {{ $t("shared.layout.header.link_logout") }}
                 </button>
               </div>
@@ -336,6 +340,8 @@ onMounted(() => {
 <style lang="scss" scoped>
 .mobile-menu {
   --sidebar-max-width: 430px;
+  --vc-radio-button-base-color: var(--mobile-menu-control-color);
+
   box-shadow: 5px 0 15px 0 rgba(0, 0, 0, 0.5);
 
   @apply md:max-w-[var(--sidebar-max-width)];

@@ -8,7 +8,7 @@
 
 --price-color: var(--color-price, var(--color-success-600));
 
---hexagon-icon-bg-color: var(--color-hexagon-icon-bg, var(--color-neutral-300));
+--hexagon-icon-bg-color: var(--color-hexagon-icon-bg, var(--color-secondary-500));
 --hexagon-icon-color: var(--color-hexagon-icon, var(--color-additional-50));
 
 --empty-list-icon: var(--color-empty-list-icon, var(--color-primary-500));
@@ -17,6 +17,7 @@
 --header-top-text-color: var(--color-header-top-text, var(--color-additional-50));
 --header-top-link-color: var(--color-header-top-link, var(--color-accent-300));
 --header-top-link-hover-color: var(--color-header-top-link-hover, var(--color-additional-50));
+--header-top-link-active-color: var(--color-header-top-link-active, var(--color-accent-300));
 
 --header-bottom-bg-color: var(--color-header-bottom-bg, var(--color-additional-50));
 --header-bottom-text-color: var(--color-header-bottom-text, var(--color-neutral-900));
@@ -34,14 +35,16 @@
 --footer-bottom-text-color: var(--color-footer-bottom-text, var(--color-additional-50));
 --footer-bottom-link-color: var(--color-footer-bottom-link, var(--color-accent-300));
 --footer-bottom-link-hover-color: var(--color-footer-bottom-link-hover, var(--color-additional-50));
+--footer-bottom-link-active-color: var(--color-footer-bottom-link-active, var(--color-additional-50));
 
 --mobile-search-bar-bg: var(--color-mobile-search-bar-bg, var(--color-secondary-800));
 
 --mobile-menu-bg-color: var(--color-mobile-menu-bg, var(--color-secondary-900));
 --mobile-menu-text-color: var(--color-mobile-menu-text, var(--color-additional-50));
---mobile-menu-link-color: var(--color-mobile-menu-link, var(--color-accent-200));
+--mobile-menu-link-color: var(--color-mobile-menu-link, var(--color-secondary-200));
 --mobile-menu-link-active-color: var(--color-mobile-menu-link-active, var(--color-additional-50));
---mobile-menu-icon-color: var(--color-mobile-menu-icon, var(--color-accent-300));
---mobile-menu-icon-active-color: var(--color-mobile-menu-icon-active, var(--color-primary-500));
---mobile-menu-navigation: var(--color-mobile-menu-navigation, var(--color-primary-400));
+--mobile-menu-icon-color: var(--color-mobile-menu-icon, var(--color-secondary-600));
+--mobile-menu-icon-active-color: var(--color-mobile-menu-icon-active, var(--color-additional-50));
+--mobile-menu-navigation-color: var(--color-mobile-menu-navigation, var(--color-primary-400));
+--mobile-menu-control-color: var(--color-mobile-menu-control, var(--color-primary-500));
 }
