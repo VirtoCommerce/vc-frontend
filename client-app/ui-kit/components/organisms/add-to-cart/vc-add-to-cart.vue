@@ -2,6 +2,7 @@
   <div class="vc-add-to-cart">
     <VcInput
       v-model.number="quantity"
+      :name
       type="number"
       :aria-label="$t('common.labels.product_quantity')"
       :disabled="disabled"
@@ -13,10 +14,11 @@
       :error="!isValid"
       :message="message"
       :show-empty-details="showEmptyDetails"
+      :readonly
       @input="onChange"
       @blur="onFocusOut"
     >
-      <template #append>
+      <template v-if="!hideButton" #append>
         <VcButton
           class="vc-add-to-cart__icon-button"
           :variant="isButtonOutlined ? 'outline' : 'solid'"
@@ -52,6 +54,7 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { toRefs } from "@vueuse/core";
+import { debounce } from "lodash";
 import { useField } from "vee-validate";
 import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
@@ -64,6 +67,7 @@ interface IEmits {
 }
 
 interface IProps {
+  name?: string;
   modelValue?: number;
   loading?: boolean;
   disabled?: boolean;
@@ -77,6 +81,9 @@ interface IProps {
   isInStock?: boolean;
   message?: string;
   showEmptyDetails?: boolean;
+  hideButton?: boolean;
+  readonly?: boolean;
+  timeout?: number;
 }
 
 const emit = defineEmits<IEmits>();
@@ -86,7 +93,7 @@ const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
+const { timeout, disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
   toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
@@ -124,7 +131,7 @@ async function validateFields(): Promise<void> {
   }
 }
 
-async function onChange(): Promise<void> {
+const onChange = debounce(async () => {
   setValue(quantity.value);
 
   const newQuantity = Number(quantity.value);
@@ -136,7 +143,7 @@ async function onChange(): Promise<void> {
   await validateFields();
 
   emit("update:modelValue", newQuantity);
-}
+}, timeout.value ?? 0);
 
 function onFocusOut() {
   const newQuantity = Number(quantity.value);

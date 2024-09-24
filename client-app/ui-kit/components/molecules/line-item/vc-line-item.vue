@@ -358,11 +358,11 @@ watchEffect(() => {
   &__slot {
     @apply flex-none empty:hidden;
 
-    &:has(.vc-quantity, * .vc-quantity) {
+    &:has(.vc-quantity, * .vc-quantity, .vc-add-to-cart, * .vc-add-to-cart) {
       @apply w-[6.5rem];
     }
 
-    &:has(.vc-add-to-cart, * .vc-add-to-cart, .add-to-cart, * .add-to-cart) {
+    &:has(.add-to-cart, * .add-to-cart) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {

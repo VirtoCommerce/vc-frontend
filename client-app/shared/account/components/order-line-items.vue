@@ -7,9 +7,9 @@
     </template>
 
     <template #default="{ item }">
-      <VcQuantity
+      <VcAddToCart
+        hide-button
         :model-value="item.quantity"
-        :name="item.id"
         :min-quantity="item.minQuantity"
         :max-quantity="item.maxQuantity"
         disabled
