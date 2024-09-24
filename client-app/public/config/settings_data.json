@@ -27,7 +27,6 @@
     "search_static_content_suggestions_enabled": true,
     "search_product_phrase_suggestions_enabled": false,
 
-    "support_phone_number": "+31 416 652 803",
     "zero_price_product_enabled": false,
 
     "checkout_multistep_enabled": true,

@@ -25,7 +25,7 @@
         <component :is="customSlots.right" v-if="customSlots.right" />
 
         <div v-else class="flex h-full flex-row items-center pr-4">
-          <a v-if="$cfg.support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${$cfg.support_phone_number}`">
+          <a v-if="support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${support_phone_number}`">
             <VcIcon class="text-primary" name="phone" :size="28" />
           </a>
 
@@ -127,6 +127,8 @@
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_ID_XAPI, MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { useDeferShortCart, useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
@@ -139,6 +141,8 @@ const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
+const { getSettingValue } = useModuleSettings(MODULE_ID_XAPI);
+const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();

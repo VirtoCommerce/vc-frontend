@@ -241,7 +241,6 @@ export interface IThemeConfigSettings {
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];
-  support_phone_number?: string;
 
   logo_image?: string;
   logo_inverted_image?: string;
