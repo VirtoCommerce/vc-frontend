@@ -2,7 +2,9 @@ import _ from "lodash";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { useFetch } from "@/core/api/common";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
+import { MODULE_ID_XAPI } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
@@ -88,6 +90,7 @@ const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() 
 
 export function useNavigations() {
   const { themeContext } = useThemeContext();
+  const { getSettingValue } = useModuleSettings(MODULE_ID_XAPI);
 
   async function fetchMenuSchema() {
     try {
@@ -127,11 +130,12 @@ export function useNavigations() {
   }
 
   async function fetchCatalogMenu() {
-    const { catalog_menu_link_list_name, catalog_empty_categories_enabled, zero_price_product_enabled } =
-      themeContext.value.settings;
+    const { catalog_empty_categories_enabled, zero_price_product_enabled } = themeContext.value.settings;
+
+    const catalog_menu_link_list_name = getSettingValue("Frontend.CatalogMenuLinkListName");
 
     try {
-      if (catalog_menu_link_list_name) {
+      if (typeof catalog_menu_link_list_name === "string") {
         // Use a list of links
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
           convertToExtendedMenuLink(item, true),
@@ -202,7 +206,6 @@ export function useNavigations() {
 
   return {
     fetchMenus,
-    fetchFooterLinks,
     goBack,
     goMainMenu,
     selectMenuItem,
