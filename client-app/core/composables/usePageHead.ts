@@ -43,7 +43,7 @@ export function usePageHead(data: IUsePageSeoData) {
         titleChunks.unshift(environmentName);
       }
 
-      return titleChunks.filter(Boolean).join(String(page_title_divider || " "));
+      return titleChunks.filter(Boolean).join(page_title_divider ? ` ${page_title_divider} ` : " ");
     }),
     meta: () => {
       if (!data.meta) {
