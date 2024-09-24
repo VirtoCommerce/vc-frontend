@@ -23,7 +23,7 @@
     "product_filters_sorting_direction": "asc",
 
     "vendor_enabled": true,
-    "rating_enabled": true,
+    "vendor_rating_enabled": true,
     "categories_limit": 499,
     "wishlists_limit": 10,
 
