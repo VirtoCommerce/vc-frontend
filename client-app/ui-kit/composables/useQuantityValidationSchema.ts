@@ -6,7 +6,7 @@ import type { Ref } from "vue";
 import type { NumberSchema } from "yup";
 
 export function useQuantityValidationSchema(payload: {
-  positive?: Ref<boolean | undefined>;
+  allowZero?: Ref<boolean | undefined>;
   isInStock?: Ref<boolean | undefined>;
   minQuantity?: Ref<number | undefined>;
   maxQuantity?: Ref<number | undefined>;
@@ -14,7 +14,7 @@ export function useQuantityValidationSchema(payload: {
 }) {
   const { t } = useI18n();
 
-  const { positive, isInStock, availableQuantity, minQuantity, maxQuantity } = payload;
+  const { allowZero, isInStock, availableQuantity, minQuantity, maxQuantity } = payload;
 
   function setAvailabilityForSchema(schema: NumberSchema): NumberSchema {
     if (availableQuantity?.value && minQuantity?.value && minQuantity.value < availableQuantity.value) {
@@ -57,7 +57,7 @@ export function useQuantityValidationSchema(payload: {
   }
 
   const quantitySchema = computed<NumberSchema>(() =>
-    (positive?.value ? number().positive() : number())
+    (allowZero?.value ? number().moreThan(-1) : number().positive())
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
       .integer()
       .withMutation((schema) => {
