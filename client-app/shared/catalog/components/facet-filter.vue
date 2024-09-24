@@ -24,11 +24,11 @@
         <VcMenuItem
           v-for="item in searchedValues"
           :key="item.value"
-          size="sm"
+          size="xs"
           color="secondary"
           @click="handleFacetItemClick(item)"
         >
-          <VcCheckbox v-model="item.selected" size="sm" :disabled="loading" @change="changeFacetValues" @click.stop />
+          <VcCheckbox v-model="item.selected" size="xs" :disabled="loading" @change="changeFacetValues" @click.stop />
 
           <span class="facet-filter-widget__label">{{ item.label }}</span>
 
@@ -37,7 +37,7 @@
           </VcBadge>
         </VcMenuItem>
 
-        <VcMenuItem v-if="isNoResults" size="sm" disabled>
+        <VcMenuItem v-if="isNoResults" size="xs" disabled>
           {{ $t("pages.catalog.no_facet_found_message") }}
         </VcMenuItem>
 
@@ -95,39 +95,42 @@
         />
       </div>
 
-      <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
+      <div class="facet-filter-dropdown__items">
+        <VcMenuItem v-if="isNoResults" disabled>{{ $t("pages.catalog.no_facet_found_message") }}</VcMenuItem>
 
-      <VcMenuItem
-        v-for="item in filtered"
-        :key="item.value"
-        size="sm"
-        color="secondary"
-        truncate
-        :active="item.selected"
-        :title="item.label"
-        @click="
-          handleFacetItemClick(item);
-          close();
-        "
-      >
-        <VcCheckbox
-          v-model="item.selected"
-          :disabled="loading"
-          @change="
-            changeFacetValues();
+        <VcMenuItem
+          v-for="item in filtered"
+          :key="item.value"
+          size="xs"
+          color="secondary"
+          truncate
+          :active="item.selected"
+          :title="item.label"
+          @click="
+            handleFacetItemClick(item);
             close();
           "
-          @click.stop
-        />
+        >
+          <VcCheckbox
+            v-model="item.selected"
+            size="xs"
+            :disabled="loading"
+            @change="
+              changeFacetValues();
+              close();
+            "
+            @click.stop
+          />
 
-        <div class="facet-filter-dropdown__label">
-          {{ item.label }}
-        </div>
+          <div class="facet-filter-dropdown__label">
+            {{ item.label }}
+          </div>
 
-        <VcBadge variant="outline" size="sm" rounded color="secondary">
-          {{ $n(item.count as number, "decimal") }}
-        </VcBadge>
-      </VcMenuItem>
+          <VcBadge variant="outline" size="sm" rounded color="secondary">
+            {{ $n(item.count as number, "decimal") }}
+          </VcBadge>
+        </VcMenuItem>
+      </div>
     </template>
   </VcDropdownMenu>
 </template>
@@ -235,7 +238,7 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
   &__container {
     --scrollbar-width: 0.875rem;
 
-    @apply overflow-y-auto relative;
+    @apply overflow-y-auto relative py-1.5;
   }
 
   &__label {
@@ -276,6 +279,10 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
     #{$opened} & {
       @apply rotate-180;
     }
+  }
+
+  &__items {
+    @apply flex-grow py-1.5;
   }
 }
 </style>
