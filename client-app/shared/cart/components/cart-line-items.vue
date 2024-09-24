@@ -24,6 +24,7 @@
       <VcAddToCart
         hide-button
         :model-value="item.quantity"
+        :name="item.id"
         :disabled="disabled"
         :readonly="readonly"
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"

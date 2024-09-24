@@ -75,6 +75,7 @@
           <td class="variations-table__col variations-table__col--quantity">
             <VcAddToCart
               :model-value="mappedLineItems[variation.id]?.quantity ?? 0"
+              :name="variation.id"
               :disabled="
                 !variation.availabilityData?.isInStock ||
                 !variation.availabilityData?.isAvailable ||

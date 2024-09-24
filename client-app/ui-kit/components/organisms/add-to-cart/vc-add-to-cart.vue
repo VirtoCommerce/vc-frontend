@@ -18,11 +18,7 @@
       @input="onChange"
       @blur="onFocusOut"
     >
-      <template #prepend>
-        <slot name="prepend" />
-      </template>
       <template #append>
-        <slot name="append" />
         <template v-if="!hideButton">
           <VcButton
             class="vc-add-to-cart__icon-button"
@@ -49,6 +45,7 @@
             {{ buttonText }}
           </VcButton>
         </template>
+        <slot name="append" />
       </template>
     </VcInput>
 
