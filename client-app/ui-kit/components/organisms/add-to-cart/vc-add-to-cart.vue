@@ -92,17 +92,30 @@ interface IProps {
   hideButton?: boolean;
   readonly?: boolean;
   timeout?: number;
+  positive?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  positive: true,
+});
 
 const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { timeout, disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
-  toRefs(props);
+const {
+  positive,
+  timeout,
+  disabled,
+  isInStock,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
+  isActive,
+  isAvailable,
+  isBuyable,
+} = toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -115,6 +128,7 @@ const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" :
 const quantity = ref<number | undefined>();
 
 const { quantitySchema } = useQuantityValidationSchema({
+  positive,
   minQuantity,
   maxQuantity,
   availableQuantity,

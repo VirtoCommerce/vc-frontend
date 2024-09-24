@@ -83,6 +83,7 @@
               :error="!!localizedItemsErrors[variation.id]"
               hide-button
               :timeout="DEFAULT_DEBOUNCE_IN_MS"
+              :positive="false"
               @update:model-value="changeCart(variation, $event)"
             >
               <template #append>
