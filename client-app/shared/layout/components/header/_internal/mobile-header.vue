@@ -128,7 +128,7 @@ import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core"
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { MODULE_ID_XAPI, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { useDeferShortCart, useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
@@ -141,7 +141,7 @@ const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
-const { getSettingValue } = useModuleSettings(MODULE_ID_XAPI);
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 const { customSlots, isAnimated } = useNestedMobileHeader();

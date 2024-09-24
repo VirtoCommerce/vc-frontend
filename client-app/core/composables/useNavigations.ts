@@ -4,7 +4,7 @@ import { useFetch } from "@/core/api/common";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
-import { MODULE_ID_XAPI } from "@/core/constants/modules";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
@@ -90,7 +90,7 @@ const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() 
 
 export function useNavigations() {
   const { themeContext } = useThemeContext();
-  const { getSettingValue } = useModuleSettings(MODULE_ID_XAPI);
+  const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
   async function fetchMenuSchema() {
     try {

@@ -141,7 +141,7 @@
 import { onClickOutside } from "@vueuse/core";
 import { ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { MODULE_ID_XAPI, MODULE_XAPI_KEYS } from "@/core/constants/modules";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useSignMeOut, useUser } from "@/shared/account";
 import TopHeaderLink from "./top-header-link.vue";
 import CurrencySelector from "@/shared/layout/components/currency-selector/currency-selector.vue";
@@ -149,7 +149,7 @@ import LanguageSelector from "@/shared/layout/components/language-selector/langu
 
 const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
-const { getSettingValue } = useModuleSettings(MODULE_ID_XAPI);
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
