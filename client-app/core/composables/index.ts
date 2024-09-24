@@ -5,6 +5,7 @@ export * from "./useCountries";
 export * from "./useCurrency";
 export * from "./useErrorsTranslator";
 export * from "./useGoogleAnalytics";
+export * from "./useHistoricalEvents";
 export * from "./useImpersonate";
 export * from "./useNavigations";
 export * from "./usePageHead";

@@ -61,9 +61,10 @@ import { clone } from "lodash";
 import { useField } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
+import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/core/composables";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
@@ -81,6 +82,7 @@ const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
 const notifications = useNotifications();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 interface IEmits {
   (event: "update:lineItem", lineItem: ShortLineItemFragment): void;
@@ -165,6 +167,12 @@ async function onChange() {
      * Send Google Analytics event for an item added to cart.
      */
     ga.addItemToCart(props.product, inputQuantity);
+    void pushHistoricalEvent({
+      eventType: "addToCart",
+      sessionId: cart.value?.id,
+      productId: props.product.id,
+      storeId: globals.storeId,
+    });
   }
 
   lineItem = clone(getLineItem(updatedCart?.items));
