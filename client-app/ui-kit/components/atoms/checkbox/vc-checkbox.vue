@@ -51,7 +51,7 @@ interface IProps {
   name?: string;
   value?: boolean | string | number | object;
   indeterminate?: boolean;
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
   labelPosition?: "left" | "right";
   showEmptyDetails?: boolean;
   message?: string;
@@ -120,6 +120,12 @@ function onClick(event: Event) {
   @apply flex-none select-none;
 
   &--size {
+    &--xs {
+      --size: 0.875rem;
+
+      @apply text-xs;
+    }
+
     &--sm {
       --size: 1.125rem;
 

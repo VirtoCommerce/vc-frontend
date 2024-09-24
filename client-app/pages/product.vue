@@ -75,12 +75,15 @@
           :model="relatedProductsSection"
         />
 
-        <component
-          :is="recommendedProductsSection?.type"
-          v-if="recommendedProductsSection && !recommendedProductsSection.hidden"
-          :recommended-products="recommendedProducts"
-          :model="recommendedProductsSection"
-        />
+        <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
+          <component
+            :is="recommendedProductsSection?.type"
+            v-for="{ model, id } in recommendedProductsSection.blocks"
+            :key="id"
+            :recommended-products="recommendedProducts[model]"
+            :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+          />
+        </template>
       </div>
 
       <ProductSidebar
@@ -102,8 +105,8 @@ import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { pushHistoricalEvent } from "@/core/api/graphql/common/mutations";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { BREAKPOINTS } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -115,7 +118,6 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
-import { useUser } from "@/shared/account";
 import {
   useProduct,
   useRelatedProducts,
@@ -179,7 +181,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
-const { isAuthenticated } = useUser();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
@@ -323,11 +325,13 @@ watchEffect(async () => {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
   }
 
-  if (!recommendedProductsSection.value?.hidden) {
-    await fetchRecommendedProducts({
+  const recommendedProductsBlocks = (recommendedProductsSection.value?.blocks ?? []) as { model: string }[];
+  if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks.length) {
+    const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
       productId: productId.value,
-      model: "related-products",
-    });
+      model,
+    }));
+    await fetchRecommendedProducts(paramsToFetch);
   }
 
   if (product.value?.hasVariations) {
@@ -336,19 +340,17 @@ watchEffect(async () => {
 });
 
 /**
- * Send Google Analytics event for product.
+ * Send Google Analytics event and historical event for product.
  */
 watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
     ga.viewItem(product.value as Product);
-    if (isAuthenticated.value) {
-      void pushHistoricalEvent({
-        eventType: "click",
-        productId: product.value.id,
-        storeId: globals.storeId,
-      });
-    }
+    void pushHistoricalEvent({
+      eventType: "click",
+      productId: product.value.id,
+      storeId: globals.storeId,
+    });
   }
 });
 
