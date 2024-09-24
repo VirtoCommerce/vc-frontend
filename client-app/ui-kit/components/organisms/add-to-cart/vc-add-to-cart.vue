@@ -11,37 +11,44 @@
       size="sm"
       single-line-message
       center
-      :error="!isValid"
+      :error="!isValid || error"
       :message="message"
       :show-empty-details="showEmptyDetails"
       :readonly
       @input="onChange"
       @blur="onFocusOut"
     >
-      <template v-if="!hideButton" #append>
-        <VcButton
-          class="vc-add-to-cart__icon-button"
-          :variant="isButtonOutlined ? 'outline' : 'solid'"
-          :loading="loading"
-          :disabled="isDisabled"
-          :title="buttonText"
-          :icon="icon"
-          size="sm"
-          @click.stop="$emit('update:cartItemQuantity', quantity!)"
-        />
+      <template #prepend>
+        <slot name="prepend" />
+      </template>
+      <template #append>
+        <slot name="append" />
+        <template v-if="!hideButton">
+          <VcButton
+            class="vc-add-to-cart__icon-button"
+            :variant="isButtonOutlined ? 'outline' : 'solid'"
+            :loading="loading"
+            :disabled="isDisabled"
+            :title="buttonText"
+            :icon="icon"
+            size="sm"
+            @click.stop="$emit('update:cartItemQuantity', quantity!)"
+          />
 
-        <VcButton
-          class="vc-add-to-cart__text-button"
-          :variant="isButtonOutlined ? 'outline' : 'solid'"
-          :loading="loading"
-          :disabled="isDisabled"
-          :title="buttonText"
-          size="sm"
-          truncate
-          @click.stop="$emit('update:cartItemQuantity', quantity!)"
-        >
-          {{ buttonText }}
-        </VcButton>
+          <VcButton
+            v-if="!hideButton"
+            class="vc-add-to-cart__text-button"
+            :variant="isButtonOutlined ? 'outline' : 'solid'"
+            :loading="loading"
+            :disabled="isDisabled"
+            :title="buttonText"
+            size="sm"
+            truncate
+            @click.stop="$emit('update:cartItemQuantity', quantity!)"
+          >
+            {{ buttonText }}
+          </VcButton>
+        </template>
       </template>
     </VcInput>
 
@@ -81,6 +88,7 @@ interface IProps {
   isInStock?: boolean;
   message?: string;
   showEmptyDetails?: boolean;
+  error?: boolean;
   hideButton?: boolean;
   readonly?: boolean;
   timeout?: number;

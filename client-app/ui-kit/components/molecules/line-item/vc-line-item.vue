@@ -358,7 +358,7 @@ watchEffect(() => {
   &__slot {
     @apply flex-none empty:hidden;
 
-    &:has(.vc-quantity, * .vc-quantity, .vc-add-to-cart, * .vc-add-to-cart) {
+    &:has(.vc-add-to-cart, * .vc-add-to-cart) {
       @apply w-[6.5rem];
     }
 
