@@ -22,13 +22,9 @@
       <div
         class="vc-product-card-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
       >
-        <AddToList custom-class="w-5 h-5 lg:w-4 lg:h-4" :product="product" tooltip-placement="bottom" />
-        <AddToCompareCatalog
-          v-if="$cfg.product_compare_enabled"
-          custom-class="w-5 h-5 lg:w-4 lg:h-4"
-          :product="product"
-          tooltip-placement="bottom"
-        />
+        <AddToList :product="product" />
+
+        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
       </div>
     </div>
 
