@@ -132,7 +132,7 @@ export function useNavigations() {
   async function fetchCatalogMenu() {
     const { catalog_empty_categories_enabled, zero_price_product_enabled } = themeContext.value.settings;
 
-    const catalog_menu_link_list_name = getSettingValue("Frontend.CatalogMenuLinkListName");
+    const catalog_menu_link_list_name = getSettingValue(MODULE_XAPI_KEYS.CATALOG_MENU_LINK_LIST_NAME);
 
     try {
       if (typeof catalog_menu_link_list_name === "string") {

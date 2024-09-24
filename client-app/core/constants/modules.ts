@@ -7,4 +7,5 @@ export const MODULE_XAPI_KEYS = {
   PAGE_TITLE_WITH_STORE_NAME: "Frontend.PageTitleWithStoreName",
   PAGE_TITLE_STORE_NAME_ALIGN: "Frontend.PageTitleStoreNameAlign",
   PAGE_TITLE_DIVIDER: "Frontend.PageTitleDivider",
+  CATALOG_MENU_LINK_LIST_NAME: "Frontend.CatalogMenuLinkListName",
 } as const;
