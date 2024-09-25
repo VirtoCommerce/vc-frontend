@@ -26,7 +26,7 @@
             <th class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.products") }}
             </th>
-            <th class="px-2 py-1 text-start">
+            <th v-if="!otherErrorItems?.length" class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.quantity") }}
             </th>
           </tr>
@@ -70,7 +70,6 @@
               <div v-for="error in errorItem.errors" :key="error.errorCode">
                 {{ translate(error) }}
               </div>
-              {{ $t(`validation_error.${errorItem.errors?.[0]?.errorCode}`) }}
             </td>
           </tr>
         </tbody>

@@ -4,8 +4,10 @@
     :title="tooltipText"
     type="button"
     :class="[
-      'flex items-center justify-center disabled:text-neutral-300',
-      product.inWishlist ? 'text-primary' : 'text-neutral-400',
+      'add-to-compare-catalog',
+      {
+        'add-to-compare-catalog--active': isInCompareList,
+      },
     ]"
     tabindex="0"
     @click="toggle"
@@ -24,12 +26,10 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   product: Product;
   customClass?: string;
-  tooltipPlacement?: VcTooltipPlacementType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   customClass: "size-5 lg:size-4",
-  tooltipPlacement: "left",
 });
 
 const { t } = useI18n();
@@ -51,3 +51,13 @@ const toggle = () => {
   }
 };
 </script>
+
+<style lang="scss">
+.add-to-compare-catalog {
+  @apply flex items-center justify-center text-neutral-400 disabled:text-neutral-300;
+
+  &--active {
+    @apply text-primary;
+  }
+}
+</style>
