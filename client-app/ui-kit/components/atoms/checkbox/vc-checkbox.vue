@@ -6,7 +6,7 @@
       `vc-checkbox--label--${labelPosition}`,
       {
         'vc-checkbox--disabled': disabled,
-        'vc-checkbox--checked': checked,
+        'vc-checkbox--checked': isChecked,
       },
     ]"
   >
@@ -17,17 +17,16 @@
         :name="name"
         :value="value"
         :disabled="disabled"
-        :checked="checked"
+        :checked="isChecked"
         :indeterminate="indeterminate"
-        :aria-checked="checked"
+        :aria-checked="isChecked"
         class="vc-checkbox__input"
         :data-test-id="testId"
-        @change="change"
+        @change="handleChange"
         @click="onClick"
       />
-
       <span v-if="$slots.default" class="vc-checkbox__label">
-        <slot v-bind="{ checked }" />
+        <slot v-bind="{ checked: isChecked }" />
       </span>
     </label>
 
@@ -42,14 +41,19 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { computed } from "vue";
+import { includes } from "lodash";
+import { computed, inject } from "vue";
+
+interface IEmits {
+  (event: "update:modelValue", value: boolean): void;
+  (event: "change", value: boolean): void;
+}
 
 interface IProps {
-  disabled?: boolean;
-  modelValue?: boolean | any[];
+  modelValue?: boolean;
   name?: string;
-  value?: boolean | string | number | object;
+  value?: string | number | object;
+  disabled?: boolean;
   indeterminate?: boolean;
   size?: "xs" | "sm" | "md";
   labelPosition?: "left" | "right";
@@ -61,49 +65,42 @@ interface IProps {
   preventDefault?: boolean;
 }
 
-const emit = defineEmits<{
-  (event: "update:modelValue", value: boolean | any[]): void;
-  (event: "change", value: boolean | any[]): void;
-}>();
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  modelValue: () => [],
+  modelValue: false,
   size: "md",
   labelPosition: "right",
 });
 
-const checked = computed<boolean>(() =>
-  typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value),
-);
+const groupContext = inject<VcCheckboxGroupContextType | null>("checkboxGroupContext", null);
 
-function change() {
+const isChecked = computed(() => {
+  if (groupContext) {
+    return includes(groupContext.modelValue, props.value);
+  } else {
+    return props.modelValue;
+  }
+});
+
+function handleChange() {
   if (props.disabled) {
     return;
   }
 
-  if (typeof props.modelValue === "boolean") {
+  if (groupContext) {
+    groupContext.toggleValue(props.value!);
+  } else {
     const newValue = !props.modelValue;
     emit("update:modelValue", newValue);
     emit("change", newValue);
-  } else {
-    const newArray = [...props.modelValue];
-    const index = newArray.indexOf(props.value);
-
-    if (index === -1) {
-      newArray.push(props.value);
-    } else {
-      newArray.splice(index, 1);
-    }
-
-    emit("update:modelValue", newArray);
-    emit("change", newArray);
   }
 }
 
 function onClick(event: Event) {
   if (props.preventDefault) {
     event.preventDefault();
-    change();
+    handleChange();
   }
 }
 </script>
