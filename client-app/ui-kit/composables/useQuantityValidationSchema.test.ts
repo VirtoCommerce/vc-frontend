@@ -15,14 +15,6 @@ describe("use-quantity-validation-schema", () => {
     expect(quantitySchema.value.isValidSync(-1)).toBeFalsy();
   });
 
-  it("allowZero option is applied", () => {
-    const { quantitySchema } = useQuantityValidationSchema({ allowZero: ref(true) });
-
-    expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
-    expect(quantitySchema.value.isValidSync(0)).toBeTruthy();
-    expect(quantitySchema.value.isValidSync(-1)).toBeFalsy();
-  });
-
   it("quantity is integer", () => {
     const { quantitySchema } = useQuantityValidationSchema({});
 

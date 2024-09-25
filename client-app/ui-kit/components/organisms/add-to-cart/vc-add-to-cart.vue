@@ -89,7 +89,6 @@ interface IProps {
   hideButton?: boolean;
   readonly?: boolean;
   timeout?: number;
-  allowZero?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -99,18 +98,8 @@ const { t } = useI18n();
 
 const isValid = ref(true);
 
-const {
-  allowZero,
-  timeout,
-  disabled,
-  isInStock,
-  minQuantity,
-  maxQuantity,
-  availableQuantity,
-  isActive,
-  isAvailable,
-  isBuyable,
-} = toRefs(props);
+const { timeout, disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
+  toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -120,10 +109,9 @@ const buttonText = computed<string>(() =>
 
 const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
 
-const quantity = ref<number | undefined>();
+const quantity = ref<number | undefined>(props.modelValue);
 
 const { quantitySchema } = useQuantityValidationSchema({
-  allowZero,
   minQuantity,
   maxQuantity,
   availableQuantity,
@@ -135,7 +123,9 @@ const isDisabled = computed(
   () => !isValid.value || disabled.value || !isActive || !isAvailable.value || !isBuyable.value || !isInStock.value,
 );
 
-const { errorMessage, validate, setValue } = useField("quantity", rules);
+const { errorMessage, validate, setValue, value } = useField("quantity", rules, {
+  initialValue: quantity.value,
+});
 
 async function validateFields(): Promise<void> {
   const { valid } = await validate();
@@ -175,8 +165,10 @@ watchEffect(() => {
 });
 
 watchEffect(async () => {
-  setValue(quantity.value);
-  await validateFields();
+  if (quantity.value !== value.value) {
+    setValue(quantity.value);
+    await validateFields();
+  }
 });
 </script>
 
