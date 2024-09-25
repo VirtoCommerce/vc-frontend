@@ -1,9 +1,12 @@
+import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { useUser } from "@/shared/account/composables/useUser";
+import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import type { MenuType } from "@/core/types";
+import type { ElementType } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import type { DeepPartial } from "utility-types";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
@@ -21,12 +24,18 @@ const desktopMainMenuItem: DeepPartial<MenuType> = {
   },
 };
 
+const menuLinkCustomElement: ElementType = {
+  id: "push-messages",
+  component: defineAsyncComponent(() => import("@/shared/push-messages/components/link-push-messages.vue")),
+};
+
 export function useWebPushNotifications() {
   async function init() {
     const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
     const { isAuthenticated } = useUser();
     const { themeContext } = useThemeContext();
     const { mergeMenuSchema } = useNavigations();
+    const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
 
     if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value || !hasModuleSettings.value) {
       const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
@@ -40,6 +49,7 @@ export function useWebPushNotifications() {
     const { initModule } = useWebPushNotificationsModule();
     await initModule();
     mergeMenuSchema(desktopMainMenuItem);
+    registerCustomLinkComponent(menuLinkCustomElement);
   }
 
   return { init };
