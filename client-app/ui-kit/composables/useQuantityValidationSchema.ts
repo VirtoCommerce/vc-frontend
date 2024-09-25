@@ -57,8 +57,8 @@ export function useQuantityValidationSchema(payload: {
 
   const quantitySchema = computed<NumberSchema>(() =>
     number()
-      .positive()
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
+      .positive()
       .integer()
       .withMutation((schema) => {
         if (!isInStock?.value) {

@@ -123,7 +123,12 @@ const isDisabled = computed(
   () => !isValid.value || disabled.value || !isActive || !isAvailable.value || !isBuyable.value || !isInStock.value,
 );
 
-const { errorMessage, validate, setValue, value } = useField("quantity", rules, {
+const {
+  errorMessage,
+  validate,
+  setValue,
+  value: fieldValue,
+} = useField("quantity", rules, {
   initialValue: quantity.value,
 });
 
@@ -165,7 +170,7 @@ watchEffect(() => {
 });
 
 watchEffect(async () => {
-  if (quantity.value !== value.value) {
+  if (quantity.value !== fieldValue.value) {
     setValue(quantity.value);
     await validateFields();
   }
