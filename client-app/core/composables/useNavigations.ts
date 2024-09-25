@@ -19,7 +19,7 @@ import type { DeepPartial } from "utility-types";
 
 const loading = ref(false);
 const matchingRouteName = ref("");
-const menuSchema = shallowRef<MenuType | null>(null);
+const menuSchema = ref<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -30,7 +30,9 @@ const openedItem = computed<ExtendedMenuLinkType | undefined>(
 );
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
+  (menuSchema.value?.header?.desktop || [])
+    .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
+    .sort((a, b) => (a.priority || 0) - (b.priority || 0)),
 );
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>

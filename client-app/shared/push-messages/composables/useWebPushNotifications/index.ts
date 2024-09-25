@@ -1,21 +1,34 @@
+import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { useUser } from "@/shared/account/composables/useUser";
+import type { MenuType } from "@/core/types";
+import type { DeepPartial } from "utility-types";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
+
+const desktopMainMenuItem: DeepPartial<MenuType> = {
+  header: {
+    desktop: [
+      {
+        id: "push-messages",
+        title: "shared.layout.header.menu.push-messages",
+        icon: "/static/icons/basic/bell.svg#icon",
+        priority: 40,
+      },
+    ],
+  },
+};
 
 export function useWebPushNotifications() {
   async function init() {
     const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
     const { isAuthenticated } = useUser();
     const { themeContext } = useThemeContext();
+    const { mergeMenuSchema } = useNavigations();
 
-    if (
-      !themeContext.value?.settings?.push_messages_enabled ||
-      isAuthenticated.value === false ||
-      !hasModuleSettings.value
-    ) {
+    if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value || !hasModuleSettings.value) {
       const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
       if (serviceWorkerRegistration) {
         void serviceWorkerRegistration.unregister();
@@ -26,6 +39,7 @@ export function useWebPushNotifications() {
     const { useWebPushNotificationsModule } = await import("./useWebPushNotificationsModule");
     const { initModule } = useWebPushNotificationsModule();
     await initModule();
+    mergeMenuSchema(desktopMainMenuItem);
   }
 
   return { init };
