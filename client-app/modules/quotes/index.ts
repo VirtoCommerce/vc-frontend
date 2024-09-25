@@ -1,9 +1,12 @@
+import { defineAsyncComponent } from "vue";
 import { useThemeContext, useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID, ENABLED_KEY } from "@/modules/quotes/constants";
+import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import type { MenuType } from "@/core/types";
 import type { I18n } from "@/i18n";
+import type { ElementType } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
 
@@ -15,6 +18,7 @@ const { themeContext } = useThemeContext();
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
 const { loadModuleLocale } = useLanguages();
+const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
 
 const route: RouteRecordRaw = {
   path: "quotes",
@@ -65,10 +69,16 @@ const mobileMenuItem: DeepPartial<MenuType> = {
   },
 };
 
+const menuLinkCustomElement: ElementType = {
+  id: "push-messages",
+  component: defineAsyncComponent(() => import("@/shared/push-messages/components/link-push-messages.vue")),
+};
+
 export function init(router: Router, i18n: I18n) {
   if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(mobileMenuItem);
+    registerCustomLinkComponent(menuLinkCustomElement);
     void loadModuleLocale(i18n, "quotes");
   }
 }

@@ -204,7 +204,6 @@ export function useNavigations() {
 
   return {
     fetchMenus,
-    fetchFooterLinks,
     goBack,
     goMainMenu,
     selectMenuItem,

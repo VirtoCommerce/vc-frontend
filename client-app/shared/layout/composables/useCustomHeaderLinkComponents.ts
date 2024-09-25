@@ -3,28 +3,25 @@ import { defineAsyncComponent, readonly, ref } from "vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { DefineComponent } from "vue";
 
-type ElementType = {
+export type ElementType = {
   id: string;
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  element: DefineComponent<{ item: ExtendedMenuLinkType }, Record<string, any>, any>;
+  component: DefineComponent<{ item: ExtendedMenuLinkType }, Record<string, any>, any>;
 };
 
 function _useCustomHeaderLinkComponents() {
-  const customLinkComponents = ref<{ [key: ElementType["id"]]: ElementType["element"] }>({
+  const customLinkComponents = ref<{ [key: ElementType["id"]]: ElementType["component"] }>({
     compare: defineAsyncComponent(
       () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
     ),
     cart: defineAsyncComponent(
       () => import("@/shared/layout/components/header/_internal/link-components/link-cart.vue"),
     ),
-    "push-messages": defineAsyncComponent(
-      () => import("@/shared/layout/components/header/_internal/link-components/link-push-messages.vue"),
-    ),
   });
 
   function registerCustomLinkComponent(element: ElementType) {
     if (!customLinkComponents.value[element.id]) {
-      customLinkComponents.value[element.id] = element.element;
+      customLinkComponents.value[element.id] = element.component;
     }
   }
 
