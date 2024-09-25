@@ -1,5 +1,5 @@
 <template>
-  <div class="vc-add-to-cart">
+  <div class="vc-add-to-cart" :class="{ 'vc-add-to-cart--hide-button': hideButton }">
     <VcInput
       v-model.number="quantity"
       :name
