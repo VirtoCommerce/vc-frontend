@@ -32,7 +32,7 @@ const openedItem = computed<ExtendedMenuLinkType | undefined>(
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   (menuSchema.value?.header?.desktop || [])
     .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
-    .sort((a, b) => (a.priority || 0) - (b.priority || 0)),
+    .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
 );
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
