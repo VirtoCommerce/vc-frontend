@@ -6,5 +6,3 @@ declare global {
     toggleValue: (value: string | number | object) => void;
   };
 }
-
-export {};
