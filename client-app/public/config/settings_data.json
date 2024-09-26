@@ -3,8 +3,6 @@
   "settings": {
     "show_details_in_separate_tab": true,
 
-    "catalog_empty_categories_enabled": false,
-
     "files_enabled": true,
 
     "push_messages_enabled": true,

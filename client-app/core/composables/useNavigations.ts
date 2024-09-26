@@ -130,9 +130,10 @@ export function useNavigations() {
   }
 
   async function fetchCatalogMenu() {
-    const { catalog_empty_categories_enabled, zero_price_product_enabled } = themeContext.value.settings;
+    const { zero_price_product_enabled } = themeContext.value.settings;
 
     const catalog_menu_link_list_name = getSettingValue(MODULE_XAPI_KEYS.CATALOG_MENU_LINK_LIST_NAME);
+    const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
       if (typeof catalog_menu_link_list_name === "string") {

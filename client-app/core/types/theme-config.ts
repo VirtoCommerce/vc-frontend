@@ -157,8 +157,6 @@ export interface IThemeConfigSettings {
 
   search_by_static_content_enabled?: boolean;
 
-  catalog_empty_categories_enabled?: boolean;
-
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
 
