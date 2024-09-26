@@ -126,7 +126,7 @@ onMounted(() => {
   @apply block list-none select-none;
 
   &__inner {
-    @apply block w-full px-3 text-left rounded-[inherit];
+    @apply block w-full px-3 text-left rounded-[inherit] text-sm/[1rem];
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
@@ -150,25 +150,25 @@ onMounted(() => {
       &--xs {
         --content-height: 0.875rem;
 
-        @apply gap-1.5 py-2 text-xs/[0.875rem];
+        @apply gap-1.5 py-1.5;
       }
 
       &--sm {
         --content-height: 1rem;
 
-        @apply gap-1.5 py-2.5 text-sm/[1rem];
+        @apply gap-1.5 py-2.5;
       }
 
       &--md {
         --content-height: 1.25rem;
 
-        @apply gap-1.5 py-2.5 text-sm/[1rem];
+        @apply gap-1.5 py-2.5;
       }
 
       &--lg {
         --content-height: 2rem;
 
-        @apply gap-2 py-2 text-sm/[1rem];
+        @apply gap-2 py-2;
       }
     }
 

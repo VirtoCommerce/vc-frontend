@@ -1,5 +1,6 @@
 #import "../../fragments/property.graphql"
 #import "../../fragments/availabilityData.graphql"
+#import "../../../common/fragments/rating.graphql"
 
 query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String, $id: String!) {
   product(storeId: $storeId, id: $id, currencyCode: $currencyCode, cultureName: $cultureName) {
@@ -43,8 +44,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
       id
       name
       rating {
-        value
-        reviewCount
+        ...rating
       }
     }
     availabilityData {
@@ -80,6 +80,9 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
         thumbnailUrl
         embedUrl
       }
+    }
+    rating {
+      ...rating
     }
   }
 }

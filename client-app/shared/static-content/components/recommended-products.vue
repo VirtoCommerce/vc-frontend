@@ -1,10 +1,5 @@
 <template>
-  <VcWidget
-    v-if="recommendedProducts.length"
-    :title="$t('pages.product.recommended_products_section_title')"
-    prepend-icon="cube"
-    size="lg"
-  >
+  <VcWidget v-if="recommendedProducts.length" :title="title" prepend-icon="cube" size="lg">
     <VcProductsGrid short>
       <ProductCardRecommended v-for="(item, index) in recommendedProducts" :key="index" :product="item" />
     </VcProductsGrid>
@@ -17,6 +12,7 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   recommendedProducts: Product[];
+  title: string;
 }
 defineProps<IProps>();
 </script>

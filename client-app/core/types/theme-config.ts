@@ -226,7 +226,7 @@ export interface IThemeConfigSettings {
   search_product_phrase_suggestions_enabled?: boolean;
 
   vendor_enabled?: boolean;
-  rating_enabled?: boolean;
+  vendor_rating_enabled?: boolean;
 
   checkout_multistep_enabled?: boolean;
   checkout_comment_enabled?: boolean;

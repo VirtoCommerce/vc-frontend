@@ -1,5 +1,5 @@
 <template>
-  <form class="overflow-x-hidden" @submit.prevent="save">
+  <form @submit.prevent="save">
     <slot name="prepend" v-bind="slotsData" />
 
     <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
