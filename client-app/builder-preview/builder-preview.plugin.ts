@@ -138,12 +138,18 @@ export default {
 
       switch (event.data.type) {
         case "changed":
+        case "update":
+        case "remove":
+        case "add":
+        case "reload":
         case "page":
         case "swap":
         case "preview":
           await updatePreview(event.data, options);
           break;
 
+        // case "hover":
+        //   break;
         case "select": {
           const element = document.getElementById("__scroll__" + event.data.sectionId);
           if (element) {
