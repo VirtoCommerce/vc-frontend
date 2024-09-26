@@ -48,6 +48,7 @@ import type {
   AddOrUpdateCartPaymentMutationVariables,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
+import type { Ref } from "vue";
 
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
@@ -176,12 +177,16 @@ export function _useFullCart() {
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
 
-  const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
-  const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);
+  const selectUnselectCartItemsLoadingStatuses = ref<Ref<boolean>[]>([]);
+  const selectUnselectCartItemsLoading = computed(() =>
+    selectUnselectCartItemsLoadingStatuses.value.some((x) => x.value),
+  );
 
   const selectedItemIds = computed({
     get: () => selectedLineItems.value.map((item) => item.id),
     set: (newValue) => {
+      const { mutate: _selectCartItems, loading: selectLoading } = useSelectCartItemsMutation(cart);
+      const { mutate: _unselectCartItemsMutation, loading: unselectLoading } = useUnselectCartItemsMutation(cart);
       const oldValue = selectedItemIds.value;
 
       const newlySelectedLineItemIds = difference(newValue, oldValue);
@@ -206,6 +211,7 @@ export function _useFullCart() {
             },
           },
         );
+        selectUnselectCartItemsLoadingStatuses.value.push(selectLoading);
       }
       if (hasNewlyUnselected) {
         void _unselectCartItemsMutation(
@@ -224,6 +230,7 @@ export function _useFullCart() {
             },
           },
         );
+        selectUnselectCartItemsLoadingStatuses.value.push(unselectLoading);
       }
     },
   });
@@ -436,8 +443,7 @@ export function _useFullCart() {
     loading: readonly(loading),
     changing: computed(
       () =>
-        selectCartItemsLoading.value ||
-        unselectCartItemsLoading.value ||
+        selectUnselectCartItemsLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
         changeItemQuantityLoading.value ||
