@@ -9,6 +9,8 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
+    @keydown.up="changeFocus"
+    @keydown.down="changeFocus"
   >
     <div v-if="$slots.before" class="vc-line-item__before">
       <slot name="before" />
@@ -168,6 +170,27 @@ const { themeContext } = useThemeContext();
 const isSelected = ref<boolean>(true);
 
 const target = computed(() => (themeContext.value?.settings?.show_details_in_separate_tab ? "_blank" : "_self"));
+
+function changeFocus(event: KeyboardEvent) {
+  const { target: targetElement, currentTarget } = event;
+  if (!(currentTarget instanceof HTMLElement) || !(targetElement instanceof HTMLElement)) {
+    return;
+  }
+  const targetClassList = targetElement.classList;
+  let nextElement: Element | null = null;
+  switch (event.key) {
+    case "ArrowUp":
+      nextElement = currentTarget.previousElementSibling;
+      break;
+    case "ArrowDown":
+      nextElement = currentTarget.nextElementSibling;
+      break;
+  }
+  if (nextElement && nextElement.classList.contains("vc-line-item") && nextElement instanceof HTMLElement) {
+    const nextTargetElement = nextElement.querySelector(`.${[...targetClassList].join(".")}`);
+    (nextTargetElement as HTMLElement | null)?.focus();
+  }
+}
 
 watchEffect(() => {
   isSelected.value = props.selected;

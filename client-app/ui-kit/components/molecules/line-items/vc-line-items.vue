@@ -49,7 +49,6 @@
         <slot name="line-items">
           <VcLineItem
             v-for="item in items"
-            ref="lineItems"
             :key="item.id"
             :image-url="item.imageUrl"
             :name="item.name"
@@ -156,7 +155,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const slotElements = ref<HTMLElement[]>([]);
 const slotWidth = ref<string>("");
-const lineItems = ref<InstanceType<typeof VcLineItem>[] | null>(null);
 
 const showImage = computed(() => props.withImage && props.items.some((item) => item.imageUrl));
 const showProperties = computed(() => props.withProperties && props.items.some((item) => item.properties?.length));
@@ -201,17 +199,6 @@ function removeSelectedItems() {
 
 function removeAllItems() {
   emit("remove:items", itemIds.value);
-}
-
-function changeFocus(event: Event, id: string, direction: string) {
-  const { target } = event;
-  const targetClass = target instanceof HTMLElement ? target.className : "";
-  const index = props.items.findIndex((item) => item.id === id);
-  const nextIndex = direction === "down" ? index + 1 : index - 1;
-
-  if (nextIndex >= 0 && nextIndex < props.items.length) {
-    lineItems.value?.[nextIndex]?.$el?.querySelector(`.${targetClass}`)?.focus();
-  }
 }
 
 watchEffect(() => {
