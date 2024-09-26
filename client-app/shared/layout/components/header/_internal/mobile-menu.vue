@@ -179,11 +179,7 @@
               </div>
 
               <div>
-                <button
-                  type="button"
-                  class="font-bold text-[--mobile-menu-navigation-color]"
-                  @click="() => signMeOut()"
-                >
+                <button type="button" class="font-bold text-[--mobile-menu-navigation-color]" @click="signMeOut">
                   {{ $t("shared.layout.header.link_logout") }}
                 </button>
               </div>
