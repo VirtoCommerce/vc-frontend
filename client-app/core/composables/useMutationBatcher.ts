@@ -6,7 +6,7 @@ import { uniqByLast } from "@/core/utilities/common";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import type { UniqByLastIterateeType } from "@/core/utilities/common";
 import type { FetchResult } from "@apollo/client/core";
-import type { MutateFunction } from "@vue/apollo-composable";
+import type { MutateFunction, MutateOverrideOptions } from "@vue/apollo-composable";
 
 const DEFAULT_MAX_LENGTH = 10;
 
@@ -66,15 +66,23 @@ export function useMutationBatcher<TData, TVariables extends object>(
     mergeStrategy: merge = DEFAULT_MERGE_STRATEGY,
   } = options;
 
+  console.log(mutation.name);
+
   const overflowed = ref(false);
+  const loading = ref(false);
   let abortController: AbortController | null = null;
   let batch: TVariables = {} as TVariables;
   let calledCount = 0;
   let debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  let mutationOptions: MutateOverrideOptions<TData> | undefined;
 
-  async function add(args: TVariables): Promise<FetchResult<TData> | null> {
+  async function add(
+    args: TVariables,
+    overrideOptions?: MutateOverrideOptions<TData> | undefined,
+  ): Promise<FetchResult<TData> | null> {
     clearPreviousDebounce();
     batch = merge(batch, args);
+    mutationOptions = overrideOptions;
     calledCount += 1;
 
     if (calledCount >= maxLength) {
@@ -83,6 +91,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
     return new Promise((resolve, reject) => {
       debounceTimeoutId = setTimeout(async () => {
         try {
+          loading.value = true;
           const result = await executeBatch();
           resolve(result);
           resetBatchState();
@@ -106,6 +115,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
     abortController = new AbortController();
     return await mutation(batch, {
       context: { fetchOptions: { signal: abortController.signal } },
+      ...mutationOptions,
     });
   }
 
@@ -114,7 +124,8 @@ export function useMutationBatcher<TData, TVariables extends object>(
     abortController = null;
     batch = {} as TVariables;
     calledCount = 0;
+    loading.value = false;
   }
 
-  return { overflowed, add };
+  return { overflowed, add, loading };
 }

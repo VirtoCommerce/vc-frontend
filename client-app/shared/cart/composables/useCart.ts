@@ -181,12 +181,14 @@ export function _useFullCart() {
   const selectUnselectCartItemsLoading = computed(() =>
     selectUnselectCartItemsLoadingStatuses.value.some((x) => x.value),
   );
+  const { mutate: _selectCartItemsMutation } = useSelectCartItemsMutation(cart);
+  const { mutate: _unselectCartItemsMutation } = useUnselectCartItemsMutation(cart);
+  const { add: _selectCartItems, loading: selectLoading } = useMutationBatcher(_selectCartItemsMutation);
+  const { add: _unselectCartItems, loading: unselectLoading } = useMutationBatcher(_unselectCartItemsMutation);
 
   const selectedItemIds = computed({
     get: () => selectedLineItems.value.map((item) => item.id),
     set: (newValue) => {
-      const { mutate: _selectCartItems, loading: selectLoading } = useSelectCartItemsMutation(cart);
-      const { mutate: _unselectCartItemsMutation, loading: unselectLoading } = useUnselectCartItemsMutation(cart);
       const oldValue = selectedItemIds.value;
 
       const newlySelectedLineItemIds = difference(newValue, oldValue);
@@ -214,7 +216,7 @@ export function _useFullCart() {
         selectUnselectCartItemsLoadingStatuses.value.push(selectLoading);
       }
       if (hasNewlyUnselected) {
-        void _unselectCartItemsMutation(
+        void _unselectCartItems(
           {
             command: {
               lineItemIds: newlyUnselectedLineItemIds,
