@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
 import mergeWith from "lodash/mergeWith";
 import { ref } from "vue";
@@ -66,8 +67,6 @@ export function useMutationBatcher<TData, TVariables extends object>(
     mergeStrategy: merge = DEFAULT_MERGE_STRATEGY,
   } = options;
 
-  console.log(mutation.name);
-
   const overflowed = ref(false);
   const loading = ref(false);
   let abortController: AbortController | null = null;
@@ -96,7 +95,13 @@ export function useMutationBatcher<TData, TVariables extends object>(
           resolve(result);
           resetBatchState();
         } catch (error) {
-          if (error instanceof Error && error.toString() !== (AbortReason.Explicit as string)) {
+          const explicitError = AbortReason.Explicit as string;
+          if (
+            error instanceof Error &&
+            error.toString() !== explicitError &&
+            error instanceof ApolloError &&
+            error.networkError?.toString() !== explicitError
+          ) {
             reject(error);
           }
         }
