@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, provide } from "vue";
+import { provide, ref, watch, toRefs } from "vue";
 
 interface IEmits {
   (event: "update:modelValue", value: (string | number | object)[]): void;
@@ -22,27 +22,33 @@ const props = withDefaults(defineProps<IProps>(), {
   modelValue: () => [],
 });
 
+const { modelValue } = toRefs(props);
+
+const internalModelValue = ref([...modelValue.value]);
+
 function toggleValue(value: string | number | object) {
-  const newValue = [...props.modelValue];
-  const index = newValue.indexOf(value);
+  const index = internalModelValue.value.indexOf(value);
 
   if (index === -1) {
-    newValue.push(value);
+    internalModelValue.value.push(value);
   } else {
-    newValue.splice(index, 1);
+    internalModelValue.value.splice(index, 1);
   }
 
-  emit("update:modelValue", newValue);
-  emit("change", newValue);
+  emit("update:modelValue", [...internalModelValue.value]);
+  emit("change", [...internalModelValue.value]);
 }
 
 provide<VcCheckboxGroupContextType>("checkboxGroupContext", {
-  modelValue: computed(() => props.modelValue).value,
+  modelValue: internalModelValue,
   toggleValue,
 });
-</script>
 
-<style scoped>
-.vc-checkbox-group {
-}
-</style>
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    internalModelValue.value = [...newVal];
+  },
+  { deep: true, immediate: true },
+);
+</script>

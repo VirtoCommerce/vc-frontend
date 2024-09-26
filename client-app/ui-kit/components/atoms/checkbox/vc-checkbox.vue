@@ -76,8 +76,8 @@ const props = withDefaults(defineProps<IProps>(), {
 const groupContext = inject<VcCheckboxGroupContextType | null>("checkboxGroupContext", null);
 
 const isChecked = computed(() => {
-  if (groupContext) {
-    return includes(groupContext.modelValue, props.value);
+  if (groupContext && !props.modelValue) {
+    return includes(groupContext.modelValue.value, props.value);
   } else {
     return props.modelValue;
   }

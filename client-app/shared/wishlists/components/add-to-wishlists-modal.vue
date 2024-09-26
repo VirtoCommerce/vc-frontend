@@ -59,39 +59,46 @@
               <VcCheckbox model-value class="relative" />
               <div class="absolute inset-0"></div>
             </button>
+
             <VcInput
               v-model="input.listName"
               class="ml-2.5 mr-3.5 grow"
-              :class="{ 'mb-4.5': !input.errorMessage }"
               :disabled="loading"
               :maxlength="25"
               required
+              show-empty-details
               :message="input.errorMessage"
               :error="!!input.errorMessage"
             />
+
             <button type="button" class="mt-3.5" @click="removeNewList(index)">
               <svg class="text-danger" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>
             </button>
           </li>
-          <li
-            v-for="list in listsOther"
-            :key="list.id"
-            class="flex justify-between px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3"
-          >
-            <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
-              <span
-                class="line-clamp-1 text-base"
-                :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
-              >
-                {{ list.name }}
-              </span>
-            </VcCheckbox>
-
-            <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
-          </li>
         </transition-group>
+
+        <VcCheckboxGroup v-model="selectedListsOtherIds">
+          <transition-group name="list-input" tag="ul">
+            <li
+              v-for="list in listsOther"
+              :key="list.id"
+              class="flex justify-between px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3"
+            >
+              <VcCheckbox :value="list.id" :disabled="loading">
+                <span
+                  class="line-clamp-1 text-base"
+                  :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
+                >
+                  {{ list.name }}
+                </span>
+              </VcCheckbox>
+
+              <WishlistStatus v-if="isCorporateMember && list.scope" :scope="list.scope" />
+            </li>
+          </transition-group>
+        </VcCheckboxGroup>
       </template>
 
       <!-- Skeletons -->
