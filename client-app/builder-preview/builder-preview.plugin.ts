@@ -148,8 +148,9 @@ export default {
           await updatePreview(event.data, options);
           break;
 
-        // case "hover":
-        //   break;
+        case "hover":
+          // ignore now
+          break;
         case "select": {
           const element = document.getElementById("__scroll__" + event.data.sectionId);
           if (element) {
@@ -170,6 +171,8 @@ export default {
         case "settings":
           updateSettings(app, event.data.settings!);
           break;
+        default:
+          console.log("Unknown message type", event.data.type);
       }
     });
     const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
