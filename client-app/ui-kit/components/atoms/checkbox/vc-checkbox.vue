@@ -178,6 +178,10 @@ function onClick(event: Event) {
       @apply ring ring-[--focus-color];
     }
 
+    &:focus-visible {
+      @apply outline-none;
+    }
+
     &:disabled {
       @apply bg-neutral-50 cursor-not-allowed;
 
