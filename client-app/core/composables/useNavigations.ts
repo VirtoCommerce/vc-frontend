@@ -30,8 +30,16 @@ const openedItem = computed<ExtendedMenuLinkType | undefined>(
 );
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
+  (menuSchema.value?.header?.desktop?.main || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
 );
+
+const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.account) : undefined;
+});
+
+const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
+});
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
@@ -209,6 +217,8 @@ export function useNavigations() {
     setMatchingRouteName,
     openedItem,
     desktopMainMenuItems,
+    desktopAccountMenuItems,
+    desktopCorporateMenuItems,
     mobileMainMenuItems,
     mobileCatalogMenuItem,
     mobileAccountMenuItem,
