@@ -83,11 +83,11 @@ const isListDetails = eagerComputed(() => route.name === "ListDetails");
 const isOrdersPage = eagerComputed(() => route.name === "Orders");
 
 function canShowItem(item: ExtendedMenuLinkType) {
-  if (isCorporateMember && item.id === "addresses") {
+  if (isCorporateMember.value && item.id === "addresses") {
     return false;
   }
 
-  return item.id !== "notifications" || isPushMessagesActive;
+  return item.id !== "notifications" || isPushMessagesActive.value;
 }
 
 const filteredDesktopAccountMenuItems = computed(() => {
