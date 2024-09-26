@@ -68,8 +68,6 @@
             :selected="selectable && selectedItemIds?.includes(item.id)"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
-            @keydown.up="changeFocus($event, item.id, 'up')"
-            @keydown.down="changeFocus($event, item.id, 'down')"
           >
             <template #before>
               <slot name="before-content" v-bind="{ item }" />
@@ -123,7 +121,6 @@
 <script setup lang="ts">
 import { intersection, map, sumBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
-import type VcLineItem from "../line-item/vc-line-item.vue";
 import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
