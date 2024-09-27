@@ -60,7 +60,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { toRefs } from "@vueuse/core";
 import { debounce } from "lodash";
 import { useField } from "vee-validate";
-import { computed, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
@@ -89,10 +89,13 @@ interface IProps {
   hideButton?: boolean;
   readonly?: boolean;
   timeout?: number;
+  validateOnMount?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  validateOnMount: true,
+});
 
 const { t } = useI18n();
 
@@ -167,6 +170,12 @@ function onFocusOut() {
 
 watchEffect(() => {
   quantity.value = props.modelValue;
+});
+
+onMounted(async () => {
+  if (props.validateOnMount) {
+    await validateFields();
+  }
 });
 
 watchEffect(async () => {
