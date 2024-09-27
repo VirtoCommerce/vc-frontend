@@ -97,13 +97,13 @@ export function useMutationBatcher<TData, TVariables extends object>(
         } catch (error) {
           const explicitError = AbortReason.Explicit as string;
           if (
-            error instanceof Error &&
-            error.toString() !== explicitError &&
-            error instanceof ApolloError &&
-            error.networkError?.toString() !== explicitError
+            !(error instanceof Error && error.toString() === explicitError) &&
+            !(error instanceof ApolloError && error.networkError?.toString() === explicitError)
           ) {
             reject(error);
           }
+        } finally {
+          loading.value = false;
         }
       }, debounce);
     });
@@ -129,7 +129,6 @@ export function useMutationBatcher<TData, TVariables extends object>(
     abortController = null;
     batch = {} as TVariables;
     calledCount = 0;
-    loading.value = false;
   }
 
   return { overflowed, add, loading };
