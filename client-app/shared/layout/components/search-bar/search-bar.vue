@@ -134,7 +134,9 @@ import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vu
 import { computed, inject, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -207,6 +209,8 @@ const isExistResults = computed(
   () => categories.value.length || products.value.length || suggestions.value.length || pages.value.length,
 );
 
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
 async function searchAndShowDropdownResults(): Promise<void> {
   const COLUMNS = 5;
   const { catalogId, currencyCode } = globals;
@@ -219,7 +223,9 @@ async function searchAndShowDropdownResults(): Promise<void> {
     return;
   }
 
-  const { catalog_empty_categories_enabled, zero_price_product_enabled } = themeContext.value.settings;
+  const { zero_price_product_enabled } = themeContext.value.settings;
+  const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
+
   const filterExpression = catalog_empty_categories_enabled
     ? undefined
     : [

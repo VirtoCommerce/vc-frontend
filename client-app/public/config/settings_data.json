@@ -3,13 +3,6 @@
   "settings": {
     "show_details_in_separate_tab": true,
 
-    "page_title_with_store_name": true,
-    "page_title_store_name_align": "start",
-    "page_title_divider": " · ",
-
-    "catalog_menu_link_list_name": "catalog-menu",
-    "catalog_empty_categories_enabled": false,
-
     "files_enabled": true,
 
     "push_messages_enabled": true,
@@ -23,7 +16,7 @@
     "product_filters_sorting_direction": "asc",
 
     "vendor_enabled": true,
-    "rating_enabled": true,
+    "vendor_rating_enabled": true,
     "categories_limit": 499,
     "wishlists_limit": 10,
 
@@ -32,7 +25,6 @@
     "search_static_content_suggestions_enabled": true,
     "search_product_phrase_suggestions_enabled": false,
 
-    "support_phone_number": "+31 416 652 803",
     "zero_price_product_enabled": false,
 
     "checkout_multistep_enabled": true,

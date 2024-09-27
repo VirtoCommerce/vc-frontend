@@ -87,12 +87,12 @@ module.exports = {
         }
       }
     ],
-    "@typescript-eslint/no-unsafe-argument": "warn", // TODO: Switch to error
-    "@typescript-eslint/no-unsafe-assignment": "warn", // TODO: Switch to error
-    "@typescript-eslint/no-unsafe-call": "warn", // TODO: Switch to error
-    "@typescript-eslint/no-unsafe-enum-comparison": "warn", // TODO: Switch to error
-    "@typescript-eslint/no-unsafe-member-access": "warn", // TODO: Switch to error
-    "@typescript-eslint/no-unsafe-return": "warn", // TODO: Switch to error
+    "@typescript-eslint/no-unsafe-argument": "warn",
+    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/no-unsafe-call": "warn",
+    "@typescript-eslint/no-unsafe-enum-comparison": "warn",
+    "@typescript-eslint/no-unsafe-member-access": "warn",
+    "@typescript-eslint/no-unsafe-return": "warn",
     "import/consistent-type-specifier-style": "warn",
     "import/no-cycle": "error",
     "import/order": [
@@ -128,7 +128,7 @@ module.exports = {
     "vue/component-tags-order": [
       "warn",
       { order: ["template", "script:not([setup])", "script[setup]", "style:not([scoped])", "style[scoped]"] },
-    ], // TODO: Deprecated, but still used in recommended. Switch to block-order, when recommended will switch.
+    ],
     "vue/custom-event-name-casing": [
       "warn",
       "camelCase",
@@ -143,27 +143,25 @@ module.exports = {
     "vue/no-multiple-objects-in-class": "warn",
     "vue/no-required-prop-with-default": "warn",
     "vue/no-static-inline-styles": "warn",
-    "vue/no-setup-props-reactivity-loss": "warn", // TODO: Remove (switch to error) after refactoring
+    "vue/no-setup-props-reactivity-loss": "warn",
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
-    // TODO: enable "vue/padding-line-between-tags": "warn",
     "vue/padding-lines-in-component-definition": "warn",
     "vue/prefer-define-options": "warn",
     "vue/require-emit-validator": "warn",
-    "vuejs-accessibility/click-events-have-key-events": "warn", // TODO: Remove (switch to error)
-    "vuejs-accessibility/no-static-element-interactions": "warn", // TODO: Remove (switch to error)
+    "vuejs-accessibility/click-events-have-key-events": "warn",
+    "vuejs-accessibility/no-static-element-interactions": "warn",
 
     /**
      * Disabled
      */
-    "@typescript-eslint/no-non-null-assertion": "off", // TODO: Remove (switch to error) after XAPI types refactoring
-    "@typescript-eslint/no-unnecessary-type-assertion": "off", // TODO: Remove (switch to error) at next PR with auto fix
-    "@typescript-eslint/no-redundant-type-constituents": "off", // TODO: Investigate why there are false positives
-    "@typescript-eslint/unbound-method": "off", // TODO: Investigate why there are false positives
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-unnecessary-type-assertion": "off",
+    "@typescript-eslint/no-redundant-type-constituents": "off",
+    "@typescript-eslint/unbound-method": "off",
     "sonarjs/no-duplicate-string": "off",
     "tailwindcss/no-custom-classname": "off",
     "vue/multi-word-component-names": "off",
-    //"vue/no-dupe-keys": "off", // TODO: Remove (switch to error). Does not work correctly with <script setup>
     "vue/require-default-prop": "off",
     "vuejs-accessibility/form-control-has-label": "off",
     "vuejs-accessibility/label-has-for": "off",

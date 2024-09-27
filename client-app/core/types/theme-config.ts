@@ -156,12 +156,6 @@ export interface IThemeConfigSettings {
   show_details_in_separate_tab?: boolean;
 
   search_by_static_content_enabled?: boolean;
-  page_title_with_store_name?: boolean;
-  page_title_store_name_align?: "start" | "end";
-  page_title_divider?: string;
-
-  catalog_menu_link_list_name?: string | null;
-  catalog_empty_categories_enabled?: boolean;
 
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
@@ -226,7 +220,7 @@ export interface IThemeConfigSettings {
   search_product_phrase_suggestions_enabled?: boolean;
 
   vendor_enabled?: boolean;
-  rating_enabled?: boolean;
+  vendor_rating_enabled?: boolean;
 
   checkout_multistep_enabled?: boolean;
   checkout_comment_enabled?: boolean;
@@ -245,7 +239,6 @@ export interface IThemeConfigSettings {
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];
-  support_phone_number?: string;
 
   logo_image?: string;
   logo_inverted_image?: string;
