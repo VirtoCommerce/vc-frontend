@@ -48,8 +48,8 @@ export function getMergeStrategyUniqueBy(keyOrFn: string | ((item: unknown) => u
  * @param options.merge - Function to merge two mutation parameters objects. See {@link DEFAULT_MERGE_STRATEGY} and {@link getMergeStrategyUniqueBy}
  * @returns Object with `overflowed` boolean ref and `add` function to add a new mutation to the batch.
  * @example ```ts
- * const { mutate: changeCartItemsQuantity, loading } = useChangeCartItemsQuantity();
- * const { overflowed, add } = useMutationBatcher(changeCartItemsQuantity);
+ * const { mutate: changeCartItemsQuantity } = useChangeCartItemsQuantity();
+ * const { overflowed, add, loading } = useMutationBatcher(changeCartItemsQuantity);
  * const result = await add({ command { cartItems: [{ productId: "1", quantity: 1}] }});
  * ```
  */
