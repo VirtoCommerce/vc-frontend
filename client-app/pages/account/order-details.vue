@@ -35,7 +35,7 @@
               <!-- Vendor -->
               <div class="flex max-w-full flex-wrap gap-x-3 print:break-after-avoid">
                 <VcVendor :vendor="group.vendor" />
-                <VcRating v-if="$cfg.rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
+                <VcRating v-if="$cfg.vendor_rating_enabled && group.vendor?.rating" :rating="group.vendor.rating" />
               </div>
 
               <OrderLineItems :items="group.items" />
