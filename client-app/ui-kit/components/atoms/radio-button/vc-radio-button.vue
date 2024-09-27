@@ -72,6 +72,9 @@ const checked = computed(() => model.value === props.value);
   $left: "";
   $right: "";
 
+  --base-color: var(--vc-radio-button-base-color, var(--color-primary-500));
+  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+
   @apply select-none;
 
   &--size {
@@ -127,11 +130,11 @@ const checked = computed(() => model.value === props.value);
     @apply flex-none size-[--size] appearance-none border-2 rounded-full border-neutral-400 bg-additional-50;
 
     &:checked {
-      @apply border-primary border-[length:var(--border-width)];
+      @apply border-[--base-color] border-[length:var(--border-width)];
     }
 
     &:focus {
-      @apply outline-none ring ring-primary-500/20;
+      @apply outline-none ring ring-[--focus-color];
     }
 
     &:disabled {

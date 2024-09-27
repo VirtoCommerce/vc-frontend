@@ -190,6 +190,9 @@ function inputClick() {
   $center: "";
   $truncate: "";
 
+  --base-color: var(--vc-input-base-color, var(--color-primary-500));
+  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+
   @apply flex flex-col;
 
   &--size {
@@ -212,6 +215,8 @@ function inputClick() {
 
   &--error {
     $error: &;
+
+    --base-color: var(--color-danger-500);
   }
 
   &--no-border {
@@ -238,11 +243,7 @@ function inputClick() {
     }
 
     &:has(input:focus) {
-      @apply ring ring-primary-100;
-
-      #{$error} & {
-        @apply ring-danger-100;
-      }
+      @apply ring ring-[--focus-color];
     }
 
     #{$disabled} &,
@@ -251,7 +252,7 @@ function inputClick() {
     }
 
     #{$error} & {
-      @apply border-danger;
+      @apply border-[--base-color];
     }
 
     #{$noBorder} & {
@@ -304,7 +305,7 @@ function inputClick() {
 
     &::placeholder {
       #{$error} & {
-        @apply opacity-80 text-danger;
+        @apply opacity-80 text-[--base-color];
       }
     }
 
@@ -317,16 +318,16 @@ function inputClick() {
     }
 
     #{$error} & {
-      @apply text-danger;
+      @apply text-[--base-color];
     }
   }
 
   &__clear {
-    @apply flex items-center p-3 text-primary;
+    @apply flex items-center p-3 text-[--base-color];
   }
 
   &__password-icon {
-    @apply h-full px-3 text-primary;
+    @apply h-full px-3 text-[--base-color];
 
     #{$disabled} & {
       @apply text-neutral-300 cursor-not-allowed;

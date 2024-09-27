@@ -13,14 +13,16 @@ const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 
 const desktopMainMenuItem: DeepPartial<MenuType> = {
   header: {
-    desktop: [
-      {
-        id: "push-messages",
-        title: "shared.layout.header.menu.push-messages",
-        icon: "/static/icons/basic/bell.svg#icon",
-        priority: 40,
-      },
-    ],
+    desktop: {
+      main: [
+        {
+          id: "push-messages",
+          title: "shared.layout.header.menu.push-messages",
+          icon: "/static/icons/basic/bell.svg#icon",
+          priority: 40,
+        },
+      ],
+    },
   },
 };
 
