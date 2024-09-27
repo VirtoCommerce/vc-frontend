@@ -48,7 +48,6 @@ import type {
   AddOrUpdateCartPaymentMutationVariables,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
-import type { Ref } from "vue";
 
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
@@ -177,10 +176,6 @@ export function _useFullCart() {
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
 
-  const selectUnselectCartItemsLoadingStatuses = ref<Ref<boolean>[]>([]);
-  const selectUnselectCartItemsLoading = computed(() =>
-    selectUnselectCartItemsLoadingStatuses.value.some((x) => x.value),
-  );
   const { mutate: _selectCartItemsMutation } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation } = useUnselectCartItemsMutation(cart);
   const { add: _selectCartItems, loading: selectLoading } = useMutationBatcher(_selectCartItemsMutation);
@@ -213,7 +208,6 @@ export function _useFullCart() {
             },
           },
         );
-        selectUnselectCartItemsLoadingStatuses.value.push(selectLoading);
       }
       if (hasNewlyUnselected) {
         void _unselectCartItems(
@@ -232,7 +226,6 @@ export function _useFullCart() {
             },
           },
         );
-        selectUnselectCartItemsLoadingStatuses.value.push(unselectLoading);
       }
     },
   });
@@ -445,7 +438,8 @@ export function _useFullCart() {
     loading: readonly(loading),
     changing: computed(
       () =>
-        selectUnselectCartItemsLoading.value ||
+        selectLoading.value ||
+        unselectLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
         changeItemQuantityLoading.value ||
