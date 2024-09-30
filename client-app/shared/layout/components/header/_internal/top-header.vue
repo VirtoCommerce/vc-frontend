@@ -7,7 +7,7 @@
 
     <div class="ms-auto flex items-center">
       <!-- Call us block -->
-      <div v-if="$cfg.support_phone_number" class="flex items-center">
+      <div v-if="support_phone_number" class="flex items-center">
         <VcIcon class="me-1.5 text-primary" name="phone" size="sm" />
 
         <span class="mr-1 font-thin">
@@ -16,9 +16,9 @@
 
         <a
           class="py-1 font-bold text-[--header-top-link-color] hover:text-[--header-top-link-hover-color]"
-          :href="`tel:${$cfg.support_phone_number}`"
+          :href="`tel:${support_phone_number}`"
         >
-          {{ $cfg.support_phone_number }}
+          {{ support_phone_number }}
         </a>
 
         <span class="mx-4 h-5 w-px bg-primary" />
@@ -140,6 +140,8 @@
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
 import { ref } from "vue";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { useSignMeOut, useUser } from "@/shared/account";
 import TopHeaderLink from "./top-header-link.vue";
 import CurrencySelector from "@/shared/layout/components/currency-selector/currency-selector.vue";
@@ -147,10 +149,13 @@ import LanguageSelector from "@/shared/layout/components/language-selector/langu
 
 const { isAuthenticated, isMultiOrganization, user, operator, organization, switchOrganization } = useUser();
 const { signMeOut } = useSignMeOut();
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
 const loginMenu = ref(null);
 const loginMenuVisible = ref(false);
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
+
+const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
 async function selectOrganization(): Promise<void> {
   if (!contactOrganizationId.value) {
