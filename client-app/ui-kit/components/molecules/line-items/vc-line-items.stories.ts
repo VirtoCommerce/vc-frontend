@@ -29,9 +29,8 @@ const TemplateQuantity: StoryFn<typeof VcLineItems> = (args) => ({
     </template>
 
     <template #default="{ item }">
-      <VcQuantity
-        :item="item"
-        @change="$emit('change:itemQuantity', { item, quantity: $event })"
+      <VcAddToCart
+        @update:modelValue="$emit('change:itemQuantity', { item, quantity: $event })"
       />
     </template>
   </VcLineItems>`,

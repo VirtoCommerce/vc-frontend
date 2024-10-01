@@ -380,11 +380,16 @@ watchEffect(() => {
   &__slot {
     @apply flex-none empty:hidden;
 
-    &:has(.vc-quantity, * .vc-quantity) {
+    &:has(.vc-add-to-cart--hide-button, * .vc-add-to-cart--hide-button) {
       @apply w-[6.5rem];
     }
 
-    &:has(.vc-add-to-cart, * .vc-add-to-cart, .add-to-cart, * .add-to-cart) {
+    &:has(
+        .add-to-cart,
+        * .add-to-cart,
+        .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button)
+      ) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {

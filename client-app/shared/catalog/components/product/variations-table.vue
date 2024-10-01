@@ -73,7 +73,7 @@
           </td>
 
           <td class="variations-table__col variations-table__col--quantity">
-            <VcQuantity
+            <VcAddToCart
               :model-value="mappedLineItems[variation.id]?.quantity ?? 0"
               :name="variation.id"
               :disabled="
@@ -82,6 +82,9 @@
                 !variation.availabilityData?.isBuyable
               "
               :error="!!localizedItemsErrors[variation.id]"
+              hide-button
+              :timeout="DEFAULT_DEBOUNCE_IN_MS"
+              :validate-on-mount="false"
               @update:model-value="changeCart(variation, $event)"
             >
               <template #append>
@@ -99,7 +102,7 @@
                   </template>
                 </VcTooltip>
               </template>
-            </VcQuantity>
+            </VcAddToCart>
 
             <CountInCart :product-id="variation.id" class="variations-table__in-cart" />
           </td>
@@ -117,6 +120,7 @@ import { PropertyType } from "@/core/api/graphql/types";
 import { useErrorsTranslator } from "@/core/composables";
 import { MAX_DISPLAY_IN_STOCK_QUANTITY } from "@/core/constants";
 import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
+import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useShortCart } from "@/shared/cart/composables";
 import CountInCart from "../count-in-cart.vue";
 import type { Product, ShortLineItemFragment, VariationType, ValidationErrorType } from "@/core/api/graphql/types";

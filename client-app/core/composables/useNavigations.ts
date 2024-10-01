@@ -21,7 +21,7 @@ import type { DeepPartial } from "utility-types";
 
 const loading = ref(false);
 const matchingRouteName = ref("");
-const menuSchema = ref<MenuType | null>(null);
+const menuSchema = shallowRef<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -213,6 +213,7 @@ export function useNavigations() {
         return objValue.concat(srcValue) as ExtendedMenuLinkType[];
       }
     });
+    triggerRef(menuSchema);
   }
 
   return {
