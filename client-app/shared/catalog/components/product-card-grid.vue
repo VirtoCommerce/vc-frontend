@@ -100,7 +100,7 @@
         <template #trigger>
           <router-link
             :to="link"
-            :target="target"
+            :target="browserTarget"
             class="my-px line-clamp-2 h-11 cursor-pointer text-lg font-black text-[--link-color] hover:text-[--link-hover-color] lg:h-9 lg:text-sm"
             @click="$emit('linkClick', $event)"
           >
@@ -169,7 +169,7 @@
     <VcVariationsButton
       v-if="product.hasVariations"
       :link="link"
-      :target="target"
+      :target="browserTarget"
       :variations-count="(product.variations?.length || 0) + 1"
       show-link
       @link-click="$emit('linkClick', $event)"
@@ -198,7 +198,7 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
-import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -207,6 +207,7 @@ import InStock from "./in-stock.vue";
 import Rating from "./rating.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { BrowserTargetType } from "@/core/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
@@ -218,7 +219,7 @@ const props = withDefaults(defineProps<IProps>(), {
 interface IProps {
   product: Product;
   lazy?: boolean;
-  openInNewTab?: boolean;
+  browserTarget?: BrowserTargetType;
   hideProperties?: boolean;
   productReviewsEnabled?: boolean;
 }
@@ -227,7 +228,6 @@ const swiperInstance = ref<SwiperInstance>();
 const swiperBulletsState = ref<boolean[]>([true, false, false]);
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
-const target = computed(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),

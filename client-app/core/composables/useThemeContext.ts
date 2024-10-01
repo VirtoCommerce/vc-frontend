@@ -44,7 +44,7 @@ function _useThemeContext() {
     const { data } = await useFetch("/config/settings_data.json").get().json<IThemeConfig>();
 
     if (IS_DEVELOPMENT && data.value) {
-      data.value.settings.show_details_in_separate_tab = false;
+      data.value.settings.details_browser_target = "_self";
     }
 
     return data.value;

@@ -142,7 +142,7 @@
 import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
-import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -151,6 +151,7 @@ import InStock from "./in-stock.vue";
 import Rating from "./rating.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { BrowserTargetType } from "@/core/types";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
@@ -161,12 +162,12 @@ const props = withDefaults(defineProps<IProps>(), {
 interface IProps {
   product: Product;
   lazy?: boolean;
-  openInNewTab?: boolean;
+  browserTarget?: BrowserTargetType;
   productReviewsEnabled?: boolean;
 }
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
-const target = computed(() => getLinkTarget(props.openInNewTab));
+const target = computed(() => props.browserTarget);
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),

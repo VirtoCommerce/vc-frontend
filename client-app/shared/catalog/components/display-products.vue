@@ -13,7 +13,7 @@
         :key="item.id + index"
         :product="item"
         :lazy="index >= lazyCardsCount"
-        :open-in-new-tab="openProductInNewTab"
+        :browser-target="browserTarget"
         :hide-properties="cardType === 'short'"
         :product-reviews-enabled="productReviewsEnabled"
         @link-click="$emit('itemLinkClick', item, $event)"
@@ -39,6 +39,7 @@ import ProductCardList from "./product-card-list.vue";
 import ProductSkeletonGrid from "./product-skeleton-grid.vue";
 import ProductSkeletonList from "./product-skeleton-list.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { BrowserTargetType } from "@/core/types";
 
 interface IEmits {
   (eventName: "itemLinkClick", product: Product, globalEvent: MouseEvent): void;
@@ -49,7 +50,7 @@ interface IProps {
   products?: Product[];
   itemsPerPage?: number;
   viewMode?: string;
-  openProductInNewTab?: boolean;
+  browserTarget?: BrowserTargetType;
   cardType?: "full" | "short";
   columnsAmountTablet?: string;
   columnsAmountDesktop?: string;

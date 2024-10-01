@@ -23,26 +23,35 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
+import { toRef } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
-import { getLinkTarget } from "@/core/utilities/common";
+import type { BrowserTargetType } from "@/core/types";
 
-interface IProps {
-  link?: string;
-  target?: "_blank" | "_self";
-  variationsCount?: number;
-  showLink?: boolean;
+interface IEmits {
+  (event: "linkClick", globalEvent: MouseEvent): void;
 }
+
+defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   link: "",
   variationsCount: 0,
 });
 
+interface IProps {
+  link?: string;
+  target?: BrowserTargetType;
+  variationsCount?: number;
+  showLink?: boolean;
+}
+
 const { themeContext } = useThemeContext();
 const breakpoints = useBreakpoints(BREAKPOINTS);
 
-const targetValue = props.target || getLinkTarget(themeContext.value.settings.show_details_in_separate_tab || true);
+const target = toRef(props, "target");
+
+const targetValue = target.value || themeContext.value.settings.details_browser_target || "_blank";
 const iconSize = breakpoints.isGreater("lg") ? "xs" : "sm";
 </script>
 

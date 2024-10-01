@@ -42,7 +42,7 @@
           :disabled="disabled || deleted"
           :to="route"
           :title="name"
-          :target="target"
+          :target="$cfg.details_browser_target"
         >
           {{ name }}
         </VcProductTitle>
@@ -127,8 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -163,11 +162,7 @@ const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
 });
 
-const { themeContext } = useThemeContext();
-
 const isSelected = ref<boolean>(true);
-
-const target = computed(() => (themeContext.value?.settings?.show_details_in_separate_tab ? "_blank" : "_self"));
 
 watchEffect(() => {
   isSelected.value = props.selected;

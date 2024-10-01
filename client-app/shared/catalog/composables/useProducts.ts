@@ -70,6 +70,7 @@ export function useProducts(
   const totalProductsCount = ref(0);
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
+  const branchesFromSidebarFilters = ref(true);
 
   const products = ref<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
@@ -182,13 +183,15 @@ export function useProducts(
     };
   }
 
-  function openBranchesModal(fromPopupSidebarFilter: boolean) {
+  function openBranchesModal() {
     openModal({
       component: BranchesModal,
       props: {
-        selectedBranches: fromPopupSidebarFilter ? productsFilters.value.branches : localStorageBranches.value,
+        selectedBranches: branchesFromSidebarFilters.value
+          ? productsFilters.value.branches
+          : localStorageBranches.value,
         onSave(branches: string[]) {
-          if (fromPopupSidebarFilter) {
+          if (branchesFromSidebarFilters.value) {
             const newFilters: ProductsFiltersType = {
               branches,
               facets: productsFilters.value.facets,
@@ -319,6 +322,7 @@ export function useProducts(
   });
 
   return {
+    branchesFromSidebarFilters,
     facets,
     facetsQueryParam,
     fetchingFacets: readonly(fetchingFacets),
