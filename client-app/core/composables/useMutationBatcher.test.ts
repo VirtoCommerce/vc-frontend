@@ -31,6 +31,16 @@ describe("useMutationBatcher", () => {
     vi.restoreAllMocks();
   });
 
+  it("should generate a unique id for each instance", () => {
+    const mutation = vi.fn().mockImplementation(mutationMock);
+    const { id: id1 } = useMutationBatcher(mutation);
+    const { id: id2 } = useMutationBatcher(mutation);
+
+    expect(id1).not.toEqual(id2);
+    expect(typeof id1).toBe("string");
+    expect(typeof id2).toBe("string");
+  });
+
   it("should call one mutation after delay", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation);
@@ -212,6 +222,42 @@ describe("useMutationBatcher", () => {
 
     expect(loading1.value).toBe(false);
     expect(loading2.value).toBe(false);
+  });
+
+  it("should abort the mutation when abort is called", () => {
+    const abortSpy = vi.spyOn(AbortController.prototype, "abort");
+    const mutation = vi.fn().mockImplementation(mutationMock);
+    const { add, abort } = useMutationBatcher(mutation);
+
+    void add(DUMMY_TEXT_ARGUMENTS);
+    vi.advanceTimersByTime(SIMULATED_REQUEST_DURATION_MS);
+
+    abort();
+
+    expect(abortSpy).toBeCalled();
+  });
+
+  it("should update the arguments ref after adding a mutation", () => {
+    const mutation = vi.fn().mockImplementation(mutationMock);
+    const { add, arguments: batchArguments } = useMutationBatcher(mutation);
+
+    const testArgs = getTestArguments("product_id_1");
+    void add(testArgs);
+
+    expect(batchArguments.value).toEqual(testArgs);
+  });
+
+  it("should call the onAddHandler when a new mutation is added", () => {
+    const mutation = vi.fn().mockImplementation(mutationMock);
+    const onAddHandlerMock = vi.fn();
+    const { add, registerOnAddHandler } = useMutationBatcher(mutation);
+
+    registerOnAddHandler(onAddHandlerMock);
+
+    const testArgs = getTestArguments("product_id_1");
+    void add(testArgs);
+
+    expect(onAddHandlerMock).toBeCalledWith(expect.any(String), testArgs);
   });
 });
 

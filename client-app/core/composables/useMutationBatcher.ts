@@ -117,7 +117,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
             !(error instanceof ApolloError && error.networkError?.toString() === explicitError)
           ) {
             reject(error);
-            loading.value = false;
+            resetBatchState();
           }
         }
       }, debounce);
