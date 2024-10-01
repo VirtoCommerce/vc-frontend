@@ -33,7 +33,8 @@
         :removable="!readonly"
         @remove="() => $emit('remove:item', item.id)"
       >
-        <VcQuantity
+        <VcAddToCart
+          hide-button
           :disabled="readonly"
           class="quote-line-items__quantity"
           :model-value="item.selectedTierPrice?.quantity"
