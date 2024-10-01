@@ -139,12 +139,14 @@ export function useMutationBatcher<TData, TVariables extends object>(
     });
   }
 
-  function resetBatchState() {
+  function resetBatchState(resetCount = true) {
     overflowed.value = false;
     abortController = null;
     batch.value = {} as TVariables;
-    calledCount = 0;
     loading.value = false;
+    if (resetCount) {
+      calledCount = 0;
+    }
   }
 
   function registerOnAddHandler(handler: (id: string, args: TVariables) => void) {
@@ -153,7 +155,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
 
   function abort() {
     clearPreviousDebounce();
-    resetBatchState();
+    resetBatchState(false);
   }
 
   return {

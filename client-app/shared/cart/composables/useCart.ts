@@ -395,7 +395,7 @@ export function _useFullCart() {
     payment,
     availableShippingMethods,
     availablePaymentMethods,
-    selectedItemIds: readonly(selectedItemIds),
+    selectedItemIds: selectedItemIds,
     lineItemsGroupedByVendor,
     selectedLineItems,
     selectedLineItemsGroupedByVendor,
