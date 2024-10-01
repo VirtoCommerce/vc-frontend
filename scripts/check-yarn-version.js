@@ -47,8 +47,6 @@ function compareYarnVersions(installedVersion, requiredVersion) {
       `Your installed Yarn version (${installedVersion}) is less than the required version (${requiredVersion}). Please upgrade.`,
     );
     process.exit(1);
-  } else {
-    console.log(`Installed Yarn version (${installedVersion}) meets the requirement (${requiredVersion}).`);
   }
 }
 

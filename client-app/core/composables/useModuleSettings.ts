@@ -25,7 +25,7 @@ function _useModuleSettings(moduleId: string) {
     return moduleSettings.value?.find((obj) => obj.name === key)?.value === true;
   }
 
-  type SettingValueType = string | number | boolean | null;
+  type SettingValueType = string | number | boolean | null | undefined;
   /**
    * Get normalized module settings
    * description: This function is used to get module settings and map them to the provided object.
@@ -52,8 +52,13 @@ function _useModuleSettings(moduleId: string) {
     return result as { [K in T[keyof T]]: SettingValueType };
   }
 
+  function getSettingValue(name: string): SettingValueType {
+    return moduleSettings.value?.find((el) => el.name === name)?.value;
+  }
+
   return {
     getModuleSettings,
+    getSettingValue,
     hasModuleSettings,
     isEnabled,
     moduleSettings,
