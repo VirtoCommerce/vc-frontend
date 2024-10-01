@@ -217,10 +217,8 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   if (!value.selected) {
-    console.log("unselect", value.itemIds);
     unselectCartItems(value.itemIds);
   } else {
-    console.log("select", value.itemIds);
     selectCartItems(value.itemIds);
   }
 }
