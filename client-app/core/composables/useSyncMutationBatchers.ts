@@ -22,21 +22,31 @@ import type { useMutationBatcher } from "./useMutationBatcher";
  * );
  * ```
  */
-type MutationBatcherType = ReturnType<typeof useMutationBatcher>;
-type CallbackType<T1 extends MutationBatcherType, T2 extends MutationBatcherType> = (params: {
-  args: unknown;
-  currentBatcher: T1 | T2;
-  anotherBatcher: T1 | T2;
-}) => void;
+type MutationBatcherType<TData, TVariables extends object> = ReturnType<typeof useMutationBatcher<TData, TVariables>>;
+type CallbackType<T1, T2, Args> = (params: { args: Args; currentBatcher: T1; anotherBatcher: T2 }) => void;
 
-export function useSyncMutationBatchers<T extends MutationBatcherType>(
-  batcher1: T1,
-  batcher2: T2,
-  callback: CallbackType<T1, T2>,
+export function useSyncMutationBatchers<TData1, TVariables1 extends object, TData2, TVariables2 extends object>(
+  batcher1: MutationBatcherType<TData1, TVariables1>,
+  batcher2: MutationBatcherType<TData2, TVariables2>,
+  callback: CallbackType<
+    MutationBatcherType<TData1, TVariables1>,
+    MutationBatcherType<TData2, TVariables2>,
+    TVariables1 | TVariables2
+  >,
 ) {
-  function onAddHandler(id: string, args: unknown) {
-    const currentBatcher = batcher1.id === id ? batcher1 : batcher2;
-    const anotherBatcher = (batcher1.id === id ? batcher2 : batcher1) as typeof currentBatcher extends T1 ? T2 : T1;
+  function onAddHandler(id: string, args: TVariables1 | TVariables2) {
+    const currentBatcher = (batcher1.id === id ? batcher1 : batcher2) as typeof batcher1 extends MutationBatcherType<
+      TData1,
+      TVariables1
+    >
+      ? MutationBatcherType<TData1, TVariables1>
+      : MutationBatcherType<TData2, TVariables2>;
+    const anotherBatcher = (batcher1.id === id ? batcher2 : batcher1) as typeof batcher1 extends MutationBatcherType<
+      TData1,
+      TVariables1
+    >
+      ? MutationBatcherType<TData2, TVariables2>
+      : MutationBatcherType<TData1, TVariables1>;
     callback({ args, currentBatcher, anotherBatcher });
   }
 
