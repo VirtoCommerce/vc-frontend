@@ -42,7 +42,7 @@
           :disabled="disabled || deleted"
           :to="route"
           :title="name"
-          :target="$cfg.details_browser_target"
+          :target="browserTarget"
         >
           {{ name }}
         </VcProductTitle>
@@ -129,6 +129,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
+import type { BrowserTargetType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -154,6 +155,7 @@ interface IProps {
   withPrice?: boolean;
   withTotal?: boolean;
   vendor?: CommonVendor;
+  browserTarget?: BrowserTargetType;
 }
 
 defineEmits<IEmits>();

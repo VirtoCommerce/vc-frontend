@@ -33,7 +33,7 @@
       <template #trigger>
         <router-link
           :to="link"
-          :target="target"
+          :target="browserTarget"
           class="vc-product-card-list__name w-full grow text-sm font-black text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
@@ -98,7 +98,7 @@
       <template v-if="product.hasVariations">
         <VcButton
           :to="link"
-          :target="target"
+          :target="browserTarget"
           variant="outline"
           size="sm"
           full-width
@@ -109,7 +109,7 @@
 
         <router-link
           :to="link"
-          :target="target"
+          :target="browserTarget"
           class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
         >
           <svg class="size-3 shrink-0 text-primary lg:size-2.5">
@@ -167,7 +167,6 @@ interface IProps {
 }
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
-const target = computed(() => props.browserTarget);
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),

@@ -66,6 +66,7 @@
             :removable="removable"
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
+            :browser-target="browserTarget"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
           >
@@ -121,7 +122,7 @@
 <script setup lang="ts">
 import { intersection, map, sumBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
-import type { PreparedLineItemType } from "@/core/types";
+import type { BrowserTargetType, PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "remove:items", value: string[]): void;
@@ -141,6 +142,7 @@ interface IProps {
   withTotal?: boolean;
   withSubtotal?: boolean;
   withHeader?: boolean;
+  browserTarget?: BrowserTargetType;
 }
 
 const emit = defineEmits<IEmits>();

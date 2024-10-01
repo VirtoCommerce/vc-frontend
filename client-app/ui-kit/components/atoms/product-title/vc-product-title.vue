@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import type { BrowserTargetType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {
@@ -32,7 +33,7 @@ interface IEmits {
 
 interface IProps {
   to?: RouteLocationRaw | null;
-  target?: "_blank" | "_self";
+  target?: BrowserTargetType;
   title?: string;
   disabled?: boolean;
   fixHeight?: boolean;

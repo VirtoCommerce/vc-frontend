@@ -4,6 +4,7 @@
     :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
+    :browser-target="$cfg.details_browser_target"
     with-image
     with-properties
     with-price
