@@ -2,7 +2,9 @@ import _ from "lodash";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { useFetch } from "@/core/api/common";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
@@ -19,7 +21,7 @@ import type { DeepPartial } from "utility-types";
 
 const loading = ref(false);
 const matchingRouteName = ref("");
-const menuSchema = shallowRef<MenuType | null>(null);
+const menuSchema = ref<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
@@ -30,8 +32,18 @@ const openedItem = computed<ExtendedMenuLinkType | undefined>(
 );
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
+  (menuSchema.value?.header?.desktop?.main || [])
+    .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
+    .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
 );
+
+const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.account) : undefined;
+});
+
+const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
+});
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
@@ -88,6 +100,7 @@ const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() 
 
 export function useNavigations() {
   const { themeContext } = useThemeContext();
+  const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
   async function fetchMenuSchema() {
     try {
@@ -127,11 +140,13 @@ export function useNavigations() {
   }
 
   async function fetchCatalogMenu() {
-    const { catalog_menu_link_list_name, catalog_empty_categories_enabled, zero_price_product_enabled } =
-      themeContext.value.settings;
+    const { zero_price_product_enabled } = themeContext.value.settings;
+
+    const catalog_menu_link_list_name = getSettingValue(MODULE_XAPI_KEYS.CATALOG_MENU_LINK_LIST_NAME);
+    const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
-      if (catalog_menu_link_list_name) {
+      if (typeof catalog_menu_link_list_name === "string") {
         // Use a list of links
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
           convertToExtendedMenuLink(item, true),
@@ -202,13 +217,14 @@ export function useNavigations() {
 
   return {
     fetchMenus,
-    fetchFooterLinks,
     goBack,
     goMainMenu,
     selectMenuItem,
     setMatchingRouteName,
     openedItem,
     desktopMainMenuItems,
+    desktopAccountMenuItems,
+    desktopCorporateMenuItems,
     mobileMainMenuItems,
     mobileCatalogMenuItem,
     mobileAccountMenuItem,

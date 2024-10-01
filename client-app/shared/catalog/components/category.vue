@@ -229,7 +229,9 @@ import {
 } from "@vueuse/core";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
 import { useBreadcrumbs, useGoogleAnalytics, useThemeContext } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
@@ -368,6 +370,8 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
     .join(" "),
 }));
 
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+
 function applyFilters(newFilters: ProductsFiltersType): void {
   _applyFilters(newFilters);
   setFiltersPosition();
@@ -436,7 +440,8 @@ watch(
   () => props.categoryId,
   (categoryId) => {
     if (!props.isSearchPage) {
-      const { catalog_empty_categories_enabled, zero_price_product_enabled } = themeContext.value.settings;
+      const { zero_price_product_enabled } = themeContext.value.settings;
+      const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
       const productFilter = catalog_empty_categories_enabled
         ? undefined

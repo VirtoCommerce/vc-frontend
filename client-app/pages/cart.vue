@@ -17,7 +17,7 @@
   </VcEmptyPage>
 
   <VcContainer v-else class="relative z-0">
-    <VcLoaderOverlay :visible="creatingQuote" fixed-spinner />
+    <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
@@ -113,20 +113,13 @@
           </template>
         </OrderSummary>
 
-        <!-- Create quote widget -->
-        <VcWidget
-          v-if="$cfg.quotes_enabled && isAuthenticated && isQuotesEnabled(QUOTES_ENABLED_KEY)"
-          :title="$t('quotes.cart_widget.title')"
-          class="print:hidden"
-        >
-          <p class="mb-5 text-xs font-normal text-neutral-400">
-            {{ $t("quotes.cart_widget.quote_request_hint") }}
-          </p>
-
-          <VcButton :loading="creatingQuote" full-width variant="outline" @click="createQuote">
-            {{ $t("quotes.cart_widget.create_quote_button") }}
-          </VcButton>
-        </VcWidget>
+        <component
+          :is="item.element"
+          v-for="item in sidebarWidgets"
+          :key="item.id"
+          @lock-cart="isCartLoked = true"
+          @unlock-cart="isCartLoked = false"
+        />
       </template>
     </VcLayoutWithRightSidebar>
 
@@ -147,17 +140,12 @@
 import { isEmpty, without, union } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { globals } from "@/core/globals";
 import { configInjectionKey } from "@/core/injection-keys";
-import { useCreateQuoteFromCartMutation } from "@/modules/quotes/api/graphql";
-import { ENABLED_KEY as QUOTES_ENABLED_KEY, MODULE_ID as QUOTES_MODULE_ID } from "@/modules/quotes/constants";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
-import { CartDeletedProductsModal } from "@/shared/cart/components";
+import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -167,21 +155,16 @@ import {
   ShippingDetailsSection,
   useCheckout,
 } from "@/shared/checkout";
-import { useModal } from "@/shared/modal";
-import { useNotifications } from "@/shared/notification";
-import type { LineItemType, Product } from "@/core/api/graphql/types";
-import type { QuoteType } from "@/modules/quotes/api/graphql/types";
+import type { Product } from "@/core/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
 const config = inject(configInjectionKey, {});
 
-const router = useRouter();
 const ga = useGoogleAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
-const { openModal } = useModal();
 const {
   loading: loadingCart,
   cart,
@@ -194,7 +177,6 @@ const {
   hasOnlyUnselectedValidationError,
   allItemsAreDigital,
   forceFetch,
-  refetch,
   changeItemQuantityBatched,
   changeItemQuantityBatchedOverflowed,
   removeItems,
@@ -205,9 +187,7 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
-const { isEnabled: isQuotesEnabled } = useModuleSettings(QUOTES_MODULE_ID);
-
-const notifications = useNotifications();
+const { sidebarWidgets } = useCartExtensionPoints();
 
 usePageHead({
   title: t("pages.cart.meta.title"),
@@ -215,11 +195,10 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
-const creatingQuote = ref(false);
+const isCartLoked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);
-const cartContainsDeletedProducts = computed(() => cart.value?.items?.some((item: LineItemType) => !item.product));
 const isShowIncompleteDataWarning = computed(
   () => (!allItemsAreDigital.value && !isValidShipment.value) || !isValidPayment.value,
 );
@@ -239,39 +218,6 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   } else {
     selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
   }
-}
-const { mutate: createQuoteFromCart } = useCreateQuoteFromCartMutation();
-
-async function createQuote(): Promise<void> {
-  if (cartContainsDeletedProducts.value) {
-    openModal({
-      component: CartDeletedProductsModal,
-    });
-
-    return;
-  }
-
-  creatingQuote.value = true;
-
-  const result = await createQuoteFromCart({ command: { cartId: cart.value!.id, comment: "" } });
-  const quote = result?.data?.createQuoteFromCart as QuoteType | undefined;
-
-  if (quote) {
-    await router.push({
-      name: "EditQuote",
-      params: { quoteId: quote.id },
-    });
-  } else {
-    notifications.error({
-      text: globals.i18n.global.t("quotes.errors.creating_quote_error"),
-      duration: 15000,
-      single: true,
-    });
-  }
-
-  await refetch();
-
-  creatingQuote.value = false;
 }
 
 void (async () => {
