@@ -1,12 +1,9 @@
 <template>
-  <slot>
-    <slot name="left" />
-    <slot name="right" />
-  </slot>
+  <slot name="right" />
 </template>
 
 <script setup lang="ts">
-import { createCommentVNode, h, onBeforeUnmount, useSlots, warn, watch, watchEffect } from "vue";
+import { onBeforeUnmount, useSlots, warn, watch, watchEffect } from "vue";
 import { useNestedMobileHeader } from "../../composables";
 
 interface IProps {
@@ -20,8 +17,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const slots = useSlots();
 const { setSlots, resetSlots, isAnimated } = useNestedMobileHeader();
-
-h(createCommentVNode(" Nested Mobile Header "));
 
 onBeforeUnmount(() => {
   resetSlots();
