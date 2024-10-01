@@ -8,36 +8,30 @@
             "name": "BulkOrder"
           },
           "title": "shared.layout.header.menu.bulk_order",
-          "icon": "/static/images/dashboard/icons/bulk-order-desktop.svg#main"
-        },
-        {
-          "id": "compare",
-          "route": {
-            "name": "CompareProducts"
+          "icon": "/static/images/dashboard/icons/bulk-order-desktop.svg#main",
+        "priority": 0
+      },
+      {
+        "id": "compare",
+        "route": { "name": "CompareProducts"
           },
           "title": "shared.layout.header.menu.compare",
-          "icon": "/static/images/dashboard/icons/compare-desktop.svg#main"
-        },
-        {
-          "id": "lists",
-          "route": {
-            "name": "Lists"
-          },
-          "title": "shared.layout.header.menu.lists",
-          "icon": "/static/images/dashboard/icons/lists.svg#main"
-        },
-        {
-          "id": "orders",
-          "route": {
-            "name": "Orders"
-          },
-          "title": "shared.layout.header.menu.orders",
-          "icon": "/static/images/dashboard/icons/orders-desktop.svg#main"
-        },
-        {
-          "id": "push-messages",
-          "title": "shared.layout.header.menu.push-messages",
-          "icon": "/static/icons/basic/bell.svg#icon"
+          "icon": "/static/images/dashboard/icons/compare-desktop.svg#main",
+        "priority": 10
+      },
+      {
+        "id": "lists",
+        "route": { "name": "Lists" },
+        "title": "shared.layout.header.menu.lists",
+        "icon": "/static/images/dashboard/icons/lists.svg#main",
+        "priority": 20
+      },
+      {
+        "id": "orders",
+        "route": { "name": "Orders" },
+        "title": "shared.layout.header.menu.orders",
+        "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
+        "priority": 30
         },
         {
           "id": "cart",
@@ -45,7 +39,8 @@
             "name": "Cart"
           },
           "title": "shared.layout.header.menu.cart",
-          "icon": "/static/images/checkout/cart-desktop.svg#main"
+          "icon": "/static/images/checkout/cart-desktop.svg#main",
+        "priority": 100
         }
       ],
       "account": {

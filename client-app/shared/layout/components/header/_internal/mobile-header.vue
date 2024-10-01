@@ -130,7 +130,8 @@ import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
-import { useDeferShortCart, useNestedMobileHeader, useSearchBar } from "@/shared/layout";
+import { useShortCart } from "@/shared/cart";
+import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
 import MobileMenu from "./mobile-menu.vue";
 import type { StyleValue } from "vue";
@@ -147,7 +148,7 @@ const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMB
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
-const { cart } = useDeferShortCart();
+const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
