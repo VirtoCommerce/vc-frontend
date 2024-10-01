@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      [master, dev, chore/VCST-1792-gh-warnings]
+      [master, dev]
     paths-ignore:
       - '.idea'
       - '.vscode'
