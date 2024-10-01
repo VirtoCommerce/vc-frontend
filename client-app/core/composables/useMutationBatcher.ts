@@ -1,6 +1,8 @@
 import { ApolloError } from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
 import mergeWith from "lodash/mergeWith";
+import noop from "lodash/noop";
+import uniqueId from "lodash/uniqueId";
 import { ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
 import { uniqByLast } from "@/core/utilities/common";
@@ -8,6 +10,7 @@ import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import type { UniqByLastIterateeType } from "@/core/utilities/common";
 import type { FetchResult } from "@apollo/client/core";
 import type { MutateFunction, MutateOverrideOptions } from "@vue/apollo-composable";
+import type { Ref } from "vue";
 
 const DEFAULT_MAX_LENGTH = 10;
 
@@ -67,20 +70,26 @@ export function useMutationBatcher<TData, TVariables extends object>(
     mergeStrategy: merge = DEFAULT_MERGE_STRATEGY,
   } = options;
 
+  const id = uniqueId();
   const overflowed = ref(false);
   const loading = ref(false);
   let abortController: AbortController | null = null;
-  let batch: TVariables = {} as TVariables;
+  const batch = ref<TVariables>({} as TVariables) as Ref<TVariables>;
   let calledCount = 0;
   let debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
   let mutationOptions: MutateOverrideOptions<TData> | undefined;
+  let onAddHandler: (id: string, args: TVariables) => void = noop;
 
   async function add(
     args: TVariables,
     overrideOptions?: MutateOverrideOptions<TData> | undefined,
+    fireAddHandler = true,
   ): Promise<FetchResult<TData> | null> {
+    if (fireAddHandler) {
+      onAddHandler(id, args);
+    }
     clearPreviousDebounce();
-    batch = merge(batch, args);
+    batch.value = merge(batch.value, args);
     mutationOptions = overrideOptions;
     calledCount += 1;
 
@@ -101,9 +110,8 @@ export function useMutationBatcher<TData, TVariables extends object>(
             !(error instanceof ApolloError && error.networkError?.toString() === explicitError)
           ) {
             reject(error);
+            loading.value = false;
           }
-        } finally {
-          loading.value = false;
         }
       }, debounce);
     });
@@ -118,7 +126,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
 
   async function executeBatch(): Promise<FetchResult<TData> | null> {
     abortController = new AbortController();
-    return await mutation(batch, {
+    return await mutation(batch.value, {
       context: { fetchOptions: { signal: abortController.signal } },
       ...mutationOptions,
     });
@@ -127,9 +135,27 @@ export function useMutationBatcher<TData, TVariables extends object>(
   function resetBatchState() {
     overflowed.value = false;
     abortController = null;
-    batch = {} as TVariables;
+    batch.value = {} as TVariables;
     calledCount = 0;
+    loading.value = false;
   }
 
-  return { overflowed, add, loading };
+  function registerOnAddHandler(handler: (id: string, args: TVariables) => void) {
+    onAddHandler = onAddHandler.name === noop.name ? handler : onAddHandler;
+  }
+
+  function abort() {
+    clearPreviousDebounce();
+    resetBatchState();
+  }
+
+  return {
+    id,
+    overflowed,
+    add,
+    loading,
+    abort,
+    arguments: batch,
+    registerOnAddHandler,
+  };
 }

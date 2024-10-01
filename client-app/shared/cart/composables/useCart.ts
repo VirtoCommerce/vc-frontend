@@ -1,6 +1,6 @@
 import { ApolloError } from "@apollo/client/core";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge } from "lodash";
+import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
 import {
@@ -30,6 +30,7 @@ import {
 } from "@/core/api/graphql";
 import { useGoogleAnalytics } from "@/core/composables";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
+import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatchers";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor, Logger } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
@@ -178,8 +179,27 @@ export function _useFullCart() {
 
   const { mutate: _selectCartItemsMutation } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation } = useUnselectCartItemsMutation(cart);
-  const { add: _selectCartItems, loading: selectLoading } = useMutationBatcher(_selectCartItemsMutation);
-  const { add: _unselectCartItems, loading: unselectLoading } = useMutationBatcher(_unselectCartItemsMutation);
+  const selectCartBatcher = useMutationBatcher(_selectCartItemsMutation, { debounce: 0 });
+  const unselectCartBatcher = useMutationBatcher(_unselectCartItemsMutation, { debounce: 0 });
+  const { add: _selectCartItems, loading: selectLoading } = selectCartBatcher;
+  const { add: _unselectCartItems, loading: unselectLoading } = unselectCartBatcher;
+  useSyncMutationBatchers(selectCartBatcher, unselectCartBatcher, ({ args, anotherBatcher }) => {
+    if (!anotherBatcher.loading.value) {
+      return;
+    }
+
+    const mutationIds = args.command.lineItemIds;
+    const anotherBatcherIds = anotherBatcher.arguments.value?.command?.lineItemIds;
+    const intersectionIds = intersection(mutationIds, anotherBatcherIds);
+
+    if (intersectionIds.length > 0) {
+      anotherBatcher.abort();
+      const ids = difference(anotherBatcherIds, intersectionIds);
+      if (ids.length > 0) {
+        void anotherBatcher.add({ command: { lineItemIds: ids } }, undefined, false);
+      }
+    }
+  });
 
   const selectedItemIds = computed({
     get: () => selectedLineItems.value.map((item) => item.id),
