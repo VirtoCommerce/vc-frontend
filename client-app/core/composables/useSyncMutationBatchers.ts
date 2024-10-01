@@ -29,14 +29,14 @@ type CallbackType<T1 extends MutationBatcherType, T2 extends MutationBatcherType
   anotherBatcher: T1 | T2;
 }) => void;
 
-export function useSyncMutationBatchers<T1 extends MutationBatcherType, T2 extends MutationBatcherType>(
+export function useSyncMutationBatchers<T extends MutationBatcherType>(
   batcher1: T1,
   batcher2: T2,
   callback: CallbackType<T1, T2>,
 ) {
   function onAddHandler(id: string, args: unknown) {
-    const currentBatcher = batcher1.id === id ? batcher1 : (batcher2 as T2);
-    const anotherBatcher = batcher1.id === id ? batcher2 : (batcher1 as T1);
+    const currentBatcher = batcher1.id === id ? batcher1 : batcher2;
+    const anotherBatcher = (batcher1.id === id ? batcher2 : batcher1) as typeof currentBatcher extends T1 ? T2 : T1;
     callback({ args, currentBatcher, anotherBatcher });
   }
 
