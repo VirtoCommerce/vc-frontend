@@ -75,7 +75,7 @@ export function _useCheckout() {
     refetch: refetchCart,
     cart,
     selectedLineItems,
-    selectedItemIds,
+    selectCartItems,
     shipment,
     payment,
     availableShippingMethods,
@@ -450,7 +450,7 @@ export function _useCheckout() {
       await refetchCart();
 
       if (themeContext.value?.storeSettings?.defaultSelectedForCheckout) {
-        selectedItemIds.value = cart.value!.items.map((item) => item.id);
+        selectCartItems(cart.value!.items.map((item) => item.id));
       }
 
       clearState();

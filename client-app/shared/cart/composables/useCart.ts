@@ -181,8 +181,10 @@ export function _useFullCart() {
   const { mutate: _unselectCartItemsMutation } = useUnselectCartItemsMutation(cart);
   const selectCartBatcher = useMutationBatcher(_selectCartItemsMutation, { debounce: 0 });
   const unselectCartBatcher = useMutationBatcher(_unselectCartItemsMutation, { debounce: 0 });
-  const { add: _selectCartItems, loading: selectLoading } = selectCartBatcher;
-  const { add: _unselectCartItems, loading: unselectLoading } = unselectCartBatcher;
+  const { add: _selectCartItems, loading: selectLoading, overflowed: selectOverflowed } = selectCartBatcher;
+  const { add: _unselectCartItems, loading: unselectLoading, overflowed: unselectOverflowed } = unselectCartBatcher;
+  const selectionOverflowed = computed(() => selectOverflowed.value || unselectOverflowed.value);
+
   useSyncMutationBatchers(selectCartBatcher, unselectCartBatcher, ({ args, anotherBatcher }) => {
     if (!anotherBatcher.loading.value) {
       return;
@@ -201,54 +203,23 @@ export function _useFullCart() {
     }
   });
 
-  const selectedItemIds = computed({
-    get: () => selectedLineItems.value.map((item) => item.id),
-    set: (newValue) => {
-      const oldValue = selectedItemIds.value;
+  const selectedItemIds = computed(() => selectedLineItems.value.map((item) => item.id));
 
-      const newlySelectedLineItemIds = difference(newValue, oldValue);
-      const newlyUnselectedLineItemIds = difference(oldValue, newValue);
+  function selectCartItems(ids: string[]): void {
+    void _selectCartItems({
+      command: {
+        lineItemIds: ids,
+      },
+    });
+  }
 
-      const hasNewlySelected = newlySelectedLineItemIds.length > 0;
-      const hasNewlyUnselected = newlyUnselectedLineItemIds.length > 0;
-      if (hasNewlySelected) {
-        void _selectCartItems(
-          {
-            command: {
-              lineItemIds: newlySelectedLineItemIds,
-            },
-          },
-          {
-            optimisticResponse: {
-              selectCartItems: merge({}, cart.value!, {
-                items: cart.value!.items.map((item) => ({
-                  selectedForCheckout: newlySelectedLineItemIds.includes(item.id) || item.selectedForCheckout,
-                })),
-              }),
-            },
-          },
-        );
-      }
-      if (hasNewlyUnselected) {
-        void _unselectCartItems(
-          {
-            command: {
-              lineItemIds: newlyUnselectedLineItemIds,
-            },
-          },
-          {
-            optimisticResponse: {
-              unSelectCartItems: merge({}, cart.value!, {
-                items: cart.value!.items.map((item) => ({
-                  selectedForCheckout: !newlyUnselectedLineItemIds.includes(item.id) && item.selectedForCheckout,
-                })),
-              }),
-            },
-          },
-        );
-      }
-    },
-  });
+  function unselectCartItems(ids: string[]): void {
+    void _unselectCartItems({
+      command: {
+        lineItemIds: ids,
+      },
+    });
+  }
 
   const { mutate: _clearCart, loading: clearCartLoading } = useClearCartMutation(cart);
   async function clearCart(): Promise<void> {
@@ -441,6 +412,9 @@ export function _useFullCart() {
     changeItemQuantity,
     changeItemQuantityBatched,
     changeItemQuantityBatchedOverflowed,
+    selectCartItems,
+    unselectCartItems,
+    selectionOverflowed,
     removeItems,
     validateCartCoupon,
     addCartCoupon,

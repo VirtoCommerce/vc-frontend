@@ -32,7 +32,7 @@
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :selected-item-ids="selectedItemIds"
         :validation-errors="cart.validationErrors"
-        :disabled="changeItemQuantityBatchedOverflowed"
+        :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
         @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
         @select:items="handleSelectItems"
         @remove:items="handleRemoveItems"
@@ -137,7 +137,7 @@
 </template>
 
 <script setup lang="ts">
-import { isEmpty, without, union } from "lodash";
+import { isEmpty } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
@@ -179,9 +179,12 @@ const {
   forceFetch,
   changeItemQuantityBatched,
   changeItemQuantityBatchedOverflowed,
+  selectionOverflowed,
   removeItems,
   toggleGift,
   openClearCartModal,
+  selectCartItems,
+  unselectCartItems,
 } = useFullCart();
 const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
@@ -214,9 +217,11 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   if (!value.selected) {
-    selectedItemIds.value = without(selectedItemIds.value, ...value.itemIds);
+    console.log("unselect", value.itemIds);
+    unselectCartItems(value.itemIds);
   } else {
-    selectedItemIds.value = union(selectedItemIds.value, value.itemIds);
+    console.log("select", value.itemIds);
+    selectCartItems(value.itemIds);
   }
 }
 
