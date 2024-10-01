@@ -28,9 +28,8 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics, useSyncMutationBatchers } from "@/core/composables";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
-import { useSyncMutationBatchers } from "@/core/composables/useSyncMutationBatchers";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor, Logger } from "@/core/utilities";
 import { useModal } from "@/shared/modal";
@@ -396,7 +395,7 @@ export function _useFullCart() {
     payment,
     availableShippingMethods,
     availablePaymentMethods,
-    selectedItemIds,
+    selectedItemIds: readonly(selectedItemIds),
     lineItemsGroupedByVendor,
     selectedLineItems,
     selectedLineItemsGroupedByVendor,

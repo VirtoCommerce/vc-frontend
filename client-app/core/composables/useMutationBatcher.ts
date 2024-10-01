@@ -45,15 +45,22 @@ export function getMergeStrategyUniqueBy(keyOrFn: string | ((item: unknown) => u
 /**
  * @description Vue composable to batch Apollo Client mutations.
  * @param mutation - Apollo Client mutation function.
- * @param options - Options object with `debounce`, `maxLength`, and `merge` properties.
+ * @param options - Options object with `debounce`, `maxLength`, and `mergeStrategy` properties.
  * @param options.debounce - Debounce time in milliseconds. Default is {@link DEFAULT_DEBOUNCE_IN_MS}.
- * @param options.length - Maximum number of mutations to batch. Default is {@link DEFAULT_MAX_LENGTH}. After reaching this number, `overflowed` ref will be set to `true`.
- * @param options.merge - Function to merge two mutation parameters objects. See {@link DEFAULT_MERGE_STRATEGY} and {@link getMergeStrategyUniqueBy}
- * @returns Object with `overflowed` boolean ref and `add` function to add a new mutation to the batch.
+ * @param options.maxLength - Maximum number of mutations to batch. Default is {@link DEFAULT_MAX_LENGTH}. After reaching this number, `overflowed` ref will be set to `true`.
+ * @param options.mergeStrategy - Function to merge two mutation parameters objects. See {@link DEFAULT_MERGE_STRATEGY} and {@link getMergeStrategyUniqueBy}
+ * @returns {object} An object with the following properties:
+ *   - `id`: A unique identifier for the batcher instance.
+ *   - `overflowed`: A boolean ref indicating whether the batch has exceeded the maximum length.
+ *   - `add`: A function to add a new mutation to the batch.
+ *   - `loading`: A boolean ref indicating whether the batch is currently being processed.
+ *   - `abort`: A function to abort the current batch.
+ *   - `arguments`: A ref containing the current batch arguments.
+ *   - `registerOnAddHandler`: A function to register a handler that will be called when a new mutation is added to the batch.
  * @example ```ts
  * const { mutate: changeCartItemsQuantity } = useChangeCartItemsQuantity();
  * const { overflowed, add, loading } = useMutationBatcher(changeCartItemsQuantity);
- * const result = await add({ command { cartItems: [{ productId: "1", quantity: 1}] }});
+ * const result = await add({ command: { cartItems: [{ productId: "1", quantity: 1}] }});
  * ```
  */
 export function useMutationBatcher<TData, TVariables extends object>(
