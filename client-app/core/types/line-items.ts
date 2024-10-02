@@ -1,15 +1,30 @@
-import type {
-  AvailabilityData,
-  CommonVendor,
-  LineItemType,
-  MoneyType,
-  OrderLineItemType,
-  Property,
-} from "@/core/api/graphql/types";
-import type { QuoteItemType } from "@/modules/quotes/api/graphql/types";
+import type { AvailabilityData, CommonVendor, MoneyType, Product, Property } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
-export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
+export type AnyLineItemType = {
+  id: string;
+  name: string;
+  imageUrl?: string;
+  product?: Product;
+  productId?: string;
+  sku?: string;
+  quantity?: number;
+  inStockQuantity?: number;
+  productType?: string;
+  price?: MoneyType;
+  listPrice?: MoneyType;
+  salePrice?: MoneyType;
+  placedPrice?: MoneyType;
+  extendedPrice?: MoneyType;
+  proposalPrices?: {
+    price: MoneyType;
+    quantity: number;
+  };
+  selectedTierPrice?: {
+    price: MoneyType;
+    quantity: number;
+  };
+};
 
 export type VendorGroupType<T> = {
   items: T[];
