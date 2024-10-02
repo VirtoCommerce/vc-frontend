@@ -51,6 +51,19 @@
         />
 
         <component
+          :is="productReviewsSection?.type"
+          v-if="productReviewsEnabled && !!productReviews?.length"
+          :model="productReviewsSection"
+          :fetching="fetchingProductReviews"
+          :rating="product.rating"
+          :reviews="productReviews"
+          :page="productReviewsPayload.page"
+          :pages-count="productReviewsPagesCount"
+          @change-sort-by-date="changeSortProductReviews"
+          @change-page="changeProductReviewsPage"
+        />
+
+        <component
           :is="productVariationsBlock?.type"
           v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
           :variations="variations"
@@ -126,6 +139,7 @@ import {
   useProducts,
   useRecommendedProducts,
 } from "@/shared/catalog";
+import { useCustomerReviews } from "@/shared/common";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
@@ -177,6 +191,13 @@ const {
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
+const {
+  enabled: productReviewsEnabled,
+  fetching: fetchingProductReviews,
+  pagesCount: productReviewsPagesCount,
+  reviews: productReviews,
+  fetchCustomerReviews,
+} = useCustomerReviews();
 
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
@@ -187,6 +208,12 @@ const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:pr
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
+});
+const productReviewsPayload = ref({
+  entityId: productId.value,
+  entityType: "Product",
+  page: 1,
+  sort: "createddate:desc",
 });
 
 const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
@@ -213,6 +240,8 @@ const seoImageUrl = computed(() => product.value?.imgSrc);
 const productInfoSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "product-info"),
 );
+
+const productReviewsSection = computed(() => template.value?.content.find((item) => item.type === "product-reviews"));
 
 const productVariationsBlock = computed(() =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -300,6 +329,19 @@ async function resetFacetFilters(): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
+async function changeSortProductReviews(sort: string): Promise<void> {
+  productReviewsPayload.value.page = 1;
+  productReviewsPayload.value.sort = sort;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
+}
+
+async function changeProductReviewsPage(page: number): Promise<void> {
+  productReviewsPayload.value.page = page;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
+}
+
 watchEffect(() => {
   if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
     usePageHead({
@@ -363,6 +405,12 @@ watchEffect(() => {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
     });
+  }
+});
+
+watchEffect(() => {
+  if (productReviewsEnabled.value) {
+    void fetchCustomerReviews(productReviewsPayload.value);
   }
 });
 </script>

@@ -10,14 +10,25 @@ export function useCustomerReviews() {
   const PAGE_SIZE = 5;
 
   const fetching = ref(false);
+  const pagesCount = ref(0);
   const reviews = ref<CustomerReview[]>();
 
-  async function fetchCustomerReviews(entityId: string, entityType: string, page: number): Promise<void> {
+  async function fetchCustomerReviews(payload: {
+    entityId: string;
+    entityType: string;
+    page: number;
+    sort: string;
+  }): Promise<void> {
     fetching.value = true;
 
     try {
-      const response = await getCustomerReviews(entityId, entityType, PAGE_SIZE, ((page - 1) * PAGE_SIZE).toString());
+      const response = await getCustomerReviews({
+        ...payload,
+        first: PAGE_SIZE,
+        after: ((payload.page - 1) * PAGE_SIZE).toString(),
+      });
       reviews.value = response?.items as CustomerReview[];
+      pagesCount.value = Math.ceil((response?.totalCount ?? 0) / PAGE_SIZE);
     } catch (e) {
       Logger.error(`${useCustomerReviews.name}.${fetchCustomerReviews.name}`);
       throw e;
@@ -32,6 +43,7 @@ export function useCustomerReviews() {
     onlyForPurchasedProduct: computed(() => isEnabled("CustomerReviews.CanSubmitReviewWhenHasOrder")),
     reviews: computed(() => reviews.value),
     fetching: readonly(fetching),
+    pagesCount: readonly(pagesCount),
     fetchCustomerReviews,
   };
 }

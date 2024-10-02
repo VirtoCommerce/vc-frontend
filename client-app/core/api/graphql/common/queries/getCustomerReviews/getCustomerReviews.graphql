@@ -1,8 +1,23 @@
-query GetCustomerReviews($storeId: String!, $entityId: String!, $entityType: String!, $first: Int, $after: String) {
-  customerReviews(storeId: $storeId, entityId: $entityId, entityType: $entityType, first: $first, after: $after) {
+query GetCustomerReviews(
+  $storeId: String!
+  $entityId: String!
+  $entityType: String!
+  $first: Int
+  $after: String
+  $sort: String
+) {
+  customerReviews(
+    storeId: $storeId
+    entityId: $entityId
+    entityType: $entityType
+    first: $first
+    after: $after
+    sort: $sort
+  ) {
     totalCount
     items {
       id
+      createdDate
       userId
       userName
       title

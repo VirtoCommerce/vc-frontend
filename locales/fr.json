@@ -150,7 +150,12 @@
       "default_currency": "Monnaie par défaut",
       "organizations": "Organisations",
       "my_organizations": "Mes organisations",
-      "select_product": "Veuillez sélectionner un produit"
+      "select_product": "Veuillez sélectionner un produit",
+      "feedback": "Rétroaction",
+      "rating": "Notation",
+      "sort_by_date": "Trier par date",
+      "ascending": "Ascendant",
+      "descending": "Descendant"
     },
     "prefixes": {
       "please": "S'il vous plaît",

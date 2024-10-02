@@ -70,7 +70,7 @@
         </div>
         <div class="min-w-0">
           <div class="truncate">
-            <Rating :rating="product.rating" />
+            <ProductRating :rating="product.rating" />
           </div>
         </div>
       </template>
@@ -148,7 +148,7 @@ import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
-import Rating from "./rating.vue";
+import ProductRating from "./product-rating.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 
