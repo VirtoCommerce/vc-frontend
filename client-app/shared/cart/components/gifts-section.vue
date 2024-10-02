@@ -13,7 +13,7 @@
           :selected="gift.isAddedInCart"
           @select="$emit('toggle:gift', gift)"
         >
-          <VcQuantity v-model="gift.quantity" disabled />
+          <VcAddToCart v-model="gift.quantity" disabled hide-button />
         </VcLineItem>
       </template>
     </VcLineItems>

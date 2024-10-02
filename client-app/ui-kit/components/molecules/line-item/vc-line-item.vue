@@ -9,6 +9,7 @@
         'vc-line-item--deleted': deleted,
       },
     ]"
+    @keydown="changeFocus"
   >
     <div v-if="$slots.before" class="vc-line-item__before">
       <slot name="before" />
@@ -168,6 +169,27 @@ const { themeContext } = useThemeContext();
 const isSelected = ref<boolean>(true);
 
 const target = computed(() => (themeContext.value?.settings?.show_details_in_separate_tab ? "_blank" : "_self"));
+
+function changeFocus(event: KeyboardEvent) {
+  const { target: targetElement, currentTarget } = event;
+  if (!(currentTarget instanceof HTMLElement) || !(targetElement instanceof HTMLElement)) {
+    return;
+  }
+  const targetClassList = targetElement.classList;
+  let nextElement: Element | null = null;
+  switch (event.key) {
+    case "ArrowUp":
+      nextElement = currentTarget.previousElementSibling;
+      break;
+    case "ArrowDown":
+      nextElement = currentTarget.nextElementSibling;
+      break;
+  }
+  if (nextElement && nextElement.classList.contains("vc-line-item") && nextElement instanceof HTMLElement) {
+    const nextTargetElement = nextElement.querySelector(`.${[...targetClassList].join(".")}`);
+    (nextTargetElement as HTMLElement | null)?.focus();
+  }
+}
 
 watchEffect(() => {
   isSelected.value = props.selected;
@@ -358,11 +380,16 @@ watchEffect(() => {
   &__slot {
     @apply flex-none empty:hidden;
 
-    &:has(.vc-quantity, * .vc-quantity) {
+    &:has(.vc-add-to-cart--hide-button, * .vc-add-to-cart--hide-button) {
       @apply w-[6.5rem];
     }
 
-    &:has(.vc-add-to-cart, * .vc-add-to-cart, .add-to-cart, * .add-to-cart) {
+    &:has(
+        .add-to-cart,
+        * .add-to-cart,
+        .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button)
+      ) {
       @apply w-full;
 
       @container (width > theme("containers.md")) {
