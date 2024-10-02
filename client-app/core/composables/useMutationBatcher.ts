@@ -92,6 +92,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
     overrideOptions?: MutateOverrideOptions<TData> | undefined,
     fireAddHandler = true,
   ): Promise<FetchResult<TData> | null> {
+    loading.value = true;
     if (fireAddHandler) {
       onAddHandler(id, args);
     }
@@ -106,7 +107,6 @@ export function useMutationBatcher<TData, TVariables extends object>(
     return new Promise((resolve, reject) => {
       debounceTimeoutId = setTimeout(async () => {
         try {
-          loading.value = true;
           const result = await executeBatch();
           resolve(result);
           resetBatchState();
