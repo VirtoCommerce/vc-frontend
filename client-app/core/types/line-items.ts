@@ -11,24 +11,12 @@ import type { RouteLocationRaw } from "vue-router";
 
 export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
 
-export type VendorGroupType<T extends LineItemType | OrderLineItemType> = {
+export type VendorGroupType<T> = {
   items: T[];
   vendor?: CommonVendor;
 };
 
-export type VendorGroupByVendorIdType<T extends LineItemType | OrderLineItemType> = Record<string, VendorGroupType<T>>;
-
-/** @deprecated Use {@link PreparedLineItemType} */
-export type ExtendedLineItemType<T extends AnyLineItemType> = T & {
-  extended: {
-    isProductExists: boolean;
-    route: RouteLocationRaw;
-    displayProperties: Property[];
-    minQuantity?: number;
-    maxQuantity?: number;
-    countInCart?: number;
-  };
-};
+export type VendorGroupByVendorIdType<T> = Record<string, VendorGroupType<T>>;
 
 export type PreparedLineItemType = {
   id: string;
