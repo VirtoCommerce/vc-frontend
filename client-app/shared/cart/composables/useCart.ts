@@ -178,19 +178,20 @@ export function _useFullCart() {
 
   const { mutate: _selectCartItemsMutation } = useSelectCartItemsMutation(cart);
   const { mutate: _unselectCartItemsMutation } = useUnselectCartItemsMutation(cart);
-  const selectCartBatcher = useMutationBatcher(_selectCartItemsMutation, { debounce: 0 });
-  const unselectCartBatcher = useMutationBatcher(_unselectCartItemsMutation, { debounce: 0 });
+  const selectCartBatcher = useMutationBatcher(_selectCartItemsMutation);
+  const unselectCartBatcher = useMutationBatcher(_unselectCartItemsMutation);
   const { add: _selectCartItems, loading: selectLoading, overflowed: selectOverflowed } = selectCartBatcher;
   const { add: _unselectCartItems, loading: unselectLoading, overflowed: unselectOverflowed } = unselectCartBatcher;
   const selectionOverflowed = computed(() => selectOverflowed.value || unselectOverflowed.value);
+  const selectionLoading = computed(() => selectLoading.value || unselectLoading.value);
 
   useSyncMutationBatchers(selectCartBatcher, unselectCartBatcher, ({ args, anotherBatcher }) => {
     if (!anotherBatcher.loading.value) {
       return;
     }
 
-    const mutationIds = args.command.lineItemIds;
-    const anotherBatcherIds = anotherBatcher.arguments.value?.command?.lineItemIds;
+    const mutationIds = args.command?.lineItemIds ?? [];
+    const anotherBatcherIds = anotherBatcher.arguments.value?.command?.lineItemIds ?? [];
     const intersectionIds = intersection(mutationIds, anotherBatcherIds);
 
     if (intersectionIds.length > 0) {
@@ -395,7 +396,7 @@ export function _useFullCart() {
     payment,
     availableShippingMethods,
     availablePaymentMethods,
-    selectedItemIds: selectedItemIds,
+    selectedItemIds,
     lineItemsGroupedByVendor,
     selectedLineItems,
     selectedLineItemsGroupedByVendor,
@@ -431,8 +432,7 @@ export function _useFullCart() {
     loading: readonly(loading),
     changing: computed(
       () =>
-        selectLoading.value ||
-        unselectLoading.value ||
+        selectionLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
         changeItemQuantityLoading.value ||

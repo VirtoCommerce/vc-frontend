@@ -11,7 +11,6 @@ describe("useSyncMutationBatchers", () => {
   let callback: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    // Create mock batchers
     mockBatcher1 = {
       id: "batcher1",
       registerOnAddHandler: vi.fn(),
@@ -22,7 +21,6 @@ describe("useSyncMutationBatchers", () => {
       registerOnAddHandler: vi.fn(),
     } as unknown as MutationBatcherType;
 
-    // Mock callback
     callback = vi.fn();
   });
 
