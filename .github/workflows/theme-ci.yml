@@ -61,6 +61,8 @@ jobs:
 
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        with:
+          projectType: theme
         id: image
 
       - name: Get changelog
@@ -202,3 +204,16 @@ jobs:
         if: success()
         run: |
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
+
+  deploy-cloud:
+    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
+    needs: ci
+    uses: ./.github/workflows/deploy-cloud.yml
+    with:
+      cmPath: 'theme/artifact.json'
+      artifactKey: 'URL'
+      artifactUrl: ${{ needs.ci.outputs.artifactUrl }}
+      environmentId: ${{ ((github.event_name == 'pull_request' && github.base_ref == 'dev') || github.ref == 'refs/heads/master') && 'qa' || 'dev' }}
+      jiraKeys: ${{ needs.ci.outputs.jira-keys }}
+      forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
+    secrets: inherit
