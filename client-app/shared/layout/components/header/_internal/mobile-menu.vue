@@ -15,9 +15,7 @@
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <svg class="text-[--mobile-menu-navigation-color]" height="20" width="20">
-          <use href="/static/images/close.svg#main" />
-        </svg>
+        <VcIcon name="x" class="text-[--mobile-menu-navigation-color]" :size="22" />
       </button>
     </header>
 
