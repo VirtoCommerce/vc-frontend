@@ -121,20 +121,14 @@ export function useNavigations() {
 
   function getMobileContactOrganizationsMenu() {
     const { t } = globals.i18n.global;
-    const { isMultiOrganization, user } = useUser();
-
-    const organizationsMenuItems = user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
-      id: item.id,
-      title: item.name,
-      isContactOrganizationsItem: true,
-    }));
+    const { isMultiOrganization } = useUser();
 
     if (isMultiOrganization.value) {
       mobileContactOrganizationsMenu.value = {
         id: "contact-organizations",
         title: t("common.labels.my_organizations"),
         icon: "/static/images/dashboard/icons/company.svg#main",
-        children: organizationsMenuItems,
+        children: [{ id: "company-list" }],
       };
     }
   }

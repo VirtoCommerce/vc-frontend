@@ -30,25 +30,24 @@
           {{ openedItem?.title }}
         </h2>
 
-        <ul class="mt-4 flex flex-col gap-y-2">
-          <li v-for="childItem in openedItem?.children" :key="childItem.title">
-            <!-- Contact organizations -->
-            <div
-              v-if="openedItem.id === 'contact-organizations' && !!childItem.id"
-              class="flex grow flex-col gap-y-1 font-normal"
-            >
-              <VcRadioButton
-                v-model="contactOrganizationId"
-                :value="childItem.id"
-                class="py-2.5"
-                @change="selectOrganization"
-              >
-                <span class="uppercase">
-                  {{ childItem.title }}
-                </span>
-              </VcRadioButton>
-            </div>
+        <!-- Contact organizations -->
+        <div v-if="openedItem.id === 'contact-organizations'" class="flex grow flex-col gap-y-1 font-normal">
+          <VcRadioButton
+            v-for="item in allOrganizations"
+            :key="item.id"
+            v-model="contactOrganizationId"
+            :value="item.id"
+            class="py-2.5"
+            @change="selectOrganization"
+          >
+            <span class="uppercase">
+              {{ item.name }}
+            </span>
+          </VcRadioButton>
+        </div>
 
+        <ul v-else class="mt-4 flex flex-col gap-y-2">
+          <li v-for="childItem in openedItem?.children" :key="childItem.title">
             <!-- Currency setting -->
             <div v-if="childItem.id === 'currency-setting'" class="flex grow flex-col gap-y-1 font-normal">
               <header class="-mt-1 mb-1 text-2xl uppercase text-additional-50">
@@ -270,7 +269,8 @@ const { cart } = useShortCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
-const { user, operator, isAuthenticated, organization, isCorporateMember, switchOrganization } = useUser();
+const { user, operator, isAuthenticated, organization, allOrganizations, isCorporateMember, switchOrganization } =
+  useUser();
 const { signMeOut } = useSignMeOut();
 const {
   mobileMainMenuItems,
