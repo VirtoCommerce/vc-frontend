@@ -237,6 +237,29 @@ describe("useMutationBatcher", () => {
     expect(abortSpy).toBeCalled();
   });
 
+  it("should reset count when abort is called with resetCount option and not reset count otherwise", () => {
+    const mutation = vi.fn().mockImplementation(mutationMock);
+    const { add, abort, overflowed } = useMutationBatcher(mutation, { maxLength: 2 });
+
+    void add(DUMMY_TEXT_ARGUMENTS);
+    void add(DUMMY_TEXT_ARGUMENTS);
+    expect(overflowed.value).toBe(true);
+
+    abort();
+    void add(DUMMY_TEXT_ARGUMENTS);
+    expect(overflowed.value).toBe(false);
+
+    abort();
+
+    void add(DUMMY_TEXT_ARGUMENTS);
+    void add(DUMMY_TEXT_ARGUMENTS);
+    expect(overflowed.value).toBe(true);
+
+    abort({ resetCount: false });
+    void add(DUMMY_TEXT_ARGUMENTS);
+    expect(overflowed.value).toBe(true);
+  });
+
   it("should update the arguments ref after adding a mutation", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add, arguments: batchArguments } = useMutationBatcher(mutation);

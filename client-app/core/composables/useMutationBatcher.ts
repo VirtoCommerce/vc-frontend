@@ -81,7 +81,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
   const overflowed = ref(false);
   const loading = ref(false);
   let abortController: AbortController | null = null;
-  const batch = ref<TVariables>({} as TVariables) as Ref<TVariables>;
+  const batch = ref({}) as Ref<TVariables>;
   let calledCount = 0;
   let debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
   let mutationOptions: MutateOverrideOptions<TData> | undefined;
@@ -116,7 +116,7 @@ export function useMutationBatcher<TData, TVariables extends object>(
             !(error instanceof Error && error.toString() === explicitError) &&
             !(error instanceof ApolloError && error.networkError?.toString() === explicitError)
           ) {
-            resetBatchState();
+            loading.value = false;
             reject(error instanceof Error ? error : new Error(error as string));
           }
         }
@@ -153,9 +153,9 @@ export function useMutationBatcher<TData, TVariables extends object>(
     onAddHandler = onAddHandler.name === noop.name ? handler : onAddHandler;
   }
 
-  function abort() {
+  function abort({ resetCount = true }: { resetCount?: boolean } = {}) {
     clearPreviousDebounce();
-    resetBatchState(false);
+    resetBatchState(resetCount);
   }
 
   return {
