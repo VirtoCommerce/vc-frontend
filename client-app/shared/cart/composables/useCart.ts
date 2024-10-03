@@ -195,7 +195,7 @@ export function _useFullCart() {
     const intersectionIds = intersection(mutationIds, anotherBatcherIds);
 
     if (intersectionIds.length > 0) {
-      anotherBatcher.abort({ resetCount: false });
+      anotherBatcher.abort();
       const ids = difference(anotherBatcherIds, intersectionIds);
       if (ids.length > 0) {
         void anotherBatcher.add({ command: { lineItemIds: ids } }, undefined, false);

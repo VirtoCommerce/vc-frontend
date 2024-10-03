@@ -139,23 +139,23 @@ export function useMutationBatcher<TData, TVariables extends object>(
     });
   }
 
-  function resetBatchState(resetCount = true) {
+  function resetBatchState() {
     overflowed.value = false;
     abortController = null;
     batch.value = {} as TVariables;
     loading.value = false;
-    if (resetCount) {
-      calledCount = 0;
-    }
+    calledCount = 0;
   }
 
   function registerOnAddHandler(handler: (id: string, args: TVariables) => void) {
     onAddHandler = onAddHandler.name === noop.name ? handler : onAddHandler;
   }
 
-  function abort({ resetCount = true }: { resetCount?: boolean } = {}) {
+  function abort() {
     clearPreviousDebounce();
-    resetBatchState(resetCount);
+    abortController = null;
+    batch.value = {} as TVariables;
+    loading.value = false;
   }
 
   return {

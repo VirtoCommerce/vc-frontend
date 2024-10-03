@@ -449,8 +449,8 @@ export function _useCheckout() {
     if (placedOrder.value) {
       await refetchCart();
 
-      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout) {
-        selectCartItems(cart.value!.items.map((item) => item.id));
+      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout && cart.value?.items.length) {
+        selectCartItems(cart.value.items.map((item) => item.id));
       }
 
       clearState();
