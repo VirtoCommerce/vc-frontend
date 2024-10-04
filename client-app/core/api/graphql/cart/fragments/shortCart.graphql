@@ -4,8 +4,8 @@
 
 fragment shortCart on CartType {
   ...cartId
-  itemsQuantity
   ...cartItems
+  itemsQuantity
   validationErrors(ruleSet: "*") {
     ...validationError
   }

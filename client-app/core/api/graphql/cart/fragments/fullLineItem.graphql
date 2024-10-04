@@ -1,11 +1,13 @@
 #import "../../common/fragments/money.graphql"
 #import "../../common/fragments/commonVendor.graphql"
-#import "./shortLineItem.graphql"
 #import "./fullLineItemProduct.graphql"
 #import "./validationError.graphql"
 
 fragment fullLineItem on LineItemType {
-  ...shortLineItem
+  id
+  sku
+  quantity
+  productId
   name
   inStockQuantity
   imageUrl
