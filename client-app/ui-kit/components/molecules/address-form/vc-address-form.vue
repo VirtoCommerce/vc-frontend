@@ -242,7 +242,7 @@ const regionRules = computed(() => {
     .string()
     .nullable()
     .when("countryCode", {
-      is: (value: string) => props.countries.find((item) => value === item.id)?.regions.length,
+      is: () => !!country.value?.regions.length,
       then: (schema) => schema.required(),
     });
   return toTypedSchema(rules);
