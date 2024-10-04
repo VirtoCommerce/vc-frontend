@@ -51,7 +51,7 @@
         />
 
         <component
-          :is="productReviewsSection?.type"
+          :is="ProductReviews"
           v-if="productReviewsEnabled && !!productReviews?.length"
           :model="productReviewsSection"
           :fetching="fetchingProductReviews"
@@ -131,6 +131,7 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
+import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
 import {
   useProduct,
   useRelatedProducts,
@@ -139,12 +140,12 @@ import {
   useProducts,
   useRecommendedProducts,
 } from "@/shared/catalog";
-import { useCustomerReviews } from "@/shared/common";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { PageContent } from "@/shared/static-content";
+import ProductReviews from "@/modules/customer-reviews/components/product-reviews.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {

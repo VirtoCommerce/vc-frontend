@@ -21,6 +21,11 @@ const independentModules: ModuleType[] = [
     searchKey: "QuoteType",
     apiPath: "client-app/modules/quotes/api/graphql",
   },
+  {
+    name: "CustomerReviews",
+    searchKey: "customerReviews",
+    apiPath: "client-app/modules/customer-reviews/api/graphql",
+  },
 ];
 
 const GENERAL_CONFIG = {

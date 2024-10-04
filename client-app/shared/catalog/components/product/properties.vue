@@ -34,9 +34,10 @@ import { computed, inject } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { configInjectionKey } from "@/core/injection-keys";
 import { getPropertiesGroupedByName } from "@/core/utilities";
-import { ProductTitledBlock, ProductRating, Vendor } from "@/shared/catalog";
-import { useCustomerReviews } from "@/shared/common";
+import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
+import { ProductTitledBlock, Vendor } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
+import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 
 interface IProps {
   product: Product;

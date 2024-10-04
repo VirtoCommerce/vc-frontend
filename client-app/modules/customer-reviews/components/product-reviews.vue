@@ -1,7 +1,7 @@
 <template>
   <VcWidget :title="$t('common.labels.feedback')" prepend-icon="chat">
     <div class="mb-8 flex justify-between">
-      <div class="flex">
+      <div v-if="rating" class="flex">
         <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
         <ProductRating :rating="rating" class="font-bold" />
       </div>
@@ -45,8 +45,8 @@
 <script setup lang="ts">
 import { ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import ProductRating from "../product-rating.vue";
-import ReviewRating from "../review-rating.vue";
+import ProductRating from "./product-rating.vue";
+import ReviewRating from "./review-rating.vue";
 import type { CustomerReview, Rating } from "@/core/api/graphql/types";
 
 interface IEmits {
@@ -62,7 +62,7 @@ interface IProps {
   fetching: boolean;
   page: number;
   pagesCount: number;
-  rating: Rating;
+  rating?: Rating;
   reviews: CustomerReview[];
 }
 

@@ -14,13 +14,11 @@ export { default as ProductCardRecommended } from "./product-card-recommended.vu
 export { default as ProductCardRelated } from "./product-card-related.vue";
 export { default as ProductPriceBlock } from "./product-price-block.vue";
 export { default as ProductProperty } from "./product-property.vue";
-export { default as ProductRating } from "./product-rating.vue";
 export { default as ProductSidebar } from "./product-sidebar.vue";
 export { default as ProductSkeletonGrid } from "./product-skeleton-grid.vue";
 export { default as ProductSkeletonList } from "./product-skeleton-list.vue";
 export { default as ProductTitledBlock } from "./product-titled-block.vue";
 export { default as ProductVideos } from "./product-videos.vue";
-export { default as ReviewRating } from "./review-rating.vue";
 export { default as VariationProperty } from "./variation-property.vue";
 export { default as Vendor } from "./vendor.vue";
 export { default as VideoModal } from "./video-modal.vue";
