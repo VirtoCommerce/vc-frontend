@@ -238,13 +238,11 @@ const cityRules = computed(() => {
 
 const regionRules = computed(() => {
   // Do not use computed based on field value cause it may cause infinite loop
-  const rules = yup
-    .string()
-    .nullable()
-    .when("countryCode", {
-      is: () => !!country.value?.regions.length,
-      then: (schema) => schema.required(),
-    });
+  const rules = yup.string().when("countryCode", {
+    is: () => !!country.value?.regions.length,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.nullable(),
+  });
   return toTypedSchema(rules);
 });
 
