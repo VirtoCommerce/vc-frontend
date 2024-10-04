@@ -1,7 +1,8 @@
 <template>
-  <div class="vc-add-to-cart">
+  <div class="vc-add-to-cart" :class="{ 'vc-add-to-cart--hide-button': hideButton }">
     <VcInput
       v-model.number="quantity"
+      :name
       type="number"
       :aria-label="$t('common.labels.product_quantity')"
       :disabled="disabled"
@@ -10,36 +11,41 @@
       size="sm"
       single-line-message
       center
-      :error="!isValid"
+      :error="!isValid || error"
       :message="message"
       :show-empty-details="showEmptyDetails"
+      :readonly
       @input="onChange"
       @blur="onFocusOut"
     >
       <template #append>
-        <VcButton
-          class="vc-add-to-cart__icon-button"
-          :variant="isButtonOutlined ? 'outline' : 'solid'"
-          :loading="loading"
-          :disabled="isDisabled"
-          :title="buttonText"
-          :icon="icon"
-          size="sm"
-          @click.stop="$emit('update:cartItemQuantity', quantity!)"
-        />
+        <template v-if="!hideButton">
+          <VcButton
+            class="vc-add-to-cart__icon-button"
+            :variant="isButtonOutlined ? 'outline' : 'solid'"
+            :loading="loading"
+            :disabled="isDisabled"
+            :title="buttonText"
+            :icon="icon"
+            size="sm"
+            @click.stop="$emit('update:cartItemQuantity', quantity!)"
+          />
 
-        <VcButton
-          class="vc-add-to-cart__text-button"
-          :variant="isButtonOutlined ? 'outline' : 'solid'"
-          :loading="loading"
-          :disabled="isDisabled"
-          :title="buttonText"
-          size="sm"
-          truncate
-          @click.stop="$emit('update:cartItemQuantity', quantity!)"
-        >
-          {{ buttonText }}
-        </VcButton>
+          <VcButton
+            v-if="!hideButton"
+            class="vc-add-to-cart__text-button"
+            :variant="isButtonOutlined ? 'outline' : 'solid'"
+            :loading="loading"
+            :disabled="isDisabled"
+            :title="buttonText"
+            size="sm"
+            truncate
+            @click.stop="$emit('update:cartItemQuantity', quantity!)"
+          >
+            {{ buttonText }}
+          </VcButton>
+        </template>
+        <slot name="append" />
       </template>
     </VcInput>
 
@@ -52,8 +58,9 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
 import { toRefs } from "@vueuse/core";
+import { debounce } from "lodash";
 import { useField } from "vee-validate";
-import { computed, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
@@ -64,6 +71,7 @@ interface IEmits {
 }
 
 interface IProps {
+  name?: string;
   modelValue?: number;
   loading?: boolean;
   disabled?: boolean;
@@ -77,16 +85,23 @@ interface IProps {
   isInStock?: boolean;
   message?: string;
   showEmptyDetails?: boolean;
+  error?: boolean;
+  hideButton?: boolean;
+  readonly?: boolean;
+  timeout?: number;
+  validateOnMount?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  validateOnMount: true,
+});
 
 const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
+const { timeout, disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
   toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
@@ -97,7 +112,7 @@ const buttonText = computed<string>(() =>
 
 const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
 
-const quantity = ref<number | undefined>();
+const quantity = ref<number | undefined>(props.modelValue);
 
 const { quantitySchema } = useQuantityValidationSchema({
   minQuantity,
@@ -111,7 +126,14 @@ const isDisabled = computed(
   () => !isValid.value || disabled.value || !isActive || !isAvailable.value || !isBuyable.value || !isInStock.value,
 );
 
-const { errorMessage, validate, setValue } = useField("quantity", rules);
+const {
+  errorMessage,
+  validate,
+  setValue,
+  value: fieldValue,
+} = useField("quantity", rules, {
+  initialValue: quantity.value,
+});
 
 async function validateFields(): Promise<void> {
   const { valid } = await validate();
@@ -124,7 +146,7 @@ async function validateFields(): Promise<void> {
   }
 }
 
-async function onChange(): Promise<void> {
+const onChange = debounce(async () => {
   setValue(quantity.value);
 
   const newQuantity = Number(quantity.value);
@@ -136,7 +158,7 @@ async function onChange(): Promise<void> {
   await validateFields();
 
   emit("update:modelValue", newQuantity);
-}
+}, timeout.value ?? 0);
 
 function onFocusOut() {
   const newQuantity = Number(quantity.value);
@@ -150,9 +172,17 @@ watchEffect(() => {
   quantity.value = props.modelValue;
 });
 
+onMounted(async () => {
+  if (props.validateOnMount) {
+    await validateFields();
+  }
+});
+
 watchEffect(async () => {
-  setValue(quantity.value);
-  await validateFields();
+  if (quantity.value !== fieldValue.value) {
+    setValue(quantity.value);
+    await validateFields();
+  }
 });
 </script>
 
