@@ -253,6 +253,8 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 .facet-filter-dropdown {
   $opened: "";
 
+  @apply shrink-0;
+
   &__trigger {
     width: max-content;
 

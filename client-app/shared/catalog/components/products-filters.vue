@@ -14,19 +14,22 @@
     <template v-else>
       <div
         ref="facetFiltersContainer"
-        class="flex gap-3"
-        :class="[isHorizontal && ' flex-row items-start', !isHorizontal && 'flex-col items-stretch lg:gap-5']"
+        :class="[
+          'flex gap-3',
+          {
+            'flex-row items-start': isHorizontal,
+            'flex-col items-stretch lg:gap-5': !isHorizontal,
+            '[&>*:last-child]:invisible': isHorizontal && filterCalculationInProgress,
+          },
+        ]"
       >
         <slot name="prepend" :loading="loading" />
-        <template v-for="(facet, i) in filtersToShow" :key="facet.paramName">
+
+        <template v-for="facet in filtersToShow" :key="facet.paramName">
           <FacetFilter
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :facet="facet"
             :loading="loading"
-            :class="[
-              isHorizontal && 'shrink-0',
-              filterCalculationInProgress && i === filtersToShow.length - 1 && 'invisible',
-            ]"
             @update:facet="onFacetFilterChanged"
           />
         </template>
