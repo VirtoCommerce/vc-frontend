@@ -8,6 +8,6 @@ const { loadModuleLocale } = useLanguages();
 
 export function init(i18n: I18n) {
   if (isEnabled(ENABLED_KEY)) {
-    void loadModuleLocale(i18n, "quotes");
+    void loadModuleLocale(i18n, "customer-reviews");
   }
 }
