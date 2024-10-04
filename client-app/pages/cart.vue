@@ -1,23 +1,25 @@
 <template>
-  <VcLoaderOverlay v-if="loading" no-bg />
+  <template v-if="!cart?.items?.length">
+    <VcLoaderOverlay v-if="loading" no-bg />
 
-  <VcEmptyPage
-    v-else-if="!cart?.items?.length"
-    :title="$t('pages.cart.title')"
-    :description="$t('pages.cart.empty_cart_description')"
-    image="/static/images/errors/emptyCart.webp"
-    mobile-image="/static/images/errors/emptyCartMobile.webp"
-    :breadcrumbs="breadcrumbs"
-  >
-    <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" size="lg">
-        {{ $t("common.buttons.continue_shopping") }}
-      </VcButton>
-    </template>
-  </VcEmptyPage>
+    <VcEmptyPage
+      v-else
+      :title="$t('pages.cart.title')"
+      :description="$t('pages.cart.empty_cart_description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg">
+          {{ $t("common.buttons.continue_shopping") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+  </template>
 
   <VcContainer v-else class="relative z-0">
-    <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
+    <VcLoaderOverlay :visible="isCartLocked || loading" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
@@ -117,8 +119,8 @@
           :is="item.element"
           v-for="item in sidebarWidgets"
           :key="item.id"
-          @lock-cart="isCartLoked = true"
-          @unlock-cart="isCartLoked = false"
+          @lock-cart="isCartLocked = true"
+          @unlock-cart="isCartLocked = false"
         />
       </template>
     </VcLayoutWithRightSidebar>
@@ -195,7 +197,7 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("common.links.cart"), route: { name: "Cart" } }]);
 
-const isCartLoked = ref(false);
+const isCartLocked = ref(false);
 const recentlyBrowsedProducts = ref<Product[]>([]);
 
 const loading = computed(() => loadingCart.value || loadingCheckout.value);

@@ -1,13 +1,11 @@
 #import "./cartId.graphql"
-#import "./shortLineItem.graphql"
+#import "./cartItems.graphql"
 #import "./validationError.graphql"
 
 fragment shortCart on CartType {
   ...cartId
   itemsQuantity
-  items {
-    ...shortLineItem
-  }
+  ...cartItems
   validationErrors(ruleSet: "*") {
     ...validationError
   }

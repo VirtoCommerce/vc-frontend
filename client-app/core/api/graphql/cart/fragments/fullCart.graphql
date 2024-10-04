@@ -3,7 +3,7 @@
 #import "./cartAddress.graphql"
 #import "./coupon.graphql"
 #import "./discount.graphql"
-#import "./fullLineItem.graphql"
+#import "./cartItems.graphql"
 #import "./gift.graphql"
 #import "./payment.graphql"
 #import "./paymentMethod.graphql"
@@ -25,9 +25,7 @@ fragment fullCart on CartType {
   availablePaymentMethods {
     ...paymentMethod
   }
-  items {
-    ...fullLineItem
-  }
+  ...cartItems
   gifts {
     ...gift
   }

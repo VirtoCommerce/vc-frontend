@@ -1,0 +1,7 @@
+#import "./fullLineItem.graphql"
+
+fragment cartItems on CartType {
+  items {
+    ...fullLineItem
+  }
+}
