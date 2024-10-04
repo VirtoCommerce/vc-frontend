@@ -14,7 +14,6 @@ import {
   categoryToExtendedMenuLink,
   getTranslatedMenuLink,
 } from "@/core/utilities";
-import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
 import type { ExtendedMenuLinkType, MenuType } from "../types";
 import type { DeepPartial } from "utility-types";
@@ -25,7 +24,6 @@ const menuSchema = shallowRef<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
-const mobileContactOrganizationsMenu = shallowRef<ExtendedMenuLinkType | undefined>();
 
 const openedItem = computed<ExtendedMenuLinkType | undefined>(
   () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
@@ -66,13 +64,7 @@ const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
     return undefined;
   }
 
-  const translatedMenuLink = getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
-
-  if (translatedMenuLink?.children && mobileContactOrganizationsMenu.value) {
-    translatedMenuLink.children.splice(1, 0, mobileContactOrganizationsMenu.value);
-  }
-
-  return translatedMenuLink;
+  return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
 });
 
 const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
@@ -119,20 +111,6 @@ export function useNavigations() {
     }
   }
 
-  function getMobileContactOrganizationsMenu() {
-    const { t } = globals.i18n.global;
-    const { isMultiOrganization } = useUser();
-
-    if (isMultiOrganization.value) {
-      mobileContactOrganizationsMenu.value = {
-        id: "contact-organizations",
-        title: t("common.labels.my_organizations"),
-        icon: "/static/images/dashboard/icons/company.svg#main",
-        children: [{ id: "company-list" }],
-      };
-    }
-  }
-
   async function fetchCatalogMenu() {
     const { zero_price_product_enabled } = themeContext.value.settings;
 
@@ -175,7 +153,6 @@ export function useNavigations() {
   async function fetchMenus() {
     loading.value = true;
     await Promise.all([fetchMenuSchema(), fetchCatalogMenu(), fetchFooterLinks()]);
-    getMobileContactOrganizationsMenu();
     loading.value = false;
   }
 
@@ -224,7 +201,6 @@ export function useNavigations() {
     mobileCatalogMenuItem,
     mobileAccountMenuItem,
     mobileCorporateMenuItem,
-    mobileContactOrganizationsMenu,
     mobilePreSelectedMenuItem,
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),

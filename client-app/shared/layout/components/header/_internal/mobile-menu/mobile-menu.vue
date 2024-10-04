@@ -31,7 +31,10 @@
         </h2>
 
         <!-- Contact organizations -->
-        <div v-if="openedItem.id === 'contact-organizations'" class="flex grow flex-col gap-y-1 font-normal">
+        <div
+          v-if="isMultiOrganization && openedItem.id === 'contact-organizations'"
+          class="mt-4 flex grow flex-col gap-y-1 font-normal"
+        >
           <VcRadioButton
             v-for="item in allOrganizations"
             :key="item.id"
@@ -45,36 +48,28 @@
             </span>
           </VcRadioButton>
         </div>
+        <div v-else-if="openedItem.id === 'settings'" class="mt-4 flex grow flex-col gap-y-1 font-normal">
+          <header class="-mt-1 mb-1 text-2xl uppercase text-additional-50">
+            {{ $t("shared.layout.header.mobile.currency") }}
+          </header>
 
-        <ul v-else class="mt-4 flex flex-col gap-y-2">
+          <VcRadioButton
+            v-for="currencyItem in supportedCurrencies"
+            :key="currencyItem.code"
+            v-model="currentCurrency.code"
+            :value="currencyItem.code"
+            class="py-2.5"
+            @click="currentCurrency?.code === currencyItem.code ? null : saveCurrencyCode(currencyItem.code)"
+          >
+            <span :class="{ 'text-additional-50': currentCurrency?.code === currencyItem.code }" class="uppercase">
+              {{ currencyItem.code }}
+            </span>
+          </VcRadioButton>
+        </div>
+        <ul v-else class="mt-4 flex grow flex-col gap-y-2">
           <li v-for="childItem in openedItem?.children" :key="childItem.title">
             <!-- Currency setting -->
-            <div v-if="childItem.id === 'currency-setting'" class="flex grow flex-col gap-y-1 font-normal">
-              <header class="-mt-1 mb-1 text-2xl uppercase text-additional-50">
-                {{ $t("shared.layout.header.mobile.currency") }}
-              </header>
-
-              <VcRadioButton
-                v-for="currencyItem in supportedCurrencies"
-                :key="currencyItem.code"
-                v-model="currentCurrency.code"
-                :value="currencyItem.code"
-                class="py-2.5"
-                @click="currentCurrency?.code === currencyItem.code ? null : saveCurrencyCode(currencyItem.code)"
-              >
-                <span :class="{ 'text-additional-50': currentCurrency?.code === currencyItem.code }" class="uppercase">
-                  {{ currencyItem.code }}
-                </span>
-              </VcRadioButton>
-            </div>
-
-            <!-- TODO: Remove rendering by condition -->
             <MobileMenuLink
-              v-else-if="
-                (childItem.id !== 'quotes' || $cfg.quotes_enabled) &&
-                (childItem.id !== 'addresses' || !isCorporateMember) &&
-                openedItem.id !== 'contact-organizations'
-              "
               :link="childItem"
               class="py-1 text-lg"
               @close="$emit('close')"
@@ -269,8 +264,16 @@ const { cart } = useShortCart();
 const { productsIds } = useCompareProducts();
 const { supportedLocales } = useLanguages();
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
-const { user, operator, isAuthenticated, organization, allOrganizations, isCorporateMember, switchOrganization } =
-  useUser();
+const {
+  user,
+  operator,
+  isAuthenticated,
+  organization,
+  allOrganizations,
+  isCorporateMember,
+  isMultiOrganization,
+  switchOrganization,
+} = useUser();
 const { signMeOut } = useSignMeOut();
 const {
   mobileMainMenuItems,
@@ -293,7 +296,7 @@ const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
 const settingsMenuItem: ExtendedMenuLinkType = {
   id: "settings",
   icon: "/static/images/common/settings.svg#main",
-  children: [{ id: "currency-setting" }], // see implementation in template
+  children: [{}], // Ensures arrow visibility for submenu navigation
 };
 
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>

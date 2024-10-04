@@ -9,29 +9,28 @@
           },
           "title": "shared.layout.header.menu.bulk_order",
           "icon": "/static/images/dashboard/icons/bulk-order-desktop.svg#main",
-        "priority": 0
-      },
-      {
-        "id": "compare",
-        "route": { "name": "CompareProducts"
-          },
+          "priority": 0
+        },
+        {
+          "id": "compare",
+          "route": { "name": "CompareProducts" },
           "title": "shared.layout.header.menu.compare",
           "icon": "/static/images/dashboard/icons/compare-desktop.svg#main",
-        "priority": 10
-      },
-      {
-        "id": "lists",
-        "route": { "name": "Lists" },
-        "title": "shared.layout.header.menu.lists",
-        "icon": "/static/images/dashboard/icons/lists.svg#main",
-        "priority": 20
-      },
-      {
-        "id": "orders",
-        "route": { "name": "Orders" },
-        "title": "shared.layout.header.menu.orders",
-        "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
-        "priority": 30
+          "priority": 10
+        },
+        {
+          "id": "lists",
+          "route": { "name": "Lists" },
+          "title": "shared.layout.header.menu.lists",
+          "icon": "/static/images/dashboard/icons/lists.svg#main",
+          "priority": 20
+        },
+        {
+          "id": "orders",
+          "route": { "name": "Orders" },
+          "title": "shared.layout.header.menu.orders",
+          "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
+          "priority": 30
         },
         {
           "id": "cart",
@@ -40,7 +39,7 @@
           },
           "title": "shared.layout.header.menu.cart",
           "icon": "/static/images/checkout/cart-desktop.svg#main",
-        "priority": 100
+          "priority": 100
         }
       ],
       "account": {
@@ -206,6 +205,12 @@
             },
             "title": "shared.layout.header.mobile.account_menu.profile",
             "icon": "/static/images/dashboard/icons/profile.svg#main"
+          },
+          {
+            "id": "contact-organizations",
+            "title": "common.labels.my_organizations",
+            "icon": "/static/images/dashboard/icons/company.svg#main",
+            "children": [{}]
           },
           {
             "route": {
