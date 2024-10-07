@@ -3,7 +3,7 @@
     <VcLineItems :with-header="false">
       <template #line-items>
         <VcLineItem v-for="gift in items" :key="gift.id" with-image :name="gift.name" :image-url="gift.imageUrl">
-          <VcQuantity v-model="gift.quantity" disabled />
+          <VcAddToCart v-model="gift.quantity" hide-button disabled />
         </VcLineItem>
       </template>
     </VcLineItems>

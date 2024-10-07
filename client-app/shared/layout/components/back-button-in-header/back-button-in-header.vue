@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import NestedMobileHeader from "../nested-mobile-header/nested-mobile-header";
+import NestedMobileHeader from "../nested-mobile-header/nested-mobile-header.vue";
 import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
