@@ -9,29 +9,34 @@
           },
           "title": "shared.layout.header.menu.bulk_order",
           "icon": "/static/images/dashboard/icons/bulk-order-desktop.svg#main",
-        "priority": 0
-      },
-      {
-        "id": "compare",
-        "route": { "name": "CompareProducts"
+          "priority": 0
+        },
+        {
+          "id": "compare",
+          "route": {
+            "name": "CompareProducts"
           },
           "title": "shared.layout.header.menu.compare",
           "icon": "/static/images/dashboard/icons/compare-desktop.svg#main",
-        "priority": 10
-      },
-      {
-        "id": "lists",
-        "route": { "name": "Lists" },
-        "title": "shared.layout.header.menu.lists",
-        "icon": "/static/images/dashboard/icons/lists.svg#main",
-        "priority": 20
-      },
-      {
-        "id": "orders",
-        "route": { "name": "Orders" },
-        "title": "shared.layout.header.menu.orders",
-        "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
-        "priority": 30
+          "priority": 10
+        },
+        {
+          "id": "lists",
+          "route": {
+            "name": "Lists"
+          },
+          "title": "shared.layout.header.menu.lists",
+          "icon": "/static/images/dashboard/icons/lists.svg#main",
+          "priority": 20
+        },
+        {
+          "id": "orders",
+          "route": {
+            "name": "Orders"
+          },
+          "title": "shared.layout.header.menu.orders",
+          "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
+          "priority": 30
         },
         {
           "id": "cart",
@@ -40,7 +45,7 @@
           },
           "title": "shared.layout.header.menu.cart",
           "icon": "/static/images/checkout/cart-desktop.svg#main",
-        "priority": 100
+          "priority": 100
         }
       ],
       "account": {
@@ -57,7 +62,8 @@
               "name": "Dashboard"
             },
             "title": "shared.account.navigation.links.dashboard",
-            "icon": "dashboard-2"
+            "icon": "dashboard-2",
+            "priority": 10
           },
           {
             "id": "profile",
@@ -65,7 +71,8 @@
               "name": "Profile"
             },
             "title": "shared.account.navigation.links.profile",
-            "icon": "profile"
+            "icon": "profile",
+            "priority": 20
           },
           {
             "id": "changePasswordAccount",
@@ -73,7 +80,8 @@
               "name": "ChangePasswordAccount"
             },
             "title": "shared.account.navigation.links.change_password",
-            "icon": "pass"
+            "icon": "pass",
+            "priority": 30
           },
           {
             "id": "addresses",
@@ -81,7 +89,8 @@
               "name": "Addresses"
             },
             "title": "shared.account.navigation.links.addresses",
-            "icon": "office-building"
+            "icon": "office-building",
+            "priority": 40
           },
           {
             "id": "orders",
@@ -89,7 +98,8 @@
               "name": "Orders"
             },
             "title": "shared.account.navigation.links.orders",
-            "icon": "clipboard-copy-1"
+            "icon": "clipboard-copy-1",
+            "priority": 50
           },
           {
             "id": "lists",
@@ -97,7 +107,8 @@
               "name": "Lists"
             },
             "title": "shared.account.navigation.links.lists",
-            "icon": "list-2"
+            "icon": "list-2",
+            "priority": 60
           },
           {
             "id": "checkoutDefaults",
@@ -105,7 +116,8 @@
               "name": "CheckoutDefaults"
             },
             "title": "shared.account.navigation.links.checkout_defaults",
-            "icon": "check-circle"
+            "icon": "check-circle",
+            "priority": 70
           },
           {
             "id": "savedCreditCards",
@@ -113,15 +125,8 @@
               "name": "SavedCreditCards"
             },
             "title": "shared.account.navigation.links.saved_credit_cards",
-            "icon": "credit-card"
-          },
-          {
-            "id": "notifications",
-            "route": {
-              "name": "Notifications"
-            },
-            "title": "shared.account.navigation.links.notifications",
-            "icon": "bell"
+            "icon": "credit-card",
+            "priority": 80
           }
         ]
       },

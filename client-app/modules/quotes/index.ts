@@ -45,7 +45,7 @@ const route: RouteRecordRaw = {
   ],
 };
 
-const mobileMenuItem: DeepPartial<MenuType> = {
+const menuItems: DeepPartial<MenuType> = {
   header: {
     desktop: {
       account: {
@@ -55,6 +55,7 @@ const mobileMenuItem: DeepPartial<MenuType> = {
             route: { name: "Quotes" },
             title: "quotes.navigation.route_name",
             icon: "clipboard-copy",
+            priority: 90,
           },
         ],
       },
@@ -77,7 +78,7 @@ const mobileMenuItem: DeepPartial<MenuType> = {
 export function init(router: Router, i18n: I18n) {
   if (themeContext.value.settings.quotes_enabled && isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
-    mergeMenuSchema(mobileMenuItem);
+    mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "quotes");
     registerSidebarWidget({ id: "quotes", element: CartWidget });
   }

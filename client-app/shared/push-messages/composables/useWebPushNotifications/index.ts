@@ -11,7 +11,7 @@ import type { DeepPartial } from "utility-types";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 
-const desktopMainMenuItem: DeepPartial<MenuType> = {
+const desktopMenuItems: DeepPartial<MenuType> = {
   header: {
     desktop: {
       main: [
@@ -22,6 +22,19 @@ const desktopMainMenuItem: DeepPartial<MenuType> = {
           priority: 40,
         },
       ],
+      account: {
+        children: [
+          {
+            id: "push-messages",
+            title: "shared.account.navigation.links.notifications",
+            route: {
+              name: "Notifications",
+            },
+            icon: "bell",
+            priority: 75,
+          },
+        ],
+      },
     },
   },
 };
@@ -50,7 +63,7 @@ export function useWebPushNotifications() {
     const { useWebPushNotificationsModule } = await import("./useWebPushNotificationsModule");
     const { initModule } = useWebPushNotificationsModule();
     await initModule();
-    mergeMenuSchema(desktopMainMenuItem);
+    mergeMenuSchema(desktopMenuItems);
     registerCustomLinkComponent(menuLinkCustomElement);
   }
 
