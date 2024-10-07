@@ -132,7 +132,6 @@
               v-if="(showSelectedBranchesMobile && isBranchSelected(index)) || !showSelectedBranchesMobile"
               :key="branch.id"
               :branch="branch"
-              :is-text-truncate-enabled="false"
             >
               <VcCheckbox class="mr-3 cursor-pointer" :value="branch.id" />
             </BranchItem>
