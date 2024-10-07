@@ -18,7 +18,7 @@
       </template>
     </VcTabs>
 
-    <FromFile class="bg-additional-50 shadow-sm" :class="{ hidden: activeTab !== 'from-file' }" />
+    <FromFile with-title class="bg-additional-50 shadow-sm" :class="{ hidden: activeTab !== 'from-file' }" />
 
     <Manually
       :loading="loadingManually"

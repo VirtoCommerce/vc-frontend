@@ -1,6 +1,6 @@
 <template>
   <article>
-    <VcTypography tag="h2" class="hidden border-b px-5 py-2 lg:block">
+    <VcTypography v-if="withTitle" tag="h2" class="hidden border-b px-5 py-2 lg:block">
       {{ $t("shared.bulk_order.from_file.title") }}
     </VcTypography>
     <VcWidget size="lg">
@@ -52,6 +52,12 @@ import { useCreatePurchaseRequestFromDocumentsMutation } from "@/core/api/graphq
 import { configInjectionKey } from "@/core/injection-keys";
 import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/constants";
 import { useFiles } from "@/shared/files/composables/useFiles";
+
+interface IProps {
+  withTitle?: boolean;
+}
+
+defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 const router = useRouter();

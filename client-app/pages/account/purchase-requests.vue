@@ -1,11 +1,9 @@
 <template>
   <div>
     <!-- Title block -->
-    <div class="flex items-center justify-between gap-2">
-      <VcTypography tag="h1">
-        {{ $t("pages.account.purchase_requests.title") }}
-      </VcTypography>
-    </div>
+    <VcTypography tag="h1">
+      {{ $t("pages.account.purchase_requests.title") }}
+    </VcTypography>
 
     <!-- Empty view -->
     <VcEmptyView
@@ -20,96 +18,100 @@
       </template>
     </VcEmptyView>
 
-    <!-- Content block -->
-    <VcWidget v-else size="lg">
-      <template #default-container>
-        <VcTable
-          :loading="loading"
-          :columns="columns"
-          :sort="sort"
-          :items="purchaseRequests"
-          :pages="pages"
-          :page="page"
-          :description="$t('pages.account.quotes.meta.table_description')"
-          @item-click="goToPurchaseRequest"
-          @header-click="applySorting"
-          @page-changed="changePage"
-        >
-          <template #mobile-item="itemData">
-            <div
-              class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
-              role="button"
-              tabindex="0"
-              @click="goToPurchaseRequest(itemData.item)"
-              @keyup.enter="goToPurchaseRequest(itemData.item)"
-            >
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.purchase_requests.purchase_request_number_label") }}
-                </span>
+    <div v-else>
+      <FromFile class="mb-5" />
 
-                <span class="overflow-hidden text-ellipsis pr-4 font-black">
-                  {{ itemData.item.number }}
-                </span>
+      <!-- Content block -->
+      <VcWidget size="lg">
+        <template #default-container>
+          <VcTable
+            :loading="loading"
+            :columns="columns"
+            :sort="sort"
+            :items="purchaseRequests"
+            :pages="pages"
+            :page="page"
+            :description="$t('pages.account.quotes.meta.table_description')"
+            @item-click="goToPurchaseRequest"
+            @header-click="applySorting"
+            @page-changed="changePage"
+          >
+            <template #mobile-item="itemData">
+              <div
+                class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
+                role="button"
+                tabindex="0"
+                @click="goToPurchaseRequest(itemData.item)"
+                @keyup.enter="goToPurchaseRequest(itemData.item)"
+              >
+                <div class="flex flex-col">
+                  <span class="text-sm text-neutral-400">
+                    {{ $t("pages.account.purchase_requests.purchase_request_number_label") }}
+                  </span>
+
+                  <span class="overflow-hidden text-ellipsis pr-4 font-black">
+                    {{ itemData.item.number }}
+                  </span>
+                </div>
+
+                <div class="flex flex-col">
+                  <span class="text-sm text-neutral-400">
+                    {{ $t("pages.account.quotes.date_label") }}
+                  </span>
+
+                  <span class="overflow-hidden text-ellipsis">
+                    {{ $d(itemData.item?.createdDate) }}
+                  </span>
+                </div>
               </div>
+            </template>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.date_label") }}
-                </span>
+            <template #mobile-skeleton>
+              <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
+                <div class="flex flex-col">
+                  <span class="text-sm text-neutral-400">
+                    {{ $t("pages.account.quotes.quote_number_label") }}
+                  </span>
+                  <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
+                </div>
 
-                <span class="overflow-hidden text-ellipsis">
-                  {{ $d(itemData.item?.createdDate) }}
-                </span>
+                <div class="flex flex-col">
+                  <span class="text-sm text-neutral-400">
+                    {{ $t("pages.account.quotes.date_label") }}
+                  </span>
+                  <div class="h-6 animate-pulse bg-neutral-200"></div>
+                </div>
               </div>
-            </div>
-          </template>
+            </template>
 
-          <template #mobile-skeleton>
-            <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.quote_number_label") }}
-                </span>
-                <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
-              </div>
+            <template #desktop-body>
+              <tr
+                v-for="purchaseRequest in purchaseRequests"
+                :key="purchaseRequest.id"
+                class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
+                @click="goToPurchaseRequest(purchaseRequest)"
+              >
+                <td class="overflow-hidden text-ellipsis p-5">
+                  {{ purchaseRequest.number }}
+                </td>
 
-              <div class="flex flex-col">
-                <span class="text-sm text-neutral-400">
-                  {{ $t("pages.account.quotes.date_label") }}
-                </span>
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </div>
-            </div>
-          </template>
+                <td class="overflow-hidden text-ellipsis p-5">
+                  {{ $d(purchaseRequest.createdDate) }}
+                </td>
+              </tr>
+            </template>
 
-          <template #desktop-body>
-            <tr
-              v-for="purchaseRequest in purchaseRequests"
-              :key="purchaseRequest.id"
-              class="cursor-pointer even:bg-neutral-50 hover:bg-neutral-200"
-              @click="goToPurchaseRequest(purchaseRequest)"
-            >
-              <td class="overflow-hidden text-ellipsis p-5">
-                {{ purchaseRequest.number }}
-              </td>
-
-              <td class="overflow-hidden text-ellipsis p-5">
-                {{ $d(purchaseRequest.createdDate) }}
-              </td>
-            </tr>
-          </template>
-
-          <template #desktop-skeleton>
-            <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
-              <td v-for="column in columns" :key="column.id" class="p-5">
-                <div class="h-6 animate-pulse bg-neutral-200"></div>
-              </td>
-            </tr>
-          </template>
-        </VcTable>
-      </template>
-    </VcWidget>
+            <template #desktop-skeleton>
+              <tr v-for="i in itemsPerPage" :key="i" class="even:bg-neutral-50">
+                <td v-for="column in columns" :key="column.id" class="p-5">
+                  <div class="h-6 animate-pulse bg-neutral-200"></div>
+                </td>
+              </tr>
+            </template>
+          </VcTable>
+        </template>
+      </VcWidget>
+    </div>
   </div>
 </template>
 
@@ -120,6 +122,7 @@ import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { usePurchaseRequests } from "@/shared/purchase-request/composables/usePurchaseRequests";
 import type { Sort } from "@/core/types";
+import FromFile from "@/shared/bulk-order/components/from-file.vue";
 
 const { t } = useI18n();
 const router = useRouter();

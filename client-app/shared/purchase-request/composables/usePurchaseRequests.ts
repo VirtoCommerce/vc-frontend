@@ -4,7 +4,7 @@ import { DEFAULT_SORT } from "@/core/constants";
 import type { Sort } from "@/core/types";
 import type { Ref } from "vue";
 
-const DEFAULT_ITEMS_PER_PAGE = 10;
+const DEFAULT_ITEMS_PER_PAGE = 5;
 
 export function usePurchaseRequests() {
   const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
