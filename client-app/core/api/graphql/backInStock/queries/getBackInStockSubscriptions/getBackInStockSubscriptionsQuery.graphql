@@ -1,0 +1,36 @@
+query getBackInStockSubscriptions(
+  $after: String
+  $first: Int
+  $keyword: String
+  $sort: String
+  $storeId: String
+  $userId: String
+  $productId: String
+  $isActive: Boolean
+  $startTriggeredDate: DateTime
+  $endTriggeredDate: DateTime
+  $filter: String
+) {
+  getBackInStockSubscriptions(
+    after: $after
+    first: $first
+    keyword: $keyword
+    sort: $sort
+    storeId: $storeId
+    userId: $userId
+    productId: $productId
+    isActive: $isActive
+    startTriggeredDate: $startTriggeredDate
+    endTriggeredDate: $endTriggeredDate
+    filter: $filter
+  ) {
+    items {
+      id
+      isActive
+      productId
+      storeId
+      triggered
+    }
+    totalCount
+  }
+}

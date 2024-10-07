@@ -150,7 +150,8 @@
       "default_currency": "Default currency",
       "organizations": "Organizations",
       "my_organizations": "My organizations",
-      "select_product": "Please select a product"
+      "select_product": "Please select a product",
+      "brand_name": "Brand name"
     },
     "prefixes": {
       "please": "Please",
@@ -164,6 +165,8 @@
     "messages": {
       "loading_text": "Loading...",
       "product_out_of_stock": "Out of stock",
+      "notify_me_when_in_stock": "Notify me when in stock",
+      "you_will_be_notified": "You'll be notified",
       "required_field": "This field is required",
       "email_is_not_correct": "Please enter a valid email address, e.g. johndoe{'@'}gmail.com",
       "email_not_unique": "This email is already registered with us",
@@ -240,7 +243,8 @@
       "contact_administrator": "contact the site administrator",
       "push-messages": "Notifications",
       "saved_credit_cards": "Saved Credit Cards",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "back_in_stock_subscriptions": "Back in stock subscriptions"
     },
     "titles": {
       "all_actions": "All actions",
@@ -319,7 +323,8 @@
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards",
-            "notifications": "@:common.links.notifications"
+            "notifications": "@:common.links.notifications",
+            "back_in_stock_subscriptions": "@:Back in stock subscriptions"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -398,7 +403,8 @@
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "saved_credit_cards": "@:common.links.saved_credit_cards",
-          "notifications": "@:common.links.notifications"
+          "notifications": "@:common.links.notifications",
+          "back_in_stock_subscriptions": "@:common.links.back_in_stock_subscriptions"
         }
       },
       "change_password_form": {
@@ -808,6 +814,22 @@
         "shared": "Shared",
         "private": "Private"
       }
+    },
+    "back-in-stock": {
+      "deactivate_back_in_stock_subscription_modal": {
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to unsubscribe from “{productName}” in stock notifications?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "list_details": {
+        "empty_list_button": "Continue browsing"
+      }
+    },
+    "back_in_stock": {
+      "list_details": {
+        "empty_list_button": "Continue browsing"
+      }
     }
   },
   "pages": {
@@ -1075,6 +1097,22 @@
         "create_list_button": "Create list",
         "create_list_button_mobile": "Create",
         "lists_icon": "List icon"
+      },
+      "back_in_stock_subscriptions": {
+        "meta": {
+          "title": "@:pages.account.back_in_stock_subscriptions.title",
+          "table_description": "back in stock subscriptions"
+        },
+        "no_results_message": "No results found",
+        "no_back_in_stock_subscriptions_message": "There are no back in stock subscriptions requests yet",
+        "search_back_in_stock_subscriptions_requests": "Search back in stock subscriptions requests",
+        "date_label": "@:common.labels.date",
+        "status_label": "@:common.labels.status",
+        "total_label": "@:common.labels.total",
+        "search_placeholder": "Enter keyword...",
+        "reset_search": "Reset search",
+        "product_name_label": "Product",
+        "total_number_label": "total"
       },
       "saved_credit_cards": {
         "no_cards": "You have not saved any credit cards yet",

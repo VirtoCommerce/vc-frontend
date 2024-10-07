@@ -178,7 +178,10 @@
 
     <template v-else>
       <slot name="cart-handler" />
-
+      <BackInStockNotifyButton
+        v-if="!product.availabilityData?.isInStock"
+        :product-id="product.id"
+      />
       <div class="mt-1 flex flex-wrap items-center gap-1">
         <InStock
           :is-in-stock="product.availabilityData?.isInStock"
@@ -201,6 +204,7 @@ import { ProductType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
+import BackInStockNotifyButton from "../../back-in-stock/components/back-in-stock-notify-button.vue";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";

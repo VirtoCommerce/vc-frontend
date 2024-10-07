@@ -6,7 +6,7 @@ import type { QuoteType } from "../quotes/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { Ref } from "vue";
 
-const DEFAULT_ITEMS_PER_PAGE = 10;
+const DEFAULT_ITEMS_PER_PAGE = 9999;
 
 export function useUserQuotes() {
   const quotes: Ref<QuoteType[]> = shallowRef<QuoteType[]>([]);

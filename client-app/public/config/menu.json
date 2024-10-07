@@ -100,6 +100,14 @@
             "icon": "list-2"
           },
           {
+            "id": "backInStockSubscriptions",
+            "route": {
+              "name": "BackInStockSubscriptions"
+            },
+            "title": "shared.account.navigation.links.back_in_stock_subscriptions",
+            "icon": "bell"
+          },
+          {
             "id": "checkoutDefaults",
             "route": {
               "name": "CheckoutDefaults"
@@ -235,6 +243,14 @@
             },
             "title": "shared.layout.header.mobile.account_menu.lists",
             "icon": "/static/images/dashboard/icons/list.svg#main"
+          },
+          {
+            "id": "backInStockSubscriptions",
+            "route": {
+              "name": "BackInStockSubscriptions"
+            },
+            "title": "shared.layout.header.mobile.account_menu.back_in_stock_subscriptions",
+            "icon": "/static/icons/basic/bell.svg#icon"
           },
           {
             "route": {
