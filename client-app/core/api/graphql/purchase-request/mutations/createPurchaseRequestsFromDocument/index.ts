@@ -1,10 +1,10 @@
 import { computed, toValue } from "vue";
 import { useMutationVariables, useMutation, useAllGlobalVariables } from "@/core/api/graphql/composables";
-import { CreatePurchaseRequestFromDocumentDocument } from "@/core/api/graphql/types";
+import { CreatePurchaseRequestFromDocumentsDocument } from "@/core/api/graphql/types";
 
-export function useCreatePurchaseRequestFromDocumentMutation() {
+export function useCreatePurchaseRequestFromDocumentsMutation() {
   return useMutation(
-    CreatePurchaseRequestFromDocumentDocument,
+    CreatePurchaseRequestFromDocumentsDocument,
     useMutationVariables(
       computed(() => ({
         command: toValue(useAllGlobalVariables()),

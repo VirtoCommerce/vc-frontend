@@ -592,15 +592,6 @@ export type CreateCustomerReviewCommandType = {
   userName: Scalars['String']['input'];
 };
 
-export type CreatePurchaseRequestFromDocumentCommandType = {
-  cultureName: Scalars['String']['input'];
-  currencyCode: Scalars['String']['input'];
-  documentUrl: Scalars['String']['input'];
-  organizationId?: InputMaybe<Scalars['String']['input']>;
-  storeId: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
-};
-
 export type CreateQuoteCommandType = {
   cultureName: Scalars['String']['input'];
   currencyCode: Scalars['String']['input'];
@@ -1719,6 +1710,19 @@ export type InputCreateOrganizationType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
+export type InputCreatePurchaseRequestFromDocumentsType = {
+  cultureName: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  documentUrls: Array<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+export type InputCreatePurchaseRequestType = {
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
 export type InputCreateUserType = {
   /** Application user to create */
   applicationUser: InputCreateApplicationUserType;
@@ -2419,6 +2423,11 @@ export type InputUpdatePersonalDataType = {
   personalData: InputPersonalDataType;
 };
 
+export type InputUpdatePurchaseRequestByDocumentType = {
+  documentUrls: Array<Scalars['String']['input']>;
+  purchaseRequestId: Scalars['String']['input'];
+};
+
 export type InputUpdateRoleInnerType = {
   /** Concurrency Stamp */
   concurrencyStamp?: InputMaybe<Scalars['String']['input']>;
@@ -2826,6 +2835,7 @@ export type Mutations = {
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
+  createPurchaseRequest?: Maybe<PurchaseRequestType>;
   createPurchaseRequestFromDocument?: Maybe<PurchaseRequestType>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
@@ -2889,6 +2899,7 @@ export type Mutations = {
   updateOrderShipmentDynamicProperties?: Maybe<CustomerOrderType>;
   updateOrganization?: Maybe<Organization>;
   updatePersonalData?: Maybe<IdentityResultType>;
+  updatePurchaseRequestByDocument?: Maybe<PurchaseRequestType>;
   updateQuoteAddresses?: Maybe<QuoteType>;
   updateQuoteAttachments?: Maybe<QuoteType>;
   updateRole?: Maybe<IdentityResultType>;
@@ -3107,8 +3118,13 @@ export type MutationsCreateOrganizationArgs = {
 };
 
 
+export type MutationsCreatePurchaseRequestArgs = {
+  command: InputCreatePurchaseRequestType;
+};
+
+
 export type MutationsCreatePurchaseRequestFromDocumentArgs = {
-  command: CreatePurchaseRequestFromDocumentCommandType;
+  command: InputCreatePurchaseRequestFromDocumentsType;
 };
 
 
@@ -3399,6 +3415,11 @@ export type MutationsUpdateOrganizationArgs = {
 
 export type MutationsUpdatePersonalDataArgs = {
   command: InputUpdatePersonalDataType;
+};
+
+
+export type MutationsUpdatePurchaseRequestByDocumentArgs = {
+  command: InputUpdatePurchaseRequestByDocumentType;
 };
 
 
@@ -4340,6 +4361,26 @@ export enum PropertyValueTypes {
   ShortText = 'SHORT_TEXT'
 }
 
+/** A connection from an object to a list of objects of type `PurchaseRequest`. */
+export type PurchaseRequestConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<PurchaseRequestEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<PurchaseRequestType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `PurchaseRequest`. */
+export type PurchaseRequestEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<PurchaseRequestType>;
+};
+
 export type PurchaseRequestSourceType = {
   contentType: Scalars['String']['output'];
   name: Scalars['String']['output'];
@@ -4349,8 +4390,12 @@ export type PurchaseRequestSourceType = {
 
 export type PurchaseRequestType = {
   cartId?: Maybe<Scalars['String']['output']>;
+  createdBy: Scalars['String']['output'];
+  createdDate: Scalars['DateTime']['output'];
   customerId: Scalars['String']['output'];
   id: Scalars['String']['output'];
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
   number: Scalars['String']['output'];
   quoteId?: Maybe<Scalars['String']['output']>;
   sources: Array<PurchaseRequestSourceType>;
@@ -4423,6 +4468,7 @@ export type Query = {
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
   purchaseRequest?: Maybe<PurchaseRequestType>;
+  purchaseRequests?: Maybe<PurchaseRequestConnection>;
   pushMessages?: Maybe<PushMessageConnection>;
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
@@ -4731,6 +4777,16 @@ export type QueryPropertyArgs = {
 
 export type QueryPurchaseRequestArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type QueryPurchaseRequestsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  customerId?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6382,12 +6438,12 @@ export type GetSkyflowCardsQueryVariables = Exact<{
 
 export type GetSkyflowCardsQuery = { skyflowCards?: { cards?: Array<{ cardNumber: string, cardExpiration?: string, skyflowId: string, active: boolean }> } };
 
-export type CreatePurchaseRequestFromDocumentMutationVariables = Exact<{
-  command: CreatePurchaseRequestFromDocumentCommandType;
+export type CreatePurchaseRequestFromDocumentsMutationVariables = Exact<{
+  command: InputCreatePurchaseRequestFromDocumentsType;
 }>;
 
 
-export type CreatePurchaseRequestFromDocumentMutation = { createPurchaseRequestFromDocument?: { id: string } };
+export type CreatePurchaseRequestFromDocumentsMutation = { createPurchaseRequestFromDocument?: { id: string } };
 
 export type GetPurchaseRequestQueryVariables = Exact<{
   id: Scalars['String']['input'];
@@ -6395,6 +6451,18 @@ export type GetPurchaseRequestQueryVariables = Exact<{
 
 
 export type GetPurchaseRequestQuery = { purchaseRequest?: { id: string, number: string, cartId?: string, quoteId?: string, sources: Array<{ name: string, url: string, contentType: string, size: number }> } };
+
+export type GetPurchaseRequestsQueryVariables = Exact<{
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  customerId?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetPurchaseRequestsQuery = { purchaseRequests?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, number: string }> } };
 
 export type PushMessageFragment = { id: string, createdDate: any, shortMessage: string, isRead: boolean, isHidden: boolean };
 
@@ -6686,8 +6754,9 @@ export const AuthorizePaymentDocument = {"kind":"Document","definitions":[{"kind
 export const DeleteSkyFlowCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteSkyFlowCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteSkyflowCardCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteSkyflowCard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<DeleteSkyFlowCardMutation, DeleteSkyFlowCardMutationVariables>;
 export const InitializePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputInitializePaymentType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"actionHtmlForm"}},{"kind":"Field","name":{"kind":"Name","value":"actionRedirectUrl"}},{"kind":"Field","name":{"kind":"Name","value":"paymentActionType"}},{"kind":"Field","name":{"kind":"Name","value":"publicParameters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<InitializePaymentMutation, InitializePaymentMutationVariables>;
 export const GetSkyflowCardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSkyflowCards"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skyflowCards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cardNumber"}},{"kind":"Field","name":{"kind":"Name","value":"cardExpiration"}},{"kind":"Field","name":{"kind":"Name","value":"skyflowId"}},{"kind":"Field","name":{"kind":"Name","value":"active"}}]}}]}}]}}]} as unknown as DocumentNode<GetSkyflowCardsQuery, GetSkyflowCardsQueryVariables>;
-export const CreatePurchaseRequestFromDocumentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreatePurchaseRequestFromDocument"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreatePurchaseRequestFromDocumentCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPurchaseRequestFromDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreatePurchaseRequestFromDocumentMutation, CreatePurchaseRequestFromDocumentMutationVariables>;
+export const CreatePurchaseRequestFromDocumentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreatePurchaseRequestFromDocuments"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputCreatePurchaseRequestFromDocumentsType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPurchaseRequestFromDocument"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreatePurchaseRequestFromDocumentsMutation, CreatePurchaseRequestFromDocumentsMutationVariables>;
 export const GetPurchaseRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPurchaseRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"purchaseRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"number"}},{"kind":"Field","name":{"kind":"Name","value":"cartId"}},{"kind":"Field","name":{"kind":"Name","value":"quoteId"}},{"kind":"Field","name":{"kind":"Name","value":"sources"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"contentType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}}]}}]}}]}}]} as unknown as DocumentNode<GetPurchaseRequestQuery, GetPurchaseRequestQueryVariables>;
+export const GetPurchaseRequestsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPurchaseRequests"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"customerId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"purchaseRequests"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"customerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"customerId"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"keyword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"number"}}]}}]}}]}}]} as unknown as DocumentNode<GetPurchaseRequestsQuery, GetPurchaseRequestsQueryVariables>;
 export const AddFcmTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddFcmToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputAddFcmTokenType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addFcmToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<AddFcmTokenMutation, AddFcmTokenMutationVariables>;
 export const ClearAllPushMessagesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ClearAllPushMessages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"clearAllPushMessages"}}]}}]} as unknown as DocumentNode<ClearAllPushMessagesMutation, ClearAllPushMessagesMutationVariables>;
 export const DeleteFcmTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteFcmToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputDeleteFcmTokenType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteFcmToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<DeleteFcmTokenMutation, DeleteFcmTokenMutationVariables>;
@@ -6743,6 +6812,7 @@ export const OperationNames = {
     GetPage: 'GetPage',
     GetSkyflowCards: 'GetSkyflowCards',
     GetPurchaseRequest: 'GetPurchaseRequest',
+    GetPurchaseRequests: 'GetPurchaseRequests',
     GetPushMessages: 'GetPushMessages',
     GetQuote: 'GetQuote',
     GetQuotes: 'GetQuotes',
@@ -6803,7 +6873,7 @@ export const OperationNames = {
     AuthorizePayment: 'AuthorizePayment',
     DeleteSkyFlowCard: 'DeleteSkyFlowCard',
     InitializePayment: 'InitializePayment',
-    CreatePurchaseRequestFromDocument: 'CreatePurchaseRequestFromDocument',
+    CreatePurchaseRequestFromDocuments: 'CreatePurchaseRequestFromDocuments',
     AddFcmToken: 'AddFcmToken',
     ClearAllPushMessages: 'ClearAllPushMessages',
     DeleteFcmToken: 'DeleteFcmToken',

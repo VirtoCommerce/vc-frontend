@@ -244,6 +244,7 @@
       "company_info": "Company Info",
       "company_members": "Company Members",
       "quote_requests": "Quote Requests",
+      "purchase_requests": "Purchase Requests",
       "contact_administrator": "contact the site administrator",
       "push-messages": "Notifications",
       "saved_credit_cards": "Saved Credit Cards",
@@ -407,6 +408,7 @@
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
           "quote_requests": "@:common.links.quote_requests",
+          "purchase_requests": "@:common.links.purchase_requests",
           "saved_credit_cards": "@:common.links.saved_credit_cards",
           "notifications": "@:common.links.notifications"
         }
@@ -1174,6 +1176,12 @@
           "approve": "The quote cannot be approved",
           "decline": "The quote cannot be declined"
         }
+      },
+      "purchase_requests": {
+        "title": "Purchase Requests",
+        "no_purchase_requests_message": "There are no purchase requests yet",
+        "no_purchase_requests_img_alt": "No orders",
+        "purchase_request_number_label": "Purchase request number"
       },
       "notifications": {
         "meta": {

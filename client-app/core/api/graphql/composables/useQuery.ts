@@ -8,7 +8,7 @@ import type { DeepPartial } from "utility-types";
 import type { MaybeRefOrGetter } from "vue";
 
 // Workaround for variables deep merge
-export function useQueryuseQuery<
+export function useQuery<
   // Follow the original @vue/apollo-composable names and signatures
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TResult = any,

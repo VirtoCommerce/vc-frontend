@@ -17,6 +17,7 @@
     "quotes_enabled": true,
     "quotes_files_scope": "quote-attachments",
 
+    "purchase_request_enabled": true,
     "purchase_request_files_scope": "purchase-request-sources",
 
     "product_compare_enabled": true,

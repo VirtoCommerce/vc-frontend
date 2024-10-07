@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { inject, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
-import { useCreatePurchaseRequestFromDocumentMutation } from "@/core/api/graphql/purchase-request/mutations/createPurchaseRequestFromDocument";
+import { useCreatePurchaseRequestFromDocumentsMutation } from "@/core/api/graphql/purchase-request/mutations/createPurchaseRequestsFromDocument";
 import { configInjectionKey } from "@/core/injection-keys";
 import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/constants";
 import { useFiles } from "@/shared/files/composables/useFiles";
@@ -64,7 +64,7 @@ const {
   options: fileOptions,
 } = useFiles(config.purchase_request_file_scope ?? DEFAULT_PURCHASE_REQUEST_FILES_SCOPE);
 
-const { mutate: createPurchaseRequestFromDocument } = useCreatePurchaseRequestFromDocumentMutation();
+const { mutate: createPurchaseRequestFromDocuments } = useCreatePurchaseRequestFromDocumentsMutation();
 
 const processing = ref(false);
 
@@ -75,9 +75,9 @@ async function onAddFiles(items: INewFile[]) {
   validateFiles();
   await uploadFiles();
 
-  const documentUrl = files.value[0]?.url;
-  if (documentUrl) {
-    const result = await createPurchaseRequestFromDocument({ command: { documentUrl } });
+  const documentUrls = files.value.map((x) => x.url!);
+  if (documentUrls.length) {
+    const result = await createPurchaseRequestFromDocuments({ command: { documentUrls } });
     const id = result?.data?.createPurchaseRequestFromDocument?.id;
     await router.push({ name: "PurchaseRequest", params: { id } });
   }

@@ -54,6 +54,10 @@ defineProps<IProps>();
   mask: url(/static/images/dashboard/icons/quotes.svg) no-repeat center / contain;
 }
 
+.purchase-requests-icon > div {
+  mask: url(/static/images/dashboard/icons/purchase-requests.svg) no-repeat center / contain;
+}
+
 .credit-card-icon > div {
   mask: url(/static/images/dashboard/icons/credit-card.svg) no-repeat center / contain;
 }

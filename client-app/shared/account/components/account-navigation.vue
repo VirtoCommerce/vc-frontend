@@ -89,6 +89,13 @@
       />
 
       <AccountNavigationLink
+        v-if="$cfg.purchase_request_enabled"
+        :to="{ name: 'PurchaseRequests' }"
+        :text="$t('shared.account.navigation.links.purchase_requests')"
+        class="purchase-requests-icon"
+      />
+
+      <AccountNavigationLink
         :to="{ name: 'SavedCreditCards' }"
         :text="$t('shared.account.navigation.links.saved_credit_cards')"
         class="credit-card-icon"
