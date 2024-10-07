@@ -67,7 +67,7 @@
           </VcRadioButton>
         </div>
         <ul v-else class="mt-4 flex grow flex-col gap-y-2">
-          <li v-for="childItem in openedItem?.children" :key="childItem.title">
+          <li v-for="childItem in sortedChildren" :key="childItem.title">
             <!-- Currency setting -->
             <MobileMenuLink
               :link="childItem"
@@ -182,12 +182,12 @@
           <ul>
             <li>
               <MobileMenuLink
-                v-if="mobileAccountMenuItem"
-                :link="mobileAccountMenuItem"
+                v-if="extendedMobileAccountMenuItem"
+                :link="extendedMobileAccountMenuItem"
                 class="py-1 text-2xl font-bold"
-                @select="selectMenuItem(mobileAccountMenuItem!)"
+                @select="selectMenuItem(extendedMobileAccountMenuItem!)"
               >
-                {{ mobileAccountMenuItem.title }}
+                {{ extendedMobileAccountMenuItem.title }}
               </MobileMenuLink>
             </li>
 
@@ -240,7 +240,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { cloneDeep } from "lodash";
+import { computed, onMounted, ref, shallowRef, triggerRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -275,18 +276,27 @@ const {
   switchOrganization,
 } = useUser();
 const { signMeOut } = useSignMeOut();
-const {
-  mobileMainMenuItems,
-  mobileAccountMenuItem,
-  mobileCorporateMenuItem,
-  mobilePreSelectedMenuItem,
-  openedItem,
-  selectMenuItem,
-  goBack,
-  goMainMenu,
-} = useNavigations();
+const { mobileMainMenuItems, mobileAccountMenuItem, mobileCorporateMenuItem, mobilePreSelectedMenuItem } =
+  useNavigations();
 
 const contactOrganizationId = ref(user.value?.contact?.organizationId);
+
+const extendedMobileAccountMenuItem = computed(() => {
+  if (isMultiOrganization.value) {
+    const item = cloneDeep(mobileAccountMenuItem.value);
+
+    item?.children?.push({
+      id: "contact-organizations",
+      title: t("common.labels.my_organizations"),
+      icon: "/static/images/dashboard/icons/company.svg#main",
+      children: [{}], // Ensures arrow visibility for submenu navigation
+      priority: 10,
+    });
+
+    return item;
+  }
+  return mobileAccountMenuItem.value;
+});
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
@@ -323,6 +333,34 @@ async function selectOrganization(): Promise<void> {
   }
 
   await switchOrganization(contactOrganizationId.value);
+}
+
+const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
+
+const openedItem = computed<ExtendedMenuLinkType | undefined>(
+  () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
+);
+
+const sortedChildren = computed(() => {
+  return openedItem.value?.children?.slice().sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+});
+
+function goBack() {
+  openedMenuItemsStack.value.pop();
+  triggerRef(openedMenuItemsStack);
+}
+
+function goMainMenu() {
+  openedMenuItemsStack.value = [];
+  triggerRef(openedMenuItemsStack);
+}
+
+function selectMenuItem(item: ExtendedMenuLinkType) {
+  if (!item.children) {
+    return;
+  }
+  openedMenuItemsStack.value.push(item);
+  triggerRef(openedMenuItemsStack);
 }
 
 onMounted(() => {

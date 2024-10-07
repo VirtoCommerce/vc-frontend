@@ -22,12 +22,7 @@ const loading = ref(false);
 const matchingRouteName = ref("");
 const menuSchema = shallowRef<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
-const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
-
-const openedItem = computed<ExtendedMenuLinkType | undefined>(
-  () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
-);
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   (menuSchema.value?.header?.desktop?.main || [])
@@ -156,24 +151,6 @@ export function useNavigations() {
     loading.value = false;
   }
 
-  function goBack() {
-    openedMenuItemsStack.value.pop();
-    triggerRef(openedMenuItemsStack);
-  }
-
-  function goMainMenu() {
-    openedMenuItemsStack.value = [];
-    triggerRef(openedMenuItemsStack);
-  }
-
-  function selectMenuItem(item: ExtendedMenuLinkType) {
-    if (!item.children) {
-      return;
-    }
-    openedMenuItemsStack.value.push(item);
-    triggerRef(openedMenuItemsStack);
-  }
-
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
@@ -189,11 +166,7 @@ export function useNavigations() {
 
   return {
     fetchMenus,
-    goBack,
-    goMainMenu,
-    selectMenuItem,
     setMatchingRouteName,
-    openedItem,
     desktopMainMenuItems,
     desktopAccountMenuItems,
     desktopCorporateMenuItems,
