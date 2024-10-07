@@ -70,10 +70,10 @@ import { getLinkAttr } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
-import DefaultMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/default-menu.vue";
-import MainMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/main-menu.vue";
-import MultiOrganisationMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/multi-organisation-menu.vue";
-import SettingsMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/settings-menu.vue";
+import DefaultMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/default-menu.vue";
+import MainMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/main-menu.vue";
+import MultiOrganisationMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/multi-organisation-menu.vue";
+import SettingsMenu from "@/shared/layout/components/header/_internal/mobile-menu/menus/settings-menu.vue";
 import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 interface IEmits {

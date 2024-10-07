@@ -7,35 +7,9 @@
         </MobileMenuLink>
       </li>
       <li v-for="item in mobileMainMenuItems" :key="item.title">
-        <MobileMenuLink
-          v-if="item.id === 'cart'"
-          :link="item"
-          :count="cart?.itemsQuantity"
-          class="py-1 text-2xl font-bold"
-          @close="$emit('close')"
-        >
-          {{ item.title }}
-        </MobileMenuLink>
-
-        <MobileMenuLink
-          v-else-if="item.id === 'compare'"
-          :link="item"
-          :count="productsIds.length"
-          class="py-1 text-2xl font-bold"
-          @close="$emit('close')"
-        >
-          {{ item.title }}
-        </MobileMenuLink>
-
-        <MobileMenuLink
-          v-else
-          :link="item"
-          class="py-1 text-2xl font-bold"
-          @close="$emit('close')"
-          @select="$emit('selectItem', item)"
-        >
-          {{ item.title }}
-        </MobileMenuLink>
+        <LinkCart v-if="item.id === 'cart'" :item="item" @close="$emit('close')" />
+        <LinkCompare v-else-if="item.id === 'compare'" :item="item" @close="$emit('close')" />
+        <LinkDefault v-else :item="item" @close="$emit('close')" @select-item="$emit('selectItem', item)" />
       </li>
     </ul>
 
@@ -136,9 +110,10 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { useSignMeOut, useUser } from "@/shared/account";
-import { useShortCart } from "@/shared/cart";
-import { useCompareProducts } from "@/shared/compare";
 import type { ExtendedMenuLinkType } from "@/core/types";
+import LinkCart from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue";
+import LinkCompare from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue";
+import LinkDefault from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-default.vue";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 
 interface IProps {
@@ -153,8 +128,6 @@ interface IEmits {
 defineEmits<IEmits>();
 defineProps<IProps>();
 
-const { cart } = useShortCart();
-const { productsIds } = useCompareProducts();
 const { signMeOut } = useSignMeOut();
 const { user, operator, isAuthenticated, isMultiOrganization, isCorporateMember } = useUser();
 const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
