@@ -31,7 +31,7 @@
             :items="purchaseRequests"
             :pages="pages"
             :page="page"
-            :description="$t('pages.account.quotes.meta.table_description')"
+            :description="$t('pages.account.purchase_requests.meta.table_description')"
             @item-click="goToPurchaseRequest"
             @header-click="applySorting"
             @page-changed="changePage"
@@ -70,14 +70,14 @@
               <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
                 <div class="flex flex-col">
                   <span class="text-sm text-neutral-400">
-                    {{ $t("pages.account.quotes.quote_number_label") }}
+                    {{ $t("pages.account.purchase_requests.purchase_request_number_label") }}
                   </span>
                   <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
                 </div>
 
                 <div class="flex flex-col">
                   <span class="text-sm text-neutral-400">
-                    {{ $t("pages.account.quotes.date_label") }}
+                    {{ $t("pages.account.purchase_requests.date_label") }}
                   </span>
                   <div class="h-6 animate-pulse bg-neutral-200"></div>
                 </div>
@@ -119,6 +119,7 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { usePageHead } from "@/core/composables/usePageHead";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { usePurchaseRequests } from "@/shared/purchase-request/composables/usePurchaseRequests";
 import type { Sort } from "@/core/types";
@@ -128,12 +129,16 @@ const { t } = useI18n();
 const router = useRouter();
 const { themeContext } = useThemeContext();
 
+usePageHead({
+  title: t("pages.account.purchase_requests.meta.title"),
+});
+
 const { loading, purchaseRequests, itemsPerPage, pages, page, sort } = usePurchaseRequests();
 
 const columns = ref<ITableColumn[]>([
   {
     id: "number",
-    title: t("pages.account.quotes.quote_number_label"),
+    title: t("pages.account.purchase_requests.purchase_request_number_label"),
     sortable: true,
   },
   {

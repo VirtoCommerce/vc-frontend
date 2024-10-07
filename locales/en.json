@@ -1178,10 +1178,15 @@
         }
       },
       "purchase_requests": {
+        "meta": {
+          "title": "@:pages.account.purchase_requests.title",
+          "table_description": "list of purchase requests"
+        },
         "title": "Purchase Requests",
         "no_purchase_requests_message": "There are no purchase requests yet",
         "no_purchase_requests_img_alt": "No orders",
-        "purchase_request_number_label": "Purchase request number"
+        "purchase_request_number_label": "Purchase request number",
+        "date_label": "@:common.labels.date"
       },
       "notifications": {
         "meta": {
