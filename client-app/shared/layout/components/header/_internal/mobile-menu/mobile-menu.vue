@@ -87,7 +87,6 @@ const { t } = useI18n();
 const { supportedLocales } = useLanguages();
 const { isAuthenticated, organization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
-
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
   isAuthenticated.value
     ? {

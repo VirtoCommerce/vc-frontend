@@ -7,9 +7,12 @@
         </MobileMenuLink>
       </li>
       <li v-for="item in mobileMainMenuItems" :key="item.title">
-        <LinkCart v-if="item.id === 'cart'" :item="item" @close="$emit('close')" />
-        <LinkCompare v-else-if="item.id === 'compare'" :item="item" @close="$emit('close')" />
-        <LinkDefault v-else :item="item" @close="$emit('close')" @select-item="$emit('selectItem', item)" />
+        <component
+          :is="(item.id && customLinkComponents[item.id]) || LinkDefault"
+          :item="item"
+          @close="$emit('close')"
+          @select-item="$emit('selectItem', item)"
+        />
       </li>
     </ul>
 
@@ -110,6 +113,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { useSignMeOut, useUser } from "@/shared/account";
+import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/useCustomMobileMenuLinkComponents";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import LinkCart from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-cart.vue";
 import LinkCompare from "@/shared/layout/components/header/_internal/mobile-menu/link-components/link-compare.vue";
@@ -133,6 +137,10 @@ const { user, operator, isAuthenticated, isMultiOrganization, isCorporateMember 
 const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
+const { registerCustomLinkComponent, customLinkComponents } = useCustomMobileMenuLinkComponents();
+
+registerCustomLinkComponent({ id: "cart", component: LinkCart });
+registerCustomLinkComponent({ id: "compare", component: LinkCompare });
 
 const extendedMobileAccountMenuItem = computed(() => {
   if (isMultiOrganization.value) {
