@@ -23,11 +23,7 @@
             :key="column.id"
             class="px-5 py-3 font-bold"
             :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
-            @click="
-              column.sortable && sort
-                ? $emit('headerClick', new Sort(column.id, toggleSortDirection(sort.direction)))
-                : null
-            "
+            @click="onHeaderClick(column, sort)"
           >
             {{ column.title }}
 
@@ -88,7 +84,8 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { PAGE_LIMIT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
-import type { ISortInfo, Sort } from "@/core/types";
+import { Sort } from "@/core/types";
+import type { ISortInfo } from "@/core/types";
 
 export type ItemType = {
   id?: string | number;
@@ -129,9 +126,15 @@ withDefaults(defineProps<IProps>(), {
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("md");
 
-const onPageUpdate = (newPage: number) => {
+function onHeaderClick(column: ITableColumn, sort?: ISortInfo | Sort) {
+  if (column.sortable && sort) {
+    emit("headerClick", new Sort(column.id, toggleSortDirection(sort.direction)));
+  }
+}
+
+function onPageUpdate(newPage: number) {
   emit("pageChanged", newPage);
-};
+}
 
 function toggleSortDirection(currentDirection: SortDirection): SortDirection {
   return currentDirection === SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;

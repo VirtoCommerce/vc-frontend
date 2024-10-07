@@ -32,6 +32,7 @@
           :page="page"
           :description="$t('pages.account.quotes.meta.table_description')"
           @item-click="goToPurchaseRequest"
+          @header-click="applySorting"
           @page-changed="changePage"
         >
           <template #mobile-item="itemData">
@@ -118,12 +119,13 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { usePurchaseRequests } from "@/shared/purchase-request/composables/usePurchaseRequests";
+import type { Sort } from "@/core/types";
 
 const { t } = useI18n();
 const router = useRouter();
 const { themeContext } = useThemeContext();
 
-const { loading, purchaseRequests, itemsPerPage, pages, page, sort, refetch } = usePurchaseRequests();
+const { loading, purchaseRequests, itemsPerPage, pages, page, sort } = usePurchaseRequests();
 
 const columns = ref<ITableColumn[]>([
   {
@@ -138,6 +140,11 @@ const columns = ref<ITableColumn[]>([
   },
 ]);
 
+function applySorting(newSort: Sort): void {
+  sort.value = newSort;
+  page.value = 1;
+}
+
 function goToPurchaseRequest(payload: { id: string }): void {
   const quoteRoute = router.resolve({ name: "PurchaseRequest", params: { quoteId: payload.id } });
 
@@ -148,9 +155,8 @@ function goToPurchaseRequest(payload: { id: string }): void {
   }
 }
 
-async function changePage(newPage: number): Promise<void> {
+function changePage(newPage: number): void {
   page.value = newPage;
   window.scroll({ top: 0, behavior: "smooth" });
-  await refetch();
 }
 </script>
