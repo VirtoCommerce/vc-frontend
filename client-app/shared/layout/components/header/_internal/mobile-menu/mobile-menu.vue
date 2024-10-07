@@ -19,7 +19,6 @@
       </button>
     </header>
 
-    <!-- region Children links section -->
     <section v-if="openedItem" class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
       <div class="flex flex-col px-10 py-6">
         <button type="button" class="appearance-none self-start text-[--mobile-menu-navigation-color]" @click="goBack">
@@ -30,56 +29,10 @@
           {{ openedItem?.title }}
         </h2>
 
-        <!-- Contact organizations -->
-        <div
-          v-if="isMultiOrganization && openedItem.id === 'contact-organizations'"
-          class="mt-4 flex grow flex-col gap-y-1 font-normal"
-        >
-          <VcRadioButton
-            v-for="item in allOrganizations"
-            :key="item.id"
-            v-model="contactOrganizationId"
-            :value="item.id"
-            class="py-2.5"
-            @change="selectOrganization"
-          >
-            <span class="uppercase">
-              {{ item.name }}
-            </span>
-          </VcRadioButton>
-        </div>
-        <div v-else-if="openedItem.id === 'settings'" class="mt-4 flex grow flex-col gap-y-1 font-normal">
-          <header class="-mt-1 mb-1 text-2xl uppercase text-additional-50">
-            {{ $t("shared.layout.header.mobile.currency") }}
-          </header>
-
-          <VcRadioButton
-            v-for="currencyItem in supportedCurrencies"
-            :key="currencyItem.code"
-            v-model="currentCurrency.code"
-            :value="currencyItem.code"
-            class="py-2.5"
-            @click="currentCurrency?.code === currencyItem.code ? null : saveCurrencyCode(currencyItem.code)"
-          >
-            <span :class="{ 'text-additional-50': currentCurrency?.code === currencyItem.code }" class="uppercase">
-              {{ currencyItem.code }}
-            </span>
-          </VcRadioButton>
-        </div>
-        <ul v-else class="mt-4 flex grow flex-col gap-y-2">
-          <li v-for="childItem in sortedChildren" :key="childItem.title">
-            <!-- Currency setting -->
-            <MobileMenuLink
-              :link="childItem"
-              class="py-1 text-lg"
-              @close="$emit('close')"
-              @select="selectMenuItem(childItem)"
-            >
-              {{ childItem.title }}
-            </MobileMenuLink>
-          </li>
-        </ul>
-
+        <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
+        <SettingsMenu v-else-if="openedItem.id === 'settings'" />
+        <DefaultMenu v-else :items="sortedChildren" @close="$emit('close')" @select-item="selectMenuItem" />
+        <!-- view all catalog link -->
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
           <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>
 
@@ -98,140 +51,9 @@
         </template>
       </div>
     </section>
-    <!-- endregion Children links section -->
 
-    <!-- region Main menu section -->
-    <section v-else class="grow divide-y divide-additional-50 divide-opacity-20 overflow-y-auto">
-      <ul class="flex flex-col gap-y-2 px-9 py-6">
-        <!-- Home link -->
-        <li>
-          <MobileMenuLink :link="homeMenuItem" class="py-1 text-2xl font-bold" @close="$emit('close')">
-            {{ homeMenuItem.title }}
-          </MobileMenuLink>
-        </li>
-        <li v-for="item in mobileMainMenuItems" :key="item.title">
-          <MobileMenuLink
-            v-if="item.id === 'cart'"
-            :link="item"
-            :count="cart?.itemsQuantity"
-            class="py-1 text-2xl font-bold"
-            @close="$emit('close')"
-          >
-            {{ item.title }}
-          </MobileMenuLink>
+    <MainMenu v-else :menu-item="homeMenuItem" @close="$emit('close')" @select-item="selectMenuItem" />
 
-          <MobileMenuLink
-            v-else-if="item.id === 'compare'"
-            :link="item"
-            :count="productsIds.length"
-            class="py-1 text-2xl font-bold"
-            @close="$emit('close')"
-          >
-            {{ item.title }}
-          </MobileMenuLink>
-
-          <MobileMenuLink
-            v-else
-            :link="item"
-            class="py-1 text-2xl font-bold"
-            @close="$emit('close')"
-            @select="selectMenuItem(item)"
-          >
-            {{ item.title }}
-          </MobileMenuLink>
-        </li>
-      </ul>
-
-      <div class="flex flex-col gap-y-2 px-9 py-6">
-        <template v-if="isAuthenticated">
-          <!-- Account -->
-          <div class="mb-4 mt-2 flex flex-row gap-4 text-xl">
-            <div
-              class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full ring-2 ring-accent-300"
-            >
-              <VcImage v-if="user.photoUrl" :src="user.photoUrl" :alt="user.contact?.fullName" class="size-12" lazy />
-              <VcIcon v-else name="user" />
-            </div>
-
-            <div class="flex flex-col leading-tight">
-              <div class="flex flex-wrap items-center gap-x-1 text-accent-100">
-                <template v-if="operator">
-                  <span class="line-clamp-3 font-bold [word-break:break-word]">
-                    {{ operator.contact?.fullName || operator.userName }}
-                  </span>
-
-                  <span class="text-accent-200">
-                    {{ $t("shared.layout.header.top_header.logged_in_as") }}
-                  </span>
-                </template>
-
-                <span class="line-clamp-3 font-bold [word-break:break-word]">
-                  {{ user.contact?.fullName || user.userName }}
-                </span>
-              </div>
-
-              <div>
-                <button type="button" class="font-bold text-[--mobile-menu-navigation-color]" @click="signMeOut">
-                  {{ $t("shared.layout.header.link_logout") }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Account link -->
-          <ul>
-            <li>
-              <MobileMenuLink
-                v-if="extendedMobileAccountMenuItem"
-                :link="extendedMobileAccountMenuItem"
-                class="py-1 text-2xl font-bold"
-                @select="selectMenuItem(extendedMobileAccountMenuItem!)"
-              >
-                {{ extendedMobileAccountMenuItem.title }}
-              </MobileMenuLink>
-            </li>
-
-            <!-- Corporate link -->
-            <li>
-              <MobileMenuLink
-                v-if="mobileCorporateMenuItem && isCorporateMember"
-                :link="mobileCorporateMenuItem"
-                class="py-1 text-2xl font-bold"
-                @select="selectMenuItem(mobileCorporateMenuItem!)"
-              >
-                {{ mobileCorporateMenuItem.title }}
-              </MobileMenuLink>
-            </li>
-          </ul>
-        </template>
-
-        <!-- Unauthorized links -->
-        <ul v-else class="mb-1">
-          <li>
-            <MobileMenuLink
-              v-for="item in unauthorizedMenuItems"
-              :key="item.title"
-              :link="item"
-              class="py-1.5 text-2xl font-bold"
-              @close="$emit('close')"
-            >
-              {{ item.title }}
-            </MobileMenuLink>
-          </li>
-        </ul>
-
-        <!-- Settings link -->
-        <MobileMenuLink
-          v-if="supportedCurrencies.length > 1"
-          :link="settingsMenuItem"
-          class="py-1 text-2xl font-bold"
-          @select="selectMenuItem(settingsMenuItem)"
-        >
-          {{ $t("shared.layout.header.mobile.settings") }}
-        </MobileMenuLink>
-      </div>
-    </section>
-    <!-- endregion Main menu section -->
     <div
       class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-additional-950/5 backdrop-blur-lg md:block"
       @click="$emit('close')"
@@ -240,18 +62,18 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep } from "lodash";
-import { computed, onMounted, ref, shallowRef, triggerRef } from "vue";
+import { computed, onMounted, shallowRef, triggerRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useCurrency, useNavigations } from "@/core/composables";
+import { useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { getLinkAttr } from "@/core/utilities";
-import { useSignMeOut, useUser } from "@/shared/account";
-import { useShortCart } from "@/shared/cart";
-import { useCompareProducts } from "@/shared/compare";
-import MobileMenuLink from "./mobile-menu-link.vue";
+import { useUser } from "@/shared/account";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
+import DefaultMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/default-menu.vue";
+import MainMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/main-menu.vue";
+import MultiOrganisationMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/multi-organisation-menu.vue";
+import SettingsMenu from "@/shared/layout/components/header/_internal/mobile-menu/widgets/settings-menu.vue";
 import LanguageSelector from "@/shared/layout/components/language-selector/language-selector.vue";
 
 interface IEmits {
@@ -261,53 +83,10 @@ interface IEmits {
 defineEmits<IEmits>();
 
 const { t } = useI18n();
-const { cart } = useShortCart();
-const { productsIds } = useCompareProducts();
+
 const { supportedLocales } = useLanguages();
-const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
-const {
-  user,
-  operator,
-  isAuthenticated,
-  organization,
-  allOrganizations,
-  isCorporateMember,
-  isMultiOrganization,
-  switchOrganization,
-} = useUser();
-const { signMeOut } = useSignMeOut();
-const { mobileMainMenuItems, mobileAccountMenuItem, mobileCorporateMenuItem, mobilePreSelectedMenuItem } =
-  useNavigations();
-
-const contactOrganizationId = ref(user.value?.contact?.organizationId);
-
-const extendedMobileAccountMenuItem = computed(() => {
-  if (isMultiOrganization.value) {
-    const item = cloneDeep(mobileAccountMenuItem.value);
-
-    item?.children?.push({
-      id: "contact-organizations",
-      title: t("common.labels.my_organizations"),
-      icon: "/static/images/dashboard/icons/company.svg#main",
-      children: [{}], // Ensures arrow visibility for submenu navigation
-      priority: 10,
-    });
-
-    return item;
-  }
-  return mobileAccountMenuItem.value;
-});
-
-const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
-  { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
-  { route: { name: "SignUp" }, title: t("shared.layout.header.link_register_now") },
-];
-
-const settingsMenuItem: ExtendedMenuLinkType = {
-  id: "settings",
-  icon: "/static/images/common/settings.svg#main",
-  children: [{}], // Ensures arrow visibility for submenu navigation
-};
+const { isAuthenticated, organization } = useUser();
+const { mobilePreSelectedMenuItem } = useNavigations();
 
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
   isAuthenticated.value
@@ -327,14 +106,6 @@ function isExternalLink(link?: RouteLocationRaw) {
   return "externalLink" in getLinkAttr(link);
 }
 
-async function selectOrganization(): Promise<void> {
-  if (!contactOrganizationId.value) {
-    return;
-  }
-
-  await switchOrganization(contactOrganizationId.value);
-}
-
 const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 
 const openedItem = computed<ExtendedMenuLinkType | undefined>(
@@ -342,7 +113,7 @@ const openedItem = computed<ExtendedMenuLinkType | undefined>(
 );
 
 const sortedChildren = computed(() => {
-  return openedItem.value?.children?.slice().sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+  return (openedItem.value?.children || []).slice().sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
 });
 
 function goBack() {
