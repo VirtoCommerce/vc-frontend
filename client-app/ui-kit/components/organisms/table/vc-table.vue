@@ -25,7 +25,7 @@
             :class="[{ 'cursor-pointer': column.sortable }, `text-${column.align || 'left'}`, column.classes]"
             @click="
               column.sortable && sort
-                ? $emit('headerClick', { column: column.id, direction: toggleSortDirection(sort.direction) })
+                ? $emit('headerClick', new Sort(column.id, toggleSortDirection(sort.direction)))
                 : null
             "
           >
@@ -88,7 +88,7 @@
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { PAGE_LIMIT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
-import type { ISortInfo } from "@/core/types";
+import type { ISortInfo, Sort } from "@/core/types";
 
 export type ItemType = {
   id?: string | number;
@@ -97,14 +97,14 @@ export type ItemType = {
 
 interface IEmits {
   (event: "itemClick", item: T): void;
-  (event: "headerClick", item: ISortInfo): void;
+  (event: "headerClick", item: ISortInfo & Sort): void;
   (event: "pageChanged", page: number): void;
 }
 
 interface IProps {
   columns?: ITableColumn[];
   items?: T[];
-  sort?: ISortInfo;
+  sort?: ISortInfo | Sort;
   pages?: number;
   page?: number;
   loading?: boolean;

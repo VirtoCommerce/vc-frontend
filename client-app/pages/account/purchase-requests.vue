@@ -26,6 +26,7 @@
         <VcTable
           :loading="loading"
           :columns="columns"
+          :sort="sort"
           :items="purchaseRequests"
           :pages="pages"
           :page="page"
@@ -122,7 +123,7 @@ const { t } = useI18n();
 const router = useRouter();
 const { themeContext } = useThemeContext();
 
-const { loading, purchaseRequests, itemsPerPage, pages, page, refetch } = usePurchaseRequests();
+const { loading, purchaseRequests, itemsPerPage, pages, page, sort, refetch } = usePurchaseRequests();
 
 const columns = ref<ITableColumn[]>([
   {
