@@ -9,7 +9,7 @@
         },
       ]"
       class="flex-none"
-      name="star"
+      name="whishlist"
       size="xs"
     />
     {{ rating.value }}

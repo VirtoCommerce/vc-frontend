@@ -1,13 +1,13 @@
 <template>
-  <VcWidget :title="$t('common.labels.feedback')" prepend-icon="chat">
-    <div class="mb-8 flex justify-between">
+  <VcWidget :title="$t('common.labels.feedback')" prepend-icon="chat" size="lg" class="text-sm">
+    <div class="mb-8 lg:flex lg:justify-between">
       <div v-if="rating" class="flex">
         <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
         <ProductRating :rating="rating" class="font-bold" />
       </div>
 
-      <div class="lg:flex">
-        <span class="mr-2 content-center font-bold">
+      <div class="max-lg:mt-3 lg:flex">
+        <span class="mr-2 content-center font-bold max-lg:hidden">
           {{ $t("common.labels.sort_by_date") }}
         </span>
         <VcSelect
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div v-for="review in reviews" :key="review.id" class="my-4 border-b-2">
+    <div v-for="review in reviews" :key="review.id" class="border-1 my-4 border-b">
       <div class="my-4 flex justify-between">
         <div>
           {{ review.userName }}
@@ -71,11 +71,11 @@ const { t } = useI18n();
 const sortByDateItems = [
   {
     id: "createddate:desc",
-    label: t("common.labels.descending"),
+    label: t("common.labels.date_new_to_old"),
   },
   {
     id: "createddate:asc",
-    label: t("common.labels.ascending"),
+    label: t("common.labels.date_old_to_new"),
   },
 ];
 

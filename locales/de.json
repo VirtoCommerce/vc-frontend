@@ -153,7 +153,9 @@
       "select_product": "Bitte wählen Sie ein Produkt aus",
       "sort_by_date": "Sortieren nach Datum",
       "ascending": "Aufsteigend",
-      "descending": "Absteigend"
+      "descending": "Absteigend",
+      "date_new_to_old": "Datum, neu bis alt",
+      "date_old_to_new": "Datum, alt bis neu"
     },
     "prefixes": {
       "please": "Bitte",

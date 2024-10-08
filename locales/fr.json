@@ -153,7 +153,9 @@
       "select_product": "Veuillez sélectionner un produit",
       "sort_by_date": "Trier par date",
       "ascending": "Ascendant",
-      "descending": "Descendant"
+      "descending": "Descendant",
+      "date_new_to_old": "Date, du nouveau à l’ancien",
+      "date_old_to_new": "Date, de l’ancien au nouveau"
     },
     "prefixes": {
       "please": "S'il vous plaît",
