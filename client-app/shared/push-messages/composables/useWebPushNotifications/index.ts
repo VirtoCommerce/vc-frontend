@@ -11,7 +11,7 @@ import type { DeepPartial } from "utility-types";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 
-const desktopMenuItems: DeepPartial<MenuType> = {
+const menuItems: DeepPartial<MenuType> = {
   header: {
     desktop: {
       main: [
@@ -63,7 +63,7 @@ export function useWebPushNotifications() {
     const { useWebPushNotificationsModule } = await import("./useWebPushNotificationsModule");
     const { initModule } = useWebPushNotificationsModule();
     await initModule();
-    mergeMenuSchema(desktopMenuItems);
+    mergeMenuSchema(menuItems);
     registerCustomLinkComponent(menuLinkCustomElement);
   }
 
