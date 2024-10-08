@@ -60,6 +60,8 @@ jobs:
 
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        with:
+          projectType: theme
         id: image
 
       - name: Set release VERSION_SUFFIX
