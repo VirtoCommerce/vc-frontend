@@ -115,7 +115,7 @@ const {
   removeQuoteItem,
 } = usePurchaseRequest(propsRef);
 
-const breadcrumbs = useBreadcrumbs([
+const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
   { title: t("common.links.purchase_requests"), route: { name: "PurchaseRequests" } },
   { title: t("pages.account.purchase_request.title", [purchaseRequest.value?.number]) },
