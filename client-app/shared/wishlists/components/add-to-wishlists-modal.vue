@@ -59,30 +59,29 @@
               <VcCheckbox model-value class="relative" />
               <div class="absolute inset-0"></div>
             </button>
+
             <VcInput
               v-model="input.listName"
               class="ml-2.5 mr-3.5 grow"
-              :class="{ 'mb-4.5': !input.errorMessage }"
               :disabled="loading"
               :maxlength="25"
               required
               :message="input.errorMessage"
               :error="!!input.errorMessage"
+              show-empty-details
             />
+
             <button type="button" class="mt-3.5" @click="removeNewList(index)">
               <svg class="text-danger" width="16" height="16">
                 <use href="/static/images/delete.svg#main" />
               </svg>
             </button>
           </li>
-          <li
-            v-for="list in listsOther"
-            :key="list.id"
-            class="flex justify-between px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3"
-          >
+
+          <li v-for="list in listsOther" :key="list.id" class="flex justify-between px-6 pb-5 last:pb-5 sm:pb-4">
             <VcCheckbox v-model="selectedListsOtherIds" :value="list.id" :disabled="loading">
               <span
-                class="line-clamp-1 text-base"
+                class="line-clamp-1 ps-0.5 text-base"
                 :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
               >
                 {{ list.name }}

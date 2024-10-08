@@ -39,7 +39,6 @@ declare module "vue" {
     VcNavButton: typeof Components.VcNavButton;
     VcProductPrice: typeof Components.VcProductPrice;
     // @deprecated
-    VcQuantity: typeof Components.VcQuantity;
     VcSelect: typeof Components.VcSelect;
     VcSteps: typeof Components.VcSteps;
     VcTextarea: typeof Components.VcTextarea;

@@ -93,7 +93,7 @@ export const QuantityInput: StoryFn<typeof VcLineItem> = (args) => ({
   components: { VcLineItem },
   setup: () => ({ args }),
   template: `<VcLineItem v-bind="args">
-    <VcQuantity />
+    <VcAddToCart hide-button />
   </VcLineItem>`,
 });
 QuantityInput.args = {
