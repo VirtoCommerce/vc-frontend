@@ -35,7 +35,7 @@
   <div class="order-2 ms-4 flex items-center xl:ms-8">
     <VcTooltip placement="bottom-start" width="12rem">
       <template #trigger>
-        <VcCheckbox v-model="savedInStock" :disabled="loading">
+        <VcCheckbox v-model="savedInStock" :disabled="loading" @click="$emit('apply')" @keyup.enter="$emit('apply')">
           <span
             class="whitespace-nowrap text-sm"
             :class="{
@@ -60,6 +60,7 @@ defineProps<IProps>();
 
 interface IEmits {
   (event: "openBranchesModal", value: boolean): void;
+  (event: "apply"): void;
 }
 
 const savedInStock = defineModel<boolean>();
