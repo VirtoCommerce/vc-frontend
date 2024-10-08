@@ -19,13 +19,11 @@
         <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
 
-      <div
-        class="vc-product-card-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
-      >
+      <VcProductActions class="vc-product-card-list__buttons mt-3 place-self-start lg:mt-2">
         <AddToList :product="product" />
 
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
-      </div>
+      </VcProductActions>
     </div>
 
     <!-- Product title -->

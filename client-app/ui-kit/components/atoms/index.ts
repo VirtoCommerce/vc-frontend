@@ -24,6 +24,7 @@ export { default as VcPopover } from "./popover/vc-popover.vue";
 export { default as VcPopupSidebar } from "./popup-sidebar/vc-popup-sidebar.vue";
 export { default as VcPriceDisplay } from "./price-display/vc-price-display.vue";
 export { default as VcPriceDisplayCatalog } from "./price-display-catalog/vc-price-display-catalog.vue";
+export { default as VcProductActions } from "./product-actions/vc-product-actions.vue";
 export { default as VcProductProperties } from "./product-properties/vc-product-properties.vue";
 export { default as VcProductTitle } from "./product-title/vc-product-title.vue";
 export { default as VcProductVendor } from "./product-vendor/vc-product-vendor.vue";
