@@ -1,30 +1,28 @@
 <template>
-  <VcLoaderOverlay v-if="loading" no-bg />
+  <div v-if="purchaseRequest">
+    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
-  <VcEmptyPage
-    v-else-if="!cart?.items?.length && !quote?.items?.length"
-    :title="$t('pages.purchase_request.title')"
-    :description="$t('pages.purchase_request.failed_or_used_description')"
-    image="/static/images/errors/emptyCart.webp"
-    mobile-image="/static/images/errors/emptyCartMobile.webp"
-    :breadcrumbs="breadcrumbs"
-  >
-    <template #actions>
-      <VcButton :to="{ name: 'BulkOrder' }" size="lg">
-        {{ $t("pages.purchase_request.try_again") }}
-      </VcButton>
-    </template>
-  </VcEmptyPage>
+    <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
-  <VcContainer v-else class="relative z-0">
-    <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
+    <VcTypography tag="h1">{{ $t("pages.account.purchase_request.title", [purchaseRequest?.number]) }}</VcTypography>
 
-    <VcTypography tag="h1" class="mb-5"
-      >{{ $t("pages.purchase_request.title") }} {{ purchaseRequest?.number }}</VcTypography
+    <VcEmptyPage
+      v-if="!cart?.items?.length && !quote?.items?.length"
+      :title="$t('pages.account.purchase_request.title')"
+      :description="$t('pages.account.purchase_request.failed_or_used_description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
     >
+      <template #actions>
+        <VcButton :to="{ name: 'BulkOrder' }" size="lg">
+          {{ $t("pages.account.purchase_request.try_again") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
 
-    <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <VcWidget :title="$t('pages.purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
+    <VcLayoutWithRightSidebar v-else is-sidebar-sticky>
+      <VcWidget :title="$t('pages.account.purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           class="h-full"
           v-bind="fileOptions"
@@ -65,16 +63,19 @@
         <OrderSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :cart="quote" no-shipping>
           <template #footer>
             <ProceedTo :to="{ name: 'EditQuote', params: { quoteId: purchaseRequest.quoteId } }">
-              {{ $t("pages.purchase_request.go_to_quote") }}
+              {{ $t("pages.account.purchase_request.go_to_quote") }}
             </ProceedTo>
           </template>
         </OrderSummary>
       </template>
     </VcLayoutWithRightSidebar>
-  </VcContainer>
+  </div>
+
+  <VcLoaderOverlay v-else :visible="loading" no-bg />
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { inject, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
@@ -83,6 +84,7 @@ import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/consta
 import { OrderSummary, ProceedTo } from "@/shared/checkout/components";
 import { useFiles } from "@/shared/files/composables/useFiles";
 import { downloadFile } from "@/shared/files/utils";
+import { BackButtonInHeader } from "@/shared/layout";
 import { usePurchaseRequest } from "@/shared/purchase-request/composables/usePurchaseRequest";
 import QuoteLineItems from "@/shared/account/components/quote-line-items.vue";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
@@ -97,8 +99,7 @@ const propsRef = toRef(props);
 
 const config = inject(configInjectionKey, {});
 const { t } = useI18n();
-
-const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const {
   loading,
@@ -113,6 +114,14 @@ const {
   removeCartItems,
   removeQuoteItem,
 } = usePurchaseRequest(propsRef);
+
+const breadcrumbs = useBreadcrumbs([
+  { title: t("common.links.account"), route: { name: "Account" } },
+  { title: t("common.links.purchase_requests"), route: { name: "PurchaseRequests" } },
+  { title: t("pages.account.purchase_request.title", [purchaseRequest.value?.number]) },
+]);
+
+const isMobile = breakpoints.smaller("lg");
 
 const {
   files,

@@ -20,7 +20,6 @@ const Company = () => import("@/pages/company/index.vue");
 const BulkOrder = () => import("@/pages/bulk-order.vue");
 const CompareProducts = () => import("@/pages/compare-products.vue");
 const Cart = () => import("@/pages/cart.vue");
-const PurchaseRequest = () => import("@/pages/purchase-request.vue");
 const Search = () => import("@/pages/search.vue");
 const Catalog = () => import("@/pages/catalog.vue");
 const Category = () => import("@/pages/category.vue");
@@ -68,7 +67,6 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
   { path: "/cart", name: "Cart", component: Cart },
-  { path: "/purchase-requests/:id", name: "PurchaseRequest", component: PurchaseRequest, props: true },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
   ...checkoutRoutes,
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },

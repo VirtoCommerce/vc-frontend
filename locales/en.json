@@ -1188,6 +1188,15 @@
         "purchase_request_number_label": "Purchase request number",
         "date_label": "@:common.labels.date"
       },
+      "purchase_request": {
+        "title": "Purchase request #{0}",
+        "failed_or_used_description": "We're sorry, but we was unable to create purchase request or you already used it to create an order",
+        "try_again": "Please try again",
+        "files_section": {
+          "title": "Files"
+        },
+        "go_to_quote": "Proceed to quote"
+      },
       "notifications": {
         "meta": {
           "title": "Notifications"
@@ -1370,15 +1379,6 @@
       "manually_tab": "Manually",
       "copy_n_paste_tab": "Copy&Paste",
       "from_file_tab": "Upload file"
-    },
-    "purchase_request": {
-      "title": "Purchase request",
-      "failed_or_used_description": "We're sorry, but we was unable to create purchase request or you already used it to create an order",
-      "try_again": "Please try again",
-      "files_section": {
-        "title": "Files"
-      },
-      "go_to_quote": "Proceed to quote"
     },
     "demo_landing": {
       "meta": {

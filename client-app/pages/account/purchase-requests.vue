@@ -154,12 +154,12 @@ function applySorting(newSort: Sort): void {
 }
 
 function goToPurchaseRequest(payload: { id: string }): void {
-  const quoteRoute = router.resolve({ name: "PurchaseRequest", params: { quoteId: payload.id } });
+  const route = router.resolve({ name: "PurchaseRequest", params: { id: payload.id } });
 
   if (themeContext.value.settings?.show_details_in_separate_tab) {
-    window.open(quoteRoute.fullPath, "_blank")!.focus();
+    window.open(route.fullPath, "_blank")!.focus();
   } else {
-    window.location.href = quoteRoute.fullPath;
+    window.location.href = route.fullPath;
   }
 }
 

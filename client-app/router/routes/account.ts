@@ -17,6 +17,7 @@ const Quotes = () => import("@/pages/account/quotes.vue");
 const EditQuote = () => import("@/pages/account/edit-quote.vue");
 const ViewQuote = () => import("@/pages/account/view-quote.vue");
 const PurchaseRequests = () => import("@/pages/account/purchase-requests.vue");
+const PurchaseRequest = () => import("@/pages/account/purchase-request.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const Notifications = () => import("@/pages/account/notifications.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
@@ -117,8 +118,16 @@ export const accountRoutes: RouteRecordRaw[] = [
   },
   {
     path: "purchase-requests",
-    name: "PurchaseRequests",
-    component: PurchaseRequests,
+    children: [
+      { path: "", name: "PurchaseRequests", component: PurchaseRequests },
+      {
+        path: ":id",
+        name: "PurchaseRequest",
+        component: PurchaseRequest,
+        props: true,
+        meta: { hideLeftSidebar: true },
+      },
+    ],
   },
   {
     path: "notifications",
