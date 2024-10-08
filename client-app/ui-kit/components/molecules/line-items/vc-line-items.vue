@@ -122,7 +122,7 @@
 <script setup lang="ts">
 import { intersection, map, sumBy } from "lodash";
 import { computed, ref, watchEffect } from "vue";
-import type { BrowserTargetType, PreparedLineItemType } from "@/core/types";
+import type { PreparedLineItemType } from "@/core/types";
 
 interface IEmits {
   (event: "remove:items", value: string[]): void;
@@ -150,6 +150,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   withHeader: true,
+  browserTarget: "_blank",
 });
 
 const slotElements = ref<HTMLElement[]>([]);
