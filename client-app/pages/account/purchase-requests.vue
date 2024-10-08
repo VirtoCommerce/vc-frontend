@@ -120,14 +120,12 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
-import { useThemeContext } from "@/core/composables/useThemeContext";
 import { usePurchaseRequests } from "@/shared/purchase-request/composables/usePurchaseRequests";
 import type { Sort } from "@/core/types";
 import FromFile from "@/shared/bulk-order/components/from-file.vue";
 
 const { t } = useI18n();
 const router = useRouter();
-const { themeContext } = useThemeContext();
 
 usePageHead({
   title: t("pages.account.purchase_requests.meta.title"),
@@ -154,13 +152,7 @@ function applySorting(newSort: Sort): void {
 }
 
 function goToPurchaseRequest(payload: { id: string }): void {
-  const route = router.resolve({ name: "PurchaseRequest", params: { id: payload.id } });
-
-  if (themeContext.value.settings?.show_details_in_separate_tab) {
-    window.open(route.fullPath, "_blank")!.focus();
-  } else {
-    window.location.href = route.fullPath;
-  }
+  void router.push({ name: "PurchaseRequest", params: { id: payload.id } });
 }
 
 function changePage(newPage: number): void {
