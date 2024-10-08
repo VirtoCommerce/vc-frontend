@@ -124,6 +124,7 @@
               :items="PRODUCT_SORTING_LIST"
               class="w-0 grow lg:w-48"
               size="sm"
+              @change="resetCurrentPage"
             />
           </div>
 
@@ -416,6 +417,10 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
     item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
   });
 }
+
+watch(currentPage, () => {
+  console.log(currentPage.value);
+});
 
 async function fetchProducts(): Promise<void> {
   await _fetchProducts(searchParams.value);
