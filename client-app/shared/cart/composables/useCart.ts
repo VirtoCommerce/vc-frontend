@@ -217,6 +217,7 @@ export function _useFullCart() {
 
   const selectedItemIds = computed(() => selectedLineItems.value.map((item) => item.id));
 
+  // Have to update cache explicitly because mutations can be aborted and cache will be rolled back if we use optimisticResponse in mutations. Which cause UI inconsistencies.
   function updateSelectionCache(ids: string[], type: "select" | "unselect") {
     if (!cart.value) {
       return;
