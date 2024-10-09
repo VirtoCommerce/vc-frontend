@@ -1,5 +1,5 @@
 <template>
-  <AccountNavigationLink :item="item">
+  <AccountNavigationItem :item="item">
     <template v-if="isListDetails">
       <div
         v-for="list in lists"
@@ -17,7 +17,7 @@
         </router-link>
       </div>
     </template>
-  </AccountNavigationLink>
+  </AccountNavigationItem>
 </template>
 
 <script setup lang="ts">
@@ -25,7 +25,7 @@ import { computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useWishlists } from "@/shared/wishlists";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import AccountNavigationLink from "@/shared/account/components/account-navigation-link.vue";
+import AccountNavigationItem from "@/shared/account/components/account-navigation-item.vue";
 
 defineProps<IProps>();
 

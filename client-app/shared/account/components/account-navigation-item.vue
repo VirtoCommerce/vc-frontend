@@ -1,8 +1,8 @@
 <template>
-  <div class="account-navigation-link" :class="{ 'account-navigation-link--active': isActive }">
-    <component :is="item?.route ? 'router-link' : 'a'" :to="item?.route" class="account-navigation-link__link">
-      <VcIcon size="sm" class="account-navigation-link__icon" :name="item?.icon" />
-      <span class="account-navigation-link__text">{{ item?.title }}</span>
+  <div class="account-navigation-item" :class="{ 'account-navigation-item--active': isActive }">
+    <component :is="item?.route ? 'router-link' : 'a'" :to="item?.route" class="account-navigation-item__link">
+      <VcIcon size="sm" class="account-navigation-item__icon" :name="item?.icon" />
+      <span class="account-navigation-item__text">{{ item?.title }}</span>
     </component>
     <slot />
   </div>
@@ -25,7 +25,7 @@ interface IProps {
 </script>
 
 <style lang="scss">
-.account-navigation-link {
+.account-navigation-item {
   $active: "";
   $hover: "";
 

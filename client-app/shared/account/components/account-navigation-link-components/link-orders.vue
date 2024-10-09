@@ -1,5 +1,5 @@
 <template>
-  <AccountNavigationLink :item="item">
+  <AccountNavigationItem :item="item">
     <template v-if="isOrdersPage">
       <div
         v-for="facet in facets"
@@ -18,7 +18,7 @@
         </a>
       </div>
     </template>
-  </AccountNavigationLink>
+  </AccountNavigationItem>
 </template>
 
 <script setup lang="ts">
@@ -27,7 +27,7 @@ import { useRoute } from "vue-router";
 import { useUserOrders } from "@/shared/account/composables/useUserOrders";
 import { useUserOrdersFilter } from "@/shared/account/composables/useUserOrdersFilter";
 import type { ExtendedMenuLinkType } from "@/core/types";
-import AccountNavigationLink from "@/shared/account/components/account-navigation-link.vue";
+import AccountNavigationItem from "@/shared/account/components/account-navigation-item.vue";
 
 interface IProps {
   item: ExtendedMenuLinkType;

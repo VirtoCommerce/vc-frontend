@@ -1,10 +1,10 @@
 <template>
-  <AccountNavigationLink :item="item" />
+  <AccountNavigationItem :item="item" />
 </template>
 
 <script setup lang="ts">
 import type { ExtendedMenuLinkType } from "@/core/types";
-import AccountNavigationLink from "@/shared/account/components/account-navigation-link.vue";
+import AccountNavigationItem from "@/shared/account/components/account-navigation-item.vue";
 defineProps<IProps>();
 
 interface IProps {
