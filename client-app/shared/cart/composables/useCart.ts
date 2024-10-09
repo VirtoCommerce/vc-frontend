@@ -218,9 +218,12 @@ export function _useFullCart() {
   const selectedItemIds = computed(() => selectedLineItems.value.map((item) => item.id));
 
   function updateSelectionCache(ids: string[], type: "select" | "unselect") {
+    if (!cart.value) {
+      return;
+    }
     client.cache.updateFragment(
       {
-        id: client.cache.identify(cart.value!),
+        id: client.cache.identify(cart.value),
         fragment: CartItemsSelectionFragment,
       },
       (data: { items: LineItemType[] | undefined } | null) => {
