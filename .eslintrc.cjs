@@ -29,7 +29,6 @@ module.exports = {
     project: ["./tsconfig.vitest.json", "./tsconfig.app.json", "./tsconfig.node.json"],
     sourceType: "module",
     tsconfigRootDir: __dirname,
-    ignorePatterns: ["dist/firebase-messaging-sw.js"],
   },
   plugins: ["vue", "import", "sort-exports", "sort-export-all", "@typescript-eslint", "sonarjs", "vuejs-accessibility"],
   rules: {
@@ -81,7 +80,7 @@ module.exports = {
       },
     ],
     "@typescript-eslint/no-unsafe-argument": "error",
-    "@typescript-eslint/no-unsafe-assignment": "warn",
+    "@typescript-eslint/no-unsafe-assignment": "error",
     "@typescript-eslint/no-unsafe-call": "warn",
     "@typescript-eslint/no-unsafe-enum-comparison": "warn",
     "@typescript-eslint/no-unsafe-member-access": "warn",
