@@ -159,6 +159,7 @@
           @reset-facet-filters="resetFacetFilters"
           @apply-filters="applyFilters"
           @show-popup-sidebar="showFiltersSidebar"
+          @apply-sort="resetCurrentPage"
         />
 
         <!-- Filters chips -->
