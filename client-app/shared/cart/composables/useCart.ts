@@ -1,4 +1,5 @@
-import { ApolloError } from "@apollo/client/core";
+import { ApolloError, gql } from "@apollo/client/core";
+import { useApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
@@ -48,6 +49,15 @@ import type {
   AddOrUpdateCartPaymentMutationVariables,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
+
+const CartItemsSelectionFragment = gql`
+  fragment CartItemsSelectionFragment on CartType {
+    items {
+      id
+      selectedForCheckout
+    }
+  }
+`;
 
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
@@ -126,6 +136,7 @@ export function useShortCart() {
 export function _useFullCart() {
   const { openModal } = useModal();
   const ga = useGoogleAnalytics();
+  const { client } = useApolloClient();
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
 
@@ -205,7 +216,28 @@ export function _useFullCart() {
 
   const selectedItemIds = computed(() => selectedLineItems.value.map((item) => item.id));
 
+  function updateSelectionCache(ids: string[], type: "select" | "unselect") {
+    client.cache.updateFragment(
+      {
+        id: client.cache.identify(cart.value!),
+        fragment: CartItemsSelectionFragment,
+      },
+      (data) => {
+        return {
+          items: data.items.map((item) => ({
+            ...item,
+            selectedForCheckout:
+              type === "select"
+                ? ids.includes(item.id) || item.selectedForCheckout
+                : item.selectedForCheckout && !ids.includes(item.id),
+          })),
+        };
+      },
+    );
+  }
+
   function selectCartItems(ids: string[]): void {
+    updateSelectionCache(ids, "select");
     void _selectCartItems({
       command: {
         lineItemIds: ids,
@@ -214,6 +246,7 @@ export function _useFullCart() {
   }
 
   function unselectCartItems(ids: string[]): void {
+    updateSelectionCache(ids, "unselect");
     void _unselectCartItems({
       command: {
         lineItemIds: ids,
