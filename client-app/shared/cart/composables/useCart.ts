@@ -203,7 +203,7 @@ export function _useFullCart() {
 
     const mutationIds = args.command?.lineItemIds ?? [];
     const anotherBatcherIds = anotherBatcher.arguments.value?.command?.lineItemIds ?? [];
-    const intersectionIds = intersection(mutationIds, anotherBatcherIds);
+    const intersectionIds = intersection(anotherBatcherIds, mutationIds);
 
     if (intersectionIds.length > 0) {
       anotherBatcher.abort();
@@ -224,7 +224,7 @@ export function _useFullCart() {
       },
       (data) => {
         return {
-          items: data.items.map((item) => ({
+          items: data.items.map((item: { id: string; selectedForCheckout: boolean }) => ({
             ...item,
             selectedForCheckout:
               type === "select"
