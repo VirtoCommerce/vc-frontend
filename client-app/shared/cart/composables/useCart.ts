@@ -47,6 +47,7 @@ import type {
   AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
   AddOrUpdateCartPaymentMutationVariables,
+  LineItemType,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 
@@ -222,9 +223,9 @@ export function _useFullCart() {
         id: client.cache.identify(cart.value!),
         fragment: CartItemsSelectionFragment,
       },
-      (data) => {
+      (data: { items: LineItemType[] | undefined } | null) => {
         return {
-          items: data.items.map((item: { id: string; selectedForCheckout: boolean }) => ({
+          items: data?.items?.map((item: LineItemType) => ({
             ...item,
             selectedForCheckout:
               type === "select"
