@@ -38,8 +38,8 @@
         <VcCheckbox
           v-model="savedInStock"
           :disabled="loading"
-          @click="$emit('applySort')"
-          @keyup.enter="$emit('applySort')"
+          @click="$emit('applyInStock')"
+          @keyup.enter="$emit('applyInStock')"
         >
           <span
             class="whitespace-nowrap text-sm"
@@ -65,7 +65,7 @@ defineProps<IProps>();
 
 interface IEmits {
   (event: "openBranchesModal", value: boolean): void;
-  (event: "applySort"): void;
+  (event: "applyInStock"): void;
 }
 
 const savedInStock = defineModel<boolean>();

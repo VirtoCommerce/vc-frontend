@@ -142,7 +142,7 @@
             :loading="fetchingProducts"
             :saved-branches="localStorageBranches"
             @open-branches-modal="openBranchesModal"
-            @apply-sort="resetCurrentPage"
+            @apply-in-stock="resetCurrentPage"
           />
         </div>
 
