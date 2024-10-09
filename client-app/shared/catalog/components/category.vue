@@ -142,7 +142,7 @@
             :loading="fetchingProducts"
             :saved-branches="localStorageBranches"
             @open-branches-modal="openBranchesModal"
-            @apply="resetCurrentPage"
+            @apply-sort="resetCurrentPage"
           />
         </div>
 
@@ -171,7 +171,12 @@
                 :key="facet.paramName + filterItem.value"
                 color="secondary"
                 closable
-                @close="onSingleFacetReset(facet.paramName, filterItem.value)"
+                @close="
+                  removeFacetFilter({
+                    paramName: facet.paramName,
+                    value: filterItem.value,
+                  })
+                "
               >
                 {{ filterItem.label }}
               </VcChip>
@@ -419,10 +424,6 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   });
 }
 
-watch(currentPage, () => {
-  console.log(currentPage.value);
-});
-
 async function fetchProducts(): Promise<void> {
   await _fetchProducts(searchParams.value);
 
@@ -466,10 +467,6 @@ watch(
   },
   { immediate: true },
 );
-
-function onSingleFacetReset(paramName: string, value: string) {
-  removeFacetFilter({ paramName, value });
-}
 
 watch(props, ({ viewMode }) => {
   if (viewMode && viewModes.includes(viewMode)) {
