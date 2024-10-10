@@ -12,6 +12,7 @@ declare module "vue" {
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCarouselPagination: typeof Components.VcCarouselPagination;
     VcCheckbox: typeof Components.VcCheckbox;
+    VcCheckboxGroup: typeof Components.VcCheckboxGroup;
     VcContainer: typeof Components.VcContainer;
     VcDateSelector: typeof Components.VcDateSelector;
     VcDialog: typeof Components.VcDialog;
