@@ -1,62 +1,68 @@
 <template>
   <VcWidget :title="$t('common.labels.feedback')" prepend-icon="chat" size="lg" class="text-sm">
-    <div class="mb-8 lg:flex lg:justify-between">
-      <div v-if="rating" class="flex">
-        <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
-        <ProductRating :rating="rating" class="font-bold" />
-      </div>
-
-      <div v-if="reviews.length" class="max-lg:mt-3 lg:flex">
-        <span class="mr-2 content-center font-bold max-lg:hidden">
-          {{ $t("common.labels.sort_by_date") }}
-        </span>
-        <VcSelect
-          v-model="sortByDate"
-          :items="sortByDateItems"
-          :disabled="fetching"
-          text-field="label"
-          value-field="id"
-          @change="changeSortByDate"
-        />
-      </div>
-    </div>
-
-    <div v-for="review in reviews" :key="review.id" class="border-1 my-4 border-b">
-      <div class="my-4 flex justify-between">
-        <div>
-          {{ review.userName }}
-          <div class="text-neutral-400">
-            {{ $d(review.createdDate) }}
-          </div>
+    <template v-if="reviews.length">
+      <div class="mb-4 lg:flex lg:justify-between">
+        <div v-if="rating" class="flex">
+          <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
+          <ProductRating :rating="rating" class="font-bold" />
         </div>
 
-        <ReviewRating :rating="review.rating" read-only />
+        <div v-if="reviews.length" class="max-lg:mt-3 lg:flex">
+          <span class="mr-2 content-center font-bold max-lg:hidden">
+            {{ $t("common.labels.sort_by_date") }}
+          </span>
+
+          <VcSelect
+            v-model="sortByDate"
+            :items="sortByDateItems"
+            :disabled="fetching"
+            text-field="label"
+            value-field="id"
+            @change="changeSortByDate"
+          />
+        </div>
       </div>
 
-      <div class="mb-4">
-        {{ review.review }}
+      <div class="divide-y rounded border">
+        <div v-for="review in reviews" :key="review.id" class="space-y-2 p-4">
+          <div class="flex justify-between gap-2">
+            <div>
+              {{ review.userName }}
+              <div class="text-neutral-400">
+                {{ $d(review.createdDate) }}
+              </div>
+            </div>
+
+            <ReviewRating :rating="review.rating" read-only />
+          </div>
+
+          <div>
+            {{ review.review }}
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="flex justify-between">
-      <VcPagination
-        v-if="pagesCount > 1"
-        v-model:page="pageNum"
-        :pages="pagesCount"
-        class="grow"
-        @update:page="changePage"
-      />
+      <div class="mb-6 mt-5 text-center sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+        <VcButton
+          v-if="isAuthenticated && canLeaveFeedback && !!reviews.length && !reviewFormVisible && !reviewSubmitted"
+          variant="outline"
+          class="max-sm:mb-10 max-sm:w-[18.125rem] sm:order-last"
+          @click="reviewFormVisible = true"
+        >
+          {{ $t("common.buttons.leave_feedback") }}
+        </VcButton>
 
-      <VcButton
-        v-if="isAuthenticated && canLeaveFeedback && !!reviews.length && !reviewFormVisible && !reviewSubmitted"
-        variant="outline"
-        @click="reviewFormVisible = true"
-      >
-        {{ $t("common.buttons.leave_feedback") }}
-      </VcButton>
-    </div>
+        <VcPagination
+          v-if="pagesCount > 1"
+          v-model:page="pageNum"
+          :pages="pagesCount"
+          class="grow max-sm:flex max-sm:justify-center"
+          @update:page="changePage"
+        />
+      </div>
+    </template>
 
-    <div v-if="isAuthenticated && (reviewFormVisible || reviewSubmitted)" class="border-1 mt-6 border-t pt-4">
+    <div v-if="isAuthenticated && (reviewFormVisible || reviewSubmitted)">
       <div v-if="reviewSubmitted" class="text-lg font-bold">
         {{ $t("common.messages.thanks_for_feedback") }}
       </div>
@@ -77,7 +83,7 @@
 
         <VcTextarea v-model="newReviewContent" :label="$t('common.labels.comments')" class="mt-4" />
 
-        <div class="mt-4 flex justify-between">
+        <div class="mt-4 flex flex-wrap justify-between gap-3 max-xs:justify-center">
           <VcButton
             v-if="!!reviews.length"
             color="neutral"

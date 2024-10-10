@@ -1,11 +1,11 @@
 <template>
-  <div class="space-x-2 text-nowrap text-neutral-300">
+  <div class="space-x-1.5 text-nowrap text-neutral-300">
     <VcIcon
       v-for="i in 5"
       :key="i"
-      :class="{ 'text-warning': i <= rating || (!readOnly && selectedRating >= i), 'cursor-pointer': !readOnly }"
+      :class="{ 'text-primary': i <= rating || (!readOnly && selectedRating >= i), 'cursor-pointer': !readOnly }"
       name="whishlist"
-      size="sm"
+      :size="16"
       @click="setRating(i)"
       @focus="handleMouseOver(i)"
       @blur="handleMouseOver(0)"
