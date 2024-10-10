@@ -124,6 +124,7 @@
               :items="PRODUCT_SORTING_LIST"
               class="w-0 grow lg:w-48"
               size="sm"
+              @change="resetCurrentPage"
             />
           </div>
 
@@ -141,6 +142,7 @@
             :loading="fetchingProducts"
             :saved-branches="localStorageBranches"
             @open-branches-modal="openBranchesModal"
+            @apply-in-stock="resetCurrentPage"
           />
         </div>
 
@@ -157,6 +159,7 @@
           @reset-facet-filters="resetFacetFilters"
           @apply-filters="applyFilters"
           @show-popup-sidebar="showFiltersSidebar"
+          @apply-sort="resetCurrentPage"
         />
 
         <!-- Filters chips -->
@@ -199,7 +202,7 @@
           :has-selected-facets="hasSelectedFacets"
           :items-per-page="itemsPerPage"
           :pages-count="pagesCount"
-          :page-number="productsPageNumber"
+          :page-number="currentPage"
           :products="products"
           :saved-view-mode="savedViewMode"
           :search-params="searchParams"
@@ -320,6 +323,10 @@ const {
   resetFilterKeyword,
   showFiltersSidebar,
   updateProductsFilters,
+
+  currentPage,
+  updateCurrentPage,
+  resetCurrentPage,
 } = useProducts({
   filtersDisplayOrder,
   useQueryParams: true,
@@ -330,7 +337,6 @@ const ga = useGoogleAnalytics();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
-const productsPageNumber = ref(1);
 const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
 
 const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
@@ -402,19 +408,19 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
     return;
   }
 
-  productsPageNumber.value = pageNumber;
+  updateCurrentPage(pageNumber);
 
   await fetchMoreProducts({
     ...searchParams.value,
-    page: productsPageNumber.value,
+    page: currentPage.value,
   });
 
   /**
    * Send Google Analytics event for products on next page.
    */
   ga.viewItemList(products.value, {
-    item_list_id: `${currentCategory.value?.slug}_page_${productsPageNumber.value}`,
-    item_list_name: `${currentCategory.value?.name} (page ${productsPageNumber.value})`,
+    item_list_id: `${currentCategory.value?.slug}_page_${currentPage.value}`,
+    item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
   });
 }
 
