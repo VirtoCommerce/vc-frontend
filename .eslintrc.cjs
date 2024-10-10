@@ -1,11 +1,11 @@
 /* eslint-env node */
-require("@rushstack/eslint-patch/modern-module-resolution");
+require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
   root: true,
   env: {
     node: true,
-    worker: true,
+    worker: true
   },
   extends: [
     "eslint:recommended", // See rules: https://eslint.org/docs/latest/rules/
@@ -30,13 +30,21 @@ module.exports = {
     sourceType: "module",
     tsconfigRootDir: __dirname,
   },
-  plugins: ["vue", "import", "sort-exports", "sort-export-all", "@typescript-eslint", "sonarjs", "vuejs-accessibility"],
+  plugins: [
+    "vue",
+    "import",
+    "sort-exports",
+    "sort-export-all",
+    "@typescript-eslint",
+    "sonarjs",
+    "vuejs-accessibility",
+  ],
   rules: {
     /**
      * Errors
      */
     "@typescript-eslint/no-shadow": "error",
-    curly: "error",
+    "curly": "error",
     "import/no-unresolved": "error",
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
     "vue/block-lang": ["error", { script: { lang: "ts" } }],
@@ -74,10 +82,10 @@ module.exports = {
     "@typescript-eslint/no-misused-promises": [
       "error",
       {
-        checksVoidReturn: {
-          arguments: false,
-        },
-      },
+        "checksVoidReturn": {
+          "arguments": false,
+        }
+      }
     ],
     "@typescript-eslint/no-unsafe-argument": "error",
     "@typescript-eslint/no-unsafe-assignment": "error",
@@ -176,60 +184,62 @@ module.exports = {
             paths: [
               {
                 name: "@apollo/client",
-                message:
-                  "@apollo/client is for React only. Please import from @apollo/client/* or @vue/apollo-composable",
+                message: "@apollo/client is for React only. Please import from @apollo/client/* or @vue/apollo-composable"
               },
               {
                 name: "@vueuse/core",
                 importNames: ["useFetch"],
-                message: "Please import useFetch from @/core/api/common instead",
+                message: "Please import useFetch from @/core/api/common instead"
               },
               {
                 name: "@vueuse/integrations/useAxios",
                 importNames: ["useAxios"],
-                message: "Please import useAxios from @/core/api/common instead",
+                message: "Please import useAxios from @/core/api/common instead"
               },
               {
                 name: "axios",
                 importNames: ["default"],
-                message: "Please use useAxios from @/core/api/common instead",
-              },
-            ],
-          },
+                message: "Please use useAxios from @/core/api/common instead"
+              }
+            ]
+          }
         ],
         "no-restricted-exports": [
           "warn",
           {
-            restrictDefaultExports: {
+            "restrictDefaultExports": {
               direct: true,
               named: true,
               defaultFrom: true,
               namedFrom: true,
               namespaceFrom: true,
-            },
-          },
+            }
+          }
         ],
-      },
+      }
     },
     {
       files: ["**/components/**/index.ts"],
       rules: {
-        "padding-line-between-statements": ["warn", { blankLine: "never", prev: "export", next: "export" }],
+        "padding-line-between-statements": [
+          "warn",
+          { "blankLine": "never", "prev": "export", "next": "export" }
+        ],
         "sort-exports/sort-exports": "warn",
-      },
+      }
     },
     {
       files: ["client-app/ui-kit/*"],
       rules: {
         "no-console": ["off", { allow: ["warn", "error"] }],
-      },
+      }
     },
     {
       files: ["scripts/*"],
       rules: {
         "no-console": "off",
-      },
-    },
+      }
+    }
   ],
   globals: {
     /**
@@ -249,5 +259,5 @@ module.exports = {
       },
       node: true,
     },
-  },
+  }
 };
