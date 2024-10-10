@@ -15,8 +15,11 @@
       </VcButton>
     </template>
   </VcEmptyPage>
+  <div class="mx-auto my-10 w-full max-w-[1200px]">
+    <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
+  </div>
 
-  <VcContainer v-else class="relative z-0">
+  <VcContainer v-if="false" class="relative z-0">
     <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />

@@ -84,7 +84,7 @@ module.exports = {
     "@typescript-eslint/no-unsafe-call": "error",
     "@typescript-eslint/no-unsafe-enum-comparison": "error",
     "@typescript-eslint/no-unsafe-member-access": "error",
-    "@typescript-eslint/no-unsafe-return": "warn",
+    "@typescript-eslint/no-unsafe-return": "error",
     "import/consistent-type-specifier-style": "warn",
     "import/no-cycle": "error",
     "import/order": [
