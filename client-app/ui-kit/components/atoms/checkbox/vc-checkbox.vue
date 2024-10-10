@@ -47,7 +47,7 @@ import { computed } from "vue";
 
 interface IProps {
   disabled?: boolean;
-  modelValue?: boolean | any[];
+  modelValue?: boolean | unknown[];
   name?: string;
   value?: boolean | string | number | object;
   indeterminate?: boolean;

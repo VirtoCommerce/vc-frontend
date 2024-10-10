@@ -17,7 +17,7 @@ export function useUserCheckoutDefaults() {
 
     if (value) {
       try {
-        result = JSON.parse(value);
+        result = JSON.parse(value) as CheckoutDefaults;
       } catch (e) {
         Logger.error(`${useUserCheckoutDefaults.name}.${getUserCheckoutDefaults.name}`, e);
       }

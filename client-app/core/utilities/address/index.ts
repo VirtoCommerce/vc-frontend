@@ -3,16 +3,15 @@ import type { AnyAddressType } from "../../types";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const newAddress = clone(address) as Record<keyof MemberAddressType, any>;
-
-  newAddress.key = newAddress.id;
+  const newAddress = clone(address);
 
   delete newAddress.id;
   delete newAddress.isDefault;
   delete newAddress.isFavorite;
 
-  return newAddress;
+  (newAddress as InputMemberAddressType).key = newAddress.id;
+
+  return newAddress as InputMemberAddressType;
 }
 
 export function getAddressName(address: AnyAddressType): string {
