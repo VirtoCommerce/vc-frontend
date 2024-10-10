@@ -1,1 +1,1 @@
-export * from "./mutations/createPurchaseRequestsFromDocument";
+export * from "./mutations/createPurchaseRequestFromDocuments";

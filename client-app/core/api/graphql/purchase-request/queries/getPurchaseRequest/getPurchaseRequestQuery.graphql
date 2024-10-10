@@ -1,5 +1,5 @@
-query GetPurchaseRequest($id: String!) {
-  purchaseRequest(id: $id) {
+query GetPurchaseRequest($purchaseRequestId: String!) {
+  purchaseRequest(purchaseRequestId: $purchaseRequestId) {
     id
     number
     cartId

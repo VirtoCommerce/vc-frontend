@@ -1,21 +1,39 @@
 import { computed, toValue } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
+import { useUpdatePurchaseRequestByDocumentsMutation } from "@/core/api/graphql/purchase-request/mutations/updatePurchaseRequestByDocuments";
 import { useGetPurchaseRequestQuery } from "@/core/api/graphql/purchase-request/queries/getPurchaseRequest";
 import { useUserQuote } from "@/shared/account/composables/useUserQuote";
 import { useFullCart } from "@/shared/cart";
 import { toAttachedFile } from "@/ui-kit/utilities/file";
+import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";
 import type { MaybeRefOrGetter } from "vue";
 
-export function usePurchaseRequest(variables: MaybeRefOrGetter<{ id: string }>) {
-  const { result, refetch, loading: purchaseRequestLoading } = useGetPurchaseRequestQuery(variables);
+export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequestId: string }>) {
+  const { result: query, refetch, loading: purchaseRequestLoading } = useGetPurchaseRequestQuery(variables);
 
-  const purchaseRequest = computed(() => result?.value?.purchaseRequest);
+  const purchaseRequest = computed(() => query?.value?.purchaseRequest);
 
   const sources = computed(() => purchaseRequest.value?.sources ?? []);
 
   const sourceFiles = computed(() =>
     sources.value.map((source) => toAttachedFile(source.name, source.size, source.contentType, source.url)),
   );
+
+  const {
+    files,
+    fetchFileOptions,
+    fileOptions,
+    processing: updatingPurchaseRequest,
+    processDocuments,
+  } = usePurchaseRequestDocuments(sourceFiles);
+
+  const { mutate: _updatePurchaseRequestByDocuments } = useUpdatePurchaseRequestByDocumentsMutation(variables);
+
+  async function updatePurchaseRequestByDocuments(items: INewFile[]): Promise<void> {
+    return await processDocuments(items, async (documentUrls) => {
+      await _updatePurchaseRequestByDocuments({ command: { documentUrls } });
+    });
+  }
 
   const {
     loading: cartLoading,
@@ -67,10 +85,15 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ id: string }>) 
     purchaseRequest,
     sources,
     sourceFiles,
+    files,
+    fileOptions,
+    updatingPurchaseRequest,
     cart,
     allCartItemsAreDigital,
     quote,
     refetch,
+    fetchFileOptions,
+    updatePurchaseRequestByDocuments,
     fetchItems,
     changeCartItemQuantity,
     changeQuoteItemQuantity,

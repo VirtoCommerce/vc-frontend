@@ -1,0 +1,5 @@
+mutation UpdatePurchaseRequestByDocuments($command: InputUpdatePurchaseRequestByDocumentsType!) {
+  updatePurchaseRequestByDocuments(command: $command) {
+    id
+  }
+}

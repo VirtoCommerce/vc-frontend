@@ -4,8 +4,8 @@
       {{ $t("shared.bulk_order.from_file.title") }}
     </VcTypography>
     <VcWidget size="lg">
-      <div :class="{ 'grid gap-4 md:grid-cols-[auto_290px]': !processing }">
-        <section v-if="processing">
+      <div :class="{ 'grid gap-4 md:grid-cols-[auto_290px]': !creatingPurchaseRequest }">
+        <section v-if="creatingPurchaseRequest">
           <p class="mb-3 text-sm">
             {{ $t("shared.bulk_order.from_file.processing.message") }}
           </p>
@@ -46,12 +46,9 @@
 </template>
 
 <script setup lang="ts">
-import { inject, ref, watchEffect } from "vue";
+import { watchEffect } from "vue";
 import { useRouter } from "vue-router";
-import { useCreatePurchaseRequestFromDocumentsMutation } from "@/core/api/graphql/purchase-request/mutations/createPurchaseRequestsFromDocument";
-import { configInjectionKey } from "@/core/injection-keys";
-import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/constants";
-import { useFiles } from "@/shared/files/composables/useFiles";
+import { useNewPurchaseRequest } from "@/shared/purchase-request/composables/useNewPurchaseRequest";
 
 interface IProps {
   withTitle?: boolean;
@@ -59,36 +56,14 @@ interface IProps {
 
 defineProps<IProps>();
 
-const config = inject(configInjectionKey, {});
 const router = useRouter();
-const {
-  files,
-  addFiles,
-  validateFiles,
-  uploadFiles,
-  fetchOptions: fetchFileOptions,
-  options: fileOptions,
-} = useFiles(config.purchase_request_file_scope ?? DEFAULT_PURCHASE_REQUEST_FILES_SCOPE);
 
-const { mutate: createPurchaseRequestFromDocuments } = useCreatePurchaseRequestFromDocumentsMutation();
-
-const processing = ref(false);
+const { files, fileOptions, fetchFileOptions, creatingPurchaseRequest, createPurchaseRequestFromDocuments } =
+  useNewPurchaseRequest();
 
 async function onAddFiles(items: INewFile[]) {
-  processing.value = true;
-
-  addFiles(items);
-  validateFiles();
-  await uploadFiles();
-
-  const documentUrls = files.value.map((x) => x.url!);
-  if (documentUrls.length) {
-    const result = await createPurchaseRequestFromDocuments({ command: { documentUrls } });
-    const id = result?.data?.createPurchaseRequestFromDocument?.id;
-    await router.push({ name: "PurchaseRequest", params: { id } });
-  }
-
-  processing.value = false;
+  const purchaseRequestId = await createPurchaseRequestFromDocuments(items);
+  void router.push({ name: "PurchaseRequest", params: { purchaseRequestId } });
 }
 
 watchEffect(async () => {

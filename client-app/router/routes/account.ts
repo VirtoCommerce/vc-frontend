@@ -121,7 +121,7 @@ export const accountRoutes: RouteRecordRaw[] = [
     children: [
       { path: "", name: "PurchaseRequests", component: PurchaseRequests },
       {
-        path: ":id",
+        path: ":purchaseRequestId",
         name: "PurchaseRequest",
         component: PurchaseRequest,
         props: true,

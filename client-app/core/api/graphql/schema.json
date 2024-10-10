@@ -18944,7 +18944,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "InputUpdatePurchaseRequestByDocumentType",
+        "name": "InputUpdatePurchaseRequestByDocumentsType",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -22769,7 +22769,7 @@
             "deprecationReason": null
           },
           {
-            "name": "createPurchaseRequestFromDocument",
+            "name": "createPurchaseRequestFromDocuments",
             "description": null,
             "args": [
               {
@@ -24480,7 +24480,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updatePurchaseRequestByDocument",
+            "name": "updatePurchaseRequestByDocuments",
             "description": null,
             "args": [
               {
@@ -24491,7 +24491,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "InputUpdatePurchaseRequestByDocumentType",
+                    "name": "InputUpdatePurchaseRequestByDocumentsType",
                     "ofType": null
                   }
                 },
@@ -35106,7 +35106,7 @@
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "purchaseRequestId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",

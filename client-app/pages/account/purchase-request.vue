@@ -6,20 +6,20 @@
 
     <VcTypography tag="h1">{{ $t("pages.account.purchase_request.title", [purchaseRequest?.number]) }}</VcTypography>
 
-    <VcEmptyPage
+    <VcEmptyView
       v-if="!cart?.items?.length && !quote?.items?.length"
-      :title="$t('pages.account.purchase_request.title')"
-      :description="$t('pages.account.purchase_request.failed_or_used_description')"
-      image="/static/images/errors/emptyCart.webp"
-      mobile-image="/static/images/errors/emptyCartMobile.webp"
-      :breadcrumbs="breadcrumbs"
+      class="lg:mt-32"
+      :text="$t('pages.account.purchase_request.failed_or_used_description')"
     >
-      <template #actions>
+      <template #icon>
+        <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/order.svg" />
+      </template>
+      <template #button>
         <VcButton :to="{ name: 'BulkOrder' }" size="lg">
           {{ $t("pages.account.purchase_request.try_again") }}
         </VcButton>
       </template>
-    </VcEmptyPage>
+    </VcEmptyView>
 
     <VcLayoutWithRightSidebar v-else is-sidebar-sticky>
       <VcWidget :title="$t('pages.account.purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
@@ -76,13 +76,10 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { inject, ref, toRef, watchEffect } from "vue";
+import { toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
-import { configInjectionKey } from "@/core/injection-keys";
-import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/constants";
 import { OrderSummary, ProceedTo } from "@/shared/checkout/components";
-import { useFiles } from "@/shared/files/composables/useFiles";
 import { downloadFile } from "@/shared/files/utils";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePurchaseRequest } from "@/shared/purchase-request/composables/usePurchaseRequest";
@@ -90,24 +87,26 @@ import QuoteLineItems from "@/shared/account/components/quote-line-items.vue";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
 interface IProps {
-  id: string;
+  purchaseRequestId: string;
 }
 
 const props = defineProps<IProps>();
 
 const propsRef = toRef(props);
 
-const config = inject(configInjectionKey, {});
 const { t } = useI18n();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const {
   loading,
   purchaseRequest,
-  sourceFiles,
+  files,
+  fileOptions,
   cart,
   allCartItemsAreDigital,
   quote,
+  fetchFileOptions,
+  updatePurchaseRequestByDocuments,
   fetchItems,
   changeCartItemQuantity,
   changeQuoteItemQuantity,
@@ -123,29 +122,8 @@ const breadcrumbs = useBreadcrumbs(() => [
 
 const isMobile = breakpoints.smaller("lg");
 
-const {
-  files,
-  addFiles,
-  validateFiles,
-  uploadFiles,
-  fetchOptions: fetchFileOptions,
-  options: fileOptions,
-} = useFiles(config.purchase_request_file_scope ?? DEFAULT_PURCHASE_REQUEST_FILES_SCOPE, sourceFiles);
-const processing = ref(false);
-
 async function onAddFiles(items: INewFile[]) {
-  processing.value = true;
-
-  addFiles(items);
-  validateFiles();
-  await uploadFiles();
-
-  const documentUrl = files.value[0]?.url;
-  if (documentUrl) {
-    // TODO
-  }
-
-  processing.value = false;
+  await updatePurchaseRequestByDocuments(items);
 }
 
 function onFileDownload(file: FileType) {

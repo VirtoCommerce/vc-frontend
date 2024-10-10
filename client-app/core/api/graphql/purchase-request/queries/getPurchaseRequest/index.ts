@@ -2,7 +2,7 @@ import { useQuery } from "@vue/apollo-composable";
 import { GetPurchaseRequestDocument } from "@/core/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
-export function useGetPurchaseRequestQuery(variables: MaybeRefOrGetter<{ id: string }>) {
+export function useGetPurchaseRequestQuery(variables: MaybeRefOrGetter<{ purchaseRequestId: string }>) {
   return useQuery(GetPurchaseRequestDocument, variables, {
     notifyOnNetworkStatusChange: true,
     fetchPolicy: "cache-and-network",

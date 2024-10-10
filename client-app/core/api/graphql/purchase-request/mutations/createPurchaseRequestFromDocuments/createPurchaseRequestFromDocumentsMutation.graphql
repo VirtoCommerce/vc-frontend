@@ -1,7 +1,5 @@
-#import "../../../cart/fragments/fullCart.graphql"
-
 mutation CreatePurchaseRequestFromDocuments($command: InputCreatePurchaseRequestFromDocumentsType!) {
-  createPurchaseRequestFromDocument(command: $command) {
+  createPurchaseRequestFromDocuments(command: $command) {
     id
   }
 }

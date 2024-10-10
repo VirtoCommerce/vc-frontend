@@ -152,7 +152,7 @@ function applySorting(newSort: Sort): void {
 }
 
 function goToPurchaseRequest(payload: { id: string }): void {
-  void router.push({ name: "PurchaseRequest", params: { id: payload.id } });
+  void router.push({ name: "PurchaseRequest", params: { purchaseRequestId: payload.id } });
 }
 
 function changePage(newPage: number): void {
