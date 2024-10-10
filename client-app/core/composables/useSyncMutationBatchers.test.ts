@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useSyncMutationBatchers } from "./useSyncMutationBatchers";
 import type { useMutationBatcher } from "./useMutationBatcher";
