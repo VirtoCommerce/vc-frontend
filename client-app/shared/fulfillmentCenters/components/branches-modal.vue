@@ -26,7 +26,7 @@
                 v-if="!isBranchSelected(index)"
                 :branch="branch"
                 class="transition-opacity delay-100 duration-300 ease-in-out"
-                :is-text-truncate-enabled="!!selectedBranchesIds.length"
+                is-text-truncate-enabled
               >
                 <VcCheckbox class="mr-3 cursor-pointer" :value="branch.id" />
               </BranchItem>
@@ -74,7 +74,7 @@
                 v-if="isBranchSelected(index)"
                 :branch="branch"
                 class="transition-opacity delay-100 duration-300 ease-in-out"
-                :is-text-truncate-enabled="!!selectedBranchesIds.length"
+                is-text-truncate-enabled
               >
                 <VcCheckbox class="mr-3 cursor-pointer" :value="branch.id" />
               </BranchItem>

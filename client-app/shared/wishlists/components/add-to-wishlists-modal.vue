@@ -81,14 +81,10 @@
 
         <VcCheckboxGroup v-model="selectedListsOtherIds">
           <transition-group name="list-input" tag="ul">
-            <li
-              v-for="list in listsOther"
-              :key="list.id"
-              class="flex justify-between px-6 pb-5 pt-2 last:pb-5 sm:pb-4 sm:pt-3"
-            >
+            <li v-for="list in listsOther" :key="list.id" class="flex justify-between px-6 pb-5 last:pb-5 sm:pb-4">
               <VcCheckbox :value="list.id" :disabled="loading">
                 <span
-                  class="line-clamp-1 text-base"
+                  class="line-clamp-1 ps-0.5 text-base"
                   :class="{ 'text-neutral': !selectedListsOtherIds.includes(list.id!) }"
                 >
                   {{ list.name }}
