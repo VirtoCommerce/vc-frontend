@@ -28,13 +28,17 @@
           color="secondary"
           @click="handleFacetItemClick(item)"
         >
-          <VcCheckbox v-model="item.selected" size="xs" :disabled="loading" @change="changeFacetValues" @click.stop />
+          <template #prepend>
+            <VcCheckbox v-model="item.selected" size="xs" :disabled="loading" @change="changeFacetValues" @click.stop />
+          </template>
 
-          <span class="facet-filter-widget__label">{{ item.label }}</span>
+          <span>{{ item.label }}</span>
 
-          <VcBadge variant="outline" size="sm" rounded color="secondary">
-            {{ $n(item.count as number, "decimal") }}
-          </VcBadge>
+          <template #append>
+            <VcBadge variant="outline" size="sm" rounded color="secondary">
+              {{ $n(item.count as number, "decimal") }}
+            </VcBadge>
+          </template>
         </VcMenuItem>
 
         <VcMenuItem v-if="isNoResults" size="xs" disabled>
