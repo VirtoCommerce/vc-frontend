@@ -1,8 +1,16 @@
 {
   "common": {
+    "buttons": {
+      "leave_feedback": "Laisser une évaluation"
+    },
     "labels": {
       "feedback": "Rétroaction",
-      "rating": "Notation"
+      "rating": "Notation",
+      "rate_product": "Évaluer le produit",
+      "item_as_described_by_vendor": "Article tel que décrit par le vendeur?"
+    },
+    "messages": {
+      "thanks_for_feedback": "Vos commentaires ont été soumis avec succès et sont en attente de confirmation. Merci!"
     }
   }
 }

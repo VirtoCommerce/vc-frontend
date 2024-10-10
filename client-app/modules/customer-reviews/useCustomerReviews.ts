@@ -1,7 +1,10 @@
+import { isDefined } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { Logger } from "@/core/utilities";
 import { getCustomerReviews } from "./api/graphql";
+import { createCustomerReview } from "./api/graphql/mutations/createCustomerReview";
+import { canLeaveFeedback } from "./api/graphql/queries/canLeaveFeedback";
 import { ENABLED_KEY, MODULE_ID, PAGE_SIZE } from "./constants";
 import type { CustomerReview } from "./api/graphql/types";
 import type { Ref } from "vue";
@@ -40,6 +43,30 @@ export function useCustomerReviews() {
     }
   }
 
+  async function _canLeaveFeedback(entityId: string, entityType: string): Promise<boolean> {
+    try {
+      const response = await canLeaveFeedback({ entityId, entityType });
+      return isDefined(response) && response;
+    } catch (e) {
+      Logger.error(`${useCustomerReviews.name}.${canLeaveFeedback.name}`);
+      throw e;
+    }
+  }
+
+  async function _createCustomerReview(payload: {
+    entityId: string;
+    entityType: string;
+    entityName: string;
+    review: string;
+    rating: number;
+  }): Promise<void> {
+    try {
+      await createCustomerReview(payload);
+    } catch (e) {
+      Logger.error(`${useCustomerReviews.name}.${createCustomerReview.name}`);
+    }
+  }
+
   return {
     enabled: computed(() => isEnabled(ENABLED_KEY)),
     reviews: computed(() => reviews.value),
@@ -48,5 +75,7 @@ export function useCustomerReviews() {
     pagesCount: readonly(pagesCount),
     pageNumber: readonly(pageNumber),
     fetchCustomerReviews,
+    canLeaveFeedback: _canLeaveFeedback,
+    createCustomerReview: _createCustomerReview,
   };
 }

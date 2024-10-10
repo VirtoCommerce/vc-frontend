@@ -1,0 +1,3 @@
+query CanLeaveFeedback($storeId: String!, $entityId: String!, $entityType: String!, $userId: String!) {
+  canLeaveFeedback(storeId: $storeId, entityId: $entityId, entityType: $entityType, userId: $userId)
+}

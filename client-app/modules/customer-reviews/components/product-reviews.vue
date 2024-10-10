@@ -6,7 +6,7 @@
         <ProductRating :rating="rating" class="font-bold" />
       </div>
 
-      <div class="max-lg:mt-3 lg:flex">
+      <div v-if="reviews.length" class="max-lg:mt-3 lg:flex">
         <span class="mr-2 content-center font-bold max-lg:hidden">
           {{ $t("common.labels.sort_by_date") }}
         </span>
@@ -30,7 +30,7 @@
           </div>
         </div>
 
-        <ReviewRating :rating="review.rating" />
+        <ReviewRating :rating="review.rating" read-only />
       </div>
 
       <div class="mb-4">
@@ -38,13 +38,74 @@
       </div>
     </div>
 
-    <VcPagination v-if="pagesCount > 1" v-model:page="pageNum" :pages="pagesCount" @update:page="changePage" />
+    <div class="flex justify-between">
+      <VcPagination
+        v-if="pagesCount > 1"
+        v-model:page="pageNum"
+        :pages="pagesCount"
+        class="grow"
+        @update:page="changePage"
+      />
+
+      <VcButton
+        v-if="isAuthenticated && canLeaveFeedback && !!reviews.length && !reviewFormVisible && !reviewSubmitted"
+        variant="outline"
+        @click="reviewFormVisible = true"
+      >
+        {{ $t("common.buttons.leave_feedback") }}
+      </VcButton>
+    </div>
+
+    <div v-if="isAuthenticated && (reviewFormVisible || reviewSubmitted)" class="border-1 mt-6 border-t pt-4">
+      <div v-if="reviewSubmitted" class="text-lg font-bold">
+        {{ $t("common.messages.thanks_for_feedback") }}
+      </div>
+
+      <template v-if="!reviewSubmitted">
+        <div class="flex justify-between">
+          <div class="text-lg font-bold">
+            {{ $t("common.labels.item_as_described_by_vendor") }}
+          </div>
+
+          <div>
+            <div class="mb-2 font-bold">
+              {{ $t("common.labels.rate_product") }}
+            </div>
+            <ReviewRating :rating="newReviewRating" @set-rating="setRating" />
+          </div>
+        </div>
+
+        <VcTextarea v-model="newReviewContent" :label="$t('common.labels.comments')" class="mt-4" />
+
+        <div class="mt-4 flex justify-between">
+          <VcButton
+            v-if="!!reviews.length"
+            color="neutral"
+            variant="outline"
+            min-width="12rem"
+            @click="reviewFormVisible = false"
+          >
+            {{ $t("common.buttons.cancel") }}
+          </VcButton>
+
+          <VcButton
+            :disabled="!newReviewContent || newReviewRating === 0"
+            variant="solid"
+            min-width="12rem"
+            @click="submitReview"
+          >
+            {{ $t("common.buttons.submit") }}
+          </VcButton>
+        </div>
+      </template>
+    </div>
   </VcWidget>
 </template>
 
 <script setup lang="ts">
 import { ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
+import { useUser } from "@/shared/account";
 import ProductRating from "./product-rating.vue";
 import ReviewRating from "./review-rating.vue";
 import type { CustomerReview, Rating } from "@/core/api/graphql/types";
@@ -52,6 +113,13 @@ import type { CustomerReview, Rating } from "@/core/api/graphql/types";
 interface IEmits {
   (event: "changeSortByDate", value: string): void;
   (event: "changePage", value: number): void;
+  (
+    event: "createReview",
+    value: {
+      review: string;
+      rating: number;
+    },
+  ): void;
 }
 
 const emit = defineEmits<IEmits>();
@@ -64,9 +132,11 @@ interface IProps {
   pagesCount: number;
   rating?: Rating;
   reviews: CustomerReview[];
+  canLeaveFeedback: boolean;
 }
 
 const { t } = useI18n();
+const { isAuthenticated } = useUser();
 
 const sortByDateItems = [
   {
@@ -79,8 +149,15 @@ const sortByDateItems = [
   },
 ];
 
+const reviews = toRef(props, "reviews");
 const pageNum = toRef(props, "page");
+const canLeaveFeedback = toRef(props, "canLeaveFeedback");
 const sortByDate = ref(sortByDateItems[0].id);
+const reviewSubmitted = ref(false);
+
+const reviewFormVisible = ref(!reviews.value.length);
+const newReviewRating = ref(0);
+const newReviewContent = ref("");
 
 function changeSortByDate(value: string): void {
   emit("changeSortByDate", value);
@@ -88,5 +165,19 @@ function changeSortByDate(value: string): void {
 
 function changePage(pageNumber: number): void {
   emit("changePage", pageNumber);
+}
+
+function setRating(value: number): void {
+  newReviewRating.value = value;
+}
+
+function submitReview(): void {
+  emit("createReview", { review: newReviewContent.value, rating: newReviewRating.value });
+
+  newReviewContent.value = "";
+  newReviewRating.value = 0;
+  reviewFormVisible.value = false;
+  canLeaveFeedback.value = false;
+  reviewSubmitted.value = true;
 }
 </script>

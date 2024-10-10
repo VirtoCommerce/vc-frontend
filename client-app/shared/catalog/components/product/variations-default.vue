@@ -43,7 +43,7 @@ import { getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
 import CountInCart from "../count-in-cart.vue";
 import InStock from "../in-stock.vue";
-import type { Product, VariationType } from "@/core/api/graphql/types";
+import type { Product } from "@/core/api/graphql/types";
 
 interface IEmits {
   (event: "changePage", page: number): void;
@@ -61,7 +61,7 @@ interface IProps {
 
 const pageNumber = toRef(props, "pageNumber");
 
-function getProperties(variation: VariationType) {
+function getProperties(variation: Product) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
   );

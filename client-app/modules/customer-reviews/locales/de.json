@@ -1,8 +1,16 @@
 {
   "common": {
+    "buttons": {
+      "leave_feedback": "Feedback hinterlassen"
+    },
     "labels": {
       "feedback": "Feedback",
-      "rating": "Bewertung"
+      "rating": "Bewertung",
+      "rate_product": "Produkt bewerten",
+      "item_as_described_by_vendor": "Artikel wie vom Lieferanten beschrieben?"
+    },
+    "messages": {
+      "thanks_for_feedback": "Ihr Feedback wurde erfolgreich übermittelt und wartet auf eine Bestätigung. Vielen Dank!"
     }
   }
 }

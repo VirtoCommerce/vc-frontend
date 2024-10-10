@@ -155,7 +155,8 @@
       "ascending": "Aufsteigend",
       "descending": "Absteigend",
       "date_new_to_old": "Datum, neu bis alt",
-      "date_old_to_new": "Datum, alt bis neu"
+      "date_old_to_new": "Datum, alt bis neu",
+      "comments": "Kommentare"
     },
     "prefixes": {
       "please": "Bitte",

@@ -1,8 +1,16 @@
 {
   "common": {
+    "buttons": {
+      "leave_feedback": "Leave feedback"
+    },
     "labels": {
       "feedback": "Feedback",
-      "rating": "Rating"
+      "rating": "Rating",
+      "rate_product": "Rate product",
+      "item_as_described_by_vendor": "Item as described by the vendor?"
+    },
+    "messages": {
+      "thanks_for_feedback": "Your feedback has been successfully submitted and is awaiting confirmation. Thank you!"
     }
   }
 }

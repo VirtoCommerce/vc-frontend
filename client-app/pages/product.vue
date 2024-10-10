@@ -52,15 +52,17 @@
 
         <component
           :is="ProductReviews"
-          v-if="productReviewsEnabled && !!productReviews?.length"
+          v-if="productReviewsEnabled && (!!productReviews?.length || leaveFeedbackVisible)"
           :model="productReviewsSection"
           :fetching="fetchingProductReviews"
           :rating="product.rating"
-          :reviews="productReviews"
+          :reviews="productReviews ?? []"
           :page="productReviewsPayload.page"
           :pages-count="productReviewsPagesCount"
+          :can-leave-feedback="leaveFeedbackVisible"
           @change-sort-by-date="changeSortProductReviews"
           @change-page="changeProductReviewsPage"
+          @create-review="createReview"
         />
 
         <component
@@ -199,6 +201,8 @@ const {
   pagesCount: productReviewsPagesCount,
   reviews: productReviews,
   fetchCustomerReviews,
+  canLeaveFeedback,
+  createCustomerReview,
 } = useCustomerReviews();
 
 const template = useTemplate("product");
@@ -217,6 +221,7 @@ const productReviewsPayload = ref({
   page: 1,
   sort: "createddate:desc",
 });
+const leaveFeedbackVisible = ref(false);
 
 const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
   page: 1,
@@ -344,6 +349,18 @@ async function changeProductReviewsPage(page: number): Promise<void> {
   await fetchCustomerReviews(productReviewsPayload.value);
 }
 
+async function createReview(payload: { review: string; rating: number }): Promise<void> {
+  await createCustomerReview({
+    entityId: productId.value,
+    entityName: product.value!.name,
+    entityType: "Product",
+    review: payload.review,
+    rating: payload.rating,
+  });
+
+  await fetchCustomerReviews(productReviewsPayload.value);
+}
+
 watchEffect(() => {
   if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
     usePageHead({
@@ -410,9 +427,10 @@ watchEffect(() => {
   }
 });
 
-watchEffect(() => {
+watchEffect(async () => {
   if (productReviewsEnabled.value) {
     void fetchCustomerReviews(productReviewsPayload.value);
+    leaveFeedbackVisible.value = await canLeaveFeedback(productId.value, "Product");
   }
 });
 </script>
