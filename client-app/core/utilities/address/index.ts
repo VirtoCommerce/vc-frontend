@@ -5,11 +5,11 @@ import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graph
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {
   const newAddress = clone(address);
 
+  (newAddress as InputMemberAddressType).key = newAddress.id;
+
   delete newAddress.id;
   delete newAddress.isDefault;
   delete newAddress.isFavorite;
-
-  (newAddress as InputMemberAddressType).key = newAddress.id;
 
   return newAddress as InputMemberAddressType;
 }
