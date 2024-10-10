@@ -133,7 +133,7 @@ import { QueryParamName } from "@/core/enums";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
 import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
-import MobileMenu from "./mobile-menu.vue";
+import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import PushMessages from "@/shared/push-messages/components/push-messages.vue";

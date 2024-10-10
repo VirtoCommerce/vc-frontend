@@ -56,6 +56,9 @@ const organization = eagerComputed<Organization | null>(
   () =>
     user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
 );
+
+const allOrganizations = computed<Organization[]>(() => user.value?.contact?.organizations?.items || []);
+
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 interface IPasswordExpirationEntry {
@@ -363,6 +366,7 @@ export function useUser() {
       () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
     ),
     organization,
+    allOrganizations,
     operator,
     checkPermissions,
     fetchUser,

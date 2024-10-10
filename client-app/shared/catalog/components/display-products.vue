@@ -33,7 +33,7 @@
 import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
-import { useCustomerReviews } from "@/shared/common";
+import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
 import ProductCardGrid from "./product-card-grid.vue";
 import ProductCardList from "./product-card-list.vue";
 import ProductSkeletonGrid from "./product-skeleton-grid.vue";
