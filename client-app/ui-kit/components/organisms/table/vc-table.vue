@@ -73,12 +73,12 @@
         {{ $t("ui_kit.reach_limit.page_limit") }}
       </slot>
     </p>
+
     <VcPagination
       v-if="!hideDefaultFooter && items.length && pages > 1"
       :page="page"
       :pages="Math.min(pages, pageLimit || pages)"
-      class="self-start"
-      :class="[isMobile ? 'px-6 py-10' : 'mt-5 px-5 pb-5']"
+      class="mt-10 md:px-5 md:pb-5"
       @update:page="onPageUpdate"
     />
   </slot>
