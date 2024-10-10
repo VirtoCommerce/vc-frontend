@@ -24,5 +24,4 @@ export type ExtendedMenuLinkType = {
   children?: ExtendedMenuLinkType[];
   priority?: number;
   isCatalogItem?: boolean;
-  isContactOrganizationsItem?: boolean;
 };
