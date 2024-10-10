@@ -24,7 +24,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import type { BrowserTargetType } from "@/core/types";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IEmits {

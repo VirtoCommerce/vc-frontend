@@ -26,7 +26,6 @@ import { useBreakpoints } from "@vueuse/core";
 import { toRef } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { BREAKPOINTS } from "@/core/constants";
-import type { BrowserTargetType } from "@/core/types";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;
