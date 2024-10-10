@@ -1,17 +1,12 @@
 <template>
-  <button
-    :aria-label="tooltipText"
-    :title="tooltipText"
-    type="button"
-    :class="[
-      'flex items-center justify-center disabled:text-neutral-300',
-      product.inWishlist ? 'text-primary' : 'text-neutral-400',
-    ]"
+  <VcProductActionsButton
+    color="danger"
+    :icon-size="iconSize"
+    :active="product.inWishlist"
     :disabled="!isAuthenticated"
+    :tooltip-text="tooltipText"
     @click="openAddToListModal"
-  >
-    <VcIcon :class="customClass" name="whishlist" />
-  </button>
+  />
 </template>
 
 <script setup lang="ts">
@@ -25,12 +20,10 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
-  customClass?: string;
+  iconSize?: VcIconSizeType;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  customClass: "size-5 lg:size-4",
-});
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { openModal } = useModal();

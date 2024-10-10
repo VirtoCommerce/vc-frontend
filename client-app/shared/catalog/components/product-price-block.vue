@@ -4,9 +4,9 @@
 
     <template #footer-container>
       <div class="flex select-none divide-x print:hidden">
-        <AddToList class="w-1/5" :product="product" custom-class="size-5" />
+        <AddToList class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
 
-        <AddToCompareCatalog class="w-1/5" :product="product" custom-class="size-5" />
+        <AddToCompareCatalog class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
 
         <VcPopover class="w-1/5" y-offset="20" trigger="click" z-index="3" @toggle="handleShareProductPopoverToggle">
           <template #trigger>
