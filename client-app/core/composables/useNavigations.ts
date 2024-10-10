@@ -146,7 +146,7 @@ export function useNavigations() {
     const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
-      if (typeof catalog_menu_link_list_name === "string") {
+      if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
         // Use a list of links
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
           convertToExtendedMenuLink(item, true),
