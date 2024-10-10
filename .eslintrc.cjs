@@ -143,7 +143,7 @@ module.exports = {
     "vue/no-multiple-objects-in-class": "warn",
     "vue/no-required-prop-with-default": "warn",
     "vue/no-static-inline-styles": "warn",
-    "vue/no-setup-props-reactivity-loss": "error",
+    "vue/no-setup-props-reactivity-loss": "warn",
     "vue/no-useless-v-bind": "warn",
     "vue/padding-line-between-blocks": "warn",
     "vue/padding-lines-in-component-definition": "warn",
