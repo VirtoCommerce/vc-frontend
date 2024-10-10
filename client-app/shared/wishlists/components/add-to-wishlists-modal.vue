@@ -30,7 +30,7 @@
           </ul>
         </template>
 
-        <div class="flex justify-between bg-neutral-100 px-6 py-3 sm:py-2.5">
+        <div class="mb-3 flex justify-between bg-neutral-100 px-6 py-3 sm:mb-4 sm:py-2.5">
           <div class="text-base font-bold">
             {{ $t("shared.wishlists.add_to_wishlists_modal.add_to_other_lists") }}
           </div>
@@ -49,12 +49,8 @@
           </button>
         </div>
 
-        <transition-group name="list-input" tag="ul" class="pt-2 sm:pt-0.5">
-          <li
-            v-for="(input, index) in newLists"
-            :key="index"
-            class="list-input-item flex items-start px-6 first:pt-3 first:sm:pt-4"
-          >
+        <transition-group name="list-input" tag="ul" class="last:pb-3">
+          <li v-for="(input, index) in newLists" :key="index" class="list-input-item flex items-start px-6">
             <button type="button" class="relative mt-3" @click="removeNewList(index)">
               <VcCheckbox model-value class="relative" />
               <div class="absolute inset-0"></div>
