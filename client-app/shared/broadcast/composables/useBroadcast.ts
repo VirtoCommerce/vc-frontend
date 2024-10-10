@@ -127,7 +127,7 @@ function localStorageApiFactory(): IUseBroadcastReturn {
     const event = key.replace(prefix, "");
 
     if (oldValue === null) {
-      const data = newValue === "undefined" ? undefined : JSON.parse(newValue!);
+      const data = newValue === "undefined" ? undefined : (JSON.parse(newValue!) as string);
 
       broadcast(event, data);
     } else if (queue[event]) {

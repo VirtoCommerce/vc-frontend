@@ -8,6 +8,7 @@ const SHORT_INITIAL_DELAY_MS = DEFAULT_DEBOUNCE_IN_MS / 2;
 const SIMULATED_REQUEST_DURATION_MS = DEFAULT_DEBOUNCE_IN_MS;
 const TOTAL_PROCESSING_DELAY_MS = INITIAL_DELAY_MS + SIMULATED_REQUEST_DURATION_MS;
 const MUTATION_OVERRIDE_OPTIONS = {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   context: { fetchOptions: { signal: expect.any(AbortSignal) } },
 };
 
@@ -17,6 +18,8 @@ const mutationMock = (value: unknown) =>
       resolve(value);
     }, SIMULATED_REQUEST_DURATION_MS);
   });
+
+type TestArgumentsType = { command: { cartItems: { productId: string; quantity: number }[] } };
 
 const getTestArguments = (productId: string, quantity: number = 1) => ({
   command: { cartItems: [{ productId, quantity: quantity }] },
@@ -122,10 +125,10 @@ describe("useMutationBatcher", () => {
   it("should apply custom merge strategy", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation, {
-      mergeStrategy: (a, b) => {
-        const itemA = a?.command?.cartItems?.[0];
-        const itemB = b?.command?.cartItems?.[0];
-        const sum = itemA?.productId === itemB.productId ? itemA.quantity + itemB.quantity : itemB.quantity;
+      mergeStrategy: (a: TestArgumentsType, b: TestArgumentsType) => {
+        const itemA = a.command.cartItems[0];
+        const itemB = b.command.cartItems[0];
+        const sum = itemA.productId === itemB.productId ? itemA.quantity + itemB.quantity : itemB.quantity;
         return { command: { cartItems: [{ productId: itemB.productId, quantity: sum }] } };
       },
     });
@@ -207,8 +210,8 @@ describe("useMutationBatcher", () => {
     expect(loading1.value).toBe(false);
     expect(loading2.value).toBe(false);
 
-    add1(DUMMY_TEXT_ARGUMENTS);
-    add2(DUMMY_TEXT_ARGUMENTS);
+    void add1(DUMMY_TEXT_ARGUMENTS);
+    void add2(DUMMY_TEXT_ARGUMENTS);
 
     vi.advanceTimersByTime(DEFAULT_DEBOUNCE_IN_MS);
     vi.advanceTimersByTime(DEFAULT_DEBOUNCE_IN_MS);
