@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { ApolloError } from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
 import mergeWith from "lodash/mergeWith";

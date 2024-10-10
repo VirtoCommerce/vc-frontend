@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import { useMutationBatcher, getMergeStrategyUniqueBy } from "./useMutationBatcher";
@@ -8,7 +10,6 @@ const SHORT_INITIAL_DELAY_MS = DEFAULT_DEBOUNCE_IN_MS / 2;
 const SIMULATED_REQUEST_DURATION_MS = DEFAULT_DEBOUNCE_IN_MS;
 const TOTAL_PROCESSING_DELAY_MS = INITIAL_DELAY_MS + SIMULATED_REQUEST_DURATION_MS;
 const MUTATION_OVERRIDE_OPTIONS = {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   context: { fetchOptions: { signal: expect.any(AbortSignal) } },
 };
 
@@ -126,9 +127,9 @@ describe("useMutationBatcher", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation, {
       mergeStrategy: (a: TestArgumentsType, b: TestArgumentsType) => {
-        const itemA = a.command.cartItems[0];
-        const itemB = b.command.cartItems[0];
-        const sum = itemA.productId === itemB.productId ? itemA.quantity + itemB.quantity : itemB.quantity;
+        const itemA = a?.command?.cartItems?.[0];
+        const itemB = b?.command?.cartItems?.[0];
+        const sum = itemA?.productId === itemB.productId ? itemA.quantity + itemB.quantity : itemB.quantity;
         return { command: { cartItems: [{ productId: itemB.productId, quantity: sum }] } };
       },
     });
