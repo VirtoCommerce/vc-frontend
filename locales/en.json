@@ -151,7 +151,12 @@
       "organizations": "Organizations",
       "my_organizations": "My organizations",
       "select_product": "Please select a product",
-      "brand_name": "Brand name"
+      "brand_name": "Brand name",
+      "sort_by_date": "Sort by date",
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "date_new_to_old": "Date, new to old",
+      "date_old_to_new": "Date, old to new"
     },
     "prefixes": {
       "please": "Please",

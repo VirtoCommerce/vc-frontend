@@ -86,12 +86,10 @@
 
       <DiscountBadge :price="product.price!" />
 
-      <div
-        class="absolute -right-4 -top-4 z-[2] flex flex-col gap-2 rounded-3xl bg-additional-50 px-2 py-3.5 empty:hidden lg:-right-3 lg:px-1.5 lg:py-2"
-      >
+      <VcProductActions direction="vertical" with-background class="absolute -right-4 -top-4 z-[2]">
         <AddToList :product="product" />
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
-      </div>
+      </VcProductActions>
     </div>
 
     <div class="flex grow flex-col pt-3 lg:pt-2.5">
@@ -138,7 +136,7 @@
           </div>
           <div class="min-w-0">
             <div class="truncate">
-              <Rating :rating="product.rating" />
+              <ProductRating :rating="product.rating" />
             </div>
           </div>
         </template>
@@ -210,10 +208,10 @@ import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
-import Rating from "./rating.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
+import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import BackInStockNotifyButton from "@/shared/back-in-stock/components/back-in-stock-notify-button.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();

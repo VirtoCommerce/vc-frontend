@@ -9,7 +9,7 @@ import { computed } from "vue";
 
 interface IProps {
   name?: string;
-  size?: "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | number;
+  size?: VcIconSizeType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -31,35 +31,35 @@ const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--siz
 <style lang="scss">
 .vc-icon {
   --size: var(--vc-icon-size, 1.5rem);
-  --color: var(--vc-icon-color, inherit);
+  --color: var(--vc-icon-color, currentColor);
 
   $self: &;
 
-  @apply inline-block align-top size-[--size] leading-none text-[--color];
+  @apply inline-block align-top size-[--size] leading-none fill-[--color];
 
   &--size {
     &--xxs {
-      @apply w-2.5 h-2.5;
+      @apply size-2.5;
     }
 
     &--xs {
-      @apply w-3.5 h-3.5;
+      @apply size-3.5;
     }
 
     &--sm {
-      @apply w-5 h-5;
+      @apply size-5;
     }
 
     &--lg {
-      @apply w-10 h-10;
+      @apply size-10;
     }
 
     &--xl {
-      @apply w-12 h-12;
+      @apply size-12;
     }
 
     &--xxl {
-      @apply w-16 h-16;
+      @apply size-16;
     }
   }
 

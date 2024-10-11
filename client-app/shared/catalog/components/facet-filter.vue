@@ -167,6 +167,7 @@ const isMobile = breakpoints.smaller("lg");
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 
 function changeFacetValues(): void {
@@ -252,6 +253,8 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
 .facet-filter-dropdown {
   $opened: "";
+
+  @apply shrink-0;
 
   &__trigger {
     width: max-content;

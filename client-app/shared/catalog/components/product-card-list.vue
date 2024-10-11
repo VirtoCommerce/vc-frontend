@@ -19,13 +19,11 @@
         <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
 
-      <div
-        class="vc-product-card-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
-      >
+      <VcProductActions class="vc-product-card-list__buttons mt-3 place-self-start lg:mt-2">
         <AddToList :product="product" />
 
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
-      </div>
+      </VcProductActions>
     </div>
 
     <!-- Product title -->
@@ -70,7 +68,7 @@
         </div>
         <div class="min-w-0">
           <div class="truncate">
-            <Rating :rating="product.rating" />
+            <ProductRating :rating="product.rating" />
           </div>
         </div>
       </template>
@@ -154,9 +152,9 @@ import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
-import Rating from "./rating.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
+import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 import BackInStockNotifyButton from "@/shared/back-in-stock/components/back-in-stock-notify-button.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
