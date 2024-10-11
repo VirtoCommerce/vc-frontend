@@ -5399,7 +5399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vee-validate/rules@npm:~4.13.1":
+"@vee-validate/rules@npm:~4.13.2":
   version: 4.13.2
   resolution: "@vee-validate/rules@npm:4.13.2"
   dependencies:
@@ -5408,7 +5408,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vee-validate/yup@npm:~4.13.1":
+"@vee-validate/yup@npm:~4.13.2":
   version: 4.13.2
   resolution: "@vee-validate/yup@npm:4.13.2"
   dependencies:
@@ -15643,8 +15643,8 @@ __metadata:
     "@types/node": "npm:^20.14.6"
     "@types/uuid": "npm:^9.0.8"
     "@unhead/vue": "npm:^1.9.14"
-    "@vee-validate/rules": "npm:~4.13.1"
-    "@vee-validate/yup": "npm:~4.13.1"
+    "@vee-validate/rules": "npm:~4.13.2"
+    "@vee-validate/yup": "npm:~4.13.2"
     "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^1.0.4"
     "@virto-commerce/front-modules-hotjar": "npm:^1.0.4"
     "@vitejs/plugin-vue": "npm:^5.0.5"
@@ -16072,7 +16072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^4.2.5, vue-router@npm:^4.4.5":
+"vue-router@npm:^4.4.5":
   version: 4.4.5
   resolution: "vue-router@npm:4.4.5"
   dependencies:
