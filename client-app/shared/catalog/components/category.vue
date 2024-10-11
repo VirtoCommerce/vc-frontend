@@ -8,51 +8,49 @@
     <!-- Breadcrumbs -->
     <VcBreadcrumbs v-if="!hideBreadcrumbs" class="mb-2.5 md:mb-4" :items="breadcrumbs" />
 
+    <!-- Popup sidebar for mobile and horizontal desktop view -->
+    <FiltersPopupSidebar
+      v-if="!hideSidebar && (isMobile || isHorizontalFilters)"
+      :is-exist-selected-facets="hasSelectedFacets"
+      :is-popup-sidebar-filter-dirty="isFiltersDirty"
+      :popup-sidebar-filters="productsFilters"
+      :is-horizontal-filters="isHorizontalFilters"
+      :facets-loading="fetchingFacets"
+      :is-mobile="isMobile"
+      :is-visible="isFiltersSidebarVisible"
+      :keyword-query-param="keywordQueryParam"
+      :sort-query-param="sortQueryParam"
+      :loading="fetchingProducts"
+      :hide-sorting="hideSorting"
+      :hide-controls="hideControls"
+      @hide-popup-sidebar="hideFiltersSidebar"
+      @reset-facet-filters="resetFacetFilters"
+      @open-branches-modal="openBranchesModal"
+      @update-popup-sidebar-filters="updateFiltersSidebar"
+      @apply-filters="applyFilters"
+    />
+
     <div class="flex items-stretch lg:gap-6">
-      <template v-if="!hideSidebar">
-        <!-- Popup sidebar for mobile and horizontal desktop view -->
-        <FiltersPopupSidebar
-          v-if="isMobile || isHorizontalFilters"
-          :is-exist-selected-facets="hasSelectedFacets"
-          :is-popup-sidebar-filter-dirty="isFiltersDirty"
-          :popup-sidebar-filters="productsFilters"
-          :is-horizontal-filters="isHorizontalFilters"
-          :facets-loading="fetchingFacets"
-          :is-mobile="isMobile"
-          :is-visible="isFiltersSidebarVisible"
-          :keyword-query-param="keywordQueryParam"
-          :sort-query-param="sortQueryParam"
-          :loading="fetchingProducts"
-          :hide-sorting="hideSorting"
-          :hide-controls="hideControls"
-          @hide-popup-sidebar="hideFiltersSidebar"
-          @reset-facet-filters="resetFacetFilters"
-          @open-branches-modal="openBranchesModal"
-          @update-popup-sidebar-filters="updateFiltersSidebar"
-          @apply-filters="applyFilters"
-        />
+      <!-- Regular desktop sidebar (vertical view) -->
+      <div v-if="!hideSidebar && !isMobile && !isHorizontalFilters" class="flex shrink-0 items-start lg:w-60">
+        <div ref="filtersElement" class="sticky w-full space-y-5" :style="filtersStyle">
+          <CategorySelector
+            v-if="!isSearchPage"
+            :category="currentCategory"
+            :loading="!currentCategory && loadingCategory"
+          />
 
-        <!-- Regular desktop sidebar (vertical view) -->
-        <div v-else class="relative flex w-60 shrink-0 items-start">
-          <div ref="filtersElement" class="sticky w-60 space-y-5" :style="filtersStyle">
-            <CategorySelector
-              v-if="!isSearchPage"
-              :category="currentCategory"
-              :loading="!currentCategory && loadingCategory"
-            />
-
-            <ProductsFilters
-              :keyword="keywordQueryParam"
-              :filters="productsFilters"
-              :loading="fetchingProducts"
-              @change="applyFilters($event)"
-            />
-          </div>
+          <ProductsFilters
+            :keyword="keywordQueryParam"
+            :filters="productsFilters"
+            :loading="fetchingProducts"
+            @change="applyFilters($event)"
+          />
         </div>
-      </template>
+      </div>
 
       <!-- Content -->
-      <div ref="contentElement" class="grow">
+      <div ref="contentElement" class="w-0 grow">
         <div class="flex">
           <VcTypography tag="h1">
             <i18n-t v-if="isSearchPage" keypath="pages.search.header" tag="span">
@@ -82,6 +80,7 @@
               {{ $t("pages.catalog.products_found_message", totalProductsCount) }}
             </sup>
           </VcTypography>
+
           <!-- View options - horizontal view -->
           <ViewMode
             v-if="!hideViewModeSelector && isHorizontalFilters"
@@ -171,6 +170,7 @@
                 :key="facet.paramName + filterItem.value"
                 color="secondary"
                 closable
+                truncate
                 @close="
                   removeFacetFilter({
                     paramName: facet.paramName,
