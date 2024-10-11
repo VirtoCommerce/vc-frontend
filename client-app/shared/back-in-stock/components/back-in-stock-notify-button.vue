@@ -19,9 +19,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { globals } from "../../../core/globals";
+import { globals } from "@/core/globals";
 import { useBackInStockSubscriptions } from "../composables";
-import type { DeactivateBackInStockSubscriptionCommandType } from "../../../core/api/graphql/types";
+import type { DeactivateBackInStockSubscriptionCommandType } from "@/core/api/graphql/types";
 
 interface IProps {
   productId?: string;
@@ -77,7 +77,7 @@ const updateBackInStockSubscription = async () => {
   }
 
   &__link-icon {
-    @apply shrink-0 text-primary me-1;
+    @apply shrink-0 me-1 text-accent-600;
   }
 
   .vc-button__slot {
