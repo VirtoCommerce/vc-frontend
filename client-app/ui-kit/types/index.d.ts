@@ -105,4 +105,6 @@ declare global {
     shortMessage: string;
     isHidden?: boolean;
   };
+
+  type BrowserTargetType = "_blank" | "_self";
 }

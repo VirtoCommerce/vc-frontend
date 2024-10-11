@@ -4,15 +4,16 @@
       <VcLineItem
         v-for="variation in variations"
         :key="variation.code"
-        with-image
-        with-price
-        with-properties
         :image-url="variation.images[0]?.url"
         :name="variation.name"
         :properties="getProperties(variation)"
         :list-price="variation.price.list"
         :actual-price="variation.price.actual"
         :vendor="$cfg.vendor_enabled ? variation.vendor : undefined"
+        :browser-target="$cfg.details_browser_target"
+        with-image
+        with-price
+        with-properties
       >
         <AddToCart :product="variation">
           <InStock
