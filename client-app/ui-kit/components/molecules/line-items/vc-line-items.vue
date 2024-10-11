@@ -66,6 +66,7 @@
             :removable="removable"
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
+            :browser-target="browserTarget"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
           >
@@ -141,6 +142,7 @@ interface IProps {
   withTotal?: boolean;
   withSubtotal?: boolean;
   withHeader?: boolean;
+  browserTarget?: BrowserTargetType;
 }
 
 const emit = defineEmits<IEmits>();
@@ -148,6 +150,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   withHeader: true,
+  browserTarget: "_blank",
 });
 
 const slotElements = ref<HTMLElement[]>([]);

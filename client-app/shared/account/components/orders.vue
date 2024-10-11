@@ -460,7 +460,7 @@ function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
 
-  if (themeContext.value.settings.show_details_in_separate_tab) {
+  if (themeContext.value.settings.details_browser_target === "_blank") {
     window.open(orderRoute.fullPath, "_blank")!.focus();
   } else {
     window.location.href = orderRoute.fullPath;

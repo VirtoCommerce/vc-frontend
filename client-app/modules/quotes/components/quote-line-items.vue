@@ -4,6 +4,7 @@
     :items="normalizedItems"
     :removable="!readonly"
     :readonly="readonly"
+    :browser-target="$cfg.details_browser_target"
     with-image
     with-properties
     with-price
