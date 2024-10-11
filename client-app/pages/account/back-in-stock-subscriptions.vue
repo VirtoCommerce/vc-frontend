@@ -1,8 +1,8 @@
 <template>
   <div>
-    <VcLoaderOverlay :visible="loading" fixed-spinner />
+    <VcLoaderOverlay :visible="allLoading" fixed-spinner />
 
-    <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back" />
 
     <div class="flex flex-col">
       <!-- Title block -->
@@ -12,23 +12,63 @@
         </VcTypography>
       </div>
 
+      <PageToolbarBlock
+        :stick="stickyMobileHeaderIsVisible"
+        class="mt-2 flex flex-row items-center gap-x-2 lg:flex-row-reverse lg:gap-x-5"
+        shadow
+      >
+        <div class="flex grow">
+          <VcInput
+            v-model="keyword"
+            :disabled="allLoading"
+            :placeholder="$t('shared.back-in-stock.search_placeholder')"
+            maxlength="64"
+            class="w-full"
+            @keydown.enter="applyKeyword"
+          >
+            <template #append>
+              <button
+                v-if="keyword"
+                :aria-label="$t('quotes.reset_search')"
+                type="button"
+                class="flex h-full items-center px-4"
+                @click="resetKeyword"
+              >
+                <VcIcon class="text-primary" name="delete-2" size="xs" />
+              </button>
+
+              <VcButton
+                :aria-label="$t('shared.back-in-stock.search_placeholder')"
+                :disabled="allLoading"
+                icon="search"
+                @click="applyKeyword"
+              />
+            </template>
+          </VcInput>
+        </div>
+      </PageToolbarBlock>
+
       <div ref="listElement" class="mt-5 w-full">
         <!-- Skeletons -->
-        <template v-if="!loading">
+        <template v-if="allLoading">
           <div v-if="isMobile" class="grid grid-cols-2 gap-x-4 gap-y-6">
-            <ProductSkeletonGrid v-for="i in actualPageRowsCount" :key="i" />
+            <ProductSkeletonGrid v-for="index in actualPageRowsCount" :key="index" />
           </div>
 
           <div v-else class="flex flex-col rounded border bg-additional-50 shadow-sm">
-            <WishlistProductItemSkeleton v-for="i in actualPageRowsCount" :key="i" class="even:bg-neutral-50" />
+            <BackInStockProductItemSkeleton
+              v-for="index in actualPageRowsCount"
+              :key="index"
+              class="even:bg-neutral-50"
+            />
           </div>
         </template>
 
         <!-- List details -->
-        <template v-if="!!subscriptionsItems.length && !loading">
+        <template v-if="!!subscriptionsItems.length && !allLoading">
           <VcWidget size="lg">
             <div class="flex flex-col gap-6">
-              <WishlistLineItems
+              <BackInStockSubscriptionsLineItems
                 :items="pagedListItems"
                 :pending-items="pendingItems"
                 @update:cart-item="addOrUpdateCartItem"
@@ -50,8 +90,8 @@
 
         <!-- Empty list -->
         <VcEmptyView
-          v-else-if="!loading && subscriptionsItems.length === 0"
-          :text="$t('shared.wishlists.list_details.empty_list')"
+          v-else-if="!allLoading && subscriptionsItems.length === 0"
+          :text="$t('shared.back-in-stock.list_details.empty_list')"
           icon="thin-lists"
         >
           <template #button>
@@ -61,28 +101,30 @@
           </template>
         </VcEmptyView>
 
-        <Error404 v-else-if="!loading && !subscriptionsItems" />
+        <Error404 v-else-if="!allLoading && !subscriptionsItems" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { keyBy } from "lodash";
-import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
+import { computed, ref, watchEffect, defineAsyncComponent, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useGoogleAnalytics, useHistoricalEvents, usePageHead } from "../../core/composables";
-import { PAGE_LIMIT } from "../../core/constants";
-import { globals } from "../../core/globals";
-import { prepareLineItemForProduct } from "../../core/utilities";
-import { DeactivateBackInStockSubscriptionModal, useBackInStockSubscriptions } from "../../shared/back-in-stock";
-import { useShortCart } from "../../shared/cart";
+import { useGoogleAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { PAGE_LIMIT } from "@/core/constants";
+import { globals } from "@/core/globals";
+import { prepareLineItemForProduct } from "@/core/utilities";
+import { DeactivateBackInStockSubscriptionModal, useBackInStockSubscriptions } from "@/shared/back-in-stock";
+import { useShortCart } from "@/shared/cart";
+import { BackButtonInHeader } from "@/shared/layout";
+import { useModal } from "@/shared/modal";
 import { ProductSkeletonGrid, useProducts } from "../../shared/catalog";
-import { BackButtonInHeader } from "../../shared/layout";
-import { useModal } from "../../shared/modal";
-import type { Product } from "../../core/api/graphql/types";
-import type { PreparedLineItemType } from "../../core/types";
+import type { Product } from "@/core/api/graphql/types";
+import type { PreparedLineItemType } from "@/core/types";
+import BackInStockProductItemSkeleton from "@/shared/back-in-stock/components/back-in-stock-product-item-skeleton.vue";
+import BackInStockSubscriptionsLineItems from "@/shared/back-in-stock/components/back-in-stock-subscriptions-line-items.vue";
 
 const Error404 = defineAsyncComponent(() => import("../../pages/404.vue"));
 const { t } = useI18n();
@@ -94,11 +136,15 @@ const {
   backInStockSubscriptions,
   itemsPerPage,
   page,
+  keyword,
 } = useBackInStockSubscriptions();
 const { fetchProducts, products, fetchingProducts } = useProducts();
 const { loading: cartLoading, changing: cartChanging, cart, addToCart, changeItemQuantity } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const { pushHistoricalEvent } = useHistoricalEvents();
+const stickyMobileHeaderAnchor = shallowRef<HTMLElement | null>(null);
+const stickyMobileHeaderAnchorIsVisible = useElementVisibility(stickyMobileHeaderAnchor);
+const stickyMobileHeaderIsVisible = computed<boolean>(() => !stickyMobileHeaderAnchorIsVisible.value && isMobile.value);
 
 usePageHead({
   title: computed(() => t("pages.account.back_in_stock_subscriptions.meta.title")),
@@ -113,7 +159,7 @@ const preparedLineItems = computed<PreparedLineItemType[]>(() =>
   subscriptionsItems.value.map((item) => prepareLineItemForProduct(item, cartItemsBySkus.value[item.code!]?.quantity)),
 );
 
-const loading = computed<boolean>(
+const allLoading = computed<boolean>(
   () => subscriptionsLoading.value || fetchingProducts.value || cartLoading.value || cartChanging.value,
 );
 
@@ -128,14 +174,30 @@ const actualPageRowsCount = computed<number>(() => pagedListItems.value.length |
 const isMobile = breakpoints.smaller("lg");
 
 const fetchProductsAndSubscriptions = async () => {
-  itemsPerPage.value = 9999;
-  await fetchSubscriptions();
+  await fetchSubscriptions({ isActive: true });
   if (backInStockSubscriptions.value.length > 0) {
-    await fetchProducts({ productIds: backInStockSubscriptions.value.map((item) => item.id!), itemsPerPage: 9999 });
+    await fetchProducts({
+      productIds: backInStockSubscriptions.value.map((item) => item.productId!),
+      itemsPerPage: 10,
+    });
+    const productsResult: Product[] = [];
+    page.value = 1;
+    if (products.value.length > 0) {
+      backInStockSubscriptions.value.forEach((subscription) => {
+        if (subscription.isActive) {
+          const product = products.value.filter((item) => item.id === subscription.productId)[0];
+
+          if (product) {
+            productsResult.push(product);
+          }
+        }
+      });
+    }
+    subscriptionsItems.value = productsResult;
   }
 };
 
-async function addOrUpdateCartItem(item: Product, quantity: number): Promise<void> {
+async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number): Promise<void> {
   const itemInCart = cart.value?.items?.find((cartItem) => cartItem.productId === item.id);
   if (pendingItems.value[item.id]) {
     return;
@@ -147,8 +209,10 @@ async function addOrUpdateCartItem(item: Product, quantity: number): Promise<voi
     }
   } else {
     await addToCart(item.id, quantity);
-
-    ga.addItemToCart(item, quantity);
+    const product = products.value.find((pr) => pr.id === item.productId);
+    if (product) {
+      ga.addItemToCart(product, quantity);
+    }
     void pushHistoricalEvent({
       eventType: "addToCart",
       sessionId: cart.value?.id,
@@ -157,6 +221,17 @@ async function addOrUpdateCartItem(item: Product, quantity: number): Promise<voi
     });
   }
   pendingItems.value[item.id] = false;
+}
+
+async function applyKeyword(): Promise<void> {
+  page.value = 1;
+  await fetchProductsAndSubscriptions();
+}
+
+async function resetKeyword(): Promise<void> {
+  keyword.value = "";
+  page.value = 1;
+  await applyKeyword();
 }
 
 function openDeleteProductModal(values: string[]): void {
@@ -169,12 +244,13 @@ function openDeleteProductModal(values: string[]): void {
         productId: item.id,
         productName: item.name,
 
-        async onResult(): Promise<void> {
+        onResult(): void {
           const previousPagesCount = pagesCount.value;
           if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pagesCount.value) {
             page.value -= 1;
           }
-          await fetchProductsAndSubscriptions();
+
+          fetchProductsAndSubscriptions();
         },
       },
     });
@@ -182,20 +258,6 @@ function openDeleteProductModal(values: string[]): void {
 }
 
 watchEffect(async () => {
-  const productsResult: Product[] = [];
   await fetchProductsAndSubscriptions();
-  page.value = 1;
-  if (products.value.length > 0) {
-    backInStockSubscriptions.value.forEach((subscription) => {
-      if (subscription.isActive) {
-        const product = products.value.filter((item) => item.id === subscription.productId)[0];
-
-        if (product) {
-          productsResult.push(product);
-        }
-      }
-    });
-  }
-  subscriptionsItems.value = productsResult;
 });
 </script>

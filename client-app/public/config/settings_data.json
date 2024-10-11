@@ -51,6 +51,8 @@
     },
     "image_carousel_in_product_card_enabled": true,
 
+    "back_in_stock_enabled": true,
+
     "orders_statuses": [
       {
         "code": "New",

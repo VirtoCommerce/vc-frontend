@@ -4735,7 +4735,7 @@ export type QueryGetBackInStockSubscriptionsArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
-  productId?: InputMaybe<Scalars['String']['input']>;
+  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   sort?: InputMaybe<Scalars['String']['input']>;
   startTriggeredDate?: InputMaybe<Scalars['DateTime']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;

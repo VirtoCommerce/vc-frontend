@@ -5,7 +5,7 @@ query getBackInStockSubscriptions(
   $sort: String
   $storeId: String
   $userId: String
-  $productId: String
+  $productIds: [String]
   $isActive: Boolean
   $startTriggeredDate: DateTime
   $endTriggeredDate: DateTime
@@ -18,7 +18,7 @@ query getBackInStockSubscriptions(
     sort: $sort
     storeId: $storeId
     userId: $userId
-    productId: $productId
+    productIds: $productIds
     isActive: $isActive
     startTriggeredDate: $startTriggeredDate
     endTriggeredDate: $endTriggeredDate

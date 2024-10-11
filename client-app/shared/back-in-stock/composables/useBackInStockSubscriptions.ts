@@ -1,5 +1,5 @@
 import { createSharedComposable } from "@vueuse/core";
-import { computed, readonly, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import {
   activateBackInStockSubscription,
   deactivateBackInStockSubscription,
@@ -12,11 +12,12 @@ import type {
   BackInStockSubscriptionQueryType,
   BackInStockSubscriptionType,
   DeactivateBackInStockSubscriptionCommandType,
+  QueryGetBackInStockSubscriptionsArgs,
 } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 import type { Ref } from "vue";
 
-const DEFAULT_ITEMS_PER_PAGE = 9999;
+const DEFAULT_ITEMS_PER_PAGE = 10;
 const loading = ref(true);
 const backInStockSubscriptions = shallowRef<BackInStockSubscriptionQueryType[]>([]);
 const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
@@ -25,6 +26,7 @@ const page: Ref<number> = ref(1);
 const keyword: Ref<string> = ref("");
 const sort: Ref<ISortInfo> = ref(DEFAULT_SORT);
 const lastFetched: Ref<number | null> = ref(null);
+const lastFetchedProductIds: Ref<Array<string> | undefined> = ref([]);
 
 createSharedComposable(useBackInStockSubscriptions);
 
@@ -37,13 +39,15 @@ export function useBackInStockSubscriptions(options: { autoRefetch: boolean } = 
 
     try {
       newSubscription = await activateBackInStockSubscription(payload);
+      if (options.autoRefetch) {
+        await fetchSubscriptions({
+          productIds: lastFetchedProductIds.value,
+          first: lastFetchedProductIds.value?.length,
+        });
+      }
     } catch (e) {
       Logger.error(`${useBackInStockSubscriptions.name}.${useBackInStockSubscriptions.name}`, e);
       throw e;
-    }
-
-    if (options.autoRefetch) {
-      await fetchSubscriptions();
     }
 
     return newSubscription;
@@ -57,37 +61,40 @@ export function useBackInStockSubscriptions(options: { autoRefetch: boolean } = 
 
     try {
       newSubscription = await deactivateBackInStockSubscription(payload);
+      if (options.autoRefetch) {
+        await fetchSubscriptions({
+          productIds: lastFetchedProductIds.value,
+          first: lastFetchedProductIds.value?.length,
+        });
+      }
     } catch (e) {
       Logger.error(`${useBackInStockSubscriptions.name}.${useBackInStockSubscriptions.name}`, e);
+      loading.value = false;
       throw e;
-    }
-
-    if (options.autoRefetch) {
-      await fetchSubscriptions();
     }
 
     return newSubscription;
   }
 
-  async function fetchSubscriptions(): Promise<void> {
+  async function fetchSubscriptions(payload?: QueryGetBackInStockSubscriptionsArgs): Promise<void> {
     loading.value = true;
-
-    const sortingExpression = getSortingExpression(sort.value);
-
     try {
       const response = await getBackInStockSubscriptions({
-        first: itemsPerPage.value,
-        after: String((page.value - 1) * itemsPerPage.value),
-        keyword: keyword.value.trim(),
-        sort: sortingExpression,
+        first: payload?.first ?? itemsPerPage.value,
+        after: payload?.after ?? String((page.value - 1) * itemsPerPage.value),
+        keyword: payload?.keyword ?? keyword.value.trim(),
+        sort: payload?.sort ?? getSortingExpression(sort.value),
+        isActive: payload?.isActive,
+        productIds: payload?.productIds,
       });
 
+      lastFetchedProductIds.value = payload?.productIds;
       backInStockSubscriptions.value = response.items ?? [];
-      pages.value = Math.ceil((response.totalCount ?? 0) / itemsPerPage.value);
+      pages.value = Math.ceil((response.totalCount ?? 0) / (payload?.first ?? itemsPerPage.value));
       lastFetched.value = Date.now();
     } catch (e) {
-      Logger.error("useUserQuotes.fetchQuotes", e);
-      throw e;
+      Logger.error("useBackInStockSubscriptions.fetchSubscriptions", e);
+      backInStockSubscriptions.value = [];
     } finally {
       loading.value = false;
     }
@@ -102,7 +109,8 @@ export function useBackInStockSubscriptions(options: { autoRefetch: boolean } = 
     page,
     keyword,
     sort,
-    loading: readonly(loading),
+    lastFetched,
+    loading: computed(() => loading.value),
     backInStockSubscriptions: computed(() => backInStockSubscriptions.value),
   };
 }

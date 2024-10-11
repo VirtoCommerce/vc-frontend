@@ -177,9 +177,12 @@
     </VcVariationsButton>
 
     <template v-else>
-      <slot name="cart-handler" />
+      <slot
+        v-if="!props.backInStockEnabled || (props.backInStockEnabled && product.availabilityData?.isInStock)"
+        name="cart-handler"
+      />
       <BackInStockNotifyButton
-        v-if="!product.availabilityData?.isInStock"
+        v-if="!product.availabilityData?.isInStock && props.backInStockEnabled"
         :product-id="product.id"
       />
       <div class="mt-1 flex flex-wrap items-center gap-1">
@@ -204,7 +207,6 @@ import { ProductType } from "@/core/enums";
 import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
-import BackInStockNotifyButton from "../../back-in-stock/components/back-in-stock-notify-button.vue";
 import CountInCart from "./count-in-cart.vue";
 import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
@@ -212,6 +214,7 @@ import Rating from "./rating.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
+import BackInStockNotifyButton from "@/shared/back-in-stock/components/back-in-stock-notify-button.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
@@ -225,6 +228,7 @@ interface IProps {
   openInNewTab?: boolean;
   hideProperties?: boolean;
   productReviewsEnabled?: boolean;
+  backInStockEnabled?: boolean;
 }
 
 const swiperInstance = ref<SwiperInstance>();

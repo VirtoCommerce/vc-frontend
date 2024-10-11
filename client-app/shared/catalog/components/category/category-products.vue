@@ -10,6 +10,7 @@
         :card-type="cardType"
         :columns-amount-desktop="columnsAmountDesktop"
         :columns-amount-tablet="columnsAmountTablet"
+        :back-in-stock-enabled="$cfg.back_in_stock_enabled"
         @item-link-click="sendGASelectItemEvent"
       >
         <template #cart-handler="{ item }">

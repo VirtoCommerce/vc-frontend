@@ -16,6 +16,7 @@
         :open-in-new-tab="openProductInNewTab"
         :hide-properties="cardType === 'short'"
         :product-reviews-enabled="productReviewsEnabled"
+        :back-in-stock-enabled="$cfg.back_in_stock_enabled"
         @link-click="$emit('itemLinkClick', item, $event)"
       >
         <template #add-to-list-handler>
@@ -31,8 +32,9 @@
 
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, toRef, watch } from "vue";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { useBackInStockSubscriptions } from "@/shared/back-in-stock";
 import { useCustomerReviews } from "@/shared/common";
 import ProductCardGrid from "./product-card-grid.vue";
 import ProductCardList from "./product-card-list.vue";
@@ -53,6 +55,7 @@ interface IProps {
   cardType?: "full" | "short";
   columnsAmountTablet?: string;
   columnsAmountDesktop?: string;
+  backInStockEnabled?: boolean;
 }
 
 defineEmits<IEmits>();
@@ -67,6 +70,7 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const { enabled: productReviewsEnabled } = useCustomerReviews();
+const { fetchSubscriptions } = useBackInStockSubscriptions();
 
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));
@@ -132,4 +136,10 @@ function getListLazyCardsCount() {
   }
   return 0;
 }
+
+watch(toRef(props, "products"), async (products) => {
+  if (props.backInStockEnabled) {
+    await fetchSubscriptions({ productIds: products.map((item) => item.id), isActive: true });
+  }
+});
 </script>

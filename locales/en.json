@@ -244,7 +244,7 @@
       "push-messages": "Notifications",
       "saved_credit_cards": "Saved Credit Cards",
       "notifications": "Notifications",
-      "back_in_stock_subscriptions": "Back in stock subscriptions"
+      "back_in_stock_subscriptions": "Back-in-stock list"
     },
     "titles": {
       "all_actions": "All actions",
@@ -324,7 +324,7 @@
             "checkout_defaults": "@:common.links.checkout_defaults",
             "saved_credit_cards": "@:common.links.saved_credit_cards",
             "notifications": "@:common.links.notifications",
-            "back_in_stock_subscriptions": "@:Back in stock subscriptions"
+            "back_in_stock_subscriptions": "@:Back-in-stock list"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -823,8 +823,10 @@
         "cancel_button": "@:common.buttons.cancel"
       },
       "list_details": {
-        "empty_list_button": "Continue browsing"
-      }
+        "empty_list_button": "Continue browsing",
+        "empty_list": "Your list is empty"
+      },
+      "search_placeholder": "Search"
     },
     "back_in_stock": {
       "list_details": {
