@@ -62,7 +62,7 @@ const updateBackInStockSubscription = async () => {
 
 <style lang="scss">
 .vc-back-in-stock-notify-button {
-  @apply flex flex-row;
+  @apply flex flex-row mb-4.5 h-9;
 
   &__link {
     @apply flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color];

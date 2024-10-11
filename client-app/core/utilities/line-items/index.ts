@@ -31,14 +31,13 @@ export function groupByVendor<T extends LineItemType | OrderLineItemType>(items:
   return result;
 }
 
-function prepareItemPrices(item: AnyLineItemType | Product) {
-  const price = "price" in item && item.price ? ("actual" in item.price ? item.price.actual : item.price) : undefined;
+function prepareItemPrices(item: AnyLineItemType) {
+  const price = "price" in item ? item.price : undefined;
 
   const listPrice = price ?? ("listPrice" in item ? item.listPrice : undefined);
   const salePrice = "salePrice" in item ? item.salePrice : undefined;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
   const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
-
   const actualPrice = placedPrice ?? salePrice ?? listPrice;
 
   return {
@@ -86,9 +85,19 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
 }
 
 export function prepareLineItemForProduct(item: Product, countInCart?: number): PreparedLineItemType {
-  const { listPrice, extendedPrice, actualPrice } = prepareItemPrices(item);
-
-  const productType = "productType" in item ? item.productType : undefined;
+  const { listPrice, extendedPrice, actualPrice } = prepareItemPrices({
+    id: item.id,
+    name: item.name,
+    imageUrl: item.imgSrc,
+    product: item,
+    productId: item.id,
+    sku: item.code,
+    quantity: 0,
+    inStockQuantity: item.availabilityData.availableQuantity,
+    productType: item.productType,
+    price: item.price.actual,
+  });
+  const productType = item.productType;
   const isVariation = !!item.masterVariation;
   const quantity = 0;
   const inStockQuantity = item.availabilityData.availableQuantity;
