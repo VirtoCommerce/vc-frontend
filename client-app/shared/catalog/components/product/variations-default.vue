@@ -61,7 +61,7 @@ interface IProps {
 
 const pageNumber = toRef(props, "pageNumber");
 
-function getProperties(variation: Product) {
+function getProperties(variation: VariationType) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
   );

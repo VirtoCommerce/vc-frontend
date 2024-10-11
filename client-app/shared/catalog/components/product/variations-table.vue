@@ -229,24 +229,24 @@ const mappedLineItems = computed(() => {
   return mapped;
 });
 
-function getStockQuantity(variation: Product) {
+function getStockQuantity(variation: VariationType) {
   return variation.availabilityData.availableQuantity &&
     variation.availabilityData.availableQuantity > MAX_DISPLAY_IN_STOCK_QUANTITY
     ? `${MAX_DISPLAY_IN_STOCK_QUANTITY}+`
     : variation.availabilityData.availableQuantity!.toString();
 }
 
-function getProperties(variation: Product) {
+function getProperties(variation: VariationType) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
   );
 }
 
-function getLineItem(variation: Product): ShortLineItemFragment | undefined {
+function getLineItem(variation: VariationType): ShortLineItemFragment | undefined {
   return cart.value?.items?.find((item) => item.productId === variation.id);
 }
 
-async function changeCart(variation: Product, quantity: number) {
+async function changeCart(variation: VariationType, quantity: number) {
   const lineItem = getLineItem(variation);
 
   if (lineItem) {
