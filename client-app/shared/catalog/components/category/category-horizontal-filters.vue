@@ -53,7 +53,12 @@
               :value="sortingOption.id"
               :label="sortingOption.name"
               class="category-horizontal-filters__sorting-input"
-              @change="close"
+              @change="
+                () => {
+                  emit('applySort');
+                  close();
+                }
+              "
               @click.stop
             />
           </VcMenuItem>
@@ -70,7 +75,7 @@ import { QueryParamName } from "@/core/enums";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   hideAllFilters: false,
   hideSorting: false,
@@ -78,6 +83,7 @@ withDefaults(defineProps<IProps>(), {
 
 interface IEmits {
   (event: "applyFilters", filters: ProductsFiltersType): void;
+  (event: "applySort"): void;
   (event: "showPopupSidebar"): void;
 }
 

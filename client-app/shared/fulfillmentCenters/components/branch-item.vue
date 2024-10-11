@@ -4,14 +4,15 @@
       <slot></slot>
 
       <div class="grow items-center md:flex">
-        <div class="relative -mt-0.5 grow md:-mt-1" :class="{ 'h-[3.75rem]': isTextTruncateEnabled }">
-          <div class="pr-3" :class="{ 'absolute inset-0': isTextTruncateEnabled }">
+        <div class="relative -mt-0.5 grow md:-mt-1">
+          <div class="pr-3">
             <div :class="{ 'max-w-full truncate': isTextTruncateEnabled }">
               <a :href="`/branch/${branch.id}`" target="_blank" class="mt-px text-base font-black text-[--link-color]">
                 {{ branch.name }}
               </a>
             </div>
-            <div class="pt-px text-xs" :class="{ 'line-clamp-2': isTextTruncateEnabled }">
+
+            <div class="line-clamp-1 pt-px text-xs" :title="branch.address">
               {{ branch.address }}
             </div>
           </div>
