@@ -14,7 +14,7 @@
   </div>
 
   <!-- Desktop table view -->
-  <table v-else :class="[layout, 'text-left text-sm']" :aria-describedby="description">
+  <table v-else class="w-full table-fixed text-left text-sm" :aria-describedby="description">
     <slot name="header">
       <thead v-if="!hideDefaultHeader && columns.length" class="border-b border-neutral-200">
         <tr>
@@ -68,19 +68,20 @@
 
   <!-- Table footer -->
   <slot name="footer">
-    <p v-if="pageLimit && page >= pageLimit" class="mt-3 text-center">
-      <slot name="page-limit-message">
-        {{ $t("ui_kit.reach_limit.page_limit") }}
-      </slot>
-    </p>
+    <div class="px-3 py-10 empty:hidden md:px-5 md:pb-5">
+      <p v-if="pageLimit && page >= pageLimit" class="mb-3 text-center">
+        <slot name="page-limit-message">
+          {{ $t("ui_kit.reach_limit.page_limit") }}
+        </slot>
+      </p>
 
-    <VcPagination
-      v-if="!hideDefaultFooter && items.length && pages > 1"
-      :page="page"
-      :pages="Math.min(pages, pageLimit || pages)"
-      class="mt-10 md:px-5 md:pb-5"
-      @update:page="onPageUpdate"
-    />
+      <VcPagination
+        v-if="!hideDefaultFooter && items.length && pages > 1"
+        :page="page"
+        :pages="Math.min(pages, pageLimit || pages)"
+        @update:page="onPageUpdate"
+      />
+    </div>
   </slot>
 </template>
 
@@ -110,7 +111,6 @@ interface IProps {
   loading?: boolean;
   hideDefaultHeader?: boolean;
   hideDefaultFooter?: boolean;
-  layout?: string;
   description?: string;
   pageLimit?: number | null;
 }
@@ -122,7 +122,6 @@ withDefaults(defineProps<IProps>(), {
   items: () => [],
   pages: 0,
   page: 0,
-  layout: "table-fixed w-full",
   pageLimit: PAGE_LIMIT,
 });
 

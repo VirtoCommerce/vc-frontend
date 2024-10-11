@@ -33,7 +33,7 @@
         </div>
 
         <!-- Content block -->
-        <div class="px-4 pb-5 md:p-5">
+        <div class="px-4 md:px-5 md:pb-5">
           <div
             v-if="addresses.length || loadingAddresses"
             class="mb-4 mt-9 flex flex-row items-center justify-between gap-3 md:mt-1.5"
@@ -74,7 +74,6 @@
               :pages="pages"
               :page="page"
               :description="$t('pages.company.info.meta.table_description')"
-              layout="table-auto"
               @header-click="applySorting"
               @page-changed="onPageChange"
             >
@@ -254,7 +253,7 @@
               <template #desktop-skeleton>
                 <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-neutral-50">
                   <td v-for="column in columns.length" :key="column" class="px-5 py-4">
-                    <div class="h-4.5 animate-pulse bg-neutral-200" />
+                    <div class="h-4.5 animate-pulse bg-neutral-200"></div>
                   </td>
                 </tr>
               </template>
@@ -341,7 +340,6 @@ const columns = computed<ITableColumn[]>(() => {
       id: "line1",
       title: t("pages.company.info.labels.address"),
       sortable: true,
-      classes: "w-64",
     },
     {
       id: "countryName",
