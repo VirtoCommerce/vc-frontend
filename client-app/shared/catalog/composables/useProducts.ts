@@ -146,6 +146,8 @@ export function useProducts(
     if (!isEqual(localStorageBranches.value, newFilters.branches)) {
       localStorageBranches.value = newFilters.branches;
     }
+
+    resetCurrentPage();
   }
 
   function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void {
@@ -157,6 +159,7 @@ export function useProducts(
       facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
 
       triggerRef(facets);
+      resetCurrentPage();
     }
   }
 
@@ -168,6 +171,7 @@ export function useProducts(
     );
 
     triggerRef(facets);
+    resetCurrentPage();
   }
 
   function resetFilterKeyword(): void {
@@ -202,6 +206,7 @@ export function useProducts(
           } else {
             localStorageBranches.value = branches;
           }
+          resetFacetFilters();
         },
       },
     });
@@ -321,6 +326,16 @@ export function useProducts(
     });
   });
 
+  const currentPage = ref(1);
+
+  function updateCurrentPage(page: number) {
+    currentPage.value = page;
+  }
+
+  function resetCurrentPage() {
+    updateCurrentPage(1);
+  }
+
   return {
     branchesFromSidebarFilters,
     facets,
@@ -341,6 +356,10 @@ export function useProducts(
     searchQueryParam,
     sortQueryParam,
     totalProductsCount: readonly(totalProductsCount),
+
+    currentPage: readonly(currentPage),
+    resetCurrentPage,
+    updateCurrentPage,
 
     applyFilters,
     getFacets,

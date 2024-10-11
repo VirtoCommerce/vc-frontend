@@ -68,13 +68,14 @@ const { loading, loadFulfillmentCenter, fulfillmentCenter, loadFulfillmentCenter
   useFulfillmentCenters();
 
 const otherBranches = computed(() => fulfillmentCenters.value.filter((item) => item.id !== props.branchId));
-loadFulfillmentCenter(props.branchId);
-loadFulfillmentCenters();
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+void loadFulfillmentCenter(props.branchId);
+void loadFulfillmentCenters();
 
 watch(
   () => props.branchId,
   () => {
-    loadFulfillmentCenter(props.branchId);
+    void loadFulfillmentCenter(props.branchId);
   },
 );
 </script>
