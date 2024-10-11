@@ -42,6 +42,7 @@ const props = defineProps<IProps>();
 
 const contentWrapperElement = shallowRef<HTMLDivElement>();
 const contentElement = shallowRef<ComponentPublicInstance>();
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const showAll = ref(props.collapse);
 
 const { height: contentWrapperElementHeight } = useElementSize(contentWrapperElement);
