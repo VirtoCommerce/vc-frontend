@@ -20,7 +20,7 @@
 
         <transition mode="out-in" name="scale">
           <VcBadge v-if="count" class="absolute -right-3 -top-2 transition-transform" variant="outline" rounded>
-            {{ $n(count, { key: "decimal", notation: "compact" }) }}
+            {{ $n(count, { style: "decimal", notation: "compact" }) }}
           </VcBadge>
         </transition>
       </span>

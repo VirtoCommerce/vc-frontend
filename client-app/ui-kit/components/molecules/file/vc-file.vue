@@ -31,7 +31,6 @@
           <span class="vc-file__size">
             {{
               $n(fileSize.value, {
-                key: "decimal",
                 notation: "compact",
                 style: "unit",
                 unit: fileSize.unit,

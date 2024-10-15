@@ -73,7 +73,7 @@
                   class="absolute -right-2 -top-2 transition-transform"
                   rounded
                 >
-                  {{ $n(cart.itemsQuantity, { key: "decimal", notation: "compact" }) }}
+                  {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
                 </VcBadge>
               </transition>
             </span>
