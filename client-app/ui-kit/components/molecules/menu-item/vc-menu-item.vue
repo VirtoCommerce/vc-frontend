@@ -18,8 +18,16 @@
       ]"
       @click="enabled ? $emit('click', $event) : null"
     >
+      <span class="vc-menu-item__prepend">
+        <slot name="prepend" />
+      </span>
+
       <span class="vc-menu-item__content">
         <slot />
+      </span>
+
+      <span class="vc-menu-item__append">
+        <slot name="append" />
       </span>
     </component>
   </component>
@@ -123,10 +131,12 @@ onMounted(() => {
   $active: "";
   $truncate: "";
 
-  @apply block list-none select-none;
+  @apply list-none select-none;
 
   &__inner {
-    @apply block w-full px-3 text-left rounded-[inherit] text-sm/[1rem];
+    --vc-icon-size: var(--content-height);
+
+    @apply grid grid-cols-[auto_1fr_auto] w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
@@ -194,22 +204,24 @@ onMounted(() => {
     }
   }
 
-  &__content {
-    --vc-icon-size: var(--content-height);
+  &__prepend {
+    @apply flex-none flex items-center h-[--content-height];
+  }
 
-    @apply grow flex items-center gap-[inherit] min-h-[var(--content-height)];
+  &__content {
+    @apply grow flex items-center gap-[inherit] min-h-[var(--content-height)] break-all;
 
     #{$truncate} & {
-      @apply truncate;
+      @apply min-w-0 truncate;
     }
 
-    & > * {
-      @apply text-left;
-
-      #{$truncate} & {
-        @apply truncate;
-      }
+    #{$truncate} & > * {
+      @apply min-w-0 truncate;
     }
+  }
+
+  &__append {
+    @apply flex-none flex items-center h-[--content-height];
   }
 
   .vc-icon {

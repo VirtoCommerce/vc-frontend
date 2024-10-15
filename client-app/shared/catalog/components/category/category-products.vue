@@ -6,7 +6,7 @@
         :view-mode="savedViewMode"
         :items-per-page="itemsPerPage"
         :products="products"
-        :open-product-in-new-tab="$cfg.show_details_in_separate_tab"
+        :browser-target="$cfg.details_browser_target"
         :card-type="cardType"
         :columns-amount-desktop="columnsAmountDesktop"
         :columns-amount-tablet="columnsAmountTablet"
