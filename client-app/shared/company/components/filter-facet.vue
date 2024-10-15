@@ -31,6 +31,7 @@ const props = defineProps({
   },
 });
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const facet = ref<FacetItemType>(_.cloneDeep(props.modelValue));
 
 function change() {

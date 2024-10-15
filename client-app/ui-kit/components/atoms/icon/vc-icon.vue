@@ -35,7 +35,7 @@ const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--siz
 
   $self: &;
 
-  @apply inline-block align-top size-[--size] leading-none fill-[--color];
+  @apply inline-block align-top size-[--size] leading-none fill-[--color] text-[--color];
 
   &--size {
     &--xxs {

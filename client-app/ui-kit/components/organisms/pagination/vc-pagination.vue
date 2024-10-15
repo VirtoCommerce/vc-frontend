@@ -143,7 +143,7 @@ const setPage = (page: number) => {
   }
 
   &__container {
-    @apply flex min-w-max flex-wrap justify-center items-center;
+    @apply flex min-w-fit flex-wrap justify-center items-center;
 
     #{$compact} & {
       @container (width > theme("containers.sm")) {

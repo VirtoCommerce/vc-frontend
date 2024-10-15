@@ -1,7 +1,7 @@
 {
   "current": "default",
   "settings": {
-    "show_details_in_separate_tab": true,
+    "details_browser_target": "_blank",
 
     "files_enabled": true,
 

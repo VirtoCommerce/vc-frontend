@@ -28,13 +28,17 @@
           color="secondary"
           @click="handleFacetItemClick(item)"
         >
-          <VcCheckbox v-model="item.selected" size="xs" :disabled="loading" @change="changeFacetValues" @click.stop />
+          <template #prepend>
+            <VcCheckbox v-model="item.selected" size="xs" :disabled="loading" @change="changeFacetValues" @click.stop />
+          </template>
 
-          <span class="facet-filter-widget__label">{{ item.label }}</span>
+          <span>{{ item.label }}</span>
 
-          <VcBadge variant="outline" size="sm" rounded color="secondary">
-            {{ $n(item.count as number, "decimal") }}
-          </VcBadge>
+          <template #append>
+            <VcBadge variant="outline" size="sm" rounded color="secondary">
+              {{ $n(item.count as number, "decimal") }}
+            </VcBadge>
+          </template>
         </VcMenuItem>
 
         <VcMenuItem v-if="isNoResults" size="xs" disabled>
@@ -167,6 +171,7 @@ const isMobile = breakpoints.smaller("lg");
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const facet = ref<FacetItemType>(cloneDeep(props.facet));
 
 function changeFacetValues(): void {

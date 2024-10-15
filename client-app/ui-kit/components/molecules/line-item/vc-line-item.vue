@@ -43,7 +43,7 @@
           :disabled="disabled || deleted"
           :to="route"
           :title="name"
-          :target="target"
+          :target="browserTarget"
         >
           {{ name }}
         </VcProductTitle>
@@ -128,8 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
-import { useThemeContext } from "@/core/composables";
+import { ref, watchEffect } from "vue";
 import type { Property, MoneyType, CommonVendor } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
@@ -156,19 +155,17 @@ interface IProps {
   withPrice?: boolean;
   withTotal?: boolean;
   vendor?: CommonVendor;
+  browserTarget?: BrowserTargetType;
 }
 
 defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   properties: () => [],
+  browserTarget: "_blank",
 });
 
-const { themeContext } = useThemeContext();
-
 const isSelected = ref<boolean>(true);
-
-const target = computed(() => (themeContext.value?.settings?.show_details_in_separate_tab ? "_blank" : "_self"));
 
 function changeFocus(event: KeyboardEvent) {
   const { target: targetElement, currentTarget } = event;
