@@ -260,7 +260,7 @@ const recommendedProductsSection = computed(() =>
 );
 
 const breadcrumbs = useBreadcrumbs(() => {
-  return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs) ?? []);
+  return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs));
 });
 
 const productComponentAnchor = shallowRef<HTMLElement | null>(null);
