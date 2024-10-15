@@ -14,7 +14,7 @@ export function useProductsRoutes(
     unref(products).reduce<Record<string, RouteLocationRaw>>((result, item) => {
       const productId = item[productIdProperty] as string | undefined;
       const productSlug = item[slugProperty] as string | undefined;
-      if (!productId) {
+      if (!productId || typeof productId !== "string") {
         return result;
       }
       result[productId] = getProductRoute(productId, productSlug);
