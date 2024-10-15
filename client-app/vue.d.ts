@@ -12,7 +12,6 @@ declare module "@vue/runtime-core" {
     $permissions: { xApi: typeof XApiPermissions; storefront: typeof StorefrontPermissions };
     $can: (...permissions: string[]) => boolean;
     $t: Composer["t"];
-    $tc: Composer["t"];
     $d: Composer["d"];
     $n: Composer["n"];
     $router: import("vue-router").Router;
