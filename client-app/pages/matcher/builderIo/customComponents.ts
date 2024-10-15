@@ -1,4 +1,5 @@
 import { defineAsyncComponent } from "vue";
+import { VcContainer } from "@/ui-kit/components";
 import type { Component } from "vue";
 
 const Category = defineAsyncComponent(() => import("@/shared/catalog/components/category.vue"));
@@ -360,6 +361,11 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         ],
       },
     ],
+  },
+  {
+    name: "VcContainer",
+    component: VcContainer,
+    inputs: [],
   },
 ];
 
