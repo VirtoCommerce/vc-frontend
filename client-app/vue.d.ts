@@ -16,6 +16,6 @@ declare module "@vue/runtime-core" {
     $d: Composer["d"];
     $n: Composer["n"];
     $router: import("vue-router").Router;
-    $route: import("vue-router").RouteLocationNormalized;
+    $route: import("vue-router").RouteLocationNormalizedLoaded;
   }
 }
