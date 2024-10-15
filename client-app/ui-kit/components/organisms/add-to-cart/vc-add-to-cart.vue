@@ -158,7 +158,7 @@ const handleChange = debounce(async () => {
     isNaN(newQuantity) ||
     newQuantity < 1 ||
     newQuantity === props.modelValue ||
-    (pendingQuantity.value && pendingQuantity.value === newQuantity)
+    pendingQuantity.value === newQuantity
   ) {
     return;
   }
