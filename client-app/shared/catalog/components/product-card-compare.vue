@@ -13,7 +13,7 @@
         class="h-[3.125rem] text-sm"
         :to="link"
         :title="product.name"
-        :target="target"
+        :target="$cfg.details_browser_target"
         @click="$emit('linkClick', $event)"
       >
         {{ product.name }}
@@ -32,7 +32,7 @@
         v-if="product.hasVariations"
         class="mb-4"
         :to="link"
-        :target="target"
+        :target="$cfg.details_browser_target"
         variant="outline"
         size="sm"
         full-width
@@ -59,7 +59,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useThemeContext } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { getProductRoute } from "@/core/utilities";
 import { AddToCart } from "@/shared/cart";
@@ -81,13 +80,9 @@ defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const { themeContext } = useThemeContext();
-
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
-
-const target = computed(() => (themeContext.value?.settings?.show_details_in_separate_tab ? "_blank" : "_self"));
 </script>

@@ -26,6 +26,7 @@
         :total="item.extendedPrice"
         :disabled="pendingItems[item.id]"
         :deleted="item.deleted"
+        :browser-target="$cfg.details_browser_target"
         with-image
         with-properties
         with-price

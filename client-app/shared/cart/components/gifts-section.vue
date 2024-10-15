@@ -5,12 +5,13 @@
         <VcLineItem
           v-for="gift in gifts"
           :key="gift.id"
-          with-image
-          selectable
           :name="gift.name"
           :image-url="gift.imageUrl"
           :disabled="disabled"
           :selected="gift.isAddedInCart"
+          :browser-target="$cfg.details_browser_target"
+          with-image
+          selectable
           @select="$emit('toggle:gift', gift)"
         >
           <VcAddToCart v-model="gift.quantity" disabled hide-button />

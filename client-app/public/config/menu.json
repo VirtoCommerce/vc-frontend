@@ -13,27 +13,21 @@
         },
         {
           "id": "compare",
-          "route": {
-            "name": "CompareProducts"
-          },
+          "route": { "name": "CompareProducts" },
           "title": "shared.layout.header.menu.compare",
           "icon": "/static/images/dashboard/icons/compare-desktop.svg#main",
           "priority": 10
         },
         {
           "id": "lists",
-          "route": {
-            "name": "Lists"
-          },
+          "route": { "name": "Lists" },
           "title": "shared.layout.header.menu.lists",
           "icon": "/static/images/dashboard/icons/lists.svg#main",
           "priority": 20
         },
         {
           "id": "orders",
-          "route": {
-            "name": "Orders"
-          },
+          "route": { "name": "Orders" },
           "title": "shared.layout.header.menu.orders",
           "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
           "priority": 30
@@ -210,14 +204,16 @@
               "name": "Profile"
             },
             "title": "shared.layout.header.mobile.account_menu.profile",
-            "icon": "/static/images/dashboard/icons/profile.svg#main"
+            "icon": "/static/images/dashboard/icons/profile.svg#main",
+            "priority": 0
           },
           {
             "route": {
               "name": "ChangePassword"
             },
             "title": "shared.layout.header.mobile.account_menu.change_password",
-            "icon": "/static/images/dashboard/icons/pass.svg#main"
+            "icon": "/static/images/dashboard/icons/pass.svg#main",
+            "priority": 20
           },
           {
             "id": "addresses",
@@ -225,42 +221,40 @@
               "name": "Addresses"
             },
             "title": "shared.layout.header.mobile.account_menu.addresses",
-            "icon": "/static/images/dashboard/icons/building.svg#main"
+            "icon": "/static/images/dashboard/icons/building.svg#main",
+            "priority": 30
           },
           {
             "route": {
               "name": "Orders"
             },
             "title": "shared.layout.header.mobile.account_menu.orders",
-            "icon": "/static/images/dashboard/icons/orders.svg#main"
+            "icon": "/static/images/dashboard/icons/orders.svg#main",
+            "priority": 40
           },
           {
             "route": {
               "name": "Lists"
             },
             "title": "shared.layout.header.mobile.account_menu.lists",
-            "icon": "/static/images/dashboard/icons/list.svg#main"
+            "icon": "/static/images/dashboard/icons/list.svg#main",
+            "priority": 50
           },
           {
             "route": {
               "name": "CheckoutDefaults"
             },
             "title": "shared.layout.header.mobile.account_menu.checkout_defaults",
-            "icon": "/static/images/dashboard/icons/check-circle.svg#main"
+            "icon": "/static/images/dashboard/icons/check-circle.svg#main",
+            "priority": 60
           },
           {
             "route": {
               "name": "SavedCreditCards"
             },
             "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
-            "icon": "/static/images/dashboard/icons/credit-card.svg#main"
-          },
-          {
-            "route": {
-              "name": "Notifications"
-            },
-            "title": "shared.layout.header.mobile.account_menu.notifications",
-            "icon": "/static/icons/basic/bell.svg#icon"
+            "icon": "/static/images/dashboard/icons/credit-card.svg#main",
+            "priority": 70
           }
         ]
       },

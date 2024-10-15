@@ -1,3 +1,4 @@
+import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
 
@@ -153,7 +154,7 @@ export interface IThemeConfigPreset {
 }
 
 export interface IThemeConfigSettings {
-  show_details_in_separate_tab?: boolean;
+  details_browser_target?: BrowserTargetType;
 
   search_by_static_content_enabled?: boolean;
 

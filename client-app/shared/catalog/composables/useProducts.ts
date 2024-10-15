@@ -70,6 +70,7 @@ export function useProducts(
   const totalProductsCount = ref(0);
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
+  const branchesFromSidebarFilters = ref(true);
 
   const products = ref<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
@@ -145,6 +146,8 @@ export function useProducts(
     if (!isEqual(localStorageBranches.value, newFilters.branches)) {
       localStorageBranches.value = newFilters.branches;
     }
+
+    resetCurrentPage();
   }
 
   function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void {
@@ -156,6 +159,7 @@ export function useProducts(
       facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
 
       triggerRef(facets);
+      resetCurrentPage();
     }
   }
 
@@ -167,6 +171,7 @@ export function useProducts(
     );
 
     triggerRef(facets);
+    resetCurrentPage();
   }
 
   function resetFilterKeyword(): void {
@@ -182,13 +187,15 @@ export function useProducts(
     };
   }
 
-  function openBranchesModal(fromPopupSidebarFilter: boolean) {
+  function openBranchesModal() {
     openModal({
       component: BranchesModal,
       props: {
-        selectedBranches: fromPopupSidebarFilter ? productsFilters.value.branches : localStorageBranches.value,
+        selectedBranches: branchesFromSidebarFilters.value
+          ? productsFilters.value.branches
+          : localStorageBranches.value,
         onSave(branches: string[]) {
-          if (fromPopupSidebarFilter) {
+          if (branchesFromSidebarFilters.value) {
             const newFilters: ProductsFiltersType = {
               branches,
               facets: productsFilters.value.facets,
@@ -199,6 +206,7 @@ export function useProducts(
           } else {
             localStorageBranches.value = branches;
           }
+          resetFacetFilters();
         },
       },
     });
@@ -318,7 +326,18 @@ export function useProducts(
     });
   });
 
+  const currentPage = ref(1);
+
+  function updateCurrentPage(page: number) {
+    currentPage.value = page;
+  }
+
+  function resetCurrentPage() {
+    updateCurrentPage(1);
+  }
+
   return {
+    branchesFromSidebarFilters,
     facets,
     facetsQueryParam,
     fetchingFacets: readonly(fetchingFacets),
@@ -337,6 +356,10 @@ export function useProducts(
     searchQueryParam,
     sortQueryParam,
     totalProductsCount: readonly(totalProductsCount),
+
+    currentPage: readonly(currentPage),
+    resetCurrentPage,
+    updateCurrentPage,
 
     applyFilters,
     getFacets,

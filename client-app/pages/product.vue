@@ -16,7 +16,7 @@
       :hide-controls="false"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @open-branches-modal="openBranchesModal"
+      @open-branches-modal="showBranchesModal"
       @update-popup-sidebar-filters="updateFiltersSidebar"
       @apply-filters="applyFilters"
     />
@@ -48,6 +48,19 @@
           v-if="productInfoSection && !productInfoSection.hidden"
           :product="product"
           :model="productInfoSection"
+        />
+
+        <component
+          :is="ProductReviews"
+          v-if="productReviewsEnabled && !!productReviews?.length"
+          :model="productReviewsSection"
+          :fetching="fetchingProductReviews"
+          :rating="product.rating"
+          :reviews="productReviews"
+          :page="productReviewsPayload.page"
+          :pages-count="productReviewsPagesCount"
+          @change-sort-by-date="changeSortProductReviews"
+          @change-page="changeProductReviewsPage"
         />
 
         <component
@@ -118,6 +131,7 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
+import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
 import {
   useProduct,
   useRelatedProducts,
@@ -137,6 +151,8 @@ const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
 
+const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
+
 interface IProps {
   productId?: string;
   allowSetMeta?: boolean;
@@ -154,6 +170,7 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
 const {
+  branchesFromSidebarFilters,
   fetchingProducts: fetchingVariations,
   products: variations,
   pagesCount: variationsPagesCount,
@@ -177,6 +194,13 @@ const {
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
+const {
+  enabled: productReviewsEnabled,
+  fetching: fetchingProductReviews,
+  pagesCount: productReviewsPagesCount,
+  reviews: productReviews,
+  fetchCustomerReviews,
+} = useCustomerReviews();
 
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
@@ -187,6 +211,12 @@ const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:pr
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
+});
+const productReviewsPayload = ref({
+  entityId: productId.value,
+  entityType: "Product",
+  page: 1,
+  sort: "createddate:desc",
 });
 
 const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
@@ -213,6 +243,8 @@ const seoImageUrl = computed(() => product.value?.imgSrc);
 const productInfoSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "product-info"),
 );
+
+const productReviewsSection = computed(() => template.value?.content.find((item) => item.type === "product-reviews"));
 
 const productVariationsBlock = computed(() =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -300,6 +332,24 @@ async function resetFacetFilters(): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
+function showBranchesModal(fromFiltersSidebar: boolean): void {
+  branchesFromSidebarFilters.value = fromFiltersSidebar;
+  openBranchesModal();
+}
+
+async function changeSortProductReviews(sort: string): Promise<void> {
+  productReviewsPayload.value.page = 1;
+  productReviewsPayload.value.sort = sort;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
+}
+
+async function changeProductReviewsPage(page: number): Promise<void> {
+  productReviewsPayload.value.page = page;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
+}
+
 watchEffect(() => {
   if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
     usePageHead({
@@ -363,6 +413,12 @@ watchEffect(() => {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
     });
+  }
+});
+
+watchEffect(() => {
+  if (productReviewsEnabled.value) {
+    void fetchCustomerReviews(productReviewsPayload.value);
   }
 });
 </script>
