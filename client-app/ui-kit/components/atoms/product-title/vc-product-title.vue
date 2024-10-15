@@ -32,7 +32,7 @@ interface IEmits {
 
 interface IProps {
   to?: RouteLocationRaw | null;
-  target?: "_blank" | "_self";
+  target?: BrowserTargetType;
   title?: string;
   disabled?: boolean;
   fixHeight?: boolean;
