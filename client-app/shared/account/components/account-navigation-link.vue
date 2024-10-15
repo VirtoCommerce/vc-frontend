@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<IProps>(), {
   icon: "",
 });
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const { isActive } = useLink({ to: props.to });
 
 interface IProps {

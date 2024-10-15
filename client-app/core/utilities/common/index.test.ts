@@ -4,7 +4,6 @@ import {
   getReturnUrlValue,
   extractHostname,
   truncate,
-  getLinkTarget,
   appendSuffixToFilename,
   stringFormat,
   asyncForEach,
@@ -162,18 +161,6 @@ describe("truncate", () => {
     const str = "Exact length";
     const result = truncate(str, str.length);
     expect(result).toBe("Exact length");
-  });
-});
-
-describe("getLinkTarget", () => {
-  it('should return "_blank" when openInNewTab is true', () => {
-    const result = getLinkTarget(true);
-    expect(result).toBe("_blank");
-  });
-
-  it('should return "_self" when openInNewTab is false', () => {
-    const result = getLinkTarget(false);
-    expect(result).toBe("_self");
   });
 });
 

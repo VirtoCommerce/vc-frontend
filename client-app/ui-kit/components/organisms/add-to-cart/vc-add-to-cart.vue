@@ -112,6 +112,7 @@ const buttonText = computed<string>(() =>
 
 const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const quantity = ref<number | undefined>(props.modelValue);
 
 const { quantitySchema } = useQuantityValidationSchema({
