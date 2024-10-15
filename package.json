@@ -111,7 +111,6 @@
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
-    "@vue/runtime-core": "^3.5.12",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "~0.5.1",
     "autoprefixer": "^10.4.19",

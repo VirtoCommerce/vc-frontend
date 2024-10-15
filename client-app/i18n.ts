@@ -1,5 +1,6 @@
 import { createI18n as _createI18n } from "vue-i18n";
 import type { LocaleMessage } from "@intlify/core-base";
+import type { I18nOptions } from "vue-i18n";
 
 export function createI18n(locale: string, currency: string, fallback?: { locale: string; message: LocaleMessage }) {
   let fallbackMessage = {};
@@ -9,7 +10,7 @@ export function createI18n(locale: string, currency: string, fallback?: { locale
     };
   }
 
-  return _createI18n({
+  const options: I18nOptions = {
     legacy: false,
     datetimeFormats: {
       en: {
@@ -61,7 +62,9 @@ export function createI18n(locale: string, currency: string, fallback?: { locale
         },
       },
     },
-  });
+  };
+
+  return _createI18n<true, typeof options>(options);
 }
 
 export type I18n = ReturnType<typeof createI18n>;

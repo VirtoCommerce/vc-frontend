@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { StorefrontPermissions, XApiPermissions } from "@/core/constants";
 import type { IThemeConfigSettings, IThemeContext } from "@/core/types";
-import type { VueI18nDateTimeFormatting, VueI18nNumberFormatting, VueI18nTranslation } from "vue-i18n";
+import type { Composer } from "vue-i18n";
 
 export {};
 
@@ -11,10 +11,10 @@ declare module "@vue/runtime-core" {
     $context: IThemeContext;
     $permissions: { xApi: typeof XApiPermissions; storefront: typeof StorefrontPermissions };
     $can: (...permissions: string[]) => boolean;
-    $t: typeof VueI18nTranslation;
-    $tc: typeof VueI18nTranslation;
-    $d: typeof VueI18nDateTimeFormatting;
-    $n: typeof VueI18nNumberFormatting;
+    $t: Composer["t"];
+    $tc: Composer["t"];
+    $d: Composer["d"];
+    $n: Composer["n"];
     $router: import("vue-router").Router;
     $route: import("vue-router").RouteLocationNormalized;
   }

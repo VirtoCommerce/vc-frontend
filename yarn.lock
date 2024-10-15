@@ -5789,7 +5789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/runtime-core@npm:3.5.12, @vue/runtime-core@npm:^3.5.12":
+"@vue/runtime-core@npm:3.5.12":
   version: 3.5.12
   resolution: "@vue/runtime-core@npm:3.5.12"
   dependencies:
@@ -15651,7 +15651,6 @@ __metadata:
     "@vue/apollo-composable": "npm:^4.0.2"
     "@vue/eslint-config-prettier": "npm:^9.0.0"
     "@vue/eslint-config-typescript": "npm:^13.0.0"
-    "@vue/runtime-core": "npm:^3.5.12"
     "@vue/test-utils": "npm:^2.4.6"
     "@vue/tsconfig": "npm:~0.5.1"
     "@vueuse/components": "npm:^10.11.0"
