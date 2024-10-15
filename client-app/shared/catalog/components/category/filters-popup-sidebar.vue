@@ -70,6 +70,7 @@
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
+        :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
         @click="
           $emit('resetFacetFilters');
           $emit('hidePopupSidebar');
