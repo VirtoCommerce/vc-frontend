@@ -5,6 +5,7 @@ const Category = defineAsyncComponent(() => import("@/shared/catalog/components/
 const Slider = defineAsyncComponent(() => import("@/shared/static-content/components/slider.vue"));
 const ProductsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/products-block.vue"));
 const FavoriteProducts = defineAsyncComponent(() => import("@/shared/static-content/components/favorite-products.vue"));
+const BreadcrumbsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/breadcrumbs-block.vue"));
 
 export const builderIOComponents: Array<BuilderIOComponentType> = [
   {
@@ -336,6 +337,27 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
         type: "string",
         helperText:
           "On your website open Developer Tools(right-click a page and select 'Inspect'). Filter products that needed in the Catalog. Then go to Network -> graphql -> operationName: 'SearchProducts' -> variables -> copy filter",
+      },
+    ],
+  },
+  {
+    name: "Breadcrumbs",
+    component: BreadcrumbsBlock,
+    inputs: [
+      {
+        name: "breadcrumbs",
+        type: "list",
+        defaultValue: [{ title: "Catalog", seoPath: "/catalog" }],
+        subFields: [
+          {
+            name: "title",
+            type: "string",
+          },
+          {
+            name: "seoPath",
+            type: "string",
+          },
+        ],
       },
     ],
   },
