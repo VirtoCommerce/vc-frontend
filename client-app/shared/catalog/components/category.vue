@@ -25,7 +25,7 @@
       :hide-controls="hideControls"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @open-branches-modal="showBranchesModal"
+      @open-branches-modal="openBranchesModal"
       @update-popup-sidebar-filters="updateFiltersSidebar"
       @apply-filters="applyFilters"
     />
@@ -295,7 +295,6 @@ const isMobile = breakpoints.smaller("lg");
 
 const { themeContext } = useThemeContext();
 const {
-  branchesFromSidebarFilters,
   getFacets,
   facetsQueryParam,
   fetchingMoreProducts,
@@ -439,11 +438,6 @@ async function fetchProducts(): Promise<void> {
 
 function selectProduct(product: Product): void {
   ga.selectItem(product);
-}
-
-function showBranchesModal(fromFiltersSidebar: boolean): void {
-  branchesFromSidebarFilters.value = fromFiltersSidebar;
-  openBranchesModal();
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);
