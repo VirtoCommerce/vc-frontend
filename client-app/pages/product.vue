@@ -352,7 +352,6 @@ async function changeProductReviewsPage(page: number): Promise<void> {
 async function createReview(payload: { review: string; rating: number }): Promise<void> {
   await createCustomerReview({
     entityId: productId.value,
-    entityName: product.value!.name,
     entityType: "Product",
     review: payload.review,
     rating: payload.rating,

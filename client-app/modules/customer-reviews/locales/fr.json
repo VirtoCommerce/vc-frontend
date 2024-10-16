@@ -12,5 +12,12 @@
     "messages": {
       "thanks_for_feedback": "Vos commentaires ont été soumis avec succès et sont en attente de confirmation. Merci!"
     }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "Les avis ne peuvent être laissés que pour les produits.",
+    "PRODUCT_MUST_BE_PURCHASED": "Seuls les utilisateurs ayant acheté le produit peuvent laisser un avis.",
+    "DUPLICATE_REVIEW": "L'utilisateur a déjà laissé un avis pour ce produit.",
+    "INVALID_RATING": "La note doit être comprise entre 1 et 5.",
+    "REVIEW_IS_EMPTY": "La propriété 'Avis' doit être remplie."
   }
 }

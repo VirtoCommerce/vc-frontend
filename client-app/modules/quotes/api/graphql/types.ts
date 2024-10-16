@@ -629,7 +629,7 @@ export type CreateCustomerReviewCommandType = {
   rating: Scalars['Int']['input'];
   review: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
-  title?: InputMaybe<Scalars['String']['input']>;
+  title: Scalars['String']['input'];
   userId: Scalars['String']['input'];
   userName: Scalars['String']['input'];
 };
@@ -646,20 +646,17 @@ export type CreateQuoteFromCartCommandType = {
   comment: Scalars['String']['input'];
 };
 
+export type CreateReviewCommandType = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  rating: Scalars['Int']['input'];
+  review: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
 export type CreateReviewResult = {
-  createdDate?: Maybe<Scalars['DateTime']['output']>;
-  entityId: Scalars['String']['output'];
-  entityName: Scalars['String']['output'];
-  entityType: Scalars['String']['output'];
   id?: Maybe<Scalars['String']['output']>;
-  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
-  rating: Scalars['Int']['output'];
-  review: Scalars['String']['output'];
-  reviewStatus?: Maybe<CustomerReviewStatus>;
-  storeId: Scalars['String']['output'];
-  title?: Maybe<Scalars['String']['output']>;
-  userId: Scalars['String']['output'];
-  userName: Scalars['String']['output'];
+  userName?: Maybe<Scalars['String']['output']>;
   /** A set of errors in case the review is invalid */
   validationErrors: Array<ReviewValidationErrorType>;
 };
@@ -2903,11 +2900,12 @@ export type Mutations = {
   confirmEmail?: Maybe<CustomIdentityResultType>;
   confirmTask?: Maybe<WorkTaskType>;
   createContact?: Maybe<ContactType>;
-  createCustomerReview?: Maybe<CreateReviewResult>;
+  createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
+  createReview?: Maybe<CreateReviewResult>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
   declineQuoteRequest?: Maybe<QuoteType>;
@@ -3195,6 +3193,11 @@ export type MutationsCreateQuoteArgs = {
 
 export type MutationsCreateQuoteFromCartArgs = {
   command: CreateQuoteFromCartCommandType;
+};
+
+
+export type MutationsCreateReviewArgs = {
+  command: CreateReviewCommandType;
 };
 
 
@@ -4543,7 +4546,6 @@ export type QueryCanLeaveFeedbackArgs = {
   entityId: Scalars['String']['input'];
   entityType: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
 };
 
 

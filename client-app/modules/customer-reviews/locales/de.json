@@ -12,5 +12,12 @@
     "messages": {
       "thanks_for_feedback": "Ihr Feedback wurde erfolgreich übermittelt und wartet auf eine Bestätigung. Vielen Dank!"
     }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "Bewertungen können nur für Produkte hinterlassen werden.",
+    "PRODUCT_MUST_BE_PURCHASED": "Nur Benutzer, die das Produkt gekauft haben, können eine Bewertung hinterlassen.",
+    "DUPLICATE_REVIEW": "Der Benutzer hat bereits eine Bewertung für dieses Produkt hinterlassen.",
+    "INVALID_RATING": "Die Bewertung sollte im Bereich von 1 bis 5 liegen.",
+    "REVIEW_IS_EMPTY": "Die Eigenschaft 'Bewertung' muss ausgefüllt sein."
   }
 }
