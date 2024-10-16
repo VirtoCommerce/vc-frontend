@@ -106,7 +106,7 @@ function getFacetLabel(label: string): string {
   const { d, t } = globals.i18n.global;
 
   if (isDateString(label)) {
-    return d(new Date(label));
+    return d(label);
   }
 
   switch (label.toLowerCase()) {

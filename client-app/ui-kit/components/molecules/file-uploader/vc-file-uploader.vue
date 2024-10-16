@@ -122,6 +122,7 @@ const formatsHint = computed(() => {
 const fileSizeHint = computed(() => {
   const maxFileSize = getFileSize(props.maxFileSize);
   return n(maxFileSize.value, {
+    key: "decimal",
     notation: "compact",
     style: "unit",
     unit: maxFileSize.unit,

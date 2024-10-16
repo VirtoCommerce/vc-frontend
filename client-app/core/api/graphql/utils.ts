@@ -5,19 +5,16 @@ import { ServerError } from "@/core/api/common";
 import { AbortReason } from "@/core/api/common/enums";
 import { GraphQLErrorCode } from "@/core/api/graphql/enums";
 import type { ApolloClient } from "@apollo/client/core";
-import type { NetworkError } from "@apollo/client/errors";
-import type { GraphQLFormattedError } from "graphql";
+import type { GraphQLErrors, NetworkError } from "@apollo/client/errors";
+import type { GraphQLError } from "graphql";
 
-export function hasErrorCode(
-  graphQLErrors: ReadonlyArray<GraphQLFormattedError> | undefined,
-  errorCode: GraphQLErrorCode,
-) {
-  return graphQLErrors?.some((graphQLError) => graphQLError.extensions?.code === errorCode);
+export function hasErrorCode(graphQLErrors: ReadonlyArray<GraphQLError> | undefined, errorCode: GraphQLErrorCode) {
+  return graphQLErrors?.some((graphQLError) => graphQLError.extensions.code === errorCode);
 }
 
 export function toServerError(
   networkError: NetworkError | undefined,
-  graphQLErrors: ReadonlyArray<GraphQLFormattedError> | undefined,
+  graphQLErrors: GraphQLErrors | undefined,
 ): ServerError | undefined {
   if (
     (networkError && networkError.toString() !== (AbortReason.Explicit as string)) ||

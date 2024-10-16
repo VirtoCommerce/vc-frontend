@@ -181,6 +181,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       const fileSize = getFileSize(errorParameter as number);
       parameters = [
         n(fileSize.value, {
+          key: "decimal",
           notation: "compact",
           style: "unit",
           unit: fileSize.unit,
