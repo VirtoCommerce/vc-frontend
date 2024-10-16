@@ -207,6 +207,7 @@ const slotsData = computed(() => ({
   values,
   dirty: meta.value.dirty,
   valid: meta.value.valid,
+  validated: meta.value.validated,
   pending: meta.value.pending,
   touched: meta.value.touched,
 }));

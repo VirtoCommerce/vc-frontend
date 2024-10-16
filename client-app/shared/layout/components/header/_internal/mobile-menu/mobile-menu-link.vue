@@ -33,7 +33,7 @@
       </span>
 
       <VcBadge v-if="count" variant="solid-light" color="neutral" size="lg" rounded>
-        {{ $n(count, { style: "decimal", notation: "compact" }) }}
+        {{ $n(count, "decimal", { notation: "compact" }) }}
       </VcBadge>
 
       <VcIcon v-if="isParent" class="ml-auto text-[--mobile-menu-navigation-color]" name="chevron-right" />
