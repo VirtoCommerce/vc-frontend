@@ -76,12 +76,18 @@
           <div>
             <div class="mb-2 font-bold">
               {{ $t("common.labels.rate_product") }}
+              <span class="text-danger">*</span>
             </div>
             <ReviewRating :rating="newReviewRating" @set-rating="setRating" />
           </div>
         </div>
 
-        <VcTextarea v-model="newReviewContent" :label="$t('common.labels.comments')" class="mt-4" />
+        <VcTextarea v-model="newReviewContent" :label="$t('common.labels.comments')" required class="mt-4" />
+
+        <div class="mt-4">
+          <span class="text-danger">*</span>
+          {{ $t("common.labels.fields_required") }}
+        </div>
 
         <div class="mt-4 flex flex-wrap justify-between gap-3 max-xs:justify-center">
           <VcButton

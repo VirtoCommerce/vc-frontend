@@ -156,7 +156,8 @@
       "descending": "Descendant",
       "date_new_to_old": "Date, du nouveau à l’ancien",
       "date_old_to_new": "Date, de l’ancien au nouveau",
-      "comments": "Commentaires"
+      "comments": "Commentaires",
+      "fields_required": "Les champs sont obligatoires"
     },
     "prefixes": {
       "please": "S'il vous plaît",

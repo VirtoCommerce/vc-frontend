@@ -156,7 +156,8 @@
       "descending": "Absteigend",
       "date_new_to_old": "Datum, neu bis alt",
       "date_old_to_new": "Datum, alt bis neu",
-      "comments": "Kommentare"
+      "comments": "Kommentare",
+      "fields_required": "Felder sind Pflichtfelder"
     },
     "prefixes": {
       "please": "Bitte",
