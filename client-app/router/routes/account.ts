@@ -15,6 +15,7 @@ const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const Notifications = () => import("@/pages/account/notifications.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
+const BackInStockSubscriptions = () => import("@/pages/account/back-in-stock-subscriptions.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -71,6 +72,7 @@ export const accountRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  { path: "back-in-stock-subscriptions", name: "BackInStockSubscriptions", component: BackInStockSubscriptions },
   { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
   {
     path: "saved-credit-cards",

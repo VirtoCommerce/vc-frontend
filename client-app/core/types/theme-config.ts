@@ -186,6 +186,7 @@ export interface IThemeConfigSettings {
   image_thumbnails_original_fallback_enabled?: boolean;
   image_thumbnails_suffixes?: { sm: string; md: string; lg: string };
   image_carousel_in_product_card_enabled?: boolean;
+  back_in_stock_enabled?: boolean;
 
   registration_enabled?: boolean;
   social_auth_google?: boolean;
