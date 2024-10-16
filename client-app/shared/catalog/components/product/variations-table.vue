@@ -8,7 +8,6 @@
       :page="pageNumber"
       :pages="pagesCount"
       :hide-default-footer="!pagesCount"
-      layout="table-fixed min-w-full w-auto"
       @header-click="applySorting"
       @page-changed="changePage"
     >

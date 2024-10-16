@@ -258,7 +258,7 @@ function goToQuoteDetails(payload: { id: string; status?: string }): void {
   const pathName: string = payload.status === "Draft" ? "EditQuote" : "ViewQuote";
   const quoteRoute = router.resolve({ name: pathName, params: { quoteId: payload.id } });
 
-  if (themeContext.value.settings?.show_details_in_separate_tab) {
+  if (themeContext.value.settings?.details_browser_target === "_blank") {
     window.open(quoteRoute.fullPath, "_blank")!.focus();
   } else {
     window.location.href = quoteRoute.fullPath;

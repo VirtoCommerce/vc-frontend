@@ -19,13 +19,11 @@
         <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
 
-      <div
-        class="vc-product-card-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
-      >
+      <VcProductActions class="vc-product-card-list__buttons mt-3 place-self-start lg:mt-2">
         <AddToList :product="product" />
 
         <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
-      </div>
+      </VcProductActions>
     </div>
 
     <!-- Product title -->
@@ -33,7 +31,7 @@
       <template #trigger>
         <router-link
           :to="link"
-          :target="target"
+          :target="browserTarget"
           class="vc-product-card-list__name w-full grow text-sm font-black text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
@@ -98,7 +96,7 @@
       <template v-if="product.hasVariations">
         <VcButton
           :to="link"
-          :target="target"
+          :target="browserTarget"
           variant="outline"
           size="sm"
           full-width
@@ -109,7 +107,7 @@
 
         <router-link
           :to="link"
-          :target="target"
+          :target="browserTarget"
           class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
         >
           <svg class="size-3 shrink-0 text-primary lg:size-2.5">
@@ -142,7 +140,7 @@
 import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
-import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -150,6 +148,7 @@ import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { BrowserTargetType } from "@/core/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
@@ -161,12 +160,11 @@ const props = withDefaults(defineProps<IProps>(), {
 interface IProps {
   product: Product;
   lazy?: boolean;
-  openInNewTab?: boolean;
+  browserTarget?: BrowserTargetType;
   productReviewsEnabled?: boolean;
 }
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
-const target = computed(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),

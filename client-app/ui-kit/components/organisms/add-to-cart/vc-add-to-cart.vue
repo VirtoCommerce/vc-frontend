@@ -62,6 +62,7 @@ import { debounce } from "lodash";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
 interface IEmits {
@@ -112,7 +113,9 @@ const buttonText = computed<string>(() =>
 
 const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const quantity = ref<number | undefined>(props.modelValue);
+const pendingQuantity = ref<number | null>(null);
 
 const { quantitySchema } = useQuantityValidationSchema({
   minQuantity,
@@ -146,19 +149,32 @@ async function validateFields(): Promise<void> {
   }
 }
 
-const onChange = debounce(async () => {
+const handleChange = debounce(async () => {
   setValue(quantity.value);
 
   const newQuantity = Number(quantity.value);
 
-  if (isNaN(newQuantity) || newQuantity < 1 || newQuantity === props.modelValue) {
+  if (
+    isNaN(newQuantity) ||
+    newQuantity < 1 ||
+    newQuantity === props.modelValue ||
+    pendingQuantity.value === newQuantity
+  ) {
     return;
   }
 
   await validateFields();
 
   emit("update:modelValue", newQuantity);
+  pendingQuantity.value = newQuantity;
 }, timeout.value ?? 0);
+
+function onChange() {
+  if (quantity.value && quantity.value > LINE_ITEM_QUANTITY_LIMIT) {
+    quantity.value = Number(quantity.value.toString().slice(0, -1));
+  }
+  void handleChange();
+}
 
 function onFocusOut() {
   const newQuantity = Number(quantity.value);
@@ -170,6 +186,7 @@ function onFocusOut() {
 
 watchEffect(() => {
   quantity.value = props.modelValue;
+  pendingQuantity.value = null;
 });
 
 onMounted(async () => {

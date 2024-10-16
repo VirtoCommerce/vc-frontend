@@ -12,6 +12,7 @@ declare module "vue" {
     VcCardSkeleton: typeof Components.VcCardSkeleton;
     VcCarouselPagination: typeof Components.VcCarouselPagination;
     VcCheckbox: typeof Components.VcCheckbox;
+    VcCheckboxGroup: typeof Components.VcCheckboxGroup;
     VcContainer: typeof Components.VcContainer;
     VcDateSelector: typeof Components.VcDateSelector;
     VcDialog: typeof Components.VcDialog;
@@ -31,6 +32,7 @@ declare module "vue" {
     VcPopupSidebar: typeof Components.VcPopupSidebar;
     VcPriceDisplay: typeof Components.VcPriceDisplay;
     VcPriceDisplayCatalog: typeof Components.VcPriceDisplayCatalog;
+    VcProductActions: typeof Components.VcProductActions;
     VcProductProperties: typeof Components.VcProductProperties;
     VcProductTitle: typeof Components.VcProductTitle;
     VcProductVendor: typeof Components.VcProductVendor;

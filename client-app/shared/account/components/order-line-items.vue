@@ -1,5 +1,13 @@
 <template>
-  <VcLineItems :items="preparedLineItems" with-image with-properties with-price with-total with-subtotal>
+  <VcLineItems
+    :items="preparedLineItems"
+    :browser-target="$cfg.details_browser_target"
+    with-image
+    with-properties
+    with-price
+    with-total
+    with-subtotal
+  >
     <template #titles>
       <div class="text-center">
         {{ $t("common.labels.quantity") }}
