@@ -365,12 +365,20 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
   {
     name: "VcContainer",
     component: VcContainer,
-    inputs: [],
+    canHaveChildren: true,
+    defaultChildren: [
+      {
+        "@type": "@builder.io/sdk:Element",
+        component: { name: "Text", options: { text: "Replace me!" } },
+      },
+    ],
   },
 ];
 
 type BuilderIOComponentType = {
-  component: Component;
-  inputs: Array<object>;
   name: string;
+  component: Component;
+  inputs?: Array<object>;
+  canHaveChildren?: boolean;
+  defaultChildren?: Array<object>;
 };
