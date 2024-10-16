@@ -25,7 +25,7 @@ function _useCategory() {
       category.value = {
         ...data.category,
         childCategories: data.childCategories.childCategories ?? [],
-        name: data.category?.name || catalogName,
+        name: data.category?.name,
         id: data.category?.id || catalogId,
       };
     } catch (e) {
