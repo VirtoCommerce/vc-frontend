@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useSyncMutationBatchers } from "./useSyncMutationBatchers";
 import type { useMutationBatcher } from "./useMutationBatcher";
 import type { Mock } from "vitest";
 
 type MutationBatcherType = ReturnType<typeof useMutationBatcher>;
+type HandlerType = (id: string, data: object) => void;
 
 describe("useSyncMutationBatchers", () => {
   let mockBatcher1: MutationBatcherType;
@@ -32,7 +34,7 @@ describe("useSyncMutationBatchers", () => {
 
   it("should call callback with batcher1 as currentBatcher when mutation is added to batcher1", () => {
     useSyncMutationBatchers(mockBatcher1, mockBatcher2, callback);
-    const handler = (mockBatcher1.registerOnAddHandler as Mock).mock.calls[0][0];
+    const handler = (mockBatcher1.registerOnAddHandler as Mock).mock.calls[0][0] as HandlerType;
     handler("batcher1", { test: "data" });
     expect(callback).toHaveBeenCalledWith({
       args: { test: "data" },
@@ -43,7 +45,7 @@ describe("useSyncMutationBatchers", () => {
 
   it("should call callback with batcher2 as currentBatcher when mutation is added to batcher2", () => {
     useSyncMutationBatchers(mockBatcher1, mockBatcher2, callback);
-    const handler = (mockBatcher2.registerOnAddHandler as Mock).mock.calls[0][0];
+    const handler = (mockBatcher2.registerOnAddHandler as Mock).mock.calls[0][0] as HandlerType;
     handler("batcher2", { test: "data2" });
     expect(callback).toHaveBeenCalledWith({
       args: { test: "data2" },
@@ -54,8 +56,8 @@ describe("useSyncMutationBatchers", () => {
 
   it("should handle multiple calls to the add handler", () => {
     useSyncMutationBatchers(mockBatcher1, mockBatcher2, callback);
-    const handler1 = (mockBatcher1.registerOnAddHandler as Mock).mock.calls[0][0];
-    const handler2 = (mockBatcher2.registerOnAddHandler as Mock).mock.calls[0][0];
+    const handler1 = (mockBatcher1.registerOnAddHandler as Mock).mock.calls[0][0] as HandlerType;
+    const handler2 = (mockBatcher2.registerOnAddHandler as Mock).mock.calls[0][0] as HandlerType;
 
     handler1("batcher1", { test: "data1" });
     expect(callback).toHaveBeenCalledWith({

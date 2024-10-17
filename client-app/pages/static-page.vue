@@ -33,7 +33,7 @@ import { useStaticPage } from "@/shared/static-content";
 const { staticPage: template } = useStaticPage();
 const templateName = computed(() => unref(template)?.settings?.name || unref(template)?.settings?.header || "");
 
-const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }]);
+const breadcrumbs = useBreadcrumbs(() => [{ title: templateName.value }] as IBreadcrumb[]);
 
 const staticPageAnchor = shallowRef<HTMLElement | null>(null);
 const staticPageAnchorIsVisible = useElementVisibility(staticPageAnchor);

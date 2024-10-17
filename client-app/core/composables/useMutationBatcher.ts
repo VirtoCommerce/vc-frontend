@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { ApolloError } from "@apollo/client/core";
 import cloneDeep from "lodash/cloneDeep";
 import mergeWith from "lodash/mergeWith";
@@ -19,9 +22,9 @@ const DEFAULT_MAX_LENGTH = 10;
  */
 function DEFAULT_MERGE_STRATEGY<TVariables extends object>(a: TVariables, b: TVariables): TVariables {
   const result = cloneDeep(a);
-  mergeWith(result, b, (objValue, srcValue) => {
+  mergeWith(result, b, (objValue: TVariables, srcValue: TVariables) => {
     if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-      return objValue.concat(srcValue);
+      return [...objValue, ...srcValue];
     }
   });
   return result;
@@ -33,9 +36,9 @@ function DEFAULT_MERGE_STRATEGY<TVariables extends object>(a: TVariables, b: TVa
 export function getMergeStrategyUniqueBy(keyOrFn: string | ((item: unknown) => unknown)) {
   return <TVariables>(a: TVariables, b: TVariables): TVariables => {
     const result = cloneDeep(a);
-    mergeWith(result, b, (objValue, srcValue) => {
+    mergeWith(result, b, (objValue: TVariables, srcValue: TVariables) => {
       if (Array.isArray(objValue) && Array.isArray(srcValue)) {
-        return uniqByLast(objValue.concat(srcValue), keyOrFn as UniqByLastIterateeType<TVariables>);
+        return uniqByLast([...objValue, ...srcValue], keyOrFn as UniqByLastIterateeType<TVariables>);
       }
     });
     return result;

@@ -10,15 +10,18 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-const props = defineProps({
+interface IProps {
   model: {
-    type: Object,
-    required: true,
-  },
-});
+    heading: string;
+    title: string;
+    text: string | { html: string };
+  };
+}
+
+const props = defineProps<IProps>();
 
 const contentValue = computed(() => {
-  return props.model.text.html || props.model.text;
+  return typeof props.model.text === "object" ? props.model.text?.html : props.model.text;
 });
 </script>
 

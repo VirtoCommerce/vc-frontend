@@ -41,7 +41,7 @@ const { dateFilterType } = toRefs(props);
 const selectedDateFilter = ref<DateFilterType>(dateFilterType.value ?? dateFilterTypes.value[0]);
 
 function handleChangeType(): void {
-  if (selectedDateFilter.value.id === DateFilterId.CUSTOM) {
+  if (selectedDateFilter.value.id === (DateFilterId.CUSTOM as DateFilterType["id"])) {
     selectedDateFilter.value.startDate = undefined;
     selectedDateFilter.value.endDate = undefined;
   }

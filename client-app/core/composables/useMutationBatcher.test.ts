@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
 import { useMutationBatcher, getMergeStrategyUniqueBy } from "./useMutationBatcher";
@@ -17,6 +19,8 @@ const mutationMock = (value: unknown) =>
       resolve(value);
     }, SIMULATED_REQUEST_DURATION_MS);
   });
+
+type TestArgumentsType = { command: { cartItems: { productId: string; quantity: number }[] } };
 
 const getTestArguments = (productId: string, quantity: number = 1) => ({
   command: { cartItems: [{ productId, quantity: quantity }] },
@@ -122,7 +126,7 @@ describe("useMutationBatcher", () => {
   it("should apply custom merge strategy", () => {
     const mutation = vi.fn().mockImplementation(mutationMock);
     const { add } = useMutationBatcher(mutation, {
-      mergeStrategy: (a, b) => {
+      mergeStrategy: (a: TestArgumentsType, b: TestArgumentsType) => {
         const itemA = a?.command?.cartItems?.[0];
         const itemB = b?.command?.cartItems?.[0];
         const sum = itemA?.productId === itemB.productId ? itemA.quantity + itemB.quantity : itemB.quantity;
@@ -207,8 +211,8 @@ describe("useMutationBatcher", () => {
     expect(loading1.value).toBe(false);
     expect(loading2.value).toBe(false);
 
-    add1(DUMMY_TEXT_ARGUMENTS);
-    add2(DUMMY_TEXT_ARGUMENTS);
+    void add1(DUMMY_TEXT_ARGUMENTS);
+    void add2(DUMMY_TEXT_ARGUMENTS);
 
     vi.advanceTimersByTime(DEFAULT_DEBOUNCE_IN_MS);
     vi.advanceTimersByTime(DEFAULT_DEBOUNCE_IN_MS);

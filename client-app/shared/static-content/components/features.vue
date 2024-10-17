@@ -21,11 +21,20 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+type ModelType = {
+  title: string;
+  subtitle: string;
+  background: string;
+  columns: {
+    title: string;
+    text: string;
+    image: string;
+  }[];
+};
+
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  model: Record<string, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  settings: Record<string, any>;
+  model: ModelType;
+  settings: Record<string, unknown>;
 }>();
 
 const classObject = computed(() => {

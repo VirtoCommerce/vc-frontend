@@ -51,6 +51,7 @@ const props = withDefaults(defineProps<IProps<T>>(), {
 const componentId = `vc-carousel_${getCurrentInstance()!.uid}`;
 const modules = [Pagination, Navigation];
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 const listeners = computed(() => props.options.on ?? {});
 
 const attrs = computed<Omit<CarouselOptions, "on">>(() => {
