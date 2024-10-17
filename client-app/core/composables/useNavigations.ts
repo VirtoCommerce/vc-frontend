@@ -31,7 +31,13 @@ const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
 );
 
 const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
-  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.account) : undefined;
+  const schema = menuSchema.value?.header?.desktop?.account
+    ? _.clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
+    : undefined;
+  if (Array.isArray(schema?.children)) {
+    schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+  }
+  return schema;
 });
 
 const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
