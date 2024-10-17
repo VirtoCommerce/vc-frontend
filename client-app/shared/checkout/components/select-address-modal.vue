@@ -114,18 +114,12 @@
               </p>
             </div>
 
-            <div v-if="itemData.item.id === selectedAddress?.id" class="w-1/4 text-center">
-              <VcIcon class="text-success" name="check-circle" />
-            </div>
+            <div class="w-1/4 text-center">
+              <VcIcon v-if="itemData.item.id === selectedAddress?.id" class="text-success" name="check-circle" />
 
-            <div v-else class="w-1/4">
-              <button
-                type="button"
-                class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-primary px-3 font-roboto-condensed text-base font-bold uppercase text-primary hover:bg-primary hover:text-additional-50 focus:outline-none"
-                @click="setAddress(itemData.item)"
-              >
+              <VcButton v-else variant="outline" size="sm" min-width="6.25rem" @click="setAddress(itemData.item)">
                 {{ $t("shared.checkout.select_address_modal.select_button") }}
-              </button>
+              </VcButton>
             </div>
           </div>
         </template>
@@ -179,17 +173,12 @@
               </span>
             </td>
 
-            <td v-if="address.id === selectedAddress?.id" class="p-5 text-center">
-              <VcIcon class="text-success" name="check-circle" />
-            </td>
-            <td v-else class="p-5">
-              <button
-                type="button"
-                class="mx-auto flex h-9 grow items-center justify-center rounded border-2 border-primary px-3 font-roboto-condensed text-base font-bold uppercase text-primary hover:bg-primary hover:text-additional-50 focus:outline-none"
-                @click="setAddress(address)"
-              >
+            <td class="p-5 text-center">
+              <VcIcon v-if="address.id === selectedAddress?.id" class="text-success" name="check-circle" />
+
+              <VcButton v-else variant="outline" size="sm" min-width="6.25rem" @click="setAddress(address)">
                 {{ $t("shared.checkout.select_address_modal.select_button") }}
-              </button>
+              </VcButton>
             </td>
           </tr>
         </template>

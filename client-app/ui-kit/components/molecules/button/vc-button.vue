@@ -160,7 +160,7 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block rounded border-2 select-none text-center;
+  @apply relative inline-block rounded border-2 select-none text-center tracking-wide;
 
   &--truncate {
     $truncate: &;

@@ -58,7 +58,7 @@
         <div class="mt-16 grid grid-cols-1 items-center gap-x-20 gap-y-10 px-8 lg:grid-cols-3 lg:px-0">
           <div class="text-center">
             <VcImage src="/static/images/demo-landing/feat-1.svg" class="mx-auto mb-9 h-24" lazy />
-            <div class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+            <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_1.title") }}
             </div>
             <div class="text-sm">
@@ -67,7 +67,7 @@
           </div>
           <div class="text-center">
             <VcImage src="/static/images/demo-landing/feat-2.svg" class="mx-auto mb-9 h-24" lazy />
-            <div class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+            <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_2.title") }}
             </div>
             <div class="text-sm">
@@ -76,7 +76,7 @@
           </div>
           <div class="text-center">
             <VcImage src="/static/images/demo-landing/feat-3.svg" class="mx-auto mb-9 h-24" lazy />
-            <div class="mb-3 font-roboto-condensed text-2xl font-bold uppercase">
+            <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_3.title") }}
             </div>
             <div class="text-sm">
