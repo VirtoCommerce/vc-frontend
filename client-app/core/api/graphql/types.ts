@@ -56,21 +56,23 @@ export type ApproveQuoteResultType = {
 export type Asset = {
   /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
-  /** Group of the asset. */
+  /** The description of the asset. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The group of the asset. */
   group?: Maybe<Scalars['String']['output']>;
   /** The unique ID of the asset. */
   id: Scalars['String']['output'];
-  /** MimeType of the asset. */
+  /** The MIME type of the asset. */
   mimeType?: Maybe<Scalars['String']['output']>;
   /** The name of the asset. */
   name?: Maybe<Scalars['String']['output']>;
-  /** RelativeUrl of the asset. */
+  /** The relative URL of the asset. */
   relativeUrl?: Maybe<Scalars['String']['output']>;
-  /** Size of the asset. */
+  /** The size of the asset in bytes. */
   size: Scalars['Long']['output'];
-  /** Type id of the asset. */
+  /** The type ID of the asset. */
   typeId: Scalars['String']['output'];
-  /** Url of the asset. */
+  /** The URL of the asset. */
   url: Scalars['String']['output'];
 };
 
@@ -391,6 +393,8 @@ export type Category = {
   /** The category priority. */
   priority: Scalars['Int']['output'];
   properties: Array<Property>;
+  /** Category relevance score */
+  relevanceScore?: Maybe<Scalars['Float']['output']>;
   /** Request related SEO info */
   seoInfo: SeoInfo;
   /** Request related slug for category */
@@ -625,7 +629,7 @@ export type CreateCustomerReviewCommandType = {
   rating: Scalars['Int']['input'];
   review: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
-  title: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
   userId: Scalars['String']['input'];
   userName: Scalars['String']['input'];
 };
@@ -640,6 +644,24 @@ export type CreateQuoteCommandType = {
 export type CreateQuoteFromCartCommandType = {
   cartId: Scalars['String']['input'];
   comment: Scalars['String']['input'];
+};
+
+export type CreateReviewResult = {
+  createdDate?: Maybe<Scalars['DateTime']['output']>;
+  entityId: Scalars['String']['output'];
+  entityName: Scalars['String']['output'];
+  entityType: Scalars['String']['output'];
+  id?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  rating: Scalars['Int']['output'];
+  review: Scalars['String']['output'];
+  reviewStatus?: Maybe<CustomerReviewStatus>;
+  storeId: Scalars['String']['output'];
+  title?: Maybe<Scalars['String']['output']>;
+  userId: Scalars['String']['output'];
+  userName: Scalars['String']['output'];
+  /** A set of errors in case the review is invalid */
+  validationErrors: Array<ReviewValidationErrorType>;
 };
 
 export type CurrencyType = {
@@ -789,7 +811,7 @@ export type CustomerReview = {
   review: Scalars['String']['output'];
   reviewStatus?: Maybe<CustomerReviewStatus>;
   storeId: Scalars['String']['output'];
-  title: Scalars['String']['output'];
+  title?: Maybe<Scalars['String']['output']>;
   userId: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };
@@ -897,6 +919,21 @@ export type DiscountType = {
   promotionId?: Maybe<Scalars['String']['output']>;
 };
 
+export type DynamicContentItemType = {
+  contentType: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  /** Dynamic content dynamic property values */
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  priority: Scalars['Int']['output'];
+};
+
+
+export type DynamicContentItemTypeDynamicPropertiesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
 export type DynamicPropertyConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -987,6 +1024,11 @@ export type ErrorParameterType = {
   key: Scalars['String']['output'];
   /** Value */
   value: Scalars['String']['output'];
+};
+
+export type EvaluateDynamicContentResultType = {
+  items?: Maybe<Array<Maybe<DynamicContentItemType>>>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Facet = {
@@ -1225,17 +1267,19 @@ export type IdentityResultType = {
 export type ImageType = {
   /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
-  /** Image group */
+  /** The description of the image */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The group of the image */
   group?: Maybe<Scalars['String']['output']>;
-  /** Image ID */
+  /** The unique ID of the image */
   id: Scalars['String']['output'];
-  /** Image name */
+  /** The name of the image */
   name?: Maybe<Scalars['String']['output']>;
-  /** Image relative URL */
+  /** The relative URL of the image */
   relativeUrl?: Maybe<Scalars['String']['output']>;
   /** Sort order */
   sortOrder: Scalars['Int']['output'];
-  /** Image URL */
+  /** The URL of the image */
   url: Scalars['String']['output'];
 };
 
@@ -2859,7 +2903,7 @@ export type Mutations = {
   confirmEmail?: Maybe<CustomIdentityResultType>;
   confirmTask?: Maybe<WorkTaskType>;
   createContact?: Maybe<ContactType>;
-  createCustomerReview?: Maybe<CustomerReview>;
+  createCustomerReview?: Maybe<CreateReviewResult>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
   createQuote?: Maybe<QuoteType>;
@@ -4145,6 +4189,8 @@ export type Product = {
   outline?: Maybe<Scalars['String']['output']>;
   /** Outlines */
   outlines: Array<OutlineType>;
+  /** Defines the number of items in a package. Quantity step for your product's. */
+  packSize: Scalars['Int']['output'];
   /** Product price */
   price: PriceType;
   /** Product prices */
@@ -4154,6 +4200,8 @@ export type Product = {
   properties: Array<Property>;
   /** Product rating */
   rating?: Maybe<Rating>;
+  /** Product relevance score */
+  relevanceScore?: Maybe<Scalars['Float']['output']>;
   /** Request related SEO info */
   seoInfo: SeoInfo;
   /** Request related slug for product */
@@ -4427,6 +4475,7 @@ export type PushMessageType = {
 };
 
 export type Query = {
+  canLeaveFeedback?: Maybe<Scalars['Boolean']['output']>;
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
   categories?: Maybe<CategoryConnection>;
@@ -4441,6 +4490,7 @@ export type Query = {
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
+  evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
   fcmSettings?: Maybe<FcmSettingsType>;
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
@@ -4486,6 +4536,14 @@ export type Query = {
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
   wishlist?: Maybe<WishlistType>;
   wishlists?: Maybe<WishlistConnection>;
+};
+
+
+export type QueryCanLeaveFeedbackArgs = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
@@ -4606,6 +4664,18 @@ export type QueryDynamicPropertyArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   idOrName: Scalars['String']['input'];
   objectType?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryEvaluateDynamicContentArgs = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  placeName?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  toDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -5215,6 +5285,13 @@ export type RequestRegistrationType = {
   result?: Maybe<AccountCreationResultType>;
 };
 
+export type ReviewValidationErrorType = {
+  /** Error code */
+  errorCode?: Maybe<Scalars['String']['output']>;
+  /** Error message */
+  errorMessage?: Maybe<Scalars['String']['output']>;
+};
+
 export type RoleType = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -5532,6 +5609,8 @@ export type VariationType = {
   name: Scalars['String']['output'];
   /** Outlines */
   outlines?: Maybe<Array<OutlineType>>;
+  /** Defines the number of items in a package. Quantity step for your product's. */
+  packSize?: Maybe<Scalars['Int']['output']>;
   /** Product price */
   price: PriceType;
   /** Product prices */
@@ -5540,11 +5619,11 @@ export type VariationType = {
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
   /** Product raiting */
-  rating?: Maybe<Rating>;
+  rating: Rating;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
-  vendor?: Maybe<CommonVendor>;
+  vendor: CommonVendor;
 };
 
 /** Vendor Info */
@@ -6548,7 +6627,7 @@ export type GetSlugInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetSlugInfoQuery = { slugInfo?: { entityInfo?: { id: string, isActive: boolean, languageCode?: string, objectId: string, objectType: string, semanticUrl: string } } };
+export type GetSlugInfoQuery = { slugInfo?: { entityInfo?: { id: string, isActive: boolean, languageCode?: string, objectId: string, objectType: string, semanticUrl: string, metaDescription?: string, metaKeywords?: string, pageTitle?: string } } };
 
 export type GetStoreQueryVariables = Exact<{
   domain: Scalars['String']['input'];
@@ -6672,7 +6751,7 @@ export const AuthorizePaymentDocument = {"kind":"Document","definitions":[{"kind
 export const DeleteSkyFlowCardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteSkyFlowCard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteSkyflowCardCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteSkyflowCard"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}]}]}}]} as unknown as DocumentNode<DeleteSkyFlowCardMutation, DeleteSkyFlowCardMutationVariables>;
 export const InitializePaymentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializePayment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"InputInitializePaymentType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializePayment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isSuccess"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}},{"kind":"Field","name":{"kind":"Name","value":"actionHtmlForm"}},{"kind":"Field","name":{"kind":"Name","value":"actionRedirectUrl"}},{"kind":"Field","name":{"kind":"Name","value":"paymentActionType"}},{"kind":"Field","name":{"kind":"Name","value":"publicParameters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]} as unknown as DocumentNode<InitializePaymentMutation, InitializePaymentMutationVariables>;
 export const GetSkyflowCardsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSkyflowCards"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skyflowCards"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cards"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cardNumber"}},{"kind":"Field","name":{"kind":"Name","value":"cardExpiration"}},{"kind":"Field","name":{"kind":"Name","value":"skyflowId"}},{"kind":"Field","name":{"kind":"Name","value":"active"}}]}}]}}]}}]} as unknown as DocumentNode<GetSkyflowCardsQuery, GetSkyflowCardsQueryVariables>;
-export const GetSlugInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSlugInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slugInfo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"entityInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"languageCode"}},{"kind":"Field","name":{"kind":"Name","value":"objectId"}},{"kind":"Field","name":{"kind":"Name","value":"objectType"}},{"kind":"Field","name":{"kind":"Name","value":"semanticUrl"}}]}}]}}]}}]} as unknown as DocumentNode<GetSlugInfoQuery, GetSlugInfoQueryVariables>;
+export const GetSlugInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSlugInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"slugInfo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}},{"kind":"Argument","name":{"kind":"Name","value":"cultureName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cultureName"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"entityInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"languageCode"}},{"kind":"Field","name":{"kind":"Name","value":"objectId"}},{"kind":"Field","name":{"kind":"Name","value":"objectType"}},{"kind":"Field","name":{"kind":"Name","value":"semanticUrl"}},{"kind":"Field","name":{"kind":"Name","value":"metaDescription"}},{"kind":"Field","name":{"kind":"Name","value":"metaKeywords"}},{"kind":"Field","name":{"kind":"Name","value":"pageTitle"}}]}}]}}]}}]} as unknown as DocumentNode<GetSlugInfoQuery, GetSlugInfoQueryVariables>;
 export const GetStoreDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStore"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"domain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"store"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"domain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"domain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"storeId"}},{"kind":"Field","name":{"kind":"Name","value":"storeName"}},{"kind":"Field","name":{"kind":"Name","value":"catalogId"}},{"kind":"Field","name":{"kind":"Name","value":"storeUrl"}},{"kind":"Field","name":{"kind":"Name","value":"defaultLanguage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allLanguageFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"availableLanguages"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allLanguageFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"defaultCurrency"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allCurrencyFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"availableCurrencies"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"allCurrencyFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"settings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authenticationTypes"}},{"kind":"Field","name":{"kind":"Name","value":"subscriptionEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"taxCalculationEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"anonymousUsersAllowed"}},{"kind":"Field","name":{"kind":"Name","value":"environmentName"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerificationEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"emailVerificationRequired"}},{"kind":"Field","name":{"kind":"Name","value":"createAnonymousOrderEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"seoLinkType"}},{"kind":"Field","name":{"kind":"Name","value":"defaultSelectedForCheckout"}},{"kind":"Field","name":{"kind":"Name","value":"passwordRequirements"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requireLowercase"}},{"kind":"Field","name":{"kind":"Name","value":"requireUppercase"}},{"kind":"Field","name":{"kind":"Name","value":"requireDigit"}},{"kind":"Field","name":{"kind":"Name","value":"requiredLength"}},{"kind":"Field","name":{"kind":"Name","value":"requiredUniqueChars"}},{"kind":"Field","name":{"kind":"Name","value":"requireNonAlphanumeric"}}]}},{"kind":"Field","name":{"kind":"Name","value":"modules"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"moduleId"}},{"kind":"Field","name":{"kind":"Name","value":"settings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"allLanguageFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LanguageType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isInvariant"}},{"kind":"Field","name":{"kind":"Name","value":"cultureName"}},{"kind":"Field","name":{"kind":"Name","value":"nativeName"}},{"kind":"Field","name":{"kind":"Name","value":"threeLetterLanguageName"}},{"kind":"Field","name":{"kind":"Name","value":"twoLetterLanguageName"}},{"kind":"Field","name":{"kind":"Name","value":"twoLetterRegionName"}},{"kind":"Field","name":{"kind":"Name","value":"threeLetterRegionName"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"allCurrencyFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"CurrencyType"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"exchangeRate"}},{"kind":"Field","name":{"kind":"Name","value":"customFormatting"}},{"kind":"Field","name":{"kind":"Name","value":"englishName"}},{"kind":"Field","name":{"kind":"Name","value":"cultureName"}}]}}]} as unknown as DocumentNode<GetStoreQuery, GetStoreQueryVariables>;
 export const OperationNames = {
   Query: {
