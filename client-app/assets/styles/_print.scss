@@ -1,3 +1,4 @@
+@use "sass:meta";
 @media print {
   html {
     @apply h-full min-h-screen;
@@ -11,19 +12,19 @@
     }
   }
 
-  @import "print/atoms/vc-badge";
-  @import "print/atoms/vc-button";
-  @import "print/atoms/vc-container";
-  @import "print/molecules/vc-chip";
-  @import "print/atoms/vc-widget";
-  @import "print/molecules/vc-input";
-  @import "print/molecules/vc-layout-with-right-sidebar";
-  @import "print/molecules/vc-line-item-price";
-  @import "print/molecules/vc-line-item-total";
-  @import "print/molecules/vc-line-item";
-  @import "print/molecules/vc-line-items";
-  @import "print/molecules/vc-select";
-  @import "print/molecules/vc-steps";
-  @import "print/molecules/vc-vendor";
-  @import "print/organisms/vc-product-image";
+  @include meta.load-css("print/atoms/vc-badge");
+  @include meta.load-css("print/atoms/vc-button");
+  @include meta.load-css("print/atoms/vc-container");
+  @include meta.load-css("print/molecules/vc-chip");
+  @include meta.load-css("print/atoms/vc-widget");
+  @include meta.load-css("print/molecules/vc-input");
+  @include meta.load-css("print/molecules/vc-layout-with-right-sidebar");
+  @include meta.load-css("print/molecules/vc-line-item-price");
+  @include meta.load-css("print/molecules/vc-line-item-total");
+  @include meta.load-css("print/molecules/vc-line-item");
+  @include meta.load-css("print/molecules/vc-line-items");
+  @include meta.load-css("print/molecules/vc-select");
+  @include meta.load-css("print/molecules/vc-steps");
+  @include meta.load-css("print/molecules/vc-vendor");
+  @include meta.load-css("print/organisms/vc-product-image");
 }
