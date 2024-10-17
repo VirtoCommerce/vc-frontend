@@ -45,7 +45,7 @@ function _useThemeContext() {
   function getThemeConfig() {
     const data = cloneDeep(settingsData) as IThemeConfig;
 
-    if (IS_DEVELOPMENT && data) {
+    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
       data.settings.details_browser_target = "_self";
     }
 
