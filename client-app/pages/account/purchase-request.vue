@@ -1,5 +1,5 @@
 <template>
-  <div v-if="purchaseRequest">
+  <div class="relative flex w-full min-w-0 flex-col gap-y-5">
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
@@ -71,7 +71,7 @@
     </VcLayoutWithRightSidebar>
   </div>
 
-  <VcLoaderOverlay v-else :visible="loading" no-bg />
+  <VcLoaderOverlay :visible="loading || updatingPurchaseRequest" fixed-spinning />
 </template>
 
 <script setup lang="ts">
@@ -102,11 +102,13 @@ const {
   purchaseRequest,
   files,
   fileOptions,
+  updatingPurchaseRequest,
   cart,
   allCartItemsAreDigital,
   quote,
   fetchFileOptions,
   updatePurchaseRequestByDocuments,
+  refetch,
   fetchItems,
   changeCartItemQuantity,
   changeQuoteItemQuantity,
@@ -124,6 +126,7 @@ const isMobile = breakpoints.smaller("lg");
 
 async function onAddFiles(items: INewFile[]) {
   await updatePurchaseRequestByDocuments(items);
+  await refetch();
 }
 
 function onFileDownload(file: FileType) {

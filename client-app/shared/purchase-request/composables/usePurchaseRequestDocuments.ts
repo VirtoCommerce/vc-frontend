@@ -2,6 +2,7 @@ import { inject, ref } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
 import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/constants";
 import { useFiles } from "@/shared/files/composables/useFiles";
+import { isUploadedFile } from "@/ui-kit/utilities";
 import type { WatchSource } from "vue";
 
 export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedFile[]>) {
@@ -25,7 +26,7 @@ export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedF
     validateFiles();
     await uploadFiles();
 
-    const documentUrls = files.value.map((x) => x.url!);
+    const documentUrls = files.value.filter(isUploadedFile).map((x) => x.url!);
     const result = await callback(documentUrls);
 
     processing.value = false;
