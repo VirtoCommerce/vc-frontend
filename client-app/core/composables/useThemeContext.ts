@@ -1,4 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
+import cloneDeep from "lodash/cloneDeep";
 import { computed, ref } from "vue";
 import settingsData from "@/config/settings_data.json";
 import { useFetch } from "@/core/api/common";
@@ -10,7 +11,7 @@ function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
   async function fetchThemeContext(store: StoreResponseType, themePresetName?: string) {
-    const themeConfig = fetchThemeConfig();
+    const themeConfig = getThemeConfig();
 
     if (!themeConfig) {
       throw new Error("Can't get theme context");
@@ -41,8 +42,8 @@ function _useThemeContext() {
     return preset;
   }
 
-  function fetchThemeConfig() {
-    const data = settingsData as IThemeConfig;
+  function getThemeConfig() {
+    const data = cloneDeep(settingsData) as IThemeConfig;
 
     if (IS_DEVELOPMENT && data) {
       data.settings.details_browser_target = "_self";
