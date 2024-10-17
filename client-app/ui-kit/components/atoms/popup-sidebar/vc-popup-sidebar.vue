@@ -20,11 +20,11 @@
         <div class="relative z-[1] flex items-center justify-between gap-2 ps-5 shadow-sm">
           <slot name="header" :hide="onHide">
             <div class="text-2xl font-bold">
-              {{ $t("common.buttons.filters") }}
+              {{ title ?? $t("common.buttons.filters") }}
             </div>
 
             <button type="button" class="appearance-none px-5 py-4" @click="onHide">
-              <VcIcon class="text-danger-400" name="x" />
+              <VcIcon class="text-neutral-600" name="delete-thin" />
             </button>
           </slot>
         </div>
@@ -51,6 +51,7 @@ interface IEmits {
 
 interface IProps {
   isVisible?: boolean;
+  title?: string;
 }
 
 defineOptions({

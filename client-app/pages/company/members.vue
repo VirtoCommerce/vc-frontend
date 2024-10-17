@@ -87,7 +87,7 @@
           class="absolute right-0 z-[1] mt-2 rounded border bg-additional-50 p-6 shadow-lg"
         >
           <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-2" @click="hideFilters">
-            <VcIcon class="text-danger" name="x" :size="18" />
+            <VcIcon class="text-danger" name="delete-thin" :size="18" />
           </button>
 
           <div class="flex flex-row gap-6 pr-4">

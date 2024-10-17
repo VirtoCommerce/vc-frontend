@@ -31,7 +31,7 @@
                 </span>
 
                 <button class="-me-1 flex p-1 text-danger-400 hover:text-danger-700" type="button" @click="close()">
-                  <VcIcon name="x" size="sm" />
+                  <VcIcon name="delete-thin" size="sm" />
                 </button>
               </h3>
 

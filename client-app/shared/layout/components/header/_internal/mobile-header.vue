@@ -98,7 +98,7 @@
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 
       <button type="button" class="-mr-2 ml-2 h-11 appearance-none px-3" @click="hideSearchBar">
-        <VcIcon name="x" class="text-additional-50" />
+        <VcIcon name="delete-thin" class="text-additional-50" />
       </button>
     </div>
     <!-- endregion Mobile Search Bar -->

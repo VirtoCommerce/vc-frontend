@@ -15,7 +15,7 @@
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <VcIcon name="x" class="text-[--mobile-menu-navigation-color]" :size="22" />
+        <VcIcon name="delete-thin" class="text-[--mobile-menu-navigation-color]" :size="22" />
       </button>
     </header>
 
