@@ -1,17 +1,30 @@
 import { VcSelect } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
+const SIZES = ["xs", "sm", "md"];
+const ITEM_SIZES = ["xs", "sm", "md", "lg"];
+
 export default {
   title: "Components/Molecules/VcSelect",
   component: VcSelect,
   argTypes: {
     size: {
       control: "radio",
-      options: ["sm", "md"],
+      options: SIZES,
       type: { name: "string", required: false },
       table: {
         type: {
-          summary: '"sm" | "md"',
+          summary: SIZES.join(" | "),
+        },
+      },
+    },
+    itemSize: {
+      control: "radio",
+      options: ITEM_SIZES,
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: ITEM_SIZES.join(" | "),
         },
       },
     },
