@@ -1,10 +1,12 @@
 import { defineAsyncComponent } from "vue";
+import { VcContainer } from "@/ui-kit/components";
 import type { Component } from "vue";
 
 const Category = defineAsyncComponent(() => import("@/shared/catalog/components/category.vue"));
 const Slider = defineAsyncComponent(() => import("@/shared/static-content/components/slider.vue"));
 const ProductsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/products-block.vue"));
 const FavoriteProducts = defineAsyncComponent(() => import("@/shared/static-content/components/favorite-products.vue"));
+const BreadcrumbsBlock = defineAsyncComponent(() => import("@/shared/static-content/components/breadcrumbs-block.vue"));
 
 export const builderIOComponents: Array<BuilderIOComponentType> = [
   {
@@ -339,10 +341,44 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       },
     ],
   },
+  {
+    name: "Breadcrumbs",
+    component: BreadcrumbsBlock,
+    inputs: [
+      {
+        name: "breadcrumbs",
+        type: "list",
+        defaultValue: [{ title: "Catalog", seoPath: "/catalog" }],
+        subFields: [
+          {
+            name: "title",
+            type: "string",
+          },
+          {
+            name: "seoPath",
+            type: "string",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "VcContainer",
+    component: VcContainer,
+    canHaveChildren: true,
+    defaultChildren: [
+      {
+        "@type": "@builder.io/sdk:Element",
+        component: { name: "Text", options: { text: "Replace me!" } },
+      },
+    ],
+  },
 ];
 
 type BuilderIOComponentType = {
-  component: Component;
-  inputs: Array<object>;
   name: string;
+  component: Component;
+  inputs?: Array<object>;
+  canHaveChildren?: boolean;
+  defaultChildren?: Array<object>;
 };
