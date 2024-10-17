@@ -1395,7 +1395,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/sdk-vue@npm:^1.0.31":
+"@builder.io/sdk-vue@npm:^1.0.36":
   version: 1.1.2
   resolution: "@builder.io/sdk-vue@npm:1.1.2"
   dependencies:
@@ -15608,7 +15608,7 @@ __metadata:
   resolution: "vc-theme-b2b-vue@workspace:."
   dependencies:
     "@apollo/client": "npm:^3.10.5"
-    "@builder.io/sdk-vue": "npm:^1.0.31"
+    "@builder.io/sdk-vue": "npm:^1.0.36"
     "@commitlint/cli": "npm:^19.3.0"
     "@commitlint/config-conventional": "npm:^19.2.2"
     "@floating-ui/vue": "npm:^1.1.4"
