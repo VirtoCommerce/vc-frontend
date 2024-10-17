@@ -11,7 +11,7 @@ export interface IUseRouteQueryParamOptions<T = LocationQueryValue | LocationQue
   removeDefaultValue?: boolean;
   /** @default push */
   updateMethod?: "push" | "replace";
-  validator?(queryValue: NonNullable<T>): boolean;
+  validator?: (queryValue: NonNullable<T>) => boolean;
 }
 
 export interface IUsePageSeoData {

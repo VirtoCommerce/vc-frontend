@@ -16,7 +16,7 @@
       :hide-controls="false"
       @hide-popup-sidebar="hideFiltersSidebar"
       @reset-facet-filters="resetFacetFilters"
-      @open-branches-modal="showBranchesModal"
+      @open-branches-modal="openBranchesModal"
       @update-popup-sidebar-filters="updateFiltersSidebar"
       @apply-filters="applyFilters"
     />
@@ -170,7 +170,6 @@ const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
 const {
-  branchesFromSidebarFilters,
   fetchingProducts: fetchingVariations,
   products: variations,
   pagesCount: variationsPagesCount,
@@ -330,11 +329,6 @@ async function resetFacetFilters(): Promise<void> {
   variationsSearchParams.value.filter = getFilterExpression([variationsFilterExpression.value]);
 
   await fetchProducts(variationsSearchParams.value);
-}
-
-function showBranchesModal(fromFiltersSidebar: boolean): void {
-  branchesFromSidebarFilters.value = fromFiltersSidebar;
-  openBranchesModal();
 }
 
 async function changeSortProductReviews(sort: string): Promise<void> {

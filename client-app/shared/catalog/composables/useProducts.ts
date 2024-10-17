@@ -70,7 +70,6 @@ export function useProducts(
   const totalProductsCount = ref(0);
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
-  const branchesFromSidebarFilters = ref(true);
 
   const products = ref<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
@@ -187,15 +186,13 @@ export function useProducts(
     };
   }
 
-  function openBranchesModal() {
+  function openBranchesModal(fromPopupSidebarFilter: boolean) {
     openModal({
       component: BranchesModal,
       props: {
-        selectedBranches: branchesFromSidebarFilters.value
-          ? productsFilters.value.branches
-          : localStorageBranches.value,
+        selectedBranches: fromPopupSidebarFilter ? productsFilters.value.branches : localStorageBranches.value,
         onSave(branches: string[]) {
-          if (branchesFromSidebarFilters.value) {
+          if (fromPopupSidebarFilter) {
             const newFilters: ProductsFiltersType = {
               branches,
               facets: productsFilters.value.facets,
@@ -206,7 +203,7 @@ export function useProducts(
           } else {
             localStorageBranches.value = branches;
           }
-          resetFacetFilters();
+          resetCurrentPage();
         },
       },
     });
@@ -337,7 +334,6 @@ export function useProducts(
   }
 
   return {
-    branchesFromSidebarFilters,
     facets,
     facetsQueryParam,
     fetchingFacets: readonly(fetchingFacets),
