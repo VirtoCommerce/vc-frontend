@@ -117,6 +117,7 @@ export default async () => {
     storeId: themeContext.value.storeId,
     catalogId: themeContext.value.catalogId,
     userId: user.value.id,
+    userName: user.value.userName,
     organizationId: user.value?.contact?.organizationId,
     cultureName: currentLanguage.value.cultureName,
     currencyCode: currentCurrency.value.code,
