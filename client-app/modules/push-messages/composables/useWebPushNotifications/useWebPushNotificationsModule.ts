@@ -4,14 +4,14 @@ import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
 import omit from "lodash/omit";
 import { apolloClient } from "@/core/api/graphql";
-import { useAddFcmToken } from "@/core/api/graphql/push-messages/mutations/addFcmToken";
-import { useDeleteFcmToken } from "@/core/api/graphql/push-messages/mutations/deleteFcmToken";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
-import type { FcmSettingsType } from "@/core/api/graphql/push-messages/types";
+import { useAddFcmToken } from "../../api/graphql/mutations/addFcmToken";
+import { useDeleteFcmToken } from "../../api/graphql/mutations/deleteFcmToken";
+import type { FcmSettingsType } from "../../api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
