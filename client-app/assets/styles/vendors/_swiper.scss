@@ -4,5 +4,5 @@
 @import "swiper/scss/thumbs";
 
 :root {
-  --swiper-theme-color: var(--color-primary);
+  --swiper-theme-color: theme("colors.primary.500");
 }

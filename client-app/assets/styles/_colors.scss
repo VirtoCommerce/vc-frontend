@@ -47,4 +47,8 @@
 --mobile-menu-icon-active-color: var(--color-mobile-menu-icon-active, var(--color-additional-50));
 --mobile-menu-navigation-color: var(--color-mobile-menu-navigation, var(--color-primary-400));
 --mobile-menu-control-color: var(--color-mobile-menu-control, var(--color-primary-500));
+
+// Customize UI-Kit colors
+--vc-variations-button-link-color: var(--link-color);
+--vc-variations-button-link-hover-color: var(--link-hover-color);
 }

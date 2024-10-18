@@ -53,27 +53,30 @@ const targetValue = target.value || themeContext.value.settings.details_browser_
 
 <style lang="scss">
 .vc-variations-button {
+  --link-color: var(--vc-variations-button-link-color, theme("colors.accent.600"));
+  --link-hover-color: var(--vc-variations-button-link-hover-color, theme("colors.accent.700"));
+
   @apply flex flex-col;
 
   &__link {
-    @apply flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] mt-2.5;
+    --vc-icon-size: 1.25rem;
+    --vc-icon-color: theme("colors.primary.500");
+
+    @apply flex items-center gap-1 mt-2.5 text-sm text-[--link-color];
+
+    &:hover {
+      @apply text-[--link-hover-color];
+    }
 
     @media (min-width: theme("screens.lg")) {
+      --vc-icon-size: 1.125rem;
+
       @apply text-xs mt-[1.25rem];
     }
   }
 
   &__link-text {
     @apply truncate;
-  }
-
-  &__link-icon {
-    --vc-icon-size: 1.25rem;
-    --vc-icon-color: theme("colors.primary.500");
-
-    @media (min-width: theme("screens.lg")) {
-      --vc-icon-size: 1.125rem;
-    }
   }
 }
 </style>
