@@ -8,6 +8,7 @@
     :is-available="product.availabilityData?.isAvailable"
     :is-buyable="product.availabilityData?.isBuyable"
     :is-in-stock="product.availabilityData?.isInStock"
+    :available-quantity="product.availabilityData?.availableQuantity"
     :message="errorMessage"
     :disabled="disabled"
     :loading="loading"
