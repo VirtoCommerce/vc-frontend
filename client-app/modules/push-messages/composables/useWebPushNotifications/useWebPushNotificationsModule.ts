@@ -50,7 +50,7 @@ function _useWebPushNotifications() {
     const icon =
       favIcons.value?.find(
         ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-      )?.href || DEFAULT_ICON_URL;
+      )?.href ?? DEFAULT_ICON_URL;
 
     const fcmSettings = getModuleSettings(SETTINGS_MAPPING);
 
