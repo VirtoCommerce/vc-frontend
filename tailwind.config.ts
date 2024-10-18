@@ -142,51 +142,42 @@ const colors = {
   additional: additionalColors,
 };
 
+const colorSet = {
+  colors,
+  backgroundColor: colors,
+  textColor: colors,
+  textDecorationColor: colors,
+  boxShadowColor: colors,
+
+  borderColor: {
+    ...colors,
+    DEFAULT: neutralColors[200],
+  },
+
+  divideColor: {
+    ...colors,
+    DEFAULT: neutralColors[200],
+  },
+
+  outlineColor: {
+    ...colors,
+    DEFAULT: primaryColors[100],
+  },
+
+  ringColor: {
+    ...colors,
+    DEFAULT: primaryColors[100],
+  },
+};
+
 module.exports = {
   content: ["./index.html", "./client-app/**/*.{vue,js,ts,jsx,tsx}", "./node_modules/tw-elements/dist/js/**/*.js"],
 
   theme: {
+    ...colorSet,
     screens: BREAKPOINTS,
     fontFamily: {
       lato: ["Lato", "sans-serif"],
-    },
-
-    colors,
-
-    backgroundColor: {
-      ...colors,
-    },
-
-    textColor: {
-      ...colors,
-    },
-
-    textDecorationColor: {
-      ...colors,
-    },
-
-    borderColor: {
-      ...colors,
-      DEFAULT: neutralColors[200],
-    },
-
-    divideColor: {
-      ...colors,
-      DEFAULT: neutralColors[200],
-    },
-
-    outlineColor: {
-      ...colors,
-      DEFAULT: primaryColors[100],
-    },
-
-    ringColor: {
-      ...colors,
-      DEFAULT: primaryColors[100],
-    },
-
-    boxShadowColor: {
-      ...colors,
     },
 
     fontSize: {
@@ -271,6 +262,8 @@ module.exports = {
     },
 
     extend: {
+      ...colorSet,
+
       containers: {
         xxs: "14rem", //224px
       },
