@@ -1,5 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
+import cloneDeep from "lodash/cloneDeep";
 import { computed, ref } from "vue";
+import settingsData from "@/config/settings_data.json";
 import { useFetch } from "@/core/api/common";
 import { IS_DEVELOPMENT } from "../constants";
 import type { StoreResponseType } from "../api/graphql/types";
@@ -9,7 +11,7 @@ function _useThemeContext() {
   const themeContext = ref<IThemeContext>();
 
   async function fetchThemeContext(store: StoreResponseType, themePresetName?: string) {
-    const themeConfig = await fetchThemeConfig();
+    const themeConfig = getThemeConfig();
 
     if (!themeConfig) {
       throw new Error("Can't get theme context");
@@ -40,14 +42,14 @@ function _useThemeContext() {
     return preset;
   }
 
-  async function fetchThemeConfig() {
-    const { data } = await useFetch("/config/settings_data.json").get().json<IThemeConfig>();
+  function getThemeConfig() {
+    const data = cloneDeep(settingsData) as IThemeConfig;
 
-    if (IS_DEVELOPMENT && data.value) {
-      data.value.settings.details_browser_target = "_self";
+    if (IS_DEVELOPMENT && typeof data.settings === "object" && data.settings !== null) {
+      data.settings.details_browser_target = "_self";
     }
 
-    return data.value;
+    return data;
   }
 
   return {
