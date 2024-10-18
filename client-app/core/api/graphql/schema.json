@@ -14,6 +14,7 @@
         "kind": "OBJECT",
         "name": "AccountCreationResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errors",
@@ -73,6 +74,7 @@
         "kind": "INPUT_OBJECT",
         "name": "AddAddressToFavoritesCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -100,6 +102,7 @@
         "kind": "INPUT_OBJECT",
         "name": "AddQuoteAttachmentsCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -147,6 +150,7 @@
         "kind": "INPUT_OBJECT",
         "name": "ApproveQuoteCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -174,6 +178,7 @@
         "kind": "OBJECT",
         "name": "ApproveQuoteResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -213,6 +218,7 @@
         "kind": "OBJECT",
         "name": "Asset",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "cultureName",
@@ -360,6 +366,7 @@
         "kind": "OBJECT",
         "name": "AuthorizePaymentResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errorMessage",
@@ -399,6 +406,7 @@
         "kind": "OBJECT",
         "name": "AvailabilityData",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "availableQuantity",
@@ -546,6 +554,7 @@
         "kind": "SCALAR",
         "name": "Boolean",
         "description": "The `Boolean` scalar type represents `true` or `false`.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -556,6 +565,7 @@
         "kind": "OBJECT",
         "name": "Breadcrumb",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "itemId",
@@ -639,6 +649,7 @@
         "kind": "OBJECT",
         "name": "BulkCartType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "cart",
@@ -678,6 +689,7 @@
         "kind": "OBJECT",
         "name": "BulkWishlistType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "wishlists",
@@ -705,6 +717,7 @@
         "kind": "INPUT_OBJECT",
         "name": "CancelQuoteCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -748,6 +761,7 @@
         "kind": "OBJECT",
         "name": "CartAddressType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addressType",
@@ -1015,6 +1029,7 @@
         "kind": "OBJECT",
         "name": "CartConnection",
         "description": "A connection from an object to a list of objects of type `Cart`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -1086,6 +1101,7 @@
         "kind": "OBJECT",
         "name": "CartEdge",
         "description": "An edge in a connection from an object to another object of type `Cart`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -1125,6 +1141,7 @@
         "kind": "OBJECT",
         "name": "CartShipmentItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "lineItem",
@@ -1164,6 +1181,7 @@
         "kind": "OBJECT",
         "name": "CartType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addresses",
@@ -2266,6 +2284,7 @@
         "kind": "OBJECT",
         "name": "CatalogDiscountType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -2389,6 +2408,7 @@
         "kind": "OBJECT",
         "name": "Category",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "breadcrumbs",
@@ -2783,6 +2803,7 @@
         "kind": "OBJECT",
         "name": "CategoryConnection",
         "description": "A connection from an object to a list of objects of type `Category`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -2854,6 +2875,7 @@
         "kind": "OBJECT",
         "name": "CategoryDescriptionType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "content",
@@ -2917,6 +2939,7 @@
         "kind": "OBJECT",
         "name": "CategoryEdge",
         "description": "An edge in a connection from an object to another object of type `Category`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -2956,6 +2979,7 @@
         "kind": "INPUT_OBJECT",
         "name": "ChangeQuoteCommentCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -2999,6 +3023,7 @@
         "kind": "INPUT_OBJECT",
         "name": "ChangeQuoteItemQuantityCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -3058,6 +3083,7 @@
         "kind": "OBJECT",
         "name": "ChildCategoriesQueryResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "childCategories",
@@ -3085,6 +3111,7 @@
         "kind": "OBJECT",
         "name": "CommonVendor",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -3140,6 +3167,7 @@
         "kind": "INPUT_OBJECT",
         "name": "ConfirmTaskCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -3167,6 +3195,7 @@
         "kind": "OBJECT",
         "name": "ContactConnection",
         "description": "A connection from an object to a list of objects of type `Contact`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -3238,6 +3267,7 @@
         "kind": "OBJECT",
         "name": "ContactEdge",
         "description": "An edge in a connection from an object to another object of type `Contact`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -3277,6 +3307,7 @@
         "kind": "OBJECT",
         "name": "ContactType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "about",
@@ -3804,6 +3835,7 @@
         "kind": "OBJECT",
         "name": "ContractConnection",
         "description": "A connection from an object to a list of objects of type `Contract`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -3875,6 +3907,7 @@
         "kind": "OBJECT",
         "name": "ContractEdge",
         "description": "An edge in a connection from an object to another object of type `Contract`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -3914,6 +3947,7 @@
         "kind": "OBJECT",
         "name": "ContractType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -4074,6 +4108,7 @@
         "kind": "OBJECT",
         "name": "CountryRegionType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -4117,6 +4152,7 @@
         "kind": "OBJECT",
         "name": "CountryType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -4184,6 +4220,7 @@
         "kind": "OBJECT",
         "name": "CouponType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -4223,6 +4260,7 @@
         "kind": "INPUT_OBJECT",
         "name": "CreateCustomerReviewCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -4325,9 +4363,13 @@
             "name": "title",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4374,6 +4416,7 @@
         "kind": "INPUT_OBJECT",
         "name": "CreateQuoteCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -4449,6 +4492,7 @@
         "kind": "INPUT_OBJECT",
         "name": "CreateQuoteFromCartCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -4489,26 +4533,15 @@
         "possibleTypes": null
       },
       {
-        "kind": "OBJECT",
-        "name": "CreateReviewResult",
+        "kind": "INPUT_OBJECT",
+        "name": "CreateReviewCommandType",
         "description": null,
-        "fields": [
-          {
-            "name": "createdDate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "DateTime",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
+        "isOneOf": false,
+        "fields": null,
+        "inputFields": [
           {
             "name": "entityId",
             "description": null,
-            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -4518,29 +4551,13 @@
                 "ofType": null
               }
             },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "entityName",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
+            "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "entityType",
             "description": null,
-            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -4550,9 +4567,69 @@
                 "ofType": null
               }
             },
+            "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
+          {
+            "name": "rating",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "review",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "storeId",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "CreateReviewResult",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
           {
             "name": "id",
             "description": null,
@@ -4566,117 +4643,13 @@
             "deprecationReason": null
           },
           {
-            "name": "modifiedDate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "DateTime",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "rating",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "review",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "reviewStatus",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "ENUM",
-              "name": "CustomerReviewStatus",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "storeId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "title",
+            "name": "userName",
             "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userName",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4715,6 +4688,7 @@
         "kind": "OBJECT",
         "name": "CurrencyType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -4818,6 +4792,7 @@
         "kind": "OBJECT",
         "name": "CustomIdentityResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errors",
@@ -4861,6 +4836,7 @@
         "kind": "OBJECT",
         "name": "CustomerOrderConnection",
         "description": "A connection from an object to a list of objects of type `CustomerOrder`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -5004,6 +4980,7 @@
         "kind": "OBJECT",
         "name": "CustomerOrderEdge",
         "description": "An edge in a connection from an object to another object of type `CustomerOrder`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -5043,6 +5020,7 @@
         "kind": "OBJECT",
         "name": "CustomerOrderType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addresses",
@@ -6236,6 +6214,7 @@
         "kind": "OBJECT",
         "name": "CustomerReview",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "createdDate",
@@ -6443,6 +6422,7 @@
         "kind": "OBJECT",
         "name": "CustomerReviewConnection",
         "description": "A connection from an object to a list of objects of type `CustomerReview`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -6514,6 +6494,7 @@
         "kind": "OBJECT",
         "name": "CustomerReviewEdge",
         "description": "An edge in a connection from an object to another object of type `CustomerReview`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -6553,6 +6534,7 @@
         "kind": "ENUM",
         "name": "CustomerReviewStatus",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -6582,6 +6564,7 @@
         "kind": "SCALAR",
         "name": "Date",
         "description": "The `Date` scalar type represents a year, month and day in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -6592,6 +6575,7 @@
         "kind": "SCALAR",
         "name": "DateTime",
         "description": "The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -6602,6 +6586,7 @@
         "kind": "SCALAR",
         "name": "Decimal",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -6612,6 +6597,7 @@
         "kind": "INPUT_OBJECT",
         "name": "DeclineQuoteCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -6639,6 +6625,7 @@
         "kind": "INPUT_OBJECT",
         "name": "DeleteFileCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -6666,6 +6653,7 @@
         "kind": "INPUT_OBJECT",
         "name": "DeleteQuoteAttachmentsCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -6713,6 +6701,7 @@
         "kind": "INPUT_OBJECT",
         "name": "DeleteSkyflowCardCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -6756,6 +6745,7 @@
         "kind": "OBJECT",
         "name": "DescriptionType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "content",
@@ -6819,6 +6809,7 @@
         "kind": "OBJECT",
         "name": "DictionaryItemConnection",
         "description": "A connection from an object to a list of objects of type `DictionaryItem`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -6890,6 +6881,7 @@
         "kind": "OBJECT",
         "name": "DictionaryItemEdge",
         "description": "An edge in a connection from an object to another object of type `DictionaryItem`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -6929,6 +6921,7 @@
         "kind": "OBJECT",
         "name": "DictionaryItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -6984,6 +6977,7 @@
         "kind": "OBJECT",
         "name": "DiscountType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -7095,6 +7089,7 @@
         "kind": "OBJECT",
         "name": "DynamicContentItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "contentType",
@@ -7215,6 +7210,7 @@
         "kind": "OBJECT",
         "name": "DynamicPropertyConnection",
         "description": "A connection from an object to a list of objects of type `DynamicProperty`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -7286,6 +7282,7 @@
         "kind": "OBJECT",
         "name": "DynamicPropertyEdge",
         "description": "An edge in a connection from an object to another object of type `DynamicProperty`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -7325,6 +7322,7 @@
         "kind": "OBJECT",
         "name": "DynamicPropertyType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "dictionaryItems",
@@ -7577,6 +7575,7 @@
         "kind": "SCALAR",
         "name": "DynamicPropertyValue",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -7587,6 +7586,7 @@
         "kind": "OBJECT",
         "name": "DynamicPropertyValueType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "dictionaryItem",
@@ -7678,6 +7678,7 @@
         "kind": "ENUM",
         "name": "DynamicPropertyValueTypes",
         "description": "Dynamic property value type",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -7743,6 +7744,7 @@
         "kind": "OBJECT",
         "name": "ErrorParameterType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "key",
@@ -7786,6 +7788,7 @@
         "kind": "OBJECT",
         "name": "EvaluateDynamicContentResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "items",
@@ -7829,6 +7832,7 @@
         "kind": "INTERFACE",
         "name": "Facet",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "facetType",
@@ -7904,6 +7908,7 @@
         "kind": "OBJECT",
         "name": "FacetRangeType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "count",
@@ -8099,6 +8104,7 @@
         "kind": "OBJECT",
         "name": "FacetTermType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "count",
@@ -8174,6 +8180,7 @@
         "kind": "ENUM",
         "name": "FacetTypes",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -8203,6 +8210,7 @@
         "kind": "OBJECT",
         "name": "FaviconType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "href",
@@ -8262,6 +8270,7 @@
         "kind": "OBJECT",
         "name": "FcmSettingsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "apiKey",
@@ -8385,6 +8394,7 @@
         "kind": "OBJECT",
         "name": "FileUploadScopeOptionsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "allowAnonymousUpload",
@@ -8464,6 +8474,7 @@
         "kind": "OBJECT",
         "name": "FilterFacet",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "count",
@@ -8545,6 +8556,7 @@
         "kind": "SCALAR",
         "name": "Float",
         "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -8555,6 +8567,7 @@
         "kind": "OBJECT",
         "name": "FulfillmentCenterAddressType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addressType",
@@ -8810,6 +8823,7 @@
         "kind": "OBJECT",
         "name": "FulfillmentCenterConnection",
         "description": "A connection from an object to a list of objects of type `FulfillmentCenter`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -8881,6 +8895,7 @@
         "kind": "OBJECT",
         "name": "FulfillmentCenterEdge",
         "description": "An edge in a connection from an object to another object of type `FulfillmentCenter`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -8920,6 +8935,7 @@
         "kind": "OBJECT",
         "name": "FulfillmentCenterType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "address",
@@ -9048,6 +9064,7 @@
         "kind": "OBJECT",
         "name": "GetRecentlyBrowsedResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "products",
@@ -9075,6 +9092,7 @@
         "kind": "OBJECT",
         "name": "GetRecommendationsResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "products",
@@ -9102,6 +9120,7 @@
         "kind": "OBJECT",
         "name": "GiftItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "categoryId",
@@ -9249,6 +9268,7 @@
         "kind": "OBJECT",
         "name": "GraphQLSettingsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "keepAliveInterval",
@@ -9276,6 +9296,7 @@
         "kind": "OBJECT",
         "name": "IdentityErrorInfoType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -9327,6 +9348,7 @@
         "kind": "OBJECT",
         "name": "IdentityErrorType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -9362,6 +9384,7 @@
         "kind": "OBJECT",
         "name": "IdentityResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errors",
@@ -9405,6 +9428,7 @@
         "kind": "OBJECT",
         "name": "ImageType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "cultureName",
@@ -9524,6 +9548,7 @@
         "kind": "OBJECT",
         "name": "InitializePaymentResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "actionHtmlForm",
@@ -9675,6 +9700,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddBulkItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -9798,6 +9824,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddCouponType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -9917,6 +9944,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddFcmTokenType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -9944,6 +9972,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddGiftItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10067,6 +10096,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10242,6 +10272,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10365,6 +10396,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddOrUpdateCartAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10484,6 +10516,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddOrUpdateCartPaymentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10603,6 +10636,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddOrUpdateCartShipmentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10722,6 +10756,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddOrUpdateOrderPaymentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10765,6 +10800,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddWishlistBulkItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10824,6 +10860,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddWishlistItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10879,6 +10916,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddWishlistItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -10930,6 +10968,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11193,6 +11232,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputApplicationUserLoginType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11236,6 +11276,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAssignPermissionScopeType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11279,6 +11320,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAssignPermissionType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11322,6 +11364,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAssignRoleType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11397,6 +11440,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputAuthorizePaymentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11452,6 +11496,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCartItemQuantityType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11495,6 +11540,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeAllCartItemsSelectedType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11598,6 +11644,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeCartItemCommentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11733,6 +11780,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeCartItemPriceType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -11868,6 +11916,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeCartItemQuantityType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12003,6 +12052,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeCartItemSelectedType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12138,6 +12188,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeCartItemsQuantityType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12261,6 +12312,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeCartItemsSelectedType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12380,6 +12432,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeCommentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12495,6 +12548,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeOrderStatusType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12538,6 +12592,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeOrganizationContactRoleType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12581,6 +12636,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangePasswordType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12640,6 +12696,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangePurchaseOrderNumber",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12755,6 +12812,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputChangeWishlistType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12830,6 +12888,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputClearCartType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -12933,6 +12992,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputClearPaymentsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13036,6 +13096,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputClearShipmentsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13139,6 +13200,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCloneWishlistType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13258,6 +13320,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputConfirmEmailType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13301,6 +13364,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCreateApplicationUserType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13548,6 +13612,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCreateContactType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13819,6 +13884,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCreateOrderFromCartType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13842,6 +13908,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCreateOrganizationType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13969,6 +14036,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCreateUserType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -13996,6 +14064,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputCreateWishlistType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14099,6 +14168,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputDeleteContactType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14126,6 +14196,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputDeleteFcmTokenType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14153,6 +14224,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputDeleteMemberAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14200,6 +14272,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputDeleteUserType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14231,6 +14304,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputDynamicPropertyValueType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14294,6 +14368,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputInitializePaymentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14333,6 +14408,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputInviteUserType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14452,6 +14528,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputKeyValueType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14491,6 +14568,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputLockUnlockOrganizationContactType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14514,6 +14592,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputMarkPushMessageReadType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14541,6 +14620,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputMarkPushMessageUnreadType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14568,6 +14648,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputMemberAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14847,6 +14928,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputMergeCartType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -14978,6 +15060,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputMoveWishlistItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15037,6 +15120,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputNewBulkItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15076,6 +15160,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputNewCartItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15131,6 +15216,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputNewWishlistItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15170,6 +15256,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputOrderAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15421,6 +15508,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputOrderBankCardInfoType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15528,6 +15616,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputOrderPaymentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15663,6 +15752,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputPaymentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15810,6 +15900,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputPersonalDataType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15881,6 +15972,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputProcessOrderPaymentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -15936,6 +16028,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputPushHistoricalEventType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16011,6 +16104,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputQuoteAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16254,6 +16348,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRegisterAccountType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16313,6 +16408,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRegisterByInvitationType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16444,6 +16540,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRegisterContactType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16563,6 +16660,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRegisterOrganizationType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16630,6 +16728,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRejectGiftItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16753,6 +16852,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveCartAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16872,6 +16972,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveCartType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -16915,6 +17016,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveCouponType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17030,6 +17132,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17149,6 +17252,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17272,6 +17376,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveMemberFromOrganizationType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17307,6 +17412,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveShipmentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17422,6 +17528,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveWishlistItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17473,6 +17580,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveWishlistItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17524,6 +17632,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRemoveWishlistType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17551,6 +17660,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRenameWishlistType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17590,6 +17700,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputRequestRegistrationType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17673,6 +17784,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputResetPasswordByTokenType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17732,6 +17844,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputSendVerifyEmailType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -17795,6 +17908,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputShipmentType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -18014,6 +18128,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateApplicationUserType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -18241,6 +18356,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateCartDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -18364,6 +18480,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateCartItemDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -18503,6 +18620,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateCartPaymentDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -18642,6 +18760,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateCartShipmentDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -18781,6 +18900,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateContactType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19056,6 +19176,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateMemberAddressType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19103,6 +19224,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateMemberDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19150,6 +19272,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateOrderDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19193,6 +19316,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateOrderItemDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19248,6 +19372,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateOrderPaymentDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19303,6 +19428,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateOrderShipmentDynamicPropertiesType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19358,6 +19484,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateOrganizationType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19489,6 +19616,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdatePersonalDataType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19516,6 +19644,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateRoleInnerType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19603,6 +19732,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateRoleType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19630,6 +19760,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateUserType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19657,6 +19788,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateWishlistItemsType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19704,6 +19836,7 @@
         "kind": "INPUT_OBJECT",
         "name": "InputUpdateWishlistLineItemType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -19747,6 +19880,7 @@
         "kind": "SCALAR",
         "name": "Int",
         "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -19757,6 +19891,7 @@
         "kind": "OBJECT",
         "name": "InventoryInfo",
         "description": "",
+        "isOneOf": null,
         "fields": [
           {
             "name": "allowBackorder",
@@ -19888,6 +20023,7 @@
         "kind": "OBJECT",
         "name": "KeyValueType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "key",
@@ -19927,6 +20063,7 @@
         "kind": "OBJECT",
         "name": "LanguageType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "cultureName",
@@ -20050,6 +20187,7 @@
         "kind": "OBJECT",
         "name": "LineItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "catalogId",
@@ -20878,6 +21016,7 @@
         "kind": "OBJECT",
         "name": "LocalizedSettingResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "items",
@@ -20905,6 +21044,7 @@
         "kind": "SCALAR",
         "name": "Long",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -20915,6 +21055,7 @@
         "kind": "OBJECT",
         "name": "MemberAddressConnection",
         "description": "A connection from an object to a list of objects of type `MemberAddress`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -20986,6 +21127,7 @@
         "kind": "OBJECT",
         "name": "MemberAddressEdge",
         "description": "An edge in a connection from an object to another object of type `MemberAddress`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -21025,6 +21167,7 @@
         "kind": "OBJECT",
         "name": "MemberAddressType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addressType",
@@ -21324,6 +21467,7 @@
         "kind": "OBJECT",
         "name": "MemberType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addresses",
@@ -21630,6 +21774,7 @@
         "kind": "OBJECT",
         "name": "MenuLinkListType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "items",
@@ -21693,6 +21838,7 @@
         "kind": "OBJECT",
         "name": "MenuLinkType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "associatedObjectId",
@@ -21824,6 +21970,7 @@
         "kind": "OBJECT",
         "name": "ModuleSettingType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "name",
@@ -21863,6 +22010,7 @@
         "kind": "SCALAR",
         "name": "ModuleSettingValue",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -21873,6 +22021,7 @@
         "kind": "OBJECT",
         "name": "ModuleSettingsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "moduleId",
@@ -21924,6 +22073,7 @@
         "kind": "OBJECT",
         "name": "MoneyType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -22047,6 +22197,7 @@
         "kind": "OBJECT",
         "name": "Mutations",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addAddressToFavorites",
@@ -23194,7 +23345,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "CreateReviewResult",
+              "name": "CustomerReview",
               "ofType": null
             },
             "isDeprecated": false,
@@ -23311,6 +23462,35 @@
             "type": {
               "kind": "OBJECT",
               "name": "QuoteType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createReview",
+            "description": null,
+            "args": [
+              {
+                "name": "command",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "CreateReviewCommandType",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "CreateReviewResult",
               "ofType": null
             },
             "isDeprecated": false,
@@ -25153,6 +25333,7 @@
         "kind": "SCALAR",
         "name": "OptionalDecimal",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -25163,6 +25344,7 @@
         "kind": "SCALAR",
         "name": "OptionalNullableDecimal",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -25173,6 +25355,7 @@
         "kind": "SCALAR",
         "name": "OptionalString",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -25183,6 +25366,7 @@
         "kind": "OBJECT",
         "name": "OrderAddressType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addressType",
@@ -25438,6 +25622,7 @@
         "kind": "OBJECT",
         "name": "OrderDiscountType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -25501,6 +25686,7 @@
         "kind": "OBJECT",
         "name": "OrderLineItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "cancelReason",
@@ -26249,6 +26435,7 @@
         "kind": "OBJECT",
         "name": "OrderPaymentMethodType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -26596,6 +26783,7 @@
         "kind": "OBJECT",
         "name": "OrderShipmentItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "barCode",
@@ -26699,6 +26887,7 @@
         "kind": "OBJECT",
         "name": "OrderShipmentPackageType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "barCode",
@@ -26846,6 +27035,7 @@
         "kind": "OBJECT",
         "name": "OrderShipmentType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "cancelReason",
@@ -27634,6 +27824,7 @@
         "kind": "OBJECT",
         "name": "OrderShippingMethodType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -27781,6 +27972,7 @@
         "kind": "OBJECT",
         "name": "OrderTaxDetailType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -27840,6 +28032,7 @@
         "kind": "OBJECT",
         "name": "Organization",
         "description": "Organization info",
+        "isOneOf": null,
         "fields": [
           {
             "name": "addresses",
@@ -28255,6 +28448,7 @@
         "kind": "OBJECT",
         "name": "OrganizationConnection",
         "description": "A connection from an object to a list of objects of type `Organization`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -28326,6 +28520,7 @@
         "kind": "OBJECT",
         "name": "OrganizationEdge",
         "description": "An edge in a connection from an object to another object of type `Organization`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -28365,6 +28560,7 @@
         "kind": "OBJECT",
         "name": "OutlineItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -28444,6 +28640,7 @@
         "kind": "OBJECT",
         "name": "OutlineType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "items",
@@ -28475,6 +28672,7 @@
         "kind": "OBJECT",
         "name": "PageConnection",
         "description": "A connection from an object to a list of objects of type `Page`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -28546,6 +28744,7 @@
         "kind": "OBJECT",
         "name": "PageEdge",
         "description": "An edge in a connection from an object to another object of type `Page`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -28585,6 +28784,7 @@
         "kind": "OBJECT",
         "name": "PageInfo",
         "description": "Information about pagination in a connection.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "endCursor",
@@ -28652,6 +28852,7 @@
         "kind": "OBJECT",
         "name": "PageType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "content",
@@ -28735,6 +28936,7 @@
         "kind": "OBJECT",
         "name": "PasswordOptionsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "requireDigit",
@@ -28842,6 +29044,7 @@
         "kind": "OBJECT",
         "name": "PaymentInConnection",
         "description": "A connection from an object to a list of objects of type `PaymentIn`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -28913,6 +29116,7 @@
         "kind": "OBJECT",
         "name": "PaymentInEdge",
         "description": "An edge in a connection from an object to another object of type `PaymentIn`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -28952,6 +29156,7 @@
         "kind": "OBJECT",
         "name": "PaymentInType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "authorizedDate",
@@ -29508,6 +29713,7 @@
         "kind": "OBJECT",
         "name": "PaymentMethodType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -29811,6 +30017,7 @@
         "kind": "OBJECT",
         "name": "PaymentTransactionType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -29994,6 +30201,7 @@
         "kind": "OBJECT",
         "name": "PaymentType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -30346,6 +30554,7 @@
         "kind": "OBJECT",
         "name": "PriceType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "actual",
@@ -30637,6 +30846,7 @@
         "kind": "OBJECT",
         "name": "ProcessPaymentRequestResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errorMessage",
@@ -30724,6 +30934,7 @@
         "kind": "OBJECT",
         "name": "Product",
         "description": "Products are the sellable goods in an e-commerce project.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "assets",
@@ -31557,6 +31768,7 @@
         "kind": "OBJECT",
         "name": "ProductAssociation",
         "description": "product association.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "associatedObjectId",
@@ -31672,6 +31884,7 @@
         "kind": "OBJECT",
         "name": "ProductAssociationConnection",
         "description": "A connection from an object to a list of objects of type `ProductAssociation`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -31743,6 +31956,7 @@
         "kind": "OBJECT",
         "name": "ProductAssociationEdge",
         "description": "An edge in a connection from an object to another object of type `ProductAssociation`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -31782,6 +31996,7 @@
         "kind": "OBJECT",
         "name": "ProductConnection",
         "description": "A connection from an object to a list of objects of type `Product`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -31925,6 +32140,7 @@
         "kind": "OBJECT",
         "name": "ProductEdge",
         "description": "An edge in a connection from an object to another object of type `Product`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -31964,6 +32180,7 @@
         "kind": "OBJECT",
         "name": "ProductSuggestionsQueryResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "suggestions",
@@ -31991,6 +32208,7 @@
         "kind": "OBJECT",
         "name": "Promotion",
         "description": "Represents promotion object",
+        "isOneOf": null,
         "fields": [
           {
             "name": "description",
@@ -32058,6 +32276,7 @@
         "kind": "OBJECT",
         "name": "Property",
         "description": "Products attributes.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "displayOrder",
@@ -32323,6 +32542,7 @@
         "kind": "OBJECT",
         "name": "PropertyConnection",
         "description": "A connection from an object to a list of objects of type `Property`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -32394,6 +32614,7 @@
         "kind": "OBJECT",
         "name": "PropertyDictionaryItem",
         "description": "Represents property dictionary item",
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -32449,6 +32670,7 @@
         "kind": "OBJECT",
         "name": "PropertyDictionaryItemConnection",
         "description": "A connection from an object to a list of objects of type `PropertyDictionaryItem`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -32520,6 +32742,7 @@
         "kind": "OBJECT",
         "name": "PropertyDictionaryItemEdge",
         "description": "An edge in a connection from an object to another object of type `PropertyDictionaryItem`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -32559,6 +32782,7 @@
         "kind": "OBJECT",
         "name": "PropertyEdge",
         "description": "An edge in a connection from an object to another object of type `Property`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -32598,6 +32822,7 @@
         "kind": "ENUM",
         "name": "PropertyType",
         "description": "The type of catalog property.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -32633,6 +32858,7 @@
         "kind": "SCALAR",
         "name": "PropertyValue",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -32643,6 +32869,7 @@
         "kind": "ENUM",
         "name": "PropertyValueTypes",
         "description": "The type of catalog property value.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -32696,6 +32923,7 @@
         "kind": "OBJECT",
         "name": "PushMessageConnection",
         "description": "A connection from an object to a list of objects of type `PushMessage`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -32767,6 +32995,7 @@
         "kind": "OBJECT",
         "name": "PushMessageEdge",
         "description": "An edge in a connection from an object to another object of type `PushMessage`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -32806,6 +33035,7 @@
         "kind": "OBJECT",
         "name": "PushMessageType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "createdDate",
@@ -32897,6 +33127,7 @@
         "kind": "OBJECT",
         "name": "Query",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "canLeaveFeedback",
@@ -32936,22 +33167,6 @@
               },
               {
                 "name": "storeId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "userId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -37086,6 +37301,7 @@
         "kind": "OBJECT",
         "name": "QuoteAddressType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addressType",
@@ -37329,6 +37545,7 @@
         "kind": "OBJECT",
         "name": "QuoteAttachmentType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "contentType",
@@ -37412,6 +37629,7 @@
         "kind": "OBJECT",
         "name": "QuoteConnection",
         "description": "A connection from an object to a list of objects of type `Quote`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -37483,6 +37701,7 @@
         "kind": "OBJECT",
         "name": "QuoteEdge",
         "description": "An edge in a connection from an object to another object of type `Quote`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -37522,6 +37741,7 @@
         "kind": "OBJECT",
         "name": "QuoteItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "catalogId",
@@ -37757,6 +37977,7 @@
         "kind": "OBJECT",
         "name": "QuoteShipmentMethodType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "currency",
@@ -37852,6 +38073,7 @@
         "kind": "OBJECT",
         "name": "QuoteTaxDetailType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -37907,6 +38129,7 @@
         "kind": "OBJECT",
         "name": "QuoteTierPriceType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "price",
@@ -37950,6 +38173,7 @@
         "kind": "OBJECT",
         "name": "QuoteTotalsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "adjustmentQuoteExlTax",
@@ -38089,6 +38313,7 @@
         "kind": "OBJECT",
         "name": "QuoteType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "addresses",
@@ -38705,6 +38930,7 @@
         "kind": "OBJECT",
         "name": "RangeFacet",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "facetType",
@@ -38794,6 +39020,7 @@
         "kind": "OBJECT",
         "name": "Rating",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "reviewCount",
@@ -38837,6 +39064,7 @@
         "kind": "INPUT_OBJECT",
         "name": "RefreshCartType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -38940,6 +39168,7 @@
         "kind": "OBJECT",
         "name": "RegisterAccountType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "createdBy",
@@ -39023,6 +39252,7 @@
         "kind": "OBJECT",
         "name": "RegisterContactType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "about",
@@ -39195,6 +39425,7 @@
         "kind": "OBJECT",
         "name": "RegisterOrganizationType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "address",
@@ -39327,6 +39558,7 @@
         "kind": "OBJECT",
         "name": "RegistrationErrorType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -39374,6 +39606,7 @@
         "kind": "INPUT_OBJECT",
         "name": "RejectTaskCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -39401,6 +39634,7 @@
         "kind": "INPUT_OBJECT",
         "name": "RemoveAddressFromFavoritesCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -39428,6 +39662,7 @@
         "kind": "INPUT_OBJECT",
         "name": "RemoveQuoteItemCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -39471,6 +39706,7 @@
         "kind": "OBJECT",
         "name": "RequestRegistrationType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "account",
@@ -39530,6 +39766,7 @@
         "kind": "OBJECT",
         "name": "ReviewValidationErrorType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errorCode",
@@ -39565,6 +39802,7 @@
         "kind": "OBJECT",
         "name": "RoleType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "description",
@@ -39656,6 +39894,7 @@
         "kind": "SCALAR",
         "name": "Seconds",
         "description": "The `Seconds` scalar type represents a period of time represented as the total number of seconds in range [-922337203685, 922337203685].",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -39666,6 +39905,7 @@
         "kind": "OBJECT",
         "name": "SeoInfo",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -39841,6 +40081,7 @@
         "kind": "OBJECT",
         "name": "ShipmentType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "comment",
@@ -40333,6 +40574,7 @@
         "kind": "OBJECT",
         "name": "ShippingMethodType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "code",
@@ -40564,6 +40806,7 @@
         "kind": "OBJECT",
         "name": "SkyflowCardResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "cards",
@@ -40591,6 +40834,7 @@
         "kind": "OBJECT",
         "name": "SkyflowCardType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "active",
@@ -40726,6 +40970,7 @@
         "kind": "OBJECT",
         "name": "SlugInfoResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "entityInfo",
@@ -40749,6 +40994,7 @@
         "kind": "OBJECT",
         "name": "StoreResponseType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "availableCurrencies",
@@ -40932,6 +41178,7 @@
         "kind": "OBJECT",
         "name": "StoreSettingsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "anonymousUsersAllowed",
@@ -41175,6 +41422,7 @@
         "kind": "SCALAR",
         "name": "String",
         "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -41185,6 +41433,7 @@
         "kind": "INPUT_OBJECT",
         "name": "SubmitQuoteCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -41228,6 +41477,7 @@
         "kind": "OBJECT",
         "name": "Subscriptions",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "ping",
@@ -41267,6 +41517,7 @@
         "kind": "OBJECT",
         "name": "TaxDetailType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "amount",
@@ -41338,6 +41589,7 @@
         "kind": "OBJECT",
         "name": "TermFacet",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "facetType",
@@ -41427,6 +41679,7 @@
         "kind": "OBJECT",
         "name": "TierPriceType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "price",
@@ -41486,6 +41739,7 @@
         "kind": "INPUT_OBJECT",
         "name": "UpdateQuoteAddressesCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -41533,6 +41787,7 @@
         "kind": "INPUT_OBJECT",
         "name": "UpdateQuoteAttachmentsCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -41580,6 +41835,7 @@
         "kind": "OBJECT",
         "name": "UserType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "accessFailedCount",
@@ -41999,6 +42255,7 @@
         "kind": "OBJECT",
         "name": "ValidationErrorType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errorCode",
@@ -42074,6 +42331,7 @@
         "kind": "OBJECT",
         "name": "VariationType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "assets",
@@ -42324,13 +42582,9 @@
             "description": "Product raiting",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Rating",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Rating",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -42352,13 +42606,9 @@
             "description": "Product vendor",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "CommonVendor",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "CommonVendor",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -42373,6 +42623,7 @@
         "kind": "OBJECT",
         "name": "Vendor",
         "description": "Vendor Info",
+        "isOneOf": null,
         "fields": [
           {
             "name": "about",
@@ -42740,6 +42991,7 @@
         "kind": "OBJECT",
         "name": "VideoConnection",
         "description": "A connection from an object to a list of objects of type `Video`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -42811,6 +43063,7 @@
         "kind": "OBJECT",
         "name": "VideoEdge",
         "description": "An edge in a connection from an object to another object of type `Video`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -42850,6 +43103,7 @@
         "kind": "OBJECT",
         "name": "VideoType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "contentUrl",
@@ -43021,6 +43275,7 @@
         "kind": "OBJECT",
         "name": "WhiteLabelingSettingsType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "faviconUrl",
@@ -43148,6 +43403,7 @@
         "kind": "OBJECT",
         "name": "WishlistConnection",
         "description": "A connection from an object to a list of objects of type `Wishlist`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -43219,6 +43475,7 @@
         "kind": "OBJECT",
         "name": "WishlistEdge",
         "description": "An edge in a connection from an object to another object of type `Wishlist`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -43258,6 +43515,7 @@
         "kind": "ENUM",
         "name": "WishlistScopeType",
         "description": null,
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -43281,6 +43539,7 @@
         "kind": "OBJECT",
         "name": "WishlistType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "currency",
@@ -43436,6 +43695,7 @@
         "kind": "OBJECT",
         "name": "WorkTaskConnection",
         "description": "A connection from an object to a list of objects of type `WorkTask`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "edges",
@@ -43507,6 +43767,7 @@
         "kind": "OBJECT",
         "name": "WorkTaskEdge",
         "description": "An edge in a connection from an object to another object of type `WorkTask`.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "cursor",
@@ -43546,6 +43807,7 @@
         "kind": "OBJECT",
         "name": "WorkTaskType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "completed",
@@ -43749,6 +44011,7 @@
         "kind": "OBJECT",
         "name": "__Directive",
         "description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "name",
@@ -43865,6 +44128,7 @@
         "kind": "ENUM",
         "name": "__DirectiveLocation",
         "description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -43990,6 +44254,7 @@
         "kind": "OBJECT",
         "name": "__EnumValue",
         "description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "name",
@@ -44057,6 +44322,7 @@
         "kind": "OBJECT",
         "name": "__Field",
         "description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "name",
@@ -44177,6 +44443,7 @@
         "kind": "OBJECT",
         "name": "__InputValue",
         "description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "name",
@@ -44272,6 +44539,7 @@
         "kind": "OBJECT",
         "name": "__Schema",
         "description": "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "description",
@@ -44383,6 +44651,7 @@
         "kind": "OBJECT",
         "name": "__Type",
         "description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name, description and optional `specifiedByURL`, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+        "isOneOf": null,
         "fields": [
           {
             "name": "kind",
@@ -44586,6 +44855,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "isOneOf",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -44597,6 +44878,7 @@
         "kind": "ENUM",
         "name": "__TypeKind",
         "description": "An enum describing what kind of type a given `__Type` is.",
+        "isOneOf": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
