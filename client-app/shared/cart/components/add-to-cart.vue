@@ -25,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -73,7 +74,7 @@ const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(
     props.product.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
-    props.product.maxQuantity || LINE_ITEM_QUANTITY_LIMIT,
+    isDefined(props.product.maxQuantity) ? props.product.maxQuantity : LINE_ITEM_QUANTITY_LIMIT,
   ),
 );
 
