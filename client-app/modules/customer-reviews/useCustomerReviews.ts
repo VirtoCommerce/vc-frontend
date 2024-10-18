@@ -1,9 +1,12 @@
+import { isDefined } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { Logger } from "@/core/utilities";
 import { getCustomerReviews } from "./api/graphql";
+import { createReview } from "./api/graphql/mutations/createReview";
+import { canLeaveFeedback } from "./api/graphql/queries/canLeaveFeedback";
 import { ENABLED_KEY, MODULE_ID, PAGE_SIZE } from "./constants";
-import type { CustomerReview } from "./api/graphql/types";
+import type { CustomerReview, ReviewValidationErrorType } from "./api/graphql/types";
 import type { Ref } from "vue";
 
 export function useCustomerReviews() {
@@ -14,6 +17,7 @@ export function useCustomerReviews() {
   const pagesCount: Ref<number> = ref(0);
   const pageNumber: Ref<number> = ref(1);
   const reviews: Ref<CustomerReview[] | undefined> = ref();
+  const errors: Ref<ReviewValidationErrorType[] | undefined> = ref();
 
   async function fetchCustomerReviews(payload: {
     entityId: string;
@@ -40,6 +44,30 @@ export function useCustomerReviews() {
     }
   }
 
+  async function _canLeaveFeedback(entityId: string, entityType: string): Promise<boolean> {
+    try {
+      const response = await canLeaveFeedback({ entityId, entityType });
+      return isDefined(response) && response;
+    } catch (e) {
+      Logger.error(`${useCustomerReviews.name}.${canLeaveFeedback.name}`);
+      throw e;
+    }
+  }
+
+  async function createCustomerReview(payload: {
+    entityId: string;
+    entityType: string;
+    review: string;
+    rating: number;
+  }): Promise<void> {
+    try {
+      const result = await createReview(payload);
+      errors.value = result?.validationErrors;
+    } catch (e) {
+      Logger.error(`${useCustomerReviews.name}.${createCustomerReview.name}`);
+    }
+  }
+
   return {
     enabled: computed(() => isEnabled(ENABLED_KEY)),
     reviews: computed(() => reviews.value),
@@ -47,6 +75,9 @@ export function useCustomerReviews() {
     itemsPerPage: readonly(itemsPerPage),
     pagesCount: readonly(pagesCount),
     pageNumber: readonly(pageNumber),
+    errors: readonly(errors),
     fetchCustomerReviews,
+    canLeaveFeedback: _canLeaveFeedback,
+    createCustomerReview,
   };
 }

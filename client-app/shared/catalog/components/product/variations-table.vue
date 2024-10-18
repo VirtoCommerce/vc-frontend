@@ -122,7 +122,7 @@ import { getPropertyValue, getPropertiesGroupedByName } from "@/core/utilities";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart";
 import { useShortCart } from "@/shared/cart/composables";
 import CountInCart from "../count-in-cart.vue";
-import type { Product, ShortLineItemFragment, VariationType, ValidationErrorType } from "@/core/api/graphql/types";
+import type { Product, ShortLineItemFragment, ValidationErrorType } from "@/core/api/graphql/types";
 import type { ISortInfo } from "@/core/types";
 
 interface IEmits {
@@ -228,24 +228,24 @@ const mappedLineItems = computed(() => {
   return mapped;
 });
 
-function getStockQuantity(variation: VariationType) {
+function getStockQuantity(variation: Product) {
   return variation.availabilityData.availableQuantity &&
     variation.availabilityData.availableQuantity > MAX_DISPLAY_IN_STOCK_QUANTITY
     ? `${MAX_DISPLAY_IN_STOCK_QUANTITY}+`
     : variation.availabilityData.availableQuantity!.toString();
 }
 
-function getProperties(variation: VariationType) {
+function getProperties(variation: Product) {
   return Object.values(
     getPropertiesGroupedByName(sortBy(variation.properties, ["displayOrder", "name"]) ?? [], PropertyType.Variation),
   );
 }
 
-function getLineItem(variation: VariationType): ShortLineItemFragment | undefined {
+function getLineItem(variation: Product): ShortLineItemFragment | undefined {
   return cart.value?.items?.find((item) => item.productId === variation.id);
 }
 
-async function changeCart(variation: VariationType, quantity: number) {
+async function changeCart(variation: Product, quantity: number) {
   const lineItem = getLineItem(variation);
 
   if (lineItem) {

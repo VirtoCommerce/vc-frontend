@@ -1,6 +1,6 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
-import getCustomerReviewsDocument from "./getCustomerReviews.graphql";
+import getCustomerReviewsDocument from "./getCustomerReviewsQuery.graphql";
 import type { GetCustomerReviewsQuery, GetCustomerReviewsQueryVariables } from "../../types";
 
 export async function getCustomerReviews(payload: {

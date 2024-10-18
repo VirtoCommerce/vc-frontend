@@ -155,7 +155,9 @@
       "ascending": "Ascending",
       "descending": "Descending",
       "date_new_to_old": "Date, new to old",
-      "date_old_to_new": "Date, old to new"
+      "date_old_to_new": "Date, old to new",
+      "comments": "Comments",
+      "fields_required": "Fields are required"
     },
     "prefixes": {
       "please": "Please",
