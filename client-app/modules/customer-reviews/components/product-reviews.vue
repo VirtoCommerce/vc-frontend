@@ -63,7 +63,8 @@
     </template>
 
     <div v-if="isAuthenticated && (reviewFormVisible || reviewSubmitted)">
-      <div v-if="reviewSubmitted" class="text-lg font-bold">
+      <div v-if="reviewSubmitted" class="flex items-center gap-3 text-lg font-bold">
+        <VcIcon name="check-circle" :size="48" class="block text-success" />
         {{ $t("common.messages.thanks_for_feedback") }}
       </div>
 
