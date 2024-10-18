@@ -358,7 +358,7 @@ const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentA
 useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible });
 
 const breadcrumbs = useBreadcrumbs(() => {
-  return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs) ?? []);
+  return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs));
 });
 
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
