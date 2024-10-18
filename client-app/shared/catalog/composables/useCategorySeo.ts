@@ -16,8 +16,8 @@ export function useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible 
   const { category: currentCategory, loading: categoryLoading } = useCategory();
   const seoTitle = computed(
     () =>
-      currentCategory.value?.seoInfo?.pageTitle ||
-      currentCategory.value?.name ||
+      currentCategory.value?.seoInfo?.pageTitle ??
+      currentCategory.value?.name ??
       (categoryLoading.value ? "" : i18n.global.t("pages.catalog.title")),
   );
   const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
