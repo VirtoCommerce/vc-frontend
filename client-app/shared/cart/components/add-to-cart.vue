@@ -17,6 +17,10 @@
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"
   />
+
+  <div v-if="$slots.default" class="vc-add-to-cart__badges">
+    <slot />
+  </div>
 </template>
 
 <script setup lang="ts">
