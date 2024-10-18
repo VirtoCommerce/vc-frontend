@@ -175,7 +175,7 @@ let skyflowClient: Skyflow,
 // styles for CVV only and for NEW CARD
 const globalStyles = {
   global: {
-    "@import": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
+    "@use": 'url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700&display=swap")',
   },
   fontFamily: "Lato, sans-serif",
   errorColor: useCssVar("--color-danger-500", root).value,

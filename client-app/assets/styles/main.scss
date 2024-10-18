@@ -1,12 +1,13 @@
+@use "sass:meta";
 @tailwind components;
 
-@import "helpers";
-@import "deprecated";
-@import "colors";
+@include meta.load-css("helpers");
+@include meta.load-css("deprecated");
+@include meta.load-css("colors");
 
-@import "print";
+@include meta.load-css("print");
 
 /* Use for custom themes only */
-@import "custom";
+@include meta.load-css("custom");
 
 @tailwind utilities;
