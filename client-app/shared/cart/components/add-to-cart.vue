@@ -3,7 +3,7 @@
     :model-value="enteredQuantity"
     :name="product.id"
     :count-in-cart="countInCart"
-    :min-quantity="minQty"
+    :min-quantity="product.minQuantity"
     :max-quantity="maxQty"
     :is-available="product.availabilityData?.isAvailable"
     :is-buyable="product.availabilityData?.isBuyable"
@@ -73,7 +73,9 @@ const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quant
 const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(
-    props.product.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
+    isDefined(props.product.availabilityData?.availableQuantity)
+      ? props.product.availabilityData.availableQuantity
+      : LINE_ITEM_QUANTITY_LIMIT,
     isDefined(props.product.maxQuantity) ? props.product.maxQuantity : LINE_ITEM_QUANTITY_LIMIT,
   ),
 );
@@ -157,7 +159,7 @@ function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | u
 }
 
 function onValidationUpdate(validation: { isValid: true } | { isValid: false; errorMessage: string }) {
-  if (!validation.isValid) {
+  if (props.product.availabilityData?.isBuyable && !validation.isValid) {
     errorMessage.value = validation.errorMessage;
   } else {
     errorMessage.value = undefined;
