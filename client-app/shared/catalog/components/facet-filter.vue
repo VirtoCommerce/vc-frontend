@@ -142,7 +142,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { computed, ref, watchEffect, shallowRef } from "vue";
+import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
@@ -171,8 +171,7 @@ const isMobile = breakpoints.smaller("lg");
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const facet = ref<FacetItemType>(cloneDeep(props.facet));
+const facet = ref<FacetItemType>(cloneDeep(toRef(props, "facet").value));
 
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
