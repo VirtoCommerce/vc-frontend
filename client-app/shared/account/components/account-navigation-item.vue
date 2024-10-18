@@ -1,35 +1,31 @@
 <template>
-  <div class="account-navigation-link" :class="{ 'account-navigation-link--active': isActive }">
-    <router-link :to="to" class="account-navigation-link__link">
-      <VcIcon size="sm" class="account-navigation-link__icon" :name="icon" />
-      <span class="account-navigation-link__text">{{ text }}</span>
-    </router-link>
+  <div class="account-navigation-item" :class="{ 'account-navigation-item--active': isActive }">
+    <component :is="item?.route ? 'router-link' : 'a'" :to="item?.route" class="account-navigation-item__link">
+      <VcIcon size="sm" class="account-navigation-item__icon" :name="item?.icon" />
+      <span class="account-navigation-item__text">{{ item?.title }}</span>
+    </component>
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
+import { toRef } from "vue";
 import { useLink } from "vue-router";
-import type { RouteLocationRaw } from "vue-router";
+import type { ExtendedMenuLinkType } from "@/core/types";
 
-const props = withDefaults(defineProps<IProps>(), {
-  text: "",
-  to: "/",
-  icon: "",
-});
+const props = defineProps<IProps>();
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const { isActive } = useLink({ to: props.to });
+const item = toRef(props, "item");
+
+const { isActive } = useLink({ to: item.value?.route ?? {} });
 
 interface IProps {
-  text?: string;
-  to?: RouteLocationRaw;
-  icon?: string;
+  item: ExtendedMenuLinkType;
 }
 </script>
 
 <style lang="scss">
-.account-navigation-link {
+.account-navigation-item {
   $active: "";
   $hover: "";
 
