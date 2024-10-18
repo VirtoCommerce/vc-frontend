@@ -15,31 +15,26 @@
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
-import { ref, watch } from "vue";
+import { cloneDeep } from "lodash";
+import { ref, toRef, watch } from "vue";
 import type { FacetItemType } from "@/core/types";
-import type { PropType } from "vue";
 
 const emit = defineEmits<{
   (event: "update:modelValue", value: FacetItemType): void;
 }>();
 
-const props = defineProps({
-  modelValue: {
-    type: Object as PropType<FacetItemType>,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const facet = ref<FacetItemType>(_.cloneDeep(props.modelValue));
+interface IProps {
+  modelValue: FacetItemType;
+}
+
+const modelValue = toRef(props, "modelValue");
+const facet = ref<FacetItemType>(cloneDeep(modelValue.value));
 
 function change() {
   emit("update:modelValue", facet.value);
 }
 
-watch(
-  () => props.modelValue,
-  (value) => (facet.value = _.cloneDeep(value)),
-);
+watch(modelValue, (value) => (facet.value = cloneDeep(value)));
 </script>
