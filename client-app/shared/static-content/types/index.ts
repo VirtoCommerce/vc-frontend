@@ -7,6 +7,17 @@ export interface PageContent {
   id: string;
   name?: string;
   type: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [propertyName: string]: any;
+  blocks?: {
+    id: string;
+    name?: string;
+    type?: string;
+    model?: string;
+    hidden?: boolean;
+  }[];
+  seoInfo?: {
+    pageTitle?: string;
+    metaKeywords?: string;
+    metaDescription?: string;
+  };
+  [propertyName: string]: unknown;
 }
