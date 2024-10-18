@@ -13,7 +13,8 @@
     </VcButton>
 
     <router-link v-if="showLink" :to="link" target="_blank" class="vc-variations-button__link">
-      <VcIcon class="vc-variations-button__link-icon" :size="iconSize" name="external-link" />
+      <VcIcon class="vc-variations-button__link-icon" name="external-link" />
+
       <span class="vc-variations-button__link-text">
         {{ $t("pages.catalog.show_on_a_separate_page") }}
       </span>
@@ -22,10 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { useBreakpoints } from "@vueuse/core";
 import { toRef } from "vue";
 import { useThemeContext } from "@/core/composables";
-import { BREAKPOINTS } from "@/core/constants";
 
 interface IEmits {
   (event: "linkClick", globalEvent: MouseEvent): void;
@@ -46,12 +45,10 @@ interface IProps {
 }
 
 const { themeContext } = useThemeContext();
-const breakpoints = useBreakpoints(BREAKPOINTS);
 
 const target = toRef(props, "target");
 
 const targetValue = target.value || themeContext.value.settings.details_browser_target || "_blank";
-const iconSize = breakpoints.isGreater("lg") ? "xs" : "sm";
 </script>
 
 <style lang="scss">
@@ -61,8 +58,8 @@ const iconSize = breakpoints.isGreater("lg") ? "xs" : "sm";
   &__link {
     @apply flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] mt-2.5;
 
-    @media (width > theme("screens.lg")) {
-      @apply text-xs mt-[1.35rem];
+    @media (min-width: theme("screens.lg")) {
+      @apply text-xs mt-[1.25rem];
     }
   }
 
@@ -71,7 +68,12 @@ const iconSize = breakpoints.isGreater("lg") ? "xs" : "sm";
   }
 
   &__link-icon {
-    @apply shrink-0 text-primary;
+    --vc-icon-size: 1.25rem;
+    --vc-icon-color: theme("colors.primary.500");
+
+    @media (min-width: theme("screens.lg")) {
+      --vc-icon-size: 1.125rem;
+    }
   }
 }
 </style>

@@ -58,9 +58,7 @@
             </div>
 
             <div class="flex cursor-pointer items-center pl-2" @click="clearSelection">
-              <svg class="text-primary" width="16" height="16">
-                <use href="/static/images/clear.svg#main"></use>
-              </svg>
+              <VcIcon name="clear" class="text-primary" :size="16" />
 
               <div class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
                 {{ $t("shared.catalog.branches_modal.clear_selection") }}
@@ -115,9 +113,7 @@
               class="ml-2.5 flex size-7 items-center justify-center self-center rounded bg-additional-50 shadow-md"
               @click="clearSelection"
             >
-              <svg class="text-primary" width="16" height="16">
-                <use href="/static/images/clear.svg#main"></use>
-              </svg>
+              <VcIcon name="clear" class="text-primary" :size="16" />
             </button>
           </template>
         </div>
