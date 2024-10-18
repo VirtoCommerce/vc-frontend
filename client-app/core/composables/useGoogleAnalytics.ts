@@ -34,7 +34,7 @@ let googleAnalyticsMethods: GoogleAnalyticsMethodsType = new Proxy({} as GoogleA
         methodsQueue.push({ method: prop as MethodNamesType, args });
       };
     }
-    return Reflect.get(target, prop);
+    return Reflect.get(target, prop) as { init: () => Promise<void> };
   },
 });
 
