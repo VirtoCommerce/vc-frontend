@@ -5,8 +5,8 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useMarkPushMessageRead } from "@/core/api/graphql/push-messages/mutations/markPushMessageRead";
 import { getReturnUrlValue } from "@/core/utilities";
+import { useMarkPushMessageRead } from "../api/graphql/mutations/markPushMessageRead";
 
 const props = withDefaults(defineProps<IProps>(), {
   messageId: "",

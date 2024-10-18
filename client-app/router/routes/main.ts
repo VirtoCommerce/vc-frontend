@@ -26,7 +26,7 @@ const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
-const PushMessage = () => import("@/pages/push-message.vue");
+const PushMessage = () => import("@/modules/push-messages/pages/push-message.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
