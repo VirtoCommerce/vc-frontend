@@ -1,4 +1,5 @@
-import _ from "lodash";
+import clone from "lodash/clone";
+import mergeWith from "lodash/mergeWith";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { useFetch } from "@/core/api/common";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
@@ -32,7 +33,7 @@ const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
 
 const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
   const schema = menuSchema.value?.header?.desktop?.account
-    ? _.clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
+    ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
     : undefined;
   if (Array.isArray(schema?.children)) {
     schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
@@ -162,8 +163,8 @@ export function useNavigations() {
   }
 
   function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
-    menuSchema.value = _.mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
-      if (_.isArray(objValue) && _.isArray(srcValue)) {
+    menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
+      if (Array.isArray(objValue) && Array.isArray(srcValue)) {
         return objValue.concat(srcValue) as ExtendedMenuLinkType[];
       }
     });
