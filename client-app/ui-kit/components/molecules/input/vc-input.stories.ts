@@ -1,6 +1,9 @@
 import { VcInput } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
+const SIZES = ["xs", "sm", "md"];
+const TYPES = ["text", "password", "number"];
+
 export default {
   title: "Components/Molecules/VcInput",
   component: VcInput,
@@ -12,16 +15,16 @@ export default {
      */
     type: {
       control: "radio",
-      options: ["text", "password", "number"],
-      table: { type: { summary: '"text" | "password" | "number"' } },
+      options: TYPES,
+      table: { type: { summary: TYPES.join(" | ") } },
     },
     size: {
       control: "radio",
-      options: ["sm", "md"],
+      options: SIZES,
       type: { name: "string", required: false },
       table: {
         type: {
-          summary: '"sm" | "md"',
+          summary: SIZES.join(" | "),
         },
       },
     },
