@@ -120,8 +120,14 @@
       </template>
 
       <template v-else>
-        <slot name="cart-handler"></slot>
-
+        <slot
+          v-if="!props.backInStockEnabled || (props.backInStockEnabled && product.availabilityData?.isInStock)"
+          name="cart-handler"
+        />
+        <BackInStockNotifyButton
+          v-if="!product.availabilityData?.isInStock && props.backInStockEnabled"
+          :product-id="product.id"
+        />
         <div class="flex items-center gap-1 lg:mt-0.5">
           <InStock
             :is-in-stock="product.availabilityData?.isInStock"
@@ -150,6 +156,7 @@ import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
 import type { BrowserTargetType } from "@/core/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
+import BackInStockNotifyButton from "@/shared/back-in-stock/components/back-in-stock-notify-button.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
@@ -162,6 +169,7 @@ interface IProps {
   lazy?: boolean;
   browserTarget?: BrowserTargetType;
   productReviewsEnabled?: boolean;
+  backInStockEnabled?: boolean;
 }
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
