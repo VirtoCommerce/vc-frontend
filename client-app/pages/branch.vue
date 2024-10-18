@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch, computed } from "vue";
+import { watch, computed, toRef } from "vue";
 import { useFulfillmentCenters } from "@/shared/fulfillmentCenters";
 
 interface IProps {
@@ -64,18 +64,17 @@ const props = withDefaults(defineProps<IProps>(), {
   branchId: "",
 });
 
+const branchId = toRef(props, "branchId");
+
 const { loading, loadFulfillmentCenter, fulfillmentCenter, loadFulfillmentCenters, fulfillmentCenters } =
   useFulfillmentCenters();
 
-const otherBranches = computed(() => fulfillmentCenters.value.filter((item) => item.id !== props.branchId));
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-void loadFulfillmentCenter(props.branchId);
+const otherBranches = computed(() => fulfillmentCenters.value.filter((item) => item.id !== branchId.value));
+
+void loadFulfillmentCenter(branchId.value);
 void loadFulfillmentCenters();
 
-watch(
-  () => props.branchId,
-  () => {
-    void loadFulfillmentCenter(props.branchId);
-  },
-);
+watch(branchId, () => {
+  void loadFulfillmentCenter(branchId.value);
+});
 </script>
