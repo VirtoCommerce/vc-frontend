@@ -93,7 +93,7 @@
             :is="recommendedProductsSection?.type"
             v-for="{ model, id } in recommendedProductsSection.blocks"
             :key="id"
-            :recommended-products="recommendedProducts[model]"
+            :recommended-products="recommendedProducts[model as string]"
             :title="$t(`pages.product.recommended_products.${model}_section_title`)"
           />
         </template>
@@ -246,8 +246,7 @@ const productInfoSection = computed(() =>
 const productReviewsSection = computed(() => template.value?.content.find((item) => item.type === "product-reviews"));
 
 const productVariationsBlock = computed(() =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  productInfoSection.value?.blocks.find((block: any) => block.type === "product-variations"),
+  productInfoSection.value?.blocks?.find((block) => block.type === "product-variations"),
 );
 
 const relatedProductsSection = computed(() =>
@@ -255,7 +254,7 @@ const relatedProductsSection = computed(() =>
 );
 
 const recommendedProductsSection = computed(() =>
-  template.value?.content.find((item: PageContent) => item.type === "recommended-products"),
+  template.value?.content?.find((item: PageContent) => item.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {
@@ -369,11 +368,11 @@ watchEffect(async () => {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
   }
 
-  const recommendedProductsBlocks = (recommendedProductsSection.value?.blocks ?? []) as { model: string }[];
-  if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks.length) {
+  const recommendedProductsBlocks = recommendedProductsSection.value?.blocks?.filter((block) => !!block.model) ?? [];
+  if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks?.length) {
     const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
       productId: productId.value,
-      model,
+      model: model as string,
     }));
     await fetchRecommendedProducts(paramsToFetch);
   }

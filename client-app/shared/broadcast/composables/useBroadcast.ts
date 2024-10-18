@@ -72,9 +72,10 @@ async function broadcast(event: string, data: any) {
 function broadcastChannelApiFactory(): IUseBroadcastReturn {
   const channel = new BroadcastChannel(CHANNEL_NAME);
 
-  channel.onmessage = async ({ data: { event, data } }) => await broadcast(event, data);
+  channel.onmessage = async ({ data: { event, data } }: { data: { event: string; data: unknown } }) =>
+    await broadcast(event, data);
 
-  async function emit(event: string, data: any, tabsType: TabsType = TabsType.OTHERS) {
+  async function emit(event: string, data: unknown, tabsType: TabsType = TabsType.OTHERS) {
     Logger.debug("[Broadcast][Emit]", event, data);
 
     if ([TabsType.ALL, TabsType.OTHERS].includes(tabsType)) {
@@ -126,9 +127,9 @@ function localStorageApiFactory(): IUseBroadcastReturn {
     const event = key.replace(prefix, "");
 
     if (oldValue === null) {
-      const data = newValue === "undefined" ? undefined : JSON.parse(newValue!);
+      const data = newValue === "undefined" ? undefined : (JSON.parse(newValue!) as unknown);
 
-      broadcast(event, data);
+      void broadcast(event, data);
     } else if (queue[event]) {
       emit(event, queue[event].shift());
 

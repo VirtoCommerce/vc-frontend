@@ -23,6 +23,6 @@ export const uiKit: Plugin = {
     // Register UI Kit components globally
     Object.entries(UIKitComponents).forEach(([name, component]) => app.component(name, component));
 
-    app.use(VueSecureHTML);
+    app.use(VueSecureHTML as Plugin);
   },
 };

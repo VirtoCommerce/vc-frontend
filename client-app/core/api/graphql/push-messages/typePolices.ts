@@ -6,7 +6,7 @@ export const pushMessagesTypePolices = {
       args?.after
         ? ["withHidden", "unreadOnly", "after", "first", "cultureName"]
         : ["withHidden", "unreadOnly", "after", "first"],
-    merge(existing, incoming) {
+    merge(existing: object, incoming: object) {
       return { ...existing, ...incoming };
     },
   } as FieldPolicy,

@@ -29,7 +29,7 @@ export class Sort extends SearchEntity implements ISortInfo {
   static fromString(str: string): Sort {
     const [fieldName, direction] = str.split(":");
     let result: Sort;
-    if (fieldName && direction && (direction == SortDirection.Ascending || direction == SortDirection.Descending)) {
+    if (fieldName && direction && direction in SortDirection) {
       result = new Sort(fieldName, direction as SortDirection);
     } else {
       result = new Sort();
