@@ -5,7 +5,7 @@
 
     "files_enabled": true,
 
-    "push_messages_enabled": false,
+    "push_messages_enabled": true,
 
     "quotes_enabled": true,
     "quotes_files_scope": "quote-attachments",
@@ -33,7 +33,7 @@
     "checkout_coupon_enabled": true,
     "checkout_gifts_enabled": true,
 
-    "isCVVinSkyflowRequired": true,
+    "isCVVinSkyflowRequired": false,
 
     "default_return_url": "/",
 
