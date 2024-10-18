@@ -81,7 +81,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const anyFilesModified = computedEager(
     () =>
       modifiedFiles.value.length > 0 ||
-      (isDefined(initialValue) && attachedFiles.value.length !== toValue(initialValue).length),
+      (isDefined(initialValue) && attachedFiles.value.length !== toValue<IAttachedFile[]>(initialValue).length),
   );
 
   const attachedAndUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
