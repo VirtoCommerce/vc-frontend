@@ -1,4 +1,3 @@
-import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, ref, shallowRef } from "vue";
 import { getCategory } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
@@ -7,7 +6,7 @@ import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
 import type { Category } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
-function _useCategory() {
+export function useCategory() {
   const loading = ref(false);
   const category = shallowRef<Category>();
 
@@ -43,5 +42,3 @@ function _useCategory() {
     category: computed(() => category.value),
   };
 }
-
-export const useCategory = createGlobalState(_useCategory);

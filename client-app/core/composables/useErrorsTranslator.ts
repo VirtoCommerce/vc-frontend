@@ -7,6 +7,7 @@ function asKey<T>(key: string): keyof T {
 }
 
 export function useErrorsTranslator<T extends object>(localeItemsGroupKey: string) {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { t, te } = useI18n();
 
   const errors = ref<T[]>();
