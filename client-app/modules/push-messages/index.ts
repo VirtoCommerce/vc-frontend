@@ -57,12 +57,12 @@ const menuItems: DeepPartial<MenuType> = {
 
 const menuLinkCustomElement: ElementType = {
   id: "push-messages",
-  component: defineAsyncComponent(() => import("@/shared/push-messages/components/link-push-messages.vue")),
+  component: defineAsyncComponent(() => import("./components/link-push-messages.vue")),
 };
 
 const menuLinkCustomElementMobile: ElementType = {
   id: "push-messages",
-  component: defineAsyncComponent(() => import("@/shared/push-messages/components/link-push-messages-mobile.vue")),
+  component: defineAsyncComponent(() => import("./components/link-push-messages-mobile.vue")),
 };
 
 export function useWebPushNotifications() {
@@ -82,7 +82,9 @@ export function useWebPushNotifications() {
       return;
     }
 
-    const { useWebPushNotificationsModule } = await import("./useWebPushNotificationsModule");
+    const { useWebPushNotificationsModule } = await import(
+      "./composables/useWebPushNotifications/useWebPushNotificationsModule"
+    );
     const { initModule } = useWebPushNotificationsModule();
     await initModule();
     mergeMenuSchema(menuItems);

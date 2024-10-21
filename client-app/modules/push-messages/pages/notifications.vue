@@ -91,8 +91,8 @@ import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
-import PushMessage from "@/shared/push-messages/components/push-message.vue";
+import PushMessage from "../components/push-message.vue";
+import { usePushMessages } from "../composables/usePushMessages";
 const { t } = useI18n();
 
 const showUnreadOnly = useLocalStorage<boolean>("showUnreadOnly_pushMessages_history", false);

@@ -16,10 +16,10 @@
 </template>
 
 <script setup lang="ts">
-import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
+import { isActive as isPushMessagesActive } from "../composables/usePushMessages";
+import PushMessages from "./push-messages.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import BottomHeaderLink from "@/shared/layout/components/header/_internal/bottom-header-link.vue";
-import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 defineProps<{ item: ExtendedMenuLinkType }>();
 </script>

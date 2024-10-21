@@ -24,8 +24,8 @@
 
 <script setup lang="ts">
 import { useLocalStorage } from "@vueuse/core";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
-import PushMessage from "@/shared/push-messages/components/push-message.vue";
+import { usePushMessages } from "@/modules/push-messages/composables/usePushMessages";
+import PushMessage from "./push-message.vue";
 
 interface IProps {
   offsetOptions?: VcPushMessagesOffsetOptionsType;
