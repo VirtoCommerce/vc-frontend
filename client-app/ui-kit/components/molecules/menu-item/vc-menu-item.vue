@@ -185,9 +185,15 @@ onMounted(() => {
     @each $color in $colors {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
+        --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
 
         &:hover {
           @apply bg-[--color-#{$color}-50] outline-none;
+        }
+
+        &:focus,
+        &:focus-visible {
+          @apply outline-[--focus-color] -outline-offset-1;
         }
 
         &#{$active} {
