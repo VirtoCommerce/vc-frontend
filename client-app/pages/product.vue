@@ -50,19 +50,10 @@
           :model="productInfoSection"
         />
 
-        <component
-          :is="ProductReviews"
-          v-if="productReviewsEnabled && (!!productReviews?.length || leaveFeedbackVisible)"
-          :model="productReviewsSection"
-          :fetching="fetchingProductReviews"
-          :rating="product.rating"
-          :reviews="productReviews ?? []"
-          :page="productReviewsPayload.page"
-          :pages-count="productReviewsPagesCount"
-          :can-leave-feedback="leaveFeedbackVisible"
-          @change-sort-by-date="changeSortProductReviews"
-          @change-page="changeProductReviewsPage"
-          @create-review="createReview"
+        <ProductReviews
+          v-if="productReviewsEnabled && !productReviewsSection?.hidden"
+          :product-id="productId"
+          :product-rating="product.rating"
         />
 
         <component
@@ -154,6 +145,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
+const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 interface IProps {
   productId?: string;
@@ -166,8 +158,6 @@ const isMobile = breakpoints.smaller("lg");
 
 const productId = toRef(props, "productId");
 const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
-
-const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
@@ -195,15 +185,7 @@ const {
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
-const {
-  enabled: productReviewsEnabled,
-  fetching: fetchingProductReviews,
-  pagesCount: productReviewsPagesCount,
-  reviews: productReviews,
-  fetchCustomerReviews,
-  canLeaveFeedback,
-  createCustomerReview,
-} = useCustomerReviews();
+const { enabled: productReviewsEnabled } = useCustomerReviews();
 
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
@@ -215,13 +197,6 @@ const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
 });
-const productReviewsPayload = ref({
-  entityId: productId.value,
-  entityType: "Product",
-  page: 1,
-  sort: "createddate:desc",
-});
-const leaveFeedbackVisible = ref(false);
 
 const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
   page: 1,
@@ -335,30 +310,6 @@ async function resetFacetFilters(): Promise<void> {
   await fetchProducts(variationsSearchParams.value);
 }
 
-async function changeSortProductReviews(sort: string): Promise<void> {
-  productReviewsPayload.value.page = 1;
-  productReviewsPayload.value.sort = sort;
-
-  await fetchCustomerReviews(productReviewsPayload.value);
-}
-
-async function changeProductReviewsPage(page: number): Promise<void> {
-  productReviewsPayload.value.page = page;
-
-  await fetchCustomerReviews(productReviewsPayload.value);
-}
-
-async function createReview(payload: { review: string; rating: number }): Promise<void> {
-  await createCustomerReview({
-    entityId: productId.value,
-    entityType: "Product",
-    review: payload.review,
-    rating: payload.rating,
-  });
-
-  await fetchCustomerReviews(productReviewsPayload.value);
-}
-
 watchEffect(() => {
   if (props.allowSetMeta && productComponentAnchorIsVisible.value) {
     usePageHead({
@@ -422,13 +373,6 @@ watchEffect(() => {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
     });
-  }
-});
-
-watchEffect(async () => {
-  if (productReviewsEnabled.value) {
-    void fetchCustomerReviews(productReviewsPayload.value);
-    leaveFeedbackVisible.value = await canLeaveFeedback(productId.value, "Product");
   }
 });
 </script>

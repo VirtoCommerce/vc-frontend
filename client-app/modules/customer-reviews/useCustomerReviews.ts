@@ -35,6 +35,7 @@ export function useCustomerReviews() {
       });
 
       reviews.value = response?.items as CustomerReview[];
+      pageNumber.value = payload.page;
       pagesCount.value = Math.ceil((response?.totalCount ?? 0) / PAGE_SIZE);
     } catch (e) {
       Logger.error(`${useCustomerReviews.name}.${fetchCustomerReviews.name}`, e);
@@ -60,11 +61,15 @@ export function useCustomerReviews() {
     review: string;
     rating: number;
   }): Promise<void> {
+    fetching.value = true;
+
     try {
       const result = await createReview(payload);
       errors.value = result?.validationErrors;
     } catch (e) {
       Logger.error(`${useCustomerReviews.name}.${createCustomerReview.name}`);
+    } finally {
+      fetching.value = false;
     }
   }
 

@@ -1,10 +1,10 @@
 <template>
   <VcWidget :title="$t('common.labels.feedback')" prepend-icon="chat" size="lg" class="text-sm">
-    <template v-if="reviews.length">
+    <template v-if="reviews?.length">
       <div class="mb-4 lg:flex lg:justify-between">
-        <div v-if="rating" class="flex">
+        <div v-if="productRating" class="flex">
           <span class="mr-2 content-center">{{ $t("common.labels.rating") }}:</span>
-          <ProductRating :rating="rating" class="font-bold" />
+          <ProductRating :rating="productRating" class="font-bold" />
         </div>
 
         <div v-if="reviews.length" class="max-lg:mt-3 lg:flex">
@@ -44,7 +44,7 @@
 
       <div class="mb-6 mt-5 text-center sm:flex sm:flex-wrap sm:items-center sm:gap-3">
         <VcButton
-          v-if="isAuthenticated && canLeaveFeedback && !!reviews.length && !reviewFormVisible && !reviewSubmitted"
+          v-if="isAuthenticated && feedbackAvailable && !reviewFormVisible && !reviewSubmitted"
           variant="outline"
           class="max-sm:mb-10 max-sm:w-[18.125rem] sm:order-last"
           @click="reviewFormVisible = true"
@@ -54,7 +54,7 @@
 
         <VcPagination
           v-if="pagesCount > 1"
-          v-model:page="pageNum"
+          v-model:page="pageNumber"
           :pages="pagesCount"
           class="grow max-sm:flex max-sm:justify-center"
           @update:page="changePage"
@@ -62,13 +62,13 @@
       </div>
     </template>
 
-    <div v-if="isAuthenticated && (reviewFormVisible || reviewSubmitted)">
+    <div v-if="isAuthenticated">
       <div v-if="reviewSubmitted" class="flex items-center gap-3 text-lg font-bold">
         <VcIcon name="check-circle" :size="48" class="block text-success" />
         {{ $t("common.messages.thanks_for_feedback") }}
       </div>
 
-      <template v-if="!reviewSubmitted">
+      <template v-if="reviewFormVisible && !reviewSubmitted">
         <div class="flex justify-between">
           <div class="text-lg font-bold">
             {{ $t("common.labels.item_as_described_by_vendor") }}
@@ -92,7 +92,8 @@
 
         <div class="mt-4 flex flex-wrap justify-between gap-3 max-xs:justify-center">
           <VcButton
-            v-if="!!reviews.length"
+            v-if="reviews?.length"
+            :disabled="fetching"
             color="neutral"
             variant="outline"
             min-width="12rem"
@@ -103,6 +104,7 @@
 
           <VcButton
             :disabled="!newReviewContent || newReviewRating === 0"
+            :loading="fetching"
             variant="solid"
             min-width="12rem"
             @click="submitReview"
@@ -116,40 +118,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef } from "vue";
+import { onMounted, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
+import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
 import ReviewRating from "./review-rating.vue";
-import type { CustomerReview, Rating } from "@/core/api/graphql/types";
-
-interface IEmits {
-  (event: "changeSortByDate", value: string): void;
-  (event: "changePage", value: number): void;
-  (
-    event: "createReview",
-    value: {
-      review: string;
-      rating: number;
-    },
-  ): void;
-}
-
-const emit = defineEmits<IEmits>();
+import type { Rating } from "../api/graphql/types";
 
 const props = defineProps<IProps>();
 
-interface IProps {
-  fetching: boolean;
-  page: number;
-  pagesCount: number;
-  rating?: Rating;
-  reviews: CustomerReview[];
-  canLeaveFeedback: boolean;
-}
+const ENTITY_TYPE = "Product";
 
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
+
+interface IProps {
+  productId: string;
+  productRating?: Rating;
+}
 
 const sortByDateItems = [
   {
@@ -162,35 +149,59 @@ const sortByDateItems = [
   },
 ];
 
-const reviews = toRef(props, "reviews");
-const pageNum = toRef(props, "page");
-const canLeaveFeedback = toRef(props, "canLeaveFeedback");
+const { fetching, pagesCount, pageNumber, reviews, canLeaveFeedback, createCustomerReview, fetchCustomerReviews } =
+  useCustomerReviews();
+
+const productId = toRef(props, "productId");
+
 const sortByDate = ref(sortByDateItems[0].id);
 const reviewSubmitted = ref(false);
-
-const reviewFormVisible = ref(!reviews.value.length);
 const newReviewRating = ref(0);
 const newReviewContent = ref("");
+const feedbackAvailable = ref(false);
+const reviewFormVisible = ref(false);
+const productReviewsPayload = ref({
+  entityId: productId.value,
+  entityType: ENTITY_TYPE,
+  page: 1,
+  sort: "createddate:desc",
+});
 
-function changeSortByDate(value: string): void {
-  emit("changeSortByDate", value);
+async function changeSortByDate(value: string): Promise<void> {
+  productReviewsPayload.value.page = 1;
+  productReviewsPayload.value.sort = value;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
 }
 
-function changePage(pageNumber: number): void {
-  emit("changePage", pageNumber);
+async function changePage(page: number): Promise<void> {
+  productReviewsPayload.value.page = page;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
 }
 
 function setRating(value: number): void {
   newReviewRating.value = value;
 }
 
-function submitReview(): void {
-  emit("createReview", { review: newReviewContent.value, rating: newReviewRating.value });
+async function submitReview(): Promise<void> {
+  await createCustomerReview({
+    entityId: productId.value,
+    entityType: ENTITY_TYPE,
+    review: newReviewContent.value,
+    rating: newReviewRating.value,
+  });
+
+  await fetchCustomerReviews(productReviewsPayload.value);
 
   newReviewContent.value = "";
   newReviewRating.value = 0;
-  reviewFormVisible.value = false;
-  canLeaveFeedback.value = false;
   reviewSubmitted.value = true;
 }
+
+onMounted(async () => {
+  await fetchCustomerReviews(productReviewsPayload.value);
+  feedbackAvailable.value = await canLeaveFeedback(props.productId, ENTITY_TYPE);
+  reviewFormVisible.value = !reviews.value?.length;
+});
 </script>
