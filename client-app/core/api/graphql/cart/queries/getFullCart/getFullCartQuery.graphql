@@ -5,6 +5,7 @@ query GetFullCart(
   $userId: String!
   $currencyCode: String!
   $cultureName: String
+  $cartId: String
   $cartType: String
   $cartName: String
 ) {
@@ -13,6 +14,7 @@ query GetFullCart(
     userId: $userId
     currencyCode: $currencyCode
     cultureName: $cultureName
+    cartId: $cartId
     cartType: $cartType
     cartName: $cartName
   ) {

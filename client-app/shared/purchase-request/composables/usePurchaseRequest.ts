@@ -53,7 +53,7 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
 
   async function fetchItems() {
     if (purchaseRequest.value?.cartId) {
-      await fetchCart({ cartType: "PurchaseRequest", cartName: purchaseRequest.value.number });
+      await fetchCart({ cartId: purchaseRequest.value.cartId });
     }
     if (purchaseRequest.value?.quoteId) {
       await fetchQuote({ id: purchaseRequest.value.quoteId, ...toValue(useAllGlobalVariables()) });
