@@ -49,7 +49,7 @@
     "@unhead/vue": "^1.9.14",
     "@vee-validate/rules": "~4.13.2",
     "@vee-validate/yup": "~4.13.2",
-    "@virto-commerce/front-modules-google-ecommerce-analytics": "^1.0.4",
+    "@virto-commerce/front-modules-google-ecommerce-analytics": "^1.0.7",
     "@virto-commerce/front-modules-hotjar": "^1.0.4",
     "@vue/apollo-composable": "^4.0.2",
     "@vueuse/components": "^10.11.0",
