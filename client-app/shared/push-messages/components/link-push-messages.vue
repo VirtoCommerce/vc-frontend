@@ -4,9 +4,7 @@
       <BottomHeaderLink :link="item" :count="unreadCount">
         <template #icon>
           <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-            <svg v-if="item.icon" :key="totalCount" height="24" width="24" class="mb-0.5 text-primary">
-              <use :href="item.icon" />
-            </svg>
+            <VcIcon v-if="item.icon" :key="totalCount" name="bell" class="mb-0.5 text-primary" />
           </transition>
         </template>
         {{ item.title }}

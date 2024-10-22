@@ -13,19 +13,16 @@
       @click.prevent="click(navigate)"
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">
-        <svg
+        <VcIcon
           v-if="link.icon"
-          height="36"
-          width="36"
+          :name="link.icon"
+          :size="36"
           :class="[
-            'shrink-0',
             isLink && (isActive || isExactActive)
               ? 'text-[--mobile-menu-icon-active-color]'
               : 'text-[--mobile-menu-icon-color]',
           ]"
-        >
-          <use :href="link.icon" />
-        </svg>
+        />
       </slot>
 
       <span class="line-clamp-3 break-words">
