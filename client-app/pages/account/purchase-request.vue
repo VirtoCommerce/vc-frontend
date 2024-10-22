@@ -127,6 +127,7 @@ const isMobile = breakpoints.smaller("lg");
 async function onAddFiles(items: INewFile[]) {
   await updatePurchaseRequestByDocuments(items);
   await refetch();
+  await fetchItems();
 }
 
 function onFileDownload(file: FileType) {
