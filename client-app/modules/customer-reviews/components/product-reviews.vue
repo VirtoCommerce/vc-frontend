@@ -1,5 +1,11 @@
 <template>
-  <VcWidget :title="$t('common.labels.feedback')" prepend-icon="chat" size="lg" class="text-sm">
+  <VcWidget
+    v-if="reviews?.length || feedbackAvailable"
+    :title="$t('common.labels.feedback')"
+    prepend-icon="chat"
+    size="lg"
+    class="text-sm"
+  >
     <template v-if="reviews?.length">
       <div class="mb-4 lg:flex lg:justify-between">
         <div v-if="productRating" class="flex">
@@ -62,7 +68,7 @@
       </div>
     </template>
 
-    <div v-if="isAuthenticated">
+    <div v-if="isAuthenticated && feedbackAvailable">
       <div v-if="reviewSubmitted" class="flex items-center gap-3 text-lg font-bold">
         <VcIcon name="check-circle" :size="48" class="block text-success" />
         {{ $t("common.messages.thanks_for_feedback") }}
