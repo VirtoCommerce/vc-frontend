@@ -9,7 +9,7 @@
 
       <form @submit="onSubmit">
         <VcInput
-          v-model.trim="firstName"
+          v-model="firstName"
           :label="$t('common.labels.first_name')"
           :placeholder="$t('common.placeholders.first_name')"
           :message="errors.firstName"
@@ -17,18 +17,20 @@
           :disabled="loading"
           :maxlength="64"
           class="mb-4"
+          autocomplete="given-name"
           required
         />
 
         <VcInput
-          v-model.trim="lastName"
+          v-model="lastName"
           :label="$t('common.labels.last_name')"
-          :placeholder="$t('common.placeholders.first_name')"
+          :placeholder="$t('common.placeholders.last_name')"
           :message="errors.lastName"
           :error="!!errors.lastName"
           :disabled="loading"
           :maxlength="64"
           class="mb-4"
+          autocomplete="family-name"
           required
         />
 
@@ -38,8 +40,10 @@
           :message="errors.email"
           :error="!!errors.email"
           class="mb-4"
-          disabled
+          type="email"
+          autocomplete="email"
           required
+          disabled
         />
 
         <div class="flex flex-col gap-x-6 gap-y-4 md:flex-row">
@@ -110,6 +114,7 @@ import { useErrorsTranslator, usePageHead, useRouteQueryParam } from "@/core/com
 import { PasswordTips, RegistrationSuccessModal, usePasswordRequirements, useUser } from "@/shared/account";
 import { TwoColumn } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
+import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 
 const commonErrors = ref<string[]>([]);
 
@@ -122,7 +127,7 @@ usePageHead({
 const { openModal } = useModal();
 const { loading, registerByInvite } = useUser();
 const { passwordRequirements } = usePasswordRequirements();
-const { getTranslation } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
 const userId = useRouteQueryParam<string>("userId");
 const email = useRouteQueryParam<string>("email");
@@ -130,8 +135,8 @@ const token = useRouteQueryParam<string>("token");
 
 const schema = toTypedSchema(
   object({
-    firstName: string().required().max(64),
-    lastName: string().required().max(64),
+    firstName: string().trim().required().max(64),
+    lastName: string().trim().required().max(64),
     email: string().required().email(),
     password: string().required(),
     confirmPassword: string()
@@ -163,9 +168,9 @@ const onSubmit = handleSubmit(async (data) => {
     userId: userId.value,
     token: token.value,
     username: email.value,
-    firstName: data.firstName!,
-    lastName: data.lastName!,
-    password: data.password!,
+    firstName: data.firstName?.trim() || "",
+    lastName: data.lastName?.trim() || "",
+    password: data.password || "",
   });
 
   if (result.succeeded) {
@@ -174,7 +179,7 @@ const onSubmit = handleSubmit(async (data) => {
     });
   } else if (result.errors?.length) {
     result.errors.forEach((error) => {
-      const errorDescription = getTranslation(error);
+      const errorDescription = translate(error);
 
       switch (error.code) {
         case "PasswordTooShort":

@@ -1,5 +1,4 @@
 import type { MaybeRef } from "@vueuse/core";
-import type { ComponentPublicInstance } from "vue";
 import type { LocationQueryValue } from "vue-router";
 
 export interface IUseRouteQueryParamOptions<T = LocationQueryValue | LocationQueryValue[]> {
@@ -12,19 +11,7 @@ export interface IUseRouteQueryParamOptions<T = LocationQueryValue | LocationQue
   removeDefaultValue?: boolean;
   /** @default push */
   updateMethod?: "push" | "replace";
-  validator?(queryValue: NonNullable<T>): boolean;
-}
-
-export interface IUseElementVisibilityOptions {
-  /**
-   * @default auto
-   * @todo Add support for "right" and "left"
-   */
-  direction?: MaybeRef<"auto" | "top" | "bottom">;
-  /** @default 0 */
-  margin?: MaybeRef<number>; // FIXME: Not used when "direction" is set to "auto"
-  scrollTarget?: MaybeRef<HTMLElement | SVGElement | ComponentPublicInstance | null>;
-  window?: Window;
+  validator?: (queryValue: NonNullable<T>) => boolean;
 }
 
 export interface IUsePageSeoData {

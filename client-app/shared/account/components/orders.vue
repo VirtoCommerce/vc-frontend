@@ -60,12 +60,12 @@
 
       <div class="flex grow">
         <VcInput
-          v-model.trim="localKeyword"
+          v-model="localKeyword"
           maxlength="64"
           class="w-full"
           :disabled="ordersLoading"
           :placeholder="$t('pages.account.orders.search_placeholder')"
-          @keypress.enter="applyKeyword"
+          @keydown.enter="applyKeyword"
         >
           <template #append>
             <button
@@ -113,12 +113,8 @@
         ? $t('pages.account.orders.no_results_message')
         : $t('pages.account.orders.no_orders_message')
     "
-    class="py-8"
+    icon="thin-order"
   >
-    <template #icon>
-      <VcImage src="/static/images/common/order.svg" :alt="$t('pages.account.orders.no_orders_img_alt')" />
-    </template>
-
     <template #button>
       <VcButton v-if="keyword || !isFilterEmpty" prepend-icon="reset" @click="resetFiltersWithKeyword">
         {{ $t("pages.account.orders.buttons.reset_search") }}
@@ -154,9 +150,9 @@
       @page-changed="changePage"
     >
       <template #mobile-item="itemData">
-        <div
-          class="grid cursor-pointer grid-cols-2 gap-y-4 border-b border-neutral-200 p-6"
-          role="button"
+        <button
+          class="grid w-full cursor-pointer grid-cols-2 items-center gap-y-4 border-b border-neutral-200 p-6 text-left"
+          type="button"
           tabindex="0"
           @click="goToOrderDetails(itemData.item)"
           @keyup.enter="goToOrderDetails(itemData.item)"
@@ -198,7 +194,7 @@
               {{ itemData.item.total?.formattedAmount }}
             </span>
           </div>
-        </div>
+        </button>
       </template>
 
       <template #mobile-skeleton>
@@ -426,7 +422,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 async function applyKeyword() {
-  keyword.value = localKeyword.value;
+  keyword.value = localKeyword.value.trim();
   page.value = 1;
   await fetchOrders();
 }
@@ -464,7 +460,7 @@ function handleOrdersFilterChange(dateFilterType: DateFilterType): void {
 function goToOrderDetails(order: CustomerOrderType): void {
   const orderRoute = router.resolve({ name: "OrderDetails", params: { orderId: order.id } });
 
-  if (themeContext.value.settings.show_details_in_separate_tab) {
+  if (themeContext.value.settings.details_browser_target === "_blank") {
     window.open(orderRoute.fullPath, "_blank")!.focus();
   } else {
     window.location.href = orderRoute.fullPath;

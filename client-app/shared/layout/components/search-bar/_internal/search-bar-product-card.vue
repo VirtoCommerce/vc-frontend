@@ -1,42 +1,15 @@
 <template>
-  <div class="flex flex-row gap-x-2.5">
-    <!-- Product image -->
-    <router-link :to="link" class="size-19 shrink-0 border border-neutral-200 p-1" @click="$emit('linkClick', $event)">
-      <VcImage
-        :src="product.imgSrc"
-        :alt="product.name"
-        size-suffix="sm"
-        class="size-full object-cover object-center"
-        lazy
-      />
+  <VcProductCard view-mode="list">
+    <router-link :to="link" class="contents" @click="$emit('linkClick', $event)">
+      <VcProductImage :img-src="product.imgSrc" :alt="product.name" size-suffix="sm" lazy />
     </router-link>
 
-    <div class="flex flex-col justify-start space-y-[0.7rem] overflow-hidden">
-      <!-- Product title -->
-      <router-link
-        :to="link"
-        class="line-clamp-2 h-8 shrink-0 text-sm font-black leading-[1.05rem] text-[--link-color]"
-        @click="$emit('linkClick', $event)"
-      >
-        {{ product.name }}
-      </router-link>
+    <VcProductTitle :lines-number="2" fix-height :to="link" :title="product.name" @click="$emit('linkClick', $event)">
+      {{ product.name }}
+    </VcProductTitle>
 
-      <!-- Product props -->
-      <div class="grid grid-cols-[auto_1fr] overflow-hidden text-xs leading-[1.063rem]">
-        <span class="pr-3.5 font-bold">{{ $t("common.labels.sku") }}</span>
-        <span class="truncate">{{ product.code }}</span>
-
-        <span class="pr-3.5 font-bold">{{ $t("common.labels.price") }}</span>
-
-        <span v-if="product.hasVariations" class="flex space-x-1">
-          <span>{{ $t("common.suffixes.from") }}</span>
-          <VcItemPrice :value="product.minVariationPrice" />
-        </span>
-
-        <VcItemPrice v-else :value="product.price" />
-      </div>
-    </div>
-  </div>
+    <VcProductPrice :actual-price="price?.actual" :has-variations="product.hasVariations" />
+  </VcProductCard>
 </template>
 
 <script setup lang="ts">
@@ -55,6 +28,8 @@ interface IProps {
 
 defineEmits<IEmits>();
 const props = defineProps<IProps>();
+
+const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

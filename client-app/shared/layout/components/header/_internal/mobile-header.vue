@@ -25,7 +25,7 @@
         <component :is="customSlots.right" v-if="customSlots.right" />
 
         <div v-else class="flex h-full flex-row items-center pr-4">
-          <a v-if="$cfg.support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${$cfg.support_phone_number}`">
+          <a v-if="support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${support_phone_number}`">
             <VcIcon class="text-primary" name="phone" :size="28" />
           </a>
 
@@ -33,10 +33,7 @@
             <VcIcon class="text-primary" name="search" :size="28" />
           </button>
 
-          <PushMessages
-            v-if="$cfg.push_messages_enabled && isAuthenticated && isPushMessagesActive"
-            class="px-1 py-2 xs:px-2"
-          >
+          <PushMessages v-if="isPushMessagesActive" class="px-1 py-2 xs:px-2">
             <template #trigger="{ totalCount, unreadCount }">
               <div class="relative">
                 <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
@@ -76,7 +73,7 @@
                   class="absolute -right-2 -top-2 transition-transform"
                   rounded
                 >
-                  {{ $n(cart.itemsQuantity, "decimal", { notation: "compact" }) }}
+                  {{ $n(cart.itemsQuantity, { style: "decimal", notation: "compact" }) }}
                 </VcBadge>
               </transition>
             </span>
@@ -90,7 +87,7 @@
     <!-- region Mobile Search Bar -->
     <div v-show="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
       <VcInput
-        v-model.trim="searchPhrase"
+        v-model="searchPhrase"
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
@@ -130,12 +127,13 @@
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
 import { computed, ref, watchEffect } from "vue";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
-import { useUser } from "@/shared/account/composables/useUser";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
-import MobileMenu from "./mobile-menu.vue";
+import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
+import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import PushMessages from "@/shared/push-messages/components/push-messages.vue";
@@ -144,14 +142,14 @@ const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
 const headerElement = ref(null);
+const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
+const support_phone_number = getSettingValue(MODULE_XAPI_KEYS.SUPPORT_PHONE_NUMBER);
 
-const { isAuthenticated } = useUser();
 const { customSlots, isAnimated } = useNestedMobileHeader();
 const { searchBarVisible, toggleSearchBar, hideSearchBar } = useSearchBar();
 const { height } = useElementSize(headerElement);
 const { cart } = useShortCart();
 const { logoUrl } = useWhiteLabeling();
-const { isActive: isPushMessagesActive } = usePushMessages();
 
 const placeholderStyle = computed<StyleValue | undefined>(() =>
   height.value ? { height: height.value + "px" } : undefined,
@@ -160,7 +158,7 @@ const placeholderStyle = computed<StyleValue | undefined>(() =>
 const searchPageLink = computed<RouteLocationRaw>(() => ({
   name: "Search",
   query: {
-    [QueryParamName.SearchPhrase]: searchPhrase.value,
+    [QueryParamName.SearchPhrase]: searchPhrase.value.trim(),
   },
 }));
 

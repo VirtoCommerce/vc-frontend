@@ -33,6 +33,26 @@
       "id": "section3",
       "type": "related-products",
       "hidden": false
+    },
+    {
+      "id": "section4",
+      "type": "recommended-products",
+      "hidden": false,
+      "blocks": [
+        {
+          "id": "related_products",
+          "model": "related-products"
+        },
+        {
+          "id": "bought_together",
+          "model": "bought-together"
+        }
+      ]
+    },
+    {
+      "id": "section5",
+      "type": "product-reviews",
+      "hidden": false
     }
   ]
 }

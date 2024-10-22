@@ -12,7 +12,7 @@
     <!-- Message -->
     <template v-if="message">
       <!-- eslint-disable-next-line vue/no-v-html -->
-      <div v-if="!singleLine" class="vc-input-details__message" v-html="message"></div>
+      <div v-if="!singleLine" v-html-safe="message" class="vc-input-details__message"></div>
 
       <VcTooltip v-else class="vc-input-details__tooltip-container" placement="bottom-start">
         <template #trigger>
@@ -53,7 +53,7 @@ withDefaults(defineProps<IProps>(), {
   $error: "";
   $singleLine: "";
 
-  @apply flex mt-0.5 gap-2 min-h-[0.875rem] text-xs;
+  @apply flex mt-1 gap-2 min-h-[0.875rem] text-xs;
 
   &--error {
     $error: &;

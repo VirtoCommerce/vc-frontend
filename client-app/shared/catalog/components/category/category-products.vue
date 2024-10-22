@@ -6,7 +6,7 @@
         :view-mode="savedViewMode"
         :items-per-page="itemsPerPage"
         :products="products"
-        :open-product-in-new-tab="$cfg.show_details_in_separate_tab"
+        :browser-target="$cfg.details_browser_target"
         :card-type="cardType"
         :columns-amount-desktop="columnsAmountDesktop"
         :columns-amount-tablet="columnsAmountTablet"
@@ -37,18 +37,10 @@
           ? $t('pages.catalog.no_products_filtered_message')
           : $t('pages.catalog.no_products_message')
       "
-      class="h-96"
+      icon="thin-stock"
     >
-      <template #icon>
-        <VcImage src="/static/images/common/stock.svg" :alt="$t('pages.catalog.products_icon')" />
-      </template>
-
-      <template #button>
-        <VcButton
-          v-if="hasSelectedFacets || keywordQueryParam"
-          prepend-icon="reset"
-          @click="$emit('resetFilterKeyword')"
-        >
+      <template v-if="hasSelectedFacets || keywordQueryParam" #button>
+        <VcButton prepend-icon="reset" @click="$emit('resetFilterKeyword')">
           {{ $t("pages.catalog.no_products_button") }}
         </VcButton>
       </template>

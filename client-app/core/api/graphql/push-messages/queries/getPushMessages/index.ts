@@ -1,19 +1,30 @@
 import { useQuery } from "@vue/apollo-composable";
-import { GetPushMessagesDocument, OnPushMessageCreatedDocument } from "@/core/api/graphql/types";
-import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
+import { toValue } from "vue";
+import { GetPushMessagesDocument, OnPushMessageCreatedDocument } from "../../types";
+import type { GetPushMessagesQueryVariables } from "../../types";
 import type { MaybeRefOrGetter } from "vue";
+
+let subscribed = false;
+let subscribedWithHidden = false;
 
 export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQueryVariables>) {
   const result = useQuery(GetPushMessagesDocument, payload, { fetchPolicy: "cache-and-network" });
+  const payloadValue = toValue(payload);
+  if ((!payloadValue.withHidden && subscribed) || (payloadValue.withHidden && subscribedWithHidden)) {
+    return result;
+  }
   result.subscribeToMore({
     document: OnPushMessageCreatedDocument,
-    // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
     updateQuery: (previousQueryResult, { subscriptionData }) => {
       if (!subscriptionData.data) {
         return previousQueryResult;
       }
+
       const newPushMessage = subscriptionData.data.pushMessageCreated;
       const items = previousQueryResult.pushMessages?.items ?? [];
+      const unreadCount = previousQueryResult.unreadCount?.totalCount;
+      const unreadCountWithHidden = previousQueryResult.unreadCountWithHidden?.totalCount;
+
       return {
         ...previousQueryResult,
         pushMessages: {
@@ -21,10 +32,19 @@ export function useGetPushMessages(payload: MaybeRefOrGetter<GetPushMessagesQuer
           totalCount: items.length + 1,
         },
         unreadCount: {
-          totalCount: previousQueryResult.unreadCount?.totalCount ? previousQueryResult.unreadCount.totalCount + 1 : 1,
+          totalCount: !payloadValue.withHidden ? (unreadCount ?? 0) + 1 : unreadCount,
+        },
+        unreadCountWithHidden: {
+          totalCount: !payloadValue.withHidden ? (unreadCountWithHidden ?? 0) + 1 : unreadCountWithHidden,
         },
       };
     },
   });
+  if (!payloadValue.withHidden) {
+    subscribed = true;
+  }
+  if (payloadValue.withHidden) {
+    subscribedWithHidden = true;
+  }
   return result;
 }

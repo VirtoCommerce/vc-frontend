@@ -3,7 +3,8 @@
     <a v-if="isExternalLink" class="footer-link" target="_blank" :href="props.to as string">
       {{ title }}
     </a>
-    <router-link v-else class="footer-link" :to="props.to || '#'">
+
+    <router-link v-else class="footer-link" active-class="footer-link--active" :to="props.to || '#'">
       <slot>{{ title }}</slot>
     </router-link>
   </span>
@@ -34,7 +35,7 @@ const isExternalLink = computed(() => {
     @apply text-[--footer-top-link-hover-color];
   }
 
-  &.router-link-active {
+  &--active {
     @apply text-[--footer-top-link-active-color];
   }
 }

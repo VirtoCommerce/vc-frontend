@@ -1,0 +1,305 @@
+{
+  "header": {
+    "desktop": {
+      "main": [
+        {
+          "id": "bulk-order",
+          "route": {
+            "name": "BulkOrder"
+          },
+          "title": "shared.layout.header.menu.bulk_order",
+          "icon": "/static/images/dashboard/icons/bulk-order-desktop.svg#main",
+          "priority": 0
+        },
+        {
+          "id": "compare",
+          "route": { "name": "CompareProducts" },
+          "title": "shared.layout.header.menu.compare",
+          "icon": "/static/images/dashboard/icons/compare-desktop.svg#main",
+          "priority": 10
+        },
+        {
+          "id": "lists",
+          "route": { "name": "Lists" },
+          "title": "shared.layout.header.menu.lists",
+          "icon": "/static/images/dashboard/icons/lists.svg#main",
+          "priority": 20
+        },
+        {
+          "id": "orders",
+          "route": { "name": "Orders" },
+          "title": "shared.layout.header.menu.orders",
+          "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
+          "priority": 30
+        },
+        {
+          "id": "cart",
+          "route": {
+            "name": "Cart"
+          },
+          "title": "shared.layout.header.menu.cart",
+          "icon": "/static/images/checkout/cart-desktop.svg#main",
+          "priority": 100
+        }
+      ],
+      "account": {
+        "id": "account",
+        "route": {
+          "name": "Account"
+        },
+        "title": "shared.layout.header.mobile.my_account",
+        "icon": "/static/images/common/user-circle.svg",
+        "children": [
+          {
+            "id": "dashboard",
+            "route": {
+              "name": "Dashboard"
+            },
+            "title": "shared.account.navigation.links.dashboard",
+            "icon": "dashboard-2",
+            "priority": 10
+          },
+          {
+            "id": "profile",
+            "route": {
+              "name": "Profile"
+            },
+            "title": "shared.account.navigation.links.profile",
+            "icon": "profile",
+            "priority": 20
+          },
+          {
+            "id": "changePasswordAccount",
+            "route": {
+              "name": "ChangePasswordAccount"
+            },
+            "title": "shared.account.navigation.links.change_password",
+            "icon": "pass",
+            "priority": 30
+          },
+          {
+            "id": "addresses",
+            "route": {
+              "name": "Addresses"
+            },
+            "title": "shared.account.navigation.links.addresses",
+            "icon": "office-building",
+            "priority": 40
+          },
+          {
+            "id": "orders",
+            "route": {
+              "name": "Orders"
+            },
+            "title": "shared.account.navigation.links.orders",
+            "icon": "clipboard-copy-1",
+            "priority": 50
+          },
+          {
+            "id": "lists",
+            "route": {
+              "name": "Lists"
+            },
+            "title": "shared.account.navigation.links.lists",
+            "icon": "list-2",
+            "priority": 60
+          },
+          {
+            "id": "checkoutDefaults",
+            "route": {
+              "name": "CheckoutDefaults"
+            },
+            "title": "shared.account.navigation.links.checkout_defaults",
+            "icon": "check-circle",
+            "priority": 70
+          },
+          {
+            "id": "savedCreditCards",
+            "route": {
+              "name": "SavedCreditCards"
+            },
+            "title": "shared.account.navigation.links.saved_credit_cards",
+            "icon": "credit-card",
+            "priority": 80
+          },
+          {
+            "id": "purchaseRequests",
+            "route": {
+              "name": "PurchaseRequests"
+            },
+            "title": "shared.account.navigation.links.purchase_requests",
+            "icon": "purchase-requests",
+            "priority": 100
+          }
+        ]
+      },
+      "corporate": {
+        "id": "corporate",
+        "route": {
+          "name": "Company"
+        },
+        "title": "shared.layout.header.mobile.corporate",
+        "icon": "/static/images/dashboard/icons/company.svg#main",
+        "children": [
+          {
+            "route": {
+              "name": "CompanyInfo"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_info",
+            "icon": "case"
+          },
+          {
+            "route": {
+              "name": "CompanyMembers"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_members",
+            "icon": "user-group"
+          }
+        ]
+      }
+    },
+    "mobile": {
+      "main": [
+        {
+          "id": "catalog",
+          "route": {
+            "name": "Catalog"
+          },
+          "title": "shared.layout.header.menu.catalog",
+          "icon": "/static/images/common/cube.svg#main",
+          "isCatalogItem": true
+        },
+        {
+          "id": "compare",
+          "route": {
+            "name": "CompareProducts"
+          },
+          "title": "shared.layout.header.menu.compare",
+          "icon": "/static/images/dashboard/icons/compare.svg#main"
+        },
+        {
+          "id": "bulk-order",
+          "route": {
+            "name": "BulkOrder"
+          },
+          "title": "shared.layout.header.menu.bulk_order",
+          "icon": "/static/images/dashboard/icons/bulk-order.svg#main"
+        },
+        {
+          "id": "cart",
+          "route": {
+            "name": "Cart"
+          },
+          "title": "shared.layout.header.menu.cart",
+          "icon": "/static/images/checkout/cart.svg#main"
+        },
+        {
+          "id": "contacts",
+          "route": "/contacts",
+          "title": "shared.layout.header.menu.contact_us",
+          "icon": "/static/images/dashboard/icons/contact.svg#main"
+        }
+      ],
+      "account": {
+        "id": "account",
+        "route": {
+          "name": "Account"
+        },
+        "title": "shared.layout.header.mobile.my_account",
+        "icon": "/static/images/common/user-circle.svg#main",
+        "children": [
+          {
+            "route": {
+              "name": "Profile"
+            },
+            "title": "shared.layout.header.mobile.account_menu.profile",
+            "icon": "/static/images/dashboard/icons/profile.svg#main",
+            "priority": 0
+          },
+          {
+            "route": {
+              "name": "ChangePassword"
+            },
+            "title": "shared.layout.header.mobile.account_menu.change_password",
+            "icon": "/static/images/dashboard/icons/pass.svg#main",
+            "priority": 20
+          },
+          {
+            "id": "addresses",
+            "route": {
+              "name": "Addresses"
+            },
+            "title": "shared.layout.header.mobile.account_menu.addresses",
+            "icon": "/static/images/dashboard/icons/building.svg#main",
+            "priority": 30
+          },
+          {
+            "route": {
+              "name": "Orders"
+            },
+            "title": "shared.layout.header.mobile.account_menu.orders",
+            "icon": "/static/images/dashboard/icons/orders.svg#main",
+            "priority": 40
+          },
+          {
+            "route": {
+              "name": "Lists"
+            },
+            "title": "shared.layout.header.mobile.account_menu.lists",
+            "icon": "/static/images/dashboard/icons/list.svg#main",
+            "priority": 50
+          },
+          {
+            "route": {
+              "name": "CheckoutDefaults"
+            },
+            "title": "shared.layout.header.mobile.account_menu.checkout_defaults",
+            "icon": "/static/images/dashboard/icons/check-circle.svg#main",
+            "priority": 60
+          },
+          {
+            "route": {
+              "name": "SavedCreditCards"
+            },
+            "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
+            "icon": "/static/images/dashboard/icons/credit-card.svg#main",
+            "priority": 70
+          },
+          {
+            "route": {
+              "name": "PurchaseRequests"
+            },
+            "title": "shared.layout.header.mobile.account_menu.purchase_requests",
+            "icon": "/static/images/dashboard/icons/purchase-requests.svg#main",
+            "priority": 70
+          }
+        ]
+      },
+      "corporate": {
+        "id": "corporate",
+        "route": {
+          "name": "Company"
+        },
+        "title": "shared.layout.header.mobile.corporate",
+        "icon": "/static/images/dashboard/icons/company.svg#main",
+        "children": [
+          {
+            "route": {
+              "name": "CompanyInfo"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_info",
+            "icon": "/static/images/dashboard/icons/building.svg#main"
+          },
+          {
+            "route": {
+              "name": "CompanyMembers"
+            },
+            "title": "shared.layout.header.mobile.corporate_menu.company_members",
+            "icon": "/static/images/dashboard/icons/members.svg#main"
+          }
+        ]
+      }
+    }
+  },
+  "footer": []
+}

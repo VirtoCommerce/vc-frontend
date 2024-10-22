@@ -1,70 +1,68 @@
-import { computed } from "vue";
+import { computed, ref, unref } from "vue";
 import { useI18n } from "vue-i18n";
-import type { Ref, ComputedRef } from "vue";
 import type { NamedValue } from "vue-i18n";
 
-export type ErrorType = {
-  id?: string;
-  code?: string;
-  description?: string;
-  parameter?: string;
-  parameters?: string[] | NamedValue;
-};
+function asKey<T>(key: string): keyof T {
+  return key as keyof T;
+}
 
-type TranslatedErrorType = ErrorType & { translation?: string };
-type IdErrorsType = Record<string, TranslatedErrorType[]>;
-
-type ComputedTranslatedErrorsType = {
-  translatedErrors: ComputedRef<TranslatedErrorType[]>;
-  idErrors: ComputedRef<IdErrorsType>;
-  getTranslation: (error: ErrorType) => string | undefined;
-};
-
-export function useErrorsTranslator(
-  keyInLocale: string,
-  errors?: Ref<ErrorType[] | undefined> | ComputedRef<ErrorType[] | undefined>,
-): ComputedTranslatedErrorsType {
-  function getTranslation(error: ErrorType) {
-    const translationKey = `${keyInLocale}.${error.code}`;
-
-    const errorParameters = error.parameters ?? (error.parameter ? [error.parameter] : []);
-    return te(translationKey) ? t(translationKey, errorParameters as NamedValue) : error.description;
-  }
-
+export function useErrorsTranslator<T extends object>(localeItemsGroupKey: string) {
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { t, te } = useI18n();
 
-  const translatedErrors = computed<TranslatedErrorType[]>(() => {
-    return (
-      errors?.value?.map((error: ErrorType) => {
-        return {
-          ...error,
-          translation: getTranslation(error),
-        };
-      }) || []
-    );
-  });
+  const errors = ref<T[]>();
 
-  const idErrors = computed<IdErrorsType>(() => {
-    return (
-      errors?.value?.reduce((records, error) => {
-        if (error.id) {
-          const key = error.id;
-          const translatedError = {
-            ...error,
-            translation: getTranslation(error),
-          };
+  function setErrors(errs: T[]): void {
+    errors.value = errs;
+  }
 
-          if (records[key]) {
-            records[key].push(translatedError);
-          } else {
-            records[key] = [translatedError];
+  function getErrorValue<K extends keyof T>(error: T, keys: K[]): T[K] | undefined {
+    const keyInError = keys.find((key) => key in error);
+    return keyInError ? error[keyInError] : undefined;
+  }
+
+  function getErrorParameters(error: T): string[] | NamedValue | undefined {
+    const parameter = getErrorValue(error, [asKey<T>("parameter")]);
+    if (parameter) {
+      return [parameter as string];
+    }
+
+    const parameters = getErrorValue(error, [asKey<T>("errorParameters")]) as Array<{ key: string; value: string }>;
+    if (parameters) {
+      return parameters.reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {} as NamedValue);
+    }
+  }
+
+  function translate(error: T): string | undefined {
+    const code = getErrorValue(error, [asKey<T>("code"), asKey<T>("errorCode")]) as string;
+    const localeKey = `${localeItemsGroupKey}.${code}`;
+    const parameters = getErrorParameters(error) ?? [];
+
+    return te(localeKey)
+      ? t(localeKey, parameters as NamedValue)
+      : (getErrorValue(error, [asKey<T>("description"), asKey<T>("errorMessage")]) as string);
+  }
+
+  const localizedItemsErrors = computed<Record<string, string[]>>(
+    () =>
+      unref(errors)?.reduce(
+        (acc, err) => {
+          const objectId = getErrorValue(err, [asKey<T>("objectId")]) as string;
+          if (objectId) {
+            const translatedError = translate(err);
+            if (translatedError) {
+              acc[objectId] = acc[objectId] ? [...acc[objectId], translatedError] : [translatedError];
+            }
           }
-        }
+          return acc;
+        },
+        {} as Record<string, string[]>,
+      ) || {},
+  );
 
-        return records;
-      }, {} as IdErrorsType) || {}
-    );
-  });
-
-  return { translatedErrors, idErrors, getTranslation };
+  return {
+    localizedItemsErrors,
+    setErrors,
+    translate,
+  };
 }

@@ -3,7 +3,7 @@
     {{ $t(memberStatus.label) }}
   </div>
 
-  <VcTooltip class="hidden md:inline-block">
+  <VcTooltip class="hidden md:inline-block" width="max-content">
     <template #trigger>
       <img width="20" height="20" :src="memberStatus.icon" :alt="$t(memberStatus.label)" />
     </template>

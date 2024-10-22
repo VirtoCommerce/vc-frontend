@@ -1,6 +1,7 @@
-import { ApolloError } from "@apollo/client/core";
+import { ApolloError, gql } from "@apollo/client/core";
+import { useApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
-import { sumBy, difference, keyBy, merge } from "lodash";
+import { sumBy, difference, keyBy, merge, intersection } from "lodash";
 import { computed, readonly, ref } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
 import {
@@ -28,7 +29,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useGoogleAnalytics, useSyncMutationBatchers } from "@/core/composables";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor, Logger } from "@/core/utilities";
@@ -46,8 +47,18 @@ import type {
   AddOrUpdateCartShipmentMutation,
   AddOrUpdateCartShipmentMutationVariables,
   AddOrUpdateCartPaymentMutationVariables,
+  LineItemType,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
+
+const CartItemsSelectionFragment = gql`
+  fragment CartItemsSelectionFragment on CartType {
+    items {
+      id
+      selectedForCheckout
+    }
+  }
+`;
 
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
@@ -94,8 +105,6 @@ export function useShortCart() {
     return result?.data?.changeCartItemQuantity;
   }
 
-  // FIXME: https://virtocommerce.atlassian.net/browse/ST-5474
-  // Calculate total price of items in the cart for some set of products
   function getItemsTotal(productIds: string[]): number {
     if (!cart.value?.items.length) {
       return 0;
@@ -128,6 +137,7 @@ export function useShortCart() {
 export function _useFullCart() {
   const { openModal } = useModal();
   const ga = useGoogleAnalytics();
+  const { client } = useApolloClient();
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
 
@@ -179,57 +189,76 @@ export function _useFullCart() {
       cart.value.validationErrors[0]?.errorCode == CartValidationErrors.ALL_LINE_ITEMS_UNSELECTED,
   );
 
-  const { mutate: _selectCartItems, loading: selectCartItemsLoading } = useSelectCartItemsMutation(cart);
-  const { mutate: _unselectCartItemsMutation, loading: unselectCartItemsLoading } = useUnselectCartItemsMutation(cart);
+  const { mutate: _selectCartItemsMutation } = useSelectCartItemsMutation(cart);
+  const { mutate: _unselectCartItemsMutation } = useUnselectCartItemsMutation(cart);
+  const selectCartBatcher = useMutationBatcher(_selectCartItemsMutation);
+  const unselectCartBatcher = useMutationBatcher(_unselectCartItemsMutation);
+  const { add: _selectCartItems, loading: selectLoading, overflowed: selectOverflowed } = selectCartBatcher;
+  const { add: _unselectCartItems, loading: unselectLoading, overflowed: unselectOverflowed } = unselectCartBatcher;
+  const selectionOverflowed = computed(() => selectOverflowed.value || unselectOverflowed.value);
+  const selectionLoading = computed(() => selectLoading.value || unselectLoading.value);
 
-  const selectedItemIds = computed({
-    get: () => selectedLineItems.value.map((item) => item.id),
-    set: (newValue) => {
-      const oldValue = selectedItemIds.value;
+  useSyncMutationBatchers(selectCartBatcher, unselectCartBatcher, ({ args, anotherBatcher }) => {
+    if (!anotherBatcher.loading.value) {
+      return;
+    }
 
-      const newlySelectedLineItemIds = difference(newValue, oldValue);
-      const newlyUnselectedLineItemIds = difference(oldValue, newValue);
+    const mutationIds = args.command?.lineItemIds ?? [];
+    const anotherBatcherIds = anotherBatcher.arguments.value?.command?.lineItemIds ?? [];
+    const intersectionIds = intersection(anotherBatcherIds, mutationIds);
 
-      const hasNewlySelected = newlySelectedLineItemIds.length > 0;
-      const hasNewlyUnselected = newlyUnselectedLineItemIds.length > 0;
-      if (hasNewlySelected) {
-        void _selectCartItems(
-          {
-            command: {
-              lineItemIds: newlySelectedLineItemIds,
-            },
-          },
-          {
-            optimisticResponse: {
-              selectCartItems: merge({}, cart.value!, {
-                items: cart.value!.items.map((item) => ({
-                  selectedForCheckout: newlySelectedLineItemIds.includes(item.id) || item.selectedForCheckout,
-                })),
-              }),
-            },
-          },
-        );
+    if (intersectionIds.length > 0) {
+      anotherBatcher.abort();
+      const ids = difference(anotherBatcherIds, intersectionIds);
+      if (ids.length > 0) {
+        void anotherBatcher.add({ command: { lineItemIds: ids } }, undefined, false);
       }
-      if (hasNewlyUnselected) {
-        void _unselectCartItemsMutation(
-          {
-            command: {
-              lineItemIds: newlyUnselectedLineItemIds,
-            },
-          },
-          {
-            optimisticResponse: {
-              unSelectCartItems: merge({}, cart.value!, {
-                items: cart.value!.items.map((item) => ({
-                  selectedForCheckout: !newlyUnselectedLineItemIds.includes(item.id) && item.selectedForCheckout,
-                })),
-              }),
-            },
-          },
-        );
-      }
-    },
+    }
   });
+
+  const selectedItemIds = computed(() => selectedLineItems.value.map((item) => item.id));
+
+  // Have to update cache explicitly because mutations can be aborted and cache will be rolled back if we use optimisticResponse in mutations. Which cause UI inconsistencies.
+  function updateSelectionCache(ids: string[], type: "select" | "unselect") {
+    if (!cart.value) {
+      return;
+    }
+    client.cache.updateFragment(
+      {
+        id: client.cache.identify(cart.value),
+        fragment: CartItemsSelectionFragment,
+      },
+      (data: { items: LineItemType[] | undefined } | null) => {
+        return {
+          items: data?.items?.map((item: LineItemType) => ({
+            ...item,
+            selectedForCheckout:
+              type === "select"
+                ? ids.includes(item.id) || item.selectedForCheckout
+                : item.selectedForCheckout && !ids.includes(item.id),
+          })),
+        };
+      },
+    );
+  }
+
+  function selectCartItems(ids: string[]): void {
+    updateSelectionCache(ids, "select");
+    void _selectCartItems({
+      command: {
+        lineItemIds: ids,
+      },
+    });
+  }
+
+  function unselectCartItems(ids: string[]): void {
+    updateSelectionCache(ids, "unselect");
+    void _unselectCartItems({
+      command: {
+        lineItemIds: ids,
+      },
+    });
+  }
 
   const { mutate: _clearCart, loading: clearCartLoading } = useClearCartMutation(cart);
   async function clearCart(): Promise<void> {
@@ -422,6 +451,9 @@ export function _useFullCart() {
     changeItemQuantity,
     changeItemQuantityBatched,
     changeItemQuantityBatchedOverflowed,
+    selectCartItems,
+    unselectCartItems,
+    selectionOverflowed,
     removeItems,
     validateCartCoupon,
     addCartCoupon,
@@ -439,8 +471,7 @@ export function _useFullCart() {
     loading: readonly(loading),
     changing: computed(
       () =>
-        selectCartItemsLoading.value ||
-        unselectCartItemsLoading.value ||
+        selectionLoading.value ||
         clearCartLoading.value ||
         removeItemsLoading.value ||
         changeItemQuantityLoading.value ||

@@ -18,8 +18,16 @@
       ]"
       @click="enabled ? $emit('click', $event) : null"
     >
+      <span class="vc-menu-item__prepend">
+        <slot name="prepend" />
+      </span>
+
       <span class="vc-menu-item__content">
         <slot />
+      </span>
+
+      <span class="vc-menu-item__append">
+        <slot name="append" />
       </span>
     </component>
   </component>
@@ -36,7 +44,7 @@ interface IEmits {
 
 interface IProps {
   color?: VcMenuItemColorType;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   to?: RouteLocationRaw | null;
   externalLink?: string;
   target?: "_self" | "_blank";
@@ -123,10 +131,12 @@ onMounted(() => {
   $active: "";
   $truncate: "";
 
-  @apply block list-none select-none;
+  @apply list-none select-none;
 
   &__inner {
-    @apply block w-full text-left rounded-[inherit];
+    --vc-icon-size: var(--content-height);
+
+    @apply grid grid-cols-[auto_1fr_auto] w-full px-3 text-left rounded-[inherit] text-sm/[0.875rem];
 
     &:not(:disabled) {
       @apply bg-additional-50 text-neutral-950;
@@ -147,36 +157,47 @@ onMounted(() => {
     }
 
     &--size {
+      &--xs {
+        --content-height: 0.875rem;
+
+        @apply gap-1.5 py-1.5;
+      }
+
       &--sm {
         --content-height: 1rem;
 
-        @apply gap-2 px-2 py-2.5 text-sm/[1rem];
+        @apply gap-1.5 py-2.5;
       }
 
       &--md {
         --content-height: 1.25rem;
 
-        @apply gap-2 px-3 py-2.5 text-sm/[1rem];
+        @apply gap-1.5 py-2.5;
       }
 
       &--lg {
         --content-height: 2rem;
 
-        @apply gap-1.5 px-3 py-2 text-sm/[1rem];
+        @apply gap-2 py-2;
       }
     }
 
     @each $color in $colors {
       &--color--#{$color} {
         --vc-icon-color: var(--color-#{$color}-600);
+        --focus-color: rgb(from var(--color-#{$color}-500) r g b / 0.3);
+
+        &:hover {
+          @apply bg-[--color-#{$color}-50] outline-none;
+        }
+
+        &:focus,
+        &:focus-visible {
+          @apply outline-[--focus-color] -outline-offset-1;
+        }
 
         &#{$active} {
           @apply bg-[--color-#{$color}-100];
-        }
-
-        &:hover,
-        &:focus {
-          @apply bg-[--color-#{$color}-50] outline-none;
         }
       }
     }
@@ -189,22 +210,24 @@ onMounted(() => {
     }
   }
 
-  &__content {
-    --vc-icon-size: var(--content-height);
+  &__prepend {
+    @apply flex-none flex items-center h-[--content-height];
+  }
 
-    @apply grow flex items-center gap-[inherit] min-h-[var(--content-height)];
+  &__content {
+    @apply grow flex items-center gap-[inherit] min-h-[var(--content-height)] break-all;
 
     #{$truncate} & {
-      @apply truncate;
+      @apply min-w-0 truncate;
     }
 
-    & > * {
-      @apply text-left;
-
-      #{$truncate} & {
-        @apply truncate;
-      }
+    #{$truncate} & > * {
+      @apply min-w-0 truncate;
     }
+  }
+
+  &__append {
+    @apply flex-none flex items-center h-[--content-height];
   }
 
   .vc-icon {

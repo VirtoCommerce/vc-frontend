@@ -37,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+import { uniqBy } from "lodash";
 import { computed, ref, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -89,7 +90,9 @@ async function addItems(items: InputNewBulkItemType[]) {
     return;
   }
 
-  const resultItems = await addBulkItemsToCart(items);
+  const normalizedItems = uniqBy(items, (item) => item.productSku);
+
+  const resultItems = await addBulkItemsToCart(normalizedItems);
 
   itemsWithErrors.value = resultItems.filter((item) => !!item.errors?.length);
 

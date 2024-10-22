@@ -4,6 +4,7 @@
     :shared-selected-item-ids="sharedSelectedItemIds"
     :disabled="disabled"
     :readonly="readonly"
+    :browser-target="$cfg.details_browser_target"
     with-image
     with-properties
     with-price
@@ -21,12 +22,12 @@
     </template>
 
     <template #default="{ item }">
-      <VcQuantity
+      <VcAddToCart
+        hide-button
         :model-value="item.quantity"
         :name="item.id"
         :disabled="disabled"
         :readonly="readonly"
-        :timeout="0"
         @update:model-value="$emit('change:itemQuantity', { itemId: item.id, quantity: $event })"
       />
 
@@ -41,16 +42,16 @@
     </template>
 
     <template #after-content="{ item }">
-      <div v-if="idErrors[item.id]" class="flex flex-col gap-1">
+      <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
         <VcAlert
-          v-for="(validationError, index) in idErrors[item.id]"
+          v-for="(validationError, index) in localizedItemsErrors[item.id]"
           :key="index"
           color="danger"
           size="sm"
           variant="outline-dark"
           icon
         >
-          {{ validationError.translation }}
+          {{ validationError }}
         </VcAlert>
       </div>
     </template>
@@ -58,14 +59,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, toRef, watchEffect } from "vue";
 import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { ErrorType } from "@/core/composables";
-import type { NamedValue } from "vue-i18n";
 
 interface IProps {
   disabled?: boolean;
@@ -89,21 +88,11 @@ const props = withDefaults(defineProps<IProps>(), {
   validationErrors: () => [],
 });
 
-const validationErrors = computed<ErrorType[]>(() => {
-  return props.validationErrors.map((el) => {
-    return {
-      id: el.objectId,
-      code: el.errorCode,
-      parameters: el.errorParameters?.reduce((acc, err) => {
-        acc[err.key] = err.value;
-        return acc;
-      }, {} as NamedValue),
-      description: el.errorMessage,
-    };
-  });
-});
+const validationErrors = toRef(props, "validationErrors");
 
-const { idErrors } = useErrorsTranslator("validation_error", validationErrors);
+const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const preparedLineItems = computed(() => prepareLineItems(props.items));
+
+watchEffect(() => setErrors(validationErrors.value));
 </script>

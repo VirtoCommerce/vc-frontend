@@ -138,7 +138,7 @@ function addToCart() {
  * Ignore non-numeric keys.
  */
 function onKeypress(event: KeyboardEvent) {
-  if (!/[0-9]/.test(event.key)) {
+  if (!/\d/.test(event.key)) {
     event.preventDefault();
   }
 }

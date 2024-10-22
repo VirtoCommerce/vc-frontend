@@ -1,26 +1,32 @@
 <template>
-  <VcModal :title="$t('shared.bulk_order.add_to_cart_sku_errors_modal.title')" class="p-6" variant="warn">
-    <div class="p-6">
-      <div class="mb-4">
-        <p>
-          {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.common_message") }}
-        </p>
+  <VcModal
+    :title="$t('shared.bulk_order.add_to_cart_sku_errors_modal.title')"
+    variant="warning"
+    icon="warning"
+    dividers
+    is-mobile-fullscreen
+  >
+    <div class="mb-4">
+      <p>
+        {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.common_message") }}
+      </p>
 
-        <p v-if="duplicateSkuItems?.length">
-          {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.duplicate_skus_message") }}
-        </p>
-      </div>
+      <p v-if="duplicateSkuItems?.length">
+        {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.duplicate_skus_message") }}
+      </p>
+    </div>
 
+    <div class="rounded border">
       <table class="w-full table-auto">
         <thead>
           <tr>
-            <th>
+            <th class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.sku") }}
             </th>
-            <th>
+            <th class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.products") }}
             </th>
-            <th class="text-center">
+            <th v-if="!otherErrorItems?.length" class="px-2 py-1 text-start">
               {{ $t("shared.bulk_order.add_to_cart_sku_errors_modal.content.quantity") }}
             </th>
           </tr>
@@ -28,10 +34,11 @@
         <tbody>
           <!-- Duplicate SKU errors -->
           <tr v-for="duplicateSkuItem in duplicateSkuItems" :key="duplicateSkuItem.sku">
-            <td>
+            <td class="px-2 py-1">
               {{ duplicateSkuItem.sku }}
             </td>
-            <td>
+
+            <td class="px-2 py-1">
               <VcSelect
                 v-model="duplicateSkuItem.productId"
                 :items="duplicateSkuItem.products"
@@ -42,26 +49,27 @@
               />
 
               <div v-if="duplicateSkuItem.errors?.length" class="text-danger">
-                <div v-for="error in duplicateSkuItem.errors" :key="error.code">
-                  {{ getTranslation(error) }}
+                <div v-for="error in duplicateSkuItem.errors" :key="error.objectId">
+                  {{ translate(error) }}
                 </div>
               </div>
             </td>
-            <td class="text-center">
+
+            <td class="px-2 py-1 text-center">
               {{ duplicateSkuItem.quantity }}
             </td>
           </tr>
 
           <!-- Other SKU errors -->
-          <tr v-for="errorItem in otherErrorItems" :key="errorItem.productSku" class="my-4">
-            <td>
+          <tr v-for="errorItem in otherErrorItems" :key="errorItem.productSku">
+            <td class="px-2 py-1">
               {{ errorItem.productSku }}
             </td>
-            <td class="text-danger" colspan="2">
+
+            <td class="px-2 py-1 text-danger" colspan="2">
               <div v-for="error in errorItem.errors" :key="error.errorCode">
-                {{ getTranslation(mapToErrorType(error)) }}
+                {{ translate(error) }}
               </div>
-              {{ $t(`validation_error.${errorItem.errors?.[0]?.errorCode}`) }}
             </td>
           </tr>
         </tbody>
@@ -88,9 +96,7 @@ import { useShortCart } from "@/shared/cart";
 import { useProducts } from "@/shared/catalog";
 import type { DuplicateSkuProductType } from "../types";
 import type { InputNewCartItemType, ValidationErrorType } from "@/core/api/graphql/types";
-import type { ErrorType } from "@/core/composables";
 import type { OutputBulkItemType } from "@/shared/cart";
-import type { NamedValue } from "vue-i18n";
 
 interface IEmits {
   (event: "confirm"): void;
@@ -106,7 +112,7 @@ interface IProps {
 
 const { products, fetchProducts } = useProducts();
 const { addItemsToCart } = useShortCart();
-const { getTranslation } = useErrorsTranslator("validation_error");
+const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const PRODUCT_DUPLICATE_SKU_ID = "PRODUCT_DUPLICATE_SKU";
 
@@ -135,18 +141,6 @@ function getDuplicateProductIds(items: OutputBulkItemType[]): string[] {
   return [...new Set(productIds)];
 }
 
-function mapToErrorType(error: ValidationErrorType): ErrorType {
-  return {
-    id: error.objectId,
-    code: error.errorCode,
-    description: error.errorMessage,
-    parameters: error.errorParameters?.reduce((acc, err) => {
-      acc[err.key] = err.value;
-      return acc;
-    }, {} as NamedValue),
-  };
-}
-
 async function addDuplicateSkuItemsToCart(itemsToAdd: DuplicateSkuProductType[]): Promise<void> {
   addingToCart.value = true;
 
@@ -164,9 +158,7 @@ async function addDuplicateSkuItemsToCart(itemsToAdd: DuplicateSkuProductType[])
 
   if (result?.validationErrors?.length) {
     duplicateSkuItems.value?.forEach((item) => {
-      item.errors = result.validationErrors
-        .filter((error) => error.objectId === item.productId)
-        .map((error) => mapToErrorType(error));
+      item.errors = result.validationErrors.filter((error) => error.objectId === item.productId);
     });
 
     return;

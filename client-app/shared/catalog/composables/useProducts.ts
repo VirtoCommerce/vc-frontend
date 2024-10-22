@@ -71,7 +71,7 @@ export function useProducts(
   const pagesCount = ref(1);
   const isFiltersSidebarVisible = ref(false);
 
-  const products = shallowRef<Product[]>([]);
+  const products = ref<Product[]>([]);
   const facets = shallowRef<FacetItemType[]>([]);
 
   const prevProductsFilters = shallowRef<ProductsFiltersType>();
@@ -79,6 +79,9 @@ export function useProducts(
     branches: localStorageBranches.value,
     inStock: localStorageInStock.value,
     facets: [],
+  });
+  const productFiltersSorted = computed(() => {
+    return { ...productsFilters.value, facets: getSortedFacets(productsFilters.value.facets) };
   });
 
   const productsById = computed(() =>
@@ -92,7 +95,7 @@ export function useProducts(
   );
 
   function getSortedFacets(allFacets: FacetItemType[]): FacetItemType[] {
-    if (options?.filtersDisplayOrder?.value?.order && options.filtersDisplayOrder?.value?.order.length) {
+    if (options.filtersDisplayOrder?.value?.order?.length) {
       const order = options.filtersDisplayOrder.value.order
         .split(",")
         .map((item) => item.trim().toLowerCase())
@@ -142,6 +145,8 @@ export function useProducts(
     if (!isEqual(localStorageBranches.value, newFilters.branches)) {
       localStorageBranches.value = newFilters.branches;
     }
+
+    resetCurrentPage();
   }
 
   function removeFacetFilter(payload: Pick<FacetItemType, "paramName"> & Pick<FacetValueItemType, "value">): void {
@@ -153,6 +158,7 @@ export function useProducts(
       facetsQueryParam.value = options?.useQueryParams ? getFilterExpressionFromFacets(facets) : "";
 
       triggerRef(facets);
+      resetCurrentPage();
     }
   }
 
@@ -164,6 +170,7 @@ export function useProducts(
     );
 
     triggerRef(facets);
+    resetCurrentPage();
   }
 
   function resetFilterKeyword(): void {
@@ -196,6 +203,7 @@ export function useProducts(
           } else {
             localStorageBranches.value = branches;
           }
+          resetCurrentPage();
         },
       },
     });
@@ -306,21 +314,24 @@ export function useProducts(
   }
 
   broadcast.on(productsInWishlistEvent, (eventItems: ProductInWishlistEventDataType[]) => {
-    let trigger = false;
-
     eventItems.forEach(({ productId, inWishlist }) => {
       const { index, product } = productsById.value[productId] ?? {};
 
       if (product) {
         products.value.splice(index, 1, { ...product, inWishlist });
-        trigger = true;
       }
     });
-
-    if (trigger) {
-      triggerRef(products);
-    }
   });
+
+  const currentPage = ref(1);
+
+  function updateCurrentPage(page: number) {
+    currentPage.value = page;
+  }
+
+  function resetCurrentPage() {
+    updateCurrentPage(1);
+  }
 
   return {
     facets,
@@ -335,12 +346,16 @@ export function useProducts(
     localStorageBranches,
     localStorageInStock,
     pagesCount: readonly(pagesCount),
-    products: computed(() => /** @see: https://github.com/vuejs/core/issues/8036 */ products.value.slice()),
+    products: computed(() => products.value),
     productsById,
-    productsFilters: computed(() => productsFilters.value),
+    productsFilters: productFiltersSorted,
     searchQueryParam,
     sortQueryParam,
     totalProductsCount: readonly(totalProductsCount),
+
+    currentPage: readonly(currentPage),
+    resetCurrentPage,
+    updateCurrentPage,
 
     applyFilters,
     getFacets,

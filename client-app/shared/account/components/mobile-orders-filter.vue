@@ -2,11 +2,10 @@
   <!-- Mobile filters -->
   <div v-if="isMobile" class="flex flex-col gap-4 lg:gap-5">
     <VcWidget v-if="!!facets" :title="$t('shared.account.orders_filter.status_label')" size="sm" collapsible>
-      <div class="flex flex-col space-y-4">
+      <VcCheckboxGroup v-model="filterData.statuses" class="space-y-4">
         <VcCheckbox
           v-for="facet in facets"
           :key="facet.term"
-          v-model="filterData.statuses"
           :value="facet.term"
           :class="[{ 'font-bold': isSelectedStatus(facet.term), 'text-neutral': !isSelectedStatus(facet.term) }]"
         >
@@ -15,7 +14,7 @@
             <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
           </div>
         </VcCheckbox>
-      </div>
+      </VcCheckboxGroup>
     </VcWidget>
 
     <VcWidget :title="$t('shared.account.orders_filter.created_date_label')" size="sm">

@@ -4,8 +4,9 @@ import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
-import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
+import { useGoogleAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
+import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
 import { useUser, useUserAddresses, useUserCheckoutDefaults } from "@/shared/account";
 import { useFullCart, EXTENDED_DEBOUNCE_IN_MS } from "@/shared/cart";
@@ -74,7 +75,7 @@ export function _useCheckout() {
     refetch: refetchCart,
     cart,
     selectedLineItems,
-    selectedItemIds,
+    selectCartItems,
     shipment,
     payment,
     availableShippingMethods,
@@ -98,6 +99,7 @@ export function _useCheckout() {
     clearState: clearGlobalCheckoutState,
   } = useGlobalCheckout();
   const { themeContext } = useThemeContext();
+  const { pushHistoricalEvent } = useHistoricalEvents();
 
   const deliveryAddress = computed(() => shipment.value?.deliveryAddress);
   const billingAddress = computed(() =>
@@ -133,7 +135,7 @@ export function _useCheckout() {
     set: (value: string) => {
       commentChanging.value = true;
       _comment.value = value;
-      void changeCommentDebounced(value);
+      void changeCommentDebounced(value.trim());
     },
   });
 
@@ -447,13 +449,19 @@ export function _useCheckout() {
     if (placedOrder.value) {
       await refetchCart();
 
-      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout) {
-        selectedItemIds.value = cart.value!.items.map((item) => item.id);
+      if (themeContext.value?.storeSettings?.defaultSelectedForCheckout && cart.value?.items.length) {
+        selectCartItems(cart.value.items.map((item) => item.id));
       }
 
       clearState();
 
       ga.placeOrder(placedOrder.value);
+      void pushHistoricalEvent({
+        eventType: "placeOrder",
+        sessionId: placedOrder.value.id,
+        productIds: placedOrder.value.items?.map((item) => item.productId),
+        storeId: globals.storeId,
+      });
 
       await router.replace({ name: canPayNow.value ? "CheckoutPayment" : "CheckoutCompleted" });
     } else {

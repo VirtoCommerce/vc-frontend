@@ -187,7 +187,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
   }
 
   table {
-    @apply table-auto rounded border-separate border border-spacing-0 w-full text-base;
+    @apply table-fixed overflow-hidden rounded border-separate border border-spacing-0 w-full text-base;
 
     tr {
       @apply even:bg-neutral-50;
@@ -195,7 +195,7 @@ const markdown = computed(() => DOMPurify.sanitize(marked(props.src) as string, 
 
     td,
     th {
-      @apply align-top px-2 py-3 border-t;
+      @apply align-top px-2 py-3 border-t break-words;
 
       @media (screen(lg)) {
         @apply p-3;

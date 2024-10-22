@@ -1,34 +1,37 @@
-import type {
-  AvailabilityData,
-  CommonVendor,
-  LineItemType,
-  MoneyType,
-  OrderLineItemType,
-  Property,
-  QuoteItemType,
-} from "@/core/api/graphql/types";
+import type { AvailabilityData, CommonVendor, MoneyType, Product, Property } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
-export type AnyLineItemType = LineItemType | OrderLineItemType | QuoteItemType;
+export type AnyLineItemType = {
+  id: string;
+  name: string;
+  imageUrl?: string;
+  product?: Product;
+  productId?: string;
+  sku?: string;
+  quantity?: number;
+  inStockQuantity?: number;
+  productType?: string;
+  price?: MoneyType;
+  listPrice?: MoneyType;
+  salePrice?: MoneyType;
+  placedPrice?: MoneyType;
+  extendedPrice?: MoneyType;
+  proposalPrices?: {
+    price: MoneyType;
+    quantity: number;
+  };
+  selectedTierPrice?: {
+    price: MoneyType;
+    quantity: number;
+  };
+};
 
-export type VendorGroupType<T extends LineItemType | OrderLineItemType> = {
+export type VendorGroupType<T> = {
   items: T[];
   vendor?: CommonVendor;
 };
 
-export type VendorGroupByVendorIdType<T extends LineItemType | OrderLineItemType> = Record<string, VendorGroupType<T>>;
-
-/** @deprecated Use {@link PreparedLineItemType} */
-export type ExtendedLineItemType<T extends AnyLineItemType> = T & {
-  extended: {
-    isProductExists: boolean;
-    route: RouteLocationRaw;
-    displayProperties: Property[];
-    minQuantity?: number;
-    maxQuantity?: number;
-    countInCart?: number;
-  };
-};
+export type VendorGroupByVendorIdType<T> = Record<string, VendorGroupType<T>>;
 
 export type PreparedLineItemType = {
   id: string;

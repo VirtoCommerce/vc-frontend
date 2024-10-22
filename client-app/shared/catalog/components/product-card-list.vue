@@ -19,25 +19,19 @@
         <DiscountBadge :price="product.price!" size="sm" />
       </router-link>
 
-      <div
-        class="vc-product-card-list__buttons mt-3 flex w-full justify-center gap-3.5 sm:justify-start sm:place-self-end lg:mt-2 lg:gap-3"
-      >
-        <AddToList custom-class="w-5 h-5 lg:w-4 lg:h-4" :product="product" tooltip-placement="bottom" />
-        <AddToCompareCatalog
-          v-if="$cfg.product_compare_enabled"
-          custom-class="w-5 h-5 lg:w-4 lg:h-4"
-          :product="product"
-          tooltip-placement="bottom"
-        />
-      </div>
+      <VcProductActions class="vc-product-card-list__buttons mt-3 place-self-start lg:mt-2">
+        <AddToList :product="product" />
+
+        <AddToCompareCatalog v-if="$cfg.product_compare_enabled" :product="product" />
+      </VcProductActions>
     </div>
 
     <!-- Product title -->
-    <VcTooltip class="w-full" placement="bottom-start">
+    <VcTooltip class="w-full" placement="bottom-start" width="16rem">
       <template #trigger>
         <router-link
           :to="link"
-          :target="target"
+          :target="browserTarget"
           class="vc-product-card-list__name w-full grow text-sm font-black text-[--link-color] hover:text-[--link-hover-color] sm:line-clamp-3 sm:overflow-hidden lg:mt-1 2xl:pr-2"
           @click="$emit('linkClick', $event)"
         >
@@ -66,17 +60,16 @@
       </template>
 
       <!-- Rating -->
-      <template v-if="false">
+      <template v-if="productReviewsEnabled && product.rating">
         <div class="min-w-0">
           <div class="truncate font-bold">
             {{ $t("shared.catalog.product_card.product_rating") }}
           </div>
         </div>
-        <div class="flex items-center gap-1">
-          <svg class="size-3 shrink-0 text-success">
-            <use href="/static/images/cup.svg#main"></use>
-          </svg>
-          <div class="font-bold">4,3/5</div>
+        <div class="min-w-0">
+          <div class="truncate">
+            <ProductRating :rating="product.rating" />
+          </div>
         </div>
       </template>
 
@@ -103,7 +96,7 @@
       <template v-if="product.hasVariations">
         <VcButton
           :to="link"
-          :target="target"
+          :target="browserTarget"
           variant="outline"
           size="sm"
           full-width
@@ -114,7 +107,7 @@
 
         <router-link
           :to="link"
-          :target="target"
+          :target="browserTarget"
           class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
         >
           <svg class="size-3 shrink-0 text-primary lg:size-2.5">
@@ -147,7 +140,7 @@
 import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
-import { getLinkTarget, getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -155,6 +148,8 @@ import DiscountBadge from "./discount-badge.vue";
 import InStock from "./in-stock.vue";
 import Vendor from "./vendor.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { BrowserTargetType } from "@/core/types";
+import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
 
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
@@ -165,11 +160,11 @@ const props = withDefaults(defineProps<IProps>(), {
 interface IProps {
   product: Product;
   lazy?: boolean;
-  openInNewTab?: boolean;
+  browserTarget?: BrowserTargetType;
+  productReviewsEnabled?: boolean;
 }
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
-const target = computed(() => getLinkTarget(props.openInNewTab));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),

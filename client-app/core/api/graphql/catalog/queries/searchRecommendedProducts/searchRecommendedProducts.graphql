@@ -1,0 +1,52 @@
+query GetProductRecommendations(
+  $storeId: String!
+  $userId: String
+  $currencyCode: String
+  $cultureName: String
+  $productId: String
+  $model: String
+  $maxRecommendations: Int
+  $fallbackProductsFilter: String
+) {
+  recommendations(
+    storeId: $storeId
+    userId: $userId
+    productId: $productId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    model: $model
+    maxRecommendations: $maxRecommendations
+    fallbackProductsFilter: $fallbackProductsFilter
+  ) {
+    products {
+      id
+      name
+      code
+      hasVariations
+      imgSrc
+      vendor {
+        name
+      }
+      price {
+        actual {
+          amount
+          formattedAmount
+        }
+        list {
+          amount
+          formattedAmount
+        }
+      }
+      minVariationPrice {
+        actual {
+          amount
+          formattedAmount
+        }
+        list {
+          amount
+          formattedAmount
+        }
+      }
+    }
+  }
+}

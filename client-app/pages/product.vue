@@ -51,6 +51,19 @@
         />
 
         <component
+          :is="ProductReviews"
+          v-if="productReviewsEnabled && !!productReviews?.length"
+          :model="productReviewsSection"
+          :fetching="fetchingProductReviews"
+          :rating="product.rating"
+          :reviews="productReviews"
+          :page="productReviewsPayload.page"
+          :pages-count="productReviewsPagesCount"
+          @change-sort-by-date="changeSortProductReviews"
+          @change-page="changeProductReviewsPage"
+        />
+
+        <component
           :is="productVariationsBlock?.type"
           v-if="productVariationsBlock && !productVariationsBlock.hidden && product.hasVariations"
           :variations="variations"
@@ -74,6 +87,16 @@
           :related-products="relatedProducts"
           :model="relatedProductsSection"
         />
+
+        <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
+          <component
+            :is="recommendedProductsSection?.type"
+            v-for="{ model, id } in recommendedProductsSection.blocks"
+            :key="id"
+            :recommended-products="recommendedProducts[model as string]"
+            :title="$t(`pages.product.recommended_products.${model}_section_title`)"
+          />
+        </template>
       </div>
 
       <ProductSidebar
@@ -96,15 +119,27 @@ import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { BREAKPOINTS } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
+import { globals } from "@/core/globals";
 import {
   buildBreadcrumbs,
   getFilterExpressionFromFacets,
   getFilterExpression,
   getSortingExpression,
+  getFilterExpressionForAvailableIn,
+  getFilterExpressionForInStock,
 } from "@/core/utilities";
-import { useProduct, useRelatedProducts, useCategory, ProductSidebar, useProducts } from "@/shared/catalog";
+import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
+import {
+  useProduct,
+  useRelatedProducts,
+  useCategory,
+  ProductSidebar,
+  useProducts,
+  useRecommendedProducts,
+} from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
@@ -115,6 +150,8 @@ import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-po
 const props = withDefaults(defineProps<IProps>(), {
   productId: "",
 });
+
+const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
 
 interface IProps {
   productId?: string;
@@ -155,21 +192,41 @@ const {
   filtersDisplayOrder,
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
+const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
+const {
+  enabled: productReviewsEnabled,
+  fetching: fetchingProductReviews,
+  pagesCount: productReviewsPagesCount,
+  reviews: productReviews,
+  fetchCustomerReviews,
+} = useCustomerReviews();
+
 const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
 const variationSortInfo = ref<ISortInfo>({
   column: "name",
   direction: SortDirection.Ascending,
 });
+const productReviewsPayload = ref({
+  entityId: productId.value,
+  entityType: "Product",
+  page: 1,
+  sort: "createddate:desc",
+});
 
 const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
   page: 1,
   itemsPerPage: 50,
   sort: getSortingExpression(variationSortInfo.value),
-  filter: variationsFilterExpression.value,
+  filter: getFilterExpression([
+    variationsFilterExpression.value,
+    getFilterExpressionForAvailableIn(productsFilters.value.branches),
+    getFilterExpressionForInStock(productsFilters.value.inStock),
+  ]),
 });
 
 // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1099
@@ -186,13 +243,18 @@ const productInfoSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "product-info"),
 );
 
+const productReviewsSection = computed(() => template.value?.content.find((item) => item.type === "product-reviews"));
+
 const productVariationsBlock = computed(() =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  productInfoSection.value?.blocks.find((block: any) => block.type === "product-variations"),
+  productInfoSection.value?.blocks?.find((block) => block.type === "product-variations"),
 );
 
 const relatedProductsSection = computed(() =>
   template.value?.content.find((item: PageContent) => item.type === "related-products"),
+);
+
+const recommendedProductsSection = computed(() =>
+  template.value?.content?.find((item: PageContent) => item.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {
@@ -236,6 +298,8 @@ async function applyFilters(newFilters: ProductsFiltersType): Promise<void> {
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
     getFilterExpressionFromFacets(newFilters.facets),
+    getFilterExpressionForInStock(newFilters.inStock),
+    getFilterExpressionForAvailableIn(newFilters.branches),
   ]);
 
   await fetchProducts(variationsSearchParams.value);
@@ -250,6 +314,8 @@ async function removeFacetFilter(
   variationsSearchParams.value.filter = getFilterExpression([
     variationsFilterExpression.value,
     getFilterExpressionFromFacets(productsFilters.value.facets),
+    getFilterExpressionForAvailableIn(productsFilters.value.branches),
+    getFilterExpressionForInStock(productsFilters.value.inStock),
   ]);
 
   await fetchProducts(variationsSearchParams.value);
@@ -262,6 +328,19 @@ async function resetFacetFilters(): Promise<void> {
   variationsSearchParams.value.filter = getFilterExpression([variationsFilterExpression.value]);
 
   await fetchProducts(variationsSearchParams.value);
+}
+
+async function changeSortProductReviews(sort: string): Promise<void> {
+  productReviewsPayload.value.page = 1;
+  productReviewsPayload.value.sort = sort;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
+}
+
+async function changeProductReviewsPage(page: number): Promise<void> {
+  productReviewsPayload.value.page = page;
+
+  await fetchCustomerReviews(productReviewsPayload.value);
 }
 
 watchEffect(() => {
@@ -289,18 +368,32 @@ watchEffect(async () => {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
   }
 
+  const recommendedProductsBlocks = recommendedProductsSection.value?.blocks?.filter((block) => !!block.model) ?? [];
+  if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks?.length) {
+    const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
+      productId: productId.value,
+      model: model as string,
+    }));
+    await fetchRecommendedProducts(paramsToFetch);
+  }
+
   if (product.value?.hasVariations) {
     await fetchProducts(variationsSearchParams.value);
   }
 });
 
 /**
- * Send Google Analytics event for product.
+ * Send Google Analytics event and historical event for product.
  */
 watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
     ga.viewItem(product.value as Product);
+    void pushHistoricalEvent({
+      eventType: "click",
+      productId: product.value.id,
+      storeId: globals.storeId,
+    });
   }
 });
 
@@ -313,6 +406,12 @@ watchEffect(() => {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
     });
+  }
+});
+
+watchEffect(() => {
+  if (productReviewsEnabled.value) {
+    void fetchCustomerReviews(productReviewsPayload.value);
   }
 });
 </script>

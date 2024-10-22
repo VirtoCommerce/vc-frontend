@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { uniqBy, cloneDeep } from "lodash";
-import type { KeyValueType } from "@/core/api/graphql/types";
+import { uniqBy } from "lodash";
 
 export function getBaseUrl(supportedLocales: string[]): string {
   const localeInPath = location.pathname.split("/")[1];
@@ -31,16 +30,8 @@ export function extractHostname(url: string) {
   return hostname;
 }
 
-export function sleep(ms: number, resolvedValue?: any): Promise<any> {
-  return new Promise((resolve) => setTimeout(resolve, ms, resolvedValue));
-}
-
 export function truncate(str: string, length: number): string {
   return str.length > length ? `${str.slice(0, length)}...` : str;
-}
-
-export function getLinkTarget(openInNewTab: boolean): "_blank" | "_self" {
-  return openInNewTab ? "_blank" : "_self";
 }
 
 export function appendSuffixToFilename(filename: string, suffix: string, checkIfSuffixExists = false) {
@@ -61,13 +52,8 @@ export function appendSuffixToFilename(filename: string, suffix: string, checkIf
     : fileNameWithoutExtension + suffix + filename.substring(dotIndex);
 }
 
-//todo add unit test
 export function stringFormat(template: string, ...args: string[]): string {
   return template.replace(/{(\d+)}/g, (match: string, num: number) => args[num] || match);
-}
-
-export function convertToType<To, From = Record<any, any>>(value?: From): To {
-  return cloneDeep<To>(value as any);
 }
 
 export async function asyncForEach<T>(
@@ -83,23 +69,6 @@ export function extractNumberFromString(str: string): number {
   const regex = /\d+/;
   const match = regex.exec(str);
   return match ? parseInt(match[0]) : 0;
-}
-
-export function getValueByKey(data: KeyValueType[], key: string): string {
-  const param = data.find((el) => el.key === key);
-
-  if (!param?.value) {
-    throw new Error(`Missed parameter ${key}`);
-  }
-
-  return param.value;
-}
-
-export function objectToKeyValues(object: { [key: string]: string }): KeyValueType[] {
-  return Object.keys(object).map((key) => ({
-    key,
-    value: object[key],
-  }));
 }
 
 export function replaceXFromBeginning(input: string, by: string = "•••• "): string {

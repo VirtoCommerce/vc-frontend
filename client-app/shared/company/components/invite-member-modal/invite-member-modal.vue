@@ -1,15 +1,10 @@
 <template>
-  <VcModal
-    ref="modalComponent"
-    :title="$t('shared.account.invite_member_modal.title')"
-    modal-width="sm:max-w-[38rem]"
-    is-mobile-fullscreen
-  >
-    <VcAlert v-if="commonErrors.length" color="danger" size="sm" variant="solid-light" class="mx-6 mt-5 sm:mx-5">
+  <VcModal ref="modalComponent" :title="$t('shared.account.invite_member_modal.title')" is-mobile-fullscreen dividers>
+    <VcAlert v-if="commonErrors.length" color="danger" size="sm" variant="solid-light" class="mb-4">
       <p v-for="error in commonErrors" :key="error">{{ error }}</p>
     </VcAlert>
 
-    <form class="h-full space-y-4 p-6 py-5 sm:border-b sm:p-5">
+    <form class="space-y-4">
       <VcSelect
         v-model="roleId"
         :items="roles"
@@ -73,6 +68,7 @@ import { useUser } from "@/shared/account";
 import { useNotifications } from "@/shared/notification";
 import { VcModal } from "@/ui-kit/components";
 import { getInvalidEmails, parseEmails, normalizeEmails } from "./emails";
+import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 
 interface IEmits {
   (e: "result", succeed: boolean): void;
@@ -91,7 +87,7 @@ const { t } = useI18n();
 const { organization, inviteUser } = useUser();
 const router = useRouter();
 const notifications = useNotifications();
-const { getTranslation } = useErrorsTranslator("identity_error");
+const { translate } = useErrorsTranslator<IdentityErrorInfoType>("identity_error");
 
 const roles = B2B_ROLES.map((role) => {
   role.normalizedName = t("common.roles." + role.id);
@@ -160,6 +156,7 @@ const send = handleSubmit(async (data) => {
   if (result.succeeded) {
     emit("result", true);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     modalComponent.value?.close();
 
     notifications.success({
@@ -174,7 +171,7 @@ const send = handleSubmit(async (data) => {
         return;
       }
 
-      const errorDescription = getTranslation(error);
+      const errorDescription = translate(error);
 
       if (errorDescription) {
         commonErrors.value.push(errorDescription);

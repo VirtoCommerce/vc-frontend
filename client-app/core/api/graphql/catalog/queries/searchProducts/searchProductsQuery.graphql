@@ -1,6 +1,7 @@
 #import "../../../common/fragments/money.graphql"
 #import "../../fragments/property.graphql"
 #import "../../fragments/availabilityData.graphql"
+#import "../../../common/fragments/rating.graphql"
 
 query SearchProducts(
   $storeId: String!
@@ -93,6 +94,9 @@ query SearchProducts(
       }
       properties {
         ...property
+      }
+      rating {
+        ...rating
       }
     }
     term_facets @include(if: $withFacets) {

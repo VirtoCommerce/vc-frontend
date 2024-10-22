@@ -6,7 +6,7 @@
       `vc-checkbox--label--${labelPosition}`,
       {
         'vc-checkbox--disabled': disabled,
-        'vc-checkbox--checked': checked,
+        'vc-checkbox--checked': isChecked,
       },
     ]"
   >
@@ -17,16 +17,16 @@
         :name="name"
         :value="value"
         :disabled="disabled"
-        :checked="checked"
+        :checked="isChecked"
         :indeterminate="indeterminate"
-        :aria-checked="checked"
+        :aria-checked="isChecked"
         class="vc-checkbox__input"
         :data-test-id="testId"
-        @change="change"
+        @change="handleChange"
+        @click="onClick"
       />
-
       <span v-if="$slots.default" class="vc-checkbox__label">
-        <slot v-bind="{ checked }" />
+        <slot v-bind="{ checked: isChecked }" />
       </span>
     </label>
 
@@ -41,61 +41,66 @@
 </template>
 
 <script setup lang="ts">
-// FIXME: https://virtocommerce.atlassian.net/browse/ST-3812
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { computed } from "vue";
+import { includes } from "lodash";
+import { computed, inject } from "vue";
+
+interface IEmits {
+  (event: "update:modelValue", value: boolean): void;
+  (event: "change", value: boolean): void;
+}
 
 interface IProps {
-  disabled?: boolean;
-  modelValue?: boolean | any[];
+  modelValue?: boolean;
   name?: string;
-  value?: boolean | string | number | object;
+  value?: string | number | object;
+  disabled?: boolean;
   indeterminate?: boolean;
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
   labelPosition?: "left" | "right";
   showEmptyDetails?: boolean;
   message?: string;
   error?: boolean;
   singleLineMessage?: boolean;
   testId?: string;
+  preventDefault?: boolean;
 }
 
-const emit = defineEmits<{
-  (event: "update:modelValue", value: boolean | any[]): void;
-  (event: "change", value: boolean | any[]): void;
-}>();
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  modelValue: () => [],
+  modelValue: false,
   size: "md",
   labelPosition: "right",
 });
 
-const checked = computed<boolean>(() =>
-  typeof props.modelValue === "boolean" ? props.modelValue : props.modelValue.includes(props.value),
-);
+const groupContext = inject<VcCheckboxGroupContextType | null>("checkboxGroupContext", null);
 
-function change() {
+const isChecked = computed(() => {
+  if (groupContext && !props.modelValue) {
+    return includes(groupContext.modelValue.value, props.value);
+  } else {
+    return props.modelValue;
+  }
+});
+
+function handleChange() {
   if (props.disabled) {
     return;
   }
 
-  if (typeof props.modelValue === "boolean") {
+  if (groupContext) {
+    groupContext.toggleValue(props.value!);
+  } else {
     const newValue = !props.modelValue;
     emit("update:modelValue", newValue);
     emit("change", newValue);
-  } else {
-    const newArray = [...props.modelValue];
-    const index = newArray.indexOf(props.value);
+  }
+}
 
-    if (index === -1) {
-      newArray.push(props.value);
-    } else {
-      newArray.splice(index, 1);
-    }
-
-    emit("update:modelValue", newArray);
-    emit("change", newArray);
+function onClick(event: Event) {
+  if (props.preventDefault) {
+    event.preventDefault();
+    handleChange();
   }
 }
 </script>
@@ -106,9 +111,18 @@ function change() {
   $left: "";
   $right: "";
 
-  @apply select-none;
+  --base-color: var(--vc-checkbox-base-color, var(--color-primary-500));
+  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+
+  @apply flex-none select-none;
 
   &--size {
+    &--xs {
+      --size: 0.875rem;
+
+      @apply text-xs;
+    }
+
     &--sm {
       --size: 1.125rem;
 
@@ -148,7 +162,7 @@ function change() {
     @apply size-[--size] shrink-0 cursor-pointer appearance-none rounded border-2 border-neutral-400 bg-additional-50;
 
     &:checked {
-      @apply border-none bg-primary bg-no-repeat bg-center bg-[length:120%];
+      @apply border-none bg-[--base-color] bg-no-repeat bg-center bg-[length:120%];
 
       background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 26 26' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M17.1561 8.43073C17.7304 7.85642 18.6616 7.85642 19.2359 8.43073C19.8102 9.00503 19.8102 9.93615 19.2359 10.5105L12.079 17.6673C11.5047 18.2416 10.5736 18.2416 9.99927 17.6673L6.76398 14.432C6.18968 13.8577 6.18968 12.9266 6.76398 12.3523C7.33828 11.778 8.2694 11.778 8.8437 12.3523L11.0391 14.5477L17.1561 8.43073Z' fill='white'/%3e%3c/svg%3e");
       print-color-adjust: exact;
@@ -161,7 +175,11 @@ function change() {
     }
 
     &:focus {
-      @apply ring ring-primary-100;
+      @apply ring ring-[--focus-color];
+    }
+
+    &:focus-visible {
+      @apply outline-none;
     }
 
     &:disabled {

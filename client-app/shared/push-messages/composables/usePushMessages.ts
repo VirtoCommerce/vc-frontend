@@ -7,10 +7,11 @@ import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mut
 import { useMarkAllPushMessagesUnread } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesUnread";
 import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/getPushMessages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { useThemeContext } from "@/core/composables/useThemeContext";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
-import { useUser } from "@/shared/account";
-import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/types";
+import { useUser } from "@/shared/account/composables";
+import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/push-messages/types";
 import type { Ref, MaybeRef } from "vue";
 
 export interface IUsePushMessagesOptions {
@@ -21,13 +22,17 @@ export interface IUsePushMessagesOptions {
 
 provideApolloClient(apolloClient);
 
-export function usePushMessages(options?: IUsePushMessagesOptions) {
-  const { isAuthenticated } = useUser();
-  const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+const { isAuthenticated } = useUser();
+const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+const { themeContext } = useThemeContext();
 
-  if (!hasModuleSettings.value || !isAuthenticated.value) {
+const isActive = computed(
+  () => themeContext.value?.settings?.push_messages_enabled && hasModuleSettings.value && isAuthenticated.value,
+);
+
+function usePushMessages(options?: IUsePushMessagesOptions) {
+  if (!isActive.value) {
     return {
-      isActive: false,
       totalCount: computed(() => 0),
       unreadCount: computed(() => 0),
       unreadCountWithHidden: computed(() => 0),
@@ -68,7 +73,6 @@ export function usePushMessages(options?: IUsePushMessagesOptions) {
   const { mutate: clearAll } = useClearAllPushMessages();
 
   return {
-    isActive: true,
     totalCount,
     unreadCount,
     unreadCountWithHidden,
@@ -81,3 +85,5 @@ export function usePushMessages(options?: IUsePushMessagesOptions) {
     page,
   };
 }
+
+export { isActive, usePushMessages };

@@ -1,7 +1,7 @@
 import { VcCheckbox } from "..";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
-const SIZES = ["sm", "md"];
+const SIZES = ["xs", "sm", "md"];
 const LABEL = ["left", "right"];
 
 export default {
@@ -77,4 +77,15 @@ IndeterminateDisabled.args = {
 export const Message = TemplateLabel.bind({});
 Message.args = {
   message: "Some smart message",
+};
+
+const TemplateCustomColor: StoryFn<typeof VcCheckbox> = (args) => ({
+  components: { VcCheckbox },
+  setup: () => ({ args }),
+  template: '<VcCheckbox v-bind="args" class="[--vc-checkbox-base-color:red]">VcCheckbox Label</VcCheckbox>',
+});
+
+export const CustomColor = TemplateCustomColor.bind({});
+CustomColor.args = {
+  modelValue: true,
 };

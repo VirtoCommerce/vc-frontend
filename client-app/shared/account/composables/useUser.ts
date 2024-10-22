@@ -15,6 +15,7 @@ import {
   updateContact,
 } from "@/core/api/graphql/account";
 import { useAuth } from "@/core/composables/useAuth";
+import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import {
@@ -55,6 +56,9 @@ const organization = eagerComputed<Organization | null>(
   () =>
     user.value?.contact?.organizations?.items?.find((item) => item.id === user.value?.contact?.organizationId) ?? null,
 );
+
+const allOrganizations = computed<Organization[]>(() => user.value?.contact?.organizations?.items || []);
+
 const operator = computed<UserType | null>(() => user.value?.operator ?? null);
 
 interface IPasswordExpirationEntry {
@@ -66,11 +70,14 @@ export function useUser() {
   const broadcast = useBroadcast();
   const { refresh } = useAuth();
   const { openModal, closeModal } = useModal();
+  const twoLetterContactLocale = computed(() => user.value?.contact?.defaultLanguage?.split("-")[0]);
 
   const changePasswordReminderDates = useLocalStorage<IPasswordExpirationEntry[]>(
     "vcst-password-expire-reminder-date",
     [],
   );
+
+  const savedUserId = useLocalStorage<string>(USER_ID_LOCAL_STORAGE, "");
 
   function handlePasswordExpiration(): void {
     if (!user.value?.passwordExpiryInDays) {
@@ -136,8 +143,10 @@ export function useUser() {
     try {
       loading.value = true;
 
-      user.value = await getMe();
-
+      user.value = await getMe(savedUserId.value);
+      if (user.value?.id !== savedUserId.value) {
+        savedUserId.value = user.value.id;
+      }
       handlePasswordExpiration();
 
       if (withBroadcast) {
@@ -357,6 +366,7 @@ export function useUser() {
       () => user.value?.contact?.organizations?.items && user.value?.contact?.organizations?.items?.length > 1,
     ),
     organization,
+    allOrganizations,
     operator,
     checkPermissions,
     fetchUser,
@@ -378,12 +388,13 @@ export function useUser() {
           throw new Error("User is missing.");
         }
 
-        return user.value!;
+        return user.value;
       },
 
       set() {
         throw new Error("User change is not available.");
       },
     }),
+    twoLetterContactLocale,
   };
 }

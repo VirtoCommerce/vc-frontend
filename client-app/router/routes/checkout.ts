@@ -1,4 +1,4 @@
-import type { RouteRecordRaw } from "vue-router";
+import type { NavigationGuardNext, RouteLocationNormalized, RouteRecordName, RouteRecordRaw } from "vue-router";
 
 const Checkout = () => import("@/pages/checkout/index.vue");
 const Billing = () => import("@/pages/checkout/billing.vue");
@@ -8,6 +8,18 @@ const Payment = () => import("@/pages/checkout/payment.vue");
 const Review = () => import("@/pages/checkout/review.vue");
 const Shipping = () => import("@/pages/checkout/shipping.vue");
 
+function handleBeforeEnter(
+  from: RouteLocationNormalized,
+  next: NavigationGuardNext,
+  targetRoute: RouteRecordName,
+  redirectRoute: RouteRecordName,
+) {
+  if (from.name === targetRoute) {
+    next({ name: redirectRoute, replace: true });
+  } else {
+    next();
+  }
+}
 export const checkoutRoutes: RouteRecordRaw[] = [
   {
     path: "/checkout/completed",
@@ -29,11 +41,17 @@ export const checkoutRoutes: RouteRecordRaw[] = [
         path: "shipping",
         name: "Shipping",
         component: Shipping,
+        beforeEnter(to, from, next) {
+          handleBeforeEnter(from, next, "CheckoutPayment", "Cart");
+        },
       },
       {
         path: "billing",
         name: "Billing",
         component: Billing,
+        beforeEnter(to, from, next) {
+          handleBeforeEnter(from, next, "CheckoutPayment", "Cart");
+        },
       },
       {
         path: "review",

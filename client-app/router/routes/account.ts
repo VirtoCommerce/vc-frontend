@@ -1,6 +1,5 @@
-import { useThemeContext } from "@/core/composables";
 import { useUser } from "@/shared/account";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
+import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
 import type { RouteRecordRaw } from "vue-router";
 
 const Dashboard = () => import("@/pages/account/dashboard.vue");
@@ -13,16 +12,11 @@ const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
-const Quotes = () => import("@/pages/account/quotes.vue");
-const EditQuote = () => import("@/pages/account/edit-quote.vue");
-const ViewQuote = () => import("@/pages/account/view-quote.vue");
 const PurchaseRequests = () => import("@/pages/account/purchase-requests.vue");
 const PurchaseRequest = () => import("@/pages/account/purchase-request.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const Notifications = () => import("@/pages/account/notifications.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
-
-const { themeContext } = useThemeContext();
 
 export const accountRoutes: RouteRecordRaw[] = [
   { path: "dashboard", name: "Dashboard", component: Dashboard },
@@ -81,37 +75,6 @@ export const accountRoutes: RouteRecordRaw[] = [
   },
   { path: "checkout-defaults", name: "CheckoutDefaults", component: CheckoutDefaults },
   {
-    path: "quotes",
-    children: [
-      { path: "", name: "Quotes", component: Quotes },
-      {
-        path: ":quoteId",
-        children: [
-          {
-            path: "",
-            name: "ViewQuote",
-            component: ViewQuote,
-            props: true,
-            meta: { hideLeftSidebar: true },
-          },
-          {
-            path: "edit",
-            name: "EditQuote",
-            component: EditQuote,
-            props: true,
-          },
-        ],
-      },
-    ],
-    beforeEnter(_to, _from, next) {
-      if (themeContext.value.settings.quotes_enabled) {
-        next();
-      } else {
-        next({ name: "Dashboard" });
-      }
-    },
-  },
-  {
     path: "saved-credit-cards",
     name: "SavedCreditCards",
     component: SavedCreditCards,
@@ -134,8 +97,7 @@ export const accountRoutes: RouteRecordRaw[] = [
     name: "Notifications",
     component: Notifications,
     beforeEnter(_to, _from, next) {
-      const { isActive } = usePushMessages();
-      if (themeContext.value?.settings?.push_messages_enabled && isActive) {
+      if (isPushMessagesActive.value) {
         next();
       } else {
         next({ name: "Dashboard" });

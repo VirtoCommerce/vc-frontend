@@ -1,17 +1,11 @@
 <template>
-  <VcTooltip width="max-content">
-    <template #trigger>
-      <slot :is-in-compare-list="isInCompareList" :toggle="toggle">
-        <button :aria-label="tooltipText" type="button" class="flex" tabindex="0" @click="toggle">
-          <VcIcon :class="[customClass, isInCompareList ? 'text-primary' : 'text-neutral-400']" name="compare" />
-        </button>
-      </slot>
-    </template>
-
-    <template #content>
-      {{ tooltipText }}
-    </template>
-  </VcTooltip>
+  <VcProductActionsButton
+    icon="compare"
+    :icon-size="iconSize"
+    :active="isInCompareList"
+    :tooltip-text="tooltipText"
+    @click="toggle"
+  />
 </template>
 
 <script setup lang="ts">
@@ -23,14 +17,10 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
-  customClass?: string;
-  tooltipPlacement?: VcTooltipPlacementType;
+  iconSize?: VcIconSizeType;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  customClass: "w-5 h-5 lg:w-4 lg:h-4",
-  tooltipPlacement: "left",
-});
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { productsIds, addToCompareList, removeFromCompareList } = useCompareProducts();

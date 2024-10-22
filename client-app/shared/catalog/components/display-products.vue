@@ -13,8 +13,9 @@
         :key="item.id + index"
         :product="item"
         :lazy="index >= lazyCardsCount"
-        :open-in-new-tab="openProductInNewTab"
+        :browser-target="browserTarget"
         :hide-properties="cardType === 'short'"
+        :product-reviews-enabled="productReviewsEnabled"
         @link-click="$emit('itemLinkClick', item, $event)"
       >
         <template #add-to-list-handler>
@@ -32,11 +33,13 @@
 import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
+import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
 import ProductCardGrid from "./product-card-grid.vue";
 import ProductCardList from "./product-card-list.vue";
 import ProductSkeletonGrid from "./product-skeleton-grid.vue";
 import ProductSkeletonList from "./product-skeleton-list.vue";
 import type { Product } from "@/core/api/graphql/types";
+import type { BrowserTargetType } from "@/core/types";
 
 interface IEmits {
   (eventName: "itemLinkClick", product: Product, globalEvent: MouseEvent): void;
@@ -47,7 +50,7 @@ interface IProps {
   products?: Product[];
   itemsPerPage?: number;
   viewMode?: string;
-  openProductInNewTab?: boolean;
+  browserTarget?: BrowserTargetType;
   cardType?: "full" | "short";
   columnsAmountTablet?: string;
   columnsAmountDesktop?: string;
@@ -64,6 +67,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
+const { enabled: productReviewsEnabled } = useCustomerReviews();
 
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));

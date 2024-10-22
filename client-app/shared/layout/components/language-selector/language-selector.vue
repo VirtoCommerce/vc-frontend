@@ -52,11 +52,13 @@ import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
 import type { ILanguage } from "@/core/types";
 
-const { currentLanguage, supportedLanguages, saveLocale } = useLanguages();
+const { pinedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
 
 function select(locale: string) {
-  if (locale !== currentLanguage.value.twoLetterLanguageName) {
-    saveLocale(locale);
+  if (locale !== pinedLocale.value) {
+    pinLocale(locale);
+    removeLocaleFromUrl();
+    location.reload();
   }
 }
 
@@ -106,7 +108,7 @@ function getCountryCode(language: ILanguage): string {
   }
 
   &__arrow {
-    @apply size-4 text-additional-50;
+    @apply size-4 text-[--mobile-menu-navigation-color];
 
     @media (min-width: theme("screens.lg")) {
       @apply size-2.5 text-primary;

@@ -2,18 +2,16 @@ import { clone, isEqual, pick } from "lodash";
 import type { AnyAddressType } from "../../types";
 import type { InputMemberAddressType, MemberAddressType } from "@/core/api/graphql/types";
 
-// FIXME: https://virtocommerce.atlassian.net/browse/ST-5122
 export function toInputAddress(address: AnyAddressType): InputMemberAddressType {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const newAddress = clone(address) as Record<keyof MemberAddressType, any>;
+  const newAddress = clone(address);
 
-  newAddress.key = newAddress.id;
+  (newAddress as InputMemberAddressType).key = newAddress.id;
 
   delete newAddress.id;
   delete newAddress.isDefault;
   delete newAddress.isFavorite;
 
-  return newAddress;
+  return newAddress as InputMemberAddressType;
 }
 
 export function getAddressName(address: AnyAddressType): string {
@@ -51,5 +49,5 @@ export function isEqualAddresses(
 }
 
 export function isMemberAddressType(address: AnyAddressType): address is MemberAddressType {
-  return "description" in address;
+  return typeof address === "object" && address !== null && "description" in address;
 }

@@ -77,12 +77,12 @@ export function termFacetToCommonFacet(termFacet: TermFacet): FacetItemType {
     type: "terms",
     label: termFacet.label,
     paramName: termFacet.name,
-    values: termFacet
-      .terms!.map<FacetValueItemType>((facetTerm: FacetTermType) => ({
+    values: termFacet.terms
+      .map<FacetValueItemType>((facetTerm: FacetTermType) => ({
         count: facetTerm.count,
         label: getFacetLabel(facetTerm.label),
-        value: facetTerm.term!,
-        selected: facetTerm.isSelected!,
+        value: facetTerm.term,
+        selected: facetTerm.isSelected,
       }))
       .sort((a, b) => a.label.localeCompare(b.label)),
   };
@@ -93,11 +93,11 @@ export function rangeFacetToCommonFacet(rangeFacet: RangeFacet): FacetItemType {
     type: "range",
     label: rangeFacet.label,
     paramName: rangeFacet.name,
-    values: rangeFacet.ranges!.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
+    values: rangeFacet.ranges.map<FacetValueItemType>((facetRange: FacetRangeType) => ({
       count: facetRange.count,
-      label: getFacetLabel(facetRange.label!),
+      label: getFacetLabel(facetRange.label),
       value: getFilterExpressionFromFacetRange(facetRange),
-      selected: facetRange.isSelected!,
+      selected: facetRange.isSelected,
     })),
   };
 }
@@ -106,7 +106,7 @@ function getFacetLabel(label: string): string {
   const { d, t } = globals.i18n.global;
 
   if (isDateString(label)) {
-    return d(label);
+    return d(new Date(label));
   }
 
   switch (label.toLowerCase()) {

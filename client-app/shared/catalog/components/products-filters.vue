@@ -1,31 +1,5 @@
 <template>
   <div class="space-y-4 lg:space-y-5">
-    <template v-if="isMobile">
-      <!-- In Stock -->
-      <VcWidget size="xs">
-        <VcCheckbox v-model="localFilters.inStock" :disabled="loading" @change="onFilterChanged">
-          {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
-        </VcCheckbox>
-      </VcWidget>
-
-      <!-- Branch availability -->
-      <VcWidget size="xs">
-        <button type="button" @click.prevent="onOpenBranches">
-          <VcCheckbox :model-value="!!localFilters.branches.length" :disabled="loading">
-            <i18n-t keypath="pages.catalog.branch_availability_filter_card.available_in" tag="div" scope="global">
-              <span :class="{ 'font-bold text-[--link-color]': localFilters.branches.length }">
-                {{ $t("pages.catalog.branch_availability_filter_card.branches", { n: localFilters.branches.length }) }}
-              </span>
-            </i18n-t>
-          </VcCheckbox>
-        </button>
-
-        <div class="ml-0.5 mt-1 pl-6 text-xs">
-          {{ $t("pages.catalog.branch_availability_filter_card.select_branch_text") }}
-        </div>
-      </VcWidget>
-    </template>
-
     <!-- Facet Filters Skeletons -->
     <template v-if="loading && !localFilters.facets.length">
       <template v-if="!isHorizontal">
@@ -40,19 +14,22 @@
     <template v-else>
       <div
         ref="facetFiltersContainer"
-        class="flex gap-3"
-        :class="[isHorizontal && ' flex-row items-start', !isHorizontal && 'flex-col items-stretch lg:gap-5']"
+        :class="[
+          'flex gap-3',
+          {
+            'flex-row items-start': isHorizontal,
+            'flex-col items-stretch lg:gap-5': !isHorizontal,
+            '[&>*:last-child]:invisible': isHorizontal && filterCalculationInProgress,
+          },
+        ]"
       >
         <slot name="prepend" :loading="loading" />
-        <template v-for="(facet, i) in filtersToShow" :key="facet.paramName">
+
+        <template v-for="facet in filtersToShow" :key="facet.paramName">
           <FacetFilter
             :mode="isHorizontal ? 'dropdown' : 'collapsable'"
             :facet="facet"
             :loading="loading"
-            :class="[
-              isHorizontal && 'shrink-0',
-              filterCalculationInProgress && i === filtersToShow.length - 1 && 'invisible',
-            ]"
             @update:facet="onFacetFilterChanged"
           />
         </template>
@@ -75,7 +52,6 @@ import type { ProductsFiltersType } from "@/shared/catalog";
 
 interface IEmits {
   (event: "change", value: ProductsFiltersType): void;
-  (event: "openBranches"): void;
 }
 
 interface IProps {
@@ -109,7 +85,8 @@ watchDebounced(
     async function calculateFiltersCountToShow() {
       filterCalculationInProgress.value = true;
       const facetsElements =
-        (facetFiltersContainer?.value?.querySelectorAll(".facet-filter__trigger") as NodeListOf<HTMLElement>) || [];
+        (facetFiltersContainer?.value?.querySelectorAll("[data-facet-filter-dropdown]") as NodeListOf<HTMLElement>) ||
+        [];
       let filtersCount = 1;
       for (let i = 0; i < localFilters.facets.length; i++) {
         const facetFilter = facetsElements[i] as HTMLElement;
@@ -151,20 +128,12 @@ watch(
   { immediate: true },
 );
 
-function onFilterChanged(): void {
-  emit("change", localFilters);
-}
-
 function onFacetFilterChanged(facet: FacetItemType): void {
   const existingFacet = localFilters.facets.find((item) => item.paramName === facet.paramName);
   if (existingFacet) {
     existingFacet.values = facet.values;
     emit("change", localFilters);
   }
-}
-
-function onOpenBranches(): void {
-  emit("openBranches");
 }
 </script>
 

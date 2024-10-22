@@ -115,9 +115,10 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .prettierignore                  // Ignore some files from Prettier.
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
-├── graphql-codegen.schema.config.ts // Configuration file to generate GraphQL schema.
-├── graphql-codegen.types.types.ts   // Configuration file to generate GraphQL types.
-├── graphql.config.json              // GraphQL configuration (https://the-guild.dev/graphql/config/docs) to use generated schema and types.
+├── graphql-codegen
+|   ├── schema.ts                    // Configuration file to generate GraphQL schema.
+|   ├── generator.ts                 // Generate types based on schema.json
+|   └── config.cjs                   // Environment configuration 
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
@@ -138,11 +139,17 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 
 ### Prerequisites
 
-- Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
-- Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
-- Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
-- Install [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api) module.
-- Install [vc-module-push-messages](https://github.com/VirtoCommerce/vc-module-push-messages) module.
+- Install `vc-platform` 3.x the latest version:
+  - [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md)
+  - [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
+- Install [Experience API / X-Api](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md) modules:
+  - [vc-module-x-api](https://github.com/VirtoCommerce/vc-module-x-api)
+  - [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api)
+- The following modules should be installed for development (but not in production; this will be changed in the future):
+  - [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api)
+  - [vc-module-push-messages](https://github.com/VirtoCommerce/vc-module-push-messages)
+  - [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
+  - [vc-module-x-recommend](https://github.com/VirtoCommerce/vc-module-x-recommend)
 - Install [Node.js v20](https://nodejs.org/en/download/) (**20.11.0** or later)
 - Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
   ```bash
@@ -207,26 +214,17 @@ yarn build:dev
 yarn build:watch
 ```
 
-#### Create artefact to install from already built code
+## Types generation
 
-```bash
-yarn compress
+Command:
 ```
+yarn generate:graphql
+```
+makes two steps:
+1. Downloads `schema.json` from GraphQL server located at the `APP_BACKEND_URL`
+2. Generates the `types.ts` file separately for general modules and independent modules.
 
-## License
-
-Copyright (c) Virtosoftware Ltd. All rights reserved.
-
-Licensed under the Virto Commerce Open Software License (the "License"); you
-may not use this file except in compliance with the License. You may
-obtain a copy of the License at
-
-[https://virtocommerce.com/opensourcelicense](https://virtocommerce.com/opensourcelicense)
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-implied.
+If independent modules are not installed on `The Platform`, types can still be safely generated.
 
 ## Dependency Analysis
 
@@ -253,3 +251,18 @@ The generated graph will also be saved in the `artifacts` folder.
 ### Troubleshooting
 
 If you encounter an error such as `dot command not found` on Windows, ensure that [Graphviz](https://graphviz.gitlab.io/download/) is installed on your system.
+
+## License
+
+Copyright (c) Virtosoftware Ltd. All rights reserved.
+
+Licensed under the Virto Commerce Open Software License (the "License"); you
+may not use this file except in compliance with the License. You may
+obtain a copy of the License at
+
+[https://virtocommerce.com/opensourcelicense](https://virtocommerce.com/opensourcelicense)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied.

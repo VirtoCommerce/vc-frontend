@@ -1,36 +1,56 @@
 import { useMutation } from "@/core/api/graphql/composables/useMutation";
-import { MarkPushMessageUnreadDocument, OperationNames, PushMessageFragmentDoc } from "@/core/api/graphql/types";
-import type { GetPushMessagesQuery } from "@/core/api/graphql/types";
+import {
+  PUSH_MESSAGE_CACHE_ID,
+  UNREAD_COUNT_CACHE_ID,
+  UNREAD_COUNT_WITH_HIDDEN_CACHE_ID,
+} from "@/core/constants/notifications";
+import { MarkPushMessageUnreadDocument, OperationNames, PushMessageFragmentDoc } from "../../types";
+import type { PushMessageConnection, PushMessageType } from "../../types";
 
-export function useMarkPushMessageUnread(optimistic = true) {
+type UnreadCountType = Pick<PushMessageConnection, "totalCount">;
+
+export function useMarkPushMessageUnread() {
   return useMutation(MarkPushMessageUnreadDocument, {
     optimisticResponse: {
       markPushMessageUnread: true,
     },
     update(cache, result, { variables }) {
-      if (result.data?.markPushMessageUnread) {
-        cache.updateFragment(
-          {
-            id: `PushMessageType:${variables?.command?.messageId}`,
-            fragment: PushMessageFragmentDoc,
-          },
-          (pushMessage) => ({ ...pushMessage!, isRead: false }),
-        );
+      if (!result.data?.markPushMessageUnread) {
+        return;
       }
-    },
-    // TODO: Refactor updateQueries to use update since it will be deprecated in the next version of Apollo Client - https://www.apollographql.com/docs/react/api/react/hoc/#optionsupdatequeries
-    updateQueries: (!optimistic && {}) || {
-      [OperationNames.Query.GetPushMessages]: (previousQueryResult) => {
-        const pushMessagesQueryResult = previousQueryResult as GetPushMessagesQuery;
-        return {
-          ...pushMessagesQueryResult,
-          unreadCount: {
-            totalCount: pushMessagesQueryResult.unreadCount?.totalCount
-              ? pushMessagesQueryResult.unreadCount.totalCount + 1
-              : 1,
+
+      let message: PushMessageType | null = null;
+
+      cache.updateFragment(
+        {
+          id: `${PUSH_MESSAGE_CACHE_ID}${variables?.command?.messageId}`,
+          fragment: PushMessageFragmentDoc,
+        },
+        (pushMessage) => {
+          message = pushMessage;
+          return pushMessage ? { ...pushMessage, isRead: false } : null;
+        },
+      );
+
+      cache.modify({
+        fields: {
+          [UNREAD_COUNT_CACHE_ID]: (value) => {
+            const unreadCount = value as UnreadCountType;
+            if (message?.isHidden) {
+              return unreadCount;
+            }
+            return {
+              totalCount: (unreadCount.totalCount ?? 0) + 1,
+            };
           },
-        } satisfies GetPushMessagesQuery;
-      },
+          [UNREAD_COUNT_WITH_HIDDEN_CACHE_ID]: (value) => {
+            const unreadCountWithHidden = value as UnreadCountType;
+            return {
+              totalCount: (unreadCountWithHidden.totalCount ?? 0) + 1,
+            };
+          },
+        },
+      });
     },
     // Just in case we did something wrong in cache
     refetchQueries: [OperationNames.Query.GetPushMessages],

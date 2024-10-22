@@ -103,6 +103,15 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "^/cms-content": getProxy(process.env.APP_BACKEND_URL),
         "^/externalsignin": getProxy(process.env.APP_BACKEND_URL),
         "^/signin-oidc": getProxy(process.env.APP_BACKEND_URL),
+        "^/signin-google": getProxy(process.env.APP_BACKEND_URL),
+      },
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler",
+          quietDeps: true,
+        },
       },
     },
   };

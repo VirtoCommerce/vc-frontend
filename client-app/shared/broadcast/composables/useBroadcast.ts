@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,sonarjs/cognitive-complexity */
 import { noop, tryOnScopeDispose, useEventListener } from "@vueuse/core";
 import { Logger } from "@/core/utilities";
-import type { InjectionEvent } from "../types";
 
 export enum TabsType {
   CURRENT = "current",
@@ -10,14 +9,14 @@ export enum TabsType {
 }
 interface IUseBroadcastReturn {
   /** Add a listener function for the specified event. Automatic deletion on unmounting. */
-  on: <T>(event: InjectionEvent<T>, listener: (data: T) => void) => void;
+  on: <T>(event: string, listener: (data: T) => void) => void;
 
   /** Remove the listener function for the specified event. */
-  off: <T>(event: InjectionEvent<T>, listener?: (data: T) => void) => void;
+  off: <T>(event: string, listener?: (data: T) => void) => void;
 
   /** Send data to other browser tabs subscribed to the specified event. */
   emit: <T>(
-    event: InjectionEvent<T>,
+    event: string,
     /** The data to be sent. This must be a JSON-serializable object. */
     data?: T,
     /**
@@ -73,9 +72,10 @@ async function broadcast(event: string, data: any) {
 function broadcastChannelApiFactory(): IUseBroadcastReturn {
   const channel = new BroadcastChannel(CHANNEL_NAME);
 
-  channel.onmessage = async ({ data: { event, data } }) => await broadcast(event, data);
+  channel.onmessage = async ({ data: { event, data } }: { data: { event: string; data: unknown } }) =>
+    await broadcast(event, data);
 
-  async function emit(event: string, data: any, tabsType: TabsType = TabsType.OTHERS) {
+  async function emit(event: string, data: unknown, tabsType: TabsType = TabsType.OTHERS) {
     Logger.debug("[Broadcast][Emit]", event, data);
 
     if ([TabsType.ALL, TabsType.OTHERS].includes(tabsType)) {
@@ -127,9 +127,9 @@ function localStorageApiFactory(): IUseBroadcastReturn {
     const event = key.replace(prefix, "");
 
     if (oldValue === null) {
-      const data = newValue === "undefined" ? undefined : JSON.parse(newValue!);
+      const data = newValue === "undefined" ? undefined : (JSON.parse(newValue!) as unknown);
 
-      broadcast(event, data);
+      void broadcast(event, data);
     } else if (queue[event]) {
       emit(event, queue[event].shift());
 

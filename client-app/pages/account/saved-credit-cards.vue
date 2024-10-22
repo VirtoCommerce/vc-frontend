@@ -22,11 +22,7 @@
     </div>
 
     <!-- Empty View -->
-    <VcEmptyView v-else :text="$t('pages.account.saved_credit_cards.no_cards')">
-      <template #icon>
-        <VcIcon class="text-warning" size="xxl" name="credit-card" />
-      </template>
-    </VcEmptyView>
+    <VcEmptyView v-else :text="$t('pages.account.saved_credit_cards.no_cards')" icon="credit-card" />
   </div>
 </template>
 
@@ -48,7 +44,6 @@ function removeCreditCard(skyflowId: string): void {
     component: "VcConfirmationModal",
     props: {
       variant: "danger",
-      iconVariant: "danger",
       title: t("pages.account.saved_credit_cards.delete_credit_card_modal.title"),
       text: t("pages.account.saved_credit_cards.delete_credit_card_modal.message"),
 

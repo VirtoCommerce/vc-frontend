@@ -60,6 +60,8 @@ jobs:
 
       - name: Get Image Version
         uses: VirtoCommerce/vc-github-actions/get-image-version@master
+        with:
+          projectType: theme
         id: image
 
       - name: Set release VERSION_SUFFIX
@@ -104,9 +106,11 @@ jobs:
         if: success()
         run: echo "BUILD_STATE=successful" >> $GITHUB_ENV
 
-      - name: Packaging
+      - name: Add files to zip
         run: |
-          yarn storybook:compress
+          mkdir ./artifacts
+          cd ./storybook-static
+          zip -r ../artifacts/$(jq -r .name ../package.json)-$(jq -r .version ../package.json).zip ./*
 
       - name: Publish to Blob
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
@@ -152,7 +156,7 @@ jobs:
       - name: Push Build Info to Jira
         if: ${{ env.CLOUD_INSTANCE_BASE_URL != 0 && env.CLIENT_ID != 0 && env.CLIENT_SECRET != 0 && steps.jira_keys.outputs.jira-keys != '' && always() }}
         id: push_build_info_to_jira
-        uses: HighwayThree/jira-upload-build-info@master
+        uses: VirtoCommerce/jira-upload-build-info@master
         with:
           cloud-instance-base-url: '${{ secrets.CLOUD_INSTANCE_BASE_URL }}'
           client-id: '${{ secrets.CLIENT_ID }}'
@@ -175,14 +179,14 @@ jobs:
           echo "Jira Upload Build Info response: ${{ steps.push_build_info_to_jira.outputs.response }}"
 
   deploy-cloud:
-    if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master')}}
+    if: ${{ github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'}}
     needs: ci
     uses: ./.github/workflows/deploy-cloud.yml
     with:
       cmPath: 'storybook/image.json'
       artifactKey: 'Tag'
       artifactUrl: ${{ needs.ci.outputs.tag }}
-      environmentId: ${{ github.ref == 'refs/heads/dev' && 'dev' || 'qa' }}
+      environmentId: ${{ github.ref == 'refs/heads/master' && 'qa' || 'dev' }}
       jiraKeys: ${{ needs.ci.outputs.jira-keys }}
       forceCommit: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' }}
     secrets: inherit

@@ -1,7 +1,11 @@
+import clone from "lodash/clone";
+import mergeWith from "lodash/mergeWith";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { useFetch } from "@/core/api/common";
+import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
+import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import {
   convertToExtendedMenuLink,
   getFilterExpressionForCategorySubtree,
@@ -11,25 +15,35 @@ import {
   categoryToExtendedMenuLink,
   getTranslatedMenuLink,
 } from "@/core/utilities";
-import { useUser } from "@/shared/account/composables/useUser";
 import { globals } from "../globals";
 import type { ExtendedMenuLinkType, MenuType } from "../types";
+import type { DeepPartial } from "utility-types";
 
 const loading = ref(false);
 const matchingRouteName = ref("");
 const menuSchema = shallowRef<MenuType | null>(null);
 const catalogMenuItems = shallowRef<ExtendedMenuLinkType[]>([]);
-const openedMenuItemsStack = shallowRef<ExtendedMenuLinkType[]>([]);
 const footerLinks = shallowRef<ExtendedMenuLinkType[]>([]);
-const mobileContactOrganizationsMenu = shallowRef<ExtendedMenuLinkType | undefined>();
-
-const openedItem = computed<ExtendedMenuLinkType | undefined>(
-  () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
-);
 
 const desktopMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
-  (menuSchema.value?.header?.desktop || []).map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item)),
+  (menuSchema.value?.header?.desktop?.main || [])
+    .map((item: ExtendedMenuLinkType) => getTranslatedMenuLink(item))
+    .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)),
 );
+
+const desktopAccountMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+  const schema = menuSchema.value?.header?.desktop?.account
+    ? clone(getTranslatedMenuLink(menuSchema.value.header.desktop.account))
+    : undefined;
+  if (Array.isArray(schema?.children)) {
+    schema.children.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+  }
+  return schema;
+});
+
+const desktopCorporateMenuItems = computed<ExtendedMenuLinkType | undefined>(() => {
+  return menuSchema.value ? getTranslatedMenuLink(menuSchema.value?.header?.desktop?.corporate) : undefined;
+});
 
 const mobileMainMenuItems = computed<ExtendedMenuLinkType[]>(() =>
   (menuSchema.value?.header?.mobile?.main || []).map((item: ExtendedMenuLinkType) => {
@@ -52,13 +66,7 @@ const mobileAccountMenuItem = computed<ExtendedMenuLinkType | undefined>(() => {
     return undefined;
   }
 
-  const translatedMenuLink = getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
-
-  if (translatedMenuLink && translatedMenuLink.children && mobileContactOrganizationsMenu.value) {
-    translatedMenuLink.children.splice(1, 0, mobileContactOrganizationsMenu.value);
-  }
-
-  return translatedMenuLink;
+  return getTranslatedMenuLink(menuSchema.value?.header?.mobile?.account);
 });
 
 const mobileCorporateMenuItem = computed<ExtendedMenuLinkType | undefined>(() =>
@@ -86,15 +94,7 @@ const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() 
 
 export function useNavigations() {
   const { themeContext } = useThemeContext();
-
-  async function fetchMenuSchema() {
-    try {
-      const { data } = await useFetch("/config/menu.json").get().json<MenuType>();
-      menuSchema.value = data.value;
-    } catch (e) {
-      Logger.error(`${useNavigations.name}.${fetchMenuSchema.name}`, e);
-    }
-  }
+  const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
   async function fetchFooterLinks() {
     try {
@@ -104,32 +104,14 @@ export function useNavigations() {
     }
   }
 
-  function getMobileContactOrganizationsMenu() {
-    const { t } = globals.i18n.global;
-    const { isMultiOrganization, user } = useUser();
-
-    const organizationsMenuItems = user.value?.contact?.organizations?.items?.map<ExtendedMenuLinkType>((item) => ({
-      id: item.id,
-      title: item.name,
-      isContactOrganizationsItem: true,
-    }));
-
-    if (isMultiOrganization.value) {
-      mobileContactOrganizationsMenu.value = {
-        id: "contact-organizations",
-        title: t("common.labels.my_organizations"),
-        icon: "/static/images/dashboard/icons/company.svg#main",
-        children: organizationsMenuItems,
-      };
-    }
-  }
-
   async function fetchCatalogMenu() {
-    const { catalog_menu_link_list_name, catalog_empty_categories_enabled, zero_price_product_enabled } =
-      themeContext.value.settings;
+    const { zero_price_product_enabled } = themeContext.value.settings;
+
+    const catalog_menu_link_list_name = getSettingValue(MODULE_XAPI_KEYS.CATALOG_MENU_LINK_LIST_NAME);
+    const catalog_empty_categories_enabled = getSettingValue(MODULE_XAPI_KEYS.CATALOG_EMPTY_CATEGORIES_ENABLED);
 
     try {
-      if (catalog_menu_link_list_name) {
+      if (catalog_menu_link_list_name && typeof catalog_menu_link_list_name === "string") {
         // Use a list of links
         catalogMenuItems.value = (await getMenu(catalog_menu_link_list_name)).map((item) =>
           convertToExtendedMenuLink(item, true),
@@ -163,50 +145,39 @@ export function useNavigations() {
 
   async function fetchMenus() {
     loading.value = true;
-    await Promise.all([fetchMenuSchema(), fetchCatalogMenu(), fetchFooterLinks()]);
-    getMobileContactOrganizationsMenu();
+    menuSchema.value = menuData as MenuType;
+    await Promise.all([fetchCatalogMenu(), fetchFooterLinks()]);
     loading.value = false;
-  }
-
-  function goBack() {
-    openedMenuItemsStack.value.pop();
-    triggerRef(openedMenuItemsStack);
-  }
-
-  function goMainMenu() {
-    openedMenuItemsStack.value = [];
-    triggerRef(openedMenuItemsStack);
-  }
-
-  function selectMenuItem(item: ExtendedMenuLinkType) {
-    if (!item.children) {
-      return;
-    }
-    openedMenuItemsStack.value.push(item);
-    triggerRef(openedMenuItemsStack);
   }
 
   function setMatchingRouteName(value: string) {
     matchingRouteName.value = value;
   }
 
+  function mergeMenuSchema(additionalSchema: DeepPartial<MenuType>) {
+    menuSchema.value = mergeWith(menuSchema.value, additionalSchema, (objValue: unknown, srcValue: unknown) => {
+      if (Array.isArray(objValue) && Array.isArray(srcValue)) {
+        return objValue.concat(srcValue) as ExtendedMenuLinkType[];
+      }
+    });
+    triggerRef(menuSchema);
+  }
+
   return {
     fetchMenus,
-    fetchFooterLinks,
-    goBack,
-    goMainMenu,
-    selectMenuItem,
     setMatchingRouteName,
-    openedItem,
     desktopMainMenuItems,
+    desktopAccountMenuItems,
+    desktopCorporateMenuItems,
     mobileMainMenuItems,
     mobileCatalogMenuItem,
     mobileAccountMenuItem,
     mobileCorporateMenuItem,
-    mobileContactOrganizationsMenu,
     mobilePreSelectedMenuItem,
     matchingRouteName: readonly(matchingRouteName),
     catalogMenuItems: computed(() => catalogMenuItems.value),
     footerLinks: computed(() => footerLinks.value),
+
+    mergeMenuSchema,
   };
 }

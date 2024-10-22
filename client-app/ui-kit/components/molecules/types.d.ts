@@ -14,6 +14,9 @@ declare module "vue" {
     VcChip: typeof Components.VcChip;
     VcCollapsibleContent: typeof Components.VcCollapsibleContent;
     VcCopyText: typeof Components.VcCopyText;
+    VcDialogContent: typeof Components.VcDialogContent;
+    VcDialogFooter: typeof Components.VcDialogFooter;
+    VcDialogHeader: typeof Components.VcDialogHeader;
     VcDropdownMenu: typeof Components.VcDropdownMenu;
     VcEmptyPage: typeof Components.VcEmptyPage;
     VcExpansionPanel: typeof Components.VcExpansionPanel;
@@ -34,10 +37,9 @@ declare module "vue" {
     VcLayoutWithRightSidebar: typeof Components.VcLayoutWithRightSidebar;
     VcMenuItem: typeof Components.VcMenuItem;
     VcNavButton: typeof Components.VcNavButton;
+    VcProductActionsButton: typeof Components.VcProductActionsButton;
     VcProductPrice: typeof Components.VcProductPrice;
     // @deprecated
-    // FIXME: https://virtocommerce.atlassian.net/browse/VCST-1658
-    VcQuantity: typeof Components.VcQuantity;
     VcSelect: typeof Components.VcSelect;
     VcSteps: typeof Components.VcSteps;
     VcTextarea: typeof Components.VcTextarea;

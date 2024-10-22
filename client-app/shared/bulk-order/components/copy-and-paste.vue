@@ -11,7 +11,7 @@
       <p v-html-safe="$t('shared.bulk_order.copy_n_paste.guide_message')" class="mb-2 text-sm text-neutral"></p>
 
       <VcTextarea
-        v-model.trim="text"
+        v-model="text"
         :disabled="loading"
         :placeholder="$t('shared.bulk_order.copy_n_paste.text_area_placeholder')"
         :rows="14"
@@ -57,6 +57,7 @@ function addToCart(): void {
   }
 
   const validItems: InputNewBulkItemType[] = text.value
+    .trim()
     .replace(/\s*,\s*/g, ",")
     .replace(/\s+/g, " ")
     .split(" ")

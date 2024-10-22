@@ -67,7 +67,7 @@
               class="vc-select__clear"
               @click="clear"
             >
-              <VcIcon name="delete-mini" :size="16" />
+              <VcIcon name="delete-mini" size="xs" />
             </button>
 
             <button
@@ -90,7 +90,7 @@
           :active="isActiveItem(item)"
           :aria-selected="isActiveItem(item)"
           role="option"
-          size="md"
+          :size="itemSize"
           @click="
             select(item);
             !multiple && close();
@@ -118,6 +118,7 @@
 
 <script setup lang="ts">
 // TODO: https://virtocommerce.atlassian.net/browse/ST-5117
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -134,8 +135,8 @@ interface IProps {
   disabled?: boolean;
   readonly?: boolean;
   items: any[];
-  size?: "sm" | "md" | "auto";
-  itemSize?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "auto";
+  itemSize?: "xs" | "sm" | "md" | "lg";
   textField?: string;
   valueField?: string;
   placeholder?: string;
@@ -398,7 +399,7 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   }
 
   &__clear {
-    @apply flex items-center h-full px-1.5 text-primary;
+    @apply flex items-center h-full px-1 text-primary;
 
     &:hover {
       @apply text-primary-600;
@@ -406,7 +407,7 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   }
 
   &__arrow {
-    @apply flex items-center h-full pe-3 ps-1.5 text-neutral-900;
+    @apply flex items-center h-full pe-3 ps-1 text-neutral-900;
 
     &:hover {
       @apply text-neutral;

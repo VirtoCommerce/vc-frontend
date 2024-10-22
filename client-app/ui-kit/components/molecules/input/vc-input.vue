@@ -106,7 +106,7 @@ export interface IProps {
   center?: boolean;
   truncate?: boolean;
   type?: "text" | "password" | "number" | "email";
-  size?: "sm" | "md" | "auto";
+  size?: "xs" | "sm" | "md" | "auto";
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
@@ -180,6 +180,7 @@ function inputClick() {
 
 <style lang="scss">
 .vc-input {
+  $sizeXs: "";
   $sizeSm: "";
   $sizeMd: "";
 
@@ -190,15 +191,28 @@ function inputClick() {
   $center: "";
   $truncate: "";
 
+  --base-color: var(--vc-input-base-color, var(--color-primary-500));
+  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+
   @apply flex flex-col;
 
   &--size {
+    &--xs {
+      $sizeXs: &;
+
+      --vc-icon-size: 1.25rem;
+    }
+
     &--sm {
       $sizeSm: &;
+
+      --vc-icon-size: 1.25rem;
     }
 
     &--md {
       $sizeMd: &;
+
+      --vc-icon-size: 1.5rem;
     }
   }
 
@@ -212,6 +226,8 @@ function inputClick() {
 
   &--error {
     $error: &;
+
+    --base-color: var(--color-danger-500);
   }
 
   &--no-border {
@@ -229,6 +245,10 @@ function inputClick() {
   &__container {
     @apply flex items-stretch border rounded bg-additional-50 select-none;
 
+    #{$sizeXs} & {
+      @apply h-8 text-sm;
+    }
+
     #{$sizeSm} & {
       @apply h-9 text-sm;
     }
@@ -238,11 +258,7 @@ function inputClick() {
     }
 
     &:has(input:focus) {
-      @apply ring ring-primary-100;
-
-      #{$error} & {
-        @apply ring-danger-100;
-      }
+      @apply ring ring-[--focus-color];
     }
 
     #{$disabled} &,
@@ -251,7 +267,7 @@ function inputClick() {
     }
 
     #{$error} & {
-      @apply border-danger;
+      @apply border-[--base-color];
     }
 
     #{$noBorder} & {
@@ -260,7 +276,7 @@ function inputClick() {
   }
 
   &__decorator {
-    @apply flex items-center h-full;
+    @apply flex items-center max-w-[50%] h-full;
 
     &:first-child > * {
       @apply rounded-r-none;
@@ -304,7 +320,7 @@ function inputClick() {
 
     &::placeholder {
       #{$error} & {
-        @apply opacity-80 text-danger;
+        @apply opacity-80 text-[--base-color];
       }
     }
 
@@ -317,16 +333,16 @@ function inputClick() {
     }
 
     #{$error} & {
-      @apply text-danger;
+      @apply text-[--base-color];
     }
   }
 
   &__clear {
-    @apply flex items-center p-3 text-primary;
+    @apply flex items-center p-3 text-[--base-color];
   }
 
   &__password-icon {
-    @apply h-full px-3 text-primary;
+    @apply flex items-center h-full px-3 text-[--base-color];
 
     #{$disabled} & {
       @apply text-neutral-300 cursor-not-allowed;

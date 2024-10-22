@@ -1,23 +1,12 @@
 <template>
-  <VcTooltip :placement="tooltipPlacement" width="max-content">
-    <template #trigger>
-      <slot :open-modal="openAddToListModal" :is-authenticated="isAuthenticated" :is-in-wishlist="product.inWishlist">
-        <button
-          :aria-label="tooltipText"
-          type="button"
-          class="flex"
-          :disabled="!isAuthenticated"
-          @click="openAddToListModal"
-        >
-          <VcIcon :class="[customClass, product.inWishlist ? 'text-primary' : 'text-neutral-400']" name="whishlist" />
-        </button>
-      </slot>
-    </template>
-
-    <template #content>
-      {{ tooltipText }}
-    </template>
-  </VcTooltip>
+  <VcProductActionsButton
+    color="danger"
+    :icon-size="iconSize"
+    :active="product.inWishlist"
+    :disabled="!isAuthenticated"
+    :tooltip-text="tooltipText"
+    @click="openAddToListModal"
+  />
 </template>
 
 <script setup lang="ts">
@@ -31,14 +20,10 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
-  customClass?: string;
-  tooltipPlacement?: VcTooltipPlacementType;
+  iconSize?: VcIconSizeType;
 }
 
-const props = withDefaults(defineProps<IProps>(), {
-  customClass: "w-5 h-5 lg:w-4 lg:h-4",
-  tooltipPlacement: "left",
-});
+const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { openModal } = useModal();
@@ -65,7 +50,7 @@ function openAddToListModal() {
     props: {
       product: props.product,
       onResult: (isInLists: boolean) => {
-        broadcast.emit(
+        void broadcast.emit(
           productsInWishlistEvent,
           [
             {

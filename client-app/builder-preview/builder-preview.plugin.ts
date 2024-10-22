@@ -59,7 +59,7 @@ function updateSettings(app: App, settings: IThemeConfig) {
   });
 
   keys
-    .filter(([key]) => /^color/.test(key))
+    .filter(([key]) => key.startsWith("color"))
     .forEach(([key, value]) => {
       document.documentElement.style.setProperty(`--${key.replace(/_/g, "-")}`, value as string);
     });
@@ -138,12 +138,19 @@ export default {
 
       switch (event.data.type) {
         case "changed":
+        case "update":
+        case "remove":
+        case "add":
+        case "reload":
         case "page":
         case "swap":
         case "preview":
           await updatePreview(event.data, options);
           break;
 
+        case "hover":
+          // ignore now
+          break;
         case "select": {
           const element = document.getElementById("__scroll__" + event.data.sectionId);
           if (element) {
@@ -164,6 +171,8 @@ export default {
         case "settings":
           updateSettings(app, event.data.settings!);
           break;
+        default:
+          console.log("Unknown message type", event.data.type);
       }
     });
     const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });

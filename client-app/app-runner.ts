@@ -6,11 +6,13 @@ import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useGoogleAnalytics, useWhiteLabeling, useNavigations } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { IS_DEVELOPMENT } from "@/core/constants";
+import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
-import { authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
+import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
+import { init as initCustomerReviews } from "@/modules/customer-reviews";
+import { init as initModuleQuotes } from "@/modules/quotes";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -19,6 +21,7 @@ import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
 import type { StoreResponseType } from "./core/api/graphql/types";
+
 // eslint-disable-next-line no-restricted-exports
 export default async () => {
   const appSelector = "#app";
@@ -48,9 +51,17 @@ export default async () => {
 
   app.use(authPlugin);
 
-  const { fetchUser, user } = useUser();
+  const { fetchUser, user, twoLetterContactLocale } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
-  const { currentLocale, currentLanguage, supportedLocales, setLocale, fetchLocaleMessages } = useLanguages();
+  const {
+    detectLocale,
+    currentLanguage,
+    supportedLocales,
+    initLocale,
+    fetchLocaleMessages,
+    getLocaleFromUrl,
+    pinedLocale,
+  } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
@@ -59,7 +70,7 @@ export default async () => {
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
   const fallback = {
-    locale: "en",
+    locale: FALLBACK_LOCALE,
     message: {},
     async setMessage() {
       this.message = await fetchLocaleMessages(this.locale);
@@ -80,16 +91,26 @@ export default async () => {
   void initializeGoogleAnalytics();
   void initializeHotjar();
 
+  // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
+  const twoLetterAppLocale = detectLocale([
+    pinedLocale.value,
+    twoLetterContactLocale.value,
+    getLocaleFromUrl(),
+    themeContext.value.defaultLanguage.twoLetterLanguageName,
+  ]);
+
   /**
    * Creating plugin instances
    */
   const head = createHead();
-  const i18n = createI18n(currentLanguage.value.twoLetterLanguageName, currentCurrency.value.code, fallback);
+  const i18n = createI18n(twoLetterAppLocale, currentCurrency.value.code, fallback);
   const router = createRouter({ base: getBaseUrl(supportedLocales.value) });
 
   /**
    * Setting global variables
    */
+  await initLocale(i18n, twoLetterAppLocale);
+
   setGlobals({
     i18n,
     router,
@@ -106,10 +127,11 @@ export default async () => {
   /**
    * Other settings
    */
-  await setLocale(i18n, currentLocale.value);
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
+  void initModuleQuotes(router, i18n);
+  void initCustomerReviews(i18n);
 
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
@@ -123,6 +145,7 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
   app.use(uiKit);
+  app.use(applicationInsightsPlugin, themeContext.value);
 
   const builderOrigin = getEpParam();
   if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {

@@ -4,44 +4,9 @@
 
     <template #footer-container>
       <div class="flex select-none divide-x print:hidden">
-        <AddToList class="flex w-1/5 flex-col justify-stretch" :product="product" tooltip-placement="bottom">
-          <template #default="{ openModal, isInWishlist, isAuthenticated }">
-            <button
-              :disabled="!isAuthenticated"
-              :class="[
-                'w-full py-4 hover:bg-neutral-50 disabled:bg-transparent',
-                {
-                  'text-primary': isInWishlist,
-                  'text-neutral-300': !isInWishlist,
-                },
-              ]"
-              :aria-label="$t('pages.catalog.add_to_wishlist_tooltip')"
-              type="button"
-              @click="openModal"
-            >
-              <VcIcon name="whishlist" size="sm" />
-            </button>
-          </template>
-        </AddToList>
+        <AddToList class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
 
-        <AddToCompareCatalog class="flex w-1/5 flex-col justify-stretch" :product="product" tooltip-placement="bottom">
-          <template #default="{ toggle, isInCompareList }">
-            <button
-              :class="[
-                'w-full py-4 hover:bg-neutral-50',
-                {
-                  'text-primary': isInCompareList,
-                  'text-neutral-300': !isInCompareList,
-                },
-              ]"
-              :aria-label="$t('shared.compare.add_to_compare.tooltips.add')"
-              type="button"
-              @click="toggle"
-            >
-              <VcIcon name="compare" size="sm" />
-            </button>
-          </template>
-        </AddToCompareCatalog>
+        <AddToCompareCatalog class="w-1/5 hover:bg-neutral-50" :product="product" :icon-size="20" />
 
         <VcPopover class="w-1/5" y-offset="20" trigger="click" z-index="3" @toggle="handleShareProductPopoverToggle">
           <template #trigger>

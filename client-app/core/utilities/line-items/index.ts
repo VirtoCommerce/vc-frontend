@@ -1,11 +1,7 @@
 import { getProductRoute } from "../product";
 import { getPropertiesGroupedByName } from "../properties";
 import type { AnyLineItemType, VendorGroupType, VendorGroupByVendorIdType, PreparedLineItemType } from "../../types";
-import type { LineItemType, OrderLineItemType, QuoteItemType } from "@/core/api/graphql/types";
-
-export function isQuoteItemType(item: AnyLineItemType): item is QuoteItemType {
-  return "proposalPrices" in item || "selectedTierPrice" in item;
-}
+import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
 
 export function groupByVendor<T extends LineItemType | OrderLineItemType>(items: T[]): VendorGroupType<T>[] {
   // NOTE: The group without the vendor should be displayed last.
@@ -55,12 +51,12 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
 
   const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
-  const quantity = isQuoteItemType(item) ? item.selectedTierPrice?.quantity : item.quantity;
+  const quantity = item.selectedTierPrice?.quantity ?? item.quantity;
   const inStockQuantity =
     "inStockQuantity" in item ? item.inStockQuantity : item.product?.availabilityData?.availableQuantity;
   const properties = Object.values(getPropertiesGroupedByName(item.product?.properties ?? []));
   const route = isVariation
-    ? getProductRoute(item.product!.masterVariation!.id || "", item.product!.masterVariation!.slug)
+    ? getProductRoute(item.product?.masterVariation?.id || "", item.product?.masterVariation?.slug)
     : getProductRoute(item.productId || item.product?.id || "", item.product?.slug);
 
   return {
@@ -81,10 +77,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     properties: properties.slice(0, 3),
     countInCart,
     minQuantity: item.product?.minQuantity,
-    maxQuantity:
-      item.product?.maxQuantity ??
-      (<LineItemType>item).inStockQuantity ??
-      item.product?.availabilityData?.availableQuantity,
+    maxQuantity: item.product?.maxQuantity ?? item.inStockQuantity ?? item.product?.availabilityData?.availableQuantity,
   };
 }
 

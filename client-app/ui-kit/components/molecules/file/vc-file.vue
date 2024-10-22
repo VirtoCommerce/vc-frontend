@@ -30,7 +30,7 @@
 
           <span class="vc-file__size">
             {{
-              $n(fileSize.value, "decimal", {
+              $n(fileSize.value, {
                 notation: "compact",
                 style: "unit",
                 unit: fileSize.unit,
@@ -155,7 +155,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__link {
-    @apply text-[--link-color] cursor-pointer;
+    @apply text-[--link-color] cursor-pointer break-all;
 
     &:hover {
       @apply text-[--link-hover-color];

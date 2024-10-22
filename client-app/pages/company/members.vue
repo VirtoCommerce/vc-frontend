@@ -126,12 +126,12 @@
 
       <div class="flex grow">
         <VcInput
-          v-model.trim="localKeyword"
+          v-model="localKeyword"
           maxlength="64"
           class="w-full"
           :disabled="contactsLoading"
           :placeholder="$t('pages.company.members.search_placeholder')"
-          @keypress.enter="applyKeyword"
+          @keydown.enter="applyKeyword"
         >
           <template #append>
             <button v-if="localKeyword" type="button" class="flex h-full items-center px-4" @click="resetKeyword">
@@ -185,11 +185,8 @@
           ? $t('pages.company.members.no_results_message')
           : $t('pages.company.members.no_members_message')
       "
+      icon="thin-order"
     >
-      <template #icon>
-        <VcImage src="/static/images/common/order.svg" :alt="$t('pages.company.members.no_members_img_alt')" />
-      </template>
-
       <template #button>
         <VcButton v-if="keyword || filter" prepent-icon="reset" @click="resetFiltersWithKeyword">
           {{ $t("pages.company.members.buttons.reset_search") }}
@@ -448,7 +445,7 @@ async function applySorting(sortInfo: ISortInfo): Promise<void> {
 }
 
 async function applyKeyword() {
-  keyword.value = localKeyword.value;
+  keyword.value = localKeyword.value.trim();
   page.value = 1;
   await fetchContacts();
 }
@@ -510,8 +507,7 @@ function openLockOrUnlockModal(contact: ExtendedContactType, isUnlock?: boolean)
   const closeLockOrUnlockModal = openModal({
     component: "VcConfirmationModal",
     props: {
-      variant: "info",
-      iconVariant: "warning",
+      variant: isUnlock ? "info" : "danger",
       loading: contactsLoading,
       title: isUnlock ? t("shared.company.unblock_member_modal.title") : t("shared.company.block_member_modal.title"),
       text: isUnlock ? t("shared.company.unblock_member_modal.text") : t("shared.company.block_member_modal.text"),
@@ -532,7 +528,6 @@ function openDeleteModal(contact: ExtendedContactType): void {
     component: "VcConfirmationModal",
     props: {
       variant: "danger",
-      iconVariant: "danger",
       loading: contactsLoading,
       title: t("shared.company.delete_member_modal.title"),
       text: t("shared.company.delete_member_modal.text", {

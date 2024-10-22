@@ -1,7 +1,12 @@
-import type { IOrderStatus } from "./order-status";
-import type { IQuoteStatus } from "./quote-status";
+import type { BrowserTargetType } from "./browser-window-target";
 import type { ISocialSharingService } from "./social-sharing";
 import type { SortDirection } from "@/core/enums";
+
+type StatusType = {
+  code: string;
+  color: VcChipColorType;
+  variant: VcChipVariantType;
+};
 
 export interface IThemeConfigPreset {
   primary_font_family?: string;
@@ -149,15 +154,9 @@ export interface IThemeConfigPreset {
 }
 
 export interface IThemeConfigSettings {
-  show_details_in_separate_tab?: boolean;
+  details_browser_target?: BrowserTargetType;
 
   search_by_static_content_enabled?: boolean;
-  page_title_with_store_name?: boolean;
-  page_title_store_name_align?: "start" | "end";
-  page_title_divider?: string;
-
-  catalog_menu_link_list_name?: string | null;
-  catalog_empty_categories_enabled?: boolean;
 
   anonymous_price_enabled?: boolean;
   anonymous_checkout?: boolean;
@@ -224,7 +223,7 @@ export interface IThemeConfigSettings {
   search_product_phrase_suggestions_enabled?: boolean;
 
   vendor_enabled?: boolean;
-  rating_enabled?: boolean;
+  vendor_rating_enabled?: boolean;
 
   checkout_multistep_enabled?: boolean;
   checkout_comment_enabled?: boolean;
@@ -238,12 +237,11 @@ export interface IThemeConfigSettings {
   orders_search_enabled?: boolean;
   orders_filter_enabled?: boolean;
   orders_reorder_enabled?: boolean;
-  orders_statuses?: IOrderStatus[];
-  quote_statuses?: IQuoteStatus[];
+  orders_statuses?: StatusType[];
+  quote_statuses?: StatusType[];
   line_items_group_by_vendor_enabled?: boolean;
 
   social_sharing_services?: ISocialSharingService[];
-  support_phone_number?: string;
 
   logo_image?: string;
   logo_inverted_image?: string;

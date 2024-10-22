@@ -30,7 +30,7 @@ import type { MaybeRef, WatchSource } from "vue";
  */
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAttachedFile[]>) {
-  const { getTranslation: getErrorTranslation } = useErrorsTranslator("file_error");
+  const { translate } = useErrorsTranslator("file_error");
   const { t, n } = useI18n();
 
   const { data, execute: _uploadFiles } = useAxios<
@@ -81,7 +81,7 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
   const anyFilesModified = computedEager(
     () =>
       modifiedFiles.value.length > 0 ||
-      (isDefined(initialValue) && attachedFiles.value.length !== toValue(initialValue).length),
+      (isDefined(initialValue) && attachedFiles.value.length !== toValue<IAttachedFile[]>(initialValue).length),
   );
 
   const attachedAndUploadedFiles = computed(() => [...attachedFiles.value, ...uploadedFiles.value]);
@@ -181,7 +181,6 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       const fileSize = getFileSize(errorParameter as number);
       parameters = [
         n(fileSize.value, {
-          key: "decimal",
           notation: "compact",
           style: "unit",
           unit: fileSize.unit,
@@ -192,10 +191,13 @@ export function useFiles(scope: MaybeRef<string>, initialValue?: WatchSource<IAt
       parameters = [errorParameter as string];
     }
 
-    return getErrorTranslation({
-      code: errorCode,
-      description: errorMessage,
-      parameters: parameters,
+    return translate({
+      errorCode,
+      errorMessage,
+      errorParameters: parameters.map((item, index) => ({
+        key: index.toString(),
+        value: item,
+      })),
     });
   }
 

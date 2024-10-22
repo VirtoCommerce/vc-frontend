@@ -15,11 +15,17 @@ function _useModuleSettings(moduleId: string) {
 
   const hasModuleSettings = computed(() => modulesSettings.value.some((obj) => obj.moduleId === moduleId) || false);
 
+  /**
+   * Checks if a feature is enabled based on the provided key inside the module settings.
+   *
+   * @param {string} key - The field name inside the module settings. Example: isEnabled.
+   * @returns {boolean} Returns `true` if the module is enabled, and `false` otherwise.
+   */
   function isEnabled(key: string): boolean {
     return moduleSettings.value?.find((obj) => obj.name === key)?.value === true;
   }
 
-  type SettingValueType = string | number | boolean | null;
+  type SettingValueType = string | number | boolean | null | undefined;
   /**
    * Get normalized module settings
    * description: This function is used to get module settings and map them to the provided object.
@@ -46,8 +52,13 @@ function _useModuleSettings(moduleId: string) {
     return result as { [K in T[keyof T]]: SettingValueType };
   }
 
+  function getSettingValue(name: string): SettingValueType {
+    return moduleSettings.value?.find((el) => el.name === name)?.value;
+  }
+
   return {
     getModuleSettings,
+    getSettingValue,
     hasModuleSettings,
     isEnabled,
     moduleSettings,

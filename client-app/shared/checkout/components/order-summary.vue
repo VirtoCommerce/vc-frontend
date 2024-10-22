@@ -27,7 +27,7 @@
             />
           </component>
 
-          <span><VcPriceDisplay :value="cart.discountTotal" prefix="-" /></span>
+          <span v-if="cart.discountTotal"><VcPriceDisplay :value="cart.discountTotal" prefix="-" /></span>
         </div>
 
         <template v-if="hasDiscounts">
@@ -62,7 +62,7 @@
         <div class="flex justify-between">
           <span>{{ $t("common.labels.tax") }}</span>
           <span>
-            <VcPriceDisplay :value="cart.taxTotal" prefix="+" />
+            <VcPriceDisplay v-if="cart.taxTotal" :value="cart.taxTotal" prefix="+" />
           </span>
         </div>
 
@@ -77,7 +77,7 @@
       <div class="mt-4 flex justify-between text-base font-black">
         <span>{{ $t("common.labels.total") }}</span>
         <span class="text-[--price-color] print:text-inherit">
-          <VcPriceDisplay :value="cart.total" />
+          <VcPriceDisplay v-if="cart.total" :value="cart.total" />
         </span>
       </div>
     </div>

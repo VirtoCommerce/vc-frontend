@@ -1,5 +1,5 @@
 <template>
-  <form class="overflow-x-hidden" @submit.prevent="save">
+  <form @submit.prevent="save">
     <slot name="prepend" v-bind="slotsData" />
 
     <div :class="{ 'md:flex md:flex-row': withPersonalInfo }">
@@ -207,7 +207,6 @@ const slotsData = computed(() => ({
   values,
   dirty: meta.value.dirty,
   valid: meta.value.valid,
-  validated: meta.value.validated,
   pending: meta.value.pending,
   touched: meta.value.touched,
 }));
@@ -238,13 +237,11 @@ const cityRules = computed(() => {
 
 const regionRules = computed(() => {
   // Do not use computed based on field value cause it may cause infinite loop
-  const rules = yup
-    .string()
-    .nullable()
-    .when("countryCode", {
-      is: (value: string) => props.countries.find((item) => value === item.id)?.regions.length,
-      then: (schema) => schema.required(),
-    });
+  const rules = yup.string().when("countryCode", {
+    is: () => !!country.value?.regions.length,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.nullable(),
+  });
   return toTypedSchema(rules);
 });
 

@@ -1,75 +1,55 @@
 <template>
-  <!-- @deprecated Replace VcInput with VcAddToCart https://virtocommerce.atlassian.net/browse/VCST-1657 -->
-  <VcInput
-    v-model.number="enteredQuantity"
-    class="add-to-cart"
-    size="sm"
-    type="number"
-    :aria-label="$t('common.labels.product_quantity')"
-    :disabled="disabled"
-    :max="maxQty"
-    :min="minQty"
-    :error="!!errorMessage"
+  <VcAddToCart
+    :model-value="enteredQuantity"
+    :name="product.id"
+    :count-in-cart="countInCart"
+    :min-quantity="product.minQuantity"
+    :max-quantity="maxQty"
+    :is-available="product.availabilityData?.isAvailable"
+    :is-buyable="product.availabilityData?.isBuyable"
+    :is-in-stock="product.availabilityData?.isInStock"
+    :available-quantity="product.availabilityData?.availableQuantity"
     :message="errorMessage"
-    single-line-message
-    center
+    :disabled="disabled"
+    :loading="loading"
     show-empty-details
-    select-on-click
-    @input="onInput"
-    @keypress="onKeypress"
-    @blur="onBlur"
-  >
-    <template #append>
-      <VcButton
-        class="add-to-cart__icon-button"
-        :variant="countInCart ? 'solid' : 'outline'"
-        :loading="loading"
-        :disabled="disabled || !!errorMessage"
-        :title="buttonText"
-        size="sm"
-        :icon="icon"
-        @click="onChange"
-      >
-        {{ buttonText }}
-      </VcButton>
+    validate-on-mount
+    @update:model-value="onInput"
+    @update:cart-item-quantity="onChange"
+    @update:validation="onValidationUpdate"
+  />
 
-      <VcButton
-        class="add-to-cart__text-button"
-        :variant="countInCart ? 'solid' : 'outline'"
-        :loading="loading"
-        :disabled="disabled || !!errorMessage"
-        :title="buttonText"
-        size="sm"
-        truncate
-        @click="onChange"
-      >
-        {{ buttonText }}
-      </VcButton>
-    </template>
-  </VcInput>
+  <div v-if="$slots.default" class="vc-add-to-cart__badges">
+    <slot />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/yup";
+import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
-import { useField } from "vee-validate";
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator, useGoogleAnalytics } from "@/core/composables";
+import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/core/composables";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
+import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useNotifications } from "@/shared/notification";
-import { useQuantityValidationSchema } from "@/ui-kit/composables";
-import type { Product, ShortCartFragment, ShortLineItemFragment, VariationType } from "@/core/api/graphql/types";
-import type { NamedValue } from "vue-i18n";
+import type {
+  Product,
+  ShortCartFragment,
+  ShortLineItemFragment,
+  VariationType,
+  ValidationErrorType,
+} from "@/core/api/graphql/types";
 
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
 const notifications = useNotifications();
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 interface IEmits {
   (event: "update:lineItem", lineItem: ShortLineItemFragment): void;
@@ -80,62 +60,40 @@ interface IProps {
   reservedSpace?: boolean;
 }
 
-const isInStock = computed(
-  () => props.product.availabilityData?.isInStock && props.product.availabilityData?.isBuyable,
-);
-const availableQuantity = computed(() => props.product.availabilityData?.availableQuantity);
-const minQuantity = computed(() => props.product.minQuantity);
-const maxQuantity = computed(() => props.product.maxQuantity);
-
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
-const { getTranslation } = useErrorsTranslator("validation_error");
-const { quantitySchema } = useQuantityValidationSchema({
-  isInStock,
-  availableQuantity,
-  minQuantity,
-  maxQuantity,
-});
+const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const loading = ref(false);
+const errorMessage = ref<string | undefined>();
 
+const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
 const countInCart = computed<number>(() => getLineItem(cart.value?.items)?.quantity || 0);
-const minQty = computed<number>(() => minQuantity.value || 1);
+const minQty = computed<number>(() => props.product.minQuantity || 1);
 const maxQty = computed<number>(() =>
   Math.min(
     props.product.availabilityData?.availableQuantity || LINE_ITEM_QUANTITY_LIMIT,
-    maxQuantity.value || LINE_ITEM_QUANTITY_LIMIT,
+    isDefined(props.product.maxQuantity) ? props.product.maxQuantity : LINE_ITEM_QUANTITY_LIMIT,
   ),
 );
 
-const disabled = computed<boolean>(() => loading.value || !props.product.availabilityData?.isAvailable);
-
-const icon = computed<"refresh" | "cart">(() => (countInCart.value ? "refresh" : "cart"));
-
-const buttonText = computed<string>(() =>
-  countInCart.value ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
-);
-
-const rules = computed(() => toTypedSchema(quantitySchema.value));
-
 const enteredQuantity = ref(!disabled.value ? countInCart.value || minQty.value : undefined);
 
-const { errorMessage, validate, setValue } = useField("quantity", rules, {
-  initialValue: enteredQuantity,
-  validateOnMount: true,
-});
+function onInput(value: number): void {
+  if (!value) {
+    enteredQuantity.value = undefined;
+  } else if (value > LINE_ITEM_QUANTITY_LIMIT) {
+    enteredQuantity.value = LINE_ITEM_QUANTITY_LIMIT;
+  } else {
+    enteredQuantity.value = value;
+  }
+}
 
 /**
  * Process button click to add/update cart line item.
  */
 async function onChange() {
-  const { valid } = await validate();
-
-  if (!valid || disabled.value) {
-    return;
-  }
-
   loading.value = true;
 
   let lineItem = getLineItem(cart.value?.items);
@@ -154,6 +112,12 @@ async function onChange() {
      * Send Google Analytics event for an item added to cart.
      */
     ga.addItemToCart(props.product, inputQuantity);
+    void pushHistoricalEvent({
+      eventType: "addToCart",
+      sessionId: cart.value?.id,
+      productId: props.product.id,
+      storeId: globals.storeId,
+    });
   }
 
   lineItem = clone(getLineItem(updatedCart?.items));
@@ -173,14 +137,7 @@ async function onChange() {
                 validationError.objectType === ValidationErrorObjectType.CatalogProduct,
             )
             .map((el) => {
-              return getTranslation({
-                code: el.errorCode,
-                parameters: el.errorParameters?.reduce((acc, err) => {
-                  acc[err.key] = err.value;
-                  return acc;
-                }, {} as NamedValue),
-                description: el.errorMessage,
-              });
+              return translate(el);
             })
             .join(" "),
         },
@@ -199,53 +156,11 @@ function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | u
   return items?.find((item) => item.productId === props.product.id);
 }
 
-/**
- * Ignore non-numeric keys.
- */
-function onKeypress(event: KeyboardEvent) {
-  if (!/[0-9]/.test(event.key)) {
-    event.preventDefault();
-  }
-}
-
-/**
- * Limit max value.
- */
-function onInput() {
-  if (!enteredQuantity.value) {
-    enteredQuantity.value = undefined;
-  } else if (enteredQuantity.value > LINE_ITEM_QUANTITY_LIMIT) {
-    enteredQuantity.value = LINE_ITEM_QUANTITY_LIMIT;
+function onValidationUpdate(validation: { isValid: true } | { isValid: false; errorMessage: string }) {
+  if (props.product.availabilityData?.isBuyable && !validation.isValid) {
+    errorMessage.value = validation.errorMessage;
   } else {
-    setValue(enteredQuantity.value);
-  }
-}
-
-function onBlur() {
-  if (!enteredQuantity.value || enteredQuantity.value < 1) {
-    enteredQuantity.value = countInCart.value || minQty.value;
+    errorMessage.value = undefined;
   }
 }
 </script>
-
-<style lang="scss">
-.add-to-cart {
-  @apply @container w-full flex-none;
-
-  &__icon-button.vc-button {
-    @apply w-24;
-
-    @container (width > theme("containers.xxs")) {
-      @apply hidden;
-    }
-  }
-
-  &__text-button.vc-button {
-    @apply hidden;
-
-    @container (width > theme("containers.xxs")) {
-      @apply block w-32;
-    }
-  }
-}
-</style>

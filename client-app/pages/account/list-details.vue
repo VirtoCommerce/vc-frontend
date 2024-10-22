@@ -90,18 +90,15 @@
         <VcEmptyView
           v-else-if="!listLoading && list?.items?.length === 0"
           :text="$t('shared.wishlists.list_details.empty_list')"
-          class="lg:mt-32"
+          icon="thin-lists"
         >
-          <template #icon>
-            <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/list.svg" />
-          </template>
-
           <template #button>
             <VcButton :to="{ name: 'Catalog' }">
               {{ $t("shared.wishlists.list_details.empty_list_button") }}
             </VcButton>
           </template>
         </VcEmptyView>
+
         <Error404 v-else-if="!listLoading && !list" />
       </div>
     </div>
@@ -110,12 +107,13 @@
 
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { cloneDeep, isEqual, keyBy } from "lodash";
+import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useGoogleAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
@@ -136,6 +134,7 @@ import type {
   LineItemType,
 } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+import type { RouteLocationNormalized } from "vue-router";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
 
 interface IProps {
@@ -160,6 +159,7 @@ const {
   changeItemQuantity,
 } = useShortCart();
 const breakpoints = useBreakpoints(breakpointsTailwind);
+const { pushHistoricalEvent } = useHistoricalEvents();
 
 usePageHead({
   title: computed(() => t("pages.account.list_details.meta.title", [list.value?.name])),
@@ -181,7 +181,11 @@ const pagedListItems = computed<PreparedLineItemType[]>(() =>
   preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
 const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
-const isDirty = computed<boolean>(() => !isEqual(list.value?.items, wishlistItems.value));
+const isDirty = computed<boolean>(() => {
+  const originalItemsToCompare = (list.value?.items ?? []).map((item) => pick(item, ["productId", "quantity"]));
+  const changedItemsToCompare = (wishlistItems.value ?? []).map((item) => pick(item, ["productId", "quantity"]));
+  return !isEqual(originalItemsToCompare, changedItemsToCompare);
+});
 
 const isMobile = breakpoints.smaller("lg");
 
@@ -202,7 +206,14 @@ async function addAllListItemsToCart(): Promise<void> {
   const items = wishlistItems.value.map(({ productId, quantity }) => ({ productId, quantity }));
   await addItemsToCart(items);
 
-  ga.addItemsToCart(wishlistItems.value.map((item) => item.product!));
+  const products = wishlistItems.value.map((item) => item.product!);
+  ga.addItemsToCart(products);
+  void pushHistoricalEvent({
+    eventType: "addToCart",
+    sessionId: cart.value?.id,
+    productIds: products.map((product) => product.id),
+    storeId: globals.storeId,
+  });
 
   showResultModal(wishlistItems.value);
 }
@@ -277,6 +288,12 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
     await addToCart(lineItem.product.id, quantity);
 
     ga.addItemToCart(lineItem.product, quantity);
+    void pushHistoricalEvent({
+      eventType: "addToCart",
+      sessionId: cart.value?.id,
+      productId: lineItem.product.id,
+      storeId: globals.storeId,
+    });
   }
   pendingItems.value[lineItem.id] = false;
 
@@ -284,7 +301,6 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
 }
 
 function openDeleteProductModal(values: string[]): void {
-  // FIXME: Make wishlist items selectable and support multiple removal
   const item = list.value?.items?.find((i) => values.includes(i.id));
 
   if (item) {
@@ -316,8 +332,8 @@ function openDeleteProductModal(values: string[]): void {
   }
 }
 
-async function canChangeRoute() {
-  return !list.value || !isDirty.value || (await openSaveChangesModal());
+async function canChangeRoute(to: RouteLocationNormalized): Promise<boolean> {
+  return to.name === "NoAccess" || !list.value || !isDirty.value || (await openSaveChangesModal());
 }
 
 onBeforeRouteLeave(canChangeRoute);

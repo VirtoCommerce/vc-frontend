@@ -13,51 +13,55 @@
         size="sm"
         variant="outline"
         class="category-horizontal-filters__show-all"
+        prepend-icon="filter"
         @click="$emit('showPopupSidebar')"
       >
-        <template #prepend>
-          <VcIcon name="filter" class="category-horizontal-filters__show-all-icon" />
-        </template>
-        {{ $t("common.buttons.all_filters") }}</VcButton
-      >
+        {{ $t("common.buttons.all_filters") }}
+      </VcButton>
 
       <VcDropdownMenu
         v-if="!hideSorting"
         :offset-options="4"
         class="category-horizontal-filters__sorting"
         max-height="20rem"
+        width="15rem"
         z-index="3"
       >
         <template #trigger>
-          <VcButton size="sm" variant="outline" class="category-horizontal-filters__sorting-trigger">
-            <template #prepend>
-              <VcIcon name="switch-vertical" class="category-horizontal-filters__sorting-trigger-icon" />
-            </template>
-            {{ $t("common.buttons.sort_by") }}</VcButton
+          <VcButton
+            size="sm"
+            variant="outline"
+            prepend-icon="switch-vertical"
+            class="category-horizontal-filters__sorting-trigger"
           >
+            {{ $t("common.buttons.sort_by") }}
+          </VcButton>
         </template>
 
         <template #content="{ close }">
-          <div class="py-2">
-            <VcMenuItem
-              v-for="sortingOption in PRODUCT_SORTING_LIST"
-              :key="sortingOption.id"
-              class="category-horizontal-filters__sorting-input"
-              color="secondary"
+          <VcMenuItem
+            v-for="sortingOption in PRODUCT_SORTING_LIST"
+            :key="sortingOption.id"
+            class="category-horizontal-filters__sorting-input"
+            color="secondary"
+            size="sm"
+            @click="sortingItemClickHandler(sortingOption.id, close)"
+          >
+            <VcRadioButton
+              v-model="sortQueryParam"
               size="sm"
-              @click="sortingItemClickHandler(sortingOption.id, close)"
-            >
-              <VcRadioButton
-                v-model="sortQueryParam"
-                size="sm"
-                :value="sortingOption.id"
-                :label="sortingOption.name"
-                class="category-horizontal-filters__sorting-input"
-                @change="close"
-                @click.stop
-              />
-            </VcMenuItem>
-          </div>
+              :value="sortingOption.id"
+              :label="sortingOption.name"
+              class="category-horizontal-filters__sorting-input"
+              @change="
+                () => {
+                  emit('applySort');
+                  close();
+                }
+              "
+              @click.stop
+            />
+          </VcMenuItem>
         </template>
       </VcDropdownMenu>
     </template>
@@ -71,7 +75,7 @@ import { QueryParamName } from "@/core/enums";
 import type { ProductsFiltersType } from "@/shared/catalog";
 import ProductsFilters from "@/shared/catalog/components/products-filters.vue";
 
-defineEmits<IEmits>();
+const emit = defineEmits<IEmits>();
 withDefaults(defineProps<IProps>(), {
   hideAllFilters: false,
   hideSorting: false,
@@ -79,6 +83,7 @@ withDefaults(defineProps<IProps>(), {
 
 interface IEmits {
   (event: "applyFilters", filters: ProductsFiltersType): void;
+  (event: "applySort"): void;
   (event: "showPopupSidebar"): void;
 }
 
@@ -109,20 +114,8 @@ function sortingItemClickHandler(id: string, close: () => void) {
     @apply shrink-0;
   }
 
-  &__show-all-icon {
-    @apply me-2;
-  }
-
   &__sorting {
     @apply shrink-0;
-  }
-
-  &__sorting-trigger-icon {
-    @apply me-2;
-  }
-
-  .vc-menu-item__inner {
-    @apply py-1.5 px-4 min-w-60;
   }
 }
 </style>

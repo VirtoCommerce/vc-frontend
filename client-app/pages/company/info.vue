@@ -33,7 +33,7 @@
         </div>
 
         <!-- Content block -->
-        <div class="px-4 pb-5 md:p-5">
+        <div class="px-4 md:px-5 md:pb-5">
           <div
             v-if="addresses.length || loadingAddresses"
             class="mb-4 mt-9 flex flex-row items-center justify-between gap-3 md:mt-1.5"
@@ -56,16 +56,8 @@
           <VcEmptyView
             v-if="!addresses.length && !loadingAddresses"
             :text="$t('pages.company.info.no_addresses_message')"
-            class="py-16"
+            icon="thin-address"
           >
-            <template #icon>
-              <VcImage
-                src="/static/images/account/icons/no-addresses.svg"
-                :alt="$t('pages.company.info.no_addresses_message')"
-                lazy
-              />
-            </template>
-
             <template v-if="userCanEditOrganization" #button>
               <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
                 {{ $t("pages.company.info.buttons.add_new_address") }}
@@ -82,7 +74,6 @@
               :pages="pages"
               :page="page"
               :description="$t('pages.company.info.meta.table_description')"
-              layout="table-auto"
               @header-click="applySorting"
               @page-changed="onPageChange"
             >
@@ -262,7 +253,7 @@
               <template #desktop-skeleton>
                 <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-neutral-50">
                   <td v-for="column in columns.length" :key="column" class="px-5 py-4">
-                    <div class="h-4.5 animate-pulse bg-neutral-200" />
+                    <div class="h-4.5 animate-pulse bg-neutral-200"></div>
                   </td>
                 </tr>
               </template>
@@ -349,7 +340,6 @@ const columns = computed<ITableColumn[]>(() => {
       id: "line1",
       title: t("pages.company.info.labels.address"),
       sortable: true,
-      classes: "w-64",
     },
     {
       id: "countryName",
@@ -411,7 +401,6 @@ function openDeleteAddressModal(address: MemberAddressType): void {
     component: "VcConfirmationModal",
     props: {
       variant: "danger",
-      iconVariant: "danger",
       loading: loadingAddresses,
       title: t("common.titles.delete_address"),
       text: t("common.messages.confirm_delete_address"),

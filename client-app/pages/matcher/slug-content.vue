@@ -97,3 +97,9 @@ onBeforeUnmount(() => {
   setMatchingRouteName("");
 });
 </script>
+
+<style lang="scss">
+.slug-content {
+  @apply contents;
+}
+</style>

@@ -26,6 +26,7 @@
         :total="item.extendedPrice"
         :disabled="pendingItems[item.id]"
         :deleted="item.deleted"
+        :browser-target="$cfg.details_browser_target"
         with-image
         with-properties
         with-price
@@ -42,14 +43,15 @@
             :available-quantity="item.inStockQuantity"
             :count-in-cart="item.countInCart"
             :disabled="addToCartDisabled(item) || pendingItems[item.id]"
+            :is-active="item.availabilityData?.isActive"
+            :is-available="item.availabilityData?.isAvailable"
+            :is-buyable="item.availabilityData?.isBuyable"
             :is-in-stock="item.availabilityData?.isInStock"
             :loading="pendingItems[item.id]"
             @update:model-value="changeItemQuantity(item, $event)"
             @update:cart-item-quantity="changeCartItemQuantity(item, $event)"
             @update:validation="setValidationStatus(item, $event)"
-          />
-
-          <div class="mt-1.5 flex gap-1.5">
+          >
             <InStock
               :is-in-stock="item.availabilityData?.isInStock"
               :is-available="!item.deleted"
@@ -58,7 +60,7 @@
             />
 
             <CountInCart :product-id="item.productId" />
-          </div>
+          </VcAddToCart>
         </div>
 
         <template #after>

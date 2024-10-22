@@ -1,0 +1,4 @@
+fragment rating on Rating {
+  value
+  reviewCount
+}
