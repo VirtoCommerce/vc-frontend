@@ -56,21 +56,23 @@ export type ApproveQuoteResultType = {
 export type Asset = {
   /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
-  /** Group of the asset. */
+  /** The description of the asset. */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The group of the asset. */
   group?: Maybe<Scalars['String']['output']>;
   /** The unique ID of the asset. */
   id: Scalars['String']['output'];
-  /** MimeType of the asset. */
+  /** The MIME type of the asset. */
   mimeType?: Maybe<Scalars['String']['output']>;
   /** The name of the asset. */
   name?: Maybe<Scalars['String']['output']>;
-  /** RelativeUrl of the asset. */
+  /** The relative URL of the asset. */
   relativeUrl?: Maybe<Scalars['String']['output']>;
-  /** Size of the asset. */
+  /** The size of the asset in bytes. */
   size: Scalars['Long']['output'];
-  /** Type id of the asset. */
+  /** The type ID of the asset. */
   typeId: Scalars['String']['output'];
-  /** Url of the asset. */
+  /** The URL of the asset. */
   url: Scalars['String']['output'];
 };
 
@@ -253,11 +255,6 @@ export type CartType = {
   isAnonymous: Scalars['Boolean']['output'];
   /** Displays whether the shopping cart is recurring */
   isRecuring?: Maybe<Scalars['Boolean']['output']>;
-  /**
-   * Shows whether the cart is valid
-   * @deprecated Deprecated, because of useless (no need to know validation state without details). Use validationErrors field.
-   */
-  isValid: Scalars['Boolean']['output'];
   /** Items */
   items: Array<LineItemType>;
   /** Item count */
@@ -334,11 +331,6 @@ export type CartTypeDynamicPropertiesArgs = {
 };
 
 
-export type CartTypeIsValidArgs = {
-  ruleSet?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type CartTypeValidationErrorsArgs = {
   ruleSet?: InputMaybe<Scalars['String']['input']>;
 };
@@ -391,6 +383,8 @@ export type Category = {
   /** The category priority. */
   priority: Scalars['Int']['output'];
   properties: Array<Property>;
+  /** Category relevance score */
+  relevanceScore?: Maybe<Scalars['Float']['output']>;
   /** Request related SEO info */
   seoInfo: SeoInfo;
   /** Request related slug for category */
@@ -1225,17 +1219,19 @@ export type IdentityResultType = {
 export type ImageType = {
   /** Culture name */
   cultureName?: Maybe<Scalars['String']['output']>;
-  /** Image group */
+  /** The description of the image */
+  description?: Maybe<Scalars['String']['output']>;
+  /** The group of the image */
   group?: Maybe<Scalars['String']['output']>;
-  /** Image ID */
+  /** The unique ID of the image */
   id: Scalars['String']['output'];
-  /** Image name */
+  /** The name of the image */
   name?: Maybe<Scalars['String']['output']>;
-  /** Image relative URL */
+  /** The relative URL of the image */
   relativeUrl?: Maybe<Scalars['String']['output']>;
   /** Sort order */
   sortOrder: Scalars['Int']['output'];
-  /** Image URL */
+  /** The URL of the image */
   url: Scalars['String']['output'];
 };
 
@@ -4145,6 +4141,8 @@ export type Product = {
   outline?: Maybe<Scalars['String']['output']>;
   /** Outlines */
   outlines: Array<OutlineType>;
+  /** Defines the number of items in a package. Quantity step for your product's. */
+  packSize: Scalars['Int']['output'];
   /** Product price */
   price: PriceType;
   /** Product prices */
@@ -4154,6 +4152,8 @@ export type Product = {
   properties: Array<Property>;
   /** Product rating */
   rating?: Maybe<Rating>;
+  /** Product relevance score */
+  relevanceScore?: Maybe<Scalars['Float']['output']>;
   /** Request related SEO info */
   seoInfo: SeoInfo;
   /** Request related slug for product */
@@ -5532,6 +5532,8 @@ export type VariationType = {
   name: Scalars['String']['output'];
   /** Outlines */
   outlines?: Maybe<Array<OutlineType>>;
+  /** Defines the number of items in a package. Quantity step for your product's. */
+  packSize?: Maybe<Scalars['Int']['output']>;
   /** Product price */
   price: PriceType;
   /** Product prices */
@@ -5540,11 +5542,11 @@ export type VariationType = {
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
   /** Product raiting */
-  rating?: Maybe<Rating>;
+  rating: Rating;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
-  vendor?: Maybe<CommonVendor>;
+  vendor: CommonVendor;
 };
 
 /** Vendor Info */
