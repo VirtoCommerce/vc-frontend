@@ -2,7 +2,7 @@ import { computed, toValue } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
 import { useUpdatePurchaseRequestByDocumentsMutation } from "@/core/api/graphql/purchase-request/mutations/updatePurchaseRequestByDocuments";
 import { useGetPurchaseRequestQuery } from "@/core/api/graphql/purchase-request/queries/getPurchaseRequest";
-import { useUserQuote } from "@/shared/account/composables/useUserQuote";
+import { useUserQuote } from "@/modules/quotes/useUserQuote";
 import { useFullCart } from "@/shared/cart";
 import { toAttachedFile } from "@/ui-kit/utilities/file";
 import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";

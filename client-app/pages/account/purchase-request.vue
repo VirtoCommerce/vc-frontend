@@ -83,7 +83,7 @@ import { OrderSummary, ProceedTo } from "@/shared/checkout/components";
 import { downloadFile } from "@/shared/files/utils";
 import { BackButtonInHeader } from "@/shared/layout";
 import { usePurchaseRequest } from "@/shared/purchase-request/composables/usePurchaseRequest";
-import QuoteLineItems from "@/shared/account/components/quote-line-items.vue";
+import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
 interface IProps {
