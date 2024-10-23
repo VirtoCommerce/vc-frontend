@@ -207,7 +207,10 @@ async function submitReview(): Promise<void> {
 
 onMounted(async () => {
   await fetchCustomerReviews(productReviewsPayload.value);
-  feedbackAvailable.value = await canLeaveFeedback(props.productId, ENTITY_TYPE);
-  reviewFormVisible.value = !reviews.value?.length;
+
+  if (isAuthenticated.value) {
+    feedbackAvailable.value = await canLeaveFeedback(props.productId, ENTITY_TYPE);
+    reviewFormVisible.value = !reviews.value?.length;
+  }
 });
 </script>
