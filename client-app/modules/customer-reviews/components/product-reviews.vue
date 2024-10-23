@@ -48,7 +48,7 @@
         </div>
       </div>
 
-      <div class="mb-6 mt-5 text-center sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+      <div class="mb-6 mt-5 justify-end text-center sm:flex sm:flex-wrap sm:items-center sm:gap-3">
         <VcButton
           v-if="isAuthenticated && feedbackAvailable && !reviewFormVisible && !reviewSubmitted"
           variant="outline"
