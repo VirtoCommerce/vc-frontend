@@ -50,11 +50,13 @@
           :model="productInfoSection"
         />
 
-        <ProductReviews
-          v-if="productReviewsEnabled && !productReviewsSection?.hidden"
-          :product-id="productId"
-          :product-rating="product.rating"
-        />
+        <KeepAlive>
+          <ProductReviews
+            v-if="productReviewsEnabled && !productReviewsSection?.hidden"
+            :product-id="productId"
+            :product-rating="product.rating"
+          />
+        </KeepAlive>
 
         <component
           :is="productVariationsBlock?.type"
