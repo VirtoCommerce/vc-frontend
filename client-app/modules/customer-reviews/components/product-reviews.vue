@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRef } from "vue";
+import { onActivated, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { useCustomerReviews } from "../useCustomerReviews";
@@ -205,7 +205,7 @@ async function submitReview(): Promise<void> {
   reviewSubmitted.value = true;
 }
 
-onMounted(async () => {
+onActivated(async () => {
   await fetchCustomerReviews(productReviewsPayload.value);
 
   if (isAuthenticated.value) {
