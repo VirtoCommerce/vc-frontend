@@ -36,7 +36,7 @@
 
           <template #append>
             <VcBadge variant="outline" size="sm" rounded color="secondary">
-              {{ $n(item.count as number, "decimal") }}
+              {{ $n(Number(item.count), "decimal") }}
             </VcBadge>
           </template>
         </VcMenuItem>
