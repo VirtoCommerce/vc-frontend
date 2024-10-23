@@ -1,7 +1,7 @@
 <template>
   <div class="space-x-1.5 text-nowrap text-neutral-300">
     <VcIcon
-      v-for="i in 5"
+      v-for="i in MAX_RATING"
       :key="i"
       :class="{ 'text-primary': i <= rating || (!readOnly && selectedRating >= i), 'cursor-pointer': !readOnly }"
       name="whishlist"
@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { MAX_RATING } from "../constants";
 
 interface IEmits {
   (event: "setRating", value: number): void;

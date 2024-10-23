@@ -35,7 +35,7 @@
             <div>
               {{ review.userName }}
               <div class="text-neutral-400">
-                {{ $d(review.createdDate) }}
+                {{ $d(review.createdDate, "short") }}
               </div>
             </div>
 
