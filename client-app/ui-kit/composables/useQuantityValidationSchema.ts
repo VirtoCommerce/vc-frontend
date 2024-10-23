@@ -13,7 +13,7 @@ export function useQuantityValidationSchema(payload: {
 }) {
   const { t } = useI18n();
 
-  const { isInStock, availableQuantity, minQuantity, maxQuantity } = payload;
+  const { availableQuantity, minQuantity, maxQuantity } = payload;
 
   function setAvailabilityForSchema(schema: NumberSchema): NumberSchema {
     if (availableQuantity?.value && minQuantity?.value && minQuantity.value < availableQuantity.value) {
@@ -58,13 +58,10 @@ export function useQuantityValidationSchema(payload: {
   const quantitySchema = computed<NumberSchema>(() =>
     number()
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-      .positive()
-      .integer()
+      .positive(t("shared.cart.add_to_cart.errors.positive_number"))
+      .integer(t("shared.cart.add_to_cart.errors.integer_number"))
+      .max(LINE_ITEM_QUANTITY_LIMIT, t("shared.cart.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]))
       .withMutation((schema) => {
-        if (!isInStock?.value) {
-          return schema;
-        }
-
         if (
           availableQuantity?.value &&
           minQuantity?.value &&
@@ -99,10 +96,7 @@ export function useQuantityValidationSchema(payload: {
           return schema.max(maxQuantity.value, t("shared.cart.add_to_cart.errors.max", [maxQuantity.value]));
         }
 
-        return schema.max(
-          LINE_ITEM_QUANTITY_LIMIT,
-          t("shared.cart.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]),
-        );
+        return schema;
       }),
   );
 

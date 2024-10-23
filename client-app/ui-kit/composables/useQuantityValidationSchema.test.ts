@@ -146,4 +146,64 @@ describe("use-quantity-validation-schema", () => {
     expect(quantitySchema.value.isValidSync(5)).toBeTruthy();
     expect(quantitySchema.value.isValidSync(6)).toBeFalsy();
   });
+
+  it("no stock available", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      isInStock: ref(false),
+    });
+
+    // isInStock is ignored. The case is handled by blocking input and don't invoke error
+    expect(quantitySchema.value.isValidSync(10));
+    expect(quantitySchema.value.isValidSync(1));
+    expect(quantitySchema.value.isValidSync(0));
+  });
+
+  it("zero available quantity", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      isInStock: ref(true),
+      availableQuantity: ref(0),
+    });
+
+    // availableQuantity is ignored. The case is handled by blocking input and don't invoke error
+    expect(quantitySchema.value.isValidSync(1));
+    expect(quantitySchema.value.isValidSync(0));
+  });
+
+  it("non-numeric input", () => {
+    const { quantitySchema } = useQuantityValidationSchema({});
+
+    expect(quantitySchema.value.isValidSync("a")).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(null)).toBeFalsy();
+  });
+
+  it("exact match of min and max", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      isInStock: ref(true),
+      minQuantity: ref(3),
+      maxQuantity: ref(3),
+    });
+
+    expect(quantitySchema.value.isValidSync(3)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(2)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(4)).toBeFalsy();
+  });
+
+  it("large numbers", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      isInStock: ref(true),
+      maxQuantity: ref(Number.MAX_SAFE_INTEGER),
+    });
+
+    expect(quantitySchema.value.isValidSync(Number.MAX_SAFE_INTEGER)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(Number.MAX_SAFE_INTEGER + 1)).toBeFalsy();
+  });
+
+  it("floating point edge cases", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      isInStock: ref(true),
+    });
+
+    expect(quantitySchema.value.isValidSync(1.999999)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(2.000001)).toBeFalsy();
+  });
 });

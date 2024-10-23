@@ -535,7 +535,10 @@
           "min": "Min order {0} item(s)",
           "max": "Max order {0} item(s)",
           "min_max": "Order from {0} to {1} item(s)",
-          "min_not_available": "Min order {0} item(s) is not available in stock"
+          "min_not_available": "Min order {0} item(s) is not available in stock",
+          "out_of_stock": "Out of stock",
+          "positive_number": "Should be positive number",
+          "integer_number": "Should be a number"
         }
       },
       "products_section": {
