@@ -121,7 +121,6 @@ const { quantitySchema } = useQuantityValidationSchema({
   minQuantity,
   maxQuantity,
   availableQuantity,
-  isInStock,
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
@@ -139,12 +138,16 @@ const {
 });
 
 async function validateFields(): Promise<void> {
-  const { valid } = await validate();
-  isValid.value = valid;
-
-  if (!valid && errorMessage.value) {
-    emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
+  if (isInStock.value) {
+    const { valid } = await validate();
+    isValid.value = valid;
+    if (!valid && errorMessage.value) {
+      emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
+    } else {
+      emit("update:validation", { isValid: true });
+    }
   } else {
+    isValid.value = true;
     emit("update:validation", { isValid: true });
   }
 }
