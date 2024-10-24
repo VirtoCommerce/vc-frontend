@@ -20,10 +20,18 @@ defineEmits<IEmits>();
 .vc-dialog-footer {
   grid-area: vc-dialog-footer;
 
-  @apply flex flex-wrap items-center gap-5 py-4 px-6;
+  @apply @container flex flex-wrap items-center gap-x-5 gap-y-2 py-4 px-6;
 
   & > .vc-button {
-    @apply min-w-32;
+    @apply w-full;
+
+    @container (min-width: theme("containers.xs")) {
+      @apply flex-1;
+    }
+
+    @container (min-width: theme("containers.sm")) {
+      @apply flex-none min-w-32 w-auto;
+    }
   }
 
   & > * {

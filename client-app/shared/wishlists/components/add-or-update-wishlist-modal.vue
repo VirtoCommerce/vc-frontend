@@ -6,6 +6,7 @@
         : $t('shared.wishlists.add_or_update_wishlist_modal.title')
     "
     dividers
+    is-mobile-fullscreen
   >
     <div class="space-y-4">
       <VcInput
