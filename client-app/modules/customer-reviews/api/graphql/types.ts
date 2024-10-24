@@ -636,6 +636,21 @@ export type CreateQuoteFromCartCommandType = {
   comment: Scalars['String']['input'];
 };
 
+export type CreateReviewCommandType = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  rating: Scalars['Int']['input'];
+  review: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
+export type CreateReviewResult = {
+  id?: Maybe<Scalars['String']['output']>;
+  userName?: Maybe<Scalars['String']['output']>;
+  /** A set of errors in case the review is invalid */
+  validationErrors: Array<ReviewValidationErrorType>;
+};
+
 export type CurrencyType = {
   /** Currency code may be used ISO 4217 */
   code: Scalars['String']['output'];
@@ -783,7 +798,7 @@ export type CustomerReview = {
   review: Scalars['String']['output'];
   reviewStatus?: Maybe<CustomerReviewStatus>;
   storeId: Scalars['String']['output'];
-  title: Scalars['String']['output'];
+  title?: Maybe<Scalars['String']['output']>;
   userId: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };
@@ -891,6 +906,21 @@ export type DiscountType = {
   promotionId?: Maybe<Scalars['String']['output']>;
 };
 
+export type DynamicContentItemType = {
+  contentType: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  /** Dynamic content dynamic property values */
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  priority: Scalars['Int']['output'];
+};
+
+
+export type DynamicContentItemTypeDynamicPropertiesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
 export type DynamicPropertyConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -981,6 +1011,11 @@ export type ErrorParameterType = {
   key: Scalars['String']['output'];
   /** Value */
   value: Scalars['String']['output'];
+};
+
+export type EvaluateDynamicContentResultType = {
+  items?: Maybe<Array<Maybe<DynamicContentItemType>>>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Facet = {
@@ -2860,6 +2895,7 @@ export type Mutations = {
   createOrganization?: Maybe<Organization>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
+  createReview?: Maybe<CreateReviewResult>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
   declineQuoteRequest?: Maybe<QuoteType>;
@@ -3147,6 +3183,11 @@ export type MutationsCreateQuoteArgs = {
 
 export type MutationsCreateQuoteFromCartArgs = {
   command: CreateQuoteFromCartCommandType;
+};
+
+
+export type MutationsCreateReviewArgs = {
+  command: CreateReviewCommandType;
 };
 
 
@@ -4427,6 +4468,7 @@ export type PushMessageType = {
 };
 
 export type Query = {
+  canLeaveFeedback?: Maybe<Scalars['Boolean']['output']>;
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
   categories?: Maybe<CategoryConnection>;
@@ -4441,6 +4483,7 @@ export type Query = {
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
+  evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
   fcmSettings?: Maybe<FcmSettingsType>;
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
@@ -4486,6 +4529,13 @@ export type Query = {
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
   wishlist?: Maybe<WishlistType>;
   wishlists?: Maybe<WishlistConnection>;
+};
+
+
+export type QueryCanLeaveFeedbackArgs = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 
@@ -4606,6 +4656,18 @@ export type QueryDynamicPropertyArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   idOrName: Scalars['String']['input'];
   objectType?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryEvaluateDynamicContentArgs = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  placeName?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  toDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -5215,6 +5277,13 @@ export type RequestRegistrationType = {
   result?: Maybe<AccountCreationResultType>;
 };
 
+export type ReviewValidationErrorType = {
+  /** Error code */
+  errorCode?: Maybe<Scalars['String']['output']>;
+  /** Error message */
+  errorMessage?: Maybe<Scalars['String']['output']>;
+};
+
 export type RoleType = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -5767,6 +5836,22 @@ export type WorkTaskType = {
   workflowId?: Maybe<Scalars['String']['output']>;
 };
 
+export type CreateReviewMutationVariables = Exact<{
+  command: CreateReviewCommandType;
+}>;
+
+
+export type CreateReviewMutation = { createReview?: { id?: string, validationErrors: Array<{ errorCode?: string, errorMessage?: string }> } };
+
+export type CanLeaveFeedbackQueryVariables = Exact<{
+  storeId: Scalars['String']['input'];
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+}>;
+
+
+export type CanLeaveFeedbackQuery = { canLeaveFeedback?: boolean };
+
 export type GetCustomerReviewsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
   entityId: Scalars['String']['input'];
@@ -5777,12 +5862,18 @@ export type GetCustomerReviewsQueryVariables = Exact<{
 }>;
 
 
-export type GetCustomerReviewsQuery = { customerReviews?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, userId: string, userName: string, title: string, review: string, rating: number }> } };
+export type GetCustomerReviewsQuery = { customerReviews?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, userId: string, userName: string, title?: string, review: string, rating: number }> } };
 
 
+export const CreateReviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateReview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateReviewCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createReview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"validationErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errorCode"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]}}]}}]} as unknown as DocumentNode<CreateReviewMutation, CreateReviewMutationVariables>;
+export const CanLeaveFeedbackDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"CanLeaveFeedback"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"entityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"entityType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"canLeaveFeedback"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"entityId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"entityId"}}},{"kind":"Argument","name":{"kind":"Name","value":"entityType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"entityType"}}}]}]}}]} as unknown as DocumentNode<CanLeaveFeedbackQuery, CanLeaveFeedbackQueryVariables>;
 export const GetCustomerReviewsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCustomerReviews"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"entityId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"entityType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"customerReviews"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"entityId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"entityId"}}},{"kind":"Argument","name":{"kind":"Name","value":"entityType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"entityType"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdDate"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"userName"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"review"}},{"kind":"Field","name":{"kind":"Name","value":"rating"}}]}}]}}]}}]} as unknown as DocumentNode<GetCustomerReviewsQuery, GetCustomerReviewsQueryVariables>;
 export const OperationNames = {
   Query: {
+    CanLeaveFeedback: 'CanLeaveFeedback',
     GetCustomerReviews: 'GetCustomerReviews'
+  },
+  Mutation: {
+    CreateReview: 'CreateReview'
   }
 }
