@@ -12,6 +12,8 @@ function _useGlobalInterceptors() {
   >([]);
   const onResponse = ref<((response: Response | AxiosResponse) => Promise<void> | void)[]>([]);
 
+  console.log(onResponse.value);
+
   return {
     onRequest,
     onResponse,

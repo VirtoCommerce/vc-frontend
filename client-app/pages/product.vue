@@ -370,7 +370,7 @@ watchEffect(() => {
  * Send Google Analytics event for related products.
  */
 watchEffect(() => {
-  if (relatedProducts.value.length) {
+  if (relatedProducts.value?.length) {
     ga.viewItemList(relatedProducts.value, {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
