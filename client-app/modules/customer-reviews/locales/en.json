@@ -1,8 +1,23 @@
 {
   "common": {
+    "buttons": {
+      "leave_feedback": "Leave feedback"
+    },
     "labels": {
       "feedback": "Feedback",
-      "rating": "Rating"
+      "rating": "Rating",
+      "rate_product": "Rate product",
+      "item_as_described_by_vendor": "Item as described by the vendor?"
+    },
+    "messages": {
+      "thanks_for_feedback": "Your feedback has been successfully submitted and is awaiting confirmation. Thank you!"
     }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "Reviews can only be left for products.",
+    "PRODUCT_MUST_BE_PURCHASED": "Only users who have purchased the product can leave a review.",
+    "DUPLICATE_REVIEW": "User has already left a review for this product.",
+    "INVALID_RATING": "Rating should be in the range from 1 to 5.",
+    "REVIEW_IS_EMPTY": "Property 'Review' must be filled in."
   }
 }
