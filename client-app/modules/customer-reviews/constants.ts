@@ -4,3 +4,4 @@ export const ENABLED_FOR_ANONYMOUS = "CustomerReviews.CustomerReviewsEnabledForA
 export const ENABLED_FOR_PURCHASED_ORDER = "CustomerReviews.CanSubmitReviewWhenHasOrder";
 
 export const PAGE_SIZE = 5;
+export const MAX_RATING = 5;

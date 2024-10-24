@@ -5,6 +5,7 @@ type GlobalVariablesType = {
   storeId?: string;
   catalogId?: string;
   userId?: string;
+  userName?: string;
   organizationId?: string;
   cultureName?: string;
   currencyCode?: string;

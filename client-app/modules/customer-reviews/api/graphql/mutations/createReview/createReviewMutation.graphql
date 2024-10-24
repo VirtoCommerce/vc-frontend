@@ -1,0 +1,9 @@
+mutation CreateReview($command: CreateReviewCommandType!) {
+  createReview(command: $command) {
+    id
+    validationErrors {
+      errorCode
+      errorMessage
+    }
+  }
+}
