@@ -9,14 +9,15 @@
         },
       ]"
       class="flex-none"
-      name="whishlist"
+      name="cup"
       size="xs"
     />
-    {{ rating.value }}
+    {{ rating.value }} / {{ MAX_RATING }}
   </div>
 </template>
 
 <script setup lang="ts">
+import { MAX_RATING } from "../constants";
 import type { Rating } from "../api/graphql/types";
 
 interface IProps {
