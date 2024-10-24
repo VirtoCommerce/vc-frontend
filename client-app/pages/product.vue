@@ -83,9 +83,7 @@
           :model="relatedProductsSection"
         />
 
-        <template
-          v-if="recommendedProductsSection && !recommendedProductsSection.hidden && recommendedProducts?.length"
-        >
+        <template v-if="recommendedProductsSection && !recommendedProductsSection.hidden">
           <component
             :is="recommendedProductsSection?.type"
             v-for="{ model, id } in recommendedProductsSection.blocks"
