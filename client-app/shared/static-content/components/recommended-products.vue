@@ -1,5 +1,5 @@
 <template>
-  <VcWidget v-if="recommendedProducts.length" :title="title" prepend-icon="cube" size="lg">
+  <VcWidget v-if="recommendedProducts?.length" :title="title" prepend-icon="cube" size="lg">
     <VcProductsGrid short>
       <ProductCardRecommended v-for="(item, index) in recommendedProducts" :key="index" :product="item" />
     </VcProductsGrid>
