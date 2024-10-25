@@ -119,7 +119,7 @@ import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
 import { usePurchaseRequests } from "@/modules/purchase-requests/composables/usePurchaseRequests";
 import type { Sort } from "@/core/types";
-import FromFile from "@/shared/bulk-order/components/from-file.vue";
+import FromFile from "@/modules/purchase-requests/components/from-file.vue";
 
 const { t } = useI18n();
 const router = useRouter();
