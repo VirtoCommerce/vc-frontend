@@ -60,7 +60,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { toRefs } from "@vueuse/core";
 import { debounce } from "lodash";
 import { useField } from "vee-validate";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
@@ -124,8 +124,8 @@ const buttonText = computed<string>(() =>
 
 const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const quantity = ref<number | undefined>(props.modelValue);
+const modelValue = toRef(props, "modelValue");
+const quantity = ref<number | undefined>(modelValue.value);
 const pendingQuantity = ref<number | null>(null);
 
 const { quantitySchema } = useQuantityValidationSchema({
@@ -172,7 +172,7 @@ const handleChange = debounce(async () => {
   if (
     isNaN(newQuantity) ||
     newQuantity < 1 ||
-    newQuantity === props.modelValue ||
+    newQuantity === modelValue.value ||
     pendingQuantity.value === newQuantity
   ) {
     return;
@@ -195,12 +195,12 @@ function onFocusOut() {
   const newQuantity = Number(quantity.value);
 
   if (isNaN(newQuantity) || newQuantity < 1) {
-    quantity.value = props.modelValue;
+    quantity.value = modelValue.value;
   }
 }
 
 watchEffect(() => {
-  quantity.value = props.modelValue;
+  quantity.value = modelValue.value;
   pendingQuantity.value = null;
 });
 
