@@ -11,8 +11,7 @@ import { setGlobals } from "@/core/globals";
 import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
-import { init as initCustomerReviews } from "@/modules/customer-reviews";
-import { init as initModuleQuotes } from "@/modules/quotes";
+import { initializeModules } from "@/modules";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
@@ -130,8 +129,8 @@ export default async () => {
 
   await fetchWhiteLabelingSettings();
   void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
-  void initModuleQuotes(router, i18n);
-  void initCustomerReviews(i18n);
+
+  void initializeModules(router, i18n);
 
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);

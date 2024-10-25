@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
-import { useGetPurchaseRequestsQuery } from "@/core/api/graphql/purchase-request/queries/getPurchaseRequests";
 import { DEFAULT_SORT } from "@/core/constants";
+import { useGetPurchaseRequestsQuery } from "@/modules/purchase-requests/api/graphql/queries/getPurchaseRequests";
 import type { Sort } from "@/core/types";
 import type { Ref } from "vue";
 

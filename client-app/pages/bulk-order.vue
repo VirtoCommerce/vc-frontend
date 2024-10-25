@@ -12,25 +12,23 @@
           :class="{ 'rounded-sm bg-additional-50 shadow-md': isActive }"
           class="block appearance-none p-1.5 text-primary-700"
         >
-          <VcIcon class="vc-button__icon me-1" :name="item['icon']" />
+          <VcIcon class="me-1 text-primary-500" :name="item['icon']" />
           <span :class="{ 'text-additional-950': isActive }">{{ item["label"] }}</span>
         </span>
       </template>
     </VcTabs>
 
-    <FromFile with-title class="bg-additional-50 shadow-sm" :class="{ hidden: activeTab !== 'from-file' }" />
+    <FromFile :class="{ hidden: activeTab !== 'from-file' }" />
 
     <Manually
       :loading="loadingManually"
       :class="{ hidden: activeTab !== 'manually' }"
-      class="bg-additional-50 shadow-sm"
       @add-to-cart="addManuallyItems"
     />
 
     <CopyAndPaste
       :loading="loadingCSV"
       :class="{ hidden: activeTab !== 'copy&paste' }"
-      class="bg-additional-50 shadow-sm"
       @add-to-cart="addItemsFromCSVText"
     />
   </VcContainer>
@@ -44,6 +42,7 @@ import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { FromFile, CopyAndPaste, Manually } from "@/shared/bulk-order";
+//import { useBulkOrderExtensionPoints } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import { useShortCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
@@ -65,6 +64,8 @@ usePageHead({
 });
 
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
+
+// const { additionalTabs } = useBulkOrderExtensionPoints();
 
 const allTabs = [
   { id: "from-file", icon: "cloud-upload", label: t("pages.bulk_order.from_file_tab") },

@@ -1,6 +1,6 @@
 import { inject, ref } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
-import { DEFAULT_PURCHASE_REQUEST_FILES_SCOPE } from "@/shared/bulk-order/constants";
+import { DEFAULT_FILES_SCOPE } from "@/modules/purchase-requests/constants";
 import { useFiles } from "@/shared/files/composables/useFiles";
 import { isUploadedFile } from "@/ui-kit/utilities";
 import type { WatchSource } from "vue";
@@ -15,7 +15,7 @@ export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedF
     uploadFiles,
     fetchOptions: fetchFileOptions,
     options: fileOptions,
-  } = useFiles(config.purchase_request_file_scope ?? DEFAULT_PURCHASE_REQUEST_FILES_SCOPE, sourceFiles);
+  } = useFiles(config.purchase_requests_file_scope ?? DEFAULT_FILES_SCOPE, sourceFiles);
 
   const processing = ref(false);
 

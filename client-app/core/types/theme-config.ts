@@ -167,8 +167,8 @@ export interface IThemeConfigSettings {
   quotes_enabled?: boolean;
   quotes_files_scope?: string;
 
-  purchase_request_enabled?: boolean;
-  purchase_request_file_scope?: string;
+  purchase_requests_enabled?: boolean;
+  purchase_requests_file_scope?: string;
 
   product_compare_enabled?: boolean;
   product_compare_limit?: number;

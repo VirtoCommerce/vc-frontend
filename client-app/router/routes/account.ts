@@ -12,8 +12,6 @@ const OrderPayment = () => import("@/pages/account/order-payment.vue");
 const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
-const PurchaseRequests = () => import("@/pages/account/purchase-requests.vue");
-const PurchaseRequest = () => import("@/pages/account/purchase-request.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
 const Notifications = () => import("@/pages/account/notifications.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
@@ -78,19 +76,6 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: "saved-credit-cards",
     name: "SavedCreditCards",
     component: SavedCreditCards,
-  },
-  {
-    path: "purchase-requests",
-    children: [
-      { path: "", name: "PurchaseRequests", component: PurchaseRequests },
-      {
-        path: ":purchaseRequestId",
-        name: "PurchaseRequest",
-        component: PurchaseRequest,
-        props: true,
-        meta: { hideLeftSidebar: true },
-      },
-    ],
   },
   {
     path: "notifications",

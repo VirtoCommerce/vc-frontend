@@ -4,25 +4,25 @@
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
 
-    <VcTypography tag="h1">{{ $t("pages.account.purchase_request.title", [purchaseRequest?.number]) }}</VcTypography>
+    <VcTypography tag="h1">{{ $t("purchase_request.title", [purchaseRequest?.number]) }}</VcTypography>
 
     <VcEmptyView
       v-if="!cart?.items?.length && !quote?.items?.length"
       class="lg:mt-32"
-      :text="$t('pages.account.purchase_request.failed_or_used_description')"
+      :text="$t('purchase_request.failed_or_used_description')"
     >
       <template #icon>
         <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/order.svg" />
       </template>
       <template #button>
         <VcButton :to="{ name: 'BulkOrder' }" size="lg">
-          {{ $t("pages.account.purchase_request.try_again") }}
+          {{ $t("purchase_request.try_again") }}
         </VcButton>
       </template>
     </VcEmptyView>
 
     <VcLayoutWithRightSidebar v-else is-sidebar-sticky>
-      <VcWidget :title="$t('pages.account.purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
+      <VcWidget :title="$t('purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           class="h-full"
           v-bind="fileOptions"
@@ -63,7 +63,7 @@
         <OrderSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :cart="quote" no-shipping>
           <template #footer>
             <ProceedTo :to="{ name: 'EditQuote', params: { quoteId: purchaseRequest.quoteId } }">
-              {{ $t("pages.account.purchase_request.go_to_quote") }}
+              {{ $t("purchase_request.go_to_quote") }}
             </ProceedTo>
           </template>
         </OrderSummary>
@@ -79,10 +79,10 @@ import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
+import { usePurchaseRequest } from "@/modules/purchase-requests/composables/usePurchaseRequest";
 import { OrderSummary, ProceedTo } from "@/shared/checkout/components";
 import { downloadFile } from "@/shared/files/utils";
 import { BackButtonInHeader } from "@/shared/layout";
-import { usePurchaseRequest } from "@/shared/purchase-request/composables/usePurchaseRequest";
 import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
@@ -118,8 +118,8 @@ const {
 
 const breadcrumbs = useBreadcrumbs(() => [
   { title: t("common.links.account"), route: { name: "Account" } },
-  { title: t("common.links.purchase_requests"), route: { name: "PurchaseRequests" } },
-  { title: t("pages.account.purchase_request.title", [purchaseRequest.value?.number]) },
+  { title: t("purchase_requests.menu.link.title"), route: { name: "PurchaseRequests" } },
+  { title: t("purchase_request.title", [purchaseRequest.value?.number]) },
 ]);
 
 const isMobile = breakpoints.smaller("lg");

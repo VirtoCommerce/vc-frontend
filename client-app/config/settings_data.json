@@ -10,8 +10,8 @@
     "quotes_enabled": true,
     "quotes_files_scope": "quote-attachments",
 
-    "purchase_request_enabled": true,
-    "purchase_request_files_scope": "purchase-request-sources",
+    "purchase_requests_enabled": true,
+    "purchase_requests_files_scope": "purchase-request-sources",
 
     "product_compare_enabled": true,
     "product_compare_limit": 5,

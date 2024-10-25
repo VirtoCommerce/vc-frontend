@@ -1,7 +1,7 @@
 import { computed, toValue } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
-import { useUpdatePurchaseRequestByDocumentsMutation } from "@/core/api/graphql/purchase-request/mutations/updatePurchaseRequestByDocuments";
-import { useGetPurchaseRequestQuery } from "@/core/api/graphql/purchase-request/queries/getPurchaseRequest";
+import { useUpdatePurchaseRequestByDocumentsMutation } from "@/modules/purchase-requests/api/graphql/mutations/updatePurchaseRequestByDocuments";
+import { useGetPurchaseRequestQuery } from "@/modules/purchase-requests/api/graphql/queries/getPurchaseRequest";
 import { useUserQuote } from "@/modules/quotes/useUserQuote";
 import { useFullCart } from "@/shared/cart";
 import { toAttachedFile } from "@/ui-kit/utilities/file";

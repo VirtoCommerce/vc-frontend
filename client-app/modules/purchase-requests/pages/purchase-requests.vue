@@ -2,19 +2,16 @@
   <div>
     <!-- Title block -->
     <VcTypography tag="h1">
-      {{ $t("pages.account.purchase_requests.title") }}
+      {{ $t("purchase_requests.title") }}
     </VcTypography>
 
     <!-- Empty view -->
     <VcEmptyView
       v-if="!loading && !purchaseRequests.length"
-      :text="$t('pages.account.purchase_requests.no_purchase_requests_message')"
+      :text="$t('purchase_requests.no_purchase_requests_message')"
     >
       <template #icon>
-        <VcImage
-          src="/static/images/common/order.svg"
-          :alt="$t('pages.account.purchase_requests.no_purchase_requests_img_alt')"
-        />
+        <VcImage src="/static/images/common/order.svg" :alt="$t('purchase_requests.no_purchase_requests_img_alt')" />
       </template>
     </VcEmptyView>
 
@@ -31,7 +28,7 @@
             :items="purchaseRequests"
             :pages="pages"
             :page="page"
-            :description="$t('pages.account.purchase_requests.meta.table_description')"
+            :description="$t('purchase_requests.meta.table_description')"
             @item-click="goToPurchaseRequest"
             @header-click="applySorting"
             @page-changed="changePage"
@@ -46,7 +43,7 @@
               >
                 <div class="flex flex-col">
                   <span class="text-sm text-neutral-400">
-                    {{ $t("pages.account.purchase_requests.purchase_request_number_label") }}
+                    {{ $t("purchase_requests.purchase_request_number_label") }}
                   </span>
 
                   <span class="overflow-hidden text-ellipsis pr-4 font-black">
@@ -56,7 +53,7 @@
 
                 <div class="flex flex-col">
                   <span class="text-sm text-neutral-400">
-                    {{ $t("pages.account.quotes.date_label") }}
+                    {{ $t("purchase_requests.date_label") }}
                   </span>
 
                   <span class="overflow-hidden text-ellipsis">
@@ -70,14 +67,14 @@
               <div v-for="i in itemsPerPage" :key="i" class="grid grid-cols-2 gap-y-4 border-b border-neutral-200 p-6">
                 <div class="flex flex-col">
                   <span class="text-sm text-neutral-400">
-                    {{ $t("pages.account.purchase_requests.purchase_request_number_label") }}
+                    {{ $t("purchase_requests.purchase_request_number_label") }}
                   </span>
                   <div class="mr-4 h-6 animate-pulse bg-neutral-200"></div>
                 </div>
 
                 <div class="flex flex-col">
                   <span class="text-sm text-neutral-400">
-                    {{ $t("pages.account.purchase_requests.date_label") }}
+                    {{ $t("purchase_requests.date_label") }}
                   </span>
                   <div class="h-6 animate-pulse bg-neutral-200"></div>
                 </div>
@@ -120,7 +117,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables/usePageHead";
-import { usePurchaseRequests } from "@/shared/purchase-request/composables/usePurchaseRequests";
+import { usePurchaseRequests } from "@/modules/purchase-requests/composables/usePurchaseRequests";
 import type { Sort } from "@/core/types";
 import FromFile from "@/shared/bulk-order/components/from-file.vue";
 
@@ -128,7 +125,7 @@ const { t } = useI18n();
 const router = useRouter();
 
 usePageHead({
-  title: t("pages.account.purchase_requests.meta.title"),
+  title: t("purchase_requests.meta.title"),
 });
 
 const { loading, purchaseRequests, itemsPerPage, pages, page, sort } = usePurchaseRequests();
@@ -136,12 +133,12 @@ const { loading, purchaseRequests, itemsPerPage, pages, page, sort } = usePurcha
 const columns = ref<ITableColumn[]>([
   {
     id: "number",
-    title: t("pages.account.purchase_requests.purchase_request_number_label"),
+    title: t("purchase_requests.purchase_request_number_label"),
     sortable: true,
   },
   {
     id: "createdDate",
-    title: t("pages.account.quotes.date_label"),
+    title: t("purchase_requests.date_label"),
     sortable: true,
   },
 ]);

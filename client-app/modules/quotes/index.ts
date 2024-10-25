@@ -76,7 +76,7 @@ const menuItems: DeepPartial<MenuType> = {
   },
 };
 
-export function init(router: Router, i18n: I18n) {
+export function initialize(router: Router, i18n: I18n) {
   if (themeContext.value.settings.quotes_enabled && isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(menuItems);

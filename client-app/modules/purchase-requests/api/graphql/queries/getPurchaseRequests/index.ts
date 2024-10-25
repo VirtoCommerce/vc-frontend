@@ -1,8 +1,8 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, toValue } from "vue";
-import { GetPurchaseRequestsDocument } from "@/core/api/graphql/types";
-import { useAllGlobalVariables } from "../../../composables";
-import type { GetPurchaseRequestsQueryVariables } from "@/core/api/graphql/types";
+import { useAllGlobalVariables } from "@/core/api/graphql/composables";
+import { GetPurchaseRequestsDocument } from "@/modules/purchase-requests/api/graphql/types";
+import type { GetPurchaseRequestsQueryVariables } from "@/modules/purchase-requests/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
 export function useGetPurchaseRequestsQuery(

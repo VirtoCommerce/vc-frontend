@@ -121,15 +121,6 @@
             "title": "shared.account.navigation.links.saved_credit_cards",
             "icon": "credit-card",
             "priority": 80
-          },
-          {
-            "id": "purchaseRequests",
-            "route": {
-              "name": "PurchaseRequests"
-            },
-            "title": "shared.account.navigation.links.purchase_requests",
-            "icon": "purchase-requests",
-            "priority": 100
           }
         ]
       },
@@ -263,14 +254,6 @@
             },
             "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
             "icon": "/static/images/dashboard/icons/credit-card.svg#main",
-            "priority": 70
-          },
-          {
-            "route": {
-              "name": "PurchaseRequests"
-            },
-            "title": "shared.layout.header.mobile.account_menu.purchase_requests",
-            "icon": "/static/images/dashboard/icons/purchase-requests.svg#main",
             "priority": 70
           }
         ]

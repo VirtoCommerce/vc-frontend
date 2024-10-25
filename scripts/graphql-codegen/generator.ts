@@ -12,6 +12,16 @@ type ModuleType = {
 
 const independentModules: ModuleType[] = [
   {
+    name: "CustomerReviews",
+    searchKey: "customerReviews",
+    apiPath: "client-app/modules/customer-reviews/api/graphql",
+  },
+  {
+    name: "PurchaseRequests",
+    searchKey: "purchaseRequests",
+    apiPath: "client-app/modules/purchase-requests/api/graphql",
+  },
+  {
     name: "PushMessages",
     searchKey: "PushMessages",
     apiPath: "client-app/core/api/graphql/push-messages",
@@ -20,11 +30,6 @@ const independentModules: ModuleType[] = [
     name: "Quotes",
     searchKey: "QuoteType",
     apiPath: "client-app/modules/quotes/api/graphql",
-  },
-  {
-    name: "CustomerReviews",
-    searchKey: "customerReviews",
-    apiPath: "client-app/modules/customer-reviews/api/graphql",
   },
 ];
 

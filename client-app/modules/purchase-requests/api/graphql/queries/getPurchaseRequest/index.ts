@@ -1,5 +1,5 @@
 import { useQuery } from "@vue/apollo-composable";
-import { GetPurchaseRequestDocument } from "@/core/api/graphql/types";
+import { GetPurchaseRequestDocument } from "@/modules/purchase-requests/api/graphql/types";
 import type { MaybeRefOrGetter } from "vue";
 
 export function useGetPurchaseRequestQuery(variables: MaybeRefOrGetter<{ purchaseRequestId: string }>) {

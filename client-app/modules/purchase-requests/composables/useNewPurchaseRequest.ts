@@ -1,4 +1,4 @@
-import { useCreatePurchaseRequestFromDocumentsMutation } from "@/core/api/graphql/purchase-request/mutations/createPurchaseRequestFromDocuments";
+import { useCreatePurchaseRequestFromDocumentsMutation } from "@/modules/purchase-requests/api/graphql/mutations/createPurchaseRequestFromDocuments";
 import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";
 
 export function useNewPurchaseRequest() {
