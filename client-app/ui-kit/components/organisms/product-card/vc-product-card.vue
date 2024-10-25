@@ -37,18 +37,13 @@ const imageContainer = useTemplateRef("imageContainer");
 
 onMounted(() => {
   if (root.value instanceof HTMLElement) {
-    const actionsElement = root.value.querySelector(".vc-product-actions");
-    const imageElement = root.value.querySelector(".vc-product-image");
+    const elements = root.value.querySelectorAll(".vc-product-image, .vc-product-actions");
 
-    if (imageContainer.value instanceof HTMLElement) {
-      if (imageElement) {
-        imageContainer.value.appendChild(imageElement);
+    elements.forEach((element) => {
+      if (element instanceof HTMLElement && imageContainer.value instanceof HTMLElement) {
+        imageContainer.value?.appendChild(element);
       }
-
-      if (actionsElement) {
-        imageContainer.value.appendChild(actionsElement);
-      }
-    }
+    });
   }
 });
 </script>
