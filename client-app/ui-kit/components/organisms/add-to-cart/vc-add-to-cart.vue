@@ -96,15 +96,25 @@ interface IProps {
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
-  validateOnMount: true
+  validateOnMount: true,
 });
 
 const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { timeout, disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable, packSize } =
-  toRefs(props);
+const {
+  timeout,
+  disabled,
+  isInStock,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
+  isActive,
+  isAvailable,
+  isBuyable,
+  packSize,
+} = toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
