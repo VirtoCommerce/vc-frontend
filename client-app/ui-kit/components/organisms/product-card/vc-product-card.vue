@@ -11,7 +11,9 @@
     ]"
   >
     <div class="vc-product-card__wrapper">
-      <div ref="imageContainer" class="vc-product-card__image-container"></div>
+      <div ref="imageContainer" class="vc-product-card__image-container">
+        <slot name="image" />
+      </div>
 
       <slot />
     </div>
@@ -84,10 +86,10 @@ onMounted(() => {
   }
 
   &__wrapper {
-    @apply relative grid h-full;
+    @apply relative h-full;
 
     #{$background}#{$grid} & {
-      @apply p-5;
+      @apply flex flex-col items-stretch p-5;
 
       @container (min-width: theme("containers.xs")) {
         @apply p-6;
@@ -95,7 +97,7 @@ onMounted(() => {
     }
 
     #{$background}#{$list} & {
-      @apply p-3;
+      @apply grid p-3;
 
       @container (min-width: theme("containers.xl")) {
         @apply p-4;
@@ -203,13 +205,17 @@ onMounted(() => {
     #{$self} & {
       grid-area: title;
 
-      @apply text-sm self-end;
+      @apply text-sm;
     }
 
     #{$grid} & {
       @container (min-width: theme("containers.xxs")) {
         @apply text-lg;
       }
+    }
+
+    #{$list} & {
+      @apply self-end;
     }
 
     #{$titleCenter} & {
@@ -231,7 +237,7 @@ onMounted(() => {
     }
 
     #{$grid} & {
-      @apply mt-3;
+      @apply grow mt-3;
 
       @container (min-width: theme("containers.xxs")) {
         --vc-property-font-size: 0.875rem;
@@ -306,7 +312,6 @@ onMounted(() => {
   }
 
   @at-root .vc-add-to-cart,
-    .add-to-cart,
     .vc-variations-button {
     #{$self} & {
       grid-area: add-to-cart;
