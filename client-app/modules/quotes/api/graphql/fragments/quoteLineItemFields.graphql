@@ -12,6 +12,7 @@ fragment quoteLineItemFields on QuoteItemType {
   }
   selectedTierPrice {
     quantity
+    packSize
     price {
       ...money
     }

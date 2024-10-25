@@ -9,9 +9,10 @@ export function useQuantityValidationSchema(payload: {
   minQuantity?: Ref<number | undefined>;
   maxQuantity?: Ref<number | undefined>;
   availableQuantity?: Ref<number | undefined>;
+  packSize?: Ref<number | undefined>;
 }) {
   const { t } = useI18n();
-  const { availableQuantity, minQuantity, maxQuantity } = payload;
+  const { availableQuantity, minQuantity, maxQuantity, packSize } = payload;
 
   function minMaxTest(schema: NumberSchema, min: number, max: number): NumberSchema {
     return schema.test(
@@ -33,6 +34,51 @@ export function useQuantityValidationSchema(payload: {
     return schema.test("incorrectMinValue", t("shared.cart.add_to_cart.errors.min_not_available", [min]), () => false);
   }
 
+  function packSizeTest(schema: NumberSchema, size?: number): NumberSchema {
+    if (!size) {
+      return schema;
+    }
+
+    return schema.test(
+      "divisible-by-packSize",
+      t("shared.cart.add_to_cart.errors.pack_size", [size]),
+      (value) => !!value && value % size === 0,
+    );
+  }
+
+  function withAvailableQuantityTest(schema: NumberSchema, quantity: number): NumberSchema {
+    if (minQuantity?.value && maxQuantity?.value) {
+      if (minQuantity.value > quantity) {
+        return availableLessThenMinError(schema, minQuantity.value);
+      }
+      return minMaxTest(schema, minQuantity.value, Math.min(quantity, maxQuantity.value));
+    }
+    if (minQuantity?.value) {
+      if (minQuantity.value > quantity) {
+        return availableLessThenMinError(schema, minQuantity.value);
+      }
+      return minMaxTest(schema, minQuantity.value, quantity);
+    }
+    if (maxQuantity?.value) {
+      return maxTest(schema, Math.min(quantity, maxQuantity.value));
+    }
+
+    return maxTest(schema, quantity);
+  }
+
+  function withoutAvailableQuantityTest(schema: NumberSchema): NumberSchema {
+    if (minQuantity?.value && maxQuantity?.value) {
+      return minMaxTest(schema, minQuantity?.value, maxQuantity.value);
+    }
+    if (minQuantity?.value) {
+      return minTest(schema, minQuantity.value);
+    }
+    if (maxQuantity?.value) {
+      return maxTest(schema, maxQuantity.value);
+    }
+
+    return schema;
+  }
   const quantitySchema = computed<NumberSchema>(() =>
     number()
       .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
@@ -41,36 +87,10 @@ export function useQuantityValidationSchema(payload: {
       .max(LINE_ITEM_QUANTITY_LIMIT, t("shared.cart.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]))
       .withMutation((schema) => {
         if (availableQuantity?.value) {
-          if (minQuantity?.value && maxQuantity?.value) {
-            if (minQuantity.value > availableQuantity.value) {
-              return availableLessThenMinError(schema, minQuantity.value);
-            }
-            return minMaxTest(schema, minQuantity.value, Math.min(availableQuantity.value, maxQuantity.value));
-          }
-          if (minQuantity?.value) {
-            if (minQuantity.value > availableQuantity.value) {
-              return availableLessThenMinError(schema, minQuantity.value);
-            }
-            return minMaxTest(schema, minQuantity.value, availableQuantity.value);
-          }
-          if (maxQuantity?.value) {
-            return maxTest(schema, Math.min(availableQuantity.value, maxQuantity.value));
-          }
-
-          return maxTest(schema, availableQuantity.value);
+          return packSizeTest(withAvailableQuantityTest(schema, availableQuantity.value), packSize?.value);
         } else {
-          if (minQuantity?.value && maxQuantity?.value) {
-            return minMaxTest(schema, minQuantity?.value, maxQuantity.value);
-          }
-          if (minQuantity?.value) {
-            return minTest(schema, minQuantity.value);
-          }
-          if (maxQuantity?.value) {
-            return maxTest(schema, maxQuantity.value);
-          }
+          return packSizeTest(withoutAvailableQuantityTest(schema), packSize?.value);
         }
-
-        return schema;
       }),
   );
 

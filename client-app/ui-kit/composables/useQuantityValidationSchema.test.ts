@@ -157,6 +157,7 @@ describe("use-quantity-validation-schema", () => {
     });
 
     // availableQuantity is ignored. The case is handled by blocking input and don't invoke error
+    expect(quantitySchema.value.isValidSync(7));
     expect(quantitySchema.value.isValidSync(1));
     expect(quantitySchema.value.isValidSync(0));
   });
@@ -184,5 +185,64 @@ describe("use-quantity-validation-schema", () => {
 
     expect(quantitySchema.value.isValidSync(1.999999)).toBeFalsy();
     expect(quantitySchema.value.isValidSync(2.000001)).toBeFalsy();
+  });
+
+  it("quantity is a multiple of pack size", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      packSize: ref(3),
+    });
+
+    expect(quantitySchema.value.isValidSync(3)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(6)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(9)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(4)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(5)).toBeFalsy();
+  });
+
+  it("quantity is a multiple of pack size with min and max", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      packSize: ref(3),
+      minQuantity: ref(3),
+      maxQuantity: ref(9),
+    });
+
+    expect(quantitySchema.value.isValidSync(3)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(6)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(9)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(12)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(2)).toBeFalsy();
+  });
+
+  it("quantity is a multiple of pack size with available quantity", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      packSize: ref(3),
+      availableQuantity: ref(9),
+    });
+
+    expect(quantitySchema.value.isValidSync(3)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(6)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(9)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(12)).toBeFalsy();
+    expect(quantitySchema.value.isValidSync(1)).toBeFalsy();
+  });
+
+  it("pack size of 1 (any quantity is valid)", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      packSize: ref(1),
+    });
+
+    expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(2)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(3)).toBeTruthy();
+  });
+
+  it("pack size of 0 (invalid configuration)", () => {
+    const { quantitySchema } = useQuantityValidationSchema({
+      packSize: ref(0),
+    });
+
+    // Assuming the schema should handle this gracefully, possibly by ignoring the pack size
+    expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(2)).toBeTruthy();
   });
 });

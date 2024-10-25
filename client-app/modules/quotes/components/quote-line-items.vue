@@ -41,7 +41,9 @@
           :model-value="item.selectedTierPrice?.quantity"
           :name="item.id"
           :min-quantity="item.product?.minQuantity"
-          :max-quantity="item.product?.maxQuantity ?? item.product?.availabilityData?.availableQuantity"
+          :max-quantity="item.product?.maxQuantity"
+          :available-quantity="item.product?.availabilityData?.availableQuantity"
+          :pack-size="item.product?.packSize"
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
       </VcLineItem>
