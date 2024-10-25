@@ -18,7 +18,9 @@
       </template>
     </VcTabs>
 
-    <FromFile :class="{ hidden: activeTab !== 'from-file' }" />
+    <div v-for="tab in additionalTabs" :key="tab.id">
+      <component :is="tab.element" :class="{ hidden: activeTab !== tab.id }" />
+    </div>
 
     <Manually
       :loading="loadingManually"
@@ -36,22 +38,21 @@
 
 <script setup lang="ts">
 import { uniqBy } from "lodash";
-import { computed, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { useUser } from "@/shared/account/composables/useUser";
-import { FromFile, CopyAndPaste, Manually } from "@/shared/bulk-order";
-//import { useBulkOrderExtensionPoints } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
+import { CopyAndPaste, Manually } from "@/shared/bulk-order";
+import { useBulkOrderExtensionPoints } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import { useShortCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
+import type { ITab } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import type { OutputBulkItemType } from "@/shared/cart";
 import AddToCartSkuErrorsModal from "@/shared/bulk-order/components/add-to-cart-sku-errors-modal.vue";
 
 const router = useRouter();
 const { t } = useI18n();
-const { isAuthenticated } = useUser();
 const { openModal } = useModal();
 const { loading: loadingCart, changing: cartChanging, addBulkItemsToCart } = useShortCart();
 
@@ -65,17 +66,16 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
 
-// const { additionalTabs } = useBulkOrderExtensionPoints();
+const { additionalTabs } = useBulkOrderExtensionPoints();
 
-const allTabs = [
-  { id: "from-file", icon: "cloud-upload", label: t("pages.bulk_order.from_file_tab") },
+const predefinedTabs: Omit<ITab, "element">[] = [
   { id: "copy&paste", icon: "document-duplicate", label: t("pages.bulk_order.copy_n_paste_tab") },
   { id: "manually", icon: "hand", label: t("pages.bulk_order.manually_tab") },
-] as const;
-const tabs = computed(() => (isAuthenticated.value ? [...allTabs] : allTabs.slice(1)));
-const _activeTab = ref<(typeof allTabs)[number]["id"]>();
+];
+const tabs = computed(() => [...additionalTabs.value.filter((tab) => !toValue(tab.hidden)), ...predefinedTabs]);
+const _activeTab = ref<string>();
 const activeTab = computed({
-  get: () => _activeTab.value ?? (isAuthenticated.value ? "from-file" : "manually"),
+  get: () => _activeTab.value ?? tabs.value[0].id,
   set: (value) => {
     _activeTab.value = value;
   },

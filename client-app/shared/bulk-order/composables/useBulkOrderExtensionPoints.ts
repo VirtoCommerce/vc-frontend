@@ -1,20 +1,20 @@
 import { createGlobalState } from "@vueuse/core";
-import { ref } from "vue";
-import type { DefineComponent } from "vue";
+import { shallowRef } from "vue";
+import type { DefineComponent, MaybeRefOrGetter } from "vue";
 
-type TabType = {
+export interface ITab {
   id: string;
   icon: string;
-  label: string;
-  hidden?: boolean;
+  label: MaybeRefOrGetter<string>;
+  hidden?: MaybeRefOrGetter<boolean>;
   /* eslint-disable @typescript-eslint/no-explicit-any */
   element: DefineComponent<Record<string, any>, Record<string, any>, any>;
-};
+}
 
 function _useBulkOrderExtensionPoints() {
-  const additionalTabs = ref<TabType[]>([]);
+  const additionalTabs = shallowRef<ITab[]>([]);
 
-  function registerAdditionalTab(tab: TabType) {
+  function registerAdditionalTab(tab: ITab) {
     if (!additionalTabs.value.some((el) => el.id === tab.id)) {
       additionalTabs.value.push(tab);
     }
