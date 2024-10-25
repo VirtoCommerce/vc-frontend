@@ -106,7 +106,7 @@ export interface IProps {
   center?: boolean;
   truncate?: boolean;
   type?: "text" | "password" | "number" | "email";
-  size?: "sm" | "md" | "auto";
+  size?: "xs" | "sm" | "md" | "auto";
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
@@ -180,6 +180,7 @@ function inputClick() {
 
 <style lang="scss">
 .vc-input {
+  $sizeXs: "";
   $sizeSm: "";
   $sizeMd: "";
 
@@ -196,12 +197,22 @@ function inputClick() {
   @apply flex flex-col;
 
   &--size {
+    &--xs {
+      $sizeXs: &;
+
+      --vc-icon-size: 1.25rem;
+    }
+
     &--sm {
       $sizeSm: &;
+
+      --vc-icon-size: 1.25rem;
     }
 
     &--md {
       $sizeMd: &;
+
+      --vc-icon-size: 1.5rem;
     }
   }
 
@@ -233,6 +244,10 @@ function inputClick() {
 
   &__container {
     @apply flex items-stretch border rounded bg-additional-50 select-none;
+
+    #{$sizeXs} & {
+      @apply h-8 text-sm;
+    }
 
     #{$sizeSm} & {
       @apply h-9 text-sm;
@@ -327,7 +342,7 @@ function inputClick() {
   }
 
   &__password-icon {
-    @apply h-full px-3 text-[--base-color];
+    @apply flex items-center h-full px-3 text-[--base-color];
 
     #{$disabled} & {
       @apply text-neutral-300 cursor-not-allowed;
