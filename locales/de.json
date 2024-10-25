@@ -537,7 +537,10 @@
           "min": "Minimale Bestellung {0} Artikel(n)",
           "max": "Maximale Bestellung {0} Artikel(n)",
           "min_max": "Bestellen Sie von {0} bis {1} Artikel(n)",
-          "min_not_available": "Minimale Bestellung von {0} Artikel(n) ist nicht auf Lager"
+          "min_not_available": "Minimale Bestellung von {0} Artikel(n) ist nicht auf Lager",
+          "out_of_stock": "Nicht auf Lager",
+          "positive_number": "Der Wert muss eine positive Zahl sein",
+          "integer_number": "Der Wert muss eine ganze Zahl sein"
         }
       },
       "products_section": {
