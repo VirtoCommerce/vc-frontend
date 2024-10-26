@@ -139,17 +139,12 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 
 ### Prerequisites
 
-- Install `vc-platform` 3.x the latest version:
-  - [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md)
-  - [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
-- Install [Experience API / X-Api](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md) modules:
-  - [vc-module-x-api](https://github.com/VirtoCommerce/vc-module-x-api)
-  - [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api)
-- The following modules should be installed for development (but not in production; this will be changed in the future):
-  - [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api)
-  - [vc-module-push-messages](https://github.com/VirtoCommerce/vc-module-push-messages)
-  - [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
-  - [vc-module-x-recommend](https://github.com/VirtoCommerce/vc-module-x-recommend)
+- Install `vc-platform` 3.x the latest version. [Deploy on Windows](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-windows.md) or [Deploy on Linux](https://github.com/VirtoCommerce/vc-platform/blob/master/docs/getting-started/deploy-from-precompiled-binaries-linux.md)
+- Install `vc-module-experience-api` module. [Getting started](https://github.com/VirtoCommerce/vc-module-experience-api/blob/dev/docs/getting-started.md)
+- Install [vc-module-profile-experience-api](https://github.com/VirtoCommerce/vc-module-profile-experience-api) module.
+- Install [vc-module-file-experience-api](https://github.com/VirtoCommerce/vc-module-file-experience-api) module.
+- Install [vc-module-push-messages](https://github.com/VirtoCommerce/vc-module-push-messages) module.
+  Install [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
 - Install [Node.js v20](https://nodejs.org/en/download/) (**20.11.0** or later)
 - Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
   ```bash
