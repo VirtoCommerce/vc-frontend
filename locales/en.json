@@ -710,21 +710,6 @@
           "products": "Products",
           "quantity": "Quantity"
         }
-      },
-      "from_file": {
-        "title": "Upload file",
-        "upload": {
-          "message": "Upload photos of documents, screenshots, or handwritten notes to get data for a new order.",
-          "examples": {
-            "title": "Examples",
-            "alt": "Examples"
-          }
-        },
-        "processing": {
-          "message": "You can upload image files or pdf files with product listings in any form for quick ordering of items",
-          "loading_message": "Recognizing an uploaded document...",
-          "cancel": "@:common.buttons.cancel"
-        }
       }
     },
     "payment": {
@@ -1306,8 +1291,7 @@
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
       "data_is_invalid_alert": "The details you provided are invalid.",
       "manually_tab": "Manually",
-      "copy_n_paste_tab": "Copy&Paste",
-      "from_file_tab": "Upload file"
+      "copy_n_paste_tab": "Copy&Paste"
     },
     "demo_landing": {
       "meta": {

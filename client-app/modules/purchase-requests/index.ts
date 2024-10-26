@@ -27,7 +27,7 @@ export function initialize(router: Router, i18n: I18n) {
     registerAdditionalTab({
       id: "from-file",
       icon: "cloud-upload",
-      label: computed(() => i18n.global.t("pages.bulk_order.manually_tab")),
+      label: computed(() => i18n.global.t("pages.bulk_order.from_file_tab")),
       hidden: computed(() => !isAuthenticated.value),
       element: FromFile,
     });

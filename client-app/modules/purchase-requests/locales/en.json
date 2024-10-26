@@ -22,6 +22,26 @@
     "files_section": {
       "title": "Files"
     },
+    "from_file": {
+      "title": "Upload file",
+      "upload": {
+        "message": "Upload photos of documents, screenshots, or handwritten notes to get data for a new order.",
+        "examples": {
+          "title": "Examples",
+          "alt": "Examples"
+        }
+      },
+      "processing": {
+        "message": "You can upload image files or pdf files with product listings in any form for quick ordering of items",
+        "loading_message": "Recognizing an uploaded document...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
     "go_to_quote": "Proceed to quote"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Upload file"
+    }
   }
 }
