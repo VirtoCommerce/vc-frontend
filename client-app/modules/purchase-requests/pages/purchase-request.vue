@@ -31,7 +31,7 @@
           @download="onFileDownload"
         />
       </VcWidget>
-      <VcWidget id="products" :title="$t('shared.checkout.products_section.title')" prepend-icon="cube" size="lg">
+      <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="cube" size="lg">
         <CartLineItems
           v-if="cart?.items?.length"
           :items="cart.items"

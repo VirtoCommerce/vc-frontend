@@ -625,9 +625,6 @@
         "quantity_label": "@:common.labels.quantity",
         "title": "Accepted Gifts"
       },
-      "products_section": {
-        "title": "Products"
-      },
       "shipping_details_section": {
         "title": "Shipping details",
         "labels": {
