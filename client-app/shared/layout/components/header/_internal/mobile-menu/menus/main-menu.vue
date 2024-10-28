@@ -56,12 +56,12 @@
         <ul>
           <li>
             <MobileMenuLink
-              v-if="extendedMobileAccountMenuItem"
-              :link="extendedMobileAccountMenuItem"
+              v-if="mobileAccountMenuItem"
+              :link="mobileAccountMenuItem"
               class="py-1 text-2xl font-bold"
-              @select="$emit('selectItem', extendedMobileAccountMenuItem!)"
+              @select="$emit('selectItem', mobileAccountMenuItem!)"
             >
-              {{ extendedMobileAccountMenuItem.title }}
+              {{ mobileAccountMenuItem.title }}
             </MobileMenuLink>
           </li>
 
@@ -108,8 +108,6 @@
 </template>
 
 <script setup lang="ts">
-import { cloneDeep } from "lodash";
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCurrency, useNavigations } from "@/core/composables";
 import { useSignMeOut, useUser } from "@/shared/account";
@@ -133,7 +131,7 @@ defineEmits<IEmits>();
 defineProps<IProps>();
 
 const { signMeOut } = useSignMeOut();
-const { user, operator, isAuthenticated, isMultiOrganization, isCorporateMember } = useUser();
+const { user, operator, isAuthenticated, isCorporateMember } = useUser();
 const { mobileMainMenuItems, mobileCorporateMenuItem, mobileAccountMenuItem } = useNavigations();
 const { t } = useI18n();
 const { supportedCurrencies } = useCurrency();
@@ -141,23 +139,6 @@ const { registerCustomLinkComponent, customLinkComponents } = useCustomMobileMen
 
 registerCustomLinkComponent({ id: "cart", component: LinkCart });
 registerCustomLinkComponent({ id: "compare", component: LinkCompare });
-
-const extendedMobileAccountMenuItem = computed(() => {
-  if (isMultiOrganization.value) {
-    const item = cloneDeep(mobileAccountMenuItem.value);
-
-    item?.children?.push({
-      id: "contact-organizations",
-      title: t("common.labels.my_organizations"),
-      icon: "/static/images/dashboard/icons/company.svg#main",
-      children: [{}], // Ensures arrow visibility for submenu navigation
-      priority: 10,
-    });
-
-    return item;
-  }
-  return mobileAccountMenuItem.value;
-});
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
   { route: { name: "SignIn" }, title: t("shared.layout.header.link_sign_in") },
