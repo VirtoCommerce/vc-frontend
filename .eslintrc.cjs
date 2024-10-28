@@ -26,7 +26,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
     parser: "@typescript-eslint/parser",
-    project: ["./tsconfig.vitest.json", "./tsconfig.app.json", "./tsconfig.node.json"],
+    project: ["./tsconfig.node.json", "./tsconfig.app.json", "./tsconfig.storybook.json", "./tsconfig.vitest.json"],
     sourceType: "module",
     tsconfigRootDir: __dirname,
   },
@@ -99,7 +99,7 @@ module.exports = {
       "warn",
       {
         groups: ["builtin", "external", "internal", "unknown", "parent", "sibling", "index", "object", "type"],
-        pathGroups: [{ pattern: "**/*.vue", group: "type", position: "after" }],
+        pathGroups: [{ pattern: "**/*.(scss|vue)", group: "type", position: "after" }],
         alphabetize: { order: "asc", orderImportKind: "asc" },
         "newlines-between": "never",
       },
@@ -254,7 +254,7 @@ module.exports = {
     "import/resolver": {
       typescript: {
         alwaysTryTypes: true,
-        project: ["./tsconfig.vitest.json", "./tsconfig.app.json", "./tsconfig.node.json"],
+        project: ["./tsconfig.node.json", "./tsconfig.app.json", "./tsconfig.storybook.json", "./tsconfig.vitest.json"],
       },
       node: true,
     },

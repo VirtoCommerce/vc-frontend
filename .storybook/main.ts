@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { loadConfigFromFile, mergeConfig, splitVendorChunkPlugin } from "vite";
 import type { StorybookConfig } from "@storybook/vue3-vite";
 
-const config: StorybookConfig = {
+const storybookConfig: StorybookConfig = {
   stories: ["../client-app/**/*.stories.ts"],
   staticDirs: [{ from: "../storybook-styles/dist", to: "/assets" }],
   addons: [
@@ -12,6 +12,7 @@ const config: StorybookConfig = {
     "@storybook/addon-actions",
     "@storybook/addon-a11y",
     "@storybook/addon-interactions",
+    "storybook-i18n",
   ],
   framework: {
     name: "@storybook/vue3-vite",
@@ -19,7 +20,7 @@ const config: StorybookConfig = {
   },
   async viteFinal(storybookViteConfig, options) {
     const isDevelopment = options.configType === "DEVELOPMENT";
-    const { config } = (await loadConfigFromFile(
+    const { config: viteConfig } = (await loadConfigFromFile(
       isDevelopment
         ? {
             command: "serve",
@@ -33,19 +34,19 @@ const config: StorybookConfig = {
     ))!;
     return mergeConfig(storybookViteConfig, {
       mode: "development",
-      envPrefix: config.envPrefix,
+      envPrefix: viteConfig.envPrefix,
       plugins: [splitVendorChunkPlugin()],
-      resolve: config.resolve,
-      define: config.define,
+      resolve: viteConfig.resolve,
+      define: viteConfig.define,
       build: {
         cssCodeSplit: false,
         reportCompressedSize: false,
       },
-      optimizeDeps: config.optimizeDeps,
+      optimizeDeps: viteConfig.optimizeDeps,
     });
   },
   docs: {
     autodocs: true,
   },
 };
-export default config;
+export default storybookConfig;
