@@ -19,7 +19,7 @@
 
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
+      <FacetItem v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
 
       <template #footer>
         <VcButton
@@ -91,7 +91,7 @@
           </button>
 
           <div class="flex flex-row gap-6 pr-4">
-            <FilterFacet v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
+            <FacetItem v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
           </div>
 
           <div class="mt-6 flex flex-row justify-end gap-4">
@@ -325,9 +325,9 @@ import { B2B_ROLES } from "@/core/constants";
 import { XApiPermissions } from "@/core/enums";
 import { getFilterExpressionFromFacets } from "@/core/utilities";
 import { PageToolbarBlock, useUser } from "@/shared/account";
+import { FacetItem } from "@/shared/common";
 import {
   EditCustomerRoleModal,
-  FilterFacet,
   InviteMemberModal,
   MemberStatus,
   MembersDropdownMenu,
