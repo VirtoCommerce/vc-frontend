@@ -216,15 +216,6 @@
             "priority": 20
           },
           {
-            "id": "addresses",
-            "route": {
-              "name": "Addresses"
-            },
-            "title": "shared.layout.header.mobile.account_menu.addresses",
-            "icon": "/static/images/dashboard/icons/building.svg#main",
-            "priority": 30
-          },
-          {
             "route": {
               "name": "Orders"
             },

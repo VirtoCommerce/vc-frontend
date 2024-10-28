@@ -143,9 +143,8 @@ registerCustomLinkComponent({ id: "cart", component: LinkCart });
 registerCustomLinkComponent({ id: "compare", component: LinkCompare });
 
 const extendedMobileAccountMenuItem = computed(() => {
+  const item = cloneDeep(mobileAccountMenuItem.value);
   if (isMultiOrganization.value) {
-    const item = cloneDeep(mobileAccountMenuItem.value);
-
     item?.children?.push({
       id: "contact-organizations",
       title: t("common.labels.my_organizations"),
@@ -153,10 +152,20 @@ const extendedMobileAccountMenuItem = computed(() => {
       children: [{}], // Ensures arrow visibility for submenu navigation
       priority: 10,
     });
-
-    return item;
   }
-  return mobileAccountMenuItem.value;
+
+  if (!isCorporateMember.value) {
+    item?.children?.push({
+      id: "addresses",
+      route: {
+        name: "Addresses",
+      },
+      title: t("shared.layout.header.mobile.account_menu.addresses"),
+      icon: "/static/images/dashboard/icons/building.svg#main",
+      priority: 30,
+    });
+  }
+  return item;
 });
 
 const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
