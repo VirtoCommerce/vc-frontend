@@ -1,5 +1,7 @@
+#import "../../fragments/purchaseRequest.graphql"
+
 mutation UpdatePurchaseRequestByDocuments($command: InputUpdatePurchaseRequestByDocumentsType!) {
   updatePurchaseRequestByDocuments(command: $command) {
-    id
+    ...purchaseRequest
   }
 }

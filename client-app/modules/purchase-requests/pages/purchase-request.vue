@@ -7,7 +7,7 @@
     <VcTypography tag="h1">{{ $t("purchase_request.title", [purchaseRequest?.number]) }}</VcTypography>
 
     <VcEmptyView
-      v-if="!cart?.items?.length && !quote?.items?.length"
+      v-if="!(loading || changing) && !(cart?.items?.length || quote?.items?.length)"
       class="lg:mt-32"
       :text="$t('purchase_request.failed_or_used_description')"
     >
@@ -71,7 +71,7 @@
     </VcLayoutWithRightSidebar>
   </div>
 
-  <VcLoaderOverlay :visible="loading || updatingPurchaseRequest" fixed-spinning />
+  <VcLoaderOverlay :visible="loading || changing" fixed-spinning />
 </template>
 
 <script setup lang="ts">
@@ -102,13 +102,12 @@ const {
   purchaseRequest,
   files,
   fileOptions,
-  updatingPurchaseRequest,
+  changing,
   cart,
   allCartItemsAreDigital,
   quote,
   fetchFileOptions,
   updatePurchaseRequestByDocuments,
-  refetch,
   fetchItems,
   changeCartItemQuantity,
   changeQuoteItemQuantity,
@@ -126,8 +125,6 @@ const isMobile = breakpoints.smaller("lg");
 
 async function onAddFiles(items: INewFile[]) {
   await updatePurchaseRequestByDocuments(items);
-  await refetch();
-  await fetchItems();
 }
 
 function onFileDownload(file: FileType) {

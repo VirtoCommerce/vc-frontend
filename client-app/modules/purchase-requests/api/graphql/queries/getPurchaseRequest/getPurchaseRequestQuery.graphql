@@ -1,14 +1,7 @@
+#import "../../fragments/purchaseRequest.graphql"
+
 query GetPurchaseRequest($purchaseRequestId: String!) {
   purchaseRequest(purchaseRequestId: $purchaseRequestId) {
-    id
-    number
-    cartId
-    quoteId
-    sources {
-      name
-      url
-      contentType
-      size
-    }
+    ...purchaseRequest
   }
 }

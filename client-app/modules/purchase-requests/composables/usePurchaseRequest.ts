@@ -23,7 +23,7 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
     files,
     fetchFileOptions,
     fileOptions,
-    processing: updatingPurchaseRequest,
+    processing: changing,
     processDocuments,
   } = usePurchaseRequestDocuments(sourceFiles);
 
@@ -82,12 +82,12 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
 
   return {
     loading: computed(() => purchaseRequestLoading.value || cartLoading.value || quoteLoading.value),
+    changing,
     purchaseRequest,
     sources,
     sourceFiles,
     files,
     fileOptions,
-    updatingPurchaseRequest,
     cart,
     allCartItemsAreDigital,
     quote,
