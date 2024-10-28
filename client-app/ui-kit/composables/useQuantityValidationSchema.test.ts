@@ -157,9 +157,9 @@ describe("use-quantity-validation-schema", () => {
     });
 
     // availableQuantity is ignored. The case is handled by blocking input and don't invoke error
-    expect(quantitySchema.value.isValidSync(7));
-    expect(quantitySchema.value.isValidSync(1));
-    expect(quantitySchema.value.isValidSync(0));
+    expect(quantitySchema.value.isValidSync(7)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(1)).toBeTruthy();
+    expect(quantitySchema.value.isValidSync(0)).toBeFalsy();
   });
 
   it("non-numeric input", () => {
