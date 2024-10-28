@@ -5611,11 +5611,11 @@ export type VariationType = {
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
   /** Product raiting */
-  rating: Rating;
+  rating?: Maybe<Rating>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
-  vendor: CommonVendor;
+  vendor?: Maybe<CommonVendor>;
 };
 
 /** Vendor Info */

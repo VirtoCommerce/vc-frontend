@@ -36,7 +36,7 @@
 
           <template #append>
             <VcBadge variant="outline" size="sm" rounded color="secondary">
-              {{ $n(item.count as number, "decimal") }}
+              {{ $n(Number(item.count), "decimal") }}
             </VcBadge>
           </template>
         </VcMenuItem>
@@ -115,24 +115,26 @@
             close();
           "
         >
-          <VcCheckbox
-            v-model="item.selected"
-            size="xs"
-            :disabled="loading"
-            @change="
-              changeFacetValues();
-              close();
-            "
-            @click.stop
-          />
+          <template #prepend>
+            <VcCheckbox
+              v-model="item.selected"
+              size="xs"
+              :disabled="loading"
+              @change="
+                changeFacetValues();
+                close();
+              "
+              @click.stop
+            />
+          </template>
 
-          <div class="facet-filter-dropdown__label">
-            {{ item.label }}
-          </div>
+          {{ item.label }}
 
-          <VcBadge variant="outline" size="sm" rounded color="secondary">
-            {{ $n(item.count as number, "decimal") }}
-          </VcBadge>
+          <template #append>
+            <VcBadge variant="outline" size="sm" rounded color="secondary">
+              {{ $n(item.count as number, "decimal") }}
+            </VcBadge>
+          </template>
         </VcMenuItem>
       </div>
     </template>
@@ -269,10 +271,6 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   &__search {
     @apply p-3 border-b;
-  }
-
-  &__label {
-    @apply flex-grow;
   }
 
   &__append {
