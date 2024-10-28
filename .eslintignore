@@ -1,11 +1,3 @@
-# ESLint has undocumented odd behavior on folders and files started with dots
-# https://github.com/eslint/eslint/issues/12348
-.deployment
-.github
-.husky
-!.storybook
-.vscode
-.yarn
 artifacts
 assets
 content

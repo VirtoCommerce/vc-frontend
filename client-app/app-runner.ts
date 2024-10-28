@@ -6,7 +6,7 @@ import { apolloClient, getStore } from "@/core/api/graphql";
 import { useCurrency, useThemeContext, useGoogleAnalytics, useWhiteLabeling, useNavigations } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
-import { IS_DEVELOPMENT } from "@/core/constants";
+import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
 import { setGlobals } from "@/core/globals";
 import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
@@ -52,14 +52,29 @@ export default async () => {
 
   const { fetchUser, user, twoLetterContactLocale } = useUser();
   const { themeContext, fetchThemeContext } = useThemeContext();
-  const { fallback, detectLocale, currentLanguage, supportedLocales, initLocale, getLocaleFromUrl, pinedLocale } =
-    useLanguages();
+  const {
+    detectLocale,
+    currentLanguage,
+    supportedLocales,
+    initLocale,
+    fetchLocaleMessages,
+    getLocaleFromUrl,
+    pinedLocale,
+  } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
   const { init: initializeWebPushNotifications } = useWebPushNotifications();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
+
+  const fallback = {
+    locale: FALLBACK_LOCALE,
+    message: {},
+    async setMessage() {
+      this.message = await fetchLocaleMessages(this.locale);
+    },
+  };
 
   const store = (await getStore(
     IS_DEVELOPMENT ? extractHostname(import.meta.env.APP_BACKEND_URL as string) : window.location.hostname,

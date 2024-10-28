@@ -1,9 +1,8 @@
 .deployment
 .github
 .husky
-!.storybook
 .vscode
-.yarn
+.idea
 artifacts
 assets
 node_modules
