@@ -125,7 +125,6 @@ import { AddressType } from "@/core/enums";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach, isEqualAddresses } from "@/core/utilities";
 import { DEFAULT_QUOTE_FILES_SCOPE, useUser, useUserAddresses } from "@/shared/account";
-import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
@@ -137,6 +136,7 @@ import type { MemberAddressType } from "@/core/api/graphql/types";
 import type { AnyAddressType } from "@/core/types";
 import type { QuoteAddressType, QuoteItemType, QuoteType } from "@/modules/quotes/api/graphql/types";
 import type { StringSchema } from "yup";
+import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 
 interface IProps {
   quoteId?: string;

@@ -145,10 +145,7 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
-import GiftsSection from "@/shared/cart/components/gifts-section.vue";
-import ProductsSection from "@/shared/cart/components/products-section.vue";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
-import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -159,6 +156,9 @@ import {
   useCheckout,
 } from "@/shared/checkout";
 import type { Product } from "@/core/api/graphql/types";
+import GiftsSection from "@/shared/cart/components/gifts-section.vue";
+import ProductsSection from "@/shared/cart/components/products-section.vue";
+import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
 const config = inject(configInjectionKey, {});
 
