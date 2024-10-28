@@ -99,7 +99,7 @@ module.exports = {
       "warn",
       {
         groups: ["builtin", "external", "internal", "unknown", "parent", "sibling", "index", "object", "type"],
-        pathGroups: [{ pattern: "**/*.(scss|vue)", group: "type", position: "after" }],
+        pathGroups: [{ pattern: "**/*.scss", group: "type", position: "after" }, { pattern: "**/*.vue", group: "type", position: "after" }],
         alphabetize: { order: "asc", orderImportKind: "asc" },
         "newlines-between": "never",
       },
