@@ -461,6 +461,21 @@ export type CommonVendor = {
   rating?: Maybe<Rating>;
 };
 
+export type ConfigurationQueryResponseType = {
+  configurationSections?: Maybe<Array<Maybe<ConfigurationSectionType>>>;
+};
+
+export type ConfigurationSectionType = {
+  /** Configuration section description */
+  description?: Maybe<Scalars['String']['output']>;
+  /** Is configuration section required */
+  isRequired: Scalars['Boolean']['output'];
+  /** Configuration section name */
+  name?: Maybe<Scalars['String']['output']>;
+  products?: Maybe<Array<Maybe<Product>>>;
+  quantity?: Maybe<Scalars['Int']['output']>;
+};
+
 export type ConfirmTaskCommandType = {
   id: Scalars['String']['input'];
 };
@@ -4160,6 +4175,8 @@ export type Product = {
   imgSrc?: Maybe<Scalars['String']['output']>;
   /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
+  /** Product is configurable */
+  isConfigurable?: Maybe<Scalars['Boolean']['output']>;
   keyProperties: Array<Property>;
   /** Length */
   length?: Maybe<Scalars['Decimal']['output']>;
@@ -4504,6 +4521,7 @@ export type Query = {
   paymentStatuses?: Maybe<LocalizedSettingResponseType>;
   payments?: Maybe<PaymentInConnection>;
   product?: Maybe<Product>;
+  productConfiguration?: Maybe<ConfigurationQueryResponseType>;
   productSuggestions?: Maybe<ProductSuggestionsQueryResponseType>;
   products?: Maybe<ProductConnection>;
   properties?: Maybe<PropertyConnection>;
@@ -4812,6 +4830,15 @@ export type QueryProductArgs = {
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   custom?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryProductConfigurationArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  productId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
