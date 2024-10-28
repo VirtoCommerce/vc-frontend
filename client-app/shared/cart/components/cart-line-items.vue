@@ -11,7 +11,7 @@
     with-total
     with-subtotal
     removable
-    selectable
+    selectable="selectable"
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
   >

@@ -19,24 +19,19 @@
   <VcContainer v-else class="relative z-0">
     <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
 
-    <template v-if="!hideHeader">
-      <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
+    <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
 
-      <VcTypography tag="h1" class="mb-5">
-        {{ $t("pages.cart.title") }}
-      </VcTypography>
-    </template>
+    <VcTypography tag="h1" class="mb-5">
+      {{ $t("pages.cart.title") }}
+    </VcTypography>
 
     <VcLayoutWithRightSidebar is-sidebar-sticky>
-      <slot name="main" />
-
       <ProductsSection
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
         :items-grouped-by-vendor="lineItemsGroupedByVendor"
         :selected-item-ids="selectedItemIds"
         :validation-errors="cart.validationErrors"
-        with-clear-cart
         :disabled="changeItemQuantityBatchedOverflowed || selectionOverflowed"
         @change:item-quantity="changeItemQuantityBatched($event.itemId, $event.quantity)"
         @select:items="handleSelectItems"
@@ -62,8 +57,6 @@
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
 
       <template #sidebar>
-        <slot name="sidebar" />
-
         <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
             <!-- Promotion code -->
@@ -152,7 +145,10 @@ import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composab
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
+import GiftsSection from "@/shared/cart/components/gifts-section.vue";
+import ProductsSection from "@/shared/cart/components/products-section.vue";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
+import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 import {
   BillingDetailsSection,
   OrderCommentSection,
@@ -163,18 +159,6 @@ import {
   useCheckout,
 } from "@/shared/checkout";
 import type { Product } from "@/core/api/graphql/types";
-import GiftsSection from "@/shared/cart/components/gifts-section.vue";
-import ProductsSection from "@/shared/cart/components/products-section.vue";
-import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
-
-interface IProps {
-  cartType?: string;
-  cartName?: string;
-  hideHeader?: boolean;
-  hideQuoteWidget?: boolean;
-}
-
-const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 
@@ -239,10 +223,8 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   }
 }
 
-const cartVariables = computed(() => ({ cartType: props.cartType, cartName: props.cartName }));
-
 void (async () => {
-  await forceFetch(cartVariables.value);
+  await forceFetch();
 
   /**
    * Send a Google Analytics shopping cart view event.

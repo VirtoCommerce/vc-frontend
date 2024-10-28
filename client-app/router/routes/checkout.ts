@@ -66,9 +66,7 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     ],
     meta: { layout: "Secure" },
     beforeEnter(to, from, next) {
-      if (from.name === "PurchaseRequest") {
-        next();
-      } else if (from.name === "Cart") {
+      if (from.name === "Cart") {
         next();
       } else if (from.name === "CheckoutPaymentResult" && to.name === "CheckoutPayment") {
         next();

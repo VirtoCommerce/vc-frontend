@@ -23,8 +23,7 @@ import { computedEager } from "@vueuse/core";
 import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { usePageHead } from "@/core/composables/usePageHead";
-import { useRouteQueryParam } from "@/core/composables/useRouteQueryParam";
+import { usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
@@ -109,12 +108,8 @@ usePageHead({
   title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
 });
 
-const cartType = useRouteQueryParam<string>("cartType");
-const cartName = useRouteQueryParam<string>("cartName");
-const cartVariables = computed(() => ({ cartType: cartType.value, cartName: cartName.value }));
-
 void (async () => {
-  await forceFetch(cartVariables.value);
+  await forceFetch();
   if (route.name === "Checkout") {
     await initialize();
     await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
