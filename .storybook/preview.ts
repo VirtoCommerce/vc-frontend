@@ -1,60 +1,41 @@
 import { setup } from "@storybook/vue3";
 import { vueRouter } from "storybook-vue3-router";
-import { useLanguages } from "../client-app/core/composables/useLanguages";
-import { setGlobals } from "../client-app/core/globals";
-import { createI18n } from "../client-app/i18n";
-import { uiKit } from "../client-app/ui-kit";
-import type { IThemeConfig, IThemeConfigPreset } from "../client-app/core/types";
-import type { I18n } from "../client-app/i18n";
+import { useLanguages } from "@/core/composables/useLanguages";
+import { useThemeContext } from "@/core/composables/useThemeContext";
+import { configPlugin, contextPlugin } from "@/core/plugins";
+import { createI18n } from "@/i18n";
+import { uiKit } from "@/ui-kit";
+import { defaultCurrency, defaultLanguage, store } from "./mocks";
 import type { Preview } from "@storybook/vue3";
-import settingsData from "../client-app/config/settings_data.json";
-
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
-import { useFetch } from "../client-app/core/api/common";
-const i18n: I18n = createI18n("en", "USD");
 
-setGlobals({ i18n });
+setup(async (app, storyContext) => {
+  const { themeContext, fetchThemeContext } = useThemeContext();
+  const { fallback, initLocale } = useLanguages();
 
-async function configureThemeSettings() {
-  const themeConfig = settingsData as IThemeConfig;
+  await Promise.all([fetchThemeContext(store), fallback.setMessage()]);
 
-  let preset;
+  const twoLetterLanguageName = storyContext?.globals.locale as string;
+  const i18n = createI18n(twoLetterLanguageName, defaultCurrency.code, fallback);
+  await initLocale(i18n, twoLetterLanguageName);
 
-  if (typeof themeConfig.current === "string") {
-    const presetFileName = themeConfig.current.toLowerCase().replace(" ", "-");
-    const { data: data_ } = await useFetch(`/config/presets/${presetFileName}.json`).get().json<IThemeConfigPreset>();
-    preset = data_.value;
-  } else {
-    preset = themeConfig.current;
-  }
-
-  const styleElement = document.createElement("style");
-  styleElement.innerText = ":root {";
-  Object.entries(preset).forEach(([key, value]) => {
-    styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
-  });
-  styleElement.innerText += "}";
-  document.head.prepend(styleElement);
-}
-
-async function configureI18N() {
-  const { initLocale } = useLanguages();
-
-  await initLocale(i18n, "en");
-}
-
-setup((app) => {
-  configureThemeSettings();
-
-  configureI18N();
   app.use(i18n);
+  app.use(contextPlugin, themeContext.value);
+  app.use(configPlugin, themeContext.value);
 
   app.use(uiKit);
 });
 
 const preview: Preview = {
   decorators: [vueRouter()],
+  initialGlobals: {
+    locale: defaultLanguage.twoLetterLanguageName,
+    locales: store.availableLanguages.reduce<Record<string, string>>((locales, availableLanguage) => {
+      locales[availableLanguage.twoLetterLanguageName] = availableLanguage.nativeName;
+      return locales;
+    }, {}),
+  },
   parameters: {
     controls: {
       matchers: {
@@ -71,4 +52,5 @@ const preview: Preview = {
   },
 };
 
+// eslint-disable-next-line no-restricted-exports
 export default preview;
