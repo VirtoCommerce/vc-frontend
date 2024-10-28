@@ -119,10 +119,10 @@ const sortedFilteredChildren = computed(() => {
 });
 
 function canShowItem(item: ExtendedMenuLinkType) {
-  return !(
-    (item.id === "addresses" && isCorporateMember.value) ||
-    (item.id === "contact-organizations" && !isMultiOrganization.value)
-  );
+  if (item.id === "addresses" && isCorporateMember.value) {
+    return false;
+  }
+  return !(item.id === "contact-organizations" && !isMultiOrganization.value);
 }
 
 function goBack() {
