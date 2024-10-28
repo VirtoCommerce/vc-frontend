@@ -208,12 +208,28 @@
             "priority": 0
           },
           {
+            "id": "contact-organizations",
+            "title": "common.labels.my_organizations",
+            "icon": "/static/images/dashboard/icons/company.svg#main",
+            "children": [{}],
+            "priority": 10
+          },
+          {
             "route": {
               "name": "ChangePassword"
             },
             "title": "shared.layout.header.mobile.account_menu.change_password",
             "icon": "/static/images/dashboard/icons/pass.svg#main",
             "priority": 20
+          },
+          {
+            "id": "addresses",
+            "route": {
+              "name": "Addresses"
+            },
+            "title": "shared.layout.header.mobile.account_menu.addresses",
+            "icon": "/static/images/dashboard/icons/building.svg#main",
+            "priority": 30
           },
           {
             "route": {
