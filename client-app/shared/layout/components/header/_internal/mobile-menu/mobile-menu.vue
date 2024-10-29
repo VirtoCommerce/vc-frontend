@@ -31,7 +31,7 @@
 
         <MultiOrganisationMenu v-if="openedItem.id === 'contact-organizations'" />
         <SettingsMenu v-else-if="openedItem.id === 'settings'" />
-        <DefaultMenu v-else :items="sortedChildren" @close="$emit('close')" @select-item="selectMenuItem" />
+        <DefaultMenu v-else :items="sortedFilteredChildren" @close="$emit('close')" @select-item="selectMenuItem" />
         <!-- view all catalog link -->
         <template v-if="openedItem?.isCatalogItem && openedItem?.route">
           <div class="my-5 h-px bg-gradient-to-r from-accent to-transparent"></div>
@@ -85,7 +85,7 @@ defineEmits<IEmits>();
 const { t } = useI18n();
 
 const { supportedLocales } = useLanguages();
-const { isAuthenticated, organization } = useUser();
+const { isAuthenticated, organization, isCorporateMember, isMultiOrganization } = useUser();
 const { mobilePreSelectedMenuItem } = useNavigations();
 const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
   isAuthenticated.value
@@ -111,9 +111,19 @@ const openedItem = computed<ExtendedMenuLinkType | undefined>(
   () => openedMenuItemsStack.value[openedMenuItemsStack.value.length - 1],
 );
 
-const sortedChildren = computed(() => {
-  return (openedItem.value?.children || []).slice().sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+const sortedFilteredChildren = computed(() => {
+  const sortedChildren = (openedItem.value?.children || [])
+    .slice()
+    .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+  return sortedChildren.filter(canShowItem);
 });
+
+function canShowItem(item: ExtendedMenuLinkType) {
+  if (item.id === "addresses" && isCorporateMember.value) {
+    return false;
+  }
+  return !(item.id === "contact-organizations" && !isMultiOrganization.value);
+}
 
 function goBack() {
   openedMenuItemsStack.value.pop();

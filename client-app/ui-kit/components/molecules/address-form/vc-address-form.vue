@@ -50,10 +50,7 @@
       </div>
 
       <!-- Divider -->
-      <div
-        v-if="withPersonalInfo"
-        class="-mx-96 mb-6 mt-8 border-t border-primary md:mx-9 md:mb-4 md:mt-6 md:border-l"
-      />
+      <div v-if="withPersonalInfo" class="-mx-6 mb-6 mt-8 border-t border-primary md:-my-0 md:mx-9 md:border-l" />
 
       <div :class="{ 'md:w-1/2': withPersonalInfo }">
         <VcInput

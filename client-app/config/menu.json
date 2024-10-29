@@ -208,6 +208,13 @@
             "priority": 0
           },
           {
+            "id": "contact-organizations",
+            "title": "common.labels.my_organizations",
+            "icon": "/static/images/dashboard/icons/company.svg#main",
+            "children": [{}],
+            "priority": 10
+          },
+          {
             "route": {
               "name": "ChangePassword"
             },
