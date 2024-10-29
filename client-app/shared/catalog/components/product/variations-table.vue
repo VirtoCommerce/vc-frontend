@@ -284,7 +284,7 @@ watchEffect(() => {
     }
 
     &--property {
-      @apply px-4 py-2.5 text-center break-words;
+      @apply px-2 py-2.5 text-center break-words;
     }
 
     &--in-stock {
