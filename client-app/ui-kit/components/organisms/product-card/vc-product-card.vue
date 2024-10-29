@@ -1,6 +1,5 @@
 <template>
   <div
-    ref="root"
     :class="[
       'vc-product-card',
       `vc-product-card--view-mode--${viewMode}`,
@@ -11,11 +10,13 @@
     ]"
   >
     <div class="vc-product-card__wrapper">
-      <div ref="imageContainer" class="vc-product-card__image-container">
-        <slot name="image" />
+      <div ref="media" class="vc-product-card__media">
+        <slot name="media" />
       </div>
 
-      <slot />
+      <div ref="content" class="vc-product-card__content">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -34,16 +35,16 @@ withDefaults(defineProps<IProps>(), {
   background: true,
 });
 
-const root = useTemplateRef("root");
-const imageContainer = useTemplateRef("imageContainer");
+const media = useTemplateRef("media");
+const content = useTemplateRef("content");
 
 onMounted(() => {
-  if (root.value instanceof HTMLElement) {
-    const elements = root.value.querySelectorAll(".vc-product-image, .vc-product-actions");
+  if (content.value instanceof HTMLElement) {
+    const elements = content.value.querySelectorAll(".vc-product-image, .vc-product-actions");
 
     elements.forEach((element) => {
-      if (element instanceof HTMLElement && imageContainer.value instanceof HTMLElement) {
-        imageContainer.value?.appendChild(element);
+      if (element instanceof HTMLElement && media.value instanceof HTMLElement) {
+        media.value?.appendChild(element);
       }
     });
   }
@@ -57,8 +58,12 @@ onMounted(() => {
   $border: "";
   $grid: "";
   $list: "";
-  $titleCenter: "";
-
+  $titleOnly: "";
+  $titleActions: "";
+  $titleVendor: "";
+  $titleVendorActions: "";
+  $titlePrice: "";
+  $noActionsNoVendor: "";
   @apply @container;
 
   &--view-mode {
@@ -108,7 +113,7 @@ onMounted(() => {
       @apply items-center;
 
       grid-template-areas:
-        "image-container"
+        "media"
         "title"
         "vendor"
         "properties"
@@ -120,21 +125,52 @@ onMounted(() => {
     #{$list} & {
       @apply items-center;
 
-      grid-template-areas:
-        "image-container title"
-        "image-container vendor"
-        "image-container price"
-        "image-container add-to-cart";
-      grid-auto-rows: repeat(4, min-content);
-      grid-auto-columns: min-content 1fr;
+      @container (max-width: theme("containers.xl")) {
+        grid-template-areas:
+          "media title"
+          "media vendor"
+          "media price"
+          "media add-to-cart";
+        grid-auto-rows: repeat(5, min-content);
+        grid-auto-columns: min-content 1fr;
 
-      &:not(:has(.vc-add-to-cart, .add-to-cart, .vc-variations-button)) {
-        grid-auto-rows: 1fr 1fr min-content min-content;
-
-        &:not(:has(.vc-product-vendor)) {
-          $titleCenter: &;
-
+        &:has(.vc-product-title:only-child):not(:has(.vc-product-actions)) {
+          $titleOnly: &;
           grid-auto-rows: 1fr min-content min-content min-content;
+        }
+
+        &:has(.vc-product-title:only-child):has(.vc-product-actions) {
+          $titleActions: &;
+          grid-auto-rows: 1fr min-content min-content 1.5rem;
+        }
+
+        &:has(.vc-product-vendor:first-child:nth-last-child(2) ~ .vc-product-title),
+        &:has(.vc-product-title:first-child:nth-last-child(2) ~ .vc-product-vendor) {
+          &:not(:has(.vc-product-actions)) {
+            $titleVendor: &;
+            grid-auto-rows: 1fr 1fr min-content min-content;
+          }
+
+          &:has(.vc-product-actions) {
+            $titleVendorActions: &;
+            grid-auto-rows: 1fr 1fr min-content 1.5rem;
+          }
+        }
+
+        &:has(.vc-product-price:first-child:nth-last-child(2) ~ .vc-product-title),
+        &:has(.vc-product-title:first-child:nth-last-child(2) ~ .vc-product-price) {
+          $titlePrice: &;
+
+          grid-auto-rows: 1fr min-content 1fr min-content;
+
+          &:has(.vc-product-actions) {
+            grid-auto-rows: 1fr min-content 1fr 1.5rem;
+          }
+        }
+
+        &:has(.vc-add-to-cart:first-child:nth-last-child(2) ~ .vc-product-title),
+        &:has(.vc-product-title:first-child:nth-last-child(2) ~ .vc-add-to-cart) {
+          grid-auto-rows: min-content min-content min-content min-content;
         }
       }
 
@@ -146,13 +182,12 @@ onMounted(() => {
         grid-auto-rows: 1fr min-content 1fr;
         grid-auto-columns: min-content 1fr min-content min-content;
 
-        &:not(:has(.vc-product-vendor, * .vc-product-actions)) {
-          $titleCenter: &;
-
+        &:not(:has(.vc-product-actions, .vc-product-vendor)) {
+          $noActionsNoVendor: &;
           grid-auto-rows: 1fr min-content min-content;
         }
 
-        &:has(.vc-product-vendor):not(:has(* .vc-product-actions)) {
+        &:has(.vc-product-vendor):not(:has(.vc-product-actions)) {
           grid-auto-rows: 1fr 1fr min-content;
         }
       }
@@ -167,8 +202,8 @@ onMounted(() => {
     }
   }
 
-  &__image-container {
-    grid-area: image-container;
+  &__media {
+    grid-area: media;
 
     @apply relative;
 
@@ -181,11 +216,15 @@ onMounted(() => {
     }
   }
 
+  &__content {
+    @apply contents;
+  }
+
   @at-root .vc-product-image {
     #{$self} & {
       grid-area: image;
 
-      @apply self-end place-content-stretch;
+      @apply self-start place-content-stretch;
     }
 
     #{$grid} & {
@@ -216,9 +255,19 @@ onMounted(() => {
 
     #{$list} & {
       @apply self-end;
+
+      &:only-child {
+        @apply self-center;
+      }
     }
 
-    #{$titleCenter} & {
+    #{$list}#{$titleActions} & {
+      @container (min-width: theme("containers.xl")) {
+        @apply self-end;
+      }
+    }
+
+    #{$list}#{$noActionsNoVendor} & {
       @apply self-center;
     }
   }
@@ -262,6 +311,10 @@ onMounted(() => {
   @at-root .vc-product-price {
     #{$self} & {
       grid-area: price;
+
+      #{$titlePrice} & {
+        @apply self-end;
+      }
     }
 
     #{$grid} & {
