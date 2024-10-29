@@ -72,6 +72,7 @@
 
         <!-- Order summary -->
         <OrderSummary
+          :changing="cartChanging"
           :cart="order"
           :no-shipping="allItemsAreDigital"
           class="order-last print:order-none print:break-after-page"
@@ -163,7 +164,7 @@ const {
   fetchFullOrder,
   clearOrder,
 } = useUserOrder();
-const { cart, addItemsToCart } = useShortCart();
+const { changing: cartChanging, cart, addItemsToCart } = useShortCart();
 const { openModal } = useModal();
 const { t } = useI18n();
 

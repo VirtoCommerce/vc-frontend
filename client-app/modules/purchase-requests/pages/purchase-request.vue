@@ -60,7 +60,7 @@
             </ProceedTo>
           </template>
         </OrderSummary>
-        <OrderSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :cart="quote" no-shipping>
+        <OrderSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :cart="quote">
           <template #footer>
             <ProceedTo :to="{ name: 'EditQuote', params: { quoteId: purchaseRequest.quoteId } }">
               {{ $t("purchase_request.go_to_quote") }}
