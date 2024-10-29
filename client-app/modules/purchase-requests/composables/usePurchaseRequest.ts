@@ -1,4 +1,5 @@
-import { computed, toValue } from "vue";
+import { useApolloClient } from "@vue/apollo-composable";
+import { computed, toValue, watch } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
 import { useUpdatePurchaseRequestByDocumentsMutation } from "@/modules/purchase-requests/api/graphql/mutations/updatePurchaseRequestByDocuments";
 import { useGetPurchaseRequestQuery } from "@/modules/purchase-requests/api/graphql/queries/getPurchaseRequest";
@@ -9,6 +10,8 @@ import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";
 import type { MaybeRefOrGetter } from "vue";
 
 export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequestId: string }>) {
+  const { client } = useApolloClient();
+
   const { result: query, refetch, loading: purchaseRequestLoading } = useGetPurchaseRequestQuery(variables);
 
   const purchaseRequest = computed(() => query?.value?.purchaseRequest);
@@ -54,6 +57,8 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
   async function fetchItems() {
     if (purchaseRequest.value?.cartId) {
       await fetchCart({ cartId: purchaseRequest.value.cartId });
+    } else if (cart.value) {
+      client.cache.evict({ id: client.cache.identify(cart.value) });
     }
     if (purchaseRequest.value?.quoteId) {
       await fetchQuote({ id: purchaseRequest.value.quoteId, ...toValue(useAllGlobalVariables()) });
@@ -79,6 +84,14 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
     await _removeQuoteItem(purchaseRequest.value!.quoteId!, itemId);
     await fetchItems();
   }
+
+  watch(
+    purchaseRequest,
+    async () => {
+      await fetchItems();
+    },
+    { immediate: true },
+  );
 
   return {
     loading: computed(() => purchaseRequestLoading.value || cartLoading.value || quoteLoading.value),

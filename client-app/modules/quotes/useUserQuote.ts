@@ -185,10 +185,6 @@ export function _useUserQuote() {
     attachedFiles,
     approveItem,
     declineItem,
-    /**
-     * @deprecated This method is no longer needed as quote variables
-     * will be garbage collected after you go away from component which use it.
-     */
     clearQuote,
     setQuoteAddress,
     fetchQuote,

@@ -74,7 +74,7 @@
 
 <script setup lang="ts">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { toRef, watchEffect } from "vue";
+import { onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePurchaseRequest } from "@/modules/purchase-requests/composables/usePurchaseRequest";
@@ -107,7 +107,6 @@ const {
   quote,
   fetchFileOptions,
   updatePurchaseRequestByDocuments,
-  fetchItems,
   changeCartItemQuantity,
   changeQuoteItemQuantity,
   removeCartItems,
@@ -132,7 +131,7 @@ function onFileDownload(file: FileType) {
   }
 }
 
-watchEffect(async () => {
-  await Promise.all([fetchFileOptions(), fetchItems()]);
+onMounted(async () => {
+  await fetchFileOptions();
 });
 </script>
