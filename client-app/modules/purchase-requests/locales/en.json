@@ -41,7 +41,7 @@
   },
   "pages": {
     "bulk_order": {
-      "from_file_tab": "Upload file"
+      "from_file_tab": "From file"
     }
   }
 }

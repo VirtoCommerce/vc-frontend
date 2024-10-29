@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav class="flex gap-1">
     <button
       v-for="(item, index) in items"
       :key="index"
@@ -9,14 +9,14 @@
       class="appearance-none disabled:opacity-40"
       @click="select(item)"
     >
-      <slot name="item" v-bind="{ item, index, isActive: isActiveItem(item) }">
-        <span
-          :class="{ [isDisabled ? '!border-neutral-400' : '!border-primary']: isActiveItem(item) }"
-          class="mx-2.5 block appearance-none border-b-[3px] border-transparent pb-2.5 pt-3 font-bold"
-        >
+      <span
+        :class="{ 'rounded-sm bg-additional-50 shadow-md': isActiveItem(item) }"
+        class="block appearance-none px-1.5 py-2 text-primary-700"
+      >
+        <slot name="item" v-bind="{ item, index, isActive: isActiveItem(item) }">
           {{ textField && isItemObject(item) ? item[textField] : item }}
-        </span>
-      </slot>
+        </slot>
+      </span>
     </button>
   </nav>
 </template>

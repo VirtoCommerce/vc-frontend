@@ -6,15 +6,10 @@
       {{ $t("pages.bulk_order.title") }}
     </VcTypography>
 
-    <VcTabs v-model="activeTab" :items="tabs" text-field="label" value-field="id" class="mb-5 flex gap-2">
+    <VcTabs v-model="activeTab" :items="tabs" text-field="label" value-field="id" class="mb-5">
       <template #item="{ item, isActive }">
-        <span
-          :class="{ 'rounded-sm bg-additional-50 shadow-md': isActive }"
-          class="block appearance-none p-1.5 text-primary-700"
-        >
-          <VcIcon class="me-1 text-primary-500" :name="item['icon']" />
-          <span :class="{ 'text-additional-950': isActive }">{{ item["label"] }}</span>
-        </span>
+        <VcIcon class="me-1 text-primary-500" :name="item['icon']" />
+        <span :class="{ 'text-additional-950': isActive }">{{ item["label"] }}</span>
       </template>
     </VcTabs>
 
