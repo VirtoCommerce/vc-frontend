@@ -1,12 +1,11 @@
 <template>
-  <span>{{ value?.amount ? prefix : "" }}{{ value?.formattedAmount ?? $t("common.labels.not_available") }}</span>
+  <span>{{ value?.formattedAmount ?? "N/A" }}</span>
 </template>
 
 <script setup lang="ts">
 import type { MoneyType } from "@/core/api/graphql/types";
 
 interface IProps {
-  prefix?: string;
   value?: MoneyType;
 }
 
