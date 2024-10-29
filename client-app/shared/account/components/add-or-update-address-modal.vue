@@ -11,12 +11,12 @@
         @save="saveAddress"
       >
         <template #append="{ dirty, valid }">
-          <div class="flex flex-wrap items-center justify-center gap-4 py-3 *:max-sm:flex-1 sm:justify-end">
-            <VcButton min-width="9rem" color="secondary" variant="outline" @click="close">
+          <div class="flex flex-wrap items-center justify-between gap-4 pt-2 *:max-xs:flex-1">
+            <VcButton min-width="8rem" color="secondary" variant="outline" @click="close">
               {{ $t("common.buttons.cancel") }}
             </VcButton>
 
-            <VcButton min-width="9rem" :disabled="!dirty || !valid" :loading="loading" type="submit">
+            <VcButton min-width="8rem" :disabled="!dirty || !valid" :loading="loading" type="submit">
               {{ saveButtonLabel }}
             </VcButton>
           </div>

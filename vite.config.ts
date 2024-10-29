@@ -106,5 +106,13 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "^/signin-google": getProxy(process.env.APP_BACKEND_URL),
       },
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler",
+          quietDeps: true,
+        },
+      },
+    },
   };
 });
