@@ -598,6 +598,21 @@ export type CreateQuoteFromCartCommandType = {
   comment: Scalars['String']['input'];
 };
 
+export type CreateReviewCommandType = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  rating: Scalars['Int']['input'];
+  review: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
+export type CreateReviewResult = {
+  id?: Maybe<Scalars['String']['output']>;
+  userName?: Maybe<Scalars['String']['output']>;
+  /** A set of errors in case the review is invalid */
+  validationErrors: Array<ReviewValidationErrorType>;
+};
+
 export type CurrencyType = {
   /** Currency code may be used ISO 4217 */
   code: Scalars['String']['output'];
@@ -745,7 +760,7 @@ export type CustomerReview = {
   review: Scalars['String']['output'];
   reviewStatus?: Maybe<CustomerReviewStatus>;
   storeId: Scalars['String']['output'];
-  title: Scalars['String']['output'];
+  title?: Maybe<Scalars['String']['output']>;
   userId: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };
@@ -853,6 +868,21 @@ export type DiscountType = {
   promotionId?: Maybe<Scalars['String']['output']>;
 };
 
+export type DynamicContentItemType = {
+  contentType: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  /** Dynamic content dynamic property values */
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  priority: Scalars['Int']['output'];
+};
+
+
+export type DynamicContentItemTypeDynamicPropertiesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
 export type DynamicPropertyConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -943,6 +973,11 @@ export type ErrorParameterType = {
   key: Scalars['String']['output'];
   /** Value */
   value: Scalars['String']['output'];
+};
+
+export type EvaluateDynamicContentResultType = {
+  items?: Maybe<Array<Maybe<DynamicContentItemType>>>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Facet = {
@@ -2865,6 +2900,7 @@ export type Mutations = {
   createPurchaseRequestFromDocuments?: Maybe<PurchaseRequestType>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
+  createReview?: Maybe<CreateReviewResult>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
   declineQuoteRequest?: Maybe<QuoteType>;
@@ -3169,6 +3205,11 @@ export type MutationsCreateQuoteArgs = {
 
 export type MutationsCreateQuoteFromCartArgs = {
   command: CreateQuoteFromCartCommandType;
+};
+
+
+export type MutationsCreateReviewArgs = {
+  command: CreateReviewCommandType;
 };
 
 
@@ -4500,6 +4541,7 @@ export type PushMessageType = {
 };
 
 export type Query = {
+  canLeaveFeedback?: Maybe<Scalars['Boolean']['output']>;
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
   categories?: Maybe<CategoryConnection>;
@@ -4513,6 +4555,7 @@ export type Query = {
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
+  evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
   fcmSettings?: Maybe<FcmSettingsType>;
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
@@ -4558,6 +4601,13 @@ export type Query = {
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
   wishlist?: Maybe<WishlistType>;
   wishlists?: Maybe<WishlistConnection>;
+};
+
+
+export type QueryCanLeaveFeedbackArgs = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 
@@ -4673,6 +4723,18 @@ export type QueryDynamicPropertyArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   idOrName: Scalars['String']['input'];
   objectType?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryEvaluateDynamicContentArgs = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  placeName?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  toDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -5277,6 +5339,13 @@ export type RequestRegistrationType = {
   result?: Maybe<AccountCreationResultType>;
 };
 
+export type ReviewValidationErrorType = {
+  /** Error code */
+  errorCode?: Maybe<Scalars['String']['output']>;
+  /** Error message */
+  errorMessage?: Maybe<Scalars['String']['output']>;
+};
+
 export type RoleType = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -5604,11 +5673,11 @@ export type VariationType = {
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
   /** Product raiting */
-  rating: Rating;
+  rating?: Maybe<Rating>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
-  vendor: CommonVendor;
+  vendor?: Maybe<CommonVendor>;
 };
 
 /** Vendor Info */
