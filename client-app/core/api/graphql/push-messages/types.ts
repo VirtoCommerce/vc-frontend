@@ -868,21 +868,6 @@ export type DiscountType = {
   promotionId?: Maybe<Scalars['String']['output']>;
 };
 
-export type DynamicContentItemType = {
-  contentType: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  /** Dynamic content dynamic property values */
-  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  priority: Scalars['Int']['output'];
-};
-
-
-export type DynamicContentItemTypeDynamicPropertiesArgs = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-};
-
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
 export type DynamicPropertyConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -973,11 +958,6 @@ export type ErrorParameterType = {
   key: Scalars['String']['output'];
   /** Value */
   value: Scalars['String']['output'];
-};
-
-export type EvaluateDynamicContentResultType = {
-  items?: Maybe<Array<Maybe<DynamicContentItemType>>>;
-  totalCount: Scalars['Int']['output'];
 };
 
 export type Facet = {
@@ -4555,7 +4535,6 @@ export type Query = {
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
-  evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
   fcmSettings?: Maybe<FcmSettingsType>;
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
@@ -4723,18 +4702,6 @@ export type QueryDynamicPropertyArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   idOrName: Scalars['String']['input'];
   objectType?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryEvaluateDynamicContentArgs = {
-  categoryId?: InputMaybe<Scalars['String']['input']>;
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-  placeName?: InputMaybe<Scalars['String']['input']>;
-  productId?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  toDate?: InputMaybe<Scalars['DateTime']['input']>;
-  userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -5183,7 +5150,6 @@ export type QuoteTotalsType = {
 
 export type QuoteType = {
   addresses: Array<QuoteAddressType>;
-  adjustment: MoneyType;
   attachments: Array<QuoteAttachmentType>;
   cancelReason?: Maybe<Scalars['String']['output']>;
   cancelledDate?: Maybe<Scalars['DateTime']['output']>;
@@ -5195,7 +5161,6 @@ export type QuoteType = {
   currency: CurrencyType;
   customerId?: Maybe<Scalars['String']['output']>;
   customerName?: Maybe<Scalars['String']['output']>;
-  discountTotal: MoneyType;
   /** Quote dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
   employeeId?: Maybe<Scalars['String']['output']>;
@@ -5218,20 +5183,12 @@ export type QuoteType = {
   objectType?: Maybe<Scalars['String']['output']>;
   organizationId?: Maybe<Scalars['String']['output']>;
   organizationName?: Maybe<Scalars['String']['output']>;
-  originalSubTotal: MoneyType;
   reminderDate?: Maybe<Scalars['DateTime']['output']>;
   shipmentMethod?: Maybe<QuoteShipmentMethodType>;
-  shippingSubTotal: MoneyType;
-  shippingTotal: MoneyType;
   status?: Maybe<Scalars['String']['output']>;
   storeId: Scalars['String']['output'];
-  subTotal: MoneyType;
   tag?: Maybe<Scalars['String']['output']>;
   taxDetails: Array<QuoteTaxDetailType>;
-  taxTotal: MoneyType;
-  total: MoneyType;
-  totalWithTax: MoneyType;
-  /** @deprecated Use separate fields instead */
   totals: QuoteTotalsType;
 };
 
@@ -5528,16 +5485,25 @@ export type StoreSettingsType = {
   emailVerificationRequired: Scalars['Boolean']['output'];
   /** Environment name */
   environmentName: Scalars['String']['output'];
-  /** SPA */
+  /**
+   * SPA
+   * @deprecated Client application should use own business logic for SPA detection.
+   */
   isSpa: Scalars['Boolean']['output'];
   modules: Array<ModuleSettingsType>;
   /** Password requirements */
   passwordRequirements?: Maybe<PasswordOptionsType>;
-  /** Quotes enabled */
+  /**
+   * Quotes enabled
+   * @deprecated Use Quotes.EnableQuotes public property instead.
+   */
   quotesEnabled: Scalars['Boolean']['output'];
   /** SEO links */
   seoLinkType: Scalars['String']['output'];
-  /** Store ID */
+  /**
+   * Subscription enabled
+   * @deprecated Use Subscription.EnableSubscriptions public property instead.
+   */
   subscriptionEnabled: Scalars['Boolean']['output'];
   /** Tax calculation enabled */
   taxCalculationEnabled: Scalars['Boolean']['output'];

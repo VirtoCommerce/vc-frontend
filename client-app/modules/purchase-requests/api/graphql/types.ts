@@ -598,6 +598,21 @@ export type CreateQuoteFromCartCommandType = {
   comment: Scalars['String']['input'];
 };
 
+export type CreateReviewCommandType = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  rating: Scalars['Int']['input'];
+  review: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
+export type CreateReviewResult = {
+  id?: Maybe<Scalars['String']['output']>;
+  userName?: Maybe<Scalars['String']['output']>;
+  /** A set of errors in case the review is invalid */
+  validationErrors: Array<ReviewValidationErrorType>;
+};
+
 export type CurrencyType = {
   /** Currency code may be used ISO 4217 */
   code: Scalars['String']['output'];
@@ -745,7 +760,7 @@ export type CustomerReview = {
   review: Scalars['String']['output'];
   reviewStatus?: Maybe<CustomerReviewStatus>;
   storeId: Scalars['String']['output'];
-  title: Scalars['String']['output'];
+  title?: Maybe<Scalars['String']['output']>;
   userId: Scalars['String']['output'];
   userName: Scalars['String']['output'];
 };
@@ -2865,6 +2880,7 @@ export type Mutations = {
   createPurchaseRequestFromDocuments?: Maybe<PurchaseRequestType>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
+  createReview?: Maybe<CreateReviewResult>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
   declineQuoteRequest?: Maybe<QuoteType>;
@@ -3169,6 +3185,11 @@ export type MutationsCreateQuoteArgs = {
 
 export type MutationsCreateQuoteFromCartArgs = {
   command: CreateQuoteFromCartCommandType;
+};
+
+
+export type MutationsCreateReviewArgs = {
+  command: CreateReviewCommandType;
 };
 
 
@@ -4500,6 +4521,7 @@ export type PushMessageType = {
 };
 
 export type Query = {
+  canLeaveFeedback?: Maybe<Scalars['Boolean']['output']>;
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
   categories?: Maybe<CategoryConnection>;
@@ -4558,6 +4580,13 @@ export type Query = {
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
   wishlist?: Maybe<WishlistType>;
   wishlists?: Maybe<WishlistConnection>;
+};
+
+
+export type QueryCanLeaveFeedbackArgs = {
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 
@@ -5121,7 +5150,6 @@ export type QuoteTotalsType = {
 
 export type QuoteType = {
   addresses: Array<QuoteAddressType>;
-  adjustment: MoneyType;
   attachments: Array<QuoteAttachmentType>;
   cancelReason?: Maybe<Scalars['String']['output']>;
   cancelledDate?: Maybe<Scalars['DateTime']['output']>;
@@ -5133,7 +5161,6 @@ export type QuoteType = {
   currency: CurrencyType;
   customerId?: Maybe<Scalars['String']['output']>;
   customerName?: Maybe<Scalars['String']['output']>;
-  discountTotal: MoneyType;
   /** Quote dynamic property values */
   dynamicProperties: Array<DynamicPropertyValueType>;
   employeeId?: Maybe<Scalars['String']['output']>;
@@ -5156,20 +5183,12 @@ export type QuoteType = {
   objectType?: Maybe<Scalars['String']['output']>;
   organizationId?: Maybe<Scalars['String']['output']>;
   organizationName?: Maybe<Scalars['String']['output']>;
-  originalSubTotal: MoneyType;
   reminderDate?: Maybe<Scalars['DateTime']['output']>;
   shipmentMethod?: Maybe<QuoteShipmentMethodType>;
-  shippingSubTotal: MoneyType;
-  shippingTotal: MoneyType;
   status?: Maybe<Scalars['String']['output']>;
   storeId: Scalars['String']['output'];
-  subTotal: MoneyType;
   tag?: Maybe<Scalars['String']['output']>;
   taxDetails: Array<QuoteTaxDetailType>;
-  taxTotal: MoneyType;
-  total: MoneyType;
-  totalWithTax: MoneyType;
-  /** @deprecated Use separate fields instead */
   totals: QuoteTotalsType;
 };
 
@@ -5275,6 +5294,13 @@ export type RequestRegistrationType = {
   organization?: Maybe<RegisterOrganizationType>;
   /** Account creation result */
   result?: Maybe<AccountCreationResultType>;
+};
+
+export type ReviewValidationErrorType = {
+  /** Error code */
+  errorCode?: Maybe<Scalars['String']['output']>;
+  /** Error message */
+  errorMessage?: Maybe<Scalars['String']['output']>;
 };
 
 export type RoleType = {
@@ -5459,16 +5485,25 @@ export type StoreSettingsType = {
   emailVerificationRequired: Scalars['Boolean']['output'];
   /** Environment name */
   environmentName: Scalars['String']['output'];
-  /** SPA */
+  /**
+   * SPA
+   * @deprecated Client application should use own business logic for SPA detection.
+   */
   isSpa: Scalars['Boolean']['output'];
   modules: Array<ModuleSettingsType>;
   /** Password requirements */
   passwordRequirements?: Maybe<PasswordOptionsType>;
-  /** Quotes enabled */
+  /**
+   * Quotes enabled
+   * @deprecated Use Quotes.EnableQuotes public property instead.
+   */
   quotesEnabled: Scalars['Boolean']['output'];
   /** SEO links */
   seoLinkType: Scalars['String']['output'];
-  /** Store ID */
+  /**
+   * Subscription enabled
+   * @deprecated Use Subscription.EnableSubscriptions public property instead.
+   */
   subscriptionEnabled: Scalars['Boolean']['output'];
   /** Tax calculation enabled */
   taxCalculationEnabled: Scalars['Boolean']['output'];
@@ -5604,11 +5639,11 @@ export type VariationType = {
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
   /** Product raiting */
-  rating: Rating;
+  rating?: Maybe<Rating>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
   /** Product vendor */
-  vendor: CommonVendor;
+  vendor?: Maybe<CommonVendor>;
 };
 
 /** Vendor Info */
