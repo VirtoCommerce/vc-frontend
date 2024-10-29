@@ -5159,6 +5159,7 @@ export type QuoteType = {
   originalSubTotal: MoneyType;
   reminderDate?: Maybe<Scalars['DateTime']['output']>;
   shipmentMethod?: Maybe<QuoteShipmentMethodType>;
+  shippingSubTotal: MoneyType;
   shippingTotal: MoneyType;
   status?: Maybe<Scalars['String']['output']>;
   storeId: Scalars['String']['output'];

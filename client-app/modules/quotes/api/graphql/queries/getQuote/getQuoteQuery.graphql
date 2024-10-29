@@ -22,27 +22,6 @@ query GetQuote($id: String, $storeId: String, $userId: String, $currencyCode: St
     addresses {
       ...quoteAddressFields
     }
-    discountTotal {
-      ...money
-    }
-    shippingTotal {
-      ...money
-    }
-    subTotal {
-      ...money
-    }
-    taxTotal {
-      ...money
-    }
-    total {
-      ...money
-    }
-    totalWithTax {
-      ...money
-    }
-    adjustment {
-      ...money
-    }
     totals {
       grandTotalInclTax {
         ...money

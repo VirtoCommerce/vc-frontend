@@ -53,20 +53,18 @@
           :no-shipping="allCartItemsAreDigital"
         >
           <template #footer>
-            <ProceedTo
-              :to="{ name: 'Checkout', params: { cartType: 'PurchaseRequest', cartName: purchaseRequest.number } }"
-            >
+            <ProceedTo :to="{ name: 'Cart', params: { cartId: purchaseRequest.cartId } }">
               {{ $t("common.buttons.go_to_checkout") }}
             </ProceedTo>
           </template>
         </OrderSummary>
-        <OrderSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :cart="quote" no-shipping>
+        <QuoteSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :quote="quote">
           <template #footer>
             <ProceedTo :to="{ name: 'EditQuote', params: { quoteId: purchaseRequest.quoteId } }">
               {{ $t("purchase_request.go_to_quote") }}
             </ProceedTo>
           </template>
-        </OrderSummary>
+        </QuoteSummary>
       </template>
     </VcLayoutWithRightSidebar>
   </div>
@@ -84,6 +82,7 @@ import { OrderSummary, ProceedTo } from "@/shared/checkout/components";
 import { downloadFile } from "@/shared/files/utils";
 import { BackButtonInHeader } from "@/shared/layout";
 import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
+import QuoteSummary from "@/modules/quotes/components/quote-summary.vue";
 import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
 interface IProps {
