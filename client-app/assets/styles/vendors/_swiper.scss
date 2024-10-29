@@ -1,7 +1,7 @@
-@import "swiper/scss";
-@import "swiper/scss/pagination";
-@import "swiper/scss/navigation";
-@import "swiper/scss/thumbs";
+@use "swiper/scss";
+@use "swiper/scss/pagination";
+@use "swiper/scss/navigation";
+@use "swiper/scss/thumbs";
 
 :root {
   --swiper-theme-color: theme("colors.primary.500");

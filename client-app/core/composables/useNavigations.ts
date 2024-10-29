@@ -1,7 +1,7 @@
 import clone from "lodash/clone";
 import mergeWith from "lodash/mergeWith";
 import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
-import { useFetch } from "@/core/api/common";
+import menuData from "@/config/menu.json";
 import { getChildCategories, getMenu } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
@@ -96,15 +96,6 @@ export function useNavigations() {
   const { themeContext } = useThemeContext();
   const { getSettingValue } = useModuleSettings(MODULE_XAPI_KEYS.MODULE_ID);
 
-  async function fetchMenuSchema() {
-    try {
-      const { data } = await useFetch("/config/menu.json").get().json<MenuType>();
-      menuSchema.value = data.value;
-    } catch (e) {
-      Logger.error(`${useNavigations.name}.${fetchMenuSchema.name}`, e);
-    }
-  }
-
   async function fetchFooterLinks() {
     try {
       footerLinks.value = (await getMenu("footer-links")).map((item) => convertToExtendedMenuLink(item, false));
@@ -154,7 +145,8 @@ export function useNavigations() {
 
   async function fetchMenus() {
     loading.value = true;
-    await Promise.all([fetchMenuSchema(), fetchCatalogMenu(), fetchFooterLinks()]);
+    menuSchema.value = menuData as MenuType;
+    await Promise.all([fetchCatalogMenu(), fetchFooterLinks()]);
     loading.value = false;
   }
 

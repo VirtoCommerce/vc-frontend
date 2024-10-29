@@ -36,7 +36,7 @@
 
           <template #append>
             <VcBadge variant="outline" size="sm" rounded color="secondary">
-              {{ $n(item.count as number, "decimal") }}
+              {{ $n(Number(item.count), "decimal") }}
             </VcBadge>
           </template>
         </VcMenuItem>
@@ -115,24 +115,26 @@
             close();
           "
         >
-          <VcCheckbox
-            v-model="item.selected"
-            size="xs"
-            :disabled="loading"
-            @change="
-              changeFacetValues();
-              close();
-            "
-            @click.stop
-          />
+          <template #prepend>
+            <VcCheckbox
+              v-model="item.selected"
+              size="xs"
+              :disabled="loading"
+              @change="
+                changeFacetValues();
+                close();
+              "
+              @click.stop
+            />
+          </template>
 
-          <div class="facet-filter-dropdown__label">
-            {{ item.label }}
-          </div>
+          {{ item.label }}
 
-          <VcBadge variant="outline" size="sm" rounded color="secondary">
-            {{ $n(item.count as number, "decimal") }}
-          </VcBadge>
+          <template #append>
+            <VcBadge variant="outline" size="sm" rounded color="secondary">
+              {{ $n(item.count as number, "decimal") }}
+            </VcBadge>
+          </template>
         </VcMenuItem>
       </div>
     </template>
@@ -142,7 +144,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { cloneDeep } from "lodash";
-import { computed, ref, watchEffect, shallowRef } from "vue";
+import { computed, ref, watchEffect, shallowRef, toRef } from "vue";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
 
 interface IEmits {
@@ -171,8 +173,7 @@ const isMobile = breakpoints.smaller("lg");
 const MAX_HEIGHT = ITEM_HEIGHT * (MAX_ITEMS_VISIBLE + 1) + INNER_MARGIN;
 const maxHeight = computed(() => (isMobile.value ? "unset" : `${MAX_HEIGHT}px`));
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const facet = ref<FacetItemType>(cloneDeep(props.facet));
+const facet = ref<FacetItemType>(cloneDeep(toRef(props, "facet").value));
 
 function changeFacetValues(): void {
   emit("update:facet", facet.value);
@@ -270,10 +271,6 @@ const hasSelected = computed(() => selectedFiltersCount.value > 0);
 
   &__search {
     @apply p-3 border-b;
-  }
-
-  &__label {
-    @apply flex-grow;
   }
 
   &__append {
