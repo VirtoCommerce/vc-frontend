@@ -101,7 +101,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-const { quote, billingAddress, approveItem, declineItem, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
+const { quote, billingAddress, approveItem, declineItem, shippingAddress, fetchQuote } = useUserQuote();
 const notification = useNotifications();
 const router = useRouter();
 
@@ -138,7 +138,6 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 watchEffect(async () => {
-  clearQuote();
   await fetchQuote({ id: props.quoteId });
 });
 
