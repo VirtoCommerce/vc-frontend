@@ -66,7 +66,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/search", name: "Search", component: Search },
   { path: "/bulk-order", name: "BulkOrder", component: BulkOrder },
   { path: "/compare", name: "CompareProducts", component: CompareProducts },
-  { path: "/cart/:cartId?", name: "Cart", component: Cart },
+  { path: "/cart/:cartId?", name: "Cart", component: Cart, props: true },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
   ...checkoutRoutes,
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },

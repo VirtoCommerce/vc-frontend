@@ -75,7 +75,7 @@
 
             <ProceedTo
               v-if="$cfg.checkout_multistep_enabled"
-              :to="{ name: 'Checkout' }"
+              :to="{ name: 'Checkout', params: { cartId } }"
               :disabled="hasOnlyUnselectedLineItems"
             >
               {{ $t("common.buttons.go_to_checkout") }}
@@ -163,6 +163,7 @@ import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browse
 interface IProps {
   cartId?: string;
 }
+
 const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});

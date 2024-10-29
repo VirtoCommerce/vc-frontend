@@ -33,9 +33,10 @@ export const checkoutRoutes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: "/checkout",
+    path: "/checkout/:cartId?",
     name: "Checkout",
     component: Checkout,
+    props: true,
     children: [
       {
         path: "shipping",
