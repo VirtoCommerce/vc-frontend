@@ -4507,6 +4507,7 @@
         "kind": "INPUT_OBJECT",
         "name": "CreateReviewCommandType",
         "description": null,
+        "isOneOf": false,
         "fields": null,
         "inputFields": [
           {
@@ -4598,6 +4599,7 @@
         "kind": "OBJECT",
         "name": "CreateReviewResult",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "id",
@@ -7058,6 +7060,7 @@
         "kind": "OBJECT",
         "name": "DynamicContentItemType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "contentType",
@@ -7756,6 +7759,7 @@
         "kind": "OBJECT",
         "name": "EvaluateDynamicContentResultType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "items",
@@ -39733,6 +39737,7 @@
         "kind": "OBJECT",
         "name": "ReviewValidationErrorType",
         "description": null,
+        "isOneOf": null,
         "fields": [
           {
             "name": "errorCode",
@@ -42548,13 +42553,9 @@
             "description": "Product raiting",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Rating",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Rating",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -42576,13 +42577,9 @@
             "description": "Product vendor",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "CommonVendor",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "CommonVendor",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
