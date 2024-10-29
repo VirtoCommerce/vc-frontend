@@ -7,6 +7,7 @@ export interface PageContent {
   id: string;
   name?: string;
   type: string;
+  hidden?: boolean;
   blocks?: {
     id: string;
     name?: string;
