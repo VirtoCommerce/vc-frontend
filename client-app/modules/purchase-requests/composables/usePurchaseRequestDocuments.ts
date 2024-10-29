@@ -26,7 +26,7 @@ export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedF
     validateFiles();
     await uploadFiles();
 
-    const documentUrls = files.value.filter(isUploadedFile).map((x) => x.url!);
+    const documentUrls = files.value.filter(isUploadedFile).map((x) => x.url);
     const result = await callback(documentUrls);
 
     processing.value = false;
