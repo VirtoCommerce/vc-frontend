@@ -14,7 +14,7 @@
         class="block appearance-none px-1.5 py-2 text-primary-700"
       >
         <slot name="item" v-bind="{ item, index, isActive: isActiveItem(item) }">
-          <span :class="{ 'text-additional-950': isActive }">{{
+          <span :class="{ 'text-additional-950': isActiveItem(item) }">{{
             textField && isItemObject(item) ? item[textField] : item
           }}</span>
         </slot>
