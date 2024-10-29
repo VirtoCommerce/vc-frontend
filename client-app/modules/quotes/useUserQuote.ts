@@ -43,6 +43,10 @@ export function _useUserQuote() {
     ),
   );
 
+  function clearQuote(): void {
+    quote.value = undefined;
+  }
+
   function setQuoteAddress(newAddress: QuoteAddressType): void {
     remove(quote.value!.addresses, (address: QuoteAddressType) => address.addressType === newAddress.addressType);
     quote.value!.addresses.push(newAddress);
@@ -181,6 +185,11 @@ export function _useUserQuote() {
     attachedFiles,
     approveItem,
     declineItem,
+    /**
+     * @deprecated This method is no longer needed as quote variables
+     * will be garbage collected after you go away from component which use it.
+     */
+    clearQuote,
     setQuoteAddress,
     fetchQuote,
     changeComment,
