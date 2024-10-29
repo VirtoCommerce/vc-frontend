@@ -1,0 +1,49 @@
+#import "../../../common/fragments/money.graphql"
+#import "../../fragments/property.graphql"
+#import "../../fragments/availabilityData.graphql"
+
+query GetProductConfigurations($productId: String!, $storeId: String!, $currencyCode: String!, $cultureName: String) {
+  productConfiguration(
+    storeId: $storeId
+    productId: $productId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+  ) {
+    configurationSections {
+      name
+      description
+      isRequired
+      quantity
+      products {
+        name
+        id
+        code
+        productType
+        slug
+        imgSrc
+        availabilityData {
+          ...availabilityData
+        }
+        price {
+          actual {
+            ...money
+          }
+          discountAmount {
+            amount
+            formattedAmount
+          }
+          sale {
+            amount
+            formattedAmount
+          }
+          list {
+            ...money
+          }
+        }
+        properties {
+          ...property
+        }
+      }
+    }
+  }
+}

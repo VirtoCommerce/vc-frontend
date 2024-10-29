@@ -461,8 +461,18 @@ export type CommonVendor = {
   rating?: Maybe<Rating>;
 };
 
+export type ConfigurableProductOptionInput = {
+  productId: Scalars['String']['input'];
+  quantity: Scalars['Int']['input'];
+};
+
 export type ConfigurationQueryResponseType = {
   configurationSections?: Maybe<Array<Maybe<ConfigurationSectionType>>>;
+};
+
+export type ConfigurationSectionInput = {
+  sectionId: Scalars['String']['input'];
+  value?: InputMaybe<ConfigurableProductOptionInput>;
 };
 
 export type ConfigurationSectionType = {
@@ -474,6 +484,27 @@ export type ConfigurationSectionType = {
   name?: Maybe<Scalars['String']['output']>;
   products?: Maybe<Array<Maybe<Product>>>;
   quantity?: Maybe<Scalars['Int']['output']>;
+};
+
+export type ConfiguredLineItemType = {
+  /** Currency */
+  currency: CurrencyType;
+  /** Total discount */
+  discountTotal: MoneyType;
+  /** Total discount with tax */
+  discountTotalWithTax: MoneyType;
+  /** Total extended price */
+  extendedPriceTotal: MoneyType;
+  /** Total extended price with tax */
+  extendedPriceTotalWithTax: MoneyType;
+  /** Shopping cart subtotal */
+  subTotal: MoneyType;
+  /** Subtotal with tax */
+  subTotalWithTax: MoneyType;
+  /** Total tax */
+  taxTotal: MoneyType;
+  /** Shopping cart total */
+  total: MoneyType;
 };
 
 export type ConfirmTaskCommandType = {
@@ -1764,6 +1795,14 @@ export type InputCreateApplicationUserType = {
   userType: Scalars['String']['input'];
 };
 
+export type InputCreateConfiguredLineItemCommand = {
+  configurableProductId: Scalars['String']['input'];
+  configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type InputCreateContactType = {
   about?: InputMaybe<Scalars['String']['input']>;
   addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
@@ -2904,6 +2943,7 @@ export type Mutations = {
   cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
   confirmTask?: Maybe<WorkTaskType>;
+  createConfiguredLineItem?: Maybe<ConfiguredLineItemType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
@@ -3168,6 +3208,11 @@ export type MutationsConfirmEmailArgs = {
 
 export type MutationsConfirmTaskArgs = {
   command: ConfirmTaskCommandType;
+};
+
+
+export type MutationsCreateConfiguredLineItemArgs = {
+  command: InputCreateConfiguredLineItemCommand;
 };
 
 
