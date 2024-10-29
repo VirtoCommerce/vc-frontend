@@ -37,7 +37,7 @@
     </VcWidget>
 
     <template #sidebar>
-      <OrderSummary :changing="checkoutChanging" :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
+      <OrderSummary :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
     </template>
   </VcLayoutWithRightSidebar>
 </template>
@@ -52,7 +52,7 @@ import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-p
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 const router = useRouter();
-const { changing: checkoutChanging, placedOrder, allOrderItemsAreDigital } = useCheckout();
+const { placedOrder, allOrderItemsAreDigital } = useCheckout();
 
 const payment = computed<PaymentInType | undefined>(() => placedOrder.value!.inPayments[0]);
 const paymentMethodType = computed<number | undefined>(() => payment.value?.paymentMethod?.paymentMethodType);

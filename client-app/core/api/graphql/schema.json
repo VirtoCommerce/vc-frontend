@@ -38823,22 +38823,6 @@
             "deprecationReason": null
           },
           {
-            "name": "shippingSubTotal",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "MoneyType",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "shippingTotal",
             "description": null,
             "args": [],

@@ -5,12 +5,7 @@
     <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
 
     <template #sidebar>
-      <OrderSummary
-        :changing="cartChanging || checkoutChanging"
-        :cart="cart!"
-        :selected-items="selectedLineItems"
-        footnote
-      >
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
         <template #footer>
           <ProceedTo
             :to="{ name: 'Billing' }"
@@ -42,7 +37,7 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
-const { changing: cartChanging, cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
-const { changing: checkoutChanging, comment, isValidShipment } = useCheckout();
+const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
+const { comment, isValidShipment } = useCheckout();
 const ga = useGoogleAnalytics();
 </script>

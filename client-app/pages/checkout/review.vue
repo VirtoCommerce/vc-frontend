@@ -111,13 +111,7 @@
     <OrderCommentSection v-if="comment" :comment="comment" readonly />
 
     <template #sidebar>
-      <OrderSummary
-        :changing="cartChanging || checkoutChanging"
-        :cart="cart!"
-        :selected-items="selectedLineItems"
-        :no-shipping="allItemsAreDigital"
-        footnote
-      >
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <!-- Promotion code -->
           <transition name="slide-fade-top" mode="in-out" appear>
@@ -159,7 +153,6 @@ import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useChecko
 import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {
-  changing: cartChanging,
   cart,
   shipment,
   payment,
@@ -170,13 +163,7 @@ const {
   hasValidationErrors,
   allItemsAreDigital,
 } = useFullCart();
-const {
-  changing: checkoutChanging,
-  billingAddressEqualsShipping,
-  comment,
-  purchaseOrderNumber,
-  isPurchaseOrderNumberEnabled,
-} = useCheckout();
+const { billingAddressEqualsShipping, comment, purchaseOrderNumber, isPurchaseOrderNumberEnabled } = useCheckout();
 const { couponCode } = useCoupon();
 
 const shippingMethodId = computed(

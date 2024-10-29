@@ -48,7 +48,49 @@
       </VcWidget>
 
       <template #sidebar>
-        <OrderSummary :title="$t('quote_details.quote_summary')" :cart="quote" />
+        <VcWidget :title="$t('quote_details.quote_summary')">
+          <div class="flex justify-between text-base">
+            <span class="font-bold">
+              {{ $t("quote_details.subTotal") }}
+            </span>
+
+            <span class="text-lg font-black text-[--price-color]">
+              <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
+            </span>
+          </div>
+          <div class="border-y py-2 text-base font-normal">
+            <div class="flex justify-between text-base">
+              {{ $t("quote_details.discountTotal") }}
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.discountTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              {{ $t("quote_details.shippingTotal") }}
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.shippingTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              {{ $t("quote_details.taxTotal") }}
+
+              <span class="">
+                <VcPriceDisplay :value="quote.totals?.taxTotal" />
+              </span>
+            </div>
+          </div>
+          <div class="flex justify-between text-base">
+            <span class="font-bold">
+              {{ $t("quote_details.total") }}
+            </span>
+
+            <span class="text-lg font-black text-success-700">
+              <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
+            </span>
+          </div>
+        </VcWidget>
 
         <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
           <div class="space-y-1">
@@ -91,7 +133,6 @@ import QuoteLineItems from "../components/quote-line-items.vue";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuote } from "../useUserQuote";
 import type { QuoteAttachmentType } from "../api/graphql/types";
-import OrderSummary from "@/shared/checkout/components/order-summary.vue";
 import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {

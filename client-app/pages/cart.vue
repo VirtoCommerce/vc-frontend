@@ -57,13 +57,7 @@
       <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
 
       <template #sidebar>
-        <OrderSummary
-          :changing="cartChanging || checkoutChanging"
-          :cart="cart!"
-          :selected-items="selectedLineItems"
-          :no-shipping="allItemsAreDigital"
-          footnote
-        >
+        <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
           <template #footer>
             <!-- Promotion code -->
             <VcActionInput
@@ -173,7 +167,6 @@ const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const {
   loading: loadingCart,
-  changing: cartChanging,
   cart,
   selectedItemIds,
   selectedLineItems,
@@ -193,14 +186,7 @@ const {
   selectCartItems,
   unselectCartItems,
 } = useFullCart();
-const {
-  loading: loadingCheckout,
-  changing: checkoutChanging,
-  comment,
-  isValidShipment,
-  isValidPayment,
-  initialize,
-} = useCheckout();
+const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, initialize } = useCheckout();
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 

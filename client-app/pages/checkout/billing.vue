@@ -3,13 +3,7 @@
     <BillingDetailsSection />
 
     <template #sidebar>
-      <OrderSummary
-        :changing="cartChanging || checkoutChanging"
-        :cart="cart!"
-        :selected-items="selectedLineItems"
-        :no-shipping="allItemsAreDigital"
-        footnote
-      >
+      <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
         <template #footer>
           <ProceedTo
             :to="{ name: 'Review' }"
@@ -41,14 +35,7 @@ import { useGoogleAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
-const {
-  changing: cartChanging,
-  cart,
-  payment,
-  selectedLineItems,
-  hasValidationErrors,
-  allItemsAreDigital,
-} = useFullCart();
-const { changing: checkoutChanging, isValidPayment } = useCheckout();
+const { cart, payment, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
+const { isValidPayment } = useCheckout();
 const ga = useGoogleAnalytics();
 </script>
