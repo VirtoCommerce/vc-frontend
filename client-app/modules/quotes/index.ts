@@ -67,7 +67,7 @@ const menuItems: DeepPartial<MenuType> = {
             id: "quotes",
             route: { name: "Quotes" },
             title: "quotes.navigation.route_name",
-            icon: "/static/images/dashboard/icons/quotes.svg#main",
+            icon: "clipboard-arrow",
             priority: 90,
           },
         ],

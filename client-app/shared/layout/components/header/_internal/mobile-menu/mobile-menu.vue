@@ -92,12 +92,12 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
     ? {
         route: { name: "Dashboard" },
         title: t("shared.layout.header.mobile.account_menu.dashboard"),
-        icon: "/static/images/dashboard/icons/dashboard-main.svg#main",
+        icon: "view-grid",
       }
     : {
         route: "/",
         title: t("shared.layout.header.menu.home"),
-        icon: "/static/images/dashboard/icons/dashboard.svg#main",
+        icon: "dashboard-2",
       },
 );
 
