@@ -77,7 +77,9 @@
       "decline": "Decline",
       "all_filters": "All filters",
       "sort_by": "Sort by",
-      "add_items_to_cart": "Add items to cart"
+      "add_items_to_cart": "Add items to cart",
+      "show_details": "Show details",
+      "send_request": "Send request"
     },
     "labels": {
       "actions": "Actions",
@@ -157,7 +159,8 @@
       "date_new_to_old": "Date, new to old",
       "date_old_to_new": "Date, old to new",
       "comments": "Comments",
-      "fields_required": "Fields are required"
+      "fields_required": "Fields are required",
+      "handle_xapi_graphql_error": "Handle xAPI GraphQL error"
     },
     "prefixes": {
       "please": "Please",
@@ -268,7 +271,8 @@
       "remove_products": "Remove products",
       "change_role": "Change role",
       "save_changes": "Save Changes",
-      "password_expired": "Password is about to expire"
+      "password_expired": "Password is about to expire",
+      "error_details": "Error details"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",

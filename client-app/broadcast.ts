@@ -20,7 +20,11 @@ import {
   passwordExpiredEvent,
   reloadAndOpenMainPage,
 } from "@/shared/broadcast";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
+import { useEnvironmentName } from "./core/composables/useEnvironmentName";
+import VcConfirmationModal from "./ui-kit/components/organisms/confirmation-modal/vc-confirmation-modal.vue";
+import type { INotification } from "@/shared/notification";
 
 let installed = false;
 
@@ -38,6 +42,8 @@ export function setupBroadcastGlobalListeners() {
   const { fetchUser, user } = useUser();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { themeContext } = useThemeContext();
+  const { environmentName } = useEnvironmentName();
+  const { closeModal, openModal } = useModal();
 
   on(pageReloadEvent, () => location.reload());
   on(reloadAndOpenMainPage, () => {
@@ -78,14 +84,41 @@ export function setupBroadcastGlobalListeners() {
       location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
     }
   });
-  on(unhandledErrorEvent, () => {
+  on(unhandledErrorEvent, (data) => {
     const { t } = globals.i18n.global;
-    notifications.error({
+
+    const notification: INotification = {
       duration: DEFAULT_NOTIFICATION_DURATION,
       group: "UnhandledError",
       singleInGroup: true,
       text: t("common.messages.unhandled_error"),
-    });
+    };
+
+    if (data) {
+      notification.text = t("common.messages.something_went_wrong");
+
+      if (environmentName?.toLowerCase() === "dev") {
+        notification.button = {
+          text: "Show details",
+          clickHandler: () => {
+            notifications.clear();
+            openModal({
+              component: VcConfirmationModal,
+              props: {
+                singleButton: true,
+                text: data as string,
+                title: t("common.titles.error_details"),
+                onConfirm() {
+                  closeModal();
+                },
+              },
+            });
+          },
+        };
+      }
+    }
+
+    notifications.error(notification);
   });
   on(openReturnUrl, () => {
     location.href = getReturnUrlValue() ?? themeContext.value.settings.default_return_url ?? "/";

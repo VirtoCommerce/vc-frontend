@@ -77,7 +77,9 @@
       "decline": "Ablehnen",
       "all_filters": "Alle Filter",
       "sort_by": "Sortieren nach",
-      "add_items_to_cart": "Artikel in den Warenkorb legen"
+      "add_items_to_cart": "Artikel in den Warenkorb legen",
+      "show_details": "Details anzeigen",
+      "send_request": "Anfrage senden"
     },
     "labels": {
       "actions": "Aktionen",
@@ -157,7 +159,8 @@
       "date_new_to_old": "Datum, neu bis alt",
       "date_old_to_new": "Datum, alt bis neu",
       "comments": "Kommentare",
-      "fields_required": "Felder sind Pflichtfelder"
+      "fields_required": "Felder sind Pflichtfelder",
+      "handle_xapi_graphql_error": "Behandeln des xAPI GraphQL-Fehlers"
     },
     "prefixes": {
       "please": "Bitte",
@@ -268,7 +271,8 @@
       "remove_products": "Produkte entfernen",
       "change_role": "Rolle ändern",
       "save_changes": "Änderungen speichern",
-      "password_expired": "Passwort läuft bald ab"
+      "password_expired": "Passwort läuft bald ab",
+      "error_details": "Details zum Fehler"
     },
     "roles": {
       "org-maintainer": "Organisationsverwalter",
