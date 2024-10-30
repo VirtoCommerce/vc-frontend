@@ -67,7 +67,7 @@
               class="vc-select__clear"
               @click="clear"
             >
-              <VcIcon name="delete-mini" size="xs" />
+              <VcIcon name="delete-2" size="xs" />
             </button>
 
             <button

@@ -54,7 +54,7 @@ const menuItems: DeepPartial<MenuType> = {
             id: "quotes",
             route: { name: "Quotes" },
             title: "quotes.navigation.route_name",
-            icon: "clipboard-copy",
+            icon: "clipboard-arrow",
             priority: 90,
           },
         ],

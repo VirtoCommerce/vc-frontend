@@ -11,7 +11,7 @@
     >
       <template #append>
         <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click="reset">
-          <VcIcon name="delete-2" size="xs" class="text-primary" />
+          <VcIcon name="delete-2" size="xs" class="fill-primary" />
         </button>
 
         <VcButton

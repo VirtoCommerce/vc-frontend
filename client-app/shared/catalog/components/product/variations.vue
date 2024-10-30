@@ -9,9 +9,10 @@
   >
     <template v-if="!isSmallScreen && isTableView" #append>
       <button type="button" @click="isFullView = !isFullView">
-        <VcIcon size="md" class="text-neutral" :name="isFullView ? 'delete-mini' : 'arrows-expand'" />
+        <VcIcon size="md" class="text-neutral" :name="isFullView ? 'delete-2' : 'arrows-expand'" />
       </button>
     </template>
+
     <div class="variations__views flex justify-between">
       <div v-if="!isSmallScreen">
         <button type="button" class="variations__view" :disabled="!isTableView" @click="toggleView">

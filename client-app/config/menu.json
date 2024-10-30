@@ -8,28 +8,28 @@
             "name": "BulkOrder"
           },
           "title": "shared.layout.header.menu.bulk_order",
-          "icon": "/static/images/dashboard/icons/bulk-order-desktop.svg#main",
+          "icon": "bulk",
           "priority": 0
         },
         {
           "id": "compare",
           "route": { "name": "CompareProducts" },
           "title": "shared.layout.header.menu.compare",
-          "icon": "/static/images/dashboard/icons/compare-desktop.svg#main",
+          "icon": "compare",
           "priority": 10
         },
         {
           "id": "lists",
           "route": { "name": "Lists" },
           "title": "shared.layout.header.menu.lists",
-          "icon": "/static/images/dashboard/icons/lists.svg#main",
+          "icon": "list-v2",
           "priority": 20
         },
         {
           "id": "orders",
           "route": { "name": "Orders" },
           "title": "shared.layout.header.menu.orders",
-          "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
+          "icon": "order",
           "priority": 30
         },
         {
@@ -38,7 +38,7 @@
             "name": "Cart"
           },
           "title": "shared.layout.header.menu.cart",
-          "icon": "/static/images/checkout/cart-desktop.svg#main",
+          "icon": "cart-2",
           "priority": 100
         }
       ],
@@ -92,7 +92,7 @@
               "name": "Orders"
             },
             "title": "shared.account.navigation.links.orders",
-            "icon": "clipboard-copy-1",
+            "icon": "clipboard-list",
             "priority": 50
           },
           {
