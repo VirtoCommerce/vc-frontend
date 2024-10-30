@@ -23,7 +23,7 @@ const menuItems: DeepPartial<MenuType> = {
               name: "Notifications",
             },
             title: "shared.layout.header.mobile.account_menu.notifications",
-            icon: "bell",
+            icon: "notification-v2",
             priority: 80,
           },
         ],
@@ -34,7 +34,7 @@ const menuItems: DeepPartial<MenuType> = {
         {
           id: "push-messages",
           title: "shared.layout.header.menu.push-messages",
-          icon: "bell",
+          icon: "notification-v2",
           priority: 40,
         },
       ],
@@ -46,7 +46,7 @@ const menuItems: DeepPartial<MenuType> = {
             route: {
               name: "Notifications",
             },
-            icon: "bell",
+            icon: "notification-v2",
             priority: 75,
           },
         ],

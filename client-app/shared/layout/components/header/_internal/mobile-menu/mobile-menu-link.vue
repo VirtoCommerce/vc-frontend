@@ -16,7 +16,7 @@
         <VcIcon
           v-if="link.icon"
           :name="link.icon"
-          :size="36"
+          :size="32"
           :class="[
             isLink && (isActive || isExactActive)
               ? 'text-[--mobile-menu-icon-active-color]'

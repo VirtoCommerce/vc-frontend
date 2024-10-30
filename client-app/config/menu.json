@@ -101,7 +101,7 @@
               "name": "Lists"
             },
             "title": "shared.account.navigation.links.lists",
-            "icon": "list-2",
+            "icon": "list-v2",
             "priority": 60
           },
           {
