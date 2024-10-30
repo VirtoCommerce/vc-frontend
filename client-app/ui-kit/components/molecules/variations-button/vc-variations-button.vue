@@ -69,8 +69,6 @@ const targetValue = target.value || themeContext.value.settings.details_browser_
     }
 
     @media (min-width: theme("screens.lg")) {
-      --vc-icon-size: 1.125rem;
-
       @apply text-xs mt-[1.25rem];
     }
   }

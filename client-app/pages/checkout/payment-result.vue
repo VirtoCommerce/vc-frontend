@@ -24,7 +24,7 @@
           v-if="isPaymentSuccess"
           name="check-circle"
           size="md"
-          class="hidden size-12 shrink-0 text-success lg:flex"
+          class="hidden size-12 shrink-0 fill-success lg:flex"
         />
 
         <VcIcon v-else name="delete" size="md" class="hidden size-12 shrink-0 fill-danger lg:flex" />

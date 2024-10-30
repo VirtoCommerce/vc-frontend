@@ -36,7 +36,7 @@ withDefaults(defineProps<IProp>(), {
   &__icon {
     --vc-icon-size: 5.375rem;
 
-    @apply text-primary;
+    @apply fill-primary;
   }
 
   &__text {

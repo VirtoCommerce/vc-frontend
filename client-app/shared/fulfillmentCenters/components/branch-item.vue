@@ -19,7 +19,7 @@
         </div>
 
         <div v-if="branch.shortDescription" class="mt-2 flex items-start md:-mt-0.5">
-          <VcIcon name="clock" class="text-secondary md:mt-px" :size="16" />
+          <VcIcon name="clock" class="fill-secondary md:mt-px" :size="16" />
 
           <div
             v-html-safe="branch.shortDescription"

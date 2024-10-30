@@ -45,7 +45,7 @@
                     class="flex items-center gap-2 py-1"
                     @click="hideSearchDropdown"
                   >
-                    <VcIcon name="search-circle" size="xs" class="shrink-0 text-neutral-300" />
+                    <VcIcon name="search-circle" size="xs" class="shrink-0 fill-neutral-300" />
                     <span v-html-safe="suggestion.label" class="truncate" />
                   </router-link>
                 </li>
@@ -116,7 +116,7 @@
 
         <!-- Not found -->
         <div v-else-if="!loading" class="my-16 text-center">
-          <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 text-primary" />
+          <VcIcon name="search-not-found" class="mr-5 inline-block !h-12 !w-12 fill-primary" />
 
           <i18n-t class="inline-block" keypath="shared.layout.search_bar.no_results" tag="p">
             <template #keyword>

@@ -24,7 +24,7 @@
             </div>
 
             <button type="button" class="appearance-none px-5 py-4" @click="onHide">
-              <VcIcon class="text-neutral-600" name="delete-thin" />
+              <VcIcon class="fill-neutral-600" name="delete-thin" />
             </button>
           </slot>
         </div>

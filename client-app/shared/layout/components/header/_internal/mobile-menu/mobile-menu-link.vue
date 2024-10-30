@@ -19,8 +19,8 @@
           :size="32"
           :class="[
             isLink && (isActive || isExactActive)
-              ? 'text-[--mobile-menu-icon-active-color]'
-              : 'text-[--mobile-menu-icon-color]',
+              ? 'fill-[--mobile-menu-icon-active-color]'
+              : 'fill-[--mobile-menu-icon-color]',
           ]"
         />
       </slot>
@@ -33,7 +33,7 @@
         {{ $n(count, { style: "decimal", notation: "compact" }) }}
       </VcBadge>
 
-      <VcIcon v-if="isParent" class="ml-auto text-[--mobile-menu-navigation-color]" name="chevron-right" />
+      <VcIcon v-if="isParent" class="ml-auto fill-[--mobile-menu-navigation-color]" name="chevron-right" />
     </component>
   </router-link>
 </template>

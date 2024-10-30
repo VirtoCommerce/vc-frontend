@@ -57,15 +57,15 @@ defineProps<IProps>();
     @apply text-neutral-400;
   }
 
-  &__icon.vc-icon {
-    @apply size-6 text-primary;
+  &__icon {
+    @apply size-6 fill-primary;
 
     @media (width > theme("screens.xs")) {
       @apply size-8;
     }
 
     #{$disabled} & {
-      @apply text-inherit;
+      @apply fill-inherit;
     }
   }
 

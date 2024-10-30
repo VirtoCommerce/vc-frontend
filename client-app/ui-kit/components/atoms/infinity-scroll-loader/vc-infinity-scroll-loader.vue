@@ -5,7 +5,7 @@
     </slot>
 
     <slot v-else name="loaded">
-      <VcIcon class="size-7 text-primary" name="badge-check" />
+      <VcIcon class="size-7 fill-primary" name="badge-check" />
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
 

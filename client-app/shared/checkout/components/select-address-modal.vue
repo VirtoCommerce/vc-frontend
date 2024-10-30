@@ -115,7 +115,7 @@
             </div>
 
             <div class="w-1/3 max-w-24 text-center">
-              <VcIcon v-if="itemData.item.id === selectedAddress?.id" class="text-success" name="check-circle" />
+              <VcIcon v-if="itemData.item.id === selectedAddress?.id" class="fill-success" name="check-circle" />
 
               <VcButton v-else variant="outline" size="sm" full-width truncate @click="setAddress(itemData.item)">
                 {{ $t("shared.checkout.select_address_modal.select_button") }}
@@ -133,7 +133,7 @@
         <template #desktop-body>
           <tr v-for="(address, index) in paginatedAddresses" :key="address.id" :class="{ 'bg-neutral-50': index % 2 }">
             <td v-if="hasFavoriteAddresses" class="truncate p-5">
-              <VcIcon v-if="address.isFavorite" class="text-primary" name="whishlist" size="md" />
+              <VcIcon v-if="address.isFavorite" class="fill-primary" name="whishlist" size="md" />
             </td>
 
             <td class="truncate p-5">
@@ -174,7 +174,7 @@
             </td>
 
             <td class="p-5 text-center">
-              <VcIcon v-if="address.id === selectedAddress?.id" class="text-success" name="check-circle" />
+              <VcIcon v-if="address.id === selectedAddress?.id" class="fill-success" name="check-circle" />
 
               <VcButton v-else variant="outline" size="sm" min-width="6.25rem" @click="setAddress(address)">
                 {{ $t("shared.checkout.select_address_modal.select_button") }}

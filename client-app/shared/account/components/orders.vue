@@ -47,7 +47,7 @@
           class="absolute right-0 z-[1] mt-2 rounded border bg-additional-50 p-6 shadow-lg"
         >
           <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-3 align-top" @click="hideFilters">
-            <VcIcon class="text-danger" name="delete-thin" :size="18" />
+            <VcIcon class="fill-danger" name="delete-thin" :size="18" />
           </button>
 
           <OrdersFilter @apply="applyOrderFilters" @reset="resetOrderFilters">
@@ -75,7 +75,7 @@
               class="flex h-full items-center px-4"
               @click="resetKeyword"
             >
-              <VcIcon class="text-primary" name="delete-2" size="xs" />
+              <VcIcon class="fill-primary" name="delete-2" size="xs" />
             </button>
 
             <VcButton

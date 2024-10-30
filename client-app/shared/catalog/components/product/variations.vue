@@ -9,7 +9,7 @@
   >
     <template v-if="!isSmallScreen && isTableView" #append>
       <button type="button" @click="isFullView = !isFullView">
-        <VcIcon size="md" class="text-neutral" :name="isFullView ? 'delete-2' : 'arrows-expand'" />
+        <VcIcon size="md" class="fill-neutral" :name="isFullView ? 'delete-2' : 'arrows-expand'" />
       </button>
     </template>
 
@@ -192,7 +192,7 @@ function handleKeyUp(event: KeyboardEvent) {
     @apply me-1 size-5;
 
     *:disabled > & {
-      @apply text-primary;
+      @apply fill-primary;
     }
   }
 }

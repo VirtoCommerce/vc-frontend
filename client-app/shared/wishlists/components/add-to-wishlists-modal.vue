@@ -41,7 +41,7 @@
             :disabled="creationButtonDisabled"
             @click="addNewList"
           >
-            <VcIcon :class="{ 'text-primary': !creationButtonDisabled }" name="plus" size="xs" />
+            <VcIcon :class="{ 'fill-primary': !creationButtonDisabled }" name="plus" size="xs" />
 
             {{ $t("shared.wishlists.add_to_wishlists_modal.add_new_list") }}
           </button>

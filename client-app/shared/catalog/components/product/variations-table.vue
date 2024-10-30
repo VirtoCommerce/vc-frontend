@@ -174,7 +174,7 @@ const productProperties = computed<IProductProperties[]>(() => {
       label,
       values: variations.value.map((variation) => {
         const property = variation.properties.find((item) => item.name === name);
-        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
+        return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
       }),
     });
   });
@@ -305,7 +305,7 @@ watchEffect(() => {
   }
 
   &__quantity-icon {
-    @apply me-3 size-4 text-danger;
+    @apply me-3 size-4 fill-danger;
   }
 
   &__in-cart {

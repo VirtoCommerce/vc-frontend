@@ -6,7 +6,7 @@
         :key="list.id"
         class="ml-4 flex items-center space-x-2 overflow-hidden text-ellipsis px-3 text-sm"
       >
-        <VcIcon class="flex-none text-primary" name="minus" />
+        <VcIcon class="flex-none fill-primary" name="minus" />
 
         <router-link
           :to="{ name: 'ListDetails', params: { listId: list.id } }"

@@ -110,7 +110,7 @@
           :target="browserTarget"
           class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
         >
-          <VcIcon name="external-link" class="size-3 shrink-0 text-primary lg:size-2.5" />
+          <VcIcon name="external-link" class="size-3 shrink-0 fill-primary lg:size-2.5" />
 
           <span class="truncate">
             {{ $t("pages.catalog.show_on_a_separate_page") }}

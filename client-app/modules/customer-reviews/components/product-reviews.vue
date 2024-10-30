@@ -70,7 +70,7 @@
 
     <div v-if="isAuthenticated && feedbackAvailable">
       <div v-if="reviewSubmitted" class="flex items-center gap-3 text-lg font-bold">
-        <VcIcon name="check-circle" :size="48" class="block text-success" />
+        <VcIcon name="check-circle" :size="48" class="block fill-success" />
         {{ $t("common.messages.thanks_for_feedback") }}
       </div>
 

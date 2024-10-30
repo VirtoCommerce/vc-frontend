@@ -419,10 +419,10 @@ function handleArrowClick(event: MouseEvent, close: () => void) {
   }
 
   &__icon {
-    @apply shrink-0 mr-3 text-neutral-900;
+    @apply shrink-0 mr-3 fill-neutral-900;
 
     #{$disabled} & {
-      @apply text-neutral-400;
+      @apply fill-neutral-400;
     }
 
     #{$readonly} & {

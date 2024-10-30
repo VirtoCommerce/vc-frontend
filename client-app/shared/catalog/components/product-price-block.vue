@@ -16,8 +16,8 @@
                 size="sm"
                 :aria-label="$t('common.buttons.share')"
                 :class="{
-                  'text-primary': !shareProductPopoverShown,
-                  'text-neutral-400': shareProductPopoverShown,
+                  'fill-primary': !shareProductPopoverShown,
+                  'fill-neutral-400': shareProductPopoverShown,
                 }"
               />
             </div>
@@ -61,7 +61,7 @@
           target="_blank"
           class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
         >
-          <VcIcon name="mail" size="sm" class="text-primary" />
+          <VcIcon name="mail" size="sm" class="fill-primary" />
         </a>
 
         <button
@@ -70,7 +70,7 @@
           type="button"
           @click="print()"
         >
-          <VcIcon name="printer" size="sm" class="text-primary" />
+          <VcIcon name="printer" size="sm" class="fill-primary" />
         </button>
       </div>
     </template>
