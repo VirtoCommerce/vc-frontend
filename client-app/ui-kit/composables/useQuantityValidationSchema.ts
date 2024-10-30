@@ -47,11 +47,14 @@ export function useQuantityValidationSchema(payload: {
   }
 
   function withAvailableQuantityTest(schema: NumberSchema, quantity: number): NumberSchema {
-    if (minQuantity?.value && maxQuantity?.value) {
+    if (minQuantity?.value && maxQuantity?.value && minQuantity.value !== maxQuantity.value) {
       if (minQuantity.value > quantity) {
         return availableLessThenMinError(schema, minQuantity.value);
       }
       return minMaxTest(schema, minQuantity.value, Math.min(quantity, maxQuantity.value));
+    }
+    if (maxQuantity?.value && maxQuantity?.value === minQuantity?.value) {
+      return maxTest(schema, maxQuantity.value);
     }
     if (minQuantity?.value) {
       if (minQuantity.value > quantity) {
