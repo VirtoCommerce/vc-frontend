@@ -80,21 +80,22 @@
                 !variation.availabilityData?.isAvailable ||
                 !variation.availabilityData?.isBuyable
               "
-              :error="!!localizedItemsErrors[variation.id]"
+              :error="!!getLocalizedItemErrors(variation)"
               hide-button
               :timeout="DEFAULT_DEBOUNCE_IN_MS"
               :validate-on-mount="false"
+              :pack-size="variation.packSize"
               @update:model-value="changeCart(variation, $event)"
             >
               <template #append>
-                <VcTooltip v-if="!!localizedItemsErrors[variation.id]" placement="bottom-end">
+                <VcTooltip v-if="!!getLocalizedItemErrors(variation)" placement="bottom-end">
                   <template #trigger>
                     <VcIcon class="variations-table__quantity-icon" name="warning" />
                   </template>
 
                   <template #content>
                     <div class="w-max rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-danger">
-                      <div v-for="(error, index) in localizedItemsErrors[variation.id]" :key="index">
+                      <div v-for="(error, index) in getLocalizedItemErrors(variation)" :key="index">
                         {{ error }}
                       </div>
                     </div>
@@ -174,7 +175,7 @@ const productProperties = computed<IProductProperties[]>(() => {
       label,
       values: variations.value.map((variation) => {
         const property = variation.properties.find((item) => item.name === name);
-        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
+        return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
       }),
     });
   });
@@ -243,6 +244,17 @@ function getProperties(variation: Product) {
 
 function getLineItem(variation: Product): ShortLineItemFragment | undefined {
   return cart.value?.items?.find((item) => item.productId === variation.id);
+}
+
+function getLocalizedItemErrors(variation: Product) {
+  if (localizedItemsErrors.value[variation.id]) {
+    return localizedItemsErrors.value[variation.id];
+  }
+
+  const lineItem = getLineItem(variation);
+  if (lineItem?.id) {
+    return localizedItemsErrors.value[lineItem.id];
+  }
 }
 
 async function changeCart(variation: Product, quantity: number) {
