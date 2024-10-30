@@ -161,7 +161,7 @@ const { t } = useI18n();
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
-const clientValidation = ref<Record<string, { isValid: boolean; message?: string }>>({});
+const clientValidation = ref<Record<string, { isValid: boolean; messages?: string[] }>>({});
 
 const variations = computed(() => props.variations);
 const productProperties = computed<IProductProperties[]>(() => {
@@ -258,7 +258,7 @@ function getLineItem(variation: Product): ShortLineItemFragment | undefined {
 
 function getItemErrors(variation: Product) {
   if (clientValidation.value[variation.id]?.isValid === false) {
-    return clientValidation.value[variation.id]?.message;
+    return clientValidation.value[variation.id]?.messages;
   }
 
   if (localizedItemsErrors.value[variation.id]) {
@@ -294,7 +294,7 @@ function changePage(page: number): void {
 
 function handleClientValidation(id: string, validation: { isValid: true } | { isValid: false; errorMessage: string }) {
   if (!validation.isValid) {
-    clientValidation.value[id] = { isValid: false, message: [validation.errorMessage] };
+    clientValidation.value[id] = { isValid: false, messages: [validation.errorMessage] };
   } else {
     clientValidation.value[id] = { isValid: true };
   }
