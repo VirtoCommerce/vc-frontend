@@ -159,7 +159,8 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { cart, addToCart, changeItemQuantity } = useShortCart();
-const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
+const { localizedItemsErrors: serverValidationErrors, setErrors } =
+  useErrorsTranslator<ValidationErrorType>("validation_error");
 
 const clientValidation = ref<Record<string, { isValid: boolean; messages?: string[] }>>({});
 
@@ -261,13 +262,13 @@ function getItemErrors(variation: Product) {
     return clientValidation.value[variation.id]?.messages;
   }
 
-  if (localizedItemsErrors.value[variation.id]) {
-    return localizedItemsErrors.value[variation.id];
+  if (serverValidationErrors.value[variation.id]) {
+    return serverValidationErrors.value[variation.id];
   }
 
   const lineItem = getLineItem(variation);
   if (lineItem?.id) {
-    return localizedItemsErrors.value[lineItem.id];
+    return serverValidationErrors.value[lineItem.id];
   }
 }
 
