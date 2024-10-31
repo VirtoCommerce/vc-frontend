@@ -13,9 +13,9 @@
           <VcInputDetails v-if="page >= PAGE_LIMIT" :message="$t('ui_kit.reach_limit.page_limit')" />
         </div>
 
-        <div class="flex w-full gap-3 sm:w-auto">
+        <div class="flex w-full flex-wrap gap-3 max-xs:*:grow sm:w-auto">
           <VcButton
-            v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization) || true"
+            v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
             variant="outline"
             no-wrap
             min-width="8rem"
@@ -67,8 +67,8 @@
         @page-changed="onPageChange"
       >
         <template #mobile-item="itemData">
-          <div class="flex items-center space-x-3 border-b p-6 last:border-none">
-            <div class="w-1/2 grow truncate">
+          <div class="flex items-center space-x-3 border-b p-4 last:border-none">
+            <div class="w-2/3 grow truncate">
               <VcBadge v-if="itemData.item.isFavorite" size="sm" variant="outline-dark" rounded>
                 <VcIcon name="whishlist" />
                 <span>{{ $t("pages.company.info.labels.favorite") }}</span>
@@ -114,10 +114,10 @@
               </p>
             </div>
 
-            <div class="w-1/4 text-center">
+            <div class="w-1/3 max-w-24 text-center">
               <VcIcon v-if="itemData.item.id === selectedAddress?.id" class="text-success" name="check-circle" />
 
-              <VcButton v-else variant="outline" size="sm" min-width="6.25rem" @click="setAddress(itemData.item)">
+              <VcButton v-else variant="outline" size="sm" full-width truncate @click="setAddress(itemData.item)">
                 {{ $t("shared.checkout.select_address_modal.select_button") }}
               </VcButton>
             </div>

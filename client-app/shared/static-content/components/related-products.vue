@@ -1,7 +1,7 @@
 <template>
   <!-- Related products section -->
   <VcWidget
-    v-if="relatedProducts.length"
+    v-if="relatedProducts?.length"
     :title="$t('pages.product.related_product_section_title')"
     prepend-icon="cube"
     size="lg"
@@ -37,7 +37,7 @@ import { ProductCardRelated } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
-  relatedProducts: Product[];
+  relatedProducts?: Product[];
 }
 const props = defineProps<IProps>();
 
@@ -67,7 +67,7 @@ const mobileProductsNumber = computed(() => {
   return 4;
 });
 
-const mobileProducts = computed(() => props.relatedProducts.slice(0, mobileProductsNumber.value));
+const mobileProducts = computed(() => props.relatedProducts?.slice(0, mobileProductsNumber.value));
 
 const relatedProductsCarouselOptions: CarouselOptions = {
   slidesPerView: 4,
