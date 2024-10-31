@@ -16,7 +16,7 @@ import { init as initModuleQuotes } from "@/modules/quotes";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
-import { useWebPushNotifications } from "@/shared/push-messages/composables/useWebPushNotifications";
+import { useWebPushNotifications } from "@/modules/push-messages";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
