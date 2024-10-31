@@ -541,7 +541,7 @@
           "out_of_stock": "Out of stock",
           "positive_number": "Value must be a positive number",
           "integer_number": "Value must be an integer",
-          "pack_size": "Order in packs of ({0})"
+          "pack_size": "Order in packs of {0}"
         }
       },
       "products_section": {

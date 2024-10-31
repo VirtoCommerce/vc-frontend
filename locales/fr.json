@@ -541,7 +541,7 @@
           "out_of_stock": "En rupture de stock",
           "positive_number": "La valeur doit être un nombre positif",
           "integer_number": "La valeur doit être un entier",
-          "pack_size": "Commander en packs de ({0})"
+          "pack_size": "Commander en packs de {0}"
         }
       },
       "products_section": {
