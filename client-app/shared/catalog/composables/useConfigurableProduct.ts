@@ -22,7 +22,8 @@ export function useConfigurableProduct(configurableProductId: string) {
   const configuration: Ref<GetProductConfigurationsQuery["productConfiguration"] | undefined> = ref();
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"] | undefined> = ref();
 
-  const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | undefined> = ref();
+  const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
+
   const selectedConfiguration = computed(() => {
     return selectedConfigurationInput.value?.reduce(
       (acc, section) => {
@@ -38,19 +39,20 @@ export function useConfigurableProduct(configurableProductId: string) {
     );
   });
 
-  async function fetchProductConfiguration(productId: string) {
+  async function fetchProductConfiguration() {
     fetching.value = true;
     try {
-      configuration.value = await getProductConfiguration(productId);
-      selectedConfigurationInput.value = configuration.value?.configurationSections?.map((section) => ({
-        sectionId: section.name!, // TODO: change with sectionId
-        value: section.isRequired
-          ? {
-              productId: section.products?.[0]?.id ?? "",
-              quantity: section.quantity ?? 1,
-            }
-          : undefined, // TODO: change with null ?
-      }));
+      configuration.value = await getProductConfiguration(configurableProductId);
+      selectedConfigurationInput.value =
+        configuration.value?.configurationSections?.map((section) => ({
+          sectionId: section.name!, // TODO: change with sectionId
+          value: section.isRequired
+            ? {
+                productId: section.products?.[0]?.id ?? "",
+                quantity: section.quantity ?? 1,
+              }
+            : undefined, // TODO: change with null ?
+        })) ?? [];
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
       throw e;
@@ -59,7 +61,7 @@ export function useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  async function createConfiguredLineItem(configurationSections: ConfigurationSectionInput[]) {
+  async function createConfiguredLineItem() {
     const { mutate } = useCreateConfiguredLineItemMutation();
     const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate);
     creating.value = true;
@@ -67,7 +69,7 @@ export function useConfigurableProduct(configurableProductId: string) {
       const result = await batchedCreateConfiguredLineItem({
         command: {
           configurableProductId,
-          configurationSections,
+          configurationSections: selectedConfigurationInput.value,
         },
       });
       configuredLineItem.value = result?.data?.createConfiguredLineItem;
@@ -79,18 +81,29 @@ export function useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  watch(selectedConfigurationInput, (value) => {
-    void createConfiguredLineItem(value ?? []);
-  });
+  function selectSectionValue(payload: ConfigurationSectionInput) {
+    const sectionIndex = selectedConfigurationInput.value?.findIndex(
+      (section) => section.sectionId === payload.sectionId,
+    );
+    selectedConfigurationInput.value?.splice(sectionIndex, 1, payload);
+  }
+
+  watch(
+    selectedConfigurationInput,
+    () => {
+      void createConfiguredLineItem();
+    },
+    {
+      deep: true,
+    },
+  );
 
   return {
-    createConfiguredLineItem,
     fetchProductConfiguration,
-    fetching: readonly(fetching),
-    creating: readonly(creating),
+    selectSectionValue,
     loading: computed(() => fetching.value || creating.value),
     configuration: readonly(configuration),
-    configuredLineItem: readonly(configuredLineItem),
     selectedConfiguration: readonly(selectedConfiguration),
+    configuredLineItem: readonly(configuredLineItem),
   };
 }
