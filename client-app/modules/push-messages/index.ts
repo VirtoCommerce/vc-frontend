@@ -34,7 +34,7 @@ const menuItems: DeepPartial<MenuType> = {
         {
           id: "push-messages",
           title: "shared.layout.header.menu.push-messages",
-          icon: "/static/icons/basic/bell.svg#icon",
+          icon: "bell",
           priority: 40,
         },
       ],
