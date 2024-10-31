@@ -35,7 +35,7 @@
       <div v-if="!hideSidebar && !isMobile && !isHorizontalFilters" class="flex shrink-0 items-start lg:w-60">
         <div ref="filtersElement" class="sticky w-full space-y-5" :style="filtersStyle">
           <CategorySelector
-            v-if="showCategorySelector"
+            v-if="categoryId"
             :category="currentCategory"
             :loading="!currentCategory && loadingCategory"
           />
@@ -53,7 +53,7 @@
       <div ref="contentElement" class="w-0 grow">
         <div class="flex">
           <VcTypography tag="h1">
-            <i18n-t v-if="showSearchKeyword" keypath="pages.search.header" tag="span">
+            <i18n-t v-if="!categoryId" keypath="pages.search.header" tag="span">
               <template #keyword>
                 <strong>{{ searchParams.keyword }}</strong>
               </template>
@@ -258,17 +258,13 @@ import CategoryHorizontalFilters from "@/shared/catalog/components/category/cate
 import CategoryProducts from "@/shared/catalog/components/category/category-products.vue";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
-const props = withDefaults(defineProps<IProps>(), {
-  showCategorySelector: true,
-});
+const props = defineProps<IProps>();
 
 const viewModes = ["grid", "list"] as const;
 type ViewModeType = (typeof viewModes)[number];
 
 interface IProps {
   categoryId?: string;
-  showCategorySelector?: boolean;
-  showSearchKeyword?: boolean;
   title?: string;
   hideTotal?: boolean;
   hideBreadcrumbs?: boolean;
@@ -368,7 +364,7 @@ const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,
   itemsPerPage: props.fixedProductsCount || itemsPerPage.value,
   sort: sortQueryParam.value,
-  keyword: props.keyword || (props.showSearchKeyword ? searchQueryParam.value : keywordQueryParam.value),
+  keyword: props.keyword || (!props.categoryId ? searchQueryParam.value : keywordQueryParam.value),
   filter: [
     props.filter,
     facetsQueryParam.value,
