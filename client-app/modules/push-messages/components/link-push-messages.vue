@@ -1,10 +1,10 @@
 <template>
   <PushMessages v-if="isPushMessagesActive" :offset-options="20">
-    <template #trigger="{ unreadCount }">
+    <template #trigger="{ totalCount, unreadCount }">
       <BottomHeaderLink :link="item" :count="unreadCount">
         <template #icon>
           <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-            <VcIcon :name="item.icon" class="mb-0.5 text-primary" :size="24" />
+            <VcIcon :key="totalCount" :name="item.icon" class="mb-0.5 text-primary" :size="24" />
           </transition>
         </template>
         {{ item.title }}
