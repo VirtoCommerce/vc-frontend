@@ -1,6 +1,7 @@
+import isEqual from "lodash/isEqual";
 import { ref, readonly, computed, watch } from "vue";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
-import { useMutationBatcher } from "@/core/composables";
+import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import type {
   ConfigurationSectionInput,
@@ -61,9 +62,11 @@ export function useConfigurableProduct(configurableProductId: string) {
     }
   }
 
+  const { mutate } = useCreateConfiguredLineItemMutation();
+  const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
+    mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
+  });
   async function createConfiguredLineItem() {
-    const { mutate } = useCreateConfiguredLineItemMutation();
-    const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate);
     creating.value = true;
     try {
       const result = await batchedCreateConfiguredLineItem({
@@ -85,13 +88,21 @@ export function useConfigurableProduct(configurableProductId: string) {
     const sectionIndex = selectedConfigurationInput.value?.findIndex(
       (section) => section.sectionId === payload.sectionId,
     );
-    selectedConfigurationInput.value?.splice(sectionIndex, 1, payload);
+    if (sectionIndex !== -1) {
+      const newValue = [...selectedConfigurationInput.value];
+      newValue?.splice(sectionIndex, 1, payload);
+      selectedConfigurationInput.value = newValue;
+    } else {
+      selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
+    }
   }
 
   watch(
     selectedConfigurationInput,
-    () => {
-      void createConfiguredLineItem();
+    (newValue, oldValue) => {
+      if (!isEqual(newValue, oldValue)) {
+        void createConfiguredLineItem();
+      }
     },
     {
       deep: true,
@@ -105,5 +116,6 @@ export function useConfigurableProduct(configurableProductId: string) {
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
     configuredLineItem: readonly(configuredLineItem),
+    selectedConfigurationInput: readonly(selectedConfigurationInput), //TODO: remove
   };
 }
