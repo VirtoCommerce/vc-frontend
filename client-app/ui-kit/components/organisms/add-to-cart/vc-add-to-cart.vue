@@ -60,7 +60,7 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { toRefs } from "@vueuse/core";
 import { debounce } from "lodash";
 import { useField } from "vee-validate";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
@@ -78,6 +78,7 @@ interface IProps {
   disabled?: boolean;
   minQuantity?: number;
   maxQuantity?: number;
+  packSize?: number;
   countInCart?: number;
   availableQuantity?: number;
   isActive?: boolean;
@@ -102,8 +103,18 @@ const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { timeout, disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
-  toRefs(props);
+const {
+  timeout,
+  disabled,
+  isInStock,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
+  isActive,
+  isAvailable,
+  isBuyable,
+  packSize,
+} = toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -113,15 +124,15 @@ const buttonText = computed<string>(() =>
 
 const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const quantity = ref<number | undefined>(props.modelValue);
+const modelValue = toRef(props, "modelValue");
+const quantity = ref<number | undefined>(modelValue.value);
 const pendingQuantity = ref<number | null>(null);
 
 const { quantitySchema } = useQuantityValidationSchema({
   minQuantity,
   maxQuantity,
   availableQuantity,
-  isInStock,
+  packSize,
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
@@ -139,12 +150,16 @@ const {
 });
 
 async function validateFields(): Promise<void> {
-  const { valid } = await validate();
-  isValid.value = valid;
-
-  if (!valid && errorMessage.value) {
-    emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
+  if (isInStock.value) {
+    const { valid } = await validate();
+    isValid.value = valid;
+    if (!valid && errorMessage.value) {
+      emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
+    } else {
+      emit("update:validation", { isValid: true });
+    }
   } else {
+    isValid.value = true;
     emit("update:validation", { isValid: true });
   }
 }
@@ -157,7 +172,7 @@ const handleChange = debounce(async () => {
   if (
     isNaN(newQuantity) ||
     newQuantity < 1 ||
-    newQuantity === props.modelValue ||
+    newQuantity === modelValue.value ||
     pendingQuantity.value === newQuantity
   ) {
     return;
@@ -180,12 +195,12 @@ function onFocusOut() {
   const newQuantity = Number(quantity.value);
 
   if (isNaN(newQuantity) || newQuantity < 1) {
-    quantity.value = props.modelValue;
+    quantity.value = modelValue.value;
   }
 }
 
 watchEffect(() => {
-  quantity.value = props.modelValue;
+  quantity.value = modelValue.value;
   pendingQuantity.value = null;
 });
 

@@ -25,6 +25,7 @@ fragment wishlistLineItemFields on LineItemType {
     outline
     minQuantity
     maxQuantity
+    packSize
     imgSrc
     images {
       url

@@ -1,3 +1,4 @@
+@use "sass:map";
 $transition-duration: var(--transition-duration, .2s);
 $animation-duration: var(--animation-duration, .3s);
 
@@ -31,7 +32,7 @@ $slide-fade: (
   .slide-fade-#{$direction}-enter-from,
   .slide-fade-#{$direction}-leave-to {
     opacity: 0;
-    transform: translate#{map-get($data, coordinate)}(map-get($data, value));
+    transform: translate#{map.get($data, coordinate)}(map.get($data, value));
   }
 }
 

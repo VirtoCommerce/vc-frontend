@@ -89,7 +89,7 @@ function _useWebPushNotifications() {
           return;
         }
         retryCount++;
-        await await new Promise((resolve) => {
+        await new Promise((resolve) => {
           setTimeout(resolve, TIMEOUT);
         });
         return await retry(messagingInstance, vapidKey);

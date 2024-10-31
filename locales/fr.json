@@ -155,7 +155,9 @@
       "ascending": "Ascendant",
       "descending": "Descendant",
       "date_new_to_old": "Date, du nouveau à l’ancien",
-      "date_old_to_new": "Date, de l’ancien au nouveau"
+      "date_old_to_new": "Date, de l’ancien au nouveau",
+      "comments": "Commentaires",
+      "fields_required": "Les champs sont obligatoires"
     },
     "prefixes": {
       "please": "S'il vous plaît",
@@ -535,7 +537,11 @@
           "min": "Commande min {0} article(s)",
           "max": "Commande max {0} article(s)",
           "min_max": "Commander de {0} à {1} article(s)",
-          "min_not_available": "La commande minimale de {0} article(s) n'est pas disponible en stock"
+          "min_not_available": "La commande minimale de {0} article(s) n'est pas disponible en stock",
+          "out_of_stock": "En rupture de stock",
+          "positive_number": "La valeur doit être un nombre positif",
+          "integer_number": "La valeur doit être un entier",
+          "pack_size": "Commander en packs de {0}"
         }
       },
       "products_section": {
