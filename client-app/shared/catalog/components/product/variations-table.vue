@@ -174,7 +174,7 @@ const productProperties = computed<IProductProperties[]>(() => {
       label,
       values: variations.value.map((variation) => {
         const property = variation.properties.find((item) => item.name === name);
-        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
+        return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
       }),
     });
   });
@@ -280,15 +280,15 @@ watchEffect(() => {
 
   &__col {
     &--title {
-      @apply overflow-hidden text-ellipsis py-2.5 ps-4;
+      @apply py-2.5 ps-4;
     }
 
     &--property {
-      @apply px-4 py-2.5 text-center;
+      @apply px-2 py-2.5 text-center break-words;
     }
 
     &--in-stock {
-      @apply overflow-hidden text-ellipsis px-2 py-3;
+      @apply px-2 py-3;
     }
 
     &--price {
