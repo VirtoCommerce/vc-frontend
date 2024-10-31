@@ -332,12 +332,12 @@ onMounted(() => {
     #{$list} & {
       --font-size: 1.125rem;
 
-      @apply mt-1;
+      @apply mt-1 flex-row items-center gap-x-1.5 flex-wrap;
 
       @container (min-width: theme("containers.xl")) {
         --font-size: 0.875rem;
 
-        @apply mt-0 ms-3 w-[7.5rem] text-end;
+        @apply mt-0 ms-3 w-[7.5rem] justify-end;
       }
 
       @container (min-width: theme("containers.4xl")) {

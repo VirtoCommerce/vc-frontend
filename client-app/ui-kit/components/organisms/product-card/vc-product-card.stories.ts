@@ -267,7 +267,7 @@ const FullListTemplateRecommended: StoryFn<typeof VcProductCard> = (args) => ({
       <VcChip v-bind="chip2">23 in Cart</VcChip>
     </VcAddToCart>
 
-    <VcProductPrice v-bind="{ ...price, align: 'end', singleLine: false }" />
+    <VcProductPrice v-bind="{ ...price, singleLine: false }" />
   </VcProductCard>`,
 });
 
