@@ -2,8 +2,9 @@
   <div
     :class="[
       'vc-product-price',
-      `vc-product-price--align--${align}`,
       {
+        'vc-product-price--align--start': align === 'start',
+        'vc-product-price--align--end': align === 'end',
         'vc-product-price--single-line': singleLine,
         'vc-product-price--truncate': truncate,
         'vc-product-price--disabled': disabled,
@@ -51,11 +52,11 @@ defineProps<IProps>();
 
   &--align {
     &--start {
-      @apply text-start;
+      @apply justify-start text-start;
     }
 
     &--end {
-      @apply text-end;
+      @apply justify-end text-end;
     }
   }
 
