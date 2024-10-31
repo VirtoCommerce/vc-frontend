@@ -38,9 +38,7 @@ interface IProps {
   disabled?: boolean;
 }
 
-withDefaults(defineProps<IProps>(), {
-  align: "start",
-});
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
@@ -53,11 +51,11 @@ withDefaults(defineProps<IProps>(), {
 
   &--align {
     &--start {
-      @apply items-start text-start;
+      @apply text-start;
     }
 
     &--end {
-      @apply items-end text-end;
+      @apply text-end;
     }
   }
 

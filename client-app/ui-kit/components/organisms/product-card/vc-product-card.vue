@@ -337,7 +337,7 @@ onMounted(() => {
       @container (min-width: theme("containers.xl")) {
         --font-size: 0.875rem;
 
-        @apply mt-0 ms-3 w-[7.5rem];
+        @apply mt-0 ms-3 w-[7.5rem] text-end;
       }
 
       @container (min-width: theme("containers.4xl")) {
