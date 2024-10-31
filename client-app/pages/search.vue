@@ -1,5 +1,5 @@
 <template>
-  <Category is-search-page hide-breadcrumbs allow-set-meta />
+  <Category :show-category-selector="false" show-search-keyword hide-breadcrumbs allow-set-meta />
 </template>
 
 <script setup lang="ts">
