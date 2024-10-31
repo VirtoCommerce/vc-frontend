@@ -26,18 +26,20 @@ export function useConfigurableProduct(configurableProductId: string) {
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
 
   const selectedConfiguration = computed(() => {
-    return selectedConfigurationInput.value?.reduce(
-      (acc, section) => {
-        const rawSection = configuration.value?.configurationSections?.find((s) => s.name === section.sectionId);
-        acc[section.sectionId] = {
-          productId: section.value?.productId,
-          quantity: section.value?.quantity,
-          selectedProductTitle: rawSection?.products?.find(({ id }) => id === section.value?.productId)?.name,
-        };
-        return acc;
-      },
-      {} as Record<string, SelectedConfigurationType | undefined>,
-    );
+    return selectedConfigurationInput.value
+      ?.filter(({ value }) => value !== undefined)
+      ?.reduce(
+        (acc, section) => {
+          const rawSection = configuration.value?.configurationSections?.find((s) => s.name === section.sectionId);
+          acc[section.sectionId] = {
+            productId: section.value?.productId,
+            quantity: section.value?.quantity,
+            selectedProductTitle: rawSection?.products?.find(({ id }) => id === section.value?.productId)?.name,
+          };
+          return acc;
+        },
+        {} as Record<string, SelectedConfigurationType | undefined>,
+      );
   });
 
   async function fetchProductConfiguration() {
@@ -116,6 +118,5 @@ export function useConfigurableProduct(configurableProductId: string) {
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
     configuredLineItem: readonly(configuredLineItem),
-    selectedConfigurationInput: readonly(selectedConfigurationInput), //TODO: remove
   };
 }
