@@ -201,7 +201,7 @@ describe("useConfigurableProduct", () => {
     );
   });
 
-  it.only("should set loading to true when fetching or creating", async () => {
+  it("should set loading to true when fetching or creating", async () => {
     const mockConfiguration = {
       configurationSections: [],
     };
