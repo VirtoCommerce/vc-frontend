@@ -58,6 +58,7 @@ const menuItems: DeepPartial<MenuType> = {
 };
 
 const Notifications = defineAsyncComponent(() => import("@/modules/push-messages/pages/notifications.vue"));
+const PushMessage = defineAsyncComponent(() => import("@/modules/push-messages/pages/push-message.vue"));
 
 const menuLinkCustomElement: ElementType = {
   id: "push-messages",
@@ -76,8 +77,23 @@ async function unregisterFCM() {
   }
 }
 
-export function usePushNotifications() {
-  async function init(router: Router) {
+const notificationsPlaceholderRoute: RouteRecordRaw = {
+  path: "notifications",
+  name: "Notifications",
+  component: () => import("@/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue"),
+};
+
+const pushMessagePlaceholderRoute: RouteRecordRaw = {
+  path: "/push-message/:messageId",
+  name: "PushMessage",
+  component: () => import("@/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue"),
+};
+
+export function usePushNotifications(router: Router) {
+  router.addRoute("Account", notificationsPlaceholderRoute);
+  router.addRoute(pushMessagePlaceholderRoute);
+
+  async function init() {
     const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
     const { isAuthenticated } = useUser();
     const { themeContext } = useThemeContext();
@@ -86,11 +102,15 @@ export function usePushNotifications() {
 
     if (!themeContext.value?.settings?.push_messages_enabled) {
       void unregisterFCM();
+      router.removeRoute("Notifications");
+      router.removeRoute("PushMessage");
       return;
     }
 
     if (!isAuthenticated.value) {
       void unregisterFCM();
+      router.removeRoute("Notifications");
+      router.removeRoute("PushMessage");
       return;
     }
 
@@ -100,15 +120,22 @@ export function usePushNotifications() {
       );
       const { initModule } = useWebPushNotificationsModule();
       await initModule();
+      const pushMessageRoute: RouteRecordRaw = {
+        path: "/push-message/:messageId",
+        name: "PushMessage",
+        component: PushMessage,
+        props: true,
+      };
+      router.addRoute(pushMessageRoute);
     } else {
       void unregisterFCM();
+      router.removeRoute("PushMessage");
     }
 
     if (isModuleEnabled) {
       const { mergeMenuSchema } = useNavigations();
       const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
       const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
-
       const notificationsRoute: RouteRecordRaw = {
         path: "notifications",
         name: "Notifications",
@@ -121,11 +148,16 @@ export function usePushNotifications() {
           }
         },
       };
-      router.addRoute("Account", notificationsRoute);
 
       mergeMenuSchema(menuItems);
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
+      router.addRoute("Account", notificationsRoute);
+      if (router.currentRoute.value.name === "Notifications") {
+        void router.replace(router.currentRoute.value);
+      }
+    } else {
+      router.removeRoute("Notifications");
     }
   }
 

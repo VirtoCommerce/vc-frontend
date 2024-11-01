@@ -65,7 +65,6 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
-  const { init: initializePushNotifications } = usePushNotifications();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
@@ -130,7 +129,9 @@ export default async () => {
    */
 
   await fetchWhiteLabelingSettings();
-  void initializePushNotifications(router); // need to be called after white labeling settings are fetched
+
+  const { init: initializePushNotifications } = usePushNotifications(router);
+  void initializePushNotifications(); // need to be called after white labeling settings are fetched
   void initModuleQuotes(router, i18n);
   void initCustomerReviews(i18n);
 
