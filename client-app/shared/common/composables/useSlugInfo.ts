@@ -1,4 +1,4 @@
-import { computed, toValue } from "vue";
+import { computed, readonly, toValue } from "vue";
 import { useGetPage, useGetSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
 import type { PageTemplate } from "@/shared/static-content";
@@ -29,6 +29,16 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
 
   const objectType = computed(() => {
     return slugInfo.value?.entityInfo?.objectType;
+  });
+
+  const seoInfo = computed(() => {
+    return slugInfo.value
+      ? {
+          metaKeywords: slugInfo.value?.entityInfo?.metaKeywords,
+          metaDescription: slugInfo.value?.entityInfo?.metaDescription,
+          pageTitle: slugInfo.value?.entityInfo?.pageTitle,
+        }
+      : null;
   });
 
   const hasContent = computed(() => {
@@ -75,6 +85,7 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     objectType,
     hasContent,
     pageContent,
+    seoInfo: readonly(seoInfo),
     fetchContent: loadContent,
   };
 }

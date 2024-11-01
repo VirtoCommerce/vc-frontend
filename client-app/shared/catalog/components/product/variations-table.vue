@@ -80,21 +80,30 @@
                 !variation.availabilityData?.isAvailable ||
                 !variation.availabilityData?.isBuyable
               "
-              :error="!!localizedItemsErrors[variation.id]"
+              :error="!!getItemErrors(variation)"
               hide-button
               :timeout="DEFAULT_DEBOUNCE_IN_MS"
               :validate-on-mount="false"
+              :pack-size="variation.packSize"
+              :min-quantity="variation.minQuantity"
+              :max-quantity="variation.maxQuantity"
+              :available-quantity="variation.availabilityData?.availableQuantity"
+              :is-in-stock="variation.availabilityData?.isInStock"
+              :is-active="variation.availabilityData?.isActive"
+              :is-available="variation.availabilityData?.isAvailable"
+              :is-buyable="variation.availabilityData?.isBuyable"
               @update:model-value="changeCart(variation, $event)"
+              @update:validation="handleClientValidation(variation.id, $event)"
             >
-              <template #append>
-                <VcTooltip v-if="!!localizedItemsErrors[variation.id]" placement="bottom-end">
+              <template v-if="!!getItemErrors(variation)" #append>
+                <VcTooltip placement="bottom-end">
                   <template #trigger>
                     <VcIcon class="variations-table__quantity-icon" name="warning" />
                   </template>
 
                   <template #content>
                     <div class="w-max rounded-sm bg-additional-50 px-3.5 py-1.5 text-xs text-danger">
-                      <div v-for="(error, index) in localizedItemsErrors[variation.id]" :key="index">
+                      <div v-for="(error, index) in getItemErrors(variation)" :key="index">
                         {{ error }}
                       </div>
                     </div>
@@ -113,7 +122,7 @@
 
 <script setup lang="ts">
 import { flatten, sortBy, uniqBy } from "lodash";
-import { computed, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
 import { useErrorsTranslator } from "@/core/composables";
@@ -150,7 +159,10 @@ const props = defineProps<IProps>();
 
 const { t } = useI18n();
 const { cart, addToCart, changeItemQuantity } = useShortCart();
-const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
+const { localizedItemsErrors: serverValidationErrors, setErrors } =
+  useErrorsTranslator<ValidationErrorType>("validation_error");
+
+const clientValidation = ref<Record<string, { isValid: boolean; messages?: string[] }>>({});
 
 const variations = computed(() => props.variations);
 const productProperties = computed<IProductProperties[]>(() => {
@@ -174,7 +186,7 @@ const productProperties = computed<IProductProperties[]>(() => {
       label,
       values: variations.value.map((variation) => {
         const property = variation.properties.find((item) => item.name === name);
-        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
+        return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
       }),
     });
   });
@@ -245,7 +257,25 @@ function getLineItem(variation: Product): ShortLineItemFragment | undefined {
   return cart.value?.items?.find((item) => item.productId === variation.id);
 }
 
+function getItemErrors(variation: Product) {
+  if (clientValidation.value[variation.id]?.isValid === false) {
+    return clientValidation.value[variation.id]?.messages;
+  }
+
+  if (serverValidationErrors.value[variation.id]) {
+    return serverValidationErrors.value[variation.id];
+  }
+
+  const lineItem = getLineItem(variation);
+  if (lineItem?.id) {
+    return serverValidationErrors.value[lineItem.id];
+  }
+}
+
 async function changeCart(variation: Product, quantity: number) {
+  if (!clientValidation.value[variation.id]?.isValid) {
+    return;
+  }
   const lineItem = getLineItem(variation);
 
   if (lineItem) {
@@ -261,6 +291,14 @@ function applySorting(sortInfo: ISortInfo): void {
 
 function changePage(page: number): void {
   emit("changePage", page);
+}
+
+function handleClientValidation(id: string, validation: { isValid: true } | { isValid: false; errorMessage: string }) {
+  if (!validation.isValid) {
+    clientValidation.value[id] = { isValid: false, messages: [validation.errorMessage] };
+  } else {
+    clientValidation.value[id] = { isValid: true };
+  }
 }
 
 watchEffect(() => {
@@ -280,15 +318,15 @@ watchEffect(() => {
 
   &__col {
     &--title {
-      @apply overflow-hidden text-ellipsis py-2.5 ps-4;
+      @apply py-2.5 ps-4;
     }
 
     &--property {
-      @apply px-4 py-2.5 text-center;
+      @apply px-2 py-2.5 text-center break-words;
     }
 
     &--in-stock {
-      @apply overflow-hidden text-ellipsis px-2 py-3;
+      @apply px-2 py-3;
     }
 
     &--price {

@@ -32,6 +32,7 @@
       :available-quantity="product.availabilityData?.availableQuantity"
       :min-quantity="product.minQuantity"
       :max-quantity="product.maxQuantity"
+      :pack-size="product.packSize"
       :count-in-cart="countInCart"
       :disabled="changing"
       :loading="changing"

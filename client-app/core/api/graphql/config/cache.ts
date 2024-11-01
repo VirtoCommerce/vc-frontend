@@ -1,5 +1,5 @@
 import { InMemoryCache } from "@apollo/client/core";
-import { pushMessagesTypePolices } from "../push-messages/typePolices";
+import { pushMessagesTypePolices } from "@/modules/push-messages/api/graphql/typePolices";
 
 export const cache = new InMemoryCache({
   typePolicies: {

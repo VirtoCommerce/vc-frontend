@@ -132,11 +132,11 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
-import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
+import { isActive as isPushMessagesActive } from "@/modules/push-messages/composables/usePushMessages";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import PushMessages from "@/shared/push-messages/components/push-messages.vue";
+import PushMessages from "@/modules/push-messages/components/push-messages.vue";
 
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
