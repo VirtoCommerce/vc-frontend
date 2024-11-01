@@ -26,6 +26,7 @@ const Category = () => import("@/pages/category.vue");
 const Product = () => import("@/pages/product.vue");
 const Branch = () => import("@/pages/branch.vue");
 const Welcome = () => import("@/pages/welcome.vue");
+const PushMessage = () => import("@/modules/push-messages/pages/push-message.vue");
 const Matcher = () => import("@/pages/matcher/matcher.vue");
 
 export const mainRoutes: RouteRecordRaw[] = [
@@ -71,6 +72,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/catalog", name: "Catalog", component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   { path: "/product/:productId", name: "Product", component: Product, props: true },
+  { path: "/push-message/:messageId", name: "PushMessage", component: PushMessage, props: true },
 
   /** NOTE: Always leave it last. */
   { path: "/:pathMatch(.*)*", name: "Matcher", component: Matcher, props: true },

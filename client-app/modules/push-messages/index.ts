@@ -57,7 +57,6 @@ const menuItems: DeepPartial<MenuType> = {
   },
 };
 
-const PushMessage = defineAsyncComponent(() => import("@/modules/push-messages/pages/push-message.vue"));
 const Notifications = defineAsyncComponent(() => import("@/modules/push-messages/pages/notifications.vue"));
 
 const menuLinkCustomElement: ElementType = {
@@ -104,13 +103,6 @@ export function usePushNotifications() {
       );
       const { initModule } = useWebPushNotificationsModule();
       await initModule();
-      const pushMessagesRoute: RouteRecordRaw = {
-        path: "/push-message/:messageId",
-        name: "PushMessage",
-        component: PushMessage,
-        props: true,
-      };
-      router.addRoute(pushMessagesRoute);
     } else {
       void unregisterFCM();
     }
