@@ -96,6 +96,15 @@ const pushMessagePlaceholderRoute: RouteRecordRaw = {
 };
 
 export function usePushNotifications(router: Router) {
+  function updateRoute() {
+    if (
+      router.currentRoute.value.name === notificationsRoute.name ||
+      router.currentRoute.value.name === pushMessageRoute.name
+    ) {
+      void router.replace(router.currentRoute.value.fullPath);
+    }
+  }
+
   router.addRoute("Account", notificationsPlaceholderRoute);
   router.addRoute(pushMessagePlaceholderRoute);
 
@@ -110,6 +119,7 @@ export function usePushNotifications(router: Router) {
       void unregisterFCM();
       router.removeRoute(notificationsRoute.name);
       router.removeRoute(pushMessageRoute.name);
+      updateRoute();
       return;
     }
 
@@ -125,9 +135,6 @@ export function usePushNotifications(router: Router) {
         props: true,
       };
       router.addRoute(route);
-      if (router.currentRoute.value.name === pushMessageRoute.name) {
-        void router.replace(router.currentRoute.value);
-      }
     } else {
       void unregisterFCM();
       router.removeRoute(pushMessageRoute.name);
@@ -153,12 +160,10 @@ export function usePushNotifications(router: Router) {
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
       router.addRoute("Account", route);
-      if (router.currentRoute.value.name === notificationsRoute.name) {
-        void router.replace(router.currentRoute.value);
-      }
     } else {
       router.removeRoute(notificationsRoute.name);
     }
+    updateRoute();
   }
 
   return { init };
