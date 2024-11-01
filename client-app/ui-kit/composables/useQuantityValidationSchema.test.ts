@@ -4,6 +4,8 @@ import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { mockI18n } from "../test-mocks";
 import { useQuantityValidationSchema } from ".";
 
+type ErrorType = { type: string };
+
 describe("use-quantity-validation-schema", () => {
   mockI18n();
 
@@ -15,14 +17,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(0);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("min");
     }
 
     try {
       quantitySchema.value.validateSync(-1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("min");
     }
   });
@@ -35,7 +37,7 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(1.5);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("integer");
     }
   });
@@ -51,14 +53,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(LINE_ITEM_QUANTITY_LIMIT + 1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("max");
     }
 
     try {
       quantitySchema.value.validateSync(Number.MAX_SAFE_INTEGER);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("max");
     }
   });
@@ -73,7 +75,7 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(6);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("maxValue");
     }
   });
@@ -89,14 +91,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
 
     try {
       quantitySchema.value.validateSync(6);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
   });
@@ -110,21 +112,21 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(0);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("min");
     }
 
     try {
       quantitySchema.value.validateSync(4);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("incorrectMinValue");
     }
 
     try {
       quantitySchema.value.validateSync(6);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("incorrectMinValue");
     }
   });
@@ -139,21 +141,21 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(0);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("min");
     }
 
     try {
       quantitySchema.value.validateSync(4);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("incorrectMinValue");
     }
 
     try {
       quantitySchema.value.validateSync(6);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("incorrectMinValue");
     }
   });
@@ -169,7 +171,7 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(5);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("maxValue");
     }
   });
@@ -185,7 +187,7 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(6);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("maxValue");
     }
   });
@@ -200,7 +202,7 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minValue");
     }
   });
@@ -215,7 +217,7 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(3);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("maxValue");
     }
   });
@@ -232,14 +234,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
 
     try {
       quantitySchema.value.validateSync(4);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
   });
@@ -256,14 +258,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
 
     try {
       quantitySchema.value.validateSync(4);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
   });
@@ -281,14 +283,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
 
     try {
       quantitySchema.value.validateSync(6);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
   });
@@ -304,7 +306,7 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(0);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("min");
     }
   });
@@ -315,14 +317,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync("a");
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("typeError");
     }
 
     try {
       quantitySchema.value.validateSync(null);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("nullable");
     }
   });
@@ -338,14 +340,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(2);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
 
     try {
       quantitySchema.value.validateSync(4);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
   });
@@ -356,14 +358,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(1.999999);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("integer");
     }
 
     try {
       quantitySchema.value.validateSync(2.000001);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("integer");
     }
   });
@@ -380,14 +382,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(4);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("divisible-by-packSize");
     }
 
     try {
       quantitySchema.value.validateSync(5);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("divisible-by-packSize");
     }
   });
@@ -406,14 +408,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(12);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("minMaxValue");
     }
 
     try {
       quantitySchema.value.validateSync(2);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("divisible-by-packSize");
     }
   });
@@ -431,14 +433,14 @@ describe("use-quantity-validation-schema", () => {
     try {
       quantitySchema.value.validateSync(12);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("maxValue");
     }
 
     try {
       quantitySchema.value.validateSync(1);
     } catch (err) {
-      const error: { type: string } = err as { type: string };
+      const error = err as ErrorType;
       expect(error.type).toBe("divisible-by-packSize");
     }
   });
