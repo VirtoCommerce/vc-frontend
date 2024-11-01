@@ -57,6 +57,7 @@ const menuItems: DeepPartial<MenuType> = {
   },
 };
 
+const PushMessage = defineAsyncComponent(() => import("@/modules/push-messages/pages/push-message.vue"));
 const Notifications = defineAsyncComponent(() => import("@/modules/push-messages/pages/notifications.vue"));
 
 const menuLinkCustomElement: ElementType = {
@@ -80,7 +81,20 @@ export function usePushNotifications() {
     const isModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY);
     const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
 
-    if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
+    async function unregisterFCM() {
+      const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
+      if (serviceWorkerRegistration) {
+        void serviceWorkerRegistration.unregister();
+      }
+    }
+
+    if (!themeContext.value?.settings?.push_messages_enabled) {
+      void unregisterFCM();
+      return;
+    }
+
+    if (!isAuthenticated.value) {
+      void unregisterFCM();
       return;
     }
 
@@ -90,15 +104,19 @@ export function usePushNotifications() {
       );
       const { initModule } = useWebPushNotificationsModule();
       await initModule();
+      const pushMessagesRoute: RouteRecordRaw = {
+        path: "/push-message/:messageId",
+        name: "PushMessage",
+        component: PushMessage,
+        props: true,
+      };
+      router.addRoute(pushMessagesRoute);
     } else {
-      const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
-      if (serviceWorkerRegistration) {
-        void serviceWorkerRegistration.unregister();
-      }
+      void unregisterFCM();
     }
 
     if (isModuleEnabled) {
-      const route: RouteRecordRaw = {
+      const notificationsRoute: RouteRecordRaw = {
         path: "notifications",
         name: "Notifications",
         component: Notifications,
@@ -110,7 +128,7 @@ export function usePushNotifications() {
           }
         },
       };
-      router.addRoute("Account", route);
+      router.addRoute("Account", notificationsRoute);
       mergeMenuSchema(menuItems);
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
