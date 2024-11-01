@@ -1,6 +1,5 @@
 import { createRouter as _createRouter, createWebHistory } from "vue-router";
 import { useThemeContext } from "@/core/composables";
-import { useEnvironmentName } from "@/core/composables/useEnvironmentName";
 import { getReturnUrlValue } from "@/core/utilities";
 import { useUser } from "@/shared/account";
 import { mainRoutes } from "./routes";
@@ -10,7 +9,6 @@ export function createRouter(options: { base: string }) {
   const { base } = options;
   const { isAuthenticated, organization } = useUser();
   const { themeContext } = useThemeContext();
-  const { environmentName } = useEnvironmentName();
 
   const router = _createRouter({
     routes: mainRoutes,
@@ -42,11 +40,6 @@ export function createRouter(options: { base: string }) {
     // Protecting company routes
     if (to.meta.requiresOrganization && !organization.value) {
       return next({ name: "Account" });
-    }
-
-    // Protecting maintenance page
-    if (to.meta.requiresDevMode && environmentName?.toLowerCase() !== "dev") {
-      return next({ name: "Home" });
     }
 
     // Make Dashboard the default Home page for authorized users

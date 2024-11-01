@@ -1,10 +1,8 @@
 <template>
   <TwoColumn>
     <template #left>
-      <VcWidget :title="$t('common.labels.handle_xapi_graphql_error')">
-        <VcButton @click="sendRequest">
-          {{ $t("common.buttons.send_request") }}
-        </VcButton>
+      <VcWidget title="Handle xAPI GraphQL error">
+        <VcButton @click="sendRequest">Send request</VcButton>
       </VcWidget>
     </template>
   </TwoColumn>

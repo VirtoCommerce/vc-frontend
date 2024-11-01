@@ -78,8 +78,7 @@
       "all_filters": "All filters",
       "sort_by": "Sort by",
       "add_items_to_cart": "Add items to cart",
-      "show_details": "Show details",
-      "send_request": "Send request"
+      "show_details": "Show details"
     },
     "labels": {
       "actions": "Actions",
@@ -159,8 +158,7 @@
       "date_new_to_old": "Date, new to old",
       "date_old_to_new": "Date, old to new",
       "comments": "Comments",
-      "fields_required": "Fields are required",
-      "handle_xapi_graphql_error": "Handle xAPI GraphQL error"
+      "fields_required": "Fields are required"
     },
     "prefixes": {
       "please": "Please",

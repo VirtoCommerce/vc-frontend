@@ -69,7 +69,6 @@ export const mainRoutes: RouteRecordRaw[] = [
     component: Maintenance,
     meta: {
       requiresAuth: true,
-      requiresDevMode: true,
     },
   },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },
