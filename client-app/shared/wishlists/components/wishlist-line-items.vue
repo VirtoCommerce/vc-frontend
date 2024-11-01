@@ -40,6 +40,7 @@
             :model-value="item.quantity"
             :min-quantity="item.minQuantity"
             :max-quantity="item.maxQuantity"
+            :pack-size="item.packSize"
             :available-quantity="item.inStockQuantity"
             :count-in-cart="item.countInCart"
             :disabled="addToCartDisabled(item) || pendingItems[item.id]"

@@ -24,7 +24,7 @@
     <VcLayoutWithRightSidebar>
       <!-- Quote products -->
       <VcWidget size="lg">
-        <QuoteLineItems :items="quote.items!" readonly />
+        <QuoteLineItems :items="quote.items" readonly />
       </VcWidget>
 
       <!-- Quote comment -->
