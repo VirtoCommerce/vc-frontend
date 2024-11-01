@@ -69,23 +69,20 @@ const menuLinkCustomElementMobile: ElementType = {
   component: defineAsyncComponent(() => import("./components/link-push-messages-mobile.vue")),
 };
 
+async function unregisterFCM() {
+  const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
+  if (serviceWorkerRegistration) {
+    void serviceWorkerRegistration.unregister();
+  }
+}
+
 export function usePushNotifications() {
   async function init(router: Router) {
     const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
     const { isAuthenticated } = useUser();
     const { themeContext } = useThemeContext();
-    const { mergeMenuSchema } = useNavigations();
-    const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
-    const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
     const isModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY);
     const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
-
-    async function unregisterFCM() {
-      const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
-      if (serviceWorkerRegistration) {
-        void serviceWorkerRegistration.unregister();
-      }
-    }
 
     if (!themeContext.value?.settings?.push_messages_enabled) {
       void unregisterFCM();
@@ -108,6 +105,10 @@ export function usePushNotifications() {
     }
 
     if (isModuleEnabled) {
+      const { mergeMenuSchema } = useNavigations();
+      const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
+      const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
+
       const notificationsRoute: RouteRecordRaw = {
         path: "notifications",
         name: "Notifications",
@@ -121,6 +122,7 @@ export function usePushNotifications() {
         },
       };
       router.addRoute("Account", notificationsRoute);
+
       mergeMenuSchema(menuItems);
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
