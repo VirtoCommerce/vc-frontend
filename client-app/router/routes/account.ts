@@ -1,5 +1,4 @@
 import { useUser } from "@/shared/account";
-import { isActive as isPushMessagesActive } from "@/modules/push-messages/composables/usePushMessages";
 import type { RouteRecordRaw } from "vue-router";
 
 const Dashboard = () => import("@/pages/account/dashboard.vue");
@@ -13,7 +12,6 @@ const Lists = () => import("@/pages/account/lists.vue");
 const ListDetails = () => import("@/pages/account/list-details.vue");
 const CheckoutDefaults = () => import("@/pages/account/checkout-defaults.vue");
 const SavedCreditCards = () => import("@/pages/account/saved-credit-cards.vue");
-const Notifications = () => import("@/modules/push-messages/pages/notifications.vue");
 const Impersonate = () => import("@/pages/account/impersonate.vue");
 
 export const accountRoutes: RouteRecordRaw[] = [
@@ -76,18 +74,6 @@ export const accountRoutes: RouteRecordRaw[] = [
     path: "saved-credit-cards",
     name: "SavedCreditCards",
     component: SavedCreditCards,
-  },
-  {
-    path: "notifications",
-    name: "Notifications",
-    component: Notifications,
-    beforeEnter(_to, _from, next) {
-      if (isPushMessagesActive.value) {
-        next();
-      } else {
-        next({ name: "Dashboard" });
-      }
-    },
   },
   {
     path: "impersonate/:userId",
