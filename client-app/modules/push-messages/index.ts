@@ -14,6 +14,15 @@ import type { Router, RouteRecordRaw } from "vue-router";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 
+const notificationsRoute = {
+  path: "notifications",
+  name: "Notifications",
+};
+const pushMessageRoute = {
+  path: "/push-message/:messageId",
+  name: "PushMessage",
+};
+
 const menuItems: DeepPartial<MenuType> = {
   header: {
     mobile: {
@@ -22,7 +31,7 @@ const menuItems: DeepPartial<MenuType> = {
           {
             id: "push-messages",
             route: {
-              name: "Notifications",
+              name: notificationsRoute.name,
             },
             title: "shared.layout.header.mobile.account_menu.notifications",
             icon: "/static/icons/basic/bell.svg#icon",
@@ -46,7 +55,7 @@ const menuItems: DeepPartial<MenuType> = {
             id: "push-messages",
             title: "shared.account.navigation.links.notifications",
             route: {
-              name: "Notifications",
+              name: notificationsRoute.name,
             },
             icon: "bell",
             priority: 75,
@@ -78,14 +87,11 @@ async function unregisterFCM() {
 }
 
 const notificationsPlaceholderRoute: RouteRecordRaw = {
-  path: "notifications",
-  name: "Notifications",
+  ...notificationsRoute,
   component: () => import("@/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue"),
 };
-
 const pushMessagePlaceholderRoute: RouteRecordRaw = {
-  path: "/push-message/:messageId",
-  name: "PushMessage",
+  ...pushMessageRoute,
   component: () => import("@/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue"),
 };
 
@@ -100,17 +106,10 @@ export function usePushNotifications(router: Router) {
     const isModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY);
     const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
 
-    if (!themeContext.value?.settings?.push_messages_enabled) {
+    if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
       void unregisterFCM();
-      router.removeRoute("Notifications");
-      router.removeRoute("PushMessage");
-      return;
-    }
-
-    if (!isAuthenticated.value) {
-      void unregisterFCM();
-      router.removeRoute("Notifications");
-      router.removeRoute("PushMessage");
+      router.removeRoute(notificationsRoute.name);
+      router.removeRoute(pushMessageRoute.name);
       return;
     }
 
@@ -120,25 +119,26 @@ export function usePushNotifications(router: Router) {
       );
       const { initModule } = useWebPushNotificationsModule();
       await initModule();
-      const pushMessageRoute: RouteRecordRaw = {
-        path: "/push-message/:messageId",
-        name: "PushMessage",
+      const route: RouteRecordRaw = {
+        ...pushMessageRoute,
         component: PushMessage,
         props: true,
       };
-      router.addRoute(pushMessageRoute);
+      router.addRoute(route);
+      if (router.currentRoute.value.name === pushMessageRoute.name) {
+        void router.replace(router.currentRoute.value);
+      }
     } else {
       void unregisterFCM();
-      router.removeRoute("PushMessage");
+      router.removeRoute(pushMessageRoute.name);
     }
 
     if (isModuleEnabled) {
       const { mergeMenuSchema } = useNavigations();
       const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
       const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
-      const notificationsRoute: RouteRecordRaw = {
-        path: "notifications",
-        name: "Notifications",
+      const route: RouteRecordRaw = {
+        ...notificationsRoute,
         component: Notifications,
         beforeEnter(_to, _from, next) {
           if (isAuthenticated.value) {
@@ -152,12 +152,12 @@ export function usePushNotifications(router: Router) {
       mergeMenuSchema(menuItems);
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
-      router.addRoute("Account", notificationsRoute);
-      if (router.currentRoute.value.name === "Notifications") {
+      router.addRoute("Account", route);
+      if (router.currentRoute.value.name === notificationsRoute.name) {
         void router.replace(router.currentRoute.value);
       }
     } else {
-      router.removeRoute("Notifications");
+      router.removeRoute(notificationsRoute.name);
     }
   }
 
