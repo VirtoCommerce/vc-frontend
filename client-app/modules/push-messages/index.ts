@@ -86,15 +86,6 @@ async function unregisterFCM() {
   }
 }
 
-const notificationsPlaceholderRoute: RouteRecordRaw = {
-  ...notificationsRoute,
-  component: () => import("@/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue"),
-};
-const pushMessagePlaceholderRoute: RouteRecordRaw = {
-  ...pushMessageRoute,
-  component: () => import("@/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue"),
-};
-
 export function usePushNotifications() {
   async function init(router: Router) {
     const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
@@ -103,41 +94,11 @@ export function usePushNotifications() {
     const isModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY);
     const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
 
-    function updateRoute() {
-      if (
-        router.currentRoute.value.name === notificationsRoute.name ||
-        router.currentRoute.value.name === pushMessageRoute.name
-      ) {
-        void router.replace(router.currentRoute.value.fullPath);
-      }
-    }
-
-    router.addRoute("Account", notificationsPlaceholderRoute);
-    router.addRoute(pushMessagePlaceholderRoute);
-
     if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
       void unregisterFCM();
       router.removeRoute(notificationsRoute.name);
       router.removeRoute(pushMessageRoute.name);
-      updateRoute();
       return;
-    }
-
-    if (isFCMModuleEnabled) {
-      const { useWebPushNotificationsModule } = await import(
-        "./composables/useWebPushNotifications/useWebPushNotificationsModule"
-      );
-      const { initModule } = useWebPushNotificationsModule();
-      await initModule();
-      const route: RouteRecordRaw = {
-        ...pushMessageRoute,
-        component: PushMessage,
-        props: true,
-      };
-      router.addRoute(route);
-    } else {
-      void unregisterFCM();
-      router.removeRoute(pushMessageRoute.name);
     }
 
     if (isModuleEnabled) {
@@ -159,11 +120,25 @@ export function usePushNotifications() {
       mergeMenuSchema(menuItems);
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
-      router.addRoute("Account", route);
-    } else {
-      router.removeRoute(notificationsRoute.name);
+      router.addRoute("Account", route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
     }
-    updateRoute();
+
+    if (isFCMModuleEnabled) {
+      const route: RouteRecordRaw = {
+        ...pushMessageRoute,
+        component: PushMessage,
+        props: true,
+      };
+      router.addRoute(route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
+
+      const { useWebPushNotificationsModule } = await import(
+        "./composables/useWebPushNotifications/useWebPushNotificationsModule"
+      );
+      const { initModule } = useWebPushNotificationsModule();
+      await initModule();
+    } else {
+      void unregisterFCM();
+    }
   }
 
   return { init };
