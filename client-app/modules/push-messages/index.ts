@@ -95,25 +95,25 @@ const pushMessagePlaceholderRoute: RouteRecordRaw = {
   component: () => import("@/ui-kit/components/molecules/loader-overlay/vc-loader-overlay.vue"),
 };
 
-export function usePushNotifications(router: Router) {
-  function updateRoute() {
-    if (
-      router.currentRoute.value.name === notificationsRoute.name ||
-      router.currentRoute.value.name === pushMessageRoute.name
-    ) {
-      void router.replace(router.currentRoute.value.fullPath);
-    }
-  }
-
-  router.addRoute("Account", notificationsPlaceholderRoute);
-  router.addRoute(pushMessagePlaceholderRoute);
-
-  async function init() {
+export function usePushNotifications() {
+  async function init(router: Router) {
     const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
     const { isAuthenticated } = useUser();
     const { themeContext } = useThemeContext();
     const isModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY);
     const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
+
+    function updateRoute() {
+      if (
+        router.currentRoute.value.name === notificationsRoute.name ||
+        router.currentRoute.value.name === pushMessageRoute.name
+      ) {
+        void router.replace(router.currentRoute.value.fullPath);
+      }
+    }
+
+    router.addRoute("Account", notificationsPlaceholderRoute);
+    router.addRoute(pushMessagePlaceholderRoute);
 
     if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
       void unregisterFCM();
