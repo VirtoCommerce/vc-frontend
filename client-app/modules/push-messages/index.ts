@@ -14,15 +14,6 @@ import type { Router, RouteRecordRaw } from "vue-router";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 
-const notificationsRoute = {
-  path: "notifications",
-  name: "Notifications",
-};
-const pushMessageRoute = {
-  path: "/push-message/:messageId",
-  name: "PushMessage",
-};
-
 const menuItems: DeepPartial<MenuType> = {
   header: {
     mobile: {
@@ -31,7 +22,7 @@ const menuItems: DeepPartial<MenuType> = {
           {
             id: "push-messages",
             route: {
-              name: notificationsRoute.name,
+              name: "Notifications",
             },
             title: "shared.layout.header.mobile.account_menu.notifications",
             icon: "/static/icons/basic/bell.svg#icon",
@@ -55,7 +46,7 @@ const menuItems: DeepPartial<MenuType> = {
             id: "push-messages",
             title: "shared.account.navigation.links.notifications",
             route: {
-              name: notificationsRoute.name,
+              name: "Notifications",
             },
             icon: "bell",
             priority: 75,
@@ -96,8 +87,6 @@ export function usePushNotifications() {
 
     if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
       void unregisterFCM();
-      router.removeRoute(notificationsRoute.name);
-      router.removeRoute(pushMessageRoute.name);
       return;
     }
 
@@ -106,7 +95,8 @@ export function usePushNotifications() {
       const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
       const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
       const route: RouteRecordRaw = {
-        ...notificationsRoute,
+        path: "notifications",
+        name: "Notifications",
         component: Notifications,
         beforeEnter(_to, _from, next) {
           if (isAuthenticated.value) {
@@ -125,7 +115,8 @@ export function usePushNotifications() {
 
     if (isFCMModuleEnabled) {
       const route: RouteRecordRaw = {
-        ...pushMessageRoute,
+        path: "/push-message/:messageId",
+        name: "PushMessage",
         component: PushMessage,
         props: true,
       };
