@@ -16,6 +16,18 @@ type SelectedConfigurationType = {
   selectedProductTitle: string | undefined;
 };
 
+/**
+ * Composable function to handle configurable products.
+ *
+ * @param {string} configurableProductId - The ID of the configurable product.
+ * @returns {Object} - The composable functions and properties.
+ * @returns {Function} fetchProductConfiguration - Function to fetch the product configuration.
+ * @returns {Function} selectSectionValue - Function to select a section value.
+ * @returns {Ref<boolean>} loading - Computed ref indicating if the product configuration fetching or line item creation is in progress.
+ * @returns {Ref<GetProductConfigurationsQuery["productConfiguration"] | undefined>} configuration - Readonly ref containing the product configuration.
+ * @returns {Ref<Record<string, SelectedConfigurationType | undefined>>} selectedConfiguration - Readonly ref containing the selected configuration.
+ * @returns {Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"] | undefined>} configuredLineItem - Readonly ref containing the created configured line item.
+ */
 export function useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
