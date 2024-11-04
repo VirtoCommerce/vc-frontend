@@ -87,7 +87,7 @@ export function useShortCart() {
       command: {
         productId,
         quantity,
-        configurableProductId: configuration.configurableProductId,
+        configurableProductId: configuration.configurableProductId || productId,
         configurationSections: configuration.configurationSections,
       },
     });
