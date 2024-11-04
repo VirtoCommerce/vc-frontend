@@ -1,5 +1,5 @@
 import { computed, toValue } from "vue";
-import { useGetPage, useGetSlugInfo } from "@/core/api/graphql";
+import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
 import type { PageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
@@ -35,6 +35,10 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     return objectType.value === "ContentFile";
   });
 
+  const hasPageDocumentContent = computed(() => {
+    return objectType.value === "Pages";
+  });
+
   const getPageParams = computed(() => {
     return { id: slugInfo?.value?.entityInfo?.objectId || "?", cultureName, storeId };
   });
@@ -45,6 +49,13 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     loading: contentLoading,
     error: contentError,
   } = useGetPage(getPageParams);
+
+  const {
+    load: loadPageDocumentContent,
+    result: pageDocumentContentResult,
+    loading: pageDocumentContentLoading,
+    error: PageDocumentContentError,
+  } = useGetPageDocument(getPageParams);
 
   const pageContent = computed(() => {
     if (contentError.value) {
@@ -63,18 +74,30 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     return null;
   });
 
+  const pageDocumentContent = computed(() => {
+    if (PageDocumentContentError.value) {
+      return null;
+    }
+
+    return pageDocumentContentResult?.value?.pageDocument || null;
+  });
+
   function isPageContent(data: unknown): data is PageTemplate {
     return Array.isArray((data as PageTemplate)?.content) && typeof (data as PageTemplate)?.settings === "object";
   }
 
   return {
     loading: computed(() => {
-      return slugLoading.value || contentLoading.value;
+      return slugLoading.value || contentLoading.value || pageDocumentContentLoading.value;
     }),
     slugInfo,
     objectType,
     hasContent,
     pageContent,
     fetchContent: loadContent,
+
+    hasPageDocumentContent,
+    pageDocumentContent,
+    fetchPageDocumentContent: loadPageDocumentContent,
   };
 }

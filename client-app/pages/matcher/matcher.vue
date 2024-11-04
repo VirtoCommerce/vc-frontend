@@ -1,10 +1,10 @@
 <template>
   <div class="matcher">
     <SlugContent
-      v-if="previewers.slugContent.isActive"
-      :is-visible="visibleComponent === 'slugContent'"
+      v-if="previewers.slugContent.isActive || previewers.virtoPages.isActive"
+      :is-visible="visibleComponent !== null && ['slugContent', 'virtoPages'].indexOf(visibleComponent) !== -1"
       :path-match="pathMatch || ['/']"
-      @set-state="updateState($event, 'slugContent')"
+      @set-state="updatSlugContentState($event)"
     />
     <BuilderIo
       v-if="previewers.builderIo.isActive"
@@ -38,9 +38,10 @@ interface IProps {
 defineProps<IProps>();
 
 const DEFAULT_PRIORITIES = {
-  builderIo: 1,
-  slugContent: 2,
-  internal: 3,
+  virtoPages: 1,
+  builderIo: 2,
+  slugContent: 3,
+  internal: 4,
 };
 
 const BuilderIo = defineAsyncComponent(() => import("@/pages/matcher/builderIo/builder-io.vue"));
@@ -59,6 +60,10 @@ const moduleSettings = computed(() => {
   return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
 });
 
+const isVirtoPagesInstalled = computed(() => {
+  return true; // modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.Platform") !== undefined;
+});
+
 const isBuilderIOEnabled = computed(() => {
   return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.Enable")?.value as boolean;
 });
@@ -69,6 +74,12 @@ const builderIoApiKey = computed(() => {
 
 // The highest priority has the previewer whose 'priority' value is closer to zero
 const previewers = ref<{ [key in string]: PreviewerStateType }>({
+  virtoPages: {
+    id: "virtoPages",
+    priority: PRIORITIES.value.virtoPages,
+    state: "initial",
+    isActive: isVirtoPagesInstalled.value,
+  },
   builderIo: {
     id: "builderIo",
     priority: PRIORITIES.value.builderIo,
@@ -90,6 +101,14 @@ const previewers = ref<{ [key in string]: PreviewerStateType }>({
 });
 
 const visibleComponent = computed(() => getVisiblePreviewer(Object.values(previewers.value)));
+
+function updatSlugContentState(state: { value: StateType; items: string[] }) {
+  for (const item of state.items) {
+    if (previewers.value[item]) {
+      previewers.value[item].state = state.value;
+    }
+  }
+}
 
 function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
   if (previewers.value[previewerId]) {
