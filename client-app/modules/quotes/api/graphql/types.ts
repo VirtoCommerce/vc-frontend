@@ -478,12 +478,16 @@ export type ConfigurationSectionInput = {
 export type ConfigurationSectionType = {
   /** Configuration section description */
   description?: Maybe<Scalars['String']['output']>;
+  /** Configuration section id */
+  id?: Maybe<Scalars['String']['output']>;
   /** Is configuration section required */
   isRequired: Scalars['Boolean']['output'];
   /** Configuration section name */
   name?: Maybe<Scalars['String']['output']>;
   products?: Maybe<Array<Maybe<Product>>>;
   quantity?: Maybe<Scalars['Int']['output']>;
+  /** Configuration section type */
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type ConfiguredLineItemType = {
@@ -1376,6 +1380,9 @@ export type InputAddItemType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   /** Comment */
   comment?: InputMaybe<Scalars['String']['input']>;
+  /** Configurable product ID */
+  configurableProductId?: InputMaybe<Scalars['String']['input']>;
+  configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
@@ -4221,7 +4228,7 @@ export type Product = {
   /** Product added at least in one wishlist */
   inWishlist: Scalars['Boolean']['output'];
   /** Product is configurable */
-  isConfigurable?: Maybe<Scalars['Boolean']['output']>;
+  isConfigurable: Scalars['Boolean']['output'];
   keyProperties: Array<Property>;
   /** Length */
   length?: Maybe<Scalars['Decimal']['output']>;
