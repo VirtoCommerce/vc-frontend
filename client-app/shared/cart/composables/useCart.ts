@@ -81,10 +81,16 @@ export function useShortCart() {
   async function addToCart(
     productId: string,
     quantity: number,
-    configurableProductId?: string,
-    configurationSections?: ConfigurationSectionInput[],
+    configuration: { configurableProductId?: string; configurationSections?: ConfigurationSectionInput[] } = {},
   ): Promise<ShortCartFragment | undefined> {
-    const result = await _addToCart({ command: { productId, quantity, configurableProductId, configurationSections } });
+    const result = await _addToCart({
+      command: {
+        productId,
+        quantity,
+        configurableProductId: configuration.configurableProductId,
+        configurationSections: configuration.configurationSections,
+      },
+    });
     return result?.data?.addItem;
   }
 
