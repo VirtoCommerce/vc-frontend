@@ -44,14 +44,7 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
-const {
-  loading,
-  slugInfo,
-  objectType,
-  hasContent,
-  pageContent,
-  fetchContent,
-} = useSlugInfo(seoUrl);
+const { loading, slugInfo, objectType, hasContent, pageContent, fetchContent } = useSlugInfo(seoUrl);
 
 enum ObjectType {
   CatalogProduct = "CatalogProduct",
