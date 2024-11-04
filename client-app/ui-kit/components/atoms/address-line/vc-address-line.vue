@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 interface IProps {
-  address: AnyAddressType;
+  address: AddressType;
 }
 
 defineProps<IProps>();
