@@ -24,7 +24,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 - **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** The Frontend Application UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
 - **Fully responsive.** We made our Frontend Application work on multiple devices from Desktops to Mobile phones, concentrating both on UI and UX.
 - **Simple styling and customization.** We use TailwindCSS to provide the easiest and most convenient way of CSS usage. Write as less of code as possible, and reuse existing highly customizable framework features.
-- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios.
+- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios. 
 
 ## The Application structure
 
@@ -92,7 +92,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── config
 |   ├── menu.json
 |   └── settings_data.json
-|
+|   
 ├── locales                          // Locale files used to provide translated content.
 |   └──...
 |
@@ -118,7 +118,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── graphql-codegen
 |   ├── schema.ts                    // Configuration file to generate GraphQL schema.
 |   ├── generator.ts                 // Generate types based on schema.json
-|   └── config.cjs                   // Environment configuration
+|   └── config.cjs                   // Environment configuration 
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
@@ -146,7 +146,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 - Install [vc-module-push-messages](https://github.com/VirtoCommerce/vc-module-push-messages) module.
   Install [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
 - Install [Node.js v22](https://nodejs.org/en/download/) (**22.11.0** or later)
-- Enable [corepack](https://yarnpkg.com/corepack) _(run as administrator on Windows)_
+- Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
   ```bash
   corepack enable
   ```
@@ -156,26 +156,22 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
     npm uninstall --global yarn
     ```
   - or through your Operation System installation tools
-    - `Control Panel`, `Chocolatey` or `Scoop` on _Windows_
-    - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on _macOs_
-    - Native package manager such as `apt` on _Linux_
+     - `Control Panel`, `Chocolatey` or `Scoop` on *Windows*
+     - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on *macOs*
+     - Native package manager such as `apt` on *Linux*
 
 ### Clone repository
-
 ```bash
 git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-theme-b2b-vue\"
 ```
 
 ### Check yarn version
-
 ```bash
 yarn -v
 ```
-
 `Yarn` should be of version **4.1.0** or greater, not 1.XX.
 
 ### Install dependencies
-
 ```bash
 yarn install
 ```
@@ -216,13 +212,10 @@ yarn build:watch
 ## Types generation
 
 Command:
-
 ```
 yarn generate:graphql
 ```
-
 makes two steps:
-
 1. Downloads `schema.json` from GraphQL server located at the `APP_BACKEND_URL`
 2. Generates the `types.ts` file separately for general modules and independent modules.
 
@@ -233,27 +226,21 @@ If independent modules are not installed on `The Platform`, types can still be s
 ### Bundle Size Analysis
 
 To examine the sizes of various chunks such as `vendor.js` or `index.js`, execute the following command:
-
 ```
 yarn generate:bundle-map
 ```
-
 The results will be located in the `artifacts` folder.
 
 ### Visualizing the Dependency Graph
 
 To create a visual representation of the dependency graph, use the following command:
-
 ```
 yarn generate:dependency-graph
 ```
-
 **Note**: This command requires parameters to run successfully. For example:
-
 ```
 yarn generate:dependency-graph client-app/main.ts client-app/shared/account/components/checkout-default-success-modal.vue
 ```
-
 The generated graph will also be saved in the `artifacts` folder.
 
 ### Troubleshooting
