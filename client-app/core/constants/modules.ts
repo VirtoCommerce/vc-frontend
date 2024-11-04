@@ -1,5 +1,6 @@
 export const MODULE_ID_PUSH_MESSAGES = "VirtoCommerce.PushMessages";
 export const MODULE_ID_XRECOMMEND = "VirtoCommerce.XRecommend";
+export const XRECOMMEND_ENABLED_KEY = "XRecommend.RecommendationsEnabled";
 
 export const MODULE_XAPI_KEYS = {
   MODULE_ID: "VirtoCommerce.Xapi",

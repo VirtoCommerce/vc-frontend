@@ -46,6 +46,7 @@ query SearchRelatedProducts(
           }
           minQuantity
           maxQuantity
+          packSize
           inWishlist
           price {
             actual {

@@ -2,8 +2,9 @@
   <div
     :class="[
       'vc-product-price',
-      `vc-product-price--align--${align}`,
       {
+        'vc-product-price--align--start': align === 'start',
+        'vc-product-price--align--end': align === 'end',
         'vc-product-price--single-line': singleLine,
         'vc-product-price--truncate': truncate,
         'vc-product-price--disabled': disabled,
@@ -38,9 +39,7 @@ interface IProps {
   disabled?: boolean;
 }
 
-withDefaults(defineProps<IProps>(), {
-  align: "start",
-});
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
@@ -53,11 +52,11 @@ withDefaults(defineProps<IProps>(), {
 
   &--align {
     &--start {
-      @apply items-start text-start;
+      @apply justify-start text-start;
     }
 
     &--end {
-      @apply items-end text-end;
+      @apply justify-end text-end;
     }
   }
 

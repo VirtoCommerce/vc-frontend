@@ -4,9 +4,7 @@
       <BottomHeaderLink :link="item" :count="unreadCount">
         <template #icon>
           <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-            <svg v-if="item.icon" :key="totalCount" height="24" width="24" class="mb-0.5 text-primary">
-              <use :href="item.icon" />
-            </svg>
+            <VcIcon :key="totalCount" :name="item.icon" class="mb-0.5 text-primary" :size="24" />
           </transition>
         </template>
         {{ item.title }}
@@ -16,10 +14,10 @@
 </template>
 
 <script setup lang="ts">
-import { isActive as isPushMessagesActive } from "@/shared/push-messages/composables/usePushMessages";
+import { isActive as isPushMessagesActive } from "../composables/usePushMessages";
+import PushMessages from "./push-messages.vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import BottomHeaderLink from "@/shared/layout/components/header/_internal/bottom-header-link.vue";
-import PushMessages from "@/shared/push-messages/components/push-messages.vue";
 
 defineProps<{ item: ExtendedMenuLinkType }>();
 </script>

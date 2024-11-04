@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { toRefs } from "vue";
-import { usePushMessage } from "@/shared/push-messages/composables/usePushMessage";
+import { usePushMessage } from "../composables/usePushMessage";
 
 interface IProps {
   pushMessage: VcPushMessageType;
