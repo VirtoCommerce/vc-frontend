@@ -48,13 +48,13 @@ export function useConfigurableProduct(configurableProductId: string) {
       configuration.value = await getProductConfiguration(configurableProductId);
       selectedConfigurationInput.value =
         configuration.value?.configurationSections?.map((section) => ({
-          sectionId: section.name!, // TODO: change with sectionId
+          sectionId: section.id || "",
           value: section.isRequired
             ? {
                 productId: section.products?.[0]?.id ?? "",
                 quantity: section.quantity ?? 1,
               }
-            : undefined, // TODO: change with null ?
+            : undefined,
         })) ?? [];
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);

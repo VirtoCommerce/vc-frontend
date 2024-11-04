@@ -10,6 +10,7 @@ query GetProductConfigurations($productId: String!, $storeId: String!, $currency
     cultureName: $cultureName
   ) {
     configurationSections {
+      id
       name
       description
       isRequired
