@@ -6,8 +6,9 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { computed, defineAsyncComponent, watch, watchEffect } from "vue";
+import { computed, watch, watchEffect } from "vue";
 import { useSlugInfo } from "@/shared/common";
+import VPBuilderIO from "@/pages/matcher/virto-pages/vp-builder-io.vue";
 import type { StateType } from "@/pages/matcher/priorityManager";
 
 interface IProps {
@@ -22,8 +23,6 @@ interface IEmits {
 
 const props = defineProps<IProps>();
 const emit = defineEmits<IEmits>();
-
-const VPBuilderIO = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/vp-builder-io.vue"));
 
 const seoUrl = computedEager(() => {
   if (!props.pathMatch) {
