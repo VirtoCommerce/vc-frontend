@@ -10,8 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import type { AnyAddressType } from "@/core/types";
-
 interface IProps {
   address: AnyAddressType;
 }
