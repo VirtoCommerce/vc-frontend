@@ -13,6 +13,7 @@ query GetProductConfigurations($productId: String!, $storeId: String!, $currency
       id
       name
       description
+      type
       isRequired
       quantity
       products {
