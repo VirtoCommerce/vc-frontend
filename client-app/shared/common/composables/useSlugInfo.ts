@@ -3,11 +3,12 @@ import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graph
 import { globals } from "@/core/globals";
 import type { PageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
+import { createGlobalState } from "@vueuse/core";
 
 /**
  * @param seoUrl path after domain without slash at the beginning
  **/
-export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
+function _useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   const { storeId, userId, cultureName } = globals;
   const variables = computed(() => {
     return {
@@ -112,3 +113,5 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     fetchPageDocumentContent: loadPageDocumentContent,
   };
 }
+
+export const useSlugInfo = createGlobalState(_useSlugInfo);

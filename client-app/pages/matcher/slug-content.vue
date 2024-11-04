@@ -1,9 +1,5 @@
 <template>
-  <div v-if="isVisible && !loading && (hasPageDocumentContent || hasContent || objectType)" class="slug-content">
-    <VirtoPages
-                v-if="objectType === 'Pages' && hasPageDocumentContent"
-                :page-document="pageDocumentContent"
-                allow-set-meta />
+  <div v-if="isVisible && !loading && (hasContent || objectType)" class="slug-content">
     <CategoryComponent v-if="objectType === 'Category'" :category-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
     <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
     <StaticPage v-else-if="hasContent" />
@@ -23,20 +19,14 @@ interface IProps {
   isVisible?: boolean;
 }
 
-interface IEmitArgs {
-  value: StateType;
-  items: string[];
-}
-
 interface IEmits {
-  (event: "setState", args: IEmitArgs): void;
+  (event: "setState", value: StateType): void;
 }
 
 const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const VirtoPages = defineAsyncComponent(() => import("@/pages/virto-pages/virto-pages.vue"));
 const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vue"));
 const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
@@ -61,32 +51,23 @@ const {
   hasContent,
   pageContent,
   fetchContent,
-  hasPageDocumentContent,
-  pageDocumentContent,
-  fetchPageDocumentContent,
 } = useSlugInfo(seoUrl);
 
 enum ObjectType {
   CatalogProduct = "CatalogProduct",
   Category = "Category",
   ContentFile = "ContentFile",
-  PageDocument = "Pages",
 }
 
 watchEffect(() => {
   if (loading.value) {
-    emit("setState", { value: "loading", items: ["slugContent", "virtoPages"] });
-  } else if (
-    [ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType) ||
-    pageContent.value
-  ) {
-    emit("setState", { value: "ready", items: ["slugContent"] });
-    emit("setState", { value: "empty", items: ["virtoPages"] });
-  } else if (pageDocumentContent.value) {
-    emit("setState", { value: "ready", items: ["virtoPages"] });
-    emit("setState", { value: "empty", items: ["slugContent"] });
+    emit("setState", "loading");
+  } else if ([ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)) {
+    emit("setState", "ready");
+  } else if (pageContent.value) {
+    emit("setState", "ready");
   } else {
-    emit("setState", { value: "empty", items: ["slugContent", "virtoPages"] });
+    emit("setState", "empty");
   }
 });
 
@@ -101,9 +82,6 @@ watch(slugInfo, () => {
       break;
     case ObjectType.ContentFile:
       void fetchContent();
-      break;
-    case ObjectType.PageDocument:
-      void fetchPageDocumentContent();
       break;
     default:
       clearState();

@@ -13,7 +13,7 @@ import { Content } from "@builder.io/sdk-vue";
 import { shallowRef, computed, watch, onBeforeMount } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 import { useThemeContext } from "@/core/composables";
-import { builderIOComponents } from "../matcher/builderIo/customComponents";
+import { builderIOComponents } from "../builderIo/customComponents";
 import type { BuilderContent } from "@builder.io/sdk-vue";
 
 interface IProps {
