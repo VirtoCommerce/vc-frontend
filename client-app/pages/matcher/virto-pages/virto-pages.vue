@@ -1,6 +1,6 @@
 <template>
   <div>
-    <VPBuilderIO ng-if="isBulderIOContent" :content="pageDocumentContent?.content" />
+    <VPBuilderIO v-if="isBulderIOContent" :content="pageDocumentContent?.content" />
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div ng-if="content">
+  <div v-if="content">
     <Content
              model="page"
              :content="pageDocumentContent"
