@@ -67,6 +67,7 @@ const checked = computed(() => model.value === props.value);
 
 <style lang="scss">
 .vc-radio-button {
+  $self: &;
   $checked: "";
   $disabled: "";
   $left: "";
@@ -143,7 +144,7 @@ const checked = computed(() => model.value === props.value);
   }
 
   &__label {
-    @apply min-w-0;
+    @apply min-w-0 empty:hidden;
 
     #{$left} & {
       @apply order-first me-2;
@@ -160,6 +161,32 @@ const checked = computed(() => model.value === props.value);
 
   &__details {
     @apply min-w-full;
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: select;
+
+      @apply self-start;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        @apply hidden;
+      }
+
+      &--list #{$self} {
+        @apply hidden;
+      }
+
+      &--item #{$self} {
+        @apply absolute -left-3.5 -top-4 p-1.5 rounded-full bg-[--bg];
+
+        @container (min-width: theme("containers.2xl")) {
+          @apply relative left-auto top-auto self-center me-1.5;
+        }
+      }
+    }
   }
 }
 </style>
