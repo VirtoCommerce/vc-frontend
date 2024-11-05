@@ -12,6 +12,7 @@
 import { Content } from "@builder.io/sdk-vue";
 import { shallowRef, computed, watch, onBeforeMount } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
+import { useThemeContext } from "@/core/composables";
 import { builderIOComponents } from "../builderIo/customComponents";
 import type { BuilderBlock, BuilderContent } from "@builder.io/sdk-vue";
 
@@ -21,8 +22,15 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { modulesSettings } = useThemeContext();
+
+const moduleSettings = computed(() => {
+  return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
+});
+
 const builderIoApiKey = computed(() => {
-  return 'd9eda59fb24050a3cec8ccc7fc01d5c9'; // it is a fake key
+  return (moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value as string)
+    || 'NO_KEY'; // that's enought to display page
 });
 
 const canShowContent = shallowRef(false);
