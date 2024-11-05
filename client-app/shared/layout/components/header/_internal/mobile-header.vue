@@ -33,9 +33,7 @@
             <VcIcon class="text-primary" name="search" :size="28" />
           </button>
 
-          <template v-if="Object.keys(customComponents).length">
-            <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
-          </template>
+          <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
 
           <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
             <span class="relative block">
