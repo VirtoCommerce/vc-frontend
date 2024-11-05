@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRef, watch } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart";
 import type { Product } from "@/core/api/graphql/types";
@@ -66,13 +66,14 @@ const errorMessage = ref<string | undefined>();
 
 const { cart, addToCart, changeItemQuantity, changing } = useShortCart();
 
-const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
-const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
-const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === props.product.id));
+const product = toRef(props, "product");
+
+const price = computed(() => (product.value.hasVariations ? product.value.minVariationPrice : product.value.price));
+const link = computed<RouteLocationRaw>(() => getProductRoute(product.value.id, product.value.slug));
+const cartLineItem = computed(() => cart.value?.items.find((item) => item.productId === product.value.id));
 const countInCart = computed<number>(() => cartLineItem.value?.quantity || 0);
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const quantity = ref(countInCart.value || props.product.minQuantity || 1);
+const quantity = ref(countInCart.value || product.value.minQuantity || 1);
 
 async function changeCartItemQuantity(qty: number) {
   if (cartLineItem.value && countInCart.value) {
@@ -80,7 +81,7 @@ async function changeCartItemQuantity(qty: number) {
       await changeItemQuantity(cartLineItem.value.id, qty);
     }
   } else {
-    await addToCart(props.product.id, qty);
+    await addToCart(product.value.id, qty);
   }
 }
 
