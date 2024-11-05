@@ -24,27 +24,11 @@ export default {
 const Template: StoryFn<typeof VcProductTotal> = (args) => ({
   components: { VcProductTotal },
   setup: () => ({ args }),
-  template: '<VcProductPrice v-bind="args" />',
+  template: '<VcProductTotal v-bind="args" />',
 });
-
-const sharedArgs = {
-  actualPrice: getMoney(1599999999),
-  listPrice: getMoney(1799999999),
-};
 
 export const Basic = Template.bind({});
 Basic.args = {
-  ...sharedArgs,
-};
-
-export const AlignEnd = Template.bind({});
-AlignEnd.args = {
-  ...sharedArgs,
-  align: "end",
-};
-
-export const SingleLine = Template.bind({});
-SingleLine.args = {
-  ...sharedArgs,
-  singleLine: true,
+  actualPrice: getMoney(1599999999),
+  listPrice: getMoney(1799999999),
 };

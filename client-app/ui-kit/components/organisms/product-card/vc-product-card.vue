@@ -25,7 +25,7 @@
 import { useTemplateRef, onMounted } from "vue";
 
 export interface IProps {
-  viewMode?: "grid" | "list";
+  viewMode?: "grid" | "list" | "item";
   background?: boolean;
   border?: boolean;
 }
