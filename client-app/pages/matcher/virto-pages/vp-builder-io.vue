@@ -12,9 +12,8 @@
 import { Content } from "@builder.io/sdk-vue";
 import { shallowRef, computed, watch, onBeforeMount } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
-import { useThemeContext } from "@/core/composables";
 import { builderIOComponents } from "../builderIo/customComponents";
-import type { BuilderContent } from "@builder.io/sdk-vue";
+import type { BuilderBlock, BuilderContent } from "@builder.io/sdk-vue";
 
 interface IProps {
   content?: string;
@@ -22,14 +21,8 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const { modulesSettings } = useThemeContext();
-
-const moduleSettings = computed(() => {
-  return modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.BuilderIO");
-});
-
 const builderIoApiKey = computed(() => {
-  return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value as string;
+  return 'd9eda59fb24050a3cec8ccc7fc01d5c9'; // it is a fake key
 });
 
 const canShowContent = shallowRef(false);
@@ -56,7 +49,7 @@ function trySetContent() {
   if (!props.content) {
     return;
   }
-  const blocks = JSON.parse(props.content);
+  const blocks = <BuilderBlock[]>JSON.parse(props.content);
   pageDocumentContent.value = <BuilderContent>{ data: { blocks } };
   canShowContent.value = true;
 }
