@@ -16,6 +16,7 @@ import type { Messaging } from "firebase/messaging";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
 const SERVICE_WORKER_VERSION = "1.0.0"; // Have to be updated on every change in the service worker to avoid caching issues
+const SERVICE_WORKER_PATH = "/fcm-service-worker.js";
 const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
 const SETTINGS_MAPPING = {
@@ -66,7 +67,7 @@ function _useWebPushNotifications() {
 
     const firebaseApp = initializeApp(firebaseConfig);
     messaging = getMessaging(firebaseApp);
-    await navigator.serviceWorker.register(`/fcm-service-worker.js?v=${SERVICE_WORKER_VERSION}`, {
+    await navigator.serviceWorker.register(`${SERVICE_WORKER_PATH}?v=${SERVICE_WORKER_VERSION}`, {
       scope: REGISTRATION_SCOPE,
     });
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
