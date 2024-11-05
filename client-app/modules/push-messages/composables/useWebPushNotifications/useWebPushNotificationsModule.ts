@@ -15,6 +15,7 @@ import type { FcmSettingsType } from "../../api/graphql/types";
 import type { Messaging } from "firebase/messaging";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
+const SERVICE_WORKER_VERSION = "1.0.0"; // Have to be updated on every change in the service worker to avoid caching issues
 const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
 const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
 const SETTINGS_MAPPING = {
@@ -64,9 +65,11 @@ function _useWebPushNotifications() {
 
     const firebaseApp = initializeApp(firebaseConfig);
     messaging = getMessaging(firebaseApp);
-
-    await getFcmToken(messaging, vapidKey);
+    await navigator.serviceWorker.register(`/fcm-service-worker.js?v=${SERVICE_WORKER_VERSION}`, {
+      scope: REGISTRATION_SCOPE,
+    });
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
+    await getFcmToken(messaging, vapidKey, serviceWorkerRegistration);
     serviceWorkerRegistration?.active?.postMessage({
       type: "initialize",
       config: firebaseConfig,
@@ -77,29 +80,13 @@ function _useWebPushNotifications() {
     broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
   }
 
-  // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693
-  function tryGetToken(count: number = 3) {
-    const TIMEOUT = 3000;
-    let retryCount = 0;
-    return async function retry(messagingInstance: Messaging, vapidKey: string) {
-      try {
-        return await getToken(messagingInstance, { vapidKey });
-      } catch (e) {
-        if (retryCount >= count) {
-          return;
-        }
-        retryCount++;
-        await new Promise((resolve) => {
-          setTimeout(resolve, TIMEOUT);
-        });
-        return await retry(messagingInstance, vapidKey);
-      }
-    };
-  }
-
-  async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
+  async function getFcmToken(
+    messagingInstance: Messaging,
+    vapidKey: string,
+    registration?: ServiceWorkerRegistration,
+  ): Promise<string | undefined> {
     try {
-      currentToken = await tryGetToken()(messagingInstance, vapidKey);
+      currentToken = await getToken(messagingInstance, { vapidKey, serviceWorkerRegistration: registration });
       if (currentToken && currentToken !== savedFcmToken.value) {
         await addFcmTokenMutation({ command: { token: currentToken } });
         savedFcmToken.value = currentToken;
