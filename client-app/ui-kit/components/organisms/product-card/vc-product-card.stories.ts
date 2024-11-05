@@ -326,9 +326,8 @@ const LineItemTemplate: StoryFn<typeof VcProductCard> = (args) => ({
   template: `<VcProductCard v-bind="args">
     <template #media>
       <VcProductImage v-bind="image" />
+      <VcRadioButton />
     </template>
-
-    <VcRadioButton />
 
     <VcProductTitle v-bind="{ ...title, linesNumber: 3}">Product title Product title</VcProductTitle>
 
