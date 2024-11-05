@@ -39,7 +39,7 @@
 
       <!-- Quote products -->
       <VcWidget :title="$t('quote_details.products')" prepend-icon="cube" size="lg">
-        <QuoteLineItems :items="quote.items!" @update:item="onUpdateItem" @remove:item="onRemoveItem" />
+        <QuoteLineItems :items="quote.items" @update:item="onUpdateItem" @remove:item="onRemoveItem" />
       </VcWidget>
 
       <VcWidget :title="$t('quote_details.shipping_address')" prepend-icon="truck" size="lg">

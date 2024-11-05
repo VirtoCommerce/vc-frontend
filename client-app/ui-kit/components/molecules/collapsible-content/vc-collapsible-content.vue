@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { useElementSize } from "@vueuse/core";
-import { computed, ref, shallowRef, watch, watchEffect } from "vue";
+import { computed, ref, shallowRef, toRef, watch, watchEffect } from "vue";
 import type { ComponentPublicInstance } from "vue";
 
 interface IEmits {
@@ -42,8 +42,9 @@ const props = defineProps<IProps>();
 
 const contentWrapperElement = shallowRef<HTMLDivElement>();
 const contentElement = shallowRef<ComponentPublicInstance>();
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const showAll = ref(props.collapse);
+
+const collapse = toRef(props, "collapse");
+const showAll = ref(collapse.value);
 
 const { height: contentWrapperElementHeight } = useElementSize(contentWrapperElement);
 const { height: contentElementHeight } = useElementSize(contentElement);
@@ -53,11 +54,11 @@ const showSeeMoreButton = computed<boolean>(
 );
 
 watchEffect(() => {
-  showAll.value = props.collapse;
+  showAll.value = collapse.value;
 });
 
 watch(showAll, (value: boolean) => {
-  if (value !== props.collapse) {
+  if (value !== collapse.value) {
     emit("update:collapse", value);
   }
 });
