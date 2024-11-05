@@ -5,7 +5,6 @@ import type { RouteRecordRaw } from "vue-router";
 import Error403 from "@/pages/403.vue";
 import Error404 from "@/pages/404.vue";
 import Error500 from "@/pages/500.vue";
-import Maintenance from "@/pages/maintenance.vue";
 
 const callback = () => import("@/pages/auth/callback.vue");
 const SingInPage = () => import("@/pages/sign-in.vue");
@@ -60,14 +59,6 @@ export const mainRoutes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       requiresOrganization: true,
-    },
-  },
-  {
-    path: "/maintenance",
-    name: "Maintenance",
-    component: Maintenance,
-    meta: {
-      requiresAuth: true,
     },
   },
   { path: "/branch/:branchId", name: "BranchPage", component: Branch, props: true },

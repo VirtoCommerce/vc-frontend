@@ -5,7 +5,7 @@ import { OperationNames } from "@/core/api/graphql/types";
 import { useThemeContext } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { getReturnUrlValue, Logger } from "@/core/utilities";
+import { getReturnUrlValue } from "@/core/utilities";
 import { useSignMeOut, useUser } from "@/shared/account";
 import {
   cartReloadEvent,
@@ -20,11 +20,7 @@ import {
   passwordExpiredEvent,
   reloadAndOpenMainPage,
 } from "@/shared/broadcast";
-import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
-import { useEnvironmentName } from "./core/composables/useEnvironmentName";
-import VcConfirmationModal from "./ui-kit/components/organisms/confirmation-modal/vc-confirmation-modal.vue";
-import type { INotification } from "@/shared/notification";
 
 let installed = false;
 
@@ -42,8 +38,6 @@ export function setupBroadcastGlobalListeners() {
   const { fetchUser, user } = useUser();
   const { signMeOut } = useSignMeOut({ reloadPage: false });
   const { themeContext } = useThemeContext();
-  const { environmentName } = useEnvironmentName();
-  const { closeModal, openModal } = useModal();
 
   on(pageReloadEvent, () => location.reload());
   on(reloadAndOpenMainPage, () => {
@@ -84,49 +78,14 @@ export function setupBroadcastGlobalListeners() {
       location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
     }
   });
-  on(unhandledErrorEvent, (data) => {
+  on(unhandledErrorEvent, () => {
     const { t } = globals.i18n.global;
-
-    const notification: INotification = {
+    notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       group: "UnhandledError",
       singleInGroup: true,
       text: t("common.messages.unhandled_error"),
-    };
-
-    const errorDetails = data as string;
-
-    if (errorDetails) {
-      notification.text = t("common.messages.something_went_wrong");
-
-      if (environmentName?.toLowerCase() === "dev") {
-        notification.button = {
-          text: "Show details",
-          clickHandler: () => {
-            notifications.clear();
-            openModal({
-              component: VcConfirmationModal,
-              props: {
-                singleButton: true,
-                text: errorDetails,
-                title: t("common.titles.error_details"),
-                onConfirm() {
-                  closeModal();
-                },
-              },
-            });
-          },
-        };
-      }
-
-      Logger.error(errorDetails);
-    }
-
-    notifications.error(notification);
-
-    if (errorDetails) {
-      throw errorDetails;
-    }
+    });
   });
   on(openReturnUrl, () => {
     location.href = getReturnUrlValue() ?? themeContext.value.settings.default_return_url ?? "/";
