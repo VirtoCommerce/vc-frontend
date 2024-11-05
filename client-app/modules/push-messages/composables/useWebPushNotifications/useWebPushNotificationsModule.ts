@@ -59,7 +59,8 @@ function _useWebPushNotifications() {
     const firebaseConfig = omit(fcmSettings, "vapidKey") as FcmSettingsType;
 
     if (initialized) {
-      await getFcmToken(messaging!, vapidKey);
+      const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
+      await getFcmToken(messaging!, vapidKey, serviceWorkerRegistration);
       return;
     }
 
@@ -83,10 +84,10 @@ function _useWebPushNotifications() {
   async function getFcmToken(
     messagingInstance: Messaging,
     vapidKey: string,
-    registration?: ServiceWorkerRegistration,
+    serviceWorkerRegistration?: ServiceWorkerRegistration,
   ): Promise<string | undefined> {
     try {
-      currentToken = await getToken(messagingInstance, { vapidKey, serviceWorkerRegistration: registration });
+      currentToken = await getToken(messagingInstance, { vapidKey, serviceWorkerRegistration });
       if (currentToken && currentToken !== savedFcmToken.value) {
         await addFcmTokenMutation({ command: { token: currentToken } });
         savedFcmToken.value = currentToken;
