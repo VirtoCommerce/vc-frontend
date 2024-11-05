@@ -17,7 +17,7 @@
       class="vc-product-title__text"
       @click="$emit('click', $event)"
     >
-      <slot />
+      <slot>{{ title }}</slot>
     </component>
   </div>
 </template>

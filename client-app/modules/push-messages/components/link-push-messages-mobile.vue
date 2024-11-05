@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { useLocalStorage } from "@vueuse/core";
-import { usePushMessages } from "@/shared/push-messages/composables/usePushMessages";
+import { usePushMessages } from "../composables/usePushMessages";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import MobileMenuLink from "@/shared/layout/components/header/_internal/mobile-menu/mobile-menu-link.vue";
 

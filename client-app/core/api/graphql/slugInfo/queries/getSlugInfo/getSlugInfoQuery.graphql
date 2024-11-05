@@ -7,6 +7,9 @@ query GetSlugInfo($slug: String, $storeId: String, $userId: String, $cultureName
       objectId
       objectType
       semanticUrl
+      metaDescription
+      metaKeywords
+      pageTitle
     }
   }
 }

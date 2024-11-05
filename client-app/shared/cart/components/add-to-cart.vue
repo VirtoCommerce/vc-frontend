@@ -5,6 +5,7 @@
     :count-in-cart="countInCart"
     :min-quantity="product.minQuantity"
     :max-quantity="maxQty"
+    :pack-size="product.packSize"
     :is-available="product.availabilityData?.isAvailable"
     :is-buyable="product.availabilityData?.isBuyable"
     :is-in-stock="product.availabilityData?.isInStock"
@@ -17,11 +18,9 @@
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"
-  />
-
-  <div v-if="$slots.default" class="vc-add-to-cart__badges">
+  >
     <slot />
-  </div>
+  </VcAddToCart>
 </template>
 
 <script setup lang="ts">

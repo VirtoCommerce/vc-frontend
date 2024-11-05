@@ -10,13 +10,21 @@
     ]"
   >
     <div class="vc-product-card__wrapper">
-      <slot />
+      <div ref="media" class="vc-product-card__media">
+        <slot name="media" />
+      </div>
+
+      <div ref="content" class="vc-product-card__content">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-interface IProps {
+import { useTemplateRef, onMounted } from "vue";
+
+export interface IProps {
   viewMode?: "grid" | "list";
   background?: boolean;
   border?: boolean;
@@ -25,6 +33,21 @@ interface IProps {
 withDefaults(defineProps<IProps>(), {
   viewMode: "grid",
   background: true,
+});
+
+const media = useTemplateRef("media");
+const content = useTemplateRef("content");
+
+onMounted(() => {
+  if (content.value instanceof HTMLElement) {
+    const elements = content.value.querySelectorAll(".vc-product-image, .vc-product-actions");
+
+    elements.forEach((element) => {
+      if (element instanceof HTMLElement && media.value instanceof HTMLElement) {
+        media.value?.appendChild(element);
+      }
+    });
+  }
 });
 </script>
 
@@ -35,7 +58,12 @@ withDefaults(defineProps<IProps>(), {
   $border: "";
   $grid: "";
   $list: "";
-
+  $titleOnly: "";
+  $titleActions: "";
+  $titleVendor: "";
+  $titleVendorActions: "";
+  $titlePrice: "";
+  $noActionsNoVendor: "";
   @apply @container;
 
   &--view-mode {
@@ -63,20 +91,20 @@ withDefaults(defineProps<IProps>(), {
   }
 
   &__wrapper {
-    @apply grid h-full;
+    @apply relative h-full;
 
     #{$background}#{$grid} & {
-      @apply p-5;
+      @apply flex flex-col items-stretch p-5;
 
-      @container (width > theme(containers.xs)) {
+      @container (min-width: theme("containers.xs")) {
         @apply p-6;
       }
     }
 
     #{$background}#{$list} & {
-      @apply p-3;
+      @apply grid p-3;
 
-      @container (width > theme(containers.xl)) {
+      @container (min-width: theme("containers.xl")) {
         @apply p-4;
       }
     }
@@ -85,7 +113,7 @@ withDefaults(defineProps<IProps>(), {
       @apply items-center;
 
       grid-template-areas:
-        "image"
+        "media"
         "title"
         "vendor"
         "properties"
@@ -97,38 +125,106 @@ withDefaults(defineProps<IProps>(), {
     #{$list} & {
       @apply items-center;
 
-      grid-template-areas:
-        "image title"
-        "image vendor"
-        "image price"
-        "image add-to-cart";
-      grid-auto-rows: min-content;
-      grid-auto-columns: min-content 1fr;
-
-      @container (width > theme(containers.xl)) {
+      @container (max-width: theme("containers.xl")) {
         grid-template-areas:
-          "image . price add-to-cart"
-          "image title price add-to-cart"
-          "image vendor price add-to-cart"
-          "image . price add-to-cart";
-        grid-auto-columns: min-content 1fr min-content min-content;
+          "media title"
+          "media vendor"
+          "media price"
+          "media add-to-cart";
+        grid-auto-rows: repeat(5, min-content);
+        grid-auto-columns: min-content 1fr;
+
+        &:has(.vc-product-title:only-child):not(:has(.vc-product-actions)) {
+          $titleOnly: &;
+          grid-auto-rows: 1fr min-content min-content min-content;
+        }
+
+        &:has(.vc-product-title:only-child):has(.vc-product-actions) {
+          $titleActions: &;
+          grid-auto-rows: 1fr min-content min-content 1.5rem;
+        }
+
+        &:has(.vc-product-vendor:first-child:nth-last-child(2) ~ .vc-product-title),
+        &:has(.vc-product-title:first-child:nth-last-child(2) ~ .vc-product-vendor) {
+          &:not(:has(.vc-product-actions)) {
+            $titleVendor: &;
+            grid-auto-rows: 1fr 1fr min-content min-content;
+          }
+
+          &:has(.vc-product-actions) {
+            $titleVendorActions: &;
+            grid-auto-rows: 1fr 1fr min-content 1.5rem;
+          }
+        }
+
+        &:has(.vc-product-price:first-child:nth-last-child(2) ~ .vc-product-title),
+        &:has(.vc-product-title:first-child:nth-last-child(2) ~ .vc-product-price) {
+          $titlePrice: &;
+
+          grid-auto-rows: 1fr min-content 1fr min-content;
+
+          &:has(.vc-product-actions) {
+            grid-auto-rows: 1fr min-content 1fr 1.5rem;
+          }
+        }
+
+        &:has(.vc-add-to-cart:first-child:nth-last-child(2) ~ .vc-product-title),
+        &:has(.vc-product-title:first-child:nth-last-child(2) ~ .vc-add-to-cart) {
+          grid-auto-rows: min-content min-content min-content min-content;
+        }
       }
 
-      @container (width > theme(containers.3xl)) {
+      @container (min-width: theme("containers.xl")) {
         grid-template-areas:
-          "image . properties price add-to-cart"
+          "image title price add-to-cart"
+          "image vendor price add-to-cart"
+          "image actions price add-to-cart";
+        grid-auto-rows: 1fr min-content 1fr;
+        grid-auto-columns: min-content 1fr min-content min-content;
+
+        &:not(:has(.vc-product-actions, .vc-product-vendor)) {
+          $noActionsNoVendor: &;
+          grid-auto-rows: 1fr min-content min-content;
+        }
+
+        &:has(.vc-product-vendor):not(:has(.vc-product-actions)) {
+          grid-auto-rows: 1fr 1fr min-content;
+        }
+      }
+
+      @container (min-width: theme("containers.3xl")) {
+        grid-template-areas:
           "image title properties price add-to-cart"
           "image vendor properties price add-to-cart"
-          "image . properties price add-to-cart";
+          "image actions properties price add-to-cart";
         grid-auto-columns: min-content 1fr min-content min-content min-content;
       }
     }
   }
 
+  &__media {
+    grid-area: media;
+
+    @apply relative;
+
+    #{$list} & {
+      @apply flex flex-col me-3 self-start items-center;
+
+      @container (min-width: theme("containers.xl")) {
+        @apply contents;
+      }
+    }
+  }
+
+  &__content {
+    @apply contents;
+  }
+
   @at-root .vc-product-image {
     #{$self} & {
       grid-area: image;
-      align-self: flex-start;
+
+      @apply self-start place-content-stretch;
     }
 
     #{$grid} & {
@@ -136,10 +232,10 @@ withDefaults(defineProps<IProps>(), {
     }
 
     #{$list} & {
-      @apply me-3 size-[4.5rem];
+      @apply size-[4.5rem];
 
-      @container (width > theme(containers.xl)) {
-        @apply size-[5.375rem];
+      @container (min-width: theme("containers.xl")) {
+        @apply me-3 size-[5.375rem];
       }
     }
   }
@@ -152,16 +248,27 @@ withDefaults(defineProps<IProps>(), {
     }
 
     #{$grid} & {
-      @container (width > theme(containers.xxs)) {
+      @container (min-width: theme("containers.xxs")) {
         @apply text-lg;
       }
     }
 
-    #{$list}:not(:has(* .vc-product-vendor)) & {
-      @container (width > theme(containers.xl)) {
-        grid-row-start: 1;
-        grid-row-end: -1;
+    #{$list} & {
+      @apply self-end;
+
+      &:only-child {
+        @apply self-center;
       }
+    }
+
+    #{$list}#{$titleActions} & {
+      @container (min-width: theme("containers.xl")) {
+        @apply self-end;
+      }
+    }
+
+    #{$list}#{$noActionsNoVendor} & {
+      @apply self-center;
     }
   }
 
@@ -169,7 +276,7 @@ withDefaults(defineProps<IProps>(), {
     #{$self} & {
       grid-area: vendor;
 
-      @apply mt-1;
+      @apply mt-1 self-start;
     }
   }
 
@@ -179,9 +286,9 @@ withDefaults(defineProps<IProps>(), {
     }
 
     #{$grid} & {
-      @apply mt-3;
+      @apply grow mt-3;
 
-      @container (width > theme(containers.xxs)) {
+      @container (min-width: theme("containers.xxs")) {
         --vc-property-font-size: 0.875rem;
 
         @apply mt-4;
@@ -191,11 +298,11 @@ withDefaults(defineProps<IProps>(), {
     #{$list} & {
       @apply hidden;
 
-      @container (width > theme(containers.3xl)) {
+      @container (min-width: theme("containers.3xl")) {
         @apply block ms-3 w-[9.75rem];
       }
 
-      @container (width > theme(containers.5xl)) {
+      @container (min-width: theme("containers.5xl")) {
         @apply w-60;
       }
     }
@@ -204,6 +311,10 @@ withDefaults(defineProps<IProps>(), {
   @at-root .vc-product-price {
     #{$self} & {
       grid-area: price;
+
+      #{$titlePrice} & {
+        @apply self-end;
+      }
     }
 
     #{$grid} & {
@@ -211,7 +322,7 @@ withDefaults(defineProps<IProps>(), {
 
       @apply mt-3;
 
-      @container (width > theme(containers.xxs)) {
+      @container (min-width: theme("containers.xxs")) {
         --font-size: 1.5rem;
 
         @apply mt-4;
@@ -221,15 +332,15 @@ withDefaults(defineProps<IProps>(), {
     #{$list} & {
       --font-size: 1.125rem;
 
-      @apply mt-1;
+      @apply mt-1 flex-row items-center gap-x-1.5 flex-wrap;
 
-      @container (width > theme(containers.xl)) {
+      @container (min-width: theme("containers.xl")) {
         --font-size: 0.875rem;
 
-        @apply mt-0 ms-3 w-[7.5rem];
+        @apply mt-0 ms-3 w-[7.5rem] justify-end;
       }
 
-      @container (width > theme(containers.4xl)) {
+      @container (min-width: theme("containers.4xl")) {
         --font-size: 1.125rem;
 
         @apply w-[9.5rem];
@@ -237,8 +348,23 @@ withDefaults(defineProps<IProps>(), {
     }
   }
 
+  @at-root .vc-product-actions {
+    #{$grid} & {
+      @apply absolute -top-4 -right-[1.1rem];
+    }
+
+    #{$list} & {
+      grid-area: actions;
+
+      @apply mt-2.5;
+
+      @container (min-width: theme("containers.xl")) {
+        @apply self-start mt-2;
+      }
+    }
+  }
+
   @at-root .vc-add-to-cart,
-    .add-to-cart,
     .vc-variations-button {
     #{$self} & {
       grid-area: add-to-cart;
@@ -247,7 +373,7 @@ withDefaults(defineProps<IProps>(), {
     #{$grid} & {
       @apply mt-3;
 
-      @container (width > theme(containers.xs)) {
+      @container (min-width: theme("containers.xs")) {
         @apply mt-4;
       }
     }
@@ -255,15 +381,15 @@ withDefaults(defineProps<IProps>(), {
     #{$list} & {
       @apply mt-3;
 
-      @container (width > theme(containers.sm)) {
+      @container (min-width: theme("containers.sm")) {
         @apply w-72;
       }
 
-      @container (width > theme(containers.xl)) {
+      @container (min-width: theme("containers.xl")) {
         @apply mt-0 ms-3 w-44;
       }
 
-      @container (width > theme(containers.4xl)) {
+      @container (min-width: theme("containers.4xl")) {
         @apply mt-0 ms-3 w-60;
       }
     }
