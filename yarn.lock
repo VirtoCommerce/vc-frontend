@@ -9167,7 +9167,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"firebase@npm:^10.12.2":
+"firebase@npm:^10.14.1":
   version: 10.14.1
   resolution: "firebase@npm:10.14.1"
   dependencies:
@@ -15670,7 +15670,7 @@ __metadata:
     eslint-plugin-tailwindcss: "npm:^3.17.3"
     eslint-plugin-vue: "npm:^9.26.0"
     eslint-plugin-vuejs-accessibility: "npm:^2.3.0"
-    firebase: "npm:^10.12.2"
+    firebase: "npm:^10.14.1"
     graphql: "npm:^16.8.2"
     graphql-tag: "npm:^2.12.6"
     husky: "npm:^9.0.11"

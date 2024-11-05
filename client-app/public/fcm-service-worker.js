@@ -6,7 +6,7 @@
 
 // TODO: Update the version number as needed
 // TODO: Refactor for using esm imports when firefox supports it https://caniuse.com/mdn-api_serviceworker_ecmascript_modules
-const VERSION = "10.12.2";
+const VERSION = "10.14.1";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
