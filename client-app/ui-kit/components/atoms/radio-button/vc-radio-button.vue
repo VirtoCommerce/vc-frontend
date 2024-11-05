@@ -179,11 +179,25 @@ const checked = computed(() => model.value === props.value);
         @apply hidden;
       }
 
-      &--item #{$self} {
-        @apply absolute -left-3.5 -top-4 p-1.5 rounded-full bg-[--bg];
+      &--item {
+        #{$self} {
+          @apply absolute -left-3.5 -top-4 p-1.5 rounded-full bg-[--bg];
+        }
 
         @container (min-width: theme("containers.2xl")) {
-          @apply relative left-auto top-auto self-center me-1.5;
+          #{$self} {
+            @apply relative left-auto top-auto self-center me-1.5;
+          }
+        }
+
+        &:has(.vc-product-image) #{$self} {
+          @container (min-width: theme("containers.2xl")) {
+            @apply top-5 self-start;
+          }
+
+          @container (min-width: theme("containers.3xl")) {
+            @apply top-[1.65rem];
+          }
         }
       }
     }
