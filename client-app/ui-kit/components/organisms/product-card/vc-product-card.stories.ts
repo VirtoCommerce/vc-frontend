@@ -1,7 +1,7 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcProductCard, VcProductImage, VcAddToCart } from "..";
-import { VcProductVendor, VcProductProperties, VcProductTitle } from "../../atoms";
-import { VcChip, VcProductPrice } from "../../molecules";
+import { VcProductVendor, VcProductProperties, VcProductTitle, VcProductActions } from "../../atoms";
+import { VcChip, VcProductPrice, VcProductActionsButton } from "../../molecules";
 import type { Meta, StoryFn } from "@storybook/vue3";
 
 export default {
@@ -47,6 +47,17 @@ const availabilityData = {
   isBuyable: true,
   isInStock: true,
   availableQuantity: 999999,
+};
+
+const actions = {
+  withBackground: true,
+  direction: "vertical",
+};
+
+const actionsButton = {
+  icon: "compare",
+  tooltipText: "Add to compare",
+  active: true,
 };
 
 const BasicTemplate: StoryFn<typeof VcProductCard> = (args) => ({
@@ -125,6 +136,8 @@ ImageVendorPriceList.args = {
 const FullTemplate: StoryFn<typeof VcProductCard> = (args) => ({
   components: {
     VcProductCard,
+    VcProductActions,
+    VcProductActionsButton,
     VcProductImage,
     VcProductTitle,
     VcProductVendor,
@@ -132,7 +145,7 @@ const FullTemplate: StoryFn<typeof VcProductCard> = (args) => ({
     VcAddToCart,
     VcChip,
   },
-  setup: () => ({ args, title, price, chip1, chip2, image, availabilityData }),
+  setup: () => ({ args, title, price, chip1, chip2, image, availabilityData, actions, actionsButton }),
   template: `<VcProductCard v-bind="args">
     <VcProductImage v-bind="image" />
 
@@ -151,6 +164,11 @@ const FullTemplate: StoryFn<typeof VcProductCard> = (args) => ({
       <VcChip v-bind="chip1">1230 in Stock</VcChip>
       <VcChip v-bind="chip2">23 in Cart</VcChip>
     </VcAddToCart>
+
+    <VcProductActions v-bind="args.viewMode === 'grid' ? actions : {}">
+      <VcProductActionsButton />
+      <VcProductActionsButton v-bind="actionsButton" />
+    </VcProductActions>
   </VcProductCard>`,
 });
 
@@ -161,5 +179,99 @@ FullCard.args = {
 
 export const FullList = FullTemplate.bind({});
 FullList.args = {
+  viewMode: "list",
+};
+
+const FullGridTemplateRecommended: StoryFn<typeof VcProductCard> = (args) => ({
+  components: {
+    VcProductCard,
+    VcProductActions,
+    VcProductActionsButton,
+    VcProductImage,
+    VcProductTitle,
+    VcProductVendor,
+    VcProductProperties,
+    VcAddToCart,
+    VcChip,
+  },
+  setup: () => ({ args, title, price, chip1, chip2, image, availabilityData, actions, actionsButton }),
+  template: `<VcProductCard v-bind="args">
+    <template #media>
+      <VcProductImage v-bind="image" />
+
+      <VcProductActions v-bind="actions">
+        <VcProductActionsButton />
+        <VcProductActionsButton v-bind="actionsButton" />
+      </VcProductActions>
+    </template>
+
+    <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
+
+    <VcProductVendor>Product Vendor</VcProductVendor>
+
+    <VcProductProperties>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+    </VcProductProperties>
+
+    <VcAddToCart v-bind="availabilityData">
+      <VcChip v-bind="chip1">1230 in Stock</VcChip>
+      <VcChip v-bind="chip2">23 in Cart</VcChip>
+    </VcAddToCart>
+
+    <VcProductPrice v-bind="price" />
+  </VcProductCard>`,
+});
+
+export const FullCardRecommendedWay = FullGridTemplateRecommended.bind({});
+FullCardRecommendedWay.args = {
+  viewMode: "grid",
+};
+
+const FullListTemplateRecommended: StoryFn<typeof VcProductCard> = (args) => ({
+  components: {
+    VcProductCard,
+    VcProductActions,
+    VcProductActionsButton,
+    VcProductImage,
+    VcProductTitle,
+    VcProductVendor,
+    VcProductProperties,
+    VcAddToCart,
+    VcChip,
+  },
+  setup: () => ({ args, title, price, chip1, chip2, image, availabilityData, actions, actionsButton }),
+  template: `<VcProductCard v-bind="args">
+    <template #media>
+      <VcProductImage v-bind="image" />
+
+      <VcProductActions>
+        <VcProductActionsButton />
+        <VcProductActionsButton v-bind="actionsButton" />
+      </VcProductActions>
+    </template>
+
+    <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
+
+    <VcProductVendor>Product Vendor</VcProductVendor>
+
+    <VcProductProperties>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+    </VcProductProperties>
+
+    <VcAddToCart v-bind="availabilityData">
+      <VcChip v-bind="chip1">1230 in Stock</VcChip>
+      <VcChip v-bind="chip2">23 in Cart</VcChip>
+    </VcAddToCart>
+
+    <VcProductPrice v-bind="{ ...price, singleLine: false }" />
+  </VcProductCard>`,
+});
+
+export const FullListRecommendedWay = FullListTemplateRecommended.bind({});
+FullListRecommendedWay.args = {
   viewMode: "list",
 };

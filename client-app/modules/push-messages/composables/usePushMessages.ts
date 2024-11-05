@@ -2,16 +2,17 @@ import { provideApolloClient } from "@vue/apollo-composable";
 import { computed, ref, toValue } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
-import { useClearAllPushMessages } from "@/core/api/graphql/push-messages/mutations/clearAllPushMessages";
-import { useMarkAllPushMessagesRead } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesRead";
-import { useMarkAllPushMessagesUnread } from "@/core/api/graphql/push-messages/mutations/markAllPushMessagesUnread";
-import { useGetPushMessages } from "@/core/api/graphql/push-messages/queries/getPushMessages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { DEFAULT_ORDERS_PER_PAGE } from "@/core/constants";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { useUser } from "@/shared/account/composables";
-import type { GetPushMessagesQueryVariables } from "@/core/api/graphql/push-messages/types";
+import { useClearAllPushMessages } from "../api/graphql/mutations/clearAllPushMessages";
+import { useMarkAllPushMessagesRead } from "../api/graphql/mutations/markAllPushMessagesRead";
+import { useMarkAllPushMessagesUnread } from "../api/graphql/mutations/markAllPushMessagesUnread";
+import { useGetPushMessages } from "../api/graphql/queries/getPushMessages";
+import { PUSH_MESSAGES_MODULE_ENABLED_KEY } from "../constants";
+import type { GetPushMessagesQueryVariables } from "../api/graphql/types";
 import type { Ref, MaybeRef } from "vue";
 
 export interface IUsePushMessagesOptions {
@@ -23,11 +24,13 @@ export interface IUsePushMessagesOptions {
 provideApolloClient(apolloClient);
 
 const { isAuthenticated } = useUser();
-const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
 const { themeContext } = useThemeContext();
 
+const isModuleEnabled = computed(() => isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY));
+
 const isActive = computed(
-  () => themeContext.value?.settings?.push_messages_enabled && hasModuleSettings.value && isAuthenticated.value,
+  () => themeContext.value?.settings?.push_messages_enabled && isModuleEnabled.value && isAuthenticated.value,
 );
 
 function usePushMessages(options?: IUsePushMessagesOptions) {

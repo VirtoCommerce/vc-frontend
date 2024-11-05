@@ -40,6 +40,7 @@ query SearchProducts(
       code
       minQuantity
       maxQuantity
+      packSize
       inWishlist
       productType
       vendor {

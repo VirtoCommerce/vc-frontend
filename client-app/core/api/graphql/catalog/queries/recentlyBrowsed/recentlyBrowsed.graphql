@@ -27,6 +27,7 @@ query GetRecentlyBrowsed($storeId: String!, $currencyCode: String, $cultureName:
       }
       minQuantity
       maxQuantity
+      packSize
       price {
         actual {
           amount

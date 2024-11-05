@@ -78,6 +78,7 @@ interface IProps {
   disabled?: boolean;
   minQuantity?: number;
   maxQuantity?: number;
+  packSize?: number;
   countInCart?: number;
   availableQuantity?: number;
   isActive?: boolean;
@@ -102,8 +103,18 @@ const { t } = useI18n();
 
 const isValid = ref(true);
 
-const { timeout, disabled, isInStock, minQuantity, maxQuantity, availableQuantity, isActive, isAvailable, isBuyable } =
-  toRefs(props);
+const {
+  timeout,
+  disabled,
+  isInStock,
+  minQuantity,
+  maxQuantity,
+  availableQuantity,
+  isActive,
+  isAvailable,
+  isBuyable,
+  packSize,
+} = toRefs(props);
 
 const isButtonOutlined = computed<boolean>(() => !props.countInCart);
 
@@ -121,7 +132,7 @@ const { quantitySchema } = useQuantityValidationSchema({
   minQuantity,
   maxQuantity,
   availableQuantity,
-  isInStock,
+  packSize,
 });
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
@@ -139,12 +150,16 @@ const {
 });
 
 async function validateFields(): Promise<void> {
-  const { valid } = await validate();
-  isValid.value = valid;
-
-  if (!valid && errorMessage.value) {
-    emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
+  if (isInStock.value) {
+    const { valid } = await validate();
+    isValid.value = valid;
+    if (!valid && errorMessage.value) {
+      emit("update:validation", { isValid: false, errorMessage: errorMessage.value });
+    } else {
+      emit("update:validation", { isValid: true });
+    }
   } else {
+    isValid.value = true;
     emit("update:validation", { isValid: true });
   }
 }

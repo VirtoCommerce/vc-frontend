@@ -174,6 +174,8 @@ const price = computed(() => (props.product.hasVariations ? props.product.minVar
 
 <style scoped lang="scss">
 .vc-product-card-list {
+  @apply @container;
+
   grid-template-columns: 72px 1fr;
   grid-template-areas:
     "mobile-left name"
