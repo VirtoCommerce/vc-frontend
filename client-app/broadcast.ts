@@ -5,7 +5,7 @@ import { OperationNames } from "@/core/api/graphql/types";
 import { useThemeContext } from "@/core/composables";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
-import { getReturnUrlValue } from "@/core/utilities";
+import { getReturnUrlValue, Logger } from "@/core/utilities";
 import { useSignMeOut, useUser } from "@/shared/account";
 import {
   cartReloadEvent,
@@ -94,7 +94,9 @@ export function setupBroadcastGlobalListeners() {
       text: t("common.messages.unhandled_error"),
     };
 
-    if (data) {
+    const errorDetails = data as string;
+
+    if (errorDetails) {
       notification.text = t("common.messages.something_went_wrong");
 
       if (environmentName?.toLowerCase() === "dev") {
@@ -106,7 +108,7 @@ export function setupBroadcastGlobalListeners() {
               component: VcConfirmationModal,
               props: {
                 singleButton: true,
-                text: data as string,
+                text: errorDetails,
                 title: t("common.titles.error_details"),
                 onConfirm() {
                   closeModal();
@@ -116,9 +118,15 @@ export function setupBroadcastGlobalListeners() {
           },
         };
       }
+
+      Logger.error(errorDetails);
     }
 
     notifications.error(notification);
+
+    if (errorDetails) {
+      throw errorDetails;
+    }
   });
   on(openReturnUrl, () => {
     location.href = getReturnUrlValue() ?? themeContext.value.settings.default_return_url ?? "/";
