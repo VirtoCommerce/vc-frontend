@@ -60,7 +60,7 @@ export function useConfigurableProduct(configurableProductId: string) {
       configuration.value = await getProductConfiguration(configurableProductId);
       selectedConfigurationInput.value =
         configuration.value?.configurationSections?.map((section) => ({
-          sectionId: section.id || "",
+          sectionId: section.id ?? "",
           value: section.isRequired
             ? {
                 productId: section.products?.[0]?.id ?? "",
