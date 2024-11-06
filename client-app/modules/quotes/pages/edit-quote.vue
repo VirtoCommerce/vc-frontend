@@ -115,16 +115,17 @@ import { toTypedSchema } from "@vee-validate/yup";
 import { computedEager } from "@vueuse/core";
 import { cloneDeep, every, isEqual, remove } from "lodash";
 import { useField } from "vee-validate";
-import { computed, inject, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { string } from "yup";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { AddressType } from "@/core/enums";
-import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach, isEqualAddresses } from "@/core/utilities";
-import { DEFAULT_QUOTE_FILES_SCOPE, useUser, useUserAddresses } from "@/shared/account";
+import { FILE_UPLOAD_SCOPE_NAME, MODULE_ID } from "@/modules/quotes/constants";
+import { useUser, useUserAddresses } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
 import { useOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
@@ -144,7 +145,6 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const config = inject(configInjectionKey, {});
 const router = useRouter();
 const { t } = useI18n();
 const { openModal, closeModal } = useModal();
@@ -175,6 +175,11 @@ const {
   submitQuote,
   updateAttachments,
 } = useUserQuote();
+
+const DEFAULT_QUOTE_FILES_SCOPE = "quote-attachments";
+const { getSettingValue } = useModuleSettings(MODULE_ID);
+const quoteFilesScope = getSettingValue(FILE_UPLOAD_SCOPE_NAME);
+
 const {
   files,
   attachedAndUploadedFiles,
@@ -186,7 +191,7 @@ const {
   removeFiles,
   fetchOptions: fetchFileOptions,
   options: fileOptions,
-} = useFiles(config.quotes_files_scope ?? DEFAULT_QUOTE_FILES_SCOPE, attachedFiles);
+} = useFiles(quoteFilesScope ? String(quoteFilesScope) : DEFAULT_QUOTE_FILES_SCOPE, attachedFiles);
 const notifications = useNotifications();
 
 usePageHead({
