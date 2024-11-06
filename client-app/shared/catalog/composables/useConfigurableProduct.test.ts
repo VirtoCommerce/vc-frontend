@@ -41,6 +41,7 @@ describe("useConfigurableProduct", () => {
     const mockConfiguration = {
       configurationSections: [
         {
+          id: "Section 1",
           name: "Section 1",
           isRequired: true,
           products: [
@@ -50,6 +51,7 @@ describe("useConfigurableProduct", () => {
           quantity: 1,
         },
         {
+          id: "Section 2",
           name: "Section 2",
           isRequired: false,
           products: [
@@ -81,6 +83,7 @@ describe("useConfigurableProduct", () => {
     const mockConfiguration = {
       configurationSections: [
         {
+          id: "Section 1",
           name: "Section 1",
           isRequired: true,
           products: [
@@ -90,6 +93,7 @@ describe("useConfigurableProduct", () => {
           quantity: 1,
         },
         {
+          id: "Section 2",
           name: "Section 2",
           isRequired: false,
           products: [
@@ -130,6 +134,7 @@ describe("useConfigurableProduct", () => {
     const mockConfiguration = {
       configurationSections: [
         {
+          id: "Section 1",
           name: "Section 1",
           isRequired: false,
           products: [
