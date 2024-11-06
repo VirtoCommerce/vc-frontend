@@ -31,7 +31,7 @@ withDefaults(defineProps<IProps>(), {
     &--horizontal {
       --vc-icon-size: 1.25rem;
 
-      @media (min-width: theme("screens.md")) {
+      @container (min-width: theme("containers.xl")) {
         --vc-icon-size: 1rem;
       }
     }
