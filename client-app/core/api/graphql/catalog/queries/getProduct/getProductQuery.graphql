@@ -15,6 +15,7 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     packSize
     imgSrc
     inWishlist
+    isConfigurable
     associations {
       totalCount
     }
