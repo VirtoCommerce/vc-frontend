@@ -1,6 +1,8 @@
 <template>
   <div class="vc-product-total">
-    <div class="vc-product-total__label">Total</div>
+    <div class="vc-product-total__label">
+      {{ $t("ui_kit.product_total.total") }}
+    </div>
 
     <VcProductPrice
       :actual-price="actualPrice"
