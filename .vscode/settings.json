@@ -4,7 +4,7 @@
   "files.associations": {
     "*.scss": "postcss"
   },
-  "i18n-ally.localesPaths": ["locales"],
+  "i18n-ally.localesPaths": ["locales", "client-app/modules/**/locales"],
   "i18n-ally.keystyle": "nested",
   "terminal.integrated.profiles.windows": {
     "PowerShell": {
