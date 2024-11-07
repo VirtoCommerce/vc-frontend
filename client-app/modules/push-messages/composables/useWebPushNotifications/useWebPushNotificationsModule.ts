@@ -1,13 +1,13 @@
 import { provideApolloClient } from "@vue/apollo-composable";
-import { createGlobalState, useLocalStorage } from "@vueuse/core";
+import { createGlobalState, useLocalStorage, useEventBus } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
 import omit from "lodash/omit";
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
+import { WHITE_LABELING_EVENTS } from "@/core/constants/modules-events";
 import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import { useAddFcmToken } from "../../api/graphql/mutations/addFcmToken";
@@ -31,6 +31,7 @@ const SETTINGS_MAPPING = {
 provideApolloClient(apolloClient);
 
 const { getModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+type FaviconType = { type: string; sizes: string; href: string };
 
 function _useWebPushNotifications() {
   let initialized = false;
@@ -46,14 +47,18 @@ function _useWebPushNotifications() {
     if (!(await isSupported())) {
       return;
     }
-
-    const { favIcons } = useWhiteLabeling();
+    const favIcons = ref<FaviconType[]>([]);
     const icon = computed(
       () =>
         favIcons.value?.find(
           ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
         )?.href ?? DEFAULT_ICON_URL,
     );
+
+    const { on } = useEventBus<string, { favicons: FaviconType[] }>(WHITE_LABELING_EVENTS.FETCHED_SETTINGS);
+    on((key, settings) => {
+      favIcons.value = settings?.favicons ?? [];
+    });
 
     const fcmSettings = getModuleSettings(SETTINGS_MAPPING);
 
@@ -70,10 +75,12 @@ function _useWebPushNotifications() {
 
     await getFcmToken(messaging, vapidKey);
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
+
     serviceWorkerRegistration?.active?.postMessage({
       type: "initialize",
       config: firebaseConfig,
     });
+
     initialized = true;
 
     watch(
