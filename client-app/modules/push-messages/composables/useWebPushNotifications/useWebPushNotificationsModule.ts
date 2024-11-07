@@ -55,8 +55,8 @@ function _useWebPushNotifications() {
         )?.href ?? DEFAULT_ICON_URL,
     );
 
-    const { on } = useEventBus<string, { favicons: FaviconType[] }>(WHITE_LABELING_EVENTS.FETCHED_SETTINGS);
-    on((key, settings) => {
+    const { once } = useEventBus<string, { favicons: FaviconType[] }>(WHITE_LABELING_EVENTS.FETCHED_SETTINGS);
+    once((key, settings) => {
       favIcons.value = settings?.favicons ?? [];
     });
 
