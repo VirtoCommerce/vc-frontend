@@ -14,16 +14,15 @@ export const errorHandlerLink = onError(({ networkError, graphQLErrors }) => {
 
   if (userLockedError) {
     void broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
-  }
-
-  if (passwordExpired) {
+  } else if (passwordExpired) {
     void broadcast.emit(passwordExpiredEvent, undefined, TabsType.CURRENT);
-  }
-
-  if (graphQLErrors) {
-    const errors = graphQLErrors.map((error) => `[GraphQL error]: Message: ${error.message}`);
-    errors.forEach((error) => {
-      throw new Error(error);
+  } else if (graphQLErrors) {
+    graphQLErrors.forEach((error) => {
+      const path = error.path?.join("/");
+      const locations = error.locations
+        ?.map((location) => `Line: ${location.line}, Column: ${location.column}`)
+        .join("/n");
+      throw new Error(`[GraphQL error]: Message: ${error.message}, Path: ${path}, Location: ${locations}`);
     });
   }
 });
