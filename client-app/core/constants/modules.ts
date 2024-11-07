@@ -3,7 +3,7 @@ export const MODULE_ID_XRECOMMEND = "VirtoCommerce.XRecommend";
 export const XRECOMMEND_ENABLED_KEY = "XRecommend.RecommendationsEnabled";
 
 export const APP_INSIGHTS_MODULE_ID = "VirtoCommerce.ApplicationInsights";
-export const APP_INSIGHTS_ENABlE_STATE = "ApplicationInsights.EnableTracking";
+export const APP_INSIGHTS_ENABLE_STATE = "ApplicationInsights.EnableTracking";
 export const APP_INSIGHTS_INSTRUMENTATION_KEY = "ApplicationInsights.InstrumentationKey";
 
 export const MODULE_XAPI_KEYS = {
