@@ -217,21 +217,25 @@ const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
 const productInfoSection = computed(() =>
-  template.value?.content.find((item: IPageContent) => item.type === "product-info"),
+  template.value?.content.find((item: IPageContent) => item?.type === "product-info"),
 );
 
-const productReviewsSection = computed(() => template.value?.content.find((item) => item.type === "product-reviews"));
+const productReviewsSection = computed(() => template.value?.content.find((item) => item?.type === "product-reviews"));
 
 const productVariationsBlock = computed(() =>
-  productInfoSection.value?.blocks?.find((block) => block.type === "product-variations"),
+  productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
 );
 
 const relatedProductsSection = computed(() =>
-  template.value?.content.find((item: IPageContent) => item.type === "related-products"),
+  template.value?.content?.find((item: IPageContent) => item?.type === "related-products"),
 );
 
 const recommendedProductsSection = computed(() =>
-  template.value?.content?.find((item: IPageContent) => item.type === "recommended-products"),
+  template.value?.content?.find((item: IPageContent) => item?.type === "recommended-products"),
+);
+
+const recommendedProductsSection = computed(() =>
+  template.value?.content?.find((item: IPageContent) => item?.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {

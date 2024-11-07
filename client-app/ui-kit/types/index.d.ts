@@ -107,4 +107,14 @@ declare global {
   };
 
   type BrowserTargetType = "_blank" | "_self";
+
+  type AddressType = {
+    city?: string;
+    countryCode?: string;
+    countryName?: string;
+    line1?: string;
+    line2?: string;
+    postalCode?: string;
+    regionName?: string;
+  };
 }

@@ -5,7 +5,7 @@ import type { IPageTemplate } from "../types";
 function _useStaticPage() {
   const staticPagePreview = ref<IPageTemplate>();
 
-  const _staticPage = ref<IPageTemplate>();
+  const _staticPage = ref<IPageTemplate | undefined>();
   const staticPage = computed({
     get: () => staticPagePreview.value ?? _staticPage.value,
     set: (value) => (_staticPage.value = value),

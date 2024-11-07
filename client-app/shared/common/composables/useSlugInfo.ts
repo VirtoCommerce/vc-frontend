@@ -74,7 +74,8 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   });
 
   function isPageContent(data: unknown): data is IPageTemplate {
-    return Array.isArray((data as IPageTemplate)?.content) && typeof (data as IPageTemplate)?.settings === "object";
+    const pageTemplate = data as IPageTemplate;
+    return Array.isArray(pageTemplate?.content) && typeof pageTemplate?.settings === "object";
   }
 
   return {

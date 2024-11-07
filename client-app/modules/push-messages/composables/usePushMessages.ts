@@ -11,6 +11,7 @@ import { useClearAllPushMessages } from "../api/graphql/mutations/clearAllPushMe
 import { useMarkAllPushMessagesRead } from "../api/graphql/mutations/markAllPushMessagesRead";
 import { useMarkAllPushMessagesUnread } from "../api/graphql/mutations/markAllPushMessagesUnread";
 import { useGetPushMessages } from "../api/graphql/queries/getPushMessages";
+import { PUSH_MESSAGES_MODULE_ENABLED_KEY } from "../constants";
 import type { GetPushMessagesQueryVariables } from "../api/graphql/types";
 import type { Ref, MaybeRef } from "vue";
 
@@ -23,11 +24,13 @@ export interface IUsePushMessagesOptions {
 provideApolloClient(apolloClient);
 
 const { isAuthenticated } = useUser();
-const { hasModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
 const { themeContext } = useThemeContext();
 
+const isModuleEnabled = computed(() => isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY));
+
 const isActive = computed(
-  () => themeContext.value?.settings?.push_messages_enabled && hasModuleSettings.value && isAuthenticated.value,
+  () => themeContext.value?.settings?.push_messages_enabled && isModuleEnabled.value && isAuthenticated.value,
 );
 
 function usePushMessages(options?: IUsePushMessagesOptions) {
