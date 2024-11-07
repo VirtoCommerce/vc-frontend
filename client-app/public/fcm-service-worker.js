@@ -129,7 +129,7 @@ function htmlToText(html) {
 
   // Function to handle blockquotes
   function handleBlockquotes(match, p1) {
-    return "\n> " + p1.trim().replace(/\n/g, "\n> ") + "\n";
+    return "\n“" + p1.trim().replace(/\n/g, "\n ") + "”\n";
   }
 
   // Function to handle paragraphs
@@ -153,7 +153,7 @@ function htmlToText(html) {
   html = html.replace(/<p[^>]*>(.*?)<\/p>/gs, handleParagraphs);
 
   // Remove remaining HTML tags
-  html = html.replace(/<\/?[^>]+(>|$)/g, "");
+  html = html.replace(/<\/?(\w+)(?:\s+[^>]+)?\s*>/g, "");
 
   return html.trim();
 }
