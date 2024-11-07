@@ -56,6 +56,8 @@ const iconSize = breakpoints.isGreater("lg") ? "xs" : "sm";
 
 <style lang="scss">
 .vc-variations-button {
+  $self: &;
+
   @apply flex flex-col;
 
   &__link {
@@ -72,6 +74,38 @@ const iconSize = breakpoints.isGreater("lg") ? "xs" : "sm";
 
   &__link-icon {
     @apply shrink-0 text-primary;
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: add-to-cart;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        @apply mt-3;
+
+        @container (min-width: theme("containers.xs")) {
+          @apply mt-4;
+        }
+      }
+
+      &--list #{$self} {
+        @apply mt-3;
+
+        @container (min-width: theme("containers.sm")) {
+          @apply w-72;
+        }
+
+        @container (min-width: theme("containers.xl")) {
+          @apply mt-0 ms-3 w-44;
+        }
+
+        @container (min-width: theme("containers.4xl")) {
+          @apply mt-0 ms-3 w-60;
+        }
+      }
+    }
   }
 }
 </style>

@@ -1,13 +1,26 @@
 import { getMoney } from "@/ui-kit/mocks";
 import { VcProductCard, VcProductImage, VcAddToCart } from "..";
-import { VcProductVendor, VcProductProperties, VcProductTitle, VcProductActions } from "../../atoms";
+import { VcProductVendor, VcProductProperties, VcProductTitle, VcProductActions, VcRadioButton } from "../../atoms";
 import { VcChip, VcProductPrice, VcProductActionsButton } from "../../molecules";
 import type { Meta, StoryFn } from "@storybook/vue3";
+
+const VIEW_MODES = ["grid", "list", "item"];
 
 export default {
   title: "Components/Organisms/VcProductCard",
   component: VcProductCard,
-  argTypes: {},
+  argTypes: {
+    viewMode: {
+      control: "radio",
+      options: VIEW_MODES,
+      type: { name: "string", required: false },
+      table: {
+        type: {
+          summary: VIEW_MODES.join(" | "),
+        },
+      },
+    },
+  },
 } as Meta<typeof VcProductCard>;
 
 const image = {
@@ -111,6 +124,26 @@ const ImageVendorPropertiesTemplate: StoryFn<typeof VcProductCard> = (args) => (
 });
 
 export const ImageVendorProperties = ImageVendorPropertiesTemplate.bind({});
+
+const ImagePriceTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+  components: { VcProductCard, VcProductImage, VcProductTitle, VcProductPrice, VcProductVendor },
+  setup: () => ({ args, title, price, image }),
+  template: `<VcProductCard v-bind="args">
+    <VcProductImage v-bind="image" />
+    <VcProductTitle v-bind="title">Product title Product title</VcProductTitle>
+    <VcProductPrice v-bind="{ ...price, singleLine: false }" />
+  </VcProductCard>`,
+});
+
+export const ImagePriceCard = ImagePriceTemplate.bind({});
+ImagePriceCard.args = {
+  viewMode: "grid",
+};
+
+export const ImagePriceList = ImagePriceTemplate.bind({});
+ImagePriceList.args = {
+  viewMode: "list",
+};
 
 const ImageVendorPriceTemplate: StoryFn<typeof VcProductCard> = (args) => ({
   components: { VcProductCard, VcProductImage, VcProductTitle, VcProductPrice, VcProductVendor },
@@ -274,4 +307,48 @@ const FullListTemplateRecommended: StoryFn<typeof VcProductCard> = (args) => ({
 export const FullListRecommendedWay = FullListTemplateRecommended.bind({});
 FullListRecommendedWay.args = {
   viewMode: "list",
+};
+
+const LineItemTemplate: StoryFn<typeof VcProductCard> = (args) => ({
+  components: {
+    VcProductCard,
+    VcProductActions,
+    VcProductActionsButton,
+    VcProductImage,
+    VcProductTitle,
+    VcProductVendor,
+    VcProductProperties,
+    VcAddToCart,
+    VcChip,
+    VcRadioButton,
+  },
+  setup: () => ({ args, title, price, chip1, chip2, image, availabilityData, actions, actionsButton }),
+  template: `<VcProductCard v-bind="args">
+    <template #media>
+      <VcProductImage v-bind="image" />
+      <VcRadioButton />
+    </template>
+
+    <VcProductTitle v-bind="{ ...title, linesNumber: 3}">Product title Product title</VcProductTitle>
+
+    <VcProductProperties>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Label">Value</VcProperty>
+      <VcProperty label="Price per item" class="@4xl:hidden">$1,000</VcProperty>
+    </VcProductProperties>
+
+    <VcAddToCart v-bind="{availabilityData, hideButton: true}">
+      <VcChip v-bind="chip1">1230 in Stock</VcChip>
+    </VcAddToCart>
+
+    <VcProductPrice v-bind="{ ...price, singleLine: false }" />
+
+    <VcProductTotal v-bind="{ ...price, singleLine: false }" />
+  </VcProductCard>`,
+});
+
+export const LineItem = LineItemTemplate.bind({});
+LineItem.args = {
+  viewMode: "item",
 };
