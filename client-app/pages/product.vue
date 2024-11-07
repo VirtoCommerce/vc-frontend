@@ -234,10 +234,6 @@ const recommendedProductsSection = computed(() =>
   template.value?.content?.find((item: IPageContent) => item?.type === "recommended-products"),
 );
 
-const recommendedProductsSection = computed(() =>
-  template.value?.content?.find((item: IPageContent) => item?.type === "recommended-products"),
-);
-
 const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs));
 });
