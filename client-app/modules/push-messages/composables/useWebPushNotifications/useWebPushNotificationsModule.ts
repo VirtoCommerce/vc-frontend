@@ -7,12 +7,13 @@ import { computed, ref, watch } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
-import { WHITE_LABELING_EVENTS } from "@/core/constants/modules-events";
+import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import { useAddFcmToken } from "../../api/graphql/mutations/addFcmToken";
 import { useDeleteFcmToken } from "../../api/graphql/mutations/deleteFcmToken";
 import type { FcmSettingsType } from "../../api/graphql/types";
+import type { EventBusKey } from "@vueuse/core";
 import type { Messaging } from "firebase/messaging";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
@@ -31,7 +32,8 @@ const SETTINGS_MAPPING = {
 provideApolloClient(apolloClient);
 
 const { getModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
-type FaviconType = { type: string; sizes: string; href: string };
+type ExtractedWhiteLabelingSettingsType =
+  typeof WHITE_LABELING_FETCHED_SETTINGS_EVENT extends EventBusKey<infer T> ? T : never;
 
 function _useWebPushNotifications() {
   let initialized = false;
@@ -47,7 +49,7 @@ function _useWebPushNotifications() {
     if (!(await isSupported())) {
       return;
     }
-    const favIcons = ref<FaviconType[]>([]);
+    const favIcons = ref<ExtractedWhiteLabelingSettingsType["favicons"]>([]);
     const icon = computed(
       () =>
         favIcons.value?.find(
@@ -55,8 +57,8 @@ function _useWebPushNotifications() {
         )?.href ?? DEFAULT_ICON_URL,
     );
 
-    const { once } = useEventBus<string, { favicons: FaviconType[] }>(WHITE_LABELING_EVENTS.FETCHED_SETTINGS);
-    once((key, settings) => {
+    const { once } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
+    once((settings) => {
       favIcons.value = settings?.favicons ?? [];
     });
 

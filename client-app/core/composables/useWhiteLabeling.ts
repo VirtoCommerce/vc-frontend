@@ -1,7 +1,7 @@
 import { createGlobalState, useEventBus } from "@vueuse/core";
 import { computed, shallowRef } from "vue";
 import { getGetWhiteLabelingSettings } from "@/core/api/graphql/whiteLabeling/queries";
-import { WHITE_LABELING_EVENTS } from "@/core/constants/modules-events";
+import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger, convertToExtendedMenuLink } from "@/core/utilities";
 import { useThemeContext } from "./useThemeContext";
 import type { WhiteLabelingSettingsType } from "@/core/api/graphql/types";
@@ -19,14 +19,14 @@ const moduleEnabled = computed(
   () => moduleSettings.value?.settings?.find((item) => item.name === MODULE_KEYS.ENABLE_STATE)?.value,
 );
 
-const { emit } = useEventBus<string, WhiteLabelingSettingsType>(WHITE_LABELING_EVENTS.FETCHED_SETTINGS);
+const { emit } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
 
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
     if (moduleEnabled.value) {
       try {
         whiteLabelingSettings.value = await getGetWhiteLabelingSettings();
-        emit(WHITE_LABELING_EVENTS.FETCHED_SETTINGS, whiteLabelingSettings.value);
+        emit(whiteLabelingSettings.value);
       } catch (e) {
         Logger.error(`${_useWhiteLabeling.name}.${fetchWhiteLabelingSettings.name}`, e);
         throw e;
