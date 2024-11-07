@@ -255,27 +255,21 @@ onMounted(() => {
       @container (min-width: theme("containers.2xl")) {
         grid-template-areas:
           "select image title properties price add-to-cart total"
-          "select image vendor properties price add-to-cart total";
-        grid-auto-rows: 1fr 1fr;
+          "select image vendor properties price add-to-cart total"
+          ". . . properties . . .";
+        grid-auto-rows: 2rem 2rem min-content;
         grid-auto-columns: min-content min-content 1fr min-content min-content min-content min-content;
 
         &:not(#{$hasVendor}) {
-          grid-auto-rows: 1fr min-content;
-        }
-
-        &#{$hasVendor} {
-          grid-auto-rows: 1fr 1fr;
-        }
-
-        &#{$hasTitlePriceOnly} {
-          grid-auto-rows: 1fr min-content;
+          grid-auto-rows: 4rem min-content min-content;
         }
       }
 
       @container (min-width: theme("containers.3xl")) {
         grid-template-areas:
           "select image title properties price add-to-cart total"
-          "select image vendor properties price add-to-cart total";
+          "select image vendor properties price add-to-cart total"
+          ". . . properties . . .";
         grid-auto-columns: min-content min-content 1fr min-content min-content min-content min-content;
       }
     }

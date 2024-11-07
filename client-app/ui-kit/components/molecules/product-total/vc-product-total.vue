@@ -34,6 +34,8 @@ defineProps<IProps>();
   &__label {
     @apply text-sm font-bold text-end;
 
+    word-break: break-word;
+
     @container (min-width: theme("containers.2xl")) {
       @apply hidden;
     }

@@ -285,10 +285,10 @@ watchEffect(async () => {
 
       &--item {
         #{$self} {
-          @apply mt-3 w-[5rem];
+          @apply mt-3 w-[5rem] self-start;
 
           @container (min-width: theme("containers.xl")) {
-            @apply w-[6.75rem];
+            @apply w-[6.75rem] self-end;
           }
 
           @container (min-width: theme("containers.2xl")) {

@@ -186,7 +186,7 @@ function slideChanged(swiper: SwiperInstance) {
         @apply size-[4.5rem];
 
         @container (min-width: theme("containers.2xl")) {
-          @apply me-3 size-[5.375rem];
+          @apply me-3 size-16;
         }
       }
     }

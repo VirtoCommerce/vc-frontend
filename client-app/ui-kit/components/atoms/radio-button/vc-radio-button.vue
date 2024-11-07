@@ -181,16 +181,12 @@ const checked = computed(() => model.value === props.value);
 
       &--item {
         #{$self} {
-          @apply absolute -left-3.5 -top-4 p-1.5 rounded-full bg-[--bg];
+          @apply z-[1] absolute -left-[0.35rem] -top-[0.45rem] p-1.5 rounded-full bg-[--bg];
         }
 
         @container (min-width: theme("containers.2xl")) {
           #{$self} {
-            @apply relative left-auto top-auto self-center me-1.5;
-          }
-
-          &:has(.vc-product-image) #{$self} {
-            @apply top-[1.65rem] self-start;
+            @apply relative left-auto top-auto self-center me-3 p-0;
           }
         }
       }

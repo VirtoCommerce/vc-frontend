@@ -50,7 +50,7 @@
             @apply w-[9.75rem];
           }
 
-          @container (min-width: theme("containers.5xl")) {
+          @container (min-width: theme("containers.4xl")) {
             @apply w-60;
           }
         }
