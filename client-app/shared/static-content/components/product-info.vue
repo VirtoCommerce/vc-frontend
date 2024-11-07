@@ -32,12 +32,12 @@
 
 <script setup lang="ts">
 import { ImageGallery, DiscountBadge, ProductVideos } from "@/shared/catalog";
-import type { PageContent } from "../types";
+import type { IPageContent } from "../types";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
-  model: PageContent;
+  model: IPageContent;
 }
 
 defineProps<IProps>();

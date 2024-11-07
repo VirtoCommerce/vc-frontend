@@ -1,11 +1,11 @@
 import { createGlobalState } from "@vueuse/core";
 import { computed, ref } from "vue";
-import type { PageTemplate } from "../types";
+import type { IPageTemplate } from "../types";
 
 function _useStaticPage() {
-  const staticPagePreview = ref<PageTemplate>();
+  const staticPagePreview = ref<IPageTemplate>();
 
-  const _staticPage = ref<PageTemplate>();
+  const _staticPage = ref<IPageTemplate>();
   const staticPage = computed({
     get: () => staticPagePreview.value ?? _staticPage.value,
     set: (value) => (_staticPage.value = value),

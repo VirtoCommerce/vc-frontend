@@ -135,7 +135,7 @@ import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
-import type { PageContent } from "@/shared/static-content";
+import type { IPageContent } from "@/shared/static-content";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -217,7 +217,7 @@ const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
 const productInfoSection = computed(() =>
-  template.value?.content.find((item: PageContent) => item.type === "product-info"),
+  template.value?.content.find((item: IPageContent) => item.type === "product-info"),
 );
 
 const productReviewsSection = computed(() => template.value?.content.find((item) => item.type === "product-reviews"));
@@ -227,11 +227,11 @@ const productVariationsBlock = computed(() =>
 );
 
 const relatedProductsSection = computed(() =>
-  template.value?.content.find((item: PageContent) => item.type === "related-products"),
+  template.value?.content.find((item: IPageContent) => item.type === "related-products"),
 );
 
 const recommendedProductsSection = computed(() =>
-  template.value?.content?.find((item: PageContent) => item.type === "recommended-products"),
+  template.value?.content?.find((item: IPageContent) => item.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {

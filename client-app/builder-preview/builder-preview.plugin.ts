@@ -3,7 +3,7 @@ import { useStaticPage, useTemplates } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
 import type { IThemeConfig } from "@/core/types";
-import type { PageContent, PageTemplate } from "@/shared/static-content/types";
+import type { IPageContent, IPageTemplate } from "@/shared/static-content/types";
 import type { App } from "vue";
 import type { Router } from "vue-router";
 import StaticPage from "@/pages/static-page.vue";
@@ -14,8 +14,8 @@ const { staticPagePreview } = useStaticPage();
 const { setTemplate } = useTemplates();
 
 declare type TransferDataType = {
-  template: PageTemplate;
-  model: PageContent;
+  template: IPageTemplate;
+  model: IPageContent;
   templateKey?: string;
   source?: string;
   type?: string;
@@ -30,9 +30,9 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
     template.content.push(data.model);
   }
 
-  const newTemplate = { ...template, content: <PageContent[]>[] };
+  const newTemplate = { ...template, content: <IPageContent[]>[] };
 
-  template.content.forEach((block: PageContent) => {
+  template.content.forEach((block: IPageContent) => {
     newTemplate.content.push({ type: "scroll-to", id: "__scroll__" + block.id });
     newTemplate.content.push(block);
   });
@@ -175,7 +175,7 @@ export default {
           console.log("Unknown message type", event.data.type);
       }
     });
-    const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
+    const page = <IPageTemplate>(<unknown>{ settings: {}, content: [] });
     staticPagePreview.value = page;
     const routes = options.router.getRoutes();
     const matcher = routes.find((x) => x.name === "Matcher")!;
