@@ -1,5 +1,5 @@
 <template>
-  <Category />
+  <Category is-root />
 </template>
 
 <script setup lang="ts">
