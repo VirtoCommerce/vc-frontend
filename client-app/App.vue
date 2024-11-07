@@ -43,10 +43,6 @@ useHead({
           sizes: "32x32",
           href: "/static/icons/favicon-32x32.png",
         },
-        {
-          rel: "manifest",
-          href: "/static/manifest.json",
-        },
       ],
 });
 
