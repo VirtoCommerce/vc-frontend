@@ -3,6 +3,7 @@ import { createGlobalState, useLocalStorage } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
 import omit from "lodash/omit";
+import { computed, watch } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
@@ -47,10 +48,12 @@ function _useWebPushNotifications() {
     }
 
     const { favIcons } = useWhiteLabeling();
-    const icon =
-      favIcons.value?.find(
-        ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-      )?.href ?? DEFAULT_ICON_URL;
+    const icon = computed(
+      () =>
+        favIcons.value?.find(
+          ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
+        )?.href ?? DEFAULT_ICON_URL,
+    );
 
     const fcmSettings = getModuleSettings(SETTINGS_MAPPING);
 
@@ -70,9 +73,19 @@ function _useWebPushNotifications() {
     serviceWorkerRegistration?.active?.postMessage({
       type: "initialize",
       config: firebaseConfig,
-      icon,
     });
     initialized = true;
+
+    watch(
+      icon,
+      () => {
+        serviceWorkerRegistration?.active?.postMessage({
+          type: "update-icon",
+          icon: icon.value,
+        });
+      },
+      { immediate: true },
+    );
 
     broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
   }
