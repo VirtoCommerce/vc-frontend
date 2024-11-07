@@ -1,4 +1,5 @@
 import { defineAsyncComponent } from "vue";
+import { cache } from "@/core/api/graphql/config";
 import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
@@ -6,6 +7,7 @@ import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/useCustomMobileMenuLinkComponents";
+import { pushMessagesTypePolices } from "./api/graphql/typePolices";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY, PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
 import type { ElementType } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
@@ -107,6 +109,7 @@ export function usePushNotifications() {
         },
       };
 
+      cache.policies.addTypePolicies(pushMessagesTypePolices);
       mergeMenuSchema(menuItems);
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);

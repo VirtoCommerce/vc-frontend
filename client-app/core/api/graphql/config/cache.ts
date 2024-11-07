@@ -1,5 +1,4 @@
 import { InMemoryCache } from "@apollo/client/core";
-import { pushMessagesTypePolices } from "@/modules/push-messages/api/graphql/typePolices";
 
 export const cache = new InMemoryCache({
   typePolicies: {
@@ -68,11 +67,6 @@ export const cache = new InMemoryCache({
     },
     ValidationErrorType: {
       keyFields: ["errorCode", "objectId", "objectType"],
-    },
-    Query: {
-      fields: {
-        ...pushMessagesTypePolices,
-      },
     },
   },
 });
