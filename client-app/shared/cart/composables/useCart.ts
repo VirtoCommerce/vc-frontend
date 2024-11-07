@@ -83,15 +83,19 @@ export function useShortCart() {
     quantity: number,
     configuration: { configurableProductId?: string; configurationSections?: ConfigurationSectionInput[] } = {},
   ): Promise<ShortCartFragment | undefined> {
-    const result = await _addToCart({
-      command: {
-        productId,
-        quantity,
-        configurableProductId: configuration.configurableProductId ?? productId,
-        configurationSections: configuration.configurationSections,
-      },
-    });
-    return result?.data?.addItem;
+    try {
+      const result = await _addToCart({
+        command: {
+          productId,
+          quantity,
+          configurableProductId: configuration.configurableProductId ?? productId,
+          configurationSections: configuration.configurationSections,
+        },
+      });
+      return result?.data?.addItem;
+    } catch (err) {
+      Logger.error(err as string);
+    }
   }
 
   const { mutate: _addItemsToCart, loading: addItemsToCartLoading } = useAddItemsCartMutation();
@@ -113,8 +117,12 @@ export function useShortCart() {
 
   const { mutate: _changeItemQuantity, loading: changeItemQuantityLoading } = useChangeShortCartItemQuantityMutation();
   async function changeItemQuantity(lineItemId: string, quantity: number): Promise<ShortCartFragment | undefined> {
-    const result = await _changeItemQuantity({ command: { lineItemId, quantity } });
-    return result?.data?.changeCartItemQuantity;
+    try {
+      const result = await _changeItemQuantity({ command: { lineItemId, quantity } });
+      return result?.data?.changeCartItemQuantity;
+    } catch (err) {
+      Logger.error(err as string);
+    }
   }
 
   function getItemsTotal(productIds: string[]): number {

@@ -1,5 +1,5 @@
 import { defineAsyncComponent } from "vue";
-import { useNavigations, useThemeContext } from "@/core/composables";
+import { useNavigations } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID, ENABLED_KEY } from "@/modules/quotes/constants";
@@ -18,7 +18,6 @@ const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
 const { registerSidebarWidget } = useCartExtensionPoints();
 const { loadModuleLocale } = useLanguages();
-const { themeContext } = useThemeContext();
 
 const route: RouteRecordRaw = {
   path: "quotes",
@@ -77,7 +76,7 @@ const menuItems: DeepPartial<MenuType> = {
 };
 
 export function init(router: Router, i18n: I18n) {
-  if (themeContext.value.settings.quotes_enabled && isEnabled(ENABLED_KEY)) {
+  if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "quotes");
