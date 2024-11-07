@@ -44,6 +44,7 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-product-price {
+  $self: &;
   $truncate: "";
 
   --font-size: var(--vc-product-price-font-size);
@@ -89,6 +90,64 @@ defineProps<IProps>();
 
     #{$truncate} & {
       @apply max-w-full truncate;
+    }
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: price;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        --font-size: theme("fontSize.lg");
+
+        @apply mt-3;
+
+        @container (min-width: theme("containers.xxs")) {
+          --font-size: theme("fontSize.2xl");
+
+          @apply mt-4;
+        }
+      }
+
+      &--list #{$self} {
+        --font-size: theme("fontSize.lg");
+
+        @container (max-width: theme("containers.xl")) {
+          @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
+        }
+
+        @container (min-width: theme("containers.xl")) {
+          --font-size: theme("fontSize.sm");
+
+          @apply ms-3 w-[7.5rem] justify-end;
+        }
+
+        @container (min-width: theme("containers.4xl")) {
+          --font-size: theme("fontSize.lg");
+
+          @apply w-[9.5rem];
+        }
+      }
+
+      &--item {
+        #{$self} {
+          @apply hidden;
+
+          @container (min-width: theme("containers.4xl")) {
+            --font-size: theme("fontSize.sm");
+
+            @apply flex flex-col justify-end w-[6.75rem] text-end;
+          }
+        }
+
+        .vc-product-total #{$self} {
+          --font-size: theme("fontSize.base");
+
+          @apply flex;
+        }
+      }
     }
   }
 }
