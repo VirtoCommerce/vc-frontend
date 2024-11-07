@@ -1,7 +1,7 @@
 {
   "quotes": {
     "meta": {
-      "title": "@:pages.account.quotes.title",
+      "title": "@:quotes.title",
       "table_description": "requested quotes"
     },
     "title": "Quote Requests",
