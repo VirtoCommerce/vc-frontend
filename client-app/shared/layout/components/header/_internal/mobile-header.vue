@@ -33,27 +33,7 @@
             <VcIcon class="text-primary" name="search" :size="28" />
           </button>
 
-          <PushMessages v-if="isPushMessagesActive" class="px-1 py-2 xs:px-2">
-            <template #trigger="{ totalCount, unreadCount }">
-              <div class="relative">
-                <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-                  <VcIcon :key="totalCount" class="text-primary" name="bell" :size="28" />
-                </transition>
-
-                <transition mode="out-in" name="scale">
-                  <VcBadge
-                    v-if="unreadCount"
-                    variant="outline"
-                    size="sm"
-                    class="absolute -right-2 -top-2 transition-transform"
-                    rounded
-                  >
-                    {{ unreadCount }}
-                  </VcBadge>
-                </transition>
-              </div>
-            </template>
-          </PushMessages>
+          <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
 
           <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
             <span class="relative block">
@@ -132,12 +112,12 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader, useSearchBar } from "@/shared/layout";
-import { isActive as isPushMessagesActive } from "@/modules/push-messages/composables/usePushMessages";
+import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import PushMessages from "@/modules/push-messages/components/push-messages.vue";
 
+const { customComponents } = useCustomMobileHeaderComponents();
 const searchPhrase = ref("");
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const mobileMenuVisible = ref(false);
