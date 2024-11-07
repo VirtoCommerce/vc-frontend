@@ -220,7 +220,14 @@ watchEffect(async () => {
 
 <style lang="scss">
 .vc-add-to-cart {
+  $self: &;
+  $hideButton: &;
+
   @apply @container flex-none;
+
+  &--hide-button {
+    $hideButton: &;
+  }
 
   &__icon-button.vc-button {
     @apply w-24 max-w-full;
@@ -239,7 +246,57 @@ watchEffect(async () => {
   }
 
   &__badges {
-    @apply mt-1.5 flex flex-wrap gap-x-1.5 gap-y-0.5;
+    @apply mt-1.5 flex flex-wrap gap-x-1.5 gap-y-0.5 empty:hidden;
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: add-to-cart;
+    }
+
+    &--view-mode {
+      &--grid {
+        #{$self} {
+          @apply mt-3;
+
+          @container (min-width: theme("containers.xs")) {
+            @apply mt-4;
+          }
+        }
+      }
+
+      &--list {
+        #{$self} {
+          @apply mt-3;
+
+          @container (min-width: theme("containers.sm")) {
+            @apply w-72;
+          }
+
+          @container (min-width: theme("containers.xl")) {
+            @apply mt-0 ms-3 w-44;
+          }
+
+          @container (min-width: theme("containers.4xl")) {
+            @apply mt-0 ms-3 w-60;
+          }
+        }
+      }
+
+      &--item {
+        #{$self} {
+          @apply mt-3 w-[5rem] self-start;
+
+          @container (min-width: theme("containers.xl")) {
+            @apply w-[6.75rem] self-end;
+          }
+
+          @container (min-width: theme("containers.2xl")) {
+            @apply mt-0 ms-3 w-[5.5rem];
+          }
+        }
+      }
+    }
   }
 }
 </style>
