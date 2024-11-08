@@ -10,9 +10,8 @@
       ]"
       @click="$emit('update:mode', 'grid')"
     >
-      <svg class="size-5">
-        <use href="/static/images/common/grid-view.svg#main"></use>
-      </svg>
+      <VcIcon class="size-5" name="grid" />
+
       <span class="ml-1.5 hidden text-base font-bold lg:block">{{ $t("shared.catalog.view_mode.grid_label") }}</span>
     </button>
 
@@ -26,21 +25,25 @@
       ]"
       @click="$emit('update:mode', 'list')"
     >
-      <svg class="size-5">
-        <use href="/static/images/common/list-view.svg#main"></use>
-      </svg>
+      <VcIcon class="size-5" name="list" />
+
       <span class="ml-1.5 hidden text-base font-bold lg:block">{{ $t("shared.catalog.view_mode.list_label") }}</span>
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-defineEmits(["update:mode"]);
+interface IEmits {
+  (event: "update:mode", mode: string): void;
+}
 
-defineProps({
-  mode: {
-    type: String,
-    default: "grid",
-  },
+interface IProps {
+  mode?: string;
+}
+
+defineEmits<IEmits>();
+
+withDefaults(defineProps<IProps>(), {
+  mode: "grid",
 });
 </script>

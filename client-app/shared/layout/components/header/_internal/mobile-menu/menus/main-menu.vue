@@ -147,7 +147,7 @@ const unauthorizedMenuItems: ExtendedMenuLinkType[] = [
 
 const settingsMenuItem: ExtendedMenuLinkType = {
   id: "settings",
-  icon: "/static/images/common/settings.svg#main",
+  icon: "cog",
   children: [{}],
 };
 </script>

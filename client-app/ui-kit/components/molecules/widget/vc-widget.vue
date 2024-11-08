@@ -213,7 +213,7 @@ watchEffect(() => {
   }
 
   &__append-icon {
-    @apply text-primary transition-all;
+    @apply fill-primary transition-all;
 
     &--rotate {
       @apply rotate-180;

@@ -6,7 +6,7 @@
         :key="facet.term"
         class="flex items-center space-x-1 overflow-hidden text-ellipsis px-3 text-sm"
       >
-        <VcIcon class="flex-none text-primary" name="minus" />
+        <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
 
         <a
           :class="{ 'font-bold': isSelectedOrderStatus(facet.term) }"
