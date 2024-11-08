@@ -23,3 +23,4 @@ export const openReturnUrl = "open_return_url" as string;
 export const forbiddenEvent = "forbidden" as string;
 export const passwordExpiredEvent = "password_expired" as string;
 export const reloadAndOpenMainPage = "reload_and_open_main_page" as string;
+export const graphqlErrorEvent = "graphql_error" as string;

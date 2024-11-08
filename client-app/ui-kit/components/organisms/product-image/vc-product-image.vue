@@ -114,6 +114,8 @@ function slideChanged(swiper: SwiperInstance) {
 
 <style lang="scss">
 .vc-product-image {
+  $self: &;
+
   @apply relative max-w-full aspect-square border border-neutral-200 rounded;
 
   &__carousel {
@@ -158,6 +160,36 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__slot {
     @apply absolute inset-0;
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: image;
+
+      @apply self-start place-content-stretch;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        @apply mb-4;
+      }
+
+      &--list #{$self} {
+        @apply size-[4.5rem];
+
+        @container (min-width: theme("containers.xl")) {
+          @apply me-3 size-[5.375rem];
+        }
+      }
+
+      &--item #{$self} {
+        @apply size-[4.5rem];
+
+        @container (min-width: theme("containers.2xl")) {
+          @apply me-3 size-16;
+        }
+      }
+    }
   }
 }
 </style>

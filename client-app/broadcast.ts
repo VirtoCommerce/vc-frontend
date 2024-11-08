@@ -19,6 +19,7 @@ import {
   forbiddenEvent,
   passwordExpiredEvent,
   reloadAndOpenMainPage,
+  graphqlErrorEvent,
 } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 
@@ -77,6 +78,9 @@ export function setupBroadcastGlobalListeners() {
     if (pathname !== "/sign-in") {
       location.href = `/sign-in?returnUrl=${pathname + search + hash}`;
     }
+  });
+  on(graphqlErrorEvent, (error) => {
+    throw error;
   });
   on(unhandledErrorEvent, () => {
     const { t } = globals.i18n.global;
