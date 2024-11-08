@@ -3,13 +3,7 @@
     <component
       :is="isLink ? 'a' : 'button'"
       :href="getHrefValue(href)"
-      :class="[
-        'flex min-h-9 items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]',
-        isLink && !isExternalLink && (isActive || isExactActive)
-          ? 'text-[--mobile-menu-link-active-color]'
-          : 'text-[--mobile-menu-link-color]',
-        $attrs.class,
-      ]"
+      :class="['flex min-h-9 items-center gap-x-3.5 text-left leading-tight tracking-[0.01em]', $attrs.class]"
       @click.prevent="click(navigate)"
     >
       <slot name="icon" v-bind="{ isActive, isExactActive }">
@@ -25,7 +19,14 @@
         />
       </slot>
 
-      <span class="line-clamp-3 break-words">
+      <span
+        :class="[
+          'line-clamp-3 break-words',
+          isLink && !isExternalLink && (isActive || isExactActive)
+            ? 'text-[--mobile-menu-link-active-color]'
+            : 'text-[--mobile-menu-link-color]',
+        ]"
+      >
         <slot v-bind="{ isActive, isExactActive }" />
       </span>
 
