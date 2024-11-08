@@ -46,6 +46,8 @@
           :model="productInfoSection"
         />
 
+        <ProductConfiguration />
+
         <KeepAlive>
           <ProductReviews
             v-if="productReviewsEnabled && !productReviewsSection?.hidden"
@@ -128,6 +130,7 @@ import {
   useRelatedProducts,
   useCategory,
   ProductSidebar,
+  ProductConfiguration,
   useProducts,
   useRecommendedProducts,
 } from "@/shared/catalog";

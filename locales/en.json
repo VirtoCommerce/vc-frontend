@@ -589,6 +589,7 @@
         "assets_block_title": "Files",
         "vendor_label": "Vendor",
         "share_product_label": "Share product",
+        "create_configuration_button": "Create your own configuration",
         "price_block": {
           "title": "Price and Delivery",
           "add_to_list_button": "Add to list",
@@ -610,6 +611,9 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price",
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        },
+        "product_configuration": {
+          "title": "Configure the parameters"
         }
       },
       "discount_badge": {
