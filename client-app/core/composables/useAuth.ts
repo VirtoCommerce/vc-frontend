@@ -140,7 +140,7 @@ function _useAuth() {
       }
     } catch {
       state.value = { ...INITIAL_STATE };
-      broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
+      void broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
     }
   }
 

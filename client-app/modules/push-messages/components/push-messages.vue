@@ -1,6 +1,6 @@
 <template>
   <VcPushMessages
-    v-model:showUnreadOnly="showUnreadOnly"
+    v-model:show-unread-only="showUnreadOnly"
     :total-count="totalCount"
     :unread-count="unreadCount"
     :items="items"

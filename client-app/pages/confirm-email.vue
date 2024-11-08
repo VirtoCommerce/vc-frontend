@@ -106,7 +106,7 @@ async function resendLink(): Promise<void> {
   emailConfirmed.value = false;
 }
 
-invoke(async () => {
+void invoke(async () => {
   const result: CustomIdentityResultType = await confirmEmail({
     userId: userId.value,
     token: token.value,

@@ -1,4 +1,5 @@
 import { useGlobalInterceptors } from "@/core/api/common";
+import { Logger } from "@/core/utilities";
 import { useStaticPage, useTemplates } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
@@ -172,7 +173,7 @@ export default {
           updateSettings(app, event.data.settings!);
           break;
         default:
-          console.log("Unknown message type", event.data.type);
+          Logger.warn(`Unknown message type: ${event.data.type}`);
       }
     });
     const page = <PageTemplate>(<unknown>{ settings: {}, content: [] });
