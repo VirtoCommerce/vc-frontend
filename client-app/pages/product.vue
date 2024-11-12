@@ -215,24 +215,22 @@ const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
-const productTemplate = computed(() => _productTemplate as PageTemplate);
+const productTemplate = _productTemplate as PageTemplate;
 
-const productInfoSection = computed(() => productTemplate.value.content.find((item) => item?.type === "product-info"));
+const productInfoSection = computed(() => productTemplate.content.find((item) => item?.type === "product-info"));
 
-const productReviewsSection = computed(() =>
-  productTemplate.value.content.find((item) => item?.type === "product-reviews"),
-);
+const productReviewsSection = computed(() => productTemplate.content.find((item) => item?.type === "product-reviews"));
 
 const productVariationsBlock = computed(() =>
   productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
 );
 
 const relatedProductsSection = computed(() =>
-  productTemplate.value.content.find((item) => item?.type === "related-products"),
+  productTemplate.content.find((item) => item?.type === "related-products"),
 );
 
 const recommendedProductsSection = computed(() =>
-  productTemplate.value.content?.find((item) => item?.type === "recommended-products"),
+  productTemplate.content?.find((item) => item?.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {
