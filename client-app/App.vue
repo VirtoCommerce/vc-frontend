@@ -27,28 +27,7 @@ const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { favIcons } = useWhiteLabeling();
 
-useHead({
-  link: favIcons.value?.length
-    ? favIcons.value
-    : [
-        {
-          rel: "icon",
-          type: "image/png",
-          sizes: "16x16",
-          href: "/static/icons/favicon-16x16.png",
-        },
-        {
-          rel: "icon",
-          type: "image/png",
-          sizes: "32x32",
-          href: "/static/icons/favicon-32x32.png",
-        },
-        {
-          rel: "manifest",
-          href: "/static/manifest.json",
-        },
-      ],
-});
+useHead({ link: favIcons.value });
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
