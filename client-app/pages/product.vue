@@ -217,21 +217,15 @@ const seoImageUrl = computed(() => product.value?.imgSrc);
 
 const productTemplate = _productTemplate as PageTemplate;
 
-const productInfoSection = computed(() => productTemplate.content.find((item) => item?.type === "product-info"));
+const productInfoSection = productTemplate.content.find((item) => item?.type === "product-info");
 
-const productReviewsSection = computed(() => productTemplate.content.find((item) => item?.type === "product-reviews"));
+const productReviewsSection = productTemplate.content.find((item) => item?.type === "product-reviews");
 
-const productVariationsBlock = computed(() =>
-  productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
-);
+const productVariationsBlock = productInfoSection?.blocks?.find((block) => block?.type === "product-variations");
 
-const relatedProductsSection = computed(() =>
-  productTemplate.content.find((item) => item?.type === "related-products"),
-);
+const relatedProductsSection = productTemplate.content.find((item) => item?.type === "related-products");
 
-const recommendedProductsSection = computed(() =>
-  productTemplate.content?.find((item) => item?.type === "recommended-products"),
-);
+const recommendedProductsSection = productTemplate.content?.find((item) => item?.type === "recommended-products");
 
 const breadcrumbs = useBreadcrumbs(() => {
   return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs));
@@ -327,12 +321,12 @@ watchEffect(() => {
 watchEffect(async () => {
   await fetchProduct(productId.value);
 
-  if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
+  if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
   }
 
-  const recommendedProductsBlocks = recommendedProductsSection.value?.blocks?.filter((block) => !!block.model) ?? [];
-  if (!recommendedProductsSection.value?.hidden && recommendedProductsSection.value?.blocks?.length) {
+  const recommendedProductsBlocks = recommendedProductsSection?.blocks?.filter((block) => !!block.model) ?? [];
+  if (!recommendedProductsSection?.hidden && recommendedProductsSection?.blocks?.length) {
     const paramsToFetch = recommendedProductsBlocks.map(({ model }) => ({
       productId: productId.value,
       model: model as string,
