@@ -217,13 +217,13 @@ const seoImageUrl = computed(() => product.value?.imgSrc);
 
 const productTemplate = _productTemplate as PageTemplate;
 
-const productInfoSection = productTemplate.content.find((item) => item?.type === "product-info");
+const productInfoSection = productTemplate.content?.find((item) => item?.type === "product-info");
 
-const productReviewsSection = productTemplate.content.find((item) => item?.type === "product-reviews");
+const productReviewsSection = productTemplate.content?.find((item) => item?.type === "product-reviews");
 
 const productVariationsBlock = productInfoSection?.blocks?.find((block) => block?.type === "product-variations");
 
-const relatedProductsSection = productTemplate.content.find((item) => item?.type === "related-products");
+const relatedProductsSection = productTemplate.content?.find((item) => item?.type === "related-products");
 
 const recommendedProductsSection = productTemplate.content?.find((item) => item?.type === "recommended-products");
 
