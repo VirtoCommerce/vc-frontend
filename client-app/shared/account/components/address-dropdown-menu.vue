@@ -6,7 +6,7 @@
 
     <template #content>
       <VcMenuItem color="secondary" @click="editAddress">
-        <VcIcon name="pencil" />
+        <VcIcon name="edit" />
 
         <span>{{ $t("common.buttons.edit") }}</span>
       </VcMenuItem>
@@ -29,7 +29,7 @@
         color="secondary"
         @click="deleteAddress"
       >
-        <VcIcon :class="address.isDefault ? 'text-neutral-400' : 'text-danger'" name="delete-2" />
+        <VcIcon :class="address.isDefault ? 'fill-neutral-400' : 'fill-danger'" name="delete-2" />
 
         <span>{{ $t("common.buttons.delete") }}</span>
       </VcMenuItem>

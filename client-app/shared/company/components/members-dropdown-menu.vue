@@ -6,7 +6,7 @@
 
     <template #content>
       <VcMenuItem color="secondary" @click="$emit('edit')">
-        <VcIcon name="pencil" />
+        <VcIcon name="edit" />
 
         <span>{{ $t("pages.company.members.buttons.edit_role") }}</span>
       </VcMenuItem>
@@ -24,7 +24,7 @@
       </VcMenuItem>
 
       <VcMenuItem color="secondary" @click="$emit('remove')">
-        <VcIcon name="delete-2" class="text-danger" />
+        <VcIcon name="delete-2" class="fill-danger" />
 
         <span>{{ $t("pages.company.members.buttons.delete") }}</span>
       </VcMenuItem>

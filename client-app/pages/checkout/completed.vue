@@ -16,7 +16,7 @@
       </h1>
 
       <div class="mb-10 flex flex-col gap-5 lg:flex-row">
-        <VcIcon name="check-circle" :size="48" class="hidden text-success lg:block" />
+        <VcIcon name="check-circle" :size="48" class="hidden fill-success lg:block" />
 
         <div class="max-w-md text-center text-xl lg:text-left">
           <strong class="mb-4 block">

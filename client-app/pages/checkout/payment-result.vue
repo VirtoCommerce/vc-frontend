@@ -24,10 +24,10 @@
           v-if="isPaymentSuccess"
           name="check-circle"
           size="md"
-          class="hidden size-12 shrink-0 text-success lg:flex"
+          class="hidden size-12 shrink-0 fill-success lg:flex"
         />
 
-        <VcIcon v-else name="x-circle" size="md" class="hidden size-12 shrink-0 text-danger lg:flex" />
+        <VcIcon v-else name="delete" size="md" class="hidden size-12 shrink-0 fill-danger lg:flex" />
 
         <div class="max-w-md text-center text-lg lg:text-left">
           <strong class="mb-4 block">

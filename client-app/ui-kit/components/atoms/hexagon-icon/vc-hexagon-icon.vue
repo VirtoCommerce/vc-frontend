@@ -1,6 +1,6 @@
 <template>
   <span class="vc-hexagon-icon" :style="style">
-    <VcIcon class="vc-hexagon-icon__icon" :name="icon" />
+    <VcIcon :name="icon" />
   </span>
 </template>
 
@@ -21,8 +21,10 @@ const style = computed(() => (props.size ? { width: width.value } : {}));
 <style lang="scss">
 .vc-hexagon-icon {
   --hexagon-size: var(--vc-hexagon-icon-size, 2.5rem);
+  --vc-icon-color: var(--hexagon-icon-color);
+  --vc-icon-size: 62%;
 
-  @apply flex items-center justify-center w-[--hexagon-size] bg-[--hexagon-icon-bg-color] text-[--hexagon-icon-color] aspect-square;
+  @apply flex items-center justify-center w-[--hexagon-size] bg-[--hexagon-icon-bg-color] aspect-square;
 
   clip-path: polygon(
     45% 1.33975%,
@@ -68,9 +70,5 @@ const style = computed(() => (props.size ? { width: width.value } : {}));
     8.93111% 22.33956%,
     10.35898% 21.33975%
   );
-
-  &__icon {
-    @apply w-[62%] h-[62%] #{!important};
-  }
 }
 </style>

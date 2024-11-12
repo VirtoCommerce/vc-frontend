@@ -20,7 +20,7 @@
         class="vc-address-selection__button"
         @click="$emit('change')"
       >
-        <VcIcon name="pencil" size="xs" />
+        <VcIcon name="edit" size="xs" />
       </VcButton>
     </template>
 

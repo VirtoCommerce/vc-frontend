@@ -33,7 +33,7 @@
           data-btn="btn-prev"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="text-neutral-400" name="chevron-left" size="xs" />
+            <VcIcon class="fill-neutral-400" name="chevron-left" size="xs" />
           </span>
         </button>
 
@@ -44,7 +44,7 @@
           data-btn="btn-next"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="text-neutral-400" name="chevron-right" size="xs" />
+            <VcIcon class="fill-neutral-400" name="chevron-right" size="xs" />
           </span>
         </button>
 

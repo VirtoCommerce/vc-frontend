@@ -6,7 +6,9 @@
 
     <template #content>
       <VcMenuItem color="secondary" nowrap @click="$emit('edit')">
-        <VcIcon name="pencil" />
+        <template #prepend>
+          <VcIcon name="edit" />
+        </template>
 
         <span>{{ $t("shared.wishlists.list_card.list_edit_button") }}</span>
       </VcMenuItem>
@@ -18,7 +20,7 @@
           nowrap
           @click="$emit('setScope', WishlistScopeType.Organization)"
         >
-          <VcIcon name="users" class="text-accent" />
+          <VcIcon name="users" class="fill-accent" />
 
           <span>{{ $t("shared.wishlists.list_card.share_button") }}</span>
         </VcMenuItem>
@@ -36,7 +38,7 @@
       </template>
 
       <VcMenuItem color="secondary" nowrap @click="$emit('remove')">
-        <VcIcon name="delete-2" class="text-danger" />
+        <VcIcon name="delete-2" class="fill-danger" />
 
         <span>{{ $t("shared.wishlists.list_card.remove_list_button") }}</span>
       </VcMenuItem>

@@ -146,7 +146,7 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
   app.use(uiKit);
-  app.use(applicationInsightsPlugin, themeContext.value);
+  app.use(applicationInsightsPlugin);
 
   const builderOrigin = getEpParam();
   if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {
