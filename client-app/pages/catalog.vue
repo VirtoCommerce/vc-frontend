@@ -1,5 +1,5 @@
 <template>
-  <Category :title="title" is-root />
+  <Category :title is-root />
 </template>
 
 <script setup lang="ts">
@@ -12,9 +12,9 @@ import { useSlugInfo } from "@/shared/common";
 import Category from "@/shared/catalog/components/category.vue";
 
 const route = useRoute();
-const { i18n } = globals;
-
 const { seoInfo } = useSlugInfo(route.path.slice(1));
+
+const { i18n } = globals;
 const catalogName = i18n.global.t("pages.catalog.title");
 const title = computed(() => seoInfo.value?.pageTitle ?? catalogName);
 
