@@ -46,7 +46,11 @@
           :model="productInfoSection"
         />
 
-        <ProductConfiguration />
+        <ProductConfiguration
+          v-if="product.isConfigurable && !!configuration"
+          :product-id="productId"
+          :configuration="configuration"
+        />
 
         <KeepAlive>
           <ProductReviews
@@ -133,6 +137,7 @@ import {
   ProductConfiguration,
   useProducts,
   useRecommendedProducts,
+  useConfigurableProduct,
 } from "@/shared/catalog";
 import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
@@ -162,6 +167,7 @@ const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
+const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId.value);
 const {
   fetchingProducts: fetchingVariations,
   products: variations,
@@ -330,6 +336,9 @@ watchEffect(() => {
 
 watchEffect(async () => {
   await fetchProduct(productId.value);
+  if (product.value?.isConfigurable) {
+    await fetchProductConfiguration();
+  }
 
   if (product.value?.associations?.totalCount && !relatedProductsSection.value?.hidden) {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });

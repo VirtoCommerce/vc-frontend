@@ -24,7 +24,7 @@
             {{ $t("pages.product.price_label") }}
           </span>
 
-          <VcItemPrice :value="product.price" />
+          <VcItemPrice :value="price" />
         </div>
 
         <div class="mt-4 print:hidden">
@@ -44,14 +44,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, toRef } from "vue";
 import { useCurrency } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { AddToCart, useShortCart } from "@/shared/cart";
+import { useConfigurableProduct } from "@/shared/catalog/composables";
 import CountInCart from "./count-in-cart.vue";
 import InStock from "./in-stock.vue";
 import ProductPriceBlock from "./product-price-block.vue";
-import type { Product } from "@/core/api/graphql/types";
+import type { MoneyType, PriceType, Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
@@ -60,8 +61,11 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const product = toRef(props, "product");
+
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
+const { configuredLineItem } = useConfigurableProduct(product.value.id);
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 
@@ -73,5 +77,11 @@ const variationsCartTotalAmount = computed<number>(() => {
   const variationsIds = props.variations?.map((variation) => variation.id!) ?? [];
 
   return getItemsTotal(variationsIds);
+});
+
+const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | undefined>(() => {
+  return props.product.isConfigurable
+    ? { actual: configuredLineItem.value?.total as MoneyType, list: configuredLineItem.value?.total as MoneyType }
+    : props.product.price;
 });
 </script>

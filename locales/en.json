@@ -613,7 +613,8 @@
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
         },
         "product_configuration": {
-          "title": "Configure the parameters"
+          "title": "Configure the parameters",
+          "none": "None"
         }
       },
       "discount_badge": {

@@ -124,7 +124,7 @@ function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
 
   if (isMobile.value && isShown && divUnderSharedPopover.value) {
-    divUnderSharedPopover.value.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+    divUnderSharedPopover.value.scrollIntoView({ behavior: "smooth" });
   }
 }
 </script>

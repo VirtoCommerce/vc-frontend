@@ -1,3 +1,4 @@
+import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import { ref, readonly, computed, watch } from "vue";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
@@ -5,8 +6,8 @@ import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables
 import { Logger } from "@/core/utilities";
 import type {
   ConfigurationSectionInput,
-  CreateConfiguredLineItemMutation,
-  GetProductConfigurationsQuery,
+  ConfigurationSectionType,
+  ConfiguredLineItemType,
 } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
@@ -26,14 +27,14 @@ type SelectedConfigurationType = {
  * @returns {Ref<boolean>} loading - Computed ref indicating if the product configuration fetching or line item creation is in progress.
  * @returns {Ref<GetProductConfigurationsQuery["productConfiguration"] | undefined>} configuration - Readonly ref containing the product configuration.
  * @returns {Ref<Record<string, SelectedConfigurationType | undefined>>} selectedConfiguration - Readonly ref containing the selected configuration.
- * @returns {Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"] | undefined>} configuredLineItem - Readonly ref containing the created configured line item.
+ * @returns {Ref<ConfiguredLineItemType | undefined>} configuredLineItem - Readonly ref containing the created configured line item.
  */
-export function useConfigurableProduct(configurableProductId: string) {
+export function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
 
-  const configuration: Ref<GetProductConfigurationsQuery["productConfiguration"] | undefined> = ref();
-  const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"] | undefined> = ref();
+  const configuration: Ref<ConfigurationSectionType[]> = ref([]);
+  const configuredLineItem: Ref<ConfiguredLineItemType | undefined> = ref();
 
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
 
@@ -42,7 +43,7 @@ export function useConfigurableProduct(configurableProductId: string) {
       ?.filter(({ value }) => value !== undefined)
       ?.reduce(
         (acc, section) => {
-          const rawSection = configuration.value?.configurationSections?.find((s) => s.name === section.sectionId);
+          const rawSection = configuration.value.find((s) => s.name === section.sectionId);
           acc[section.sectionId] = {
             productId: section.value?.productId,
             quantity: section.value?.quantity,
@@ -57,9 +58,10 @@ export function useConfigurableProduct(configurableProductId: string) {
   async function fetchProductConfiguration() {
     fetching.value = true;
     try {
-      configuration.value = await getProductConfiguration(configurableProductId);
+      const data = await getProductConfiguration(configurableProductId);
+      configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
       selectedConfigurationInput.value =
-        configuration.value?.configurationSections?.map((section) => ({
+        configuration.value.map((section) => ({
           sectionId: section.id ?? "",
           value: section.isRequired
             ? {
@@ -80,6 +82,7 @@ export function useConfigurableProduct(configurableProductId: string) {
   const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
     mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
   });
+
   async function createConfiguredLineItem() {
     creating.value = true;
     try {
@@ -129,6 +132,9 @@ export function useConfigurableProduct(configurableProductId: string) {
     loading: computed(() => fetching.value || creating.value),
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
+    selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
   };
 }
+
+export const useConfigurableProduct = createSharedComposable(_useConfigurableProduct);

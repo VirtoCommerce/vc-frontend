@@ -6,47 +6,69 @@
     size="lg"
   >
     <div class="product-configuration__widgets">
-      <VcWidget collapsible size="xs">
+      <VcWidget v-for="section in configuration" :key="section.id" collapsible size="xs">
         <template #title>
-          Title
+          {{ section.name }}
           <div class="product-configuration__description">
-            Colorful Party Balloons 100pcs 12inch Chrome Metallic Helium Balloons for Birthday Party Decoration and Arch
-            Decoration
+            {{ section.description }}
           </div>
         </template>
 
         <div class="product-configuration__items">
-          <VcProductCard v-for="i in ['1', '2', '3']" :key="i" view-mode="item" class="product-configuration__item">
+          <VcProductCard
+            v-for="product in section.products"
+            :key="product.id"
+            view-mode="item"
+            class="product-configuration__item"
+          >
             <template #media>
-              <VcRadioButton :value="i" name="radio" />
-              <VcProductImage />
+              <VcRadioButton
+                :value="product.id"
+                :name="`selection-${section.id}`"
+                @input="
+                  handleInput({ sectionId: section.id!, value: { productId: product.id, quantity: section.quantity! } })
+                "
+              />
+              <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
             </template>
 
-            <VcProductTitle to="#">Product Title</VcProductTitle>
+            <VcProductTitle :to="getProductRoute(product.id, product.slug)">{{ product.name }}</VcProductTitle>
 
             <VcProductProperties>
-              <VcProperty label="Property 1" value="Value 1" />
-              <VcProperty label="Property 2" value="Value 1" />
-              <VcProperty label="Property 3" value="Value 1" />
-              <VcProperty class="@2xl:hidden" label="Price per item">
-                <VcPriceDisplay />
-              </VcProperty>
+              <VcProperty
+                v-for="property in product.properties.slice(0, 3)"
+                :key="property.id"
+                :label="property.name"
+                :value="property.value"
+              />
+              <!-- <VcProperty class="@2xl:hidden" label="Price per item">
+                <VcPriceDisplay :value="product.price.actual" />
+              </VcProperty> -->
             </VcProductProperties>
 
-            <VcProductPrice />
+            <VcProductPrice
+              :has-variations="product.hasVariations"
+              :actual-price="product.price.actual"
+              :list-price="product.price.list"
+            />
 
-            <VcAddToCart hide-button />
+            <VcAddToCart hide-button disabled :model-value="section.quantity" />
 
             <VcProductTotal />
           </VcProductCard>
 
-          <VcProductCard view-mode="item" class="product-configuration__item">
+          <VcProductCard v-if="!section.isRequired" view-mode="item" class="product-configuration__item">
             <template #media>
-              <VcRadioButton value="none" name="radio" />
+              <VcRadioButton
+                value="none"
+                :name="`selection-${section.id}`"
+                :model-value="selectedConfiguration[section.id!]?.productId === undefined ? 'none' : ''"
+                @input="handleInput({ sectionId: section.id!, value: undefined })"
+              />
               <VcProductImage />
             </template>
 
-            <VcProductTitle title="None" />
+            <VcProductTitle :title="$t('shared.catalog.product_details.product_configuration.none')" />
           </VcProductCard>
         </div>
       </VcWidget>
@@ -54,7 +76,27 @@
   </VcWidget>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { toRef } from "vue";
+import { getProductRoute } from "@/core/utilities";
+import { useConfigurableProduct } from "@/shared/catalog/composables";
+import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+
+interface IProps {
+  configuration: ConfigurationSectionType[];
+  productId: string;
+}
+
+const props = defineProps<IProps>();
+
+const configurableProductId = toRef(props, "productId");
+
+const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(configurableProductId.value);
+
+function handleInput({ sectionId, value }: { sectionId: string; value?: { productId: string; quantity: number } }) {
+  selectSectionValue({ sectionId, value });
+}
+</script>
 
 <style lang="scss">
 .product-configuration {

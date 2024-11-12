@@ -28,8 +28,13 @@
           </template>
         </div>
 
-        <div class="product-info__config">
-          <VcButton color="secondary" variant="outline" prepend-icon="cube-transparent">
+        <div v-if="product.isConfigurable" class="product-info__config">
+          <VcButton
+            color="secondary"
+            variant="outline"
+            prepend-icon="cube-transparent"
+            @click="handleCreateConfiguration"
+          >
             {{ $t("shared.catalog.product_details.create_configuration_button") }}
           </VcButton>
         </div>
@@ -49,6 +54,13 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+function handleCreateConfiguration() {
+  const productConfigurationElement = document.querySelector(".product-configuration__description");
+  if (productConfigurationElement) {
+    productConfigurationElement.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+  }
+}
 </script>
 
 <style lang="scss">
