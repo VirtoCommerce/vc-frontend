@@ -3,9 +3,9 @@
     <VcIcon
       :class="[
         {
-          'text-danger': rating.value <= 3,
-          'text-warning': rating.value > 3 && rating.value <= 4,
-          'text-success': rating.value > 4,
+          'fill-danger': rating.value <= 3,
+          'fill-warning': rating.value > 3 && rating.value <= 4,
+          'fill-success': rating.value > 4,
         },
       ]"
       class="flex-none"

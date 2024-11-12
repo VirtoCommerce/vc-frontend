@@ -8,28 +8,28 @@
             "name": "BulkOrder"
           },
           "title": "shared.layout.header.menu.bulk_order",
-          "icon": "/static/images/dashboard/icons/bulk-order-desktop.svg#main",
+          "icon": "bulk",
           "priority": 0
         },
         {
           "id": "compare",
           "route": { "name": "CompareProducts" },
           "title": "shared.layout.header.menu.compare",
-          "icon": "/static/images/dashboard/icons/compare-desktop.svg#main",
+          "icon": "compare",
           "priority": 10
         },
         {
           "id": "lists",
           "route": { "name": "Lists" },
           "title": "shared.layout.header.menu.lists",
-          "icon": "/static/images/dashboard/icons/lists.svg#main",
+          "icon": "list-v2",
           "priority": 20
         },
         {
           "id": "orders",
           "route": { "name": "Orders" },
           "title": "shared.layout.header.menu.orders",
-          "icon": "/static/images/dashboard/icons/orders-desktop.svg#main",
+          "icon": "order",
           "priority": 30
         },
         {
@@ -38,7 +38,7 @@
             "name": "Cart"
           },
           "title": "shared.layout.header.menu.cart",
-          "icon": "/static/images/checkout/cart-desktop.svg#main",
+          "icon": "cart-2",
           "priority": 100
         }
       ],
@@ -48,7 +48,7 @@
           "name": "Account"
         },
         "title": "shared.layout.header.mobile.my_account",
-        "icon": "/static/images/common/user-circle.svg",
+        "icon": "user-circle",
         "children": [
           {
             "id": "dashboard",
@@ -92,7 +92,7 @@
               "name": "Orders"
             },
             "title": "shared.account.navigation.links.orders",
-            "icon": "clipboard-copy-1",
+            "icon": "clipboard-list",
             "priority": 50
           },
           {
@@ -101,7 +101,7 @@
               "name": "Lists"
             },
             "title": "shared.account.navigation.links.lists",
-            "icon": "list-2",
+            "icon": "list-v2",
             "priority": 60
           },
           {
@@ -130,7 +130,7 @@
           "name": "Company"
         },
         "title": "shared.layout.header.mobile.corporate",
-        "icon": "/static/images/dashboard/icons/company.svg#main",
+        "icon": "case",
         "children": [
           {
             "route": {
@@ -157,7 +157,7 @@
             "name": "Catalog"
           },
           "title": "shared.layout.header.menu.catalog",
-          "icon": "/static/images/common/cube.svg#main",
+          "icon": "cube",
           "isCatalogItem": true
         },
         {
@@ -166,7 +166,7 @@
             "name": "CompareProducts"
           },
           "title": "shared.layout.header.menu.compare",
-          "icon": "/static/images/dashboard/icons/compare.svg#main"
+          "icon": "compare"
         },
         {
           "id": "bulk-order",
@@ -174,7 +174,7 @@
             "name": "BulkOrder"
           },
           "title": "shared.layout.header.menu.bulk_order",
-          "icon": "/static/images/dashboard/icons/bulk-order.svg#main"
+          "icon": "bulk"
         },
         {
           "id": "cart",
@@ -182,13 +182,13 @@
             "name": "Cart"
           },
           "title": "shared.layout.header.menu.cart",
-          "icon": "/static/images/checkout/cart.svg#main"
+          "icon": "cart"
         },
         {
           "id": "contacts",
           "route": "/contacts",
           "title": "shared.layout.header.menu.contact_us",
-          "icon": "/static/images/dashboard/icons/contact.svg#main"
+          "icon": "mail"
         }
       ],
       "account": {
@@ -197,20 +197,20 @@
           "name": "Account"
         },
         "title": "shared.layout.header.mobile.my_account",
-        "icon": "/static/images/common/user-circle.svg#main",
+        "icon": "user-circle",
         "children": [
           {
             "route": {
               "name": "Profile"
             },
             "title": "shared.layout.header.mobile.account_menu.profile",
-            "icon": "/static/images/dashboard/icons/profile.svg#main",
+            "icon": "profile",
             "priority": 0
           },
           {
             "id": "contact-organizations",
             "title": "common.labels.my_organizations",
-            "icon": "/static/images/dashboard/icons/company.svg#main",
+            "icon": "case",
             "children": [{}],
             "priority": 10
           },
@@ -219,7 +219,7 @@
               "name": "ChangePassword"
             },
             "title": "shared.layout.header.mobile.account_menu.change_password",
-            "icon": "/static/images/dashboard/icons/pass.svg#main",
+            "icon": "pass",
             "priority": 20
           },
           {
@@ -228,7 +228,7 @@
               "name": "Addresses"
             },
             "title": "shared.layout.header.mobile.account_menu.addresses",
-            "icon": "/static/images/dashboard/icons/building.svg#main",
+            "icon": "office-building",
             "priority": 30
           },
           {
@@ -236,7 +236,7 @@
               "name": "Orders"
             },
             "title": "shared.layout.header.mobile.account_menu.orders",
-            "icon": "/static/images/dashboard/icons/orders.svg#main",
+            "icon": "clipboard-list",
             "priority": 40
           },
           {
@@ -244,7 +244,7 @@
               "name": "Lists"
             },
             "title": "shared.layout.header.mobile.account_menu.lists",
-            "icon": "/static/images/dashboard/icons/list.svg#main",
+            "icon": "list-v2",
             "priority": 50
           },
           {
@@ -252,7 +252,7 @@
               "name": "CheckoutDefaults"
             },
             "title": "shared.layout.header.mobile.account_menu.checkout_defaults",
-            "icon": "/static/images/dashboard/icons/check-circle.svg#main",
+            "icon": "check-circle",
             "priority": 60
           },
           {
@@ -260,7 +260,7 @@
               "name": "SavedCreditCards"
             },
             "title": "shared.layout.header.mobile.account_menu.saved_credit_cards",
-            "icon": "/static/images/dashboard/icons/credit-card.svg#main",
+            "icon": "credit-card",
             "priority": 70
           }
         ]
@@ -271,21 +271,21 @@
           "name": "Company"
         },
         "title": "shared.layout.header.mobile.corporate",
-        "icon": "/static/images/dashboard/icons/company.svg#main",
+        "icon": "case",
         "children": [
           {
             "route": {
               "name": "CompanyInfo"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_info",
-            "icon": "/static/images/dashboard/icons/building.svg#main"
+            "icon": "office-building"
           },
           {
             "route": {
               "name": "CompanyMembers"
             },
             "title": "shared.layout.header.mobile.corporate_menu.company_members",
-            "icon": "/static/images/dashboard/icons/members.svg#main"
+            "icon": "user-group"
           }
         ]
       }

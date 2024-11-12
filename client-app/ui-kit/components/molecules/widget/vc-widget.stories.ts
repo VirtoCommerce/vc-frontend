@@ -84,7 +84,7 @@ export const PrependSlot: StoryFn<typeof VcWidget> = (args) => ({
   setup: () => ({ args }),
   template: `<VcWidget v-bind="args">
     <template #prepend>
-      <VcIcon class="text-danger" name="cake" size="sm" />
+      <VcIcon class="fill-danger" name="cake" size="sm" />
     </template>
 
     Widget text
@@ -103,7 +103,7 @@ export const AppendSlot: StoryFn<typeof VcWidget> = (args) => ({
     <template #append>
       <span class="flex items-center gap-1">
         <a class="text-accent-600 text-sm underline" href="#">Link</a>
-        <VcIcon class="text-accent-600" name="arrow-right" size="xs" />
+        <VcIcon class="fill-accent-600" name="arrow-right" size="xs" />
       </span>
     </template>
   </VcWidget>`,

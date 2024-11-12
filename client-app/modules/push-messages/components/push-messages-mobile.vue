@@ -3,7 +3,7 @@
     <template #trigger="{ totalCount, unreadCount }">
       <div class="relative">
         <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-          <VcIcon :key="totalCount" class="text-primary" name="bell" :size="28" />
+          <VcIcon :key="totalCount" class="fill-primary" name="notification-v2" :size="28" />
         </transition>
 
         <transition mode="out-in" name="scale">
@@ -21,6 +21,7 @@
     </template>
   </PushMessages>
 </template>
+
 <script lang="ts" setup>
 import PushMessages from "./push-messages.vue";
 </script>

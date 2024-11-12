@@ -53,7 +53,7 @@
 
       <div v-if="clearable && model && !disabled && !readonly" class="vc-input__decorator">
         <button type="button" tabindex="-1" class="vc-input__clear" @click.stop="clear">
-          <VcIcon name="delete-mini" :size="16" />
+          <VcIcon name="delete-2" size="xs" />
         </button>
       </div>
 

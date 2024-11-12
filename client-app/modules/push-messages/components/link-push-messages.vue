@@ -4,7 +4,7 @@
       <BottomHeaderLink :link="item" :count="unreadCount">
         <template #icon>
           <transition :name="unreadCount ? 'shake' : ''" mode="out-in">
-            <VcIcon :key="totalCount" :name="item.icon" class="mb-0.5 text-primary" :size="24" />
+            <VcIcon :key="totalCount" :name="item.icon" class="mb-0.5 fill-primary" :size="24" />
           </transition>
         </template>
         {{ item.title }}
