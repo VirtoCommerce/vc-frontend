@@ -1,6 +1,6 @@
 <template>
   <VcContainer
-    v-if="product && template"
+    v-if="product && productTemplate"
     ref="productComponentAnchor"
     class="print:min-w-[1024px] print:bg-transparent print:px-0 print:[zoom:0.7]"
   >
@@ -101,7 +101,7 @@
     </div>
   </VcContainer>
 
-  <Error404 v-else-if="!fetchingProduct && template" />
+  <Error404 v-else-if="!fetchingProduct && productTemplate" />
 </template>
 
 <script setup lang="ts">
@@ -109,6 +109,7 @@ import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
+import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { BREAKPOINTS } from "@/core/constants";
@@ -131,11 +132,10 @@ import {
   useProducts,
   useRecommendedProducts,
 } from "@/shared/catalog";
-import { useTemplate } from "@/shared/static-content";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
-import type { PageContent } from "@/shared/static-content";
+import type { PageTemplate } from "@/shared/static-content";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -185,7 +185,6 @@ const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
 const { enabled: productReviewsEnabled } = useCustomerReviews();
 
-const template = useTemplate("product");
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
 const { pushHistoricalEvent } = useHistoricalEvents();
@@ -216,22 +215,24 @@ const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
-const productInfoSection = computed(() =>
-  template.value?.content.find((item: PageContent) => item?.type === "product-info"),
-);
+const productTemplate = computed(() => _productTemplate as PageTemplate);
 
-const productReviewsSection = computed(() => template.value?.content.find((item) => item?.type === "product-reviews"));
+const productInfoSection = computed(() => productTemplate.value.content.find((item) => item?.type === "product-info"));
+
+const productReviewsSection = computed(() =>
+  productTemplate.value.content.find((item) => item?.type === "product-reviews"),
+);
 
 const productVariationsBlock = computed(() =>
   productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
 );
 
 const relatedProductsSection = computed(() =>
-  template.value?.content.find((item: PageContent) => item?.type === "related-products"),
+  productTemplate.value.content.find((item) => item?.type === "related-products"),
 );
 
 const recommendedProductsSection = computed(() =>
-  template.value?.content?.find((item: PageContent) => item?.type === "recommended-products"),
+  productTemplate.value.content?.find((item) => item?.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {
