@@ -294,11 +294,11 @@ watchEffect(async () => {
       }
 
       &--item {
-        #{$self} {
+        #{$hideButton} {
           @apply mt-3 w-[5rem] self-start;
 
           @container (min-width: theme("containers.xl")) {
-            @apply w-[6.75rem] self-end;
+            @apply w-[6.75rem] self-center;
           }
 
           @container (min-width: theme("containers.2xl")) {
