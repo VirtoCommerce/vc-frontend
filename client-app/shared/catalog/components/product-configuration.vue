@@ -36,7 +36,7 @@
 
             <VcProductProperties>
               <VcProperty
-                v-for="property in product.properties.slice(0, 3)"
+                v-for="property in product.properties.slice(0, PRODUCT_PROPERTY_LIMIT)"
                 :key="property.id"
                 :label="property.name"
                 :value="property.value"
@@ -53,8 +53,6 @@
             />
 
             <VcAddToCart hide-button disabled :model-value="section.quantity" />
-
-            <VcProductTotal :actual-price="product.price.actual" :list-price="product.price.list" />
           </VcProductCard>
 
           <VcProductCard v-if="!section.isRequired" view-mode="item" class="product-configuration__item">
@@ -82,12 +80,14 @@ import { getProductRoute } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import type { ConfigurationSectionType } from "@/core/api/graphql/types";
 
+const props = defineProps<IProps>();
+
+const PRODUCT_PROPERTY_LIMIT = 3;
+
 interface IProps {
   configuration: ConfigurationSectionType[];
   productId: string;
 }
-
-const props = defineProps<IProps>();
 
 const configurableProductId = toRef(props, "productId");
 
