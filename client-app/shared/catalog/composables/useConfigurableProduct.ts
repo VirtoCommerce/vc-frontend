@@ -7,7 +7,7 @@ import { Logger } from "@/core/utilities";
 import type {
   ConfigurationSectionInput,
   ConfigurationSectionType,
-  ConfiguredLineItemType,
+  CreateConfiguredLineItemMutation,
 } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
@@ -35,7 +35,7 @@ export function _useConfigurableProduct(configurableProductId: string) {
   const creating: Ref<boolean> = ref(false);
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
-  const configuredLineItem: Ref<ConfiguredLineItemType | undefined> = ref();
+  const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
 
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
 
