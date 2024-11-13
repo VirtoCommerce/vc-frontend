@@ -27,7 +27,8 @@ const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { favIcons } = useWhiteLabeling();
 
-// if favIcons.value empty array - default favicon from index.html will be shown
+// If favIcons.value is an empty array, the default favicon from index.html will be used.
+// The favicon will also NOT be updated in PWA mode (in manifest.json).
 useHead({ link: favIcons.value });
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
