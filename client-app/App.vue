@@ -27,6 +27,7 @@ const router = useRouter();
 const { hideSearchBar, hideSearchDropdown } = useSearchBar();
 const { favIcons } = useWhiteLabeling();
 
+// if favIcons.value empty array - default favicon from index.html will be shown
 useHead({ link: favIcons.value });
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
