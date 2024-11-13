@@ -1,6 +1,6 @@
 import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
-import { ref, readonly, computed, watch } from "vue";
+import { ref, readonly, computed, watch, shallowReadonly } from "vue";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { Logger } from "@/core/utilities";
@@ -131,7 +131,7 @@ export function _useConfigurableProduct(configurableProductId: string) {
     fetchProductConfiguration,
     selectSectionValue,
     loading: computed(() => fetching.value || creating.value),
-    configuration: readonly(configuration),
+    configuration: shallowReadonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
     selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
