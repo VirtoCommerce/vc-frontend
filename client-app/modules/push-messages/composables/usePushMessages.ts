@@ -13,6 +13,7 @@ import { useMarkAllPushMessagesUnread } from "../api/graphql/mutations/markAllPu
 import { useGetPushMessages } from "../api/graphql/queries/getPushMessages";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY } from "../constants";
 import type { GetPushMessagesQueryVariables } from "../api/graphql/types";
+import type { VcPushMessageType } from "@/modules/push-messages/types";
 import type { Ref, MaybeRef } from "vue";
 
 export interface IUsePushMessagesOptions {

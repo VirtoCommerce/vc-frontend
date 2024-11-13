@@ -1,6 +1,7 @@
 import { defineAsyncComponent } from "vue";
 import { cache } from "@/core/api/graphql/config";
 import { useNavigations } from "@/core/composables";
+import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
@@ -11,6 +12,7 @@ import { useCustomMobileMenuLinkComponents } from "@/shared/layout/composables/u
 import { pushMessagesTypePolices } from "./api/graphql/typePolices";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY, PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY } from "./constants";
 import type { MenuType } from "@/core/types";
+import type { I18n } from "@/i18n";
 import type { ElementType } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import type { ElementType as HeaderElementType } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
 import type { DeepPartial } from "utility-types";
@@ -87,7 +89,7 @@ async function unregisterFCM() {
 }
 
 export function usePushNotifications() {
-  async function init(router: Router) {
+  async function init(router: Router, i18n: I18n) {
     const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
     const { isAuthenticated } = useUser();
     const { themeContext } = useThemeContext();
@@ -100,6 +102,7 @@ export function usePushNotifications() {
     }
 
     if (isModuleEnabled) {
+      const { loadModuleLocale } = useLanguages();
       const { mergeMenuSchema } = useNavigations();
       const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
       const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
@@ -119,6 +122,7 @@ export function usePushNotifications() {
 
       cache.policies.addTypePolicies(pushMessagesTypePolices);
       mergeMenuSchema(menuItems);
+      void loadModuleLocale(i18n, "push-messages");
       registerCustomLinkComponent(menuLinkCustomElement);
       registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
       registerCustomMobileHeaderComponent(headerWidgetCustomElementMobile);

@@ -1423,20 +1423,6 @@
         "tried_more_than_max_file_count": "Sie haben versucht, mehr als die maximal erlaubte Anzahl an Dateien hochzuladen."
       }
     },
-    "push-messages": {
-      "title": "Benachrichtigungen",
-      "options": {
-        "make_all_as_read": "Alle als gelesen markieren",
-        "make_all_as_unread": "Alle als ungelesen markieren"
-      },
-      "empty": {
-        "title": "Momentan keine neuen Benachrichtigungen.",
-        "description": "Bleiben Sie dran für Updates und wichtige Nachrichten."
-      },
-      "clear_all": "Alle löschen",
-      "view_all": "Alle Benachrichtigungen anzeigen",
-      "show_unread_only": "Nur ungelesene anzeigen"
-    },
     "reach_limit": {
       "end_list": "Sie haben das Ende der Liste erreicht.",
       "page_limit_filters": "Keine weiteren Ergebnisse. Bitte versuchen Sie, die Filter zu ändern.",

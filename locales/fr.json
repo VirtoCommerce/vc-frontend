@@ -1423,20 +1423,6 @@
         "tried_more_than_max_file_count": "Vous avez essayé de télécharger plus que le nombre maximum de fichiers autorisés."
       }
     },
-    "push-messages": {
-      "title": "Notifications",
-      "options": {
-        "make_all_as_read": "Tout marquer comme lu",
-        "make_all_as_unread": "Tout marquer comme non lu"
-      },
-      "empty": {
-        "title": "Aucune nouvelle notification pour le moment.",
-        "description": "Restez à l'écoute pour des mises à jour et des messages importants."
-      },
-      "clear_all": "Tout effacer",
-      "view_all": "Voir toutes les notifications",
-      "show_unread_only": "Afficher uniquement les non lues"
-    },
     "reach_limit": {
       "end_list": "Vous avez atteint la fin de la liste.",
       "page_limit_filters": "Pas d'autres résultats. Veuillez essayer de changer les filtres.",

@@ -1426,20 +1426,6 @@
         "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
       }
     },
-    "push-messages": {
-      "title": "Notifications",
-      "options": {
-        "make_all_as_read": "Mark all as read",
-        "make_all_as_unread": "Mark all as unread"
-      },
-      "empty": {
-        "title": "No new notifications at the moment.",
-        "description": "Stay tuned for updates and important messages."
-      },
-      "clear_all": "Clear all",
-      "view_all": "View all notifications",
-      "show_unread_only": "Show unread only"
-    },
     "reach_limit": {
       "end_list": "You have reached the end of the list.",
       "page_limit_filters": "No more results. Please try to change filters.",

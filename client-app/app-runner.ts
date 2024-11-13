@@ -130,7 +130,7 @@ export default async () => {
    */
 
   await fetchWhiteLabelingSettings();
-  void initializePushNotifications(router); // need to be called after white labeling settings are fetched
+  void initializePushNotifications(router, i18n); // need to be called after white labeling settings are fetched
   void initModuleQuotes(router, i18n);
   void initCustomerReviews(i18n);
 

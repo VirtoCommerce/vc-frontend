@@ -34,6 +34,8 @@
 </template>
 
 <script setup lang="ts">
+import type { VcPushMessageType } from "@/modules/push-messages/types";
+
 export interface IEmits {
   (event: "remove"): void;
 }

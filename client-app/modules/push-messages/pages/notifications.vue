@@ -26,7 +26,7 @@
               markReadAll();
             "
           >
-            {{ $t("ui_kit.push-messages.options.make_all_as_read") }}
+            {{ $t("push_messages.options.make_all_as_read") }}
           </VcMenuItem>
 
           <VcMenuItem
@@ -35,7 +35,7 @@
               markUnreadAll();
             "
           >
-            {{ $t("ui_kit.push-messages.options.make_all_as_unread") }}
+            {{ $t("push_messages.options.make_all_as_unread") }}
           </VcMenuItem>
         </template>
       </VcDropdownMenu>
@@ -44,10 +44,10 @@
     <div class="mt-4 lg:mt-5">
       <VcSwitch
         v-model="showUnreadOnly"
-        :aria-label="$t('ui_kit.push-messages.show_unread_only')"
+        :aria-label="$t('push_messages.show_unread_only')"
         label-position="right"
       >
-        {{ $t("ui_kit.push-messages.show_unread_only") }}
+        {{ $t("push_messages.show_unread_only") }}
       </VcSwitch>
     </div>
 
@@ -70,7 +70,7 @@
             />
           </div>
 
-          <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+          <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("reach_limit.page_limit") }}</p>
 
           <VcPagination
             v-if="items.length && pages > 1"

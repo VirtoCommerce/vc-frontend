@@ -1,5 +1,6 @@
 import { useMarkPushMessageRead } from "../api/graphql/mutations/markPushMessageRead";
 import { useMarkPushMessageUnread } from "../api/graphql/mutations/markPushMessageUnread";
+import type { VcPushMessageType } from "@/modules/push-messages/types";
 import type { Ref } from "vue";
 
 export function usePushMessage(pushMessage: Ref<VcPushMessageType>) {

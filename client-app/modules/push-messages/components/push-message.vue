@@ -5,6 +5,8 @@
 <script setup lang="ts">
 import { toRefs } from "vue";
 import { usePushMessage } from "../composables/usePushMessage";
+import type { VcPushMessageType } from "@/modules/push-messages/types";
+import VcPushMessage from "@/modules/push-messages/components/vc-push-message.vue";
 
 interface IProps {
   pushMessage: VcPushMessageType;
