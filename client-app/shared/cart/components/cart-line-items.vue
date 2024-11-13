@@ -49,10 +49,10 @@
           <VcIcon class="text-primary" :size="12" name="chevron-down" />
         </button>
 
-        <ul class="space-y-1.5 pt-2 text-xs">
-          <li>1. Frosty Brew, a refreshing and energizing beverage that will keep you hydrated</li>
-          <li>2. Frosty Brew, a refreshing and energizing beverage that will keep you hydrated</li>
-          <li>3. Frosty Brew, a refreshing and energizing beverage that will keep you hydrated</li>
+        <ul v-if="item.configurationItems" class="space-y-1.5 pt-2 text-xs">
+          <li v-for="(configurationItem, index) in item.configurationItems" :key="configurationItem.id">
+            {{ `${index + 1}. ${configurationItem.name}` }}
+          </li>
         </ul>
       </div>
 
