@@ -98,8 +98,6 @@ function handleInput({ sectionId, value }: { sectionId: string; value?: { produc
 }
 
 function getSelectedOptionTitle(sectionId: string) {
-  const selectedOption = selectedConfiguration.value[sectionId];
-  console.log(selectedOption);
   return selectedConfiguration.value[sectionId]?.selectedProductTitle;
 }
 </script>
