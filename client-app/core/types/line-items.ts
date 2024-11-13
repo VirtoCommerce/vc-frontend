@@ -26,7 +26,7 @@ export type AnyLineItemType = {
   };
   configurationItems?: {
     id: string;
-    name: string;
+    name?: string;
   }[];
 };
 
@@ -59,6 +59,6 @@ export type PreparedLineItemType = {
   countInCart?: number;
   configurationItems?: {
     id: string;
-    name: string;
+    name?: string;
   }[];
 };
