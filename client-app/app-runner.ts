@@ -129,8 +129,8 @@ export default async () => {
    * Other settings
    */
 
-  void initializePushNotifications(router);
   await fetchWhiteLabelingSettings();
+  void initializePushNotifications(router);
   void initModuleQuotes(router, i18n);
   void initCustomerReviews(i18n);
 
