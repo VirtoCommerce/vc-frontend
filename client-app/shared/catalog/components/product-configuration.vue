@@ -10,7 +10,7 @@
         <template #title>
           {{ section.name }}
           <div class="product-configuration__description">
-            {{ section.description }}
+            {{ getSelectedOptionTitle(section.id!) ?? section.description }}
           </div>
         </template>
 
@@ -41,9 +41,9 @@
                 :label="property.name"
                 :value="property.value"
               />
-              <!-- <VcProperty class="@2xl:hidden" label="Price per item">
+              <VcProperty class="@2xl:hidden" label="Price per item">
                 <VcPriceDisplay :value="product.price.actual" />
-              </VcProperty> -->
+              </VcProperty>
             </VcProductProperties>
 
             <VcProductPrice
@@ -54,7 +54,7 @@
 
             <VcAddToCart hide-button disabled :model-value="section.quantity" />
 
-            <VcProductTotal />
+            <VcProductTotal :actual-price="product.price.actual" :list-price="product.price.list" />
           </VcProductCard>
 
           <VcProductCard v-if="!section.isRequired" view-mode="item" class="product-configuration__item">
@@ -95,6 +95,12 @@ const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(con
 
 function handleInput({ sectionId, value }: { sectionId: string; value?: { productId: string; quantity: number } }) {
   selectSectionValue({ sectionId, value });
+}
+
+function getSelectedOptionTitle(sectionId: string) {
+  const selectedOption = selectedConfiguration.value[sectionId];
+  console.log(selectedOption);
+  return selectedConfiguration.value[sectionId]?.selectedProductTitle;
 }
 </script>
 

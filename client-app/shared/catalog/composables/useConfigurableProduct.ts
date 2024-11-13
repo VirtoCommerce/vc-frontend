@@ -25,8 +25,9 @@ type SelectedConfigurationType = {
  * @returns {Function} fetchProductConfiguration - Function to fetch the product configuration.
  * @returns {Function} selectSectionValue - Function to select a section value.
  * @returns {Ref<boolean>} loading - Computed ref indicating if the product configuration fetching or line item creation is in progress.
- * @returns {Ref<GetProductConfigurationsQuery["productConfiguration"] | undefined>} configuration - Readonly ref containing the product configuration.
+ * @returns {Ref<ConfigurationSectionType[]>} configuration - Readonly ref containing the product configuration.
  * @returns {Ref<Record<string, SelectedConfigurationType | undefined>>} selectedConfiguration - Readonly ref containing the selected configuration.
+ * @returns {Ref<ConfigurationSectionInput[] | []>} selectedConfigurationInput - Readonly ref containing the selected configuration input.
  * @returns {Ref<ConfiguredLineItemType | undefined>} configuredLineItem - Readonly ref containing the created configured line item.
  */
 export function _useConfigurableProduct(configurableProductId: string) {
@@ -43,7 +44,7 @@ export function _useConfigurableProduct(configurableProductId: string) {
       ?.filter(({ value }) => value !== undefined)
       ?.reduce(
         (acc, section) => {
-          const rawSection = configuration.value.find((s) => s.name === section.sectionId);
+          const rawSection = configuration.value.find(({ id }) => id === section.sectionId);
           acc[section.sectionId] = {
             productId: section.value?.productId,
             quantity: section.value?.quantity,
