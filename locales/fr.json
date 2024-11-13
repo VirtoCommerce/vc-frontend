@@ -77,7 +77,8 @@
       "decline": "Refuser",
       "all_filters": "Tous les filtres",
       "sort_by": "Trier par",
-      "add_items_to_cart": "Ajouter des articles au panier"
+      "add_items_to_cart": "Ajouter des articles au panier",
+      "show_details": "Afficher les détails"
     },
     "labels": {
       "actions": "Actions",
@@ -268,7 +269,8 @@
       "remove_products": "Supprimer des produits",
       "change_role": "Changer de rôle",
       "save_changes": "Enregistrer les modifications",
-      "password_expired": "Le mot de passe est sur le point d'expirer"
+      "password_expired": "Le mot de passe est sur le point d'expirer",
+      "error_details": "Détails de l’erreur"
     },
     "roles": {
       "org-maintainer": "Mainteneur d'organisation",
@@ -537,7 +539,11 @@
           "min": "Commande min {0} article(s)",
           "max": "Commande max {0} article(s)",
           "min_max": "Commander de {0} à {1} article(s)",
-          "min_not_available": "La commande minimale de {0} article(s) n'est pas disponible en stock"
+          "min_not_available": "La commande minimale de {0} article(s) n'est pas disponible en stock",
+          "out_of_stock": "En rupture de stock",
+          "positive_number": "La valeur doit être un nombre positif",
+          "integer_number": "La valeur doit être un entier",
+          "pack_size": "Commander en packs de {0}"
         }
       },
       "products_section": {

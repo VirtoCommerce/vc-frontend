@@ -8,8 +8,8 @@
     <VcExpansionPanels class="flex flex-col gap-y-4">
       <VcExpansionPanel v-for="(group, index) in groups" :key="group.name" :expanded="!index && groups.length === 1">
         <template #icon>
-          <VcIcon v-if="group.name === 'added'" class="text-success" name="check-circle" />
-          <VcIcon v-else-if="group.name === 'not_added'" class="text-danger" name="x-circle" />
+          <VcIcon v-if="group.name === 'added'" class="fill-success" name="check-circle" />
+          <VcIcon v-else-if="group.name === 'not_added'" class="fill-danger" name="delete" />
         </template>
 
         <template #header-content>
@@ -191,7 +191,7 @@ function print() {
       case "added":
         return "check-circle";
       case "not_added":
-        return "x-circle";
+        return "delete";
     }
   };
 

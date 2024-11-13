@@ -77,7 +77,8 @@
       "decline": "Decline",
       "all_filters": "All filters",
       "sort_by": "Sort by",
-      "add_items_to_cart": "Add items to cart"
+      "add_items_to_cart": "Add items to cart",
+      "show_details": "Show details"
     },
     "labels": {
       "actions": "Actions",
@@ -268,7 +269,8 @@
       "remove_products": "Remove products",
       "change_role": "Change role",
       "save_changes": "Save Changes",
-      "password_expired": "Password is about to expire"
+      "password_expired": "Password is about to expire",
+      "error_details": "Error details"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -537,7 +539,11 @@
           "min": "Min order {0} item(s)",
           "max": "Max order {0} item(s)",
           "min_max": "Order from {0} to {1} item(s)",
-          "min_not_available": "Min order {0} item(s) is not available in stock"
+          "min_not_available": "Min order {0} item(s) is not available in stock",
+          "out_of_stock": "Out of stock",
+          "positive_number": "Value must be a positive number",
+          "integer_number": "Value must be an integer",
+          "pack_size": "Order in packs of {0}"
         }
       },
       "products_section": {
@@ -1395,6 +1401,9 @@
     }
   },
   "ui_kit": {
+    "product_total": {
+      "total": "Total"
+    },
     "pagination": {
       "previous": "Previous",
       "next": "Next"

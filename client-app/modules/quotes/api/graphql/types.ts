@@ -1340,6 +1340,11 @@ export type InputAddOrUpdateOrderPaymentType = {
   payment: InputOrderPaymentType;
 };
 
+export type InputAddPurchaseRequestSourceType = {
+  documentUrls: Array<Scalars['String']['input']>;
+  purchaseRequestId: Scalars['String']['input'];
+};
+
 export type InputAddWishlistBulkItemType = {
   /** Wish list ids */
   listIds: Array<InputMaybe<Scalars['String']['input']>>;
@@ -1437,11 +1442,6 @@ export type InputAuthorizePaymentType = {
   parameters?: InputMaybe<Array<InputMaybe<InputKeyValueType>>>;
   /** Payment Id */
   paymentId: Scalars['String']['input'];
-};
-
-export type InputCapturePurchaseRequestSourceType = {
-  documentUrls: Array<Scalars['String']['input']>;
-  purchaseRequestId: Scalars['String']['input'];
 };
 
 export type InputCartItemQuantityType = {
@@ -1743,6 +1743,8 @@ export type InputCreatePurchaseRequestFromDocumentsType = {
 };
 
 export type InputCreatePurchaseRequestType = {
+  cultureName: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
@@ -3014,7 +3016,7 @@ export type MutationsAddOrUpdateOrderPaymentArgs = {
 
 
 export type MutationsAddPurchaseRequestSourceArgs = {
-  command: InputCapturePurchaseRequestSourceType;
+  command: InputAddPurchaseRequestSourceType;
 };
 
 

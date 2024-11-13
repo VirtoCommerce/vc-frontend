@@ -25,6 +25,7 @@
         :name="item.name"
         :route="getRoute(item)"
         :properties="getProperties(item)"
+        :actual-price="item.selectedTierPrice?.price"
         :list-price="item.listPrice"
         :total="item.extendedPrice"
         with-image
@@ -40,14 +41,12 @@
           class="quote-line-items__quantity"
           :model-value="item.selectedTierPrice?.quantity"
           :name="item.id"
-          :min-quantity="item.product?.minQuantity"
-          :max-quantity="item.product?.maxQuantity ?? item.product?.availabilityData?.availableQuantity"
           @update:model-value="$emit('update:item', { itemId: item.id, quantity: $event })"
         />
       </VcLineItem>
     </template>
     <template #after-items>
-      <div v-if="!items.length" class="quote-line-items__no-items">
+      <div v-if="!items?.length" class="quote-line-items__no-items">
         <VcAlert color="warning" size="sm" variant="outline-dark" icon>
           {{ $t("quote_details.no_items_message") }}
         </VcAlert>
@@ -73,13 +72,13 @@ interface IEmits {
 }
 interface IProps {
   readonly?: boolean;
-  items: QuoteItemType[];
+  items?: QuoteItemType[];
 }
 
 const { n } = useI18n();
 
 const normalizedItems = computed(() => {
-  return props.items.map((item) => ({
+  return props.items?.map((item) => ({
     ...item,
     extendedPrice: getTotalPrice(item),
   }));

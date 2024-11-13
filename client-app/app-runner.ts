@@ -11,11 +11,13 @@ import { setGlobals } from "@/core/globals";
 import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
-import { initializeModules } from "@/modules";
+import { init as initCustomerReviews } from "@/modules/customer-reviews";
+import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
+import { usePushNotifications } from "@/modules/push-messages";
+import { init as initModuleQuotes } from "@/modules/quotes";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
-import { useWebPushNotifications } from "@/shared/push-messages/composables/useWebPushNotifications";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
 import App from "./App.vue";
@@ -64,7 +66,7 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
-  const { init: initializeWebPushNotifications } = useWebPushNotifications();
+  const { init: initializePushNotifications } = usePushNotifications();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
@@ -129,9 +131,10 @@ export default async () => {
    */
 
   await fetchWhiteLabelingSettings();
-  void initializeWebPushNotifications(); // need to be called after white labeling settings are fetched
-
-  void initializeModules(router, i18n);
+  void initializePushNotifications(router); // need to be called after white labeling settings are fetched
+  void initModuleQuotes(router, i18n);
+  void initCustomerReviews(i18n);
+  void initializePurchaseRequests(router, i18n);
 
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
@@ -145,7 +148,7 @@ export default async () => {
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
   app.use(uiKit);
-  app.use(applicationInsightsPlugin, themeContext.value);
+  app.use(applicationInsightsPlugin);
 
   const builderOrigin = getEpParam();
   if (builderOrigin && isPageBuilderPreviewMode(builderOrigin)) {

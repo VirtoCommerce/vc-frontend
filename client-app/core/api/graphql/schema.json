@@ -10351,6 +10351,58 @@
       },
       {
         "kind": "INPUT_OBJECT",
+        "name": "InputAddPurchaseRequestSourceType",
+        "description": null,
+        "isOneOf": false,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "documentUrls",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "purchaseRequestId",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
         "name": "InputAddWishlistBulkItemType",
         "description": null,
         "isOneOf": false,
@@ -11027,58 +11079,6 @@
           {
             "name": "paymentId",
             "description": "Payment Id",
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
-        "name": "InputCapturePurchaseRequestSourceType",
-        "description": null,
-        "isOneOf": false,
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "documentUrls",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "purchaseRequestId",
-            "description": null,
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -13744,6 +13744,38 @@
         "isOneOf": false,
         "fields": null,
         "inputFields": [
+          {
+            "name": "cultureName",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "currencyCode",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "storeId",
             "description": null,
@@ -22508,7 +22540,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "InputCapturePurchaseRequestSourceType",
+                    "name": "InputAddPurchaseRequestSourceType",
                     "ofType": null
                   }
                 },

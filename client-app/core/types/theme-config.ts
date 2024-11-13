@@ -164,12 +164,7 @@ export interface IThemeConfigSettings {
   push_messages_enabled?: boolean;
   files_enabled?: boolean;
 
-  quotes_enabled?: boolean;
-  quotes_files_scope?: string;
-
-  purchase_requests_enabled?: boolean;
-  purchase_requests_file_scope?: string;
-
+  bulk_order_enabled?: boolean;
   product_compare_enabled?: boolean;
   product_compare_limit?: number;
   product_filters_sorting?: boolean;

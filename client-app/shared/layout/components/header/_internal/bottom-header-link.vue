@@ -13,9 +13,7 @@
     >
       <span class="relative">
         <slot name="icon">
-          <svg v-if="link.icon" height="24" width="24" class="mb-0.5 text-primary">
-            <use :href="link.icon" />
-          </svg>
+          <VcIcon v-if="link.icon" :name="link.icon" :size="24" class="mb-0.5 fill-primary" />
         </slot>
 
         <transition mode="out-in" name="scale">

@@ -24,7 +24,7 @@ const independentModules: ModuleType[] = [
   {
     name: "PushMessages",
     searchKey: "PushMessages",
-    apiPath: "client-app/core/api/graphql/push-messages",
+    apiPath: "client-app/modules/push-messages/api/graphql",
   },
   {
     name: "Quotes",

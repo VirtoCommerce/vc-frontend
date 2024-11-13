@@ -23,7 +23,7 @@
     <div v-if="closable">
       <button type="button" class="vc-alert__close-button" @click="$emit('close')">
         <slot name="close-icon">
-          <VcIcon name="delete-mini" />
+          <VcIcon name="delete-2" />
         </slot>
       </button>
     </div>
@@ -64,7 +64,7 @@ const iconName = computed<string>(() => {
 
   switch (props.color) {
     case "danger":
-      return "x-circle";
+      return "delete";
 
     case "warning":
       return "exclamation-circle";

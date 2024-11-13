@@ -110,9 +110,8 @@
           :target="browserTarget"
           class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
         >
-          <svg class="size-3 shrink-0 text-primary lg:size-2.5">
-            <use href="/static/images/link.svg#main"></use>
-          </svg>
+          <VcIcon name="external-link" class="size-3 shrink-0 fill-primary lg:size-2.5" />
+
           <span class="truncate">
             {{ $t("pages.catalog.show_on_a_separate_page") }}
           </span>
@@ -174,6 +173,8 @@ const price = computed(() => (props.product.hasVariations ? props.product.minVar
 
 <style scoped lang="scss">
 .vc-product-card-list {
+  @apply @container;
+
   grid-template-columns: 72px 1fr;
   grid-template-areas:
     "mobile-left name"

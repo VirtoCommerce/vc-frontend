@@ -142,6 +142,8 @@ import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
@@ -196,6 +198,8 @@ const { loading: loadingCheckout, comment, isValidShipment, isValidPayment, init
 const { couponCode, couponIsApplied, couponValidationError, applyCoupon, removeCoupon, clearCouponValidationError } =
   useCoupon();
 
+const { isEnabled: isEnabledXRecommend } = useModuleSettings(MODULE_ID_XRECOMMEND);
+
 const { sidebarWidgets } = useCartExtensionPoints();
 
 usePageHead({
@@ -243,7 +247,8 @@ void (async () => {
     await initialize();
   }
 
-  if (isAuthenticated.value) {
+  const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
+  if (isAuthenticated.value && isXRecommendModuleEnabled) {
     recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
   }
 })();

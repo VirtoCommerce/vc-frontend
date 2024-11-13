@@ -3,7 +3,7 @@
     <VcWidget
       id="line-items-widget"
       :title="$t('common.titles.review_order')"
-      prepend-icon="clipboard-copy-1"
+      prepend-icon="clipboard-list"
       size="lg"
       class="print:break-inside-auto"
     >

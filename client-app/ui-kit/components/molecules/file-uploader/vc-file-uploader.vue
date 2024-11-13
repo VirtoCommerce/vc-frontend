@@ -246,7 +246,7 @@ function onFileDownload(file: FileType) {
   }
 
   &__drop-icon {
-    @apply text-accent;
+    @apply fill-accent;
   }
 
   &__desktop {

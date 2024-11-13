@@ -7,12 +7,6 @@
 
     "push_messages_enabled": true,
 
-    "quotes_enabled": true,
-    "quotes_files_scope": "quote-attachments",
-
-    "purchase_requests_enabled": true,
-    "purchase_requests_files_scope": "purchase-request-sources",
-
     "product_compare_enabled": true,
     "product_compare_limit": 5,
     "product_filters_sorting": false,

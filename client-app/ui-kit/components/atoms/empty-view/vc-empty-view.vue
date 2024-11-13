@@ -35,8 +35,7 @@ withDefaults(defineProps<IProp>(), {
 
   &__icon {
     --vc-icon-size: 5.375rem;
-
-    @apply text-primary;
+    --vc-icon-color: theme("colors.primary.500");
   }
 
   &__text {

@@ -160,10 +160,10 @@ const unreadVisibility = useVModel(props, "showUnreadOnly", emits);
   }
 
   &__options-icon {
-    @apply text-neutral;
+    @apply fill-neutral;
 
     &:hover {
-      @apply text-neutral-700;
+      @apply fill-neutral-700;
     }
   }
 

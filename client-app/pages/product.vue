@@ -37,10 +37,6 @@
       </VcCopyText>
     </div>
 
-    <!--
-        TODO: create VcLayoutWithSidebar component
-        https://virtocommerce.atlassian.net/browse/ST-5629
-      -->
     <div class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6">
       <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
         <component
@@ -211,7 +207,6 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
   ]),
 });
 
-// todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1099
 const sideBarProduct = computed(() => {
   return product.value as Product;
 });
@@ -222,21 +217,21 @@ const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
 const productInfoSection = computed(() =>
-  template.value?.content.find((item: PageContent) => item.type === "product-info"),
+  template.value?.content.find((item: PageContent) => item?.type === "product-info"),
 );
 
-const productReviewsSection = computed(() => template.value?.content.find((item) => item.type === "product-reviews"));
+const productReviewsSection = computed(() => template.value?.content.find((item) => item?.type === "product-reviews"));
 
 const productVariationsBlock = computed(() =>
-  productInfoSection.value?.blocks?.find((block) => block.type === "product-variations"),
+  productInfoSection.value?.blocks?.find((block) => block?.type === "product-variations"),
 );
 
 const relatedProductsSection = computed(() =>
-  template.value?.content.find((item: PageContent) => item.type === "related-products"),
+  template.value?.content.find((item: PageContent) => item?.type === "related-products"),
 );
 
 const recommendedProductsSection = computed(() =>
-  template.value?.content?.find((item: PageContent) => item.type === "recommended-products"),
+  template.value?.content?.find((item: PageContent) => item?.type === "recommended-products"),
 );
 
 const breadcrumbs = useBreadcrumbs(() => {

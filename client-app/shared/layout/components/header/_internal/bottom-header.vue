@@ -28,7 +28,7 @@
           {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
         </span>
 
-        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 text-primary" />
+        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 fill-primary" />
       </a>
 
       <SearchBar />

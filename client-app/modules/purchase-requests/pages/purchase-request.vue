@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex w-full min-w-0 flex-col gap-y-5">
+  <div>
     <BackButtonInHeader v-if="isMobile" @click="$router.back()" />
 
     <VcBreadcrumbs :items="breadcrumbs" class="hidden lg:block" />
@@ -67,9 +67,9 @@
         </QuoteSummary>
       </template>
     </VcLayoutWithRightSidebar>
-  </div>
 
-  <VcLoaderOverlay :visible="loading || changing" fixed-spinning />
+    <VcLoaderOverlay :visible="loading || changing" fixed-spinning />
+  </div>
 </template>
 
 <script setup lang="ts">

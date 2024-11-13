@@ -2,8 +2,9 @@
   <div
     :class="[
       'vc-product-price',
-      `vc-product-price--align--${align}`,
       {
+        'vc-product-price--align--start': align === 'start',
+        'vc-product-price--align--end': align === 'end',
         'vc-product-price--single-line': singleLine,
         'vc-product-price--truncate': truncate,
         'vc-product-price--disabled': disabled,
@@ -38,13 +39,12 @@ interface IProps {
   disabled?: boolean;
 }
 
-withDefaults(defineProps<IProps>(), {
-  align: "start",
-});
+defineProps<IProps>();
 </script>
 
 <style lang="scss">
 .vc-product-price {
+  $self: &;
   $truncate: "";
 
   --font-size: var(--vc-product-price-font-size);
@@ -53,11 +53,11 @@ withDefaults(defineProps<IProps>(), {
 
   &--align {
     &--start {
-      @apply items-start text-start;
+      @apply justify-start text-start;
     }
 
     &--end {
-      @apply items-end text-end;
+      @apply justify-end text-end;
     }
   }
 
@@ -90,6 +90,64 @@ withDefaults(defineProps<IProps>(), {
 
     #{$truncate} & {
       @apply max-w-full truncate;
+    }
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: price;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        --font-size: theme("fontSize.lg");
+
+        @apply mt-3;
+
+        @container (min-width: theme("containers.xxs")) {
+          --font-size: theme("fontSize.2xl");
+
+          @apply mt-4;
+        }
+      }
+
+      &--list #{$self} {
+        --font-size: theme("fontSize.lg");
+
+        @container (max-width: theme("containers.xl")) {
+          @apply self-start mt-1 flex-row items-center gap-x-1.5 flex-wrap;
+        }
+
+        @container (min-width: theme("containers.xl")) {
+          --font-size: theme("fontSize.sm");
+
+          @apply ms-3 w-[7.5rem] justify-end;
+        }
+
+        @container (min-width: theme("containers.4xl")) {
+          --font-size: theme("fontSize.lg");
+
+          @apply w-[9.5rem];
+        }
+      }
+
+      &--item {
+        #{$self} {
+          @apply hidden;
+
+          @container (min-width: theme("containers.4xl")) {
+            --font-size: theme("fontSize.sm");
+
+            @apply flex flex-col justify-end w-[6.75rem] text-end;
+          }
+        }
+
+        .vc-product-total #{$self} {
+          --font-size: theme("fontSize.base");
+
+          @apply flex;
+        }
+      }
     }
   }
 }

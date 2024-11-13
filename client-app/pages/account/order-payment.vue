@@ -155,7 +155,7 @@
                     :disabled="paymentMethodComponent?.loading || loading"
                     class="md:!hidden"
                     size="sm"
-                    icon="pencil"
+                    icon="edit"
                     variant="outline"
                     @click="paymentMethodComponent?.loading || loading ? null : showEditAddressModal()"
                   />
@@ -208,7 +208,7 @@
                     :disabled="paymentMethodComponent?.loading || loading"
                     class="md:!hidden"
                     size="sm"
-                    icon="pencil"
+                    icon="edit"
                     variant="outline"
                     @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodModal()"
                   />
