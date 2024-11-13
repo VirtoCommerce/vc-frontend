@@ -48,6 +48,7 @@ import type {
   AddOrUpdateCartShipmentMutationVariables,
   AddOrUpdateCartPaymentMutationVariables,
   LineItemType,
+  ConfigurationSectionInput,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
 
@@ -77,9 +78,20 @@ export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
 
   const { mutate: _addToCart, loading: addToCartLoading } = useAddItemToCartMutation();
-  async function addToCart(productId: string, quantity: number): Promise<ShortCartFragment | undefined> {
+  async function addToCart(
+    productId: string,
+    quantity: number,
+    configuration: { configurableProductId?: string; configurationSections?: ConfigurationSectionInput[] } = {},
+  ): Promise<ShortCartFragment | undefined> {
     try {
-      const result = await _addToCart({ command: { productId, quantity } });
+      const result = await _addToCart({
+        command: {
+          productId,
+          quantity,
+          configurableProductId: configuration.configurableProductId ?? productId,
+          configurationSections: configuration.configurationSections,
+        },
+      });
       return result?.data?.addItem;
     } catch (err) {
       Logger.error(err as string);

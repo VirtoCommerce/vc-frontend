@@ -1,0 +1,34 @@
+#import "../../cart/fragments/property.graphql"
+#import "../../cart/fragments/currency.graphql"
+
+mutation CreateConfiguredLineItem($command: InputCreateConfiguredLineItemCommand!) {
+  createConfiguredLineItem(command: $command) {
+    currency {
+      ...currency
+    }
+    total {
+      ...money
+    }
+    taxTotal {
+      ...money
+    }
+    subTotal {
+      ...money
+    }
+    subTotalWithTax {
+      ...money
+    }
+    extendedPriceTotal {
+      ...money
+    }
+    extendedPriceTotalWithTax {
+      ...money
+    }
+    discountTotal {
+      ...money
+    }
+    discountTotalWithTax {
+      ...money
+    }
+  }
+}
