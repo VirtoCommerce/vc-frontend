@@ -42,14 +42,14 @@
     </template>
 
     <template #after-content="{ item }">
-      <div class="rounded border bg-neutral-50 px-4 py-2">
+      <div v-if="item.configurationItems?.length" class="rounded border bg-neutral-50 px-4 py-2">
         <button type="button" class="flex items-center gap-1 text-xs font-bold">
-          <span>Components list</span>
+          <span>{{ $t("shared.cart.configuration_items.title") }}</span>
 
           <VcIcon class="text-primary" :size="12" name="chevron-down" />
         </button>
 
-        <ul v-if="item.configurationItems" class="space-y-1.5 pt-2 text-xs">
+        <ul class="space-y-1.5 pt-2 text-xs">
           <li v-for="(configurationItem, index) in item.configurationItems" :key="configurationItem.id">
             {{ `${index + 1}. ${configurationItem.name}` }}
           </li>

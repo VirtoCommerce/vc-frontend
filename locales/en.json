@@ -567,6 +567,9 @@
       "clear_cart_modal": {
         "title": "Clear cart",
         "message": "Do you want to clear your cart?"
+      },
+      "configuration_items": {
+        "title": "Components list"
       }
     },
     "catalog": {
