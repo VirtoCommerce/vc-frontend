@@ -137,8 +137,8 @@ function _useWebPushNotifications() {
         )?.href ?? DEFAULT_ICON_URL,
     );
 
-    const { once } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
-    once((settings) => {
+    const { on } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
+    on((settings) => {
       favIcons.value = settings?.favicons ?? [];
     });
 
