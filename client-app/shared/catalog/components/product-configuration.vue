@@ -78,7 +78,7 @@
 import { toRef } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
-import type { ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
 
 const props = defineProps<IProps>();
 
@@ -93,7 +93,7 @@ const configurableProductId = toRef(props, "productId");
 
 const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(configurableProductId.value);
 
-function handleInput({ sectionId, value }: { sectionId: string; value?: { productId: string; quantity: number } }) {
+function handleInput({ sectionId, value }: ConfigurationSectionInput) {
   selectSectionValue({ sectionId, value });
 }
 
