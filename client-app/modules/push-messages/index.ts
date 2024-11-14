@@ -79,57 +79,61 @@ async function unregisterFCM() {
   }
 }
 
-export async function init(router: Router) {
-  const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
-  const { isAuthenticated } = useUser();
-  const { themeContext } = useThemeContext();
-  const isModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY);
-  const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
+export function usePushNotifications() {
+  async function init(router: Router) {
+    const { isEnabled } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+    const { isAuthenticated } = useUser();
+    const { themeContext } = useThemeContext();
+    const isModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_ENABLED_KEY);
+    const isFCMModuleEnabled = isEnabled(PUSH_MESSAGES_MODULE_FCM_ENABLED_KEY);
 
-  if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
-    void unregisterFCM();
-    return;
+    if (!themeContext.value?.settings?.push_messages_enabled || !isAuthenticated.value) {
+      void unregisterFCM();
+      return;
+    }
+
+    if (isModuleEnabled) {
+      const { mergeMenuSchema } = useNavigations();
+      const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
+      const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
+      const route: RouteRecordRaw = {
+        path: "notifications",
+        name: "Notifications",
+        component: Notifications,
+        beforeEnter(_to, _from, next) {
+          if (isAuthenticated.value) {
+            next();
+          } else {
+            next({ name: "Dashboard" });
+          }
+        },
+      };
+
+      cache.policies.addTypePolicies(pushMessagesTypePolices);
+      mergeMenuSchema(menuItems);
+      registerCustomLinkComponent(menuLinkCustomElement);
+      registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
+      router.addRoute("Account", route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
+    }
+
+    if (isFCMModuleEnabled) {
+      const route: RouteRecordRaw = {
+        path: "/push-message/:messageId",
+        name: "PushMessage",
+        component: PushMessage,
+        props: true,
+      };
+      router.addRoute(route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
+
+      const { useWebPushNotificationsModule } = await import(
+        "./composables/useWebPushNotifications/useWebPushNotificationsModule"
+      );
+      const { initModule } = useWebPushNotificationsModule();
+      await initModule();
+    } else {
+      void unregisterFCM();
+    }
   }
 
-  if (isModuleEnabled) {
-    const { mergeMenuSchema } = useNavigations();
-    const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
-    const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();
-    const route: RouteRecordRaw = {
-      path: "notifications",
-      name: "Notifications",
-      component: Notifications,
-      beforeEnter(_to, _from, next) {
-        if (isAuthenticated.value) {
-          next();
-        } else {
-          next({ name: "Dashboard" });
-        }
-      },
-    };
-
-    cache.policies.addTypePolicies(pushMessagesTypePolices);
-    mergeMenuSchema(menuItems);
-    registerCustomLinkComponent(menuLinkCustomElement);
-    registerCustomMobileLinkComponent(menuLinkCustomElementMobile);
-    router.addRoute("Account", route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
-  }
-
-  if (isFCMModuleEnabled) {
-    const route: RouteRecordRaw = {
-      path: "/push-message/:messageId",
-      name: "PushMessage",
-      component: PushMessage,
-      props: true,
-    };
-    router.addRoute(route); // NOTE: This route must be added before any asynchronous calls. Delaying it can cause a 404 error if accessed prematurely.
-
-    const { useWebPushNotificationsModule } = await import(
-      "./composables/useWebPushNotifications/useWebPushNotificationsModule"
-    );
-    const { initModule } = useWebPushNotificationsModule();
-    await initModule();
-  } else {
-    void unregisterFCM();
-  }
+  return { init };
 }
