@@ -133,7 +133,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     loading: computed(() => fetching.value || creating.value),
     configuration: shallowReadonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
-    selectedConfigurationInput: readonly(selectedConfigurationInput),
+    selectedConfigurationInput: shallowReadonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
   };
 }

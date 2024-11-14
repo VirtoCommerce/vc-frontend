@@ -112,7 +112,7 @@ async function onChange() {
     updatedCart = await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
   } else {
     const inputQuantity = enteredQuantity.value || minQty.value;
-    const configurationSections = isConfigurable.value ? [...selectedConfigurationInput.value] : undefined;
+    const configurationSections = isConfigurable.value ? selectedConfigurationInput.value : undefined;
     updatedCart = await addToCart(product.value.id!, inputQuantity, configurationSections);
 
     /**
