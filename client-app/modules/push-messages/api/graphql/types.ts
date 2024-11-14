@@ -466,6 +466,13 @@ export type ConfigurableProductOptionInput = {
   quantity: Scalars['Int']['input'];
 };
 
+export type ConfigurationItemType = {
+  /** Configuration item ID */
+  id: Scalars['String']['output'];
+  /** Configuration item name */
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type ConfigurationQueryResponseType = {
   configurationSections?: Maybe<Array<Maybe<ConfigurationSectionType>>>;
 };
@@ -1380,8 +1387,6 @@ export type InputAddItemType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   /** Comment */
   comment?: InputMaybe<Scalars['String']['input']>;
-  /** Configurable product ID */
-  configurableProductId?: InputMaybe<Scalars['String']['input']>;
   configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
@@ -2630,6 +2635,8 @@ export type LineItemType = {
   catalogId: Scalars['String']['output'];
   /** Category ID value */
   categoryId?: Maybe<Scalars['String']['output']>;
+  /** Configuration items for configurable product */
+  configurationItems?: Maybe<Array<Maybe<ConfigurationItemType>>>;
   /** Line item create date */
   createdDate: Scalars['DateTime']['output'];
   /** Discount amount */
