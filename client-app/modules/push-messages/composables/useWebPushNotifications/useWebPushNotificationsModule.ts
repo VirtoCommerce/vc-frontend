@@ -16,7 +16,6 @@ import { useDeleteFcmToken } from "../../api/graphql/mutations/deleteFcmToken";
 import {
   REGISTRATION_SCOPE,
   SERVICE_WORKER_PATH,
-  SERVICE_WORKER_VERSION,
   DEFAULT_ICON_URL,
   PREFERRED_ICON_PROPERTIES,
   SETTINGS_MAPPING,
@@ -59,7 +58,7 @@ function _useWebPushNotifications() {
 
     const firebaseApp = initializeApp(firebaseConfig);
     messaging = getMessaging(firebaseApp);
-    await navigator.serviceWorker.register(`${SERVICE_WORKER_PATH}?v=${SERVICE_WORKER_VERSION}`, {
+    await navigator.serviceWorker.register(SERVICE_WORKER_PATH, {
       scope: REGISTRATION_SCOPE,
     });
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
