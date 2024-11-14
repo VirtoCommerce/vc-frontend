@@ -64,6 +64,7 @@ import { computed, onMounted, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
+import { AddToCartModeType } from "@/ui-kit/enums";
 
 interface IEmits {
   (event: "update:modelValue", value: number): void;
@@ -101,11 +102,6 @@ const props = withDefaults(defineProps<IProps>(), {
   validateOnMount: true,
 });
 
-enum ModeType {
-  Add = "add",
-  Update = "update",
-}
-
 const { t } = useI18n();
 
 const isValid = ref(true);
@@ -125,14 +121,14 @@ const {
   isAddOnly,
 } = toRefs(props);
 
-const mode = computed(() => (countInCart.value && !isAddOnly.value ? ModeType.Update : ModeType.Add));
-const isButtonOutlined = computed<boolean>(() => mode.value === ModeType.Add);
+const mode = computed(() => (countInCart.value && !isAddOnly.value ? AddToCartModeType.Update : AddToCartModeType.Add));
+const isButtonOutlined = computed<boolean>(() => mode.value === AddToCartModeType.Add);
 
 const buttonText = computed<string>(() =>
-  mode.value === ModeType.Update ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
+  mode.value === AddToCartModeType.Update ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
 
-const icon = computed<"refresh" | "cart">(() => (mode.value === ModeType.Update ? "refresh" : "cart"));
+const icon = computed<"refresh" | "cart">(() => (mode.value === AddToCartModeType.Update ? "refresh" : "cart"));
 
 const modelValue = toRef(props, "modelValue");
 const quantity = ref<number | undefined>(modelValue.value);

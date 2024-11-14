@@ -37,6 +37,7 @@ import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog";
 import { useNotifications } from "@/shared/notification";
+import { AddToCartModeType } from "@/ui-kit/enums";
 import type {
   Product,
   ShortCartFragment,
@@ -59,11 +60,6 @@ interface IEmits {
 interface IProps {
   product: Product | VariationType;
   reservedSpace?: boolean;
-}
-
-enum ModeType {
-  Add = "add",
-  Update = "update",
 }
 
 const product = toRef(props, "product");
@@ -110,9 +106,9 @@ async function onChange() {
   let updatedCart: ShortCartFragment | undefined;
 
   const isAlreadyExistsInTheCart = !!lineItem;
-  const mode = isAlreadyExistsInTheCart && !isConfigurable.value ? ModeType.Update : ModeType.Add;
+  const mode = isAlreadyExistsInTheCart && !isConfigurable.value ? AddToCartModeType.Update : AddToCartModeType.Add;
 
-  if (mode === ModeType.Update) {
+  if (mode === AddToCartModeType.Update) {
     updatedCart = await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
   } else {
     const inputQuantity = enteredQuantity.value || minQty.value;
@@ -137,7 +133,7 @@ async function onChange() {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     notifications.error({
       text: t(
-        mode === ModeType.Update
+        mode === AddToCartModeType.Update
           ? "common.messages.fail_to_change_quantity_in_cart"
           : "common.messages.fail_add_product_to_cart",
         {
