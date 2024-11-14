@@ -21,14 +21,14 @@ type SelectedConfigurationType = {
  * Composable function to handle configurable products.
  *
  * @param {string} configurableProductId - The ID of the configurable product.
- * @returns {Object} - The composable functions and properties.
+ * @returns {Object} The composable functions and properties:
  * @returns {Function} fetchProductConfiguration - Function to fetch the product configuration.
- * @returns {Function} selectSectionValue - Function to select a section value.
- * @returns {Ref<boolean>} loading - Computed ref indicating if the product configuration fetching or line item creation is in progress.
- * @returns {Ref<ConfigurationSectionType[]>} configuration - Readonly ref containing the product configuration.
- * @returns {Ref<Record<string, SelectedConfigurationType | undefined>>} selectedConfiguration - Readonly ref containing the selected configuration.
- * @returns {Ref<ConfigurationSectionInput[] | []>} selectedConfigurationInput - Readonly ref containing the selected configuration input.
- * @returns {Ref<ConfiguredLineItemType | undefined>} configuredLineItem - Readonly ref containing the created configured line item.
+ * @returns {Function} selectSectionValue - Function to select a section value for a configuration section.
+ * @returns {ComputedRef<boolean>} loading - Computed ref indicating if any operation is in progress.
+ * @returns {ShallowReadonly<Ref<ConfigurationSectionType[]>>} configuration - Readonly ref containing the product configuration sections.
+ * @returns {Readonly<ComputedRef<Record<string, SelectedConfigurationType>>>} selectedConfiguration - Readonly computed ref of the selected configuration state.
+ * @returns {ShallowReadonly<Ref<ConfigurationSectionInput[]>>} selectedConfigurationInput - Readonly ref containing the configuration input data.
+ * @returns {Readonly<Ref<CreateConfiguredLineItemMutation['createConfiguredLineItem']>>} configuredLineItem - Readonly ref of the created configured line item.
  */
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
