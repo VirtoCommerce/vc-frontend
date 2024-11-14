@@ -26,7 +26,7 @@
         {
           "type": "product-variations",
           "id": "productvariationsgIL5",
-          "hidden": true
+          "hidden": false
         }
       ]
     },
