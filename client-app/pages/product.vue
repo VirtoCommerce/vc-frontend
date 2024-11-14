@@ -334,7 +334,7 @@ watchEffect(async () => {
     await fetchRecommendedProducts(paramsToFetch);
   }
 
-  if (product.value?.hasVariations) {
+  if (product.value?.hasVariations && !productVariationsBlock?.hidden) {
     await fetchProducts(variationsSearchParams.value);
   }
 });
