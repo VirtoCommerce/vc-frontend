@@ -246,9 +246,7 @@
       "company_info": "Company Info",
       "company_members": "Company Members",
       "contact_administrator": "contact the site administrator",
-      "push-messages": "Notifications",
-      "saved_credit_cards": "Saved Credit Cards",
-      "notifications": "Notifications"
+      "saved_credit_cards": "Saved Credit Cards"
     },
     "titles": {
       "all_actions": "All actions",
@@ -314,8 +312,7 @@
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
-          "contact_us": "@:common.links.contact_us",
-          "push-messages": "@:common.links.push-messages"
+          "contact_us": "@:common.links.contact_us"
         },
         "mobile": {
           "my_account": "@:common.links.account",
@@ -327,8 +324,7 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
-            "saved_credit_cards": "@:common.links.saved_credit_cards",
-            "notifications": "@:common.links.notifications"
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -406,8 +402,7 @@
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards",
-          "notifications": "@:common.links.notifications"
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
         }
       },
       "change_password_form": {
@@ -1110,12 +1105,6 @@
         "title": "Profile",
         "change_password_title": "Change Password",
         "update_error_alert": "There was an error during profile update"
-      },
-      "notifications": {
-        "meta": {
-          "title": "Notifications"
-        },
-        "empty_list": "You do not have any new notifications at this time"
       },
       "impersonate": {
         "title": "Impersonation",

@@ -2,7 +2,7 @@
   <div class="!block">
     <div class="flex items-start justify-between gap-3">
       <VcTypography tag="h1" class="flex items-center gap-2">
-        {{ $t("shared.account.navigation.links.notifications") }}
+        {{ $t("push_messages.title") }}
 
         <VcBadge v-if="unreadCountWithHidden > 0" variant="outline" size="lg" rounded>
           {{ unreadCountWithHidden }}
@@ -42,11 +42,7 @@
     </div>
 
     <div class="mt-4 lg:mt-5">
-      <VcSwitch
-        v-model="showUnreadOnly"
-        :aria-label="$t('push_messages.show_unread_only')"
-        label-position="right"
-      >
+      <VcSwitch v-model="showUnreadOnly" :aria-label="$t('push_messages.show_unread_only')" label-position="right">
         {{ $t("push_messages.show_unread_only") }}
       </VcSwitch>
     </div>
@@ -55,7 +51,7 @@
       <template #default-container>
         <VcEmptyView
           v-if="totalCount === 0 && !loading"
-          :text="$t('pages.account.notifications.empty_list')"
+          :text="$t('push_messages.empty_list')"
           icon="thin-notifications"
         />
 
@@ -105,7 +101,7 @@ const { items, markReadAll, markUnreadAll, totalCount, unreadCountWithHidden, lo
 });
 
 usePageHead({
-  title: t("pages.account.notifications.meta.title"),
+  title: t("push-messages.title"),
 });
 
 function resetPagination() {

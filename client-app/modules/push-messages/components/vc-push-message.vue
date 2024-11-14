@@ -34,14 +34,14 @@
 </template>
 
 <script setup lang="ts">
-import type { VcPushMessageType } from "@/modules/push-messages/types";
+import type { PushMessageType } from "@/modules/push-messages/types";
 
 export interface IEmits {
   (event: "remove"): void;
 }
 
 interface IProps {
-  pushMessage: VcPushMessageType;
+  pushMessage: PushMessageType;
   removable?: boolean;
   size?: "md" | "lg";
 }

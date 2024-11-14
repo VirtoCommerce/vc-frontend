@@ -246,9 +246,7 @@
       "company_info": "Firmeninformationen",
       "company_members": "Firmenmitglieder",
       "contact_administrator": "den Administrator der Website kontaktieren",
-      "push-messages": "Benachrichtigungen",
-      "saved_credit_cards": "Gespeicherte Kreditkarten",
-      "notifications": "Benachrichtigungen"
+      "saved_credit_cards": "Gespeicherte Kreditkarten"
     },
     "titles": {
       "all_actions": "Alle Aktionen",
@@ -314,8 +312,7 @@
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
-          "contact_us": "@:common.links.contact_us",
-          "push-messages": "@:common.links.push-messages"
+          "contact_us": "@:common.links.contact_us"
         },
         "mobile": {
           "my_account": "@:common.links.account",
@@ -327,8 +324,7 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
-            "saved_credit_cards": "@:common.links.saved_credit_cards",
-            "notifications": "@:common.links.notifications"
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -406,8 +402,7 @@
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards",
-          "notifications": "@:common.links.notifications"
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
         }
       },
       "change_password_form": {
@@ -1110,12 +1105,6 @@
         "title": "Profil",
         "change_password_title": "Passwort ändern",
         "update_error_alert": "Es gab einen Fehler beim Aktualisieren des Profils"
-      },
-      "notifications": {
-        "meta": {
-          "title": "Benachrichtigungen"
-        },
-        "empty_list": "Sie haben derzeit keine neuen Benachrichtigungen"
       },
       "impersonate": {
         "title": "Nachahmung",

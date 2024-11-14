@@ -1,4 +1,4 @@
-export type VcPushMessageType = {
+export type PushMessageType = {
   id: string;
   createdDate: number | Date;
   isRead?: boolean;

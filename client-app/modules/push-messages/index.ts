@@ -30,7 +30,7 @@ const menuItems: DeepPartial<MenuType> = {
             route: {
               name: "Notifications",
             },
-            title: "shared.layout.header.mobile.account_menu.notifications",
+            title: "push_messages.menu_item_name",
             icon: "notification-v2",
             priority: 80,
           },
@@ -41,7 +41,7 @@ const menuItems: DeepPartial<MenuType> = {
       main: [
         {
           id: "push-messages",
-          title: "shared.layout.header.menu.push-messages",
+          title: "push_messages.menu_item_name",
           icon: "notification-v2",
           priority: 40,
         },
@@ -50,7 +50,7 @@ const menuItems: DeepPartial<MenuType> = {
         children: [
           {
             id: "push-messages",
-            title: "shared.account.navigation.links.notifications",
+            title: "push_messages.menu_item_name",
             route: {
               name: "Notifications",
             },

@@ -1,6 +1,8 @@
 {
-  "push-messages": {
+  "push_messages": {
     "title": "Notifications",
+    "menu_item_name": "Notifications",
+    "empty_list": "Vous n'avez pas de nouvelles notifications pour le moment",
     "options": {
       "make_all_as_read": "Tout marquer comme lu",
       "make_all_as_unread": "Tout marquer comme non lu"
