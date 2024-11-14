@@ -25,7 +25,8 @@
         },
         {
           "type": "product-variations",
-          "id": "productvariationsgIL5"
+          "id": "productvariationsgIL5",
+          "hidden": false
         }
       ]
     },
