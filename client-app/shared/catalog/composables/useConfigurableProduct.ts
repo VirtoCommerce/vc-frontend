@@ -1,4 +1,4 @@
-import { useMemoize } from "@vueuse/core";
+import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import { ref, readonly, computed, watch, shallowReadonly } from "vue";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
@@ -138,4 +138,4 @@ function _useConfigurableProduct(configurableProductId: string) {
   };
 }
 
-export const useConfigurableProduct = useMemoize(_useConfigurableProduct);
+export const useConfigurableProduct = createSharedComposable(_useConfigurableProduct);

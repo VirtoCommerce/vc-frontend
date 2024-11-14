@@ -113,7 +113,7 @@
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
 import { useBreakpoints, useElementVisibility } from "@vueuse/core";
-import { computed, defineAsyncComponent, onBeforeUnmount, ref, shallowRef, toRef, watchEffect } from "vue";
+import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
@@ -167,7 +167,6 @@ const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
-const { clear: clearConfigurableProduct } = useConfigurableProduct;
 const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId.value);
 const {
   fetchingProducts: fetchingVariations,
@@ -336,7 +335,6 @@ watchEffect(() => {
 });
 
 watchEffect(async () => {
-  clearConfigurableProduct();
   await fetchProduct(productId.value);
   if (product.value?.isConfigurable) {
     await fetchProductConfiguration();
@@ -385,10 +383,6 @@ watchEffect(() => {
       item_list_name: t("pages.product.related_product_section_title"),
     });
   }
-});
-
-onBeforeUnmount(() => {
-  clearConfigurableProduct();
 });
 </script>
 

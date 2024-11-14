@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useConfigurableProduct } from "@/shared/catalog";
 import type { Mock } from "vitest";
 
 const mocks = vi.hoisted(() => {
@@ -23,14 +22,18 @@ vi.mock("@/core/utilities", () => ({
 }));
 
 describe("useConfigurableProduct", () => {
-  let composable: ReturnType<typeof useConfigurableProduct>;
+  type UseConfigurableProductType =
+    typeof import("@/shared/catalog/composables/useConfigurableProduct").useConfigurableProduct;
+
+  let composable: ReturnType<UseConfigurableProductType>;
   const configurableProductId = "test-product-id";
   let mutateMock: Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    const { useConfigurableProduct } = await import("@/shared/catalog");
     vi.resetAllMocks();
+    vi.resetModules();
     vi.useFakeTimers();
-    useConfigurableProduct.clear();
 
     mutateMock = vi.fn();
     mocks.useCreateConfiguredLineItemMutation.mockReturnValue({ mutate: mutateMock });
