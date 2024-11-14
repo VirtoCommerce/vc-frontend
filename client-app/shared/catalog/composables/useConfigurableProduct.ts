@@ -79,13 +79,12 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  const { mutate } = useCreateConfiguredLineItemMutation();
-  const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
-    mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
-  });
-
   async function createConfiguredLineItem() {
     creating.value = true;
+    const { mutate } = useCreateConfiguredLineItemMutation();
+    const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
+      mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
+    });
     try {
       const result = await batchedCreateConfiguredLineItem({
         command: {

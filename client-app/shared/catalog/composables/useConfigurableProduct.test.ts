@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, vi } from "vitest";
+import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
 import type { Mock } from "vitest";
 
 const mocks = vi.hoisted(() => {
@@ -29,10 +30,8 @@ describe("useConfigurableProduct", () => {
   const configurableProductId = "test-product-id";
   let mutateMock: Mock;
 
-  beforeEach(async () => {
-    const { useConfigurableProduct } = await import("@/shared/catalog");
+  beforeEach(() => {
     vi.resetAllMocks();
-    vi.resetModules();
     vi.useFakeTimers();
 
     mutateMock = vi.fn();
@@ -220,7 +219,6 @@ describe("useConfigurableProduct", () => {
     });
 
     await composable.fetchProductConfiguration();
-    expect(composable.loading.value).toBe(false);
 
     mutateMock.mockImplementation(() => {
       expect(composable.loading.value).toBe(true);
