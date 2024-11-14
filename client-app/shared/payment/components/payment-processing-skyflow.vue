@@ -12,7 +12,7 @@
       >
         <template #placeholder>
           <div class="flex items-center gap-3 p-3 text-sm">
-            <VcIcon class="text-neutral" name="credit-card" size="xl" />
+            <VcIcon class="fill-neutral" name="credit-card" size="xl" />
 
             {{ $t("common.placeholders.select_credit_card") }}
           </div>
@@ -20,9 +20,9 @@
 
         <template #selected="{ item }">
           <div class="flex items-center gap-3 p-3 text-sm">
-            <VcIcon v-if="item.skyflowId.length" class="text-neutral" name="credit-card" size="xl" />
+            <VcIcon v-if="item.skyflowId.length" class="fill-neutral" name="credit-card" size="xl" />
 
-            <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
+            <VcIcon v-else class="size-12 fill-success" name="plus-circle-outlined" />
 
             {{ item.cardNumber }}
 
@@ -31,9 +31,9 @@
         </template>
 
         <template #item="{ item }">
-          <VcIcon v-if="item.skyflowId.length" class="text-neutral" name="credit-card" size="xl" />
+          <VcIcon v-if="item.skyflowId.length" class="fill-neutral" name="credit-card" size="xl" />
 
-          <VcIcon v-else class="size-12 text-success" name="plus-circle-outlined" />
+          <VcIcon v-else class="size-12 fill-success" name="plus-circle-outlined" />
 
           {{ item.cardNumber }}
 

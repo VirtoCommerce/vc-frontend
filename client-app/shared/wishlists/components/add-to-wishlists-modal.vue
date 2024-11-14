@@ -37,13 +37,11 @@
 
           <button
             type="button"
-            class="flex cursor-pointer items-center text-sm font-bold text-[--link-color] disabled:cursor-not-allowed disabled:text-neutral-400"
+            class="flex cursor-pointer items-center gap-1.5 text-sm font-bold text-[--link-color] disabled:cursor-not-allowed disabled:text-neutral-400"
             :disabled="creationButtonDisabled"
             @click="addNewList"
           >
-            <svg :class="['mr-2 size-3.5', creationButtonDisabled ? 'text-neutral-400' : 'text-primary']">
-              <use href="/static/images/plus.svg#main" />
-            </svg>
+            <VcIcon :class="{ 'fill-primary': !creationButtonDisabled }" name="plus" size="xs" />
 
             {{ $t("shared.wishlists.add_to_wishlists_modal.add_new_list") }}
           </button>
@@ -67,10 +65,8 @@
               :error="!!input.errorMessage"
             />
 
-            <button type="button" class="mt-3.5" @click="removeNewList(index)">
-              <svg class="text-danger" width="16" height="16">
-                <use href="/static/images/delete.svg#main" />
-              </svg>
+            <button type="button" class="mt-3.5 text-danger" @click="removeNewList(index)">
+              <VcIcon name="delete" :size="16" />
             </button>
           </li>
         </transition-group>

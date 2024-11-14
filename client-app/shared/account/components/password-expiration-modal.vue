@@ -11,7 +11,7 @@
     </template>
 
     <div class="flex items-center justify-center gap-4 px-5 py-10">
-      <VcIcon class="text-warning" name="exclamation-circle" size="lg" />
+      <VcIcon class="fill-warning" name="exclamation-circle" size="lg" />
 
       <span class="text-lg">
         {{ $t("common.messages.password_about_expire", { value: expiryInDays }) }}
