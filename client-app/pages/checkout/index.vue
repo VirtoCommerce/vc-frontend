@@ -28,6 +28,12 @@ import { configInjectionKey } from "@/core/injection-keys";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
 
+interface IProps {
+  cartId?: string;
+}
+
+const props = defineProps<IProps>();
+
 const config = inject(configInjectionKey, {});
 
 const router = useRouter();
@@ -58,7 +64,7 @@ const steps = computed<IStepsItem[]>(() => {
   } else {
     result.push({
       icon: "arrow-left-bold",
-      route: { name: "Cart", replace: true },
+      route: { name: "Cart", params: { cartId: props.cartId }, replace: true },
       text: t("common.buttons.back_to_cart"),
     });
   }
@@ -109,7 +115,7 @@ usePageHead({
 });
 
 void (async () => {
-  await forceFetch();
+  await forceFetch(props);
   if (route.name === "Checkout") {
     await initialize();
     await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });

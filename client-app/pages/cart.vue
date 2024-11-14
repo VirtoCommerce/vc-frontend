@@ -75,7 +75,7 @@
 
             <ProceedTo
               v-if="$cfg.checkout_multistep_enabled"
-              :to="{ name: 'Checkout' }"
+              :to="{ name: 'Checkout', params: { cartId } }"
               :disabled="hasOnlyUnselectedLineItems"
             >
               {{ $t("common.buttons.go_to_checkout") }}
@@ -162,6 +162,12 @@ import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
+interface IProps {
+  cartId?: string;
+}
+
+const props = defineProps<IProps>();
+
 const config = inject(configInjectionKey, {});
 
 const ga = useGoogleAnalytics();
@@ -228,7 +234,7 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
 }
 
 void (async () => {
-  await forceFetch();
+  await forceFetch(props);
 
   /**
    * Send a Google Analytics shopping cart view event.
