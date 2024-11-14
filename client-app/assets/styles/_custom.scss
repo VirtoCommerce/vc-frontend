@@ -5,12 +5,3 @@
  *   @apply normal-case;
  * }
  * */
-body {
-  --vc-radio-button-focus-color: var(--focus-color);
-}
-
-.builder-block {
-  .vc-container {
-    --body-bg-color: transparent;
-  }
-}

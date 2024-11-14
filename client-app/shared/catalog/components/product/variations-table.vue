@@ -343,7 +343,7 @@ watchEffect(() => {
   }
 
   &__quantity-icon {
-    @apply me-3 size-4 text-danger;
+    @apply me-3 size-4 fill-danger;
   }
 
   &__in-cart {

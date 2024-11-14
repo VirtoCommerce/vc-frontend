@@ -9,7 +9,7 @@
         :to="getCategoryRoute(parentCategory!)"
         class="-mx-2 flex grow items-center gap-1.5 rounded-sm px-2 py-1 text-sm hover:bg-neutral-50"
       >
-        <VcIcon class="text-primary" name="chevron-left" size="xs" />
+        <VcIcon class="fill-primary" name="chevron-left" size="xs" />
 
         <span class="font-bold">
           {{ parentCategory!.name }}

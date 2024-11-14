@@ -10,7 +10,7 @@
           {{ currentCurrency.code }}
         </span>
 
-        <VcIcon class="text-primary" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
+        <VcIcon class="fill-primary" size="xxs" :name="opened ? 'chevron-up' : 'chevron-down'" />
       </button>
     </template>
 

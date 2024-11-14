@@ -114,7 +114,7 @@
           color="neutral"
           size="sm"
           variant="no-background"
-          icon="x"
+          icon="delete-thin"
           :disabled="disabled"
           @click="$emit('remove')"
         />

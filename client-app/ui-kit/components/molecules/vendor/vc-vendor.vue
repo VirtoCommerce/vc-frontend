@@ -33,7 +33,7 @@ defineProps<IProps>();
   }
 
   &__icon {
-    @apply flex-none text-primary;
+    @apply flex-none fill-primary;
   }
 
   &__title {
