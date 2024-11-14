@@ -23,7 +23,7 @@ defineProps<IProps>();
   @apply flex items-center gap-0.5;
 
   &__icon {
-    @apply text-primary;
+    @apply fill-primary;
   }
 
   &__text {

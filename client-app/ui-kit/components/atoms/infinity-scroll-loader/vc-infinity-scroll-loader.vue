@@ -1,28 +1,15 @@
 <template>
-  <div ref="target">
+  <div ref="target" class="flex items-center justify-center gap-2 text-base">
     <slot v-if="loading" name="loader">
-      <p class="flex items-center justify-center">
-        <img
-          src="/static/images/loader.webp"
-          class="inline-block animate-spin"
-          alt="spinner"
-          width="29"
-          height="29"
-          loading="lazy"
-        />
-      </p>
+      <VcLoader />
     </slot>
 
     <slot v-else name="loaded">
-      <p class="flex items-center justify-center">
-        <svg width="29" height="29" class="inline-block text-primary">
-          <use href="/static/images/badge-check.svg#badge-check" />
-        </svg>
+      <VcIcon class="size-7 fill-primary" name="badge-check" />
 
-        <span v-if="isPageLimitReached" class="ml-3">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
+      <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
 
-        <span v-else class="ml-3">{{ $t("ui_kit.reach_limit.end_list") }}</span>
-      </p>
+      <span v-else>{{ $t("ui_kit.reach_limit.end_list") }}</span>
     </slot>
   </div>
 </template>
