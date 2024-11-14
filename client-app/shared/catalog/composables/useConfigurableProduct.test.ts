@@ -30,6 +30,7 @@ describe("useConfigurableProduct", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.useFakeTimers();
+    useConfigurableProduct.clear();
 
     mutateMock = vi.fn();
     mocks.useCreateConfiguredLineItemMutation.mockReturnValue({ mutate: mutateMock });
@@ -67,7 +68,7 @@ describe("useConfigurableProduct", () => {
     await composable.fetchProductConfiguration();
 
     expect(mocks.getProductConfiguration).toHaveBeenCalledWith(configurableProductId);
-    expect(composable.configuration.value).toEqual(mockConfiguration);
+    expect(composable.configuration.value).toEqual(mockConfiguration.configurationSections);
 
     expect(composable.selectedConfiguration.value).toEqual({
       "Section 1": {

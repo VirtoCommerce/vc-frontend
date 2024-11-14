@@ -1,4 +1,4 @@
-import { createSharedComposable } from "@vueuse/core";
+import { useMemoize } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import { ref, readonly, computed, watch, shallowReadonly } from "vue";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
@@ -30,7 +30,7 @@ type SelectedConfigurationType = {
  * @returns {Ref<ConfigurationSectionInput[] | []>} selectedConfigurationInput - Readonly ref containing the selected configuration input.
  * @returns {Ref<ConfiguredLineItemType | undefined>} configuredLineItem - Readonly ref containing the created configured line item.
  */
-export function _useConfigurableProduct(configurableProductId: string) {
+function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
 
@@ -138,4 +138,4 @@ export function _useConfigurableProduct(configurableProductId: string) {
   };
 }
 
-export const useConfigurableProduct = createSharedComposable(_useConfigurableProduct);
+export const useConfigurableProduct = useMemoize(_useConfigurableProduct);
