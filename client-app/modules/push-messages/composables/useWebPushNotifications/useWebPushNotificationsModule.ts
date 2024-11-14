@@ -6,6 +6,7 @@ import omit from "lodash/omit";
 import { computed, ref, watch } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
 import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger } from "@/core/utilities";
@@ -49,18 +50,6 @@ function _useWebPushNotifications() {
     if (!(await isSupported())) {
       return;
     }
-    const favIcons = ref<ExtractedWhiteLabelingSettingsType["favicons"]>([]);
-    const icon = computed(
-      () =>
-        favIcons.value?.find(
-          ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-        )?.href ?? DEFAULT_ICON_URL,
-    );
-
-    const { once } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
-    once((settings) => {
-      favIcons.value = settings?.favicons ?? [];
-    });
 
     const fcmSettings = getModuleSettings(SETTINGS_MAPPING);
 
@@ -85,17 +74,7 @@ function _useWebPushNotifications() {
 
     initialized = true;
 
-    watch(
-      icon,
-      () => {
-        serviceWorkerRegistration?.active?.postMessage({
-          type: "update-icon",
-          icon: icon.value,
-        });
-      },
-      { immediate: true },
-    );
-
+    updateAndObserveNotificationIcon(serviceWorkerRegistration);
     broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
   }
 
@@ -146,6 +125,33 @@ function _useWebPushNotifications() {
     } catch (e) {
       Logger.error(deleteFcmToken.name, e);
     }
+  }
+
+  function updateAndObserveNotificationIcon(serviceWorkerRegistration?: ServiceWorkerRegistration) {
+    const { favIcons: favIconsFromWhiteLabeling } = useWhiteLabeling();
+    const favIcons = ref<ExtractedWhiteLabelingSettingsType["favicons"]>(favIconsFromWhiteLabeling.value ?? []);
+    const icon = computed(
+      () =>
+        favIcons.value?.find(
+          ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
+        )?.href ?? DEFAULT_ICON_URL,
+    );
+
+    const { once } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
+    once((settings) => {
+      favIcons.value = settings?.favicons ?? [];
+    });
+
+    watch(
+      icon,
+      () => {
+        serviceWorkerRegistration?.active?.postMessage({
+          type: "update-icon",
+          icon: icon.value,
+        });
+      },
+      { immediate: true },
+    );
   }
 
   return { initModule };
