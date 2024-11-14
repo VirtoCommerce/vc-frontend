@@ -47,7 +47,7 @@
         />
 
         <ProductConfiguration
-          v-if="product.isConfigurable && !!configuration"
+          v-if="product.isConfigurable && configuration?.length"
           :product-id="productId"
           :configuration="configuration"
         />

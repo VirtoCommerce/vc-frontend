@@ -16,8 +16,8 @@
                 size="sm"
                 :aria-label="$t('common.buttons.share')"
                 :class="{
-                  'text-primary': !shareProductPopoverShown,
-                  'text-neutral-400': shareProductPopoverShown,
+                  'fill-primary': !shareProductPopoverShown,
+                  'fill-neutral-400': shareProductPopoverShown,
                 }"
               />
             </div>
@@ -31,7 +31,7 @@
                 </span>
 
                 <button class="-me-1 flex p-1 text-danger-400 hover:text-danger-700" type="button" @click="close()">
-                  <VcIcon name="x" size="sm" />
+                  <VcIcon name="delete-thin" size="sm" />
                 </button>
               </h3>
 
@@ -61,7 +61,7 @@
           target="_blank"
           class="flex w-1/5 cursor-pointer items-center justify-center px-2 py-4 hover:bg-neutral-50"
         >
-          <VcIcon name="mail" size="sm" class="text-primary" />
+          <VcIcon name="mail" size="sm" class="fill-primary" />
         </a>
 
         <button
@@ -70,7 +70,7 @@
           type="button"
           @click="print()"
         >
-          <VcIcon name="printer" size="sm" class="text-primary" />
+          <VcIcon name="printer" size="sm" class="fill-primary" />
         </button>
       </div>
     </template>
@@ -124,7 +124,7 @@ function handleShareProductPopoverToggle(isShown: boolean): void {
   shareProductPopoverShown.value = isShown;
 
   if (isMobile.value && isShown && divUnderSharedPopover.value) {
-    divUnderSharedPopover.value.scrollIntoView({ behavior: "smooth" });
+    divUnderSharedPopover.value.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
   }
 }
 </script>

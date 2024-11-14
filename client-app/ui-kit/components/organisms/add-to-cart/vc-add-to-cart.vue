@@ -65,17 +65,6 @@ import { useI18n } from "vue-i18n";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
 
-const emit = defineEmits<IEmits>();
-
-const props = withDefaults(defineProps<IProps>(), {
-  validateOnMount: true,
-});
-
-enum ModeType {
-  Add = "add",
-  Update = "update",
-}
-
 interface IEmits {
   (event: "update:modelValue", value: number): void;
   (event: "update:cartItemQuantity", quantity: number): void;
@@ -104,6 +93,17 @@ interface IProps {
   timeout?: number;
   validateOnMount?: boolean;
   isAddOnly?: boolean;
+}
+
+const emit = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  validateOnMount: true,
+});
+
+enum ModeType {
+  Add = "add",
+  Update = "update",
 }
 
 const { t } = useI18n();
