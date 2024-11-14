@@ -15,7 +15,7 @@
       <LanguageSelector v-if="supportedLocales.length > 1" />
 
       <button type="button" class="-mr-4 appearance-none p-4" @click="$emit('close')">
-        <VcIcon name="x" class="text-[--mobile-menu-navigation-color]" :size="22" />
+        <VcIcon name="delete-thin" class="fill-[--mobile-menu-navigation-color]" :size="22" />
       </button>
     </header>
 
@@ -92,12 +92,12 @@ const homeMenuItem = computed<ExtendedMenuLinkType>(() =>
     ? {
         route: { name: "Dashboard" },
         title: t("shared.layout.header.mobile.account_menu.dashboard"),
-        icon: "/static/images/dashboard/icons/dashboard-main.svg#main",
+        icon: "view-grid",
       }
     : {
         route: "/",
         title: t("shared.layout.header.menu.home"),
-        icon: "/static/images/dashboard/icons/dashboard.svg#main",
+        icon: "dashboard-2",
       },
 );
 

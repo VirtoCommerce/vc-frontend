@@ -33,7 +33,7 @@
           data-btn="btn-prev"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="text-neutral-400" name="chevron-left" size="xs" />
+            <VcIcon class="fill-neutral-400" name="chevron-left" size="xs" />
           </span>
         </button>
 
@@ -44,7 +44,7 @@
           data-btn="btn-next"
         >
           <span class="vc-product-image__carousel-arrow">
-            <VcIcon class="text-neutral-400" name="chevron-right" size="xs" />
+            <VcIcon class="fill-neutral-400" name="chevron-right" size="xs" />
           </span>
         </button>
 
@@ -114,6 +114,8 @@ function slideChanged(swiper: SwiperInstance) {
 
 <style lang="scss">
 .vc-product-image {
+  $self: &;
+
   @apply relative max-w-full aspect-square border border-neutral-200 rounded;
 
   &__carousel {
@@ -158,6 +160,36 @@ function slideChanged(swiper: SwiperInstance) {
 
   &__slot {
     @apply absolute inset-0;
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: image;
+
+      @apply self-start place-content-stretch;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        @apply mb-4;
+      }
+
+      &--list #{$self} {
+        @apply size-[4.5rem];
+
+        @container (min-width: theme("containers.xl")) {
+          @apply me-3 size-[5.375rem];
+        }
+      }
+
+      &--item #{$self} {
+        @apply size-[4.5rem];
+
+        @container (min-width: theme("containers.2xl")) {
+          @apply me-3 size-16;
+        }
+      }
+    }
   }
 }
 </style>

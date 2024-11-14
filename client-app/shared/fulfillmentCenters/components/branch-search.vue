@@ -16,9 +16,7 @@
         :disabled="!modelValue.length"
         @click="emit('update:input', '')"
       >
-        <svg class="size-3 sm:size-2.5">
-          <use href="/static/images/delete.svg#main"></use>
-        </svg>
+        <VcIcon name="delete" class="size-3 sm:size-2.5" />
       </button>
     </div>
   </div>

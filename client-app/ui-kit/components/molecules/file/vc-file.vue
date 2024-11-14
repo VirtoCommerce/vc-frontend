@@ -68,7 +68,14 @@
           @click="reload"
         />
 
-        <VcButton v-if="removable" variant="no-background" color="neutral" size="xs" icon="x" @click="remove" />
+        <VcButton
+          v-if="removable"
+          variant="no-background"
+          color="neutral"
+          size="xs"
+          icon="delete-thin"
+          @click="remove"
+        />
       </span>
     </div>
   </div>

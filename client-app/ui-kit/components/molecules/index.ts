@@ -33,6 +33,7 @@ export { default as VcMenuItem } from "./menu-item/vc-menu-item.vue";
 export { default as VcNavButton } from "./nav-button/vc-nav-button.vue";
 export { default as VcProductActionsButton } from "./product-actions-button/vc-product-actions-button.vue";
 export { default as VcProductPrice } from "./product-price/vc-product-price.vue";
+export { default as VcProductTotal } from "./product-total/vc-product-total.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";

@@ -77,7 +77,8 @@
       "decline": "Decline",
       "all_filters": "All filters",
       "sort_by": "Sort by",
-      "add_items_to_cart": "Add items to cart"
+      "add_items_to_cart": "Add items to cart",
+      "show_details": "Show details"
     },
     "labels": {
       "actions": "Actions",
@@ -268,7 +269,8 @@
       "remove_products": "Remove products",
       "change_role": "Change role",
       "save_changes": "Save Changes",
-      "password_expired": "Password is about to expire"
+      "password_expired": "Password is about to expire",
+      "error_details": "Error details"
     },
     "roles": {
       "org-maintainer": "Organization maintainer",
@@ -1399,6 +1401,9 @@
     }
   },
   "ui_kit": {
+    "product_total": {
+      "total": "Total"
+    },
     "pagination": {
       "previous": "Previous",
       "next": "Next"

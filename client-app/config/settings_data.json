@@ -7,9 +7,6 @@
 
     "push_messages_enabled": true,
 
-    "quotes_enabled": true,
-    "quotes_files_scope": "quote-attachments",
-
     "product_compare_enabled": true,
     "product_compare_limit": 5,
     "product_filters_sorting": false,
