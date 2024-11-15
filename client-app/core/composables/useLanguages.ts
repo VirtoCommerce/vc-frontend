@@ -163,7 +163,6 @@ function _useLanguages() {
     }),
 
     initLocale,
-    fetchLocaleMessages,
 
     pinLocale,
     unpinLocale,
