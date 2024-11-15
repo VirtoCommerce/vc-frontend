@@ -15,6 +15,7 @@
             :shared-selected-item-ids="selectedItemIds"
             :disabled="disabled"
             :validation-errors="validationErrors"
+            selectable
             @change:item-quantity="$emit('change:itemQuantity', $event)"
             @select:items="$emit('select:items', $event)"
             @remove:items="$emit('remove:items', $event)"
@@ -30,6 +31,7 @@
         :shared-selected-item-ids="selectedItemIds"
         :disabled="disabled"
         :validation-errors="validationErrors"
+        selectable
         @change:item-quantity="$emit('change:itemQuantity', $event)"
         @select:items="$emit('select:items', $event)"
         @remove:items="$emit('remove:items', $event)"
