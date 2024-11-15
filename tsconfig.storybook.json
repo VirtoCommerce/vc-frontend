@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.app.json",
+  "include": [
+    ".storybook/**/*",
+    "client-app/**/*",
+    "client-app/**/*.vue",
+    "config/*.json",
+    "locales/*.json",
+    "package.json"
+  ],
+  "exclude": ["./storybook/main.ts"]
+}
