@@ -113,8 +113,8 @@ function _useConfigurableProduct(configurableProductId: string) {
     );
     if (sectionIndex !== -1) {
       const newValueWithReplacedOrRemovedSection = payload.value
-        ? selectedConfigurationInput.value.toSpliced(sectionIndex, 1, payload)
-        : selectedConfigurationInput.value.toSpliced(sectionIndex, 1);
+        ? [...selectedConfigurationInput.value].splice(sectionIndex, 1, payload)
+        : [...selectedConfigurationInput.value].splice(sectionIndex, 1);
       selectedConfigurationInput.value = newValueWithReplacedOrRemovedSection;
     } else if (payload.value) {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
