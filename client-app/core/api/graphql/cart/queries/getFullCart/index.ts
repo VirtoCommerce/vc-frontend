@@ -1,5 +1,5 @@
-import { useLazyQuery } from "@vue/apollo-composable";
 import { useCartQueryVariables } from "@/core/api/graphql/cart/composables";
+import { useLazyQuery } from "@/core/api/graphql/composables";
 import { GetFullCartDocument } from "@/core/api/graphql/types";
 
 export function useGetFullCartQuery() {
