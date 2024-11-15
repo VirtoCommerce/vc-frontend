@@ -1,6 +1,8 @@
+import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
 import { ref, readonly, computed, watch, shallowReadonly } from "vue";
+import { apolloClient } from "@/core/api/graphql";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { Logger } from "@/core/utilities";
@@ -16,6 +18,8 @@ type SelectedConfigurationType = {
   quantity: number | undefined;
   selectedProductTitle: string | undefined;
 };
+
+provideApolloClient(apolloClient);
 
 /**
  * Composable function to handle configurable products.
