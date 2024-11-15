@@ -12,8 +12,9 @@ import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
 
 const DEFAULT_LOCALE = "en";
+const DEFAULT_CURRENCY = "USD";
 
-const i18n: I18n = createI18n(DEFAULT_LOCALE, "USD");
+const i18n: I18n = createI18n(DEFAULT_LOCALE, DEFAULT_CURRENCY);
 
 setGlobals({ i18n });
 
