@@ -1,55 +1,45 @@
 import { setup } from "@storybook/vue3";
 import { vueRouter } from "storybook-vue3-router";
-import settingsData from "../client-app/config/settings_data.json";
 import { useFetch } from "../client-app/core/api/common";
-import { useLanguages } from "../client-app/core/composables/useLanguages";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
-import type { IThemeConfig, IThemeConfigPreset } from "../client-app/core/types";
+import DEFAULT_MESSAGE from "../locales/en.json";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3";
 
 import "../storybook-styles/swiper.scss";
 import "../storybook-styles/utilities.scss";
-const i18n: I18n = createI18n("en", "USD");
+
+const DEFAULT_LOCALE = "en";
+
+const i18n: I18n = createI18n(DEFAULT_LOCALE, "USD");
 
 setGlobals({ i18n });
 
 async function configureThemeSettings() {
-  const themeConfig = settingsData as IThemeConfig;
+  const { data: preset } = await useFetch(`/config/presets/default.json`).get().json<{ [key: string]: string }>();
 
-  let preset: IThemeConfigPreset;
-
-  if (typeof themeConfig.current === "string") {
-    const presetFileName = themeConfig.current.toLowerCase().replace(" ", "-");
-    const { data: data_ } = await useFetch(`/config/presets/${presetFileName}.json`).get().json<IThemeConfigPreset>();
-    preset = data_.value!;
-  } else {
-    preset = themeConfig.current;
+  if (preset.value) {
+    const styleElement = document.createElement("style");
+    styleElement.innerText = ":root {";
+    Object.entries(preset.value).forEach(([key, value]) => {
+      styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
+    });
+    styleElement.innerText += "}";
+    document.head.prepend(styleElement);
   }
-
-  const styleElement = document.createElement("style");
-  styleElement.innerText = ":root {";
-  Object.entries(preset).forEach(([key, value]) => {
-    styleElement.innerText += `--${key.replace(/_/g, "-")}: ${value};`;
-  });
-  styleElement.innerText += "}";
-  document.head.prepend(styleElement);
 }
 
-async function configureI18N() {
-  const { initLocale } = useLanguages();
-
-  await initLocale(i18n, "en");
+function configureI18N() {
+  i18n.global.setLocaleMessage(DEFAULT_LOCALE, DEFAULT_MESSAGE);
 }
 
-setup((app) => {
-  configureThemeSettings();
-
+setup(async (app) => {
+  await configureThemeSettings();
   configureI18N();
-  app.use(i18n);
 
+  app.use(i18n);
   app.use(uiKit);
 });
 
@@ -71,4 +61,5 @@ const preview: Preview = {
   },
 };
 
+// eslint-disable-next-line no-restricted-exports
 export default preview;
