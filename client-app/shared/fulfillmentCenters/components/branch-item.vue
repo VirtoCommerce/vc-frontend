@@ -19,9 +19,8 @@
         </div>
 
         <div v-if="branch.shortDescription" class="mt-2 flex items-start md:-mt-0.5">
-          <svg class="text-secondary md:mt-px" width="16" height="16">
-            <use href="/static/images/clock.svg#main"></use>
-          </svg>
+          <VcIcon name="clock" class="fill-secondary md:mt-px" :size="16" />
+
           <div
             v-html-safe="branch.shortDescription"
             class="ml-1.5 flex space-x-3 whitespace-nowrap text-xs md:block md:space-x-0"

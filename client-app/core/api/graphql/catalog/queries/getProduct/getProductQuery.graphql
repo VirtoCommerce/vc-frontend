@@ -12,8 +12,10 @@ query GetProduct($storeId: String!, $currencyCode: String!, $cultureName: String
     hasVariations
     minQuantity
     maxQuantity
+    packSize
     imgSrc
     inWishlist
+    isConfigurable
     associations {
       totalCount
     }

@@ -68,7 +68,14 @@
           @click="reload"
         />
 
-        <VcButton v-if="removable" variant="no-background" color="neutral" size="xs" icon="x" @click="remove" />
+        <VcButton
+          v-if="removable"
+          variant="no-background"
+          color="neutral"
+          size="xs"
+          icon="delete-thin"
+          @click="remove"
+        />
       </span>
     </div>
   </div>
@@ -155,7 +162,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__link {
-    @apply text-[--link-color] cursor-pointer break-all;
+    @apply text-[--link-color] cursor-pointer;
 
     &:hover {
       @apply text-[--link-hover-color];
@@ -164,7 +171,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
 
   &__name,
   &__link {
-    @apply grow line-clamp-2 break-words text-sm font-bold;
+    @apply grow line-clamp-2 break-all text-sm font-bold;
   }
 
   &__size {
@@ -188,7 +195,7 @@ const fileSize = computed(() => getFileSize(props.file.size));
   }
 
   &__buttons {
-    @apply flex-none flex self-start;
+    @apply flex-none flex self-center;
   }
 }
 </style>

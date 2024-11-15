@@ -11,7 +11,7 @@
     </div>
 
     <button v-if="closable" type="button" class="vc-dialog-header__close" @click="$emit('close')">
-      <VcIcon name="x" :size="16" />
+      <VcIcon name="delete-thin" :size="16" />
     </button>
   </DialogTitle>
 </template>

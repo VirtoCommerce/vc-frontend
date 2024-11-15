@@ -40,8 +40,10 @@ query SearchProducts(
       code
       minQuantity
       maxQuantity
+      packSize
       inWishlist
       productType
+      isConfigurable
       vendor {
         id
         name

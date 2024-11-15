@@ -25,13 +25,15 @@ withDefaults(defineProps<IProps>(), {
 
 <style lang="scss">
 .vc-product-actions {
+  $self: &;
+
   @apply flex gap-2 w-fit empty:hidden;
 
   &--direction {
     &--horizontal {
       --vc-icon-size: 1.25rem;
 
-      @media (min-width: theme("screens.md")) {
+      @container (min-width: theme("containers.xl")) {
         --vc-icon-size: 1rem;
       }
     }
@@ -49,6 +51,28 @@ withDefaults(defineProps<IProps>(), {
 
   .vc-icon {
     @apply block;
+  }
+
+  @at-root .vc-product-card {
+    &--view-mode {
+      &--grid #{$self} {
+        @apply absolute -top-4 -right-[1.1rem];
+      }
+
+      &--list #{$self} {
+        grid-area: actions;
+
+        @apply mt-2.5;
+
+        @container (min-width: theme("containers.xl")) {
+          @apply self-start mt-2;
+        }
+      }
+
+      &--item #{$self} {
+        @apply hidden;
+      }
+    }
   }
 }
 </style>

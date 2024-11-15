@@ -17,7 +17,7 @@
       class="vc-product-title__text"
       @click="$emit('click', $event)"
     >
-      <slot />
+      <slot>{{ title }}</slot>
     </component>
   </div>
 </template>
@@ -52,11 +52,14 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
 <style lang="scss">
 .vc-product-title {
+  $self: &;
   $disabled: "";
   $link: "";
 
   --font-size: var(--vc-product-title-font-size);
   --lines-number: v-bind(linesNumber);
+  --link-color: var(--vc-product-title-link-color, theme("colors.accent.600"));
+  --link-hover-color: var(--vc-product-title-link-hover-color, theme("colors.accent.700"));
 
   @apply text-[length:var(--font-size)] font-bold line-clamp-[--lines-number];
 
@@ -90,6 +93,56 @@ const linkTo = computed(() => (!props.disabled ? props.to : ""));
 
     #{$disabled} & {
       @apply text-neutral pointer-events-none;
+    }
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: title;
+
+      @apply text-sm;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        @container (min-width: theme("containers.xxs")) {
+          @apply text-lg;
+        }
+      }
+
+      &--list {
+        #{$self} {
+          @apply self-end;
+
+          &:only-child {
+            @apply self-center;
+          }
+        }
+
+        @container (min-width: theme("containers.xl")) {
+          &:not(:has(.vc-product-vendor, .vc-product-action)) #{$self} {
+            @apply self-center;
+          }
+        }
+      }
+
+      &--item {
+        #{$self} {
+          @apply self-center;
+        }
+
+        &:has(.vc-product-vendor) #{$self} {
+          @apply self-end;
+        }
+
+        @container (min-width: theme("containers.2xl")) {
+          @apply self-end;
+
+          &:not(:has(.vc-product-vendor)) #{$self} {
+            @apply self-center;
+          }
+        }
+      }
     }
   }
 }

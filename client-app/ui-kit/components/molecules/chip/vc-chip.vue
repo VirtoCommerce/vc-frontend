@@ -30,7 +30,7 @@
       @click.stop="disabled ? null : $emit('close')"
     >
       <slot name="close-icon">
-        <VcIcon name="delete-mini" />
+        <VcIcon name="delete-2" />
       </slot>
     </button>
   </component>

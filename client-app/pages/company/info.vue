@@ -193,8 +193,8 @@
                           :class="[
                             'cursor-pointer',
                             {
-                              'text-neutral-400': !address.isFavorite,
-                              'text-primary': address.isFavorite,
+                              'fill-neutral-400': !address.isFavorite,
+                              'fill-primary': address.isFavorite,
                             },
                           ]"
                           name="whishlist"
