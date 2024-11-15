@@ -13,6 +13,9 @@ import { useHead } from "@unhead/vue";
 import { computedEager } from "@vueuse/core";
 import { markRaw, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import favicon16 from "@/assets/icons/favicon-16x16.png";
+import favicon32 from "@/assets/icons/favicon-32x32.png";
+import faviconSVG from "@/assets/icons/favicon.svg";
 import { setupBroadcastGlobalListeners } from "@/broadcast";
 import { ModalHost } from "@/shared/modal";
 import { NotificationsHost } from "@/shared/notification";
@@ -29,7 +32,29 @@ const { favIcons } = useWhiteLabeling();
 
 // If favIcons.value is an empty array, the default favicon from index.html will be used.
 // The favicon will also NOT be updated in PWA mode (in manifest.json).
-useHead({ link: favIcons.value });
+useHead({
+  link: favIcons.value?.length
+    ? favIcons.value
+    : [
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: faviconSVG,
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "16x16",
+          href: favicon16,
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "32x32",
+          href: favicon32,
+        },
+      ],
+});
 
 const layouts: Record<NonNullable<typeof route.meta.layout>, Component> = {
   Main: markRaw(MainLayout),
