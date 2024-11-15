@@ -13,6 +13,7 @@ import { useMarkAllPushMessagesUnread } from "../api/graphql/mutations/markAllPu
 import { useGetPushMessages } from "../api/graphql/queries/getPushMessages";
 import { PUSH_MESSAGES_MODULE_ENABLED_KEY } from "../constants";
 import type { GetPushMessagesQueryVariables } from "../api/graphql/types";
+import type { PushMessageType } from "@/modules/push-messages/types";
 import type { Ref, MaybeRef } from "vue";
 
 export interface IUsePushMessagesOptions {
@@ -66,7 +67,7 @@ function usePushMessages(options?: IUsePushMessagesOptions) {
   const totalCount = computed(() => items.value.length);
   const unreadCount = computed(() => result.value?.unreadCount?.totalCount ?? 0);
   const unreadCountWithHidden = computed(() => result.value?.unreadCountWithHidden?.totalCount ?? 0);
-  const items = computed<VcPushMessageType[]>(() => result.value?.pushMessages?.items ?? []);
+  const items = computed<PushMessageType[]>(() => result.value?.pushMessages?.items ?? []);
   const pages = computed(() => {
     return Math.ceil((result?.value?.pushMessages?.totalCount ?? 0) / itemsPerPage.value);
   });

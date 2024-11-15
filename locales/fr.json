@@ -246,9 +246,7 @@
       "company_info": "Informations sur l'entreprise",
       "company_members": "Membres de l'entreprise",
       "contact_administrator": "contacter l'administrateur du site",
-      "push-messages": "Notifications",
-      "saved_credit_cards": "Cartes de crédit enregistrées",
-      "notifications": "Notifications"
+      "saved_credit_cards": "Cartes de crédit enregistrées"
     },
     "titles": {
       "all_actions": "Toutes les actions",
@@ -314,8 +312,7 @@
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
-          "contact_us": "@:common.links.contact_us",
-          "push-messages": "@:common.links.push-messages"
+          "contact_us": "@:common.links.contact_us"
         },
         "mobile": {
           "my_account": "@:common.links.account",
@@ -327,8 +324,7 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
-            "saved_credit_cards": "@:common.links.saved_credit_cards",
-            "notifications": "@:common.links.notifications"
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -406,8 +402,7 @@
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards",
-          "notifications": "@:common.links.notifications"
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
         }
       },
       "change_password_form": {
@@ -1111,12 +1106,6 @@
         "change_password_title": "Changer le mot de passe",
         "update_error_alert": "Une erreur s'est produite lors de la mise à jour du profil"
       },
-      "notifications": {
-        "meta": {
-          "title": "Notifications"
-        },
-        "empty_list": "Vous n'avez pas de nouvelles notifications pour le moment"
-      },
       "impersonate": {
         "title": "Impersonation",
         "success": "Vous êtes en train d'être imité",
@@ -1422,20 +1411,6 @@
         "has_max_file_count": "Vous avez téléchargé le nombre maximum de fichiers possible. D'autres téléchargements ne sont pas possibles.",
         "tried_more_than_max_file_count": "Vous avez essayé de télécharger plus que le nombre maximum de fichiers autorisés."
       }
-    },
-    "push-messages": {
-      "title": "Notifications",
-      "options": {
-        "make_all_as_read": "Tout marquer comme lu",
-        "make_all_as_unread": "Tout marquer comme non lu"
-      },
-      "empty": {
-        "title": "Aucune nouvelle notification pour le moment.",
-        "description": "Restez à l'écoute pour des mises à jour et des messages importants."
-      },
-      "clear_all": "Tout effacer",
-      "view_all": "Voir toutes les notifications",
-      "show_unread_only": "Afficher uniquement les non lues"
     },
     "reach_limit": {
       "end_list": "Vous avez atteint la fin de la liste.",

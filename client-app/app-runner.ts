@@ -129,7 +129,7 @@ export default async () => {
    */
 
   await fetchWhiteLabelingSettings();
-  void initPushNotifications(router);
+  void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initCustomerReviews(i18n);
 

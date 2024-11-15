@@ -2,7 +2,7 @@
   <div class="!block">
     <div class="flex items-start justify-between gap-3">
       <VcTypography tag="h1" class="flex items-center gap-2">
-        {{ $t("shared.account.navigation.links.notifications") }}
+        {{ $t("push_messages.title") }}
 
         <VcBadge v-if="unreadCountWithHidden > 0" variant="outline" size="lg" rounded>
           {{ unreadCountWithHidden }}
@@ -26,7 +26,7 @@
               markReadAll();
             "
           >
-            {{ $t("ui_kit.push-messages.options.make_all_as_read") }}
+            {{ $t("push_messages.options.make_all_as_read") }}
           </VcMenuItem>
 
           <VcMenuItem
@@ -35,19 +35,15 @@
               markUnreadAll();
             "
           >
-            {{ $t("ui_kit.push-messages.options.make_all_as_unread") }}
+            {{ $t("push_messages.options.make_all_as_unread") }}
           </VcMenuItem>
         </template>
       </VcDropdownMenu>
     </div>
 
     <div class="mt-4 lg:mt-5">
-      <VcSwitch
-        v-model="showUnreadOnly"
-        :aria-label="$t('ui_kit.push-messages.show_unread_only')"
-        label-position="right"
-      >
-        {{ $t("ui_kit.push-messages.show_unread_only") }}
+      <VcSwitch v-model="showUnreadOnly" :aria-label="$t('push_messages.show_unread_only')" label-position="right">
+        {{ $t("push_messages.show_unread_only") }}
       </VcSwitch>
     </div>
 
@@ -55,7 +51,7 @@
       <template #default-container>
         <VcEmptyView
           v-if="totalCount === 0 && !loading"
-          :text="$t('pages.account.notifications.empty_list')"
+          :text="$t('push_messages.empty_list')"
           icon="thin-notifications"
         />
 
@@ -70,7 +66,7 @@
             />
           </div>
 
-          <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+          <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("reach_limit.page_limit") }}</p>
 
           <VcPagination
             v-if="items.length && pages > 1"
@@ -105,7 +101,7 @@ const { items, markReadAll, markUnreadAll, totalCount, unreadCountWithHidden, lo
 });
 
 usePageHead({
-  title: t("pages.account.notifications.meta.title"),
+  title: t("push-messages.title"),
 });
 
 function resetPagination() {
