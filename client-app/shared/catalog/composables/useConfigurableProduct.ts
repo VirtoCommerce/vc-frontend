@@ -52,7 +52,8 @@ function _useConfigurableProduct(configurableProductId: string) {
           acc[section.sectionId] = {
             productId: section.value?.productId,
             quantity: section.value?.quantity,
-            selectedProductTitle: rawSection?.products?.find(({ id }) => id === section.value?.productId)?.name,
+            selectedProductTitle: rawSection?.options?.find(({ product }) => product?.id === section.value?.productId)
+              ?.product?.name,
           };
           return acc;
         },
@@ -65,16 +66,17 @@ function _useConfigurableProduct(configurableProductId: string) {
     try {
       const data = await getProductConfiguration(configurableProductId);
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
-      selectedConfigurationInput.value =
-        configuration.value.map((section) => ({
-          sectionId: section.id ?? "",
-          value: section.isRequired
-            ? {
-                productId: section.products?.[0]?.id ?? "",
-                quantity: section.quantity ?? 1,
-              }
-            : undefined,
-        })) ?? [];
+      configuration.value.forEach((section) => {
+        if (section.isRequired && section.id) {
+          selectSectionValue({
+            sectionId: section.id,
+            value: {
+              productId: section.options?.[0]?.product?.id ?? "",
+              quantity: section.options?.[0]?.quantity ?? 1,
+            },
+          });
+        }
+      });
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
       throw e;
@@ -110,10 +112,11 @@ function _useConfigurableProduct(configurableProductId: string) {
       (section) => section.sectionId === payload.sectionId,
     );
     if (sectionIndex !== -1) {
-      const newValue = [...selectedConfigurationInput.value];
-      newValue?.splice(sectionIndex, 1, payload);
-      selectedConfigurationInput.value = newValue;
-    } else {
+      const newValueWithReplacedOrRemovedSection = payload.value
+        ? selectedConfigurationInput.value.toSpliced(sectionIndex, 1, payload)
+        : selectedConfigurationInput.value.toSpliced(sectionIndex, 1);
+      selectedConfigurationInput.value = newValueWithReplacedOrRemovedSection;
+    } else if (payload.value) {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
     }
   }
@@ -127,6 +130,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     },
     {
       deep: true,
+      immediate: true,
     },
   );
 

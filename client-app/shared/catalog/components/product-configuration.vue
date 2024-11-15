@@ -14,46 +14,49 @@
           </div>
         </template>
 
-        <div class="product-configuration__items">
-          <VcProductCard
-            v-for="product in section.products"
-            :key="product.id"
-            view-mode="item"
-            class="product-configuration__item"
+        <div v-if="section.type === 'product' && section.options?.length" class="product-configuration__items">
+          <template
+            v-for="({ id, product, quantity, listPrice, salePrice, extendedPrice }, index) in section.options"
+            :key="`${id}-${index}`"
           >
-            <template #media>
-              <VcRadioButton
-                :value="product.id"
-                :name="`selection-${section.id}`"
-                @input="
-                  handleInput({ sectionId: section.id!, value: { productId: product.id, quantity: section.quantity! } })
-                "
+            <VcProductCard v-if="!!product" view-mode="item" class="product-configuration__item">
+              <template #media>
+                <VcRadioButton
+                  :value="product.id"
+                  :name="`selection-${section.id}`"
+                  @input="
+                    handleInput({
+                      sectionId: section.id!,
+                      value: { productId: product.id, quantity: quantity ?? 1 },
+                    })
+                  "
+                />
+                <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
+              </template>
+              <VcProductTitle :to="getProductRoute(product.id, product.slug)">{{ product.name }}</VcProductTitle>
+
+              <VcProductProperties>
+                <VcProperty
+                  v-for="property in product.properties.slice(0, PRODUCT_PROPERTY_LIMIT)"
+                  :key="property.id"
+                  :label="property.name"
+                  :value="property.value"
+                />
+                <VcProperty class="@2xl:hidden" label="Price per item">
+                  <VcPriceDisplay :value="product.price.actual" />
+                </VcProperty>
+              </VcProductProperties>
+
+              <VcProductPrice
+                :has-variations="product.hasVariations"
+                :actual-price="salePrice"
+                :list-price="listPrice"
               />
-              <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
-            </template>
 
-            <VcProductTitle :to="getProductRoute(product.id, product.slug)">{{ product.name }}</VcProductTitle>
-
-            <VcProductProperties>
-              <VcProperty
-                v-for="property in product.properties.slice(0, PRODUCT_PROPERTY_LIMIT)"
-                :key="property.id"
-                :label="property.name"
-                :value="property.value"
-              />
-              <VcProperty class="@2xl:hidden" label="Price per item">
-                <VcPriceDisplay :value="product.price.actual" />
-              </VcProperty>
-            </VcProductProperties>
-
-            <VcProductPrice
-              :has-variations="product.hasVariations"
-              :actual-price="product.price.actual"
-              :list-price="product.price.list"
-            />
-
-            <VcAddToCart hide-button disabled :model-value="section.quantity" />
-          </VcProductCard>
+              <VcAddToCart hide-button disabled :model-value="quantity ?? 1" />
+              <VcProductTotal :quantity="quantity" :actual-price="extendedPrice" />
+            </VcProductCard>
+          </template>
 
           <VcProductCard v-if="!section.isRequired" view-mode="item" class="product-configuration__item">
             <template #media>

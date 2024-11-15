@@ -81,15 +81,10 @@ const variationsCartTotalAmount = computed<number>(() => {
 
 const price = computed<PriceType | { actual: MoneyType; list: MoneyType } | undefined>(() => {
   if (props.product.isConfigurable) {
-    const total = configuredLineItem.value?.total;
-    return total &&
-      typeof total === "object" &&
-      "amount" in total &&
-      "formattedAmount" in total &&
-      "currency" in total &&
-      "formattedAmountWithoutCurrency" in total
-      ? { actual: total as MoneyType, list: total as MoneyType }
-      : undefined;
+    return {
+      actual: configuredLineItem.value?.extendedPrice as MoneyType,
+      list: configuredLineItem.value?.listPrice as MoneyType,
+    };
   }
   return props.product.price;
 });
