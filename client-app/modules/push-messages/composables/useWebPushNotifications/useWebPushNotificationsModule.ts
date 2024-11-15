@@ -13,22 +13,16 @@ import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import { useAddFcmToken } from "../../api/graphql/mutations/addFcmToken";
 import { useDeleteFcmToken } from "../../api/graphql/mutations/deleteFcmToken";
+import {
+  REGISTRATION_SCOPE,
+  SERVICE_WORKER_PATH,
+  DEFAULT_ICON_URL,
+  PREFERRED_ICON_PROPERTIES,
+  SETTINGS_MAPPING,
+} from "../../constants";
 import type { FcmSettingsType } from "../../api/graphql/types";
 import type { EventBusKey } from "@vueuse/core";
 import type { Messaging } from "firebase/messaging";
-
-const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
-const DEFAULT_ICON_URL = "/static/icons/favicon-32x32.png";
-const PREFERRED_ICON_PROPERTIES = { type: "image/png", sizes: "32x32" };
-const SETTINGS_MAPPING = {
-  "PushMessages.FcmReceiverOptions.ApiKey": "apiKey",
-  "PushMessages.FcmReceiverOptions.AuthDomain": "authDomain",
-  "PushMessages.FcmReceiverOptions.ProjectId": "projectId",
-  "PushMessages.FcmReceiverOptions.StorageBucket": "storageBucket",
-  "PushMessages.FcmReceiverOptions.MessagingSenderId": "messagingSenderId",
-  "PushMessages.FcmReceiverOptions.AppId": "appId",
-  "PushMessages.FcmReceiverOptions.VapidKey": "vapidKey",
-} as const;
 
 provideApolloClient(apolloClient);
 
@@ -56,17 +50,19 @@ function _useWebPushNotifications() {
     const vapidKey = fcmSettings?.vapidKey as string;
     const firebaseConfig = omit(fcmSettings, "vapidKey") as FcmSettingsType;
 
-    if (initialized) {
-      await getFcmToken(messaging!, vapidKey);
+    if (initialized && messaging) {
+      const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
+      await getFcmToken(messaging, vapidKey, serviceWorkerRegistration);
       return;
     }
 
     const firebaseApp = initializeApp(firebaseConfig);
     messaging = getMessaging(firebaseApp);
-
-    await getFcmToken(messaging, vapidKey);
+    await navigator.serviceWorker.register(SERVICE_WORKER_PATH, {
+      scope: REGISTRATION_SCOPE,
+    });
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
-
+    await getFcmToken(messaging, vapidKey, serviceWorkerRegistration);
     serviceWorkerRegistration?.active?.postMessage({
       type: "initialize",
       config: firebaseConfig,
@@ -78,29 +74,13 @@ function _useWebPushNotifications() {
     broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
   }
 
-  // workaround for the issue with the first token request https://github.com/firebase/firebase-js-sdk/issues/7693
-  function tryGetToken(count: number = 3) {
-    const TIMEOUT = 3000;
-    let retryCount = 0;
-    return async function retry(messagingInstance: Messaging, vapidKey: string) {
-      try {
-        return await getToken(messagingInstance, { vapidKey });
-      } catch (e) {
-        if (retryCount >= count) {
-          return;
-        }
-        retryCount++;
-        await new Promise((resolve) => {
-          setTimeout(resolve, TIMEOUT);
-        });
-        return await retry(messagingInstance, vapidKey);
-      }
-    };
-  }
-
-  async function getFcmToken(messagingInstance: Messaging, vapidKey: string): Promise<string | undefined> {
+  async function getFcmToken(
+    messagingInstance: Messaging,
+    vapidKey: string,
+    serviceWorkerRegistration?: ServiceWorkerRegistration,
+  ): Promise<string | undefined> {
     try {
-      currentToken = await tryGetToken()(messagingInstance, vapidKey);
+      currentToken = await getToken(messagingInstance, { vapidKey, serviceWorkerRegistration });
       if (currentToken && currentToken !== savedFcmToken.value) {
         await addFcmTokenMutation({ command: { token: currentToken } });
         savedFcmToken.value = currentToken;

@@ -4,9 +4,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable no-undef */
 
-// TODO: Update the version number as needed
-// TODO: Refactor for using esm imports when firefox supports it https://caniuse.com/mdn-api_serviceworker_ecmascript_modules
-const VERSION = "10.12.2";
+// NOTE: When updating the service worker, make sure to update the version in the service worker module constants "client-app/modules/push-messages/constants/index.ts"
+
+const VERSION = "11.0.1";
 importScripts(
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-app-compat.js`,
   `//www.gstatic.com/firebasejs/${VERSION}/firebase-messaging-compat.js`,
@@ -135,7 +135,7 @@ function htmlToText(html) {
 
   // Function to handle blockquotes
   function handleBlockquotes(match, p1) {
-    return "\n> " + p1.trim().replace(/\n/g, "\n> ") + "\n";
+    return "\n“" + p1.trim().replace(/\n/g, "\n ") + "”\n";
   }
 
   // Function to handle paragraphs
@@ -159,7 +159,7 @@ function htmlToText(html) {
   html = html.replace(/<p[^>]*>(.*?)<\/p>/gs, handleParagraphs);
 
   // Remove remaining HTML tags
-  html = html.replace(/<\/?[^>]+(>|$)/g, "");
+  html = html.replace(/<\/?(\w+)(?:\s+[^>]+)?\s*>/g, "");
 
   return html.trim();
 }
