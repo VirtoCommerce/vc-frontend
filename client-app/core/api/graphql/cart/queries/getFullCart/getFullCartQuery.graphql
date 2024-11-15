@@ -1,7 +1,7 @@
 #import "../../fragments/fullCart.graphql"
 
-query GetFullCart($storeId: String!, $userId: String!, $currencyCode: String!, $cultureName: String, $cartId: String) {
-  cart(storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName, cartId: $cartId) {
+query GetFullCart($storeId: String!, $userId: String!, $currencyCode: String!, $cultureName: String) {
+  cart(storeId: $storeId, userId: $userId, currencyCode: $currencyCode, cultureName: $cultureName) {
     ...fullCart
   }
 }

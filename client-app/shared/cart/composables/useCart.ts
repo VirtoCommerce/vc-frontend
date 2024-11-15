@@ -160,8 +160,7 @@ export function _useFullCart() {
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
 
-  const forceFetch = async (variables?: { cartId?: string }) =>
-    (await load(null, variables)) || (await refetch(variables));
+  const forceFetch = async () => (await load()) || (await refetch());
 
   const cart = computed(() => query.value?.cart as CartType | undefined);
 
