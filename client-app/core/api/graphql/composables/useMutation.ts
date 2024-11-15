@@ -14,17 +14,17 @@ export function useMutation<
   TResult = any,
   TVariables extends OperationVariables = OperationVariables,
   TGlobalVariables extends DeepPartial<TVariables> = DeepPartial<TVariables>,
-  TMutateVariables extends DeepOmitByType<TVariables, TGlobalVariables> = DeepOmitByType<TVariables, TGlobalVariables>,
+  TLocalVariables extends DeepOmitByType<TVariables, TGlobalVariables> = DeepOmitByType<TVariables, TGlobalVariables>,
 >(
   document: MaybeRefOrGetter<DocumentNode | TypedDocumentNode<TResult, TVariables>>,
   options: MaybeRefOrGetter<UseMutationOptions<TResult, TGlobalVariables>> = {},
-): UseMutationReturn<TResult, TMutateVariables> {
-  const result = _useMutation<TResult, TMutateVariables>(
+): Omit<UseMutationReturn<TResult, TVariables>, "mutate"> & { mutate: MutateFunction<TResult, TLocalVariables> } {
+  const result = _useMutation<TResult, TVariables>(
     document,
-    options as MaybeRefOrGetter<UseMutationOptions<TResult, TMutateVariables>>,
+    options as MaybeRefOrGetter<UseMutationOptions<TResult, TVariables>>,
   );
-  const mutate: MutateFunction<TResult, TMutateVariables> = (variables, overrideOptions) => {
-    return result.mutate(merge({}, toValue(options).variables, variables), overrideOptions);
+  const mutate: MutateFunction<TResult, TLocalVariables> = (variables, overrideOptions) => {
+    return result.mutate(merge({}, toValue(options).variables, variables) as TVariables, overrideOptions);
   };
   return {
     ...result,
