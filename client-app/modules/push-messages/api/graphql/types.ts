@@ -44,11 +44,6 @@ export type AddQuoteAttachmentsCommandType = {
   urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
-export type AddQuoteItemsCommandType = {
-  newQuoteItems: Array<InputMaybe<InputNewQuoteItemType>>;
-  quoteId: Scalars['String']['input'];
-};
-
 export type ApproveQuoteCommandType = {
   quoteId: Scalars['String']['input'];
 };
@@ -523,6 +518,10 @@ export type ConfiguredLineItemType = {
   total: MoneyType;
 };
 
+export type ConfirmTaskCommandType = {
+  id: Scalars['String']['input'];
+};
+
 /** A connection from an object to a list of objects of type `Contact`. */
 export type ContactConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -607,6 +606,45 @@ export type ContactTypeOrganizationsArgs = {
 export type ContactTypeSeoInfoArgs = {
   cultureName: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
+};
+
+/** A connection from an object to a list of objects of type `Contract`. */
+export type ContractConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<ContractEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<ContractType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `Contract`. */
+export type ContractEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<ContractType>;
+};
+
+export type ContractType = {
+  code: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  /** Contract dynamic property values */
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  startDate?: Maybe<Scalars['DateTime']['output']>;
+  status?: Maybe<Scalars['String']['output']>;
+  storeId?: Maybe<Scalars['String']['output']>;
+  vendorId?: Maybe<Scalars['String']['output']>;
+};
+
+
+export type ContractTypeDynamicPropertiesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CountryRegionType = {
@@ -925,6 +963,21 @@ export type DiscountType = {
   promotionId?: Maybe<Scalars['String']['output']>;
 };
 
+export type DynamicContentItemType = {
+  contentType: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  /** Dynamic content dynamic property values */
+  dynamicProperties?: Maybe<Array<Maybe<DynamicPropertyValueType>>>;
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  priority: Scalars['Int']['output'];
+};
+
+
+export type DynamicContentItemTypeDynamicPropertiesArgs = {
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+};
+
 /** A connection from an object to a list of objects of type `DynamicProperty`. */
 export type DynamicPropertyConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -1015,6 +1068,11 @@ export type ErrorParameterType = {
   key: Scalars['String']['output'];
   /** Value */
   value: Scalars['String']['output'];
+};
+
+export type EvaluateDynamicContentResultType = {
+  items?: Maybe<Array<Maybe<DynamicContentItemType>>>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Facet = {
@@ -1396,11 +1454,6 @@ export type InputAddOrUpdateOrderPaymentType = {
   orderId: Scalars['String']['input'];
   /** Payment */
   payment: InputOrderPaymentType;
-};
-
-export type InputAddPurchaseRequestSourceType = {
-  documentUrls: Array<Scalars['String']['input']>;
-  purchaseRequestId: Scalars['String']['input'];
 };
 
 export type InputAddWishlistBulkItemType = {
@@ -1800,21 +1853,6 @@ export type InputCreateOrganizationType = {
   phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
-export type InputCreatePurchaseRequestFromDocumentsType = {
-  cultureName: Scalars['String']['input'];
-  currencyCode: Scalars['String']['input'];
-  documentUrls: Array<Scalars['String']['input']>;
-  storeId: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
-};
-
-export type InputCreatePurchaseRequestType = {
-  cultureName: Scalars['String']['input'];
-  currencyCode: Scalars['String']['input'];
-  storeId: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
-};
-
 export type InputCreateUserType = {
   /** Application user to create */
   applicationUser: InputCreateApplicationUserType;
@@ -1863,10 +1901,6 @@ export type InputDynamicPropertyValueType = {
   name: Scalars['String']['input'];
   /** Dynamic property value. ID must be passed for dictionary item */
   value?: InputMaybe<Scalars['DynamicPropertyValue']['input']>;
-};
-
-export type InputExtractDataFromPurchaseRequestSourcesType = {
-  purchaseRequestId: Scalars['String']['input'];
 };
 
 export type InputInitializePaymentType = {
@@ -1993,15 +2027,6 @@ export type InputNewCartItemType = {
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type InputNewQuoteItemType = {
-  comment?: InputMaybe<Scalars['String']['input']>;
-  dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  price?: InputMaybe<Scalars['Decimal']['input']>;
-  productId?: InputMaybe<Scalars['String']['input']>;
-  quantity: Scalars['Int']['input'];
-};
-
 export type InputNewWishlistItemType = {
   /** Product Id */
   productId: Scalars['String']['input'];
@@ -2104,10 +2129,6 @@ export type InputPersonalDataType = {
   fullName?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   middleName?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type InputPostProcessPurchaseRequestSourcesType = {
-  purchaseRequestId: Scalars['String']['input'];
 };
 
 export type InputProcessOrderPaymentType = {
@@ -2531,11 +2552,6 @@ export type InputUpdatePersonalDataType = {
   personalData: InputPersonalDataType;
 };
 
-export type InputUpdatePurchaseRequestByDocumentsType = {
-  documentUrls: Array<Scalars['String']['input']>;
-  purchaseRequestId: Scalars['String']['input'];
-};
-
 export type InputUpdateRoleInnerType = {
   /** Concurrency Stamp */
   concurrencyStamp?: InputMaybe<Scalars['String']['input']>;
@@ -2914,9 +2930,7 @@ export type Mutations = {
   addOrUpdateCartPayment?: Maybe<CartType>;
   addOrUpdateCartShipment?: Maybe<CartType>;
   addOrUpdateOrderPayment?: Maybe<CustomerOrderType>;
-  addPurchaseRequestSource?: Maybe<PurchaseRequestType>;
   addQuoteAttachments?: Maybe<QuoteType>;
-  addQuoteItems?: Maybe<QuoteType>;
   addWishlistBulkItem?: Maybe<BulkWishlistType>;
   addWishlistItem?: Maybe<WishlistType>;
   addWishlistItems?: Maybe<WishlistType>;
@@ -2942,13 +2956,12 @@ export type Mutations = {
   clearShipments?: Maybe<CartType>;
   cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
+  confirmTask?: Maybe<WorkTaskType>;
   createConfiguredLineItem?: Maybe<ConfiguredLineItemType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
   createOrganization?: Maybe<Organization>;
-  createPurchaseRequest?: Maybe<PurchaseRequestType>;
-  createPurchaseRequestFromDocuments?: Maybe<PurchaseRequestType>;
   createQuote?: Maybe<QuoteType>;
   createQuoteFromCart?: Maybe<QuoteType>;
   createReview?: Maybe<CreateReviewResult>;
@@ -2962,7 +2975,6 @@ export type Mutations = {
   deleteQuoteAttachments?: Maybe<QuoteType>;
   deleteSkyflowCard?: Maybe<Scalars['Boolean']['output']>;
   deleteUsers?: Maybe<IdentityResultType>;
-  extractPurchaseRequestSourcesData?: Maybe<PurchaseRequestType>;
   initializePayment?: Maybe<InitializePaymentResultType>;
   inviteUser?: Maybe<CustomIdentityResultType>;
   lockOrganizationContact?: Maybe<ContactType>;
@@ -2972,13 +2984,13 @@ export type Mutations = {
   markPushMessageUnread?: Maybe<Scalars['Boolean']['output']>;
   mergeCart?: Maybe<CartType>;
   moveWishlistItem?: Maybe<WishlistType>;
-  postProcessPurchaseRequestSources?: Maybe<PurchaseRequestType>;
   /** @deprecated Obsolete. Use 'initializePayment' mutation */
   processOrderPayment?: Maybe<ProcessPaymentRequestResultType>;
   pushHistoricalEvent?: Maybe<Scalars['Boolean']['output']>;
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
   rejectGiftItems?: Maybe<CartType>;
+  rejectTask?: Maybe<WorkTaskType>;
   removeAddressFromFavorites?: Maybe<Scalars['Boolean']['output']>;
   removeCart?: Maybe<Scalars['Boolean']['output']>;
   removeCartAddress?: Maybe<CartType>;
@@ -3015,7 +3027,6 @@ export type Mutations = {
   updateOrderShipmentDynamicProperties?: Maybe<CustomerOrderType>;
   updateOrganization?: Maybe<Organization>;
   updatePersonalData?: Maybe<IdentityResultType>;
-  updatePurchaseRequestByDocuments?: Maybe<PurchaseRequestType>;
   updateQuoteAddresses?: Maybe<QuoteType>;
   updateQuoteAttachments?: Maybe<QuoteType>;
   updateRole?: Maybe<IdentityResultType>;
@@ -3084,18 +3095,8 @@ export type MutationsAddOrUpdateOrderPaymentArgs = {
 };
 
 
-export type MutationsAddPurchaseRequestSourceArgs = {
-  command: InputAddPurchaseRequestSourceType;
-};
-
-
 export type MutationsAddQuoteAttachmentsArgs = {
   command: AddQuoteAttachmentsCommandType;
-};
-
-
-export type MutationsAddQuoteItemsArgs = {
-  command: AddQuoteItemsCommandType;
 };
 
 
@@ -3219,6 +3220,11 @@ export type MutationsConfirmEmailArgs = {
 };
 
 
+export type MutationsConfirmTaskArgs = {
+  command: ConfirmTaskCommandType;
+};
+
+
 export type MutationsCreateConfiguredLineItemArgs = {
   command: InputCreateConfiguredLineItemCommand;
 };
@@ -3241,16 +3247,6 @@ export type MutationsCreateOrderFromCartArgs = {
 
 export type MutationsCreateOrganizationArgs = {
   command: InputCreateOrganizationType;
-};
-
-
-export type MutationsCreatePurchaseRequestArgs = {
-  command: InputCreatePurchaseRequestType;
-};
-
-
-export type MutationsCreatePurchaseRequestFromDocumentsArgs = {
-  command: InputCreatePurchaseRequestFromDocumentsType;
 };
 
 
@@ -3319,11 +3315,6 @@ export type MutationsDeleteUsersArgs = {
 };
 
 
-export type MutationsExtractPurchaseRequestSourcesDataArgs = {
-  command: InputExtractDataFromPurchaseRequestSourcesType;
-};
-
-
 export type MutationsInitializePaymentArgs = {
   command: InputInitializePaymentType;
 };
@@ -3359,11 +3350,6 @@ export type MutationsMoveWishlistItemArgs = {
 };
 
 
-export type MutationsPostProcessPurchaseRequestSourcesArgs = {
-  command: InputPostProcessPurchaseRequestSourcesType;
-};
-
-
 export type MutationsProcessOrderPaymentArgs = {
   command: InputProcessOrderPaymentType;
 };
@@ -3386,6 +3372,11 @@ export type MutationsRegisterByInvitationArgs = {
 
 export type MutationsRejectGiftItemsArgs = {
   command: InputRejectGiftItemsType;
+};
+
+
+export type MutationsRejectTaskArgs = {
+  command: RejectTaskCommandType;
 };
 
 
@@ -3561,11 +3552,6 @@ export type MutationsUpdateOrganizationArgs = {
 
 export type MutationsUpdatePersonalDataArgs = {
   command: InputUpdatePersonalDataType;
-};
-
-
-export type MutationsUpdatePurchaseRequestByDocumentsArgs = {
-  command: InputUpdatePurchaseRequestByDocumentsType;
 };
 
 
@@ -4529,47 +4515,6 @@ export enum PropertyValueTypes {
   ShortText = 'SHORT_TEXT'
 }
 
-/** A connection from an object to a list of objects of type `PurchaseRequest`. */
-export type PurchaseRequestConnection = {
-  /** A list of all of the edges returned in the connection. */
-  edges?: Maybe<Array<Maybe<PurchaseRequestEdge>>>;
-  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
-  items?: Maybe<Array<Maybe<PurchaseRequestType>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
-  totalCount?: Maybe<Scalars['Int']['output']>;
-};
-
-/** An edge in a connection from an object to another object of type `PurchaseRequest`. */
-export type PurchaseRequestEdge = {
-  /** A cursor for use in pagination */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge */
-  node?: Maybe<PurchaseRequestType>;
-};
-
-export type PurchaseRequestSourceType = {
-  contentType: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  size: Scalars['Long']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type PurchaseRequestType = {
-  cartId?: Maybe<Scalars['String']['output']>;
-  createdBy: Scalars['String']['output'];
-  createdDate: Scalars['DateTime']['output'];
-  customerId: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  modifiedBy?: Maybe<Scalars['String']['output']>;
-  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
-  number: Scalars['String']['output'];
-  quoteId?: Maybe<Scalars['String']['output']>;
-  sources: Array<PurchaseRequestSourceType>;
-  storeId: Scalars['String']['output'];
-};
-
 /** A connection from an object to a list of objects of type `PushMessage`. */
 export type PushMessageConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -4609,10 +4554,12 @@ export type Query = {
   childCategories?: Maybe<ChildCategoriesQueryResponseType>;
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
+  contract?: Maybe<ContractType>;
   countries: Array<CountryType>;
   customerReviews?: Maybe<CustomerReviewConnection>;
   dynamicProperties?: Maybe<DynamicPropertyConnection>;
   dynamicProperty?: Maybe<DynamicPropertyType>;
+  evaluateDynamicContent?: Maybe<EvaluateDynamicContentResultType>;
   fcmSettings?: Maybe<FcmSettingsType>;
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
@@ -4625,6 +4572,7 @@ export type Query = {
   orderStatuses?: Maybe<LocalizedSettingResponseType>;
   orders?: Maybe<CustomerOrderConnection>;
   organization?: Maybe<Organization>;
+  organizationContracts?: Maybe<ContractConnection>;
   organizationOrders?: Maybe<CustomerOrderConnection>;
   organizations?: Maybe<OrganizationConnection>;
   page?: Maybe<PageType>;
@@ -4637,8 +4585,6 @@ export type Query = {
   products?: Maybe<ProductConnection>;
   properties?: Maybe<PropertyConnection>;
   property?: Maybe<Property>;
-  purchaseRequest?: Maybe<PurchaseRequestType>;
-  purchaseRequests?: Maybe<PurchaseRequestConnection>;
   pushMessages?: Maybe<PushMessageConnection>;
   quote?: Maybe<QuoteType>;
   quoteAttachmentOptions?: Maybe<FileUploadScopeOptionsType>;
@@ -4652,6 +4598,7 @@ export type Query = {
   skyflowCards?: Maybe<SkyflowCardResponseType>;
   slugInfo?: Maybe<SlugInfoResponseType>;
   store?: Maybe<StoreResponseType>;
+  tasks?: Maybe<WorkTaskConnection>;
   user?: Maybe<UserType>;
   validateCoupon?: Maybe<Scalars['Boolean']['output']>;
   validatePassword?: Maybe<CustomIdentityResultType>;
@@ -4755,6 +4702,11 @@ export type QueryContactsArgs = {
 };
 
 
+export type QueryContractArgs = {
+  id?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type QueryCustomerReviewsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   entityId: Scalars['String']['input'];
@@ -4781,6 +4733,18 @@ export type QueryDynamicPropertyArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   idOrName: Scalars['String']['input'];
   objectType?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryEvaluateDynamicContentArgs = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  placeName?: InputMaybe<Scalars['String']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  toDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userGroups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
@@ -4854,6 +4818,18 @@ export type QueryOrdersArgs = {
 export type QueryOrganizationArgs = {
   id: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryOrganizationContractsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  organizationId: Scalars['String']['input'];
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  vendorId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4968,21 +4944,6 @@ export type QueryPropertyArgs = {
 };
 
 
-export type QueryPurchaseRequestArgs = {
-  purchaseRequestId: Scalars['String']['input'];
-};
-
-
-export type QueryPurchaseRequestsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  customerId?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
 export type QueryPushMessagesArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
@@ -5074,6 +5035,20 @@ export type QuerySlugInfoArgs = {
 export type QueryStoreArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   domain?: InputMaybe<Scalars['String']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryTasksArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  completed?: InputMaybe<Scalars['Boolean']['input']>;
+  endDueDate?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  responsibleId?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  startDueDate?: InputMaybe<Scalars['DateTime']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -5188,7 +5163,7 @@ export type QuoteEdge = {
 };
 
 export type QuoteItemType = {
-  catalogId?: Maybe<Scalars['String']['output']>;
+  catalogId: Scalars['String']['output'];
   categoryId?: Maybe<Scalars['String']['output']>;
   comment?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -5196,12 +5171,12 @@ export type QuoteItemType = {
   listPrice: MoneyType;
   name: Scalars['String']['output'];
   product?: Maybe<Product>;
-  productId?: Maybe<Scalars['String']['output']>;
+  productId: Scalars['String']['output'];
   proposalPrices: Array<QuoteTierPriceType>;
   quantity: Scalars['Int']['output'];
   salePrice: MoneyType;
   selectedTierPrice?: Maybe<QuoteTierPriceType>;
-  sku?: Maybe<Scalars['String']['output']>;
+  sku: Scalars['String']['output'];
   taxType?: Maybe<Scalars['String']['output']>;
 };
 
@@ -5362,6 +5337,10 @@ export type RegistrationErrorType = {
   code?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   parameter?: Maybe<Scalars['String']['output']>;
+};
+
+export type RejectTaskCommandType = {
+  id: Scalars['String']['input'];
 };
 
 export type RemoveAddressFromFavoritesCommandType = {
@@ -5573,25 +5552,16 @@ export type StoreSettingsType = {
   emailVerificationRequired: Scalars['Boolean']['output'];
   /** Environment name */
   environmentName: Scalars['String']['output'];
-  /**
-   * SPA
-   * @deprecated Client application should use own business logic for SPA detection.
-   */
+  /** SPA */
   isSpa: Scalars['Boolean']['output'];
   modules: Array<ModuleSettingsType>;
   /** Password requirements */
   passwordRequirements?: Maybe<PasswordOptionsType>;
-  /**
-   * Quotes enabled
-   * @deprecated Use Quotes.EnableQuotes public property instead.
-   */
+  /** Quotes enabled */
   quotesEnabled: Scalars['Boolean']['output'];
   /** SEO links */
   seoLinkType: Scalars['String']['output'];
-  /**
-   * Subscription enabled
-   * @deprecated Use Subscription.EnableSubscriptions public property instead.
-   */
+  /** Store ID */
   subscriptionEnabled: Scalars['Boolean']['output'];
   /** Tax calculation enabled */
   taxCalculationEnabled: Scalars['Boolean']['output'];
@@ -5912,6 +5882,44 @@ export type WishlistType = {
   scope?: Maybe<WishlistScopeType>;
   /** Shopping cart store ID */
   storeId?: Maybe<Scalars['String']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `WorkTask`. */
+export type WorkTaskConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<WorkTaskEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<WorkTaskType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `WorkTask`. */
+export type WorkTaskEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<WorkTaskType>;
+};
+
+export type WorkTaskType = {
+  completed?: Maybe<Scalars['Boolean']['output']>;
+  createdBy?: Maybe<Scalars['String']['output']>;
+  createdDate: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  dueDate?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['String']['output'];
+  isActive: Scalars['Boolean']['output'];
+  modifiedBy?: Maybe<Scalars['String']['output']>;
+  modifiedDate?: Maybe<Scalars['DateTime']['output']>;
+  parameters?: Maybe<Scalars['String']['output']>;
+  priority?: Maybe<Scalars['Int']['output']>;
+  responsibleName?: Maybe<Scalars['String']['output']>;
+  storeId?: Maybe<Scalars['String']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  workflowId?: Maybe<Scalars['String']['output']>;
 };
 
 export type PushMessageFragment = { id: string, createdDate: any, shortMessage: string, isRead: boolean, isHidden: boolean };
