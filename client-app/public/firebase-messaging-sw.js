@@ -19,9 +19,15 @@ const DB_DEFAULT_ICON_ID = "defaultIcon";
 
 self.addEventListener("message", (event) => {
   if (event.data.type === "initialize") {
-    const { config, icon: iconUrl } = event.data;
-    storeDefaultIcon(iconUrl);
+    const { config } = event.data;
     initialize(config);
+  }
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data.type === "update-icon") {
+    const { icon } = event.data;
+    storeDefaultIcon(icon);
   }
 });
 

@@ -1,17 +1,20 @@
 import { provideApolloClient } from "@vue/apollo-composable";
-import { createGlobalState, useLocalStorage } from "@vueuse/core";
+import { createGlobalState, useLocalStorage, useEventBus } from "@vueuse/core";
 import { initializeApp } from "firebase/app";
 import { isSupported, getMessaging, getToken, deleteToken } from "firebase/messaging";
 import omit from "lodash/omit";
+import { computed, ref, watch } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useWhiteLabeling } from "@/core/composables/useWhiteLabeling";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
+import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger } from "@/core/utilities";
 import { userBeforeUnauthorizeEvent, useBroadcast } from "@/shared/broadcast";
 import { useAddFcmToken } from "../../api/graphql/mutations/addFcmToken";
 import { useDeleteFcmToken } from "../../api/graphql/mutations/deleteFcmToken";
 import type { FcmSettingsType } from "../../api/graphql/types";
+import type { EventBusKey } from "@vueuse/core";
 import type { Messaging } from "firebase/messaging";
 
 const REGISTRATION_SCOPE = "/firebase-cloud-messaging-push-scope";
@@ -30,6 +33,8 @@ const SETTINGS_MAPPING = {
 provideApolloClient(apolloClient);
 
 const { getModuleSettings } = useModuleSettings(MODULE_ID_PUSH_MESSAGES);
+type ExtractedWhiteLabelingSettingsType =
+  typeof WHITE_LABELING_FETCHED_SETTINGS_EVENT extends EventBusKey<infer T> ? T : never;
 
 function _useWebPushNotifications() {
   let initialized = false;
@@ -46,12 +51,6 @@ function _useWebPushNotifications() {
       return;
     }
 
-    const { favIcons } = useWhiteLabeling();
-    const icon =
-      favIcons.value?.find(
-        ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
-      )?.href ?? DEFAULT_ICON_URL;
-
     const fcmSettings = getModuleSettings(SETTINGS_MAPPING);
 
     const vapidKey = fcmSettings?.vapidKey as string;
@@ -67,13 +66,15 @@ function _useWebPushNotifications() {
 
     await getFcmToken(messaging, vapidKey);
     const serviceWorkerRegistration = await navigator.serviceWorker.getRegistration(REGISTRATION_SCOPE);
+
     serviceWorkerRegistration?.active?.postMessage({
       type: "initialize",
       config: firebaseConfig,
-      icon,
     });
+
     initialized = true;
 
+    updateAndObserveNotificationIcon(serviceWorkerRegistration);
     broadcast.on(userBeforeUnauthorizeEvent, deleteFcmToken);
   }
 
@@ -124,6 +125,33 @@ function _useWebPushNotifications() {
     } catch (e) {
       Logger.error(deleteFcmToken.name, e);
     }
+  }
+
+  function updateAndObserveNotificationIcon(serviceWorkerRegistration?: ServiceWorkerRegistration) {
+    const { favIcons: favIconsFromWhiteLabeling } = useWhiteLabeling();
+    const favIcons = ref<ExtractedWhiteLabelingSettingsType["favicons"]>(favIconsFromWhiteLabeling.value ?? []);
+    const icon = computed(
+      () =>
+        favIcons.value?.find(
+          ({ type, sizes }) => type === PREFERRED_ICON_PROPERTIES.type && sizes === PREFERRED_ICON_PROPERTIES.sizes,
+        )?.href ?? DEFAULT_ICON_URL,
+    );
+
+    const { on } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
+    on((settings) => {
+      favIcons.value = settings?.favicons ?? [];
+    });
+
+    watch(
+      icon,
+      () => {
+        serviceWorkerRegistration?.active?.postMessage({
+          type: "update-icon",
+          icon: icon.value,
+        });
+      },
+      { immediate: true },
+    );
   }
 
   return { initModule };
