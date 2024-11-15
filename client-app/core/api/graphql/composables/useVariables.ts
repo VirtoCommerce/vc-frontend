@@ -1,7 +1,5 @@
-import { computed, toValue } from "vue";
 import { globals } from "@/core/globals";
-import type { UseMutationOptions } from "@vue/apollo-composable";
-import type { ComputedRef, MaybeRefOrGetter } from "vue";
+import type { MaybeRefOrGetter } from "vue";
 
 export interface IAllGlobalVariables {
   storeId: string;
@@ -24,16 +22,4 @@ export function useAllGlobalVariables(): MaybeRefOrGetter<IAllGlobalVariables> {
     currencyCode,
     userId,
   };
-}
-
-export type MutationOptionsType<TResult, TVariables> = Omit<UseMutationOptions<TResult, TVariables>, "variables">;
-
-export function useMutationVariables<TResult, TVariables>(
-  variables: MaybeRefOrGetter<TVariables>,
-  options: MaybeRefOrGetter<MutationOptionsType<TResult, TVariables>> = {},
-): ComputedRef<UseMutationOptions<TResult, TVariables>> {
-  return computed(() => ({
-    variables: toValue(variables),
-    ...toValue(options),
-  }));
 }
