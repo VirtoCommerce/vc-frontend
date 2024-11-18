@@ -507,7 +507,7 @@ export type ConfigurationSectionType = {
   /** Configuration section description */
   description?: Maybe<Scalars['String']['output']>;
   /** Configuration section id */
-  id?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
   /** Is configuration section required */
   isRequired: Scalars['Boolean']['output'];
   /** Configuration section name */

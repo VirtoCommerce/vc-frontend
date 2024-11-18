@@ -79,13 +79,14 @@ import { toRef } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
 
 const PRODUCT_PROPERTY_LIMIT = 3;
 
 interface IProps {
-  configuration: ConfigurationSectionType[];
+  configuration: DeepReadonly<ConfigurationSectionType[]>;
   productId: string;
 }
 
