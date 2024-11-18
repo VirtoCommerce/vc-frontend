@@ -113,7 +113,7 @@ async function onChange() {
   } else {
     const inputQuantity = enteredQuantity.value || minQty.value;
     const configurationSections = isConfigurable.value ? selectedConfigurationInput.value : undefined;
-    updatedCart = await addToCart(product.value.id!, inputQuantity, configurationSections);
+    updatedCart = await addToCart(product.value.id, inputQuantity, configurationSections);
 
     /**
      * Send Google Analytics event for an item added to cart.

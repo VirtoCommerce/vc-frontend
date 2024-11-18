@@ -28,14 +28,14 @@ describe("useConfigurableProduct", () => {
 
   let composable: ReturnType<UseConfigurableProductType>;
   const configurableProductId = "test-product-id";
-  let mutateMock: Mock;
+  let createConfiguredLineItemMutationMock: Mock;
 
   beforeEach(() => {
     vi.resetAllMocks();
     vi.useFakeTimers();
 
-    mutateMock = vi.fn();
-    mocks.useCreateConfiguredLineItemMutation.mockReturnValue({ mutate: mutateMock });
+    createConfiguredLineItemMutationMock = vi.fn();
+    mocks.useCreateConfiguredLineItemMutation.mockReturnValue({ mutate: createConfiguredLineItemMutationMock });
 
     composable = useConfigurableProduct(configurableProductId);
   });
@@ -45,7 +45,7 @@ describe("useConfigurableProduct", () => {
     expect(composable.selectedConfiguration.value).toEqual({});
     expect(composable.selectedConfigurationInput.value).toEqual([]);
     expect(composable.configuredLineItem.value).toBeUndefined();
-    expect(composable.loading.value).toBe(true); // because of the initial creating line item called immediately
+    expect(composable.loading.value).toBe(false);
   });
 
   it("should fetch product configuration and set configuration ref", async () => {
@@ -117,7 +117,7 @@ describe("useConfigurableProduct", () => {
       },
     };
 
-    mutateMock.mockResolvedValue(mockCreateConfiguredLineItemResponse);
+    createConfiguredLineItemMutationMock.mockResolvedValue(mockCreateConfiguredLineItemResponse);
 
     await composable.fetchProductConfiguration();
     vi.advanceTimersByTime(1000);
@@ -134,15 +134,15 @@ describe("useConfigurableProduct", () => {
     await flushPromises();
     vi.advanceTimersByTime(1000);
 
-    expect(mutateMock.mock.calls[0][0]).toEqual({
+    expect(createConfiguredLineItemMutationMock.mock.calls[0][0]).toEqual({
       command: {
         configurableProductId: configurableProductId,
         configurationSections: [],
       },
     });
 
-    expect(mutateMock).toBeCalledTimes(2);
-    expect(mutateMock.mock.calls[1][0]).toEqual({
+    expect(createConfiguredLineItemMutationMock).toBeCalledTimes(2);
+    expect(createConfiguredLineItemMutationMock.mock.calls[1][0]).toEqual({
       command: {
         configurableProductId: configurableProductId,
         configurationSections: [
@@ -173,7 +173,7 @@ describe("useConfigurableProduct", () => {
 
     await composable.fetchProductConfiguration();
 
-    mutateMock.mockImplementation(() => {
+    createConfiguredLineItemMutationMock.mockImplementation(() => {
       expect(composable.loading.value).toBe(true);
       return Promise.resolve({});
     });
@@ -211,7 +211,7 @@ describe("useConfigurableProduct", () => {
     });
 
     await flushPromises();
-    expect(mutateMock).toBeCalledTimes(1); // Only the initial call
+    expect(createConfiguredLineItemMutationMock).toBeCalledTimes(1); // Only the initial call
   });
 });
 

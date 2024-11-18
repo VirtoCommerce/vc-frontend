@@ -1,7 +1,6 @@
 import { provideApolloClient } from "@vue/apollo-composable";
-import { createSharedComposable, watchPausable } from "@vueuse/core";
-import isEqual from "lodash/isEqual";
-import { ref, readonly, computed, shallowReadonly } from "vue";
+import { createSharedComposable } from "@vueuse/core";
+import { ref, readonly, computed, nextTick } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
@@ -69,7 +68,7 @@ function _useConfigurableProduct(configurableProductId: string) {
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
       configuration.value.forEach((section) => {
         if (section.isRequired && section.id) {
-          selectSectionValue({
+          changeSelectionValue({
             sectionId: section.id,
             value: {
               productId: section.options?.[0]?.product?.id ?? "",
@@ -78,6 +77,8 @@ function _useConfigurableProduct(configurableProductId: string) {
           });
         }
       });
+      await nextTick();
+      void createConfiguredLineItem();
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
       throw e;
@@ -108,51 +109,39 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  function selectSectionValue(payload: ConfigurationSectionInput) {
+  function changeSelectionValue(payload: ConfigurationSectionInput) {
     const sectionIndex = selectedConfigurationInput.value?.findIndex(
       (section) => section.sectionId === payload.sectionId,
     );
     if (sectionIndex !== -1) {
-      const newValueWithReplacedOrRemovedSection = payload.value
-        ? [...selectedConfigurationInput.value].splice(sectionIndex, 1, payload)
-        : [...selectedConfigurationInput.value].splice(sectionIndex, 1);
-      selectedConfigurationInput.value = newValueWithReplacedOrRemovedSection;
+      const newValue = [...selectedConfigurationInput.value];
+      payload.value ? newValue.splice(sectionIndex, 1, payload) : newValue.splice(sectionIndex, 1);
+      selectedConfigurationInput.value = newValue;
     } else if (payload.value) {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
     }
   }
 
-  function reset() {
-    pauseWatch();
-    selectedConfigurationInput.value = [];
-    configuration.value = [];
-    fetching.value = true;
-    configuredLineItem.value = undefined;
-    fetching.value = false;
-    creating.value = false;
-    resumeWatch();
+  function selectSectionValue(payload: ConfigurationSectionInput) {
+    changeSelectionValue(payload);
+    void createConfiguredLineItem();
   }
 
-  const { pause: pauseWatch, resume: resumeWatch } = watchPausable(
-    selectedConfigurationInput,
-    (newValue, oldValue) => {
-      if (!isEqual(newValue, oldValue)) {
-        void createConfiguredLineItem();
-      }
-    },
-    {
-      deep: true,
-      immediate: true,
-    },
-  );
+  function reset() {
+    fetching.value = false;
+    creating.value = false;
+    selectedConfigurationInput.value = [];
+    configuration.value = [];
+    configuredLineItem.value = undefined;
+  }
 
   return {
     fetchProductConfiguration,
     selectSectionValue,
     loading: computed(() => fetching.value || creating.value),
-    configuration: shallowReadonly(configuration),
+    configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
-    selectedConfigurationInput: shallowReadonly(selectedConfigurationInput),
+    selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
   };
 }

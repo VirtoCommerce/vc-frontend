@@ -10,15 +10,12 @@
         <template #title>
           {{ section.name }}
           <div class="product-configuration__description">
-            {{ getSelectedOptionTitle(section.id!) ?? section.description }}
+            {{ getSelectedOptionTitle(section.id) ?? section.description }}
           </div>
         </template>
 
         <div v-if="section.type === 'product' && section.options?.length" class="product-configuration__items">
-          <template
-            v-for="({ id, product, quantity, listPrice, salePrice, extendedPrice }, index) in section.options"
-            :key="`${id}-${index}`"
-          >
+          <template v-for="{ id, product, quantity, listPrice, salePrice, extendedPrice } in section.options" :key="id">
             <VcProductCard v-if="!!product" view-mode="item" class="product-configuration__item">
               <template #media>
                 <VcRadioButton
@@ -26,7 +23,7 @@
                   :name="`selection-${section.id}`"
                   @input="
                     handleInput({
-                      sectionId: section.id!,
+                      sectionId: section.id,
                       value: { productId: product.id, quantity: quantity ?? 1 },
                     })
                   "
@@ -42,7 +39,7 @@
                   :label="property.name"
                   :value="property.value"
                 />
-                <VcProperty class="@2xl:hidden" label="Price per item">
+                <VcProperty class="@2xl:hidden" :label="$t('common.labels.price_per_item')">
                   <VcPriceDisplay :value="product.price.actual" />
                 </VcProperty>
               </VcProductProperties>
@@ -63,7 +60,7 @@
               <VcRadioButton
                 value="none"
                 :name="`selection-${section.id}`"
-                :model-value="selectedConfiguration[section.id!]?.productId === undefined ? 'none' : ''"
+                :model-value="selectedConfiguration[section.id]?.productId === undefined ? 'none' : ''"
                 @input="handleInput({ sectionId: section.id!, value: undefined })"
               />
               <VcProductImage />
@@ -99,9 +96,12 @@ const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(con
 function handleInput({ sectionId, value }: ConfigurationSectionInput) {
   selectSectionValue({ sectionId, value });
 }
-
-function getSelectedOptionTitle(sectionId: string) {
-  return selectedConfiguration.value[sectionId]?.selectedProductTitle;
+function getSelectedOptionTitle(sectionId?: string) {
+  if (!sectionId) {
+    return "";
+  }
+  const config = selectedConfiguration.value?.[sectionId];
+  return config?.selectedProductTitle ?? "";
 }
 </script>
 
