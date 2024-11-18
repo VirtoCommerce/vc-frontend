@@ -1,7 +1,7 @@
 import { provideApolloClient } from "@vue/apollo-composable";
-import { createSharedComposable } from "@vueuse/core";
+import { createSharedComposable, watchPausable } from "@vueuse/core";
 import isEqual from "lodash/isEqual";
-import { ref, readonly, computed, watch, shallowReadonly } from "vue";
+import { ref, readonly, computed, shallowReadonly } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
@@ -62,6 +62,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   });
 
   async function fetchProductConfiguration() {
+    reset();
     fetching.value = true;
     try {
       const data = await getProductConfiguration(configurableProductId);
@@ -121,7 +122,18 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  watch(
+  function reset() {
+    pauseWatch();
+    selectedConfigurationInput.value = [];
+    configuration.value = [];
+    fetching.value = true;
+    configuredLineItem.value = undefined;
+    fetching.value = false;
+    creating.value = false;
+    resumeWatch();
+  }
+
+  const { pause: pauseWatch, resume: resumeWatch } = watchPausable(
     selectedConfigurationInput,
     (newValue, oldValue) => {
       if (!isEqual(newValue, oldValue)) {
