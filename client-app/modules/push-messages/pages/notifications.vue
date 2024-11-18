@@ -101,7 +101,7 @@ const { items, markReadAll, markUnreadAll, totalCount, unreadCountWithHidden, lo
 });
 
 usePageHead({
-  title: t("push-messages.title"),
+  title: t("push_messages.title"),
 });
 
 function resetPagination() {
