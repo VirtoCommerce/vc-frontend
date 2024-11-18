@@ -1,9 +1,9 @@
 import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
-import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID, ENABLED_KEY } from "@/modules/quotes/constants";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
+import { loadModuleLocale } from "../utils";
 import type { MenuType } from "@/core/types";
 import type { I18n } from "@/i18n";
 import type { DeepPartial } from "utility-types";
@@ -17,7 +17,6 @@ const CartWidget = defineAsyncComponent(() => import("@/modules/quotes/component
 const { isEnabled } = useModuleSettings(MODULE_ID);
 const { mergeMenuSchema } = useNavigations();
 const { registerSidebarWidget } = useCartExtensionPoints();
-const { loadModuleLocale } = useLanguages();
 
 const route: RouteRecordRaw = {
   path: "quotes",
