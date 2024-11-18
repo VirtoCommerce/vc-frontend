@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { useLocalStorage } from "@vueuse/core";
-import { watch, watchEffect } from "vue";
+import { watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
@@ -100,10 +100,8 @@ const { items, markReadAll, markUnreadAll, totalCount, unreadCountWithHidden, lo
   withHidden: true,
 });
 
-watchEffect(() => {
-  usePageHead({
-    title: t("push_messages.title"),
-  });
+usePageHead({
+  title: t("push-messages.title"),
 });
 
 function resetPagination() {
