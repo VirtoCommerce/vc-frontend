@@ -97,12 +97,8 @@ const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(con
 function handleInput({ sectionId, value }: ConfigurationSectionInput) {
   selectSectionValue({ sectionId, value });
 }
-function getSelectedOptionTitle(sectionId?: string) {
-  if (!sectionId) {
-    return "";
-  }
-  const config = selectedConfiguration.value?.[sectionId];
-  return config?.selectedProductTitle ?? "";
+function getSelectedOptionTitle(sectionId: string) {
+  return selectedConfiguration.value?.[sectionId]?.selectedProductTitle ?? "";
 }
 </script>
 
