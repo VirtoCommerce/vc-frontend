@@ -6,47 +6,43 @@
       {{ $t("pages.bulk_order.title") }}
     </VcTypography>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-5">
-      <!-- Mobile Tabs -->
-      <VcTabs
-        v-model="activeTab"
-        :items="tabs"
-        text-field="label"
-        value-field="id"
-        class="col-span-1 border-y bg-additional-50 px-3.5 shadow-sm max-md:-mx-6 md:rounded-t md:border md:px-3 lg:hidden"
-      />
+    <VcTabs v-model="activeTab" :items="tabs" text-field="label" value-field="id" class="mb-5">
+      <template #item="{ item, isActive }">
+        <VcIcon class="me-1" :class="{ 'fill-primary-500': !isActive }" :name="item['icon']" />
+        <span>{{ item["label"] }}</span>
+      </template>
+    </VcTabs>
 
-      <!-- Main section -->
-      <div :class="{ hidden: activeTab !== 'manually' }" class="col-span-1 max-md:-mx-6 lg:col-span-2 lg:block">
-        <Manually
-          :loading="loadingManually"
-          class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
-          @add-to-cart="addManuallyItems"
-        />
-      </div>
-
-      <!-- Sidebar -->
-      <div :class="{ hidden: activeTab !== 'copy&paste' }" class="col-span-1 max-md:-mx-6 lg:block">
-        <CopyAndPaste
-          :loading="loadingCSV"
-          class="bg-additional-50 shadow-sm md:rounded-b md:border-x md:border-b lg:rounded lg:border"
-          @add-to-cart="addItemsFromCSVText"
-        />
-      </div>
+    <div v-for="tab in additionalTabs" :key="tab.id">
+      <component :is="tab.element" :class="{ hidden: activeTab !== tab.id }" />
     </div>
+
+    <Manually
+      :loading="loadingManually"
+      :class="{ hidden: activeTab !== 'manually' }"
+      @add-to-cart="addManuallyItems"
+    />
+
+    <CopyAndPaste
+      :loading="loadingCSV"
+      :class="{ hidden: activeTab !== 'copy&paste' }"
+      @add-to-cart="addItemsFromCSVText"
+    />
   </VcContainer>
 </template>
 
 <script setup lang="ts">
 import { uniqBy } from "lodash";
-import { ref, shallowRef } from "vue";
+import { computed, ref, shallowRef, toValue } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { CopyAndPaste, Manually } from "@/shared/bulk-order";
+import { useBulkOrderExtensionPoints } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import { useShortCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
 import type { InputNewBulkItemType } from "@/core/api/graphql/types";
+import type { ITab } from "@/shared/bulk-order/composables/useBulkOrderExtensionPoints";
 import type { OutputBulkItemType } from "@/shared/cart";
 import AddToCartSkuErrorsModal from "@/shared/bulk-order/components/add-to-cart-sku-errors-modal.vue";
 
@@ -65,14 +61,23 @@ usePageHead({
 
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.bulk_order.title") }]);
 
-const tabs = [
-  { id: "manually", label: t("pages.bulk_order.manually_tab") },
-  { id: "copy&paste", label: t("pages.bulk_order.copy_n_paste_tab") },
-] as const;
+const { additionalTabs } = useBulkOrderExtensionPoints();
+
+const predefinedTabs: Omit<ITab, "element">[] = [
+  { id: "copy&paste", icon: "document-duplicate", label: t("pages.bulk_order.copy_n_paste_tab") },
+  { id: "manually", icon: "hand", label: t("pages.bulk_order.manually_tab") },
+];
+const tabs = computed(() => [...additionalTabs.value.filter((tab) => !toValue(tab.hidden)), ...predefinedTabs]);
+const _activeTab = ref<string>();
+const activeTab = computed({
+  get: () => _activeTab.value ?? tabs.value[0].id,
+  set: (value) => {
+    _activeTab.value = value;
+  },
+});
 
 const loadingManually = ref(false);
 const loadingCSV = ref(false);
-const activeTab = ref<"manually" | "copy&paste">(tabs[0].id);
 
 const itemsWithErrors = shallowRef<OutputBulkItemType[]>();
 
