@@ -616,7 +616,8 @@
         },
         "product_configuration": {
           "title": "Parameter konfigurieren",
-          "none": "Keine"
+          "none": "Keine",
+          "nothing_selected": "Nicht ausgewählt"
         }
       },
       "discount_badge": {

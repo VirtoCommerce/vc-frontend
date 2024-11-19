@@ -9,8 +9,11 @@
       <VcWidget v-for="section in configuration" :key="section.id" collapsible size="xs">
         <template #title>
           {{ section.name }}
-          <div class="product-configuration__description">
-            {{ getSelectedOptionTitle(section.id) ?? section.description }}
+          <div v-if="section.description" class="product-configuration__description">
+            {{ section.description }}
+          </div>
+          <div class="product-configuration__subtitle">
+            {{ getSectionSubtitle(section) }}
           </div>
         </template>
 
@@ -76,6 +79,7 @@
 
 <script setup lang="ts">
 import { toRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
@@ -92,13 +96,17 @@ interface IProps {
 
 const configurableProductId = toRef(props, "productId");
 
+const { t } = useI18n();
 const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(configurableProductId.value);
 
 function handleInput({ sectionId, value }: ConfigurationSectionInput) {
   selectSectionValue({ sectionId, value });
 }
-function getSelectedOptionTitle(sectionId: string) {
-  return selectedConfiguration.value?.[sectionId]?.selectedProductTitle ?? "";
+function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
+  return (
+    selectedConfiguration.value?.[section.id]?.selectedProductTitle ??
+    t("shared.catalog.product_details.product_configuration.nothing_selected")
+  );
 }
 </script>
 
@@ -108,7 +116,8 @@ function getSelectedOptionTitle(sectionId: string) {
     @apply space-y-5;
   }
 
-  &__description {
+  &__description,
+  &__subtitle {
     @apply mt-1 text-xs font-normal normal-case text-neutral;
   }
 
