@@ -100,7 +100,7 @@ function detectLocale(locales: unknown[]): string {
 }
 
 function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
-  const existingMessages = i18n.global.getLocaleMessage(locale as string);
+  const existingMessages = i18n.global.getLocaleMessage(locale);
 
   i18n.global.setLocaleMessage(locale, merge({}, existingMessages, messages));
 }
