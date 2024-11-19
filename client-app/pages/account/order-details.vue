@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <VcLayoutWithRightSidebar is-sidebar-sticky>
+    <VcLayout sidebar-position="right" sticky-sidebar>
       <VcWidget id="line-items-widget" size="lg" class="print:break-inside-auto">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
@@ -125,7 +125,7 @@
           </div>
         </VcWidget>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
   </div>
 
   <VcLoaderOverlay v-else no-bg />

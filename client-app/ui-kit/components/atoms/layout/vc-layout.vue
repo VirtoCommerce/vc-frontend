@@ -1,7 +1,10 @@
 <template>
   <div class="vc-layout">
     <div class="vc-layout__container">
-      <aside :class="['vc-layout__sidebar-container', `vc-layout__sidebar-container--position--${sidebarPosition}`]">
+      <aside
+        v-if="$slots.sidebar"
+        :class="['vc-layout__sidebar-container', `vc-layout__sidebar-container--position--${sidebarPosition}`]"
+      >
         <div
           ref="sidebar"
           :class="[
@@ -12,13 +15,13 @@
           ]"
           :style="stickySidebar ? sidebarStyle : {}"
         >
-          <slot name="sidebar"></slot>
+          <slot name="sidebar" />
         </div>
       </aside>
 
       <main class="vc-layout__content-container">
         <div ref="content" class="vc-layout__content">
-          <slot></slot>
+          <slot />
         </div>
       </main>
     </div>
@@ -26,8 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef } from "vue";
-import { useStickySidebar } from "@/shared/catalog/composables/useStickyFilters";
+import { ref } from "vue";
+import { useStickySidebar } from "../../../composables/useStickySidebar";
 
 interface IProps {
   sidebarPosition?: "left" | "right";
@@ -38,8 +41,8 @@ withDefaults(defineProps<IProps>(), {
   sidebarPosition: "left",
 });
 
-const sidebar = useTemplateRef("sidebar");
-const content = useTemplateRef("content");
+const sidebar = ref<HTMLElement | null>(null);
+const content = ref<HTMLElement | null>(null);
 
 const { sidebarStyle } = useStickySidebar({
   content,
@@ -52,14 +55,23 @@ const { sidebarStyle } = useStickySidebar({
   $left: "";
   $right: "";
 
-  --sidebar-offset-top: var(--vc-layout-sidebar-offset-top, theme("padding.5"));
-  --sidebar-offset-bottom: var(--vc-layout-sidebar-offset-bottom, 0);
+  //useStickySidebar requires "px"
+  --sidebar-offset-top: var(--vc-layout-sidebar-offset-top, 68px);
+  --sidebar-offset-bottom: var(--vc-layout-sidebar-offset-bottom, 20px);
+
+  @media (min-width: theme("screens.lg")) {
+    --sidebar-offset-top: var(--vc-layout-sidebar-offset-top, 108px);
+  }
 
   &__container {
     @apply max-w-full;
 
     @media (min-width: theme("screens.md")) {
       @apply flex items-stretch gap-3;
+    }
+
+    @media (min-width: theme("screens.xl")) {
+      @apply gap-5;
     }
   }
 
@@ -99,8 +111,12 @@ const { sidebarStyle } = useStickySidebar({
 
   &__sidebar {
     &--sticky {
+      @media (max-width: theme("screens.md")) {
+        @apply relative top-auto bottom-auto #{!important};
+      }
+
       @media (min-width: theme("screens.md")) {
-        //@apply sticky top-[--sidebar-offset-top];
+        @apply sticky top-[--sidebar-offset-top] bottom-[--sidebar-offset-bottom];
       }
     }
 

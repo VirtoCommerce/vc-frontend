@@ -4,7 +4,7 @@
       <VcBreadcrumbs :items="breadcrumbs" />
     </div>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <VcTypography tag="h1">
         {{ $t("quote_details.title", [quote.number]) }}
       </VcTypography>
@@ -19,9 +19,9 @@
           </VcButton>
         </div>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <!-- Quote products -->
       <VcWidget size="lg">
         <QuoteLineItems :items="quote.items" readonly />
@@ -116,7 +116,7 @@
           <VcAddressInfo :address="billingAddress!" />
         </VcWidget>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
   </div>
 
   <VcLoaderOverlay v-else no-bg />
@@ -133,7 +133,6 @@ import QuoteLineItems from "../components/quote-line-items.vue";
 import QuoteStatus from "../components/quote-status.vue";
 import { useUserQuote } from "../useUserQuote";
 import type { QuoteAttachmentType } from "../api/graphql/types";
-import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {
   quoteId: string;
