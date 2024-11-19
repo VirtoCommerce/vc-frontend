@@ -1,0 +1,18 @@
+{
+  "push_messages": {
+    "title": "Benachrichtigungen",
+    "menu_item_name": "Benachrichtigungen",
+    "empty_list": "Sie haben derzeit keine neuen Benachrichtigungen",
+    "options": {
+      "make_all_as_read": "Alle als gelesen markieren",
+      "make_all_as_unread": "Alle als ungelesen markieren"
+    },
+    "empty": {
+      "title": "Momentan keine neuen Benachrichtigungen.",
+      "description": "Bleiben Sie dran für Updates und wichtige Nachrichten."
+    },
+    "clear_all": "Alle löschen",
+    "view_all": "Alle Benachrichtigungen anzeigen",
+    "show_unread_only": "Nur ungelesene anzeigen"
+  }
+}
