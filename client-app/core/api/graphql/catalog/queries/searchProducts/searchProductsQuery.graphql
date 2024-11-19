@@ -43,6 +43,7 @@ query SearchProducts(
       packSize
       inWishlist
       productType
+      isConfigurable
       vendor {
         id
         name

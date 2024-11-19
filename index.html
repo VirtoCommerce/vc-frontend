@@ -13,18 +13,16 @@
     />
     <link rel="stylesheet" href="/client-app/assets/styles/preflight.scss" />
     <link rel="stylesheet" href="/client-app/assets/styles/vendors.scss" />
+
+    <link rel="manifest" href="/client-app/config/manifest.json">
+
     <meta name="robots" content="noindex" />
 
     <title>Virto Commerce</title>
   </head>
 
   <body>
-    <!--
-      NOTE: As an example, here is the code for transferring
-      artificial (in development mode) settings to a Vue application.
-    -->
-    <div id="app" data-settings='{ "exampleProperty": "example value" }'></div>
-
+    <div id="app"></div>
     <script type="module" src="/client-app/main.ts"></script>
   </body>
 </html>

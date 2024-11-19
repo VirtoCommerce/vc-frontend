@@ -31,6 +31,7 @@
         <VcFileUploader
           v-bind="fileOptions"
           :files="files"
+          removable
           @add-files="onAddFiles"
           @remove-files="onRemoveFiles"
           @download="onFileDownload"

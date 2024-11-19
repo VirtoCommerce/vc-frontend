@@ -25,6 +25,7 @@
         :name="item.name"
         :route="getRoute(item)"
         :properties="getProperties(item)"
+        :actual-price="item.selectedTierPrice?.price"
         :list-price="item.listPrice"
         :total="item.extendedPrice"
         with-image
