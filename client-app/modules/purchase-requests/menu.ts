@@ -27,7 +27,7 @@ export const menuItems: DeepPartial<MenuType> = {
               name: "PurchaseRequests",
             },
             title: "purchase_requests.menu.link.title",
-            icon: "/static/images/dashboard/icons/purchase-requests.svg#main",
+            icon: "cloud-upload",
             priority: 100,
           },
         ],
