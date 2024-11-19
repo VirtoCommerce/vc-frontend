@@ -9,7 +9,7 @@
         <div class="vc-push-messages__list">
           <div class="vc-push-messages__head">
             <div class="vc-push-messages__title">
-              <span>{{ $t("ui_kit.push-messages.title") }}</span>
+              <span>{{ $t("push_messages.title") }}</span>
 
               <VcBadge v-if="unreadCount > 0" variant="outline" size="lg" rounded>
                 {{ unreadCount }}
@@ -17,7 +17,7 @@
             </div>
 
             <VcSwitch v-model="unreadVisibility" size="sm">
-              {{ $t("ui_kit.push-messages.show_unread_only") }}
+              {{ $t("push_messages.show_unread_only") }}
             </VcSwitch>
 
             <VcDropdownMenu
@@ -35,7 +35,7 @@
                     $emit('markReadAll');
                   "
                 >
-                  {{ $t("ui_kit.push-messages.options.make_all_as_read") }}
+                  {{ $t("push_messages.options.make_all_as_read") }}
                 </VcMenuItem>
 
                 <VcMenuItem
@@ -44,7 +44,7 @@
                     $emit('markUnreadAll');
                   "
                 >
-                  {{ $t("ui_kit.push-messages.options.make_all_as_unread") }}
+                  {{ $t("push_messages.options.make_all_as_unread") }}
                 </VcMenuItem>
               </template>
             </VcDropdownMenu>
@@ -55,11 +55,11 @@
 
             <div v-if="totalCount === 0" class="vc-push-messages__empty">
               <div class="vc-push-messages__empty-title">
-                {{ $t("ui_kit.push-messages.empty.title") }}
+                {{ $t("push_messages.empty.title") }}
               </div>
 
               <div class="vc-push-messages__empty-text">
-                {{ $t("ui_kit.push-messages.empty.description") }}
+                {{ $t("push_messages.empty.description") }}
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
               class="vc-push-messages__action-left"
               @click="$emit('clearAll')"
             >
-              {{ $t("ui_kit.push-messages.clear_all") }}
+              {{ $t("push_messages.clear_all") }}
             </VcButton>
             <VcButton
               v-if="canViewAll"
@@ -86,7 +86,7 @@
                 $emit('viewAll');
               "
             >
-              {{ $t("ui_kit.push-messages.view_all") }}
+              {{ $t("push_messages.view_all") }}
             </VcButton>
           </div>
         </div>
@@ -113,8 +113,8 @@ interface IProps {
   canViewAll?: boolean;
   showUnreadOnly?: boolean;
   withOptions?: boolean;
-  offsetOptions?: VcPushMessagesOffsetOptionsType;
-  placement?: VcPushMessagesPlacementType;
+  offsetOptions?: VcPopoverOffsetOptionsType;
+  placement?: VcPopoverPlacementType;
 }
 
 const emits = defineEmits<IEmits>();

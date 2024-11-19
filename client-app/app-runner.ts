@@ -13,7 +13,7 @@ import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
-import { usePushNotifications } from "@/modules/push-messages";
+import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { createRouter } from "@/router";
 import { useUser } from "@/shared/account";
@@ -66,7 +66,6 @@ export default async () => {
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
-  const { init: initializePushNotifications } = usePushNotifications();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
 
@@ -131,7 +130,7 @@ export default async () => {
    */
 
   await fetchWhiteLabelingSettings();
-  void initializePushNotifications(router); // need to be called after white labeling settings are fetched
+  void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);

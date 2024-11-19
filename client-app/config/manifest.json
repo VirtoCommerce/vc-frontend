@@ -1,0 +1,18 @@
+{
+  "name": "Store",
+  "short_name": "Store",
+  "description": "Store description",
+  "lang": "en-US",
+  "display": "standalone",
+  "orientation": "any",
+  "start_url": "/",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "/static/icons/favicon-pwa-v1.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
