@@ -29,8 +29,6 @@ export async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<
     if (locale !== FALLBACK_LOCALE) {
       mergeLocales(i18n, FALLBACK_LOCALE, moduleFallbackMessages);
     }
-
-    Logger.debug(`The "${moduleName}" module locale: "${locale}" was loaded successfully.`);
   } catch (error) {
     Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`);
   }

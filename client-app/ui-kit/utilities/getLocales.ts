@@ -20,8 +20,6 @@ export async function getLocales(
         return {};
       }),
     ]);
-    Logger.debug(`The UI Kit locale: "${locale}" was loaded successfully.`);
-
     return {
       messages,
       fallbackMessages,
