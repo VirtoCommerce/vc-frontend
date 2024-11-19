@@ -1,6 +1,6 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
-import { ref, readonly, computed, nextTick } from "vue";
+import { ref, readonly, computed } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
@@ -77,7 +77,6 @@ function _useConfigurableProduct(configurableProductId: string) {
           });
         }
       });
-      await nextTick();
       void createConfiguredLineItem();
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
