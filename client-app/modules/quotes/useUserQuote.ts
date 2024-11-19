@@ -1,4 +1,3 @@
-import { createSharedComposable } from "@vueuse/core";
 import { cloneDeep, omit, remove } from "lodash";
 import { computed, ref } from "vue";
 import { AddressType } from "@/core/enums";
@@ -23,26 +22,26 @@ import type {
   ApproveQuoteResultType,
 } from "../quotes/api/graphql/types";
 
-export function _useUserQuote() {
-  const fetching = ref<boolean>(false);
+const fetching = ref<boolean>(false);
 
-  const quote = ref<QuoteType | undefined>();
+const quote = ref<QuoteType | undefined>();
 
-  const billingAddress = computed<QuoteAddressType | undefined>(() =>
-    quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
-  );
-  const shippingAddress = computed<QuoteAddressType | undefined>(() =>
-    quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
-  );
+const billingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Billing),
+);
+const shippingAddress = computed<QuoteAddressType | undefined>(() =>
+  quote.value?.addresses?.find((address: QuoteAddressType) => address.addressType === AddressType.Shipping),
+);
 
-  const attachments = computed(() => quote.value?.attachments ?? []);
+const attachments = computed(() => quote.value?.attachments ?? []);
 
-  const attachedFiles = computed(() =>
-    attachments.value.map((attachment) =>
-      toAttachedFile(attachment.name, attachment.size, attachment.contentType, attachment.url),
-    ),
-  );
+const attachedFiles = computed(() =>
+  attachments.value.map((attachment) =>
+    toAttachedFile(attachment.name, attachment.size, attachment.contentType, attachment.url),
+  ),
+);
 
+export function useUserQuote() {
   function clearQuote(): void {
     quote.value = undefined;
   }
@@ -196,5 +195,3 @@ export function _useUserQuote() {
     submitQuote,
   };
 }
-
-export const useUserQuote = createSharedComposable(_useUserQuote);

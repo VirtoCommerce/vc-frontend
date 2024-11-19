@@ -48,7 +48,49 @@
       </VcWidget>
 
       <template #sidebar>
-        <QuoteSummary :quote="quote" />
+        <VcWidget :title="$t('quote_details.quote_summary')">
+          <div class="flex justify-between text-base">
+            <span class="font-bold">
+              {{ $t("quote_details.subTotal") }}
+            </span>
+
+            <span class="text-lg font-black text-[--price-color]">
+              <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
+            </span>
+          </div>
+          <div class="border-y py-2 text-base font-normal">
+            <div class="flex justify-between text-base">
+              {{ $t("quote_details.discountTotal") }}
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.discountTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              {{ $t("quote_details.shippingTotal") }}
+
+              <span>
+                <VcPriceDisplay :value="quote.totals?.shippingTotal" />
+              </span>
+            </div>
+            <div class="flex justify-between text-base">
+              {{ $t("quote_details.taxTotal") }}
+
+              <span class="">
+                <VcPriceDisplay :value="quote.totals?.taxTotal" />
+              </span>
+            </div>
+          </div>
+          <div class="flex justify-between text-base">
+            <span class="font-bold">
+              {{ $t("quote_details.total") }}
+            </span>
+
+            <span class="text-lg font-black text-success-700">
+              <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
+            </span>
+          </div>
+        </VcWidget>
 
         <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
           <div class="space-y-1">
@@ -85,13 +127,12 @@ import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
-import { useUserQuote } from "@/modules/quotes/useUserQuote";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
-import type { QuoteAttachmentType } from "@/modules/quotes/api/graphql/types";
-import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
-import QuoteStatus from "@/modules/quotes/components/quote-status.vue";
-import QuoteSummary from "@/modules/quotes/components/quote-summary.vue";
+import QuoteLineItems from "../components/quote-line-items.vue";
+import QuoteStatus from "../components/quote-status.vue";
+import { useUserQuote } from "../useUserQuote";
+import type { QuoteAttachmentType } from "../api/graphql/types";
 import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {
@@ -101,7 +142,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-const { quote, billingAddress, approveItem, declineItem, shippingAddress, fetchQuote } = useUserQuote();
+const { quote, billingAddress, approveItem, declineItem, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
 const notification = useNotifications();
 const router = useRouter();
 
@@ -138,6 +179,7 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 watchEffect(async () => {
+  clearQuote();
   await fetchQuote({ id: props.quoteId });
 });
 
