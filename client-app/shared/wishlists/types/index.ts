@@ -1,4 +1,4 @@
-export interface WishlistInputType {
+export interface IWishlistInput {
   listName: string;
   errorMessage?: string;
 }
