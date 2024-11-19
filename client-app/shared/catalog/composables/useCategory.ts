@@ -24,7 +24,7 @@ export function useCategory() {
       category.value = {
         ...data.category,
         childCategories: data.childCategories.childCategories ?? [],
-        name: data.category?.name,
+        name: data.category?.name ?? catalogName,
         id: data.category?.id || catalogId,
       };
     } catch (e) {

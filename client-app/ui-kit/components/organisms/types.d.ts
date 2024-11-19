@@ -7,8 +7,6 @@ declare module "vue" {
     VcAddToCart: typeof Components.VcAddToCart;
     VcConfirmationModal: typeof Components.VcConfirmationModal;
     VcModal: typeof Components.VcModal;
-    VcPushMessage: typeof Components.VcPushMessage;
-    VcPushMessages: typeof Components.VcPushMessages;
     VcPagination: typeof Components.VcPagination;
     VcProductCard: typeof Components.VcProductCard;
     VcProductImage: typeof Components.VcProductImage;
