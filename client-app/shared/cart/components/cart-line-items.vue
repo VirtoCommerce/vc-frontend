@@ -43,13 +43,21 @@
 
     <template #after-content="{ item }">
       <div v-if="item.configurationItems?.length" class="rounded border bg-neutral-50 px-4 py-2">
-        <button type="button" class="flex items-center gap-1 text-xs font-bold">
+        <button
+          type="button"
+          class="flex items-center gap-1 text-xs font-bold"
+          @click="configurationItemsCollapseState[item.id] = !configurationItemsCollapseState[item.id]"
+        >
           <span>{{ $t("shared.cart.configuration_items.title") }}</span>
 
-          <VcIcon class="text-primary" :size="12" name="chevron-down" />
+          <VcIcon
+            class="text-primary"
+            :name="configurationItemsCollapseState[item.id] ? 'chevron-up' : 'chevron-down'"
+            size="xs"
+          />
         </button>
 
-        <ul class="space-y-1.5 pt-2 text-xs">
+        <ul class="space-y-1.5 pt-2 text-xs" :class="{ hidden: !configurationItemsCollapseState[item.id] }">
           <li v-for="(configurationItem, index) in item.configurationItems" :key="configurationItem.id">
             {{ `${index + 1}. ${configurationItem.name}` }}
           </li>
@@ -73,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef, watchEffect } from "vue";
+import { computed, ref, toRef, watchEffect } from "vue";
 import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
@@ -102,6 +110,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const validationErrors = toRef(props, "validationErrors");
+const configurationItemsCollapseState = ref<Record<string, boolean>>({});
 
 const { localizedItemsErrors, setErrors } = useErrorsTranslator<ValidationErrorType>("validation_error");
 
