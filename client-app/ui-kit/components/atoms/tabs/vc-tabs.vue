@@ -11,7 +11,7 @@
     >
       <span
         :class="[
-          { 'rounded-sm bg-additional-50  shadow-md': isActiveItem(item) },
+          { 'rounded bg-additional-50  shadow-md': isActiveItem(item) },
           isActiveItem(item) ? 'text-neutral-900' : 'text-primary-700',
         ]"
         class="block appearance-none px-1.5 py-2"
