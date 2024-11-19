@@ -1,26 +1,24 @@
 <template>
-  <nav class="flex gap-1">
+  <div>
     <button
       v-for="(item, index) in items"
       :key="index"
       :disabled="isDisabled"
       :class="isActiveItem(item) ? 'cursor-default' : 'text-[--link-color] hover:text-[--link-hover-color]'"
       type="button"
-      class="appearance-none disabled:opacity-40"
+      class="appearance-none px-2.5 disabled:opacity-40"
       @click="select(item)"
     >
       <span
-        :class="{ 'rounded-sm bg-additional-50 shadow-md': isActiveItem(item) }"
-        class="block appearance-none px-1.5 py-2 text-primary-700"
+        :class="{ [isDisabled ? '!border-neutral-400' : '!border-primary']: isActiveItem(item) }"
+        class="block appearance-none border-b-[3px] border-transparent pb-2.5 pt-3 font-bold"
       >
-        <slot name="item" v-bind="{ item, index, isActive: isActiveItem(item) }">
-          <span :class="{ 'text-additional-950': isActiveItem(item) }">{{
-            textField && isItemObject(item) ? item[textField] : item
-          }}</span>
+        <slot name="item" v-bind="{ item, index }">
+          {{ textField && isItemObject(item) ? item[textField] : item }}
         </slot>
       </span>
     </button>
-  </nav>
+  </div>
 </template>
 
 <script setup lang="ts" generic="T extends ItemType | string | number, U extends string | number">
