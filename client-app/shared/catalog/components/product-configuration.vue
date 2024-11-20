@@ -44,7 +44,7 @@
                   :value="property.value"
                 />
                 <VcProperty class="@2xl:hidden" :label="$t('common.labels.price_per_item')">
-                  <VcPriceDisplay :value="product.price.actual" />
+                  <VcPriceDisplay :value="listPrice" />
                 </VcProperty>
               </VcProductProperties>
 
