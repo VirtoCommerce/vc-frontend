@@ -81,7 +81,7 @@ const mobilePreSelectedMenuItem = computed<ExtendedMenuLinkType | undefined>(() 
 
   let preSelectedLink: ExtendedMenuLinkType | undefined;
 
-  if (["Catalog", "Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
+  if (["Category", "Product"].some((item) => matchedRouteNames.includes(item))) {
     preSelectedLink = mobileCatalogMenuItem.value;
   } else if (matchedRouteNames.includes("Account") && !matchedRouteNames.includes("Dashboard")) {
     preSelectedLink = mobileAccountMenuItem.value;

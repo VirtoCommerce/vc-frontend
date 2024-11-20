@@ -17,19 +17,19 @@
       </template>
 
       <!-- Catalog button -->
-      <a
+      <VcButton
         ref="showCatalogMenuButton"
-        :href="catalogLink"
-        type="button"
-        class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
+        :append-icon="catalogMenuItems?.length ? catalogButtonIcon : undefined"
+        variant="outline"
+        class="border-primary px-[0.8rem] py-[0.55rem] text-sm"
         @click="toggleCatalogDropdown"
       >
-        <span class="font-bold uppercase tracking-wide">
+        <span
+          class="font-bold uppercase tracking-wide text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
+        >
           {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
         </span>
-
-        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 fill-primary" />
-      </a>
+      </VcButton>
 
       <SearchBar />
 
@@ -63,7 +63,6 @@
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, ref, shallowRef } from "vue";
-import { useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { SearchBar } from "@/shared/layout";
@@ -72,7 +71,7 @@ import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
 
-const router = useRouter();
+//const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
@@ -85,7 +84,6 @@ const catalogMenuVisible = ref(false);
 
 const { bottom } = useElementBounding(bottomHeader);
 
-const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const catalogMenuStyle = computed<StyleValue | undefined>(() =>
   bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined,

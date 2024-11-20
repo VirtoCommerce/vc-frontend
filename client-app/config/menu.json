@@ -154,7 +154,7 @@
         {
           "id": "catalog",
           "route": {
-            "name": "Catalog"
+            "name": ""
           },
           "title": "shared.layout.header.menu.catalog",
           "icon": "cube",
