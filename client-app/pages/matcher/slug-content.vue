@@ -1,7 +1,19 @@
 <template>
   <div v-if="isVisible && !loading && (hasContent || objectType)" class="slug-content">
-    <CategoryComponent v-if="objectType === 'Category'" :category-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
-    <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+    <CatalogComponent v-if="objectType === ObjectType.Catalog" />
+
+    <CategoryComponent
+      v-else-if="objectType === ObjectType.Category"
+      :category-id="slugInfo?.entityInfo?.objectId"
+      allow-set-meta
+    />
+
+    <Product
+      v-else-if="objectType === ObjectType.CatalogProduct"
+      :product-id="slugInfo?.entityInfo?.objectId"
+      allow-set-meta
+    />
+
     <StaticPage v-else-if="hasContent" />
   </div>
 </template>
@@ -27,6 +39,7 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
+const CatalogComponent = defineAsyncComponent(() => import("@/pages/catalog.vue"));
 const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vue"));
 const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
@@ -47,6 +60,7 @@ const seoUrl = computedEager(() => {
 const { loading, slugInfo, objectType, hasContent, pageContent, fetchContent } = useSlugInfo(seoUrl);
 
 enum ObjectType {
+  Catalog = "Catalog",
   CatalogProduct = "CatalogProduct",
   Category = "Category",
   ContentFile = "ContentFile",
@@ -55,7 +69,9 @@ enum ObjectType {
 watchEffect(() => {
   if (loading.value) {
     emit("setState", "loading");
-  } else if ([ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)) {
+  } else if (
+    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)
+  ) {
     emit("setState", "ready");
   } else if (pageContent.value) {
     emit("setState", "ready");
