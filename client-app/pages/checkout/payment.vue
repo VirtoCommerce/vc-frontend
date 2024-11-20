@@ -1,5 +1,5 @@
 <template>
-  <VcLayout sidebar-position="right" sticky-sidebar>
+  <VcLayout v-if="placedOrder" sidebar-position="right" sticky-sidebar>
     <VcWidget size="lg">
       <template #default-container>
         <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-6">
