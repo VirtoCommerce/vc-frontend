@@ -56,7 +56,7 @@ interface IProps {
 defineProps<IProps>();
 
 function handleCreateConfiguration() {
-  const productConfigurationElement = document.querySelector(".product-configuration__description");
+  const productConfigurationElement = document.getElementById("product-configuration-anchor");
   if (productConfigurationElement) {
     productConfigurationElement.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
   }

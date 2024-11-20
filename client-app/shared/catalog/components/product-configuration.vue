@@ -5,6 +5,7 @@
     :title="$t('shared.catalog.product_details.product_configuration.title')"
     size="lg"
   >
+    <div id="product-configuration-anchor" />
     <div class="product-configuration__widgets">
       <VcWidget v-for="section in configuration" :key="section.id" collapsible size="xs">
         <template #title>
