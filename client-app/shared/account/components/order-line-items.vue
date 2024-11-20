@@ -27,7 +27,7 @@
     <template #after-content="{ item }">
       <ConfigurationItems
         v-if="item.configurationItems?.length"
-        :item-id="item.id"
+        :id="item.id"
         :configuration-items="item.configurationItems"
       />
     </template>
