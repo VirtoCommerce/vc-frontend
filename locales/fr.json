@@ -562,6 +562,9 @@
       "clear_cart_modal": {
         "title": "Vider le panier",
         "message": "Voulez-vous vider votre panier ?"
+      },
+      "configuration_items": {
+        "title": "Liste des composants"
       }
     },
     "catalog": {
@@ -605,6 +608,11 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price",
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        },
+        "product_configuration": {
+          "title": "Configurer les paramètres",
+          "none": "Aucun",
+          "nothing_selected": "Aucun sélectionné"
         }
       },
       "discount_badge": {

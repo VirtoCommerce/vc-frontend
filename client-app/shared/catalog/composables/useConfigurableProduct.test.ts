@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useConfigurableProduct } from "@/shared/catalog";
+import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
 import type { Mock } from "vitest";
 
 const mocks = vi.hoisted(() => {
@@ -23,51 +23,41 @@ vi.mock("@/core/utilities", () => ({
 }));
 
 describe("useConfigurableProduct", () => {
-  let composable: ReturnType<typeof useConfigurableProduct>;
+  type UseConfigurableProductType =
+    typeof import("@/shared/catalog/composables/useConfigurableProduct").useConfigurableProduct;
+
+  let composable: ReturnType<UseConfigurableProductType>;
   const configurableProductId = "test-product-id";
-  let mutateMock: Mock;
+  let createConfiguredLineItemMutationMock: Mock;
 
   beforeEach(() => {
     vi.resetAllMocks();
     vi.useFakeTimers();
 
-    mutateMock = vi.fn();
-    mocks.useCreateConfiguredLineItemMutation.mockReturnValue({ mutate: mutateMock });
+    createConfiguredLineItemMutationMock = vi.fn();
+    mocks.useCreateConfiguredLineItemMutation.mockReturnValue({ mutate: createConfiguredLineItemMutationMock });
 
     composable = useConfigurableProduct(configurableProductId);
   });
 
+  it("should initialize with correct default state", () => {
+    expect(composable.configuration.value).toEqual([]);
+    expect(composable.selectedConfiguration.value).toEqual({});
+    expect(composable.selectedConfigurationInput.value).toEqual([]);
+    expect(composable.configuredLineItem.value).toBeUndefined();
+    expect(composable.loading.value).toBe(false);
+  });
+
   it("should fetch product configuration and set configuration ref", async () => {
     const mockConfiguration = {
-      configurationSections: [
-        {
-          id: "Section 1",
-          name: "Section 1",
-          isRequired: true,
-          products: [
-            { id: "product-1", name: "Product 1" },
-            { id: "product-2", name: "Product 2" },
-          ],
-          quantity: 1,
-        },
-        {
-          id: "Section 2",
-          name: "Section 2",
-          isRequired: false,
-          products: [
-            { id: "product-3", name: "Product 3" },
-            { id: "product-4", name: "Product 4" },
-          ],
-          quantity: 1,
-        },
-      ],
+      configurationSections: [createConfigurationSection(1, { isRequired: true }), createConfigurationSection(2)],
     };
     mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
 
     await composable.fetchProductConfiguration();
 
     expect(mocks.getProductConfiguration).toHaveBeenCalledWith(configurableProductId);
-    expect(composable.configuration.value).toEqual(mockConfiguration);
+    expect(composable.configuration.value).toEqual(mockConfiguration.configurationSections);
 
     expect(composable.selectedConfiguration.value).toEqual({
       "Section 1": {
@@ -82,26 +72,8 @@ describe("useConfigurableProduct", () => {
   it("should update selectedConfiguration when selectSectionValue is called", async () => {
     const mockConfiguration = {
       configurationSections: [
-        {
-          id: "Section 1",
-          name: "Section 1",
-          isRequired: true,
-          products: [
-            { id: "product-1", name: "Product 1" },
-            { id: "product-2", name: "Product 2" },
-          ],
-          quantity: 1,
-        },
-        {
-          id: "Section 2",
-          name: "Section 2",
-          isRequired: false,
-          products: [
-            { id: "product-3", name: "Product 3" },
-            { id: "product-4", name: "Product 4" },
-          ],
-          quantity: 1,
-        },
+        createConfigurationSection(1, { isRequired: true, products: [1, 2] }),
+        createConfigurationSection(2, { isRequired: false, products: [3, 4] }),
       ],
     };
     mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
@@ -132,18 +104,7 @@ describe("useConfigurableProduct", () => {
 
   it("should call createConfiguredLineItem when selectedConfigurationInput changes", async () => {
     const mockConfiguration = {
-      configurationSections: [
-        {
-          id: "Section 1",
-          name: "Section 1",
-          isRequired: false,
-          products: [
-            { id: "product-1", name: "Product 1" },
-            { id: "product-2", name: "Product 2" },
-          ],
-          quantity: 1,
-        },
-      ],
+      configurationSections: [createConfigurationSection(1, { isRequired: false })],
     };
 
     mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
@@ -156,7 +117,7 @@ describe("useConfigurableProduct", () => {
       },
     };
 
-    mutateMock.mockResolvedValue(mockCreateConfiguredLineItemResponse);
+    createConfiguredLineItemMutationMock.mockResolvedValue(mockCreateConfiguredLineItemResponse);
 
     await composable.fetchProductConfiguration();
     vi.advanceTimersByTime(1000);
@@ -173,20 +134,15 @@ describe("useConfigurableProduct", () => {
     await flushPromises();
     vi.advanceTimersByTime(1000);
 
-    expect(mutateMock.mock.calls[0][0]).toEqual({
+    expect(createConfiguredLineItemMutationMock.mock.calls[0][0]).toEqual({
       command: {
         configurableProductId: configurableProductId,
-        configurationSections: [
-          {
-            sectionId: "Section 1",
-            value: undefined,
-          },
-        ],
+        configurationSections: [],
       },
     });
 
-    expect(mutateMock).toBeCalledTimes(2);
-    expect(mutateMock.mock.calls[1][0]).toEqual({
+    expect(createConfiguredLineItemMutationMock).toBeCalledTimes(2);
+    expect(createConfiguredLineItemMutationMock.mock.calls[1][0]).toEqual({
       command: {
         configurableProductId: configurableProductId,
         configurationSections: [
@@ -216,9 +172,8 @@ describe("useConfigurableProduct", () => {
     });
 
     await composable.fetchProductConfiguration();
-    expect(composable.loading.value).toBe(false);
 
-    mutateMock.mockImplementation(() => {
+    createConfiguredLineItemMutationMock.mockImplementation(() => {
       expect(composable.loading.value).toBe(true);
       return Promise.resolve({});
     });
@@ -236,4 +191,47 @@ describe("useConfigurableProduct", () => {
 
     expect(composable.loading.value).toBe(false);
   });
+
+  it("should not call createConfiguredLineItem if selectedConfigurationInput does not change", async () => {
+    const mockConfiguration = {
+      configurationSections: [createConfigurationSection(1)],
+    };
+    mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+
+    await composable.fetchProductConfiguration();
+    vi.advanceTimersByTime(1000);
+    await flushPromises();
+
+    composable.selectSectionValue({
+      sectionId: "Section 1",
+      value: {
+        productId: "product-1",
+        quantity: 1,
+      },
+    });
+
+    await flushPromises();
+    expect(createConfiguredLineItemMutationMock).toBeCalledTimes(1); // Only the initial call
+  });
 });
+
+// Mock data factory functions
+function createProduct(id: number) {
+  return {
+    id: `product-${id}`,
+    name: `Product ${id}`,
+  };
+}
+function createConfigurationSection(id: number, { isRequired = false, products = [1, 2] } = {}) {
+  return {
+    id: `Section ${id}`,
+    name: `Section ${id}`,
+    type: "product",
+    isRequired,
+    options: products.map((productId) => ({
+      id: `option-${productId}`,
+      product: createProduct(productId),
+      quantity: 1,
+    })),
+  };
+}

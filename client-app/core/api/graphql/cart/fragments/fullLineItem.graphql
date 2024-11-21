@@ -35,4 +35,8 @@ fragment fullLineItem on LineItemType {
   validationErrors {
     ...validationError
   }
+  configurationItems {
+    id
+    name
+  }
 }
