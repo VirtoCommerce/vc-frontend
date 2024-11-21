@@ -3274,7 +3274,7 @@
           },
           {
             "name": "extendedPrice",
-            "description": "List price",
+            "description": "Extended price",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -3318,7 +3318,7 @@
           },
           {
             "name": "product",
-            "description": "Product",
+            "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
@@ -26124,6 +26124,46 @@
       },
       {
         "kind": "OBJECT",
+        "name": "OrderConfigurationItemType",
+        "description": null,
+        "isOneOf": null,
+        "fields": [
+          {
+            "name": "id",
+            "description": "Configuration item ID",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": "Configuration item name",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "OrderDiscountType",
         "description": null,
         "isOneOf": null,
@@ -26165,12 +26205,36 @@
               "name": "String",
               "ofType": null
             },
+            "isDeprecated": true,
+            "deprecationReason": "Use the new PromotionDescription field instead"
+          },
+          {
+            "name": "promotionDescription",
+            "description": "Description of the promotion",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "promotionId",
             "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "promotionName",
+            "description": "Name of the promotion",
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -26252,6 +26316,22 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "configurationItems",
+            "description": "Configuration items for configurable product",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "OrderConfigurationItemType",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

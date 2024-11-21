@@ -480,13 +480,12 @@ export type ConfigurationLineItemType = {
   currency: CurrencyType;
   /** Total discount amount */
   discountAmount: MoneyType;
-  /** List price */
+  /** Extended price */
   extendedPrice: MoneyType;
   /** Item id */
   id?: Maybe<Scalars['String']['output']>;
   /** List price */
   listPrice: MoneyType;
-  /** Product */
   product?: Maybe<Product>;
   /** Quantity */
   quantity?: Maybe<Scalars['Int']['output']>;
@@ -3621,12 +3620,24 @@ export type OrderAddressType = {
   zip?: Maybe<Scalars['String']['output']>;
 };
 
+export type OrderConfigurationItemType = {
+  /** Configuration item ID */
+  id: Scalars['String']['output'];
+  /** Configuration item name */
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type OrderDiscountType = {
   /** Order discount amount */
   amount: MoneyType;
   coupon?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use the new PromotionDescription field instead */
   description?: Maybe<Scalars['String']['output']>;
+  /** Description of the promotion */
+  promotionDescription?: Maybe<Scalars['String']['output']>;
   promotionId?: Maybe<Scalars['String']['output']>;
+  /** Name of the promotion */
+  promotionName?: Maybe<Scalars['String']['output']>;
 };
 
 export type OrderLineItemType = {
@@ -3635,6 +3646,8 @@ export type OrderLineItemType = {
   catalogId: Scalars['String']['output'];
   categoryId?: Maybe<Scalars['String']['output']>;
   comment?: Maybe<Scalars['String']['output']>;
+  /** Configuration items for configurable product */
+  configurationItems?: Maybe<Array<Maybe<OrderConfigurationItemType>>>;
   currency: CurrencyType;
   discountAmount: MoneyType;
   discountAmountWithTax: MoneyType;
