@@ -21,7 +21,7 @@
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
             <span v-if="prependIcon || $slots.prepend" class="vc-widget__prepend-append">
               <slot name="prepend">
-                <VcHexagonIcon v-if="prependIcon" :icon="prependIcon" />
+                <VcShape v-if="prependIcon" :icon="prependIcon" />
               </slot>
             </span>
 

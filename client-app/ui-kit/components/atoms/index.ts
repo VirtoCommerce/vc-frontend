@@ -11,7 +11,6 @@ export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue"
 export { default as VcDialog } from "./dialog/vc-dialog.vue";
 export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
 export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-panels.vue";
-export { default as VcHexagonIcon } from "./hexagon-icon/vc-hexagon-icon.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";

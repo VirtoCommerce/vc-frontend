@@ -36,6 +36,7 @@ export { default as VcProductPrice } from "./product-price/vc-product-price.vue"
 export { default as VcProductTotal } from "./product-total/vc-product-total.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
+export { default as VcShape } from "./shape/vc-shape.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcTextarea } from "./textarea/vc-textarea.vue";
 export { default as VcVariationsButton } from "./variations-button/vc-variations-button.vue";
