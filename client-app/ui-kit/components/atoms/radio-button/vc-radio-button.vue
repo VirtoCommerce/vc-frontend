@@ -20,6 +20,8 @@
         :checked="checked"
         :disabled="disabled"
         :aria-checked="checked"
+        @change="emit('change', value)"
+        @input="emit('input', value)"
       />
 
       <span class="vc-radio-button__label">
@@ -55,12 +57,19 @@ interface IProps {
   singleLineMessage?: boolean;
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   labelPosition: "right",
 });
 
 const model = defineModel<IProps["value"]>();
+
+interface IEmits {
+  (event: "input", value: string): void;
+  (event: "change", value: string): void;
+}
 
 const checked = computed(() => model.value === props.value);
 </script>
