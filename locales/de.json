@@ -567,6 +567,9 @@
       "clear_cart_modal": {
         "title": "Warenkorb leeren",
         "message": "Möchten Sie Ihren Warenkorb leeren?"
+      },
+      "configuration_items": {
+        "title": "Komponentenliste"
       }
     },
     "catalog": {
@@ -610,6 +613,11 @@
           "variation_sku_label": "@:common.labels.sku",
           "price_label": "@:common.labels.product_price",
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        },
+        "product_configuration": {
+          "title": "Parameter konfigurieren",
+          "none": "Keine",
+          "nothing_selected": "Nicht ausgewählt"
         }
       },
       "discount_badge": {

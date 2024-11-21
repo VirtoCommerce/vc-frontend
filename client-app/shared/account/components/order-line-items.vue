@@ -24,14 +24,21 @@
         disabled
       />
     </template>
+    <template #after-content="{ item }">
+      <ConfigurationItems
+        v-if="item.configurationItems?.length"
+        :id="item.id"
+        :configuration-items="item.configurationItems"
+      />
+    </template>
   </VcLineItems>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { prepareLineItems } from "@/core/utilities";
+import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
-
 interface IProps {
   items?: OrderLineItemType[] | LineItemType[];
 }

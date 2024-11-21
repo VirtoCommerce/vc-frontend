@@ -567,6 +567,9 @@
       "clear_cart_modal": {
         "title": "Clear cart",
         "message": "Do you want to clear your cart?"
+      },
+      "configuration_items": {
+        "title": "Components list"
       }
     },
     "catalog": {
@@ -613,7 +616,9 @@
           "vendor_label": "@:shared.catalog.product_details.vendor_label"
         },
         "product_configuration": {
-          "title": "Configure the parameters"
+          "title": "Configure the parameters",
+          "none": "None",
+          "nothing_selected": "Nothing selected"
         }
       },
       "discount_badge": {
