@@ -42,6 +42,8 @@
     </template>
 
     <template #after-content="{ item }">
+      <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
+
       <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
         <VcAlert
           v-for="(validationError, index) in localizedItemsErrors[item.id]"
@@ -64,6 +66,7 @@ import { useErrorsTranslator } from "@/core/composables";
 import { ProductType } from "@/core/enums";
 import { prepareLineItems } from "@/core/utilities";
 import { InStock } from "@/shared/catalog";
+import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, ValidationErrorType } from "@/core/api/graphql/types";
 
 interface IProps {

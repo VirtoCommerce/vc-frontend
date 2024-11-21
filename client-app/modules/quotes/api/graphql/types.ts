@@ -175,6 +175,13 @@ export type CartAddressType = {
   zip?: Maybe<Scalars['String']['output']>;
 };
 
+export type CartConfigurationItemType = {
+  /** Configuration item ID */
+  id: Scalars['String']['output'];
+  /** Configuration item name */
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 /** A connection from an object to a list of objects of type `Cart`. */
 export type CartConnection = {
   /** A list of all of the edges returned in the connection. */
@@ -211,6 +218,8 @@ export type CartType = {
   availableShippingMethods: Array<ShippingMethodType>;
   /** Shopping cart channel ID */
   channelId?: Maybe<Scalars['String']['output']>;
+  /** Cart checkout ID */
+  checkoutId: Scalars['String']['output'];
   /** Shopping cart text comment */
   comment?: Maybe<Scalars['String']['output']>;
   /** Coupons */
@@ -466,11 +475,22 @@ export type ConfigurableProductOptionInput = {
   quantity: Scalars['Int']['input'];
 };
 
-export type ConfigurationItemType = {
-  /** Configuration item ID */
-  id: Scalars['String']['output'];
-  /** Configuration item name */
-  name?: Maybe<Scalars['String']['output']>;
+export type ConfigurationLineItemType = {
+  /** Currency */
+  currency: CurrencyType;
+  /** Total discount amount */
+  discountAmount: MoneyType;
+  /** Extended price */
+  extendedPrice: MoneyType;
+  /** Item id */
+  id?: Maybe<Scalars['String']['output']>;
+  /** List price */
+  listPrice: MoneyType;
+  product?: Maybe<Product>;
+  /** Quantity */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Sale price */
+  salePrice: MoneyType;
 };
 
 export type ConfigurationQueryResponseType = {
@@ -486,36 +506,14 @@ export type ConfigurationSectionType = {
   /** Configuration section description */
   description?: Maybe<Scalars['String']['output']>;
   /** Configuration section id */
-  id?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
   /** Is configuration section required */
   isRequired: Scalars['Boolean']['output'];
   /** Configuration section name */
   name?: Maybe<Scalars['String']['output']>;
-  products?: Maybe<Array<Maybe<Product>>>;
-  quantity?: Maybe<Scalars['Int']['output']>;
+  options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
   /** Configuration section type */
   type?: Maybe<Scalars['String']['output']>;
-};
-
-export type ConfiguredLineItemType = {
-  /** Currency */
-  currency: CurrencyType;
-  /** Total discount */
-  discountTotal: MoneyType;
-  /** Total discount with tax */
-  discountTotalWithTax: MoneyType;
-  /** Total extended price */
-  extendedPriceTotal: MoneyType;
-  /** Total extended price with tax */
-  extendedPriceTotalWithTax: MoneyType;
-  /** Shopping cart subtotal */
-  subTotal: MoneyType;
-  /** Subtotal with tax */
-  subTotalWithTax: MoneyType;
-  /** Total tax */
-  taxTotal: MoneyType;
-  /** Shopping cart total */
-  total: MoneyType;
 };
 
 export type ConfirmTaskCommandType = {
@@ -2636,7 +2634,7 @@ export type LineItemType = {
   /** Category ID value */
   categoryId?: Maybe<Scalars['String']['output']>;
   /** Configuration items for configurable product */
-  configurationItems?: Maybe<Array<Maybe<ConfigurationItemType>>>;
+  configurationItems?: Maybe<Array<Maybe<CartConfigurationItemType>>>;
   /** Line item create date */
   createdDate: Scalars['DateTime']['output'];
   /** Discount amount */
@@ -2957,7 +2955,7 @@ export type Mutations = {
   cloneWishlist?: Maybe<WishlistType>;
   confirmEmail?: Maybe<CustomIdentityResultType>;
   confirmTask?: Maybe<WorkTaskType>;
-  createConfiguredLineItem?: Maybe<ConfiguredLineItemType>;
+  createConfiguredLineItem?: Maybe<ConfigurationLineItemType>;
   createContact?: Maybe<ContactType>;
   createCustomerReview?: Maybe<CustomerReview>;
   createOrderFromCart?: Maybe<CustomerOrderType>;
@@ -3622,12 +3620,24 @@ export type OrderAddressType = {
   zip?: Maybe<Scalars['String']['output']>;
 };
 
+export type OrderConfigurationItemType = {
+  /** Configuration item ID */
+  id: Scalars['String']['output'];
+  /** Configuration item name */
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type OrderDiscountType = {
   /** Order discount amount */
   amount: MoneyType;
   coupon?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use the new PromotionDescription field instead */
   description?: Maybe<Scalars['String']['output']>;
+  /** Description of the promotion */
+  promotionDescription?: Maybe<Scalars['String']['output']>;
   promotionId?: Maybe<Scalars['String']['output']>;
+  /** Name of the promotion */
+  promotionName?: Maybe<Scalars['String']['output']>;
 };
 
 export type OrderLineItemType = {
@@ -3636,6 +3646,8 @@ export type OrderLineItemType = {
   catalogId: Scalars['String']['output'];
   categoryId?: Maybe<Scalars['String']['output']>;
   comment?: Maybe<Scalars['String']['output']>;
+  /** Configuration items for configurable product */
+  configurationItems?: Maybe<Array<Maybe<OrderConfigurationItemType>>>;
   currency: CurrencyType;
   discountAmount: MoneyType;
   discountAmountWithTax: MoneyType;
@@ -4895,9 +4907,9 @@ export type QueryProductArgs = {
 
 
 export type QueryProductConfigurationArgs = {
+  configurableProductId: Scalars['String']['input'];
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  productId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
