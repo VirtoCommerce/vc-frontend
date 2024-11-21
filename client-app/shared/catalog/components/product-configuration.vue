@@ -81,7 +81,8 @@
 <script setup lang="ts">
 import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { getProductRoute } from "@/core/utilities";
+import { PropertyType } from "@/core/api/graphql/types";
+import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import type { ConfigurationSectionInput, ConfigurationSectionType, Property } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
@@ -110,7 +111,10 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
   );
 }
 function getProperties(properties: DeepReadonly<Property[]>) {
-  return properties.filter((property) => !property.hidden && !!property.value).slice(0, PRODUCT_PROPERTY_LIMIT);
+  return Object.values(getPropertiesGroupedByName(properties as Property[], PropertyType.Product)).slice(
+    0,
+    PRODUCT_PROPERTY_LIMIT,
+  );
 }
 </script>
 
