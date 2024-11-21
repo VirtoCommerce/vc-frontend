@@ -2,7 +2,7 @@ import { ApolloError, gql } from "@apollo/client/core";
 import { useApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable, computedEager } from "@vueuse/core";
 import { sumBy, difference, keyBy, merge, intersection } from "lodash";
-import { computed, readonly, ref } from "vue";
+import { computed, readonly, ref, toValue } from "vue";
 import { AbortReason } from "@/core/api/common/enums";
 import {
   useGetShortCartQuery,
@@ -29,6 +29,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
+import { useCartQueryVariables } from "@/core/api/graphql/cart/composables";
 import { useGoogleAnalytics, useSyncMutationBatchers } from "@/core/composables";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
@@ -160,8 +161,10 @@ export function _useFullCart() {
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
 
-  const forceFetch = async (variables?: { cartId?: string }) =>
-    (await load(null, variables)) || (await refetch(variables));
+  const forceFetch = async (variables?: { cartId?: string }) => {
+    const allVariables = { ...toValue(useCartQueryVariables()), ...variables };
+    return (await load(null, allVariables)) || (await refetch(allVariables));
+  };
 
   const cart = computed(() => query.value?.cart as CartType | undefined);
 
