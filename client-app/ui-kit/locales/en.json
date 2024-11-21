@@ -1,0 +1,34 @@
+{
+  "ui_kit": {
+    "product_total": {
+      "total": "Total"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "select": {
+      "items_selected": "{0} items selected"
+    },
+    "file": {
+      "progress": "{percent} done",
+      "uploaded": "Upload completed"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Drag and drop file here or",
+      "browse": "Browse your files",
+      "requirements": "The files available for upload are in {formats} formats. Each file should not exceed {fileSize}. Maximum {maxFileCount} files allowed.",
+      "any_format": "any",
+      "errors": {
+        "fix_to_continue": "Fix file upload errors to continue.",
+        "has_max_file_count": "You have uploaded the maximum number of files possible. Futher uploads are not possible.",
+        "tried_more_than_max_file_count": "You tried to upload more than maximum number of files allowed."
+      }
+    },
+    "reach_limit": {
+      "end_list": "You have reached the end of the list.",
+      "page_limit_filters": "No more results. Please try to change filters.",
+      "page_limit": "No more results could be shown."
+    }
+  }
+}

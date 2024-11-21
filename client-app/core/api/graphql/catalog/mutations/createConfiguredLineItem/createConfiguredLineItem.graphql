@@ -3,31 +3,15 @@
 
 mutation CreateConfiguredLineItem($command: InputCreateConfiguredLineItemCommand!) {
   createConfiguredLineItem(command: $command) {
-    currency {
-      ...currency
-    }
-    total {
+    id
+    quantity
+    listPrice {
       ...money
     }
-    taxTotal {
+    salePrice {
       ...money
     }
-    subTotal {
-      ...money
-    }
-    subTotalWithTax {
-      ...money
-    }
-    extendedPriceTotal {
-      ...money
-    }
-    extendedPriceTotalWithTax {
-      ...money
-    }
-    discountTotal {
-      ...money
-    }
-    discountTotalWithTax {
+    extendedPrice {
       ...money
     }
   }
