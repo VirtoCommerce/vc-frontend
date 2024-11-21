@@ -52,6 +52,7 @@ import type {
   ConfigurationSectionInput,
 } from "@/core/api/graphql/types";
 import type { OutputBulkItemType, ExtendedGiftItemType } from "@/shared/cart/types";
+import type { DeepReadonly } from "vue";
 
 const CartItemsSelectionFragment = gql`
   fragment CartItemsSelectionFragment on CartType {
@@ -82,14 +83,14 @@ export function useShortCart() {
   async function addToCart(
     productId: string,
     quantity: number,
-    configurationSections?: ConfigurationSectionInput[],
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
   ): Promise<ShortCartFragment | undefined> {
     try {
       const result = await _addToCart({
         command: {
           productId,
           quantity,
-          configurationSections,
+          configurationSections: configurationSections as ConfigurationSectionInput[],
         },
       });
       return result?.data?.addItem;

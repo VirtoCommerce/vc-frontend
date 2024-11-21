@@ -105,6 +105,7 @@ watchEffect(() => {
 
 <style lang="scss">
 .vc-widget {
+  $self: &;
   $collapsed: "";
 
   $sizeLG: "";
@@ -116,6 +117,10 @@ watchEffect(() => {
   @media (max-width: theme("screens.md")) {
     .vc-container & {
       @apply -mx-4.5;
+    }
+
+    #{$self} & {
+      @apply mx-0;
     }
   }
 
