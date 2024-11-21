@@ -246,9 +246,7 @@
       "company_info": "Firmeninformationen",
       "company_members": "Firmenmitglieder",
       "contact_administrator": "den Administrator der Website kontaktieren",
-      "push-messages": "Benachrichtigungen",
-      "saved_credit_cards": "Gespeicherte Kreditkarten",
-      "notifications": "Benachrichtigungen"
+      "saved_credit_cards": "Gespeicherte Kreditkarten"
     },
     "titles": {
       "all_actions": "Alle Aktionen",
@@ -314,8 +312,7 @@
           "cart": "@:common.links.cart",
           "lists": "@:common.links.lists",
           "orders": "@:common.links.orders",
-          "contact_us": "@:common.links.contact_us",
-          "push-messages": "@:common.links.push-messages"
+          "contact_us": "@:common.links.contact_us"
         },
         "mobile": {
           "my_account": "@:common.links.account",
@@ -327,8 +324,7 @@
             "orders": "@:common.links.orders",
             "lists": "@:common.links.lists",
             "checkout_defaults": "@:common.links.checkout_defaults",
-            "saved_credit_cards": "@:common.links.saved_credit_cards",
-            "notifications": "@:common.links.notifications"
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
           },
           "corporate": "@:shared.account.navigation.corporate_title",
           "corporate_menu": {
@@ -406,8 +402,7 @@
           "checkout_defaults": "@:common.links.checkout_defaults",
           "company_info": "@:common.links.company_info",
           "company_members": "@:common.links.company_members",
-          "saved_credit_cards": "@:common.links.saved_credit_cards",
-          "notifications": "@:common.links.notifications"
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
         }
       },
       "change_password_form": {
@@ -1119,12 +1114,6 @@
         "change_password_title": "Passwort ändern",
         "update_error_alert": "Es gab einen Fehler beim Aktualisieren des Profils"
       },
-      "notifications": {
-        "meta": {
-          "title": "Benachrichtigungen"
-        },
-        "empty_list": "Sie haben derzeit keine neuen Benachrichtigungen"
-      },
       "impersonate": {
         "title": "Nachahmung",
         "success": "Sie werden nachgeahmt",
@@ -1430,20 +1419,6 @@
         "has_max_file_count": "Sie haben die maximale Anzahl an Dateien hochgeladen. Weitere Uploads sind nicht möglich.",
         "tried_more_than_max_file_count": "Sie haben versucht, mehr als die maximal erlaubte Anzahl an Dateien hochzuladen."
       }
-    },
-    "push-messages": {
-      "title": "Benachrichtigungen",
-      "options": {
-        "make_all_as_read": "Alle als gelesen markieren",
-        "make_all_as_unread": "Alle als ungelesen markieren"
-      },
-      "empty": {
-        "title": "Momentan keine neuen Benachrichtigungen.",
-        "description": "Bleiben Sie dran für Updates und wichtige Nachrichten."
-      },
-      "clear_all": "Alle löschen",
-      "view_all": "Alle Benachrichtigungen anzeigen",
-      "show_unread_only": "Nur ungelesene anzeigen"
     },
     "reach_limit": {
       "end_list": "Sie haben das Ende der Liste erreicht.",
