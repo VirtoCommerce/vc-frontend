@@ -138,7 +138,7 @@
 
 <script setup lang="ts">
 import { isEmpty } from "lodash";
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -233,23 +233,27 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   }
 }
 
-void (async () => {
-  await forceFetch(props);
+watch(
+  () => props.cartId,
+  async () => {
+    await forceFetch({ cartId: props.cartId });
 
-  /**
-   * Send a Google Analytics shopping cart view event.
-   */
-  if (cart.value) {
-    ga.viewCart(cart.value);
-  }
+    /**
+     * Send a Google Analytics shopping cart view event.
+     */
+    if (cart.value) {
+      ga.viewCart(cart.value);
+    }
 
-  if (!config.checkout_multistep_enabled) {
-    await initialize();
-  }
+    if (!config.checkout_multistep_enabled) {
+      await initialize();
+    }
 
-  const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
-  if (isAuthenticated.value && isXRecommendModuleEnabled) {
-    recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
-  }
-})();
+    const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
+    if (isAuthenticated.value && isXRecommendModuleEnabled) {
+      recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
+    }
+  },
+  { immediate: true },
+);
 </script>

@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { computed, inject } from "vue";
+import { computed, inject, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
@@ -114,11 +114,15 @@ usePageHead({
   title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
 });
 
-void (async () => {
-  await forceFetch(props);
-  if (route.name === "Checkout") {
-    await initialize();
-    await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
-  }
-})();
+watch(
+  () => props.cartId,
+  async () => {
+    await forceFetch({ cartId: props.cartId });
+    if (route.name === "Checkout") {
+      await initialize();
+      await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
+    }
+  },
+  { immediate: true },
+);
 </script>
