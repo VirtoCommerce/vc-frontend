@@ -38,7 +38,7 @@
 
               <VcProductProperties>
                 <VcProperty
-                  v-for="property in product.properties.slice(0, PRODUCT_PROPERTY_LIMIT)"
+                  v-for="property in getProperties(product.properties)"
                   :key="property.id"
                   :label="property.name"
                   :value="property.value"
@@ -83,7 +83,7 @@ import { toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { getProductRoute } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
-import type { ConfigurationSectionInput, ConfigurationSectionType } from "@/core/api/graphql/types";
+import type { ConfigurationSectionInput, ConfigurationSectionType, Property } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
@@ -108,6 +108,9 @@ function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
     selectedConfiguration.value?.[section.id]?.selectedProductTitle ??
     t("shared.catalog.product_details.product_configuration.nothing_selected")
   );
+}
+function getProperties(properties: DeepReadonly<Property[]>) {
+  return properties.filter((property) => !property.hidden && !!property.value).slice(0, PRODUCT_PROPERTY_LIMIT);
 }
 </script>
 
