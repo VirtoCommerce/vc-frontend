@@ -34,7 +34,7 @@ import _ from "lodash";
 import { Pagination, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue"; // eslint-disable-line import/no-unresolved
 import { computed, getCurrentInstance } from "vue";
-import type { NavigationOptions, PaginationOptions } from "swiper/types";
+import type { NavigationOptions, PaginationOptions, SwiperEvents } from "swiper/types";
 
 interface IProps<T> {
   slides?: T[];
@@ -51,8 +51,7 @@ const props = withDefaults(defineProps<IProps<T>>(), {
 const componentId = `vc-carousel_${getCurrentInstance()!.uid}`;
 const modules = [Pagination, Navigation];
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return
-const listeners = computed(() => props.options.on ?? {});
+const listeners = computed<SwiperEvents>(() => props.options.on ?? ({} as SwiperEvents));
 
 const attrs = computed<Omit<CarouselOptions, "on">>(() => {
   const options = _.clone(props.options);

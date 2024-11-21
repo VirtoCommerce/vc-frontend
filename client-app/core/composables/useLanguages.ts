@@ -105,20 +105,23 @@ async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
   const locale = currentLanguage.value?.twoLetterLanguageName || FALLBACK_LOCALE;
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const [moduleFallbackMessages, moduleMessages] = await Promise.all([
       locale !== FALLBACK_LOCALE
-        ? import(`../../modules/${moduleName}/locales/${FALLBACK_LOCALE}.json`).catch((error) => {
-            Logger.error(`Fallback locale: ${FALLBACK_LOCALE} for the module ${moduleName} not found`, error);
+        ? import(`../../modules/${moduleName}/locales/${FALLBACK_LOCALE}.json`)
+            .then((messages) => messages as LocaleMessage)
+            .catch((error) => {
+              Logger.error(`Fallback locale: ${FALLBACK_LOCALE} for the module ${moduleName} not found`, error);
 
-            return {};
-          })
-        : Promise.resolve({}),
-      import(`../../modules/${moduleName}/locales/${locale}.json`).catch((error) => {
-        Logger.error(`Locale: ${locale} for the module ${moduleName} not found`, error);
+              return {} as LocaleMessage;
+            })
+        : Promise.resolve({} as LocaleMessage),
+      import(`../../modules/${moduleName}/locales/${locale}.json`)
+        .then((messages) => messages as LocaleMessage)
+        .catch((error) => {
+          Logger.error(`Locale: ${locale} for the module ${moduleName} not found`, error);
 
-        return {};
-      }),
+          return {} as LocaleMessage;
+        }),
     ]);
 
     const existingMessages = i18n.global.getLocaleMessage(locale as string);

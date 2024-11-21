@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { DEFAULT_DEBOUNCE_IN_MS } from "@/shared/cart/constants";
@@ -10,7 +9,7 @@ const SHORT_INITIAL_DELAY_MS = DEFAULT_DEBOUNCE_IN_MS / 2;
 const SIMULATED_REQUEST_DURATION_MS = DEFAULT_DEBOUNCE_IN_MS;
 const TOTAL_PROCESSING_DELAY_MS = INITIAL_DELAY_MS + SIMULATED_REQUEST_DURATION_MS;
 const MUTATION_OVERRIDE_OPTIONS = {
-  context: { fetchOptions: { signal: expect.any(AbortSignal) } },
+  context: { fetchOptions: { signal: new AbortController().signal } },
 };
 
 const mutationMock = (value: unknown) =>
