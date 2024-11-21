@@ -42,11 +42,7 @@
     </template>
 
     <template #after-content="{ item }">
-      <ConfigurationItems
-        v-if="item.configurationItems?.length"
-        :id="item.id"
-        :configuration-items="item.configurationItems"
-      />
+      <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
 
       <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
         <VcAlert
