@@ -1,10 +1,10 @@
 import { defineAsyncComponent } from "vue";
 import { cache } from "@/core/api/graphql/config";
 import { useNavigations } from "@/core/composables";
-import { useLanguages } from "@/core/composables/useLanguages";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { useThemeContext } from "@/core/composables/useThemeContext";
 import { MODULE_ID_PUSH_MESSAGES } from "@/core/constants/modules";
+import { loadModuleLocale } from "@/modules/utils";
 import { useUser } from "@/shared/account/composables/useUser";
 import { useCustomHeaderLinkComponents } from "@/shared/layout/composables/useCustomHeaderLinkComponents";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
@@ -101,7 +101,6 @@ export async function init(router: Router, i18n: I18n) {
   }
 
   if (isModuleEnabled) {
-    const { loadModuleLocale } = useLanguages();
     const { mergeMenuSchema } = useNavigations();
     const { registerCustomLinkComponent } = useCustomHeaderLinkComponents();
     const { registerCustomLinkComponent: registerCustomMobileLinkComponent } = useCustomMobileMenuLinkComponents();

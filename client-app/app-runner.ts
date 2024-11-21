@@ -19,6 +19,7 @@ import { useUser } from "@/shared/account";
 import ProductBlocks from "@/shared/catalog/components/product";
 import { templateBlocks } from "@/shared/static-content";
 import { uiKit } from "@/ui-kit";
+import { getLocales as getUIKitLocales } from "@/ui-kit/utilities/getLocales";
 import App from "./App.vue";
 import type { StoreResponseType } from "./core/api/graphql/types";
 
@@ -61,6 +62,7 @@ export default async () => {
     fetchLocaleMessages,
     getLocaleFromUrl,
     pinedLocale,
+    mergeLocales,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
   const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
@@ -144,7 +146,14 @@ export default async () => {
   app.use(permissionsPlugin);
   app.use(contextPlugin, themeContext.value);
   app.use(configPlugin, themeContext.value);
+
+  const UIKitMessages = await getUIKitLocales(FALLBACK_LOCALE, currentLanguage.value?.twoLetterLanguageName);
+  mergeLocales(i18n, currentLanguage.value?.twoLetterLanguageName, UIKitMessages.messages);
+  if (currentLanguage.value?.twoLetterLanguageName !== FALLBACK_LOCALE) {
+    mergeLocales(i18n, FALLBACK_LOCALE, UIKitMessages.fallbackMessages);
+  }
   app.use(uiKit);
+
   app.use(applicationInsightsPlugin);
 
   const builderOrigin = getEpParam();
