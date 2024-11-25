@@ -13,7 +13,7 @@
           <VcInputDetails v-if="page >= PAGE_LIMIT" :message="$t('ui_kit.reach_limit.page_limit')" />
         </div>
 
-        <div class="flex w-full flex-wrap gap-3 max-xs:*:grow sm:w-auto">
+        <div class="flex w-full flex-wrap gap-3 max-xs:*:grow sm:ms-auto sm:w-auto">
           <VcButton
             v-if="!isCorporateAddresses || $can($permissions.xApi.CanEditOrganization)"
             variant="outline"
