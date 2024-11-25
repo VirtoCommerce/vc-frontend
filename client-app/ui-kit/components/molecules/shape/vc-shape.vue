@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 interface IProps {
   size?: number | string;
@@ -18,8 +18,15 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "2.5rem",
-  mask: "/static/icons/polygon.svg",
+  mask: "polygon",
 });
+
+const iconUrl = ref<string>("");
+
+const loadIcon = async (name?: string) => {
+  const module = (await import(`@/assets/icons/basic/${name}.svg?url`)) as { default: string };
+  iconUrl.value = module.default || "";
+};
 
 const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
 
@@ -27,8 +34,16 @@ const style = computed(() => ({
   width: _size.value,
   height: _size.value,
   backgroundImage: props.img ? `url(${props.img})` : "none",
-  maskImage: `url(${props.mask})`,
+  maskImage: iconUrl.value && iconUrl.value !== "null" ? `url(${iconUrl.value})` : "none",
 }));
+
+watch(
+  () => props.mask,
+  (newIconName: string) => {
+    void loadIcon(newIconName);
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
