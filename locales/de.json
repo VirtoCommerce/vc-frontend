@@ -1397,35 +1397,6 @@
       "message": "@:common.messages.blocked"
     }
   },
-  "ui_kit": {
-    "pagination": {
-      "previous": "Vorherige",
-      "next": "Nächste"
-    },
-    "select": {
-      "items_selected": "{0} Artikel ausgewählt"
-    },
-    "file": {
-      "progress": "{percent} erledigt",
-      "uploaded": "Upload abgeschlossen"
-    },
-    "file_uploader": {
-      "drag_and_drop": "Datei hierher ziehen oder",
-      "browse": "Durchsuchen Sie Ihre Dateien",
-      "requirements": "Die Dateien, die hochgeladen werden können, sind im Format {formats}. Jede Datei darf {fileSize} nicht überschreiten. Maximal {maxFileCount} Dateien erlaubt.",
-      "any_format": "beliebig",
-      "errors": {
-        "fix_to_continue": "Beheben Sie die Fehler beim Datei-Upload, um fortzufahren.",
-        "has_max_file_count": "Sie haben die maximale Anzahl an Dateien hochgeladen. Weitere Uploads sind nicht möglich.",
-        "tried_more_than_max_file_count": "Sie haben versucht, mehr als die maximal erlaubte Anzahl an Dateien hochzuladen."
-      }
-    },
-    "reach_limit": {
-      "end_list": "Sie haben das Ende der Liste erreicht.",
-      "page_limit_filters": "Keine weiteren Ergebnisse. Bitte versuchen Sie, die Filter zu ändern.",
-      "page_limit": "Es konnten keine weiteren Ergebnisse angezeigt werden."
-    }
-  },
   "identity_error": {
     "DuplicateEmail": "E-Mail {0} ist bereits vergeben",
     "DuplicateUserName": "Benutzername {0} ist bereits vergeben",

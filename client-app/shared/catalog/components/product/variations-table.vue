@@ -200,7 +200,7 @@ const propertiesTitles = computed<ITableColumn[]>(() =>
     title: item.label,
     sortable: true,
     align: "center",
-    classes: "min-w-24 w-24",
+    classes: "min-w-24 w-24 break-words",
   })),
 );
 
