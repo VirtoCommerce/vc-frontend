@@ -93,30 +93,25 @@
     </div>
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
-      <template v-if="product.hasVariations">
-        <VcButton
-          :to="link"
-          :target="browserTarget"
-          variant="outline"
-          size="sm"
-          full-width
-          @click="$emit('linkClick', $event)"
-        >
-          {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
-        </VcButton>
+      <VcProductButton
+        v-if="product.isConfigurable"
+        :to="link"
+        link-text="Customize"
+        button-text="Customize"
+        color="accent"
+        icon="cube-transparent"
+        :target="browserTarget || $cfg.details_browser_target || '_blank'"
+        @link-click="$emit('linkClick', $event)"
+      />
 
-        <router-link
-          :to="link"
-          :target="browserTarget"
-          class="flex items-center gap-1 text-sm text-[--link-color] hover:text-[--link-hover-color] lg:mt-1 lg:text-xs"
-        >
-          <VcIcon name="external-link" class="size-3 shrink-0 fill-primary lg:size-2.5" />
-
-          <span class="truncate">
-            {{ $t("pages.catalog.show_on_a_separate_page") }}
-          </span>
-        </router-link>
-      </template>
+      <VcProductButton
+        v-else-if="product.hasVariations"
+        :to="link"
+        :link-text="$t('pages.catalog.show_on_a_separate_page')"
+        :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+        :target="browserTarget || $cfg.details_browser_target || '_blank'"
+        @link-click="$emit('linkClick', $event)"
+      />
 
       <template v-else>
         <slot name="cart-handler"></slot>

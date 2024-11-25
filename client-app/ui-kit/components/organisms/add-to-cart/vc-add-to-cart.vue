@@ -64,6 +64,7 @@ import { computed, onMounted, ref, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { useQuantityValidationSchema } from "@/ui-kit/composables";
+import { AddToCartModeType } from "@/ui-kit/enums";
 
 interface IEmits {
   (event: "update:modelValue", value: number): void;
@@ -92,9 +93,11 @@ interface IProps {
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;
+  isAddOnly?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   validateOnMount: true,
 });
@@ -114,15 +117,18 @@ const {
   isAvailable,
   isBuyable,
   packSize,
+  countInCart,
+  isAddOnly,
 } = toRefs(props);
 
-const isButtonOutlined = computed<boolean>(() => !props.countInCart);
+const mode = computed(() => (countInCart.value && !isAddOnly.value ? AddToCartModeType.Update : AddToCartModeType.Add));
+const isButtonOutlined = computed<boolean>(() => mode.value === AddToCartModeType.Add);
 
 const buttonText = computed<string>(() =>
-  props.countInCart ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
+  mode.value === AddToCartModeType.Update ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
 );
 
-const icon = computed<"refresh" | "cart">(() => (props.countInCart ? "refresh" : "cart"));
+const icon = computed<"refresh" | "cart">(() => (mode.value === AddToCartModeType.Update ? "refresh" : "cart"));
 
 const modelValue = toRef(props, "modelValue");
 const quantity = ref<number | undefined>(modelValue.value);
@@ -284,11 +290,11 @@ watchEffect(async () => {
       }
 
       &--item {
-        #{$self} {
+        #{$hideButton} {
           @apply mt-3 w-[5rem] self-start;
 
           @container (min-width: theme("containers.xl")) {
-            @apply w-[6.75rem] self-end;
+            @apply w-[6.75rem] self-center;
           }
 
           @container (min-width: theme("containers.2xl")) {

@@ -2,13 +2,11 @@ import { useLocalStorage } from "@vueuse/core";
 import { merge } from "lodash";
 import { computed, ref } from "vue";
 import { setLocale as setLocaleForYup } from "yup";
-import { FALLBACK_LOCALE } from "@/core/constants";
-import { Logger } from "@/core/utilities";
 import { useThemeContext } from "./useThemeContext";
 import type { ILanguage } from "../types";
 import type { I18n } from "@/i18n";
 import type { LocaleMessage } from "@intlify/core-base";
-import type { Composer } from "vue-i18n";
+import type { Composer, LocaleMessageValue } from "vue-i18n";
 
 const { themeContext } = useThemeContext();
 
@@ -101,39 +99,10 @@ function detectLocale(locales: unknown[]): string {
   return stringLocales[0] || defaultLocale.value;
 }
 
-async function loadModuleLocale(i18n: I18n, moduleName: string): Promise<void> {
-  const locale = currentLanguage.value?.twoLetterLanguageName || FALLBACK_LOCALE;
+function mergeLocales(i18n: I18n, locale: string, messages: LocaleMessageValue) {
+  const existingMessages = i18n.global.getLocaleMessage(locale);
 
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const [moduleFallbackMessages, moduleMessages] = await Promise.all([
-      locale !== FALLBACK_LOCALE
-        ? import(`../../modules/${moduleName}/locales/${FALLBACK_LOCALE}.json`).catch((error) => {
-            Logger.error(`Fallback locale: ${FALLBACK_LOCALE} for the module ${moduleName} not found`, error);
-
-            return {};
-          })
-        : Promise.resolve({}),
-      import(`../../modules/${moduleName}/locales/${locale}.json`).catch((error) => {
-        Logger.error(`Locale: ${locale} for the module ${moduleName} not found`, error);
-
-        return {};
-      }),
-    ]);
-
-    const existingMessages = i18n.global.getLocaleMessage(locale as string);
-
-    i18n.global.setLocaleMessage(locale, merge({}, existingMessages, moduleMessages));
-
-    if (locale !== FALLBACK_LOCALE) {
-      const existingFallbackMessages = i18n.global.getLocaleMessage(FALLBACK_LOCALE);
-      i18n.global.setLocaleMessage(FALLBACK_LOCALE, merge({}, existingFallbackMessages, moduleFallbackMessages));
-    }
-
-    Logger.debug(`The "${moduleName}" module locale: "${locale}" was loaded successfully.`);
-  } catch (error) {
-    Logger.error(`Error loading the ${moduleName} module locale: "${locale}"`);
-  }
+  i18n.global.setLocaleMessage(locale, merge({}, existingMessages, messages));
 }
 
 export function useLanguages() {
@@ -160,7 +129,6 @@ export function useLanguages() {
     removeLocaleFromUrl,
     detectLocale,
     getLocaleFromUrl,
-
-    loadModuleLocale,
+    mergeLocales,
   };
 }
