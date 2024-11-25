@@ -200,7 +200,7 @@ const propertiesTitles = computed<ITableColumn[]>(() =>
     title: item.label,
     sortable: true,
     align: "center",
-    classes: "min-w-24 w-24",
+    classes: "min-w-24 w-24 break-words",
   })),
 );
 
@@ -343,7 +343,7 @@ watchEffect(() => {
   }
 
   &__quantity-icon {
-    @apply me-3 size-4 text-danger;
+    @apply me-3 size-4 fill-danger;
   }
 
   &__in-cart {

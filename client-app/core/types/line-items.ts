@@ -24,6 +24,10 @@ export type AnyLineItemType = {
     price: MoneyType;
     quantity: number;
   };
+  configurationItems?: {
+    id: string;
+    name?: string;
+  }[];
 };
 
 export type VendorGroupType<T> = {
@@ -53,4 +57,8 @@ export type PreparedLineItemType = {
   sku?: string;
   productId?: string;
   countInCart?: number;
+  configurationItems?: {
+    id: string;
+    name?: string;
+  }[];
 };

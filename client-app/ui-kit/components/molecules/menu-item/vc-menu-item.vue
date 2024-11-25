@@ -211,7 +211,7 @@ onMounted(() => {
   }
 
   &__prepend {
-    @apply flex-none flex items-center h-[--content-height];
+    @apply flex-none flex items-center h-[--content-height] empty:hidden;
   }
 
   &__content {
@@ -227,7 +227,7 @@ onMounted(() => {
   }
 
   &__append {
-    @apply flex-none flex items-center h-[--content-height];
+    @apply flex-none flex items-center h-[--content-height] empty:hidden;
   }
 
   .vc-icon {

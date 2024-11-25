@@ -1,0 +1,59 @@
+{
+  "settings": {
+    "name": "Product template"
+  },
+  "content": [
+    {
+      "id": "section1",
+      "type": "product-info",
+      "blocks": [
+        {
+          "id": "block1",
+          "type": "product-properties",
+          "title": "",
+          "hidden": false
+        },
+        {
+          "type": "product-description",
+          "id": "productdescriptionw4OT"
+        },
+        {
+          "name": null,
+          "type": "product-assets",
+          "id": "productassetsgi5C",
+          "title": ""
+        },
+        {
+          "type": "product-variations",
+          "id": "productvariationsgIL5",
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "id": "section3",
+      "type": "related-products",
+      "hidden": false
+    },
+    {
+      "id": "section4",
+      "type": "recommended-products",
+      "hidden": false,
+      "blocks": [
+        {
+          "id": "related_products",
+          "model": "related-products"
+        },
+        {
+          "id": "bought_together",
+          "model": "bought-together"
+        }
+      ]
+    },
+    {
+      "id": "section5",
+      "type": "product-reviews",
+      "hidden": false
+    }
+  ]
+}

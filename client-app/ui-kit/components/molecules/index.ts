@@ -32,12 +32,13 @@ export { default as VcLoaderWithText } from "./loader-with-text/vc-loader-with-t
 export { default as VcMenuItem } from "./menu-item/vc-menu-item.vue";
 export { default as VcNavButton } from "./nav-button/vc-nav-button.vue";
 export { default as VcProductActionsButton } from "./product-actions-button/vc-product-actions-button.vue";
+export { default as VcProductButton } from "./product-button/vc-product-button.vue";
 export { default as VcProductPrice } from "./product-price/vc-product-price.vue";
+export { default as VcProductTotal } from "./product-total/vc-product-total.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcTextarea } from "./textarea/vc-textarea.vue";
-export { default as VcVariationsButton } from "./variations-button/vc-variations-button.vue";
 export { default as VcVendor } from "./vendor/vc-vendor.vue";
 export { default as VcWidget } from "./widget/vc-widget.vue";
 export { default as VcWidgetSkeleton } from "./widget-skeleton/vc-widget-skeleton.vue";

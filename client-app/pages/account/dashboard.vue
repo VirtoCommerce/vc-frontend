@@ -16,7 +16,7 @@
         >
           {{ $t("pages.account.dashboard.last_orders_card.all_orders_link") }}
 
-          <VcIcon class="text-primary" name="arrow-right" size="xs" />
+          <VcIcon class="fill-primary" name="arrow-right" size="xs" />
         </router-link>
       </template>
 

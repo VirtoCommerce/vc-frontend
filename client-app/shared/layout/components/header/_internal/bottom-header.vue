@@ -28,7 +28,7 @@
           {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
         </span>
 
-        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 text-primary" />
+        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 fill-primary" />
       </a>
 
       <SearchBar />
@@ -62,8 +62,8 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, ref, shallowRef } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref, shallowRef, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { SearchBar } from "@/shared/layout";
@@ -84,6 +84,7 @@ const showCatalogMenuButton = shallowRef<HTMLElement | null>(null);
 const catalogMenuVisible = ref(false);
 
 const { bottom } = useElementBounding(bottomHeader);
+const route = useRoute();
 
 const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
@@ -107,4 +108,8 @@ function toggleCatalogDropdown(event: Event) {
     catalogMenuVisible.value = !catalogMenuVisible.value;
   }
 }
+
+watch(route, () => {
+  catalogMenuVisible.value = false;
+});
 </script>

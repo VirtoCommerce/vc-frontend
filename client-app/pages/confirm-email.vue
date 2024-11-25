@@ -11,7 +11,7 @@
       </VcTypography>
 
       <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
-        <VcIcon name="check" size="xxl" class="text-success" />
+        <VcIcon name="check" size="xxl" class="fill-success" />
 
         <p class="max-w-md text-center text-lg lg:text-left">
           <span v-if="linkSentSuccessfully">
@@ -52,7 +52,7 @@
       </VcTypography>
 
       <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
-        <VcIcon name="exclamation-circle" size="xxl" class="text-danger" />
+        <VcIcon name="exclamation-circle" size="xxl" class="fill-danger" />
 
         <p class="max-w-md text-center text-lg font-bold lg:text-left">
           <span v-if="!emailConfirmed">

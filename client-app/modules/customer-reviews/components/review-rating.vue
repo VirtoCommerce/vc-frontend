@@ -3,7 +3,7 @@
     <VcIcon
       v-for="i in MAX_RATING"
       :key="i"
-      :class="{ 'text-primary': i <= rating || (!readOnly && selectedRating >= i), 'cursor-pointer': !readOnly }"
+      :class="{ 'fill-primary': i <= rating || (!readOnly && selectedRating >= i), 'cursor-pointer': !readOnly }"
       name="whishlist"
       :size="16"
       @click="setRating(i)"

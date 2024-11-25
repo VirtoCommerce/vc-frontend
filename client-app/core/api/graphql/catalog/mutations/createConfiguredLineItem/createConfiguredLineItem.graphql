@@ -1,0 +1,18 @@
+#import "../../cart/fragments/property.graphql"
+#import "../../cart/fragments/currency.graphql"
+
+mutation CreateConfiguredLineItem($command: InputCreateConfiguredLineItemCommand!) {
+  createConfiguredLineItem(command: $command) {
+    id
+    quantity
+    listPrice {
+      ...money
+    }
+    salePrice {
+      ...money
+    }
+    extendedPrice {
+      ...money
+    }
+  }
+}

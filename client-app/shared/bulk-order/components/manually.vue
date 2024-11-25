@@ -49,7 +49,7 @@
           class="inline-flex appearance-none items-center gap-1.5 py-1.5 md:py-0"
           @click="increment"
         >
-          <VcIcon class="text-primary" name="plus" size="sm" />
+          <VcIcon class="fill-primary" name="plus" size="sm" />
 
           <span class="border-b border-dashed border-current text-[--link-color] hover:text-[--link-hover-color]">
             {{ $t("shared.bulk_order.manually.add_rows_action_link") }}

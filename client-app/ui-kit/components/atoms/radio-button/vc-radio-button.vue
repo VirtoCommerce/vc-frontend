@@ -20,6 +20,8 @@
         :checked="checked"
         :disabled="disabled"
         :aria-checked="checked"
+        @change="emit('change', value)"
+        @input="emit('input', value)"
       />
 
       <span class="vc-radio-button__label">
@@ -55,6 +57,8 @@ interface IProps {
   singleLineMessage?: boolean;
 }
 
+const emit = defineEmits<IEmits>();
+
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
   labelPosition: "right",
@@ -62,11 +66,17 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const model = defineModel<IProps["value"]>();
 
+interface IEmits {
+  (event: "input", value: string): void;
+  (event: "change", value: string): void;
+}
+
 const checked = computed(() => model.value === props.value);
 </script>
 
 <style lang="scss">
 .vc-radio-button {
+  $self: &;
   $checked: "";
   $disabled: "";
   $left: "";
@@ -143,7 +153,7 @@ const checked = computed(() => model.value === props.value);
   }
 
   &__label {
-    @apply min-w-0;
+    @apply min-w-0 empty:hidden;
 
     #{$left} & {
       @apply order-first me-2;
@@ -160,6 +170,36 @@ const checked = computed(() => model.value === props.value);
 
   &__details {
     @apply min-w-full;
+  }
+
+  @at-root .vc-product-card {
+    #{$self} {
+      grid-area: select;
+
+      @apply self-start;
+    }
+
+    &--view-mode {
+      &--grid #{$self} {
+        @apply hidden;
+      }
+
+      &--list #{$self} {
+        @apply hidden;
+      }
+
+      &--item {
+        #{$self} {
+          @apply z-[1] absolute -left-[0.35rem] -top-[0.45rem] p-1.5 rounded-full bg-[--bg];
+        }
+
+        @container (min-width: theme("containers.2xl")) {
+          #{$self} {
+            @apply relative left-auto top-auto self-center me-3 p-0;
+          }
+        }
+      }
+    }
   }
 }
 </style>
