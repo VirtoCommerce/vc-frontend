@@ -14,12 +14,18 @@
       "toggle_dropdown": "Toggle dropdown"
     },
     "labels": {
+      "add_to_cart": "Add to cart",
+      "cancel": "Cancel",
+      "not_available": "N/A",
+      "ok": "OK",
       "price_per_item": "Price per item",
       "product": "Product",
+      "product_quantity": "Product quantity",
       "properties": "Properties",
       "subtotal": "Subtotal",
       "toggle_vendor_select": "Toggle vendor select",
       "total": "Total",
+      "update_cart": "Update cart",
       "vendor": "Vendor"
     },
     "suffixes": {
@@ -29,6 +35,21 @@
     "messages": {
       "loading_text": "Loading...",
       "no_results": "No results found"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "in Cart",
+        "already_in_cart_message": "{0} has already been added to the cart",
+        "enter_correct_number_message": "Please enter a valid number",
+        "min": "Min order {0} item(s)",
+        "max": "Max order {0} item(s)",
+        "min_max": "Order from {0} to {1} item(s)",
+        "min_not_available": "Min order {0} item(s) is not available in stock",
+        "out_of_stock": "Out of stock",
+        "positive_number": "Value must be a positive number",
+        "integer_number": "Value must be an integer",
+        "pack_size": "Order in packs of {0}"
+      }
     },
     "product_total": {
       "total": "Total"
