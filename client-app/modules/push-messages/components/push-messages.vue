@@ -1,6 +1,6 @@
 <template>
   <VcPushMessages
-    v-model:showUnreadOnly="showUnreadOnly"
+    v-model:show-unread-only="showUnreadOnly"
     :total-count="totalCount"
     :unread-count="unreadCount"
     :items="items"
@@ -26,9 +26,10 @@
 import { useLocalStorage } from "@vueuse/core";
 import { usePushMessages } from "@/modules/push-messages/composables/usePushMessages";
 import PushMessage from "./push-message.vue";
+import VcPushMessages from "@/modules/push-messages/components/vc-push-messages.vue";
 
 interface IProps {
-  offsetOptions?: VcPushMessagesOffsetOptionsType;
+  offsetOptions?: VcPopoverOffsetOptionsType;
 }
 
 defineProps<IProps>();
