@@ -1,5 +1,4 @@
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
-export { default as VcAddressLine } from "./address-line/vc-address-line.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";

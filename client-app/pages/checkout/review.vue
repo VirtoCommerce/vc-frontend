@@ -34,7 +34,7 @@
             </VcLabel>
 
             <div class="grow divide-y rounded border print:border-none">
-              <VcAddressSelection
+              <AddressSelection
                 :address="shipment?.deliveryAddress"
                 class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
                 readonly
@@ -69,7 +69,7 @@
             </VcLabel>
 
             <div class="grow divide-y rounded border print:border-none">
-              <VcAddressSelection
+              <AddressSelection
                 :address="billingAddress"
                 class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
                 readonly
@@ -150,6 +150,7 @@ import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { AddressSelection } from "@/shared/common";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {

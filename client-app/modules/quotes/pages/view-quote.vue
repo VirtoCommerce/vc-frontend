@@ -109,11 +109,11 @@
         </VcWidget>
 
         <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
-          <VcAddressInfo :address="shippingAddress!" />
+          <AddressInfo :address="shippingAddress!" />
         </VcWidget>
 
         <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
-          <VcAddressInfo :address="billingAddress!" />
+          <AddressInfo :address="billingAddress!" />
         </VcWidget>
       </template>
     </VcLayoutWithRightSidebar>
@@ -127,6 +127,7 @@ import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { AddressInfo } from "@/shared/common";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import QuoteLineItems from "../components/quote-line-items.vue";

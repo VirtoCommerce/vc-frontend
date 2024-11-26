@@ -90,7 +90,7 @@
 
         <!-- Billing Address Widget -->
         <VcWidget v-if="billingAddress" :title="$t('common.titles.billing_address')">
-          <VcAddressInfo :address="billingAddress" class="text-base" />
+          <AddressInfo :address="billingAddress" class="text-base" />
         </VcWidget>
 
         <!-- Shipping Method Card -->
@@ -112,7 +112,7 @@
 
         <!-- Shipping Address Card -->
         <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-          <VcAddressInfo :address="deliveryAddress" class="text-base" />
+          <AddressInfo :address="deliveryAddress" class="text-base" />
         </VcWidget>
 
         <!-- Payment Method section -->
@@ -139,6 +139,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
+import { AddressInfo } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";
