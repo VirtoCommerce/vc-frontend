@@ -8,8 +8,8 @@
 
 --price-color: var(--color-price, var(--color-success-600));
 
---hexagon-icon-bg-color: var(--color-hexagon-icon-bg, var(--color-secondary-500));
---hexagon-icon-color: var(--color-hexagon-icon, var(--color-additional-50));
+--shape-icon-bg-color: var(--color-shape-icon-bg, var(--color-secondary-500));
+--shape-icon-color: var(--color-shape-icon, var(--color-additional-50));
 
 --empty-list-icon: var(--color-empty-list-icon, var(--color-primary-500));
 
@@ -52,6 +52,6 @@
 --vc-radio-button-focus-color: var(--focus-color);
 --vc-product-title-link-color: var(--link-color);
 --vc-product-title-link-hover-color: var(--link-hover-color);
---vc-hexagon-icon-bg-color: var(--hexagon-icon-bg-color);
---vc-hexagon-icon-color: var(--hexagon-icon-color);
+--vc-shape-icon-bg-color: var(--shape-icon-bg-color);
+--vc-shape-icon-color: var(--shape-icon-color);
 }
