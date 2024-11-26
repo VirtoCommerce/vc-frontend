@@ -118,6 +118,7 @@ import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -129,7 +130,10 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
-import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
+import {
+  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
+  ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
+} from "@/modules/customer-reviews/constants";
 import {
   useProduct,
   useRelatedProducts,
@@ -192,7 +196,9 @@ const {
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
-const { enabled: productReviewsEnabled } = useCustomerReviews();
+
+const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
+const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
