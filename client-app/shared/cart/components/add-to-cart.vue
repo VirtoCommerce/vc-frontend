@@ -15,7 +15,6 @@
     :loading="loading"
     show-empty-details
     validate-on-mount
-    :is-add-only="isConfigurable"
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"
@@ -67,7 +66,7 @@ const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
+const { selectedConfigurationInput, lineItemId: configurableLineItemId } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
@@ -106,7 +105,7 @@ async function onChange() {
   let updatedCart: ShortCartFragment | undefined;
 
   const isAlreadyExistsInTheCart = !!lineItem;
-  const mode = isAlreadyExistsInTheCart && !isConfigurable.value ? AddToCartModeType.Update : AddToCartModeType.Add;
+  const mode = isAlreadyExistsInTheCart ? AddToCartModeType.Update : AddToCartModeType.Add;
 
   if (mode === AddToCartModeType.Update) {
     updatedCart = await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
@@ -160,7 +159,11 @@ async function onChange() {
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
-  return items?.find((item) => item.productId === product.value.id);
+  if (isConfigurable.value) {
+    return configurableLineItemId.value ? items?.find((item) => item.id === configurableLineItemId.value) : undefined;
+  } else {
+    return items?.find((item) => item.productId === product.value.id);
+  }
 }
 
 function onValidationUpdate(validation: { isValid: true } | { isValid: false; errorMessage: string }) {

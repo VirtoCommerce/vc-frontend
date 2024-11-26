@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { flushPromises } from "@vue/test-utils";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi, beforeAll } from "vitest";
 import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
 import type { Mock } from "vitest";
 
@@ -22,6 +22,16 @@ vi.mock("@/core/utilities", () => ({
   },
 }));
 
+vi.mock("vue-router", () => ({
+  useRouter: () => ({
+    currentRoute: {
+      value: {
+        query: {},
+      },
+    },
+  }),
+}));
+
 describe("useConfigurableProduct", () => {
   type UseConfigurableProductType =
     typeof import("@/shared/catalog/composables/useConfigurableProduct").useConfigurableProduct;
@@ -30,12 +40,14 @@ describe("useConfigurableProduct", () => {
   const configurableProductId = "test-product-id";
   let createConfiguredLineItemMutationMock: Mock;
 
-  beforeEach(() => {
-    vi.resetAllMocks();
-    vi.useFakeTimers();
-
+  beforeAll(() => {
     createConfiguredLineItemMutationMock = vi.fn();
     mocks.useCreateConfiguredLineItemMutation.mockReturnValue({ mutate: createConfiguredLineItemMutationMock });
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
 
     composable = useConfigurableProduct(configurableProductId);
   });

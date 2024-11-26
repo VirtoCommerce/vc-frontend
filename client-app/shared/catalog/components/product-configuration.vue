@@ -23,6 +23,7 @@
             <VcProductCard v-if="!!product" view-mode="item" class="product-configuration__item">
               <template #media>
                 <VcRadioButton
+                  :model-value="selectedConfiguration[section.id]?.productId"
                   :value="product.id"
                   :name="`selection-${section.id}`"
                   @input="

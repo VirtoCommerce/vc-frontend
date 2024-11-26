@@ -1,9 +1,9 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
-import { ref, readonly, computed } from "vue";
+import { ref, readonly, computed, watch } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
-import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
+import { getMergeStrategyUniqueBy, useMutationBatcher, useRouteQueryParam } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import type {
   ConfigurationSectionInput,
@@ -36,6 +36,9 @@ provideApolloClient(apolloClient);
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
+
+  const lineItemId = useRouteQueryParam<string>("lineItemId");
+  const configurationQueryParam = useRouteQueryParam<string>("configuration");
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
@@ -86,12 +89,15 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
+  const { mutate } = useCreateConfiguredLineItemMutation();
+  const { add: batchedCreateConfiguredLineItem, abort: abortBatchedCreateConfiguredLineItem } = useMutationBatcher(
+    mutate,
+    {
+      mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
+    },
+  );
   async function createConfiguredLineItem() {
     creating.value = true;
-    const { mutate } = useCreateConfiguredLineItemMutation();
-    const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
-      mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
-    });
     try {
       const result = await batchedCreateConfiguredLineItem({
         command: {
@@ -132,7 +138,27 @@ function _useConfigurableProduct(configurableProductId: string) {
     selectedConfigurationInput.value = [];
     configuration.value = [];
     configuredLineItem.value = undefined;
+    abortBatchedCreateConfiguredLineItem();
   }
+
+  watch(
+    configurationQueryParam,
+    (value) => {
+      if (value) {
+        try {
+          const parsedValue = JSON.parse(value) as { sectionId: string; productId: string; quantity: number }[];
+          parsedValue.forEach(({ sectionId, productId, quantity }) => {
+            changeSelectionValue({ sectionId, value: { productId, quantity } });
+          });
+          void createConfiguredLineItem();
+        } catch (e) {
+          Logger.error(`${_useConfigurableProduct.name}`, e);
+          throw e;
+        }
+      }
+    },
+    { immediate: true },
+  );
 
   return {
     fetchProductConfiguration,
@@ -142,6 +168,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     selectedConfiguration: readonly(selectedConfiguration),
     selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
+    lineItemId: readonly(lineItemId),
   };
 }
 

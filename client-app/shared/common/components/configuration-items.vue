@@ -10,21 +10,56 @@
       <li v-for="(configurationItem, index) in configurationItems" :key="configurationItem.id">
         {{ `${index + 1}. ${configurationItem.name}` }}
       </li>
+      <li>
+        <VcButton v-if="allowEdit" size="xs" :to="getRoute()" append-icon="edit" variant="outline">
+          Edit configuration
+        </VcButton>
+      </li>
     </ul>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
   configurationItems: {
     id: string;
     name?: string;
   }[];
+  lineItemId?: string;
+  allowEdit?: boolean;
+  route?: RouteLocationRaw;
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const isCollapsed = ref<boolean>(true);
+
+function getRoute() {
+  const query = {
+    lineItemId: props.lineItemId,
+    configuration: JSON.stringify([
+      {
+        sectionId: "01f2ae1f-6a72-40f7-bad4-f3328faca4bd-Dress",
+        productId: "73334f6a05de4be6ab077da0ed12fd37",
+        quantity: 2,
+      },
+      {
+        sectionId: "01f2ae1f-6a72-40f7-bad4-f3328faca4bd-Bag",
+        productId: "198d4ad4d5be42aea8d9546885a3bd99",
+        quantity: 1,
+      },
+    ]),
+  };
+
+  if (typeof props.route === "string") {
+    return { path: props.route, query };
+  }
+  if (typeof props.route === "object") {
+    return { ...props.route, query };
+  }
+  return "";
+}
 </script>
