@@ -86,6 +86,7 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   validationErrors: () => [],
+  selectable: true,
 });
 
 const validationErrors = toRef(props, "validationErrors");
