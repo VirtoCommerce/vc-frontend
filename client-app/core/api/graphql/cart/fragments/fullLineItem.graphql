@@ -38,5 +38,8 @@ fragment fullLineItem on LineItemType {
   configurationItems {
     id
     name
+    quantity
+    productId
+    sectionId
   }
 }

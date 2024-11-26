@@ -144,12 +144,13 @@ function _useConfigurableProduct(configurableProductId: string) {
     } else if (payload.value) {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
     }
-    // configurationQueryParam.value = JSON.stringify(
-    //   selectedConfigurationInput.value.map(({ sectionId, value }) => ({
-    //     sectionId,
-    //     productId: value?.productId,
-    //   })),
-    // );
+    configurationQueryParam.value = JSON.stringify(
+      selectedConfigurationInput.value.map(({ sectionId, value }) => ({
+        sectionId,
+        productId: value?.productId,
+        quantity: value?.quantity,
+      })),
+    );
   }
 
   function selectSectionValue(payload: ConfigurationSectionInput) {

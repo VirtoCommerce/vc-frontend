@@ -20,13 +20,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
   configurationItems: {
     id: string;
     name?: string;
+    quantity?: number;
+    productId?: string;
+    sectionId?: string;
   }[];
   lineItemId?: string;
   allowEdit?: boolean;
@@ -34,24 +37,16 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+const configurationItems = toRef(props, "configurationItems");
 
 const isCollapsed = ref<boolean>(true);
 
 function getRoute() {
   const query = {
     lineItemId: props.lineItemId,
-    configuration: JSON.stringify([
-      {
-        sectionId: "e8438c2c-a5fb-40ea-8855-4568401a19f0-Baloons",
-        productId: "85e7aa089a4e4a97a4394d668e37e3f8",
-        quantity: 1,
-      },
-      {
-        sectionId: "e8438c2c-a5fb-40ea-8855-4568401a19f0-Chips & Snacks",
-        productId: "24234aafeb0f4dbda72ffd977b32befb",
-        quantity: 3,
-      },
-    ]),
+    configuration: JSON.stringify(
+      configurationItems.value.map(({ sectionId, productId, quantity }) => ({ sectionId, productId, quantity })),
+    ),
   };
 
   if (typeof props.route === "string") {

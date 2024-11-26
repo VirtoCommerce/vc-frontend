@@ -27,6 +27,9 @@ export type AnyLineItemType = {
   configurationItems?: {
     id: string;
     name?: string;
+    quantity?: number;
+    productId?: string;
+    sectionId?: string;
   }[];
 };
 
@@ -60,5 +63,8 @@ export type PreparedLineItemType = {
   configurationItems?: {
     id: string;
     name?: string;
+    quantity?: number;
+    productId?: string;
+    sectionId?: string;
   }[];
 };
