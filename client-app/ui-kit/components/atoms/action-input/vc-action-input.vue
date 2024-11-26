@@ -16,7 +16,7 @@
       <template v-if="!readonly">
         <VcButton
           v-if="applied"
-          :aria-label="$t('common.buttons.deny')"
+          :aria-label="$t('ui_kit.buttons.deny')"
           size="sm"
           color="danger"
           variant="outline"
@@ -27,7 +27,7 @@
 
         <VcButton
           v-else
-          :aria-label="$t('common.buttons.apply')"
+          :aria-label="$t('ui_kit.buttons.apply')"
           icon="apply"
           size="sm"
           variant="outline"

@@ -9,7 +9,7 @@
       />
       <VcPriceDisplay v-else class="font-bold text-[--price-color]" :value="value?.list" />
       <span class="hidden sm:inline md:hidden xl:inline print:!block">
-        {{ $t("common.suffixes.per_item") }}
+        {{ $t("ui_kit.suffixes.per_item") }}
       </span>
     </div>
     <div class="leading-4">

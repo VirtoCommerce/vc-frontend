@@ -60,7 +60,7 @@
       <div v-if="type === 'password' && !hidePasswordSwitcher" class="vc-input__decorator">
         <button
           :disabled="disabled"
-          :aria-label="$t('common.buttons.show_hide_password')"
+          :aria-label="$t('ui_kit.buttons.show_hide_password')"
           tabindex="-1"
           type="button"
           class="vc-input__password-icon"

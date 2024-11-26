@@ -1,5 +1,35 @@
 {
   "ui_kit": {
+    "buttons": {
+      "apply": "Apply",
+      "copy": "Copy",
+      "deny": "Deny",
+      "filters": "Filters",
+      "remove_all": "Remove all",
+      "remove_from_cart": "Remove from cart",
+      "remove_selected": "Remove Selected",
+      "see_more": "See more",
+      "see_less": "See less",
+      "show_hide_password": "Show/hide password",
+      "toggle_dropdown": "Toggle dropdown"
+    },
+    "labels": {
+      "price_per_item": "Price per item",
+      "product": "Product",
+      "properties": "Properties",
+      "subtotal": "Subtotal",
+      "toggle_vendor_select": "Toggle vendor select",
+      "total": "Total",
+      "vendor": "Vendor"
+    },
+    "suffixes": {
+      "from": "From",
+      "per_item": " per item"
+    },
+    "messages": {
+      "loading_text": "Loading...",
+      "no_results": "No results found"
+    },
     "product_total": {
       "total": "Total"
     },

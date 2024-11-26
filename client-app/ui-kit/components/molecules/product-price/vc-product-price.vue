@@ -12,7 +12,7 @@
     ]"
   >
     <span class="vc-product-price__actual">
-      <span v-if="hasVariations" class="vc-product-price__variations"> {{ $t("common.suffixes.from") }}</span>
+      <span v-if="hasVariations" class="vc-product-price__variations"> {{ $t("ui_kit.suffixes.from") }}</span>
 
       <VcPriceDisplay :value="shouldUseActualPrice(listPrice, actualPrice) || !listPrice ? actualPrice : listPrice" />
     </span>

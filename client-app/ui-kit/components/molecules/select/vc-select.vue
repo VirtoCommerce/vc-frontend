@@ -61,7 +61,7 @@
           <template #append>
             <button
               v-if="clearable && (filterValue || (selectedText && !isShown))"
-              :aria-label="$t('common.buttons.toggle_dropdown')"
+              :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
               type="button"
               tabindex="-1"
               class="vc-select__clear"
@@ -71,7 +71,7 @@
             </button>
 
             <button
-              :aria-label="$t('common.buttons.toggle_dropdown')"
+              :aria-label="$t('ui_kit.buttons.toggle_dropdown')"
               type="button"
               tabindex="-1"
               class="vc-select__arrow"
@@ -107,7 +107,7 @@
         </VcMenuItem>
 
         <VcMenuItem v-if="filterValue && !filteredItems.length" disabled>
-          {{ $t("common.messages.no_results") }}
+          {{ $t("ui_kit.messages.no_results") }}
         </VcMenuItem>
       </template>
     </VcDropdownMenu>
