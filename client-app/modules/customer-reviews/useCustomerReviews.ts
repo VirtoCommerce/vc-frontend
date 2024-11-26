@@ -1,17 +1,14 @@
 import { isDefined } from "@vueuse/core";
 import { computed, readonly, ref } from "vue";
-import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { Logger } from "@/core/utilities";
 import { getCustomerReviews } from "./api/graphql";
 import { createReview } from "./api/graphql/mutations/createReview";
 import { canLeaveFeedback } from "./api/graphql/queries/canLeaveFeedback";
-import { ENABLED_KEY, MODULE_ID, PAGE_SIZE } from "./constants";
+import { PAGE_SIZE } from "./constants";
 import type { CustomerReview, ReviewValidationErrorType } from "./api/graphql/types";
 import type { Ref } from "vue";
 
 export function useCustomerReviews() {
-  const { isEnabled } = useModuleSettings(MODULE_ID);
-
   const fetching: Ref<boolean> = ref(false);
   const itemsPerPage: Ref<number> = ref(PAGE_SIZE);
   const pagesCount: Ref<number> = ref(0);
@@ -74,7 +71,6 @@ export function useCustomerReviews() {
   }
 
   return {
-    enabled: computed(() => isEnabled(ENABLED_KEY)),
     reviews: computed(() => reviews.value),
     fetching: readonly(fetching),
     itemsPerPage: readonly(itemsPerPage),
