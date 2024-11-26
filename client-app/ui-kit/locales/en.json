@@ -1,23 +1,25 @@
 {
   "ui_kit": {
     "buttons": {
+      "add_to_cart": "Add to cart",
       "apply": "Apply",
+      "cancel": "Cancel",
+      "close": "Close",
       "copy": "Copy",
       "deny": "Deny",
       "filters": "Filters",
+      "ok": "OK",
       "remove_all": "Remove all",
       "remove_from_cart": "Remove from cart",
       "remove_selected": "Remove Selected",
       "see_more": "See more",
       "see_less": "See less",
       "show_hide_password": "Show/hide password",
-      "toggle_dropdown": "Toggle dropdown"
+      "toggle_dropdown": "Toggle dropdown",
+      "update_cart": "Update cart"
     },
     "labels": {
-      "add_to_cart": "Add to cart",
-      "cancel": "Cancel",
       "not_available": "N/A",
-      "ok": "OK",
       "price_per_item": "Price per item",
       "product": "Product",
       "product_quantity": "Product quantity",
@@ -25,7 +27,6 @@
       "subtotal": "Subtotal",
       "toggle_vendor_select": "Toggle vendor select",
       "total": "Total",
-      "update_cart": "Update cart",
       "vendor": "Vendor"
     },
     "suffixes": {
@@ -50,9 +51,6 @@
         "integer_number": "Value must be an integer",
         "pack_size": "Order in packs of {0}"
       }
-    },
-    "product_total": {
-      "total": "Total"
     },
     "pagination": {
       "previous": "Previous",
