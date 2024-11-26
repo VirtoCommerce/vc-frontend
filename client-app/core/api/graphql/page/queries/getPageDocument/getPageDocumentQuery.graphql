@@ -1,0 +1,8 @@
+query getPageDocument($id: String!) {
+  pageDocument(id: $id) {
+    id
+    source
+    permalink
+    content
+  }
+}
