@@ -1,6 +1,6 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
-import { ref, readonly, computed, watch } from "vue";
+import { ref, readonly, computed } from "vue";
 import { apolloClient } from "@/core/api/graphql";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
 import { getMergeStrategyUniqueBy, useMutationBatcher, useRouteQueryParam } from "@/core/composables";
@@ -45,6 +45,19 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
 
+  const preselectedValues = computed(() => {
+    try {
+      return JSON.parse(configurationQueryParam.value) as {
+        sectionId: string;
+        productId: string;
+        quantity: number;
+      }[];
+    } catch (e) {
+      Logger.error(`${_useConfigurableProduct.name}.preselectedValues`, e);
+      return [];
+    }
+  });
+
   const selectedConfiguration = computed(() => {
     return selectedConfigurationInput.value
       ?.filter(({ value }) => value !== undefined)
@@ -70,12 +83,18 @@ function _useConfigurableProduct(configurableProductId: string) {
       const data = await getProductConfiguration(configurableProductId);
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
       configuration.value.forEach((section) => {
-        if (section.isRequired && section.id) {
+        const preselectedValue = preselectedValues.value.find(({ sectionId }) => sectionId === section.id);
+        const isPreselectedValueValid =
+          preselectedValue?.productId &&
+          preselectedValue?.quantity &&
+          section.options?.some(({ product }) => product?.id === preselectedValue.productId);
+
+        if (section.isRequired || (preselectedValue && isPreselectedValueValid)) {
           changeSelectionValue({
             sectionId: section.id,
             value: {
-              productId: section.options?.[0]?.product?.id ?? "",
-              quantity: section.options?.[0]?.quantity ?? 1,
+              productId: preselectedValue?.productId ?? section.options?.[0]?.product?.id ?? "",
+              quantity: preselectedValue?.quantity ?? section.options?.[0]?.quantity ?? 1,
             },
           });
         }
@@ -125,6 +144,12 @@ function _useConfigurableProduct(configurableProductId: string) {
     } else if (payload.value) {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
     }
+    // configurationQueryParam.value = JSON.stringify(
+    //   selectedConfigurationInput.value.map(({ sectionId, value }) => ({
+    //     sectionId,
+    //     productId: value?.productId,
+    //   })),
+    // );
   }
 
   function selectSectionValue(payload: ConfigurationSectionInput) {
@@ -140,25 +165,6 @@ function _useConfigurableProduct(configurableProductId: string) {
     configuredLineItem.value = undefined;
     abortBatchedCreateConfiguredLineItem();
   }
-
-  watch(
-    configurationQueryParam,
-    (value) => {
-      if (value) {
-        try {
-          const parsedValue = JSON.parse(value) as { sectionId: string; productId: string; quantity: number }[];
-          parsedValue.forEach(({ sectionId, productId, quantity }) => {
-            changeSelectionValue({ sectionId, value: { productId, quantity } });
-          });
-          void createConfiguredLineItem();
-        } catch (e) {
-          Logger.error(`${_useConfigurableProduct.name}`, e);
-          throw e;
-        }
-      }
-    },
-    { immediate: true },
-  );
 
   return {
     fetchProductConfiguration,

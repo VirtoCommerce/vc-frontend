@@ -42,14 +42,14 @@ function getRoute() {
     lineItemId: props.lineItemId,
     configuration: JSON.stringify([
       {
-        sectionId: "01f2ae1f-6a72-40f7-bad4-f3328faca4bd-Dress",
-        productId: "73334f6a05de4be6ab077da0ed12fd37",
-        quantity: 2,
+        sectionId: "e8438c2c-a5fb-40ea-8855-4568401a19f0-Baloons",
+        productId: "85e7aa089a4e4a97a4394d668e37e3f8",
+        quantity: 1,
       },
       {
-        sectionId: "01f2ae1f-6a72-40f7-bad4-f3328faca4bd-Bag",
-        productId: "198d4ad4d5be42aea8d9546885a3bd99",
-        quantity: 1,
+        sectionId: "e8438c2c-a5fb-40ea-8855-4568401a19f0-Chips & Snacks",
+        productId: "24234aafeb0f4dbda72ffd977b32befb",
+        quantity: 3,
       },
     ]),
   };
