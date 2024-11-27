@@ -33,6 +33,7 @@ provideApolloClient(apolloClient);
  * @returns {Readonly<ComputedRef<Record<string, SelectedConfigurationType>>>} selectedConfiguration - Readonly computed ref of the selected configuration state.
  * @returns {ShallowReadonly<Ref<ConfigurationSectionInput[]>>} selectedConfigurationInput - Readonly ref containing the configuration input data.
  * @returns {Readonly<Ref<CreateConfiguredLineItemMutation['createConfiguredLineItem']>>} configuredLineItem - Readonly ref of the created configured line item.
+ * @returns {Readonly<Ref<string>>} lineItemId - Readonly ref of the line item ID. (taken from route query params)
  */
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
@@ -72,13 +73,12 @@ function _useConfigurableProduct(configurableProductId: string) {
       const preselectedValues = await getPreselectedValues();
 
       configuration.value.forEach((section) => {
-        const preselectedValue = preselectedValues.find(({ sectionId }) => sectionId === section.id);
+        const preselectedValue = preselectedValues?.find(({ sectionId }) => sectionId === section.id);
         const isPreselectedValueValid =
           preselectedValue?.productId &&
-          preselectedValue?.quantity &&
           section.options?.some(({ product }) => product?.id === preselectedValue.productId);
 
-        if (section.isRequired || (preselectedValue && isPreselectedValueValid)) {
+        if ((preselectedValue && isPreselectedValueValid) || section.isRequired) {
           changeSelectionValue({
             sectionId: section.id,
             value: {
@@ -140,13 +140,12 @@ function _useConfigurableProduct(configurableProductId: string) {
     void createConfiguredLineItem();
   }
 
-  async function getPreselectedValues(): Promise<CartConfigurationItemType[] | []> {
+  async function getPreselectedValues(): Promise<CartConfigurationItemType[] | undefined> {
     if (lineItemId.value) {
       await forceFetch();
       const lineItem = cart.value?.items.find(({ id }) => id === lineItemId.value);
       return lineItem?.configurationItems ?? [];
     }
-    return [];
   }
 
   function reset() {

@@ -564,7 +564,8 @@
         "message": "Do you want to clear your cart?"
       },
       "configuration_items": {
-        "title": "Components list"
+        "title": "Components list",
+        "edit_configuration": "Edit configuration"
       }
     },
     "catalog": {

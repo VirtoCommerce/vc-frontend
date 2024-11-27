@@ -564,7 +564,8 @@
         "message": "Voulez-vous vider votre panier ?"
       },
       "configuration_items": {
-        "title": "Liste des composants"
+        "title": "Liste des composants",
+        "edit_configuration": "Modifier la configuration"
       }
     },
     "catalog": {

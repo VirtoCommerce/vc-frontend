@@ -11,8 +11,8 @@
         {{ `${index + 1}. ${configurationItem.name}` }}
       </li>
       <li>
-        <VcButton v-if="allowEdit" size="xs" :to="getRoute()" append-icon="edit" variant="outline">
-          Edit configuration
+        <VcButton v-if="allowEdit" size="xs" :to="editRoute" append-icon="edit" variant="outline">
+          {{ $t("shared.cart.configuration_items.edit_configuration") }}
         </VcButton>
       </li>
     </ul>
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef } from "vue";
+import { computed, ref, toRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
@@ -39,7 +39,7 @@ const lineItemId = toRef(props, "lineItemId");
 
 const isCollapsed = ref<boolean>(true);
 
-function getRoute() {
+const editRoute = computed(() => {
   if (typeof props.route === "string") {
     return { path: props.route, query: { lineItemId: lineItemId.value } };
   }
@@ -47,5 +47,5 @@ function getRoute() {
     return { ...props.route, query: { lineItemId: lineItemId.value } };
   }
   return "";
-}
+});
 </script>

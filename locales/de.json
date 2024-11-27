@@ -564,7 +564,8 @@
         "message": "Möchten Sie Ihren Warenkorb leeren?"
       },
       "configuration_items": {
-        "title": "Komponentenliste"
+        "title": "Komponentenliste",
+        "edit_configuration": "Konfiguration bearbeiten"
       }
     },
     "catalog": {
