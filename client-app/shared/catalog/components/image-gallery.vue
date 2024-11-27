@@ -188,7 +188,7 @@ onMounted(async () => {
   }
 
   &__thumb-img {
-    @apply border rounded-sm w-full h-full object-center object-contain;
+    @apply border rounded-sm w-full aspect-square object-center object-contain;
 
     &--active {
       @apply border-primary outline outline-1 outline-primary;
