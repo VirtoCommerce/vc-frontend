@@ -7,7 +7,7 @@
     <VcWidget size="lg">
       <template #default-container>
         <!-- Company name block -->
-        <div class="flex items-start gap-3 p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+        <div class="p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
           <VcInput
             v-model="organizationName"
             :label="$t('pages.company.info.labels.company_name')"
@@ -17,19 +17,19 @@
             name="organization-name"
             autocomplete="off"
             maxlength="64"
-            class="grow"
-          />
-
-          <VcButton
-            v-if="userCanEditOrganization"
-            :loading="loadingOrganization || loadingUser"
-            :disabled="!meta.valid || !meta.dirty"
-            :icon="companyNameSaveIcon"
-            class="mt-[1.375rem] flex-none"
-            @click="saveOrganizationName"
           >
-            {{ $t("common.buttons.save") }}
-          </VcButton>
+            <template v-if="userCanEditOrganization" #append>
+              <VcButton
+                :loading="loadingOrganization || loadingUser"
+                :disabled="!meta.valid || !meta.dirty"
+                :icon="companyNameSaveIcon"
+                class="flex-none"
+                @click="saveOrganizationName"
+              >
+                {{ $t("common.buttons.save") }}
+              </VcButton>
+            </template>
+          </VcInput>
         </div>
 
         <!-- Content block -->
