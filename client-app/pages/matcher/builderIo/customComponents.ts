@@ -348,7 +348,6 @@ export const builderIOComponents: Array<BuilderIOComponentType> = [
       {
         name: "breadcrumbs",
         type: "list",
-        defaultValue: [{ title: "Catalog", seoPath: "/catalog" }],
         subFields: [
           {
             name: "title",
