@@ -1,0 +1,31 @@
+{
+  "ui_kit": {
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "select": {
+      "items_selected": "{0} articles sélectionnés"
+    },
+    "file": {
+      "progress": "{percent} terminé",
+      "uploaded": "Téléchargement terminé"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Glissez-déposez le fichier ici ou",
+      "browse": "Parcourir vos fichiers",
+      "requirements": "Les fichiers disponibles pour le téléchargement sont aux formats {formats}. Chaque fichier ne doit pas dépasser {fileSize}. Maximum {maxFileCount} fichiers autorisés.",
+      "any_format": "tout",
+      "errors": {
+        "fix_to_continue": "Corrigez les erreurs de téléchargement pour continuer.",
+        "has_max_file_count": "Vous avez téléchargé le nombre maximum de fichiers possible. D'autres téléchargements ne sont pas possibles.",
+        "tried_more_than_max_file_count": "Vous avez essayé de télécharger plus que le nombre maximum de fichiers autorisés."
+      }
+    },
+    "reach_limit": {
+      "end_list": "Vous avez atteint la fin de la liste.",
+      "page_limit_filters": "Pas d'autres résultats. Veuillez essayer de changer les filtres.",
+      "page_limit": "Aucun autre résultat ne peut être affiché."
+    }
+  }
+}

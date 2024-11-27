@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -57,7 +57,7 @@
     "@vueuse/integrations": "^10.11.0",
     "axios": "^1.7.2",
     "dompurify": "^3.1.6",
-    "firebase": "^10.12.2",
+    "firebase": "^11.0.1",
     "graphql": "^16.8.2",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
