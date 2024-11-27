@@ -42,19 +42,20 @@
       <GiftsSection
         v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
         :gifts="availableExtendedGifts"
+        class="mt-5"
         @toggle:gift="toggleGift"
       />
 
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
-        <ShippingDetailsSection v-if="!allItemsAreDigital" />
+        <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-        <BillingDetailsSection />
+        <BillingDetailsSection class="mt-5" />
 
-        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
+        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
       </template>
 
-      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
+      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
 
       <template #sidebar>
         <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>

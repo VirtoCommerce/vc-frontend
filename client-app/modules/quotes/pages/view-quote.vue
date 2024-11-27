@@ -39,6 +39,7 @@
         :title="$t('quote_details.files')"
         size="lg"
         prepend-icon="document-text"
+        class="mt-5"
       >
         <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
@@ -48,73 +49,75 @@
       </VcWidget>
 
       <template #sidebar>
-        <VcWidget :title="$t('quote_details.quote_summary')">
-          <div class="flex justify-between text-base">
-            <span class="font-bold">
-              {{ $t("quote_details.subTotal") }}
-            </span>
-
-            <span class="text-lg font-black text-[--price-color]">
-              <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
-            </span>
-          </div>
-          <div class="border-y py-2 text-base font-normal">
+        <div class="space-y-5">
+          <VcWidget :title="$t('quote_details.quote_summary')">
             <div class="flex justify-between text-base">
-              {{ $t("quote_details.discountTotal") }}
+              <span class="font-bold">
+                {{ $t("quote_details.subTotal") }}
+              </span>
 
-              <span>
-                <VcPriceDisplay :value="quote.totals?.discountTotal" />
+              <span class="text-lg font-black text-[--price-color]">
+                <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
               </span>
             </div>
-            <div class="flex justify-between text-base">
-              {{ $t("quote_details.shippingTotal") }}
+            <div class="border-y py-2 text-base font-normal">
+              <div class="flex justify-between text-base">
+                {{ $t("quote_details.discountTotal") }}
 
-              <span>
-                <VcPriceDisplay :value="quote.totals?.shippingTotal" />
-              </span>
+                <span>
+                  <VcPriceDisplay :value="quote.totals?.discountTotal" />
+                </span>
+              </div>
+              <div class="flex justify-between text-base">
+                {{ $t("quote_details.shippingTotal") }}
+
+                <span>
+                  <VcPriceDisplay :value="quote.totals?.shippingTotal" />
+                </span>
+              </div>
+              <div class="flex justify-between text-base">
+                {{ $t("quote_details.taxTotal") }}
+
+                <span class="">
+                  <VcPriceDisplay :value="quote.totals?.taxTotal" />
+                </span>
+              </div>
             </div>
             <div class="flex justify-between text-base">
-              {{ $t("quote_details.taxTotal") }}
+              <span class="font-bold">
+                {{ $t("quote_details.total") }}
+              </span>
 
-              <span class="">
-                <VcPriceDisplay :value="quote.totals?.taxTotal" />
+              <span class="text-lg font-black text-success-700">
+                <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
               </span>
             </div>
-          </div>
-          <div class="flex justify-between text-base">
-            <span class="font-bold">
-              {{ $t("quote_details.total") }}
-            </span>
+          </VcWidget>
 
-            <span class="text-lg font-black text-success-700">
-              <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
-            </span>
-          </div>
-        </VcWidget>
+          <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
+            <div class="space-y-1">
+              <div class="flex text-base">
+                <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
 
-        <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
-          <div class="space-y-1">
-            <div class="flex text-base">
-              <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
+                <span>{{ $d(quote.createdDate) }}</span>
+              </div>
 
-              <span>{{ $d(quote.createdDate) }}</span>
+              <div class="flex items-center gap-2">
+                <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
+
+                <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
+              </div>
             </div>
+          </VcWidget>
 
-            <div class="flex items-center gap-2">
-              <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
+          <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
+            <VcAddressInfo :address="shippingAddress!" />
+          </VcWidget>
 
-              <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
-            </div>
-          </div>
-        </VcWidget>
-
-        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
-          <VcAddressInfo :address="shippingAddress!" />
-        </VcWidget>
-
-        <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
-          <VcAddressInfo :address="billingAddress!" />
-        </VcWidget>
+          <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
+            <VcAddressInfo :address="billingAddress!" />
+          </VcWidget>
+        </div>
       </template>
     </VcLayout>
   </div>
