@@ -153,9 +153,6 @@
       "main": [
         {
           "id": "catalog",
-          "route": {
-            "name": ""
-          },
           "title": "shared.layout.header.menu.catalog",
           "icon": "cube",
           "isCatalogItem": true
