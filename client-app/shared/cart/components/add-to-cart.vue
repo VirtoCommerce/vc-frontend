@@ -34,7 +34,7 @@ import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
-import { useConfigurableProduct } from "@/shared/catalog";
+import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
 import { AddToCartModeType } from "@/ui-kit/enums";
 import type {
@@ -130,7 +130,7 @@ async function onChange() {
 
   lineItem = clone(getLineItem(updatedCart?.items));
 
-  if (!lineItem) {
+  if (!lineItem && !isConfigurable.value) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     notifications.error({
       text: t(
@@ -153,7 +153,7 @@ async function onChange() {
       duration: 4000,
       single: true,
     });
-  } else {
+  } else if (lineItem) {
     emit("update:lineItem", lineItem);
   }
 

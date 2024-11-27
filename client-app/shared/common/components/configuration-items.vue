@@ -27,9 +27,6 @@ interface IProps {
   configurationItems: {
     id: string;
     name?: string;
-    quantity?: number;
-    productId?: string;
-    sectionId?: string;
   }[];
   lineItemId?: string;
   allowEdit?: boolean;
@@ -38,22 +35,16 @@ interface IProps {
 
 const props = defineProps<IProps>();
 const configurationItems = toRef(props, "configurationItems");
+const lineItemId = toRef(props, "lineItemId");
 
 const isCollapsed = ref<boolean>(true);
 
 function getRoute() {
-  const query = {
-    lineItemId: props.lineItemId,
-    configuration: JSON.stringify(
-      configurationItems.value.map(({ sectionId, productId, quantity }) => ({ sectionId, productId, quantity })),
-    ),
-  };
-
   if (typeof props.route === "string") {
-    return { path: props.route, query };
+    return { path: props.route, query: { lineItemId: lineItemId.value } };
   }
   if (typeof props.route === "object") {
-    return { ...props.route, query };
+    return { ...props.route, query: { lineItemId: lineItemId.value } };
   }
   return "";
 }

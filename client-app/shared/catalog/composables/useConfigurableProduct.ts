@@ -4,7 +4,9 @@ import { ref, readonly, computed } from "vue";
 import { apolloClient, getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql";
 import { getMergeStrategyUniqueBy, useMutationBatcher, useRouteQueryParam } from "@/core/composables";
 import { Logger } from "@/core/utilities";
+import { useFullCart } from "@/shared/cart/composables";
 import type {
+  CartConfigurationItemType,
   ConfigurationSectionInput,
   ConfigurationSectionType,
   CreateConfiguredLineItemMutation,
@@ -37,24 +39,11 @@ function _useConfigurableProduct(configurableProductId: string) {
   const creating: Ref<boolean> = ref(false);
 
   const lineItemId = useRouteQueryParam<string>("lineItemId");
-  const configurationQueryParam = useRouteQueryParam<string>("configuration");
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
-
-  const preselectedValues = computed(() => {
-    try {
-      return JSON.parse(configurationQueryParam.value) as {
-        sectionId: string;
-        productId: string;
-        quantity: number;
-      }[];
-    } catch (e) {
-      Logger.error(`${_useConfigurableProduct.name}.preselectedValues`, e);
-      return [];
-    }
-  });
+  const { cart, forceFetch } = useFullCart();
 
   const selectedConfiguration = computed(() => {
     return selectedConfigurationInput.value
@@ -80,8 +69,10 @@ function _useConfigurableProduct(configurableProductId: string) {
     try {
       const data = await getProductConfiguration(configurableProductId);
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
+      const preselectedValues = await getPreselectedValues();
+
       configuration.value.forEach((section) => {
-        const preselectedValue = preselectedValues.value.find(({ sectionId }) => sectionId === section.id);
+        const preselectedValue = preselectedValues.find(({ sectionId }) => sectionId === section.id);
         const isPreselectedValueValid =
           preselectedValue?.productId &&
           preselectedValue?.quantity &&
@@ -142,18 +133,20 @@ function _useConfigurableProduct(configurableProductId: string) {
     } else if (payload.value) {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
     }
-    configurationQueryParam.value = JSON.stringify(
-      selectedConfigurationInput.value.map(({ sectionId, value }) => ({
-        sectionId,
-        productId: value?.productId,
-        quantity: value?.quantity,
-      })),
-    );
   }
 
   function selectSectionValue(payload: ConfigurationSectionInput) {
     changeSelectionValue(payload);
     void createConfiguredLineItem();
+  }
+
+  async function getPreselectedValues(): Promise<CartConfigurationItemType[] | []> {
+    if (lineItemId.value) {
+      await forceFetch();
+      const lineItem = cart.value?.items.find(({ id }) => id === lineItemId.value);
+      return lineItem?.configurationItems ?? [];
+    }
+    return [];
   }
 
   function reset() {
