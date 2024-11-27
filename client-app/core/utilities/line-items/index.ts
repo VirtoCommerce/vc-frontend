@@ -79,6 +79,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     minQuantity: item.product?.minQuantity,
     maxQuantity: item.product?.maxQuantity ?? item.inStockQuantity ?? item.product?.availabilityData?.availableQuantity,
     packSize: item.product?.packSize,
+    isConfigurable: item.product?.isConfigurable,
     configurationItems: "configurationItems" in item ? item.configurationItems : undefined,
   };
 }

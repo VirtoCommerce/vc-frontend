@@ -1,5 +1,5 @@
 <template>
-  <div v-if="configurationItems?.length" class="rounded border bg-neutral-50 px-4 py-2">
+  <div class="rounded border bg-neutral-50 px-4 py-2">
     <button type="button" class="flex items-center gap-1 text-xs font-bold" @click="isCollapsed = !isCollapsed">
       <span>{{ $t("shared.cart.configuration_items.title") }}</span>
 
@@ -24,7 +24,7 @@ import { computed, ref, toRef } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
 interface IProps {
-  configurationItems: {
+  configurationItems?: {
     id: string;
     name?: string;
   }[];

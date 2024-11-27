@@ -24,6 +24,7 @@ export type AnyLineItemType = {
     price: MoneyType;
     quantity: number;
   };
+  isConfigurable?: boolean;
   configurationItems?: {
     id: string;
     name?: string;
@@ -57,6 +58,7 @@ export type PreparedLineItemType = {
   sku?: string;
   productId?: string;
   countInCart?: number;
+  isConfigurable?: boolean;
   configurationItems?: {
     id: string;
     name?: string;

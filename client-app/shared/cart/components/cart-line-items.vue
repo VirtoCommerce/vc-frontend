@@ -43,7 +43,7 @@
 
     <template #after-content="{ item }">
       <ConfigurationItems
-        v-if="item.configurationItems?.length"
+        v-if="item.isConfigurable"
         :configuration-items="item.configurationItems"
         :line-item-id="item.id"
         allow-edit
