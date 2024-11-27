@@ -703,7 +703,7 @@
         "subtitle_message_end": "by entering item @:{'common.labels.sku'}s and quantities."
       },
       "copy_n_paste": {
-        "title": "Copy and Paste",
+        "title": "Copy&Paste",
         "subtitle_message": "Want to save time and order faster?",
         "guide_message": "Simply copy and paste item records from your CSV file into the field below using the following format: <strong>SKU,Quantity</strong>. Each record should start with a new line.",
         "text_area_placeholder": "Format example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
@@ -1293,8 +1293,8 @@
       "product_duplicate_sku_alert": "There are multiple products with SKU \"{0}\". Please choose one to add to cart:",
       "product_was_not_added_alert": "Products with following SKUs were not added to the cart: {0}",
       "data_is_invalid_alert": "The details you provided are invalid.",
-      "manually_tab": "Enter Manually",
-      "copy_n_paste_tab": "Copy and Paste"
+      "manually_tab": "Manually",
+      "copy_n_paste_tab": "Copy&Paste"
     },
     "demo_landing": {
       "meta": {
