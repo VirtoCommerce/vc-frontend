@@ -235,8 +235,9 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
 
 watch(
   () => props.cartId,
-  async () => {
-    await forceFetch({ cartId: props.cartId });
+  async (cartId) => {
+    // Workaround as vue router pass empty string instead of undefined for optional params
+    await forceFetch({ cartId: cartId || undefined });
 
     /**
      * Send a Google Analytics shopping cart view event.
