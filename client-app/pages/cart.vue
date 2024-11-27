@@ -126,10 +126,10 @@
     <transition name="slide-fade-bottom">
       <div
         v-if="!isEmpty(selectedItemIds)"
-        class="shadow-t-lgs fixed bottom-0 left-0 z-10 flex w-full justify-center bg-additional-50 p-6 md:hidden print:hidden"
+        class="fixed bottom-0 left-0 z-10 flex w-full justify-center bg-additional-50 p-4 shadow-2xl lg:hidden print:hidden"
       >
-        <VcButton variant="outline" prepend-icon="trash" @click="handleRemoveItems(selectedItemIds)">
-          {{ $t("common.buttons.remove_selected") }}
+        <VcButton variant="outline" prepend-icon="check-circle" @click="handleProceedToCheckout">
+          {{ $t("common.buttons.go_to_checkout") }}
         </VcButton>
       </div>
     </transition>
@@ -224,6 +224,14 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
     unselectCartItems(value.itemIds);
   } else {
     selectCartItems(value.itemIds);
+  }
+}
+
+function handleProceedToCheckout() {
+  const orderSummaryElement = document.getElementById("order-summary");
+
+  if (orderSummaryElement) {
+    orderSummaryElement.scrollIntoView({ behavior: "smooth" });
   }
 }
 
