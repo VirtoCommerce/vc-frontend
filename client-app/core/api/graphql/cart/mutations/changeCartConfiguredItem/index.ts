@@ -3,20 +3,18 @@ import { ChangeCartConfiguredItemDocument } from "@/core/api/graphql/types";
 import { globals } from "@/core/globals";
 import type { ConfigurationSectionInput } from "@/core/api/graphql/types";
 
+type MutationVariablesType = {
+  lineItemId: string;
+  configurationSections: ConfigurationSectionInput[];
+  quantity: number;
+};
+
 export function useChangeCartConfiguredItemMutation() {
   const { storeId, currencyCode, cultureName, userId } = globals;
 
-  const { mutate: _mutate, loading, called, onDone, onError, error } = useMutation(ChangeCartConfiguredItemDocument);
+  const { mutate: _mutate, ...rest } = useMutation(ChangeCartConfiguredItemDocument);
 
-  async function mutate({
-    lineItemId,
-    configurationSections,
-    quantity,
-  }: {
-    lineItemId: string;
-    configurationSections: ConfigurationSectionInput[];
-    quantity: number;
-  }) {
+  async function mutate({ lineItemId, configurationSections, quantity }: MutationVariablesType) {
     return await _mutate({
       command: {
         storeId,
@@ -30,5 +28,5 @@ export function useChangeCartConfiguredItemMutation() {
     });
   }
 
-  return { mutate, loading, called, onDone, onError, error };
+  return { mutate, ...rest };
 }
