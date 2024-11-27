@@ -62,7 +62,7 @@ interface IProps {
 }
 
 const product = toRef(props, "product");
-const { cart, addToCart, changeItemQuantity } = useShortCart();
+const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
@@ -108,7 +108,9 @@ async function onChange() {
   const mode = isAlreadyExistsInTheCart ? AddToCartModeType.Update : AddToCartModeType.Add;
 
   if (mode === AddToCartModeType.Update) {
-    updatedCart = await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
+    updatedCart = isConfigurable.value
+      ? await changeCartConfiguredItem(lineItem!.id, enteredQuantity.value || 0, selectedConfigurationInput.value)
+      : await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
   } else {
     const inputQuantity = enteredQuantity.value || minQty.value;
     const configurationSections = isConfigurable.value ? selectedConfigurationInput.value : undefined;

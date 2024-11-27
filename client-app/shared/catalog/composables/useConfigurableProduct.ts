@@ -1,8 +1,7 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import { ref, readonly, computed } from "vue";
-import { apolloClient } from "@/core/api/graphql";
-import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
+import { apolloClient, getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql";
 import { getMergeStrategyUniqueBy, useMutationBatcher, useRouteQueryParam } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import type {
@@ -42,7 +41,6 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
-
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
 
   const preselectedValues = computed(() => {
