@@ -28,7 +28,7 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/core/composables";
+import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents, useRouteQueryParam } from "@/core/composables";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -66,7 +66,8 @@ const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useSho
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const { selectedConfigurationInput, lineItemId: configurableLineItemId } = useConfigurableProduct(product.value.id);
+const configurableLineItemId = useRouteQueryParam<string>("lineItemId");
+const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();

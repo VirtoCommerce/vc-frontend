@@ -33,7 +33,6 @@ provideApolloClient(apolloClient);
  * @returns {Readonly<ComputedRef<Record<string, SelectedConfigurationType>>>} selectedConfiguration - Readonly computed ref of the selected configuration state.
  * @returns {ShallowReadonly<Ref<ConfigurationSectionInput[]>>} selectedConfigurationInput - Readonly ref containing the configuration input data.
  * @returns {Readonly<Ref<CreateConfiguredLineItemMutation['createConfiguredLineItem']>>} configuredLineItem - Readonly ref of the created configured line item.
- * @returns {Readonly<Ref<string>>} lineItemId - Readonly ref of the line item ID. (taken from route query params)
  */
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
@@ -165,7 +164,6 @@ function _useConfigurableProduct(configurableProductId: string) {
     selectedConfiguration: readonly(selectedConfiguration),
     selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
-    lineItemId: readonly(lineItemId),
   };
 }
 
