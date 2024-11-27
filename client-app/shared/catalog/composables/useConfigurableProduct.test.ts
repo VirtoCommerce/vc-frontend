@@ -24,6 +24,7 @@ vi.mock("@/core/utilities", () => ({
 
 vi.mock("vue-router", () => ({
   useRouter: () => ({
+    resolve: vi.fn().mockReturnValue({}),
     currentRoute: {
       value: {
         query: {},
