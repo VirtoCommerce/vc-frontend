@@ -134,7 +134,9 @@ export function useShortCart() {
     configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
   ): Promise<ShortCartFragment | undefined> {
     const result = await _changeCartConfiguredItem({
-      command: { lineItemId, quantity, configurationSections: configurationSections as ConfigurationSectionInput[] },
+      lineItemId,
+      quantity,
+      configurationSections: configurationSections as ConfigurationSectionInput[],
     });
     return result?.data?.changeCartConfiguredItem;
   }
