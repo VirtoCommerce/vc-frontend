@@ -32,8 +32,12 @@
 <script setup lang="ts">
 import { useBreakpoints } from "@vueuse/core";
 import { computed } from "vue";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE } from "@/core/constants";
-import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
+import {
+  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
+  ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
+} from "@/modules/customer-reviews/constants";
 import ProductCardGrid from "./product-card-grid.vue";
 import ProductCardList from "./product-card-list.vue";
 import ProductSkeletonGrid from "./product-skeleton-grid.vue";
@@ -67,7 +71,9 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
-const { enabled: productReviewsEnabled } = useCustomerReviews();
+
+const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
+const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const skeletonComponent = computed(() => (props.viewMode === "list" ? ProductSkeletonList : ProductSkeletonGrid));
 const cardComponent = computed(() => (props.viewMode === "list" ? ProductCardList : ProductCardGrid));

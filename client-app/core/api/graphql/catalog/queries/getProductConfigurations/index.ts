@@ -5,7 +5,7 @@ import type { GetProductConfigurationsQuery, GetProductConfigurationsQueryVariab
 import type { ApolloQueryResult } from "@apollo/client/core";
 
 export async function getProductConfiguration(
-  productId: string,
+  configurableProductId: string,
 ): Promise<GetProductConfigurationsQuery["productConfiguration"] | undefined> {
   const { storeId, cultureName, currencyCode } = globals;
 
@@ -18,7 +18,7 @@ export async function getProductConfiguration(
       storeId,
       cultureName,
       currencyCode,
-      productId,
+      configurableProductId,
     },
   });
 

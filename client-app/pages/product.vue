@@ -46,6 +46,12 @@
           :model="productInfoSection"
         />
 
+        <ProductConfiguration
+          v-if="product.isConfigurable && configuration?.length"
+          :product-id="productId"
+          :configuration="configuration"
+        />
+
         <KeepAlive>
           <ProductReviews
             v-if="productReviewsEnabled && !productReviewsSection?.hidden"
@@ -111,6 +117,7 @@ import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -122,14 +129,19 @@ import {
   getFilterExpressionForAvailableIn,
   getFilterExpressionForInStock,
 } from "@/core/utilities";
-import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
+import {
+  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
+  ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
+} from "@/modules/customer-reviews/constants";
 import {
   useProduct,
   useRelatedProducts,
   useCategory,
   ProductSidebar,
+  ProductConfiguration,
   useProducts,
   useRecommendedProducts,
+  useConfigurableProduct,
 } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
@@ -158,6 +170,7 @@ const filtersDisplayOrder = toRef(props, "filtersDisplayOrder");
 
 const { t } = useI18n();
 const { product, fetching: fetchingProduct, fetchProduct } = useProduct();
+const { fetchProductConfiguration, configuration } = useConfigurableProduct(productId.value);
 const {
   fetchingProducts: fetchingVariations,
   products: variations,
@@ -182,7 +195,9 @@ const {
 });
 const { relatedProducts, fetchRelatedProducts } = useRelatedProducts();
 const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts();
-const { enabled: productReviewsEnabled } = useCustomerReviews();
+
+const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
+const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const ga = useGoogleAnalytics();
 const { catalogBreadcrumb } = useCategory();
@@ -319,6 +334,9 @@ watchEffect(() => {
 
 watchEffect(async () => {
   await fetchProduct(productId.value);
+  if (product.value?.isConfigurable) {
+    await fetchProductConfiguration();
+  }
 
   if (product.value?.associations?.totalCount && !relatedProductsSection?.hidden) {
     await fetchRelatedProducts({ productId: productId.value, itemsPerPage: 30 });
