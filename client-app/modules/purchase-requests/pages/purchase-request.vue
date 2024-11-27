@@ -36,6 +36,7 @@
           v-if="cart?.items?.length"
           :items="cart.items"
           :validation-errors="cart.validationErrors"
+          :selectable="false"
           @change:item-quantity="changeCartItemQuantity"
           @remove:items="removeCartItems"
         />
