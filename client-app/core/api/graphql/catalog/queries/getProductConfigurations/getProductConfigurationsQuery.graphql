@@ -2,10 +2,15 @@
 #import "../../fragments/property.graphql"
 #import "../../fragments/availabilityData.graphql"
 
-query GetProductConfigurations($productId: String!, $storeId: String!, $currencyCode: String!, $cultureName: String) {
+query GetProductConfigurations(
+  $configurableProductId: String!
+  $storeId: String!
+  $currencyCode: String!
+  $cultureName: String
+) {
   productConfiguration(
     storeId: $storeId
-    productId: $productId
+    configurableProductId: $configurableProductId
     currencyCode: $currencyCode
     cultureName: $cultureName
   ) {
@@ -15,35 +20,32 @@ query GetProductConfigurations($productId: String!, $storeId: String!, $currency
       description
       type
       isRequired
-      quantity
-      products {
-        name
+      options {
         id
-        code
-        productType
-        slug
-        imgSrc
-        availabilityData {
-          ...availabilityData
+        quantity
+        listPrice {
+          ...money
         }
-        price {
-          actual {
-            ...money
-          }
-          discountAmount {
-            amount
-            formattedAmount
-          }
-          sale {
-            amount
-            formattedAmount
-          }
-          list {
-            ...money
-          }
+        salePrice {
+          ...money
         }
-        properties {
-          ...property
+        extendedPrice {
+          ...money
+        }
+        product {
+          name
+          id
+          code
+          productType
+          slug
+          imgSrc
+          hasVariations
+          availabilityData {
+            ...availabilityData
+          }
+          properties {
+            ...property
+          }
         }
       }
     }

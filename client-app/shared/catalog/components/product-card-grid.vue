@@ -164,15 +164,24 @@
       <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" />
     </div>
 
-    <VcVariationsButton
-      v-if="product.hasVariations"
-      :link="link"
-      :target="browserTarget"
-      :variations-count="(product.variations?.length || 0) + 1"
-      show-link
+    <VcProductButton
+      v-if="product.isConfigurable"
+      :to="link"
+      link-text="Customize"
+      button-text="Customize"
+      icon="cube-transparent"
+      :target="browserTarget || $cfg.details_browser_target || '_blank'"
       @link-click="$emit('linkClick', $event)"
-    >
-    </VcVariationsButton>
+    />
+
+    <VcProductButton
+      v-else-if="product.hasVariations"
+      :to="link"
+      :link-text="$t('pages.catalog.show_on_a_separate_page')"
+      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      @link-click="$emit('linkClick', $event)"
+    />
 
     <template v-else>
       <slot name="cart-handler" />
