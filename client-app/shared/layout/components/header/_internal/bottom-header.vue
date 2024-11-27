@@ -62,7 +62,8 @@
 
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
-import { computed, ref, shallowRef } from "vue";
+import { computed, ref, shallowRef, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { SearchBar } from "@/shared/layout";
@@ -71,7 +72,6 @@ import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
 
-//const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
@@ -83,6 +83,7 @@ const showCatalogMenuButton = shallowRef<HTMLElement | null>(null);
 const catalogMenuVisible = ref(false);
 
 const { bottom } = useElementBounding(bottomHeader);
+const route = useRoute();
 
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const catalogMenuStyle = computed<StyleValue | undefined>(() =>
@@ -105,4 +106,8 @@ function toggleCatalogDropdown(event: Event) {
     catalogMenuVisible.value = !catalogMenuVisible.value;
   }
 }
+
+watch(route, () => {
+  catalogMenuVisible.value = false;
+});
 </script>

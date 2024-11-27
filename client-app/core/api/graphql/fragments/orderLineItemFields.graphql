@@ -46,4 +46,8 @@ fragment orderLineItemFields on OrderLineItemType {
       reviewCount
     }
   }
+  configurationItems {
+    id
+    name
+  }
 }
