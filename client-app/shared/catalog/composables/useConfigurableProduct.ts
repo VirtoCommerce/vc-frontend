@@ -1,12 +1,14 @@
-import isEqual from "lodash/isEqual";
-import { ref, readonly, computed, watch } from "vue";
+import { provideApolloClient } from "@vue/apollo-composable";
+import { createSharedComposable } from "@vueuse/core";
+import { ref, readonly, computed } from "vue";
+import { apolloClient } from "@/core/api/graphql";
 import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { Logger } from "@/core/utilities";
 import type {
   ConfigurationSectionInput,
+  ConfigurationSectionType,
   CreateConfiguredLineItemMutation,
-  GetProductConfigurationsQuery,
 } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
@@ -16,24 +18,27 @@ type SelectedConfigurationType = {
   selectedProductTitle: string | undefined;
 };
 
+provideApolloClient(apolloClient);
+
 /**
  * Composable function to handle configurable products.
  *
  * @param {string} configurableProductId - The ID of the configurable product.
- * @returns {Object} - The composable functions and properties.
+ * @returns {Object} The composable functions and properties:
  * @returns {Function} fetchProductConfiguration - Function to fetch the product configuration.
- * @returns {Function} selectSectionValue - Function to select a section value.
- * @returns {Ref<boolean>} loading - Computed ref indicating if the product configuration fetching or line item creation is in progress.
- * @returns {Ref<GetProductConfigurationsQuery["productConfiguration"] | undefined>} configuration - Readonly ref containing the product configuration.
- * @returns {Ref<Record<string, SelectedConfigurationType | undefined>>} selectedConfiguration - Readonly ref containing the selected configuration.
- * @returns {Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"] | undefined>} configuredLineItem - Readonly ref containing the created configured line item.
+ * @returns {Function} selectSectionValue - Function to select a section value for a configuration section.
+ * @returns {ComputedRef<boolean>} loading - Computed ref indicating if any operation is in progress.
+ * @returns {ShallowReadonly<Ref<ConfigurationSectionType[]>>} configuration - Readonly ref containing the product configuration sections.
+ * @returns {Readonly<ComputedRef<Record<string, SelectedConfigurationType>>>} selectedConfiguration - Readonly computed ref of the selected configuration state.
+ * @returns {ShallowReadonly<Ref<ConfigurationSectionInput[]>>} selectedConfigurationInput - Readonly ref containing the configuration input data.
+ * @returns {Readonly<Ref<CreateConfiguredLineItemMutation['createConfiguredLineItem']>>} configuredLineItem - Readonly ref of the created configured line item.
  */
-export function useConfigurableProduct(configurableProductId: string) {
+function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
 
-  const configuration: Ref<GetProductConfigurationsQuery["productConfiguration"] | undefined> = ref();
-  const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"] | undefined> = ref();
+  const configuration: Ref<ConfigurationSectionType[]> = ref([]);
+  const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
 
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
 
@@ -42,11 +47,12 @@ export function useConfigurableProduct(configurableProductId: string) {
       ?.filter(({ value }) => value !== undefined)
       ?.reduce(
         (acc, section) => {
-          const rawSection = configuration.value?.configurationSections?.find((s) => s.name === section.sectionId);
+          const rawSection = configuration.value.find(({ id }) => id === section.sectionId);
           acc[section.sectionId] = {
             productId: section.value?.productId,
             quantity: section.value?.quantity,
-            selectedProductTitle: rawSection?.products?.find(({ id }) => id === section.value?.productId)?.name,
+            selectedProductTitle: rawSection?.options?.find(({ product }) => product?.id === section.value?.productId)
+              ?.product?.name,
           };
           return acc;
         },
@@ -55,19 +61,23 @@ export function useConfigurableProduct(configurableProductId: string) {
   });
 
   async function fetchProductConfiguration() {
+    reset();
     fetching.value = true;
     try {
-      configuration.value = await getProductConfiguration(configurableProductId);
-      selectedConfigurationInput.value =
-        configuration.value?.configurationSections?.map((section) => ({
-          sectionId: section.id ?? "",
-          value: section.isRequired
-            ? {
-                productId: section.products?.[0]?.id ?? "",
-                quantity: section.quantity ?? 1,
-              }
-            : undefined,
-        })) ?? [];
+      const data = await getProductConfiguration(configurableProductId);
+      configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
+      configuration.value.forEach((section) => {
+        if (section.isRequired && section.id) {
+          changeSelectionValue({
+            sectionId: section.id,
+            value: {
+              productId: section.options?.[0]?.product?.id ?? "",
+              quantity: section.options?.[0]?.quantity ?? 1,
+            },
+          });
+        }
+      });
+      void createConfiguredLineItem();
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
       throw e;
@@ -76,12 +86,12 @@ export function useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  const { mutate } = useCreateConfiguredLineItemMutation();
-  const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
-    mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
-  });
   async function createConfiguredLineItem() {
     creating.value = true;
+    const { mutate } = useCreateConfiguredLineItemMutation();
+    const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
+      mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
+    });
     try {
       const result = await batchedCreateConfiguredLineItem({
         command: {
@@ -98,30 +108,31 @@ export function useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  function selectSectionValue(payload: ConfigurationSectionInput) {
+  function changeSelectionValue(payload: ConfigurationSectionInput) {
     const sectionIndex = selectedConfigurationInput.value?.findIndex(
       (section) => section.sectionId === payload.sectionId,
     );
     if (sectionIndex !== -1) {
       const newValue = [...selectedConfigurationInput.value];
-      newValue?.splice(sectionIndex, 1, payload);
+      payload.value ? newValue.splice(sectionIndex, 1, payload) : newValue.splice(sectionIndex, 1);
       selectedConfigurationInput.value = newValue;
-    } else {
+    } else if (payload.value) {
       selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
     }
   }
 
-  watch(
-    selectedConfigurationInput,
-    (newValue, oldValue) => {
-      if (!isEqual(newValue, oldValue)) {
-        void createConfiguredLineItem();
-      }
-    },
-    {
-      deep: true,
-    },
-  );
+  function selectSectionValue(payload: ConfigurationSectionInput) {
+    changeSelectionValue(payload);
+    void createConfiguredLineItem();
+  }
+
+  function reset() {
+    fetching.value = false;
+    creating.value = false;
+    selectedConfigurationInput.value = [];
+    configuration.value = [];
+    configuredLineItem.value = undefined;
+  }
 
   return {
     fetchProductConfiguration,
@@ -129,6 +140,9 @@ export function useConfigurableProduct(configurableProductId: string) {
     loading: computed(() => fetching.value || creating.value),
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
+    selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
   };
 }
+
+export const useConfigurableProduct = createSharedComposable(_useConfigurableProduct);
