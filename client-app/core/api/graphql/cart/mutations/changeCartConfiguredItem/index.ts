@@ -1,6 +1,6 @@
-import { useMutation } from "@/core/api/graphql/composables";
+import { toValue } from "vue";
+import { useAllGlobalVariables, useMutation } from "@/core/api/graphql/composables";
 import { ChangeCartConfiguredItemDocument } from "@/core/api/graphql/types";
-import { globals } from "@/core/globals";
 import type { ConfigurationSectionInput } from "@/core/api/graphql/types";
 
 type MutationVariablesType = {
@@ -10,7 +10,7 @@ type MutationVariablesType = {
 };
 
 export function useChangeCartConfiguredItemMutation() {
-  const { storeId, currencyCode, cultureName, userId } = globals;
+  const { cultureName, currencyCode, storeId, userId } = toValue(useAllGlobalVariables());
 
   const { mutate: _mutate, ...rest } = useMutation(ChangeCartConfiguredItemDocument);
 
