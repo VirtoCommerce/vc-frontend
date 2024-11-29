@@ -97,11 +97,10 @@ async function onChange() {
 
   try {
     const lineItem = getLineItem(cart.value?.items);
-    const isExistingItem = !!lineItem;
-    const mode = isExistingItem ? AddToCartModeType.Update : AddToCartModeType.Add;
+    const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
     const updatedCart = await updateOrAddToCart(lineItem, mode);
 
-    if (isConfigurable.value && !isExistingItem) {
+    if (isConfigurable.value && mode === AddToCartModeType.Add) {
       loading.value = false;
       return;
     }
