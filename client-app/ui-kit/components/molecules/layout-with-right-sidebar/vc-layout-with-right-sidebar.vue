@@ -16,12 +16,11 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  isSidebarSticky: {
-    type: Boolean,
-    default: false,
-  },
-});
+interface IProps {
+  isSidebarSticky?: boolean;
+}
+
+defineProps<IProps>();
 </script>
 
 <style lang="scss">

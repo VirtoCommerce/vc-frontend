@@ -163,7 +163,7 @@ function getProperties() {
       values: _.map(products.value, (product) => {
         const property = _.find(product.properties, ["name", name]);
 
-        return property ? getPropertyValue(property) ?? "\u2013" : "\u2013";
+        return property ? (getPropertyValue(property) ?? "\u2013") : "\u2013";
       }),
     };
   });

@@ -1,7 +1,8 @@
+import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, toValue } from "vue";
 import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
-import type { PageTemplate } from "@/shared/static-content";
+import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
 
 /**
@@ -92,8 +93,8 @@ export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     return pageDocumentContentResult?.value?.pageDocument || null;
   });
 
-  function isPageContent(data: unknown): data is PageTemplate {
-    const pageTemplate = data as PageTemplate;
+  function isPageContent(data: unknown): data is IPageTemplate {
+    const pageTemplate = data as IPageTemplate;
     return Array.isArray(pageTemplate?.content) && typeof pageTemplate?.settings === "object";
   }
 

@@ -56,7 +56,10 @@
 
     <div
       class="mobile-menu__overlay fixed inset-y-0 right-0 hidden bg-additional-950/5 backdrop-blur-lg md:block"
+      role="button"
+      tabindex="0"
       @click="$emit('close')"
+      @keypress="$emit('close')"
     />
   </nav>
 </template>

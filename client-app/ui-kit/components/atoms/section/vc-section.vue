@@ -11,17 +11,17 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  title: {
-    type: String,
-    default: "",
-  },
+import { Logger } from "@/core/utilities";
 
-  iconUrl: {
-    type: String,
-    default: "",
-  },
+interface IProps {
+  title?: string;
+  iconUrl?: string;
+}
+
+withDefaults(defineProps<IProps>(), {
+  title: "",
+  iconUrl: "",
 });
 
-console.warn("[UIKit][warn] VcSection is deprecated, use VcWidget instead.");
+Logger.warn("[UIKit][warn] VcSection is deprecated, use VcWidget instead.");
 </script>
