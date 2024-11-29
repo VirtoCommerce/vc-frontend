@@ -131,7 +131,12 @@ async function onChange() {
 
   lineItem = clone(getLineItem(updatedCart?.items));
 
-  if (!lineItem && !isConfigurable.value) {
+  if (mode === AddToCartModeType.Add && isConfigurable.value) {
+    loading.value = false;
+    return;
+  }
+
+  if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     notifications.error({
       text: t(
@@ -154,7 +159,7 @@ async function onChange() {
       duration: 4000,
       single: true,
     });
-  } else if (lineItem) {
+  } else {
     emit("update:lineItem", lineItem);
   }
 
