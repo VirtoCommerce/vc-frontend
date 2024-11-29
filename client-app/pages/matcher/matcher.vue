@@ -1,11 +1,5 @@
 <template>
   <div class="matcher">
-    <VirtoPages
-      v-if="previewers.virtoPages.isActive"
-      :is-visible="visibleComponent === 'virtoPages'"
-      :path-match="pathMatch || ['/']"
-      @set-state="updateState($event, 'virtoPages')"
-    />
     <SlugContent
       v-if="previewers.slugContent.isActive"
       :is-visible="visibleComponent === 'slugContent'"
@@ -44,13 +38,11 @@ interface IProps {
 defineProps<IProps>();
 
 const DEFAULT_PRIORITIES = {
-  virtoPages: 1,
-  builderIo: 2,
-  slugContent: 3,
-  internal: 4,
+  builderIo: 1,
+  slugContent: 2,
+  internal: 3,
 };
 
-const VirtoPages = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
 const BuilderIo = defineAsyncComponent(() => import("@/pages/matcher/builderIo/builder-io.vue"));
 const SlugContent = defineAsyncComponent(() => import("@/pages/matcher/slug-content.vue"));
 const Internal = defineAsyncComponent(() => import("@/pages/matcher/internal.vue"));
@@ -71,23 +63,12 @@ const isBuilderIOEnabled = computed(() => {
   return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.Enable")?.value as boolean;
 });
 
-const isVirtoPagesEnabled = computed(() => {
-  const pagesSettings = modulesSettings.value?.find((el) => el.moduleId === "VirtoCommerce.Pages")
-  return pagesSettings?.settings.find((el) => el.name === "VirtoPages.Enable")?.value as boolean;
-});
-
 const builderIoApiKey = computed(() => {
   return moduleSettings.value?.settings.find((el) => el.name === "BuilderIO.PublicApiKey")?.value as string;
 });
 
 // The highest priority has the previewer whose 'priority' value is closer to zero
 const previewers = ref<{ [key in string]: PreviewerStateType }>({
-  virtoPages: {
-    id: "virtoPages",
-    priority: PRIORITIES.value.virtoPages,
-    state: "initial",
-    isActive: isVirtoPagesEnabled.value,
-  },
   builderIo: {
     id: "builderIo",
     priority: PRIORITIES.value.builderIo,
