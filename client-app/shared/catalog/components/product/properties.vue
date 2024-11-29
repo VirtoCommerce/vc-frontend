@@ -32,9 +32,13 @@
 <script setup lang="ts">
 import { computed, inject } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { configInjectionKey } from "@/core/injection-keys";
 import { getPropertiesGroupedByName } from "@/core/utilities";
-import { useCustomerReviews } from "@/modules/customer-reviews/useCustomerReviews";
+import {
+  MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
+  ENABLED_KEY as CUSTOMER_REVIEWS_ENABLED_KEY,
+} from "@/modules/customer-reviews/constants";
 import { ProductTitledBlock, Vendor } from "@/shared/catalog";
 import type { Product } from "@/core/api/graphql/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
@@ -51,7 +55,8 @@ const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 
-const { enabled: productReviewsEnabled } = useCustomerReviews();
+const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
+const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),

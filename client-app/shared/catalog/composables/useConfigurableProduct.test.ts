@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { flushPromises } from "@vue/test-utils";
 import { describe, it, expect, beforeEach, vi, beforeAll, afterEach } from "vitest";
 import { ref } from "vue";
 import { useConfigurableProduct } from "@/shared/catalog/composables/useConfigurableProduct";
+import type { CreateConfiguredLineItemMutationVariables } from "@/core/api/graphql/types";
 import type { Mock } from "vitest";
 
 const TIMER_DELAY = 1000;
@@ -175,7 +175,13 @@ describe("useConfigurableProduct", () => {
       await flushPromises();
       vi.advanceTimersByTime(TIMER_DELAY);
 
-      expect(createConfiguredLineItemMutationMock.mock.calls[0][0]).toEqual({
+      const firstCallArguments = createConfiguredLineItemMutationMock.mock
+        .calls[0] as CreateConfiguredLineItemMutationVariables[];
+
+      const secondCallArguments = createConfiguredLineItemMutationMock.mock
+        .calls[1] as CreateConfiguredLineItemMutationVariables[];
+
+      expect(firstCallArguments[0]).toEqual({
         command: {
           configurableProductId: configurableProductId,
           configurationSections: [],
@@ -183,7 +189,8 @@ describe("useConfigurableProduct", () => {
       });
 
       expect(createConfiguredLineItemMutationMock).toBeCalledTimes(2);
-      expect(createConfiguredLineItemMutationMock.mock.calls[1][0]).toEqual({
+
+      expect(secondCallArguments[0]).toEqual({
         command: {
           configurableProductId: configurableProductId,
           configurationSections: [

@@ -44,6 +44,11 @@ export type AddQuoteAttachmentsCommandType = {
   urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
+export type AddQuoteItemsCommandType = {
+  newQuoteItems: Array<InputMaybe<InputNewQuoteItemType>>;
+  quoteId: Scalars['String']['input'];
+};
+
 export type ApproveQuoteCommandType = {
   quoteId: Scalars['String']['input'];
 };
@@ -2046,6 +2051,15 @@ export type InputNewCartItemType = {
   quantity?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type InputNewQuoteItemType = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  price?: InputMaybe<Scalars['Decimal']['input']>;
+  productId?: InputMaybe<Scalars['String']['input']>;
+  quantity: Scalars['Int']['input'];
+};
+
 export type InputNewWishlistItemType = {
   /** Product Id */
   productId: Scalars['String']['input'];
@@ -2950,6 +2964,7 @@ export type Mutations = {
   addOrUpdateCartShipment?: Maybe<CartType>;
   addOrUpdateOrderPayment?: Maybe<CustomerOrderType>;
   addQuoteAttachments?: Maybe<QuoteType>;
+  addQuoteItems?: Maybe<QuoteType>;
   addWishlistBulkItem?: Maybe<BulkWishlistType>;
   addWishlistItem?: Maybe<WishlistType>;
   addWishlistItems?: Maybe<WishlistType>;
@@ -3049,6 +3064,7 @@ export type Mutations = {
   updatePersonalData?: Maybe<IdentityResultType>;
   updateQuoteAddresses?: Maybe<QuoteType>;
   updateQuoteAttachments?: Maybe<QuoteType>;
+  updateQuoteDynamicProperties?: Maybe<QuoteType>;
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   updateWishListItems?: Maybe<WishlistType>;
@@ -3117,6 +3133,11 @@ export type MutationsAddOrUpdateOrderPaymentArgs = {
 
 export type MutationsAddQuoteAttachmentsArgs = {
   command: AddQuoteAttachmentsCommandType;
+};
+
+
+export type MutationsAddQuoteItemsArgs = {
+  command: AddQuoteItemsCommandType;
 };
 
 
@@ -3590,6 +3611,11 @@ export type MutationsUpdateQuoteAttachmentsArgs = {
 };
 
 
+export type MutationsUpdateQuoteDynamicPropertiesArgs = {
+  command: UpdateQuoteDynamicPropertiesCommandType;
+};
+
+
 export type MutationsUpdateRoleArgs = {
   command: InputUpdateRoleType;
 };
@@ -3967,6 +3993,35 @@ export type PageConnection = {
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** A connection from an object to a list of objects of type `PageDocument`. */
+export type PageDocumentConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<PageDocumentEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<PageDocumentType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `PageDocument`. */
+export type PageDocumentEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<PageDocumentType>;
+};
+
+export type PageDocumentType = {
+  content: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  /** Page permalink */
+  permalink?: Maybe<Scalars['String']['output']>;
+  /** Page source */
+  source?: Maybe<Scalars['String']['output']>;
 };
 
 /** An edge in a connection from an object to another object of type `Page`. */
@@ -4615,6 +4670,8 @@ export type Query = {
   organizationOrders?: Maybe<CustomerOrderConnection>;
   organizations?: Maybe<OrganizationConnection>;
   page?: Maybe<PageType>;
+  pageDocument?: Maybe<PageDocumentType>;
+  pageDocuments?: Maybe<PageDocumentConnection>;
   pages?: Maybe<PageConnection>;
   paymentStatuses?: Maybe<LocalizedSettingResponseType>;
   payments?: Maybe<PaymentInConnection>;
@@ -4894,6 +4951,20 @@ export type QueryOrganizationsArgs = {
 export type QueryPageArgs = {
   cultureName?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
+
+export type QueryPageDocumentArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryPageDocumentsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  keyword: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
 };
 
@@ -5202,7 +5273,7 @@ export type QuoteEdge = {
 };
 
 export type QuoteItemType = {
-  catalogId: Scalars['String']['output'];
+  catalogId?: Maybe<Scalars['String']['output']>;
   categoryId?: Maybe<Scalars['String']['output']>;
   comment?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
@@ -5210,12 +5281,12 @@ export type QuoteItemType = {
   listPrice: MoneyType;
   name: Scalars['String']['output'];
   product?: Maybe<Product>;
-  productId: Scalars['String']['output'];
+  productId?: Maybe<Scalars['String']['output']>;
   proposalPrices: Array<QuoteTierPriceType>;
   quantity: Scalars['Int']['output'];
   salePrice: MoneyType;
   selectedTierPrice?: Maybe<QuoteTierPriceType>;
-  sku: Scalars['String']['output'];
+  sku?: Maybe<Scalars['String']['output']>;
   taxType?: Maybe<Scalars['String']['output']>;
 };
 
@@ -5591,16 +5662,25 @@ export type StoreSettingsType = {
   emailVerificationRequired: Scalars['Boolean']['output'];
   /** Environment name */
   environmentName: Scalars['String']['output'];
-  /** SPA */
+  /**
+   * SPA
+   * @deprecated Client application should use own business logic for SPA detection.
+   */
   isSpa: Scalars['Boolean']['output'];
   modules: Array<ModuleSettingsType>;
   /** Password requirements */
   passwordRequirements?: Maybe<PasswordOptionsType>;
-  /** Quotes enabled */
+  /**
+   * Quotes enabled
+   * @deprecated Use Quotes.EnableQuotes public property instead.
+   */
   quotesEnabled: Scalars['Boolean']['output'];
   /** SEO links */
   seoLinkType: Scalars['String']['output'];
-  /** Store ID */
+  /**
+   * Subscription enabled
+   * @deprecated Use Subscription.EnableSubscriptions public property instead.
+   */
   subscriptionEnabled: Scalars['Boolean']['output'];
   /** Tax calculation enabled */
   taxCalculationEnabled: Scalars['Boolean']['output'];
@@ -5655,6 +5735,12 @@ export type UpdateQuoteAddressesCommandType = {
 export type UpdateQuoteAttachmentsCommandType = {
   quoteId: Scalars['String']['input'];
   urls: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
+export type UpdateQuoteDynamicPropertiesCommandType = {
+  /** Dynamic properties */
+  dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
+  quoteId: Scalars['String']['input'];
 };
 
 export type UserType = {
@@ -5971,7 +6057,7 @@ export type QuoteAddressFieldsFragment = { firstName: string, lastName: string, 
 
 export type QuoteAttachmentFragment = { name: string, url: string, contentType?: string, size: number };
 
-export type QuoteLineItemFieldsFragment = { id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, availabilityData: { availableQuantity: number, isInStock: boolean } } };
+export type QuoteLineItemFieldsFragment = { id: string, sku?: string, productId?: string, name: string, imageUrl?: string, listPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, availabilityData: { availableQuantity: number, isInStock: boolean } } };
 
 export type ApproveQuoteRequestMutationVariables = Exact<{
   command: ApproveQuoteCommandType;
@@ -6052,7 +6138,7 @@ export type GetQuoteQueryVariables = Exact<{
 }>;
 
 
-export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku: string, productId: string, name: string, imageUrl?: string, listPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, adjustmentQuoteExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, grandTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
+export type GetQuoteQuery = { quote?: { id: string, number: string, createdDate: any, cancelledDate?: any, cancelReason?: string, comment?: string, isCancelled: boolean, status?: string, attachments: Array<{ name: string, url: string, contentType?: string, size: number }>, items: Array<{ id: string, sku?: string, productId?: string, name: string, imageUrl?: string, listPrice: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, selectedTierPrice?: { quantity: number, price: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, product?: { id: string, slug?: string, brandName?: string, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, availabilityData: { availableQuantity: number, isInStock: boolean } } }>, addresses: Array<{ firstName: string, lastName: string, line1?: string, line2?: string, city: string, countryCode?: string, countryName: string, regionId?: string, regionName?: string, postalCode?: string, phone?: string, email?: string, addressType?: number, key?: string }>, totals: { grandTotalInclTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, subTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, shippingTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, taxTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, adjustmentQuoteExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, grandTotalExlTax: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountTotal: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } } };
 
 export type GetQuotesQueryVariables = Exact<{
   storeId?: InputMaybe<Scalars['String']['input']>;
