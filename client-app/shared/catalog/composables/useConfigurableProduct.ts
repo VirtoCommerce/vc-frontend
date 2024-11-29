@@ -38,12 +38,9 @@ function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
 
-  const lineItemId = useRouteQueryParam<string>("lineItemId");
-
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
-  const { cart, forceFetch } = useFullCart();
 
   const selectedConfiguration = computed(() => {
     return selectedConfigurationInput.value
@@ -140,7 +137,9 @@ function _useConfigurableProduct(configurableProductId: string) {
   }
 
   async function getPreselectedValues(): Promise<CartConfigurationItemType[] | undefined> {
+    const lineItemId = useRouteQueryParam<string>("lineItemId");
     if (lineItemId.value) {
+      const { cart, forceFetch } = useFullCart();
       await forceFetch();
       const lineItem = cart.value?.items.find(({ id }) => id === lineItemId.value);
       return lineItem?.configurationItems ?? [];
