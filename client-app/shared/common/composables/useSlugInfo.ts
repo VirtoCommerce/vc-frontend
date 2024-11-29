@@ -1,4 +1,3 @@
-import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, toValue } from "vue";
 import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
