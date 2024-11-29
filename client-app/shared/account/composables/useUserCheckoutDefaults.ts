@@ -1,17 +1,17 @@
 import { Logger } from "@/core/utilities";
 import { useUser } from "./useUser";
-import type { CheckoutDefaults } from "@/shared/account";
+import type { CheckoutDefaultsType } from "@/shared/account";
 
 export function useUserCheckoutDefaults() {
   const { user } = useUser();
   const keyPrefix = "checkout_defaults_";
 
-  function setUserCheckoutDefaults(defaults: CheckoutDefaults) {
+  function setUserCheckoutDefaults(defaults: CheckoutDefaultsType) {
     localStorage.setItem(`${keyPrefix}${user.value.id}`, JSON.stringify(defaults));
   }
 
-  function getUserCheckoutDefaults(): CheckoutDefaults {
-    let result: CheckoutDefaults | null = null;
+  function getUserCheckoutDefaults(): CheckoutDefaultsType {
+    let result: CheckoutDefaultsType | null = null;
 
     const value = localStorage.getItem(`${keyPrefix}${user.value.id}`);
 
@@ -19,7 +19,7 @@ export function useUserCheckoutDefaults() {
       try {
         const data = JSON.parse(value) as unknown;
         if (data && typeof data === "object") {
-          result = JSON.parse(value) as CheckoutDefaults;
+          result = JSON.parse(value) as CheckoutDefaultsType;
         }
       } catch (e) {
         Logger.error(`${useUserCheckoutDefaults.name}.${getUserCheckoutDefaults.name}`, e);

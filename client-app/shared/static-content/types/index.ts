@@ -1,9 +1,9 @@
-export interface PageTemplate {
-  settings: PageContent;
-  content: PageContent[];
+export interface IPageTemplate {
+  settings: IPageContent;
+  content: IPageContent[];
 }
 
-export interface PageContent {
+export interface IPageContent {
   id: string;
   name?: string;
   type: string;
