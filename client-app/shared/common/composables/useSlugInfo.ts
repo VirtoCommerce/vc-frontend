@@ -8,7 +8,7 @@ import type { MaybeRefOrGetter } from "vue";
 /**
  * @param seoUrl path after domain without slash at the beginning
  **/
-function _useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
+export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   const { storeId, userId, cultureName } = globals;
   const variables = computed(() => {
     return {
@@ -114,5 +114,3 @@ function _useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     fetchPageDocumentContent: loadPageDocumentContent,
   };
 }
-
-export const useSlugInfo = createGlobalState(_useSlugInfo);
