@@ -486,6 +486,11 @@ export type ConfigurableProductOptionInput = {
   quantity: Scalars['Int']['input'];
 };
 
+export type ConfigurationItemsResponseType = {
+  /** Configuration items for configurable product */
+  configurationItems?: Maybe<Array<Maybe<CartConfigurationItemType>>>;
+};
+
 export type ConfigurationLineItemType = {
   /** Currency */
   currency: CurrencyType;
@@ -4646,6 +4651,7 @@ export type Query = {
   checkEmailUniqueness?: Maybe<Scalars['Boolean']['output']>;
   checkUsernameUniqueness?: Maybe<Scalars['Boolean']['output']>;
   childCategories?: Maybe<ChildCategoriesQueryResponseType>;
+  configurationItems?: Maybe<ConfigurationItemsResponseType>;
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
   contract?: Maybe<ContractType>;
@@ -4779,6 +4785,18 @@ export type QueryChildCategoriesArgs = {
   maxLevel?: InputMaybe<Scalars['Int']['input']>;
   onlyActive?: InputMaybe<Scalars['Boolean']['input']>;
   productFilter?: InputMaybe<Scalars['String']['input']>;
+  storeId: Scalars['String']['input'];
+  userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryConfigurationItemsArgs = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode: Scalars['String']['input'];
+  lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };

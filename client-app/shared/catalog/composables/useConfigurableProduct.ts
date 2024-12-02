@@ -1,10 +1,15 @@
 import { provideApolloClient } from "@vue/apollo-composable";
-import { createSharedComposable } from "@vueuse/core";
+import { createSharedComposable, useUrlSearchParams } from "@vueuse/core";
 import { ref, readonly, computed } from "vue";
-import { apolloClient, getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql";
-import { getMergeStrategyUniqueBy, useMutationBatcher, useRouteQueryParam } from "@/core/composables";
+import {
+  apolloClient,
+  getConfigurationItems,
+  getProductConfiguration,
+  useCreateConfiguredLineItemMutation,
+} from "@/core/api/graphql";
+import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { Logger } from "@/core/utilities";
-import { useFullCart } from "@/shared/cart/composables";
+import { useShortCart } from "@/shared/cart/composables";
 import type {
   CartConfigurationItemType,
   ConfigurationSectionInput,
@@ -37,6 +42,7 @@ provideApolloClient(apolloClient);
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
+  const { cart } = useShortCart();
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
@@ -137,12 +143,10 @@ function _useConfigurableProduct(configurableProductId: string) {
   }
 
   async function getPreselectedValues(): Promise<CartConfigurationItemType[] | undefined> {
-    const lineItemId = useRouteQueryParam<string>("lineItemId");
-    if (lineItemId.value) {
-      const { cart, forceFetch } = useFullCart();
-      await forceFetch();
-      const lineItem = cart.value?.items.find(({ id }) => id === lineItemId.value);
-      return lineItem?.configurationItems ?? [];
+    const { lineItemId } = useUrlSearchParams<{ lineItemId: string | undefined }>("history", { write: false });
+    if (lineItemId) {
+      const result = await getConfigurationItems(lineItemId, cart.value?.id);
+      return result?.configurationItems ?? [];
     }
   }
 
