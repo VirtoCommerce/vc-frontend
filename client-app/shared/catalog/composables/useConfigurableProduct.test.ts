@@ -9,9 +9,10 @@ const TIMER_DELAY = 1000;
 
 const mocks = vi.hoisted(() => ({
   getProductConfiguration: vi.fn(),
+  getConfigurationItems: vi.fn(),
   useCreateConfiguredLineItemMutation: vi.fn(),
-  useRouteQueryParamMock: vi.fn(),
-  useFullCartMock: vi.fn(),
+  useUrlSearchParamsMock: vi.fn(),
+  useShortCartMock: vi.fn(),
 }));
 
 vi.mock("@/core/api/graphql", async () => {
@@ -20,6 +21,7 @@ vi.mock("@/core/api/graphql", async () => {
     ...actual,
     getProductConfiguration: mocks.getProductConfiguration,
     useCreateConfiguredLineItemMutation: mocks.useCreateConfiguredLineItemMutation,
+    getConfigurationItems: mocks.getConfigurationItems,
   };
 });
 
@@ -30,11 +32,11 @@ vi.mock("@/core/utilities", () => ({
   },
 }));
 
-vi.mock("@/core/composables", async () => {
-  const actual = await vi.importActual<typeof import("@/core/composables")>("@/core/composables");
+vi.mock("@vueuse/core", async () => {
+  const actual = await vi.importActual<typeof import("@vueuse/core")>("@vueuse/core");
   return {
     ...actual,
-    useRouteQueryParam: mocks.useRouteQueryParamMock,
+    useUrlSearchParams: mocks.useUrlSearchParamsMock,
   };
 });
 
@@ -42,7 +44,7 @@ vi.mock("@/shared/cart/composables", async () => {
   const actual = await vi.importActual<typeof import("@/shared/cart/composables")>("@/shared/cart/composables");
   return {
     ...actual,
-    useFullCart: mocks.useFullCartMock,
+    useShortCart: mocks.useShortCartMock,
   };
 });
 
@@ -72,12 +74,12 @@ describe("useConfigurableProduct", () => {
 
   describe("without preselected values", () => {
     beforeEach(() => {
-      mocks.useRouteQueryParamMock.mockReturnValue(ref(undefined));
-      mocks.useFullCartMock.mockReturnValue({
+      mocks.useUrlSearchParamsMock.mockReturnValue({});
+      mocks.useShortCartMock.mockReturnValue({
         cart: ref({
+          id: "cart-id-1",
           items: [],
         }),
-        forceFetch: vi.fn(),
       });
       composable = useConfigurableProduct(configurableProductId);
     });
@@ -99,6 +101,7 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
 
       expect(mocks.getProductConfiguration).toHaveBeenCalledWith(configurableProductId);
+      expect(mocks.getConfigurationItems).not.toHaveBeenCalled();
       expect(composable.configuration.value).toEqual(mockConfiguration.configurationSections);
 
       expect(composable.selectedConfiguration.value).toEqual({
@@ -177,13 +180,12 @@ describe("useConfigurableProduct", () => {
 
       const firstCallArguments = createConfiguredLineItemMutationMock.mock
         .calls[0] as CreateConfiguredLineItemMutationVariables[];
-
       const secondCallArguments = createConfiguredLineItemMutationMock.mock
         .calls[1] as CreateConfiguredLineItemMutationVariables[];
 
       expect(firstCallArguments[0]).toEqual({
         command: {
-          configurableProductId: configurableProductId,
+          configurableProductId,
           configurationSections: [],
         },
       });
@@ -192,7 +194,7 @@ describe("useConfigurableProduct", () => {
 
       expect(secondCallArguments[0]).toEqual({
         command: {
-          configurableProductId: configurableProductId,
+          configurableProductId,
           configurationSections: [
             {
               sectionId: "Section 1",
@@ -265,28 +267,25 @@ describe("useConfigurableProduct", () => {
 
   describe("with preselected values", () => {
     beforeEach(() => {
-      mocks.useRouteQueryParamMock.mockReturnValue(ref("line-item-1"));
-      mocks.useFullCartMock.mockReturnValue({
+      mocks.useUrlSearchParamsMock.mockReturnValue({ lineItemId: "line-item-1" });
+      mocks.useShortCartMock.mockReturnValue({
         cart: ref({
-          items: [
-            {
-              id: "line-item-1",
-              configurationItems: [
-                {
-                  sectionId: "Section 1",
-                  productId: "product-2",
-                  quantity: 1,
-                },
-                {
-                  sectionId: "Section 2",
-                  productId: "product-4",
-                  quantity: 2,
-                },
-              ],
-            },
-          ],
+          id: "cart-id-1",
         }),
-        forceFetch: vi.fn(),
+      });
+      mocks.getConfigurationItems.mockResolvedValue({
+        configurationItems: [
+          {
+            sectionId: "Section 1",
+            productId: "product-2",
+            quantity: 1,
+          },
+          {
+            sectionId: "Section 2",
+            productId: "product-4",
+            quantity: 2,
+          },
+        ],
       });
 
       composable = useConfigurableProduct(configurableProductId);
@@ -313,6 +312,8 @@ describe("useConfigurableProduct", () => {
       await composable.fetchProductConfiguration();
       vi.advanceTimersByTime(TIMER_DELAY);
       await flushPromises();
+
+      expect(mocks.getConfigurationItems).toHaveBeenCalledWith("line-item-1", "cart-id-1");
 
       expect(composable.selectedConfigurationInput.value).toEqual([
         {
@@ -366,32 +367,28 @@ describe("useConfigurableProduct", () => {
       };
       mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
 
-      mocks.useFullCartMock.mockReturnValue({
-        cart: ref({
-          items: [
-            {
-              id: "line-item-111",
-              configurationItems: [
-                {
-                  sectionId: "Section 1",
-                  productId: "product-1",
-                  quantity: 1,
-                },
-                {
-                  sectionId: "Section 2",
-                  productId: "product-invalid",
-                  quantity: 2,
-                },
-              ],
-            },
-          ],
-        }),
-        forceFetch: vi.fn(),
+      mocks.getConfigurationItems.mockResolvedValue({
+        configurationItems: [
+          {
+            sectionId: "Section 1",
+            productId: "product-1",
+            quantity: 1,
+          },
+          {
+            sectionId: "Section 2",
+            productId: "product-invalid",
+            quantity: 2,
+          },
+        ],
       });
+
+      mocks.useUrlSearchParamsMock.mockReturnValue({ lineItemId: "line-item-111" });
 
       await composable.fetchProductConfiguration();
       vi.advanceTimersByTime(TIMER_DELAY);
       await flushPromises();
+
+      expect(mocks.getConfigurationItems).toHaveBeenCalledWith("line-item-111", "cart-id-1");
 
       expect(composable.selectedConfigurationInput.value).toEqual([
         {
@@ -422,6 +419,7 @@ function createProduct(id: number) {
     name: `Product ${id}`,
   };
 }
+
 function createConfigurationSection(
   id: number,
   { isRequired = false, products = [1, 2] }: { isRequired?: boolean; products?: number[] } = {},
