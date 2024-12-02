@@ -132,7 +132,7 @@
     :class="[
       'flex flex-col bg-additional-50 shadow-sm',
       {
-        'max-lg:-mx-6 lg:rounded lg:border': withSearch,
+        'max-md:-mx-6 lg:rounded lg:border': withSearch,
       },
     ]"
   >

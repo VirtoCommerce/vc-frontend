@@ -17,6 +17,7 @@ export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";
 export { default as VcInputDetails } from "./input-details/vc-input-details.vue";
 export { default as VcLabel } from "./label/vc-label.vue";
+export { default as VcLayout } from "./layout/vc-layout.vue";
 export { default as VcLineItemProperty } from "./line-item-property/vc-line-item-property.vue";
 export { default as VcListItem } from "./list-item/vc-list-item.vue";
 export { default as VcLoader } from "./loader/vc-loader.vue";

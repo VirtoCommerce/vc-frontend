@@ -1,8 +1,8 @@
 <template>
-  <VcLayoutWithRightSidebar is-sidebar-sticky>
+  <VcLayout sidebar-position="right" sticky-sidebar>
     <ShippingDetailsSection />
 
-    <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
+    <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
@@ -29,7 +29,7 @@
         </template>
       </OrderSummary>
     </template>
-  </VcLayoutWithRightSidebar>
+  </VcLayout>
 </template>
 
 <script setup lang="ts">
