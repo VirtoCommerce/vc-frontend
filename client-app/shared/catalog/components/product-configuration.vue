@@ -18,7 +18,7 @@
           </div>
         </template>
 
-        <div v-if="section.type === 'product' && section.options?.length" class="product-configuration__items">
+        <div v-if="section.options?.length" class="product-configuration__items">
           <template v-for="{ id, product, quantity, listPrice, salePrice, extendedPrice } in section.options" :key="id">
             <VcProductCard v-if="!!product" view-mode="item" class="product-configuration__item">
               <template #media>
