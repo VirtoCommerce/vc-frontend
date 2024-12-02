@@ -28,7 +28,7 @@
           :aria-label="$t('common.buttons.apply')"
           icon="apply"
           variant="no-background"
-          :disabled="value.length === 0 || disabled"
+          :disabled="value.length === 0 || disabled || !!errorMessage"
           @click="$emit('apply')"
         />
       </template>
