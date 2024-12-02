@@ -22,12 +22,10 @@
               <VcButton
                 :loading="loadingOrganization || loadingUser"
                 :disabled="!meta.valid || !meta.dirty"
-                :icon="companyNameSaveIcon"
+                icon="save-v2"
                 class="flex-none"
                 @click="saveOrganizationName"
-              >
-                {{ $t("common.buttons.save") }}
-              </VcButton>
+              />
             </template>
           </VcInput>
         </div>
@@ -267,7 +265,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { breakpointsTailwind, useBreakpoints, computedEager } from "@vueuse/core";
+import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -285,9 +283,6 @@ const page = ref(1);
 const itemsPerPage = ref(10);
 
 const { t } = useI18n();
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const isMobile = breakpoints.smaller("lg");
 
 usePageHead({
   title: t("pages.company.info.meta.title"),
@@ -326,8 +321,6 @@ const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPer
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
   addresses.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
 );
-
-const companyNameSaveIcon = computed(() => (isMobile.value ? "save-v2" : ""));
 
 const columns = computed<ITableColumn[]>(() => {
   const result: ITableColumn[] = [
