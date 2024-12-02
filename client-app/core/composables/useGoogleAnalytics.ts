@@ -3,6 +3,7 @@ import { useCurrency } from "@/core/composables/useCurrency";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
+import { IS_DEVELOPMENT } from "../constants";
 
 const MODULE_ID = "VirtoCommerce.GoogleEcommerceAnalytics";
 const IS_ENABLED_KEY = "GoogleAnalytics4.EnableTracking";
@@ -41,13 +42,13 @@ export function useGoogleAnalytics() {
   async function init(): Promise<void> {
     if (hasModuleSettings && isEnabled(IS_ENABLED_KEY)) {
       try {
-        const module = await import("../../../../vc-module-front-google-ecommerce-analytics/dist");
+        const module = await import("@virto-commerce/front-modules-google-ecommerce-analytics");
         const { useGoogleAnalyticsModule } = module.default || module;
         const { initModule, ...methods } = useGoogleAnalyticsModule();
 
         initModule({
           getModuleSettings,
-          isDevelopment: false,
+          isDevelopment: IS_DEVELOPMENT,
           logger: Logger,
           useScriptTag,
           currentCurrency,
