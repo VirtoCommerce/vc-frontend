@@ -185,6 +185,12 @@ export type CartConfigurationItemType = {
   id: Scalars['String']['output'];
   /** Configuration item name */
   name?: Maybe<Scalars['String']['output']>;
+  /** Configuration item product ID */
+  productId?: Maybe<Scalars['String']['output']>;
+  /** Configuration item quantity */
+  quantity?: Maybe<Scalars['Int']['output']>;
+  /** Configuration item section ID */
+  sectionId?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `Cart`. */
@@ -1575,6 +1581,21 @@ export type InputChangeAllCartItemsSelectedType = {
   userId: Scalars['String']['input'];
 };
 
+export type InputChangeCartConfiguredItemType = {
+  cartId?: InputMaybe<Scalars['String']['input']>;
+  cartName?: InputMaybe<Scalars['String']['input']>;
+  cartType?: InputMaybe<Scalars['String']['input']>;
+  configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
+  cultureName?: InputMaybe<Scalars['String']['input']>;
+  currencyCode?: InputMaybe<Scalars['String']['input']>;
+  /** Line item Id */
+  lineItemId: Scalars['String']['input'];
+  /** Quantity */
+  quantity?: InputMaybe<Scalars['Int']['input']>;
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
 export type InputChangeCartItemCommentType = {
   cartId?: InputMaybe<Scalars['String']['input']>;
   cartName?: InputMaybe<Scalars['String']['input']>;
@@ -2950,6 +2971,7 @@ export type Mutations = {
   approveQuoteRequest?: Maybe<ApproveQuoteResultType>;
   authorizePayment?: Maybe<AuthorizePaymentResultType>;
   cancelQuoteRequest?: Maybe<QuoteType>;
+  changeCartConfiguredItem?: Maybe<CartType>;
   changeCartItemComment?: Maybe<CartType>;
   changeCartItemPrice?: Maybe<CartType>;
   changeCartItemQuantity?: Maybe<CartType>;
@@ -3146,6 +3168,11 @@ export type MutationsAuthorizePaymentArgs = {
 
 export type MutationsCancelQuoteRequestArgs = {
   command: CancelQuoteCommandType;
+};
+
+
+export type MutationsChangeCartConfiguredItemArgs = {
+  command: InputChangeCartConfiguredItemType;
 };
 
 
