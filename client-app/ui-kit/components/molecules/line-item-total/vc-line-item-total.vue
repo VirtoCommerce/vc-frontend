@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+import { Logger } from "@/core/utilities";
 import { shouldUseActualPrice } from "@/ui-kit/utilities/price";
 import type { MoneyType } from "@/core/api/graphql/types";
 
@@ -26,7 +27,7 @@ interface IProps {
 
 defineProps<IProps>();
 
-console.warn("[UIKit][warn] VcLineItemTotal is deprecated, use VcProductPrice instead.");
+Logger.warn("[UIKit][warn] VcLineItemTotal is deprecated, use VcProductPrice instead.");
 </script>
 
 <style lang="scss">

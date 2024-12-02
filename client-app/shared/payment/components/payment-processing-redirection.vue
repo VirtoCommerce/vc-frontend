@@ -69,5 +69,5 @@ function redirect() {
   }
 }
 
-initPayment();
+void initPayment();
 </script>

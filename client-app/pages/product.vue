@@ -147,7 +147,7 @@ import {
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
-import type { PageTemplate } from "@/shared/static-content";
+import type { IPageTemplate } from "@/shared/static-content";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -230,7 +230,7 @@ const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
-const productTemplate = _productTemplate as PageTemplate;
+const productTemplate = _productTemplate as IPageTemplate;
 
 const productInfoSection = productTemplate?.content?.find((item) => item?.type === "product-info");
 

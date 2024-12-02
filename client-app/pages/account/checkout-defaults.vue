@@ -128,7 +128,7 @@ import { usePageHead } from "@/core/composables";
 import { useUserCheckoutDefaults, CheckoutDefaultsSuccessModal } from "@/shared/account";
 import { useFullCart } from "@/shared/cart";
 import { useModal } from "@/shared/modal";
-import type { CheckoutDefaults } from "@/shared/account";
+import type { CheckoutDefaultsType } from "@/shared/account";
 
 const { t } = useI18n();
 const { openModal } = useModal();
@@ -139,8 +139,8 @@ usePageHead({
   title: t("pages.account.checkout_defaults.meta.title"),
 });
 
-const savedCheckoutDefaults = ref<CheckoutDefaults>(getUserCheckoutDefaults());
-const localCheckoutDefaults = ref<CheckoutDefaults>(clone(savedCheckoutDefaults.value));
+const savedCheckoutDefaults = ref<CheckoutDefaultsType>(getUserCheckoutDefaults());
+const localCheckoutDefaults = ref<CheckoutDefaultsType>(clone(savedCheckoutDefaults.value));
 
 const isDirty = computed<boolean>(() => !isEqual(savedCheckoutDefaults.value, localCheckoutDefaults.value));
 
@@ -154,5 +154,5 @@ function saveDefaults() {
   });
 }
 
-forceFetch();
+void forceFetch();
 </script>
