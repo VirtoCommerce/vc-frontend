@@ -21,7 +21,7 @@ export function useRouteQueryParam<T = NonNullable<LocationQueryValue> | NonNull
 
   return computed<T>({
     get() {
-      const queryValue = router.currentRoute.value.query[key] as T | null;
+      const queryValue = router?.currentRoute?.value?.query[key] as T | null;
 
       const fallbackValue = defaultValue ?? ((Array.isArray(queryValue) ? [] : "") as T);
 
