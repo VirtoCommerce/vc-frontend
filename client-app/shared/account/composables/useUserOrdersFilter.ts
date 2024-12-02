@@ -4,11 +4,11 @@ import { DateFilterId } from "@/core/enums";
 import { toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import type { FacetTermType } from "@/core/api/graphql/types";
 import type { DateFilterType } from "@/core/types";
-import type { OrdersFilterData, OrdersFilterChipsItem } from "@/shared/account";
+import type { OrdersFilterDataType, OrdersFilterChipsItemType } from "@/shared/account";
 import type { Ref } from "vue";
 
-const filterData: Ref<OrdersFilterData> = ref({ statuses: [] });
-const appliedFilterData: Ref<OrdersFilterData> = ref({ ...filterData.value });
+const filterData: Ref<OrdersFilterDataType> = ref({ statuses: [] });
+const appliedFilterData: Ref<OrdersFilterDataType> = ref({ ...filterData.value });
 const facetLocalization: Ref<FacetTermType[] | undefined> = ref();
 
 function getFirstDayOfWeek(currentDate: Date): Date {
@@ -96,7 +96,7 @@ export function useUserOrdersFilter() {
   });
 
   const filterChipsItems = computed(() => {
-    const items: OrdersFilterChipsItem[] = [];
+    const items: OrdersFilterChipsItemType[] = [];
 
     if (appliedFilterData.value.statuses.length) {
       for (const status of appliedFilterData.value.statuses) {
@@ -141,7 +141,7 @@ export function useUserOrdersFilter() {
     filterData.value = { ...appliedFilterData.value };
   }
 
-  function removeFilterChipsItem(item: OrdersFilterChipsItem) {
+  function removeFilterChipsItem(item: OrdersFilterChipsItemType) {
     if (item.fieldName === "statuses") {
       appliedFilterData.value.statuses.splice(appliedFilterData.value.statuses.indexOf(item.value as string), 1);
     }

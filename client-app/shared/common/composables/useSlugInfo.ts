@@ -1,14 +1,14 @@
+import { createGlobalState } from "@vueuse/core";
 import { computed, readonly, toValue } from "vue";
 import { useGetPage, useGetPageDocument, useGetSlugInfo } from "@/core/api/graphql";
 import { globals } from "@/core/globals";
-import type { PageTemplate } from "@/shared/static-content";
+import type { IPageTemplate } from "@/shared/static-content";
 import type { MaybeRefOrGetter } from "vue";
-import { createGlobalState } from "@vueuse/core";
 
 /**
  * @param seoUrl path after domain without slash at the beginning
  **/
-function _useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
+export function useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
   const { storeId, userId, cultureName } = globals;
   const variables = computed(() => {
     return {
@@ -93,8 +93,8 @@ function _useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     return pageDocumentContentResult?.value?.pageDocument || null;
   });
 
-  function isPageContent(data: unknown): data is PageTemplate {
-    const pageTemplate = data as PageTemplate;
+  function isPageContent(data: unknown): data is IPageTemplate {
+    const pageTemplate = data as IPageTemplate;
     return Array.isArray(pageTemplate?.content) && typeof pageTemplate?.settings === "object";
   }
 
@@ -114,5 +114,3 @@ function _useSlugInfo(seoUrl: MaybeRefOrGetter<string>) {
     fetchPageDocumentContent: loadPageDocumentContent,
   };
 }
-
-export const useSlugInfo = createGlobalState(_useSlugInfo);

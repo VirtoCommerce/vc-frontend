@@ -446,7 +446,7 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
   });
 }
 
-fetchAddresses();
+void fetchAddresses();
 
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
   if (addressId) {

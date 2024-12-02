@@ -6,7 +6,7 @@ import { Sort } from "@/core/types";
 import { Logger, toEndDateFilterValue, toStartDateFilterValue } from "@/core/utilities";
 import { useUserOrdersFilter } from "./useUserOrdersFilter";
 import type { CustomerOrderType, FacetTermType } from "@/core/api/graphql/types";
-import type { OrdersFilterData } from "@/shared/account";
+import type { OrdersFilterDataType } from "@/shared/account";
 import type { MaybeRef, Ref } from "vue";
 
 export interface IUseUserOrdersOptions {
@@ -66,7 +66,7 @@ export function useUserOrders(options: IUseUserOrdersOptions) {
   };
 }
 
-function getFilterExpression(keyword: string, filterData: OrdersFilterData): string {
+function getFilterExpression(keyword: string, filterData: OrdersFilterDataType): string {
   let filterExpression = "";
   if (keyword) {
     filterExpression += `${keyword} `;

@@ -9,9 +9,7 @@ export type ElementType = {
 };
 
 function _useCustomMobileHeaderComponents() {
-  const customComponents = ref<{ [key: ElementType["id"]]: ElementType["component"] }>({
-
-  });
+  const customComponents = ref<{ [key: ElementType["id"]]: ElementType["component"] }>({});
 
   function registerCustomComponent(element: ElementType) {
     if (!customComponents.value[element.id]) {
