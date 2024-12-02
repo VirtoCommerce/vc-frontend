@@ -1,9 +1,9 @@
 import { useScriptTag } from "@vueuse/core";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { IS_DEVELOPMENT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
-import { IS_DEVELOPMENT } from "../constants";
 
 const MODULE_ID = "VirtoCommerce.GoogleEcommerceAnalytics";
 const IS_ENABLED_KEY = "GoogleAnalytics4.EnableTracking";
@@ -42,8 +42,7 @@ export function useGoogleAnalytics() {
   async function init(): Promise<void> {
     if (hasModuleSettings && isEnabled(IS_ENABLED_KEY)) {
       try {
-        const module = await import("@virto-commerce/front-modules-google-ecommerce-analytics");
-        const { useGoogleAnalyticsModule } = module.default || module;
+        const { useGoogleAnalyticsModule } = await import("@virto-commerce/front-modules-google-ecommerce-analytics");
         const { initModule, ...methods } = useGoogleAnalyticsModule();
 
         initModule({
@@ -55,6 +54,7 @@ export function useGoogleAnalytics() {
           currencyCode,
         });
         googleAnalyticsMethods = methods;
+
         // it there are any methods in the queue, execute them, then clear the queue
         if (methodsQueue.length) {
           methodsQueue.forEach(({ method, args }) => {
