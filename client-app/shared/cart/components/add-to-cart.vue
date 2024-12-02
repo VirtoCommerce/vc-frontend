@@ -24,11 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import { isDefined } from "@vueuse/core";
+import { isDefined, useUrlSearchParams } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents, useRouteQueryParam } from "@/core/composables";
+import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/core/composables";
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -60,7 +60,9 @@ const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useSho
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const configurableLineItemId = useRouteQueryParam<string>("lineItemId");
+const { lineItemId: configurableLineItemId } = useUrlSearchParams<{ lineItemId: string | undefined }>("history", {
+  write: false,
+});
 const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
@@ -169,7 +171,7 @@ function getValidationErrors(): string {
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
   if (isConfigurable.value) {
-    return configurableLineItemId.value ? items?.find((item) => item.id === configurableLineItemId.value) : undefined;
+    return configurableLineItemId ? items?.find((item) => item.id === configurableLineItemId) : undefined;
   } else {
     return items?.find((item) => item.productId === product.value.id);
   }

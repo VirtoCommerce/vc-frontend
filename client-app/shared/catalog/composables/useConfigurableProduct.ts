@@ -145,8 +145,13 @@ function _useConfigurableProduct(configurableProductId: string) {
   async function getPreselectedValues(): Promise<CartConfigurationItemType[] | undefined> {
     const { lineItemId } = useUrlSearchParams<{ lineItemId: string | undefined }>("history", { write: false });
     if (lineItemId) {
-      const result = await getConfigurationItems(lineItemId, cart.value?.id);
-      return result?.configurationItems ?? [];
+      try {
+        const result = await getConfigurationItems(lineItemId, cart.value?.id);
+        return result?.configurationItems ?? [];
+      } catch (e) {
+        Logger.error(`${useConfigurableProduct.name}.${getPreselectedValues.name}`, e);
+        throw e;
+      }
     }
   }
 
