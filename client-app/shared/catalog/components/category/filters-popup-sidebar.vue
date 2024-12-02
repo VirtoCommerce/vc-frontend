@@ -11,7 +11,7 @@
       :loading="loading || facetsLoading"
       @change="$emit('updatePopupSidebarFilters', $event)"
     >
-      <template #prepend="{ loading }">
+      <template #prepend="{ loading: _loading }">
         <div class="filters-popup-sidebar__container">
           <div v-if="!hideSorting" class="filters-popup-sidebar__sorting">
             <span class="filters-popup-sidebar__sorting-label">
@@ -23,7 +23,7 @@
               size="sm"
               text-field="name"
               value-field="id"
-              :disabled="loading"
+              :disabled="_loading"
               :items="PRODUCT_SORTING_LIST"
             />
           </div>

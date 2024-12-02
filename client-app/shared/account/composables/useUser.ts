@@ -39,12 +39,12 @@ import type {
   UserType,
 } from "@/core/api/graphql/types";
 import type {
-  ForgotPassword,
-  RegisterOrganization,
-  ResetPassword,
-  ChangePassword,
-  SignMeUp,
-  UserPersonalData,
+  ForgotPasswordType,
+  RegisterOrganizationType,
+  ResetPasswordType,
+  ChangePasswordType,
+  SignMeUpType,
+  UserPersonalDataType,
 } from "@/shared/account";
 
 const loading = ref(false);
@@ -150,15 +150,15 @@ export function useUser() {
       handlePasswordExpiration();
 
       if (withBroadcast) {
-        broadcast.emit(userReloadEvent);
+        void broadcast.emit(userReloadEvent);
       }
 
       if (user.value?.forcePasswordChange || user.value?.passwordExpired) {
-        broadcast.emit(passwordExpiredEvent);
+        void broadcast.emit(passwordExpiredEvent);
       }
 
       if (user.value?.lockedState) {
-        broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
+        void broadcast.emit(userLockedEvent, undefined, TabsType.ALL);
       }
     } catch (e) {
       Logger.error(`${useUser.name}.${fetchUser.name}`, e);
@@ -168,7 +168,7 @@ export function useUser() {
     }
   }
 
-  async function updateUser(personalData: UserPersonalData): Promise<void> {
+  async function updateUser(personalData: UserPersonalDataType): Promise<void> {
     try {
       loading.value = true;
 
@@ -200,7 +200,7 @@ export function useUser() {
     }
   }
 
-  async function registerUser(payload: SignMeUp): Promise<AccountCreationResultType> {
+  async function registerUser(payload: SignMeUpType): Promise<AccountCreationResultType> {
     const { storeId } = globals;
 
     try {
@@ -228,7 +228,7 @@ export function useUser() {
     }
   }
 
-  async function registerOrganization(payload: RegisterOrganization): Promise<AccountCreationResultType> {
+  async function registerOrganization(payload: RegisterOrganizationType): Promise<AccountCreationResultType> {
     const { storeId } = globals;
 
     try {
@@ -259,7 +259,7 @@ export function useUser() {
     }
   }
 
-  async function forgotPassword(payload: ForgotPassword): Promise<boolean> {
+  async function forgotPassword(payload: ForgotPasswordType): Promise<boolean> {
     try {
       loading.value = true;
 
@@ -275,7 +275,7 @@ export function useUser() {
     }
   }
 
-  async function resetPassword(payload: ResetPassword): Promise<IdentityResultType> {
+  async function resetPassword(payload: ResetPasswordType): Promise<IdentityResultType> {
     try {
       loading.value = true;
 
@@ -291,7 +291,7 @@ export function useUser() {
       loading.value = false;
     }
   }
-  async function changePassword(payload: ChangePassword): Promise<IdentityResultType> {
+  async function changePassword(payload: ChangePasswordType): Promise<IdentityResultType> {
     try {
       loading.value = true;
 
@@ -351,7 +351,7 @@ export function useUser() {
 
       localStorage.setItem(`organization-id-${user.value?.userName}`, organizationId);
 
-      broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+      void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
     } catch (e) {
       Logger.error(switchOrganization.name, e);
     } finally {

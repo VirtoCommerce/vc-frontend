@@ -9,9 +9,11 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 
-const props = defineProps({
-  roleId: String,
-});
+interface IProps {
+  roleId?: string;
+}
+
+const props = defineProps<IProps>();
 
 const fallback = ref(false);
 

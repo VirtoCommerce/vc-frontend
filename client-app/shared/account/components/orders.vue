@@ -325,7 +325,7 @@ import MobileOrdersFilter from "./mobile-orders-filter.vue";
 import OrderStatus from "./order-status.vue";
 import OrdersFilter from "./orders-filter.vue";
 import PageToolbarBlock from "./page-toolbar-block.vue";
-import type { OrdersFilterChipsItem } from "../types";
+import type { OrdersFilterChipsItemType } from "../types";
 import type { CustomerOrderType } from "@/core/api/graphql/types";
 import type { SortDirection } from "@/core/enums";
 import type { DateFilterType, ISortInfo } from "@/core/types";
@@ -472,7 +472,7 @@ function applyOrderFilters(): void {
   hideFilters();
 }
 
-function handleRemoveFilter(item: OrdersFilterChipsItem): void {
+function handleRemoveFilter(item: OrdersFilterChipsItemType): void {
   removeFilterChipsItem(item);
 
   if (item.fieldName === "startDate" || item.fieldName === "endDate") {
