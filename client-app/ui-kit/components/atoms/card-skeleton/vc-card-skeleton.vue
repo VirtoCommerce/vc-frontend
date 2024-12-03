@@ -14,10 +14,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  isCollapsible: {
-    type: Boolean,
-    default: false,
-  },
-});
+interface IProps {
+  isCollapsible: boolean;
+}
+
+defineProps<IProps>();
 </script>

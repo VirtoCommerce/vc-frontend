@@ -111,5 +111,5 @@ function setScope(listId: string, scope: WishlistScopeType) {
   void updateWishlist({ listId, scope });
 }
 
-fetchWishlists();
+void fetchWishlists();
 </script>

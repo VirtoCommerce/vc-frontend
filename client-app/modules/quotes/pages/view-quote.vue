@@ -4,7 +4,7 @@
       <VcBreadcrumbs :items="breadcrumbs" />
     </div>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <VcTypography tag="h1">
         {{ $t("quote_details.title", [quote.number]) }}
       </VcTypography>
@@ -19,9 +19,9 @@
           </VcButton>
         </div>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <!-- Quote products -->
       <VcWidget size="lg">
         <QuoteLineItems :items="quote.items" readonly />
@@ -39,6 +39,7 @@
         :title="$t('quote_details.files')"
         size="lg"
         prepend-icon="document-text"
+        class="mt-5"
       >
         <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
@@ -48,33 +49,35 @@
       </VcWidget>
 
       <template #sidebar>
-        <QuoteSummary :quote="quote" />
+        <div class="space-y-5">
+          <QuoteSummary :quote="quote" />
 
-        <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
-          <div class="space-y-1">
-            <div class="flex text-base">
-              <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
+          <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
+            <div class="space-y-1">
+              <div class="flex text-base">
+                <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
 
-              <span>{{ $d(quote.createdDate) }}</span>
+                <span>{{ $d(quote.createdDate) }}</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
+
+                <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
+              </div>
             </div>
+          </VcWidget>
 
-            <div class="flex items-center gap-2">
-              <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
+          <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
+            <VcAddressInfo :address="shippingAddress!" />
+          </VcWidget>
 
-              <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
-            </div>
-          </div>
-        </VcWidget>
-
-        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
-          <VcAddressInfo :address="shippingAddress!" />
-        </VcWidget>
-
-        <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
-          <VcAddressInfo :address="billingAddress!" />
-        </VcWidget>
+          <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
+            <VcAddressInfo :address="billingAddress!" />
+          </VcWidget>
+        </div>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
   </div>
 
   <VcLoaderOverlay v-else no-bg />
@@ -92,7 +95,6 @@ import type { QuoteAttachmentType } from "@/modules/quotes/api/graphql/types";
 import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
 import QuoteStatus from "@/modules/quotes/components/quote-status.vue";
 import QuoteSummary from "@/modules/quotes/components/quote-summary.vue";
-import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {
   quoteId: string;

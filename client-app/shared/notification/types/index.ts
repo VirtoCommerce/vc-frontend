@@ -1,9 +1,9 @@
 import type { Component, ComponentObjectPropsOptions } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-export type CloseNotificationHandle = () => void;
+export type CloseNotificationHandleType = () => void;
 
-export type NotificationCustomButton = {
+export type NotificationCustomButtonType = {
   text?: string;
   html?: string;
   color?: "primary" | "secondary" | "success" | "info" | "neutral" | "warning" | "danger" | "accent";
@@ -18,7 +18,7 @@ export interface INotification {
   html?: string;
   classes?: string;
   group?: string;
-  button?: NotificationCustomButton;
+  button?: NotificationCustomButtonType;
   component?: Component;
   props?: ComponentObjectPropsOptions;
 

@@ -1,3 +1,3 @@
 import runner from "./app-runner";
 
-runner();
+void runner();
