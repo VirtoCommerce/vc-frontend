@@ -11,8 +11,10 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  stick: Boolean,
-  shadow: Boolean,
-});
+interface IProps {
+  stick: boolean;
+  shadow: boolean;
+}
+
+defineProps<IProps>();
 </script>

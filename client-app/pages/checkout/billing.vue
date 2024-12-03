@@ -1,5 +1,5 @@
 <template>
-  <VcLayoutWithRightSidebar is-sidebar-sticky>
+  <VcLayout sidebar-position="right" sticky-sidebar>
     <BillingDetailsSection />
 
     <template #sidebar>
@@ -27,7 +27,7 @@
         </template>
       </OrderSummary>
     </template>
-  </VcLayoutWithRightSidebar>
+  </VcLayout>
 </template>
 
 <script setup lang="ts">
