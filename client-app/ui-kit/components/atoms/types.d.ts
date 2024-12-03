@@ -23,6 +23,7 @@ declare module "vue" {
     VcImage: typeof Components.VcImage;
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
+    VcLayout: typeof Components.VcLayout;
     VcLineItemProperty: typeof Components.VcLineItemProperty;
     VcListItem: typeof Components.VcListItem;
     VcLoader: typeof Components.VcLoader;

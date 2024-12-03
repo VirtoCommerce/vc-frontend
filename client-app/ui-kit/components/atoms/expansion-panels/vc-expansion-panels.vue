@@ -11,12 +11,14 @@ import { getCurrentInstance, provide, ref } from "vue";
  * This component is used only with the child component `VcExpansionPanel`.
  */
 
-const props = defineProps({
+interface IProps {
   /**
    * Allows multiple panels to expand
    */
-  multiple: Boolean,
-});
+  multiple?: boolean;
+}
+
+const props = defineProps<IProps>();
 
 const providedKey = `panels_${getCurrentInstance()?.uid}`;
 const panels: TProvidedObjectOfExpansionPanels["panels"] = ref({});

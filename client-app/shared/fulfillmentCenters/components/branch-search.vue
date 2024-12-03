@@ -23,14 +23,19 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(["update:input"]);
+interface IEmits {
+  (event: "update:input", value: string): void;
+}
 
-defineProps({
-  modelValue: {
-    type: String,
-    default: "",
-  },
+const emit = defineEmits<IEmits>();
+
+withDefaults(defineProps<IProps>(), {
+  modelValue: "",
 });
+
+interface IProps {
+  modelValue?: string;
+}
 
 function onInput(event: Event) {
   const target = event.target as HTMLInputElement;

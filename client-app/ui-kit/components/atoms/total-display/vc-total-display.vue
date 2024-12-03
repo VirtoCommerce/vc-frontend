@@ -5,22 +5,13 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
-const props = defineProps({
-  amount: {
-    type: Number,
-    required: true,
-  },
+interface IProps {
+  amount: number;
+  cultureName: string;
+  currencyCode: string;
+}
 
-  cultureName: {
-    type: String,
-    required: true,
-  },
-
-  currencyCode: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
 
 const formattedAmount = computed(() =>
   new Intl.NumberFormat(props.cultureName, {

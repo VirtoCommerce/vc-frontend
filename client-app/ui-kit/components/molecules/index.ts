@@ -19,7 +19,6 @@ export { default as VcFileUploader } from "./file-uploader/vc-file-uploader.vue"
 export { default as VcInput } from "./input/vc-input.vue";
 export { default as VcItemPrice } from "./item-price/vc-item-price.vue";
 export { default as VcItemPriceCatalog } from "./item-price-catalog/vc-item-price-catalog.vue";
-export { default as VcLayoutWithRightSidebar } from "./layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 export { default as VcLineItem } from "./line-item/vc-line-item.vue";
 /** @deprecated VcLineItemPrice is deprecated, use VcProductPrice instead. */
 export { default as VcLineItemPrice } from "./line-item-price/vc-line-item-price.vue";

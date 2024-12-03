@@ -35,7 +35,6 @@ declare module "vue" {
     VcList: typeof Components.VcList;
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;
     VcLoaderWithText: typeof Components.VcLoaderWithText;
-    VcLayoutWithRightSidebar: typeof Components.VcLayoutWithRightSidebar;
     VcMenuItem: typeof Components.VcMenuItem;
     VcNavButton: typeof Components.VcNavButton;
     VcProductActionsButton: typeof Components.VcProductActionsButton;
