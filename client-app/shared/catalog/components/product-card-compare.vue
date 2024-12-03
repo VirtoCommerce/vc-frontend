@@ -28,19 +28,29 @@
     </div>
 
     <div>
-      <VcButton
-        v-if="product.hasVariations"
-        class="mb-4"
-        :to="link"
-        :target="$cfg.details_browser_target"
-        variant="outline"
-        size="sm"
-        full-width
-        truncate
-        @click="$emit('linkClick', $event)"
-      >
-        {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
-      </VcButton>
+      <template v-if="product.isConfigurable || product.hasVariations">
+        <VcProductButton
+          v-if="product.isConfigurable"
+          class="mb-4"
+          :to="link"
+          :button-text="$t('pages.catalog.customize_button')"
+          icon="cube-transparent"
+          :target="$cfg.details_browser_target"
+        />
+        <VcButton
+          v-if="product.hasVariations"
+          class="mb-4"
+          :to="link"
+          :target="$cfg.details_browser_target"
+          variant="outline"
+          size="sm"
+          full-width
+          truncate
+          @click="$emit('linkClick', $event)"
+        >
+          {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
+        </VcButton>
+      </template>
 
       <AddToCart v-else :product="product" reserved-space />
 
