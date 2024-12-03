@@ -13,11 +13,22 @@
       single-line
     />
 
-    <VcProductButton
-      v-if="product.hasVariations"
-      :to="link"
-      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-    />
+    <template v-if="product.isConfigurable || product.hasVariations">
+      <VcProductButton
+        v-if="product.isConfigurable"
+        :to="link"
+        :button-text="$t('pages.catalog.customize_button')"
+        icon="cube-transparent"
+        target="_blank"
+      />
+
+      <VcProductButton
+        v-if="product.hasVariations"
+        :to="link"
+        target="_blank"
+        :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+      />
+    </template>
 
     <VcAddToCart
       v-else
