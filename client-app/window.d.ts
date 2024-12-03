@@ -1,5 +1,5 @@
 export declare global {
-  interface Window {
+  interface IWindow {
     dataLayer: Array<unknown>;
     gtag: Gtag;
   }

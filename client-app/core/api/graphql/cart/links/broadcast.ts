@@ -9,7 +9,7 @@ export const broadcastLink = split(
   new ApolloLink((operation, forward) => {
     const broadcast = useBroadcast();
     return forward(operation).map((data) => {
-      broadcast.emit(cartReloadEvent);
+      void broadcast.emit(cartReloadEvent);
       return data;
     });
   }),

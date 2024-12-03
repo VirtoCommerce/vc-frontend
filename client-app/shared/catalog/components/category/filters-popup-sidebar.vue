@@ -11,21 +11,23 @@
       :loading="loading || facetsLoading"
       @change="$emit('updatePopupSidebarFilters', $event)"
     >
-      <template #prepend="{ loading }">
+      <template #prepend="{ loading: _loading }">
         <div class="filters-popup-sidebar__container">
-          <div v-if="!hideSorting && isHorizontalFilters" class="filters-popup-sidebar__sorting">
+          <div v-if="!hideSorting" class="filters-popup-sidebar__sorting">
             <span class="filters-popup-sidebar__sorting-label">
               {{ $t("pages.catalog.sort_by_label") }}
             </span>
+
             <VcSelect
               v-model="sortQueryParam"
               size="sm"
               text-field="name"
               value-field="id"
-              :disabled="loading"
+              :disabled="_loading"
               :items="PRODUCT_SORTING_LIST"
             />
           </div>
+
           <VcCheckbox
             v-if="!hideControls"
             :model-value="popupSidebarFilters.inStock"
@@ -39,6 +41,7 @@
           >
             {{ $t("pages.catalog.instock_filter_card.checkbox_label") }}
           </VcCheckbox>
+
           <VcCheckbox
             v-if="!hideControls"
             class="filters-popup-sidebar__control"
@@ -109,7 +112,6 @@ interface IEmits {
 }
 
 interface IProps {
-  isHorizontalFilters?: boolean;
   isExistSelectedFacets?: boolean;
   isMobile?: boolean;
   isPopupSidebarFilterDirty?: boolean;

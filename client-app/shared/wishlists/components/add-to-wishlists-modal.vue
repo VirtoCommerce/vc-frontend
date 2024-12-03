@@ -135,7 +135,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
-import type { WishlistInputType } from "@/shared/wishlists/types";
+import type { IWishlistInput } from "@/shared/wishlists/types";
 import WishlistStatus from "@/shared/wishlists/components/wishlist-status.vue";
 
 interface IProps {
@@ -176,7 +176,7 @@ const {
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
 const removedLists = ref<string[]>([]);
-const newLists = ref<WishlistInputType[]>([]);
+const newLists = ref<IWishlistInput[]>([]);
 
 const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
