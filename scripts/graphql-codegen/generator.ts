@@ -1,14 +1,22 @@
 import fs from "fs/promises";
 import { generate } from "@graphql-codegen/cli";
-import { SCHEMA_PATH } from "./schema";
+import * as dotenv from "dotenv";
+import type { CodegenConfig } from "@graphql-codegen/cli";
 
-const allModulesPath = "client-app/core/api/graphql";
+dotenv.config();
+dotenv.config({ path: ".env.local", override: true });
 
 type ModuleType = {
   name: string;
   searchKey: string;
   apiPath: string;
+  schemaPath?: string;
 };
+
+const core = {
+  apiPath: "client-app/core/api/graphql",
+  schemaPath: "client-app/core/api/graphql/schema.json",
+} as const;
 
 const independentModules: ModuleType[] = [
   {
@@ -75,14 +83,16 @@ const GENERAL_PLUGINS = [
 ];
 
 async function runCodegen() {
+  await downloadSchema(`${process.env.APP_BACKEND_URL}/graphql`, core.schemaPath);
+
   // eslint-disable-next-line no-console
   console.log("\nGenerate types for general modules:");
-  const typesPath = `${allModulesPath}/types.ts`;
+  const typesPath = `${core.apiPath}/types.ts`;
   await generate(
     {
-      schema: SCHEMA_PATH,
+      schema: core.schemaPath,
       documents: [
-        addExtension(allModulesPath),
+        addExtension(core.apiPath),
         // exclude independent modules from general modules
         ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
       ],
@@ -98,7 +108,7 @@ async function runCodegen() {
   // eslint-disable-next-line no-console
   console.log(`Types for general modules have been generated in "${typesPath}"`);
 
-  const JSONString = await readJsonAndReturnString(SCHEMA_PATH);
+  const JSONString = await readJsonAndReturnString(core.schemaPath);
 
   const installedIndependentModules = independentModules.filter((el) => JSONString?.includes(el.searchKey));
 
@@ -113,7 +123,7 @@ async function runCodegen() {
       try {
         await generate(
           {
-            schema: SCHEMA_PATH,
+            schema: core.schemaPath,
             documents: addExtension(module.apiPath),
             generates: {
               [moduleTypesPath]: {
@@ -154,4 +164,19 @@ async function readJsonAndReturnString(filePath: string) {
     console.error("Error reading or parsing JSON:", err);
     return null;
   }
+}
+
+async function downloadSchema(schemaUrl: string, schemaPath: string) {
+  const schema: CodegenConfig = {
+    schema: schemaUrl,
+    generates: {
+      [schemaPath]: {
+        plugins: ["introspection"],
+      },
+    },
+  };
+
+  // eslint-disable-next-line no-console
+  console.log(`Downloading schema from ${schemaUrl} to ${schemaPath}`);
+  await generate(schema, true);
 }

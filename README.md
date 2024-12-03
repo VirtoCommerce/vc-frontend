@@ -218,7 +218,7 @@ yarn build:watch
 
 Command:
 ```
-yarn generate:graphql
+yarn generate:graphql:generate-types
 ```
 makes two steps:
 1. Downloads `schema.json` from GraphQL server located at the `APP_BACKEND_URL`
