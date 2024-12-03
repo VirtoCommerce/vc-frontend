@@ -185,12 +185,6 @@ export type CartConfigurationItemType = {
   id: Scalars['String']['output'];
   /** Configuration item name */
   name?: Maybe<Scalars['String']['output']>;
-  /** Configuration item product ID */
-  productId?: Maybe<Scalars['String']['output']>;
-  /** Configuration item quantity */
-  quantity?: Maybe<Scalars['Int']['output']>;
-  /** Configuration item section ID */
-  sectionId?: Maybe<Scalars['String']['output']>;
 };
 
 /** A connection from an object to a list of objects of type `Cart`. */
@@ -484,11 +478,6 @@ export type CommonVendor = {
 export type ConfigurableProductOptionInput = {
   productId: Scalars['String']['input'];
   quantity: Scalars['Int']['input'];
-};
-
-export type ConfigurationItemsResponseType = {
-  /** Configuration items for configurable product */
-  configurationItems?: Maybe<Array<Maybe<CartConfigurationItemType>>>;
 };
 
 export type ConfigurationLineItemType = {
@@ -1582,21 +1571,6 @@ export type InputChangeAllCartItemsSelectedType = {
   cartType?: InputMaybe<Scalars['String']['input']>;
   cultureName?: InputMaybe<Scalars['String']['input']>;
   currencyCode?: InputMaybe<Scalars['String']['input']>;
-  storeId: Scalars['String']['input'];
-  userId: Scalars['String']['input'];
-};
-
-export type InputChangeCartConfiguredItemType = {
-  cartId?: InputMaybe<Scalars['String']['input']>;
-  cartName?: InputMaybe<Scalars['String']['input']>;
-  cartType?: InputMaybe<Scalars['String']['input']>;
-  configurationSections?: InputMaybe<Array<InputMaybe<ConfigurationSectionInput>>>;
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-  currencyCode?: InputMaybe<Scalars['String']['input']>;
-  /** Line item Id */
-  lineItemId: Scalars['String']['input'];
-  /** Quantity */
-  quantity?: InputMaybe<Scalars['Int']['input']>;
   storeId: Scalars['String']['input'];
   userId: Scalars['String']['input'];
 };
@@ -2976,7 +2950,6 @@ export type Mutations = {
   approveQuoteRequest?: Maybe<ApproveQuoteResultType>;
   authorizePayment?: Maybe<AuthorizePaymentResultType>;
   cancelQuoteRequest?: Maybe<QuoteType>;
-  changeCartConfiguredItem?: Maybe<CartType>;
   changeCartItemComment?: Maybe<CartType>;
   changeCartItemPrice?: Maybe<CartType>;
   changeCartItemQuantity?: Maybe<CartType>;
@@ -3173,11 +3146,6 @@ export type MutationsAuthorizePaymentArgs = {
 
 export type MutationsCancelQuoteRequestArgs = {
   command: CancelQuoteCommandType;
-};
-
-
-export type MutationsChangeCartConfiguredItemArgs = {
-  command: InputChangeCartConfiguredItemType;
 };
 
 
@@ -4651,7 +4619,6 @@ export type Query = {
   checkEmailUniqueness?: Maybe<Scalars['Boolean']['output']>;
   checkUsernameUniqueness?: Maybe<Scalars['Boolean']['output']>;
   childCategories?: Maybe<ChildCategoriesQueryResponseType>;
-  configurationItems?: Maybe<ConfigurationItemsResponseType>;
   contact?: Maybe<ContactType>;
   contacts?: Maybe<ContactConnection>;
   contract?: Maybe<ContractType>;
@@ -4785,18 +4752,6 @@ export type QueryChildCategoriesArgs = {
   maxLevel?: InputMaybe<Scalars['Int']['input']>;
   onlyActive?: InputMaybe<Scalars['Boolean']['input']>;
   productFilter?: InputMaybe<Scalars['String']['input']>;
-  storeId: Scalars['String']['input'];
-  userId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryConfigurationItemsArgs = {
-  cartId?: InputMaybe<Scalars['String']['input']>;
-  cartName?: InputMaybe<Scalars['String']['input']>;
-  cartType?: InputMaybe<Scalars['String']['input']>;
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-  currencyCode: Scalars['String']['input'];
-  lineItemId: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
   userId?: InputMaybe<Scalars['String']['input']>;
 };
