@@ -4,7 +4,7 @@
       {{ fulfillmentCenter?.name }}
     </VcTypography>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <VcWidget size="lg">
         <div class="mb-2 font-bold">{{ $t("pages.branch.address") }}</div>
 
@@ -21,7 +21,7 @@
         </div>
       </VcWidget>
 
-      <VcWidget v-if="fulfillmentCenter?.description" size="lg">
+      <VcWidget v-if="fulfillmentCenter?.description" size="lg" class="mt-5">
         <VcMarkdownRender :src="fulfillmentCenter?.description" class="text-sm" />
       </VcWidget>
 
@@ -49,7 +49,7 @@
           </VcList>
         </VcWidget>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
   </VcContainer>
 </template>
 
