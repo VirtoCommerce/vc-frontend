@@ -37,8 +37,8 @@
       </VcCopyText>
     </div>
 
-    <div class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6">
-      <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
+    <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
+      <div class="space-y-5 max-md:mt-5 xl:space-y-7">
         <component
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
@@ -96,15 +96,14 @@
         </template>
       </div>
 
-      <ProductSidebar
-        :class="[
-          'flex-none md:sticky md:top-18 md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
-          { 'print:hidden': product.hasVariations },
-        ]"
-        :product="sideBarProduct"
-        :variations="variations"
-      />
-    </div>
+      <template #sidebar>
+        <ProductSidebar
+          :class="[{ 'print:hidden': product.hasVariations }]"
+          :product="sideBarProduct"
+          :variations="variations"
+        />
+      </template>
+    </VcLayout>
   </VcContainer>
 
   <Error404 v-else-if="!fetchingProduct && productTemplate" />
@@ -147,7 +146,7 @@ import {
 import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
-import type { PageTemplate } from "@/shared/static-content";
+import type { IPageTemplate } from "@/shared/static-content";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -230,7 +229,7 @@ const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
-const productTemplate = _productTemplate as PageTemplate;
+const productTemplate = _productTemplate as IPageTemplate;
 
 const productInfoSection = productTemplate?.content?.find((item) => item?.type === "product-info");
 

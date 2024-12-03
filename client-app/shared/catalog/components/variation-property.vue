@@ -11,11 +11,11 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  label: {
-    type: String,
-    default: "",
-    required: true,
-  },
+interface IProps {
+  label?: string;
+}
+
+withDefaults(defineProps<IProps>(), {
+  label: "",
 });
 </script>
