@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { isDefined, useUrlSearchParams } from "@vueuse/core";
+import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
@@ -32,7 +32,7 @@ import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/
 import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { Logger } from "@/core/utilities";
+import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
@@ -60,9 +60,7 @@ const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useSho
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const { lineItemId: configurableLineItemId } = useUrlSearchParams<{ lineItemId: string | undefined }>("history", {
-  write: false,
-});
+const configurableLineItemId = getUrlSearchParam("lineItemId");
 const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
