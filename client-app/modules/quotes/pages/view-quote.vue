@@ -49,33 +49,31 @@
       </VcWidget>
 
       <template #sidebar>
-        <div class="space-y-5 max-md:mt-5">
-          <QuoteSummary :quote="quote" />
+        <QuoteSummary :quote="quote" class="mb-5 max-md:mt-5" />
 
-          <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
-            <div class="space-y-1">
-              <div class="flex text-base">
-                <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
+        <VcWidget :title="$t('quote_details.quote_data')" class="mb-5 max-md:order-first">
+          <div class="space-y-1">
+            <div class="flex text-base">
+              <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
 
-                <span>{{ $d(quote.createdDate) }}</span>
-              </div>
-
-              <div class="flex items-center gap-2">
-                <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
-
-                <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
-              </div>
+              <span>{{ $d(quote.createdDate) }}</span>
             </div>
-          </VcWidget>
 
-          <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
-            <VcAddressInfo :address="shippingAddress!" />
-          </VcWidget>
+            <div class="flex items-center gap-2">
+              <span class="text-base font-bold">{{ $t("quote_details.status") }}:</span>
 
-          <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
-            <VcAddressInfo :address="billingAddress!" />
-          </VcWidget>
-        </div>
+              <QuoteStatus class="min-w-[7.785rem]" :status="quote.status" />
+            </div>
+          </div>
+        </VcWidget>
+
+        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')" class="mb-5">
+          <VcAddressInfo :address="shippingAddress!" />
+        </VcWidget>
+
+        <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
+          <VcAddressInfo :address="billingAddress!" />
+        </VcWidget>
       </template>
     </VcLayout>
   </div>
