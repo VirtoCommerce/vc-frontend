@@ -166,7 +166,6 @@ const {
   shippingAddress,
   billingAddress,
   attachedFiles,
-  clearQuote,
   setQuoteAddress,
   fetchQuote,
   changeComment,
@@ -460,8 +459,6 @@ onMounted(() => {
 });
 
 watchEffect(async () => {
-  clearQuote();
-
   await Promise.all([fetchFileOptions(), fetchAddresses(), fetchQuote({ id: props.quoteId })]);
 
   originalQuote.value = cloneDeep(quote.value);
