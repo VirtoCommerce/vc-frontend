@@ -1,5 +1,5 @@
 import { provideApolloClient } from "@vue/apollo-composable";
-import { createSharedComposable, useUrlSearchParams } from "@vueuse/core";
+import { createSharedComposable } from "@vueuse/core";
 import { ref, readonly, computed } from "vue";
 import {
   apolloClient,
@@ -8,7 +8,7 @@ import {
   useCreateConfiguredLineItemMutation,
 } from "@/core/api/graphql";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import type {
   CartConfigurationItemType,
@@ -143,7 +143,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   }
 
   async function getPreselectedValues(): Promise<CartConfigurationItemType[] | undefined> {
-    const { lineItemId } = useUrlSearchParams<{ lineItemId: string | undefined }>("history", { write: false });
+    const lineItemId = getUrlSearchParam("lineItemId");
     if (lineItemId) {
       try {
         const result = await getConfigurationItems(lineItemId, cart.value?.id);
