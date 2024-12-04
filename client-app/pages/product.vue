@@ -38,7 +38,7 @@
     </div>
 
     <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
-      <div class="space-y-5 max-md:mt-5 xl:space-y-7">
+      <div class="space-y-5 xl:space-y-7">
         <component
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
@@ -98,7 +98,7 @@
 
       <template #sidebar>
         <ProductSidebar
-          :class="[{ 'print:hidden': product.hasVariations }]"
+          :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
           :product="sideBarProduct"
           :variations="variations"
         />
