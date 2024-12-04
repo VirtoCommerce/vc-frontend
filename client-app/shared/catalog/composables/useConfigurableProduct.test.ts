@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
   getProductConfiguration: vi.fn(),
   getConfigurationItems: vi.fn(),
   useCreateConfiguredLineItemMutation: vi.fn(),
-  useUrlSearchParamsMock: vi.fn(),
+  getUrlSearchParamMock: vi.fn(),
   useShortCartMock: vi.fn(),
 }));
 
@@ -30,15 +30,8 @@ vi.mock("@/core/utilities", () => ({
     error: vi.fn(),
     debug: vi.fn(),
   },
+  getUrlSearchParam: mocks.getUrlSearchParamMock,
 }));
-
-vi.mock("@vueuse/core", async () => {
-  const actual = await vi.importActual<typeof import("@vueuse/core")>("@vueuse/core");
-  return {
-    ...actual,
-    useUrlSearchParams: mocks.useUrlSearchParamsMock,
-  };
-});
 
 vi.mock("@/shared/cart/composables", async () => {
   const actual = await vi.importActual<typeof import("@/shared/cart/composables")>("@/shared/cart/composables");
@@ -74,7 +67,7 @@ describe("useConfigurableProduct", () => {
 
   describe("without preselected values", () => {
     beforeEach(() => {
-      mocks.useUrlSearchParamsMock.mockReturnValue({});
+      mocks.getUrlSearchParamMock.mockReturnValue(null);
       mocks.useShortCartMock.mockReturnValue({
         cart: ref({
           id: "cart-id-1",
@@ -267,7 +260,7 @@ describe("useConfigurableProduct", () => {
 
   describe("with preselected values", () => {
     beforeEach(() => {
-      mocks.useUrlSearchParamsMock.mockReturnValue({ lineItemId: "line-item-1" });
+      mocks.getUrlSearchParamMock.mockReturnValue("line-item-1");
       mocks.useShortCartMock.mockReturnValue({
         cart: ref({
           id: "cart-id-1",
@@ -382,7 +375,7 @@ describe("useConfigurableProduct", () => {
         ],
       });
 
-      mocks.useUrlSearchParamsMock.mockReturnValue({ lineItemId: "line-item-111" });
+      mocks.getUrlSearchParamMock.mockReturnValue("line-item-111");
 
       await composable.fetchProductConfiguration();
       vi.advanceTimersByTime(TIMER_DELAY);
