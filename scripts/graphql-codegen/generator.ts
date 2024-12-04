@@ -1,4 +1,3 @@
-import fs from "fs/promises";
 import { generate } from "@graphql-codegen/cli";
 import * as dotenv from "dotenv";
 
@@ -9,7 +8,7 @@ type ModuleType = {
   name: string;
   searchKey: string;
   apiPath: string;
-  schemaPath?: string;
+  schemaPath: string;
 };
 
 const core = {
@@ -17,6 +16,7 @@ const core = {
   schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
 } as const;
 
+// if a module does not have separated schema - use `core.schemaPath`
 const independentModules: ModuleType[] = [
   {
     name: "PushMessages",
@@ -38,7 +38,7 @@ const independentModules: ModuleType[] = [
   },
 ];
 
-const GENERAL_CONFIG = {
+const CONFIG = {
   dedupeFragments: true,
   identifierName: "OperationNames",
   maybeValue: "T",
@@ -72,7 +72,7 @@ const GENERAL_CONFIG = {
   skipGraphQLImport: true,
 };
 
-const GENERAL_PLUGINS = [
+const PLUGINS = [
   {
     add: {
       content: "// This file is auto-generated. Do not edit manually.\n",
@@ -91,6 +91,7 @@ async function runCodegen() {
   await generate(
     {
       schema: core.schemaPath,
+      silent: true,
       documents: [
         addExtension(core.apiPath),
         // exclude independent modules from general modules
@@ -98,15 +99,15 @@ async function runCodegen() {
       ],
       generates: {
         [typesPath]: {
-          plugins: GENERAL_PLUGINS,
-          config: GENERAL_CONFIG,
+          plugins: PLUGINS,
+          config: CONFIG,
         },
       },
     },
     true,
   );
   // eslint-disable-next-line no-console
-  console.log(`Types for general modules have been generated in "${typesPath}"`);
+  console.log(`Types for The Core have been generated in "${typesPath}"`);
 
   await Promise.allSettled(
     independentModules.map(async (module) => {
@@ -115,11 +116,12 @@ async function runCodegen() {
         await generate(
           {
             schema: module.schemaPath,
+            silent: true,
             documents: addExtension(module.apiPath),
             generates: {
               [moduleTypesPath]: {
-                plugins: GENERAL_PLUGINS,
-                config: GENERAL_CONFIG,
+                plugins: PLUGINS,
+                config: CONFIG,
               },
             },
           },
@@ -142,17 +144,4 @@ runCodegen().catch((err) => {
 
 function addExtension(path: string): string {
   return `${path}/**/*.(graphql|gql)`;
-}
-
-async function readJsonAndReturnString(filePath: string) {
-  try {
-    const data = await fs.readFile(filePath, "utf8");
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const jsonData = JSON.parse(data);
-    return JSON.stringify(jsonData);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("Error reading or parsing JSON:", err);
-    return null;
-  }
 }
