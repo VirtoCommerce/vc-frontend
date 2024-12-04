@@ -8,6 +8,7 @@ import {
   useCreateConfiguredLineItemMutation,
 } from "@/core/api/graphql";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
 import type {
@@ -143,7 +144,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   }
 
   async function getPreselectedValues(): Promise<CartConfigurationItemType[] | undefined> {
-    const lineItemId = getUrlSearchParam("lineItemId");
+    const lineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
     if (lineItemId) {
       try {
         const result = await getConfigurationItems(lineItemId, cart.value?.id);

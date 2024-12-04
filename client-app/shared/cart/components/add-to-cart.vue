@@ -29,7 +29,7 @@ import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/core/composables";
-import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
@@ -60,7 +60,7 @@ const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useSho
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const configurableLineItemId = getUrlSearchParam("lineItemId");
+const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
