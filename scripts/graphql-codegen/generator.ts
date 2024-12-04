@@ -17,6 +17,7 @@ const core = {
 } as const;
 
 // if a module does not have separated schema - use `core.schemaPath`
+// if a module not used and not installed on The Platform - remove it to avoid console error
 const independentModules: ModuleType[] = [
   {
     name: "PushMessages",
@@ -34,7 +35,7 @@ const independentModules: ModuleType[] = [
     name: "CustomerReviews",
     searchKey: "customerReviews",
     apiPath: "client-app/modules/customer-reviews/api/graphql",
-    schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/customerReviews`,
   },
 ];
 
@@ -107,7 +108,7 @@ async function runCodegen() {
     true,
   );
   // eslint-disable-next-line no-console
-  console.log(`Types for The Core have been generated in "${typesPath}"`);
+  console.log(`Types for The Core have been generated in "${typesPath}\n"`);
 
   await Promise.allSettled(
     independentModules.map(async (module) => {
@@ -128,10 +129,10 @@ async function runCodegen() {
           true,
         );
         // eslint-disable-next-line no-console
-        console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"`);
+        console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"\n`);
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.error(`Error during types generation for "${module.name} module"`, err);
+        console.error(`Error during types generation for "${module.name} module"\n`, err);
       }
     }),
   );
