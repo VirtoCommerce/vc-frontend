@@ -1,7 +1,6 @@
 import fs from "fs/promises";
 import { generate } from "@graphql-codegen/cli";
 import * as dotenv from "dotenv";
-import type { CodegenConfig } from "@graphql-codegen/cli";
 
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
@@ -15,7 +14,7 @@ type ModuleType = {
 
 const core = {
   apiPath: "client-app/core/api/graphql",
-  schemaPath: "client-app/core/api/graphql/schema.json",
+  schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
 } as const;
 
 const independentModules: ModuleType[] = [
@@ -23,16 +22,19 @@ const independentModules: ModuleType[] = [
     name: "PushMessages",
     searchKey: "PushMessages",
     apiPath: "client-app/modules/push-messages/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/pushMessages`,
   },
   {
     name: "Quotes",
     searchKey: "QuoteType",
     apiPath: "client-app/modules/quotes/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/quote`,
   },
   {
     name: "CustomerReviews",
     searchKey: "customerReviews",
     apiPath: "client-app/modules/customer-reviews/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
   },
 ];
 
@@ -83,8 +85,6 @@ const GENERAL_PLUGINS = [
 ];
 
 async function runCodegen() {
-  await downloadSchema(`${process.env.APP_BACKEND_URL}/graphql`, core.schemaPath);
-
   // eslint-disable-next-line no-console
   console.log("\nGenerate types for general modules:");
   const typesPath = `${core.apiPath}/types.ts`;
@@ -108,22 +108,13 @@ async function runCodegen() {
   // eslint-disable-next-line no-console
   console.log(`Types for general modules have been generated in "${typesPath}"`);
 
-  const JSONString = await readJsonAndReturnString(core.schemaPath);
-
-  const installedIndependentModules = independentModules.filter((el) => JSONString?.includes(el.searchKey));
-
-  if (installedIndependentModules.length) {
-    // eslint-disable-next-line no-console
-    console.log("\nGenerate types for independent modules:");
-  }
-
   await Promise.allSettled(
-    installedIndependentModules.map(async (module) => {
+    independentModules.map(async (module) => {
       const moduleTypesPath = `${module.apiPath}/types.ts`;
       try {
         await generate(
           {
-            schema: core.schemaPath,
+            schema: module.schemaPath,
             documents: addExtension(module.apiPath),
             generates: {
               [moduleTypesPath]: {
@@ -164,19 +155,4 @@ async function readJsonAndReturnString(filePath: string) {
     console.error("Error reading or parsing JSON:", err);
     return null;
   }
-}
-
-async function downloadSchema(schemaUrl: string, schemaPath: string) {
-  const schema: CodegenConfig = {
-    schema: schemaUrl,
-    generates: {
-      [schemaPath]: {
-        plugins: ["introspection"],
-      },
-    },
-  };
-
-  // eslint-disable-next-line no-console
-  console.log(`Downloading schema from ${schemaUrl} to ${schemaPath}`);
-  await generate(schema, true);
 }
