@@ -19,10 +19,9 @@ export function toServerError(
   networkError: NetworkError | undefined,
   graphQLErrors: ReadonlyArray<GraphQLFormattedError> | undefined,
 ): ServerError | undefined {
-  if (
-    (networkError && networkError.toString() !== (AbortReason.Explicit as string)) ||
-    hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)
-  ) {
+  const isExplicitlyAborted =
+    networkError?.toString() === (AbortReason.Explicit as string) || networkError?.toString().includes("AbortError");
+  if ((networkError && !isExplicitlyAborted) || hasErrorCode(graphQLErrors, GraphQLErrorCode.Unhandled)) {
     return ServerError.Unhandled;
   }
 
