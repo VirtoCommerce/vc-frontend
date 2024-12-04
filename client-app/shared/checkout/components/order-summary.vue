@@ -1,5 +1,5 @@
 <template>
-  <VcWidget id="order-summary" class="print:break-inside-avoid" :title="$t('common.titles.order_summary')">
+  <VcWidget id="order-summary" class="max-md:mt-5 print:break-inside-avoid" :title="$t('common.titles.order_summary')">
     <slot name="header" />
 
     <!-- Totals block -->

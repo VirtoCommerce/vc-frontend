@@ -52,25 +52,25 @@
       <OrderCommentSection v-if="order.comment" :comment="order.comment" readonly class="mt-5" />
 
       <template #sidebar>
-        <div class="space-y-5">
-          <!-- Order Data Widget -->
-          <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first">
-            <div class="flex flex-col gap-1.5 text-sm">
-              <p v-if="order.createdDate">
-                <span class="font-black"> {{ $t("common.labels.created") }}: </span>
-                {{ $d(order.createdDate) }}
-              </p>
-              <p v-if="order.status" class="flex items-center">
-                <span class="mr-1 font-black"> {{ $t("common.labels.status") }}: </span>
-                <OrderStatus
-                  class="min-w-[7.785rem] print:min-w-0"
-                  :status="order.status"
-                  :display-value="order.statusDisplayValue"
-                />
-              </p>
-            </div>
-          </VcWidget>
+        <!-- Order Data Widget -->
+        <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first mb-5">
+          <div class="flex flex-col gap-1.5 text-sm">
+            <p v-if="order.createdDate">
+              <span class="font-black"> {{ $t("common.labels.created") }}: </span>
+              {{ $d(order.createdDate) }}
+            </p>
+            <p v-if="order.status" class="flex items-center">
+              <span class="mr-1 font-black"> {{ $t("common.labels.status") }}: </span>
+              <OrderStatus
+                class="min-w-[7.785rem] print:min-w-0"
+                :status="order.status"
+                :display-value="order.statusDisplayValue"
+              />
+            </p>
+          </div>
+        </VcWidget>
 
+        <div class="space-y-5">
           <!-- Order summary -->
           <OrderSummary
             :cart="order"
