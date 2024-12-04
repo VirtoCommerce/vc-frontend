@@ -113,10 +113,13 @@ async function onChange() {
 }
 
 async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
-  if (mode === AddToCartModeType.Update && !!lineItem) {
+  if (mode === AddToCartModeType.Update && !enteredQuantity.value) {
+    return cart.value;
+  }
+  if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value) {
     return isConfigurable.value
-      ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value || 0, selectedConfigurationInput.value)
-      : await changeItemQuantity(lineItem.id, enteredQuantity.value || 0);
+      ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
+      : await changeItemQuantity(lineItem.id, enteredQuantity.value);
   }
 
   const quantity = enteredQuantity.value || minQty.value;
