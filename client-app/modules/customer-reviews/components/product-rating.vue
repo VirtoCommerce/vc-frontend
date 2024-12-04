@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { MAX_RATING } from "../constants";
-import type { Rating } from "../api/graphql/types";
+import type { Rating } from "@/core/api/graphql/types";
 
 interface IProps {
   rating: Rating;
