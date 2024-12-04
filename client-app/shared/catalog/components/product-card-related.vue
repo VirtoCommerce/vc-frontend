@@ -31,28 +31,21 @@
     </div>
 
     <div class="h-[3.25rem] print:hidden">
-      <template v-if="product.isConfigurable || product.hasVariations">
-        <VcProductButton
-          v-if="product.isConfigurable"
-          :to="link"
-          :button-text="$t('pages.catalog.customize_button')"
-          icon="cube-transparent"
-          target="_blank"
-        />
+      <VcProductButton
+        v-if="product.isConfigurable"
+        :to="link"
+        :button-text="$t('pages.catalog.customize_button')"
+        icon="cube-transparent"
+        target="_blank"
+      />
 
-        <VcButton
-          v-if="product.hasVariations"
-          :to="link"
-          target="_blank"
-          variant="outline"
-          size="sm"
-          full-width
-          truncate
-          @click="$emit('linkClick', $event)"
-        >
-          {{ $t("pages.catalog.variations_button", [(product.variations?.length || 0) + 1]) }}
-        </VcButton>
-      </template>
+      <VcProductButton
+        v-else-if="product.hasVariations"
+        :to="link"
+        target="_blank"
+        variant="outline"
+        :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+      />
 
       <AddToCart v-else :product="product" />
     </div>

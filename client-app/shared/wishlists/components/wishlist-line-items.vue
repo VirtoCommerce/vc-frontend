@@ -34,27 +34,20 @@
         @remove="() => removeSingleItem(item.id)"
       >
         <div v-if="!item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
-          <template v-if="item.isConfigurable || item.hasVariations">
-            <VcProductButton
-              v-if="item.isConfigurable"
-              no-wrap
-              :to="item.route"
-              :button-text="$t('pages.catalog.customize_button')"
-              icon="cube-transparent"
-              :target="$cfg.details_browser_target"
-            />
-            <VcButton
-              v-if="item.hasVariations"
-              :to="item.route"
-              :target="$cfg.details_browser_target"
-              variant="outline"
-              size="sm"
-              full-width
-              truncate
-            >
-              {{ $t("pages.catalog.variations_button", [(item.variations?.length || 0) + 1]) }}
-            </VcButton>
-          </template>
+          <VcProductButton
+            v-if="item.isConfigurable"
+            no-wrap
+            :to="item.route"
+            :button-text="$t('pages.catalog.customize_button')"
+            icon="cube-transparent"
+            :target="$cfg.details_browser_target"
+          />
+          <VcProductButton
+            v-else-if="item.hasVariations"
+            :to="item.route"
+            :target="$cfg.details_browser_target"
+            :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
+          />
           <VcAddToCart
             v-else
             class="w-full"
