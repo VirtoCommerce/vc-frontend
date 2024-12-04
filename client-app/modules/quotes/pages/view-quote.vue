@@ -10,7 +10,7 @@
       </VcTypography>
 
       <template #sidebar>
-        <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3">
+        <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3 max-md:mt-5">
           <VcButton class="grow" variant="outline" @click="decline">
             {{ $t("common.buttons.decline") }}
           </VcButton>
@@ -49,7 +49,7 @@
       </VcWidget>
 
       <template #sidebar>
-        <div class="space-y-5">
+        <div class="space-y-5 max-md:mt-5">
           <QuoteSummary :quote="quote" />
 
           <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
