@@ -68,11 +68,12 @@
     <div v-show="searchBarVisible" class="flex select-none items-center bg-[--mobile-search-bar-bg] p-4">
       <VcInput
         v-model="searchPhrase"
+        type="search"
         maxlength="64"
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
         no-border
-        @keyup.enter="searchPhrase && $router.push(searchPageLink)"
+        @keydown.enter="searchPhrase && $router.push(searchPageLink)"
       />
 
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
