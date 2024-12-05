@@ -1,11 +1,18 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
 import { ref, readonly, computed } from "vue";
-import { apolloClient } from "@/core/api/graphql";
-import { getProductConfiguration, useCreateConfiguredLineItemMutation } from "@/core/api/graphql/catalog";
+import {
+  apolloClient,
+  getConfigurationItems,
+  getProductConfiguration,
+  useCreateConfiguredLineItemMutation,
+} from "@/core/api/graphql";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
-import { Logger } from "@/core/utilities";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import { getUrlSearchParam, Logger } from "@/core/utilities";
+import { useShortCart } from "@/shared/cart/composables";
 import type {
+  CartConfigurationItemType,
   ConfigurationSectionInput,
   ConfigurationSectionType,
   CreateConfiguredLineItemMutation,
@@ -36,10 +43,10 @@ provideApolloClient(apolloClient);
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
+  const { cart } = useShortCart();
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
-
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
 
   const selectedConfiguration = computed(() => {
@@ -66,13 +73,20 @@ function _useConfigurableProduct(configurableProductId: string) {
     try {
       const data = await getProductConfiguration(configurableProductId);
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
+      const preselectedValues = await getPreselectedValues();
+
       configuration.value.forEach((section) => {
-        if (section.isRequired && section.id) {
+        const preselectedValue = preselectedValues?.find(({ sectionId }) => sectionId === section.id);
+        const isPreselectedValueValid =
+          preselectedValue?.productId &&
+          section.options?.some(({ product }) => product?.id === preselectedValue.productId);
+
+        if ((preselectedValue && isPreselectedValueValid) || section.isRequired) {
           changeSelectionValue({
             sectionId: section.id,
             value: {
-              productId: section.options?.[0]?.product?.id ?? "",
-              quantity: section.options?.[0]?.quantity ?? 1,
+              productId: preselectedValue?.productId ?? section.options?.[0]?.product?.id ?? "",
+              quantity: preselectedValue?.quantity ?? section.options?.[0]?.quantity ?? 1,
             },
           });
         }
@@ -86,12 +100,15 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
+  const { mutate } = useCreateConfiguredLineItemMutation();
+  const { add: batchedCreateConfiguredLineItem, abort: abortBatchedCreateConfiguredLineItem } = useMutationBatcher(
+    mutate,
+    {
+      mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
+    },
+  );
   async function createConfiguredLineItem() {
     creating.value = true;
-    const { mutate } = useCreateConfiguredLineItemMutation();
-    const { add: batchedCreateConfiguredLineItem } = useMutationBatcher(mutate, {
-      mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
-    });
     try {
       const result = await batchedCreateConfiguredLineItem({
         command: {
@@ -126,12 +143,26 @@ function _useConfigurableProduct(configurableProductId: string) {
     void createConfiguredLineItem();
   }
 
+  async function getPreselectedValues(): Promise<CartConfigurationItemType[] | undefined> {
+    const lineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+    if (lineItemId) {
+      try {
+        const result = await getConfigurationItems(lineItemId, cart.value?.id);
+        return result?.configurationItems ?? [];
+      } catch (e) {
+        Logger.error(`${useConfigurableProduct.name}.${getPreselectedValues.name}`, e);
+        throw e;
+      }
+    }
+  }
+
   function reset() {
     fetching.value = false;
     creating.value = false;
     selectedConfigurationInput.value = [];
     configuration.value = [];
     configuredLineItem.value = undefined;
+    abortBatchedCreateConfiguredLineItem();
   }
 
   return {

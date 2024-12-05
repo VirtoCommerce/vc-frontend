@@ -1,0 +1,23 @@
+query GetConfigurationItems(
+  $lineItemId: String!
+  $storeId: String!
+  $currencyCode: String!
+  $cultureName: String
+  $cartId: String
+) {
+  configurationItems(
+    lineItemId: $lineItemId
+    storeId: $storeId
+    currencyCode: $currencyCode
+    cultureName: $cultureName
+    cartId: $cartId
+  ) {
+    configurationItems {
+      id
+      name
+      quantity
+      productId
+      sectionId
+    }
+  }
+}

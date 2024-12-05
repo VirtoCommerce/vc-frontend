@@ -10,6 +10,7 @@
         :prepend-icon="icon"
         size="sm"
         full-width
+        :no-wrap="noWrap"
         @click="$emit('linkClick', $event)"
       >
         {{ buttonText }}
@@ -43,6 +44,7 @@ interface IProps {
   variant?: string;
   color?: string;
   icon?: string;
+  noWrap?: boolean;
 }
 
 defineEmits<IEmits>();
