@@ -36,7 +36,7 @@ const _size = computed(() => (typeof props.size === "number" ? `${props.size}px`
 const style = computed(() => ({
   width: _size.value,
   height: _size.value,
-  backgroundImage: props.img ? `url(${props.img})` : "none",
+  backgroundImage: props.img ? `url("${props.img}")` : "none",
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
 
