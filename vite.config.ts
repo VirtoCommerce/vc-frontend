@@ -6,7 +6,6 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig, loadEnv, splitVendorChunkPlugin } from "vite";
 import { checker } from "vite-plugin-checker";
 import mkcert from "vite-plugin-mkcert";
-import svgLoader from "vite-svg-loader";
 import type { ProxyOptions, UserConfig, PluginOption } from "vite";
 
 function getProxy(target: ProxyOptions["target"], options: Omit<ProxyOptions, "target"> = {}): ProxyOptions {
@@ -42,7 +41,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
             certFileName: "public.pem",
           })
         : undefined,
-      svgLoader(),
       vue(),
       graphql() as PluginOption,
       isServe
@@ -79,6 +77,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
           }) as PluginOption)
         : undefined,
     ],
+    assetsInclude: ["**/*.svg"],
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./client-app", import.meta.url)),

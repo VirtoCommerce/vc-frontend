@@ -23,9 +23,12 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const iconUrl = ref<string>("");
 
-const loadIcon = async (name?: string) => {
-  const module = (await import(`@/assets/icons/basic/${name}.svg?url`)) as { default: string };
-  iconUrl.value = module.default || "";
+const loadIcon = (name?: string) => {
+  try {
+    iconUrl.value = new URL(`/client-app/assets/icons/basic/${name}.svg`, import.meta.url).href;
+  } catch (error) {
+    iconUrl.value = "";
+  }
 };
 
 const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
@@ -34,13 +37,13 @@ const style = computed(() => ({
   width: _size.value,
   height: _size.value,
   backgroundImage: props.img ? `url(${props.img})` : "none",
-  maskImage: iconUrl.value && iconUrl.value !== "null" ? `url(${iconUrl.value})` : "none",
+  maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
 
 watch(
   () => props.mask,
   (newIconName: string) => {
-    void loadIcon(newIconName);
+    loadIcon(newIconName);
   },
   { immediate: true },
 );
