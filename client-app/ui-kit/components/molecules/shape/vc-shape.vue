@@ -24,11 +24,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const iconUrl = ref<string>("");
 
 const loadIcon = (name?: string) => {
-  try {
-    iconUrl.value = new URL(`/client-app/assets/icons/basic/${name}.svg`, import.meta.url).href;
-  } catch (error) {
-    iconUrl.value = "";
-  }
+  iconUrl.value = new URL(`/client-app/assets/icons/basic/${name}.svg`, import.meta.url).href ?? "";
 };
 
 const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
