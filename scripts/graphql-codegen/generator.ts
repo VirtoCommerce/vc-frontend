@@ -1,8 +1,4 @@
 import { generate } from "@graphql-codegen/cli";
-import * as dotenv from "dotenv";
-
-dotenv.config();
-dotenv.config({ path: ".env.local", override: true });
 
 type ModuleType = {
   name: string;
