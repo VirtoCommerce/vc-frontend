@@ -7,7 +7,13 @@
   >
     <div id="product-configuration-anchor" />
     <div class="product-configuration__widgets">
-      <VcWidget v-for="section in configuration" :key="section.id" collapsible size="xs">
+      <VcWidget
+        v-for="(section, index) in configuration"
+        :key="section.id"
+        collapsible
+        size="xs"
+        :collapsed="index !== 0"
+      >
         <template #title>
           {{ section.name }}
           <div v-if="section.description" class="product-configuration__description">
