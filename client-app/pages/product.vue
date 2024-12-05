@@ -37,8 +37,8 @@
       </VcCopyText>
     </div>
 
-    <div class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6">
-      <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
+    <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
+      <div class="space-y-5 xl:space-y-7">
         <component
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
@@ -96,15 +96,14 @@
         </template>
       </div>
 
-      <ProductSidebar
-        :class="[
-          'flex-none md:sticky md:top-18 md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
-          { 'print:hidden': product.hasVariations },
-        ]"
-        :product="sideBarProduct"
-        :variations="variations"
-      />
-    </div>
+      <template #sidebar>
+        <ProductSidebar
+          :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
+          :product="sideBarProduct"
+          :variations="variations"
+        />
+      </template>
+    </VcLayout>
   </VcContainer>
 
   <Error404 v-else-if="!fetchingProduct && productTemplate" />

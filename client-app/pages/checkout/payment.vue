@@ -1,5 +1,5 @@
 <template>
-  <VcLayoutWithRightSidebar v-if="placedOrder" is-sidebar-sticky>
+  <VcLayout v-if="placedOrder" sidebar-position="right" sticky-sidebar>
     <VcWidget size="lg">
       <template #default-container>
         <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-6">
@@ -39,7 +39,7 @@
     <template #sidebar>
       <OrderSummary :cart="placedOrder" :no-shipping="allOrderItemsAreDigital" />
     </template>
-  </VcLayoutWithRightSidebar>
+  </VcLayout>
 </template>
 
 <script setup lang="ts">

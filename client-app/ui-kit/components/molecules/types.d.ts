@@ -34,7 +34,6 @@ declare module "vue" {
     VcList: typeof Components.VcList;
     VcLoaderOverlay: typeof Components.VcLoaderOverlay;
     VcLoaderWithText: typeof Components.VcLoaderWithText;
-    VcLayoutWithRightSidebar: typeof Components.VcLayoutWithRightSidebar;
     VcMenuItem: typeof Components.VcMenuItem;
     VcNavButton: typeof Components.VcNavButton;
     VcProductActionsButton: typeof Components.VcProductActionsButton;
@@ -43,6 +42,7 @@ declare module "vue" {
     VcProductTotal: typeof Components.VcProductTotal;
     // @deprecated
     VcSelect: typeof Components.VcSelect;
+    VcShape: typeof Components.VcShape;
     VcSteps: typeof Components.VcSteps;
     VcTextarea: typeof Components.VcTextarea;
     VcRating: typeof Components.VcRating;
