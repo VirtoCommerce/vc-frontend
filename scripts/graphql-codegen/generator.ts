@@ -2,7 +2,6 @@ import { generate } from "@graphql-codegen/cli";
 
 type ModuleType = {
   name: string;
-  searchKey: string;
   apiPath: string;
   schemaPath: string;
 };
@@ -17,19 +16,16 @@ const core = {
 const independentModules: ModuleType[] = [
   {
     name: "PushMessages",
-    searchKey: "PushMessages",
     apiPath: "client-app/modules/push-messages/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/pushMessages`,
   },
   {
     name: "Quotes",
-    searchKey: "QuoteType",
     apiPath: "client-app/modules/quotes/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/quote`,
   },
   {
     name: "CustomerReviews",
-    searchKey: "customerReviews",
     apiPath: "client-app/modules/customer-reviews/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/customerReviews`,
   },
