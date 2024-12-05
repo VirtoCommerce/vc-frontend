@@ -10,6 +10,7 @@ query GetRecentlyBrowsed($storeId: String!, $currencyCode: String, $cultureName:
       name
       code
       hasVariations
+      isConfigurable
       variations {
         id
       }

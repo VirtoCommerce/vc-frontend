@@ -41,6 +41,6 @@ const isSucceeded = ref(false);
 
 function onSucceeded() {
   isSucceeded.value = true;
-  broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
+  void broadcast.emit(openReturnUrl, undefined, TabsType.ALL);
 }
 </script>

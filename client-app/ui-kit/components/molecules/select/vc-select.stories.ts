@@ -41,10 +41,6 @@ export default {
   },
 } as Meta<typeof VcSelect>;
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-
 const Template: StoryFn<typeof VcSelect> = (args) => ({
   components: { VcSelect },
   setup: () => ({ args }),

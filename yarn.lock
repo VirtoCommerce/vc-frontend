@@ -1396,14 +1396,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/sdk-vue@npm:^1.0.36":
-  version: 1.1.2
-  resolution: "@builder.io/sdk-vue@npm:1.1.2"
+"@builder.io/sdk-vue@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@builder.io/sdk-vue@npm:3.0.0"
   dependencies:
     isolated-vm: "npm:^5.0.0"
   peerDependencies:
     vue: ">= 3"
-  checksum: 10c0/792eea44900f1e5e25ad17c22532c210ed5e5cf2bcbaf539be0bcf8214e84396ca331806184fa12bd313cda08301c96c260567d6553e4260c1c94c33ac7f7b6f
+  checksum: 10c0/3ff7c73198f9da651957fe3b167835135f0395eb42044fe35b9307816301b9e723f436f83b93d0400ba32acb29827faac9707356e5126ff92c604549531bee46
   languageName: node
   linkType: hard
 
@@ -5273,14 +5273,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@virto-commerce/front-modules-google-ecommerce-analytics@npm:^1.0.7":
-  version: 1.0.8
-  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:1.0.8"
+"@virto-commerce/front-modules-google-ecommerce-analytics@npm:1.0.10":
+  version: 1.0.10
+  resolution: "@virto-commerce/front-modules-google-ecommerce-analytics@npm:1.0.10"
   dependencies:
     lodash: "npm:^4.17.21"
-    micromatch: "npm:^4.0.8"
-    vue: "npm:^3.4.31"
-  checksum: 10c0/ebdae263d5b568b9642bb47241d20e46e5f795b0fadb189ef6d6b6644738dd63f3b903b96fb067140a61e8259bd605e37a1043fd2a9b3bbc9ca450a6d2900da6
+    vue: "npm:3.5.12"
+  checksum: 10c0/a8172eca3d5ced0511d7bc4678e79f0a7cc5de915f8dd9c2f0140475ef5356a3efa4da1f07c8cf306af3dc5ee1647b6303ac3a9887e275f60a59cd09340774a6
   languageName: node
   linkType: hard
 
@@ -14856,7 +14855,7 @@ __metadata:
   resolution: "vc-theme-b2b-vue@workspace:."
   dependencies:
     "@apollo/client": "npm:^3.10.5"
-    "@builder.io/sdk-vue": "npm:^1.0.36"
+    "@builder.io/sdk-vue": "npm:^3.0.0"
     "@commitlint/cli": "npm:^19.3.0"
     "@commitlint/config-conventional": "npm:^19.2.2"
     "@floating-ui/vue": "npm:^1.1.4"
@@ -14893,7 +14892,7 @@ __metadata:
     "@unhead/vue": "npm:^1.9.14"
     "@vee-validate/rules": "npm:~4.13.2"
     "@vee-validate/yup": "npm:~4.13.2"
-    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:^1.0.7"
+    "@virto-commerce/front-modules-google-ecommerce-analytics": "npm:1.0.10"
     "@virto-commerce/front-modules-hotjar": "npm:^1.0.4"
     "@vitejs/plugin-vue": "npm:^5.0.5"
     "@vue/apollo-composable": "npm:^4.0.2"
@@ -15371,7 +15370,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.4.31, vue@npm:^3.5.12":
+"vue@npm:3.5.12, vue@npm:^3.5.12":
   version: 3.5.12
   resolution: "vue@npm:3.5.12"
   dependencies:

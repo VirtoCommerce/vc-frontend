@@ -23,7 +23,7 @@ export function useSignMeOut(options: { reloadPage?: boolean } = { reloadPage: t
     localStorage.removeItem(USER_ID_LOCAL_STORAGE);
 
     if (options.reloadPage) {
-      broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
+      void broadcast.emit(pageReloadEvent, undefined, TabsType.ALL);
     }
   }
 

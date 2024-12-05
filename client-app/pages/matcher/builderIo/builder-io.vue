@@ -10,7 +10,6 @@ import { useElementVisibility } from "@vueuse/core";
 import { onMounted, ref, shallowRef, watchEffect } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
 import { usePageHead } from "@/core/composables";
-import { IS_DEVELOPMENT } from "@/core/constants";
 import { builderIOComponents } from "./customComponents";
 import type { StateType } from "../priorityManager";
 import type { BuilderContent } from "@builder.io/sdk-vue";
@@ -28,8 +27,8 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
-const canShowContent = shallowRef(false);
-const content = shallowRef<BuilderContent | null>(null);
+const canShowContent = ref(false);
+const content = ref<BuilderContent | null>(null);
 const isLoading = ref(false);
 
 function clearState() {
@@ -57,7 +56,6 @@ async function tryLoadContent(urlPath: string) {
 
     content.value = await fetchOneEntry({
       model: "page",
-      cacheSeconds: IS_DEVELOPMENT ? 1 : 60,
       apiKey: props.apiKey,
       options: getBuilderSearchParams(new URLSearchParams(location.search)),
       userAttributes: {

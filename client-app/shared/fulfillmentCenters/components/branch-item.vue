@@ -33,17 +33,11 @@
 
 <script setup lang="ts">
 import type { IFulfillmentCenter } from "@/shared/fulfillmentCenters";
-import type { PropType } from "vue";
 
-defineProps({
-  branch: {
-    type: Object as PropType<IFulfillmentCenter>,
-    required: true,
-  },
+interface IProps {
+  branch: IFulfillmentCenter;
+  isTextTruncateEnabled?: boolean;
+}
 
-  isTextTruncateEnabled: {
-    type: Boolean,
-    default: false,
-  },
-});
+defineProps<IProps>();
 </script>

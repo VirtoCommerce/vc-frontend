@@ -130,7 +130,7 @@ import { useUser } from "@/shared/account";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
 import ReviewRating from "./review-rating.vue";
-import type { Rating } from "../api/graphql/types";
+import type { Rating } from "@/core/api/graphql/types";
 
 const props = defineProps<IProps>();
 

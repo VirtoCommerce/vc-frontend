@@ -1,39 +1,42 @@
-import fs from "fs/promises";
 import { generate } from "@graphql-codegen/cli";
-import { SCHEMA_PATH } from "./schema";
-
-const allModulesPath = "client-app/core/api/graphql";
 
 type ModuleType = {
   name: string;
-  searchKey: string;
   apiPath: string;
+  schemaPath: string;
 };
 
+const core = {
+  apiPath: "client-app/core/api/graphql",
+  schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
+} as const;
+
+// if a module does not have separated schema - use `core.schemaPath`
+// if a module not used and not installed on The Platform - remove it to avoid console error
 const independentModules: ModuleType[] = [
   {
     name: "CustomerReviews",
-    searchKey: "customerReviews",
     apiPath: "client-app/modules/customer-reviews/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/customerReviews`,
   },
   {
     name: "PurchaseRequests",
-    searchKey: "purchaseRequests",
     apiPath: "client-app/modules/purchase-requests/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/aiDocumentProcessing`,
   },
   {
     name: "PushMessages",
-    searchKey: "PushMessages",
     apiPath: "client-app/modules/push-messages/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/pushMessages`,
   },
   {
     name: "Quotes",
-    searchKey: "QuoteType",
     apiPath: "client-app/modules/quotes/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/quote`,
   },
 ];
 
-const GENERAL_CONFIG = {
+const CONFIG = {
   dedupeFragments: true,
   identifierName: "OperationNames",
   maybeValue: "T",
@@ -67,7 +70,7 @@ const GENERAL_CONFIG = {
   skipGraphQLImport: true,
 };
 
-const GENERAL_PLUGINS = [
+const PLUGINS = [
   {
     add: {
       content: "// This file is auto-generated. Do not edit manually.\n",
@@ -82,58 +85,51 @@ const GENERAL_PLUGINS = [
 async function runCodegen() {
   // eslint-disable-next-line no-console
   console.log("\nGenerate types for general modules:");
-  const typesPath = `${allModulesPath}/types.ts`;
+  const typesPath = `${core.apiPath}/types.ts`;
   await generate(
     {
-      schema: SCHEMA_PATH,
+      schema: core.schemaPath,
+      silent: true,
       documents: [
-        addExtension(allModulesPath),
+        addExtension(core.apiPath),
         // exclude independent modules from general modules
         ...independentModules.map((module) => `!${addExtension(module.apiPath)}`),
       ],
       generates: {
         [typesPath]: {
-          plugins: GENERAL_PLUGINS,
-          config: GENERAL_CONFIG,
+          plugins: PLUGINS,
+          config: CONFIG,
         },
       },
     },
     true,
   );
   // eslint-disable-next-line no-console
-  console.log(`Types for general modules have been generated in "${typesPath}"`);
-
-  const JSONString = await readJsonAndReturnString(SCHEMA_PATH);
-
-  const installedIndependentModules = independentModules.filter((el) => JSONString?.includes(el.searchKey));
-
-  if (installedIndependentModules.length) {
-    // eslint-disable-next-line no-console
-    console.log("\nGenerate types for independent modules:");
-  }
+  console.log(`Types for The Core have been generated in "${typesPath}\n"`);
 
   await Promise.allSettled(
-    installedIndependentModules.map(async (module) => {
+    independentModules.map(async (module) => {
       const moduleTypesPath = `${module.apiPath}/types.ts`;
       try {
         await generate(
           {
-            schema: SCHEMA_PATH,
+            schema: module.schemaPath,
+            silent: true,
             documents: addExtension(module.apiPath),
             generates: {
               [moduleTypesPath]: {
-                plugins: GENERAL_PLUGINS,
-                config: GENERAL_CONFIG,
+                plugins: PLUGINS,
+                config: CONFIG,
               },
             },
           },
           true,
         );
         // eslint-disable-next-line no-console
-        console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"`);
+        console.log(`Types for "${module.name}" module have been generated in "${moduleTypesPath}"\n`);
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.error(`Error during types generation for "${module.name} module"`, err);
+        console.error(`Error during types generation for "${module.name} module"\n`, err);
       }
     }),
   );
@@ -146,17 +142,4 @@ runCodegen().catch((err) => {
 
 function addExtension(path: string): string {
   return `${path}/**/*.(graphql|gql)`;
-}
-
-async function readJsonAndReturnString(filePath: string) {
-  try {
-    const data = await fs.readFile(filePath, "utf8");
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const jsonData = JSON.parse(data);
-    return JSON.stringify(jsonData);
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("Error reading or parsing JSON:", err);
-    return null;
-  }
 }

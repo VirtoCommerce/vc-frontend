@@ -9,6 +9,7 @@ export interface IAllGlobalVariables {
 }
 
 /**
+ * @deprecated Use {@link globals} directly instead.
  * Returns all global variables.
  * Now these variables are just strings, because we reload the page on sign in / sign out,
  * but in future we should update them without page reload and they will become reactive.

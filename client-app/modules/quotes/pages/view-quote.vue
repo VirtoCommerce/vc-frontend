@@ -4,13 +4,13 @@
       <VcBreadcrumbs :items="breadcrumbs" />
     </div>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <VcTypography tag="h1">
         {{ $t("quote_details.title", [quote.number]) }}
       </VcTypography>
 
       <template #sidebar>
-        <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3">
+        <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3 max-md:mt-5">
           <VcButton class="grow" variant="outline" @click="decline">
             {{ $t("common.buttons.decline") }}
           </VcButton>
@@ -19,9 +19,9 @@
           </VcButton>
         </div>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <!-- Quote products -->
       <VcWidget size="lg">
         <QuoteLineItems :items="quote.items" readonly />
@@ -39,6 +39,7 @@
         :title="$t('quote_details.files')"
         size="lg"
         prepend-icon="document-text"
+        class="mt-5"
       >
         <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
@@ -48,9 +49,9 @@
       </VcWidget>
 
       <template #sidebar>
-        <QuoteSummary :quote="quote" />
+        <QuoteSummary :quote="quote" class="mb-5 max-md:mt-5" />
 
-        <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
+        <VcWidget :title="$t('quote_details.quote_data')" class="mb-5 max-md:order-first">
           <div class="space-y-1">
             <div class="flex text-base">
               <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
@@ -66,7 +67,7 @@
           </div>
         </VcWidget>
 
-        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
+        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')" class="mb-5">
           <VcAddressInfo :address="shippingAddress!" />
         </VcWidget>
 
@@ -74,7 +75,7 @@
           <VcAddressInfo :address="billingAddress!" />
         </VcWidget>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
   </div>
 
   <VcLoaderOverlay v-else no-bg />
@@ -92,7 +93,6 @@ import type { QuoteAttachmentType } from "@/modules/quotes/api/graphql/types";
 import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
 import QuoteStatus from "@/modules/quotes/components/quote-status.vue";
 import QuoteSummary from "@/modules/quotes/components/quote-summary.vue";
-import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
 
 interface IProps {
   quoteId: string;

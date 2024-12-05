@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <VcLayoutWithRightSidebar is-sidebar-sticky>
+    <VcLayout sidebar-position="right" sticky-sidebar>
       <VcWidget id="line-items-widget" size="lg" class="print:break-inside-auto">
         <!-- Items grouped by Vendor -->
         <div v-if="$cfg.line_items_group_by_vendor_enabled" class="space-y-5 md:space-y-7">
@@ -47,13 +47,13 @@
         <OrderLineItems v-else :items="orderItems" />
       </VcWidget>
 
-      <AcceptedGifts v-if="giftItems.length" :items="giftItems" />
+      <AcceptedGifts v-if="giftItems.length" :items="giftItems" class="mt-5" />
 
-      <OrderCommentSection v-if="order.comment" :comment="order.comment" readonly />
+      <OrderCommentSection v-if="order.comment" :comment="order.comment" readonly class="mt-5" />
 
       <template #sidebar>
         <!-- Order Data Widget -->
-        <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first">
+        <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first mb-5">
           <div class="flex flex-col gap-1.5 text-sm">
             <p v-if="order.createdDate">
               <span class="font-black"> {{ $t("common.labels.created") }}: </span>
@@ -70,62 +70,69 @@
           </div>
         </VcWidget>
 
-        <!-- Order summary -->
-        <OrderSummary
-          :cart="order"
-          :no-shipping="allItemsAreDigital"
-          class="order-last print:order-none print:break-after-page"
-        >
-          <template #footer>
-            <VcButton
-              v-if="showPaymentButton"
-              class="mt-4"
-              full-width
-              @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
-            >
-              {{ $t("common.buttons.pay_now") }}
-            </VcButton>
-          </template>
-        </OrderSummary>
+        <div class="space-y-5">
+          <!-- Order summary -->
+          <OrderSummary
+            :cart="order"
+            :no-shipping="allItemsAreDigital"
+            class="order-last print:order-none print:break-after-page"
+          >
+            <template #footer>
+              <VcButton
+                v-if="showPaymentButton"
+                class="mt-4"
+                full-width
+                @click="$router.push({ name: 'OrderPayment', params: { orderId } })"
+              >
+                {{ $t("common.buttons.pay_now") }}
+              </VcButton>
+            </template>
+          </OrderSummary>
 
-        <!-- Billing Address Widget -->
-        <VcWidget v-if="billingAddress" :title="$t('common.titles.billing_address')">
-          <VcAddressInfo :address="billingAddress" class="text-base" />
-        </VcWidget>
+          <!-- Billing Address Widget -->
+          <VcWidget v-if="billingAddress" :title="$t('common.titles.billing_address')">
+            <VcAddressInfo :address="billingAddress" class="text-base" />
+          </VcWidget>
 
-        <!-- Shipping Method Card -->
-        <VcWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')">
-          <div class="flex items-center gap-4 text-base">
-            <VcImage
-              :alt="shipmentMethodName"
-              :src="shipment.shippingMethod?.logoUrl"
-              class="size-12 print:hidden"
-              lazy
-            />
+          <!-- Shipping Method Card -->
+          <VcWidget v-if="!allItemsAreDigital && shipment" :title="$t('common.titles.shipping_method')">
+            <div class="flex items-center gap-4 text-base">
+              <VcImage
+                :alt="shipmentMethodName"
+                :src="shipment.shippingMethod?.logoUrl"
+                class="size-12 print:hidden"
+                lazy
+              />
 
-            <span class="min-w-0 break-words">
-              {{ shipmentMethodName }}
-              ({{ shipment.price?.formattedAmount }})
-            </span>
-          </div>
-        </VcWidget>
+              <span class="min-w-0 break-words">
+                {{ shipmentMethodName }}
+                ({{ shipment.price?.formattedAmount }})
+              </span>
+            </div>
+          </VcWidget>
 
-        <!-- Shipping Address Card -->
-        <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-          <VcAddressInfo :address="deliveryAddress" class="text-base" />
-        </VcWidget>
+          <!-- Shipping Address Card -->
+          <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
+            <VcAddressInfo :address="deliveryAddress" class="text-base" />
+          </VcWidget>
 
-        <!-- Payment Method section -->
-        <VcWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')">
-          <div class="flex items-center gap-4 text-base">
-            <VcImage :alt="paymentMethodName" :src="payment.paymentMethod.logoUrl" class="size-12 print:hidden" lazy />
-            <span class="min-w-0 break-words">
-              {{ paymentMethodName }}
-            </span>
-          </div>
-        </VcWidget>
+          <!-- Payment Method section -->
+          <VcWidget v-if="payment?.paymentMethod" :title="$t('common.titles.payment_method')">
+            <div class="flex items-center gap-4 text-base">
+              <VcImage
+                :alt="paymentMethodName"
+                :src="payment.paymentMethod.logoUrl"
+                class="size-12 print:hidden"
+                lazy
+              />
+              <span class="min-w-0 break-words">
+                {{ paymentMethodName }}
+              </span>
+            </div>
+          </VcWidget>
+        </div>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
   </div>
 
   <VcLoaderOverlay v-else no-bg />

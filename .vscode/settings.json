@@ -1,4 +1,16 @@
 {
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json",
+    "vite.config.*": "vitest.config.*",
+    "package.json": ".npmrc, .yarnrc*, yarn*",
+    ".eslintrc.*": ".eslint*",
+    ".prettierrc.*": ".prettier*",
+    ".dependency-graph.cjs": ".dependency-cruiser.cjs"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
   "editor.formatOnSave": true,
   "eslint.useESLintClass": true,
   "files.associations": {

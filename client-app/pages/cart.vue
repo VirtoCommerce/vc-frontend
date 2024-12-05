@@ -25,7 +25,7 @@
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
-    <VcLayoutWithRightSidebar is-sidebar-sticky>
+    <VcLayout sidebar-position="right" sticky-sidebar>
       <ProductsSection
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
@@ -42,19 +42,20 @@
       <GiftsSection
         v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
         :gifts="availableExtendedGifts"
+        class="mt-5"
         @toggle:gift="toggleGift"
       />
 
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
-        <ShippingDetailsSection v-if="!allItemsAreDigital" />
+        <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-        <BillingDetailsSection />
+        <BillingDetailsSection class="mt-5" />
 
-        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
+        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
       </template>
 
-      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
+      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
 
       <template #sidebar>
         <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -117,11 +118,12 @@
           :is="item.element"
           v-for="item in sidebarWidgets"
           :key="item.id"
+          class="mt-5"
           @lock-cart="isCartLoked = true"
           @unlock-cart="isCartLoked = false"
         />
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
 
     <transition name="slide-fade-bottom">
       <div

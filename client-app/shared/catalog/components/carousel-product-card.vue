@@ -1,7 +1,7 @@
 <template>
   <div class="rounded border border-transparent bg-additional-50 lg:p-2 lg:hover:border-neutral-100 lg:hover:shadow-lg">
     <!-- Product image -->
-    <router-link :to="link" @click="$emit('link-click', $event)">
+    <router-link :to="link" @click="$emit('linkClick', $event)">
       <div class="square relative border border-neutral-200">
         <VcImage
           :src="product.imgSrc"
@@ -19,7 +19,7 @@
         :to="link"
         :title="product.name"
         class="mt-2 line-clamp-3 text-sm font-black text-[--link-color] hover:text-[--link-hover-color]"
-        @click="$emit('link-click', $event)"
+        @click="$emit('linkClick', $event)"
       >
         {{ product.name }}
       </router-link>
@@ -36,17 +36,15 @@
 import { computed } from "vue";
 import { getProductRoute } from "@/core/utilities";
 import type { Product } from "@/core/api/graphql/types";
-import type { PropType } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
-defineEmits<{ (eventName: "link-click", globalEvent: PointerEvent): void }>();
+defineEmits<{ (eventName: "linkClick", globalEvent: PointerEvent): void }>();
 
-const props = defineProps({
-  product: {
-    type: Object as PropType<Product>,
-    required: true,
-  },
-});
+const props = defineProps<IProps>();
+
+interface IProps {
+  product: Product;
+}
 
 const link = computed<RouteLocationRaw>(() => getProductRoute(props.product.id, props.product.slug));
 </script>

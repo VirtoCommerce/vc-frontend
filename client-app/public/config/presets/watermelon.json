@@ -106,8 +106,8 @@
 
   "color_price": "#43875f",
 
-  "color_hexagon_icon_bg": "#ed6665",
-  "color_hexagon_icon": "#ffffff",
+  "color_shape_icon_bg": "#ed6665",
+  "color_shape_icon": "#ffffff",
 
   "color_empty_list_icon": "#aeb85f",
 
