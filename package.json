@@ -30,7 +30,7 @@
     "test:unit": "yarn precheck && vitest",
     "test:typing": "yarn precheck && vitest --typecheck",
     "generate:certificates": "yarn precheck && vite-node --mode production scripts/generate-certificates",
-    "generate:graphql:generate-types": "yarn precheck && vite-node scripts/graphql-codegen/generator.ts",
+    "generate:graphql-types": "yarn precheck && vite-node scripts/graphql-codegen/generator.ts",
     "generate:bundle-map": "yarn precheck && GENERATE_BUNDLE_MAP=true yarn build-only",
     "generate:dependency-graph": "yarn precheck && depcruise $0 --focus $0 --focus-depth 0 --reaches $1 --config .dependency-graph.cjs --output-type dot | dot -T svg | depcruise-wrap-stream-in-html > artifacts/dependency-graph.html",
     "storybook:styles": "yarn precheck && npx tailwindcss -i storybook-styles/preflight.scss -o storybook-styles/dist/preflight.css",
