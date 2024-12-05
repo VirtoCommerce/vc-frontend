@@ -23,10 +23,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const iconUrl = ref<string>("");
 
-const loadIcon = (name?: string) => {
-  iconUrl.value = new URL(`/client-app/assets/icons/basic/${name}.svg`, import.meta.url).href ?? "";
-};
-
 const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
 
 const style = computed(() => ({
@@ -35,6 +31,10 @@ const style = computed(() => ({
   backgroundImage: props.img ? `url("${props.img}")` : "none",
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
+
+function loadIcon(name?: string) {
+  iconUrl.value = new URL(`/client-app/assets/icons/basic/${name}.svg`, import.meta.url).href ?? "";
+}
 
 watch(
   () => props.mask,
