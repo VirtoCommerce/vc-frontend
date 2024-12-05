@@ -44,10 +44,13 @@ const _variant = computed(() => {
 
 <style lang="scss">
 .vc-typography {
+  $self: &;
+
   @apply empty:hidden;
 
   &--variant {
-    &--h1 {
+    @at-root h1:not(#{$self}),
+      &--h1 {
       @apply text-2xl tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
@@ -55,7 +58,8 @@ const _variant = computed(() => {
       }
     }
 
-    &--h2 {
+    @at-root h2:not(#{$self}),
+      &--h2 {
       @apply text-xl tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
@@ -63,7 +67,8 @@ const _variant = computed(() => {
       }
     }
 
-    &--h3 {
+    @at-root h3:not(#{$self}),
+      &--h3 {
       @apply text-lg tracking-wide font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
@@ -71,7 +76,8 @@ const _variant = computed(() => {
       }
     }
 
-    &--h4 {
+    @at-root h4:not(#{$self}),
+      &--h4 {
       @apply text-base font-bold uppercase;
 
       @media (min-width: theme("screens.lg")) {
@@ -79,11 +85,13 @@ const _variant = computed(() => {
       }
     }
 
-    &--h5 {
+    @at-root h5:not(#{$self}),
+      &--h5 {
       @apply text-base font-bold uppercase;
     }
 
-    &--h6 {
+    @at-root h6:not(#{$self}),
+      &--h6 {
       @apply text-base font-bold uppercase;
     }
 

@@ -11,7 +11,7 @@
     with-total
     with-subtotal
     removable
-    selectable
+    :selectable="selectable"
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
   >
@@ -80,6 +80,7 @@ interface IProps {
   readonly?: boolean;
   items?: LineItemType[];
   validationErrors?: ValidationErrorType[];
+  selectable?: boolean;
   sharedSelectedItemIds?: string[];
 }
 
@@ -94,6 +95,7 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   validationErrors: () => [],
+  selectable: true,
 });
 
 const validationErrors = toRef(props, "validationErrors");

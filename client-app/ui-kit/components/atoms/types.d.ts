@@ -20,7 +20,6 @@ declare module "vue" {
     VcExpansionPanels: typeof Components.VcExpansionPanels;
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
-    VcHexagonIcon: typeof Components.VcHexagonIcon;
     VcImage: typeof Components.VcImage;
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;
