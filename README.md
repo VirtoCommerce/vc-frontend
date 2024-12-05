@@ -116,7 +116,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
 ├── graphql-codegen
-|   └── generator.ts                 // Generate GraphQl types 
+|   └── generator.ts                 // Generate GraphQL types 
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
