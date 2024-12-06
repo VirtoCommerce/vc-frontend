@@ -1,19 +1,14 @@
 <template>
   <div>
     <!-- Title block -->
-    <VcTypography tag="h1">
-      {{ $t("purchase_requests.title") }}
-    </VcTypography>
+    <VcTypography tag="h1">{{ $t("purchase_requests.title") }}</VcTypography>
 
     <!-- Empty view -->
     <VcEmptyView
       v-if="!loading && !purchaseRequests.length"
       :text="$t('purchase_requests.no_purchase_requests_message')"
-    >
-      <template #icon>
-        <VcImage src="/static/images/common/order.svg" :alt="$t('purchase_requests.no_purchase_requests_img_alt')" />
-      </template>
-    </VcEmptyView>
+      icon="thin-order"
+    />
 
     <div v-else>
       <FromFile class="mb-5" />

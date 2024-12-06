@@ -8,12 +8,9 @@
 
     <VcEmptyView
       v-if="!(loading || changing) && !quote?.items?.length"
-      class="lg:mt-32"
       :text="$t('purchase_request.failed_or_used_description')"
+      icon="thin-order"
     >
-      <template #icon>
-        <VcImage :alt="$t('shared.wishlists.list_details.list_icon')" src="/static/images/common/order.svg" />
-      </template>
       <template #button>
         <VcButton :to="{ name: 'BulkOrder' }" size="lg">
           {{ $t("purchase_request.try_again") }}
