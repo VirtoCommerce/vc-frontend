@@ -37,6 +37,10 @@ fragment orderLineItemFields on OrderLineItemType {
   discountTotal {
     ...money
   }
+  discounts {
+    promotionId
+    promotionName
+  }
   outerId
   vendor {
     id

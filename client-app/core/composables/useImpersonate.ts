@@ -43,7 +43,7 @@ export function _useImpersonate() {
 
         // reload all tabs to renew state
         setTimeout(() => {
-          broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
+          void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
         }, 1000);
       }
     } catch (e) {

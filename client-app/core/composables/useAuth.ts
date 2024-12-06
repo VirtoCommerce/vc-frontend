@@ -25,7 +25,7 @@ function _useAuth() {
 
   const getTokenParams = ref<URLSearchParams>();
 
-  let getTokenRequest = Promise.resolve();
+  let getTokenRequest: Promise<unknown> = Promise.resolve();
   const {
     data,
     execute: getToken,
@@ -103,7 +103,6 @@ function _useAuth() {
 
     getTokenParams.value = params;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await (getTokenRequest = getToken(true));
   }
 
@@ -115,7 +114,6 @@ function _useAuth() {
 
     getTokenParams.value = params;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await (getTokenRequest = getToken(true));
   }
 
@@ -133,14 +131,13 @@ function _useAuth() {
 
     try {
       if (!isAuthorizing.value) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         await (getTokenRequest = getToken(true));
       } else {
         await getTokenRequest;
       }
     } catch {
       state.value = { ...INITIAL_STATE };
-      broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
+      void broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
     }
   }
 

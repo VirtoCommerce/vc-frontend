@@ -77,6 +77,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
           }) as PluginOption)
         : undefined,
     ],
+    assetsInclude: ["**/*.svg"],
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./client-app", import.meta.url)),

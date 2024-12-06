@@ -25,6 +25,7 @@ query SearchRelatedProducts(
             name
           }
           hasVariations
+          isConfigurable
           variations {
             id
           }

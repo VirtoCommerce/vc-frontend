@@ -105,7 +105,7 @@ export interface IProps {
   maxlength?: string | number;
   center?: boolean;
   truncate?: boolean;
-  type?: "text" | "password" | "number" | "email";
+  type?: "text" | "password" | "number" | "email" | "search";
   size?: "xs" | "sm" | "md" | "auto";
   clearable?: boolean;
   browserTooltip?: "enabled" | "disabled";

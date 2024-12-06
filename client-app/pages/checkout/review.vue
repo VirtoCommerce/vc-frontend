@@ -1,5 +1,5 @@
 <template>
-  <VcLayoutWithRightSidebar is-sidebar-sticky>
+  <VcLayout sidebar-position="right" sticky-sidebar>
     <VcWidget
       id="line-items-widget"
       :title="$t('common.titles.review_order')"
@@ -106,9 +106,9 @@
       </div>
     </VcWidget>
 
-    <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" />
+    <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" class="mt-5" />
 
-    <OrderCommentSection v-if="comment" :comment="comment" readonly />
+    <OrderCommentSection v-if="comment" :comment="comment" readonly class="mt-5" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -136,13 +136,13 @@
       </OrderSummary>
 
       <!-- Order actions -->
-      <VcWidget :title="$t('common.titles.other_actions')" class="print:hidden">
+      <VcWidget :title="$t('common.titles.other_actions')" class="mt-5 print:hidden">
         <VcButton full-width variant="outline" prepend-icon="printer" @click="print()">
           {{ $t("common.buttons.print_order") }}
         </VcButton>
       </VcWidget>
     </template>
-  </VcLayoutWithRightSidebar>
+  </VcLayout>
 </template>
 
 <script setup lang="ts">

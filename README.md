@@ -116,9 +116,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
 ├── graphql-codegen
-|   ├── schema.ts                    // Configuration file to generate GraphQL schema.
-|   ├── generator.ts                 // Generate types based on schema.json
-|   └── config.cjs                   // Environment configuration 
+|   └── generator.ts                 // Generate GraphQL types 
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
@@ -218,12 +216,9 @@ yarn build:watch
 
 Command:
 ```
-yarn generate:graphql
-```
-makes two steps:
-1. Downloads `schema.json` from GraphQL server located at the `APP_BACKEND_URL`
-2. Generates the `types.ts` file separately for general modules and independent modules.
+yarn generate:graphql-types
 
+Generates the `types.ts` files separately for `The Core App` and independent modules.
 If independent modules are not installed on `The Platform`, types can still be safely generated.
 
 ## Dependency Analysis

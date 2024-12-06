@@ -7,7 +7,13 @@
   >
     <div id="product-configuration-anchor" />
     <div class="product-configuration__widgets">
-      <VcWidget v-for="section in configuration" :key="section.id" collapsible size="xs">
+      <VcWidget
+        v-for="(section, index) in configuration"
+        :key="section.id"
+        collapsible
+        size="xs"
+        :collapsed="index !== 0"
+      >
         <template #title>
           {{ section.name }}
           <div v-if="section.description" class="product-configuration__description">
@@ -18,11 +24,12 @@
           </div>
         </template>
 
-        <div v-if="section.type === 'product' && section.options?.length" class="product-configuration__items">
+        <div v-if="section.options?.length" class="product-configuration__items">
           <template v-for="{ id, product, quantity, listPrice, salePrice, extendedPrice } in section.options" :key="id">
             <VcProductCard v-if="!!product" view-mode="item" class="product-configuration__item">
               <template #media>
                 <VcRadioButton
+                  :model-value="selectedConfiguration[section.id]?.productId"
                   :value="product.id"
                   :name="`selection-${section.id}`"
                   @input="

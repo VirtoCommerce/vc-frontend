@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4">
     <div class="flex items-center gap-2">
-      <VcHexagonIcon :icon="icon" />
+      <VcShape :icon="icon" />
 
       <h2 class="text-xl font-bold uppercase text-neutral-950">{{ title }}</h2>
     </div>

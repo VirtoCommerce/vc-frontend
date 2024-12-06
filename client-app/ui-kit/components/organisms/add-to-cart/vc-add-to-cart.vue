@@ -93,7 +93,6 @@ interface IProps {
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;
-  isAddOnly?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -118,10 +117,9 @@ const {
   isBuyable,
   packSize,
   countInCart,
-  isAddOnly,
 } = toRefs(props);
 
-const mode = computed(() => (countInCart.value && !isAddOnly.value ? AddToCartModeType.Update : AddToCartModeType.Add));
+const mode = computed(() => (countInCart.value ? AddToCartModeType.Update : AddToCartModeType.Add));
 const isButtonOutlined = computed<boolean>(() => mode.value === AddToCartModeType.Add);
 
 const buttonText = computed<string>(() =>

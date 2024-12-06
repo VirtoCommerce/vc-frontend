@@ -4,13 +4,13 @@
       <VcBreadcrumbs :items="breadcrumbs" />
     </div>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <VcTypography tag="h1">
         {{ $t("quote_details.title", [quote.number]) }}
       </VcTypography>
 
       <template #sidebar>
-        <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3">
+        <div v-if="quote.status === 'Proposal sent'" class="flex flex-wrap gap-3 max-md:mt-5">
           <VcButton class="grow" variant="outline" @click="decline">
             {{ $t("common.buttons.decline") }}
           </VcButton>
@@ -19,9 +19,9 @@
           </VcButton>
         </div>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
 
-    <VcLayoutWithRightSidebar>
+    <VcLayout sidebar-position="right">
       <!-- Quote products -->
       <VcWidget size="lg">
         <QuoteLineItems :items="quote.items" readonly />
@@ -39,6 +39,7 @@
         :title="$t('quote_details.files')"
         size="lg"
         prepend-icon="document-text"
+        class="mt-5"
       >
         <ul class="space-y-2 rounded border border-neutral-200 px-3 py-4">
           <li v-for="(attachment, index) in quote.attachments" :key="index">
@@ -48,51 +49,9 @@
       </VcWidget>
 
       <template #sidebar>
-        <VcWidget :title="$t('quote_details.quote_summary')">
-          <div class="flex justify-between text-base">
-            <span class="font-bold">
-              {{ $t("quote_details.subTotal") }}
-            </span>
+        <QuoteSummary :quote="quote" class="mb-5 max-md:mt-5" />
 
-            <span class="text-lg font-black text-[--price-color]">
-              <VcPriceDisplay :value="quote.totals?.subTotalExlTax" />
-            </span>
-          </div>
-          <div class="border-y py-2 text-base font-normal">
-            <div class="flex justify-between text-base">
-              {{ $t("quote_details.discountTotal") }}
-
-              <span>
-                <VcPriceDisplay :value="quote.totals?.discountTotal" />
-              </span>
-            </div>
-            <div class="flex justify-between text-base">
-              {{ $t("quote_details.shippingTotal") }}
-
-              <span>
-                <VcPriceDisplay :value="quote.totals?.shippingTotal" />
-              </span>
-            </div>
-            <div class="flex justify-between text-base">
-              {{ $t("quote_details.taxTotal") }}
-
-              <span class="">
-                <VcPriceDisplay :value="quote.totals?.taxTotal" />
-              </span>
-            </div>
-          </div>
-          <div class="flex justify-between text-base">
-            <span class="font-bold">
-              {{ $t("quote_details.total") }}
-            </span>
-
-            <span class="text-lg font-black text-success-700">
-              <VcPriceDisplay :value="quote.totals?.grandTotalInclTax" />
-            </span>
-          </div>
-        </VcWidget>
-
-        <VcWidget :title="$t('quote_details.quote_data')" class="-order-1 lg:order-none">
+        <VcWidget :title="$t('quote_details.quote_data')" class="mb-5 max-md:order-first">
           <div class="space-y-1">
             <div class="flex text-base">
               <span class="mr-2 font-bold">{{ $t("quote_details.created") }}:</span>
@@ -108,7 +67,7 @@
           </div>
         </VcWidget>
 
-        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')">
+        <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')" class="mb-5">
           <AddressInfo :address="shippingAddress!" />
         </VcWidget>
 
@@ -116,7 +75,7 @@
           <AddressInfo :address="billingAddress!" />
         </VcWidget>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
   </div>
 
   <VcLoaderOverlay v-else no-bg />
@@ -127,14 +86,14 @@ import { watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
+import { useUserQuote } from "@/modules/quotes/useUserQuote";
 import { AddressInfo } from "@/shared/common";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
-import QuoteLineItems from "../components/quote-line-items.vue";
-import QuoteStatus from "../components/quote-status.vue";
-import { useUserQuote } from "../useUserQuote";
-import type { QuoteAttachmentType } from "../api/graphql/types";
-import VcLayoutWithRightSidebar from "@/ui-kit/components/molecules/layout-with-right-sidebar/vc-layout-with-right-sidebar.vue";
+import type { QuoteAttachmentType } from "@/modules/quotes/api/graphql/types";
+import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
+import QuoteStatus from "@/modules/quotes/components/quote-status.vue";
+import QuoteSummary from "@/modules/quotes/components/quote-summary.vue";
 
 interface IProps {
   quoteId: string;
@@ -143,7 +102,7 @@ interface IProps {
 const props = defineProps<IProps>();
 
 const { t } = useI18n();
-const { quote, billingAddress, approveItem, declineItem, shippingAddress, clearQuote, fetchQuote } = useUserQuote();
+const { quote, billingAddress, approveItem, declineItem, shippingAddress, fetchQuote } = useUserQuote();
 const notification = useNotifications();
 const router = useRouter();
 
@@ -180,7 +139,6 @@ const breadcrumbs = useBreadcrumbs(() => [
 ]);
 
 watchEffect(async () => {
-  clearQuote();
   await fetchQuote({ id: props.quoteId });
 });
 

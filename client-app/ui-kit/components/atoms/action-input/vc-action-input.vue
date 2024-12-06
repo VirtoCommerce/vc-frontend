@@ -2,24 +2,22 @@
   <div>
     <p v-if="label" class="pb-2 text-base font-black">{{ label }}</p>
 
-    <div class="flex items-start gap-3">
-      <VcInput
-        v-model="value"
-        :placeholder="placeholder"
-        :readonly="readonly"
-        :disabled="applied || disabled"
-        :maxlength="maxLength"
-        size="sm"
-        @keyup.enter="$emit('apply')"
-      />
-
-      <template v-if="!readonly">
+    <VcInput
+      v-model="value"
+      :placeholder="placeholder"
+      :readonly="readonly"
+      :disabled="applied || disabled"
+      :maxlength="maxLength"
+      :message="errorMessage"
+      :error="!!errorMessage"
+      @keyup.enter="$emit('apply')"
+    >
+      <template v-if="!readonly" #append>
         <VcButton
           v-if="applied"
           :aria-label="$t('ui_kit.buttons.deny')"
-          size="sm"
           color="danger"
-          variant="outline"
+          variant="no-background"
           :disabled="disabled"
           icon="delete-2"
           @click="$emit('deny')"
@@ -29,15 +27,12 @@
           v-else
           :aria-label="$t('ui_kit.buttons.apply')"
           icon="apply"
-          size="sm"
-          variant="outline"
-          :disabled="value.length === 0 || disabled"
+          variant="no-background"
+          :disabled="value.length === 0 || disabled || !!errorMessage"
           @click="$emit('apply')"
         />
       </template>
-    </div>
-
-    <VcInputDetails v-if="errorMessage" :message="errorMessage" error />
+    </VcInput>
   </div>
 </template>
 
