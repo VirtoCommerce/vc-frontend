@@ -20,19 +20,13 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { computed, inject, watch } from "vue";
+import { computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { usePageHead } from "@/core/composables";
 import { configInjectionKey } from "@/core/injection-keys";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
-
-interface IProps {
-  cartId?: string;
-}
-
-const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 
@@ -64,7 +58,7 @@ const steps = computed<IStepsItem[]>(() => {
   } else {
     result.push({
       icon: "arrow-left-bold",
-      route: { name: "Cart", params: { cartId: props.cartId }, replace: true },
+      route: { name: "Cart", replace: true },
       text: t("common.buttons.back_to_cart"),
     });
   }
@@ -114,16 +108,11 @@ usePageHead({
   title: computed(() => [t("pages.checkout.meta.title"), pageTitle.value]),
 });
 
-watch(
-  () => props.cartId,
-  async (cartId) => {
-    // Workaround as vue router pass empty string instead of undefined for optional params
-    await forceFetch({ cartId: cartId || undefined });
-    if (route.name === "Checkout") {
-      await initialize();
-      await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
-    }
-  },
-  { immediate: true },
-);
+void (async () => {
+  await forceFetch();
+  if (route.name === "Checkout") {
+    await initialize();
+    await router.push({ name: allItemsAreDigital.value ? "Billing" : "Shipping", replace: true });
+  }
+})();
 </script>

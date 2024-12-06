@@ -76,7 +76,7 @@
 
             <ProceedTo
               v-if="$cfg.checkout_multistep_enabled"
-              :to="{ name: 'Checkout', params: { cartId } }"
+              :to="{ name: 'Checkout' }"
               :disabled="hasOnlyUnselectedLineItems"
             >
               {{ $t("common.buttons.go_to_checkout") }}
@@ -140,7 +140,7 @@
 
 <script setup lang="ts">
 import { isEmpty } from "lodash";
-import { computed, inject, ref, watch } from "vue";
+import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
 import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
@@ -163,12 +163,6 @@ import type { Product } from "@/core/api/graphql/types";
 import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
-
-interface IProps {
-  cartId?: string;
-}
-
-const props = defineProps<IProps>();
 
 const config = inject(configInjectionKey, {});
 
@@ -235,28 +229,23 @@ function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
   }
 }
 
-watch(
-  () => props.cartId,
-  async (cartId) => {
-    // Workaround as vue router pass empty string instead of undefined for optional params
-    await forceFetch({ cartId: cartId || undefined });
+void (async () => {
+  await forceFetch();
 
-    /**
-     * Send a Google Analytics shopping cart view event.
-     */
-    if (cart.value) {
-      ga.viewCart(cart.value);
-    }
+  /**
+   * Send a Google Analytics shopping cart view event.
+   */
+  if (cart.value) {
+    ga.viewCart(cart.value);
+  }
 
-    if (!config.checkout_multistep_enabled) {
-      await initialize();
-    }
+  if (!config.checkout_multistep_enabled) {
+    await initialize();
+  }
 
-    const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
-    if (isAuthenticated.value && isXRecommendModuleEnabled) {
-      recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
-    }
-  },
-  { immediate: true },
-);
+  const isXRecommendModuleEnabled = isEnabledXRecommend(XRECOMMEND_ENABLED_KEY);
+  if (isAuthenticated.value && isXRecommendModuleEnabled) {
+    recentlyBrowsedProducts.value = (await recentlyBrowsed())?.products || [];
+  }
+})();
 </script>
