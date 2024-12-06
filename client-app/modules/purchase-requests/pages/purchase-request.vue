@@ -7,7 +7,7 @@
     <VcTypography tag="h1">{{ $t("purchase_request.title", [purchaseRequest?.number]) }}</VcTypography>
 
     <VcEmptyView
-      v-if="!(loading || changing) && !(cart?.items?.length || quote?.items?.length)"
+      v-if="!(loading || changing) && !quote?.items?.length"
       class="lg:mt-32"
       :text="$t('purchase_request.failed_or_used_description')"
     >
@@ -21,7 +21,7 @@
       </template>
     </VcEmptyView>
 
-    <VcLayoutWithRightSidebar v-else is-sidebar-sticky>
+    <VcLayout v-else sidebar-position="right" sticky-sidebar>
       <VcWidget :title="$t('purchase_request.files_section.title')" prepend-icon="document-add" size="lg">
         <VcFileUploader
           class="h-full"
@@ -32,14 +32,6 @@
         />
       </VcWidget>
       <VcWidget id="products" :title="$t('shared.cart.products_section.title')" prepend-icon="cube" size="lg">
-        <CartLineItems
-          v-if="cart?.items?.length"
-          :items="cart.items"
-          :validation-errors="cart.validationErrors"
-          :selectable="false"
-          @change:item-quantity="changeCartItemQuantity"
-          @remove:items="removeCartItems"
-        />
         <QuoteLineItems
           v-if="quote?.items?.length"
           :items="quote.items"
@@ -48,17 +40,6 @@
         />
       </VcWidget>
       <template #sidebar>
-        <OrderSummary
-          v-if="purchaseRequest?.cartId && cart?.items?.length"
-          :cart="cart"
-          :no-shipping="allCartItemsAreDigital"
-        >
-          <template #footer>
-            <ProceedTo :to="{ name: 'Cart', params: { cartId: purchaseRequest.cartId } }">
-              {{ $t("common.buttons.go_to_checkout") }}
-            </ProceedTo>
-          </template>
-        </OrderSummary>
         <QuoteSummary v-if="purchaseRequest?.quoteId && quote?.items?.length" :quote="quote">
           <template #footer>
             <ProceedTo :to="{ name: 'EditQuote', params: { quoteId: purchaseRequest.quoteId } }">
@@ -67,7 +48,7 @@
           </template>
         </QuoteSummary>
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
 
     <VcLoaderOverlay :visible="loading || changing" fixed-spinning />
   </div>
@@ -79,12 +60,11 @@ import { onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBreadcrumbs } from "@/core/composables";
 import { usePurchaseRequest } from "@/modules/purchase-requests/composables/usePurchaseRequest";
-import { OrderSummary, ProceedTo } from "@/shared/checkout/components";
+import { ProceedTo } from "@/shared/checkout/components";
 import { downloadFile } from "@/shared/files/utils";
 import { BackButtonInHeader } from "@/shared/layout";
 import QuoteLineItems from "@/modules/quotes/components/quote-line-items.vue";
 import QuoteSummary from "@/modules/quotes/components/quote-summary.vue";
-import CartLineItems from "@/shared/cart/components/cart-line-items.vue";
 
 interface IProps {
   purchaseRequestId: string;
@@ -103,14 +83,10 @@ const {
   files,
   fileOptions,
   changing,
-  cart,
-  allCartItemsAreDigital,
   quote,
   fetchFileOptions,
   updatePurchaseRequestByDocuments,
-  changeCartItemQuantity,
   changeQuoteItemQuantity,
-  removeCartItems,
   removeQuoteItem,
 } = usePurchaseRequest(propsRef);
 

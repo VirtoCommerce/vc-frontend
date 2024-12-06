@@ -1,17 +1,13 @@
-import { useApolloClient } from "@vue/apollo-composable";
 import { computed, toValue, watch } from "vue";
 import { useAllGlobalVariables } from "@/core/api/graphql/composables";
 import { useUpdatePurchaseRequestByDocumentsMutation } from "@/modules/purchase-requests/api/graphql/mutations/updatePurchaseRequestByDocuments";
 import { useGetPurchaseRequestQuery } from "@/modules/purchase-requests/api/graphql/queries/getPurchaseRequest";
 import { useUserQuote } from "@/modules/quotes/useUserQuote";
-import { useFullCart } from "@/shared/cart";
 import { toAttachedFile } from "@/ui-kit/utilities/file";
 import { usePurchaseRequestDocuments } from "./usePurchaseRequestDocuments";
 import type { MaybeRefOrGetter } from "vue";
 
 export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequestId: string }>) {
-  const { client } = useApolloClient();
-
   const { result: query, refetch, loading: purchaseRequestLoading } = useGetPurchaseRequestQuery(variables);
 
   const purchaseRequest = computed(() => query?.value?.purchaseRequest);
@@ -39,14 +35,6 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
   }
 
   const {
-    loading: cartLoading,
-    cart,
-    allItemsAreDigital: allCartItemsAreDigital,
-    forceFetch: fetchCart,
-    changeItemQuantityBatched: _changeCartItemQuantity,
-    removeItems: _removeCartItems,
-  } = useFullCart();
-  const {
     fetching: quoteLoading,
     quote,
     fetchQuote,
@@ -55,28 +43,13 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
   } = useUserQuote();
 
   async function fetchItems() {
-    if (purchaseRequest.value?.cartId) {
-      await fetchCart({ cartId: purchaseRequest.value.cartId });
-    } else if (cart.value) {
-      client.cache.evict({ id: client.cache.identify(cart.value) });
-    }
     if (purchaseRequest.value?.quoteId) {
       await fetchQuote({ id: purchaseRequest.value.quoteId, ...toValue(useAllGlobalVariables()) });
     }
   }
 
-  async function changeCartItemQuantity(value: { itemId: string; quantity: number }) {
-    await _changeCartItemQuantity(value.itemId, value.quantity);
-    await fetchItems();
-  }
-
   async function changeQuoteItemQuantity(value: { itemId: string; quantity: number }) {
     await _changeQuoteItemQuantity(purchaseRequest.value!.quoteId!, value.itemId, value.quantity);
-    await fetchItems();
-  }
-
-  async function removeCartItems(itemIds: string[]) {
-    await _removeCartItems(itemIds);
     await fetchItems();
   }
 
@@ -94,23 +67,19 @@ export function usePurchaseRequest(variables: MaybeRefOrGetter<{ purchaseRequest
   );
 
   return {
-    loading: computed(() => purchaseRequestLoading.value || cartLoading.value || quoteLoading.value),
+    loading: computed(() => purchaseRequestLoading.value || quoteLoading.value),
     changing,
     purchaseRequest,
     sources,
     sourceFiles,
     files,
     fileOptions,
-    cart,
-    allCartItemsAreDigital,
     quote,
     refetch,
     fetchFileOptions,
     updatePurchaseRequestByDocuments,
     fetchItems,
-    changeCartItemQuantity,
     changeQuoteItemQuantity,
-    removeCartItems,
     removeQuoteItem,
   };
 }
