@@ -23,9 +23,7 @@ const TemplateQuantity: StoryFn<typeof VcLineItems> = (args) => ({
   setup: () => ({ args }),
   template: `<VcLineItems v-bind="args">
     <template #titles>
-      <div class="text-end">
-        {{ $t("common.labels.quantity") }}
-      </div>
+      <div class="text-end">Quantity</div>
     </template>
 
     <template #default="{ item }">

@@ -1,7 +1,7 @@
 <template>
   <div class="vc-product-total">
     <div class="vc-product-total__label">
-      {{ $t("ui_kit.product_total.total") }}
+      {{ $t("ui_kit.labels.total") }}
     </div>
 
     <VcProductPrice

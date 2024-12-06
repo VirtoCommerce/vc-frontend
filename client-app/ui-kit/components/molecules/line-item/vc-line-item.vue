@@ -20,7 +20,7 @@
         v-if="selectable"
         v-model="isSelected"
         class="vc-line-item__checkbox"
-        :name="$t('common.labels.toggle_vendor_select')"
+        :name="$t('ui_kit.labels.toggle_vendor_select')"
         :disabled="disabled"
         test-id="vc-line-item-checkbox"
         @change="$emit('select', isSelected)"
@@ -69,14 +69,14 @@
             </VcProperty>
           </template>
 
-          <VcProperty v-if="vendor" :label="$t('common.labels.vendor')" :disabled="disabled">
+          <VcProperty v-if="vendor" :label="$t('ui_kit.labels.vendor')" :disabled="disabled">
             {{ vendor.name }}
           </VcProperty>
 
           <VcProperty
             v-if="withPrice && !deleted"
             class="vc-line-item__property-price"
-            :label="$t('common.labels.price_per_item')"
+            :label="$t('ui_kit.labels.price_per_item')"
             :disabled="disabled"
           >
             <VcProductPrice :list-price="actualPrice || listPrice" :disabled="disabled" truncate />
@@ -109,7 +109,7 @@
 
         <VcButton
           v-if="removable"
-          :aria-label="$t('common.buttons.remove_from_cart')"
+          :aria-label="$t('ui_kit.buttons.remove_from_cart')"
           class="vc-line-item__remove-button"
           color="neutral"
           size="sm"

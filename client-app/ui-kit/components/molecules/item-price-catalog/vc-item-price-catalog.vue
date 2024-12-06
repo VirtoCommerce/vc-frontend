@@ -1,7 +1,7 @@
 <template>
   <div v-if="hasVariations" class="flex items-end gap-1.5">
     <div class="pb-0.5 text-sm text-neutral lg:text-xs">
-      {{ $t("common.suffixes.from") }}
+      {{ $t("ui_kit.suffixes.from") }}
     </div>
     <VcPriceDisplayCatalog :value="value?.actual" class="text-xl font-bold" />
   </div>

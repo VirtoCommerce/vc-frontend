@@ -3,7 +3,7 @@
     <VcLoader class="inline-block size-6 text-primary" />
 
     <span class="animate-pulse font-bold">
-      {{ text ?? $t("common.messages.loading_text") }}
+      {{ text ?? $t("ui_kit.messages.loading_text") }}
     </span>
   </div>
 </template>

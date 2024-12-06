@@ -7,7 +7,7 @@
         </VcLabel>
 
         <div :class="['grow divide-y rounded border', { 'cursor-not-allowed bg-neutral-50': disabled }]">
-          <VcAddressSelection
+          <AddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="deliveryAddress"
             :disabled="disabled"
@@ -58,6 +58,7 @@
 <script setup lang="ts">
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
+import { AddressSelection } from "@/shared/common";
 
 interface IProps {
   disabled?: boolean;
