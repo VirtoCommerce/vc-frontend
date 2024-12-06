@@ -207,7 +207,8 @@
       "password_new_same_old": "Votre mot de passe actuel et votre nouveau mot de passe doivent être différents.",
       "blocked": "Vous avez été bloqué. Vous ne pouvez pas accéder à des informations ou créer la commande. Pour plus de détails, veuillez ",
       "password_about_expire": "Votre mot de passe expirera dans {value} jour(s). Veuillez définir un nouveau mot de passe dans votre profil.",
-      "password_expired": "Votre mot de passe a expiré"
+      "password_expired": "Votre mot de passe a expiré",
+      "data_changed": "Les données ont été modifiées dans l'un des autres onglets. Veuillez actualiser la page pour afficher les données actuelles."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",

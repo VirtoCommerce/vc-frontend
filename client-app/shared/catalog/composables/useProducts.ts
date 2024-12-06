@@ -12,12 +12,10 @@ import {
   rangeFacetToCommonFacet,
   termFacetToCommonFacet,
 } from "@/core/utilities";
-import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "../types";
 import type { Product, RangeFacet, TermFacet } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType } from "@/core/types";
-import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
 import type { Ref } from "vue";
 import BranchesModal from "@/shared/fulfillmentCenters/components/branches-modal.vue";
 
@@ -41,7 +39,6 @@ export function useProducts(
     withImages = config.image_carousel_in_product_card_enabled,
     withZeroPrice = config.zero_price_product_enabled,
   } = options;
-  const broadcast = useBroadcast();
   const { openModal } = useModal();
 
   const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
@@ -312,16 +309,6 @@ export function useProducts(
       fetchingFacets.value = false;
     }
   }
-
-  broadcast.on(productsInWishlistEvent, (eventItems: ProductInWishlistEventDataType[]) => {
-    eventItems.forEach(({ productId, inWishlist }) => {
-      const { index, product } = productsById.value[productId] ?? {};
-
-      if (product) {
-        products.value.splice(index, 1, { ...product, inWishlist });
-      }
-    });
-  });
 
   const currentPage = ref(1);
 

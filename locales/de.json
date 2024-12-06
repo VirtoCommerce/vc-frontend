@@ -207,7 +207,8 @@
       "password_new_same_old": "Ihr aktuelles Passwort und das neue Passwort müssen unterschiedlich sein.",
       "blocked": "Sie wurden blockiert. Sie können keine Informationen abrufen oder Bestellungen aufgeben. Für weitere Details ",
       "password_about_expire": "Ihr Passwort läuft in {value} Tag(en) ab. Bitte setzen Sie ein neues Passwort im Profil.",
-      "password_expired": "Ihr Passwort ist abgelaufen"
+      "password_expired": "Ihr Passwort ist abgelaufen",
+      "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
