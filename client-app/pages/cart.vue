@@ -16,7 +16,7 @@
     </template>
   </VcEmptyPage>
 
-  <VcContainer v-else class="relative z-0">
+  <VcContainer v-else class="relative z-0 max-lg:pb-12">
     <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
@@ -78,11 +78,12 @@
               v-if="$cfg.checkout_multistep_enabled"
               :to="{ name: 'Checkout' }"
               :disabled="hasOnlyUnselectedLineItems"
+              class="mt-4"
             >
               {{ $t("common.buttons.go_to_checkout") }}
             </ProceedTo>
 
-            <PlaceOrder v-else />
+            <PlaceOrder v-else class="mt-4" />
 
             <template v-if="!$cfg.checkout_multistep_enabled">
               <transition name="slide-fade-top" mode="out-in" appear>
@@ -127,19 +128,30 @@
 
     <transition name="slide-fade-bottom">
       <div
-        v-if="!isEmpty(selectedItemIds)"
-        class="shadow-t-lgs fixed bottom-0 left-0 z-10 flex w-full justify-center bg-additional-50 p-6 md:hidden print:hidden"
+        v-if="!loading && cart?.items?.length"
+        class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] lg:hidden print:hidden"
       >
-        <VcButton variant="outline" prepend-icon="trash" @click="handleRemoveItems(selectedItemIds)">
-          {{ $t("common.buttons.remove_selected") }}
-        </VcButton>
+        <div class="text-end text-base font-bold text-neutral-950">
+          <span class="me-1">{{ $t("common.labels.total") }}:</span>
+          <VcPriceDisplay v-if="cart.total" :value="cart.total" />
+        </div>
+
+        <ProceedTo
+          v-if="$cfg.checkout_multistep_enabled"
+          :to="{ name: 'Checkout' }"
+          :disabled="hasOnlyUnselectedLineItems"
+          class="!mt-2"
+        >
+          {{ $t("common.buttons.go_to_checkout") }}
+        </ProceedTo>
+
+        <PlaceOrder v-else class="!mt-2" />
       </div>
     </transition>
   </VcContainer>
 </template>
 
 <script setup lang="ts">
-import { isEmpty } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
