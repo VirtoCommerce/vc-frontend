@@ -41,14 +41,13 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
 
     let action = "BETWEEN";
 
-    const down = scrollTop > scrollOld;
     const up = scrollTop < scrollOld;
 
-    if (sidebarHeight > clientHeight - offsetTop && (down || up)) {
+    if (sidebarHeight > clientHeight - offsetTop) {
       if (up && sidebarTop >= offsetTop && sidebarBottom >= clientHeight - offsetBottom && sidebarTop > contentTop) {
         action = "TOP";
       } else if (
-        down &&
+        !up &&
         sidebarTop <= offsetTop &&
         sidebarBottom <= clientHeight - offsetBottom &&
         sidebarBottom <= contentBottom
@@ -80,6 +79,8 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
             bottom: "auto",
           };
       }
+    } else {
+      sidebarStyle.value = {};
     }
 
     scrollOld = scrollTop;
@@ -112,6 +113,7 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
         setSidebarPosition();
       }
     },
+    { deep: true },
   );
 
   watch(
@@ -121,6 +123,7 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
         setSidebarPosition();
       }
     },
+    { deep: true },
   );
 
   return { setSidebarPosition, sidebarStyle, scrollDirection };
