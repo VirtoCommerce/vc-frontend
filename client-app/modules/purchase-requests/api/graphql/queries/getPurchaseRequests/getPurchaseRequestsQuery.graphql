@@ -1,0 +1,24 @@
+query GetPurchaseRequests(
+  $storeId: String
+  $customerId: String
+  $sort: String
+  $keyword: String
+  $first: Int
+  $after: String
+) {
+  purchaseRequests(
+    storeId: $storeId
+    customerId: $customerId
+    sort: $sort
+    keyword: $keyword
+    first: $first
+    after: $after
+  ) {
+    totalCount
+    items {
+      id
+      createdDate
+      number
+    }
+  }
+}
