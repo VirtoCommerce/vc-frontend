@@ -47,10 +47,11 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
       if (up && sidebarTop >= offsetTop && sidebarBottom >= clientHeight - offsetBottom && sidebarTop > contentTop) {
         action = "TOP";
       } else if (
-        !up &&
-        sidebarTop <= offsetTop &&
-        sidebarBottom <= clientHeight - offsetBottom &&
-        sidebarBottom <= contentBottom
+        (!up &&
+          sidebarTop <= offsetTop &&
+          sidebarBottom <= clientHeight - offsetBottom &&
+          sidebarBottom <= contentBottom) ||
+        sidebarTop > contentBottom
       ) {
         action = "BOTTOM";
       }
