@@ -1,10 +1,14 @@
 import { ref } from "vue";
-import { DEFAULT_FILES_SCOPE } from "@/modules/purchase-requests/constants";
+import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { DEFAULT_FILES_SCOPE, FILES_SCOPE_SETTING_NAME, MODULE_ID } from "@/modules/purchase-requests/constants";
 import { useFiles } from "@/shared/files/composables/useFiles";
 import { isUploadedFile } from "@/ui-kit/utilities";
 import type { WatchSource } from "vue";
 
 export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedFile[]>) {
+  const { getSettingValue } = useModuleSettings(MODULE_ID);
+  const filesScope = getSettingValue(FILES_SCOPE_SETTING_NAME);
+
   const {
     files,
     addFiles,
@@ -12,7 +16,7 @@ export function usePurchaseRequestDocuments(sourceFiles?: WatchSource<IAttachedF
     uploadFiles,
     fetchOptions: fetchFileOptions,
     options: fileOptions,
-  } = useFiles(/* config.purchase_requests_file_scope ?? */ DEFAULT_FILES_SCOPE, sourceFiles);
+  } = useFiles(filesScope ? String(filesScope) : DEFAULT_FILES_SCOPE, sourceFiles);
 
   const processing = ref(false);
 
