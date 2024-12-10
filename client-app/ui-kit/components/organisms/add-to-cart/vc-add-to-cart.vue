@@ -4,7 +4,7 @@
       v-model.number="quantity"
       :name
       type="number"
-      :aria-label="$t('common.labels.product_quantity')"
+      :aria-label="$t('ui_kit.labels.product_quantity')"
       :disabled="disabled"
       :max="maxQuantity"
       :min="minQuantity"
@@ -123,7 +123,7 @@ const mode = computed(() => (countInCart.value ? AddToCartModeType.Update : AddT
 const isButtonOutlined = computed<boolean>(() => mode.value === AddToCartModeType.Add);
 
 const buttonText = computed<string>(() =>
-  mode.value === AddToCartModeType.Update ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
+  mode.value === AddToCartModeType.Update ? t("ui_kit.buttons.update_cart") : t("ui_kit.buttons.add_to_cart"),
 );
 
 const icon = computed<"refresh" | "cart">(() => (mode.value === AddToCartModeType.Update ? "refresh" : "cart"));

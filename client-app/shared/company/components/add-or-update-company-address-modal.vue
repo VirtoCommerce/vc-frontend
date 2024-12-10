@@ -16,7 +16,7 @@
         {{ $t("shared.company.add_or_update_address_modal.address_title") }}
       </h3>
 
-      <VcAddressForm
+      <AddressForm
         :model-value="address"
         :countries="countries"
         :disabled="loading"
@@ -35,7 +35,7 @@
             </VcButton>
           </div>
         </template>
-      </VcAddressForm>
+      </AddressForm>
     </template>
   </VcModal>
 </template>
@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useCountries } from "@/core/composables";
+import { AddressForm } from "@/shared/common";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 
 export interface IEmits {

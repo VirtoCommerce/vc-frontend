@@ -1,6 +1,6 @@
 <template>
   <div class="vc-line-item-total">
-    <div class="vc-line-item-total__label">{{ $t("common.labels.total") }}</div>
+    <div class="vc-line-item-total__label">{{ $t("ui_kit.labels.total") }}</div>
 
     <VcPriceDisplay
       class="vc-line-item-total__actual"

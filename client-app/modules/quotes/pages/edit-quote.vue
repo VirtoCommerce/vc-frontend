@@ -49,7 +49,7 @@
         </h4>
 
         <div :class="['mt-2.5 rounded border p-5', { 'cursor-not-allowed bg-neutral-50': fetching }]">
-          <VcAddressSelection
+          <AddressSelection
             :placeholder="$t('shared.checkout.shipping_details_section.links.select_address')"
             :address="shippingAddress"
             :disabled="fetching"
@@ -77,7 +77,7 @@
             {{ $t("quote_details.same_as_shipping_address") }}
           </VcCheckbox>
 
-          <VcAddressSelection
+          <AddressSelection
             :placeholder="
               shippingAddress && billingAddressEqualsShipping
                 ? $t('quote_details.select_shipping_address')
@@ -128,6 +128,7 @@ import { asyncForEach, isEqualAddresses } from "@/core/utilities";
 import { FILE_UPLOAD_SCOPE_NAME, MODULE_ID } from "@/modules/quotes/constants";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
+import { AddressSelection } from "@/shared/common";
 import { useOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";

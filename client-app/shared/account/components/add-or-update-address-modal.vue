@@ -1,7 +1,7 @@
 <template>
   <VcModal :title="title" max-width="60rem" hide-actions is-mobile-fullscreen>
     <template #default="{ close }">
-      <VcAddressForm
+      <AddressForm
         :model-value="editableAddress"
         :countries="countries"
         :disabled="loading"
@@ -21,7 +21,7 @@
             </VcButton>
           </div>
         </template>
-      </VcAddressForm>
+      </AddressForm>
     </template>
   </VcModal>
 </template>
@@ -31,6 +31,7 @@ import { clone } from "lodash";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCountries } from "@/core/composables";
+import { AddressForm } from "@/shared/common";
 import type { MemberAddressType } from "@/core/api/graphql/types";
 
 interface IEmits {

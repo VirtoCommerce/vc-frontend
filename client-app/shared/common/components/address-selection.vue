@@ -9,7 +9,7 @@
     ]"
   >
     <template v-if="address">
-      <VcAddressLine class="vc-address-selection__address" :address="address" />
+      <AddressLine class="vc-address-selection__address" :address="address" />
 
       <VcButton
         v-if="!readonly"
@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+import AddressLine from "./address-line.vue";
 import type { AnyAddressType } from "@/core/types";
 
 interface IEmits {

@@ -27,7 +27,7 @@
         <div class="relative z-[1] flex items-center justify-between gap-2 ps-5 shadow-sm">
           <slot name="header" :hide="onHide">
             <div class="text-2xl font-bold">
-              {{ title ?? $t("common.buttons.filters") }}
+              {{ title ?? $t("ui_kit.buttons.filters") }}
             </div>
 
             <button type="button" class="appearance-none px-5 py-4" @click="onHide">

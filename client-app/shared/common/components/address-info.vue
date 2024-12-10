@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <div class="flex flex-col">
       <span class="font-bold">{{ address.firstName }} {{ address.lastName }}</span>
-      <VcAddressLine :address="address" />
+      <AddressLine :address="address" />
     </div>
 
     <div class="flex flex-col empty:hidden">
@@ -20,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import AddressLine from "./address-line.vue";
 import type { AnyAddressType } from "@/core/types";
 
 interface IProps {

@@ -3,10 +3,10 @@
     <VcIcon name="vendor" size="sm" class="vc-vendor__icon" />
 
     <span class="vc-vendor__title">
-      {{ $t("common.labels.vendor") }}:
+      {{ $t("ui_kit.labels.vendor") }}:
 
       <span class="vc-vendor__name">
-        {{ vendor?.name || $t("common.labels.not_available") }}
+        {{ vendor?.name || $t("ui_kit.labels.not_available") }}
       </span>
     </span>
   </div>

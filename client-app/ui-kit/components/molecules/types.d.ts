@@ -4,9 +4,6 @@ declare module "vue" {
   // Glboal components is already declated interface which we want to augment
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
-    VcAddressInfo: typeof Components.VcAddressInfo;
-    VcAddressForm: typeof Components.VcAddressForm;
-    VcAddressSelection: typeof Components.VcAddressSelection;
     VcAlert: typeof Components.VcAlert;
     VcButton: typeof Components.VcButton;
     VcButtonSeeMoreLess: typeof Components.VcButtonSeeMoreLess;

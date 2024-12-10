@@ -68,11 +68,11 @@
         </VcWidget>
 
         <VcWidget v-if="shippingAddress" :title="$t('quote_details.shipping_address')" class="mb-5">
-          <VcAddressInfo :address="shippingAddress!" />
+          <AddressInfo :address="shippingAddress!" />
         </VcWidget>
 
         <VcWidget v-if="billingAddress" :title="$t('quote_details.billing_address')">
-          <VcAddressInfo :address="billingAddress!" />
+          <AddressInfo :address="billingAddress!" />
         </VcWidget>
       </template>
     </VcLayout>
@@ -87,6 +87,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserQuote } from "@/modules/quotes/useUserQuote";
+import { AddressInfo } from "@/shared/common";
 import { downloadFile } from "@/shared/files";
 import { useNotifications } from "@/shared/notification";
 import type { QuoteAttachmentType } from "@/modules/quotes/api/graphql/types";

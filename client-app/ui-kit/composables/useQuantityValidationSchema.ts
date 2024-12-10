@@ -17,21 +17,21 @@ export function useQuantityValidationSchema(payload: {
   function minMaxTest(schema: NumberSchema, min: number, max: number): NumberSchema {
     return schema.test(
       "minMaxValue",
-      t("shared.cart.add_to_cart.errors.min_max", [min, max]),
+      t("ui_kit.add_to_cart.errors.min_max", [min, max]),
       (value) => !!value && value >= min && value <= max,
     );
   }
 
   function maxTest(schema: NumberSchema, max: number): NumberSchema {
-    return schema.test("maxValue", t("shared.cart.add_to_cart.errors.max", [max]), (value) => !!value && value <= max);
+    return schema.test("maxValue", t("ui_kit.add_to_cart.errors.max", [max]), (value) => !!value && value <= max);
   }
 
   function minTest(schema: NumberSchema, min: number): NumberSchema {
-    return schema.test("minValue", t("shared.cart.add_to_cart.errors.min", [min]), (value) => !!value && value >= min);
+    return schema.test("minValue", t("ui_kit.add_to_cart.errors.min", [min]), (value) => !!value && value >= min);
   }
 
   function availableLessThenMinError(schema: NumberSchema, min: number): NumberSchema {
-    return schema.test("incorrectMinValue", t("shared.cart.add_to_cart.errors.min_not_available", [min]), () => false);
+    return schema.test("incorrectMinValue", t("ui_kit.add_to_cart.errors.min_not_available", [min]), () => false);
   }
 
   function packSizeTest(schema: NumberSchema, size?: number): NumberSchema {
@@ -41,7 +41,7 @@ export function useQuantityValidationSchema(payload: {
 
     return schema.test(
       "divisible-by-packSize",
-      t("shared.cart.add_to_cart.errors.pack_size", [size]),
+      t("ui_kit.add_to_cart.errors.pack_size", [size]),
       (value) => !!value && value % size === 0,
     );
   }
@@ -84,10 +84,10 @@ export function useQuantityValidationSchema(payload: {
   }
   const quantitySchema = computed<NumberSchema>(() =>
     number()
-      .typeError(t("shared.cart.add_to_cart.errors.enter_correct_number_message"))
-      .positive(t("shared.cart.add_to_cart.errors.positive_number"))
-      .integer(t("shared.cart.add_to_cart.errors.integer_number"))
-      .max(LINE_ITEM_QUANTITY_LIMIT, t("shared.cart.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]))
+      .typeError(t("ui_kit.add_to_cart.errors.enter_correct_number_message"))
+      .positive(t("ui_kit.add_to_cart.errors.positive_number"))
+      .integer(t("ui_kit.add_to_cart.errors.integer_number"))
+      .max(LINE_ITEM_QUANTITY_LIMIT, t("ui_kit.add_to_cart.errors.max", [LINE_ITEM_QUANTITY_LIMIT]))
       .withMutation((schema) => {
         if (availableQuantity?.value) {
           return packSizeTest(withAvailableQuantityTest(schema, availableQuantity.value), packSize?.value);
