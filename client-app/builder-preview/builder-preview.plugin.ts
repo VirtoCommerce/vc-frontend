@@ -42,10 +42,8 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
       await options.router.push("/designer-preview");
     }
     staticPagePreview.value = newTemplate;
-  } else {
-    if (templateUrl) {
-      await options.router.push(templateUrl);
-    }
+  } else if (templateUrl) {
+    await options.router.push(templateUrl);
   }
   templateUrl = undefined;
 }
