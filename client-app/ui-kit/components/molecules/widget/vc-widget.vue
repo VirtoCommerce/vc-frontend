@@ -5,7 +5,8 @@
       `vc-widget--size--${size}`,
       {
         'vc-widget--collapsed': _collapsed,
-        'vc-widget--no-shadow': noShadow,
+        'vc-widget--no-shadow': !shadow,
+        'vc-widget--no-border': !border,
       },
     ]"
   >
@@ -79,7 +80,8 @@ interface IProps {
   appendIcon?: string;
   collapsible?: boolean;
   collapsed?: boolean;
-  noShadow?: boolean;
+  shadow?: boolean;
+  border?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -87,6 +89,8 @@ const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
+  shadow: true,
+  border: true,
 });
 
 const _collapsed = ref(false);
@@ -111,8 +115,11 @@ watchEffect(() => {
   $sizeLG: "";
 
   --p-x: theme("padding.4");
+  --border-color: var(--vc-widget-border-color, theme("colors.neutral.100"));
+  --divide-color: var(--vc-widget-divide-color, var(--border-color));
+  --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
 
-  @apply relative border border-neutral-100 bg-additional-50 text-neutral-950 text-base rounded divide-y shadow-md bg-center;
+  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded divide-y divide-[--divide-color] shadow-md bg-center;
 
   @media (max-width: theme("screens.md")) {
     .vc-container & {
@@ -172,6 +179,10 @@ watchEffect(() => {
 
   &--no-shadow {
     @apply shadow-none;
+  }
+
+  &--no-border {
+    @apply border-none shadow-none;
   }
 
   &__header-container {

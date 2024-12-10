@@ -3,14 +3,14 @@
     <!-- Top footer -->
     <div
       v-if="!compact"
-      class="hidden bg-[--footer-top-bg-color] text-[--footer-top-text-color] md:block print:!hidden"
+      class="bg-[--footer-top-bg-color] px-10 pb-7 pt-8 text-[--footer-top-text-color] sm:flex sm:gap-14 md:gap-16 print:!hidden"
     >
-      <div class="container mx-auto grid grid-cols-2 gap-4 p-12 lg:grid-cols-4 xl:grid-cols-5">
-        <!-- Logo column -->
-        <div class="hidden xl:block">
-          <VcImage :src="secondaryLogoUrl" :alt="$context.storeName" class="h-9" lazy />
-        </div>
+      <!-- Logo column -->
+      <div class="mb-5 flex-none">
+        <VcImage :src="secondaryLogoUrl" :alt="$context.storeName" class="h-11" lazy />
+      </div>
 
+      <div class="grid sm:grow sm:grid-cols-2 sm:gap-12 md:grid-cols-3 lg:grid-cols-4 xl:gap-19 2xl:grid-cols-5">
         <template v-if="whiteLabelingFooterLinks?.length">
           <FooterLinks v-for="(footerLink, index) in whiteLabelingFooterLinks" :key="index" :links-block="footerLink" />
         </template>
