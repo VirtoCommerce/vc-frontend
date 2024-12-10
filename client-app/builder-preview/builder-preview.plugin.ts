@@ -1,6 +1,6 @@
 import { useGlobalInterceptors } from "@/core/api/common";
 import { Logger } from "@/core/utilities";
-import { useStaticPage, useTemplates } from "@/shared/static-content";
+import { useStaticPage } from "@/shared/static-content";
 import { templateBlocks } from "@/shared/static-content/components";
 import ScrollToElement from "./scroll-to-element.vue";
 import type { IThemeConfig } from "@/core/types";
@@ -12,7 +12,6 @@ import StaticPage from "@/pages/static-page.vue";
 templateBlocks["scroll-to"] = ScrollToElement;
 
 const { staticPagePreview } = useStaticPage();
-const { setTemplate } = useTemplates();
 
 declare type TransferDataType = {
   template: IPageTemplate;
@@ -47,7 +46,6 @@ async function updatePreview(data: TransferDataType, options: { router: Router }
     if (templateUrl) {
       await options.router.push(templateUrl);
     }
-    setTemplate(data.templateKey, newTemplate);
   }
   templateUrl = undefined;
 }
