@@ -115,7 +115,7 @@ import { useGoogleAnalytics, useHistoricalEvents, usePageHead } from "@/core/com
 import { PAGE_LIMIT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
-import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
+import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -313,7 +313,7 @@ function openDeleteProductModal(values: string[]): void {
         async onResult(): Promise<void> {
           const previousPagesCount = pagesCount.value;
 
-          void broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
+          void broadcast.emit(dataChangedEvent);
 
           wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
 
