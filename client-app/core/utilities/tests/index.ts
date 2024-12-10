@@ -1,4 +1,3 @@
-import { mount, shallowMount } from "@vue/test-utils";
 import merge from "lodash/merge";
 import { createI18n } from "vue-i18n";
 import type { Component } from "vue";
@@ -42,6 +41,7 @@ const defaults = {
 };
 
 export function createWrapperFactory<T extends Component>(
+  mount: typeof import("@vue/test-utils").mount,
   component: T,
   globalOverrides: Parameters<typeof mount>[1] = {},
 ) {
@@ -52,6 +52,7 @@ export function createWrapperFactory<T extends Component>(
 }
 
 export function createShallowWrapperFactory<T extends Component>(
+  shallowMount: typeof import("@vue/test-utils").shallowMount,
   component: T,
   globalOverrides: Parameters<typeof shallowMount>[1] = {},
 ) {
