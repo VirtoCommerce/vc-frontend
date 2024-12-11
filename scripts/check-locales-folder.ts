@@ -15,9 +15,10 @@ function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const fullKey = parentKey ? `${parentKey}.${key}` : key;
-      if (typeof obj[key] === "object" && obj[key] !== null) {
-        keys = keys.concat(getAllKeys(obj[key], fullKey));
-      } else {
+      const value = obj[key];
+      if (typeof value === "object" && value !== null) {
+        keys = keys.concat(getAllKeys(value, fullKey));
+      } else if (typeof value === "string") {
         keys.push(fullKey);
       }
     }
