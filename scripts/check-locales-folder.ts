@@ -34,32 +34,49 @@ function compareKeys(baseKeys: string[], keysToCompare: string[], baseLang: stri
   }
 }
 
+function validateLocaleFolder(localeFolder: string): boolean {
+  if (!fs.existsSync(localeFolder)) {
+    console.log(`The specified directory "${localeFolder}" does not exist.`);
+    console.log(`Please provide a valid directory path. Example usage:`);
+    console.log(`yarn run check-locales -- path/to/your/locales`);
+    return false;
+  }
+  return true;
+}
+
+function getJsonFiles(localeFolder: string): string[] {
+  const files = fs.readdirSync(localeFolder).filter((file) => file.endsWith(".json"));
+  if (files.length === 0) {
+    console.log("No JSON files found in the specified directory.");
+  }
+  return files;
+}
+
+function loadLocaleData(files: string[], localeFolder: string): { [key: string]: LocaleDataType } {
+  const localeData: { [key: string]: LocaleDataType } = {};
+  files.forEach((file) => {
+    const filePath = path.join(localeFolder, file);
+    localeData[file] = loadJson(filePath);
+  });
+  return localeData;
+}
+
 // @description: This script checks if all keys in the locales are present in the en.json file.
 // @usage: yarn check-locales -- path/to/locales_folder
 function main(): void {
   const args = process.argv.slice(2);
   const localeFolder = args[0] || "locales"; // Default to 'locales' if no argument is provided
 
-  if (!fs.existsSync(localeFolder)) {
-    console.log(`The specified directory "${localeFolder}" does not exist.`);
-    console.log(`Please provide a valid directory path. Example usage:`);
-    console.log(`yarn run check-locales -- path/to/your/locales`);
+  if (!validateLocaleFolder(localeFolder)) {
     return;
   }
 
-  const files = fs.readdirSync(localeFolder).filter((file) => file.endsWith(".json"));
-
+  const files = getJsonFiles(localeFolder);
   if (files.length === 0) {
-    console.log("No JSON files found in the specified directory.");
     return;
   }
 
-  // Load all JSON files
-  const localeData: { [key: string]: LocaleDataType } = {};
-  files.forEach((file) => {
-    const filePath = path.join(localeFolder, file);
-    localeData[file] = loadJson(filePath);
-  });
+  const localeData = loadLocaleData(files, localeFolder);
 
   // Get all keys for each locale
   const localeKeys: { [key: string]: string[] } = {};
