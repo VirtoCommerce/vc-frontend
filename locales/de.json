@@ -548,7 +548,8 @@
         "message": "Möchten Sie Ihren Warenkorb leeren?"
       },
       "configuration_items": {
-        "title": "Komponentenliste"
+        "title": "Komponentenliste",
+        "edit_configuration": "Konfiguration bearbeiten"
       }
     },
     "catalog": {
@@ -571,6 +572,7 @@
         "assets_block_title": "Dateien",
         "vendor_label": "Anbieter",
         "share_product_label": "Produkt teilen",
+        "create_configuration_button": "Konfiguration erstellen",
         "price_block": {
           "title": "Preis und Lieferung",
           "add_to_list_button": "Zur Liste hinzufügen",
