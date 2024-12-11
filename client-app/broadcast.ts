@@ -20,6 +20,7 @@ import {
   passwordExpiredEvent,
   reloadAndOpenMainPage,
   graphqlErrorEvent,
+  dataChangedEvent,
 } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
 
@@ -31,6 +32,8 @@ export function setupBroadcastGlobalListeners() {
   }
 
   installed = true;
+
+  const { t } = globals.i18n.global;
 
   const { client } = useApolloClient();
   const router = useRouter();
@@ -83,7 +86,6 @@ export function setupBroadcastGlobalListeners() {
     throw error;
   });
   on(unhandledErrorEvent, () => {
-    const { t } = globals.i18n.global;
     notifications.error({
       duration: DEFAULT_NOTIFICATION_DURATION,
       group: "UnhandledError",
@@ -104,5 +106,12 @@ export function setupBroadcastGlobalListeners() {
     if (pathname !== "/change-password") {
       location.href = `/change-password?returnUrl=${pathname + search + hash}`;
     }
+  });
+
+  on(dataChangedEvent, () => {
+    notifications.warning({
+      duration: DEFAULT_NOTIFICATION_DURATION,
+      text: t("common.messages.data_changed"),
+    });
   });
 }

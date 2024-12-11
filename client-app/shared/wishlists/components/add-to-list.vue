@@ -2,7 +2,7 @@
   <VcProductActionsButton
     color="danger"
     :icon-size="iconSize"
-    :active="product.inWishlist"
+    :active="inWishList"
     :disabled="!isAuthenticated"
     :tooltip-text="tooltipText"
     @click="openAddToListModal"
@@ -10,10 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account/composables";
-import { productsInWishlistEvent, TabsType, useBroadcast } from "@/shared/broadcast";
+import { dataChangedEvent, TabsType, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 import AddToWishlistsModal from "./add-to-wishlists-modal.vue";
 import type { Product } from "@/core/api/graphql/types";
@@ -29,6 +29,8 @@ const { t } = useI18n();
 const { openModal } = useModal();
 const { isAuthenticated } = useUser();
 const broadcast = useBroadcast();
+
+const inWishList = ref(toRef(props, "product").value.inWishlist);
 
 const tooltipText = computed<string>(() => {
   if (!isAuthenticated.value) {
@@ -49,17 +51,10 @@ function openAddToListModal() {
     component: AddToWishlistsModal,
     props: {
       product: props.product,
-      onResult: (isInLists: boolean) => {
-        void broadcast.emit(
-          productsInWishlistEvent,
-          [
-            {
-              productId: props.product.id,
-              inWishlist: isInLists,
-            },
-          ],
-          TabsType.ALL,
-        );
+      onResult: (inWishLists: boolean) => {
+        inWishList.value = inWishLists;
+
+        void broadcast.emit(dataChangedEvent, TabsType.ALL);
       },
     },
   });
