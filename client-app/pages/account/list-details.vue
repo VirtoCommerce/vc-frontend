@@ -111,7 +111,7 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { useGoogleAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
@@ -146,7 +146,7 @@ const props = defineProps<IProps>();
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
-const ga = useGoogleAnalytics();
+const { trackEvent } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
 const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
@@ -207,7 +207,7 @@ async function addAllListItemsToCart(): Promise<void> {
   await addItemsToCart(items);
 
   const products = wishlistItems.value.map((item) => item.product!);
-  ga.addItemsToCart(products);
+  trackEvent.addItemsToCart(products);
   void pushHistoricalEvent({
     eventType: "addToCart",
     sessionId: cart.value?.id,
@@ -287,7 +287,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   } else {
     await addToCart(lineItem.product.id, quantity);
 
-    ga.addItemToCart(lineItem.product, quantity);
+    trackEvent.addItemToCart(lineItem.product, quantity);
     void pushHistoricalEvent({
       eventType: "addToCart",
       sessionId: cart.value?.id,
@@ -355,7 +355,7 @@ watchEffect(() => {
     .filter(Boolean);
 
   if (items?.length) {
-    ga.viewItemList(items, {
+    trackEvent.viewItemList(items, {
       item_list_name: `Wishlist "${list.value?.name}"`,
     });
   }

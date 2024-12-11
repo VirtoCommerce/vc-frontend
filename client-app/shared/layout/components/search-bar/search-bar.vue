@@ -100,7 +100,7 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  ga.selectItem(product, { search_term: trimmedSearchPhrase });
+                  trackEvent.selectItem(product, { search_term: trimmedSearchPhrase });
                 "
               />
             </div>
@@ -133,7 +133,7 @@
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
 import { computed, inject, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
-import { useCategoriesRoutes, useGoogleAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
+import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -174,7 +174,7 @@ const {
   searchResults,
 } = useSearchBar();
 
-const ga = useGoogleAnalytics();
+const { trackEvent } = useAnalytics();
 const router = useRouter();
 const { themeContext } = useThemeContext();
 
@@ -264,7 +264,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
    * Send Google Analytics event for products.
    */
   if (products.value.length) {
-    ga.viewItemList(products.value, {
+    trackEvent.viewItemList(products.value, {
       item_list_name: `Search phrase "${trimmedSearchPhrase.value}"`,
     });
   }
@@ -283,7 +283,7 @@ function goToSearchResultsPage() {
   if (trimmedSearchPhrase.value) {
     hideSearchDropdown();
     void router.push(getSearchRoute(trimmedSearchPhrase.value));
-    ga.search(trimmedSearchPhrase.value, products.value, total.value);
+    trackEvent.search(trimmedSearchPhrase.value, products.value, total.value);
   }
 }
 

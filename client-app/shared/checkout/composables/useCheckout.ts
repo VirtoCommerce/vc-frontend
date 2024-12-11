@@ -4,7 +4,7 @@ import { computed, readonly, ref, shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { createOrderFromCart as _createOrderFromCart } from "@/core/api/graphql";
-import { useGoogleAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
+import { useAnalytics, useHistoricalEvents, useThemeContext } from "@/core/composables";
 import { AddressType, ProductType } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { isEqualAddresses, Logger } from "@/core/utilities";
@@ -54,7 +54,7 @@ const useGlobalCheckout = createGlobalState(() => {
 });
 
 export function _useCheckout() {
-  const ga = useGoogleAnalytics();
+  const { trackEvent } = useAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
@@ -254,7 +254,7 @@ export function _useCheckout() {
 
     void fetchAddresses();
 
-    ga.beginCheckout({ ...cart.value!, items: selectedLineItems.value });
+    trackEvent.beginCheckout({ ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
   }
@@ -455,7 +455,7 @@ export function _useCheckout() {
 
       clearState();
 
-      ga.placeOrder(placedOrder.value);
+      trackEvent.placeOrder(placedOrder.value);
       void pushHistoricalEvent({
         eventType: "placeOrder",
         sessionId: placedOrder.value.id,

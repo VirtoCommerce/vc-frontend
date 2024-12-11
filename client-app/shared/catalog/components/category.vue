@@ -226,7 +226,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
-import { useBreadcrumbs, useGoogleAnalytics, useThemeContext } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
@@ -327,7 +327,7 @@ const {
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
-const ga = useGoogleAnalytics();
+const { trackEvent } = useAnalytics();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
@@ -407,7 +407,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   /**
    * Send Google Analytics event for products on next page.
    */
-  ga.viewItemList(products.value, {
+  trackEvent.viewItemList(products.value, {
     item_list_id: `${currentCategory.value?.slug}_page_${currentPage.value}`,
     item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
   });
@@ -419,14 +419,14 @@ async function fetchProducts(): Promise<void> {
   /**
    * Send Google Analytics event for products.
    */
-  ga.viewItemList(products.value, {
+  trackEvent.viewItemList(products.value, {
     item_list_id: currentCategory.value?.slug,
     item_list_name: currentCategory.value?.name,
   });
 }
 
 function selectProduct(product: Product): void {
-  ga.selectItem(product);
+  trackEvent.selectItem(product);
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);

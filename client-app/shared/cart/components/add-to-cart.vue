@@ -28,7 +28,7 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/core/composables";
+import { useErrorsTranslator, useAnalytics, useHistoricalEvents } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
@@ -58,7 +58,7 @@ interface IProps {
 const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useShortCart();
 const { t } = useI18n();
-const ga = useGoogleAnalytics();
+const { trackEvent } = useAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
@@ -131,7 +131,7 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
 }
 
 function trackAddToCart(quantity: number) {
-  ga.addItemToCart(product.value, quantity);
+  trackEvent.addItemToCart(product.value, quantity);
   void pushHistoricalEvent({
     eventType: "addToCart",
     sessionId: cart.value?.id,

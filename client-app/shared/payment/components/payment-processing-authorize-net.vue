@@ -55,7 +55,7 @@ import { clone } from "lodash";
 import { computed, onMounted, ref, shallowRef, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment } from "@/core/api/graphql";
-import { useGoogleAnalytics } from "@/core/composables/useGoogleAnalytics";
+import { useAnalytics } from "@/core/composables/useAnalytics";
 import { Logger } from "@/core/utilities";
 import { useAuthorizeNet } from "@/shared/payment/composables/useAuthorizeNet";
 import { PaymentActionType } from "@/shared/payment/types";
@@ -97,7 +97,7 @@ const scriptURL = computed<string>(() => parameters.value.find(({ key }) => key 
 const apiLoginID = computed<string>(() => parameters.value.find(({ key }) => key === "apiLogin")?.value ?? "");
 const clientKey = computed<string>(() => parameters.value.find(({ key }) => key === "clientKey")?.value ?? "");
 
-const ga = useGoogleAnalytics();
+const { trackEvent } = useAnalytics();
 const { t } = useI18n();
 const { loadAcceptJS, dispatchData, sendOpaqueData } = useAuthorizeNet({ scriptURL, manualScriptLoading: true });
 
@@ -175,7 +175,7 @@ async function pay(opaqueData: Accept.OpaqueData) {
     /**
      * Send Google Analytics purchase event.
      */
-    ga.purchase(props.order);
+    trackEvent.purchase(props.order);
   } else {
     emit("fail", errorMessage);
   }
