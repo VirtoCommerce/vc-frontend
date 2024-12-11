@@ -36,7 +36,8 @@
     "storybook:styles": "yarn precheck && npx tailwindcss -i storybook-styles/preflight.scss -o storybook-styles/dist/preflight.css",
     "storybook:dev": "yarn precheck && yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn precheck && yarn storybook:styles && storybook build",
-    "postinstall": "yarn precheck && husky"
+    "postinstall": "yarn precheck && husky",
+    "check-locales": "yarn precheck && vite-node scripts/check_locales_folder.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.10.5",
