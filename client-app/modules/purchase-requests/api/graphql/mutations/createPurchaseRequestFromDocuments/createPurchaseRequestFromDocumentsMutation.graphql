@@ -1,0 +1,5 @@
+mutation CreatePurchaseRequestFromDocuments($command: InputCreatePurchaseRequestFromDocumentsType!) {
+  createPurchaseRequestFromDocuments(command: $command) {
+    id
+  }
+}
