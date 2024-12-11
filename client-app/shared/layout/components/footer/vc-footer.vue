@@ -23,7 +23,7 @@
 
     <!-- Bottom footer -->
     <div
-      class="flex flex-col items-center justify-between gap-1 bg-[--footer-bottom-bg-color] p-4 text-sm text-[--footer-bottom-text-color] sm:flex-row sm:px-6 sm:py-5 print:flex-row print:bg-additional-50 print:px-0 print:text-additional-950"
+      class="flex flex-col items-center justify-between gap-1 bg-[--footer-bottom-bg-color] p-4 text-center text-sm text-[--footer-bottom-text-color] md:flex-row md:px-6 md:py-5 print:flex-row print:bg-additional-50 print:px-0 print:text-additional-950"
     >
       <span>
         {{ $t("shared.layout.footer.version") }} {{ version }}. © {{ new Date().getFullYear() }}
