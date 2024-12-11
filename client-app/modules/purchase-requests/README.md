@@ -2,7 +2,7 @@
 
 ## Overview
 
-This module implements intelligent document processing — a technology that extracts and organizes data from documents for business process automation. Unlike traditional OCR, intelligent document processing not only recognizes and extracts text from documents, but also understands the context and meaning of the information by combining OCR with AI and machine learning..
+This module implements intelligent document processing — a technology that extracts and organizes data from documents for business process automation. Unlike traditional OCR (optical character recognition), intelligent document processing not only recognizes and extracts text from documents, but also understands the context and meaning of the information by combining OCR with AI and machine learning.
 
 Purchase request — feature that allows you to upload orders and order-like documents from other services (or even handwritten ones) to create a new order (shopping cart or quote) in VirtoCommerce.
 
