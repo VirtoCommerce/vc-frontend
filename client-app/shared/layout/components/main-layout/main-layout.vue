@@ -21,7 +21,7 @@ import VcHeader from "@/shared/layout/components/header/vc-header.vue";
   @apply flex min-h-screen flex-col;
 
   &__content {
-    @apply relative flex grow flex-col;
+    @apply relative z-[1] flex grow flex-col;
   }
 }
 </style>

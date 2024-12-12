@@ -129,7 +129,7 @@
     <transition name="slide-fade-bottom">
       <div
         v-if="!loading && cart?.items?.length"
-        class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] lg:hidden print:hidden"
+        class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
       >
         <div class="text-end text-base font-bold text-neutral-950">
           <span class="me-1">{{ $t("common.labels.total") }}:</span>
