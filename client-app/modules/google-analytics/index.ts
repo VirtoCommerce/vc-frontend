@@ -18,7 +18,7 @@ export async function init(): Promise<void> {
   }
   const { addTracker } = useAnalytics();
   const tracker = await import("./events");
-  addTracker(tracker);
+  addTracker(tracker.analytics);
   useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${trackId}`);
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag() {

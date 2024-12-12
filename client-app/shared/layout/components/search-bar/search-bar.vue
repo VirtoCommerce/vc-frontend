@@ -100,7 +100,7 @@
                 :product="product"
                 @link-click="
                   hideSearchDropdown();
-                  trackEvent.selectItem(product, { search_term: trimmedSearchPhrase });
+                  analytics('selectItem', product, { search_term: trimmedSearchPhrase });
                 "
               />
             </div>
@@ -174,7 +174,7 @@ const {
   searchResults,
 } = useSearchBar();
 
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const router = useRouter();
 const { themeContext } = useThemeContext();
 
@@ -264,7 +264,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
    * Send Google Analytics event for products.
    */
   if (products.value.length) {
-    trackEvent.viewItemList(products.value, {
+    analytics("viewItemList", products.value, {
       item_list_name: `Search phrase "${trimmedSearchPhrase.value}"`,
     });
   }
@@ -283,7 +283,7 @@ function goToSearchResultsPage() {
   if (trimmedSearchPhrase.value) {
     hideSearchDropdown();
     void router.push(getSearchRoute(trimmedSearchPhrase.value));
-    trackEvent.search(trimmedSearchPhrase.value, products.value, total.value);
+    analytics("search", trimmedSearchPhrase.value, products.value, total.value);
   }
 }
 

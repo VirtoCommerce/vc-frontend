@@ -165,7 +165,7 @@ const {
   removeItemsFromWishlists,
 } = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const {
   loading: loadingProductWishlists,
   load: fetchProductWishlists,
@@ -228,7 +228,7 @@ async function addToWishlistsFromListOther() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  trackEvent.addItemToWishList(product.value!);
+  analytics("addItemToWishList", product.value!);
 }
 
 async function createLists() {
@@ -249,7 +249,7 @@ async function createLists() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  trackEvent.addItemToWishList(product.value!);
+  analytics("addItemToWishList", product.value!);
 }
 
 async function removeProductFromWishlists() {

@@ -8,7 +8,9 @@
           <ProceedTo
             :to="{ name: 'Review' }"
             :disabled="!isValidPayment"
-            @click="trackEvent.addPaymentInfo({ ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)"
+            @click="
+              analytics('addPaymentInfo', { ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)
+            "
           >
             {{ $t("common.buttons.review_order") }}
           </ProceedTo>
@@ -37,5 +39,5 @@ import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/s
 
 const { cart, payment, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
 const { isValidPayment } = useCheckout();
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 </script>

@@ -327,7 +327,7 @@ const {
   withFacets: true,
 });
 const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
 
@@ -407,7 +407,7 @@ async function changeProductsPage(pageNumber: number): Promise<void> {
   /**
    * Send Google Analytics event for products on next page.
    */
-  trackEvent.viewItemList(products.value, {
+  analytics("viewItemList", products.value, {
     item_list_id: `${currentCategory.value?.slug}_page_${currentPage.value}`,
     item_list_name: `${currentCategory.value?.name} (page ${currentPage.value})`,
   });
@@ -419,14 +419,14 @@ async function fetchProducts(): Promise<void> {
   /**
    * Send Google Analytics event for products.
    */
-  trackEvent.viewItemList(products.value, {
+  analytics("viewItemList", products.value, {
     item_list_id: currentCategory.value?.slug,
     item_list_name: currentCategory.value?.name,
   });
 }
 
 function selectProduct(product: Product): void {
-  trackEvent.selectItem(product);
+  analytics("selectItem", product);
 }
 
 whenever(() => !isMobile.value, hideFiltersSidebar);

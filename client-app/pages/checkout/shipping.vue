@@ -11,7 +11,7 @@
             :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
             @click="
-              trackEvent.addShippingInfo({ ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
+              analytics('addShippingInfo', { ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
             "
           >
             {{ $t("common.buttons.go_to_billing") }}
@@ -41,5 +41,5 @@ import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, u
 
 const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
 const { comment, isValidShipment } = useCheckout();
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 </script>

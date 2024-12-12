@@ -10,20 +10,7 @@ function _useAnalytics() {
     trackers.push(tracker);
   }
 
-  const trackEvent = new Proxy(
-    {} as {
-      [E in AnalyticsEventNameType]: (...args: IAnalyticsEventMap[E]) => void;
-    },
-    {
-      get(target, prop: AnalyticsEventNameType) {
-        return <E extends AnalyticsEventNameType>(...args: IAnalyticsEventMap[E]) => {
-          _trackEvent(prop, ...args);
-        };
-      },
-    },
-  );
-
-  function _trackEvent<E extends AnalyticsEventNameType>(event: E, ...args: IAnalyticsEventMap[E]): void {
+  function analytics<E extends AnalyticsEventNameType>(event: E, ...args: IAnalyticsEventMap[E]): void {
     if (IS_DEVELOPMENT) {
       Logger.debug(`${useAnalytics.name}, can't track event in development mode`);
       return;
@@ -40,7 +27,7 @@ function _useAnalytics() {
 
   return {
     addTracker,
-    trackEvent,
+    analytics,
   };
 }
 

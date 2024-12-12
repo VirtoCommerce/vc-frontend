@@ -178,7 +178,7 @@ import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browse
 
 const config = inject(configInjectionKey, {});
 
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const {
@@ -230,7 +230,10 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  trackEvent.removeItemsFromCart(cart.value!.items!.filter((item) => itemIds.includes(item.id)));
+  analytics(
+    "removeItemsFromCart",
+    cart.value!.items!.filter((item) => itemIds.includes(item.id)),
+  );
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
@@ -248,7 +251,7 @@ void (async () => {
    * Send a Google Analytics shopping cart view event.
    */
   if (cart.value) {
-    trackEvent.viewCart(cart.value);
+    analytics("viewCart", cart.value);
   }
 
   if (!config.checkout_multistep_enabled) {

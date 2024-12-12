@@ -97,7 +97,7 @@ const scriptURL = computed<string>(() => parameters.value.find(({ key }) => key 
 const apiLoginID = computed<string>(() => parameters.value.find(({ key }) => key === "apiLogin")?.value ?? "");
 const clientKey = computed<string>(() => parameters.value.find(({ key }) => key === "clientKey")?.value ?? "");
 
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { loadAcceptJS, dispatchData, sendOpaqueData } = useAuthorizeNet({ scriptURL, manualScriptLoading: true });
 
@@ -175,7 +175,7 @@ async function pay(opaqueData: Accept.OpaqueData) {
     /**
      * Send Google Analytics purchase event.
      */
-    trackEvent.purchase(props.order);
+    analytics("purchase", props.order);
   } else {
     emit("fail", errorMessage);
   }

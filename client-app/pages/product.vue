@@ -199,7 +199,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const { catalogBreadcrumb } = useCategory();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
@@ -362,7 +362,7 @@ watchEffect(async () => {
 watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
-    trackEvent.viewItem(product.value as Product);
+    analytics("viewItem", product.value as Product);
     void pushHistoricalEvent({
       eventType: "click",
       productId: product.value.id,
@@ -376,7 +376,7 @@ watchEffect(() => {
  */
 watchEffect(() => {
   if (relatedProducts.value.length) {
-    trackEvent.viewItemList(relatedProducts.value, {
+    analytics("viewItemList", relatedProducts.value, {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
     });

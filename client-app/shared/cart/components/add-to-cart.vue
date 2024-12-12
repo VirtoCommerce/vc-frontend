@@ -58,7 +58,7 @@ interface IProps {
 const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useShortCart();
 const { t } = useI18n();
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
@@ -131,7 +131,7 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
 }
 
 function trackAddToCart(quantity: number) {
-  trackEvent.addItemToCart(product.value, quantity);
+  analytics("addItemToCart", product.value, quantity);
   void pushHistoricalEvent({
     eventType: "addToCart",
     sessionId: cart.value?.id,

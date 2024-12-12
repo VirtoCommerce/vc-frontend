@@ -54,7 +54,7 @@ const useGlobalCheckout = createGlobalState(() => {
 });
 
 export function _useCheckout() {
-  const { trackEvent } = useAnalytics();
+  const { analytics } = useAnalytics();
   const { t } = useI18n();
   const notifications = useNotifications();
   const { openModal, closeModal } = useModal();
@@ -254,7 +254,7 @@ export function _useCheckout() {
 
     void fetchAddresses();
 
-    trackEvent.beginCheckout({ ...cart.value!, items: selectedLineItems.value });
+    analytics("beginCheckout", { ...cart.value!, items: selectedLineItems.value });
 
     loading.value = false;
   }
@@ -455,7 +455,7 @@ export function _useCheckout() {
 
       clearState();
 
-      trackEvent.placeOrder(placedOrder.value);
+      analytics("placeOrder", placedOrder.value);
       void pushHistoricalEvent({
         eventType: "placeOrder",
         sessionId: placedOrder.value.id,

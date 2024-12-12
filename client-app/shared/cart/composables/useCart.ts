@@ -174,7 +174,7 @@ export function useShortCart() {
 
 export function _useFullCart() {
   const { openModal } = useModal();
-  const { trackEvent } = useAnalytics();
+  const { analytics } = useAnalytics();
   const { client } = useApolloClient();
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
@@ -460,7 +460,7 @@ export function _useFullCart() {
       props: {
         async onResult() {
           await clearCart();
-          trackEvent.clearCart(cart.value!);
+          analytics("clearCart", cart.value!);
         },
       },
     });

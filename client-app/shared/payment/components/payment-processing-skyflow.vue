@@ -126,7 +126,7 @@ type FieldsType = { [key: string]: string };
 const { t } = useI18n();
 const { user, isAuthenticated } = useUser();
 const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const { themeContext } = useThemeContext();
 
 const loading = ref(false);
@@ -543,7 +543,7 @@ async function pay(parameters: InputKeyValueType[]): Promise<void> {
   });
 
   if (isSuccess) {
-    trackEvent.purchase(props.order);
+    analytics("purchase", props.order);
     emit("success");
   } else {
     emit("fail");

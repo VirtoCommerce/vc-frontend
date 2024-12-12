@@ -117,7 +117,7 @@ usePageHead({
   },
 });
 
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
@@ -208,7 +208,7 @@ function syncScroll(event: Event) {
  */
 watchEffect(() => {
   if (products.value.length) {
-    trackEvent.viewItemList(products.value, {
+    analytics("viewItemList", products.value, {
       item_list_id: "compare_products",
       item_list_name: t("pages.compare.header_block.title"),
     });

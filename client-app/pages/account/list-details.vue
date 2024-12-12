@@ -146,7 +146,7 @@ const props = defineProps<IProps>();
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
-const { trackEvent } = useAnalytics();
+const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
 const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
@@ -207,7 +207,7 @@ async function addAllListItemsToCart(): Promise<void> {
   await addItemsToCart(items);
 
   const products = wishlistItems.value.map((item) => item.product!);
-  trackEvent.addItemsToCart(products);
+  analytics("addItemsToCart", products);
   void pushHistoricalEvent({
     eventType: "addToCart",
     sessionId: cart.value?.id,
@@ -287,7 +287,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   } else {
     await addToCart(lineItem.product.id, quantity);
 
-    trackEvent.addItemToCart(lineItem.product, quantity);
+    analytics("addItemToCart", lineItem.product, quantity);
     void pushHistoricalEvent({
       eventType: "addToCart",
       sessionId: cart.value?.id,
@@ -355,7 +355,7 @@ watchEffect(() => {
     .filter(Boolean);
 
   if (items?.length) {
-    trackEvent.viewItemList(items, {
+    analytics("viewItemList", items, {
       item_list_name: `Wishlist "${list.value?.name}"`,
     });
   }
