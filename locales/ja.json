@@ -272,5 +272,230 @@
         "FixedRate_Air": "固定料金 (航空)"
       }
     }
+  },
+  "shared": {
+    "layout": {
+      "header": {
+        "top_header": {
+          "link_dashboard": "@:common.links.dashboard",
+          "link_contact_us": "お問い合わせ",
+          "call_us_label": "お電話: ",
+          "logged_in_as": "ログインユーザー:"
+        },
+        "bottom_header": {
+          "catalog_menu_button": "カタログ"
+        },
+        "link_sign_in": "ログイン",
+        "link_register_now": "今すぐ登録",
+        "link_logout": "ログアウト",
+        "menu": {
+          "home": "@:common.links.home",
+          "catalog": "@:common.links.catalog",
+          "bulk_order": "@:common.links.bulk_order",
+          "compare": "@:common.links.compare",
+          "cart": "@:common.links.cart",
+          "lists": "@:common.links.lists",
+          "orders": "@:common.links.orders",
+          "contact_us": "@:common.links.contact_us"
+        },
+        "mobile": {
+          "my_account": "@:common.links.account",
+          "account_menu": {
+            "dashboard": "@:common.links.dashboard",
+            "profile": "@:common.links.profile",
+            "change_password": "@:common.links.change_password",
+            "addresses": "@:common.links.addresses",
+            "orders": "@:common.links.orders",
+            "lists": "@:common.links.lists",
+            "checkout_defaults": "@:common.links.checkout_defaults",
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
+          },
+          "settings": "設定",
+          "currency": "通貨",
+          "search_bar": {
+            "input_placeholder": "キーワード、商品番号、型番を入力"
+          },
+          "view_all_catalog": "カテゴリー内の全商品を表示"
+        }
+      },
+      "footer": {
+        "version": "Ver.",
+        "company_name": "Virto Commerce",
+        "company_information_link_group": "会社情報",
+        "about_us_link": "会社概要",
+        "investor_relations_link": "IR情報",
+        "supplier_overview_link": "サプライヤー概要",
+        "worldwide_link": "グローバル",
+        "customer_support_link_group": "カスタマーサポート",
+        "catalog_request_link": "カタログ請求",
+        "contact_us_link": "お問い合わせ",
+        "feedback_link": "フィードバック",
+        "find_a_branch_link": "店舗検索",
+        "order_support_link_group": "注文サポート",
+        "orders_link": "注文履歴",
+        "pick_up_link": "店舗受取",
+        "auto_reorder_link": "自動再注文",
+        "special_orders_link": "特別注文",
+        "returns_cancellations_link": "返品・キャンセル",
+        "online_resources_ling_group": "オンラインリソース",
+        "catalog_link": "カタログ",
+        "hot_buys_link": "お買い得商品",
+        "rebates_link": "リベート",
+        "replacement_parts_link": "交換部品",
+        "demo_landing_link": "デモランディング",
+        "demo_page_link": "デモページ",
+        "builder_io_page_link": "Builder.ioページ",
+        "all_rights_reserved": "All Rights Reserved.",
+        "asp_net_e_commerce_platform": "ASP.NET eコマースプラットフォーム {0}",
+        "by_virto": "Virto Commerce"
+      },
+      "search_bar": {
+        "categories_label": "カテゴリー",
+        "products_label": "商品",
+        "pages_label": "ページ",
+        "suggestions_label": "おすすめ",
+        "no_results": "{keyword}の検索結果はありません",
+        "enter_keyword_placeholder": "商品を検索",
+        "search_button": "検索",
+        "view_all_results_button": "全{total}件を表示"
+      },
+      "language_selector": {
+        "label": "言語:"
+      },
+      "currency_selector": {
+        "label": "通貨:"
+      }
+    },
+    "account": {
+      "navigation": {
+        "main_title": "アカウント",
+        "corporate_title": "法人",
+        "links": {
+          "dashboard": "@:common.links.dashboard",
+          "profile": "@:common.links.profile",
+          "change_password": "@:common.links.change_password",
+          "addresses": "@:common.links.addresses",
+          "orders": "@:common.links.orders",
+          "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members",
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
+        }
+      },
+      "change_password_form": {
+        "title": "新しいパスワードを作成",
+        "current_pass_label": "現在のパスワード",
+        "current_pass_placeholder": "現在のパスワードを入力",
+        "new_pass_label": "新しいパスワード",
+        "new_pass_placeholder": "新しいパスワードを作成",
+        "confirm_new_pass_label": "新しいパスワード（確認）",
+        "confirm_new_pass_placeholder": "新しいパスワードを再入力"
+      },
+      "sign_in_form": {
+        "remember_me_label": "ログイン状態を保持",
+        "forgot_password_link": "パスワードをお忘れですか？",
+        "login_button": "ログイン",
+        "registration_button": "新規登録",
+        "errors": {
+          "login_failed": "ログインに失敗しました。認証情報を確認してください",
+          "email_verification_is_required": "メール認証が必要です。メールアドレスを確認してください",
+          "user_is_temporary_locked_out": "アカウントが一時的にロックされました。しばらく時間をおいて再試行してください",
+          "user_is_locked_out": "@:common.messages.blocked",
+          "user_cannot_login_in_store": "アクセスが拒否されました。現在のストアにログインできません",
+          "password_expired": "@:common.messages.password_expired",
+          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください"
+        }
+      },
+      "forgot_password_form": {
+        "error_alert": "パスワードリセット要求が無効です。"
+      },
+      "checkout_default_success_modal": {
+        "title": "決済設定",
+        "message": "デフォルトの決済情報が更新されました。",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "invite_member_modal": {
+        "title": "メンバー招待",
+        "role_label": "権限",
+        "role_placeholder": "権限を選択",
+        "emails_label": "招待したい人のメールアドレスを入力",
+        "emails_placeholder": "複数の場合はカンマ、セミコロン、改行で区切ってください",
+        "message_label": "メッセージ",
+        "cancel_button": "@:common.buttons.cancel",
+        "send_button": "@:common.buttons.send",
+        "invite_successfully_text": "招待を送信しました",
+        "emails_quantity_exceeded": "一度に{maxValue}人まで招待できます",
+        "email_length_exceeded": "メールアドレスは{maxValue}文字以内で入力してください",
+        "invalid_emails": "無効なメールアドレス: {invalidEmails}"
+      },
+      "profile_update_success_modal": {
+        "title": "プロフィール更新",
+        "message": "プロフィールを更新しました！",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "registration_success_modal": {
+        "title": "登録完了",
+        "message": "登録が完了しました！",
+        "ok_button": "@:common.buttons.home"
+      },
+      "reorder_info_modal": {
+        "title": "再注文の確認",
+        "cancel_button": "@:common.buttons.cancel",
+        "confirm_button": "@:common.buttons.confirm",
+        "filter": {
+          "title": "商品フィルター:",
+          "reduced_quantity_checkbox": "数量減少",
+          "can_t_be_purchased_checkbox": "購入不可",
+          "items_without_changes_checkbox": "変更なし"
+        },
+        "product_card": {
+          "quantity_label": "@:common.labels.quantity",
+          "total_label": "@:common.labels.total{':'}",
+          "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
+          "out_of_stock_message": "@:common.messages.product_out_of_stock",
+          "reduced_message": "在庫制限により注文数量が<span class=\"text-neutral\">{0}個から{1}個に減少</span>しました",
+          "item_can_t_be_purchased_message": "@:common.messages.item_can_t_be_purchased",
+          "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
+        }
+      },
+      "orders_filter": {
+        "status_label": "@:common.labels.status",
+        "created_date_label": "作成日",
+        "start_date_label": "開始日",
+        "end_date_label": "終了日",
+        "apply_button": "@:common.buttons.apply",
+        "reset_button": "@:common.buttons.reset"
+      }
+    },
+    "company": {
+      "add_or_update_address_modal": {
+        "address_title": "住所情報",
+        "create_title": "新規会社住所を作成",
+        "edit_title": "会社住所を編集"
+      },
+      "block_member_modal": {
+        "title": "ユーザーをブロック",
+        "text": "このユーザーのアクセスをブロックしますか？"
+      },
+      "unblock_member_modal": {
+        "title": "ブロック解除",
+        "text": "このユーザーのブロックを解除しますか？"
+      },
+      "delete_member_modal": {
+        "title": "メンバー削除",
+        "text": "メンバーリストからユーザー「{name}」を削除しますか？"
+      },
+      "notifications": {
+        "user_blocked": "ユーザーをブロックしました。",
+        "user_unblocked": "ユーザーのブロックを解除しました。"
+      }
+    }
   }
 }
