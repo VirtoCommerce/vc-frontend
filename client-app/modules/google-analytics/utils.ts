@@ -11,6 +11,14 @@ import type {
   OrderDiscountType,
 } from "@/core/api/graphql/types";
 
+export function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
+  if (canUseDOM && window.gtag) {
+    window.gtag("event", eventName, eventParams);
+  } else {
+    Logger.debug(DEBUG_PREFIX, eventName, eventParams);
+  }
+}
+
 export function productToGtagItem(item: Product | VariationType, index?: number): Gtag.Item {
   const categories: Record<string, string> = "breadcrumbs" in item ? getCategories(item.breadcrumbs) : {};
 
@@ -67,12 +75,4 @@ export function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, st
     });
 
   return categories;
-}
-
-export function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
-  if (canUseDOM && window.gtag) {
-    window.gtag("event", eventName, eventParams);
-  } else {
-    Logger.debug(DEBUG_PREFIX, eventName, eventParams);
-  }
 }
