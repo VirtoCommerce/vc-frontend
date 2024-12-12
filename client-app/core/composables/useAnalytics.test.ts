@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useAnalytics } from "@/core/composables/useAnalytics";
 import { Logger } from "@/core/utilities";
 import type { CustomerOrderType, LineItemType, Product } from "../api/graphql/types";
+import type { useAnalytics as useAnalyticsType } from "@/core/composables/useAnalytics";
 import type { AnalyticsEventNameType, IAnalyticsEventMap, TackerType } from "@/core/types/analytics";
 
 vi.mock("@/core/utilities", () => ({
@@ -9,28 +9,28 @@ vi.mock("@/core/utilities", () => ({
     debug: vi.fn(),
     warn: vi.fn(),
     error: vi.fn(),
-    info: vi.fn(),
   },
 }));
 
-vi.mock("@/core/constants", () => ({
-  IS_DEVELOPMENT: false,
-}));
-
 describe("useAnalytics Composable", () => {
-  let analyticsInstance: ReturnType<typeof useAnalytics>;
-  let addTracker: ReturnType<typeof useAnalytics>["addTracker"];
-  let trackEvent: ReturnType<typeof useAnalytics>["analytics"];
+  let analyticsInstance: ReturnType<typeof useAnalyticsType>;
+  let addTracker: ReturnType<typeof useAnalyticsType>["addTracker"];
+  let analytics: ReturnType<typeof useAnalyticsType>["analytics"];
   let mockTracker1: TackerType;
   let mockTracker2: TackerType;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.resetModules();
+    vi.doUnmock("@/core/constants");
     vi.clearAllMocks();
+    vi.doMock("@/core/constants", () => ({
+      IS_DEVELOPMENT: false,
+    }));
+    const { useAnalytics } = await import("@/core/composables/useAnalytics");
 
     analyticsInstance = useAnalytics();
     addTracker = analyticsInstance.addTracker;
-    trackEvent = analyticsInstance.analytics;
+    analytics = analyticsInstance.analytics;
 
     mockTracker1 = {
       viewItemList: vi.fn(),
@@ -75,7 +75,7 @@ describe("useAnalytics Composable", () => {
     const event: AnalyticsEventNameType = "viewItemList";
     const args: IAnalyticsEventMap["viewItemList"] = [[{ code: "item1" }], { someParam: "value" }];
 
-    trackEvent(event, ...args);
+    analytics(event, ...args);
 
     expect(mockTracker1.viewItemList).toHaveBeenCalledWith(...args);
     expect(Logger.debug).not.toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe("useAnalytics Composable", () => {
     const event: AnalyticsEventNameType = "selectItem";
     const args: IAnalyticsEventMap["selectItem"] = [{ productId: "123" } as LineItemType, { someParam: "value" }];
 
-    trackEvent(event, ...args);
+    analytics(event, ...args);
 
     expect(mockTracker1.selectItem).toHaveBeenCalledWith(...args);
     expect(mockTracker2.selectItem).toHaveBeenCalledWith(...args);
@@ -104,35 +104,13 @@ describe("useAnalytics Composable", () => {
     const args1: IAnalyticsEventMap["viewItem"] = [{ id: "123" } as Product, { someParam: "value1" }];
     const args2: IAnalyticsEventMap["viewItem"] = [{ id: "321" } as Product, { someParam: "value2" }];
 
-    trackEvent(event, ...args1);
-    trackEvent(event, ...args2);
+    analytics(event, ...args1);
+    analytics(event, ...args2);
 
     expect(mockTracker1.viewItem).toHaveBeenCalledTimes(2);
     expect(mockTracker1.viewItem).toHaveBeenCalledWith(...args1);
     expect(mockTracker1.viewItem).toHaveBeenCalledWith(...args2);
     expect(Logger.debug).not.toHaveBeenCalled();
-    expect(Logger.warn).not.toHaveBeenCalled();
-  });
-
-  it("should not dispatch events and log debug in development mode", async () => {
-    vi.doMock("@/core/constants", () => ({
-      IS_DEVELOPMENT: true,
-    }));
-
-    const { useAnalytics: useAnalyticsDev } = await import("@/core/composables/useAnalytics");
-    const analyticsDev = useAnalyticsDev();
-    const addTrackerDev = analyticsDev.addTracker;
-    const trackEventDev = analyticsDev.analytics;
-
-    addTrackerDev(mockTracker1);
-
-    const event: AnalyticsEventNameType = "addItemToCart";
-    const args: IAnalyticsEventMap["addItemToCart"] = [{ id: "123" } as Product, 2, { someParam: "value" }];
-
-    trackEventDev(event, ...args);
-
-    expect(mockTracker1.addItemToCart).not.toHaveBeenCalled();
-    expect(Logger.debug).toHaveBeenCalledWith("useAnalytics, can't track event in development mode");
     expect(Logger.warn).not.toHaveBeenCalled();
   });
 
@@ -150,7 +128,7 @@ describe("useAnalytics Composable", () => {
       { someParam: "value" },
     ];
 
-    trackEvent(event, ...args);
+    analytics(event, ...args);
 
     expect(mockTracker1.purchase).toBeUndefined();
     expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker.');
@@ -163,7 +141,7 @@ describe("useAnalytics Composable", () => {
     const event: AnalyticsEventNameType = "search";
     const args: IAnalyticsEventMap["search"] = ["query", [{ code: "item1" }], 1];
 
-    trackEvent(event, ...args);
+    analytics(event, ...args);
 
     expect(mockTracker1.search).toHaveBeenCalledTimes(1);
     expect(mockTracker1.search).toHaveBeenCalledWith(...args);
@@ -185,7 +163,7 @@ describe("useAnalytics Composable", () => {
       { someParam: "value1" },
     ];
 
-    trackEvent(event1, ...args1);
+    analytics(event1, ...args1);
 
     expect(partialTracker.viewItem).toHaveBeenCalledWith(...args1);
     expect(Logger.warn).not.toHaveBeenCalled();
@@ -199,7 +177,7 @@ describe("useAnalytics Composable", () => {
       { someParam: "value2" },
     ];
 
-    trackEvent(event2, ...args2);
+    analytics(event2, ...args2);
 
     expect(partialTracker.purchase).toBeUndefined();
     expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker.');
@@ -229,7 +207,7 @@ describe("useAnalytics Composable", () => {
 
     const loggerErrorSpy = vi.spyOn(Logger, "error");
 
-    trackEvent(event, ...args);
+    analytics(event, ...args);
 
     expect(faultyTracker.viewItem).toHaveBeenCalledWith(...args);
     expect(normalTracker.viewItem).toHaveBeenCalledWith(...args);
@@ -245,7 +223,7 @@ describe("useAnalytics Composable", () => {
       { someParam: "value" },
     ];
 
-    trackEvent(event, ...args);
+    analytics(event, ...args);
 
     expect(mockTracker1.viewItem).not.toHaveBeenCalled();
     expect(Logger.warn).not.toHaveBeenCalled();
@@ -270,7 +248,7 @@ describe("useAnalytics Composable", () => {
         } as Product,
         { someParam: `value${i}` },
       ];
-      trackEvent(event, ...args);
+      analytics(event, ...args);
     }
 
     trackers.forEach((tracker) => {
@@ -288,5 +266,27 @@ describe("useAnalytics Composable", () => {
 
     expect(Logger.warn).not.toHaveBeenCalled();
     expect(Logger.debug).not.toHaveBeenCalled();
+  });
+
+  it("should not dispatch events and log debug in development mode", async () => {
+    vi.resetModules();
+    vi.doUnmock("@/core/constants");
+    vi.doMock("@/core/constants", () => ({
+      IS_DEVELOPMENT: true,
+    }));
+
+    const { useAnalytics: useAnalyticsDev } = await import("@/core/composables/useAnalytics");
+    const { addTracker: addTrackerDev, analytics: analyticsDev } = useAnalyticsDev();
+
+    addTrackerDev(mockTracker1);
+
+    const event: AnalyticsEventNameType = "addItemToCart";
+    const args: IAnalyticsEventMap["addItemToCart"] = [{ id: "123" } as Product, 2, { someParam: "value" }];
+
+    analyticsDev(event, ...args);
+
+    expect(mockTracker1.addItemToCart).not.toHaveBeenCalled();
+    expect(Logger.debug).toHaveBeenCalledWith("useAnalytics, can't track event in development mode");
+    expect(Logger.warn).not.toHaveBeenCalled();
   });
 });
