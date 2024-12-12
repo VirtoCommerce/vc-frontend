@@ -3,12 +3,12 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
-import type { IAnalyticsEventMap } from "@/core/types/analytics";
+import type { TackerType } from "@/core/types/analytics";
 
 const { currencyCode } = globals;
 
-export const analytics = {
-  viewItemList(...[items = [], params]: IAnalyticsEventMap["viewItemList"]) {
+export const analytics: TackerType = {
+  viewItemList(items = [], params) {
     sendEvent("view_item_list", {
       ...params,
       items_skus: items
@@ -19,7 +19,7 @@ export const analytics = {
     });
   },
 
-  selectItem(...[item, params]: IAnalyticsEventMap["selectItem"]) {
+  selectItem(item, params) {
     const gtagItem = "productId" in item ? lineItemToGtagItem(item) : productToGtagItem(item);
     sendEvent("select_item", {
       ...params,
@@ -27,7 +27,7 @@ export const analytics = {
     });
   },
 
-  viewItem(...[item, params]: IAnalyticsEventMap["viewItem"]) {
+  viewItem(item, params) {
     sendEvent("view_item", {
       ...params,
       currency: currencyCode,
@@ -36,7 +36,7 @@ export const analytics = {
     });
   },
 
-  addItemToWishList(...[item, params]: IAnalyticsEventMap["addItemToWishList"]) {
+  addItemToWishList(item, params) {
     sendEvent("add_to_wishlist", {
       ...params,
       currency: currencyCode,
@@ -45,7 +45,7 @@ export const analytics = {
     });
   },
 
-  addItemToCart(...[item, quantity = 1, params]: IAnalyticsEventMap["addItemToCart"]) {
+  addItemToCart(item, quantity = 1, params) {
     const inputItem = productToGtagItem(item);
     inputItem.quantity = quantity;
     sendEvent("add_to_cart", {
@@ -56,7 +56,7 @@ export const analytics = {
     });
   },
 
-  addItemsToCart(...[items, params]: IAnalyticsEventMap["addItemsToCart"]) {
+  addItemsToCart(items, params) {
     const subtotal: number = sumBy(items, (item) => item?.price?.actual?.amount);
     const inputItems = items.filter(Boolean).map((item) => productToGtagItem(item));
     sendEvent("add_to_cart", {
@@ -68,7 +68,7 @@ export const analytics = {
     });
   },
 
-  removeItemsFromCart(...[items, params]: IAnalyticsEventMap["removeItemsFromCart"]) {
+  removeItemsFromCart(items, params) {
     const subtotal: number = sumBy(items, (item) => item.extendedPrice?.amount);
     const inputItems = items.map(lineItemToGtagItem);
     sendEvent("remove_from_cart", {
@@ -80,7 +80,7 @@ export const analytics = {
     });
   },
 
-  viewCart(...[cart, params]: IAnalyticsEventMap["viewCart"]) {
+  viewCart(cart, params) {
     sendEvent("view_cart", {
       ...params,
       currency: currencyCode,
@@ -90,7 +90,7 @@ export const analytics = {
     });
   },
 
-  clearCart(...[cart, params]: IAnalyticsEventMap["clearCart"]) {
+  clearCart(cart, params) {
     sendEvent("clear_cart", {
       ...params,
       currency: currencyCode,
@@ -100,7 +100,7 @@ export const analytics = {
     });
   },
 
-  beginCheckout(...[cart, params]: IAnalyticsEventMap["beginCheckout"]) {
+  beginCheckout(cart, params) {
     try {
       sendEvent("begin_checkout", {
         ...params,
@@ -115,7 +115,7 @@ export const analytics = {
     }
   },
 
-  addShippingInfo(...[cart, params, shipmentMethodOption]: IAnalyticsEventMap["addShippingInfo"]) {
+  addShippingInfo(cart, params, shipmentMethodOption) {
     try {
       sendEvent("add_shipping_info", {
         ...params,
@@ -131,7 +131,7 @@ export const analytics = {
     }
   },
 
-  addPaymentInfo(...[cart, params, paymentGatewayCode]: IAnalyticsEventMap["addPaymentInfo"]) {
+  addPaymentInfo(cart, params, paymentGatewayCode) {
     try {
       sendEvent("add_payment_info", {
         ...params,
@@ -147,7 +147,7 @@ export const analytics = {
     }
   },
 
-  purchase(...[order, transactionId, params]: IAnalyticsEventMap["purchase"]) {
+  purchase(order, transactionId, params) {
     try {
       sendEvent("purchase", {
         ...params,
@@ -165,7 +165,7 @@ export const analytics = {
     }
   },
 
-  placeOrder(...[order, params]: IAnalyticsEventMap["placeOrder"]) {
+  placeOrder(order, params) {
     try {
       sendEvent("place_order", {
         ...params,
@@ -181,7 +181,7 @@ export const analytics = {
     }
   },
 
-  search(...[searchTerm, visibleItems = [], itemsCount = 0]: IAnalyticsEventMap["search"]) {
+  search(searchTerm, visibleItems = [], itemsCount = 0) {
     sendEvent("search", {
       search_term: searchTerm,
       items_count: itemsCount,
