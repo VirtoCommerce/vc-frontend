@@ -2,20 +2,10 @@ import { sumBy } from "lodash";
 import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
-import { lineItemToGtagItem, productToGtagItem } from "./utils";
-import type { CustomEventNamesType, EventParamsType } from "./types";
+import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
 import type { IAnalyticsEventMap } from "@/core/types/analytics";
 
-const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
 const { currencyCode } = globals;
-
-function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
-  if (canUseDOM && window.gtag) {
-    window.gtag("event", eventName, eventParams);
-  } else {
-    Logger.debug(DEBUG_PREFIX, eventName, eventParams);
-  }
-}
 
 export const analytics = {
   viewItemList(...[items = [], params]: IAnalyticsEventMap["viewItemList"]) {

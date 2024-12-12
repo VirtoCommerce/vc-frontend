@@ -1,3 +1,6 @@
+import { Logger } from "@/core/utilities";
+import { canUseDOM, DEBUG_PREFIX } from "./constants";
+import type { CustomEventNamesType, EventParamsType } from "./types";
 import type {
   Breadcrumb,
   LineItemType,
@@ -64,4 +67,12 @@ export function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, st
     });
 
   return categories;
+}
+
+export function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
+  if (canUseDOM && window.gtag) {
+    window.gtag("event", eventName, eventParams);
+  } else {
+    Logger.debug(DEBUG_PREFIX, eventName, eventParams);
+  }
 }

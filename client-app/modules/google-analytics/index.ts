@@ -16,10 +16,10 @@ export async function init(): Promise<void> {
   if (!canUseDOM || !trackId || !hasModuleSettings || !isEnabled || IS_DEVELOPMENT) {
     return;
   }
+  useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${trackId}`);
   const { addTracker } = useAnalytics();
   const tracker = await import("./events");
   addTracker(tracker.analytics);
-  useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${trackId}`);
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag() {
     // is not working with rest
