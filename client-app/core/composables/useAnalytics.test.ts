@@ -16,6 +16,16 @@ vi.mock("@/core/constants", () => ({
   IS_DEVELOPMENT: false,
 }));
 
+const mockedProduct = {
+  id: "123",
+} as Product;
+
+const mockedCustomerOrder = {
+  id: "123",
+} as CustomerOrderType;
+
+const arbitraryParam = { someParam: "value" };
+
 describe("useAnalytics", () => {
   let analyticsInstance: ReturnType<typeof useAnalyticsType>;
   let addTracker: ReturnType<typeof useAnalyticsType>["addTracker"];
@@ -75,7 +85,7 @@ describe("useAnalytics", () => {
     addTracker(mockTracker1);
 
     const event: AnalyticsEventNameType = "viewItemList";
-    const args: IAnalyticsEventMap["viewItemList"] = [[{ code: "item1" }], { someParam: "value" }];
+    const args: IAnalyticsEventMap["viewItemList"] = [[{ code: "item1" }], arbitraryParam];
 
     analytics(event, ...args);
 
@@ -89,7 +99,7 @@ describe("useAnalytics", () => {
     addTracker(mockTracker2);
 
     const event: AnalyticsEventNameType = "selectItem";
-    const args: IAnalyticsEventMap["selectItem"] = [{ productId: "123" } as LineItemType, { someParam: "value" }];
+    const args: IAnalyticsEventMap["selectItem"] = [{ productId: "123" } as LineItemType, arbitraryParam];
 
     analytics(event, ...args);
 
@@ -103,8 +113,8 @@ describe("useAnalytics", () => {
     addTracker(mockTracker1);
 
     const event: AnalyticsEventNameType = "viewItem";
-    const args1: IAnalyticsEventMap["viewItem"] = [{ id: "123" } as Product, { someParam: "value1" }];
-    const args2: IAnalyticsEventMap["viewItem"] = [{ id: "321" } as Product, { someParam: "value2" }];
+    const args1: IAnalyticsEventMap["viewItem"] = [mockedProduct, { someParam: "value1" }];
+    const args2: IAnalyticsEventMap["viewItem"] = [mockedProduct, { someParam: "value2" }];
 
     analytics(event, ...args1);
     analytics(event, ...args2);
@@ -122,13 +132,7 @@ describe("useAnalytics", () => {
     delete mockTracker1.purchase;
 
     const event: AnalyticsEventNameType = "purchase";
-    const args: IAnalyticsEventMap["purchase"] = [
-      {
-        id: "123",
-      } as CustomerOrderType,
-      "txn123",
-      { someParam: "value" },
-    ];
+    const args: IAnalyticsEventMap["purchase"] = [mockedCustomerOrder, "txn123", arbitraryParam];
 
     analytics(event, ...args);
 
@@ -158,12 +162,7 @@ describe("useAnalytics", () => {
     addTracker(partialTracker);
 
     const event1: AnalyticsEventNameType = "viewItem";
-    const args1: IAnalyticsEventMap["viewItem"] = [
-      {
-        id: "123",
-      } as Product,
-      { someParam: "value1" },
-    ];
+    const args1: IAnalyticsEventMap["viewItem"] = [mockedProduct, { someParam: "value1" }];
 
     analytics(event1, ...args1);
 
@@ -171,13 +170,7 @@ describe("useAnalytics", () => {
     expect(Logger.warn).not.toHaveBeenCalled();
 
     const event2: AnalyticsEventNameType = "purchase";
-    const args2: IAnalyticsEventMap["purchase"] = [
-      {
-        id: "123",
-      } as CustomerOrderType,
-      "txn123",
-      { someParam: "value2" },
-    ];
+    const args2: IAnalyticsEventMap["purchase"] = [mockedCustomerOrder, "txn123", { someParam: "value2" }];
 
     analytics(event2, ...args2);
 
@@ -200,12 +193,7 @@ describe("useAnalytics", () => {
     addTracker(normalTracker);
 
     const event: AnalyticsEventNameType = "viewItem";
-    const args: IAnalyticsEventMap["viewItem"] = [
-      {
-        id: "123",
-      } as Product,
-      { someParam: "value" },
-    ];
+    const args: IAnalyticsEventMap["viewItem"] = [mockedProduct, arbitraryParam];
 
     const loggerErrorSpy = vi.spyOn(Logger, "error");
 
@@ -218,12 +206,7 @@ describe("useAnalytics", () => {
 
   it("should not dispatch events and not log warnings when no trackers are added", () => {
     const event: AnalyticsEventNameType = "viewItem";
-    const args: IAnalyticsEventMap["viewItem"] = [
-      {
-        id: "123",
-      } as Product,
-      { someParam: "value" },
-    ];
+    const args: IAnalyticsEventMap["viewItem"] = [mockedProduct, arbitraryParam];
 
     analytics(event, ...args);
 
@@ -244,25 +227,14 @@ describe("useAnalytics", () => {
     const numEvents = 100;
     for (let i = 0; i < numEvents; i++) {
       const event: AnalyticsEventNameType = "viewItem";
-      const args: IAnalyticsEventMap["viewItem"] = [
-        {
-          id: "123",
-        } as Product,
-        { someParam: `value${i}` },
-      ];
+      const args: IAnalyticsEventMap["viewItem"] = [mockedProduct, { someParam: `value${i}` }];
       analytics(event, ...args);
     }
 
     trackers.forEach((tracker) => {
       expect(tracker.viewItem).toHaveBeenCalledTimes(numEvents);
       for (let i = 0; i < numEvents; i++) {
-        expect(tracker.viewItem).toHaveBeenNthCalledWith(
-          i + 1,
-          {
-            id: "123",
-          } as Product,
-          { someParam: `value${i}` },
-        );
+        expect(tracker.viewItem).toHaveBeenNthCalledWith(i + 1, mockedProduct, { someParam: `value${i}` });
       }
     });
 
@@ -283,7 +255,7 @@ describe("useAnalytics", () => {
     addTrackerDev(mockTracker1);
 
     const event: AnalyticsEventNameType = "addItemToCart";
-    const args: IAnalyticsEventMap["addItemToCart"] = [{ id: "123" } as Product, 2, { someParam: "value" }];
+    const args: IAnalyticsEventMap["addItemToCart"] = [mockedProduct, 2, arbitraryParam];
 
     analyticsDev(event, ...args);
 
@@ -294,12 +266,7 @@ describe("useAnalytics", () => {
 
   it("should not dispatch events and not log warnings when no trackers are added", () => {
     const event: AnalyticsEventNameType = "viewItem";
-    const args: IAnalyticsEventMap["viewItem"] = [
-      {
-        id: "123",
-      } as Product,
-      { someParam: "value" },
-    ];
+    const args: IAnalyticsEventMap["viewItem"] = [mockedProduct, arbitraryParam];
 
     analytics(event, ...args);
 
