@@ -1,4 +1,4 @@
-import { createGlobalState } from "@vueuse/core";
+import { createSharedComposable } from "@vueuse/core";
 import { computed, ref } from "vue";
 import type { IPageTemplate } from "../types";
 
@@ -17,4 +17,4 @@ function _useStaticPage() {
   };
 }
 
-export const useStaticPage = createGlobalState(_useStaticPage);
+export const useStaticPage = createSharedComposable(_useStaticPage);
