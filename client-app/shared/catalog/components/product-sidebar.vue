@@ -23,8 +23,10 @@
           <span>
             {{ $t("pages.product.price_label") }}
           </span>
-
-          <VcItemPrice :value="price" />
+          <span class="relative">
+            <VcLoaderOverlay v-if="configuredLineItemLoading" />
+            <VcItemPrice :value="price" />
+          </span>
         </div>
 
         <div class="mt-4 print:hidden">
@@ -65,7 +67,7 @@ const product = toRef(props, "product");
 
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
-const { configuredLineItem } = useConfigurableProduct(product.value.id);
+const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

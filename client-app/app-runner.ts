@@ -13,6 +13,7 @@ import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
+import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
 import { createRouter } from "@/router";
@@ -89,9 +90,6 @@ export default async () => {
 
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
 
-  void initializeGoogleAnalytics();
-  void initializeHotjar();
-
   // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
   const twoLetterAppLocale = detectLocale([
     pinedLocale.value,
@@ -134,6 +132,9 @@ export default async () => {
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
   void initCustomerReviews(i18n);
+  void initializePurchaseRequests(router, i18n);
+  void initializeGoogleAnalytics();
+  void initializeHotjar();
 
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
