@@ -98,7 +98,7 @@ import Skyflow from "skyflow-js";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
-import { useGoogleAnalytics, useThemeContext } from "@/core/composables";
+import { useAnalytics, useThemeContext } from "@/core/composables";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { replaceXFromBeginning } from "@/core/utilities";
 import { useUser } from "@/shared/account";
@@ -126,7 +126,7 @@ type FieldsType = { [key: string]: string };
 const { t } = useI18n();
 const { user, isAuthenticated } = useUser();
 const { skyflowCards, fetchSkyflowCards } = useSkyflowCards();
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { themeContext } = useThemeContext();
 
 const loading = ref(false);
@@ -543,7 +543,7 @@ async function pay(parameters: InputKeyValueType[]): Promise<void> {
   });
 
   if (isSuccess) {
-    ga.purchase(props.order);
+    analytics("purchase", props.order);
     emit("success");
   } else {
     emit("fail");
