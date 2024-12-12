@@ -8,14 +8,14 @@ import type { TackerType } from "@/core/types/analytics";
 const { currencyCode } = globals;
 
 export const analytics: TackerType = {
-  viewItemList(items = [], params) {
+  viewItemList(items, params) {
     sendEvent("view_item_list", {
       ...params,
-      items_skus: items
+      items_skus: (items ?? [])
         .map((el) => el.code)
         .join(", ")
         .trim(),
-      items_count: items.length,
+      items_count: items?.length ?? 0,
     });
   },
 
@@ -45,13 +45,13 @@ export const analytics: TackerType = {
     });
   },
 
-  addItemToCart(item, quantity = 1, params) {
+  addItemToCart(item, quantity, params) {
     const inputItem = productToGtagItem(item);
     inputItem.quantity = quantity;
     sendEvent("add_to_cart", {
       ...params,
       currency: currencyCode,
-      value: (item.price?.actual?.amount || 0) * quantity,
+      value: (item.price?.actual?.amount || 0) * (quantity ?? 1),
       items: [inputItem],
     });
   },

@@ -44,7 +44,7 @@ export function lineItemToGtagItem(
     index,
     item_id: item.sku,
     item_name: item.name,
-    affiliation: item.vendor?.name || "?",
+    affiliation: item.vendor?.name ?? "?",
     currency: item.placedPrice.currency.code,
     discount: item.discountAmount?.amount || item.discountTotal?.amount,
     price: "price" in item ? item.price.amount : item.listPrice.amount,
