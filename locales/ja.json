@@ -1383,5 +1383,58 @@
       "title": "アカウントがブロックされています",
       "message": "@:common.messages.blocked"
     }
+  },
+  "identity_error": {
+    "DuplicateEmail": "メールアドレス {0} は既に使用されています",
+    "DuplicateUserName": "ユーザー名 {0} は既に使用されています",
+    "InvalidEmail": "有効なメールアドレスを入力してください（例：johndoe@gmail.com）",
+    "InvalidPasswordHasherCompatibilityMode": "指定されたPasswordHasherCompatibilityModeが無効です",
+    "InvalidPasswordHasherIterationCount": "反復回数は正の整数である必要があります",
+    "InvalidToken": "トークンが無効または期限切れです",
+    "InvalidUserName": "ユーザー名が無効です。英数字のみ使用可能です",
+    "LoginAlreadyAssociated": "このログイン情報は既に使用されています",
+    "PasswordTooShort": "パスワードは{0}文字以上である必要があります",
+    "PasswordRequiresDigit": "パスワードには数字（'0'～'9'）を1文字以上含める必要があります",
+    "PasswordMismatch": "現在のパスワードが間違っています。再試行するかサポートにお問い合わせください",
+    "PasswordRequiresLower": "パスワードには小文字（'a'～'z'）を1文字以上含める必要があります",
+    "PasswordRequiresNonAlphanumeric": "パスワードには英数字以外の文字を1文字以上含める必要があります",
+    "PasswordRequiresUpper": "パスワードには大文字（'A'～'Z'）を1文字以上含める必要があります",
+    "PasswordRequiresUniqueChars": "パスワードには異なる文字を使用する必要があります",
+    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください"
+  },
+  "password_tips": {
+    "title": "強力なパスワードを作成するためのヒント：",
+    "required_digit": "数字が必要です",
+    "required_lowercase": "小文字が必要です",
+    "required_non_alphanumeric": "特殊文字が必要です",
+    "required_uppercase": "大文字が必要です",
+    "required_length": "1文字以上必要です | 最低{0}文字必要です",
+    "required_unique_chars": "1つ以上の固有文字が必要です | 最低{0}個の固有文字が必要です"
+  },
+  "validation_error": {
+    "PRODUCT_QTY_CHANGED": "最大{availQty}個まで注文可能です",
+    "CART_PRODUCT_UNAVAILABLE": "この商品は現在購入できません",
+    "CART_PRODUCT_INACTIVE": "この商品は現在無効です",
+    "PRODUCT_PRICE_INVALID": "価格が無効です",
+    "PRODUCT_FFC_QTY": "この商品は在庫切れです",
+    "PRODUCT_MIN_QTY": "最小{minQty}個から注文可能です",
+    "PRODUCT_MAX_QTY": "最大{maxQty}個まで注文可能です",
+    "PRODUCT_MIN_MAX_QTY": "{minQty}個から{maxQty}個まで注文可能です",
+    "UNABLE_SET_LESS_PRICE": "これ以上価格を下げることはできません",
+    "LINE_ITEM_NOT_FOUND": "明細項目が見つかりません",
+    "LINE_ITEM_IS_READ_ONLY": "明細項目は読み取り専用です",
+    "PRODUCT_QTY_INSUFFICIENT": "在庫数量{availQty}が要求数量{new_qty}に対して不足しています",
+    "PRODUCT_MIN_QTY_NOT_AVAILABLE": "最小注文数量{minQty}個分の在庫がありません",
+    "PRODUCT_EXACT_QTY": "{minQty}個注文可能です",
+    "CART_INVALID_PRODUCT": "無効な商品です"
+  },
+  "file_error": {
+    "ALREADY_EXISTS": "同じ名前のファイルをアップロードできません",
+    "INVALID_CONTENT": "ファイルを読み込めません",
+    "EXCEPTION": "ファイルのアップロード中にエラーが発生しました。もう一度お試しください",
+    "INVALID_SCOPE": "不明なスコープ '{0}' です",
+    "INVALID_EXTENSION": "このファイル形式は許可されていません",
+    "INVALID_SIZE": "ファイルサイズが許容サイズ{0}を超えています",
+    "CANNOT_DELETE": "ファイルの削除中にエラーが発生しました"
   }
 }
