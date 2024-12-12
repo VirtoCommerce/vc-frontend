@@ -61,7 +61,7 @@ const isMobile = breakpoints.smaller("sm");
   }
 
   &__title {
-    @apply flex-grow text-base font-bold uppercase text-additional-50;
+    @apply flex-grow text-base font-bold uppercase text-additional-50 break-words min-w-0;
 
     @media (min-width: theme("screens.sm")) {
       @apply text-sm;

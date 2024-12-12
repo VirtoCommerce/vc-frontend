@@ -211,7 +211,7 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--title-min-h] min-w-0 grow text-[length:--title-text] font-bold uppercase;
+    @apply flex flex-col justify-center min-h-[--title-min-h] min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
   }
 
   &__slot {
