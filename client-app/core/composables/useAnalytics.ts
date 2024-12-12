@@ -1,6 +1,6 @@
 import { createGlobalState } from "@vueuse/core";
 import { IS_DEVELOPMENT } from "@/core/constants";
-import { Logger } from "@/core/utilities";
+import { Logger } from "@/core/utilities/logger";
 import type { AnalyticsEventNameType, IAnalyticsEventMap, TackerType } from "../types/analytics";
 
 function _useAnalytics() {

@@ -4,7 +4,7 @@ import type { CustomerOrderType, LineItemType, Product } from "../api/graphql/ty
 import type { useAnalytics as useAnalyticsType } from "@/core/composables/useAnalytics";
 import type { AnalyticsEventNameType, IAnalyticsEventMap, TackerType } from "@/core/types/analytics";
 
-vi.mock("@/core/utilities", () => ({
+vi.mock("@/core/utilities/logger", () => ({
   Logger: {
     debug: vi.fn(),
     warn: vi.fn(),
@@ -12,7 +12,11 @@ vi.mock("@/core/utilities", () => ({
   },
 }));
 
-describe("useAnalytics Composable", () => {
+vi.mock("@/core/constants", () => ({
+  IS_DEVELOPMENT: false,
+}));
+
+describe("useAnalytics", () => {
   let analyticsInstance: ReturnType<typeof useAnalyticsType>;
   let addTracker: ReturnType<typeof useAnalyticsType>["addTracker"];
   let analytics: ReturnType<typeof useAnalyticsType>["analytics"];
@@ -23,9 +27,7 @@ describe("useAnalytics Composable", () => {
     vi.resetModules();
     vi.doUnmock("@/core/constants");
     vi.clearAllMocks();
-    vi.doMock("@/core/constants", () => ({
-      IS_DEVELOPMENT: false,
-    }));
+
     const { useAnalytics } = await import("@/core/composables/useAnalytics");
 
     analyticsInstance = useAnalytics();
@@ -288,5 +290,21 @@ describe("useAnalytics Composable", () => {
     expect(mockTracker1.addItemToCart).not.toHaveBeenCalled();
     expect(Logger.debug).toHaveBeenCalledWith("useAnalytics, can't track event in development mode");
     expect(Logger.warn).not.toHaveBeenCalled();
+  });
+
+  it("should not dispatch events and not log warnings when no trackers are added", () => {
+    const event: AnalyticsEventNameType = "viewItem";
+    const args: IAnalyticsEventMap["viewItem"] = [
+      {
+        id: "123",
+      } as Product,
+      { someParam: "value" },
+    ];
+
+    analytics(event, ...args);
+
+    expect(mockTracker1.viewItem).not.toHaveBeenCalled();
+    expect(Logger.warn).not.toHaveBeenCalled();
+    expect(Logger.debug).not.toHaveBeenCalled();
   });
 });
