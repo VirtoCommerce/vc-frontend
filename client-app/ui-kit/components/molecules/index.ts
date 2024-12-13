@@ -1,6 +1,3 @@
-export { default as VcAddressForm } from "./address-form/vc-address-form.vue";
-export { default as VcAddressInfo } from "./address-info/vc-address-info.vue";
-export { default as VcAddressSelection } from "./address-selection/vc-address-selection.vue";
 export { default as VcAlert } from "./alert/vc-alert.vue";
 export { default as VcButton } from "./button/vc-button.vue";
 export { default as VcButtonSeeMoreLess } from "./button-see-more-less/vc-button-see-more-less.vue";
@@ -36,6 +33,7 @@ export { default as VcProductPrice } from "./product-price/vc-product-price.vue"
 export { default as VcProductTotal } from "./product-total/vc-product-total.vue";
 export { default as VcRating } from "./rating/vc-rating.vue";
 export { default as VcSelect } from "./select/vc-select.vue";
+export { default as VcShape } from "./shape/vc-shape.vue";
 export { default as VcSteps } from "./steps/vc-steps.vue";
 export { default as VcTextarea } from "./textarea/vc-textarea.vue";
 export { default as VcVendor } from "./vendor/vc-vendor.vue";

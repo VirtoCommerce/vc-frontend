@@ -2,7 +2,7 @@
   <div class="vc-dialog-footer">
     <slot>
       <VcButton color="secondary" variant="outline" class="mx-auto" @click="$emit('close')">
-        {{ $t("common.buttons.close") }}
+        {{ $t("ui_kit.buttons.close") }}
       </VcButton>
     </slot>
   </div>

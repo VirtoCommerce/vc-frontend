@@ -33,9 +33,23 @@
         removable
         @remove="() => removeSingleItem(item.id)"
       >
-        <div ref="itemDefaultSlot">
+        <div v-if="!item.deleted" ref="itemDefaultSlot" :style="{ width: itemDefaultSlotWidth }">
+          <VcProductButton
+            v-if="item.isConfigurable"
+            no-wrap
+            :to="item.route"
+            :button-text="$t('pages.catalog.customize_button')"
+            icon="cube-transparent"
+            :target="$cfg.details_browser_target"
+          />
+          <VcProductButton
+            v-else-if="item.hasVariations"
+            :to="item.route"
+            :target="$cfg.details_browser_target"
+            :button-text="$t('pages.catalog.variations_button', [(item.variations?.length || 0) + 1])"
+          />
           <VcAddToCart
-            v-if="!item.deleted"
+            v-else
             class="w-full"
             :model-value="item.quantity"
             :min-quantity="item.minQuantity"
@@ -115,7 +129,8 @@ withDefaults(defineProps<IProps>(), {
 const validationErrors = ref<ValidationErrorType[]>([]);
 const itemDefaultSlot = ref<HTMLElement[] | null>(null);
 const itemDefaultSlotWidth = computed<string>(() => {
-  return itemDefaultSlot.value?.[0] ? `${itemDefaultSlot.value[0].clientWidth}px` : "";
+  const maxSlotWidth = Math.max(...(itemDefaultSlot.value?.map((el) => el.clientWidth) || [0]));
+  return maxSlotWidth ? `${maxSlotWidth}px` : "";
 });
 
 function addToCartDisabled(item: PreparedLineItemType) {

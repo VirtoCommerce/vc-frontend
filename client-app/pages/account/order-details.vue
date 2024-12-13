@@ -52,25 +52,25 @@
       <OrderCommentSection v-if="order.comment" :comment="order.comment" readonly class="mt-5" />
 
       <template #sidebar>
-        <div class="space-y-5">
-          <!-- Order Data Widget -->
-          <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first">
-            <div class="flex flex-col gap-1.5 text-sm">
-              <p v-if="order.createdDate">
-                <span class="font-black"> {{ $t("common.labels.created") }}: </span>
-                {{ $d(order.createdDate) }}
-              </p>
-              <p v-if="order.status" class="flex items-center">
-                <span class="mr-1 font-black"> {{ $t("common.labels.status") }}: </span>
-                <OrderStatus
-                  class="min-w-[7.785rem] print:min-w-0"
-                  :status="order.status"
-                  :display-value="order.statusDisplayValue"
-                />
-              </p>
-            </div>
-          </VcWidget>
+        <!-- Order Data Widget -->
+        <VcWidget id="order-data-widget" :title="$t('common.titles.order_data')" class="order-first mb-5">
+          <div class="flex flex-col gap-1.5 text-sm">
+            <p v-if="order.createdDate">
+              <span class="font-black"> {{ $t("common.labels.created") }}: </span>
+              {{ $d(order.createdDate) }}
+            </p>
+            <p v-if="order.status" class="flex items-center">
+              <span class="mr-1 font-black"> {{ $t("common.labels.status") }}: </span>
+              <OrderStatus
+                class="min-w-[7.785rem] print:min-w-0"
+                :status="order.status"
+                :display-value="order.statusDisplayValue"
+              />
+            </p>
+          </div>
+        </VcWidget>
 
+        <div class="space-y-5">
           <!-- Order summary -->
           <OrderSummary
             :cart="order"
@@ -91,7 +91,7 @@
 
           <!-- Billing Address Widget -->
           <VcWidget v-if="billingAddress" :title="$t('common.titles.billing_address')">
-            <VcAddressInfo :address="billingAddress" class="text-base" />
+            <AddressInfo :address="billingAddress" class="text-base" />
           </VcWidget>
 
           <!-- Shipping Method Card -->
@@ -113,7 +113,7 @@
 
           <!-- Shipping Address Card -->
           <VcWidget v-if="!allItemsAreDigital && deliveryAddress" :title="$t('common.titles.shipping_address')">
-            <VcAddressInfo :address="deliveryAddress" class="text-base" />
+            <AddressInfo :address="deliveryAddress" class="text-base" />
           </VcWidget>
 
           <!-- Payment Method section -->
@@ -146,6 +146,7 @@ import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useUserOrder, OrderLineItems, OrderStatus } from "@/shared/account";
 import { getItemsForAddBulkItemsToCartResultsModal, useShortCart } from "@/shared/cart";
 import { AcceptedGifts, OrderCommentSection, OrderSummary } from "@/shared/checkout";
+import { AddressInfo } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import AddBulkItemsToCartResultsModal from "@/shared/cart/components/add-bulk-items-to-cart-results-modal.vue";

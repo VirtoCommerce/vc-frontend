@@ -4,11 +4,11 @@
 
     <template #actions="{ close }">
       <VcButton v-if="!singleButton" :disabled="loading" color="secondary" variant="outline" @click="close">
-        {{ $t("common.buttons.cancel") }}
+        {{ $t("ui_kit.buttons.cancel") }}
       </VcButton>
 
       <VcButton :loading="loading" :color="variant" @click="$emit('confirm')">
-        {{ $t("common.buttons.ok") }}
+        {{ $t("ui_kit.buttons.ok") }}
       </VcButton>
     </template>
   </VcModal>

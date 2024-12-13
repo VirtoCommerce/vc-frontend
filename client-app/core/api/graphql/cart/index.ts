@@ -6,6 +6,7 @@ export * from "./mutations/addItemsCart";
 export * from "./mutations/addOrUpdateCartPayment";
 export * from "./mutations/addOrUpdateCartShipment";
 export * from "./mutations/changeCartComment";
+export * from "./mutations/changeCartConfiguredItem";
 export * from "./mutations/changeCartItemQuantity";
 export * from "./mutations/changeFullCartItemQuantity";
 export * from "./mutations/changeFullCartItemsQuantity";

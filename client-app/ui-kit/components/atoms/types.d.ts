@@ -5,7 +5,6 @@ declare module "vue" {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   export interface GlobalComponents {
     VcActionInput: typeof Components.VcActionInput;
-    VcAddressLine: typeof Components.VcAddressLine;
     VcBadge: typeof Components.VcBadge;
     VcBreadcrumbs: typeof Components.VcBreadcrumbs;
     VcButton: typeof Components.VcButton;
@@ -20,7 +19,6 @@ declare module "vue" {
     VcExpansionPanels: typeof Components.VcExpansionPanels;
     VcInputDetails: typeof Components.VcInputDetails;
     VcIcon: typeof Components.VcIcon;
-    VcHexagonIcon: typeof Components.VcHexagonIcon;
     VcImage: typeof Components.VcImage;
     VcInfinityScrollLoader: typeof Components.VcInfinityScrollLoader;
     VcLabel: typeof Components.VcLabel;

@@ -16,4 +16,5 @@ fragment fullLineItemProduct on Product {
   availabilityData {
     ...availabilityData
   }
+  isConfigurable
 }

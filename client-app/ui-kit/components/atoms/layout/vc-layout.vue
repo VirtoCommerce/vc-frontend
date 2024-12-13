@@ -13,7 +13,7 @@
               'vc-layout__sidebar--sticky': stickySidebar,
             },
           ]"
-          :style="stickySidebar ? sidebarStyle : {}"
+          :style="stickySidebar && !isMobile ? sidebarStyle : {}"
         >
           <slot name="sidebar" />
         </div>
@@ -29,7 +29,9 @@
 </template>
 
 <script setup lang="ts">
+import { useBreakpoints } from "@vueuse/core";
 import { ref } from "vue";
+import { BREAKPOINTS } from "@/core/constants";
 import { useStickySidebar } from "../../../composables/useStickySidebar";
 
 interface IProps {
@@ -40,6 +42,9 @@ interface IProps {
 withDefaults(defineProps<IProps>(), {
   sidebarPosition: "left",
 });
+
+const breakpoints = useBreakpoints(BREAKPOINTS);
+const isMobile = breakpoints.smaller("md");
 
 const sidebar = ref<HTMLElement | null>(null);
 const content = ref<HTMLElement | null>(null);
@@ -64,10 +69,10 @@ const { sidebarStyle } = useStickySidebar({
   }
 
   &__container {
-    @apply max-w-full;
+    @apply flex flex-col max-w-full;
 
     @media (min-width: theme("screens.md")) {
-      @apply flex items-stretch gap-3;
+      @apply flex-row items-stretch gap-3;
     }
 
     @media (min-width: theme("screens.xl")) {
@@ -110,11 +115,17 @@ const { sidebarStyle } = useStickySidebar({
   }
 
   &__sidebar {
-    &--sticky {
-      @media (max-width: theme("screens.md")) {
-        @apply relative top-auto bottom-auto #{!important};
-      }
+    @apply contents;
 
+    @media (min-width: theme("screens.md")) {
+      @apply block;
+    }
+
+    & > * {
+      @apply order-[2];
+    }
+
+    &--sticky {
       @media (min-width: theme("screens.md")) {
         @apply sticky top-[--sidebar-offset-top] bottom-[--sidebar-offset-bottom];
       }
@@ -145,7 +156,19 @@ const { sidebarStyle } = useStickySidebar({
     @apply contents;
 
     @media (min-width: theme("screens.md")) {
-      @apply block order-2 w-0 flex-grow;
+      @apply block w-0 flex-grow;
+    }
+  }
+
+  &__content {
+    @apply contents;
+
+    @media (min-width: theme("screens.md")) {
+      @apply block;
+    }
+
+    & > * {
+      @apply order-[1];
     }
   }
 }
