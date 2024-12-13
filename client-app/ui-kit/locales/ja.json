@@ -1,0 +1,83 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "カートに追加",
+      "apply": "適用",
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "copy": "コピー",
+      "deny": "拒否",
+      "filters": "フィルター",
+      "ok": "OK",
+      "remove_all": "すべて削除",
+      "remove_from_cart": "カートから削除",
+      "remove_selected": "選択を削除",
+      "see_more": "もっと見る",
+      "see_less": "少なく見る",
+      "show_hide_password": "パスワードを表示/非表示",
+      "toggle_dropdown": "ドロップダウンを切り替え",
+      "update_cart": "カートを更新"
+    },
+    "labels": {
+      "not_available": "N/A",
+      "price_per_item": "単価",
+      "product": "商品",
+      "product_quantity": "商品数量",
+      "properties": "プロパティ",
+      "subtotal": "小計",
+      "toggle_vendor_select": "ベンダー選択を切り替え",
+      "total": "合計",
+      "vendor": "ベンダー"
+    },
+    "suffixes": {
+      "from": "から",
+      "per_item": " 単価"
+    },
+    "messages": {
+      "loading_text": "読み込み中...",
+      "no_results": "結果が見つかりません"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "カートにあります",
+        "already_in_cart_message": "{0}はすでにカートに追加されています",
+        "enter_correct_number_message": "有効な番号を入力してください",
+        "min": "最小注文 {0} 個",
+        "max": "最大注文 {0} 個",
+        "min_max": "{0} から {1} 個の注文",
+        "min_not_available": "最小注文 {0} 個は在庫がありません",
+        "out_of_stock": "在庫切れ",
+        "positive_number": "値は正の数でなければなりません",
+        "integer_number": "値は整数でなければなりません",
+        "pack_size": "{0} のパックで注文"
+      }
+    },
+    "pagination": {
+      "previous": "前へ",
+      "next": "次へ"
+    },
+    "select": {
+      "items_selected": "{0} 個のアイテムが選択されました"
+    },
+    "file": {
+      "progress": "{percent} 完了",
+      "uploaded": "アップロード完了"
+    },
+    "file_uploader": {
+      "drag_and_drop": "ここにファイルをドラッグ＆ドロップまたは",
+      "browse": "ファイルを参照",
+      "requirements": "アップロード可能なファイルは {formats} 形式です。各ファイルは {fileSize} を超えてはなりません。最大 {maxFileCount} ファイルが許可されています。",
+      "any_format": "任意",
+      "errors": {
+        "fix_to_continue": "ファイルアップロードエラーを修正して続行してください。",
+        "has_max_file_count": "アップロード可能な最大数のファイルをアップロードしました。これ以上のアップロードはできません。",
+        "tried_more_than_max_file_count": "許可されている最大数を超えるファイルをアップロードしようとしました。"
+      }
+    },
+    "reach_limit": {
+      "end_list": "リストの終わりに達しました。",
+      "page_limit_filters": "これ以上の結果はありません。フィルターを変更してみてください。",
+      "page_limit": "これ以上の結果を表示できません。"
+    }
+  }
+}
