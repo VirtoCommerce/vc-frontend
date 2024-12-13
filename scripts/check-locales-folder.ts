@@ -65,37 +65,39 @@ function loadLocaleData(files: string[], localeFolder: string): { [key: string]:
 // @usage: yarn check-locales -- path/to/locales_folder
 function main(): void {
   const args = process.argv.slice(2);
-  const localeFolder = args[0] || "locales"; // Default to 'locales' if no argument is provided
+  const localeFolders = args.length > 0 ? args : ["locales"]; // Default to 'locales' if no argument is provided
 
-  if (!validateLocaleFolder(localeFolder)) {
-    return;
-  }
-
-  const files = getJsonFiles(localeFolder);
-  if (files.length === 0) {
-    return;
-  }
-
-  const localeData = loadLocaleData(files, localeFolder);
-
-  // Get all keys for each locale
-  const localeKeys: { [key: string]: string[] } = {};
-  for (const file in localeData) {
-    if (Object.hasOwn(localeData, file)) {
-      localeKeys[file] = getAllKeys(localeData[file]);
+  localeFolders.forEach((localeFolder) => {
+    if (!validateLocaleFolder(localeFolder)) {
+      return;
     }
-  }
 
-  // Compare keys between each pair of locale files
-  for (const baseFile in localeKeys) {
-    if (Object.hasOwn(localeKeys, baseFile)) {
-      for (const compareFile in localeKeys) {
-        if (Object.hasOwn(localeKeys, compareFile) && baseFile !== compareFile) {
-          compareKeys(localeKeys[baseFile], localeKeys[compareFile], baseFile, compareFile);
+    const files = getJsonFiles(localeFolder);
+    if (files.length === 0) {
+      return;
+    }
+
+    const localeData = loadLocaleData(files, localeFolder);
+
+    // Get all keys for each locale
+    const localeKeys: { [key: string]: string[] } = {};
+    for (const file in localeData) {
+      if (Object.hasOwn(localeData, file)) {
+        localeKeys[file] = getAllKeys(localeData[file]);
+      }
+    }
+
+    // Compare keys between each pair of locale files
+    for (const baseFile in localeKeys) {
+      if (Object.hasOwn(localeKeys, baseFile)) {
+        for (const compareFile in localeKeys) {
+          if (Object.hasOwn(localeKeys, compareFile) && baseFile !== compareFile) {
+            compareKeys(localeKeys[baseFile], localeKeys[compareFile], baseFile, compareFile);
+          }
         }
       }
     }
-  }
+  });
 }
 
 main();
