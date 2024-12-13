@@ -15,6 +15,16 @@ const core = {
 // if a module not used and not installed on The Platform - remove it to avoid console error
 const independentModules: ModuleType[] = [
   {
+    name: "CustomerReviews",
+    apiPath: "client-app/modules/customer-reviews/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/customerReviews`,
+  },
+  {
+    name: "PurchaseRequests",
+    apiPath: "client-app/modules/purchase-requests/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/aiDocumentProcessing`,
+  },
+  {
     name: "PushMessages",
     apiPath: "client-app/modules/push-messages/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/pushMessages`,
@@ -23,11 +33,6 @@ const independentModules: ModuleType[] = [
     name: "Quotes",
     apiPath: "client-app/modules/quotes/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/quote`,
-  },
-  {
-    name: "CustomerReviews",
-    apiPath: "client-app/modules/customer-reviews/api/graphql",
-    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/customerReviews`,
   },
 ];
 
