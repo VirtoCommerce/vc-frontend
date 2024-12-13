@@ -19,6 +19,7 @@ export interface INotification {
   classes?: string;
   group?: string;
   button?: NotificationCustomButtonType;
+  buttons?: NotificationCustomButtonType[];
   component?: Component;
   props?: ComponentObjectPropsOptions;
 

@@ -596,7 +596,8 @@
         "product_configuration": {
           "title": "Parameter konfigurieren",
           "none": "Keine",
-          "nothing_selected": "Nicht ausgewählt"
+          "nothing_selected": "Nicht ausgewählt",
+          "changed_notification": "Die Produktkonfiguration wurde geändert. Änderungen speichern?"
         }
       },
       "discount_badge": {

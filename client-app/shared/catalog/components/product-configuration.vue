@@ -86,17 +86,21 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { PropertyType } from "@/core/api/graphql/types";
-import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import { getProductRoute, getPropertiesGroupedByName, getUrlSearchParam } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { useNotifications } from "@/shared/notification";
 import type { ConfigurationSectionInput, ConfigurationSectionType, Property } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
 
+const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const PRODUCT_PROPERTY_LIMIT = 3;
+const NOTIFICATIONS_GROUP = "product-configuration";
 
 interface IProps {
   configuration: DeepReadonly<ConfigurationSectionType[]>;
@@ -106,7 +110,32 @@ interface IProps {
 const configurableProductId = toRef(props, "productId");
 
 const { t } = useI18n();
-const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(configurableProductId.value);
+const {
+  selectSectionValue,
+  selectedConfiguration,
+  selectedConfigurationInput,
+  isConfigurationChanged,
+  changeCartConfiguredItem,
+} = useConfigurableProduct(configurableProductId.value);
+
+const notifications = useNotifications();
+watch(isConfigurationChanged, (newVal) => {
+  if (newVal && configurableLineItemId) {
+    notifications.info({
+      text: t("shared.catalog.product_details.product_configuration.changed_notification"),
+      group: NOTIFICATIONS_GROUP,
+      button: {
+        text: t("common.buttons.save"),
+        color: "accent",
+        clickHandler() {
+          void changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+        },
+      },
+    });
+  } else {
+    notifications.clear(NOTIFICATIONS_GROUP);
+  }
+});
 
 function handleInput({ sectionId, value }: ConfigurationSectionInput) {
   selectSectionValue({ sectionId, value });

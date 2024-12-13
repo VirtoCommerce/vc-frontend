@@ -598,7 +598,8 @@
         "product_configuration": {
           "title": "Configure the parameters",
           "none": "None",
-          "nothing_selected": "Nothing selected"
+          "nothing_selected": "Nothing selected",
+          "changed_notification": "The product configuration has been changed. Save changes?"
         }
       },
       "discount_badge": {
