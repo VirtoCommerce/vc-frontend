@@ -110,7 +110,6 @@ export function setupBroadcastGlobalListeners() {
 
   on(dataChangedEvent, () => {
     notifications.warning({
-      duration: DEFAULT_NOTIFICATION_DURATION,
       text: t("common.messages.data_changed"),
     });
   });
