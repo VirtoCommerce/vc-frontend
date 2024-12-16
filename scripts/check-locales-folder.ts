@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as glob from "glob";
 
 type LocaleDataType = {
   [key: string]: string | LocaleDataType;
@@ -61,11 +62,23 @@ function loadLocaleData(files: string[], localeFolder: string): { [key: string]:
   return localeData;
 }
 
+function getLocaleFolders(patterns: string[]): string[] {
+  const folders: string[] = [];
+  patterns.forEach((pattern) => {
+    const matchedFolders = glob.sync(pattern, { absolute: true });
+    folders.push(...matchedFolders);
+  });
+  return folders;
+}
+
 // @description: This script checks if all keys in the locales are presented.
 // @usage: yarn check-locales -- path/to/locales_folder
 function main(): void {
   const args = process.argv.slice(2);
-  const localeFolders = args.length > 0 ? args : ["locales"]; // Default to 'locales' if no argument is provided
+
+  const patterns = args.length > 0 ? args : ["locales"]; // Default to 'locales' if no argument is provided
+
+  const localeFolders = getLocaleFolders(patterns);
 
   localeFolders.forEach((localeFolder) => {
     if (!validateLocaleFolder(localeFolder)) {

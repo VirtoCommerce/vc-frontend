@@ -37,7 +37,7 @@
     "storybook:dev": "yarn precheck && yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn precheck && yarn storybook:styles && storybook build",
     "postinstall": "yarn precheck && husky",
-    "check-locales": "yarn precheck && vite-node scripts/check-locales-folder.ts"
+    "check-locales": "yarn precheck && vite-node scripts/check-locales-folder.ts -- locales client-app/ui-kit/locales client-app/modules/**/locales"
   },
   "dependencies": {
     "@apollo/client": "^3.10.5",
@@ -57,6 +57,7 @@
     "axios": "^1.7.2",
     "dompurify": "^3.1.6",
     "firebase": "^11.0.1",
+    "glob": "^11.0.0",
     "graphql": "^16.8.2",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
