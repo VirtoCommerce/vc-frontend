@@ -158,13 +158,16 @@ function getProperties(properties: DeepReadonly<Property[]>) {
 }
 
 async function canChangeRoute(): Promise<boolean> {
-  return !!(isConfigurationChanged.value && configurableLineItemId) && (await openSaveChangesModal());
+  if (!configurableLineItemId) {
+    return true;
+  }
+  return isConfigurationChanged.value && (await openSaveChangesModal());
 }
-
 onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
 
 async function openSaveChangesModal(): Promise<boolean> {
+  notifications.clear(NOTIFICATIONS_GROUP);
   return await new Promise<boolean>((resolve) => {
     const closeModal = openModal({
       component: SaveChangesModal,
@@ -173,7 +176,9 @@ async function openSaveChangesModal(): Promise<boolean> {
         message: t("shared.catalog.product_details.product_configuration.changed_confirmation"),
         onConfirm: async () => {
           closeModal();
-          await changeCartConfiguredItem(configurableLineItemId!, undefined, selectedConfigurationInput.value);
+          if (configurableLineItemId) {
+            await changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+          }
           resolve(true);
         },
         onClose: () => {
