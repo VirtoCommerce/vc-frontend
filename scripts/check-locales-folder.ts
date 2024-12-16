@@ -72,7 +72,7 @@ function getLocaleFolders(patterns: string[]): string[] {
 }
 
 // @description: This script checks if all keys in the locales are presented.
-// @usage: yarn check-locales -- path/to/locales_folder
+// @usage: yarn check-locales -- path/to/locales_folder path/to/**/locales
 function main(): void {
   const args = process.argv.slice(2);
 

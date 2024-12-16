@@ -243,6 +243,13 @@ yarn generate:dependency-graph client-app/main.ts client-app/shared/account/comp
 ```
 The generated graph will also be saved in the `artifacts` folder.
 
+```
+yarn check-locales -- path/to/locales_folder path/to/**/locales
+```
+The command is used to ensure that all locale files have consistent keys across different languages. This helps in maintaining uniformity and avoiding missing translations.
+
+The script will output warnings for any missing keys in the locale files. Review these warnings to ensure all necessary translations are present. Also added to the CI pipeline.
+
 ### Troubleshooting
 
 If you encounter an error such as `dot command not found` on Windows, ensure that [Graphviz](https://graphviz.gitlab.io/download/) is installed on your system.
