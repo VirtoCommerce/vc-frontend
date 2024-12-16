@@ -88,10 +88,13 @@
 <script setup lang="ts">
 import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { PropertyType } from "@/core/api/graphql/types";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { getProductRoute, getPropertiesGroupedByName, getUrlSearchParam } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { SaveChangesModal } from "@/shared/common";
+import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { ConfigurationSectionInput, ConfigurationSectionType, Property } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
@@ -117,6 +120,7 @@ const {
   isConfigurationChanged,
   changeCartConfiguredItem,
 } = useConfigurableProduct(configurableProductId.value);
+const { openModal } = useModal();
 
 const notifications = useNotifications();
 watch(isConfigurationChanged, (newVal) => {
@@ -151,6 +155,33 @@ function getProperties(properties: DeepReadonly<Property[]>) {
     0,
     PRODUCT_PROPERTY_LIMIT,
   );
+}
+
+async function canChangeRoute(): Promise<boolean> {
+  return !!(isConfigurationChanged.value && configurableLineItemId) && (await openSaveChangesModal());
+}
+
+onBeforeRouteLeave(canChangeRoute);
+onBeforeRouteUpdate(canChangeRoute);
+
+async function openSaveChangesModal(): Promise<boolean> {
+  return await new Promise<boolean>((resolve) => {
+    const closeModal = openModal({
+      component: SaveChangesModal,
+      props: {
+        title: t("common.titles.save_changes"),
+        message: t("shared.catalog.product_details.product_configuration.changed_confirmation"),
+        onConfirm: async () => {
+          closeModal();
+          await changeCartConfiguredItem(configurableLineItemId!, undefined, selectedConfigurationInput.value);
+          resolve(true);
+        },
+        onClose: () => {
+          resolve(true);
+        },
+      },
+    });
+  });
 }
 </script>
 

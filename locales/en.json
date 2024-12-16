@@ -599,7 +599,8 @@
           "title": "Configure the parameters",
           "none": "None",
           "nothing_selected": "Nothing selected",
-          "changed_notification": "The product configuration has been changed. Save changes?"
+          "changed_notification": "The product configuration has been changed. You can always save it later by clicking \"@:{'ui_kit.buttons.update_cart'}\" button.",
+          "changed_confirmation": "The product configuration has been changed. Do you want to save it?"
         }
       },
       "discount_badge": {

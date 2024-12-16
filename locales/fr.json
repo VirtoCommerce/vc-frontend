@@ -598,7 +598,8 @@
           "title": "Configurer les paramètres",
           "none": "Aucun",
           "nothing_selected": "Aucun sélectionné",
-          "changed_notification": "La configuration du produit a été modifiée. Enregistrer les modifications ?"
+          "changed_notification": "La configuration du produit a été modifiée. Vous pouvez toujours enregistrer les modifications ultérieurement en cliquant sur le bouton \"@:{'ui_kit.buttons.update_cart'}\".",
+          "changed_confirmation": "La configuration du produit a été modifiée. Vous souhaitez-vous enregistrer les modifications ?"
         }
       },
       "discount_badge": {

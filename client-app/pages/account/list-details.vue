@@ -118,6 +118,7 @@ import { prepareLineItem } from "@/core/utilities";
 import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
+import { SaveChangesModal } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import {
@@ -126,7 +127,6 @@ import {
   DeleteWishlistProductModal,
   WishlistLineItems,
   WishlistProductItemSkeleton,
-  SaveWishlistChangesModal,
 } from "@/shared/wishlists";
 import type {
   InputUpdateWishlistItemsType,
@@ -233,8 +233,10 @@ async function updateItems() {
 async function openSaveChangesModal(): Promise<boolean> {
   return await new Promise<boolean>((resolve) => {
     const closeModal = openModal({
-      component: SaveWishlistChangesModal,
+      component: SaveChangesModal,
       props: {
+        title: t("pages.account.list_details.save_changes"),
+        message: t("pages.account.list_details.save_changes_message"),
         onConfirm: async () => {
           closeModal();
           await updateItems();

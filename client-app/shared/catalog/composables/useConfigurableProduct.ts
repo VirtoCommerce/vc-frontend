@@ -1,6 +1,7 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
+import sortBy from "lodash/sortBy";
 import { ref, readonly, computed } from "vue";
 import {
   apolloClient,
@@ -74,7 +75,11 @@ function _useConfigurableProduct(configurableProductId: string) {
   });
 
   const isConfigurationChanged = computed(() => {
-    return !isEqual(initialSelectedConfigurationInput.value, selectedConfigurationInput.value);
+    const sortKey = "sectionId";
+    return !isEqual(
+      sortBy(initialSelectedConfigurationInput.value, sortKey),
+      sortBy(selectedConfigurationInput.value, sortKey),
+    );
   });
 
   async function fetchProductConfiguration() {
