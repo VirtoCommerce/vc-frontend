@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "запрошенные котировки"
+    },
+    "title": "Запросы котировок",
+    "no_quotes_message": "Запросов котировок пока нет",
+    "quote_number_label": "Номер котировки",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Введите ключевое слово...",
+    "no_results_message": "Результаты не найдены",
+    "request_quote_button": "Запросить котировку",
+    "search_quote_requests": "Поиск запросов котировок",
+    "reset_search": "Сбросить поиск",
+    "cart_widget": {
+      "quote_request_hint": "Вы можете запросить товары в вашей корзине через специальную услугу",
+      "create_quote_button": "Добавить товары из корзины в котировку",
+      "title": "Запрос котировки"
+    },
+    "navigation": {
+      "route_name": "Запросы котировок"
+    },
+    "errors": {
+      "creating_quote_error": "Ошибка при создании котировки"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Комментарий к запросу котировки",
+    "title": "Запрос котировки #{0}",
+    "comment": "Комментарий",
+    "comment_field_label": "У вас есть общий комментарий к этому запросу котировки?",
+    "products": "Продукты",
+    "shipping_address": "Адрес доставки",
+    "billing_address": "Адрес для выставления счета",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "Вы не указали адрес. Пожалуйста, укажите его.",
+    "same_as_shipping_address": "Такой же, как адрес доставки",
+    "quote_summary": "Сводка котировки",
+    "quote_data": "Данные котировки",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "Запрос котировки не содержит товаров",
+    "save_changes_notification_success": "Запрос котировки успешно сохранен",
+    "select_shipping_address": "Выберите адрес доставки",
+    "select_billing_address": "Выберите адрес для выставления счета",
+    "files": "Файлы",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "Котировка не может быть утверждена",
+      "decline": "Котировка не может быть отклонена"
+    }
+  }
+}
