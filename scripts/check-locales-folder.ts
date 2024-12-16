@@ -61,7 +61,7 @@ function loadLocaleData(files: string[], localeFolder: string): { [key: string]:
   return localeData;
 }
 
-// @description: This script checks if all keys in the locales are present in the en.json file.
+// @description: This script checks if all keys in the locales are presented.
 // @usage: yarn check-locales -- path/to/locales_folder
 function main(): void {
   const args = process.argv.slice(2);
