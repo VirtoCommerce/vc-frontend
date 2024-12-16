@@ -120,11 +120,12 @@ const {
   isConfigurationChanged,
   changeCartConfiguredItem,
 } = useConfigurableProduct(configurableProductId.value);
-const { openModal } = useModal();
 
+const { openModal } = useModal();
 const notifications = useNotifications();
-watch(isConfigurationChanged, (newVal) => {
-  if (newVal && configurableLineItemId) {
+
+watch(isConfigurationChanged, (isChanged) => {
+  if (isChanged && configurableLineItemId) {
     notifications.info({
       text: t("shared.catalog.product_details.product_configuration.changed_notification"),
       group: NOTIFICATIONS_GROUP,
