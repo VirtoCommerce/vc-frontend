@@ -37,9 +37,9 @@ function compareKeys(baseKeys: string[], keysToCompare: string[], baseLang: stri
 
 function validateLocaleFolder(localeFolder: string): boolean {
   if (!fs.existsSync(localeFolder)) {
-    console.log(`The specified directory "${localeFolder}" does not exist.`);
-    console.log(`Please provide a valid directory path. Example usage:`);
-    console.log(`yarn run check-locales -- path/to/your/locales`);
+    console.warn(`Warning: The specified directory "${localeFolder}" does not exist.`);
+    console.warn(`Please provide a valid directory path. Example usage:`);
+    console.warn(`yarn run check-locales -- path/to/your/locales`);
     return false;
   }
   return true;
@@ -48,7 +48,7 @@ function validateLocaleFolder(localeFolder: string): boolean {
 function getJsonFiles(localeFolder: string): string[] {
   const files = fs.readdirSync(localeFolder).filter((file) => file.endsWith(".json"));
   if (files.length === 0) {
-    console.log("No JSON files found in the specified directory.");
+    console.warn("Warning: No JSON files found in the specified directory.");
   }
   return files;
 }
