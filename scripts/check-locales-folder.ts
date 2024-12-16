@@ -30,8 +30,8 @@ function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
 function compareKeys(baseKeys: string[], keysToCompare: string[], baseLang: string, compareLang: string): void {
   const missingInCompare = baseKeys.filter((key) => !keysToCompare.includes(key));
   if (missingInCompare.length > 0) {
-    console.log(`Keys missing in ${compareLang} compared to ${baseLang}:`);
-    missingInCompare.forEach((key) => console.log(`  - ${key}`));
+    console.warn(`Warning: Keys missing in ${compareLang} compared to ${baseLang}:`);
+    missingInCompare.forEach((key) => console.warn(`  - ${key}`));
   }
 }
 

@@ -103,7 +103,12 @@ jobs:
 
       - name: Check Locales
         run: |
-          yarn check-locales
+          set -o pipefail
+          yarn check-locales 2>&1 | tee check-locales.log
+          if grep -q "Warning:" check-locales.log; then
+            echo "Locale check completed with warnings."
+            exit 1
+          fi
 
       - name: Build
         run: |
