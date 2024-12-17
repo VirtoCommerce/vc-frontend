@@ -190,9 +190,8 @@
       "passwords_do_not_match": "The password fields must have matching values",
       "password_new_same_old": "Your current password and new password must be different",
       "blocked": "You have been blocked. You can not reach any information or create the order. For more details please ",
-      "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile.",
-      "password_expired": "Your password is expired",
-      "data_changed": "The data has been modified on one of the other tabs. Please refresh the page to display the current data."
+      "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile",
+      "password_expired": "Your password is expired"
     },
     "placeholders": {
       "enter_value": "Please enter a value",
@@ -221,17 +220,17 @@
       "dashboard": "Dashboard",
       "account": "Account",
       "profile": "Profile",
-      "change_password": "Change Password",
+      "change_password": "Change password",
       "addresses": "Addresses",
       "orders": "Orders",
       "lists": "Lists",
-      "checkout_defaults": "Checkout Defaults",
+      "checkout_defaults": "Checkout defaults",
       "list_details": "List details",
       "cart": "Cart",
-      "company_info": "Company Info",
-      "company_members": "Company Members",
+      "company_info": "Company info",
+      "company_members": "Company members",
       "contact_administrator": "contact the site administrator",
-      "saved_credit_cards": "Saved Credit Cards"
+      "saved_credit_cards": "Saved credit cards"
     },
     "titles": {
       "all_actions": "All actions",
@@ -328,7 +327,7 @@
         "version": "Ver.",
         "company_name": "Virto Commerce",
         "company_information_link_group": "Company details",
-        "about_us_link": "About Us",
+        "about_us_link": "About us",
         "investor_relations_link": "Investor relations",
         "supplier_overview_link": "Supplier overview",
         "worldwide_link": "Worldwide",
