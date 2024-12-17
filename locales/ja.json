@@ -191,7 +191,8 @@
       "password_new_same_old": "現在のパスワードと異なる必要があります",
       "blocked": "アカウントがブロックされています",
       "password_about_expire": "パスワードは{value}日後に期限切れです",
-      "password_expired": "パスワードが期限切れです"
+      "password_expired": "パスワードが期限切れです",
+      "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。"
     },
     "placeholders": {
       "enter_value": "入力してください",

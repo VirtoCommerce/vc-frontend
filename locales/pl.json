@@ -191,7 +191,8 @@
       "password_new_same_old": "Twoje obecne hasło i nowe hasło muszą się różnić.",
       "blocked": "Zostałeś zablokowany. Nie możesz uzyskać dostępu do żadnych informacji ani złożyć zamówienia. Więcej informacji znajdziesz ",
       "password_about_expire": "Twoje hasło wkrótce wygaśnie za {value} dzień/dni. Proszę ustawić nowe hasło w profilu.",
-      "password_expired": "Twoje hasło wygasło"
+      "password_expired": "Twoje hasło wygasło",
+      "data_changed": "Dane zostały zmienione w jednym z innych tabów. Proszę odśwież stronę, aby wyświetlić aktualne dane."
     },
     "placeholders": {
       "enter_value": "Proszę wprowadzić wartość",

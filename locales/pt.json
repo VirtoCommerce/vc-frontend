@@ -191,7 +191,8 @@
       "password_new_same_old": "Sua senha atual e a nova senha devem ser diferentes.",
       "blocked": "Você foi bloqueado. Não pode acessar nenhuma informação ou criar o pedido. Para mais detalhes, por favor ",
       "password_about_expire": "Sua senha está prestes a expirar em {value} dia(s). Por favor, defina uma nova senha no perfil.",
-      "password_expired": "Sua senha expirou"
+      "password_expired": "Sua senha expirou",
+      "data_changed": "Os dados foram alterados em um dos outros tabs. Por favor, atualize a página para exibir os dados atuais."
     },
     "placeholders": {
       "enter_value": "Por favor, insira um valor",

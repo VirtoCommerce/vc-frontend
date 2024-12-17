@@ -191,7 +191,8 @@
       "password_new_same_old": "La tua password attuale e la nuova password devono essere diverse.",
       "blocked": "Sei stato bloccato. Non puoi accedere a nessuna informazione o creare l'ordine. Per ulteriori dettagli, per favore ",
       "password_about_expire": "La tua password sta per scadere tra {value} giorno(i). Imposta una nuova password nel profilo.",
-      "password_expired": "La tua password è scaduta"
+      "password_expired": "La tua password è scaduta",
+      "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
