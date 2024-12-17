@@ -28,7 +28,6 @@ import {
   useUnselectCartItemsMutation,
   useValidateCouponQuery,
   generateCacheIdIfNew,
-  useChangeCartConfiguredItemMutation,
 } from "@/core/api/graphql";
 import { useGoogleAnalytics, useSyncMutationBatchers } from "@/core/composables";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
@@ -126,21 +125,6 @@ export function useShortCart() {
     }
   }
 
-  const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } =
-    useChangeCartConfiguredItemMutation();
-  async function changeCartConfiguredItem(
-    lineItemId: string,
-    quantity: number,
-    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
-  ): Promise<ShortCartFragment | undefined> {
-    const result = await _changeCartConfiguredItem({
-      lineItemId,
-      quantity,
-      configurationSections: configurationSections as ConfigurationSectionInput[],
-    });
-    return result?.data?.changeCartConfiguredItem;
-  }
-
   function getItemsTotal(productIds: string[]): number {
     if (!cart.value?.items.length) {
       return 0;
@@ -158,7 +142,6 @@ export function useShortCart() {
     addItemsToCart,
     addBulkItemsToCart,
     changeItemQuantity,
-    changeCartConfiguredItem,
     getItemsTotal,
     loading,
     changing: computed(
@@ -166,8 +149,7 @@ export function useShortCart() {
         addToCartLoading.value ||
         addItemsToCartLoading.value ||
         addBulkItemsToCartLoading.value ||
-        changeItemQuantityLoading.value ||
-        changeCartConfiguredItemLoading.value,
+        changeItemQuantityLoading.value,
     ),
   };
 }
