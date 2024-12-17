@@ -162,7 +162,10 @@ async function canChangeRoute(): Promise<boolean> {
   if (!configurableLineItemId) {
     return true;
   }
-  return isConfigurationChanged.value && (await openSaveChangesModal());
+  if (!isConfigurationChanged.value) {
+    return true;
+  }
+  return await openSaveChangesModal();
 }
 onBeforeRouteLeave(canChangeRoute);
 onBeforeRouteUpdate(canChangeRoute);
