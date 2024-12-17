@@ -1,11 +1,10 @@
 <template>
-  <svg :class="['vc-icon', sizeClass]" :style="style">
-    <use :href="`/static/icons/basic/${name}.svg#icon`"></use>
-  </svg>
+  <span :class="['vc-icon', sizeClass]" :style="style" v-html="icon"></span>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import DOMPurify from "dompurify";
+import { ref, computed, watch } from "vue";
 
 interface IProps {
   name?: string;
@@ -15,6 +14,8 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   name: "document-text",
 });
+
+const icon = ref();
 
 const style = computed(() =>
   typeof props.size === "number"
@@ -26,6 +27,19 @@ const style = computed(() =>
 );
 
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
+
+async function loadIcon(name?: string) {
+  const response = (await import(`@/assets/icons/basic/${name}.svg?raw`)) as { default: string };
+  icon.value = DOMPurify.sanitize(response.default);
+}
+
+watch(
+  () => props.name,
+  (newIconName: string) => {
+    void loadIcon(newIconName);
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss">
