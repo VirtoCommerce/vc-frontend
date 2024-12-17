@@ -190,8 +190,9 @@
       "passwords_do_not_match": "The password fields must have matching values",
       "password_new_same_old": "Your current password and new password must be different",
       "blocked": "You have been blocked. You can not reach any information or create the order. For more details please ",
-      "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile",
-      "password_expired": "Your password is expired"
+      "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile.",
+      "password_expired": "Your password is expired",
+      "data_changed": "The data has been modified on one of the other tabs. Please refresh the page to display the current data."
     },
     "placeholders": {
       "enter_value": "Please enter a value",
