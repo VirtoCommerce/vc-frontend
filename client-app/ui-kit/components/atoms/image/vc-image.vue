@@ -5,7 +5,7 @@
     :loading="lazy ? 'lazy' : 'eager'"
     :data-src="fallbackEnabled ? src : null"
     :data-size-suffix="fallbackEnabled || originalEnabled ? sizeSuffix : null"
-    :class="{ 'object-scale-down object-center': preparedSrc === fallbackSrc }"
+    :class="{ 'object-scale-down object-center': fallbackEnabled || !src }"
     @error="setFallback"
   />
 </template>
