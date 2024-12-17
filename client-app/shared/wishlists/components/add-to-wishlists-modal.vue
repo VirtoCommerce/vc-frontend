@@ -126,7 +126,7 @@
 import { computed, ref, inject, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetProductWishlistsQuery } from "@/core/api/graphql/catalog/queries/getProductWishlists";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
@@ -165,7 +165,7 @@ const {
   removeItemsFromWishlists,
 } = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const {
   loading: loadingProductWishlists,
   load: fetchProductWishlists,
@@ -228,7 +228,7 @@ async function addToWishlistsFromListOther() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value!);
+  analytics("addItemToWishList", product.value!);
 }
 
 async function createLists() {
@@ -249,7 +249,7 @@ async function createLists() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value!);
+  analytics("addItemToWishList", product.value!);
 }
 
 async function removeProductFromWishlists() {
