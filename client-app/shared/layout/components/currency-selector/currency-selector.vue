@@ -38,12 +38,27 @@
 </template>
 
 <script setup lang="ts">
+import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables";
+import { useFullCart } from "@/shared/cart";
 
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
+const { cart } = useFullCart();
+const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
 
-function select(code: string) {
+async function select(code: string): Promise<void> {
   if (currentCurrency.value?.code !== code) {
+    if (cart.value) {
+      await changeCartCurrency({
+        command: {
+          cartId: cart.value.id,
+          cartName: cart.value.name,
+          cartType: cart.value.type,
+          newCurrencyCode: code,
+        },
+      });
+    }
+
     saveCurrencyCode(code);
   }
 }
