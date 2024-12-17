@@ -183,7 +183,7 @@
                   </template>
                   <template v-else>
                     <VcImage
-                      src="/static/icons/placeholders/select-payment.svg"
+                      src="select-payment.svg"
                       class="mr-3.5 inline-block size-10 object-center md:size-12"
                       lazy
                     />
