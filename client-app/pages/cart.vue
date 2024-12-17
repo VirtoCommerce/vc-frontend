@@ -5,8 +5,8 @@
     v-else-if="!cart?.items?.length"
     :title="$t('pages.cart.title')"
     :description="$t('pages.cart.empty_cart_description')"
-    image="/static/images/errors/emptyCart.webp"
-    mobile-image="/static/images/errors/emptyCartMobile.webp"
+    image="emptyCart.webp"
+    mobile-image="emptyCartMobile.webp"
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>

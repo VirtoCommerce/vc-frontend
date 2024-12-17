@@ -4,8 +4,8 @@
     :breadcrumbs="breadcrumbs"
     :title="$t('pages.compare.empty_list.title')"
     :description="$t('pages.compare.empty_list.message')"
-    image="/static/images/errors/emptyCompareList.webp"
-    mobile-image="/static/images/errors/emptyCompareListMobile.webp"
+    image="emptyCompareList.webp"
+    mobile-image="emptyCompareListMobile.webp"
   >
     <template #actions>
       <VcButton :to="{ name: 'Catalog' }">
