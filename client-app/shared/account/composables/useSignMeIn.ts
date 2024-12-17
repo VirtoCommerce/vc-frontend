@@ -40,7 +40,7 @@ export function useSignMeIn() {
           if (currencyCode !== currentCurencyCode) {
             await changeCartCurrency({
               command: {
-                cartId: cart.value.id,
+                userId: me.value.me.id,
                 newCurrencyCode: currencyCode,
               },
             });

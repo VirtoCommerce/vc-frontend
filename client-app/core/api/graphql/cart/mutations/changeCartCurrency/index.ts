@@ -7,13 +7,12 @@ export function useChangeCartCurrencyMutation() {
   return useMutation(
     ChangeCartCurrencyDocument,
     computed(() => {
-      const { storeId, userId, currencyCode, cultureName } = globals;
+      const { storeId, currencyCode, cultureName } = globals;
 
       return {
         variables: {
           command: {
             storeId,
-            userId,
             currencyCode,
             cultureName,
           },
