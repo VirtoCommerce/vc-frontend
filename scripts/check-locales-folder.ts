@@ -13,17 +13,15 @@ function loadJson(filePath: string): LocaleDataType {
 
 function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
   let keys: string[] = [];
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const fullKey = parentKey ? `${parentKey}.${key}` : key;
-      const value = obj[key];
-      if (typeof value === "object" && value !== null) {
-        keys = keys.concat(getAllKeys(value, fullKey));
-      } else if (typeof value === "string") {
-        keys.push(fullKey);
-      }
+  Object.keys(obj).forEach((key) => {
+    const fullKey = parentKey ? `${parentKey}.${key}` : key;
+    const value = obj[key];
+    if (typeof value === "object" && value !== null) {
+      keys = keys.concat(getAllKeys(value, fullKey));
+    } else if (typeof value === "string") {
+      keys.push(fullKey);
     }
-  }
+  });
   return keys;
 }
 
@@ -94,22 +92,18 @@ function main(): void {
 
     // Get all keys for each locale
     const localeKeys: { [key: string]: string[] } = {};
-    for (const file in localeData) {
-      if (Object.hasOwn(localeData, file)) {
-        localeKeys[file] = getAllKeys(localeData[file]);
-      }
-    }
+    Object.keys(localeData).forEach((file) => {
+      localeKeys[file] = getAllKeys(localeData[file]);
+    });
 
     // Compare keys between each pair of locale files
-    for (const baseFile in localeKeys) {
-      if (Object.hasOwn(localeKeys, baseFile)) {
-        for (const compareFile in localeKeys) {
-          if (Object.hasOwn(localeKeys, compareFile) && baseFile !== compareFile) {
-            compareKeys(localeKeys[baseFile], localeKeys[compareFile], baseFile, compareFile);
-          }
+    Object.keys(localeKeys).forEach((baseFile) => {
+      Object.keys(localeKeys).forEach((compareFile) => {
+        if (baseFile !== compareFile) {
+          compareKeys(localeKeys[baseFile], localeKeys[compareFile], baseFile, compareFile);
         }
-      }
-    }
+      });
+    });
   });
 }
 
