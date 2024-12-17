@@ -34,8 +34,8 @@
 
     "default_return_url": "/",
 
-    "logo_image": "/static/images/common/logo.svg",
-    "logo_inverted_image": "/static/images/common/logo-white.svg",
+    "logo_image": "logo.svg",
+    "logo_inverted_image": "logo-white.svg",
     "favicon_image": "/static/icons/favicon-32x32.png",
     "homepage_background_image": "/static/images/home/main-banner.webp",
 
