@@ -30,7 +30,12 @@ export const Basic = Template.bind({});
 
 export const NoShadow = Template.bind({});
 NoShadow.args = {
-  noShadow: true,
+  shadow: false,
+};
+
+export const NoBorder = Template.bind({});
+NoBorder.args = {
+  border: false,
 };
 
 export const Title = Template.bind({});
