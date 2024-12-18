@@ -1,20 +1,22 @@
 <template>
-  <VcLoaderOverlay v-if="loading && !cart?.items?.length" no-bg />
+  <template v-if="!cart?.items?.length">
+    <VcLoaderOverlay v-if="loading" no-bg />
 
-  <VcEmptyPage
-    v-else-if="!cart?.items?.length"
-    :title="$t('pages.cart.title')"
-    :description="$t('pages.cart.empty_cart_description')"
-    image="/static/images/errors/emptyCart.webp"
-    mobile-image="/static/images/errors/emptyCartMobile.webp"
-    :breadcrumbs="breadcrumbs"
-  >
-    <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" size="lg">
-        {{ $t("common.buttons.continue_shopping") }}
-      </VcButton>
-    </template>
-  </VcEmptyPage>
+    <VcEmptyPage
+      v-else
+      :title="$t('pages.cart.title')"
+      :description="$t('pages.cart.empty_cart_description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg">
+          {{ $t("common.buttons.continue_shopping") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+  </template>
 
   <VcContainer v-else class="relative z-0 max-lg:pb-12">
     <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
