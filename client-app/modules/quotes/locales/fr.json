@@ -1,8 +1,69 @@
 {
   "quotes": {
-    "request_quote_button": "Ajouter des articles au devis",
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "devis demandés"
+    },
+    "title": "Demandes de Devis",
+    "no_quotes_message": "Il n'y a pas encore de demandes de devis",
+    "quote_number_label": "Numéro de devis",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Entrez un mot-clé...",
+    "no_results_message": "Aucun résultat trouvé",
+    "request_quote_button": "Demander un Devis",
+    "search_quote_requests": "Rechercher des demandes de devis",
+    "reset_search": "Réinitialiser la recherche",
+    "cart_widget": {
+      "quote_request_hint": "Vous pouvez demander des articles dans votre panier via un service spécial",
+      "create_quote_button": "Ajouter les articles du panier au devis",
+      "title": "Demande de devis"
+    },
     "navigation": {
-      "route_name": "Demandes de devis"
+      "route_name": "Demandes de Devis"
+    },
+    "errors": {
+      "creating_quote_error": "Erreur lors de la création d'un devis"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Commentaire sur la demande de devis",
+    "title": "Demande de Devis #{0}",
+    "comment": "Commentaire",
+    "comment_field_label": "Avez-vous une remarque générale pour cette demande de devis ?",
+    "products": "Produits",
+    "shipping_address": "Adresse de Livraison",
+    "billing_address": "Adresse de Facturation",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "Vous n'avez pas défini d'adresse. Veuillez en spécifier une.",
+    "same_as_shipping_address": "Identique à l'adresse de livraison",
+    "quote_summary": "Résumé du Devis",
+    "quote_data": "Données du Devis",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "La demande de devis ne contient pas d'articles",
+    "save_changes_notification_success": "La demande de devis a été enregistrée avec succès",
+    "select_shipping_address": "Sélectionnez une adresse de livraison",
+    "select_billing_address": "Sélectionnez une adresse de facturation",
+    "files": "Fichiers",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "Le devis ne peut pas être approuvé",
+      "decline": "Le devis ne peut pas être refusé"
     }
   }
 }

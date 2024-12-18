@@ -1,0 +1,18 @@
+{
+  "push_messages": {
+    "title": "Powiadomienia",
+    "menu_item_name": "Powiadomienia",
+    "empty_list": "Nie masz nowych powiadomień w tej chwili",
+    "options": {
+      "make_all_as_read": "Oznacz wszystko jako przeczytane",
+      "make_all_as_unread": "Oznacz wszystko jako nieprzeczytane"
+    },
+    "empty": {
+      "title": "Brak nowych powiadomień w tej chwili.",
+      "description": "Bądź na bieżąco z aktualizacjami i ważnymi wiadomościami."
+    },
+    "clear_all": "Wyczyść wszystko",
+    "view_all": "Zobacz wszystkie powiadomienia",
+    "show_unread_only": "Pokaż tylko nieprzeczytane"
+  }
+}
