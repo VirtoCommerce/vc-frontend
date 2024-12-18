@@ -37,7 +37,7 @@
     "logo_image": "logo.svg",
     "logo_inverted_image": "logo-white.svg",
     "favicon_image": "/static/icons/favicon-32x32.png",
-    "homepage_background_image": "/static/images/home/main-banner.webp",
+    "homepage_background_image": "main-banner.webp",
 
     "image_thumbnails_enabled": true,
     "image_thumbnails_original_fallback_enabled": true,

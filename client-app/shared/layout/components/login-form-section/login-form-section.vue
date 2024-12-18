@@ -1,5 +1,5 @@
 <template>
-  <div class="banner flex items-center" :style="{ backgroundImage: `url(${$cfg.homepage_background_image})` }">
+  <div class="banner flex items-center" :style="{ backgroundImage: `url(${bgImage})` }">
     <div class="container mx-auto flex flex-col items-center space-y-10 p-6 md:p-12 lg:flex-row lg:space-x-24">
       <div v-if="!isAuthenticated" class="w-full rounded bg-additional-50 p-6 shadow-lg md:p-10 lg:w-2/5">
         <VcTypography tag="h1" class="mb-8">
@@ -33,8 +33,15 @@
 </template>
 
 <script setup lang="ts">
+import { computed, inject } from "vue";
+import { configInjectionKey } from "@/core/injection-keys";
 import { SignInForm, useUser } from "@/shared/account";
+import { loadImage } from "@/ui-kit/utilities";
+
+const cfg = inject(configInjectionKey);
 const { isAuthenticated } = useUser();
+
+const bgImage = computed(() => (cfg?.homepage_background_image ? loadImage(cfg?.homepage_background_image) : "none"));
 </script>
 
 <style scoped>
