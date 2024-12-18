@@ -1091,7 +1091,7 @@
           "title": "清单：{0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes in the list?"
+        "save_changes_message": "@:common.messages.save_changes 列表中吗?"
       },
       "profile": {
         "meta": {
