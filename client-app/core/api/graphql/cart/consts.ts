@@ -15,6 +15,7 @@ export const FULL_CART_MUTATION_NAMES = [
   OperationNames.Mutation.ChangeCartComment,
   OperationNames.Mutation.ChangeFullCartItemQuantity,
   OperationNames.Mutation.ChangeFullCartItemsQuantity,
+  OperationNames.Mutation.ChangeCartConfiguredItem,
   OperationNames.Mutation.ChangePurchaseOrderNumber,
   OperationNames.Mutation.ClearCart,
   OperationNames.Mutation.RejectGiftItems,
