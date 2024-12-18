@@ -1,9 +1,5 @@
 <template>
-  <VcEmptyPage
-    image="/static/images/order-completed.webp"
-    mobile-image="/static/images/order-completed.webp"
-    class="flex grow flex-col"
-  >
+  <VcEmptyPage image="order-completed.webp" mobile-image="order-completed.webp" class="flex grow flex-col">
     <template #title>
       <h1 class="mb-3 text-center text-2xl font-bold uppercase lg:hidden lg:text-left">
         {{ $t("pages.checkout_complete.title") }}
