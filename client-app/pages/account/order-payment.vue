@@ -40,8 +40,8 @@
           <!-- Successful payment -->
           <VcEmptyPage
             v-if="success"
-            image="/static/images/payment/payment-successful.webp"
-            mobile-image="/static/images/payment/payment-successful.webp"
+            image="order-payment-successful.webp"
+            mobile-image="order-payment-successful.webp"
             class="-mx-6 -mb-6 -mt-16 md:-mt-6 lg:-mx-9 lg:pl-14"
           >
             <template #description>
@@ -78,8 +78,8 @@
           <!-- Payment failure -->
           <VcEmptyPage
             v-else-if="failure"
-            image="/static/images/payment/payment-failed.webp"
-            mobile-image="/static/images/payment/payment-failed.webp"
+            image="order-payment-failed.webp"
+            mobile-image="order-payment-failed.webp"
             class="-mx-9 -mb-6 -mt-16 md:-mt-6 lg:pl-14"
           >
             <template #description>
