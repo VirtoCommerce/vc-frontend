@@ -1,5 +1,5 @@
 <template>
-  <VcLoaderOverlay v-if="loading" no-bg />
+  <VcLoaderOverlay v-if="loading && !cart?.items?.length" no-bg />
 
   <VcEmptyPage
     v-else-if="!cart?.items?.length"
