@@ -599,7 +599,9 @@
         "product_configuration": {
           "title": "Configura los parámetros",
           "none": "Ninguno",
-          "nothing_selected": "Nada seleccionado"
+          "nothing_selected": "Nada seleccionado",
+          "changed_notification": "La configuración del producto ha sido cambiada. Puedes siempre guardarla más tarde haciendo clic en el botón \"@:{'ui_kit.buttons.update_cart'}\".",
+          "changed_confirmation": "La configuración del producto ha sido cambiada. ¿Quieres guardarla?"
         }
       },
       "discount_badge": {
