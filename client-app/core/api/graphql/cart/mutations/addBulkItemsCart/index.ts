@@ -5,7 +5,7 @@ import type { BulkCartType, InputNewBulkItemType, CartIdFragment } from "@/core/
 import type { MaybeRef } from "vue";
 
 export function useAddBulkItemsCartMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
-  return useMutation(AddBulkItemsCartDocument, useCartMutationVariables(cart, {}));
+  return useMutation(AddBulkItemsCartDocument, useCartMutationVariables(cart));
 }
 
 /** @deprecated Use {@link useAddBulkItemsCartMutation} instead. */

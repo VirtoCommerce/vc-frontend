@@ -5,7 +5,7 @@ import type { CartType, InputNewCartItemType, CartIdFragment } from "@/core/api/
 import type { MaybeRef } from "vue";
 
 export function useAddItemsCartMutation(cart?: MaybeRef<CartIdFragment | undefined>) {
-  return useMutation(AddItemsCartDocument, useCartMutationVariables(cart, {}));
+  return useMutation(AddItemsCartDocument, useCartMutationVariables(cart));
 }
 
 /** @deprecated Use {@link useAddItemsCartMutation} instead. */
