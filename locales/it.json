@@ -1,0 +1,1443 @@
+{
+  "common": {
+    "buttons": {
+      "home": "Pagina iniziale",
+      "ok": "OK",
+      "cancel": "Annulla",
+      "close": "Chiudi",
+      "confirm": "Conferma",
+      "submit": "Invia",
+      "create": "Crea",
+      "update": "Aggiorna",
+      "remove": "Rimuovi",
+      "save": "Salva",
+      "edit": "Modifica",
+      "settings": "Impostazioni",
+      "change": "Cambia",
+      "delete": "Elimina",
+      "continue_shopping": "Continua a fare acquisti",
+      "select": "Seleziona",
+      "choose": "Scegli",
+      "allFilters": "Tutti i filtri",
+      "filters": "Filtri",
+      "back": "Indietro",
+      "reset": "Reimposta",
+      "register": "Registrati",
+      "reset_password": "Reimposta password",
+      "reset_filters": "Reimposta filtri",
+      "add_to_cart": "Aggiungi al carrello",
+      "apply": "Applica",
+      "send": "Invia",
+      "more": "Altro",
+      "yes": "Sì",
+      "no": "No",
+      "clear_cart": "Svuota carrello",
+      "save_changes": "Salva modifiche",
+      "new_address": "Nuovo indirizzo",
+      "review_order": "Rivedi ordine",
+      "show_order": "Mostra ordine",
+      "print": "Stampa",
+      "print_order": "Stampa ordine",
+      "place_order": "Effettua ordine",
+      "back_to_cart": "Torna al carrello",
+      "back_to_order_details": "Torna ai dettagli dell'ordine",
+      "go_to_checkout": "Procedi al checkout",
+      "go_to_billing": "Procedi alla fatturazione",
+      "show_more": "Mostra di più",
+      "hide": "Nascondi",
+      "view_invoice": "Visualizza fattura",
+      "pay_now": "Paga ora",
+      "payment_details": "Dettagli pagamento",
+      "reorder_all": "Riordina tutto",
+      "view_cart": "Visualizza carrello",
+      "add_new": "Aggiungi nuovo",
+      "add_new_address": "Aggiungi nuovo indirizzo",
+      "remove_selected": "Rimuovi selezionati",
+      "resend_link": "Reinvia link",
+      "set_new_password": "Imposta nuova password",
+      "toggle_dropdown": "Attiva/disattiva menu a discesa",
+      "search_orders": "Cerca ordini",
+      "reset_orders_search_keyword": "Reimposta parola chiave di ricerca ordini",
+      "remove_credit_card": "Rimuovi carta di credito",
+      "search_company_members": "Cerca membri azienda",
+      "reset_company_members_search_keyword": "Reimposta parola chiave di ricerca membri azienda",
+      "previous": "Precedente",
+      "next": "Successivo",
+      "send_link_email": "Invia link via e-mail",
+      "share": "Condividi",
+      "approve": "Approva",
+      "decline": "Rifiuta",
+      "all_filters": "Tutti i filtri",
+      "sort_by": "Ordina per",
+      "add_items_to_cart": "Aggiungi articoli al carrello",
+      "show_details": "Mostra dettagli"
+    },
+    "labels": {
+      "actions": "Azioni",
+      "user_name": "Nome utente",
+      "password": "Password",
+      "confirm_password": "Conferma password",
+      "company_name": "Nome azienda",
+      "first_name": "Nome",
+      "last_name": "Cognome",
+      "address": "Indirizzo",
+      "phone": "Telefono",
+      "email": "Email",
+      "country": "Paese",
+      "zip_or_postal_code": "CAP / Codice postale",
+      "region": "Stato/Provincia",
+      "city": "Città",
+      "address_line1": "Indirizzo",
+      "address_line2": "Appartamento, suite, numero edificio, ecc.",
+      "description": "Descrizione",
+      "quantity": "Quantità",
+      "total": "Totale",
+      "compare": "Confronta",
+      "price": "Prezzo",
+      "product_price": "Il tuo prezzo",
+      "subtotal": "Subtotale",
+      "discount": "Sconto",
+      "line_items": "Articoli",
+      "shipping": "Spedizione",
+      "tax": "Tassa",
+      "shipping_cost": "Costo di spedizione",
+      "status": "Stato",
+      "date": "Data",
+      "created_date": "Data di creazione",
+      "sort_by": "Ordina per:",
+      "sku": "SKU",
+      "true_property": "Sì",
+      "false_property": "No",
+      "product": "Prodotto",
+      "properties": "Proprietà",
+      "price_per_item": "Prezzo per articolo",
+      "created": "Creato",
+      "purchase_order_number": "Numero ordine d'acquisto",
+      "promotion_code": "Codice promozionale",
+      "secure_checkout": "Checkout sicuro",
+      "creates": "Crea",
+      "payment_number": "ID pagamento",
+      "payment_type": "Tipo di pagamento",
+      "recipient_name": "Nome destinatario",
+      "active_address": "Indirizzo attivo",
+      "addresses_icon": "Icona indirizzo",
+      "digital_product": "Prodotto digitale",
+      "search": "Cerca {0}",
+      "in_stock": "Disponibile",
+      "starts_from": "Inizio: {0}",
+      "ends_to": "Fine: {0}",
+      "saved_cards": "Carte salvate",
+      "save_card_for_future_payments": "Salva carta per pagamenti futuri. È sicuro.",
+      "add_new_card": "Aggiungi nuova carta",
+      "last_day": "Ultimo giorno",
+      "last_week": "Ultima settimana",
+      "last_month": "Ultimo mese",
+      "last_year": "Ultimo anno",
+      "custom_date": "Data personalizzata",
+      "background_image": "Immagine di sfondo",
+      "default_language": "Lingua predefinita",
+      "default_currency": "Valuta predefinita",
+      "organizations": "Organizzazioni",
+      "my_organizations": "Le mie organizzazioni",
+      "select_product": "Seleziona un prodotto",
+      "sort_by_date": "Ordina per data",
+      "ascending": "Ascendente",
+      "descending": "Discendente",
+      "date_new_to_old": "Data, dal nuovo al vecchio",
+      "date_old_to_new": "Data, dal vecchio al nuovo",
+      "comments": "Commenti",
+      "fields_required": "I campi sono obbligatori"
+    },
+    "prefixes": {
+      "please": "Per favore",
+      "expires": "Scade:"
+    },
+    "suffixes": {
+      "product_count_in_stock": "in magazzino"
+    },
+    "messages": {
+      "product_out_of_stock": "Esaurito",
+      "required_field": "Questo campo è obbligatorio",
+      "email_is_not_correct": "Inserisci un indirizzo email valido, ad es. johndoe{'@'}gmail.com",
+      "email_not_unique": "Questa email è già registrata con noi",
+      "max_length": "Questo campo non deve contenere più di {max} caratteri",
+      "creating_order_error": "Errore durante la creazione di un ordine",
+      "item_can_t_be_purchased": "Questo articolo non può essere acquistato",
+      "item_is_out_of_stock": "Questo articolo è esaurito",
+      "invalid_value": "Valore non valido",
+      "invalid_user_id_or_token": "ID utente o token non valido.",
+      "product_no_longer_available": "Non più disponibile",
+      "item_quantity_required_field": "Il valore della quantità dell'articolo non può essere vuoto",
+      "max_value": "Il valore massimo è {value}",
+      "min_value": "Il valore minimo è {value}",
+      "empty_wish_list": "Non ci sono articoli nella lista",
+      "not_defined": "Non definito",
+      "invalid_coupon": "Questo codice non corrisponde a nessun coupon attivo. Controlla che tutto sia corretto e riprova.",
+      "fill_all_required": "Completa tutte le informazioni richieste per procedere.",
+      "something_went_wrong": "Oops! Qualcosa è andato storto. Controlla che tutto sia corretto e riprova.",
+      "checkout_pricing_warning": "Disponibilità, spedizione, tasse e promozioni non sono definitive fino al completamento dell'ordine.",
+      "wishlists_available_for_authorized": "Le liste dei desideri sono disponibili solo per gli utenti autenticati",
+      "no_addresses": "Non hai ancora nessun indirizzo",
+      "confirm_delete_address": "Sei sicuro di voler eliminare questo indirizzo?",
+      "save_changes": "Vuoi salvare le modifiche",
+      "address_deletion_successful": "L'indirizzo è stato eliminato con successo",
+      "cart_contains_deleted_products": "Il carrello contiene prodotti che non possono più essere acquistati. Rimuovi questi prodotti e riprova",
+      "fail_add_product_to_cart": "Spiacenti, questo prodotto non può essere aggiunto al carrello. {reason}",
+      "fail_to_change_quantity_in_cart": "Spiacenti, non è possibile aggiornare la quantità del prodotto nel carrello. {reason}",
+      "unhandled_error": "Ci scusiamo per l'inconveniente. Il nostro server sta attualmente riscontrando problemi tecnici. Riprova più tardi.",
+      "role_update_successful": "Il ruolo del cliente è stato aggiornato con successo.",
+      "role_update_failed": "Si sono verificati errori durante l'aggiornamento del ruolo: {0}",
+      "passwords_do_not_match": "I campi della password devono avere valori corrispondenti.",
+      "password_new_same_old": "La tua password attuale e la nuova password devono essere diverse.",
+      "blocked": "Sei stato bloccato. Non puoi accedere a nessuna informazione o creare l'ordine. Per ulteriori dettagli, per favore ",
+      "password_about_expire": "La tua password sta per scadere tra {value} giorno(i). Imposta una nuova password nel profilo.",
+      "password_expired": "La tua password è scaduta",
+      "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti."
+    },
+    "placeholders": {
+      "enter_value": "Inserisci un valore",
+      "not_selected": "Non selezionato",
+      "select_address": "Seleziona un indirizzo",
+      "select_country": "Seleziona il tuo paese",
+      "select_region": "Seleziona il tuo stato o provincia",
+      "select_delivery_method": "Seleziona un metodo di consegna",
+      "select_payment_method": "Seleziona un metodo di pagamento",
+      "company_name": "Inserisci il nome della tua azienda",
+      "first_name": "Inserisci il tuo nome",
+      "last_name": "Inserisci il tuo cognome",
+      "email": "Inserisci il tuo indirizzo email",
+      "password": "Inserisci la tua password",
+      "confirm_password": "Conferma la tua password",
+      "purchase_order_number": "Inserisci un numero d'ordine d'acquisto",
+      "promotion_code": "Inserisci un codice promozionale",
+      "select_credit_card": "Seleziona carta di credito"
+    },
+    "links": {
+      "home": "Home",
+      "catalog": "Catalogo",
+      "bulk_order": "Ordine all'ingrosso",
+      "compare": "Confronta",
+      "contact_us": "Contattaci",
+      "dashboard": "Dashboard",
+      "account": "Account",
+      "profile": "Profilo",
+      "change_password": "Cambia password",
+      "addresses": "Indirizzi",
+      "orders": "Ordini",
+      "lists": "Liste",
+      "checkout_defaults": "Impostazioni predefinite del checkout",
+      "list_details": "Dettagli lista",
+      "cart": "Carrello",
+      "company_info": "Informazioni azienda",
+      "company_members": "Membri azienda",
+      "contact_administrator": "contatta l'amministratore del sito",
+      "saved_credit_cards": "Carte di credito salvate"
+    },
+    "titles": {
+      "all_actions": "Tutte le azioni",
+      "other_actions": "Altre azioni",
+      "order_summary": "Riepilogo ordine",
+      "billing_address": "Indirizzo di fatturazione",
+      "payment_method": "Metodo di pagamento",
+      "payment_details": "Dettagli pagamento",
+      "shipping_method": "Metodo di spedizione",
+      "shipping_address": "Indirizzo di spedizione",
+      "order_comment": "Commento ordine",
+      "order_data": "Dati ordine",
+      "review_order": "Rivedi il tuo ordine",
+      "new_address": "Nuovo indirizzo",
+      "edit_address": "Modifica indirizzo",
+      "addresses": "Indirizzi",
+      "delete_address": "Elimina indirizzo",
+      "remove_products": "Rimuovi prodotti",
+      "change_role": "Cambia ruolo",
+      "save_changes": "Salva modifiche",
+      "password_expired": "La password sta per scadere",
+      "error_details": "Dettagli errore"
+    },
+    "roles": {
+      "org-maintainer": "Manutentore organizzazione",
+      "org-employee": "Dipendente organizzazione",
+      "purchasing-agent": "Agente acquisti",
+      "store-admin": "Amministratore negozio",
+      "store-manager": "Responsabile negozio"
+    },
+    "methods": {
+      "payment_by_code": {
+        "AuthorizeNetPaymentMethod": "Carta bancaria (Authorize.Net)",
+        "DefaultManualPaymentMethod": "Manuale",
+        "SkyflowPaymentMethod": "Carta bancaria (Skyflow)"
+      },
+      "delivery_by_id": {
+        "FixedRate_Ground": "Tariffa fissa (Terra)",
+        "FixedRate_Air": "Tariffa fissa (Aria)"
+      }
+    }
+  },
+  "shared": {
+    "layout": {
+      "header": {
+        "top_header": {
+          "link_dashboard": "@:common.links.dashboard",
+          "link_contact_us": "Contatti",
+          "call_us_label": "Chiamaci: ",
+          "logged_in_as": "connesso come"
+        },
+        "bottom_header": {
+          "catalog_menu_button": "Catalogo"
+        },
+        "link_sign_in": "Accedi",
+        "link_register_now": "Iscriviti ora",
+        "link_logout": "Esci",
+        "menu": {
+          "home": "@:common.links.home",
+          "catalog": "@:common.links.catalog",
+          "bulk_order": "@:common.links.bulk_order",
+          "compare": "@:common.links.compare",
+          "cart": "@:common.links.cart",
+          "lists": "@:common.links.lists",
+          "orders": "@:common.links.orders",
+          "contact_us": "@:common.links.contact_us"
+        },
+        "mobile": {
+          "my_account": "@:common.links.account",
+          "account_menu": {
+            "dashboard": "@:common.links.dashboard",
+            "profile": "@:common.links.profile",
+            "change_password": "@:common.links.change_password",
+            "addresses": "@:common.links.addresses",
+            "orders": "@:common.links.orders",
+            "lists": "@:common.links.lists",
+            "checkout_defaults": "@:common.links.checkout_defaults",
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
+          },
+          "settings": "Impostazioni",
+          "currency": "Valuta",
+          "search_bar": {
+            "input_placeholder": "Inserisci parola chiave, articolo, modello o numero parte di ricambio"
+          },
+          "view_all_catalog": "Visualizza tutti i prodotti nella categoria"
+        }
+      },
+      "footer": {
+        "version": "Ver.",
+        "company_name": "Virto Commerce",
+        "company_information_link_group": "Dettagli azienda",
+        "about_us_link": "Chi siamo",
+        "investor_relations_link": "Relazioni con gli investitori",
+        "supplier_overview_link": "Panoramica fornitori",
+        "worldwide_link": "In tutto il mondo",
+        "customer_support_link_group": "Supporto clienti",
+        "catalog_request_link": "Richiesta catalogo",
+        "contact_us_link": "Contattaci",
+        "feedback_link": "Feedback",
+        "find_a_branch_link": "Trova una filiale",
+        "order_support_link_group": "Supporto ordini",
+        "orders_link": "Ordini",
+        "pick_up_link": "Ritiro",
+        "auto_reorder_link": "Riordino automatico",
+        "special_orders_link": "Ordini speciali",
+        "returns_cancellations_link": "Resi e cancellazioni",
+        "online_resources_ling_group": "Risorse online",
+        "catalog_link": "Catalogo",
+        "hot_buys_link": "Offerte speciali",
+        "rebates_link": "Rimborsi",
+        "replacement_parts_link": "Parti di ricambio",
+        "demo_landing_link": "Pagina demo",
+        "demo_page_link": "Pagina demo",
+        "builder_io_page_link": "Pagina Builder.io",
+        "all_rights_reserved": "Tutti i diritti riservati.",
+        "asp_net_e_commerce_platform": "Piattaforma ecommerce ASP.NET {0}",
+        "by_virto": "Virto Commerce"
+      },
+      "search_bar": {
+        "categories_label": "Categorie",
+        "products_label": "Prodotti",
+        "pages_label": "Pagine",
+        "suggestions_label": "Suggerimenti",
+        "no_results": "La tua ricerca {keyword} non ha prodotto risultati",
+        "enter_keyword_placeholder": "Cerca prodotti qui",
+        "search_button": "Cerca",
+        "view_all_results_button": "Visualizza tutti i {total} risultati"
+      },
+      "language_selector": {
+        "label": "Lingua:"
+      },
+      "currency_selector": {
+        "label": "Valuta:"
+      }
+    },
+    "account": {
+      "navigation": {
+        "main_title": "Account",
+        "corporate_title": "Aziendale",
+        "links": {
+          "dashboard": "@:common.links.dashboard",
+          "profile": "@:common.links.profile",
+          "change_password": "@:common.links.change_password",
+          "addresses": "@:common.links.addresses",
+          "orders": "@:common.links.orders",
+          "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members",
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
+        }
+      },
+      "change_password_form": {
+        "title": "Crea nuova password",
+        "current_pass_label": "Password attuale",
+        "current_pass_placeholder": "Inserisci la tua password attuale",
+        "new_pass_label": "Nuova password",
+        "new_pass_placeholder": "Crea una nuova password",
+        "confirm_new_pass_label": "Conferma nuova password",
+        "confirm_new_pass_placeholder": "Ripeti la tua nuova password"
+      },
+      "sign_in_form": {
+        "remember_me_label": "Ricordami",
+        "forgot_password_link": "Hai dimenticato la password?",
+        "login_button": "Accedi",
+        "registration_button": "Iscriviti",
+        "errors": {
+          "login_failed": "Tentativo di accesso fallito. Controlla le tue credenziali",
+          "email_verification_is_required": "Verifica email richiesta. Verifica il tuo indirizzo email",
+          "user_is_temporary_locked_out": "Il tuo account è stato temporaneamente bloccato. Riprova dopo un po'",
+          "user_is_locked_out": "@:common.messages.blocked",
+          "user_cannot_login_in_store": "Accesso negato. Non puoi accedere al negozio corrente",
+          "password_expired": "@:common.messages.password_expired",
+          "user_not_found": "Utente non trovato. Assicurati di aver inserito le informazioni corrette"
+        }
+      },
+      "forgot_password_form": {
+        "error_alert": "Risultato non valido della richiesta di reimpostazione password. Per favore "
+      },
+      "checkout_default_success_modal": {
+        "title": "Impostazioni predefinite del checkout",
+        "message": "Dettagli predefiniti del checkout aggiornati con successo.",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "invite_member_modal": {
+        "title": "Invita membro",
+        "role_label": "Ruolo",
+        "role_placeholder": "Seleziona ruolo",
+        "emails_label": "Inserisci gli indirizzi email delle persone che vuoi invitare",
+        "emails_placeholder": "Usa virgole, punti e virgola o interruzioni di riga per separare più voci",
+        "message_label": "Messaggio",
+        "cancel_button": "@:common.buttons.cancel",
+        "send_button": "@:common.buttons.send",
+        "invite_successfully_text": "L'invito è stato inviato con successo",
+        "emails_quantity_exceeded": "Puoi invitare fino a {maxValue} utenti alla volta",
+        "email_length_exceeded": "La lunghezza massima di un indirizzo email è {maxValue} caratteri",
+        "invalid_emails": "Indirizzi email non corretti: {invalidEmails}"
+      },
+      "profile_update_success_modal": {
+        "title": "Aggiornamento profilo",
+        "message": "Profilo aggiornato con successo!",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "registration_success_modal": {
+        "title": "Registrazione",
+        "message": "Registrazione completata con successo!",
+        "ok_button": "@:common.buttons.home"
+      },
+      "reorder_info_modal": {
+        "title": "Conferma riordino",
+        "cancel_button": "@:common.buttons.cancel",
+        "confirm_button": "@:common.buttons.confirm",
+        "filter": {
+          "title": "Filtra prodotti:",
+          "reduced_quantity_checkbox": "Quantità ridotta",
+          "can_t_be_purchased_checkbox": "Non può essere acquistato",
+          "items_without_changes_checkbox": "Articoli senza modifiche"
+        },
+        "product_card": {
+          "quantity_label": "@:common.labels.quantity",
+          "total_label": "@:common.labels.total{':'}",
+          "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
+          "out_of_stock_message": "@:common.messages.product_out_of_stock",
+          "reduced_message": "Il numero di articoli nell'ordine è stato <span class=\"text-neutral\">ridotto da {0} a {1}</span> a causa di restrizioni di magazzino",
+          "item_can_t_be_purchased_message": "@:common.messages.item_can_t_be_purchased",
+          "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
+        }
+      },
+      "orders_filter": {
+        "status_label": "@:common.labels.status",
+        "created_date_label": "Data di creazione",
+        "start_date_label": "Data di inizio",
+        "end_date_label": "Data di fine",
+        "apply_button": "@:common.buttons.apply",
+        "reset_button": "@:common.buttons.reset"
+      }
+    },
+    "company": {
+      "add_or_update_address_modal": {
+        "address_title": "Informazioni indirizzo",
+        "create_title": "Crea un nuovo indirizzo aziendale",
+        "edit_title": "Modifica indirizzo aziendale"
+      },
+      "block_member_modal": {
+        "title": "Blocca utente",
+        "text": "Sei sicuro di voler bloccare l'accesso dell'utente?"
+      },
+      "unblock_member_modal": {
+        "title": "Sblocca utente",
+        "text": "Sei sicuro di voler sbloccare l'accesso dell'utente?"
+      },
+      "delete_member_modal": {
+        "title": "Elimina membro",
+        "text": "Sei sicuro di voler eliminare l'utente {name} dall'elenco dei membri aziendali?"
+      },
+      "notifications": {
+        "user_blocked": "L'utente è stato bloccato con successo.",
+        "user_unblocked": "L'utente è stato sbloccato con successo."
+      }
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Aggiungi al confronto",
+          "remove": "Rimuovi dal confronto"
+        }
+      },
+      "clear_list_modal": {
+        "title": "Conferma cancellazione",
+        "message": "Confermi la rimozione di tutti i prodotti dalla lista di confronto?"
+      }
+    },
+    "cart": {
+      "add_to_cart": {
+        "errors": {
+          "in_cart": "nel carrello",
+          "already_in_cart_message": "{0} è già stato aggiunto al carrello",
+          "enter_correct_number_message": "Inserisci un numero valido",
+          "min": "Ordine minimo {0} articolo(i)",
+          "max": "Ordine massimo {0} articolo(i)",
+          "min_max": "Ordina da {0} a {1} articolo(i)",
+          "min_not_available": "Ordine minimo {0} articolo(i) non disponibile in magazzino",
+          "out_of_stock": "Esaurito",
+          "positive_number": "Il valore deve essere un numero positivo",
+          "integer_number": "Il valore deve essere un numero intero",
+          "pack_size": "Ordina in confezioni da {0}"
+        }
+      },
+      "products_section": {
+        "title": "Prodotti"
+      },
+      "gifts_section": {
+        "title": "+ Aggiungi un regalo"
+      },
+      "add_bulk_items_to_cart_results_modal": {
+        "title": "Risultato aggiunta prodotti al carrello",
+        "groups": {
+          "added": "Aggiunto con successo",
+          "not_added": "Non aggiunto"
+        },
+        "labels": {
+          "sku": "@:common.labels.sku",
+          "product_name": "Nome prodotto",
+          "quantity": "Quantità"
+        }
+      },
+      "clear_cart_modal": {
+        "title": "Svuota carrello",
+        "message": "Vuoi svuotare il tuo carrello?"
+      },
+      "configuration_items": {
+        "title": "Elenco componenti",
+        "edit_configuration": "Modifica configurazione"
+      }
+    },
+    "catalog": {
+      "view_mode": {
+        "grid_label": "Griglia",
+        "list_label": "Lista"
+      },
+      "page_size": {
+        "label": "Risultati per pagina:"
+      },
+      "product_card": {
+        "price_label": "@:common.labels.product_price",
+        "product_rating": "Valutazione:",
+        "product_vendor": "Fornitore:"
+      },
+      "product_details": {
+        "technical_specs_block_title": "Proprietà",
+        "variations_block_title": "Variazioni prodotto",
+        "description_block_title": "Descrizione",
+        "assets_block_title": "File",
+        "vendor_label": "Fornitore",
+        "share_product_label": "Condividi prodotto",
+        "create_configuration_button": "Crea la tua configurazione",
+        "price_block": {
+          "title": "Prezzo e consegna",
+          "add_to_list_button": "Aggiungi alla lista",
+          "product_email_title": "Dai un'occhiata al prodotto: {0}"
+        },
+        "variations": {
+          "title": "Variazioni prodotto",
+          "columns": {
+            "item": "Articolo",
+            "stock": "Magazzino",
+            "price": "Prezzo",
+            "quantity": "Quantità"
+          },
+          "list": "Lista",
+          "table": "Tabella",
+          "no_results": "Nessun risultato trovato"
+        },
+        "product_variation_card": {
+          "variation_sku_label": "@:common.labels.sku",
+          "price_label": "@:common.labels.product_price",
+          "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        },
+        "product_configuration": {
+          "title": "Configura i parametri",
+          "none": "Nessuno",
+          "nothing_selected": "Niente selezionato",
+          "changed_notification": "La configurazione del prodotto è stata modificata. Puoi sempre salvarla più tardi facendo clic sul pulsante \"@:{'ui_kit.buttons.update_cart'}\".",
+          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?"
+        }
+      },
+      "discount_badge": {
+        "off": "sconto"
+      },
+      "branches_modal": {
+        "title": "Seleziona filiale",
+        "all_branches": "Tutte le filiali",
+        "search_input_placeholder": "Cerca per indirizzo e nome",
+        "selected_branches": "Filiali selezionate",
+        "clear_selection": "Cancella selezione",
+        "cancel_button": "Annulla",
+        "ok_button": "Ok",
+        "no_results": "Nessun risultato trovato",
+        "reset_search_button": "Reimposta ricerca"
+      }
+    },
+    "checkout": {
+      "accepted_gifts": {
+        "gift_label": "Regalo",
+        "quantity_label": "@:common.labels.quantity",
+        "title": "Regali accettati"
+      },
+      "shipping_details_section": {
+        "title": "Dettagli spedizione",
+        "labels": {
+          "shipping_address": "Indirizzo di spedizione",
+          "shipping_method": "Metodo di consegna"
+        },
+        "links": {
+          "select_address": "seleziona un indirizzo di spedizione"
+        }
+      },
+      "billing_details_section": {
+        "title": "Dettagli pagamento",
+        "labels": {
+          "billing_address": "Indirizzo di fatturazione",
+          "payment_method": "Metodo di pagamento",
+          "same_as_shipping_address": "Uguale all'indirizzo di spedizione"
+        },
+        "links": {
+          "select_address": "Seleziona un indirizzo di fatturazione"
+        },
+        "messages": {
+          "no_addresses": "Non hai nessun indirizzo di fatturazione. Seleziona o specificane uno.",
+          "unauthenticated_no_addresses": "Non hai nessun indirizzo di fatturazione. Specificane uno."
+        }
+      },
+      "payment_method_modal": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select",
+        "title": "Seleziona metodo di pagamento"
+      },
+      "select_address_modal": {
+        "meta": {
+          "table_description": "indirizzi disponibili"
+        },
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "save_button": "@:common.buttons.save",
+        "select_button": "@:common.buttons.select",
+        "add_address_button": "@:common.buttons.add_new_address",
+        "phone_label": "@:common.labels.phone{':'}",
+        "email_label": "@:common.labels.email{':'}",
+        "no_addresses_message": "Non hai ancora nessun indirizzo",
+        "title": "Seleziona indirizzo"
+      },
+      "shipping_method_modal": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select",
+        "price_label": "@:common.labels.price{':'}",
+        "title": "Seleziona metodo di spedizione"
+      }
+    },
+    "bulk_order": {
+      "manually": {
+        "title": "Manuale",
+        "product_sku_label": "@:common.labels.sku",
+        "quantity_label": "@:common.labels.quantity",
+        "add_rows_action_link": "Aggiungi altre 5 righe",
+        "reset_button": "@:common.buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart",
+        "subtitle_message_start": "Aggiungi rapidamente articoli al tuo",
+        "cart_link": "Carrello",
+        "subtitle_message_end": "inserendo SKU e quantità degli articoli."
+      },
+      "copy_n_paste": {
+        "title": "Copia&Incolla",
+        "subtitle_message": "Vuoi risparmiare tempo e ordinare più velocemente?",
+        "guide_message": "Copia e incolla semplicemente i record degli articoli dal tuo file CSV nel campo sottostante utilizzando il seguente formato: <strong>SKU,Quantità</strong>. Ogni record dovrebbe iniziare con una nuova riga.",
+        "text_area_placeholder": "Esempio di formato:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
+        "reset_button": "@:common.buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart"
+      },
+      "add_to_cart_sku_errors_modal": {
+        "title": "Errori SKU aggiunti al carrello",
+        "common_message": "Ci sono stati diversi problemi durante l'aggiunta degli articoli al carrello.",
+        "duplicate_skus_message": "Rilevati SKU duplicati. Controlla gli articoli per gli SKU pertinenti da aggiungere al carrello.",
+        "content": {
+          "sku": "SKU",
+          "products": "Prodotti",
+          "quantity": "Quantità"
+        }
+      }
+    },
+    "payment": {
+      "bank_card_form": {
+        "number_label": "Numero carta",
+        "cardholder_name_label": "Nome del titolare",
+        "expiration_date_label": "Data di scadenza",
+        "expiration_date_placeholder": "MM / AA",
+        "month_label": "Mese",
+        "month_placeholder": "MM",
+        "year_label": "Anno",
+        "year_placeholder": "AA",
+        "security_code_label": "Codice di sicurezza"
+      },
+      "authorize_net": {
+        "user_agreement_link": "Accordo utente",
+        "privacy_policy_link": "Informativa sulla privacy",
+        "accept_terms_text": "Effettuando un ordine, accetti i termini del nostro",
+        "processing_personal_data_text": "e accetti che possiamo elaborare i tuoi dati personali come da nostra",
+        "pay_now_button": "Paga ora",
+        "errors": {
+          "number": "Fornisci un numero di carta di credito valido",
+          "month": "Fornisci un mese di scadenza valido",
+          "year": "Fornisci un anno di scadenza valido",
+          "expiration_date": "La data di scadenza deve essere nel futuro",
+          "security_code": "Fornisci un codice di sicurezza valido",
+          "cardholder_name": "Fornisci un nome del titolare valido",
+          "incorrect_payment_method": "Metodo di pagamento errato"
+        }
+      },
+      "skyflow": {
+        "pay_now_button": "Paga ora"
+      },
+      "manual": {
+        "text": "Il metodo di pagamento selezionato non supporta il pagamento online. Seleziona un altro metodo o "
+      },
+      "redirection": {
+        "text": "Dopo aver cliccato su <strong>{0}</strong>, verrai reindirizzato al servizio di pagamento di terze parti",
+        "pay_now_button": "Paga ora",
+        "try_again_button": "Riprova",
+        "errors": {
+          "missing_link": "Link di reindirizzamento mancante",
+          "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
+        }
+      }
+    },
+    "wishlists": {
+      "list_card": {
+        "product_count_label": "Conteggio prodotti",
+        "list_edit_button": "Modifica",
+        "remove_list_button": "Elimina",
+        "make_private_button": "Rendi privato",
+        "share_button": "Condividi",
+        "saved": "Salvato"
+      },
+      "list_details": {
+        "add_all_to_cart_button": "Aggiungi tutto al carrello",
+        "list_settings_button": "Impostazioni lista",
+        "empty_list": "La tua lista è vuota",
+        "empty_list_button": "Continua a navigare",
+        "list_icon": "Icona lista"
+      },
+      "add_to_wishlists_modal": {
+        "title": "Seleziona lista",
+        "empty_list": "Non hai nessuna lista della spesa",
+        "cancel_button": "@:common.buttons.cancel",
+        "already_in_the_lists": "Già nelle liste",
+        "add_to_other_lists": "Aggiungi ad altre liste",
+        "add_to_list_button": "Aggiungi alla lista",
+        "add_new_list": "Aggiungi nuova lista",
+        "save_button": "Salva",
+        "notification_success": "Le tue liste sono state aggiornate con successo",
+        "is_required_validation_error": "Il <b>Nome della lista</b> è obbligatorio",
+        "new_list": "Nuova lista"
+      },
+      "unsuccessful_create_wishlist_modal": {
+        "message": "Hai raggiunto il numero massimo di liste. Elimina una che non usi o riorganizza i prodotti per riutilizzare una lista esistente.",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "add_or_update_wishlist_modal": {
+        "title": "Nuova lista",
+        "edit_mode_title": "Impostazioni lista",
+        "list_name_label": "Nome lista",
+        "list_name_placeholder": "Inserisci il nome",
+        "create_button": "Crea lista",
+        "save_button": "@:common.buttons.save",
+        "cancel_button": "@:common.buttons.cancel",
+        "private_list": "Lista privata",
+        "make_shared": "Rendi condivisa"
+      },
+      "delete_wishlist_modal": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler rimuovere la lista “{listName}”?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "delete_wishlist_product_modal": {
+        "title": "Conferma eliminazione",
+        "message": "Sei sicuro di voler rimuovere “{productName}” dalla lista?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "status": {
+        "shared": "Condivisa",
+        "private": "Privata"
+      }
+    }
+  },
+  "pages": {
+    "403": {
+      "error_code": "403",
+      "error_text": "Accesso negato",
+      "message": "Non hai i permessi per accedere alla pagina richiesta.",
+      "img_alt": "Accesso negato",
+      "home_button": "@:common.buttons.home"
+    },
+    "404": {
+      "error_code": "404",
+      "error_text": "Pagina non trovata",
+      "message": "Si è verificato un errore. Vuoi tornare alla pagina iniziale?",
+      "img_alt": "Pagina non trovata",
+      "home_button": "@:common.buttons.home"
+    },
+    "500": {
+      "error_code": "500",
+      "error_text": "Errore interno del server",
+      "message": "Si è verificato un errore. Vuoi tornare alla pagina iniziale?",
+      "img_alt": "Errore interno del server",
+      "home_button": "@:common.buttons.home"
+    },
+    "home": {
+      "meta": {
+        "title": "Home",
+        "keywords": "test, home, pagina, parole chiave",
+        "description": "Descrizione della pagina iniziale di test"
+      },
+      "sign_in_form_title": "Accedi",
+      "main_banner_block": {
+        "message": "Possiamo aiutarti a <br />prendere decisioni<br />informate e sagge",
+        "key_feature_1": "Orientato ai risultati",
+        "key_feature_2": "Affidabile",
+        "key_feature_3": "Affidabile"
+      },
+      "feature_descriptions_block": {
+        "title": "La gestione commerciale non è mai stata così facile",
+        "feature_1": "Gestione account aziendale",
+        "feature_2": "Gestione delle offerte e negoziazione dei prezzi",
+        "feature_3": "Molteplici negozi, canali e sedi",
+        "feature_4": "Personalizzazione B2B e gestione dei prezzi"
+      },
+      "subscription_block": {
+        "subscribe_now": "Iscriviti ora!",
+        "info_message": "Rimani&nbsp;connesso&nbsp;alle&nbsp;novità&nbsp;del&nbsp;negozio&nbsp;B2B!",
+        "email_placeholder": "La tua email",
+        "subscribe_button": "Iscriviti"
+      }
+    },
+    "forgot_password": {
+      "meta": {
+        "title": "Password dimenticata"
+      },
+      "header": "reimposta la tua password",
+      "email_will_be_sended_message": "Ti invieremo un'email con le istruzioni per reimpostare la password",
+      "reset_link_was_sent_message": "Ti abbiamo inviato un link per reimpostare la password nella tua casella di posta.",
+      "home_button": "@:common.buttons.home"
+    },
+    "reset_password": {
+      "meta": {
+        "title": "Reimposta password"
+      },
+      "header": "Reimposta la tua password",
+      "enter_new_password_message": "Inserisci la tua nuova password",
+      "success_message": "La tua password è stata reimpostata con successo",
+      "log_in_button": "Accedi"
+    },
+    "set_password": {
+      "meta": {
+        "title": "Registrazione"
+      },
+      "header": "Registrazione",
+      "enter_new_password_message": "Un account è stato creato per te, imposta una password per accedere.",
+      "success_message": "La registrazione è stata completata con successo",
+      "log_in_button": "Continua"
+    },
+    "change_password": {
+      "meta": {
+        "title": "Cambia password"
+      },
+      "header": "Cambia la tua password",
+      "success_message": "La tua password è stata cambiata con successo"
+    },
+    "sign_in": {
+      "meta": {
+        "title": "@:pages.sign_in.header"
+      },
+      "header": "Accedi",
+      "divider_text": "Oppure",
+      "providers": {
+        "azure_ad": {
+          "button_text": "Accedi con Entra ID"
+        },
+        "google_sso": {
+          "button_text": "Accedi con Google"
+        }
+      }
+    },
+    "sign_up": {
+      "meta": {
+        "title": "@:pages.sign_up.header"
+      },
+      "header": "Registrazione",
+      "personal_registration_kind_label": "Account personale",
+      "organization_registration_kind_label": "Account aziendale",
+      "register_button": "Iscriviti"
+    },
+    "confirm_email": {
+      "meta": {
+        "title": "@:pages.confirm_email.header"
+      },
+      "header": "Conferma email",
+      "subtitle": "Grazie per aver verificato la tua email.",
+      "text": "Usa il tuo nome utente e password per accedere al tuo account.",
+      "continue_button": "@:shared.layout.header.link_sign_in",
+      "continue_shopping_button": "@:common.buttons.continue_shopping",
+      "email_confirmation_failed_text": "Per continuare, devi ancora completare il processo di verifica. Usa il pulsante qui sotto per richiedere un nuovo link.",
+      "link_sent_successfully_text": "Ti abbiamo inviato il link di conferma nella tua casella di posta.",
+      "link_sent_error_text": "Si è verificato un problema durante l'invio del link di conferma. Riprova più tardi."
+    },
+    "confirm_invitation": {
+      "meta": {
+        "title": "@:pages.confirm_invitation.header"
+      },
+      "header": "Registrazione",
+      "text": "Hai ricevuto l'invito a unirti alla tua azienda.<br />Completa la registrazione"
+    },
+    "account": {
+      "addresses": {
+        "meta": {
+          "title": "@:pages.account.addresses.title",
+          "table_description": "indirizzi disponibili"
+        },
+        "title": "Indirizzi",
+        "new_address_title": "Nuovo indirizzo",
+        "edit_address_title": "Modifica indirizzo",
+        "make_default_button": "Imposta come predefinito",
+        "no_addresses_img_alt": "Nessun indirizzo"
+      },
+      "checkout_defaults": {
+        "meta": {
+          "title": "@:pages.account.checkout_defaults.title"
+        },
+        "title": "Impostazioni predefinite del checkout",
+        "select_delivery_method_label": "Metodo di consegna preferito",
+        "shipping_radio_label": "Spedizione",
+        "pickup_radio_label": "Ritiro",
+        "not_selected_placeholder": "@:common.placeholders.not_selected",
+        "update_button": "@:common.buttons.update",
+        "payment_method_label": "Metodo di pagamento preferito",
+        "payment_method_placeholder": "Seleziona il tuo metodo di pagamento preferito",
+        "shipping_method_label": "Metodo di spedizione preferito",
+        "shipping_method_placeholder": "Seleziona il tuo metodo di spedizione preferito"
+      },
+      "dashboard": {
+        "meta": {
+          "title": "@:pages.account.dashboard.title"
+        },
+        "title": "Dashboard",
+        "last_orders_card": {
+          "title": "Ultimi ordini",
+          "all_orders_link": "Tutti gli ordini",
+          "order_number_label": "Numero ordine",
+          "purchase_number_label": "Ordine d'acquisto",
+          "status_label": "@:common.labels.status",
+          "invoice_label": "Fattura",
+          "date_label": "@:common.labels.date",
+          "total_label": "@:common.labels.total",
+          "no_orders_img_alt": "Nessun ordine",
+          "no_orders_message": "Non ci sono ancora ordini"
+        },
+        "monthly_report_card": {
+          "title": "Rapporto di spesa mensile",
+          "budget_title": "Budget",
+          "total_spend_label": "Spesa totale",
+          "spend_chart_alt": "Grafico delle spese"
+        },
+        "orders_status_card": {
+          "title": "Stato degli ordini"
+        },
+        "bulk_order_card": {
+          "title": "Blocco ordine all'ingrosso"
+        }
+      },
+      "change_password": {
+        "meta": {
+          "title": "@:pages.account.change_password.title"
+        },
+        "title": "Cambia password",
+        "success_message": "@:pages.change_password.success_message"
+      },
+      "orders": {
+        "meta": {
+          "title": "@:pages.account.orders.title",
+          "table_description": "@:pages.account.orders.title"
+        },
+        "search_placeholder": "Inserisci parola chiave...",
+        "title": "Ordini",
+        "order_number_label": "Numero ordine",
+        "purchase_number_label": "Ordine d'acquisto",
+        "status_label": "@:common.labels.status",
+        "invoice_label": "Fattura",
+        "date_label": "@:common.labels.date",
+        "total_label": "@:common.labels.total",
+        "no_orders_img_alt": "Nessun ordine",
+        "no_orders_message": "Non ci sono ancora ordini",
+        "no_results_message": "Nessun risultato trovato",
+        "buttons": {
+          "no_orders": "Continua a navigare",
+          "reset_search": "Reimposta ricerca"
+        }
+      },
+      "order_details": {
+        "meta": {
+          "title": "@:pages.account.order_details.title"
+        },
+        "title": "Ordine #{0}",
+        "created_title": "Ordine completato",
+        "purchase_order_label": "Ordine d'acquisto: ",
+        "placed_on_label": "Effettuato il: ",
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        }
+      },
+      "order_payment": {
+        "meta": {
+          "title": "@:pages.account.order_payment.title"
+        },
+        "title": "Informazioni pagamento",
+        "breadcrumb_title": "Pagamento",
+        "processed_title": "@:pages.account.order_details.title",
+        "billing_address_label": "Indirizzo di fatturazione",
+        "payment_method_label": "Metodo di pagamento",
+        "phone_label": "@:pages.checkout.shipping_details_section.shipping_address_block.phone_label",
+        "email_label": "@:pages.checkout.shipping_details_section.shipping_address_block.email_label",
+        "edit_button": "Modifica",
+        "bank_card_title": "Carta di credito",
+        "back_to_order_button": "Torna all'ordine",
+        "orders_list_button": "Elenco ordini",
+        "try_again_button": "Riprova",
+        "continue_shopping_button": "Continua a fare acquisti",
+        "status_label": "@:common.labels.status{':'}",
+        "order_date": "Data ordine:",
+        "success": {
+          "title": "Pagamento riuscito",
+          "text": "Grazie, stiamo verificando il tuo pagamento. L'ordine verrà spedito dopo aver ricevuto il pagamento."
+        },
+        "failure": {
+          "title": "Pagamento fallito",
+          "text": "C'è un problema con il tuo pagamento, riprova."
+        }
+      },
+      "lists": {
+        "meta": {
+          "title": "@:shared.account.navigation.links.lists"
+        },
+        "no_lists": "Non hai ancora creato nessuna lista",
+        "create_list_button": "Crea lista",
+        "create_list_button_mobile": "Crea",
+        "lists_icon": "Icona lista"
+      },
+      "saved_credit_cards": {
+        "no_cards": "Non hai ancora salvato nessuna carta di credito",
+        "delete_credit_card_modal": {
+          "title": "Conferma eliminazione",
+          "message": "Sei sicuro di voler rimuovere la carta di credito?"
+        }
+      },
+      "list_details": {
+        "meta": {
+          "title": "Lista: {0}"
+        },
+        "save_changes": "@:common.titles.save_changes",
+        "save_changes_message": "@:common.messages.save_changes nella lista?"
+      },
+      "profile": {
+        "meta": {
+          "title": "@:pages.account.profile.title"
+        },
+        "title": "Profilo",
+        "change_password_title": "Cambia password",
+        "update_error_alert": "Si è verificato un errore durante l'aggiornamento del profilo"
+      },
+      "impersonate": {
+        "title": "Impersonificazione",
+        "success": "Sei impersonato",
+        "error": "Alcuni problemi durante l'impersonificazione. Controlla i tuoi permessi"
+      }
+    },
+    "company": {
+      "info": {
+        "meta": {
+          "title": "@:pages.company.info.title",
+          "table_description": "indirizzi aziendali"
+        },
+        "title": "Informazioni azienda",
+        "content_header": "Indirizzi",
+        "no_addresses_message": "Non ci sono ancora indirizzi",
+        "address_not_delete_message": "L'indirizzo predefinito non può essere eliminato",
+        "address_saved_successful_message": "L'indirizzo è stato salvato con successo",
+        "add_to_favorites": "Segna come preferito",
+        "remove_from_favorites": "Rimuovi dai preferiti",
+        "labels": {
+          "company_name": "Nome azienda",
+          "address": "Indirizzo",
+          "description": "Descrizione",
+          "zip": "CAP",
+          "country": "Paese",
+          "default": "Predefinito",
+          "favorite": "Preferito",
+          "actions": "Azioni"
+        },
+        "buttons": {
+          "add_new_address": "@:common.buttons.add_new_address",
+          "add_new_address_mobile": "Aggiungi nuovo"
+        }
+      },
+      "members": {
+        "meta": {
+          "title": "@:pages.company.members.title",
+          "table_description": "@:pages.company.members.title"
+        },
+        "title": "Membri azienda",
+        "search_placeholder": "Cerca utenti",
+        "no_members_img_alt": "Nessun membro",
+        "no_members_message": "Non ci sono ancora membri",
+        "no_results_message": "Nessun risultato trovato",
+        "invite_sent": "Invito inviato",
+        "labels": {
+          "role": "Ruolo",
+          "status": "Stato"
+        },
+        "buttons": {
+          "invite_members": "Invita membri",
+          "invite": "Invita",
+          "reset_search": "Reimposta ricerca",
+          "edit_role": "Modifica ruolo",
+          "block_user": "Blocca utente",
+          "unblock_user": "Sblocca utente",
+          "delete": "Elimina",
+          "no_members": "Continua a navigare"
+        },
+        "content_header": {
+          "name": "Nome",
+          "role": "Ruolo",
+          "email": "Email",
+          "active": "Attivo"
+        },
+        "statuses": {
+          "active": "Attivo",
+          "inactive": "Inattivo",
+          "invited": "Invitato",
+          "blocked": "Bloccato"
+        }
+      }
+    },
+    "cart": {
+      "meta": {
+        "title": "@:pages.cart.title"
+      },
+      "title": "Carrello",
+      "empty_cart_description": "Il tuo carrello è vuoto",
+      "recently_browsed_products": "Prodotti recentemente visualizzati"
+    },
+    "checkout": {
+      "meta": {
+        "title": "@:pages.checkout.title"
+      },
+      "title": "Checkout",
+      "steps": {
+        "shipping": "Spedizione",
+        "billing": "Fatturazione",
+        "review": "Rivedi ordine",
+        "payment": "Pagamento",
+        "completed": "Completato"
+      }
+    },
+    "catalog": {
+      "meta": {
+        "title": "@:pages.catalog.title",
+        "keywords": "test, catalogo, pagina, parole chiave",
+        "description": "Descrizione della pagina del catalogo di test"
+      },
+      "title": "Catalogo",
+      "instock_filter_card": {
+        "title": "Disponibile",
+        "checkbox_label": "Mostra disponibile",
+        "tooltip_text": "Seleziona per mostrare solo i prodotti disponibili"
+      },
+      "branch_availability_filter_card": {
+        "title": "Disponibilità filiale",
+        "available_in": "Disponibile presso {0}",
+        "branches": "filiali | {n} filiale | {n} filiali",
+        "select_branch_text": "Seleziona una filiale di ritiro per vedere i prodotti disponibili ora"
+      },
+      "products_found_message": "risultato | risultati",
+      "filters_button": "@:common.buttons.filters",
+      "sort_by_label": "@:common.labels.sort_by",
+      "choose_button": "@:common.buttons.choose",
+      "add_to_wishlist_tooltip": "Aggiungi alla lista",
+      "in_the_list_tooltip": "Nella lista",
+      "variations_button": "{0} variazioni",
+      "customize_button": "Personalizza",
+      "show_on_a_separate_page": "Mostra su una pagina separata",
+      "no_products_message": "Non ci sono prodotti in questa categoria",
+      "no_products_filtered_message": "Nessun risultato trovato",
+      "no_facet_found_message": "Nessun risultato",
+      "no_products_button": "Reimposta ricerca",
+      "products_icon": "Icona prodotto",
+      "show_all_results": "Mostra tutti i risultati"
+    },
+    "product": {
+      "sku_label": "@:common.labels.sku",
+      "sku_copied_message": "@:common.labels.sku copiato con successo",
+      "variations_total_label": "Totale nel tuo carrello:",
+      "view_cart_button": "Visualizza carrello",
+      "recommended_products": {
+        "related-products_section_title": "Prodotti correlati a questo articolo",
+        "bought-together_section_title": "Acquistati insieme dai clienti"
+      },
+      "related_product_section_title": "Prodotti correlati",
+      "price_label": "@:common.labels.product_price{':'}"
+    },
+    "checkout_complete": {
+      "title": "Ordine completato",
+      "subtitle": "L'ordine {0} è stato inviato con successo.",
+      "text": "Sarai avvisato via email sul cambiamento dello stato dell'ordine."
+    },
+    "payment_result": {
+      "title": {
+        "success": "Pagamento riuscito",
+        "failed": "Pagamento fallito"
+      },
+      "subtitle": {
+        "success": "L'ordine {0} è stato inviato con successo.",
+        "failed": "L'ordine {0} non è stato pagato."
+      },
+      "text": {
+        "success": "Grazie, stiamo verificando il tuo pagamento. Sarai avvisato via email sul cambiamento dello stato dell'ordine.",
+        "failed": "C'è un problema con il tuo pagamento, riprova"
+      }
+    },
+    "search": {
+      "meta": {
+        "title": "Cerca: {0}"
+      },
+      "header": "La tua ricerca per {keyword} ha restituito i seguenti risultati",
+      "sort_by_label": "@:common.labels.sort_by",
+      "choose_button": "@:common.buttons.choose",
+      "no_results_message": "La tua ricerca <strong>{0}</strong> non ha prodotto risultati",
+      "home_button": "@:common.buttons.home"
+    },
+    "bulk_order": {
+      "meta": {
+        "title": "Ordine all'ingrosso",
+        "keywords": "all'ingrosso, ordine",
+        "description": "Pagina ordine all'ingrosso"
+      },
+      "title": "Blocco ordine all'ingrosso",
+      "product_duplicate_sku_alert": "Ci sono più prodotti con SKU \"{0}\". Scegline uno da aggiungere al carrello:",
+      "product_was_not_added_alert": "I prodotti con i seguenti SKU non sono stati aggiunti al carrello: {0}",
+      "data_is_invalid_alert": "I dettagli forniti non sono validi.",
+      "manually_tab": "Manuale",
+      "copy_n_paste_tab": "Copia&Incolla"
+    },
+    "demo_landing": {
+      "meta": {
+        "title": "Pagina demo"
+      },
+      "header": "Panoramica del mercato delle stampanti",
+      "primary_block": {
+        "primary_text": "La gestione commerciale non è mai stata così facile",
+        "secondary_text": "Tutto ciò che sogni può diventare realtà nel momento in cui decidi di vincere",
+        "first_button": "Scopri di più",
+        "second_button": "Contattaci",
+        "image_alt": "Un laptop su un tavolo"
+      },
+      "secondary_block": {
+        "primary_text": "La leggibilità è una preoccupazione primaria di un designer",
+        "secondary_text": "La leggibilità è un focus critico per i designer poiché influisce direttamente su quanto efficacemente un messaggio viene comunicato attraverso il design. Comporta scelte come caratteri, spaziatura e layout per garantire che il contenuto sia facilmente comprensibile. Un'enfasi sulla leggibilità migliora il coinvolgimento degli utenti e il successo complessivo di un design."
+      },
+      "features_block": {
+        "primary_text": "Esplora le funzionalità",
+        "secondary_text": "Con una fotocamera cristallina, display video HD in tempo reale e controlli di volo intuitivi, cosa creerai?",
+        "feature_1": {
+          "title": "Video aereo epico",
+          "text": "Con il Phantom 3 Professional, puoi girare video 4K fino a 30 fotogrammi al secondo e catturare foto da 12MP."
+        },
+        "feature_2": {
+          "title": "Vista HD dal vivo",
+          "text": "Collega semplicemente il tuo telefono o tablet e mostra una vista HD a 720p di tutto ciò che vede la tua fotocamera."
+        },
+        "feature_3": {
+          "title": "Controllo completo",
+          "text": "Tieni il tuo Phantom 3 completamente sotto il tuo comando mentre accedi alle funzionalità più utilizzate direttamente sul telecomando incluso"
+        }
+      },
+      "booking_block": {
+        "message": "Prenota una sessione di consulenza ecommerce gratuita",
+        "first_button": "Scopri di più",
+        "second_button": "Contattaci"
+      },
+      "products_block": {
+        "title": "Stampanti",
+        "message": "Le stampanti sono necessarie per creare documenti fisici, registri e materiali di comunicazione in vari settori e settori",
+        "choose_button": "Scegli"
+      },
+      "after_products_block": {
+        "primary_text": "Il mondo dinamico delle vendite business-to-business",
+        "secondary_text": "Il mondo degli affari moderno è un mondo di vendite. Le aziende, grandi e piccole, interagiscono attivamente tra loro, offrendo i loro prodotti e servizi. Le aziende di successo costruiscono relazioni a lungo termine, comprendendo le esigenze dei clienti e reagendo ai cambiamenti del mercato. Il successo e la sopravvivenza delle aziende dipendono dalle vendite efficaci. Questo mondo dinamico richiede adattamento, innovazione e apprendimento continuo per soddisfare le esigenze dei partner commerciali moderni."
+      },
+      "subscription_block": {
+        "primary_text": "Iscriviti alle nostre promozioni",
+        "secondary_text": "Sii tra i primi a conoscere gli eventi imminenti",
+        "input_placeholder": "tanya.hill{'@'}example.com",
+        "agreement_checkbox_label": "Cliccando su \"Invia\", accetto i",
+        "terms_and_policy_link": "Termini e politica",
+        "submit_button": "@:common.buttons.submit"
+      }
+    },
+    "compare": {
+      "meta": {
+        "title": "Confronta prodotti",
+        "keywords": "test, confronta, prodotti, pagina, parole chiave",
+        "description": "Descrizione della pagina di confronto prodotti di test"
+      },
+      "empty_list": {
+        "title": "Confronta prodotti",
+        "message": "La tua lista di confronto prodotti è vuota",
+        "button_text": "Continua a navigare qui",
+        "img_alt": "carrelloVuoto",
+        "img_alt_mobile": "carrelloVuotoMobile"
+      },
+      "header_block": {
+        "title": "Confronta prodotti",
+        "counter_message": "{productsNumber} articoli su {productsLimit} aggiunti",
+        "differences_checkbox_label": "Mostra solo differenze",
+        "clear_button": "Cancella lista"
+      },
+      "main_block": {
+        "price_label": "@:common.labels.product_price"
+      },
+      "links": {
+        "home": "@:common.links.home",
+        "compare_products": "Confronta prodotti"
+      }
+    },
+    "branch": {
+      "address": "Indirizzo",
+      "phone": "Telefono: ",
+      "other_branches": "Altre filiali"
+    },
+    "welcome": {
+      "meta": {
+        "title": "Registrazione completata"
+      },
+      "title": "Registrazione completata",
+      "description": "Grazie per aver mostrato interesse a registrarti con noi. Ti chiediamo gentilmente di controllare la tua casella di posta per verificare l'indirizzo email che hai inserito."
+    },
+    "blocked": {
+      "meta": {
+        "title": "Bloccato"
+      },
+      "title": "Il tuo account è bloccato",
+      "message": "@:common.messages.blocked"
+    }
+  },
+  "identity_error": {
+    "DuplicateEmail": "Email {0} è già in uso",
+    "DuplicateUserName": "Nome utente {0} è già in uso",
+    "InvalidEmail": "Inserisci un indirizzo email valido, ad es. johndoe@gmail.com",
+    "InvalidPasswordHasherCompatibilityMode": "Il PasswordHasherCompatibilityMode fornito non è valido",
+    "InvalidPasswordHasherIterationCount": "Il conteggio delle iterazioni deve essere un numero intero positivo",
+    "InvalidToken": "Il token non è valido o è scaduto",
+    "InvalidUserName": "Il nome utente non è valido e può contenere solo lettere o cifre",
+    "LoginAlreadyAssociated": "Un utente con questo login esiste già",
+    "PasswordTooShort": "La tua password deve essere lunga almeno {0} caratteri",
+    "PasswordRequiresDigit": "Le password devono avere almeno una cifra ('0'-'9')",
+    "PasswordMismatch": "Hai inserito la password attuale errata, riprova o chiama il supporto",
+    "PasswordRequiresLower": "Le password devono avere almeno una lettera minuscola ('a'-'z')",
+    "PasswordRequiresNonAlphanumeric": "Le password devono avere almeno un carattere non alfanumerico",
+    "PasswordRequiresUpper": "Le password devono avere almeno una lettera maiuscola ('A'-'Z')",
+    "PasswordRequiresUniqueChars": "Le password devono utilizzare caratteri diversi",
+    "RecentPasswordUsed": "Hai usato questa password in passato. Creane un'altra."
+  },
+  "password_tips": {
+    "title": "Suggerimenti per creare una password sicura:",
+    "required_digit": "Sono richieste cifre",
+    "required_lowercase": "Sono richiesti simboli minuscoli",
+    "required_non_alphanumeric": "Sono richiesti simboli speciali",
+    "required_uppercase": "Sono richiesti simboli maiuscoli",
+    "required_length": "Almeno un carattere | Minimo {0} caratteri",
+    "required_unique_chars": "Almeno un carattere unico | Minimo {0} caratteri unici"
+  },
+  "validation_error": {
+    "PRODUCT_QTY_CHANGED": "Puoi ordinare massimo {availQty} articolo(i)",
+    "CART_PRODUCT_UNAVAILABLE": "Il prodotto non è più disponibile per l'acquisto.",
+    "CART_PRODUCT_INACTIVE": "Il prodotto è inattivo.",
+    "PRODUCT_PRICE_INVALID": "Il prezzo non è valido.",
+    "PRODUCT_FFC_QTY": "Il prodotto è esaurito",
+    "PRODUCT_MIN_QTY": "Puoi ordinare minimo {minQty} articolo(i)",
+    "PRODUCT_MAX_QTY": "Puoi ordinare massimo {maxQty} articolo(i)",
+    "PRODUCT_MIN_MAX_QTY": "Puoi ordinare da {minQty} a {maxQty} articolo(i)",
+    "UNABLE_SET_LESS_PRICE": "Impossibile impostare un prezzo inferiore.",
+    "LINE_ITEM_NOT_FOUND": "Articolo non trovato.",
+    "LINE_ITEM_IS_READ_ONLY": "L'articolo è di sola lettura.",
+    "PRODUCT_QTY_INSUFFICIENT": "La quantità disponibile del prodotto {availQty} è insufficiente per la richiesta {new_qty}",
+    "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Ordine minimo {minQty} articolo(i) non disponibile in magazzino",
+    "PRODUCT_EXACT_QTY": "Puoi ordinare {minQty} articolo(i)",
+    "CART_INVALID_PRODUCT": "Prodotto non valido"
+  },
+  "file_error": {
+    "ALREADY_EXISTS": "Impossibile caricare il file con lo stesso nome.",
+    "INVALID_CONTENT": "Impossibile leggere il file.",
+    "EXCEPTION": "Errore durante il caricamento del file. Riprova.",
+    "INVALID_SCOPE": "Ambito sconosciuto '{0}'.",
+    "INVALID_EXTENSION": "Formato file non consentito.",
+    "INVALID_SIZE": "La dimensione del file supera il limite consentito di {0}.",
+    "CANNOT_DELETE": "Errore durante l'eliminazione del file."
+  }
+}

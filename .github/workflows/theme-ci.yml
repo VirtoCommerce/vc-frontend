@@ -101,6 +101,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+      - name: Check Locales
+        run: |
+          set -o pipefail
+          yarn check-locales 2>&1 | tee check-locales.log
+          if grep -q "Warning:" check-locales.log; then
+            echo "Locale check completed with warnings."
+            exit 1
+          fi
+
       - name: Build
         run: |
           yarn build

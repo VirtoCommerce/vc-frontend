@@ -1,0 +1,23 @@
+{
+  "common": {
+    "buttons": {
+      "leave_feedback": "Dejar comentario"
+    },
+    "labels": {
+      "feedback": "Comentario",
+      "rating": "Calificación",
+      "rate_product": "Calificar producto",
+      "item_as_described_by_vendor": "¿El artículo es como lo describe el vendedor?"
+    },
+    "messages": {
+      "thanks_for_feedback": "Tu comentario ha sido enviado y está pendiente de confirmación. ¡Gracias!"
+    }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "Solo se pueden dejar reseñas para productos.",
+    "PRODUCT_MUST_BE_PURCHASED": "Solo los usuarios que han comprado el producto pueden dejar una reseña.",
+    "DUPLICATE_REVIEW": "El usuario ya ha dejado una reseña para este producto.",
+    "INVALID_RATING": "La calificación debe estar entre 1 y 5.",
+    "REVIEW_IS_EMPTY": "La propiedad 'Comentario' debe estar llena."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "common": {
+    "buttons": {
+      "leave_feedback": "留下反馈"
+    },
+    "labels": {
+      "feedback": "反馈",
+      "rating": "评分",
+      "rate_product": "评价产品",
+      "item_as_described_by_vendor": "商品是否如卖家描述？"
+    },
+    "messages": {
+      "thanks_for_feedback": "您的反馈已成功提交，正在等待确认。谢谢！"
+    }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "只能对产品留下评论。",
+    "PRODUCT_MUST_BE_PURCHASED": "只有购买过产品的用户才能留下评论。",
+    "DUPLICATE_REVIEW": "用户已对该产品留下评论。",
+    "INVALID_RATING": "评分应在1到5之间。",
+    "REVIEW_IS_EMPTY": "“反馈”字段必须填写。"
+  }
+}
