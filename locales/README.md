@@ -8,6 +8,5 @@ Added languages:
 - 日本語 (にほんご)
 - Polski
 - Português
-- 语言
+- 中文
 - Русский язык
-  
