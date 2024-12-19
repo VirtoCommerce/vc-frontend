@@ -30,7 +30,8 @@ export async function fixLocales() {
       }),
     );
   } catch (error) {
-    console.error(`${PREFIX} Error reading files:`, error);
+    console.error(`${PREFIX} Error reading files:`, error, "try again..");
+    return;
   }
 
   console.log(`\n---\n${PREFIX} Found ${missingKeys.length} missing keys, translating...`);
