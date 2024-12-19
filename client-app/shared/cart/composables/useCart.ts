@@ -305,9 +305,12 @@ export function _useFullCart() {
     await _changeItemQuantity({ command: { lineItemId, quantity } });
   }
 
-  const { mutate: _changeItemsQuantity, loading: changeItemsQuantityLoading } =
-    useChangeFullCartItemsQuantityMutation(cart);
-  const { add, overflowed: changeItemQuantityBatchedOverflowed } = useMutationBatcher(_changeItemsQuantity, {
+  const { mutate: _changeItemsQuantity } = useChangeFullCartItemsQuantityMutation(cart);
+  const {
+    add,
+    overflowed: changeItemQuantityBatchedOverflowed,
+    loading: changeItemsQuantityLoading,
+  } = useMutationBatcher(_changeItemsQuantity, {
     mergeStrategy: getMergeStrategyUniqueBy("lineItemId"),
   });
   async function changeItemQuantityBatched(lineItemId: string, quantity: number): Promise<void> {
