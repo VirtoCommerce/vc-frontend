@@ -47,7 +47,7 @@ export async function fixLocales() {
       const originLanguage = originFile.split(".")[0];
       const targetLanguage = targetFile.split(".")[0];
 
-      const translatedString = await translate(originString as string, originLanguage, targetLanguage);
+      const translatedString = await translate(originString, originLanguage, targetLanguage);
 
       const tableRow = `${key} (${index + 1}/${missingKeys.length})`;
       console.table({
