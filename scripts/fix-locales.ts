@@ -29,21 +29,17 @@ export async function fixLocales() {
   for (const { key, originFile, targetFile, localeFolder } of missingKeys) {
     const originFilePath = path.join(localeFolder, originFile);
     const targetFilePath = path.join(localeFolder, targetFile);
+
     const originFileContent = get(fileContents, originFilePath);
     const targetFileContent = get(fileContents, targetFilePath);
-    const originString = get(originFileContent, key);
-    const translatedString = await translate(
-      originString as string,
-      originFile.split(".")[0],
-      targetFile.split(".")[0],
-    );
-    console.table(
-      {
-        [originFile.split(".")[0]]: originString,
-        [targetFile.split(".")[0]]: translatedString,
-      },
-      ["Translation"],
-    );
+
+    const originString = get(originFileContent, key) as string;
+    const originLanguage = originFile.split(".")[0];
+    const targetLanguage = targetFile.split(".")[0];
+
+    const translatedString = await translate(originString as string, originLanguage, targetLanguage);
+    console.info(`${originLanguage} -> ${targetLanguage}: ${originString} -> ${translatedString}`);
+
     set(targetFileContent, key, translatedString);
     await new Promise((resolve) => setTimeout(resolve, 4000));
   }
