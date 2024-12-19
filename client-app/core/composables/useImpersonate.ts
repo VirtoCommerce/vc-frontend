@@ -1,4 +1,3 @@
-import { createGlobalState } from "@vueuse/core";
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useFetch } from "@/core/api/common";
@@ -8,7 +7,7 @@ import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcas
 import { useNotifications } from "@/shared/notification";
 import type { ConnectTokenResponseType } from "../types";
 
-export function _useImpersonate() {
+export function useImpersonate() {
   const { setTokenType, setAccessToken, setExpiresAt } = useAuth();
   const broadcast = useBroadcast();
   const status = ref();
@@ -57,5 +56,3 @@ export function _useImpersonate() {
     status,
   };
 }
-
-export const useImpersonate = createGlobalState(_useImpersonate);
