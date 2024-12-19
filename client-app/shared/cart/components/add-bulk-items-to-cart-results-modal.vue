@@ -176,7 +176,7 @@ function print() {
     .map((el) => el.outerHTML)
     .join("");
 
-  const logoImage = loadImage(logoUrl.value!);
+  const logoImage = loadImage(logoUrl.value);
 
   const headerHtml = `
   <header class="flex justify-between items-start">
