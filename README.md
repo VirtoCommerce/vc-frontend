@@ -24,7 +24,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 - **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** The Frontend Application UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
 - **Fully responsive.** We made our Frontend Application work on multiple devices from Desktops to Mobile phones, concentrating both on UI and UX.
 - **Simple styling and customization.** We use TailwindCSS to provide the easiest and most convenient way of CSS usage. Write as less of code as possible, and reuse existing highly customizable framework features.
-- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios.
+- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios. 
 
 ## The Application structure
 
@@ -92,7 +92,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── config
 |   ├── menu.json
 |   └── settings_data.json
-|
+|   
 ├── locales                          // Locale files used to provide translated content.
 |   └──...
 |
@@ -116,7 +116,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── .prettierrc.json                 // Config for Prettier.
 ├── .yarnrc.yml                      // Yarn package manager configuration
 ├── graphql-codegen
-|   └── generator.ts                 // Generate GraphQL types
+|   └── generator.ts                 // Generate GraphQL types 
 ├── index.html                       // Vite Development entry point.
 ├── LICENSE.txt
 ├── package.json                     // NPM Package description.
@@ -149,7 +149,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
   - [vc-module-skyflow](https://github.com/VirtoCommerce/vc-module-skyflow)
   - [vc-module-x-recommend](https://github.com/VirtoCommerce/vc-module-x-recommend)
 - Install [Node.js v22](https://nodejs.org/en/download/) (**22.10.0** or later)
-- Enable [corepack](https://yarnpkg.com/corepack) _(run as administrator on Windows)_
+- Enable [corepack](https://yarnpkg.com/corepack) *(run as administrator on Windows)*
   ```bash
   corepack enable
   ```
@@ -159,26 +159,22 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
     npm uninstall --global yarn
     ```
   - or through your Operation System installation tools
-    - `Control Panel`, `Chocolatey` or `Scoop` on _Windows_
-    - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on _macOs_
-    - Native package manager such as `apt` on _Linux_
+     - `Control Panel`, `Chocolatey` or `Scoop` on *Windows*
+     - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on *macOs*
+     - Native package manager such as `apt` on *Linux*
 
 ### Clone repository
-
 ```bash
 git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-theme-b2b-vue\"
 ```
 
 ### Check yarn version
-
 ```bash
 yarn -v
 ```
-
 `Yarn` should be of version **4.1.0** or greater, not 1.XX.
 
 ### Install dependencies
-
 ```bash
 yarn install
 ```
@@ -219,7 +215,6 @@ yarn build:watch
 ## Types generation
 
 Command:
-
 ```
 yarn generate:graphql-types
 ```
@@ -232,49 +227,38 @@ If independent modules are not installed on `The Platform`, types can still be s
 ### Bundle Size Analysis
 
 To examine the sizes of various chunks such as `vendor.js` or `index.js`, execute the following command:
-
 ```
 yarn generate:bundle-map
 ```
-
 The results will be located in the `artifacts` folder.
 
 ### Visualizing the Dependency Graph
 
 To create a visual representation of the dependency graph, use the following command:
-
 ```
 yarn generate:dependency-graph
 ```
-
 **Note**: This command requires parameters to run successfully. For example:
-
 ```
 yarn generate:dependency-graph client-app/main.ts client-app/shared/account/components/checkout-default-success-modal.vue
 ```
-
 The generated graph will also be saved in the `artifacts` folder.
 
 ## Localization
-
 ### Check for missing locale keys
 
 ```
 yarn check-locales -- path/to/locales_folder path/to/**/locales
 ```
-
 The command is used to ensure that all locale files have consistent keys across different languages. This helps in maintaining uniformity and avoiding missing translations.
 
 The script will output warnings for any missing keys in the locale files. Review these warnings to ensure all necessary translations are present. Also added to the CI pipeline.
 
 ### Fix Missing Locales
-
 ```
 yarn fix-locales -- path/to/locales_folder path/to/\*\*/locales
 ```
-
 This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language. The script includes a 4-second delay between translations to avoid API rate limits.
-
 **Note**: This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
 
 ### Troubleshooting
