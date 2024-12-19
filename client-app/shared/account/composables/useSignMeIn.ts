@@ -1,6 +1,11 @@
 import { syncRefs, useAsyncState } from "@vueuse/core";
 import { ref } from "vue";
-import { useChangeCartCurrencyMutation, useGetMeQuery, useMergeCartMutation } from "@/core/api/graphql";
+import {
+  useChangeCartCurrencyMutation,
+  useClearCurrencyCartMutation,
+  useGetMeQuery,
+  useMergeCartMutation,
+} from "@/core/api/graphql";
 import { useAuth } from "@/core/composables/useAuth";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -20,6 +25,7 @@ export function useSignMeIn() {
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
   const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
   const { currencyCode: currentCurencyCode } = globals;
+  const { mutate: clearCurrencyCart } = useClearCurrencyCartMutation();
 
   const { isLoading: loading, execute: signIn } = useAsyncState(
     async () => {
@@ -35,6 +41,11 @@ export function useSignMeIn() {
 
       if (me.value?.me && currencyCode) {
         if (cart.value?.id) {
+          await clearCurrencyCart({
+            command: { userId: me.value.me.id, currencyCode: currentCurencyCode },
+            skipQuery: false,
+          });
+
           await mergeCart({ command: { userId: me.value.me.id, secondCartId: cart.value.id } });
 
           if (currencyCode !== currentCurencyCode) {

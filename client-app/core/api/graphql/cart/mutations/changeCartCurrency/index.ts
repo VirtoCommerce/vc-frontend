@@ -8,8 +8,8 @@ export function useChangeCartCurrencyMutation() {
     variables: {
       command: {
         storeId,
-        currencyCode,
         cultureName,
+        currencyCode,
       },
     },
   });
