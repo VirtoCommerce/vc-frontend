@@ -6,6 +6,8 @@ import { main as getMissingKeys } from "./check-locales-folder-for-missing-keys"
 import { translate } from "./translator";
 import type { LocaleDataType } from "./check-locales-folder-for-missing-keys";
 
+const PREFIX = "[FIX_LOCALES_UTILITY]";
+
 export async function fixLocales() {
   const missingKeys = getMissingKeys();
   const allNeededFiles = missingKeys.reduce((acc, { originFile, targetFile, localeFolder }) => {
@@ -23,10 +25,12 @@ export async function fixLocales() {
       }),
     );
   } catch (error) {
-    console.error("Error reading files:", error);
+    console.error(`${PREFIX} Error reading files:`, error);
   }
 
-  for (const { key, originFile, targetFile, localeFolder } of missingKeys) {
+  console.log(`\n---\n${PREFIX} Found ${missingKeys.length} missing keys, translating...`);
+
+  for (const [index, { key, originFile, targetFile, localeFolder }] of missingKeys.entries()) {
     const originFilePath = path.join(localeFolder, originFile);
     const targetFilePath = path.join(localeFolder, targetFile);
 
@@ -38,7 +42,11 @@ export async function fixLocales() {
     const targetLanguage = targetFile.split(".")[0];
 
     const translatedString = await translate(originString as string, originLanguage, targetLanguage);
-    console.info(`${originLanguage} -> ${targetLanguage}: ${originString} -> ${translatedString}`);
+    const tableRow = `${key} (${index + 1}/${missingKeys.length})`;
+    console.table({
+      [originLanguage]: { [tableRow]: originString },
+      [targetLanguage]: { [tableRow]: translatedString },
+    });
 
     set(targetFileContent, key, translatedString);
     await new Promise((resolve) => setTimeout(resolve, 4000));
@@ -49,6 +57,7 @@ export async function fixLocales() {
       await fs.promises.writeFile(filename, JSON.stringify(fileContents[filename], null, 2));
     }),
   );
+  console.log(`${PREFIX} Translation completed successfully\n---\n`);
 }
 
 void fixLocales();
