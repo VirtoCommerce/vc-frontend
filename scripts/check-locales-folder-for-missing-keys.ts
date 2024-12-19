@@ -6,7 +6,7 @@ export type LocaleDataType = {
   [key: string]: string | LocaleDataType;
 };
 
-export type MissingKeys = {
+export type MissingKeyType = {
   key: string;
   originFile: string;
   targetFile: string;
@@ -38,7 +38,7 @@ function compareKeys(
   baseLang: string,
   compareLang: string,
   localeFolder: string,
-): MissingKeys[] {
+): MissingKeyType[] {
   const missingInCompare = baseKeys.filter((key) => !keysToCompare.includes(key));
 
   return missingInCompare.map((key) => ({
@@ -67,7 +67,7 @@ function getJsonFiles(localeFolder: string): string[] {
   return files;
 }
 
-export function loadLocaleData(files: string[], localeFolder: string): { [key: string]: LocaleDataType } {
+function loadLocaleData(files: string[], localeFolder: string): { [key: string]: LocaleDataType } {
   const localeData: { [key: string]: LocaleDataType } = {};
   files.forEach((file) => {
     const filePath = path.join(localeFolder, file);
@@ -87,14 +87,14 @@ function getLocaleFolders(patterns: string[]): string[] {
 
 // @description: This script checks if all keys in the locales are presented.
 // @usage: yarn check-locales -- path/to/locales_folder path/to/**/locales
-export function main(): MissingKeys[] {
+export function main(): MissingKeyType[] {
   const args = process.argv.slice(2);
 
   const patterns = args.length > 0 ? args : ["locales"]; // Default to 'locales' if no argument is provided
 
   const localeFolders = getLocaleFolders(patterns);
 
-  const missingKeys: MissingKeys[] = [];
+  const missingKeys: MissingKeyType[] = [];
 
   localeFolders.forEach((localeFolder) => {
     if (!validateLocaleFolder(localeFolder)) {
@@ -118,9 +118,14 @@ export function main(): MissingKeys[] {
     Object.keys(localeKeys).forEach((baseFile) => {
       Object.keys(localeKeys).forEach((compareFile) => {
         if (baseFile !== compareFile) {
-          missingKeys.push(
-            ...compareKeys(localeKeys[baseFile], localeKeys[compareFile], baseFile, compareFile, localeFolder),
+          const newMissingKeys = compareKeys(
+            localeKeys[baseFile],
+            localeKeys[compareFile],
+            baseFile,
+            compareFile,
+            localeFolder,
           );
+          missingKeys.push(...newMissingKeys);
         }
       });
     });
