@@ -191,7 +191,8 @@
       "password_new_same_old": "Ihr aktuelles Passwort und das neue Passwort müssen unterschiedlich sein.",
       "blocked": "Sie wurden blockiert. Sie können keine Informationen abrufen oder Bestellungen aufgeben. Für weitere Details ",
       "password_about_expire": "Ihr Passwort läuft in {value} Tag(en) ab. Bitte setzen Sie ein neues Passwort im Profil.",
-      "password_expired": "Ihr Passwort ist abgelaufen"
+      "password_expired": "Ihr Passwort ist abgelaufen",
+      "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
@@ -548,7 +549,8 @@
         "message": "Möchten Sie Ihren Warenkorb leeren?"
       },
       "configuration_items": {
-        "title": "Komponentenliste"
+        "title": "Komponentenliste",
+        "edit_configuration": "Konfiguration bearbeiten"
       }
     },
     "catalog": {
@@ -571,6 +573,7 @@
         "assets_block_title": "Dateien",
         "vendor_label": "Anbieter",
         "share_product_label": "Produkt teilen",
+        "create_configuration_button": "Konfiguration erstellen",
         "price_block": {
           "title": "Preis und Lieferung",
           "add_to_list_button": "Zur Liste hinzufügen",
@@ -596,7 +599,9 @@
         "product_configuration": {
           "title": "Parameter konfigurieren",
           "none": "Keine",
-          "nothing_selected": "Nicht ausgewählt"
+          "nothing_selected": "Nicht ausgewählt",
+          "changed_notification": "Die Produktkonfiguration wurde geändert. Sie können die Änderungen später immer durch Klicken auf den \"@:{'ui_kit.buttons.update_cart'}\" Button speichern.",
+          "changed_confirmation": "Die Produktkonfiguration wurde geändert. Möchten Sie sie speichern?"
         }
       },
       "discount_badge": {

@@ -1,0 +1,18 @@
+{
+  "push_messages": {
+    "title": "Notifiche",
+    "menu_item_name": "Notifiche",
+    "empty_list": "Non hai nuove notifiche al momento",
+    "options": {
+      "make_all_as_read": "Segna tutto come letto",
+      "make_all_as_unread": "Segna tutto come non letto"
+    },
+    "empty": {
+      "title": "Nessuna nuova notifica al momento.",
+      "description": "Rimani aggiornato su novità e messaggi importanti."
+    },
+    "clear_all": "Cancella tutto",
+    "view_all": "Visualizza tutte le notifiche",
+    "show_unread_only": "Mostra solo non letti"
+  }
+}

@@ -1,10 +1,13 @@
 import { provideApolloClient } from "@vue/apollo-composable";
 import { createSharedComposable } from "@vueuse/core";
+import isEqual from "lodash/isEqual";
+import sortBy from "lodash/sortBy";
 import { ref, readonly, computed } from "vue";
 import {
   apolloClient,
   getConfigurationItems,
   getProductConfiguration,
+  useChangeCartConfiguredItemMutation,
   useCreateConfiguredLineItemMutation,
 } from "@/core/api/graphql";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
@@ -16,8 +19,9 @@ import type {
   ConfigurationSectionInput,
   ConfigurationSectionType,
   CreateConfiguredLineItemMutation,
+  ShortCartFragment,
 } from "@/core/api/graphql/types";
-import type { Ref } from "vue";
+import type { DeepReadonly, Ref } from "vue";
 
 type SelectedConfigurationType = {
   productId: string | undefined;
@@ -34,11 +38,13 @@ provideApolloClient(apolloClient);
  * @returns {Object} The composable functions and properties:
  * @returns {Function} fetchProductConfiguration - Function to fetch the product configuration.
  * @returns {Function} selectSectionValue - Function to select a section value for a configuration section.
+ * @returns {Function} changeCartConfiguredItem - Function to change the cart configured item.
  * @returns {ComputedRef<boolean>} loading - Computed ref indicating if any operation is in progress.
  * @returns {ShallowReadonly<Ref<ConfigurationSectionType[]>>} configuration - Readonly ref containing the product configuration sections.
  * @returns {Readonly<ComputedRef<Record<string, SelectedConfigurationType>>>} selectedConfiguration - Readonly computed ref of the selected configuration state.
  * @returns {ShallowReadonly<Ref<ConfigurationSectionInput[]>>} selectedConfigurationInput - Readonly ref containing the configuration input data.
  * @returns {Readonly<Ref<CreateConfiguredLineItemMutation['createConfiguredLineItem']>>} configuredLineItem - Readonly ref of the created configured line item.
+ * @returns {Readonly<ComputedRef<boolean>>} isConfigurationChanged - Readonly computed ref indicating if the configuration has changed.
  */
 function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
@@ -48,6 +54,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
   const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
+  const initialSelectedConfigurationInput: Ref<DeepReadonly<ConfigurationSectionInput[] | []>> = ref([]);
 
   const selectedConfiguration = computed(() => {
     return selectedConfigurationInput.value
@@ -65,6 +72,14 @@ function _useConfigurableProduct(configurableProductId: string) {
         },
         {} as Record<string, SelectedConfigurationType | undefined>,
       );
+  });
+
+  const isConfigurationChanged = computed(() => {
+    const sortKey = "sectionId";
+    return !isEqual(
+      sortBy(initialSelectedConfigurationInput.value, sortKey),
+      sortBy(selectedConfigurationInput.value, sortKey),
+    );
   });
 
   async function fetchProductConfiguration() {
@@ -91,6 +106,7 @@ function _useConfigurableProduct(configurableProductId: string) {
           });
         }
       });
+      initialSelectedConfigurationInput.value = selectedConfigurationInput.value;
       void createConfiguredLineItem();
     } catch (e) {
       Logger.error(`${useConfigurableProduct.name}.${fetchProductConfiguration.name}`, e);
@@ -156,10 +172,32 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
+  const { mutate: _changeCartConfiguredItem, loading: changeCartConfiguredItemLoading } =
+    useChangeCartConfiguredItemMutation();
+  async function changeCartConfiguredItem(
+    lineItemId: string,
+    quantity?: number,
+    configurationSections?: DeepReadonly<ConfigurationSectionInput[]>,
+  ): Promise<ShortCartFragment | undefined> {
+    try {
+      const result = await _changeCartConfiguredItem({
+        lineItemId,
+        quantity,
+        configurationSections: configurationSections as ConfigurationSectionInput[],
+      });
+      initialSelectedConfigurationInput.value = configurationSections ?? [];
+      return result?.data?.changeCartConfiguredItem;
+    } catch (e) {
+      Logger.error(`${useConfigurableProduct.name}.${changeCartConfiguredItem.name}`, e);
+      throw e;
+    }
+  }
+
   function reset() {
     fetching.value = false;
     creating.value = false;
     selectedConfigurationInput.value = [];
+    initialSelectedConfigurationInput.value = [];
     configuration.value = [];
     configuredLineItem.value = undefined;
     abortBatchedCreateConfiguredLineItem();
@@ -168,11 +206,13 @@ function _useConfigurableProduct(configurableProductId: string) {
   return {
     fetchProductConfiguration,
     selectSectionValue,
-    loading: computed(() => fetching.value || creating.value),
+    changeCartConfiguredItem,
+    loading: computed(() => fetching.value || creating.value || changeCartConfiguredItemLoading.value),
     configuration: readonly(configuration),
     selectedConfiguration: readonly(selectedConfiguration),
     selectedConfigurationInput: readonly(selectedConfigurationInput),
     configuredLineItem: readonly(configuredLineItem),
+    isConfigurationChanged: readonly(isConfigurationChanged),
   };
 }
 

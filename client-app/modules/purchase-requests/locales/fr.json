@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "demandes_d'achat.titre",
+      "table_description": "liste des demandes d'achat"
+    },
+    "title": "Demandes d'Achat",
+    "no_purchase_requests_message": "Il n'y a pas encore de demandes d'achat",
+    "no_purchase_requests_img_alt": "Pas de commandes",
+    "purchase_request_number_label": "Numéro de demande d'achat",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Demandes d'Achat"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Demande d'achat #{0}",
+    "failed_or_used_description": "Désolé, nous n'avons pas pu créer la demande d'achat ou vous l'avez déjà utilisée pour créer une commande",
+    "try_again": "Veuillez réessayer",
+    "files_section": {
+      "title": "Fichiers"
+    },
+    "from_file": {
+      "title": "Télécharger le fichier",
+      "upload": {
+        "message": "Téléchargez des photos de documents, des captures d'écran ou des notes manuscrites pour obtenir des données pour une nouvelle commande.",
+        "examples": {
+          "title": "Exemples",
+          "alt": "Exemples"
+        }
+      },
+      "processing": {
+        "message": "Vous pouvez télécharger des fichiers image ou pdf avec des listes de produits sous n'importe quelle forme pour une commande rapide d'articles",
+        "loading_message": "Reconnaissance d'un document téléchargé...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Passer au devis"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Depuis le fichier"
+    }
+  }
+}

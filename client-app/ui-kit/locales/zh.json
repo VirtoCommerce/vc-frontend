@@ -1,0 +1,83 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "加入购物车",
+      "apply": "应用",
+      "cancel": "取消",
+      "close": "关闭",
+      "copy": "复制",
+      "deny": "拒绝",
+      "filters": "筛选",
+      "ok": "确定",
+      "remove_all": "移除所有",
+      "remove_from_cart": "从购物车中移除",
+      "remove_selected": "移除选中",
+      "see_more": "查看更多",
+      "see_less": "收起",
+      "show_hide_password": "显示/隐藏密码",
+      "toggle_dropdown": "切换下拉菜单",
+      "update_cart": "更新购物车"
+    },
+    "labels": {
+      "not_available": "不可用",
+      "price_per_item": "单价",
+      "product": "产品",
+      "product_quantity": "产品数量",
+      "properties": "属性",
+      "subtotal": "小计",
+      "toggle_vendor_select": "切换供应商选择",
+      "total": "总计",
+      "vendor": "供应商"
+    },
+    "suffixes": {
+      "from": "从",
+      "per_item": " 每件"
+    },
+    "messages": {
+      "loading_text": "加载中...",
+      "no_results": "未找到结果"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "在购物车中",
+        "already_in_cart_message": "{0} 已经添加到购物车",
+        "enter_correct_number_message": "请输入有效的数字",
+        "min": "最小订单 {0} 件",
+        "max": "最大订单 {0} 件",
+        "min_max": "订单从 {0} 到 {1} 件",
+        "min_not_available": "最小订单 {0} 件库存不足",
+        "out_of_stock": "缺货",
+        "positive_number": "值必须是正数",
+        "integer_number": "值必须是整数",
+        "pack_size": "按 {0} 的包装订购"
+      }
+    },
+    "pagination": {
+      "previous": "上一页",
+      "next": "下一页"
+    },
+    "select": {
+      "items_selected": "已选择 {0} 件商品"
+    },
+    "file": {
+      "progress": "{percent} 完成",
+      "uploaded": "上传完成"
+    },
+    "file_uploader": {
+      "drag_and_drop": "拖放文件到此处或",
+      "browse": "浏览您的文件",
+      "requirements": "可上传的文件格式为 {formats}。每个文件不得超过 {fileSize}。最多允许 {maxFileCount} 个文件。",
+      "any_format": "任何",
+      "errors": {
+        "fix_to_continue": "修复文件上传错误以继续。",
+        "has_max_file_count": "您已上传最大数量的文件。无法进行更多上传。",
+        "tried_more_than_max_file_count": "您尝试上传超过允许的最大文件数。"
+      }
+    },
+    "reach_limit": {
+      "end_list": "您已到达列表末尾。",
+      "page_limit_filters": "没有更多结果。请尝试更改筛选条件。",
+      "page_limit": "无法显示更多结果。"
+    }
+  }
+}
