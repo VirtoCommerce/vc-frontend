@@ -32,6 +32,11 @@
             @success="onPaymentResult(true)"
             @fail="onPaymentResult(false)"
           />
+          <PaymentProcessingCyberSource
+            v-else-if="paymentTypeName === 'CyberSourcePaymentMethod'"
+            :order="placedOrder"
+            @success="onPaymentResult(true)"
+            @fail="onPaymentResult(false)" />
         </div>
       </template>
     </VcWidget>
@@ -50,6 +55,7 @@ import { PaymentActionType, PaymentProcessingRedirection } from "@/shared/paymen
 import type { PaymentInType } from "@/core/api/graphql/types";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
+import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 
 const router = useRouter();
 const { placedOrder, allOrderItemsAreDigital } = useCheckout();
