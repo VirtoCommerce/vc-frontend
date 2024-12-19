@@ -90,6 +90,7 @@ import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
 import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
+import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 
 const MAX_NAME_LENGTH = 64;
@@ -101,6 +102,7 @@ const { openModal } = useModal();
 const { removeLocaleFromUrl, unpinLocale } = useLanguages();
 const { supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
+const broadcast = useBroadcast();
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
@@ -166,6 +168,8 @@ const onSubmit = handleSubmit(async (data) => {
       async onClose() {
         applyLanguage();
         await applyCurrency();
+
+        void broadcast.emit(dataChangedEvent);
 
         location.reload();
       },
