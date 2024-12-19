@@ -11,6 +11,10 @@ fragment fullLineItem on LineItemType {
   imageUrl
   selectedForCheckout
   productType
+  showPlacedPrice
+  listTotal {
+    ...money
+  }
   product {
     ...fullLineItemProduct
   }
