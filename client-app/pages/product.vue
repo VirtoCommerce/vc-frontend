@@ -111,7 +111,7 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { useBreakpoints, useElementVisibility, useScriptTag } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
@@ -161,6 +161,8 @@ interface IProps {
   allowSetMeta?: boolean;
   filtersDisplayOrder?: FiltersDisplayOrderType;
 }
+
+useScriptTag("http://localhost:8000/public/virto-assistant.js");
 
 const breakpoints = useBreakpoints(BREAKPOINTS);
 const isMobile = breakpoints.smaller("lg");
