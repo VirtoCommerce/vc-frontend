@@ -86,9 +86,11 @@ import { useForm } from "vee-validate";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
+import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
 import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
+import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
 
 const MAX_NAME_LENGTH = 64;
@@ -99,6 +101,8 @@ const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const { removeLocaleFromUrl, unpinLocale } = useLanguages();
 const { supportedCurrencies, saveCurrencyCode } = useCurrency();
+const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
+const broadcast = useBroadcast();
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
@@ -137,8 +141,15 @@ function applyLanguage(): void {
   removeLocaleFromUrl();
 }
 
-function applyCurrency(): void {
+async function applyCurrency(): Promise<void> {
   if (user.value?.contact?.currencyCode) {
+    await changeCartCurrency({
+      command: {
+        userId: user.value.id,
+        newCurrencyCode: user.value.contact.currencyCode,
+      },
+    });
+
     const contactCurrency = supportedCurrencies.value.find((item) => item.code === user.value!.contact!.currencyCode);
 
     if (contactCurrency) {
@@ -154,9 +165,11 @@ const onSubmit = handleSubmit(async (data) => {
   openModal({
     component: ProfileUpdateSuccessModal,
     props: {
-      onClose() {
+      async onClose() {
         applyLanguage();
-        applyCurrency();
+        await applyCurrency();
+
+        void broadcast.emit(dataChangedEvent);
 
         location.reload();
       },
