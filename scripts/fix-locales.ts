@@ -13,7 +13,6 @@ export async function fixLocales() {
     acc.add(path.join(localeFolder, targetFile));
     return acc;
   }, new Set<string>());
-  console.log("---", allNeededFiles);
 
   const fileContents: Record<string, LocaleDataType> = {};
   try {
@@ -38,7 +37,15 @@ export async function fixLocales() {
       originFile.split(".")[0],
       targetFile.split(".")[0],
     );
+    console.table(
+      {
+        [originFile.split(".")[0]]: originString,
+        [targetFile.split(".")[0]]: translatedString,
+      },
+      ["Translation"],
+    );
     set(targetFileContent, key, translatedString);
+    await new Promise((resolve) => setTimeout(resolve, 4000));
   }
 
   await Promise.all(
