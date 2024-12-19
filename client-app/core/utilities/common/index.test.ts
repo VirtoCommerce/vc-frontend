@@ -104,6 +104,18 @@ describe("getReturnUrlValue", () => {
     const result = getReturnUrlValue();
     expect(result).toBeNull();
   });
+
+  it("should return null when returnUrl points to a different hostname", () => {
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        href: "http://example.com?returnUrl=http://malicious.com/home",
+      },
+    });
+
+    const result = getReturnUrlValue();
+    expect(result).toBeNull();
+  });
 });
 
 describe("extractHostname", () => {
