@@ -20,7 +20,7 @@
           class="aspect-video rounded bg-neutral-200"
           :class="[imagePosition === 'right' ? 'order-1 lg:order-2' : 'order-2 lg:order-1']"
         >
-          <img :src="image" :alt="imageDescription" />
+          <VcImage :src="image" :alt="imageDescription" />
         </div>
       </div>
     </div>

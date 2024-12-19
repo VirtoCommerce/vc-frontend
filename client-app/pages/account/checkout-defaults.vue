@@ -39,7 +39,7 @@
               <VcImage
                 :alt="$t('common.placeholders.select_payment_method')"
                 class="size-12 rounded-sm bg-neutral-100"
-                src="/static/icons/placeholders/select-payment.svg"
+                src="select-payment.svg"
               />
 
               {{ $t("common.placeholders.select_payment_method") }}
@@ -82,7 +82,7 @@
               <VcImage
                 :alt="$t('common.placeholders.select_delivery_method')"
                 class="size-12 rounded-sm bg-neutral-100"
-                src="/static/icons/placeholders/select-shipping.svg"
+                src="select-shipping.svg"
               />
 
               {{ $t("common.placeholders.select_delivery_method") }}

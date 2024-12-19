@@ -20,7 +20,7 @@
         v-if="!hasIdentityProviders || hasOnlyIdentityProviders"
         :alt="$t('common.labels.background_image')"
         class="sign-in__image"
-        src="/static/images/sign-in/sign-in-page-image.webp"
+        src="sign-in-page-image.webp"
         lazy
       />
       <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders">

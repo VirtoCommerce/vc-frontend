@@ -126,12 +126,12 @@ const icon = computed(() => {
   if (isFailedFile(props.file)) {
     fileName = "error";
   } else if (Object.keys(ContentType).includes(contentType as ContentType)) {
-    fileName = ContentType[contentType as ContentType] || "file";
+    fileName = ContentType[contentType as ContentType]?.replace("/", "-") || "file";
   } else {
     fileName = "file";
   }
 
-  return `/static/icons/file/${fileName}.svg`;
+  return `file-${fileName}.svg`;
 });
 
 const fileSize = computed(() => getFileSize(props.file.size));

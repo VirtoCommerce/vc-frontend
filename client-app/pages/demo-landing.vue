@@ -27,10 +27,7 @@
             </div>
           </div>
           <div class="order-1 aspect-video rounded bg-neutral-200 lg:order-2">
-            <VcImage
-              src="/static/images/demo-landing/note.webp"
-              :alt="$t('pages.demo_landing.primary_block.image_alt')"
-            />
+            <VcImage src="note.webp" :alt="$t('pages.demo_landing.primary_block.image_alt')" />
           </div>
         </div>
       </div>
@@ -57,7 +54,7 @@
         </div>
         <div class="mt-16 grid grid-cols-1 items-center gap-x-20 gap-y-10 px-8 lg:grid-cols-3 lg:px-0">
           <div class="text-center">
-            <VcImage src="/static/images/demo-landing/feat-1.svg" class="mx-auto mb-9 h-24" lazy />
+            <VcImage src="feat-1.svg" class="mx-auto mb-9 h-24" lazy />
             <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_1.title") }}
             </div>
@@ -66,7 +63,7 @@
             </div>
           </div>
           <div class="text-center">
-            <VcImage src="/static/images/demo-landing/feat-2.svg" class="mx-auto mb-9 h-24" lazy />
+            <VcImage src="feat-2.svg" class="mx-auto mb-9 h-24" lazy />
             <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_2.title") }}
             </div>
@@ -75,7 +72,7 @@
             </div>
           </div>
           <div class="text-center">
-            <VcImage src="/static/images/demo-landing/feat-3.svg" class="mx-auto mb-9 h-24" lazy />
+            <VcImage src="feat-3.svg" class="mx-auto mb-9 h-24" lazy />
             <div class="mb-3 text-2xl font-bold uppercase">
               {{ $t("pages.demo_landing.features_block.feature_3.title") }}
             </div>

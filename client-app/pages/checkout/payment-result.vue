@@ -1,11 +1,7 @@
 <template>
   <VcEmptyPage
-    :image="
-      isPaymentSuccess ? '/static/images/order-payment-successful.webp' : '/static/images/order-payment-failed.webp'
-    "
-    :mobile-image="
-      isPaymentSuccess ? '/static/images/order-payment-successful.webp' : '/static/images/order-payment-failed.webp'
-    "
+    :image="isPaymentSuccess ? 'order-payment-successful.webp' : 'order-payment-failed.webp'"
+    :mobile-image="isPaymentSuccess ? 'order-payment-successful.webp' : 'order-payment-failed.webp'"
     class="flex grow flex-col"
   >
     <template #title>
