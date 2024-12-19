@@ -101,6 +101,6 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
 }
 
 watch(countInCart, (newCount) => {
-  quantity.value = newCount || 1;
+  quantity.value = newCount || product.value.minQuantity || 1;
 });
 </script>
