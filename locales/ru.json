@@ -1,0 +1,1443 @@
+{
+  "common": {
+    "buttons": {
+      "home": "Главная страница",
+      "ok": "ОК",
+      "cancel": "Отменить",
+      "close": "Закрыть",
+      "confirm": "Подтвердить",
+      "submit": "Отправить",
+      "create": "Создать",
+      "update": "Обновить",
+      "remove": "Удалить",
+      "save": "Сохранить",
+      "edit": "Редактировать",
+      "settings": "Настройки",
+      "change": "Изменить",
+      "delete": "Удалить",
+      "continue_shopping": "Продолжить покупки",
+      "select": "Выбрать",
+      "choose": "Выбрать",
+      "allFilters": "Все фильтры",
+      "filters": "Фильтры",
+      "back": "Назад",
+      "reset": "Сброс",
+      "register": "Регистрация",
+      "reset_password": "Сбросить пароль",
+      "reset_filters": "Сбросить фильтры",
+      "add_to_cart": "В корзину",
+      "apply": "Применить",
+      "send": "Отправить",
+      "more": "Больше",
+      "yes": "Да",
+      "no": "Нет",
+      "clear_cart": "Очистить корзину",
+      "save_changes": "Сохранить изменения",
+      "new_address": "Новый адрес",
+      "review_order": "Просмотреть заказ",
+      "show_order": "Показать заказ",
+      "print": "Печать",
+      "print_order": "Печать заказа",
+      "place_order": "Оформить заказ",
+      "back_to_cart": "Вернуться в корзину",
+      "back_to_order_details": "Вернуться к деталям заказа",
+      "go_to_checkout": "Оформить заказ",
+      "go_to_billing": "Перейти к оплате",
+      "show_more": "Подробнее",
+      "hide": "Скрыть",
+      "view_invoice": "Просмотреть счет",
+      "pay_now": "Оплатить сейчас",
+      "payment_details": "Детали оплаты",
+      "reorder_all": "Повторить заказ",
+      "view_cart": "Просмотреть корзину",
+      "add_new": "Добавить новый",
+      "add_new_address": "Добавить новый адрес",
+      "remove_selected": "Удалить выбранное",
+      "resend_link": "Отправить ссылку еще раз",
+      "set_new_password": "Установить новый пароль",
+      "toggle_dropdown": "Переключить выпадающее меню",
+      "search_orders": "Поиск заказов",
+      "reset_orders_search_keyword": "Сбросить ключевое слово поиска заказов",
+      "remove_credit_card": "Удалить кредитную карту",
+      "search_company_members": "Поиск членов компании",
+      "reset_company_members_search_keyword": "Сбросить ключевое слово поиска членов компании",
+      "previous": "Предыдущая",
+      "next": "Следующая",
+      "send_link_email": "Отправить ссылку по электронной почте",
+      "share": "Поделиться",
+      "approve": "Утвердить",
+      "decline": "Отклонить",
+      "all_filters": "Все фильтры",
+      "sort_by": "Сортировать по",
+      "add_items_to_cart": "Добавить товары в корзину",
+      "show_details": "Показать детали"
+    },
+    "labels": {
+      "actions": "Действия",
+      "user_name": "Имя пользователя",
+      "password": "Пароль",
+      "confirm_password": "Подтвердите пароль",
+      "company_name": "Название компании",
+      "first_name": "Имя",
+      "last_name": "Фамилия",
+      "address": "Адрес",
+      "phone": "Телефон",
+      "email": "Электронная почта",
+      "country": "Страна",
+      "zip_or_postal_code": "Почтовый индекс",
+      "region": "Штат/Провинция",
+      "city": "Город",
+      "address_line1": "Адрес",
+      "address_line2": "Квартира, офис, номер здания и т.д.",
+      "description": "Описание",
+      "quantity": "Количество",
+      "total": "Итого",
+      "compare": "Сравнить",
+      "price": "Цена",
+      "product_price": "Ваша цена",
+      "subtotal": "Промежуточный итог",
+      "discount": "Скидка",
+      "line_items": "Позиции",
+      "shipping": "Доставка",
+      "tax": "Налог",
+      "shipping_cost": "Доставка",
+      "status": "Статус",
+      "date": "Дата",
+      "created_date": "Дата создания",
+      "sort_by": "Сортировать по:",
+      "sku": "SKU",
+      "true_property": "Да",
+      "false_property": "Нет",
+      "product": "Товар",
+      "properties": "Свойства",
+      "price_per_item": "Цена за единицу",
+      "created": "Создано",
+      "purchase_order_number": "Номер заказа",
+      "promotion_code": "Промокод",
+      "secure_checkout": "Безопасная оплата",
+      "creates": "Создает",
+      "payment_number": "ID платежа",
+      "payment_type": "Тип оплаты",
+      "recipient_name": "Имя получателя",
+      "active_address": "Активный адрес",
+      "addresses_icon": "Иконка адресов",
+      "digital_product": "Цифровой товар",
+      "search": "Поиск {0}",
+      "in_stock": "В наличии",
+      "starts_from": "Начало: {0}",
+      "ends_to": "Конец: {0}",
+      "saved_cards": "Сохраненные карты",
+      "save_card_for_future_payments": "Сохраните карту для будущих платежей. Это безопасно.",
+      "add_new_card": "Добавить новую карту",
+      "last_day": "Последний день",
+      "last_week": "Последняя неделя",
+      "last_month": "Последний месяц",
+      "last_year": "Последний год",
+      "custom_date": "Произвольная дата",
+      "background_image": "Фоновое изображение",
+      "default_language": "Язык по умолчанию",
+      "default_currency": "Валюта по умолчанию",
+      "organizations": "Организации",
+      "my_organizations": "Мои организации",
+      "select_product": "Пожалуйста, выберите товар",
+      "sort_by_date": "Сортировать по дате",
+      "ascending": "По возрастанию",
+      "descending": "По убыванию",
+      "date_new_to_old": "Дата, новые сначала",
+      "date_old_to_new": "Дата, старые сначала",
+      "comments": "Комментарии",
+      "fields_required": "Поля обязательны для заполнения"
+    },
+    "prefixes": {
+      "please": "Пожалуйста",
+      "expires": "Действ. до:"
+    },
+    "suffixes": {
+      "product_count_in_stock": "в наличии"
+    },
+    "messages": {
+      "product_out_of_stock": "Нет в наличии",
+      "required_field": "Это поле обязательно для заполнения",
+      "email_is_not_correct": "Пожалуйста, введите эл.почту, например johndoe{'@'}gmail.com",
+      "email_not_unique": "Эта эл.почта уже зарегистрирован у нас",
+      "max_length": "Это поле не должно содержать более чем {max} символов",
+      "creating_order_error": "Ошибка при создании заказа",
+      "item_can_t_be_purchased": "Этот товар нельзя приобрести",
+      "item_is_out_of_stock": "Этот товар отсутствует на складе",
+      "invalid_value": "Неверное значение",
+      "invalid_user_id_or_token": "ID пользователя или токен недействительны",
+      "product_no_longer_available": "Больше недоступен",
+      "item_quantity_required_field": "Значение количества товара не может быть пустым",
+      "max_value": "Максимальное значение: {value}",
+      "min_value": "Минимальное значение: {value}",
+      "empty_wish_list": "В списке нет товаров",
+      "not_defined": "Не определено",
+      "invalid_coupon": "Этот код не соответствует ни одному из активных купонов. Проверьте правильность и попробуйте снова.",
+      "fill_all_required": "Введите всю необходимую информацию для продолжения.",
+      "something_went_wrong": "Что-то пошло не так. Проверьте данные и попробуйте снова.",
+      "checkout_pricing_warning": "Информация о наличии товаров, стоимости доставки, налогах и акциях является предварительной и может измениться до завершения оформления заказа.",
+      "wishlists_available_for_authorized": "Списки желаний доступны только для авторизованных пользователей",
+      "no_addresses": "У вас пока нет адресов",
+      "confirm_delete_address": "Вы уверены, что хотите удалить этот адрес?",
+      "save_changes": "Хотите сохранить изменения",
+      "address_deletion_successful": "Адрес успешно удален",
+      "cart_contains_deleted_products": "Корзина содержит товары, которые больше нельзя приобрести. Удалите эти товары и попробуйте снова",
+      "fail_add_product_to_cart": "Этот товар нельзя добавить в корзину. {reason}",
+      "fail_to_change_quantity_in_cart": "Невозможно обновить количество товара в корзине. {reason}",
+      "unhandled_error": "Извините за временные неудобства. В данный момент на сервере возникли технические проблемы. Пожалуйста, повтороите попытку позднее.",
+      "role_update_successful": "Роль клиента была успешно обновлена.",
+      "role_update_failed": "Ошибка при обновлении роли: {0}",
+      "passwords_do_not_match": "Пароли должны совпадать.",
+      "password_new_same_old": "Текущий пароль и новый пароль должны отличаться.",
+      "blocked": "Ваш аккаунт заблокирован. Вы не можете получить доступ к информации или создать заказ. Для получения дополнительных сведений, пожалуйста, ",
+      "password_about_expire": "Срок действия пароля истечет через {value} день(дня). Установите новый пароль в профиле.",
+      "password_expired": "Срок действия пароля истек",
+      "data_changed": "Данные были изменены на одной из других вкладок. Обновите страницу, чтобы отобразить последние данные."
+    },
+    "placeholders": {
+      "enter_value": "Введите значение",
+      "not_selected": "Не выбрано",
+      "select_address": "Выберите адрес",
+      "select_country": "Выберите страну",
+      "select_region": "Выберите штат или провинцию",
+      "select_delivery_method": "Выберите способ доставки",
+      "select_payment_method": "Выберите способ оплаты",
+      "company_name": "Введите название вашей компании",
+      "first_name": "Введите ваше имя",
+      "last_name": "Введите вашу фамилию",
+      "email": "Введите адрес эл. почты",
+      "password": "Введите пароль",
+      "confirm_password": "Подтвердите пароль",
+      "purchase_order_number": "Введите номер заказа",
+      "promotion_code": "Введите промокод",
+      "select_credit_card": "Выберите кредитную карту"
+    },
+    "links": {
+      "home": "Главная",
+      "catalog": "Каталог",
+      "bulk_order": "Мультизаказ",
+      "compare": "Сравнение",
+      "contact_us": "Свяжитесь с нами",
+      "dashboard": "Дашборд",
+      "account": "Аккаунт",
+      "profile": "Профиль",
+      "change_password": "Сменить пароль",
+      "addresses": "Адреса",
+      "orders": "Заказы",
+      "lists": "Списки",
+      "checkout_defaults": "Настройки оформления заказа",
+      "list_details": "Детали списка",
+      "cart": "Корзина",
+      "company_info": "Информация о компании",
+      "company_members": "Сотрудники компании",
+      "contact_administrator": "свяжитесь с администратором сайта",
+      "saved_credit_cards": "Сохраненные кредитные карты"
+    },
+    "titles": {
+      "all_actions": "Все действия",
+      "other_actions": "Другие действия",
+      "order_summary": "Данные заказа",
+      "billing_address": "Платежный адрес",
+      "payment_method": "Способ оплаты",
+      "payment_details": "Детали оплаты",
+      "shipping_method": "Способ доставки",
+      "shipping_address": "Адрес доставки",
+      "order_comment": "Комментарий к заказу",
+      "order_data": "Данные заказа",
+      "review_order": "Проверьте ваш заказ",
+      "new_address": "Новый адрес",
+      "edit_address": "Редактировать адрес",
+      "addresses": "Адреса",
+      "delete_address": "Удалить адрес",
+      "remove_products": "Удалить товары",
+      "change_role": "Сменить роль",
+      "save_changes": "Сохранить изменения",
+      "password_expired": "Пароль скоро истечет",
+      "error_details": "Детали ошибки"
+    },
+    "roles": {
+      "org-maintainer": "Администратор организации",
+      "org-employee": "Сотрудник организации",
+      "purchasing-agent": "Aгент по закупкам",
+      "store-admin": "Администратор магазина",
+      "store-manager": "Менеджер магазина"
+    },
+    "methods": {
+      "payment_by_code": {
+        "AuthorizeNetPaymentMethod": "Банковская карта (Authorize.Net)",
+        "DefaultManualPaymentMethod": "Вручную",
+        "SkyflowPaymentMethod": "Банковская карта (Skyflow)"
+      },
+      "delivery_by_id": {
+        "FixedRate_Ground": "Фиксированная ставка (наземный транспорт)",
+        "FixedRate_Air": "Фиксированная ставка (воздушный транспорт)"
+      }
+    }
+  },
+  "shared": {
+    "layout": {
+      "header": {
+        "top_header": {
+          "link_dashboard": "@:common.links.dashboard",
+          "link_contact_us": "Контакты",
+          "call_us_label": "Поддержка: ",
+          "logged_in_as": "вход под именем"
+        },
+        "bottom_header": {
+          "catalog_menu_button": "Каталог"
+        },
+        "link_sign_in": "Вход",
+        "link_register_now": "Регистрация",
+        "link_logout": "Выход",
+        "menu": {
+          "home": "@:common.links.home",
+          "catalog": "@:common.links.catalog",
+          "bulk_order": "@:common.links.bulk_order",
+          "compare": "@:common.links.compare",
+          "cart": "@:common.links.cart",
+          "lists": "@:common.links.lists",
+          "orders": "@:common.links.orders",
+          "contact_us": "@:common.links.contact_us"
+        },
+        "mobile": {
+          "my_account": "@:common.links.account",
+          "account_menu": {
+            "dashboard": "@:common.links.dashboard",
+            "profile": "@:common.links.profile",
+            "change_password": "@:common.links.change_password",
+            "addresses": "@:common.links.addresses",
+            "orders": "@:common.links.orders",
+            "lists": "@:common.links.lists",
+            "checkout_defaults": "@:common.links.checkout_defaults",
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
+          },
+          "settings": "Настройки",
+          "currency": "Валюта",
+          "search_bar": {
+            "input_placeholder": "Введите ключевое слово, товар, модель или номер запчасти"
+          },
+          "view_all_catalog": "Просмотреть все товары в категории"
+        }
+      },
+      "footer": {
+        "version": "Версия",
+        "company_name": "Virto Commerce",
+        "company_information_link_group": "Подробнее о компании",
+        "about_us_link": "О нас",
+        "investor_relations_link": "Связи с инвесторами",
+        "supplier_overview_link": "Поставщики",
+        "worldwide_link": "Всемирный",
+        "customer_support_link_group": "Поддержка клиентов",
+        "catalog_request_link": "Запрос каталога",
+        "contact_us_link": "Свяжитесь с нами",
+        "feedback_link": "Обратная связь",
+        "find_a_branch_link": "Найти филиал",
+        "order_support_link_group": "Поддержка заказов",
+        "orders_link": "Заказы",
+        "pick_up_link": "Самовывоз",
+        "auto_reorder_link": "Автоповтор заказа",
+        "special_orders_link": "Специальные заказы",
+        "returns_cancellations_link": "Возвраты и отмены",
+        "online_resources_ling_group": "Онлайн ресурсы",
+        "catalog_link": "Каталог",
+        "hot_buys_link": "Горячие предложения",
+        "rebates_link": "Кэшбэки",
+        "replacement_parts_link": "Запасные части",
+        "demo_landing_link": "Демо-страница",
+        "demo_page_link": "Демо-страница",
+        "builder_io_page_link": "Страница в Builder.io",
+        "all_rights_reserved": "Все права защищены",
+        "asp_net_e_commerce_platform": "Платформа ASP.NET ecommerce {0}",
+        "by_virto": "Virto Commerce"
+      },
+      "search_bar": {
+        "categories_label": "Категории",
+        "products_label": "Товары",
+        "pages_label": "Страницы",
+        "suggestions_label": "Предложения",
+        "no_results": "По вашему запросу {keyword} ничего не найдено",
+        "enter_keyword_placeholder": "Поиск товаров",
+        "search_button": "Искать",
+        "view_all_results_button": "Просмотреть все {total} результаты"
+      },
+      "language_selector": {
+        "label": "Язык:"
+      },
+      "currency_selector": {
+        "label": "Валюта:"
+      }
+    },
+    "account": {
+      "navigation": {
+        "main_title": "Аккаунт",
+        "corporate_title": "Корпоративный",
+        "links": {
+          "dashboard": "@:common.links.dashboard",
+          "profile": "@:common.links.profile",
+          "change_password": "@:common.links.change_password",
+          "addresses": "@:common.links.addresses",
+          "orders": "@:common.links.orders",
+          "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members",
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
+        }
+      },
+      "change_password_form": {
+        "title": "Создать новый пароль",
+        "current_pass_label": "Текущий пароль",
+        "current_pass_placeholder": "Введите текущий пароль",
+        "new_pass_label": "Новый пароль",
+        "new_pass_placeholder": "Создайте новый пароль",
+        "confirm_new_pass_label": "Подтвердите новый пароль",
+        "confirm_new_pass_placeholder": "Повторите новый пароль"
+      },
+      "sign_in_form": {
+        "remember_me_label": "Запомнить меня",
+        "forgot_password_link": "Забыли пароль?",
+        "login_button": "Вход",
+        "registration_button": "Регистрация",
+        "errors": {
+          "login_failed": "Не удалось войти. Проверьте ваши учетные данные.",
+          "email_verification_is_required": "Требуется подтверждение эл. почты. Подтвердите адрес эл. почты",
+          "user_is_temporary_locked_out": "Ваш аккаунт временно заблокирован. Пожалуйста, попробуйте позже",
+          "user_is_locked_out": "@:common.messages.blocked",
+          "user_cannot_login_in_store": "Доступ запрещен. Вы не можете войти в текущий магазин",
+          "password_expired": "@:common.messages.password_expired",
+          "user_not_found": "Пользователь не найден. Пожалуйста, убедитесь, что вы ввели правильную информацию"
+        }
+      },
+      "forgot_password_form": {
+        "error_alert": "Неверный результат запроса сброса пароля. Пожалуйста, "
+      },
+      "checkout_default_success_modal": {
+        "title": "Настройки оформления заказа",
+        "message": "Настройки оформления заказа успешно обновлены",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "invite_member_modal": {
+        "title": "Пригласить участника",
+        "role_label": "Роль",
+        "role_placeholder": "Выберите роль",
+        "emails_label": "Введите адреса эл. почты людей, которых вы хотите пригласить",
+        "emails_placeholder": "Используйте запятые, точки с запятой или переносы строк для разделения нескольких записей",
+        "message_label": "Сообщение",
+        "cancel_button": "@:common.buttons.cancel",
+        "send_button": "@:common.buttons.send",
+        "invite_successfully_text": "Приглашение успешно отправлено",
+        "emails_quantity_exceeded": "Вы можете пригласить до {maxValue} пользователей за один раз",
+        "email_length_exceeded": "Максимальная длина адреса эл. почты составляет {maxValue} символов",
+        "invalid_emails": "Некорректные адреса эл. почты: {invalidEmails}"
+      },
+      "profile_update_success_modal": {
+        "title": "Обновление профиля",
+        "message": "Профиль успешно обновлен!",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "registration_success_modal": {
+        "title": "Регистрация",
+        "message": "Регистрация успешно завершена!",
+        "ok_button": "@:common.buttons.home"
+      },
+      "reorder_info_modal": {
+        "title": "Подтверждение повторного заказа",
+        "cancel_button": "@:common.buttons.cancel",
+        "confirm_button": "@:common.buttons.confirm",
+        "filter": {
+          "title": "Фильтр:",
+          "reduced_quantity_checkbox": "Количество снижено",
+          "can_t_be_purchased_checkbox": "Нельзя приобрести",
+          "items_without_changes_checkbox": "Товары без изменений"
+        },
+        "product_card": {
+          "quantity_label": "@:common.labels.quantity",
+          "total_label": "@:common.labels.total{':'}",
+          "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
+          "out_of_stock_message": "@:common.messages.product_out_of_stock",
+          "reduced_message": "Количество товаров в заказе было <span class=\"text-neutral\">уменьшено с {0} до {1}</span> из-за ограничений на складе",
+          "item_can_t_be_purchased_message": "@:common.messages.item_can_t_be_purchased",
+          "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
+        }
+      },
+      "orders_filter": {
+        "status_label": "@:common.labels.status",
+        "created_date_label": "Дата создания",
+        "start_date_label": "Дата начала",
+        "end_date_label": "Дата окончания",
+        "apply_button": "@:common.buttons.apply",
+        "reset_button": "@:common.buttons.reset"
+      }
+    },
+    "company": {
+      "add_or_update_address_modal": {
+        "address_title": "Информация об адресе",
+        "create_title": "Ввести новый адрес компании",
+        "edit_title": "Редактировать адрес компании"
+      },
+      "block_member_modal": {
+        "title": "Заблокировать пользователя",
+        "text": "Вы уверены, что хотите заблокировать доступ пользователя?"
+      },
+      "unblock_member_modal": {
+        "title": "Разблокировать пользователя",
+        "text": "Вы уверены, что хотите разблокировать доступ пользователя?"
+      },
+      "delete_member_modal": {
+        "title": "Удалить участника",
+        "text": "Вы уверены, что хотите удалить пользователя {name} из списка участников компании?"
+      },
+      "notifications": {
+        "user_blocked": "Пользователь был успешно заблокирован.",
+        "user_unblocked": "Пользователь был успешно разблокирован."
+      }
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "Добавить в сравнение",
+          "remove": "Удалить из сравнения"
+        }
+      },
+      "clear_list_modal": {
+        "title": "Подтвердить удаление",
+        "message": "Вы подтверждаете удаление всех товаров из списка?"
+      }
+    },
+    "cart": {
+      "add_to_cart": {
+        "errors": {
+          "in_cart": "в корзине",
+          "already_in_cart_message": "{0} уже добавлен в корзину",
+          "enter_correct_number_message": "Введите корректное число",
+          "min": "Мин заказ {0} шт.",
+          "max": "Макс заказ {0} шт.",
+          "min_max": "Заказ от {0} до {1} шт.",
+          "min_not_available": "Мин заказ {0} шт. нет в наличии",
+          "out_of_stock": "Нет в наличии",
+          "positive_number": "Число должно быть положительным",
+          "integer_number": "Число должно быть целым",
+          "pack_size": "Заказ упаковками по {0}"
+        }
+      },
+      "products_section": {
+        "title": "Товары"
+      },
+      "gifts_section": {
+        "title": "+ Добавить подарок"
+      },
+      "add_bulk_items_to_cart_results_modal": {
+        "title": "Добавление товаров в корзину",
+        "groups": {
+          "added": "Успешно добавлено",
+          "not_added": "Не добавлено"
+        },
+        "labels": {
+          "sku": "@:common.labels.sku",
+          "product_name": "Название товара",
+          "quantity": "Количество"
+        }
+      },
+      "clear_cart_modal": {
+        "title": "Очистить корзину",
+        "message": "Вы хотите очистить корзину?"
+      },
+      "configuration_items": {
+        "title": "Список компонентов",
+        "edit_configuration": "Редактировать конфигурацию"
+      }
+    },
+    "catalog": {
+      "view_mode": {
+        "grid_label": "Карточки",
+        "list_label": "Список"
+      },
+      "page_size": {
+        "label": "Результатов на странице:"
+      },
+      "product_card": {
+        "price_label": "@:common.labels.product_price",
+        "product_rating": "Рейтинг:",
+        "product_vendor": "Поставщик:"
+      },
+      "product_details": {
+        "technical_specs_block_title": "Свойства",
+        "variations_block_title": "Вариации товара",
+        "description_block_title": "Описание",
+        "assets_block_title": "Файлы",
+        "vendor_label": "Поставщик",
+        "share_product_label": "Поделиться товаром",
+        "create_configuration_button": "Создайте свою конфигурацию",
+        "price_block": {
+          "title": "Цена и доставка",
+          "add_to_list_button": "Добавить в список",
+          "product_email_title": "Пожалуйста, ознакомьтесь с товаром: {0}"
+        },
+        "variations": {
+          "title": "Вариации товара",
+          "columns": {
+            "item": "Позиция",
+            "stock": "Склад",
+            "price": "Цена",
+            "quantity": "Количество"
+          },
+          "list": "Список",
+          "table": "Таблица",
+          "no_results": "Результаты не найдены"
+        },
+        "product_variation_card": {
+          "variation_sku_label": "@:common.labels.sku",
+          "price_label": "@:common.labels.product_price",
+          "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        },
+        "product_configuration": {
+          "title": "Настройте параметры",
+          "none": "Нет",
+          "nothing_selected": "Ничего не выбрано",
+          "changed_notification": "Конфигурация товара была изменена. Вы можете всегда сохранить ее позже, нажав кнопку \"@:{'ui_kit.buttons.update_cart'}\".",
+          "changed_confirmation": "Конфигурация товара была изменена. Вы хотите ее сохранить?"
+        }
+      },
+      "discount_badge": {
+        "off": "скидка"
+      },
+      "branches_modal": {
+        "title": "Выбрать филиал",
+        "all_branches": "Все филиалы",
+        "search_input_placeholder": "Поиск по адресу и названию",
+        "selected_branches": "Выбранные филиалы",
+        "clear_selection": "Очистить выбор",
+        "cancel_button": "Отмена",
+        "ok_button": "ОК",
+        "no_results": "Результатов не найдено",
+        "reset_search_button": "Очистить поиск"
+      }
+    },
+    "checkout": {
+      "accepted_gifts": {
+        "gift_label": "Подарок",
+        "quantity_label": "@:common.labels.quantity",
+        "title": "Принятые подарки"
+      },
+      "shipping_details_section": {
+        "title": "Информация о доставке",
+        "labels": {
+          "shipping_address": "Адрес доставки",
+          "shipping_method": "Способ доставки"
+        },
+        "links": {
+          "select_address": "выберите адрес доставки"
+        }
+      },
+      "billing_details_section": {
+        "title": "Детали оплаты",
+        "labels": {
+          "billing_address": "Платежный адрес",
+          "payment_method": "Способ оплаты",
+          "same_as_shipping_address": "Совпадает с адресом доставки"
+        },
+        "links": {
+          "select_address": "Выбрать платежный адрес"
+        },
+        "messages": {
+          "no_addresses": "Не указан платежный адрес. Пожалуйста, выберите или введите адрес.",
+          "unauthenticated_no_addresses": "Нет платежных адресов. Пожалуйста, введите адрес."
+        }
+      },
+      "payment_method_modal": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select",
+        "title": "Выбрать способ оплаты"
+      },
+      "select_address_modal": {
+        "meta": {
+          "table_description": "доступные адреса"
+        },
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "save_button": "@:common.buttons.save",
+        "select_button": "@:common.buttons.select",
+        "add_address_button": "@:common.buttons.add_new_address",
+        "phone_label": "@:common.labels.phone{':'}",
+        "email_label": "@:common.labels.email{':'}",
+        "no_addresses_message": "У вас пока нет адресов",
+        "title": "Выбрать адрес"
+      },
+      "shipping_method_modal": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select",
+        "price_label": "@:common.labels.price{':'}",
+        "title": "Выбрать способ доставки"
+      }
+    },
+    "bulk_order": {
+      "manually": {
+        "title": "Вручную",
+        "product_sku_label": "@:common.labels.sku",
+        "quantity_label": "@:common.labels.quantity",
+        "add_rows_action_link": "Добавить еще 5 строк",
+        "reset_button": "@:common.buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart",
+        "subtitle_message_start": "Быстро добавляйте товары в",
+        "cart_link": "Корзину",
+        "subtitle_message_end": "вводя SKU и количество товаров."
+      },
+      "copy_n_paste": {
+        "title": "Копировать из файла",
+        "subtitle_message": "Хотите сэкономить время и заказать быстрее?",
+        "guide_message": "Просто скопируйте и вставьте записи товаров из вашего CSV файла в поле ниже, используя следующий формат: <strong>SKU,Количество</strong>. Каждая запись должна начинаться с новой строки.",
+        "text_area_placeholder": "Пример формата:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
+        "reset_button": "@:common.buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart"
+      },
+      "add_to_cart_sku_errors_modal": {
+        "title": "Ошибки SKU при добавлении в корзину",
+        "common_message": "При добавлении товаров в корзину возникли проблемы.",
+        "duplicate_skus_message": "Обнаружены дублирующиеся SKU. Проверьте товары для соответствующих SKU перед добавлением в корзину.",
+        "content": {
+          "sku": "SKU",
+          "products": "Товары",
+          "quantity": "Количество"
+        }
+      }
+    },
+    "payment": {
+      "bank_card_form": {
+        "number_label": "Номер карты",
+        "cardholder_name_label": "Имя владельца карты",
+        "expiration_date_label": "Срок действия",
+        "expiration_date_placeholder": "ММ / ГГ",
+        "month_label": "Месяц",
+        "month_placeholder": "ММ",
+        "year_label": "Год",
+        "year_placeholder": "ГГ",
+        "security_code_label": "Код безопасности"
+      },
+      "authorize_net": {
+        "user_agreement_link": "Пользовательского соглашения",
+        "privacy_policy_link": "Политике конфиденциальности",
+        "accept_terms_text": "Размещая заказ, вы принимаете условия нашего",
+        "processing_personal_data_text": "и соглашаетесь на обработку ваших персональных данных согласно нашей",
+        "pay_now_button": "Оплатить сейчас",
+        "errors": {
+          "number": "Введите корректный номер кредитной карты",
+          "month": "Введите корректный месяц оконччания срока действия",
+          "year": "Введите корректный год окончания срока действия",
+          "expiration_date": "Дата истечения срока действия должна быть в будущем",
+          "security_code": "Введите корректный код безопасности",
+          "cardholder_name": "Введите корректное имя владельца карты",
+          "incorrect_payment_method": "Некорректный способ оплаты"
+        }
+      },
+      "skyflow": {
+        "pay_now_button": "Оплатить сейчас"
+      },
+      "manual": {
+        "text": "Выбранный вами способ оплаты не поддерживает онлайн-платежи. Пожалуйста, выберите другой способ или "
+      },
+      "redirection": {
+        "text": "После нажатия <strong>{0}</strong> вы будете перенаправлены на сторонний платежный сервис",
+        "pay_now_button": "Оплатить сейчас",
+        "try_again_button": "Попробовать снова",
+        "errors": {
+          "missing_link": "Ссылка для перенаправления отсутствует",
+          "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
+        }
+      }
+    },
+    "wishlists": {
+      "list_card": {
+        "product_count_label": "Количество товаров",
+        "list_edit_button": "Редактировать",
+        "remove_list_button": "Удалить",
+        "make_private_button": "Сделать приватным",
+        "share_button": "Поделиться",
+        "saved": "Сохранено"
+      },
+      "list_details": {
+        "add_all_to_cart_button": "Добавить все в корзину",
+        "list_settings_button": "Настройки списка",
+        "empty_list": "Ваш список пуст",
+        "empty_list_button": "Перейти в каталог",
+        "list_icon": "Иконка списка"
+      },
+      "add_to_wishlists_modal": {
+        "title": "Выберите список",
+        "empty_list": "У вас нет списков товавров",
+        "cancel_button": "@:common.buttons.cancel",
+        "already_in_the_lists": "Уже в списках",
+        "add_to_other_lists": "Добавить в другие списки",
+        "add_to_list_button": "Добавить в список",
+        "add_new_list": "Добавить новый список",
+        "save_button": "Сохранить",
+        "notification_success": "Ваши списки были успешно обновлены",
+        "is_required_validation_error": "Требуется <b>Название списка</b>",
+        "new_list": "Новый список"
+      },
+      "unsuccessful_create_wishlist_modal": {
+        "message": "Вы достигли максимального количества списков. Удалите неиспользуемый список или перераспределите товары в существующие списки.",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "add_or_update_wishlist_modal": {
+        "title": "Новый список",
+        "edit_mode_title": "Настройки списка",
+        "list_name_label": "Название списка",
+        "list_name_placeholder": "Пожалуйста, введите название",
+        "create_button": "Создать список",
+        "save_button": "@:common.buttons.save",
+        "cancel_button": "@:common.buttons.cancel",
+        "private_list": "Приватный список",
+        "make_shared": "Сделать общим"
+      },
+      "delete_wishlist_modal": {
+        "title": "Подтвердить удаление",
+        "message": "Вы уверены, что хотите удалить список “{listName}”?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "delete_wishlist_product_modal": {
+        "title": "Подтвердить удаление",
+        "message": "Вы уверены, что хотите удалить “{productName}” из списка?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "status": {
+        "shared": "Общий",
+        "private": "Приватный"
+      }
+    }
+  },
+  "pages": {
+    "403": {
+      "error_code": "403",
+      "error_text": "Доступ запрещен",
+      "message": "У вас нет прав доступа к запрошенной странице.",
+      "img_alt": "Доступ запрещен",
+      "home_button": "@:common.buttons.home"
+    },
+    "404": {
+      "error_code": "404",
+      "error_text": "Страница не найдена",
+      "message": "Произошла ошибка. Перенаправить вас на домашнюю страницу?",
+      "img_alt": "Страница не найдена",
+      "home_button": "@:common.buttons.home"
+    },
+    "500": {
+      "error_code": "500",
+      "error_text": "Внутренняя ошибка сервера",
+      "message": "Произошла ошибка. Перенаправить вас на домашнюю страницу?",
+      "img_alt": "Внутренняя ошибка сервера",
+      "home_button": "@:common.buttons.home"
+    },
+    "home": {
+      "meta": {
+        "title": "Главная",
+        "keywords": "тест, главная, страница, ключевые слова",
+        "description": "Описание тестовой главной страницы"
+      },
+      "sign_in_form_title": "Вход",
+      "main_banner_block": {
+        "message": "Мы можем помочь вам <br />принимать обоснованные<br />и мудрые решения",
+        "key_feature_1": "Ориентированность на результат",
+        "key_feature_2": "Доверенный",
+        "key_feature_3": "Надежный"
+      },
+      "feature_descriptions_block": {
+        "title": "Управление коммерческой деятельностью никогда не было таким простым",
+        "feature_1": "Управление корпоративным аккаунтом",
+        "feature_2": "Управление предложениями и переговоры по ценам",
+        "feature_3": "Множество магазинов, каналов и локаций",
+        "feature_4": "Кастомизация B2B и управление ценами"
+      },
+      "subscription_block": {
+        "subscribe_now": "Подписаться сейчас!",
+        "info_message": "Оставайтесь на связи с новостями B2B магазина!",
+        "email_placeholder": "Ваш email",
+        "subscribe_button": "Подписаться"
+      }
+    },
+    "forgot_password": {
+      "meta": {
+        "title": "Забыли пароль"
+      },
+      "header": "сбросить пароль",
+      "email_will_be_sended_message": "Мы отправим вам письмо с инструкциями по сбросу пароля",
+      "reset_link_was_sent_message": "Мы отправили вам ссылку для сброса пароля на ваш почтовый ящик",
+      "home_button": "@:common.buttons.home"
+    },
+    "reset_password": {
+      "meta": {
+        "title": "Сброс пароля"
+      },
+      "header": "Сбросьте ваш пароль",
+      "enter_new_password_message": "Введите новый пароль",
+      "success_message": "Ваш пароль был успешно сброшен",
+      "log_in_button": "Вход"
+    },
+    "set_password": {
+      "meta": {
+        "title": "Регистрация"
+      },
+      "header": "Регистрация",
+      "enter_new_password_message": "Для вас был создан аккаунт, пожалуйста, установите пароль для входа.",
+      "success_message": "Регистрация успешно завершена",
+      "log_in_button": "Продолжить"
+    },
+    "change_password": {
+      "meta": {
+        "title": "Смена пароля"
+      },
+      "header": "Смените ваш пароль",
+      "success_message": "Ваш пароль успешно изменен"
+    },
+    "sign_in": {
+      "meta": {
+        "title": "@:pages.sign_in.header"
+      },
+      "header": "Войти",
+      "divider_text": "или",
+      "providers": {
+        "azure_ad": {
+          "button_text": "Войти с помощью Entra ID"
+        },
+        "google_sso": {
+          "button_text": "Войти с помощью Google"
+        }
+      }
+    },
+    "sign_up": {
+      "meta": {
+        "title": "@:pages.sign_up.header"
+      },
+      "header": "Регистрация",
+      "personal_registration_kind_label": "Личный аккаунт",
+      "organization_registration_kind_label": "Корпоративный аккаунт",
+      "register_button": "Регистрация"
+    },
+    "confirm_email": {
+      "meta": {
+        "title": "@:pages.confirm_email.header"
+      },
+      "header": "Подтверждение эл. почты",
+      "subtitle": "Благодарим за подтверждение эл. почты",
+      "text": "Пожалуйста, используйте ваше имя пользователя и пароль для входа в аккаунт",
+      "continue_button": "@:shared.layout.header.link_sign_in",
+      "continue_shopping_button": "@:common.buttons.continue_shopping",
+      "email_confirmation_failed_text": "Чтобы продолжить, вам нужно завершить процесс подтверждения. Пожалуйста, используйте кнопку ниже, чтобы запросить новую ссылку.",
+      "link_sent_successfully_text": "Мы отправили ссылку подтверждения на ваш почтовый ящик.",
+      "link_sent_error_text": "Произошла проблема при отправке ссылки подтверждения. Пожалуйста, попробуйте позже."
+    },
+    "confirm_invitation": {
+      "meta": {
+        "title": "@:pages.confirm_invitation.header"
+      },
+      "header": "Регистрация",
+      "text": "Вы получили приглашение присоединиться к вашей компании.<br />Пожалуйста, завершите регистрацию."
+    },
+    "account": {
+      "addresses": {
+        "meta": {
+          "title": "@:pages.account.addresses.title",
+          "table_description": "доступные адреса"
+        },
+        "title": "Адреса",
+        "new_address_title": "Новый адрес",
+        "edit_address_title": "Редактировать адрес",
+        "make_default_button": "Установить по умолчанию",
+        "no_addresses_img_alt": "Нет адресов"
+      },
+      "checkout_defaults": {
+        "meta": {
+          "title": "@:pages.account.checkout_defaults.title"
+        },
+        "title": "Настройки оформления заказа",
+        "select_delivery_method_label": "Предпочтительный способ доставки",
+        "shipping_radio_label": "Доставка",
+        "pickup_radio_label": "Самовывоз",
+        "not_selected_placeholder": "@:common.placeholders.not_selected",
+        "update_button": "@:common.buttons.update",
+        "payment_method_label": "Предпочтительный способ оплаты",
+        "payment_method_placeholder": "Пожалуйста, выберите предпочтительный способ оплаты",
+        "shipping_method_label": "Предпочтительный способ доставки",
+        "shipping_method_placeholder": "Пожалуйста, выберите предпочтительный способ доставки"
+      },
+      "dashboard": {
+        "meta": {
+          "title": "@:pages.account.dashboard.title"
+        },
+        "title": "Панель управления",
+        "last_orders_card": {
+          "title": "Последние заказы",
+          "all_orders_link": "Все заказы",
+          "order_number_label": "Номер заказа",
+          "purchase_number_label": "Номер закупки",
+          "status_label": "@:common.labels.status",
+          "invoice_label": "Счет",
+          "date_label": "@:common.labels.date",
+          "total_label": "@:common.labels.total",
+          "no_orders_img_alt": "Нет заказов",
+          "no_orders_message": "Еще нет заказов"
+        },
+        "monthly_report_card": {
+          "title": "Отчет о расходах за месяц",
+          "budget_title": "Бюджет",
+          "total_spend_label": "Всего потрачено",
+          "spend_chart_alt": "Диаграмма расходов"
+        },
+        "orders_status_card": {
+          "title": "Статус заказов"
+        },
+        "bulk_order_card": {
+          "title": "Мультизаказ"
+        }
+      },
+      "change_password": {
+        "meta": {
+          "title": "@:pages.account.change_password.title"
+        },
+        "title": "Смена пароля",
+        "success_message": "@:pages.change_password.success_message"
+      },
+      "orders": {
+        "meta": {
+          "title": "@:pages.account.orders.title",
+          "table_description": "@:pages.account.orders.title"
+        },
+        "search_placeholder": "Введите ключевое слово...",
+        "title": "Заказы",
+        "order_number_label": "Номер заказа",
+        "purchase_number_label": "Номер закупки",
+        "status_label": "@:common.labels.status",
+        "invoice_label": "Счет",
+        "date_label": "@:common.labels.date",
+        "total_label": "@:common.labels.total",
+        "no_orders_img_alt": "Нет заказов",
+        "no_orders_message": "Еще нет заказов",
+        "no_results_message": "Результаты не найдены",
+        "buttons": {
+          "no_orders": "Перейти в каталог",
+          "reset_search": "Очистить поиск"
+        }
+      },
+      "order_details": {
+        "meta": {
+          "title": "@:pages.account.order_details.title"
+        },
+        "title": "Заказ #{0}",
+        "created_title": "Заказ завершен",
+        "purchase_order_label": "Номер заказа: ",
+        "placed_on_label": "Размещен: ",
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        }
+      },
+      "order_payment": {
+        "meta": {
+          "title": "@:pages.account.order_payment.title"
+        },
+        "title": "Информация об оплате",
+        "breadcrumb_title": "Оплата",
+        "processed_title": "@:pages.account.order_details.title",
+        "billing_address_label": "Платежный адрес",
+        "payment_method_label": "Способ оплаты",
+        "phone_label": "@:pages.checkout.shipping_details_section.shipping_address_block.phone_label",
+        "email_label": "@:pages.checkout.shipping_details_section.shipping_address_block.email_label",
+        "edit_button": "Редактировать",
+        "bank_card_title": "Кредитная карта",
+        "back_to_order_button": "Вернуться к заказу",
+        "orders_list_button": "Список заказов",
+        "try_again_button": "Попробовать снова",
+        "continue_shopping_button": "Продолжить покупки",
+        "status_label": "@:common.labels.status{':'}",
+        "order_date": "Дата заказа:",
+        "success": {
+          "title": "Оплата прошла успешно",
+          "text": "Спасибо, мы проверяем вашу оплату. Заказ будет отправлен после получения оплаты."
+        },
+        "failure": {
+          "title": "Оплата не прошла",
+          "text": "Возникла проблема с вашей оплатой, пожалуйста, попробуйте снова."
+        }
+      },
+      "lists": {
+        "meta": {
+          "title": "@:shared.account.navigation.links.lists"
+        },
+        "no_lists": "Вы еще не создали списков",
+        "create_list_button": "Создать список",
+        "create_list_button_mobile": "Создать",
+        "lists_icon": "Иконка списка"
+      },
+      "saved_credit_cards": {
+        "no_cards": "У вас нет сохраненных кредитных карт",
+        "delete_credit_card_modal": {
+          "title": "Подтвердить удаление",
+          "message": "Вы уверены, что хотите удалить кредитную карту?"
+        }
+      },
+      "list_details": {
+        "meta": {
+          "title": "Список: {0}"
+        },
+        "save_changes": "@:common.titles.save_changes",
+        "save_changes_message": "@:common.messages.save_changes в списке?"
+      },
+      "profile": {
+        "meta": {
+          "title": "@:pages.account.profile.title"
+        },
+        "title": "Профиль",
+        "change_password_title": "Сменить пароль",
+        "update_error_alert": "Произошла ошибка при обновлении профиля"
+      },
+      "impersonate": {
+        "title": "Авторизация",
+        "success": "Вы авторизовались",
+        "error": "Возникли проблемы при авторизации. Проверьте ваши права доступа"
+      }
+    },
+    "company": {
+      "info": {
+        "meta": {
+          "title": "@:pages.company.info.title",
+          "table_description": "адреса компании"
+        },
+        "title": "Информация о компании",
+        "content_header": "Адреса",
+        "no_addresses_message": "Пока нет адресов",
+        "address_not_delete_message": "Адрес по умолчанию удалить нельзя",
+        "address_saved_successful_message": "Адрес успешно сохранен",
+        "add_to_favorites": "Добавить в избранное",
+        "remove_from_favorites": "Удалить из избранного",
+        "labels": {
+          "company_name": "Название компании",
+          "address": "Адрес",
+          "description": "Описание",
+          "zip": "Почтовый индекс",
+          "country": "Страна",
+          "default": "По умолчанию",
+          "favorite": "Избранное",
+          "actions": "Действия"
+        },
+        "buttons": {
+          "add_new_address": "@:common.buttons.add_new_address",
+          "add_new_address_mobile": "Добавить новый"
+        }
+      },
+      "members": {
+        "meta": {
+          "title": "@:pages.company.members.title",
+          "table_description": "@:pages.company.members.title"
+        },
+        "title": "Сотрудники компании",
+        "search_placeholder": "Поиск пользователей",
+        "no_members_img_alt": "Нет сотрудников",
+        "no_members_message": "Сотрудников пока нет",
+        "no_results_message": "Результаты не найдены",
+        "invite_sent": "Приглашение отправлено",
+        "labels": {
+          "role": "Роль",
+          "status": "Статус"
+        },
+        "buttons": {
+          "invite_members": "Пригласить участников",
+          "invite": "Пригласить",
+          "reset_search": "Очистить поиск",
+          "edit_role": "Редактировать роль",
+          "block_user": "Заблокировать пользователя",
+          "unblock_user": "Разблокировать пользователя",
+          "delete": "Удалить",
+          "no_members": "Продолжить просмотр"
+        },
+        "content_header": {
+          "name": "Имя",
+          "role": "Роль",
+          "email": "Электронная почта",
+          "active": "Статус"
+        },
+        "statuses": {
+          "active": "Активен",
+          "inactive": "Неактивен",
+          "invited": "Приглашен",
+          "blocked": "Заблокирован"
+        }
+      }
+    },
+    "cart": {
+      "meta": {
+        "title": "@:pages.cart.title"
+      },
+      "title": "Корзина",
+      "empty_cart_description": "Ваша корзина пуста",
+      "recently_browsed_products": "Недавно просмотренные"
+    },
+    "checkout": {
+      "meta": {
+        "title": "@:pages.checkout.title"
+      },
+      "title": "Оформление заказа",
+      "steps": {
+        "shipping": "Доставка",
+        "billing": "Оплата",
+        "review": "Проверка заказа",
+        "payment": "Оплата",
+        "completed": "Завершено"
+      }
+    },
+    "catalog": {
+      "meta": {
+        "title": "@:pages.catalog.title",
+        "keywords": "тест, каталог, страница, ключевые слова",
+        "description": "Описание тестовой страницы каталога"
+      },
+      "title": "Каталог",
+      "instock_filter_card": {
+        "title": "В наличии",
+        "checkbox_label": "Только товары в наличии",
+        "tooltip_text": "Выберите, чтобы увидеть только товары в наличии"
+      },
+      "branch_availability_filter_card": {
+        "title": "Наличие в филиалах",
+        "available_in": "Выбрать {0}",
+        "branches": "филиал | {n} филиал | {n} филиалов",
+        "select_branch_text": "Выберите филиал, чтобы увидеть товары в наличии"
+      },
+      "products_found_message": "результат | результаты",
+      "filters_button": "@:common.buttons.filters",
+      "sort_by_label": "@:common.labels.sort_by",
+      "choose_button": "@:common.buttons.choose",
+      "add_to_wishlist_tooltip": "Добавить в список",
+      "in_the_list_tooltip": "В списке",
+      "variations_button": "Вариаций: {0}",
+      "customize_button": "Настроить",
+      "show_on_a_separate_page": "Открыть в новом окне",
+      "no_products_message": "В этой категории нет товаров",
+      "no_products_filtered_message": "Результаты не найдены",
+      "no_facet_found_message": "Результатов нет",
+      "no_products_button": "Очистить поиск",
+      "products_icon": "Иконка товара",
+      "show_all_results": "Показать все результаты"
+    },
+    "product": {
+      "sku_label": "@:common.labels.sku",
+      "sku_copied_message": "@:common.labels.sku успешно скопирован",
+      "variations_total_label": "Всего в вашей корзине:",
+      "view_cart_button": "В корзину",
+      "recommended_products": {
+        "related-products_section_title": "Похожие товары",
+        "bought-together_section_title": "Также покупают вместе"
+      },
+      "related_product_section_title": "Связанные товары",
+      "price_label": "@:common.labels.product_price{':'}"
+    },
+    "checkout_complete": {
+      "title": "Заказ завершен",
+      "subtitle": "Заказ {0} успешно оформлен.",
+      "text": "Вы будете уведомлены по электронной почте об изменении статуса заказа."
+    },
+    "payment_result": {
+      "title": {
+        "success": "Оплата прошла успешно",
+        "failed": "Оплата не прошла"
+      },
+      "subtitle": {
+        "success": "Заказ {0} был успешно оформлен.",
+        "failed": "Заказ {0} не был оплачен."
+      },
+      "text": {
+        "success": "Спасибо, мы проверяем вашу оплату. Вы получите уведомление по электронной почте об изменении статуса заказа.",
+        "failed": "Возникла проблема с вашей оплатой, пожалуйста, попробуйте снова"
+      }
+    },
+    "search": {
+      "meta": {
+        "title": "Поиск: {0}"
+      },
+      "header": "Ваш поиск {keyword} вернул следующее",
+      "sort_by_label": "@:common.labels.sort_by",
+      "choose_button": "@:common.buttons.choose",
+      "no_results_message": "Ваш запрос <strong>{0}</strong> не дал результатов",
+      "home_button": "@:common.buttons.home"
+    },
+    "bulk_order": {
+      "meta": {
+        "title": "Мультизаказ",
+        "keywords": "массовый, заказ",
+        "description": "Мультизаказ"
+      },
+      "title": "Мультизаказы",
+      "product_duplicate_sku_alert": "Существует несколько товаров с SKU \"{0}\". Пожалуйста, выберите товар, чтобы добавить в корзину:",
+      "product_was_not_added_alert": "Товары со следующими SKU не были добавлены в корзину: {0}",
+      "data_is_invalid_alert": "Предоставленные данные недействительны.",
+      "manually_tab": "Вручную",
+      "copy_n_paste_tab": "Копировать из файла"
+    },
+    "demo_landing": {
+      "meta": {
+        "title": "Демо-страница"
+      },
+      "header": "Обзор рынка принтеров",
+      "primary_block": {
+        "primary_text": "Управление коммерческой деятельностью никогда не было таким простым",
+        "secondary_text": "Все, о чем вы мечтаете, может сбыться в тот момент, когда вы решите победить",
+        "first_button": "Узнать больше",
+        "second_button": "Связаться",
+        "image_alt": "Ноутбук на столе"
+      },
+      "secondary_block": {
+        "primary_text": "Читаемость – первостепенная забота дизайнера",
+        "secondary_text": "Читаемость – это основное внимание для дизайнеров, поскольку она напрямую влияет на то, насколько эффективно сообщение передается через дизайн. Она включает в себя такие элементы, как шрифты, расстояния и раскладка, чтобы обеспечить легкое понимание контента. Акцент на читаемости повышает вовлеченность пользователей и общий успех дизайна."
+      },
+      "features_block": {
+        "primary_text": "Исследуйте функции",
+        "secondary_text": "С кристально чистой камерой, дисплеем реального времени HD видео и интуитивно понятным управлением полетом, что вы создадите?",
+        "feature_1": {
+          "title": "Эпическое воздушное видео",
+          "text": "С Phantom 3 Professional вы можете снимать видео 4K со скоростью до 30 кадров в секунду и захватывать 12MP фотографии."
+        },
+        "feature_2": {
+          "title": "Прямой HD просмотр",
+          "text": "Просто подключите ваш телефон или планшет и отображайте 720p HD вид всего, что видит ваша камера."
+        },
+        "feature_3": {
+          "title": "Полный контроль",
+          "text": "Держите ваш Phantom 3 полностью под вашим контролем, получая доступ к самым часто используемым функциям прямо на прилагаемом пульте управления"
+        }
+      },
+      "booking_block": {
+        "message": "Забронируйте бесплатную консультацию по электронной коммерции",
+        "first_button": "Узнать больше",
+        "second_button": "Связаться"
+      },
+      "products_block": {
+        "title": "Принтеры",
+        "message": "Принтеры необходимы для создания физических документов, записей и коммуникационных материалов в различных отраслях и секторах",
+        "choose_button": "Выбрать"
+      },
+      "after_products_block": {
+        "primary_text": "Динамичный мир B2B продаж",
+        "secondary_text": "Современный деловой мир – это мир продаж. Компании, как большие, так и малые, активно взаимодействуют друг с другом, предлагая свои товары и услуги. Успешные бизнесы строят долгосрочные отношения, понимая потребности клиентов и реагируя на изменения рынка. Успех и выживание компаний зависят от эффективных продаж. Этот динамичный мир требует адаптации, инноваций и постоянного обучения, чтобы соответствовать требованиям современных бизнес-партнеров."
+      },
+      "subscription_block": {
+        "primary_text": "Подпишитесь на наши акции",
+        "secondary_text": "Будьте среди первых, кто узнает о предстоящих событиях",
+        "input_placeholder": "tanya.hill{'@'}example.com",
+        "agreement_checkbox_label": "Нажимая \"Отправить\", я соглашаюсь с",
+        "terms_and_policy_link": "Условиями и Политикой",
+        "submit_button": "@:common.buttons.submit"
+      }
+    },
+    "compare": {
+      "meta": {
+        "title": "Сравнение товаров",
+        "keywords": "тест, сравнить, товары, страница, ключевые слова",
+        "description": "Описание тестовой страницы сравнения товаров"
+      },
+      "empty_list": {
+        "title": "Сравнение товаров",
+        "message": "Список товаров для сравнения пуст",
+        "button_text": "Перейти в каталог",
+        "img_alt": "пустаяКорзина",
+        "img_alt_mobile": "пустаяКорзинаMobile"
+      },
+      "header_block": {
+        "title": "Сравнение товаров",
+        "counter_message": "Добавлено {productsNumber} из {productsLimit}",
+        "differences_checkbox_label": "Показать только отличия",
+        "clear_button": "Очистить список"
+      },
+      "main_block": {
+        "price_label": "@:common.labels.product_price"
+      },
+      "links": {
+        "home": "@:common.links.home",
+        "compare_products": "Сравнение товаров"
+      }
+    },
+    "branch": {
+      "address": "Адрес",
+      "phone": "Телефон: ",
+      "other_branches": "Другие филиалы"
+    },
+    "welcome": {
+      "meta": {
+        "title": "Регистрация завершена"
+      },
+      "title": "Регистрация завершена",
+      "description": "Спасибо за проявленный интерес к регистрации у нас. Пожалуйста, проверьте почтовый ящик, чтобы подтвердить адрес электронной почты."
+    },
+    "blocked": {
+      "meta": {
+        "title": "Заблокировано"
+      },
+      "title": "Ваш аккаунт заблокирован",
+      "message": "@:common.messages.blocked"
+    }
+  },
+  "identity_error": {
+    "DuplicateEmail": "Эл.почта {0} уже используется",
+    "DuplicateUserName": "Имя пользователя {0} уже используется",
+    "InvalidEmail": "Введите корректный адрес эл. почты, например johndoe@gmail.com",
+    "InvalidPasswordHasherCompatibilityMode": "Указанный режим совместимости PasswordHasher недействителен",
+    "InvalidPasswordHasherIterationCount": "Количество итераций должно быть положительным целым числом",
+    "InvalidToken": "Токен недействителен или просрочен",
+    "InvalidUserName": "Имя пользователя недействительно. Оно может содержать только буквы или цифры",
+    "LoginAlreadyAssociated": "Пользователь с таким логином уже существует",
+    "PasswordTooShort": "Ваш пароль должен содержать не менее {0} символов",
+    "PasswordRequiresDigit": "Пароли должны содержать как минимум одну цифру ('0'-'9')",
+    "PasswordMismatch": "Вы ввели неверный текущий пароль, пожалуйста, попробуйте снова или обратитесь в поддержку",
+    "PasswordRequiresLower": "Пароли должны содержать как минимум одну строчную букву ('a'-'z')",
+    "PasswordRequiresNonAlphanumeric": "Пароли должны содержать как минимум один неалфавитный символ",
+    "PasswordRequiresUpper": "Пароли должны содержать как минимум одну заглавную букву ('A'-'Z')",
+    "PasswordRequiresUniqueChars": "Пароли должны содержать разные символы",
+    "RecentPasswordUsed": "Этот пароль вы уже использовали ранее. Пожалуйста, создайте другой."
+  },
+  "password_tips": {
+    "title": "Советы по созданию надежного пароля:",
+    "required_digit": "Обязательно используйте цифры",
+    "required_lowercase": "Обязательно используйте строчные символы",
+    "required_non_alphanumeric": "Обязательно используйте специальные символы",
+    "required_uppercase": "Обязательно используйте заглавные символы",
+    "required_length": "Как минимум один символ | Минимум {0} символов",
+    "required_unique_chars": "Как минимум один уникальный символ | Минимум {0} уникальных символов"
+  },
+  "validation_error": {
+    "PRODUCT_QTY_CHANGED": "Вы можете заказать максимум {availQty} шт.",
+    "CART_PRODUCT_UNAVAILABLE": "Товар больше недоступен для покупки.",
+    "CART_PRODUCT_INACTIVE": "Товар неактивен.",
+    "PRODUCT_PRICE_INVALID": "Цена недействительна.",
+    "PRODUCT_FFC_QTY": "Товар отсутствует на складе",
+    "PRODUCT_MIN_QTY": "Вы можете заказать минимум {minQty} шт.",
+    "PRODUCT_MAX_QTY": "Вы можете заказать максимум {maxQty} шт.",
+    "PRODUCT_MIN_MAX_QTY": "Вы можете заказать от {minQty} до {maxQty} шт.",
+    "UNABLE_SET_LESS_PRICE": "Невозможно установить меньшую цену.",
+    "LINE_ITEM_NOT_FOUND": "Позиция не найдена.",
+    "LINE_ITEM_IS_READ_ONLY": "Позиция доступна только для чтения.",
+    "PRODUCT_QTY_INSUFFICIENT": "Доступное количество товара {availQty} недостаточно для запрошенного {new_qty}",
+    "PRODUCT_MIN_QTY_NOT_AVAILABLE": "Минимальный заказ {minQty} шт. нет в наличии",
+    "PRODUCT_EXACT_QTY": "Вы можете заказать {minQty} шт.",
+    "CART_INVALID_PRODUCT": "Недействительный товар"
+  },
+  "file_error": {
+    "ALREADY_EXISTS": "Невозможно загрузить файл с тем же именем.",
+    "INVALID_CONTENT": "Невозможно прочитать файл.",
+    "EXCEPTION": "Ошибка при загрузке файла. Пожалуйста, попробуйте снова.",
+    "INVALID_SCOPE": "Неизвестная область '{0}'.",
+    "INVALID_EXTENSION": "Формат файла не разрешен.",
+    "INVALID_SIZE": "Размер файла превышает допустимый {0}.",
+    "CANNOT_DELETE": "Ошибка при удалении файла."
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "Adicionar ao carrinho",
+      "apply": "Aplicar",
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "copy": "Copiar",
+      "deny": "Negar",
+      "filters": "Filtros",
+      "ok": "OK",
+      "remove_all": "Remover tudo",
+      "remove_from_cart": "Remover do carrinho",
+      "remove_selected": "Remover selecionados",
+      "see_more": "Ver mais",
+      "see_less": "Ver menos",
+      "show_hide_password": "Mostrar/ocultar senha",
+      "toggle_dropdown": "Alternar menu suspenso",
+      "update_cart": "Atualizar carrinho"
+    },
+    "labels": {
+      "not_available": "N/D",
+      "price_per_item": "Preço por item",
+      "product": "Produto",
+      "product_quantity": "Quantidade do produto",
+      "properties": "Propriedades",
+      "subtotal": "Subtotal",
+      "toggle_vendor_select": "Alternar seleção de fornecedor",
+      "total": "Total",
+      "vendor": "Fornecedor"
+    },
+    "suffixes": {
+      "from": "De",
+      "per_item": " por item"
+    },
+    "messages": {
+      "loading_text": "Carregando...",
+      "no_results": "Nenhum resultado encontrado"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "no carrinho",
+        "already_in_cart_message": "{0} já foi adicionado ao carrinho",
+        "enter_correct_number_message": "Por favor, insira um número válido",
+        "min": "Pedido mínimo de {0} item(ns)",
+        "max": "Pedido máximo de {0} item(ns)",
+        "min_max": "Pedido de {0} a {1} item(ns)",
+        "min_not_available": "Pedido mínimo de {0} item(ns) não está disponível em estoque",
+        "out_of_stock": "Fora de estoque",
+        "positive_number": "O valor deve ser um número positivo",
+        "integer_number": "O valor deve ser um número inteiro",
+        "pack_size": "Peça em pacotes de {0}"
+      }
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Próximo"
+    },
+    "select": {
+      "items_selected": "{0} itens selecionados"
+    },
+    "file": {
+      "progress": "{percent} concluído",
+      "uploaded": "Upload concluído"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Arraste e solte o arquivo aqui ou",
+      "browse": "Navegue pelos seus arquivos",
+      "requirements": "Os arquivos disponíveis para upload estão nos formatos {formats}. Cada arquivo não deve exceder {fileSize}. Máximo de {maxFileCount} arquivos permitidos.",
+      "any_format": "qualquer",
+      "errors": {
+        "fix_to_continue": "Corrija os erros de upload de arquivos para continuar.",
+        "has_max_file_count": "Você carregou o número máximo de arquivos possível. Mais uploads não são possíveis.",
+        "tried_more_than_max_file_count": "Você tentou carregar mais do que o número máximo de arquivos permitidos."
+      }
+    },
+    "reach_limit": {
+      "end_list": "Você chegou ao final da lista.",
+      "page_limit_filters": "Não há mais resultados. Tente mudar os filtros.",
+      "page_limit": "Não é possível mostrar mais resultados."
+    }
+  }
+}
