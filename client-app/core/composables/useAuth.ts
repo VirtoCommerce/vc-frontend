@@ -117,6 +117,18 @@ function _useAuth() {
     await (getTokenRequest = getToken(true));
   }
 
+  async function impersonate(userId: string): Promise<void> {
+    const params = new URLSearchParams({
+      grant_type: "impersonate",
+      scope: "offline_access",
+      user_id: userId,
+    });
+
+    getTokenParams.value = params;
+
+    await (getTokenRequest = getToken(true));
+  }
+
   async function refresh(organizationId?: string) {
     const params = new URLSearchParams({
       grant_type: "refresh_token",
@@ -178,6 +190,7 @@ function _useAuth() {
     isAuthorizing,
     authorize,
     externalSignInCallback,
+    impersonate,
     refresh,
     unauthorize,
 
