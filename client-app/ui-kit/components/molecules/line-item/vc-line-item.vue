@@ -87,7 +87,7 @@
           v-if="withPrice"
           class="vc-line-item__price"
           :list-price="listPrice"
-          :actual-price="actualPrice"
+          :actual-price="showPlacedPrice ? actualPrice : listPrice"
           :disabled="disabled"
           align="end"
         />
@@ -100,7 +100,8 @@
           <VcProductPrice
             v-if="withTotal"
             class="vc-line-item__total"
-            :list-price="total"
+            :list-price="showPlacedPrice ? total : listTotal"
+            :actual-price="total"
             align="end"
             :disabled="disabled"
             truncate
@@ -145,6 +146,7 @@ interface IProps {
   listPrice?: MoneyType;
   actualPrice?: MoneyType;
   total?: MoneyType;
+  listTotal?: MoneyType;
   selectable?: boolean;
   selected?: boolean;
   removable?: boolean;
@@ -156,6 +158,7 @@ interface IProps {
   withTotal?: boolean;
   vendor?: CommonVendor;
   browserTarget?: BrowserTargetType;
+  showPlacedPrice?: boolean;
 }
 
 defineEmits<IEmits>();
