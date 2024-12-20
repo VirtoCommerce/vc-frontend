@@ -7,7 +7,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
+import { loadImage, loadIcon } from "@/ui-kit/utilities";
 
 interface IProps {
   size?: number | string;
@@ -19,30 +20,20 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   size: "2.5rem",
   mask: "polygon",
+  img: "",
 });
 
-const iconUrl = ref<string>("");
+const iconUrl = computed(() => loadIcon(props.mask));
+const imgUrl = computed(() => loadImage(props.img));
 
 const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
 
 const style = computed(() => ({
   width: _size.value,
   height: _size.value,
-  backgroundImage: props.img ? `url("${props.img}")` : "none",
+  backgroundImage: props.img ? `url("${imgUrl.value}")` : "none",
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
-
-function loadIcon(name?: string) {
-  iconUrl.value = new URL(`/client-app/assets/icons/basic/${name}.svg`, import.meta.url).href ?? "";
-}
-
-watch(
-  () => props.mask,
-  (newIconName: string) => {
-    loadIcon(newIconName);
-  },
-  { immediate: true },
-);
 </script>
 
 <style lang="scss">

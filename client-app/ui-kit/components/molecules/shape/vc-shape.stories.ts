@@ -27,13 +27,13 @@ Large.args = {
 
 export const Image = Template.bind({});
 Image.args = {
-  img: "/static/images/home/main-banner.webp",
+  img: "main-banner.webp",
   size: "300px",
 };
 
 export const ImageIcon = Template.bind({});
 ImageIcon.args = {
-  img: "/static/images/home/main-banner.webp",
+  img: "main-banner.webp",
   size: "300px",
   icon: "adjustments",
 };

@@ -2,7 +2,7 @@
   <div ref="homePageAnchor">
     <LoginFormSection />
     <!-- Main content -->
-    <div class="main">
+    <div>
       <div class="container mx-auto px-6 pb-40 pt-32 md:px-12">
         <div class="px-6 text-center text-3xl font-bold">
           {{ $t("pages.home.feature_descriptions_block.title") }}
@@ -10,7 +10,7 @@
         <div class="mx-auto mt-24 flex flex-wrap justify-between">
           <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
             <VcImage
-              src="/static/images/home/hexa-1.webp"
+              src="hexa-1.webp"
               :alt="$t('pages.home.feature_descriptions_block.feature_1')"
               class="mx-auto w-full"
               lazy
@@ -21,7 +21,7 @@
           </div>
           <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
             <VcImage
-              src="/static/images/home/hexa-2.webp"
+              src="hexa-2.webp"
               :alt="$t('pages.home.feature_descriptions_block.feature_2')"
               class="mx-auto w-full"
               lazy
@@ -32,7 +32,7 @@
           </div>
           <div class="mb-24 w-full md:mb-0 md:mt-44 md:w-1/2 lg:w-1/4">
             <VcImage
-              src="/static/images/home/hexa-3.webp"
+              src="hexa-3.webp"
               :alt="$t('pages.home.feature_descriptions_block.feature_3')"
               class="mx-auto w-full"
               lazy
@@ -43,7 +43,7 @@
           </div>
           <div class="mb-24 w-full md:mb-0 md:w-1/2 lg:w-1/4">
             <VcImage
-              src="/static/images/home/hexa-4.webp"
+              src="hexa-4.webp"
               :alt="$t('pages.home.feature_descriptions_block.feature_4')"
               class="mx-auto w-full"
               lazy
@@ -101,27 +101,3 @@ watch(homePageAnchorIsVisible, (value) => {
   }
 });
 </script>
-
-<style scoped>
-.main {
-  background-image: url(/images/home/bevel-top.webp), url(/images/home/bevel-bottom.webp),
-    url(/images/home/hexa-left.webp), url(/images/home/hexa-right.webp);
-  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  background-size: 100%, 100%, auto, auto;
-  background-position:
-    top,
-    bottom,
-    left top 40%,
-    right bottom;
-}
-
-@media (max-width: 768px) {
-  .main {
-    background-position:
-      top,
-      bottom,
-      left -140px top 40%,
-      right -140px bottom;
-  }
-}
-</style>

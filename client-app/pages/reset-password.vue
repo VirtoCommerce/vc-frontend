@@ -48,11 +48,7 @@
     </template>
 
     <template #right>
-      <VcImage
-        class="max-w-md"
-        :src="isResetMode ? '/static/images/sign-in/sign-in-page-image.webp' : '/static/images/sign-up/image.webp'"
-        lazy
-      />
+      <VcImage class="max-w-md" :src="isResetMode ? 'sign-in-page-image.webp' : 'sign-up-page-image.webp'" lazy />
     </template>
   </TwoColumn>
 </template>

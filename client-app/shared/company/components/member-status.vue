@@ -28,28 +28,28 @@ const memberStatus = computed(() => {
   switch (props.status) {
     case ContactStatus.Approved:
       return {
-        icon: "/static/icons/contact-active.svg",
+        icon: "status-active.svg",
         label: "pages.company.members.statuses.active",
         styles: "bg-success text-additional-50",
       };
 
     case ContactStatus.Invited:
       return {
-        icon: "/static/icons/contact-invited.svg",
+        icon: "status-invited.svg",
         label: "pages.company.members.statuses.invited",
         styles: "bg-info text-additional-50",
       };
 
     case ContactStatus.Locked:
       return {
-        icon: "/static/icons/contact-blocked.svg",
+        icon: "status-blocked.svg",
         label: "pages.company.members.statuses.blocked",
         styles: "bg-danger text-additional-50",
       };
 
     default:
       return {
-        icon: "/static/icons/contact-inactive.svg",
+        icon: "status-inactive.svg",
         label: "pages.company.members.statuses.inactive",
         styles: "border border-current text-neutral",
       };

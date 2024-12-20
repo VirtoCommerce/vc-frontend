@@ -1,5 +1,5 @@
 <template>
-  <VcEmptyPage image="/static/images/illustrations/emails.webp" mobile-image="/static/images/illustrations/emails.webp">
+  <VcEmptyPage image="emails.webp" mobile-image="emails.webp">
     <template #description>
       <VcTypography tag="h1" class="mb-8">
         {{ $t("pages.welcome.title") }}

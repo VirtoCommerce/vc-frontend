@@ -1,5 +1,5 @@
 <template>
-  <VcEmptyPage image="/static/images/blocked/image.webp" mobile-image="/static/images/blocked/image.webp">
+  <VcEmptyPage image="blocked.webp" mobile-image="blocked.webp">
     <template #description>
       <VcTypography tag="h1" class="mb-6">
         {{ $t("pages.blocked.title") }}

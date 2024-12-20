@@ -1,10 +1,6 @@
 <template>
   <!-- Success -->
-  <VcEmptyPage
-    v-if="emailConfirmed || linkSentSuccessfully"
-    image="/static/images/email.webp"
-    class="flex grow flex-col"
-  >
+  <VcEmptyPage v-if="emailConfirmed || linkSentSuccessfully" image="email.webp" class="flex grow flex-col">
     <template #description>
       <VcTypography tag="h1" class="mb-6 text-center lg:text-left">
         {{ $t("pages.confirm_email.header") }}
@@ -43,7 +39,7 @@
   <!-- Error -->
   <VcEmptyPage
     v-else-if="loaded && (!emailConfirmed || !linkSentSuccessfully)"
-    image="/static/images/email.webp"
+    image="email.webp"
     class="flex grow flex-col"
   >
     <template #description>
