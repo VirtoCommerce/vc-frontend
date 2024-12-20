@@ -116,7 +116,7 @@
         </OrderSummary>
 
         <component
-          :is="item.element"
+          :is="{ ...item.element }"
           v-for="item in sidebarWidgets"
           :key="item.id"
           class="mt-5"
