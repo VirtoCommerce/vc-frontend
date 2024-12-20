@@ -115,7 +115,7 @@ import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS } from "@/core/constants";
@@ -199,7 +199,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { catalogBreadcrumb } = useCategory();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
@@ -362,7 +362,7 @@ watchEffect(async () => {
 watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
-    ga.viewItem(product.value as Product);
+    analytics("viewItem", product.value as Product);
     void pushHistoricalEvent({
       eventType: "click",
       productId: product.value.id,
@@ -376,7 +376,7 @@ watchEffect(() => {
  */
 watchEffect(() => {
   if (relatedProducts.value.length) {
-    ga.viewItemList(relatedProducts.value, {
+    analytics("viewItemList", relatedProducts.value, {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
     });
