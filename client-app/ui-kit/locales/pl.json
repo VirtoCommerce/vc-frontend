@@ -1,0 +1,83 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "Dodaj do koszyka",
+      "apply": "Zastosuj",
+      "cancel": "Anuluj",
+      "close": "Zamknij",
+      "copy": "Kopiuj",
+      "deny": "Odmów",
+      "filters": "Filtry",
+      "ok": "OK",
+      "remove_all": "Usuń wszystko",
+      "remove_from_cart": "Usuń z koszyka",
+      "remove_selected": "Usuń wybrane",
+      "see_more": "Zobacz więcej",
+      "see_less": "Zobacz mniej",
+      "show_hide_password": "Pokaż/ukryj hasło",
+      "toggle_dropdown": "Przełącz rozwijane",
+      "update_cart": "Zaktualizuj koszyk"
+    },
+    "labels": {
+      "not_available": "N/D",
+      "price_per_item": "Cena za sztukę",
+      "product": "Produkt",
+      "product_quantity": "Ilość produktu",
+      "properties": "Właściwości",
+      "subtotal": "Suma częściowa",
+      "toggle_vendor_select": "Przełącz wybór dostawcy",
+      "total": "Razem",
+      "vendor": "Dostawca"
+    },
+    "suffixes": {
+      "from": "Od",
+      "per_item": " za sztukę"
+    },
+    "messages": {
+      "loading_text": "Ładowanie...",
+      "no_results": "Nie znaleziono wyników"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "w koszyku",
+        "already_in_cart_message": "{0} został już dodany do koszyka",
+        "enter_correct_number_message": "Wprowadź poprawny numer",
+        "min": "Minimalne zamówienie {0} sztuk(i)",
+        "max": "Maksymalne zamówienie {0} sztuk(i)",
+        "min_max": "Zamów od {0} do {1} sztuk(i)",
+        "min_not_available": "Minimalne zamówienie {0} sztuk(i) nie jest dostępne w magazynie",
+        "out_of_stock": "Brak w magazynie",
+        "positive_number": "Wartość musi być liczbą dodatnią",
+        "integer_number": "Wartość musi być liczbą całkowitą",
+        "pack_size": "Zamów w paczkach po {0}"
+      }
+    },
+    "pagination": {
+      "previous": "Poprzedni",
+      "next": "Następny"
+    },
+    "select": {
+      "items_selected": "{0} wybranych przedmiotów"
+    },
+    "file": {
+      "progress": "{percent} ukończono",
+      "uploaded": "Przesyłanie zakończone"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Przeciągnij i upuść plik tutaj lub",
+      "browse": "Przeglądaj swoje pliki",
+      "requirements": "Dostępne do przesłania pliki są w formatach {formats}. Każdy plik nie powinien przekraczać {fileSize}. Maksymalnie {maxFileCount} plików dozwolonych.",
+      "any_format": "dowolny",
+      "errors": {
+        "fix_to_continue": "Napraw błędy przesyłania plików, aby kontynuować.",
+        "has_max_file_count": "Przesłałeś maksymalną liczbę możliwych plików. Dalsze przesyłanie nie jest możliwe.",
+        "tried_more_than_max_file_count": "Próbowałeś przesłać więcej niż maksymalna liczba dozwolonych plików."
+      }
+    },
+    "reach_limit": {
+      "end_list": "Osiągnąłeś koniec listy.",
+      "page_limit_filters": "Brak dalszych wyników. Spróbuj zmienić filtry.",
+      "page_limit": "Nie można wyświetlić więcej wyników."
+    }
+  }
+}

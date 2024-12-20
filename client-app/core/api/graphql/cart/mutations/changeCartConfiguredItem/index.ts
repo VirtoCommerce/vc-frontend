@@ -6,7 +6,7 @@ import type { ConfigurationSectionInput } from "@/core/api/graphql/types";
 type MutationVariablesType = {
   lineItemId: string;
   configurationSections: ConfigurationSectionInput[];
-  quantity: number;
+  quantity?: number;
 };
 
 export function useChangeCartConfiguredItemMutation() {

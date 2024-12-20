@@ -57,12 +57,12 @@ interface IProps {
 }
 
 const product = toRef(props, "product");
-const { cart, addToCart, changeItemQuantity, changeCartConfiguredItem } = useShortCart();
+const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
 const ga = useGoogleAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
 const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
-const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
+const { selectedConfigurationInput, changeCartConfiguredItem } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();

@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "リクエストされた見積もり"
+    },
+    "title": "見積もりリクエスト",
+    "no_quotes_message": "まだ見積もりリクエストはありません",
+    "quote_number_label": "見積もり番号",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "キーワードを入力...",
+    "no_results_message": "結果が見つかりません",
+    "request_quote_button": "見積もりをリクエスト",
+    "search_quote_requests": "見積もりリクエストを検索",
+    "reset_search": "検索をリセット",
+    "cart_widget": {
+      "quote_request_hint": "特別なサービスを通じてカート内のアイテムをリクエストできます",
+      "create_quote_button": "カートのアイテムを見積もりに追加",
+      "title": "見積もりリクエスト"
+    },
+    "navigation": {
+      "route_name": "見積もりリクエスト"
+    },
+    "errors": {
+      "creating_quote_error": "見積もりの作成中にエラーが発生しました"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "見積もりリクエストコメント",
+    "title": "見積もりリクエスト #{0}",
+    "comment": "コメント",
+    "comment_field_label": "この見積もりリクエストに対する一般的なコメントはありますか？",
+    "products": "製品",
+    "shipping_address": "配送先住所",
+    "billing_address": "請求先住所",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "住所が設定されていません。指定してください。",
+    "same_as_shipping_address": "配送先住所と同じ",
+    "quote_summary": "見積もり概要",
+    "quote_data": "見積もりデータ",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "見積もりリクエストにアイテムがありません",
+    "save_changes_notification_success": "見積もりリクエストが正常に保存されました",
+    "select_shipping_address": "配送先住所を選択",
+    "select_billing_address": "請求先住所を選択",
+    "files": "ファイル",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "見積もりを承認できません",
+      "decline": "見積もりを拒否できません"
+    }
+  }
+}

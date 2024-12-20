@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "購入リクエスト.タイトル",
+      "table_description": "購入リクエストのリスト"
+    },
+    "title": "購入リクエスト",
+    "no_purchase_requests_message": "まだ購入リクエストはありません",
+    "no_purchase_requests_img_alt": "注文なし",
+    "purchase_request_number_label": "購入リクエスト番号",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "購入リクエスト"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "購入リクエスト #{0}",
+    "failed_or_used_description": "申し訳ありませんが、購入リクエストを作成できなかったか、すでに注文を作成するために使用しました",
+    "try_again": "もう一度お試しください",
+    "files_section": {
+      "title": "ファイル"
+    },
+    "from_file": {
+      "title": "ファイルをアップロード",
+      "upload": {
+        "message": "新しい注文のデータを取得するために、ドキュメントの写真、スクリーンショット、または手書きのメモをアップロードしてください。",
+        "examples": {
+          "title": "例",
+          "alt": "例"
+        }
+      },
+      "processing": {
+        "message": "商品リストを含む画像ファイルまたはpdfファイルをアップロードして、アイテムを迅速に注文できます",
+        "loading_message": "アップロードされたドキュメントを認識中...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "見積もりに進む"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "ファイルから"
+    }
+  }
+}
