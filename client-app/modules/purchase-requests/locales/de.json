@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "kaufanfragen.titel",
+      "table_description": "Liste der Kaufanfragen"
+    },
+    "title": "Kaufanfragen",
+    "no_purchase_requests_message": "Es gibt noch keine Kaufanfragen",
+    "no_purchase_requests_img_alt": "Keine Bestellungen",
+    "purchase_request_number_label": "Kaufanfragenummer",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Kaufanfragen"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Kaufanfrage #{0}",
+    "failed_or_used_description": "Es tut uns leid, aber wir konnten die Kaufanfrage nicht erstellen oder Sie haben sie bereits verwendet, um eine Bestellung zu erstellen",
+    "try_again": "Bitte versuchen Sie es erneut",
+    "files_section": {
+      "title": "Dateien"
+    },
+    "from_file": {
+      "title": "Datei hochladen",
+      "upload": {
+        "message": "Laden Sie Fotos von Dokumenten, Screenshots oder handschriftlichen Notizen hoch, um Daten für eine neue Bestellung zu erhalten.",
+        "examples": {
+          "title": "Beispiele",
+          "alt": "Beispiele"
+        }
+      },
+      "processing": {
+        "message": "Sie können Bilddateien oder PDF-Dateien mit Produktlisten in beliebiger Form hochladen, um Artikel schnell zu bestellen",
+        "loading_message": "Hochgeladenes Dokument wird erkannt...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Zum Angebot gehen"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Aus Datei"
+    }
+  }
+}

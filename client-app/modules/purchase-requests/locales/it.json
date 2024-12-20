@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "richieste_di_acquisto.titolo",
+      "table_description": "elenco delle richieste di acquisto"
+    },
+    "title": "Richieste di Acquisto",
+    "no_purchase_requests_message": "Non ci sono ancora richieste di acquisto",
+    "no_purchase_requests_img_alt": "Nessun ordine",
+    "purchase_request_number_label": "Numero richiesta di acquisto",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Richieste di Acquisto"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Richiesta di acquisto #{0}",
+    "failed_or_used_description": "Ci dispiace, ma non siamo riusciti a creare la richiesta di acquisto o l'hai già utilizzata per creare un ordine",
+    "try_again": "Per favore, riprova",
+    "files_section": {
+      "title": "File"
+    },
+    "from_file": {
+      "title": "Carica file",
+      "upload": {
+        "message": "Carica foto di documenti, screenshot o note scritte a mano per ottenere dati per un nuovo ordine.",
+        "examples": {
+          "title": "Esempi",
+          "alt": "Esempi"
+        }
+      },
+      "processing": {
+        "message": "Puoi caricare file immagine o pdf con elenchi di prodotti in qualsiasi forma per un ordine rapido di articoli",
+        "loading_message": "Riconoscimento di un documento caricato...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Procedi al preventivo"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Da file"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "common": {
+    "buttons": {
+      "leave_feedback": "フィードバックを残す"
+    },
+    "labels": {
+      "feedback": "フィードバック",
+      "rating": "評価",
+      "rate_product": "商品を評価する",
+      "item_as_described_by_vendor": "商品はベンダーの説明通りですか？"
+    },
+    "messages": {
+      "thanks_for_feedback": "フィードバックが送信され、確認待ちです。ありがとうございます！"
+    }
+  },
+  "validation_errors": {
+    "INVALID_ENTITY_TYPE": "レビューは商品のみ可能です。",
+    "PRODUCT_MUST_BE_PURCHASED": "購入したユーザーのみレビューを残せます。",
+    "DUPLICATE_REVIEW": "この商品には既にレビューを残しています。",
+    "INVALID_RATING": "評価は1から5の範囲である必要があります。",
+    "REVIEW_IS_EMPTY": "「フィードバック」フィールドを入力してください。"
+  }
+}

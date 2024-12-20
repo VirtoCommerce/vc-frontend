@@ -403,6 +403,76 @@ describe("useConfigurableProduct", () => {
       });
     });
   });
+
+  describe("isConfigurationChanged", () => {
+    it("should be set to true when selectedConfigurationInput changes", async () => {
+      const mockConfiguration = {
+        configurationSections: [createConfigurationSection(1), createConfigurationSection(2)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+
+      await composable.fetchProductConfiguration();
+      await flushPromises();
+
+      expect(composable.isConfigurationChanged.value).toBe(false);
+
+      composable.selectSectionValue({
+        sectionId: "Section 1",
+        value: {
+          productId: "product-2",
+          quantity: 1,
+        },
+      });
+
+      expect(composable.isConfigurationChanged.value).toBe(true);
+    });
+
+    it("should be set to false when return to initially selected configuration", async () => {
+      const mockConfiguration = {
+        configurationSections: [createConfigurationSection(1), createConfigurationSection(2)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+
+      await composable.fetchProductConfiguration();
+      await flushPromises();
+
+      expect(composable.isConfigurationChanged.value).toBe(false);
+
+      // Change configuration
+      composable.selectSectionValue({
+        sectionId: "Section 1",
+        value: {
+          productId: "product-2",
+          quantity: 1,
+        },
+      });
+
+      expect(composable.isConfigurationChanged.value).toBe(true);
+
+      // Return to initial configuration
+      composable.selectSectionValue({
+        sectionId: "Section 1",
+        value: {
+          productId: "product-1",
+          quantity: 1,
+        },
+      });
+
+      expect(composable.isConfigurationChanged.value).toBe(false);
+    });
+
+    it("should remain false when nothing is selected", async () => {
+      const mockConfiguration = {
+        configurationSections: [createConfigurationSection(1, { isRequired: false }), createConfigurationSection(2)],
+      };
+      mocks.getProductConfiguration.mockResolvedValue(mockConfiguration);
+
+      await composable.fetchProductConfiguration();
+      await flushPromises();
+
+      expect(composable.isConfigurationChanged.value).toBe(false);
+    });
+  });
 });
 
 // Mock data factory functions
