@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { loadIcon } from "../../../utilities";
 
 interface IProps {
   size?: number | string;
@@ -32,14 +33,10 @@ const style = computed(() => ({
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
 
-function loadIcon(name?: string) {
-  iconUrl.value = new URL(`/client-app/assets/icons/basic/${name}.svg`, import.meta.url).href ?? "";
-}
-
 watch(
   () => props.mask,
   (newIconName: string) => {
-    loadIcon(newIconName);
+    iconUrl.value = loadIcon(newIconName);
   },
   { immediate: true },
 );
