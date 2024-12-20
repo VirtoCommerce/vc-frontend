@@ -25,11 +25,9 @@
           close();
         "
       >
-        <span
-          class="flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary-600 text-base font-bold text-additional-50"
-        >
-          {{ item.symbol }}
-        </span>
+        <template #prepend>
+          <VcBadge rounded color="secondary" size="lg">{{ item.symbol }}</VcBadge>
+        </template>
 
         <span>{{ item.code }}</span>
       </VcMenuItem>
