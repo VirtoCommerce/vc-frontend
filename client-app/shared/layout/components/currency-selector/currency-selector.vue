@@ -1,5 +1,5 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" width="7.5rem" class="h-full">
+  <VcDropdownMenu placement="bottom-end" width="8rem" class="h-full">
     <template #trigger="{ opened }">
       <button type="button" class="flex h-full items-center gap-x-1.5">
         <span class="text-sm">
@@ -20,6 +20,7 @@
         :key="item.code"
         :active="item.code === currentCurrency.code"
         color="secondary"
+        truncate
         @click="
           select(item.code);
           close();
