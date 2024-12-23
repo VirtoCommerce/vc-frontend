@@ -111,6 +111,7 @@ export function setupBroadcastGlobalListeners() {
   on(dataChangedEvent, () => {
     notifications.warning({
       text: t("common.messages.data_changed"),
+      single: true,
     });
   });
 }
