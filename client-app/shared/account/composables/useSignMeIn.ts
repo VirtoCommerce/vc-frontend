@@ -1,10 +1,16 @@
 import { syncRefs, useAsyncState } from "@vueuse/core";
 import { ref } from "vue";
-import { useGetMeQuery, useMergeCartMutation } from "@/core/api/graphql";
+import {
+  useChangeCartCurrencyMutation,
+  useClearCurrencyCartMutation,
+  useGetMeQuery,
+  useMergeCartMutation,
+} from "@/core/api/graphql";
 import { useAuth } from "@/core/composables/useAuth";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { USER_ID_LOCAL_STORAGE } from "@/core/constants";
+import { globals } from "@/core/globals";
 import { TabsType, openReturnUrl, useBroadcast } from "@/shared/broadcast";
 import { useShortCart } from "@/shared/cart/composables";
 import type { IdentityErrorType } from "@/core/api/graphql/types";
@@ -17,6 +23,9 @@ export function useSignMeIn() {
   const { mutate: mergeCart } = useMergeCartMutation();
   const { unpinLocale, removeLocaleFromUrl } = useLanguages();
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
+  const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
+  const { currencyCode: currentCurencyCode } = globals;
+  const { mutate: clearCurrencyCart } = useClearCurrencyCartMutation();
 
   const { isLoading: loading, execute: signIn } = useAsyncState(
     async () => {
@@ -28,18 +37,30 @@ export function useSignMeIn() {
       // get user that will be applied after reload.
       await getMe();
 
-      if (me.value?.me) {
+      const currencyCode = me.value?.me?.contact?.currencyCode;
+
+      if (me.value?.me && currencyCode) {
         if (cart.value?.id) {
+          await clearCurrencyCart({
+            command: { userId: me.value.me.id, currencyCode: currentCurencyCode },
+            skipQuery: false,
+          });
+
           await mergeCart({ command: { userId: me.value.me.id, secondCartId: cart.value.id } });
+
+          if (currencyCode !== currentCurencyCode) {
+            await changeCartCurrency({
+              command: {
+                userId: me.value.me.id,
+                newCurrencyCode: currencyCode,
+              },
+            });
+          }
         }
 
-        const currencyCode = me.value.me.contact?.currencyCode;
-
-        if (currencyCode) {
-          const contactCurrency = supportedCurrencies.value.find((item) => item.code === currencyCode);
-          if (contactCurrency) {
-            saveCurrencyCode(contactCurrency.code, false);
-          }
+        const contactCurrency = supportedCurrencies.value.find((item) => item.code === currencyCode);
+        if (contactCurrency) {
+          saveCurrencyCode(contactCurrency.code, false);
         }
       }
 
