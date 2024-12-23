@@ -1,5 +1,5 @@
 <template>
-  <VcDropdownMenu placement="bottom-end" width="7.5rem" class="h-full">
+  <VcDropdownMenu placement="bottom-end" width="8rem" class="h-full">
     <template #trigger="{ opened }">
       <button type="button" class="flex h-full items-center gap-x-1.5">
         <span class="text-sm">
@@ -20,16 +20,15 @@
         :key="item.code"
         :active="item.code === currentCurrency.code"
         color="secondary"
+        truncate
         @click="
           select(item.code);
           close();
         "
       >
-        <span
-          class="flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary-600 text-base font-bold text-additional-50"
-        >
-          {{ item.symbol }}
-        </span>
+        <template #prepend>
+          <VcBadge rounded color="secondary" size="lg">{{ item.symbol }}</VcBadge>
+        </template>
 
         <span>{{ item.code }}</span>
       </VcMenuItem>

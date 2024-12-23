@@ -95,6 +95,8 @@
         <template v-if="selectable">
           <VcButton
             class="vc-line-items__button vc-line-items__button--desktop"
+            color="secondary"
+            variant="outline"
             size="xs"
             :disabled="!selectedItemIds.length"
             @click="removeSelectedItems"
@@ -104,6 +106,7 @@
 
           <VcButton
             class="vc-line-items__button vc-line-items__button--mobile"
+            color="secondary"
             size="xs"
             variant="outline"
             @click="removeAllItems"
