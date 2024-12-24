@@ -1,7 +1,7 @@
 <template>
   <div class="form-group">
     <label for="cardholderName">Name</label>
-    <input id="cardholderName" class="form-control" name="cardholderName" placeholder="Name on the card">
+    <input id="cardholderName" class="form-control" name="cardholderName" placeholder="Name on the card" />
     <label id="cardNumber-label">Card Number</label>
     <div id="number-container" class="form-control"></div>
     <label for="securityCode-container">Security Code</label>
@@ -40,22 +40,18 @@
     </div>
   </div>
 
-  <input type="hidden" id="flexresponse" name="flexresponse">
+  <input id="flexresponse" type="hidden" name="flexresponse" />
 
-  <VcButton
-            class="flex-1 md:order-first md:flex-none"
-            data-test-id="pay-now-button"
-            @click="sendPaymentData">
+  <VcButton class="flex-1 md:order-first md:flex-none" data-test-id="pay-now-button" @click="sendPaymentData">
     Pay now
   </VcButton>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { noop, useScriptTag } from "@vueuse/core";
+/* eslint-disable */
+import { onMounted } from "vue";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
-import type { KeyValuePair } from 'tailwindcss/types/config';
 
 interface IEmits {
   (event: "success"): void;
@@ -70,39 +66,41 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
-declare var Flex: any;
+declare let Flex: any;
 
 let flex: any;
 let microform: any;
 
 function sendPaymentData() {
   const options = {
-    expirationMonth: '12', // take from input
-    expirationYear: '2025', // take from input
+    expirationMonth: "12", // take from input
+    expirationYear: "2025", // take from input
   };
 
   microform.createToken(options, (err: any, token: any) => {
     if (err) {
-      emit('fail', err.message);
+      emit("fail", err.message);
       return;
     }
 
     const parameters = [
       {
-        key: 'token',
-        value: token
-      }
-    ]
+        key: "token",
+        value: token,
+      },
+    ];
 
     authorizePayment({
       orderId: props.order.id,
       paymentId: props.order.inPayments[0]!.id,
       parameters,
-    }).then(() => {
-      emit('success');
-    }).catch((e) => {
-      emit('fail', e.message);
-    });
+    })
+      .then(() => {
+        emit("success");
+      })
+      .catch((e) => {
+        emit("fail", e.message);
+      });
   });
 }
 
@@ -111,13 +109,13 @@ onMounted(async () => {
 });
 
 async function initPayment() {
-  const { publicParameters, errorMessage } = await initializePayment({
+  const { publicParameters } = await initializePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0]!.id,
   });
   // https://jwt.io/libraries
   // clientScript should be taken from jwt token
-  // it is neccessary to validate token before using the script from it
+  // it is necessary to validate token before using the script from it
   await initScript(getValue(publicParameters!, "clientScript")!);
   await initFlex(getValue(publicParameters!, "jwt")!);
   await initForm();
@@ -125,36 +123,36 @@ async function initPayment() {
 
 async function initScript(url: string) {
   return new Promise((resolve, reject) => {
-    console.log('init script', url);
-    const el = document.createElement('script');
+    console.log("init script", url);
+    const el = document.createElement("script");
     el.src = url;
-    el.addEventListener('load', resolve);
-    el.addEventListener('error', reject);
+    el.addEventListener("load", resolve);
+    el.addEventListener("error", reject);
     document.body.append(el);
   });
 }
 
 async function initForm() {
-  const number = microform.createField('number', { placeholder: 'Card number' });
-  const securityCode = microform.createField('securityCode', { placeholder: '×××' });
-  number.load('#number-container');
-  securityCode.load('#securityCode-container');
+  const number = microform.createField("number", { placeholder: "Card number" });
+  const securityCode = microform.createField("securityCode", { placeholder: "×××" });
+  number.load("#number-container");
+  securityCode.load("#securityCode-container");
 }
 
-var customStyles = {
-  'input': {
-    'font-size': '14px',
-    'font-family': 'helvetica, tahoma, calibri, sans-serif',
-    'color': '#555'
+const customStyles = {
+  input: {
+    "font-size": "14px",
+    "font-family": "helvetica, tahoma, calibri, sans-serif",
+    color: "#555",
   },
-  ':focus': { 'color': 'blue' },
-  ':disabled': { 'cursor': 'not-allowed' },
-  'valid': { 'color': '#3c763d' },
-  'invalid': { 'color': '#a94442' }
+  ":focus": { color: "blue" },
+  ":disabled": { cursor: "not-allowed" },
+  valid: { color: "#3c763d" },
+  invalid: { color: "#a94442" },
 };
 
 async function initFlex(key: string) {
-  console.log('init form', Flex);
+  console.log("init form", Flex);
   try {
     flex = new Flex(key);
     // styling
@@ -165,11 +163,10 @@ async function initFlex(key: string) {
   } catch (e) {
     console.error(e);
   }
-  console.log('init complete', flex);
+  console.log("init complete", flex);
 }
 
 function getValue(publicParameters: KeyValueType[], key: string) {
-  return publicParameters.find(x => x.key === key)?.value;
+  return publicParameters.find((x) => x.key === key)?.value;
 }
-
 </script>
