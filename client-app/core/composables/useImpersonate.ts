@@ -6,10 +6,16 @@ import { useAuth } from "@/core/composables/useAuth";
 import { Logger } from "@/core/utilities";
 import { TabsType, useBroadcast, reloadAndOpenMainPage } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification";
-import type { ConnectTokenResponseType } from "../types";
+
+type ConnectTokenResponseType = {
+  expires_in: number;
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+};
 
 export function _useImpersonate() {
-  const { setTokenType, setAccessToken, setExpiresAt } = useAuth();
+  const { setTokenType, setAccessToken, setExpiresAt, setRefreshToken } = useAuth();
   const broadcast = useBroadcast();
   const status = ref();
   const notifications = useNotifications();
@@ -23,6 +29,7 @@ export function _useImpersonate() {
         .post(
           new URLSearchParams({
             grant_type: "impersonate",
+            scope: "offline_access",
             user_id: userId,
           }),
           "application/x-www-form-urlencoded",
@@ -32,11 +39,12 @@ export function _useImpersonate() {
       if (!data.value || error.value) {
         status.value = "error";
       } else {
-        const { access_token, token_type, expires_in } = data.value;
+        const { access_token, token_type, expires_in, refresh_token } = data.value;
 
         setAccessToken(access_token);
         setExpiresAt(expires_in);
         setTokenType(token_type);
+        setRefreshToken(refresh_token);
 
         status.value = "success";
         notifications.success({ text: t("pages.account.impersonate.success") });

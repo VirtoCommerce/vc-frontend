@@ -184,6 +184,7 @@ function _useAuth() {
     setTokenType,
     setAccessToken,
     setExpiresAt,
+    setRefreshToken,
   };
 }
 
