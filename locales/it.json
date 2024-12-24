@@ -266,7 +266,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Carta bancaria (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manuale",
-        "SkyflowPaymentMethod": "Carta bancaria (Skyflow)"
+        "SkyflowPaymentMethod": "Carta bancaria (Skyflow)",
+        "CyberSourcePaymentMethod": "Carta bancaria (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tariffa fissa (Terra)",

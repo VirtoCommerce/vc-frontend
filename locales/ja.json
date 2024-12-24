@@ -266,7 +266,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "クレジットカード (Authorize.Net)",
         "DefaultManualPaymentMethod": "手動決済",
-        "SkyflowPaymentMethod": "クレジットカード (Skyflow)"
+        "SkyflowPaymentMethod": "クレジットカード (Skyflow)",
+        "CyberSourcePaymentMethod": "クレジットカード (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定料金 (地上)",

@@ -266,7 +266,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Банковская карта (Authorize.Net)",
         "DefaultManualPaymentMethod": "Вручную",
-        "SkyflowPaymentMethod": "Банковская карта (Skyflow)"
+        "SkyflowPaymentMethod": "Банковская карта (Skyflow)",
+        "CyberSourcePaymentMethod": "Банковская карта (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Фиксированная ставка (наземный транспорт)",
