@@ -23,7 +23,6 @@
 import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables";
 import { globals } from "@/core/globals";
-import { useFullCart } from "@/shared/cart";
 
 interface IEmits {
   (event: "close"): void;
@@ -32,18 +31,16 @@ interface IEmits {
 const emit = defineEmits<IEmits>();
 
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
-const { cart } = useFullCart();
 const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
 const { userId } = globals;
 
 async function changeCurrency(code: string): Promise<void> {
-  if (currentCurrency.value?.code !== code && cart.value) {
+  if (currentCurrency.value?.code !== code) {
     emit("close");
 
     await changeCartCurrency({
       command: {
         userId,
-        cartId: cart.value.id,
         newCurrencyCode: code,
       },
     });
