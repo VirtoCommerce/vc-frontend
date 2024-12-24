@@ -8,7 +8,9 @@
           <ProceedTo
             :to="{ name: 'Review' }"
             :disabled="!isValidPayment"
-            @click="ga.addPaymentInfo({ ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)"
+            @click="
+              analytics('addPaymentInfo', { ...cart!, items: selectedLineItems }, {}, payment?.paymentGatewayCode)
+            "
           >
             {{ $t("common.buttons.review_order") }}
           </ProceedTo>
@@ -31,11 +33,11 @@
 </template>
 
 <script setup lang="ts">
-import { useGoogleAnalytics } from "@/core/composables";
+import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { BillingDetailsSection, OrderSummary, ProceedTo, useCheckout } from "@/shared/checkout";
 
 const { cart, payment, selectedLineItems, hasValidationErrors, allItemsAreDigital } = useFullCart();
 const { isValidPayment } = useCheckout();
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 </script>
