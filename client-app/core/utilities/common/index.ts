@@ -7,8 +7,16 @@ export function getBaseUrl(supportedLocales: string[]): string {
 }
 
 export function getReturnUrlValue(): string | null {
-  const { searchParams } = new URL(location.href);
-  return searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
+  const { searchParams, origin, hostname } = new URL(location.href);
+  const returnUrl = searchParams.get("returnUrl") || searchParams.get("ReturnUrl");
+
+  if (returnUrl) {
+    const returnUrlObj = new URL(returnUrl, origin);
+    if (returnUrlObj.hostname === hostname) {
+      return returnUrl;
+    }
+  }
+  return null;
 }
 
 export function extractHostname(url: string) {

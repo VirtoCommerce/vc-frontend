@@ -37,17 +37,19 @@ function prepareItemPrices(item: AnyLineItemType) {
   const salePrice = "salePrice" in item ? item.salePrice : undefined;
   const placedPrice = "placedPrice" in item ? item.placedPrice : undefined;
   const extendedPrice = "extendedPrice" in item ? item.extendedPrice : undefined;
+  const listTotal = "listTotal" in item ? item.listTotal : undefined;
   return {
     listPrice,
     salePrice,
     placedPrice,
     extendedPrice,
     actualPrice: placedPrice ?? salePrice ?? listPrice,
+    listTotal,
   };
 }
 
 export function prepareLineItem(item: AnyLineItemType, countInCart?: number): PreparedLineItemType {
-  const { listPrice, extendedPrice, actualPrice } = prepareItemPrices(item);
+  const { listPrice, extendedPrice, actualPrice, listTotal } = prepareItemPrices(item);
 
   const productType = "productType" in item ? item.productType : undefined;
   const isVariation = !!item.product?.masterVariation;
@@ -70,6 +72,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     listPrice,
     actualPrice,
     extendedPrice,
+    listTotal,
     quantity,
     inStockQuantity,
     route,
@@ -83,6 +86,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     hasVariations: item.product?.hasVariations,
     variations: item.product?.variations,
     configurationItems: "configurationItems" in item ? item.configurationItems : undefined,
+    showPlacedPrice: item.showPlacedPrice,
   };
 }
 
