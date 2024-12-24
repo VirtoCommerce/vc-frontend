@@ -25,6 +25,12 @@ import { useCurrency } from "@/core/composables";
 import { globals } from "@/core/globals";
 import { useFullCart } from "@/shared/cart";
 
+interface IEmits {
+  (event: "close"): void;
+}
+
+const emit = defineEmits<IEmits>();
+
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { cart } = useFullCart();
 const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
@@ -32,6 +38,8 @@ const { userId } = globals;
 
 async function changeCurrency(code: string): Promise<void> {
   if (currentCurrency.value?.code !== code && cart.value) {
+    emit("close");
+
     await changeCartCurrency({
       command: {
         userId,
