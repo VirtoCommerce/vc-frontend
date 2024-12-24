@@ -61,7 +61,7 @@ export function _useImpersonate() {
   }
 
   return {
-    impersonate: impersonate,
+    impersonate,
     status,
   };
 }
