@@ -10,7 +10,7 @@
       v-model="currentCurrency.code"
       :value="currencyItem.code"
       class="py-2.5"
-      @click="currentCurrency?.code === currencyItem.code ? null : saveCurrencyCode(currencyItem.code)"
+      @click="changeCurrency(currencyItem.code)"
     >
       <span :class="{ 'text-additional-50': currentCurrency?.code === currencyItem.code }" class="uppercase">
         {{ currencyItem.code }}
@@ -20,7 +20,26 @@
 </template>
 
 <script setup lang="ts">
+import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables";
+import { globals } from "@/core/globals";
 
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
+const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
+const { userId } = globals;
+
+function changeCurrency(code: string): void {
+  if (currentCurrency.value?.code === code) {
+    return;
+  }
+
+  saveCurrencyCode(code);
+
+  void changeCartCurrency({
+    command: {
+      userId,
+      newCurrencyCode: code,
+    },
+  });
+}
 </script>
