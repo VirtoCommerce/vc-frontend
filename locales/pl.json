@@ -266,7 +266,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Karta bankowa (Authorize.Net)",
         "DefaultManualPaymentMethod": "Ręczne",
-        "SkyflowPaymentMethod": "Karta bankowa (Skyflow)"
+        "SkyflowPaymentMethod": "Karta bankowa (Skyflow)",
+        "CyberSourcePaymentMethod": "Karta bankowa (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Stała cena (drogowa)",
