@@ -1,6 +1,12 @@
+type IdentityErrorType = {
+  code?: string;
+  description?: string;
+};
+
 export type ConnectTokenResponseType = {
-  expires_in: number;
-  access_token: string;
-  token_type: string;
-  error?: string;
+  expires_in?: number;
+  access_token?: string;
+  refresh_token?: string;
+  errors?: Array<IdentityErrorType>;
+  token_type?: string;
 };
