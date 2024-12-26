@@ -1,57 +1,65 @@
 <template>
   <div class="form-group">
-    <label for="cardholderName">Name</label>
-    <input id="cardholderName" class="form-control" name="cardholderName" placeholder="Name on the card" />
-    <label id="cardNumber-label">Card Number</label>
-    <div id="number-container" class="form-control"></div>
-    <label for="securityCode-container">Security Code</label>
-    <div id="securityCode-container" class="form-control"></div>
-  </div>
-
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="expMonth">Expiry month</label>
-      <select id="expMonth" class="form-control">
-        <option>01</option>
-        <option>02</option>
-        <option>03</option>
-        <option>04</option>
-        <option>05</option>
-        <option>06</option>
-        <option>07</option>
-        <option>08</option>
-        <option>09</option>
-        <option>10</option>
-        <option>11</option>
-        <option>12</option>
-      </select>
+    <VcInput
+      v-model.trim="cardholderName"
+      :label="labels.cardholderName"
+      :message="formErrors.cardholderName"
+      :error="!!formErrors.cardholderName"
+      :disabled="disabled"
+      required
+      test-id-input="card-holder-input"
+    />
+    <div>
+      <label id="cardNumber-label">{{ labels.number }}</label>
+      <div id="number-container" class="form-control"></div>
     </div>
-    <div class="form-group col-md-6">
-      <label for="expYear">Expiry year</label>
-      <select id="expYear" class="form-control">
-        <option>2025</option>
-        <option>2026</option>
-        <option>2027</option>
-        <option>2028</option>
-        <option>2029</option>
-        <option>2030</option>
-        <option>2031</option>
-      </select>
+    <div class="flex flex-col gap-x-6 gap-y-3 sm:flex-row">
+      <VcInput
+        v-model="expirationDate"
+        v-maska
+        data-maska="## / ##"
+        :label="labels.expirationDate"
+        :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
+        :message="expirationDateErrors"
+        :error="!!expirationDateErrors"
+        :disabled="disabled"
+        name="expirationDate"
+        autocomplete="off"
+        minlength="7"
+        maxlength="7"
+        class="basis-1/4"
+        required
+        test-id-input="expiration-date-input"
+      />
+      <div>
+        <label for="securityCode-container">{{ labels.securityCode }}</label>
+        <div id="securityCode-container" class="form-control"></div>
+      </div>
     </div>
   </div>
 
   <input id="flexresponse" type="hidden" name="flexresponse" />
 
-  <VcButton class="flex-1 md:order-first md:flex-none" data-test-id="pay-now-button" @click="sendPaymentData">
-    Pay now
+  <VcButton
+    :disabled="!isValidBankCard"
+    :loading="loading"
+    class="flex-1 md:order-first md:flex-none"
+    data-test-id="pay-now-button"
+    @click="sendPaymentData"
+  >
+    {{ $t("shared.payment.authorize_net.pay_now_button") }}
   </VcButton>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable */
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
+import { useI18n } from "vue-i18n";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
+import { toTypedSchema } from "@vee-validate/yup";
 
 interface IEmits {
   (event: "success"): void;
@@ -66,15 +74,96 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
+const { t } = useI18n();
+
+const loading = computed(() => {
+  // todo implement
+  return false
+})
+
+const labels = computed(() => {
+  return {
+    number: t("shared.payment.bank_card_form.number_label"),
+    cardholderName: t("shared.payment.bank_card_form.cardholder_name_label"),
+    expirationDate: t("shared.payment.bank_card_form.expiration_date_label"),
+    yearLabel: t("shared.payment.bank_card_form.year_label"),
+    monthLabel: t("shared.payment.bank_card_form.month_label"),
+    securityCode: t("shared.payment.bank_card_form.security_code_label"),
+  };
+});
+
+const monthYupSchema = yup
+  .string()
+  .required()
+  .length(2)
+  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
+  .label(labels.value.monthLabel);
+
+const validationSchema = toTypedSchema(
+  yup.object({
+    cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
+    month: monthYupSchema,
+    year: yup.string().when("month", ([month], schema) => {
+      return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
+    }),
+  }),
+);
+
+const initialValues = {
+  cardholderName: "",
+  month: "",
+  year: "",
+};
+
+const {
+  values: formValues,
+  meta,
+  errors: formErrors,
+  defineField,
+} = useForm({
+  validationSchema,
+  initialValues,
+});
+
+const isValidBankCard = computed(() => {
+  return meta.value.valid
+})
+
+const [cardholderName] = defineField("cardholderName");
+const [month] = defineField("month");
+const [year] = defineField("year");
+
+const expirationDate = computed({
+  get: () =>
+    (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
+  set: (value) => {
+    if (value) {
+      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
+      month.value = rawMonth;
+      year.value = rawYear;
+    }
+  },
+});
+
+const expirationDateErrors = computed<string>(() =>
+  [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
+);
+
 declare let Flex: any;
 
 let flex: any;
 let microform: any;
 
 function sendPaymentData() {
+  if (!isValidBankCard.value) {
+    return;
+  }
+
   const options = {
-    expirationMonth: "12", // take from input
-    expirationYear: "2025", // take from input
+    // cardholderName is optional for cybersource
+    cardholderName: formValues.cardholderName,
+    expirationMonth: formValues.month,
+    expirationYear: formValues.year,
   };
 
   microform.createToken(options, (err: any, token: any) => {
@@ -152,7 +241,6 @@ const customStyles = {
 };
 
 async function initFlex(key: string) {
-  console.log("init form", Flex);
   try {
     flex = new Flex(key);
     // styling
@@ -163,7 +251,6 @@ async function initFlex(key: string) {
   } catch (e) {
     console.error(e);
   }
-  console.log("init complete", flex);
 }
 
 function getValue(publicParameters: KeyValueType[], key: string) {
