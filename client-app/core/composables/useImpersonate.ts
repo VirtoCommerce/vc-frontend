@@ -33,7 +33,7 @@ export function _useImpersonate() {
       if (!data.value || error.value) {
         status.value = "error";
       } else {
-        const { access_token, token_type, expires_in, refresh_token, errors } = data.value;
+        const { access_token, token_type, expires_in, refresh_token, error: tokenError } = data.value;
 
         if (access_token && token_type && expires_in && refresh_token) {
           setAccessToken(access_token);
@@ -48,7 +48,7 @@ export function _useImpersonate() {
             void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
           }, 1000);
         } else {
-          Logger.error(impersonate.name, errors);
+          Logger.error(impersonate.name, tokenError);
           status.value = "error";
         }
       }

@@ -8,5 +8,6 @@ export type ConnectTokenResponseType = {
   access_token?: string;
   refresh_token?: string;
   errors?: Array<IdentityErrorType>;
+  error?: string;
   token_type?: string;
 };
