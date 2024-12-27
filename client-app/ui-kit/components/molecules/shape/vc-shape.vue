@@ -10,24 +10,20 @@
 import { computed, ref, watch } from "vue";
 
 interface IProps {
-  size?: number | string;
+  size?: string;
   icon?: string;
   img?: string;
   mask?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  size: "2.5rem",
   mask: "polygon",
+  size: "",
 });
 
 const iconUrl = ref<string>("");
 
-const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
-
 const style = computed(() => ({
-  width: _size.value,
-  height: _size.value,
   backgroundImage: props.img ? `url("${props.img}")` : "none",
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
@@ -47,9 +43,11 @@ watch(
 
 <style lang="scss">
 .vc-shape {
-  --size: var(--vc-shape-icon-size, 2.5rem);
-  --bg-color: var(--vc-shape-icon-bg-color, theme("colors.secondary.500"));
-  --vc-icon-color: var(--vc-shape-icon-color, theme("colors.additional.50"));
+  --props-size: v-bind(props.size);
+
+  --size: var(--props-size, var(--vc-shape-size, 2.5rem));
+  --bg-color: var(--vc-shape-bg-color, theme("colors.secondary.500"));
+  --vc-icon-color: var(--vc-shape-color, theme("colors.additional.50"));
   --vc-icon-size: 50%;
 
   @apply relative flex items-center justify-center size-[--size] bg-[--bg-color] bg-cover bg-center;
