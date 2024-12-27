@@ -33,7 +33,7 @@ export function _useImpersonate() {
       if (!data.value || error.value) {
         status.value = "error";
       } else {
-        const { access_token, token_type, expires_in, refresh_token, error: tokenError } = data.value;
+        const { access_token, token_type, expires_in, refresh_token, error: tokenError, errors } = data.value;
 
         if (access_token && token_type && expires_in && refresh_token) {
           setAccessToken(access_token);
@@ -48,11 +48,13 @@ export function _useImpersonate() {
             void broadcast.emit(reloadAndOpenMainPage, null, TabsType.ALL);
           }, 1000);
         } else {
-          Logger.error(impersonate.name, tokenError);
+          notifications.error({ text: t("pages.account.impersonate.error") });
+          Logger.error(impersonate.name, tokenError, errors);
           status.value = "error";
         }
       }
     } catch (e) {
+      notifications.error({ text: t("pages.account.impersonate.error") });
       Logger.error(impersonate.name, e);
       status.value = "error";
     }
