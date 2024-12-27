@@ -53,13 +53,15 @@
 
 <script setup lang="ts">
 /* eslint-disable */
-import { computed, onMounted } from "vue";
+import { computed, onMounted, onUnmounted, type Ref } from "vue";
 import { initializePayment, authorizePayment } from "@/core/api/graphql";
 import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
 import { useI18n } from "vue-i18n";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toTypedSchema } from "@vee-validate/yup";
+import { useScriptTag } from "@vueuse/core";
+import notifications from "@/modules/push-messages/pages/notifications.vue";
 
 interface IEmits {
   (event: "success"): void;
@@ -197,28 +199,37 @@ onMounted(async () => {
   await initPayment();
 });
 
+let scriptTag: Ref<HTMLScriptElement | null, HTMLScriptElement | null>;
+async function useDynamicScript(url: string): Promise<void> {
+  return new Promise((resolve: () => void) => {
+    const { scriptTag: tag } = useScriptTag(url, resolve);
+    scriptTag = tag;
+  });
+}
+
 async function initPayment() {
   const { publicParameters } = await initializePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0]!.id,
   });
+
+  if(!publicParameters) {
+    // todo add translation
+    showError("Can't init payment");
+    return
+  }
   // https://jwt.io/libraries
   // clientScript should be taken from jwt token
   // it is necessary to validate token before using the script from it
-  await initScript(getValue(publicParameters!, "clientScript")!);
-  await initFlex(getValue(publicParameters!, "jwt")!);
+  await useDynamicScript(getValue(publicParameters, "clientScript")!);
+  await initFlex(getValue(publicParameters, "jwt")!);
   await initForm();
 }
 
-async function initScript(url: string) {
-  return new Promise((resolve, reject) => {
-    console.log("init script", url);
-    const el = document.createElement("script");
-    el.src = url;
-    el.addEventListener("load", resolve);
-    el.addEventListener("error", reject);
-    document.body.append(el);
-  });
+function removeScript() {
+  if (scriptTag.value && scriptTag.value.parentNode) {
+    scriptTag.value.parentNode.removeChild(scriptTag.value);
+  }
 }
 
 async function initForm() {
@@ -256,4 +267,14 @@ async function initFlex(key: string) {
 function getValue(publicParameters: KeyValueType[], key: string) {
   return publicParameters.find((x) => x.key === key)?.value;
 }
+
+function showError(message: string) {
+  notifications.error({
+    text: message,
+    duration: 10000,
+    single: true,
+  });
+}
+
+onUnmounted(removeScript);
 </script>
