@@ -43,22 +43,23 @@ const _bgColor = computed(() => (isCssVariable(props.bgColor) ? `var(${props.bgC
 
   --max-width: var(--props-max-width, var(--vc-container-max-width, 87.75rem));
   --bg-color: var(--props-bg-color, var(--vc-container-bg-color, theme("colors.neutral.50")));
-  --vc-container-padding-x: theme("padding.6");
-  --vc-container-width: min(var(--max-width), calc(100vw - var(--vc-container-padding-x) * 2));
+  --px: var(--vc-container-px, theme("padding.6"));
+
+  --vc-container-width: min(var(--max-width), calc(100vw - var(--px) * 2));
   --vc-container-offset: calc((100vw - var(--vc-container-width)) / 2);
 
-  @apply relative grow bg-[--bg-color] py-6 px-[--vc-container-padding-x];
+  @apply relative grow bg-[--bg-color] py-6 px-[--px];
 
   @media (width >= theme("screens.md")) {
     @apply pb-9;
   }
 
   @media (width >= theme("screens.lg")) {
-    --vc-container-padding-x: theme("padding.8");
+    --px: var(--vc-container-px, theme("padding.8"));
   }
 
   @media (width >= theme("screens.2xl")) {
-    --vc-container-padding-x: theme("padding.12");
+    --px: var(--vc-container-px, theme("padding.12"));
   }
 
   &--loading {
@@ -72,7 +73,7 @@ const _bgColor = computed(() => (isCssVariable(props.bgColor) ? `var(${props.bgC
       @apply absolute size-[28rem] bottom-[-10rem] right-[-10rem];
 
       @media (min-width: theme("screens.xl")) {
-        @apply size-[48rem] bottom-[-15rem] right-[-15rem];
+        @apply size-[48rem] bottom-[-15rem] right-[-13.5rem];
       }
     }
   }
