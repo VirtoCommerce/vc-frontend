@@ -3,9 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import DOMPurify from "dompurify";
 import { ref, computed, watch } from "vue";
-import { Logger } from "@/core/utilities";
+import { loadIconRaw } from "@/ui-kit/utilities";
 
 interface IProps {
   name?: string;
@@ -30,17 +29,7 @@ const style = computed(() =>
 const sizeClass = computed(() => (typeof props.size === "string" ? `vc-icon--size--${props.size}` : ""));
 
 async function loadIcon(name?: string) {
-  if (name) {
-    try {
-      const response = (await import(`../../../../assets/icons/basic/${name}.svg?raw`)) as { default: string };
-      icon.value = DOMPurify.sanitize(response.default);
-    } catch (error) {
-      Logger.error(`Failed to load icon: ${name}`, error);
-      icon.value = "";
-    }
-  } else {
-    icon.value = "";
-  }
+  icon.value = await loadIconRaw(name);
 }
 
 watch(

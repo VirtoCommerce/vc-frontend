@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { Logger } from "@/core/utilities";
+import { loadIcon } from "@/ui-kit/utilities";
 
 interface IProps {
   size?: number | string;
@@ -33,23 +33,10 @@ const style = computed(() => ({
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
 
-function loadIcon(name?: string) {
-  if (name) {
-    try {
-      iconUrl.value = new URL(`../../../../assets/icons/basic/${name}.svg`, import.meta.url).href;
-    } catch (error) {
-      Logger.error(`Failed to load icon: ${name}`, error);
-      iconUrl.value = "";
-    }
-  } else {
-    iconUrl.value = "";
-  }
-}
-
 watch(
   () => props.mask,
   (newIconName: string) => {
-    loadIcon(newIconName);
+    iconUrl.value = loadIcon(newIconName);
   },
   { immediate: true },
 );
