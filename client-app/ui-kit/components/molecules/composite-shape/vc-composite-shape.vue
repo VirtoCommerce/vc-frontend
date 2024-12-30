@@ -8,7 +8,7 @@
 
     <div class="vc-composite-shape__icon">
       <slot>
-        <VcShape :icon="icon" :mask="iconMask" :size="iconSize" />
+        <VcShape :icon="icon" :mask="iconMask" :size="iconSize" :bg-color="iconBgColor" />
       </slot>
     </div>
   </div>
@@ -19,6 +19,7 @@ interface IProps {
   icon?: string;
   iconMask?: string;
   iconSize?: string;
+  iconBgColor?: string;
   img?: string;
   mask?: string;
   size?: string;
@@ -27,6 +28,7 @@ interface IProps {
 const props = withDefaults(defineProps<IProps>(), {
   size: "",
   iconSize: "",
+  iconBgColor: "",
 });
 </script>
 
@@ -39,7 +41,6 @@ const props = withDefaults(defineProps<IProps>(), {
   --icon-size: var(--props-icon-size, var(--vc-composite-shape-icon-size, 26.5%));
   --icon-top: var(--vc-composite-shape-icon-top, 11%);
   --icon-left: var(--vc-composite-shape-icon-left, -8%);
-  --icon-bg-color: var(--vc-composite-shape-icon-bg-color, theme("colors.info.500"));
 
   @apply relative size-[--size];
 
@@ -51,7 +52,6 @@ const props = withDefaults(defineProps<IProps>(), {
 
   &__icon {
     --vc-shape-size: 100%;
-    --vc-shape-bg-color: var(--icon-bg-color);
 
     @apply absolute top-[--icon-top] left-[--icon-left] size-[--icon-size];
   }
