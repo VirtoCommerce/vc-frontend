@@ -9,11 +9,11 @@
       required
       test-id-input="card-holder-input"
     />
-    <div>
-      <label id="cardNumber-label">{{ labels.number }}</label>
-      <div id="number-container" class="form-control"></div>
+    <div class="mt-3">
+      <VcLabel for-id="cardNumber-container">{{ labels.number }}</VcLabel>
+      <div id="cardNumber-container" class="form-control h-11 border border-neutral-200"></div>
     </div>
-    <div class="flex flex-col gap-x-6 gap-y-3 sm:flex-row">
+    <div class="mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <VcInput
         v-model="expirationDate"
         v-maska
@@ -32,8 +32,8 @@
         test-id-input="expiration-date-input"
       />
       <div>
-        <label for="securityCode-container">{{ labels.securityCode }}</label>
-        <div id="securityCode-container" class="form-control"></div>
+        <VcLabel for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
+        <div id="securityCode-container" class="form-control h-11 w-40 border border-neutral-200"></div>
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@
   <VcButton
     :disabled="!isValidBankCard"
     :loading="loading"
-    class="flex-1 md:order-first md:flex-none"
+    class="flex-1 md:order-first md:flex-none mt-3"
     data-test-id="pay-now-button"
     @click="sendPaymentData"
   >
@@ -233,22 +233,19 @@ function removeScript() {
 }
 
 async function initForm() {
-  const number = microform.createField("number", { placeholder: "Card number" });
+  const number = microform.createField("number");
   const securityCode = microform.createField("securityCode", { placeholder: "×××" });
-  number.load("#number-container");
+  number.load("#cardNumber-container");
   securityCode.load("#securityCode-container");
 }
 
 const customStyles = {
   input: {
-    "font-size": "14px",
-    "font-family": "helvetica, tahoma, calibri, sans-serif",
+    'font-size': '16px',
+    // custom font-family not supported
+    'font-family': 'sans-serif',
     color: "#555",
   },
-  ":focus": { color: "blue" },
-  ":disabled": { cursor: "not-allowed" },
-  valid: { color: "#3c763d" },
-  invalid: { color: "#a94442" },
 };
 
 async function initFlex(key: string) {
