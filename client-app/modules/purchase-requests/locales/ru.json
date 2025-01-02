@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "запросы_на_покупку.заголовок",
+      "table_description": "список запросов на покупку"
+    },
+    "title": "Запросы на Покупку",
+    "no_purchase_requests_message": "Запросов на покупку пока нет",
+    "no_purchase_requests_img_alt": "Нет заказов",
+    "purchase_request_number_label": "Номер запроса на покупку",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Запросы на Покупку"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Запрос на покупку #{0}",
+    "failed_or_used_description": "Извините, но мы не смогли создать запрос на покупку или вы уже использовали его для создания заказа",
+    "try_again": "Пожалуйста, попробуйте снова",
+    "files_section": {
+      "title": "Файлы"
+    },
+    "from_file": {
+      "title": "Загрузить файл",
+      "upload": {
+        "message": "Загрузите фотографии документов, скриншоты или рукописные заметки, чтобы получить данные для нового заказа.",
+        "examples": {
+          "title": "Примеры",
+          "alt": "Примеры"
+        }
+      },
+      "processing": {
+        "message": "Вы можете загрузить файлы изображений или pdf с перечнями товаров в любой форме для быстрого заказа товаров",
+        "loading_message": "Распознавание загруженного документа...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Перейти к котировке"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Из файла"
+    }
+  }
+}

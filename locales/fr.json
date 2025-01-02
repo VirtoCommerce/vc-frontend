@@ -573,6 +573,7 @@
         "assets_block_title": "Fichiers",
         "vendor_label": "Fournisseur",
         "share_product_label": "Partager le produit",
+        "create_configuration_button": "Créer configuration",
         "price_block": {
           "title": "Prix et Livraison",
           "add_to_list_button": "Ajouter à la liste",
@@ -598,7 +599,9 @@
         "product_configuration": {
           "title": "Configurer les paramètres",
           "none": "Aucun",
-          "nothing_selected": "Aucun sélectionné"
+          "nothing_selected": "Aucun sélectionné",
+          "changed_notification": "La configuration du produit a été modifiée. Vous pouvez toujours enregistrer les modifications ultérieurement en cliquant sur le bouton \"@:{'ui_kit.buttons.update_cart'}\".",
+          "changed_confirmation": "La configuration du produit a été modifiée. Vous souhaitez-vous enregistrer les modifications ?"
         }
       },
       "discount_badge": {
@@ -1102,7 +1105,7 @@
       },
       "impersonate": {
         "title": "Impersonation",
-        "success": "Vous êtes en train d'être imité",
+        "success": "Impersonation réussie",
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"
       }
     },

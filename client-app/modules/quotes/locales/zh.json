@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "请求的报价"
+    },
+    "title": "报价请求",
+    "no_quotes_message": "尚无报价请求",
+    "quote_number_label": "报价编号",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "输入关键词...",
+    "no_results_message": "未找到结果",
+    "request_quote_button": "请求报价",
+    "search_quote_requests": "搜索报价请求",
+    "reset_search": "重置搜索",
+    "cart_widget": {
+      "quote_request_hint": "您可以通过特殊服务请求购物车中的商品",
+      "create_quote_button": "将购物车商品添加到报价",
+      "title": "报价请求"
+    },
+    "navigation": {
+      "route_name": "报价请求"
+    },
+    "errors": {
+      "creating_quote_error": "创建报价时出错"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "报价请求评论",
+    "title": "报价请求 #{0}",
+    "comment": "评论",
+    "comment_field_label": "您对这个报价请求有一般性评论吗？",
+    "products": "产品",
+    "shipping_address": "送货地址",
+    "billing_address": "账单地址",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "您尚未设置地址。请指定一个。",
+    "same_as_shipping_address": "与送货地址相同",
+    "quote_summary": "报价摘要",
+    "quote_data": "报价数据",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "报价请求没有商品",
+    "save_changes_notification_success": "报价请求已成功保存",
+    "select_shipping_address": "选择送货地址",
+    "select_billing_address": "选择账单地址",
+    "files": "文件",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "报价无法批准",
+      "decline": "报价无法拒绝"
+    }
+  }
+}

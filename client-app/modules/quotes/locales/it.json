@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "preventivi richiesti"
+    },
+    "title": "Richieste di Preventivo",
+    "no_quotes_message": "Non ci sono ancora richieste di preventivo",
+    "quote_number_label": "Numero di preventivo",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Inserisci parola chiave...",
+    "no_results_message": "Nessun risultato trovato",
+    "request_quote_button": "Richiedi Preventivo",
+    "search_quote_requests": "Cerca richieste di preventivo",
+    "reset_search": "Reimposta ricerca",
+    "cart_widget": {
+      "quote_request_hint": "Puoi richiedere articoli nel tuo carrello tramite un servizio speciale",
+      "create_quote_button": "Aggiungi articoli del carrello al preventivo",
+      "title": "Richiesta di preventivo"
+    },
+    "navigation": {
+      "route_name": "Richieste di Preventivo"
+    },
+    "errors": {
+      "creating_quote_error": "Errore nella creazione di un preventivo"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Commento alla richiesta di preventivo",
+    "title": "Richiesta di Preventivo #{0}",
+    "comment": "Commento",
+    "comment_field_label": "Hai un commento generale per questa richiesta di preventivo?",
+    "products": "Prodotti",
+    "shipping_address": "Indirizzo di Spedizione",
+    "billing_address": "Indirizzo di Fatturazione",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "Non hai impostato un indirizzo. Si prega di specificarne uno.",
+    "same_as_shipping_address": "Uguale all'indirizzo di spedizione",
+    "quote_summary": "Riepilogo Preventivo",
+    "quote_data": "Dati Preventivo",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "La richiesta di preventivo non ha articoli",
+    "save_changes_notification_success": "La richiesta di preventivo è stata salvata con successo",
+    "select_shipping_address": "Seleziona un indirizzo di spedizione",
+    "select_billing_address": "Seleziona un indirizzo di fatturazione",
+    "files": "File",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "Il preventivo non può essere approvato",
+      "decline": "Il preventivo non può essere rifiutato"
+    }
+  }
+}

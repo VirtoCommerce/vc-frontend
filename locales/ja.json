@@ -1,0 +1,1443 @@
+{
+  "common": {
+    "buttons": {
+      "home": "ホーム",
+      "ok": "OK",
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "confirm": "確認",
+      "submit": "送信",
+      "create": "作成",
+      "update": "更新",
+      "remove": "削除",
+      "save": "保存",
+      "edit": "編集",
+      "settings": "設定",
+      "change": "変更",
+      "delete": "削除",
+      "continue_shopping": "買い物を続ける",
+      "select": "選択",
+      "choose": "選択",
+      "allFilters": "全フィルター",
+      "filters": "フィルター",
+      "back": "戻る",
+      "reset": "リセット",
+      "register": "登録",
+      "reset_password": "パスワードリセット",
+      "reset_filters": "フィルターリセット",
+      "add_to_cart": "カートに入れる",
+      "apply": "適用",
+      "send": "送信",
+      "more": "もっと見る",
+      "yes": "はい",
+      "no": "いいえ",
+      "clear_cart": "カートを空に",
+      "save_changes": "変更を保存",
+      "new_address": "新規住所",
+      "review_order": "注文確認",
+      "show_order": "注文表示",
+      "print": "印刷",
+      "print_order": "注文印刷",
+      "place_order": "注文確定",
+      "back_to_cart": "カートに戻る",
+      "back_to_order_details": "注文詳細に戻る",
+      "go_to_checkout": "レジへ進む",
+      "go_to_billing": "支払いへ進む",
+      "show_more": "もっと見る",
+      "hide": "非表示",
+      "view_invoice": "請求書表示",
+      "pay_now": "今すぐ支払う",
+      "payment_details": "支払い詳細",
+      "reorder_all": "全て再注文",
+      "view_cart": "カートを見る",
+      "add_new": "新規追加",
+      "add_new_address": "新規住所追加",
+      "remove_selected": "選択を削除",
+      "resend_link": "リンク再送信",
+      "set_new_password": "新規パスワード設定",
+      "toggle_dropdown": "ドロップダウン",
+      "search_orders": "注文検索",
+      "reset_orders_search_keyword": "検索リセット",
+      "remove_credit_card": "カード削除",
+      "search_company_members": "メンバー検索",
+      "reset_company_members_search_keyword": "メンバー検索リセット",
+      "previous": "前へ",
+      "next": "次へ",
+      "send_link_email": "メールでリンク送信",
+      "share": "共有",
+      "approve": "承認",
+      "decline": "却下",
+      "all_filters": "全フィルター",
+      "sort_by": "並び替え",
+      "add_items_to_cart": "カートに追加",
+      "show_details": "詳細表示"
+    },
+    "labels": {
+      "actions": "操作",
+      "user_name": "ユーザー名",
+      "password": "パスワード",
+      "confirm_password": "パスワード(確認)",
+      "company_name": "会社名",
+      "first_name": "名",
+      "last_name": "姓",
+      "address": "住所",
+      "phone": "電話番号",
+      "email": "メール",
+      "country": "国",
+      "zip_or_postal_code": "郵便番号",
+      "region": "都道府県",
+      "city": "市区町村",
+      "address_line1": "住所",
+      "address_line2": "建物名・部屋番号",
+      "description": "説明",
+      "quantity": "数量",
+      "total": "合計",
+      "compare": "比較",
+      "price": "価格",
+      "product_price": "販売価格",
+      "subtotal": "小計",
+      "discount": "割引",
+      "line_items": "明細",
+      "shipping": "配送",
+      "tax": "税金",
+      "shipping_cost": "送料",
+      "status": "状態",
+      "date": "日付",
+      "created_date": "作成日",
+      "sort_by": "並び替え:",
+      "sku": "SKU",
+      "true_property": "はい",
+      "false_property": "いいえ",
+      "product": "商品",
+      "properties": "属性",
+      "price_per_item": "単価",
+      "created": "作成済",
+      "purchase_order_number": "発注番号",
+      "promotion_code": "クーポン",
+      "secure_checkout": "安全な決済",
+      "creates": "作成",
+      "payment_number": "支払ID",
+      "payment_type": "支払方法",
+      "recipient_name": "受取人",
+      "active_address": "有効な住所",
+      "addresses_icon": "住所アイコン",
+      "digital_product": "デジタル商品",
+      "search": "{0}を検索",
+      "in_stock": "在庫あり",
+      "starts_from": "開始: {0}",
+      "ends_to": "終了: {0}",
+      "saved_cards": "保存済カード",
+      "save_card_for_future_payments": "カードを保存",
+      "add_new_card": "新規カード追加",
+      "last_day": "昨日",
+      "last_week": "先週",
+      "last_month": "先月",
+      "last_year": "昨年",
+      "custom_date": "日付指定",
+      "background_image": "背景画像",
+      "default_language": "標準言語",
+      "default_currency": "標準通貨",
+      "organizations": "組織",
+      "my_organizations": "自社",
+      "select_product": "商品を選択",
+      "sort_by_date": "日付順",
+      "ascending": "昇順",
+      "descending": "降順",
+      "date_new_to_old": "新しい順",
+      "date_old_to_new": "古い順",
+      "comments": "コメント",
+      "fields_required": "必須項目"
+    },
+    "prefixes": {
+      "please": "お願いします",
+      "expires": "有効期限:"
+    },
+    "suffixes": {
+      "product_count_in_stock": "在庫あり"
+    },
+    "messages": {
+      "product_out_of_stock": "在庫切れ",
+      "required_field": "必須項目です",
+      "email_is_not_correct": "有効なメールアドレスを入力してください",
+      "email_not_unique": "このメールは既に登録済みです",
+      "max_length": "{max}文字以内で入力してください",
+      "creating_order_error": "注文作成エラー",
+      "item_can_t_be_purchased": "購入できません",
+      "item_is_out_of_stock": "在庫切れです",
+      "invalid_value": "無効な値",
+      "invalid_user_id_or_token": "無効なIDまたはトークン",
+      "product_no_longer_available": "取扱終了",
+      "item_quantity_required_field": "数量を入力してください",
+      "max_value": "最大値は{value}です",
+      "min_value": "最小値は{value}です",
+      "empty_wish_list": "リストが空です",
+      "not_defined": "未定義",
+      "invalid_coupon": "無効なクーポンです",
+      "fill_all_required": "必須項目を入力してください",
+      "something_went_wrong": "エラーが発生しました",
+      "checkout_pricing_warning": "価格は注文確定時に確定されます",
+      "wishlists_available_for_authorized": "ログインが必要です",
+      "no_addresses": "住所が未登録です",
+      "confirm_delete_address": "この住所を削除しますか？",
+      "save_changes": "変更を保存しますか",
+      "address_deletion_successful": "住所を削除しました",
+      "cart_contains_deleted_products": "無効な商品を削除してください",
+      "fail_add_product_to_cart": "カートに追加できません: {reason}",
+      "fail_to_change_quantity_in_cart": "数量を変更できません: {reason}",
+      "unhandled_error": "システムエラーが発生しました",
+      "role_update_successful": "権限を更新しました",
+      "role_update_failed": "権限の更新に失敗: {0}",
+      "passwords_do_not_match": "パスワードが一致しません",
+      "password_new_same_old": "現在のパスワードと異なる必要があります",
+      "blocked": "アカウントがブロックされています",
+      "password_about_expire": "パスワードは{value}日後に期限切れです",
+      "password_expired": "パスワードが期限切れです",
+      "data_changed": "他のタブのいずれかでデータが変更されました。現在のデータを表示するには、ページを更新してください。"
+    },
+    "placeholders": {
+      "enter_value": "入力してください",
+      "not_selected": "未選択",
+      "select_address": "住所を選択",
+      "select_country": "国を選択",
+      "select_region": "都道府県を選択",
+      "select_delivery_method": "配送方法を選択",
+      "select_payment_method": "支払方法を選択",
+      "company_name": "会社名を入力",
+      "first_name": "名を入力",
+      "last_name": "姓を入力",
+      "email": "メールアドレスを入力",
+      "password": "パスワードを入力",
+      "confirm_password": "パスワードを確認",
+      "purchase_order_number": "発注番号を入力",
+      "promotion_code": "クーポンコードを入力",
+      "select_credit_card": "カードを選択"
+    },
+    "links": {
+      "home": "ホーム",
+      "catalog": "カタログ",
+      "bulk_order": "一括注文",
+      "compare": "比較",
+      "contact_us": "お問い合わせ",
+      "dashboard": "ダッシュボード",
+      "account": "アカウント",
+      "profile": "プロフィール",
+      "change_password": "パスワード変更",
+      "addresses": "住所",
+      "orders": "注文履歴",
+      "lists": "リスト",
+      "checkout_defaults": "決済設定",
+      "list_details": "リスト詳細",
+      "cart": "カート",
+      "company_info": "会社情報",
+      "company_members": "メンバー",
+      "contact_administrator": "管理者に連絡",
+      "saved_credit_cards": "保存済カード"
+    },
+    "titles": {
+      "all_actions": "全ての操作",
+      "other_actions": "その他の操作",
+      "order_summary": "注文サマリー",
+      "billing_address": "請求先住所",
+      "payment_method": "支払方法",
+      "payment_details": "支払詳細",
+      "shipping_method": "配送方法",
+      "shipping_address": "配送先住所",
+      "order_comment": "注文コメント",
+      "order_data": "注文データ",
+      "review_order": "注文内容確認",
+      "new_address": "新規住所",
+      "edit_address": "住所を編集",
+      "addresses": "住所",
+      "delete_address": "住所を削除",
+      "remove_products": "商品を削除",
+      "change_role": "権限変更",
+      "save_changes": "変更を保存",
+      "password_expired": "パスワード期限切れ",
+      "error_details": "エラー詳細"
+    },
+    "roles": {
+      "org-maintainer": "組織管理者",
+      "org-employee": "組織従業員",
+      "purchasing-agent": "購買担当者",
+      "store-admin": "ストア管理者",
+      "store-manager": "ストアマネージャー"
+    },
+    "methods": {
+      "payment_by_code": {
+        "AuthorizeNetPaymentMethod": "クレジットカード (Authorize.Net)",
+        "DefaultManualPaymentMethod": "手動決済",
+        "SkyflowPaymentMethod": "クレジットカード (Skyflow)"
+      },
+      "delivery_by_id": {
+        "FixedRate_Ground": "固定料金 (地上)",
+        "FixedRate_Air": "固定料金 (航空)"
+      }
+    }
+  },
+  "shared": {
+    "layout": {
+      "header": {
+        "top_header": {
+          "link_dashboard": "@:common.links.dashboard",
+          "link_contact_us": "お問い合わせ",
+          "call_us_label": "お電話: ",
+          "logged_in_as": "ログインユーザー:"
+        },
+        "bottom_header": {
+          "catalog_menu_button": "カタログ"
+        },
+        "link_sign_in": "ログイン",
+        "link_register_now": "今すぐ登録",
+        "link_logout": "ログアウト",
+        "menu": {
+          "home": "@:common.links.home",
+          "catalog": "@:common.links.catalog",
+          "bulk_order": "@:common.links.bulk_order",
+          "compare": "@:common.links.compare",
+          "cart": "@:common.links.cart",
+          "lists": "@:common.links.lists",
+          "orders": "@:common.links.orders",
+          "contact_us": "@:common.links.contact_us"
+        },
+        "mobile": {
+          "my_account": "@:common.links.account",
+          "account_menu": {
+            "dashboard": "@:common.links.dashboard",
+            "profile": "@:common.links.profile",
+            "change_password": "@:common.links.change_password",
+            "addresses": "@:common.links.addresses",
+            "orders": "@:common.links.orders",
+            "lists": "@:common.links.lists",
+            "checkout_defaults": "@:common.links.checkout_defaults",
+            "saved_credit_cards": "@:common.links.saved_credit_cards"
+          },
+          "corporate": "@:shared.account.navigation.corporate_title",
+          "corporate_menu": {
+            "company_info": "@:common.links.company_info",
+            "company_members": "@:common.links.company_members"
+          },
+          "settings": "設定",
+          "currency": "通貨",
+          "search_bar": {
+            "input_placeholder": "キーワード、商品番号、型番を入力"
+          },
+          "view_all_catalog": "カテゴリー内の全商品を表示"
+        }
+      },
+      "footer": {
+        "version": "Ver.",
+        "company_name": "Virto Commerce",
+        "company_information_link_group": "会社情報",
+        "about_us_link": "会社概要",
+        "investor_relations_link": "IR情報",
+        "supplier_overview_link": "サプライヤー概要",
+        "worldwide_link": "グローバル",
+        "customer_support_link_group": "カスタマーサポート",
+        "catalog_request_link": "カタログ請求",
+        "contact_us_link": "お問い合わせ",
+        "feedback_link": "フィードバック",
+        "find_a_branch_link": "店舗検索",
+        "order_support_link_group": "注文サポート",
+        "orders_link": "注文履歴",
+        "pick_up_link": "店舗受取",
+        "auto_reorder_link": "自動再注文",
+        "special_orders_link": "特別注文",
+        "returns_cancellations_link": "返品・キャンセル",
+        "online_resources_ling_group": "オンラインリソース",
+        "catalog_link": "カタログ",
+        "hot_buys_link": "お買い得商品",
+        "rebates_link": "リベート",
+        "replacement_parts_link": "交換部品",
+        "demo_landing_link": "デモランディング",
+        "demo_page_link": "デモページ",
+        "builder_io_page_link": "Builder.ioページ",
+        "all_rights_reserved": "All Rights Reserved.",
+        "asp_net_e_commerce_platform": "ASP.NET eコマースプラットフォーム {0}",
+        "by_virto": "Virto Commerce"
+      },
+      "search_bar": {
+        "categories_label": "カテゴリー",
+        "products_label": "商品",
+        "pages_label": "ページ",
+        "suggestions_label": "おすすめ",
+        "no_results": "{keyword}の検索結果はありません",
+        "enter_keyword_placeholder": "商品を検索",
+        "search_button": "検索",
+        "view_all_results_button": "全{total}件を表示"
+      },
+      "language_selector": {
+        "label": "言語:"
+      },
+      "currency_selector": {
+        "label": "通貨:"
+      }
+    },
+    "account": {
+      "navigation": {
+        "main_title": "アカウント",
+        "corporate_title": "法人",
+        "links": {
+          "dashboard": "@:common.links.dashboard",
+          "profile": "@:common.links.profile",
+          "change_password": "@:common.links.change_password",
+          "addresses": "@:common.links.addresses",
+          "orders": "@:common.links.orders",
+          "lists": "@:common.links.lists",
+          "list_details": "@:common.links.list_details",
+          "checkout_defaults": "@:common.links.checkout_defaults",
+          "company_info": "@:common.links.company_info",
+          "company_members": "@:common.links.company_members",
+          "saved_credit_cards": "@:common.links.saved_credit_cards"
+        }
+      },
+      "change_password_form": {
+        "title": "新しいパスワードを作成",
+        "current_pass_label": "現在のパスワード",
+        "current_pass_placeholder": "現在のパスワードを入力",
+        "new_pass_label": "新しいパスワード",
+        "new_pass_placeholder": "新しいパスワードを作成",
+        "confirm_new_pass_label": "新しいパスワード（確認）",
+        "confirm_new_pass_placeholder": "新しいパスワードを再入力"
+      },
+      "sign_in_form": {
+        "remember_me_label": "ログイン状態を保持",
+        "forgot_password_link": "パスワードをお忘れですか？",
+        "login_button": "ログイン",
+        "registration_button": "新規登録",
+        "errors": {
+          "login_failed": "ログインに失敗しました。認証情報を確認してください",
+          "email_verification_is_required": "メール認証が必要です。メールアドレスを確認してください",
+          "user_is_temporary_locked_out": "アカウントが一時的にロックされました。しばらく時間をおいて再試行してください",
+          "user_is_locked_out": "@:common.messages.blocked",
+          "user_cannot_login_in_store": "アクセスが拒否されました。現在のストアにログインできません",
+          "password_expired": "@:common.messages.password_expired",
+          "user_not_found": "ユーザーが見つかりません。入力情報を確認してください"
+        }
+      },
+      "forgot_password_form": {
+        "error_alert": "パスワードリセット要求が無効です。"
+      },
+      "checkout_default_success_modal": {
+        "title": "決済設定",
+        "message": "デフォルトの決済情報が更新されました。",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "invite_member_modal": {
+        "title": "メンバー招待",
+        "role_label": "権限",
+        "role_placeholder": "権限を選択",
+        "emails_label": "招待したい人のメールアドレスを入力",
+        "emails_placeholder": "複数の場合はカンマ、セミコロン、改行で区切ってください",
+        "message_label": "メッセージ",
+        "cancel_button": "@:common.buttons.cancel",
+        "send_button": "@:common.buttons.send",
+        "invite_successfully_text": "招待を送信しました",
+        "emails_quantity_exceeded": "一度に{maxValue}人まで招待できます",
+        "email_length_exceeded": "メールアドレスは{maxValue}文字以内で入力してください",
+        "invalid_emails": "無効なメールアドレス: {invalidEmails}"
+      },
+      "profile_update_success_modal": {
+        "title": "プロフィール更新",
+        "message": "プロフィールを更新しました！",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "registration_success_modal": {
+        "title": "登録完了",
+        "message": "登録が完了しました！",
+        "ok_button": "@:common.buttons.home"
+      },
+      "reorder_info_modal": {
+        "title": "再注文の確認",
+        "cancel_button": "@:common.buttons.cancel",
+        "confirm_button": "@:common.buttons.confirm",
+        "filter": {
+          "title": "商品フィルター:",
+          "reduced_quantity_checkbox": "数量減少",
+          "can_t_be_purchased_checkbox": "購入不可",
+          "items_without_changes_checkbox": "変更なし"
+        },
+        "product_card": {
+          "quantity_label": "@:common.labels.quantity",
+          "total_label": "@:common.labels.total{':'}",
+          "in_stock_suffix": "@:common.suffixes.product_count_in_stock",
+          "out_of_stock_message": "@:common.messages.product_out_of_stock",
+          "reduced_message": "在庫制限により注文数量が<span class=\"text-neutral\">{0}個から{1}個に減少</span>しました",
+          "item_can_t_be_purchased_message": "@:common.messages.item_can_t_be_purchased",
+          "item_is_out_of_stock_message": "@:common.messages.item_is_out_of_stock"
+        }
+      },
+      "orders_filter": {
+        "status_label": "@:common.labels.status",
+        "created_date_label": "作成日",
+        "start_date_label": "開始日",
+        "end_date_label": "終了日",
+        "apply_button": "@:common.buttons.apply",
+        "reset_button": "@:common.buttons.reset"
+      }
+    },
+    "company": {
+      "add_or_update_address_modal": {
+        "address_title": "住所情報",
+        "create_title": "新規会社住所を作成",
+        "edit_title": "会社住所を編集"
+      },
+      "block_member_modal": {
+        "title": "ユーザーをブロック",
+        "text": "このユーザーのアクセスをブロックしますか？"
+      },
+      "unblock_member_modal": {
+        "title": "ブロック解除",
+        "text": "このユーザーのブロックを解除しますか？"
+      },
+      "delete_member_modal": {
+        "title": "メンバー削除",
+        "text": "メンバーリストからユーザー「{name}」を削除しますか？"
+      },
+      "notifications": {
+        "user_blocked": "ユーザーをブロックしました。",
+        "user_unblocked": "ユーザーのブロックを解除しました。"
+      }
+    },
+    "compare": {
+      "add_to_compare": {
+        "tooltips": {
+          "add": "比較リストに追加",
+          "remove": "比較リストから削除"
+        }
+      },
+      "clear_list_modal": {
+        "title": "クリアの確認",
+        "message": "比較リストから全ての商品を削除しますか？"
+      }
+    },
+    "cart": {
+      "add_to_cart": {
+        "errors": {
+          "in_cart": "カート内",
+          "already_in_cart_message": "{0}は既にカートに追加されています",
+          "enter_correct_number_message": "有効な数値を入力してください",
+          "min": "最小注文数：{0}個",
+          "max": "最大注文数：{0}個",
+          "min_max": "注文可能数：{0}個から{1}個",
+          "min_not_available": "最小注文数{0}個分の在庫がありません",
+          "out_of_stock": "在庫切れ",
+          "positive_number": "正の数値を入力してください",
+          "integer_number": "整数を入力してください",
+          "pack_size": "{0}個単位でご注文ください"
+        }
+      },
+      "products_section": {
+        "title": "商品"
+      },
+      "gifts_section": {
+        "title": "+ ギフトを追加"
+      },
+      "add_bulk_items_to_cart_results_modal": {
+        "title": "カートへの追加結果",
+        "groups": {
+          "added": "追加完了",
+          "not_added": "追加できませんでした"
+        },
+        "labels": {
+          "sku": "@:common.labels.sku",
+          "product_name": "商品名",
+          "quantity": "数量"
+        }
+      },
+      "clear_cart_modal": {
+        "title": "カートを空にする",
+        "message": "カートを空にしますか？"
+      },
+      "configuration_items": {
+        "title": "構成部品リスト",
+        "edit_configuration": "構成を編集"
+      }
+    },
+    "catalog": {
+      "view_mode": {
+        "grid_label": "グリッド表示",
+        "list_label": "リスト表示"
+      },
+      "page_size": {
+        "label": "表示件数："
+      },
+      "product_card": {
+        "price_label": "@:common.labels.product_price",
+        "product_rating": "評価：",
+        "product_vendor": "販売元："
+      },
+      "product_details": {
+        "technical_specs_block_title": "商品仕様",
+        "variations_block_title": "商品バリエーション",
+        "description_block_title": "商品説明",
+        "assets_block_title": "ファイル",
+        "vendor_label": "販売元",
+        "share_product_label": "商品をシェア",
+        "create_configuration_button": "カスタム構成を作成",
+        "price_block": {
+          "title": "価格・配送",
+          "add_to_list_button": "リストに追加",
+          "product_email_title": "この商品をご確認ください：{0}"
+        },
+        "variations": {
+          "title": "商品バリエーション",
+          "columns": {
+            "item": "商品",
+            "stock": "在庫",
+            "price": "価格",
+            "quantity": "数量"
+          },
+          "list": "リスト",
+          "table": "テーブル",
+          "no_results": "該当する商品がありません"
+        },
+        "product_variation_card": {
+          "variation_sku_label": "@:common.labels.sku",
+          "price_label": "@:common.labels.product_price",
+          "vendor_label": "@:shared.catalog.product_details.vendor_label"
+        },
+        "product_configuration": {
+          "title": "パラメータ設定",
+          "none": "なし",
+          "nothing_selected": "未選択",
+          "changed_notification": "商品の設定が変更されました。後で「@:{'ui_kit.buttons.update_cart'}」ボタンをクリックして保存することもできます。",
+          "changed_confirmation": "商品の設定が変更されました。保存しますか？"
+        }
+      },
+      "discount_badge": {
+        "off": "OFF"
+      },
+      "branches_modal": {
+        "title": "店舗を選択",
+        "all_branches": "全店舗",
+        "search_input_placeholder": "住所や店舗名で検索",
+        "selected_branches": "選択した店舗",
+        "clear_selection": "選択をクリア",
+        "cancel_button": "キャンセル",
+        "ok_button": "OK",
+        "no_results": "該当する店舗がありません",
+        "reset_search_button": "検索をリセット"
+      }
+    },
+    "checkout": {
+      "accepted_gifts": {
+        "gift_label": "ギフト",
+        "quantity_label": "@:common.labels.quantity",
+        "title": "選択したギフト"
+      },
+      "shipping_details_section": {
+        "title": "配送情報",
+        "labels": {
+          "shipping_address": "配送先住所",
+          "shipping_method": "配送方法"
+        },
+        "links": {
+          "select_address": "配送先住所を選択"
+        }
+      },
+      "billing_details_section": {
+        "title": "支払い情報",
+        "labels": {
+          "billing_address": "請求先住所",
+          "payment_method": "支払い方法",
+          "same_as_shipping_address": "配送先と同じ"
+        },
+        "links": {
+          "select_address": "請求先住所を選択"
+        },
+        "messages": {
+          "no_addresses": "請求先住所が登録されていません。選択または入力してください。",
+          "unauthenticated_no_addresses": "請求先住所が登録されていません。入力してください。"
+        }
+      },
+      "payment_method_modal": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select",
+        "title": "支払い方法を選択"
+      },
+      "select_address_modal": {
+        "meta": {
+          "table_description": "登録済み住所"
+        },
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "save_button": "@:common.buttons.save",
+        "select_button": "@:common.buttons.select",
+        "add_address_button": "@:common.buttons.add_new_address",
+        "phone_label": "@:common.labels.phone{':'}",
+        "email_label": "@:common.labels.email{':'}",
+        "no_addresses_message": "住所が登録されていません",
+        "title": "住所を選択"
+      },
+      "shipping_method_modal": {
+        "cancel_button": "@:common.buttons.cancel",
+        "ok_button": "@:common.buttons.ok",
+        "select_button": "@:common.buttons.select",
+        "price_label": "@:common.labels.price{':'}",
+        "title": "配送方法を選択"
+      }
+    },
+    "bulk_order": {
+      "manually": {
+        "title": "Manually",
+        "product_sku_label": "@:common.labels.sku",
+        "quantity_label": "@:common.labels.quantity",
+        "add_rows_action_link": "Add 5 more rows",
+        "reset_button": "@:common.buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart",
+        "subtitle_message_start": "Quickly add items to your",
+        "cart_link": "Cart",
+        "subtitle_message_end": "by entering item @:{'common.labels.sku'}s and quantities."
+      },
+      "copy_n_paste": {
+        "title": "Copy&Paste",
+        "subtitle_message": "Want to save time and order faster?",
+        "guide_message": "Simply copy and paste item records from your CSV file into the field below using the following format: <strong>SKU,Quantity</strong>. Each record should start with a new line.",
+        "text_area_placeholder": "Format example:\n6AF8SM0VPFV6,10\n3RO1GEQI34E8,20",
+        "reset_button": "@:common.buttons.reset",
+        "add_to_cart_button": "@:common.buttons.add_to_cart"
+      },
+      "add_to_cart_sku_errors_modal": {
+        "title": "Add to cart SKU errors",
+        "common_message": "There were several issues while adding items to the cart.",
+        "duplicate_skus_message": "Duplicate SKUs detected. Please check the items for the relevant SKUs to add to cart.",
+        "content": {
+          "sku": "SKU",
+          "products": "Products",
+          "quantity": "Quantity"
+        }
+      }
+    },
+    "payment": {
+      "bank_card_form": {
+        "number_label": "Card Number",
+        "cardholder_name_label": "Cardholder Name",
+        "expiration_date_label": "Expiration Date",
+        "expiration_date_placeholder": "MM / YY",
+        "month_label": "Month",
+        "month_placeholder": "MM",
+        "year_label": "Year",
+        "year_placeholder": "YY",
+        "security_code_label": "Security Code"
+      },
+      "authorize_net": {
+        "user_agreement_link": "User Agreement",
+        "privacy_policy_link": "Privacy Policy",
+        "accept_terms_text": "By placing an order, you accept the terms of our",
+        "processing_personal_data_text": "and agree that we may process your personal data as per our",
+        "pay_now_button": "Pay Now",
+        "errors": {
+          "number": "Please provide a valid credit card number",
+          "month": "Please provide a valid expiration month",
+          "year": "Please provide a valid expiration year",
+          "expiration_date": "Expiration date must be in the future",
+          "security_code": "Please provide a valid security code",
+          "cardholder_name": "Please provide a valid cardholder name",
+          "incorrect_payment_method": "Incorrect payment method"
+        }
+      },
+      "skyflow": {
+        "pay_now_button": "Pay Now"
+      },
+      "manual": {
+        "text": "The payment method you selected does not support online payment. Please select another method or "
+      },
+      "redirection": {
+        "text": "After you click <strong>{0}</strong>, you will be redirected to the third-party payment service",
+        "pay_now_button": "Pay Now",
+        "try_again_button": "Try Again",
+        "errors": {
+          "missing_link": "Redirect link is missing",
+          "incorrect_payment_method": "@:shared.payment.authorize_net.errors.incorrect_payment_method"
+        }
+      }
+    },
+    "wishlists": {
+      "list_card": {
+        "product_count_label": "Product count",
+        "list_edit_button": "Edit",
+        "remove_list_button": "Delete",
+        "make_private_button": "Make private",
+        "share_button": "Share",
+        "saved": "Saved"
+      },
+      "list_details": {
+        "add_all_to_cart_button": "Add all to cart",
+        "list_settings_button": "List settings",
+        "empty_list": "Your list is empty",
+        "empty_list_button": "Continue browsing",
+        "list_icon": "List icon"
+      },
+      "add_to_wishlists_modal": {
+        "title": "Please select list",
+        "empty_list": "You do not have any shopping lists",
+        "cancel_button": "@:common.buttons.cancel",
+        "already_in_the_lists": "Already in the lists",
+        "add_to_other_lists": "Add to other lists",
+        "add_to_list_button": "Add to list",
+        "add_new_list": "Add new list",
+        "save_button": "Save",
+        "notification_success": "Your lists were successfully updated",
+        "is_required_validation_error": "The <b>List name</b> is required",
+        "new_list": "New list"
+      },
+      "unsuccessful_create_wishlist_modal": {
+        "message": "You have reached the maximum number of lists. Please delete one you do not use or reshuffle products to reuse an existing list.",
+        "ok_button": "@:common.buttons.ok"
+      },
+      "add_or_update_wishlist_modal": {
+        "title": "New List",
+        "edit_mode_title": "List Settings",
+        "list_name_label": "List name",
+        "list_name_placeholder": "Please enter name",
+        "create_button": "Create list",
+        "save_button": "@:common.buttons.save",
+        "cancel_button": "@:common.buttons.cancel",
+        "private_list": "Private list",
+        "make_shared": "Make shared"
+      },
+      "delete_wishlist_modal": {
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to remove the “{listName}” list?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "delete_wishlist_product_modal": {
+        "title": "Confirm Delete",
+        "message": "Are you sure you want to remove “{productName}” from the list?",
+        "delete_button": "@:common.buttons.delete",
+        "cancel_button": "@:common.buttons.cancel"
+      },
+      "status": {
+        "shared": "Shared",
+        "private": "Private"
+      }
+    }
+  },
+  "pages": {
+    "403": {
+      "error_code": "403",
+      "error_text": "アクセス拒否",
+      "message": "要求されたページへのアクセス権限がありません。",
+      "img_alt": "アクセス拒否",
+      "home_button": "@:common.buttons.home"
+    },
+    "404": {
+      "error_code": "404",
+      "error_text": "ページが見つかりません",
+      "message": "エラーが発生しました。ホームページに戻りますか？",
+      "img_alt": "ページが見つかりません",
+      "home_button": "@:common.buttons.home"
+    },
+    "500": {
+      "error_code": "500",
+      "error_text": "内部サーバーエラー",
+      "message": "エラーが発生しました。ホームページに戻りますか？",
+      "img_alt": "内部サーバーエラー",
+      "home_button": "@:common.buttons.home"
+    },
+    "home": {
+      "meta": {
+        "title": "ホーム",
+        "keywords": "テスト, ホーム, ページ, キーワード",
+        "description": "テストホームページの説明"
+      },
+      "sign_in_form_title": "ログイン",
+      "main_banner_block": {
+        "message": "賢明な判断のために<br />私たちが<br />サポートします",
+        "key_feature_1": "結果重視",
+        "key_feature_2": "信頼性",
+        "key_feature_3": "安定性"
+      },
+      "feature_descriptions_block": {
+        "title": "これまでにない簡単な商取引管理",
+        "feature_1": "法人アカウント管理",
+        "feature_2": "見積管理と価格交渉",
+        "feature_3": "複数店舗、チャネル、拠点対応",
+        "feature_4": "B2Bカスタマイズと価格管理"
+      },
+      "subscription_block": {
+        "subscribe_now": "今すぐ登録！",
+        "info_message": "B2Bストアの最新情報をお届けします！",
+        "email_placeholder": "メールアドレス",
+        "subscribe_button": "登録"
+      }
+    },
+    "forgot_password": {
+      "meta": {
+        "title": "パスワードをお忘れの方"
+      },
+      "header": "パスワードのリセット",
+      "email_will_be_sended_message": "パスワードリセットの手順をメールでお送りします",
+      "reset_link_was_sent_message": "パスワードリセットのリンクをメールボックスに送信しました。",
+      "home_button": "@:common.buttons.home"
+    },
+    "reset_password": {
+      "meta": {
+        "title": "パスワードリセット"
+      },
+      "header": "パスワードのリセット",
+      "enter_new_password_message": "新しいパスワードを入力してください",
+      "success_message": "パスワードのリセットが完了しました",
+      "log_in_button": "ログイン"
+    },
+    "set_password": {
+      "meta": {
+        "title": "会員登録"
+      },
+      "header": "会員登録",
+      "enter_new_password_message": "アカウントが作成されました。ログインするためのパスワードを設定してください。",
+      "success_message": "会員登録が完了しました",
+      "log_in_button": "続ける"
+    },
+    "change_password": {
+      "meta": {
+        "title": "パスワード変更"
+      },
+      "header": "パスワードの変更",
+      "success_message": "パスワードが正常に変更されました"
+    },
+    "sign_in": {
+      "meta": {
+        "title": "@:pages.sign_in.header"
+      },
+      "header": "ログイン",
+      "divider_text": "または",
+      "providers": {
+        "azure_ad": {
+          "button_text": "Entra IDでログイン"
+        },
+        "google_sso": {
+          "button_text": "Googleでログイン"
+        }
+      }
+    },
+    "sign_up": {
+      "meta": {
+        "title": "@:pages.sign_up.header"
+      },
+      "header": "会員登録",
+      "personal_registration_kind_label": "個人アカウント",
+      "organization_registration_kind_label": "法人アカウント",
+      "register_button": "登録する"
+    },
+    "confirm_email": {
+      "meta": {
+        "title": "@:pages.confirm_email.header"
+      },
+      "header": "メール認証",
+      "subtitle": "メールアドレスの確認ありがとうございます。",
+      "text": "ユーザー名とパスワードでログインしてください。",
+      "continue_button": "@:shared.layout.header.link_sign_in",
+      "continue_shopping_button": "@:common.buttons.continue_shopping",
+      "email_confirmation_failed_text": "続行するには認証プロセスを完了する必要があります。下のボタンから新しいリンクを要求してください。",
+      "link_sent_successfully_text": "確認リンクをメールボックスに送信しました。",
+      "link_sent_error_text": "確認リンクの送信中に問題が発生しました。後ほど再試行してください。"
+    },
+    "confirm_invitation": {
+      "meta": {
+        "title": "@:pages.confirm_invitation.header"
+      },
+      "header": "会員登録",
+      "text": "会社への招待を受け取りました。<br />登録を完了してください"
+    },
+    "account": {
+      "addresses": {
+        "meta": {
+          "title": "@:pages.account.addresses.title",
+          "table_description": "登録済み住所"
+        },
+        "title": "住所",
+        "new_address_title": "新規住所",
+        "edit_address_title": "住所を編集",
+        "make_default_button": "既定に設定",
+        "no_addresses_img_alt": "住所なし"
+      },
+      "checkout_defaults": {
+        "meta": {
+          "title": "@:pages.account.checkout_defaults.title"
+        },
+        "title": "既定の決済設定",
+        "select_delivery_method_label": "希望配送方法",
+        "shipping_radio_label": "配送",
+        "pickup_radio_label": "店頭受け取り",
+        "not_selected_placeholder": "@:common.placeholders.not_selected",
+        "update_button": "@:common.buttons.update",
+        "payment_method_label": "希望支払方法",
+        "payment_method_placeholder": "希望する支払方法を選択してください",
+        "shipping_method_label": "希望配送方法",
+        "shipping_method_placeholder": "希望する配送方法を選択してください"
+      },
+      "dashboard": {
+        "meta": {
+          "title": "@:pages.account.dashboard.title"
+        },
+        "title": "ダッシュボード",
+        "last_orders_card": {
+          "title": "最近の注文",
+          "all_orders_link": "すべての注文",
+          "order_number_label": "注文番号",
+          "purchase_number_label": "発注番号",
+          "status_label": "@:common.labels.status",
+          "invoice_label": "請求書",
+          "date_label": "@:common.labels.date",
+          "total_label": "@:common.labels.total",
+          "no_orders_img_alt": "注文なし",
+          "no_orders_message": "注文履歴がありません"
+        },
+        "monthly_report_card": {
+          "title": "月間支出レポート",
+          "budget_title": "予算",
+          "total_spend_label": "総支出額",
+          "spend_chart_alt": "支出チャート"
+        },
+        "orders_status_card": {
+          "title": "注文状況"
+        },
+        "bulk_order_card": {
+          "title": "一括注文パッド"
+        }
+      },
+      "change_password": {
+        "meta": {
+          "title": "@:pages.account.change_password.title"
+        },
+        "title": "パスワード変更",
+        "success_message": "@:pages.change_password.success_message"
+      },
+      "orders": {
+        "meta": {
+          "title": "@:pages.account.orders.title",
+          "table_description": "@:pages.account.orders.title"
+        },
+        "search_placeholder": "キーワードを入力...",
+        "title": "注文履歴",
+        "order_number_label": "注文番号",
+        "purchase_number_label": "発注番号",
+        "status_label": "@:common.labels.status",
+        "invoice_label": "請求書",
+        "date_label": "@:common.labels.date",
+        "total_label": "@:common.labels.total",
+        "no_orders_img_alt": "注文なし",
+        "no_orders_message": "注文履歴がありません",
+        "no_results_message": "該当する結果が見つかりません",
+        "buttons": {
+          "no_orders": "買い物を続ける",
+          "reset_search": "検索をリセット"
+        }
+      },
+      "order_details": {
+        "meta": {
+          "title": "@:pages.account.order_details.title"
+        },
+        "title": "注文 #{0}",
+        "created_title": "注文完了",
+        "purchase_order_label": "発注番号：",
+        "placed_on_label": "注文日：",
+        "line_items": {
+          "product": "@:common.labels.product",
+          "properties": "@:common.labels.properties",
+          "price_per_item": "@:common.labels.price_per_item",
+          "quantity": "@:common.labels.quantity",
+          "total": "@:common.labels.total",
+          "subtotal": "@:common.labels.subtotal"
+        }
+      },
+      "order_payment": {
+        "meta": {
+          "title": "@:pages.account.order_payment.title"
+        },
+        "title": "支払い情報",
+        "breadcrumb_title": "支払い",
+        "processed_title": "@:pages.account.order_details.title",
+        "billing_address_label": "請求先住所",
+        "payment_method_label": "支払方法",
+        "phone_label": "@:pages.checkout.shipping_details_section.shipping_address_block.phone_label",
+        "email_label": "@:pages.checkout.shipping_details_section.shipping_address_block.email_label",
+        "edit_button": "編集",
+        "bank_card_title": "クレジットカード",
+        "back_to_order_button": "注文詳細に戻る",
+        "orders_list_button": "注文一覧",
+        "try_again_button": "再試行",
+        "continue_shopping_button": "買い物を続ける",
+        "status_label": "@:common.labels.status{':'}",
+        "order_date": "注文日：",
+        "success": {
+          "title": "支払い完了",
+          "text": "ありがとうございます。支払いを確認中です。支払いの確認後、商品を発送いたします。"
+        },
+        "failure": {
+          "title": "支払い失敗",
+          "text": "支払い処理に問題が発生しました。もう一度お試しください。"
+        }
+      },
+      "lists": {
+        "meta": {
+          "title": "@:shared.account.navigation.links.lists"
+        },
+        "no_lists": "リストがまだ作成されていません",
+        "create_list_button": "リストを作成",
+        "create_list_button_mobile": "作成",
+        "lists_icon": "リストアイコン"
+      },
+      "saved_credit_cards": {
+        "no_cards": "保存されているクレジットカードがありません",
+        "delete_credit_card_modal": {
+          "title": "削除の確認",
+          "message": "このクレジットカードを削除してもよろしいですか？"
+        }
+      },
+      "list_details": {
+        "meta": {
+          "title": "リスト：{0}"
+        },
+        "save_changes": "@:common.titles.save_changes",
+        "save_changes_message": "@:common.messages.save_changes"
+      },
+      "profile": {
+        "meta": {
+          "title": "@:pages.account.profile.title"
+        },
+        "title": "プロフィール",
+        "change_password_title": "パスワード変更",
+        "update_error_alert": "プロフィールの更新中にエラーが発生しました"
+      },
+      "impersonate": {
+        "title": "代理ログイン",
+        "success": "代理ログイン成功",
+        "error": "代理ログイン中に問題が発生しました。権限を確認してください"
+      }
+    },
+    "company": {
+      "info": {
+        "meta": {
+          "title": "@:pages.company.info.title",
+          "table_description": "会社の住所"
+        },
+        "title": "会社情報",
+        "content_header": "住所",
+        "no_addresses_message": "住所が登録されていません",
+        "address_not_delete_message": "既定の住所は削除できません",
+        "address_saved_successful_message": "住所を保存しました",
+        "add_to_favorites": "お気に入りに追加",
+        "remove_from_favorites": "お気に入りから削除",
+        "labels": {
+          "company_name": "会社名",
+          "address": "住所",
+          "description": "説明",
+          "zip": "郵便番号",
+          "country": "国",
+          "default": "既定",
+          "favorite": "お気に入り",
+          "actions": "操作"
+        },
+        "buttons": {
+          "add_new_address": "@:common.buttons.add_new_address",
+          "add_new_address_mobile": "新規追加"
+        }
+      },
+      "members": {
+        "meta": {
+          "title": "@:pages.company.members.title",
+          "table_description": "@:pages.company.members.title"
+        },
+        "title": "会社メンバー",
+        "search_placeholder": "ユーザーを検索",
+        "no_members_img_alt": "メンバーなし",
+        "no_members_message": "メンバーが登録されていません",
+        "no_results_message": "該当する結果が見つかりません",
+        "invite_sent": "招待を送信しました",
+        "labels": {
+          "role": "役割",
+          "status": "ステータス"
+        },
+        "buttons": {
+          "invite_members": "メンバーを招待",
+          "invite": "招待",
+          "reset_search": "検索をリセット",
+          "edit_role": "役割を編集",
+          "block_user": "ユーザーをブロック",
+          "unblock_user": "ブロックを解除",
+          "delete": "削除",
+          "no_members": "閲覧を続ける"
+        },
+        "content_header": {
+          "name": "名前",
+          "role": "役割",
+          "email": "メールアドレス",
+          "active": "有効"
+        },
+        "statuses": {
+          "active": "有効",
+          "inactive": "無効",
+          "invited": "招待済み",
+          "blocked": "ブロック"
+        }
+      }
+    },
+    "cart": {
+      "meta": {
+        "title": "@:pages.cart.title"
+      },
+      "title": "カート",
+      "empty_cart_description": "カートが空です",
+      "recently_browsed_products": "最近見た商品"
+    },
+    "checkout": {
+      "meta": {
+        "title": "@:pages.checkout.title"
+      },
+      "title": "ご注文手続き",
+      "steps": {
+        "shipping": "配送",
+        "billing": "支払い",
+        "review": "注文確認",
+        "payment": "お支払い",
+        "completed": "完了"
+      }
+    },
+    "catalog": {
+      "meta": {
+        "title": "@:pages.catalog.title",
+        "keywords": "テスト, カタログ, ページ, キーワード",
+        "description": "テストカタログページの説明"
+      },
+      "title": "カタログ",
+      "instock_filter_card": {
+        "title": "在庫あり",
+        "checkbox_label": "在庫ありのみ表示",
+        "tooltip_text": "在庫がある商品のみを表示する場合に選択してください"
+      },
+      "branch_availability_filter_card": {
+        "title": "店舗在庫",
+        "available_in": "{0}で在庫あり",
+        "branches": "店舗 | {n}店舗 | {n}店舗",
+        "select_branch_text": "受け取り店舗を選択して、現在在庫のある商品を確認してください"
+      },
+      "products_found_message": "件の検索結果",
+      "filters_button": "@:common.buttons.filters",
+      "sort_by_label": "@:common.labels.sort_by",
+      "choose_button": "@:common.buttons.choose",
+      "add_to_wishlist_tooltip": "リストに追加",
+      "in_the_list_tooltip": "リスト追加済み",
+      "variations_button": "バリエーション：{0}",
+      "customize_button": "カスタマイズ",
+      "show_on_a_separate_page": "別ページで表示",
+      "no_products_message": "このカテゴリーに商品がありません",
+      "no_products_filtered_message": "該当する商品が見つかりません",
+      "no_facet_found_message": "該当なし",
+      "no_products_button": "検索をリセット",
+      "products_icon": "商品アイコン",
+      "show_all_results": "すべての結果を表示"
+    },
+    "product": {
+      "sku_label": "@:common.labels.sku",
+      "sku_copied_message": "@:common.labels.skuをコピーしました",
+      "variations_total_label": "カート内の合計：",
+      "view_cart_button": "カートを見る",
+      "recommended_products": {
+        "related-products_section_title": "関連商品",
+        "bought-together_section_title": "よく一緒に購入される商品"
+      },
+      "related_product_section_title": "関連商品",
+      "price_label": "@:common.labels.product_price{':'}"
+    },
+    "checkout_complete": {
+      "title": "ご注文完了",
+      "subtitle": "注文番号{0}が正常に受け付けられました。",
+      "text": "注文状況の変更についてはメールでお知らせいたします。"
+    },
+    "payment_result": {
+      "title": {
+        "success": "お支払い完了",
+        "failed": "お支払い失敗"
+      },
+      "subtitle": {
+        "success": "注文番号{0}が正常に受け付けられました。",
+        "failed": "注文番号{0}のお支払いが完了していません。"
+      },
+      "text": {
+        "success": "ありがとうございます。お支払いを確認しております。注文状況の変更についてはメールでお知らせいたします。",
+        "failed": "お支払い処理に問題が発生しました。もう一度お試しください。"
+      }
+    },
+    "search": {
+      "meta": {
+        "title": "検索結果：{0}"
+      },
+      "header": "「{keyword}」の検索結果",
+      "sort_by_label": "@:common.labels.sort_by",
+      "choose_button": "@:common.buttons.choose",
+      "no_results_message": "「<strong>{0}</strong>」に一致する結果が見つかりませんでした",
+      "home_button": "@:common.buttons.home"
+    },
+    "bulk_order": {
+      "meta": {
+        "title": "一括注文",
+        "keywords": "一括, 注文",
+        "description": "一括注文ページ"
+      },
+      "title": "一括注文パッド",
+      "product_duplicate_sku_alert": "SKU「{0}」に複数の商品が該当します。カートに追加する商品を選択してください：",
+      "product_was_not_added_alert": "以下のSKUの商品はカートに追加されませんでした：{0}",
+      "data_is_invalid_alert": "入力された情報が無効です。",
+      "manually_tab": "手動入力",
+      "copy_n_paste_tab": "コピー＆ペースト"
+    },
+    "demo_landing": {
+      "meta": {
+        "title": "デモランディング"
+      },
+      "header": "プリンター市場概要",
+      "primary_block": {
+        "primary_text": "これまでにない簡単な商取引管理",
+        "secondary_text": "目標達成を決意した瞬間から、夢は現実となり始めます",
+        "first_button": "詳細を見る",
+        "second_button": "お問い合わせ",
+        "image_alt": "テーブル上のノートパソコン"
+      },
+      "secondary_block": {
+        "primary_text": "読みやすさはデザイナーの最優先事項",
+        "secondary_text": "読みやすさはデザインを通じてメッセージを効果的に伝えるための重要な要素です。フォント、間隔、レイアウトなどの選択により、コンテンツの理解しやすさを確保します。読みやすさの向上は、ユーザーエンゲージメントとデザインの成功に直接影響を与えます。"
+      },
+      "features_block": {
+        "primary_text": "機能を探索",
+        "secondary_text": "高精細カメラ、リアルタイムHDビデオ表示、直感的な飛行制御を備え、あなたは何を創造しますか？",
+        "feature_1": {
+          "title": "迫力の空撮映像",
+          "text": "Phantom 3 Professionalで、最大30fpsの4K動画撮影と12MPの写真撮影が可能です。"
+        },
+        "feature_2": {
+          "title": "ライブHDビュー",
+          "text": "スマートフォンやタブレットを接続するだけで、カメラが捉えるすべてを720p HDで表示できます。"
+        },
+        "feature_3": {
+          "title": "完全なコントロール",
+          "text": "付属のリモコンで最もよく使う機能にアクセスしながら、Phantom 3を完全にコントロール"
+        }
+      },
+      "booking_block": {
+        "message": "無料のeコマースコンサルティングセッションを予約",
+        "first_button": "詳細を見る",
+        "second_button": "お問い合わせ"
+      },
+      "products_block": {
+        "title": "プリンター",
+        "message": "プリンターは、様々な産業分野で物理的な文書、記録、通信資料を作成するために必要不可欠です",
+        "choose_button": "選択"
+      },
+      "after_products_block": {
+        "primary_text": "ダイナミックなB2B販売の世界",
+        "secondary_text": "現代のビジネス世界は販売の世界です。大小様々な企業が積極的に関わり合い、製品やサービスを提供しています。成功する企業は、顧客ニーズを理解し、市場の変化に対応しながら、長期的な関係を構築します。企業の成功と存続は効果的な販売にかかっています。このダイナミックな世界では、現代のビジネスパートナーの要求に応えるため、適応力、革新性、継続的な学習が求められます。"
+      },
+      "subscription_block": {
+        "primary_text": "プロモーション情報を購読",
+        "secondary_text": "今後のイベント情報をいち早くお届けします",
+        "input_placeholder": "tanya.hill{'@'}example.com",
+        "agreement_checkbox_label": "「送信」をクリックすることで、",
+        "terms_and_policy_link": "利用規約とポリシー",
+        "submit_button": "@:common.buttons.submit"
+      }
+    },
+    "compare": {
+      "meta": {
+        "title": "商品比較",
+        "keywords": "テスト, 比較, 商品, ページ, キーワード",
+        "description": "テスト商品比較ページの説明"
+      },
+      "empty_list": {
+        "title": "商品比較",
+        "message": "比較リストが空です",
+        "button_text": "買い物を続ける",
+        "img_alt": "空のカート",
+        "img_alt_mobile": "空のカート（モバイル）"
+      },
+      "header_block": {
+        "title": "商品比較",
+        "counter_message": "{productsLimit}個中{productsNumber}個を追加",
+        "differences_checkbox_label": "違いのみを表示",
+        "clear_button": "リストをクリア"
+      },
+      "main_block": {
+        "price_label": "@:common.labels.product_price"
+      },
+      "links": {
+        "home": "@:common.links.home",
+        "compare_products": "商品比較"
+      }
+    },
+    "branch": {
+      "address": "住所",
+      "phone": "電話番号：",
+      "other_branches": "その他の店舗"
+    },
+    "welcome": {
+      "meta": {
+        "title": "登録完了"
+      },
+      "title": "登録完了",
+      "description": "ご登録いただき、ありがとうございます。入力されたメールアドレスの確認のため、メールボックスをご確認ください。"
+    },
+    "blocked": {
+      "meta": {
+        "title": "ブロック"
+      },
+      "title": "アカウントがブロックされています",
+      "message": "@:common.messages.blocked"
+    }
+  },
+  "identity_error": {
+    "DuplicateEmail": "メールアドレス {0} は既に使用されています",
+    "DuplicateUserName": "ユーザー名 {0} は既に使用されています",
+    "InvalidEmail": "有効なメールアドレスを入力してください（例：johndoe@gmail.com）",
+    "InvalidPasswordHasherCompatibilityMode": "指定されたPasswordHasherCompatibilityModeが無効です",
+    "InvalidPasswordHasherIterationCount": "反復回数は正の整数である必要があります",
+    "InvalidToken": "トークンが無効または期限切れです",
+    "InvalidUserName": "ユーザー名が無効です。英数字のみ使用可能です",
+    "LoginAlreadyAssociated": "このログイン情報は既に使用されています",
+    "PasswordTooShort": "パスワードは{0}文字以上である必要があります",
+    "PasswordRequiresDigit": "パスワードには数字（'0'～'9'）を1文字以上含める必要があります",
+    "PasswordMismatch": "現在のパスワードが間違っています。再試行するかサポートにお問い合わせください",
+    "PasswordRequiresLower": "パスワードには小文字（'a'～'z'）を1文字以上含める必要があります",
+    "PasswordRequiresNonAlphanumeric": "パスワードには英数字以外の文字を1文字以上含める必要があります",
+    "PasswordRequiresUpper": "パスワードには大文字（'A'～'Z'）を1文字以上含める必要があります",
+    "PasswordRequiresUniqueChars": "パスワードには異なる文字を使用する必要があります",
+    "RecentPasswordUsed": "このパスワードは過去に使用されています。別のパスワードを作成してください"
+  },
+  "password_tips": {
+    "title": "強力なパスワードを作成するためのヒント：",
+    "required_digit": "数字が必要です",
+    "required_lowercase": "小文字が必要です",
+    "required_non_alphanumeric": "特殊文字が必要です",
+    "required_uppercase": "大文字が必要です",
+    "required_length": "1文字以上必要です | 最低{0}文字必要です",
+    "required_unique_chars": "1つ以上の固有文字が必要です | 最低{0}個の固有文字が必要です"
+  },
+  "validation_error": {
+    "PRODUCT_QTY_CHANGED": "最大{availQty}個まで注文可能です",
+    "CART_PRODUCT_UNAVAILABLE": "この商品は現在購入できません",
+    "CART_PRODUCT_INACTIVE": "この商品は現在無効です",
+    "PRODUCT_PRICE_INVALID": "価格が無効です",
+    "PRODUCT_FFC_QTY": "この商品は在庫切れです",
+    "PRODUCT_MIN_QTY": "最小{minQty}個から注文可能です",
+    "PRODUCT_MAX_QTY": "最大{maxQty}個まで注文可能です",
+    "PRODUCT_MIN_MAX_QTY": "{minQty}個から{maxQty}個まで注文可能です",
+    "UNABLE_SET_LESS_PRICE": "これ以上価格を下げることはできません",
+    "LINE_ITEM_NOT_FOUND": "明細項目が見つかりません",
+    "LINE_ITEM_IS_READ_ONLY": "明細項目は読み取り専用です",
+    "PRODUCT_QTY_INSUFFICIENT": "在庫数量{availQty}が要求数量{new_qty}に対して不足しています",
+    "PRODUCT_MIN_QTY_NOT_AVAILABLE": "最小注文数量{minQty}個分の在庫がありません",
+    "PRODUCT_EXACT_QTY": "{minQty}個注文可能です",
+    "CART_INVALID_PRODUCT": "無効な商品です"
+  },
+  "file_error": {
+    "ALREADY_EXISTS": "同じ名前のファイルをアップロードできません",
+    "INVALID_CONTENT": "ファイルを読み込めません",
+    "EXCEPTION": "ファイルのアップロード中にエラーが発生しました。もう一度お試しください",
+    "INVALID_SCOPE": "不明なスコープ '{0}' です",
+    "INVALID_EXTENSION": "このファイル形式は許可されていません",
+    "INVALID_SIZE": "ファイルサイズが許容サイズ{0}を超えています",
+    "CANNOT_DELETE": "ファイルの削除中にエラーが発生しました"
+  }
+}

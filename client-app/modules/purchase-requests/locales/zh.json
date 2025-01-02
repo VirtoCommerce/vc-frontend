@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "采购请求.标题",
+      "table_description": "采购请求列表"
+    },
+    "title": "采购请求",
+    "no_purchase_requests_message": "目前还没有采购请求",
+    "no_purchase_requests_img_alt": "无订单",
+    "purchase_request_number_label": "采购请求编号",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "采购请求"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "采购请求 #{0}",
+    "failed_or_used_description": "很抱歉，我们无法创建采购请求或您已使用它创建订单",
+    "try_again": "请再试一次",
+    "files_section": {
+      "title": "文件"
+    },
+    "from_file": {
+      "title": "上传文件",
+      "upload": {
+        "message": "上传文件、截图或手写笔记的照片以获取新订单的数据。",
+        "examples": {
+          "title": "示例",
+          "alt": "示例"
+        }
+      },
+      "processing": {
+        "message": "您可以上传包含产品列表的图像文件或pdf文件，以便快速订购商品",
+        "loading_message": "识别上传的文档...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "前往报价"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "从文件"
+    }
+  }
+}
