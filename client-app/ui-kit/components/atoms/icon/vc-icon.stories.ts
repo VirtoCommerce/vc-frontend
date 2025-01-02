@@ -12,7 +12,7 @@ const Template: StoryFn<typeof VcIcon> = (args) => ({
   template: '<VcIcon v-bind="args" />',
 });
 
-const iconList = import.meta.glob("@/assets/icons/basic/*.svg", { eager: true });
+const iconList = import.meta.glob("../../../icons/*.svg", { eager: true });
 
 const TemplateList: StoryFn<typeof VcIcon> = (args) => ({
   components: { VcIcon },

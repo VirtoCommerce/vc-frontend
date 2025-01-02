@@ -38,6 +38,8 @@ export type AnyLineItemType = {
     id: string;
     name?: string;
   }[];
+  showPlacedPrice?: boolean;
+  listTotal?: MoneyType;
 };
 
 export type VendorGroupType<T> = {
@@ -74,4 +76,6 @@ export type PreparedLineItemType = {
     id: string;
     name?: string;
   }[];
+  showPlacedPrice?: boolean;
+  listTotal?: MoneyType;
 };

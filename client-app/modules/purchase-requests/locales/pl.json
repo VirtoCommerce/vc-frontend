@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "żądania_zakupu.tytuł",
+      "table_description": "lista żądań zakupu"
+    },
+    "title": "Żądania Zakupu",
+    "no_purchase_requests_message": "Nie ma jeszcze żądań zakupu",
+    "no_purchase_requests_img_alt": "Brak zamówień",
+    "purchase_request_number_label": "Numer żądania zakupu",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Żądania Zakupu"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Żądanie zakupu #{0}",
+    "failed_or_used_description": "Przepraszamy, ale nie udało się utworzyć żądania zakupu lub już go użyłeś do utworzenia zamówienia",
+    "try_again": "Proszę spróbować ponownie",
+    "files_section": {
+      "title": "Pliki"
+    },
+    "from_file": {
+      "title": "Prześlij plik",
+      "upload": {
+        "message": "Prześlij zdjęcia dokumentów, zrzuty ekranu lub odręczne notatki, aby uzyskać dane do nowego zamówienia.",
+        "examples": {
+          "title": "Przykłady",
+          "alt": "Przykłady"
+        }
+      },
+      "processing": {
+        "message": "Możesz przesłać pliki graficzne lub pdf z listami produktów w dowolnej formie, aby szybko zamówić przedmioty",
+        "loading_message": "Rozpoznawanie przesłanego dokumentu...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Przejdź do wyceny"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Z pliku"
+    }
+  }
+}
