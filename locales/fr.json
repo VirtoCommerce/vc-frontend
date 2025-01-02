@@ -1105,7 +1105,7 @@
       },
       "impersonate": {
         "title": "Impersonation",
-        "success": "Vous êtes en train d'être imité",
+        "success": "Impersonation réussie",
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"
       }
     },
