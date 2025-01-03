@@ -10,30 +10,30 @@
       test-id-input="card-holder-input"
     />
     <div class="mt-3">
-      <VcLabel for-id="cardNumber-container">{{ labels.number }}</VcLabel>
-      <div id="cardNumber-container" class="form-control h-11 border border-neutral-200"></div>
+      <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
+      <div id="cardNumber-container" class="form-control h-11 border border-neutral-200 px-3"></div>
     </div>
-    <div class="mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
+    <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <VcInput
         v-model="expirationDate"
         v-maska
-        data-maska="## / ##"
+        data-maska="## / ####"
         :label="labels.expirationDate"
-        :placeholder="$t('shared.payment.bank_card_form.expiration_date_placeholder')"
+        :placeholder="$t('shared.payment.bank_card_form.expiration_date_full_placeholder')"
         :message="expirationDateErrors"
         :error="!!expirationDateErrors"
         :disabled="disabled"
         name="expirationDate"
         autocomplete="off"
-        minlength="7"
-        maxlength="7"
+        minlength="9"
+        maxlength="9"
         class="basis-1/4"
         required
         test-id-input="expiration-date-input"
       />
-      <div>
-        <VcLabel for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
-        <div id="securityCode-container" class="form-control h-11 w-40 border border-neutral-200"></div>
+      <div class="basis-1/4">
+        <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
+        <div id="securityCode-container" class="form-control h-11 border border-neutral-200 px-3"></div>
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@
   <VcButton
     :disabled="!isValidBankCard"
     :loading="loading"
-    class="flex-1 md:order-first md:flex-none mt-3"
+    class="mt-3 flex-1 md:order-first md:flex-none"
     data-test-id="pay-now-button"
     @click="sendPaymentData"
   >
@@ -98,6 +98,7 @@ const monthYupSchema = yup
   .string()
   .required()
   .length(2)
+  // todo refactor lang message location
   .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
   .label(labels.value.monthLabel);
 
@@ -106,7 +107,11 @@ const validationSchema = toTypedSchema(
     cardholderName: yup.string().required().max(64).label(labels.value.cardholderName),
     month: monthYupSchema,
     year: yup.string().when("month", ([month], schema) => {
-      return monthYupSchema.isValidSync(month) ? schema.length(2).label(labels.value.yearLabel) : schema;
+      return monthYupSchema.isValidSync(month)
+        ? schema.length(4)
+          .matches(/^2[0-1][0-9][0-9]$/, t("shared.payment.authorize_net.errors.year"))
+          .label(labels.value.yearLabel)
+        : schema;
     }),
   }),
 );
@@ -234,7 +239,10 @@ function removeScript() {
 
 async function initForm() {
   const number = microform.createField("number");
-  const securityCode = microform.createField("securityCode", { placeholder: "×××" });
+  const securityCode = microform.createField("securityCode", {
+    placeholder: "•••",
+    maxLength: 4
+  });
   number.load("#cardNumber-container");
   securityCode.load("#securityCode-container");
 }
@@ -242,9 +250,12 @@ async function initForm() {
 const customStyles = {
   input: {
     'font-size': '16px',
-    // custom font-family not supported
+    // custom font-family like Lato not supported
     'font-family': 'sans-serif',
     color: "#555",
+    '::placeholder': {
+      color: "red"
+    }
   },
 };
 

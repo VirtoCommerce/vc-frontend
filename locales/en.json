@@ -716,6 +716,7 @@
         "cardholder_name_label": "Cardholder name",
         "expiration_date_label": "Expiration date",
         "expiration_date_placeholder": "MM / YY",
+        "expiration_date_full_placeholder": "MM / YYYY",
         "month_label": "Month",
         "month_placeholder": "MM",
         "year_label": "Year",
@@ -1378,7 +1379,7 @@
         "title": "Registration completed"
       },
       "title": "Registration completed",
-      "description": "Thank you for showing your interest in registering with us. We kindly ask you to check your mailbox to verify the email address you’ve entered."
+      "description": "Thank you for showing your interest in registering with us. We kindly ask you to check your mailbox to verify the email address you've entered."
     },
     "blocked": {
       "meta": {
