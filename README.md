@@ -260,12 +260,11 @@ yarn fix-locales -- path/to/locales_folder path/to/\*\*/locales
 ```
 This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language and updates locale files accordingly. 
 
-[!CAUTION]
-This is an experimental feature and may not work as expected.
+> [!IMPORTANT]
+> This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
 
-
-[!IMPORTANT]
-This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
+> [!CAUTION]
+> This is an experimental feature and may not work as expected.
 
 ### Troubleshooting
 
