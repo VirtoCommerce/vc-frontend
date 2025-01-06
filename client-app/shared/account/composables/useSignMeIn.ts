@@ -41,10 +41,12 @@ export function useSignMeIn() {
 
       if (me.value?.me && currencyCode) {
         if (cart.value?.id && cart.value.items?.length) {
-          await clearCurrencyCart({
-            command: { userId: me.value.me.id, currencyCode: currentCurencyCode },
-            skipQuery: false,
-          });
+          if (currencyCode !== currentCurencyCode) {
+            await clearCurrencyCart({
+              command: { userId: me.value.me.id, currencyCode: currentCurencyCode },
+              skipQuery: false,
+            });
+          }
 
           await mergeCart({ command: { userId: me.value.me.id, secondCartId: cart.value.id } });
 
