@@ -98,7 +98,6 @@
 
       <template v-if="product" #sidebar>
         <ProductSidebar
-          v-if="product"
           :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
           :product="product"
           :variations="variations"
