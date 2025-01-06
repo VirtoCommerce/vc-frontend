@@ -2,9 +2,9 @@ import fs from "fs";
 import path from "path";
 import get from "lodash/get";
 import set from "lodash/set";
-import { main as getMissingKeys } from "./check-locales-folder-for-missing-keys";
+import { main as getMissingKeys } from "./check-locales-missing-keys";
 import { translate } from "./translator";
-import type { LocaleDataType } from "./check-locales-folder-for-missing-keys";
+import type { LocaleDataType } from "./check-locales-missing-keys";
 
 const PREFIX = "[FIX_LOCALES_UTILITY]";
 const DELAY_BETWEEN_TRANSLATIONS_MS = 4000;
