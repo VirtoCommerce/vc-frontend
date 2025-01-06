@@ -3,7 +3,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApp, h, provide } from "vue";
 import { getEpParam, isPreviewMode as isPageBuilderPreviewMode } from "@/builder-preview/utils";
 import { apolloClient, getStore } from "@/core/api/graphql";
-import { useCurrency, useThemeContext, useGoogleAnalytics, useWhiteLabeling, useNavigations } from "@/core/composables";
+import { useCurrency, useThemeContext, useWhiteLabeling, useNavigations } from "@/core/composables";
 import { useHotjar } from "@/core/composables/useHotjar";
 import { useLanguages } from "@/core/composables/useLanguages";
 import { FALLBACK_LOCALE, IS_DEVELOPMENT } from "@/core/constants";
@@ -12,6 +12,7 @@ import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, per
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
+import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
 import { init as initPushNotifications } from "@/modules/push-messages";
 import { init as initModuleQuotes } from "@/modules/quotes";
@@ -66,7 +67,6 @@ export default async () => {
     mergeLocales,
   } = useLanguages();
   const { currentCurrency } = useCurrency();
-  const { init: initializeGoogleAnalytics } = useGoogleAnalytics();
   const { init: initializeHotjar } = useHotjar();
   const { fetchMenus } = useNavigations();
   const { themePresetName, fetchWhiteLabelingSettings } = useWhiteLabeling();
@@ -89,9 +89,6 @@ export default async () => {
   }
 
   await Promise.all([fetchThemeContext(store), fetchUser(), fallback.setMessage()]);
-
-  void initializeGoogleAnalytics();
-  void initializeHotjar();
 
   // priority rule: pinedLocale > contactLocale > urlLocale > storeLocale
   const twoLetterAppLocale = detectLocale([
@@ -136,6 +133,8 @@ export default async () => {
   void initModuleQuotes(router, i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
+  void initializeGoogleAnalytics();
+  void initializeHotjar();
 
   if (themePresetName.value) {
     await fetchThemeContext(store, themePresetName.value);
