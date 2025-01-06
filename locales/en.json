@@ -1105,7 +1105,7 @@
       },
       "impersonate": {
         "title": "Impersonation",
-        "success": "You are impersonated",
+        "success": "Impersonation succeeded",
         "error": "Some problems occurred during impersonation. Check your permissions"
       }
     },
