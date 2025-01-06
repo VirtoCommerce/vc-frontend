@@ -1,12 +1,12 @@
 import { ref, computed, readonly } from "vue";
 import { getProduct } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
-import type { GetProductQuery } from "@/core/api/graphql/types";
+import type { Product } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
 export function useProduct() {
   const fetching: Ref<boolean> = ref(true);
-  const product: Ref<GetProductQuery["product"] | undefined> = ref();
+  const product: Ref<Product | undefined> = ref();
 
   async function fetchProduct(id: string) {
     fetching.value = true;

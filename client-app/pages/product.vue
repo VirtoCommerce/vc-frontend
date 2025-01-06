@@ -96,10 +96,11 @@
         </template>
       </div>
 
-      <template #sidebar>
+      <template v-if="product" #sidebar>
         <ProductSidebar
+          v-if="product"
           :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
-          :product="sideBarProduct"
+          :product="product"
           :variations="variations"
         />
       </template>
@@ -143,7 +144,6 @@ import {
   useRecommendedProducts,
   useConfigurableProduct,
 } from "@/shared/catalog";
-import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
 import type { IPageTemplate } from "@/shared/static-content";
@@ -218,10 +218,6 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
     getFilterExpressionForAvailableIn(productsFilters.value.branches),
     getFilterExpressionForInStock(productsFilters.value.inStock),
   ]),
-});
-
-const sideBarProduct = computed(() => {
-  return product.value as Product;
 });
 
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
@@ -362,7 +358,7 @@ watchEffect(async () => {
 watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
-    analytics("viewItem", product.value as Product);
+    analytics("viewItem", product.value);
     void pushHistoricalEvent({
       eventType: "click",
       productId: product.value.id,
