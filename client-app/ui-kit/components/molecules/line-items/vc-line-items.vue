@@ -57,6 +57,7 @@
             :list-price="item.listPrice"
             :actual-price="item.actualPrice"
             :total="item.extendedPrice"
+            :list-total="item.listTotal"
             :with-image="showImage"
             :with-properties="showProperties"
             :with-price="showPrice"
@@ -67,6 +68,7 @@
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
+            :show-placed-price="item.showPlacedPrice"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
           >
@@ -93,6 +95,8 @@
         <template v-if="selectable">
           <VcButton
             class="vc-line-items__button vc-line-items__button--desktop"
+            color="secondary"
+            variant="outline"
             size="xs"
             :disabled="!selectedItemIds.length"
             @click="removeSelectedItems"
@@ -102,6 +106,7 @@
 
           <VcButton
             class="vc-line-items__button vc-line-items__button--mobile"
+            color="secondary"
             size="xs"
             variant="outline"
             @click="removeAllItems"

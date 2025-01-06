@@ -29,7 +29,7 @@ import {
   useValidateCouponQuery,
   generateCacheIdIfNew,
 } from "@/core/api/graphql";
-import { useGoogleAnalytics, useSyncMutationBatchers } from "@/core/composables";
+import { useAnalytics, useSyncMutationBatchers } from "@/core/composables";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables/useMutationBatcher";
 import { ProductType, ValidationErrorObjectType } from "@/core/enums";
 import { groupByVendor, Logger } from "@/core/utilities";
@@ -156,7 +156,7 @@ export function useShortCart() {
 
 export function _useFullCart() {
   const { openModal } = useModal();
-  const ga = useGoogleAnalytics();
+  const { analytics } = useAnalytics();
   const { client } = useApolloClient();
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
@@ -445,7 +445,7 @@ export function _useFullCart() {
       props: {
         async onResult() {
           await clearCart();
-          ga.clearCart(cart.value!);
+          analytics("clearCart", cart.value!);
         },
       },
     });

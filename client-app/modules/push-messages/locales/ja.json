@@ -1,0 +1,18 @@
+{
+  "push_messages": {
+    "title": "通知",
+    "menu_item_name": "通知",
+    "empty_list": "現在、新しい通知はありません",
+    "options": {
+      "make_all_as_read": "すべて既読にする",
+      "make_all_as_unread": "すべて未読にする"
+    },
+    "empty": {
+      "title": "現在、新しい通知はありません。",
+      "description": "更新情報や重要なメッセージをお待ちください。"
+    },
+    "clear_all": "すべてクリア",
+    "view_all": "すべての通知を表示",
+    "show_unread_only": "未読のみ表示"
+  }
+}

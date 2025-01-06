@@ -1,0 +1,47 @@
+{
+  "purchase_requests": {
+    "meta": {
+      "title": "solicitudes_de_compra.título",
+      "table_description": "lista de solicitudes de compra"
+    },
+    "title": "Solicitudes de Compra",
+    "no_purchase_requests_message": "Aún no hay solicitudes de compra",
+    "no_purchase_requests_img_alt": "Sin pedidos",
+    "purchase_request_number_label": "Número de solicitud de compra",
+    "date_label": "@:common.labels.date",
+    "menu": {
+      "link": {
+        "title": "Solicitudes de Compra"
+      }
+    }
+  },
+  "purchase_request": {
+    "title": "Solicitud de compra #{0}",
+    "failed_or_used_description": "Lo sentimos, no pudimos crear la solicitud de compra o ya la usaste para crear un pedido",
+    "try_again": "Por favor, inténtalo de nuevo",
+    "files_section": {
+      "title": "Archivos"
+    },
+    "from_file": {
+      "title": "Subir archivo",
+      "upload": {
+        "message": "Sube fotos de documentos, capturas de pantalla o notas manuscritas para obtener datos para un nuevo pedido.",
+        "examples": {
+          "title": "Ejemplos",
+          "alt": "Ejemplos"
+        }
+      },
+      "processing": {
+        "message": "Puedes subir archivos de imagen o pdf con listados de productos en cualquier forma para un pedido rápido de artículos",
+        "loading_message": "Reconociendo un documento subido...",
+        "cancel": "@:common.buttons.cancel"
+      }
+    },
+    "go_to_quote": "Proceder a la cotización"
+  },
+  "pages": {
+    "bulk_order": {
+      "from_file_tab": "Desde archivo"
+    }
+  }
+}

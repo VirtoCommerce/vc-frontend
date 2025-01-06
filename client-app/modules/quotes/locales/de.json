@@ -1,8 +1,69 @@
 {
   "quotes": {
-    "request_quote_button": "Artikel zum Angebot hinzufügen",
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "angeforderte Angebote"
+    },
+    "title": "Angebotsanfragen",
+    "no_quotes_message": "Es gibt noch keine Angebotsanfragen",
+    "quote_number_label": "Angebotsnummer",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Stichwort eingeben...",
+    "no_results_message": "Keine Ergebnisse gefunden",
+    "request_quote_button": "Angebot anfordern",
+    "search_quote_requests": "Angebotsanfragen suchen",
+    "reset_search": "Suche zurücksetzen",
+    "cart_widget": {
+      "quote_request_hint": "Sie können Artikel in Ihrem Warenkorb über einen speziellen Service anfordern",
+      "create_quote_button": "Warenkorbartikel zum Angebot hinzufügen",
+      "title": "Angebotsanfrage"
+    },
     "navigation": {
       "route_name": "Angebotsanfragen"
+    },
+    "errors": {
+      "creating_quote_error": "Fehler beim Erstellen eines Angebots"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Kommentar zur Angebotsanfrage",
+    "title": "Angebotsanfrage #{0}",
+    "comment": "Kommentar",
+    "comment_field_label": "Haben Sie eine allgemeine Bemerkung zu dieser Angebotsanfrage?",
+    "products": "Produkte",
+    "shipping_address": "Lieferadresse",
+    "billing_address": "Rechnungsadresse",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "Sie haben keine Adresse angegeben. Bitte geben Sie eine an.",
+    "same_as_shipping_address": "Gleich wie Lieferadresse",
+    "quote_summary": "Angebotsübersicht",
+    "quote_data": "Angebotsdaten",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "Die Angebotsanfrage enthält keine Artikel",
+    "save_changes_notification_success": "Die Angebotsanfrage wurde erfolgreich gespeichert",
+    "select_shipping_address": "Lieferadresse auswählen",
+    "select_billing_address": "Rechnungsadresse auswählen",
+    "files": "Dateien",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "Das Angebot kann nicht genehmigt werden",
+      "decline": "Das Angebot kann nicht abgelehnt werden"
     }
   }
 }

@@ -1,0 +1,7 @@
+#import "../../fragments/fullCart.graphql"
+
+mutation ChangeCartCurrency($command: InputChangeCartCurrencyType!) {
+  changeCartCurrency(command: $command) {
+    ...fullCart
+  }
+}

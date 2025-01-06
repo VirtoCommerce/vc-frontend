@@ -157,7 +157,7 @@
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -180,7 +180,7 @@ import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browse
 
 const config = inject(configInjectionKey, {});
 
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const {
@@ -232,7 +232,10 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  ga.removeItemsFromCart(cart.value!.items!.filter((item) => itemIds.includes(item.id)));
+  analytics(
+    "removeItemsFromCart",
+    cart.value!.items!.filter((item) => itemIds.includes(item.id)),
+  );
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
@@ -250,7 +253,7 @@ void (async () => {
    * Send a Google Analytics shopping cart view event.
    */
   if (cart.value) {
-    ga.viewCart(cart.value);
+    analytics("viewCart", cart.value);
   }
 
   if (!config.checkout_multistep_enabled) {

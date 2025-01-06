@@ -573,6 +573,7 @@
         "assets_block_title": "Fichiers",
         "vendor_label": "Fournisseur",
         "share_product_label": "Partager le produit",
+        "create_configuration_button": "Créer configuration",
         "price_block": {
           "title": "Prix et Livraison",
           "add_to_list_button": "Ajouter à la liste",
@@ -1104,7 +1105,7 @@
       },
       "impersonate": {
         "title": "Impersonation",
-        "success": "Vous êtes en train d'être imité",
+        "success": "Impersonation réussie",
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"
       }
     },
