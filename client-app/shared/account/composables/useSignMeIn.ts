@@ -40,7 +40,7 @@ export function useSignMeIn() {
       const currencyCode = me.value?.me?.contact?.currencyCode;
 
       if (me.value?.me && currencyCode) {
-        if (cart.value?.id) {
+        if (cart.value?.id && cart.value.items?.length) {
           await clearCurrencyCart({
             command: { userId: me.value.me.id, currencyCode: currentCurencyCode },
             skipQuery: false,
