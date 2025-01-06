@@ -96,7 +96,7 @@
         </template>
       </div>
 
-      <template v-if="product" #sidebar>
+      <template #sidebar>
         <ProductSidebar
           :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
           :product="product"
