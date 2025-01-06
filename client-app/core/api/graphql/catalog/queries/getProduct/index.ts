@@ -16,5 +16,5 @@ export async function getProduct(id: string): Promise<Product | undefined> {
     },
   });
 
-  return data.product as Product;
+  return data.product as Product | undefined;
 }
