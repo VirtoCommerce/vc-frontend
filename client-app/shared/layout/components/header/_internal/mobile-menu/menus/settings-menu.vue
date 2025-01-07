@@ -23,9 +23,11 @@
 import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables";
 import { globals } from "@/core/globals";
+import { useFullCart } from "@/shared/cart";
 
 const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
 const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
+const { cart } = useFullCart();
 const { userId } = globals;
 
 function changeCurrency(code: string): void {
@@ -35,11 +37,14 @@ function changeCurrency(code: string): void {
 
   saveCurrencyCode(code);
 
-  void changeCartCurrency({
-    command: {
-      userId,
-      newCurrencyCode: code,
-    },
-  });
+  if (cart.value?.id) {
+    void changeCartCurrency({
+      command: {
+        userId,
+        cartId: cart.value.id,
+        newCurrencyCode: code,
+      },
+    });
+  }
 }
 </script>
