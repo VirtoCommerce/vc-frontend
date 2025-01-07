@@ -716,7 +716,6 @@
         "cardholder_name_label": "Cardholder name",
         "expiration_date_label": "Expiration date",
         "expiration_date_placeholder": "MM / YY",
-        "expiration_date_full_placeholder": "MM / YYYY",
         "month_label": "Month",
         "month_placeholder": "MM",
         "year_label": "Year",

@@ -14,12 +14,13 @@
       <div id="cardNumber-container" class="form-control h-11 border border-neutral-200 px-3"></div>
     </div>
     <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
+      <!-- todo add placeholder translation -->
       <VcInput
         v-model="expirationDate"
         v-maska
         data-maska="## / ####"
         :label="labels.expirationDate"
-        :placeholder="$t('shared.payment.bank_card_form.expiration_date_full_placeholder')"
+        placeholder="YYYY"
         :message="expirationDateErrors"
         :error="!!expirationDateErrors"
         :disabled="disabled"
