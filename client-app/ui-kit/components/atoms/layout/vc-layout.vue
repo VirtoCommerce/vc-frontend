@@ -85,6 +85,7 @@ const { sidebarStyle } = useStickySidebar({
 
     @media (min-width: theme("screens.md")) {
       @apply flex items-start;
+      overflow-anchor: none;
     }
 
     &--position {
