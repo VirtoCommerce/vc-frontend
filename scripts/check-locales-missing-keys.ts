@@ -2,8 +2,15 @@ import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
 
-type LocaleDataType = {
+export type LocaleDataType = {
   [key: string]: string | LocaleDataType;
+};
+
+export type MissingKeyType = {
+  key: string;
+  originFile: string;
+  targetFile: string;
+  localeFolder: string;
 };
 
 function loadJson(filePath: string): LocaleDataType {
@@ -25,12 +32,21 @@ function getAllKeys(obj: LocaleDataType, parentKey: string = ""): string[] {
   return keys;
 }
 
-function compareKeys(baseKeys: string[], keysToCompare: string[], baseLang: string, compareLang: string): void {
+function compareKeys(
+  baseKeys: string[],
+  keysToCompare: string[],
+  baseLang: string,
+  compareLang: string,
+  localeFolder: string,
+): MissingKeyType[] {
   const missingInCompare = baseKeys.filter((key) => !keysToCompare.includes(key));
-  if (missingInCompare.length > 0) {
-    console.warn(`Warning: Keys missing in ${compareLang} compared to ${baseLang}:`);
-    missingInCompare.forEach((key) => console.warn(`  - ${key}`));
-  }
+
+  return missingInCompare.map((key) => ({
+    key,
+    originFile: baseLang,
+    targetFile: compareLang,
+    localeFolder,
+  }));
 }
 
 function validateLocaleFolder(localeFolder: string): boolean {
@@ -71,12 +87,14 @@ function getLocaleFolders(patterns: string[]): string[] {
 
 // @description: This script checks if all keys in the locales are presented.
 // @usage: yarn check-locales -- path/to/locales_folder path/to/**/locales
-function main(): void {
+export function main(): MissingKeyType[] {
   const args = process.argv.slice(2);
 
   const patterns = args.length > 0 ? args : ["locales"]; // Default to 'locales' if no argument is provided
 
   const localeFolders = getLocaleFolders(patterns);
+
+  const missingKeys: MissingKeyType[] = [];
 
   localeFolders.forEach((localeFolder) => {
     if (!validateLocaleFolder(localeFolder)) {
@@ -100,11 +118,18 @@ function main(): void {
     Object.keys(localeKeys).forEach((baseFile) => {
       Object.keys(localeKeys).forEach((compareFile) => {
         if (baseFile !== compareFile) {
-          compareKeys(localeKeys[baseFile], localeKeys[compareFile], baseFile, compareFile);
+          const newMissingKeys = compareKeys(
+            localeKeys[baseFile],
+            localeKeys[compareFile],
+            baseFile,
+            compareFile,
+            localeFolder,
+          );
+          missingKeys.push(...newMissingKeys);
         }
       });
     });
   });
-}
 
-main();
+  return missingKeys;
+}
