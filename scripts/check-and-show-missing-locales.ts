@@ -2,7 +2,7 @@ import groupBy from "lodash/groupBy";
 import { main as checkLocales } from "./check-locales-missing-keys";
 import type { MissingKeyType } from "./check-locales-missing-keys";
 
-function printMissingKeys(missingKeys: MissingKeyType[]) {
+function showMissingKeys(missingKeys: MissingKeyType[]) {
   const groupedByLanguages = groupBy(missingKeys, ({ originFile, targetFile }) => `${originFile}|${targetFile}`);
   Object.entries(groupedByLanguages).forEach(([languages, keys]) => {
     const [originFile, targetFile] = languages.split("|");
@@ -11,4 +11,4 @@ function printMissingKeys(missingKeys: MissingKeyType[]) {
   });
 }
 
-printMissingKeys(checkLocales());
+showMissingKeys(checkLocales());

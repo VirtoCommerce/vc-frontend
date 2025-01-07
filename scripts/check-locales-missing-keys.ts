@@ -133,5 +133,3 @@ export function main(): MissingKeyType[] {
 
   return missingKeys;
 }
-
-main();

@@ -37,7 +37,7 @@
     "storybook:dev": "yarn precheck && yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn precheck && yarn storybook:styles && storybook build",
     "postinstall": "yarn precheck && husky",
-    "check-locales": "yarn precheck && vite-node scripts/check-and-print-missing-locales -- locales client-app/ui-kit/locales client-app/modules/**/locales",
+    "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales -- locales client-app/ui-kit/locales client-app/modules/**/locales",
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts -- locales client-app/ui-kit/locales client-app/modules/**/locales"
   },
   "dependencies": {
