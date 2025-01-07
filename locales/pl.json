@@ -1106,7 +1106,7 @@
       },
       "impersonate": {
         "title": "Podrabianie",
-        "success": "Jesteś podrobiony",
+        "success": "Podrobienie zakończone",
         "error": "Wystąpiły problemy podczas podrabiania. Sprawdź swoje uprawnienia"
       }
     },

@@ -1106,7 +1106,7 @@
       },
       "impersonate": {
         "title": "Nachahmung",
-        "success": "Sie werden nachgeahmt",
+        "success": "Impersonation erfolgreich",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
       }
     },

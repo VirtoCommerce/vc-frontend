@@ -1106,7 +1106,7 @@
       },
       "impersonate": {
         "title": "Suplantación",
-        "success": "Estás suplantado",
+        "success": "Suplantación exitosa",
         "error": "Algunos problemas durante la suplantación. Verifica tus permisos"
       }
     },
