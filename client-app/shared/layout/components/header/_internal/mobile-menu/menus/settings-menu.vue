@@ -24,22 +24,24 @@ import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
 import { useCurrency } from "@/core/composables";
 import { globals } from "@/core/globals";
 
-const { currentCurrency, supportedCurrencies, saveCurrencyCode } = useCurrency();
+const { currentCurrency, supportedCurrencies, savedCurrencyCode } = useCurrency();
 const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
 const { userId } = globals;
 
-function changeCurrency(code: string): void {
+async function changeCurrency(code: string): Promise<void> {
   if (currentCurrency.value?.code === code) {
     return;
   }
 
-  saveCurrencyCode(code);
+  savedCurrencyCode.value = code;
 
-  void changeCartCurrency({
+  await changeCartCurrency({
     command: {
       userId,
       newCurrencyCode: code,
     },
   });
+
+  location.reload();
 }
 </script>
