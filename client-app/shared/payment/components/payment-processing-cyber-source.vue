@@ -52,16 +52,18 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable */
-import { computed, onMounted, onUnmounted, type Ref } from "vue";
-import { initializePayment, authorizePayment } from "@/core/api/graphql";
-import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
-import { useI18n } from "vue-i18n";
-import { useForm } from "vee-validate";
-import * as yup from "yup";
 import { toTypedSchema } from "@vee-validate/yup";
 import { useScriptTag } from "@vueuse/core";
-import notifications from "@/modules/push-messages/pages/notifications.vue";
+import { useForm } from "vee-validate";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import * as yup from "yup";
+import { initializePayment, authorizePayment } from "@/core/api/graphql";
+import { useAnalytics } from "@/core/composables";
+import { Logger } from "@/core/utilities";
+import { useNotifications } from "@/shared/notification";
+import type { CustomerOrderType, KeyValueType } from "@/core/api/graphql/types";
+import type { Ref } from "vue";
 
 interface IEmits {
   (event: "success"): void;
@@ -73,15 +75,44 @@ interface IProps {
   disabled?: boolean;
 }
 
+interface IField {
+  load(containerId: string): void;
+}
+
+interface IMicroform {
+  createField(type: "number" | "securityCode", options?: IFieldOptions): IField;
+  createToken(options: Record<string, unknown>, callback: (err: unknown, token: string) => void): void;
+}
+
+interface IFieldOptions {
+  placeholder?: string;
+  maxLength?: number;
+}
+
+type FlexConstructorType = {
+  new (key: string): IFlex;
+};
+
+interface IFlex {
+  microform(options: { styles: Record<string, unknown> }): IMicroform;
+}
+
 const emit = defineEmits<IEmits>();
+
 const props = defineProps<IProps>();
 
-const { t } = useI18n();
+declare let Flex: FlexConstructorType;
 
-const loading = computed(() => {
-  // todo implement
-  return false
-})
+let flex: IFlex;
+let microform: IMicroform;
+
+// Example usage
+
+const { t } = useI18n();
+const { analytics } = useAnalytics();
+const notifications = useNotifications();
+
+const loading = ref(false);
 
 const labels = computed(() => {
   return {
@@ -108,9 +139,10 @@ const validationSchema = toTypedSchema(
     month: monthYupSchema,
     year: yup.string().when("month", ([month], schema) => {
       return monthYupSchema.isValidSync(month)
-        ? schema.length(4)
-          .matches(/^2[0-1][0-9][0-9]$/, t("shared.payment.authorize_net.errors.year"))
-          .label(labels.value.yearLabel)
+        ? schema
+            .length(4)
+            .matches(/^2[0-1][0-9][0-9]$/, t("shared.payment.authorize_net.errors.year"))
+            .label(labels.value.yearLabel)
         : schema;
     }),
   }),
@@ -133,8 +165,8 @@ const {
 });
 
 const isValidBankCard = computed(() => {
-  return meta.value.valid
-})
+  return meta.value.valid;
+});
 
 const [cardholderName] = defineField("cardholderName");
 const [month] = defineField("month");
@@ -156,47 +188,51 @@ const expirationDateErrors = computed<string>(() =>
   [formErrors.value.month, formErrors.value.year].filter(Boolean).join(". "),
 );
 
-declare let Flex: any;
-
-let flex: any;
-let microform: any;
-
-function sendPaymentData() {
+async function sendPaymentData() {
   if (!isValidBankCard.value) {
     return;
   }
 
-  const options = {
-    // cardholderName is optional for cybersource
-    cardholderName: formValues.cardholderName,
-    expirationMonth: formValues.month,
-    expirationYear: formValues.year,
-  };
+  try {
+    const token = await createToken({
+      // cardholderName is optional for cybersource
+      cardholderName: formValues.cardholderName,
+      expirationMonth: formValues.month,
+      expirationYear: formValues.year,
+    });
 
-  microform.createToken(options, (err: any, token: any) => {
-    if (err) {
-      emit("fail", err.message);
-      return;
-    }
-
-    const parameters = [
-      {
-        key: "token",
-        value: token,
-      },
-    ];
-
-    authorizePayment({
+    const { isSuccess } = await authorizePayment({
       orderId: props.order.id,
       paymentId: props.order.inPayments[0]!.id,
-      parameters,
-    })
-      .then(() => {
-        emit("success");
-      })
-      .catch((e) => {
-        emit("fail", e.message);
-      });
+      parameters: [
+        {
+          key: "token",
+          value: token,
+        },
+      ],
+    });
+
+    if (isSuccess) {
+      analytics("purchase", props.order);
+      emit("success");
+    } else {
+      emit("fail");
+    }
+  } catch (e) {
+    Logger.error(sendPaymentData.name, e);
+    emit("fail");
+  }
+}
+
+async function createToken(options: Record<string, unknown>): Promise<string> {
+  return new Promise((resolve, reject) => {
+    microform.createToken(options, (err: unknown, token: string) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(token);
+      }
+    });
   });
 }
 
@@ -204,44 +240,33 @@ onMounted(async () => {
   await initPayment();
 });
 
-let scriptTag: Ref<HTMLScriptElement | null, HTMLScriptElement | null>;
-async function useDynamicScript(url: string): Promise<void> {
-  return new Promise((resolve: () => void) => {
-    const { scriptTag: tag } = useScriptTag(url, resolve);
-    scriptTag = tag;
-  });
-}
-
 async function initPayment() {
+  loading.value = true;
   const { publicParameters } = await initializePayment({
     orderId: props.order.id,
     paymentId: props.order.inPayments[0]!.id,
   });
 
-  if(!publicParameters) {
+  const scriptUrl = getValue(publicParameters, "clientScript");
+
+  if (!publicParameters || !scriptUrl) {
     // todo add translation
     showError("Can't init payment");
-    return
+    return;
   }
-  // https://jwt.io/libraries
-  // clientScript should be taken from jwt token
-  // it is necessary to validate token before using the script from it
-  await useDynamicScript(getValue(publicParameters, "clientScript")!);
+
+  await useDynamicScript(scriptUrl);
   await initFlex(getValue(publicParameters, "jwt")!);
-  await initForm();
+  initForm();
+
+  loading.value = false;
 }
 
-function removeScript() {
-  if (scriptTag.value && scriptTag.value.parentNode) {
-    scriptTag.value.parentNode.removeChild(scriptTag.value);
-  }
-}
-
-async function initForm() {
+function initForm() {
   const number = microform.createField("number");
   const securityCode = microform.createField("securityCode", {
     placeholder: "•••",
-    maxLength: 4
+    maxLength: 4,
   });
   number.load("#cardNumber-container");
   securityCode.load("#securityCode-container");
@@ -249,31 +274,41 @@ async function initForm() {
 
 const customStyles = {
   input: {
-    'font-size': '16px',
+    "font-size": "16px",
     // custom font-family like Lato not supported
-    'font-family': 'sans-serif',
+    "font-family": "sans-serif",
     color: "#555",
-    '::placeholder': {
-      color: "red"
-    }
+    "::placeholder": {
+      color: "red",
+    },
   },
 };
 
 async function initFlex(key: string) {
   try {
     flex = new Flex(key);
-    // styling
-    // https://developer.cybersource.com/docs/cybs/en-us/digital-accept-flex/developer/all/rest/digital-accept-flex/microform-integ-v2/styling-v2.html
-    microform = flex.microform({
+    microform = await createMicroformAsync({
       styles: customStyles,
     });
   } catch (e) {
-    console.error(e);
+    Logger.error(initFlex.name, e);
   }
 }
 
-function getValue(publicParameters: KeyValueType[], key: string) {
-  return publicParameters.find((x) => x.key === key)?.value;
+function createMicroformAsync(options: { styles: Record<string, unknown> }): Promise<IMicroform> {
+  return new Promise((resolve, reject) => {
+    try {
+      const microformInstance = flex.microform(options);
+      resolve(microformInstance);
+    } catch (error: unknown) {
+      reject(error instanceof Error ? error : new Error("Failed to create microform"));
+    }
+  });
+}
+
+// todo find in common
+function getValue(publicParameters?: KeyValueType[], key?: string) {
+  return publicParameters?.find((x) => x.key === key)?.value;
 }
 
 function showError(message: string) {
@@ -282,6 +317,21 @@ function showError(message: string) {
     duration: 10000,
     single: true,
   });
+}
+
+let scriptTag: Ref<HTMLScriptElement | null, HTMLScriptElement | null>;
+
+async function useDynamicScript(url: string): Promise<void> {
+  return new Promise((resolve: () => void) => {
+    const { scriptTag: tag } = useScriptTag(url, resolve);
+    scriptTag = tag;
+  });
+}
+
+function removeScript() {
+  if (scriptTag.value && scriptTag.value.parentNode) {
+    scriptTag.value.parentNode.removeChild(scriptTag.value);
+  }
 }
 
 onUnmounted(removeScript);
