@@ -217,6 +217,7 @@ yarn build:watch
 Command:
 ```
 yarn generate:graphql-types
+```
 
 Generates the `types.ts` files separately for `The Core App` and independent modules.
 If independent modules are not installed on `The Platform`, types can still be safely generated.
@@ -243,12 +244,27 @@ yarn generate:dependency-graph client-app/main.ts client-app/shared/account/comp
 ```
 The generated graph will also be saved in the `artifacts` folder.
 
+## Localization
+### Check for missing locale keys
+
 ```
 yarn check-locales -- path/to/locales_folder path/to/**/locales
 ```
 The command is used to ensure that all locale files have consistent keys across different languages. This helps in maintaining uniformity and avoiding missing translations.
 
 The script will output warnings for any missing keys in the locale files. Review these warnings to ensure all necessary translations are present. Also added to the CI pipeline.
+
+### Fix Missing Locales
+```
+yarn fix-locales -- path/to/locales_folder path/to/\*\*/locales
+```
+This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language and updates locale files accordingly. 
+
+> [!IMPORTANT]
+> This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
+
+> [!CAUTION]
+> This is an experimental feature and may not work as expected.
 
 ### Troubleshooting
 

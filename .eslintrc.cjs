@@ -157,7 +157,7 @@ module.exports = {
      */
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-unnecessary-type-assertion": "off",
-    "@typescript-eslint/no-redundant-type-constituents": "off",
+    "@typescript-eslint/no-redundant-type-constituents": "warn",
     "sonarjs/no-duplicate-string": "off",
     "tailwindcss/no-custom-classname": "off",
     "vue/multi-word-component-names": "off",

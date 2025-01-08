@@ -18,11 +18,13 @@
       </DisplayProducts>
 
       <VcInfinityScrollLoader
-        v-if="!fetchingProducts && !Number(fixedProductsCount)"
-        :loading="fetchingMoreProducts"
+        v-if="!Number(fixedProductsCount)"
+        :loading="fetchingProducts || fetchingMoreProducts"
+        :is-page-limit-reached="pageNumber === PAGE_LIMIT"
+        :page-number="pageNumber"
+        :pages-count="pagesCount"
         distance="400"
         class="mt-8"
-        :is-page-limit-reached="pageNumber === PAGE_LIMIT"
         @visible="$emit('changePage', ++pageNumber)"
       />
 
