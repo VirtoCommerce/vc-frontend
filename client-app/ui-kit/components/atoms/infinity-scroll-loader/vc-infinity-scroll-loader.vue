@@ -9,7 +9,7 @@
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
 
-      <span v-else>{{ $t("ui_kit.reach_limit.end_list") }}</span>
+      <span v-else-if="!loading && pageNumber === pagesCount">{{ $t("ui_kit.reach_limit.end_list") }}</span>
     </slot>
   </div>
 </template>
@@ -20,7 +20,7 @@ import { onBeforeUnmount, onMounted, shallowRef, watch } from "vue";
 const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  loading: false,
+  loading: true,
   viewport: null,
   distance: 0,
 });
@@ -34,6 +34,8 @@ interface IProps {
   viewport?: Element | Document | null;
   distance?: string | number;
   isPageLimitReached?: boolean;
+  pagesCount: number;
+  pageNumber: number;
 }
 
 let observer: IntersectionObserver | null = null;
