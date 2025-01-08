@@ -78,6 +78,7 @@ interface IProps {
 
 interface IField {
   load(containerId: string): void;
+  on(event: string, callback: (data: { valid: boolean; card: Array<unknown> }) => void): void;
 }
 
 interface IMicroform {
@@ -165,8 +166,17 @@ const {
   initialValues,
 });
 
+const cybersourceMeta = ref({
+  cardNumber: {
+    valid: false,
+  },
+  cvv: {
+    valid: false,
+  },
+});
+
 const isValidBankCard = computed(() => {
-  return meta.value.valid;
+  return meta.value.valid && cybersourceMeta.value.cardNumber.valid && cybersourceMeta.value.cvv.valid;
 });
 
 const [cardholderName] = defineField("cardholderName");
@@ -270,7 +280,17 @@ function initForm() {
     maxLength: 4,
   });
   number.load("#cardNumber-container");
+  number.on("change", onChange);
   securityCode.load("#securityCode-container");
+  securityCode.on("change", onChange);
+}
+
+function onChange(data: { valid: boolean; card: Array<unknown> }) {
+  if (data.card) {
+    cybersourceMeta.value.cardNumber.valid = data.valid;
+  } else {
+    cybersourceMeta.value.cvv.valid = data.valid;
+  }
 }
 
 const customStyles = {
