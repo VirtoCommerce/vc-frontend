@@ -107,7 +107,7 @@ import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
 import { VcButton } from "@/ui-kit/components";
-import { loadImage, loadIcon } from "@/ui-kit/utilities";
+import { getImageUrl, getIconUrl } from "@/ui-kit/utilities";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";
 
 type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsModalType[] };
@@ -176,7 +176,7 @@ function print() {
     .map((el) => el.outerHTML)
     .join("");
 
-  const logoImage = loadImage(logoUrl.value);
+  const logoImage = getImageUrl(logoUrl.value);
 
   const headerHtml = `
   <header class="flex justify-between items-start">
@@ -199,7 +199,7 @@ function print() {
   };
 
   groups.value.forEach((group) => {
-    const icon = loadIcon(iconName(group.name));
+    const icon = getIconUrl(iconName(group.name));
 
     contentHtml += `
     <div class="space-y-3">

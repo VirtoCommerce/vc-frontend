@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { loadImage, loadIcon } from "@/ui-kit/utilities";
+import { getImageUrl, getIconUrl } from "@/ui-kit/utilities";
 
 interface IProps {
   size?: number | string;
@@ -23,8 +23,8 @@ const props = withDefaults(defineProps<IProps>(), {
   img: "",
 });
 
-const iconUrl = computed(() => loadIcon(props.mask));
-const imgUrl = computed(() => loadImage(props.img));
+const iconUrl = computed(() => getIconUrl(props.mask));
+const imgUrl = computed(() => getImageUrl(props.img));
 
 const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
 

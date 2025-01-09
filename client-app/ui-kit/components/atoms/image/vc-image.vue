@@ -15,7 +15,7 @@ import { computed, inject, ref, watch } from "vue";
 import { NO_IMAGE_URL } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { appendSuffixToFilename } from "@/core/utilities";
-import { loadImage, isFilenameOnly } from "../../../utilities";
+import { getImageUrl, isFilenameOnly } from "../../../utilities";
 
 export interface IProps {
   lazy?: boolean;
@@ -42,11 +42,11 @@ const originalEnabled = ref(false);
 
 const preparedSrc = computed<string>(() => {
   if (fallbackEnabled.value || !props.src) {
-    return isFilenameOnly(props.fallbackSrc) ? loadImage(props.fallbackSrc) : props.fallbackSrc;
+    return isFilenameOnly(props.fallbackSrc) ? getImageUrl(props.fallbackSrc) : props.fallbackSrc;
   }
 
   if (isFilenameOnly(props.src)) {
-    return loadImage(props.src);
+    return getImageUrl(props.src);
   }
 
   const sizeSuffix = props.sizeSuffix ? cfg?.image_thumbnails_suffixes?.[props.sizeSuffix] : "";
