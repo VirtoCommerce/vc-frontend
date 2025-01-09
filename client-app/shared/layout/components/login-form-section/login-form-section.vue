@@ -36,12 +36,12 @@
 import { computed, inject } from "vue";
 import { configInjectionKey } from "@/core/injection-keys";
 import { SignInForm, useUser } from "@/shared/account";
-import { loadImage } from "@/ui-kit/utilities";
+import { getImageUrl } from "@/ui-kit/utilities";
 
 const cfg = inject(configInjectionKey);
 const { isAuthenticated } = useUser();
 
-const bgImage = computed(() => (cfg?.homepage_background_image ? loadImage(cfg?.homepage_background_image) : "none"));
+const bgImage = computed(() => (cfg?.homepage_background_image ? getImageUrl(cfg?.homepage_background_image) : "none"));
 </script>
 
 <style scoped>
