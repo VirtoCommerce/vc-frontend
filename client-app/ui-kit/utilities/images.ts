@@ -4,7 +4,7 @@ import { Logger } from "@/core/utilities";
 export function getImageUrl(fileName?: string): string {
   if (fileName) {
     try {
-      return new URL(`/client-app/assets/images/${fileName}`, import.meta.url).href;
+      return new URL(`/client-app/assets/images/${fileName}`, import.meta.url).href ?? "";
     } catch (error) {
       Logger.error(`Failed to load icon: ${fileName}`, error);
       return "";
