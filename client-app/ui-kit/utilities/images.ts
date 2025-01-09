@@ -1,12 +1,17 @@
 import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
 
-export function isFilenameOnly(src: string): boolean {
-  return /^[a-zA-Z0-9._-]+(\.[a-zA-Z0-9]+)?$/.test(src);
-}
-
 export function loadImage(fileName?: string): string {
-  return new URL(`/client-app/assets/images/${fileName}`, import.meta.url).href;
+  if (fileName) {
+    try {
+      return new URL(`/client-app/assets/images/${fileName}`, import.meta.url).href;
+    } catch (error) {
+      Logger.error(`Failed to load icon: ${fileName}`, error);
+      return "";
+    }
+  } else {
+    return "";
+  }
 }
 
 export function loadIcon(name?: string) {

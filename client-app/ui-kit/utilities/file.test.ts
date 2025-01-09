@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isFilenameOnly } from "./images";
+import { isFilenameOnly } from "./file";
 
 describe("isFilenameOnly", () => {
   it("should return true for filenames with letters, numbers, dashes, and underscores", () => {
