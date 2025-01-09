@@ -40,11 +40,13 @@ export function useSignMeIn() {
       const currencyCode = me.value?.me?.contact?.currencyCode;
 
       if (me.value?.me && currencyCode) {
-        if (cart.value?.id) {
-          await clearCurrencyCart({
-            command: { userId: me.value.me.id, currencyCode: currentCurencyCode },
-            skipQuery: false,
-          });
+        if (cart.value?.id && cart.value.items?.length) {
+          if (currencyCode !== currentCurencyCode) {
+            await clearCurrencyCart({
+              command: { userId: me.value.me.id, currencyCode: currentCurencyCode },
+              skipQuery: false,
+            });
+          }
 
           await mergeCart({ command: { userId: me.value.me.id, secondCartId: cart.value.id } });
 

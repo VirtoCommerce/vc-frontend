@@ -10,6 +10,7 @@ export const BREAKPOINTS = {
 export type BreakpointsType = keyof typeof BREAKPOINTS;
 
 export const COLORS = {
+  accent: "accent",
   primary: "primary",
   secondary: "secondary",
   neutral: "neutral",

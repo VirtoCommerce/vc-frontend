@@ -1,20 +1,22 @@
 <template>
-  <VcLoaderOverlay v-if="loading" no-bg />
+  <template v-if="!cart?.items?.length">
+    <VcLoaderOverlay v-if="loading" no-bg />
 
-  <VcEmptyPage
-    v-else-if="!cart?.items?.length"
-    :title="$t('pages.cart.title')"
-    :description="$t('pages.cart.empty_cart_description')"
-    image="/static/images/errors/emptyCart.webp"
-    mobile-image="/static/images/errors/emptyCartMobile.webp"
-    :breadcrumbs="breadcrumbs"
-  >
-    <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" size="lg">
-        {{ $t("common.buttons.continue_shopping") }}
-      </VcButton>
-    </template>
-  </VcEmptyPage>
+    <VcEmptyPage
+      v-else
+      :title="$t('pages.cart.title')"
+      :description="$t('pages.cart.empty_cart_description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg">
+          {{ $t("common.buttons.continue_shopping") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+  </template>
 
   <VcContainer v-else class="relative z-0 max-lg:pb-12">
     <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
@@ -155,7 +157,7 @@
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -178,7 +180,7 @@ import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browse
 
 const config = inject(configInjectionKey, {});
 
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const {
@@ -230,7 +232,10 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  ga.removeItemsFromCart(cart.value!.items!.filter((item) => itemIds.includes(item.id)));
+  analytics(
+    "removeItemsFromCart",
+    cart.value!.items!.filter((item) => itemIds.includes(item.id)),
+  );
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
@@ -248,7 +253,7 @@ void (async () => {
    * Send a Google Analytics shopping cart view event.
    */
   if (cart.value) {
-    ga.viewCart(cart.value);
+    analytics("viewCart", cart.value);
   }
 
   if (!config.checkout_multistep_enabled) {
