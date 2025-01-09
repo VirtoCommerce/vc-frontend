@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.12.0",
+  "version": "2.13.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -37,7 +37,8 @@
     "storybook:dev": "yarn precheck && yarn generate:certificates && yarn storybook:styles && storybook dev --port 6006 --no-open --https --ssl-cert ./.certificates/public.pem --ssl-key ./.certificates/private.pem",
     "storybook:build": "yarn precheck && yarn storybook:styles && storybook build",
     "postinstall": "yarn precheck && husky",
-    "check-locales": "yarn precheck && vite-node scripts/check-locales-folder.ts -- locales client-app/ui-kit/locales client-app/modules/**/locales"
+    "check-locales": "yarn precheck && vite-node scripts/check-and-show-missing-locales -- locales client-app/ui-kit/locales client-app/modules/**/locales",
+    "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts -- locales client-app/ui-kit/locales client-app/modules/**/locales"
   },
   "dependencies": {
     "@apollo/client": "^3.10.5",
@@ -48,7 +49,6 @@
     "@unhead/vue": "^1.9.14",
     "@vee-validate/rules": "~4.13.2",
     "@vee-validate/yup": "~4.13.2",
-    "@virto-commerce/front-modules-google-ecommerce-analytics": "1.0.10",
     "@virto-commerce/front-modules-hotjar": "^1.0.4",
     "@vue/apollo-composable": "^4.0.2",
     "@vueuse/components": "^10.11.0",
@@ -79,6 +79,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
+    "@google/generative-ai": "^0.21.0",
     "@graphql-codegen/add": "5.0.3",
     "@graphql-codegen/cli": "5.0.2",
     "@graphql-codegen/introspection": "4.0.3",

@@ -96,7 +96,7 @@
 import _ from "lodash";
 import { ref, computed, watch, watchEffect, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { getPropertyValue } from "@/core/utilities";
 import { ProductCardCompare, useProducts } from "@/shared/catalog";
 import { useCompareProducts } from "@/shared/compare";
@@ -117,7 +117,7 @@ usePageHead({
   },
 });
 
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { fetchProducts, products } = useProducts();
 const { clearCompareList, productsLimit, removeFromCompareList, productsIds } = useCompareProducts();
 const breadcrumbs = useBreadcrumbs([{ title: t("pages.compare.links.compare_products") }]);
@@ -208,7 +208,7 @@ function syncScroll(event: Event) {
  */
 watchEffect(() => {
   if (products.value.length) {
-    ga.viewItemList(products.value, {
+    analytics("viewItemList", products.value, {
       item_list_id: "compare_products",
       item_list_name: t("pages.compare.header_block.title"),
     });

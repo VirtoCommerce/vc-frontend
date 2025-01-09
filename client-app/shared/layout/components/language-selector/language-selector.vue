@@ -50,15 +50,20 @@
 <script setup lang="ts">
 import { useLanguages } from "@/core/composables/useLanguages";
 import { languageToCountryMap } from "@/core/constants";
+import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import type { ILanguage } from "@/core/types";
 
 const { pinedLocale, supportedLanguages, pinLocale, removeLocaleFromUrl, currentLanguage } = useLanguages();
+const broadcast = useBroadcast();
 
 function select(locale: string) {
   if (locale !== pinedLocale.value) {
     pinLocale(locale);
     removeLocaleFromUrl();
-    location.reload();
+
+    void broadcast.emit(dataChangedEvent);
+
+    void location.reload();
   }
 }
 
