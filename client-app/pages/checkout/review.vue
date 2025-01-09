@@ -1,5 +1,5 @@
 <template>
-  <VcLayoutWithRightSidebar is-sidebar-sticky>
+  <VcLayout sidebar-position="right" sticky-sidebar>
     <VcWidget
       id="line-items-widget"
       :title="$t('common.titles.review_order')"
@@ -34,7 +34,7 @@
             </VcLabel>
 
             <div class="grow divide-y rounded border print:border-none">
-              <VcAddressSelection
+              <AddressSelection
                 :address="shipment?.deliveryAddress"
                 class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
                 readonly
@@ -69,7 +69,7 @@
             </VcLabel>
 
             <div class="grow divide-y rounded border print:border-none">
-              <VcAddressSelection
+              <AddressSelection
                 :address="billingAddress"
                 class="min-h-[4.625rem] px-3 py-1.5 print:min-h-0 print:px-0"
                 readonly
@@ -106,9 +106,9 @@
       </div>
     </VcWidget>
 
-    <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" />
+    <AcceptedGifts v-if="cart?.gifts?.length" :items="cart.gifts" class="mt-5" />
 
-    <OrderCommentSection v-if="comment" :comment="comment" readonly />
+    <OrderCommentSection v-if="comment" :comment="comment" readonly class="mt-5" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -136,13 +136,13 @@
       </OrderSummary>
 
       <!-- Order actions -->
-      <VcWidget :title="$t('common.titles.other_actions')" class="print:hidden">
+      <VcWidget :title="$t('common.titles.other_actions')" class="mt-5 print:hidden">
         <VcButton full-width variant="outline" prepend-icon="printer" @click="print()">
           {{ $t("common.buttons.print_order") }}
         </VcButton>
       </VcWidget>
     </template>
-  </VcLayoutWithRightSidebar>
+  </VcLayout>
 </template>
 
 <script setup lang="ts">
@@ -150,6 +150,7 @@ import { computed } from "vue";
 import { OrderLineItems } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { AcceptedGifts, PlaceOrder, OrderCommentSection, OrderSummary, useCheckout } from "@/shared/checkout";
+import { AddressSelection } from "@/shared/common";
 import type { CartAddressType } from "@/core/api/graphql/types";
 
 const {

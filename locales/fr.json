@@ -26,9 +26,7 @@
       "reset_password": "Réinitialiser le mot de passe",
       "reset_filters": "Réinitialiser les filtres",
       "add_to_cart": "Ajouter au panier",
-      "update_cart": "Mettre à jour le panier",
       "apply": "Appliquer",
-      "deny": "Refuser",
       "send": "Envoyer",
       "more": "Plus",
       "yes": "Oui",
@@ -45,8 +43,6 @@
       "back_to_order_details": "Retour aux détails de la commande",
       "go_to_checkout": "Procéder au paiement",
       "go_to_billing": "Procéder à la facturation",
-      "see_more": "Voir plus",
-      "see_less": "Voir moins",
       "show_more": "Afficher plus",
       "hide": "Cacher",
       "view_invoice": "Voir la facture",
@@ -57,18 +53,14 @@
       "add_new": "Ajouter nouveau",
       "add_new_address": "Ajouter une nouvelle adresse",
       "remove_selected": "Supprimer la sélection",
-      "remove_all": "Tout supprimer",
       "resend_link": "Renvoyer le lien",
       "set_new_password": "Définir un nouveau mot de passe",
-      "show_hide_password": "Afficher/masquer le mot de passe",
       "toggle_dropdown": "Basculer le menu déroulant",
-      "remove_from_cart": "Retirer du panier",
       "search_orders": "Rechercher des commandes",
       "reset_orders_search_keyword": "Réinitialiser le mot-clé de recherche de commandes",
       "remove_credit_card": "Supprimer la carte de crédit",
       "search_company_members": "Rechercher des membres de l'entreprise",
       "reset_company_members_search_keyword": "Réinitialiser le mot-clé de recherche des membres de l'entreprise",
-      "copy": "Copier",
       "previous": "Précédent",
       "next": "Suivant",
       "send_link_email": "Envoyer le lien par e-mail",
@@ -120,10 +112,8 @@
       "properties": "Propriétés",
       "price_per_item": "Prix par article",
       "created": "Créé",
-      "not_available": "N/A",
       "purchase_order_number": "Numéro de commande d'achat",
       "promotion_code": "Code promotionnel",
-      "vendor": "Fournisseur",
       "secure_checkout": "Paiement sécurisé",
       "creates": "Crée",
       "payment_number": "Identifiant de paiement",
@@ -145,8 +135,6 @@
       "last_year": "Dernière année",
       "custom_date": "Date personnalisée",
       "background_image": "Image de fond",
-      "product_quantity": "Quantité de produit",
-      "toggle_vendor_select": "Basculer la sélection de fournisseur",
       "default_language": "Langue par défaut",
       "default_currency": "Monnaie par défaut",
       "organizations": "Organisations",
@@ -165,12 +153,9 @@
       "expires": "Expire :"
     },
     "suffixes": {
-      "from": "De",
-      "per_item": " par article",
       "product_count_in_stock": "en stock"
     },
     "messages": {
-      "loading_text": "Chargement...",
       "product_out_of_stock": "En rupture de stock",
       "required_field": "Ce champ est requis",
       "email_is_not_correct": "Veuillez entrer une adresse e-mail valide, ex. johndoe{'@'}gmail.com",
@@ -194,7 +179,6 @@
       "wishlists_available_for_authorized": "Les listes de souhaits ne sont disponibles que pour les utilisateurs authentifiés",
       "no_addresses": "Vous n'avez pas encore d'adresses",
       "confirm_delete_address": "Êtes-vous sûr de vouloir supprimer cette adresse ?",
-      "no_results": "Aucun résultat trouvé",
       "save_changes": "Souhaitez-vous enregistrer les modifications",
       "address_deletion_successful": "L'adresse a été supprimée avec succès",
       "cart_contains_deleted_products": "Le panier contient des produits qui ne peuvent plus être achetés. Veuillez supprimer ces produits et réessayer.",
@@ -207,7 +191,8 @@
       "password_new_same_old": "Votre mot de passe actuel et votre nouveau mot de passe doivent être différents.",
       "blocked": "Vous avez été bloqué. Vous ne pouvez pas accéder à des informations ou créer la commande. Pour plus de détails, veuillez ",
       "password_about_expire": "Votre mot de passe expirera dans {value} jour(s). Veuillez définir un nouveau mot de passe dans votre profil.",
-      "password_expired": "Votre mot de passe a expiré"
+      "password_expired": "Votre mot de passe a expiré",
+      "data_changed": "Les données ont été modifiées dans l'un des autres onglets. Veuillez actualiser la page pour afficher les données actuelles."
     },
     "placeholders": {
       "enter_value": "Veuillez entrer une valeur",
@@ -564,7 +549,8 @@
         "message": "Voulez-vous vider votre panier ?"
       },
       "configuration_items": {
-        "title": "Liste des composants"
+        "title": "Liste des composants",
+        "edit_configuration": "Modifier la configuration"
       }
     },
     "catalog": {
@@ -587,6 +573,7 @@
         "assets_block_title": "Fichiers",
         "vendor_label": "Fournisseur",
         "share_product_label": "Partager le produit",
+        "create_configuration_button": "Créer configuration",
         "price_block": {
           "title": "Prix et Livraison",
           "add_to_list_button": "Ajouter à la liste",
@@ -612,7 +599,9 @@
         "product_configuration": {
           "title": "Configurer les paramètres",
           "none": "Aucun",
-          "nothing_selected": "Aucun sélectionné"
+          "nothing_selected": "Aucun sélectionné",
+          "changed_notification": "La configuration du produit a été modifiée. Vous pouvez toujours enregistrer les modifications ultérieurement en cliquant sur le bouton \"@:{'ui_kit.buttons.update_cart'}\".",
+          "changed_confirmation": "La configuration du produit a été modifiée. Vous souhaitez-vous enregistrer les modifications ?"
         }
       },
       "discount_badge": {
@@ -1116,7 +1105,7 @@
       },
       "impersonate": {
         "title": "Impersonation",
-        "success": "Vous êtes en train d'être imité",
+        "success": "Impersonation réussie",
         "error": "Des problèmes sont survenus lors de l'imitation. Vérifiez vos autorisations"
       }
     },
@@ -1233,6 +1222,7 @@
       "add_to_wishlist_tooltip": "Ajouter à la liste",
       "in_the_list_tooltip": "Dans la liste",
       "variations_button": "{0} variations",
+      "customize_button": "Personnaliser",
       "show_on_a_separate_page": "Afficher sur une page séparée",
       "no_products_message": "Il n'y a pas de produits dans cette catégorie",
       "no_products_filtered_message": "Aucun résultat trouvé",

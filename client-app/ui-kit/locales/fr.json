@@ -1,5 +1,57 @@
 {
   "ui_kit": {
+    "buttons": {
+      "add_to_cart": "Ajouter au panier",
+      "apply": "Appliquer",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "copy": "Copier",
+      "deny": "Refuser",
+      "filters": "Filtres",
+      "ok": "OK",
+      "remove_all": "Tout supprimer",
+      "remove_from_cart": "Retirer du panier",
+      "remove_selected": "Supprimer la sélection",
+      "see_more": "Voir plus",
+      "see_less": "Voir moins",
+      "show_hide_password": "Afficher/masquer le mot de passe",
+      "toggle_dropdown": "Basculer le menu déroulant",
+      "update_cart": "Mettre à jour le panier"
+    },
+    "labels": {
+      "not_available": "N/A",
+      "price_per_item": "Prix par article",
+      "product": "Produit",
+      "product_quantity": "Quantité de produit",
+      "properties": "Propriétés",
+      "subtotal": "Sous-total",
+      "toggle_vendor_select": "Basculer la sélection de fournisseur",
+      "total": "Total",
+      "vendor": "Fournisseur"
+    },
+    "suffixes": {
+      "from": "De",
+      "per_item": " par article"
+    },
+    "messages": {
+      "loading_text": "Chargement...",
+      "no_results": "Aucun résultat trouvé"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "dans le panier",
+        "already_in_cart_message": "{0} a déjà été ajouté au panier",
+        "enter_correct_number_message": "Veuillez entrer un nombre valide",
+        "min": "Commande min {0} article(s)",
+        "max": "Commande max {0} article(s)",
+        "min_max": "Commander de {0} à {1} article(s)",
+        "min_not_available": "La commande minimale de {0} article(s) n'est pas disponible en stock",
+        "out_of_stock": "En rupture de stock",
+        "positive_number": "La valeur doit être un nombre positif",
+        "integer_number": "La valeur doit être un entier",
+        "pack_size": "Commander en packs de {0}"
+      }
+    },
     "pagination": {
       "previous": "Précédent",
       "next": "Suivant"

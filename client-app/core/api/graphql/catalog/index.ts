@@ -1,6 +1,7 @@
 export * from "./mutations/createConfiguredLineItem";
 export * from "./queries/childCategories";
 export * from "./queries/getCategory";
+export * from "./queries/getConfigurationItems";
 export * from "./queries/getProduct";
 export * from "./queries/getProductConfigurations";
 export * from "./queries/getProductWishlists";

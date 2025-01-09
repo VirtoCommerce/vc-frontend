@@ -1,0 +1,69 @@
+{
+  "quotes": {
+    "meta": {
+      "title": "@:quotes.title",
+      "table_description": "żądane oferty"
+    },
+    "title": "Żądania Ofert",
+    "no_quotes_message": "Nie ma jeszcze żądań ofert",
+    "quote_number_label": "Numer oferty",
+    "date_label": "@:common.labels.date",
+    "status_label": "@:common.labels.status",
+    "total_label": "@:common.labels.total",
+    "search_placeholder": "Wpisz słowo kluczowe...",
+    "no_results_message": "Nie znaleziono wyników",
+    "request_quote_button": "Poproś o Ofertę",
+    "search_quote_requests": "Szukaj żądań ofert",
+    "reset_search": "Zresetuj wyszukiwanie",
+    "cart_widget": {
+      "quote_request_hint": "Możesz poprosić o przedmioty w koszyku za pomocą specjalnej usługi",
+      "create_quote_button": "Dodaj przedmioty z koszyka do oferty",
+      "title": "Żądanie oferty"
+    },
+    "navigation": {
+      "route_name": "Żądania Ofert"
+    },
+    "errors": {
+      "creating_quote_error": "Błąd podczas tworzenia oferty"
+    }
+  },
+  "quote_details": {
+    "quote_request_comment": "Komentarz do żądania oferty",
+    "title": "Żądanie Oferty #{0}",
+    "comment": "Komentarz",
+    "comment_field_label": "Czy masz ogólną uwagę do tego żądania oferty?",
+    "products": "Produkty",
+    "shipping_address": "Adres Dostawy",
+    "billing_address": "Adres Rozliczeniowy",
+    "save_changes": "@:common.buttons.save_changes",
+    "submit": "@:common.buttons.submit",
+    "no_address_message": "Nie ustawiłeś adresu. Proszę podać jeden.",
+    "same_as_shipping_address": "Taki sam jak adres dostawy",
+    "quote_summary": "Podsumowanie Oferty",
+    "quote_data": "Dane Oferty",
+    "subTotal": "@:common.labels.subtotal",
+    "discountTotal": "@:common.labels.discount",
+    "shippingTotal": "@:common.labels.shipping_cost",
+    "taxTotal": "@:common.labels.tax",
+    "total": "@:common.labels.total",
+    "created": "@:common.labels.created",
+    "status": "@:common.labels.status",
+    "no_items_message": "Żądanie oferty nie zawiera przedmiotów",
+    "save_changes_notification_success": "Żądanie oferty zostało pomyślnie zapisane",
+    "select_shipping_address": "Wybierz adres dostawy",
+    "select_billing_address": "Wybierz adres rozliczeniowy",
+    "files": "Pliki",
+    "line_items": {
+      "product": "@:common.labels.product",
+      "properties": "@:common.labels.properties",
+      "price_per_item": "@:common.labels.price_per_item",
+      "quantity": "@:common.labels.quantity",
+      "total": "@:common.labels.total",
+      "subtotal": "@:common.labels.subtotal"
+    },
+    "error": {
+      "approve": "Oferty nie można zatwierdzić",
+      "decline": "Oferty nie można odrzucić"
+    }
+  }
+}

@@ -22,6 +22,8 @@ fragment wishlistLineItemFields on LineItemType {
     id
     code
     slug
+    hasVariations
+    isConfigurable
     outline
     minQuantity
     maxQuantity
@@ -57,6 +59,9 @@ fragment wishlistLineItemFields on LineItemType {
         amount
         formattedAmount
       }
+    }
+    variations {
+      id
     }
   }
 }

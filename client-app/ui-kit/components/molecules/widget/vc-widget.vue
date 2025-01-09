@@ -5,7 +5,8 @@
       `vc-widget--size--${size}`,
       {
         'vc-widget--collapsed': _collapsed,
-        'vc-widget--no-shadow': noShadow,
+        'vc-widget--no-shadow': !shadow,
+        'vc-widget--no-border': !border,
       },
     ]"
   >
@@ -21,7 +22,7 @@
           <slot name="header" v-bind="{ collapsible, collapsed: _collapsed }">
             <span v-if="prependIcon || $slots.prepend" class="vc-widget__prepend-append">
               <slot name="prepend">
-                <VcHexagonIcon v-if="prependIcon" :icon="prependIcon" />
+                <VcShape v-if="prependIcon" :icon="prependIcon" />
               </slot>
             </span>
 
@@ -79,7 +80,8 @@ interface IProps {
   appendIcon?: string;
   collapsible?: boolean;
   collapsed?: boolean;
-  noShadow?: boolean;
+  shadow?: boolean;
+  border?: boolean;
   size?: "xs" | "sm" | "md" | "lg";
 }
 
@@ -87,6 +89,8 @@ const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   size: "md",
+  shadow: true,
+  border: true,
 });
 
 const _collapsed = ref(false);
@@ -111,8 +115,11 @@ watchEffect(() => {
   $sizeLG: "";
 
   --p-x: theme("padding.4");
+  --border-color: var(--vc-widget-border-color, theme("colors.neutral.100"));
+  --divide-color: var(--vc-widget-divide-color, var(--border-color));
+  --bg-color: var(--vc-widget-bg-color, theme("colors.additional.50"));
 
-  @apply relative border border-neutral-100 bg-additional-50 text-neutral-950 text-base rounded divide-y shadow-md bg-center;
+  @apply relative border border-[--border-color] bg-[--bg-color] text-neutral-950 text-base rounded divide-y divide-[--divide-color] shadow-md bg-center;
 
   @media (max-width: theme("screens.md")) {
     .vc-container & {
@@ -174,6 +181,10 @@ watchEffect(() => {
     @apply shadow-none;
   }
 
+  &--no-border {
+    @apply border-none shadow-none;
+  }
+
   &__header-container {
     @apply w-full text-start empty:hidden;
 
@@ -200,7 +211,7 @@ watchEffect(() => {
   }
 
   &__title {
-    @apply flex flex-col justify-center min-h-[--title-min-h] min-w-0 grow text-[length:--title-text] font-bold uppercase;
+    @apply flex flex-col justify-center min-h-[--title-min-h] min-w-0 grow text-[length:--title-text] font-bold uppercase break-words;
   }
 
   &__slot {

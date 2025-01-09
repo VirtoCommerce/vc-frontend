@@ -26,9 +26,7 @@
       "reset_password": "Passwort zurücksetzen",
       "reset_filters": "Filter zurücksetzen",
       "add_to_cart": "In den Warenkorb",
-      "update_cart": "Warenkorb aktualisieren",
       "apply": "Anwenden",
-      "deny": "Verweigern",
       "send": "Senden",
       "more": "Mehr",
       "yes": "Ja",
@@ -45,8 +43,6 @@
       "back_to_order_details": "Zurück zu den Bestelldetails",
       "go_to_checkout": "Zur Kasse",
       "go_to_billing": "Zur Abrechnung",
-      "see_more": "Mehr anzeigen",
-      "see_less": "Weniger anzeigen",
       "show_more": "Mehr anzeigen",
       "hide": "Verstecken",
       "view_invoice": "Rechnung anzeigen",
@@ -57,18 +53,14 @@
       "add_new": "Neu hinzufügen",
       "add_new_address": "Neue Adresse hinzufügen",
       "remove_selected": "Ausgewählte entfernen",
-      "remove_all": "Alle entfernen",
       "resend_link": "Link erneut senden",
       "set_new_password": "Neues Passwort festlegen",
-      "show_hide_password": "Passwort anzeigen/verbergen",
       "toggle_dropdown": "Dropdown umschalten",
-      "remove_from_cart": "Aus dem Warenkorb entfernen",
       "search_orders": "Bestellungen durchsuchen",
       "reset_orders_search_keyword": "Suchbegriff für Bestellungen zurücksetzen",
       "remove_credit_card": "Kreditkarte entfernen",
       "search_company_members": "Firmenmitglieder suchen",
       "reset_company_members_search_keyword": "Suchbegriff für Firmenmitglieder zurücksetzen",
-      "copy": "Kopieren",
       "previous": "Vorherige",
       "next": "Nächste",
       "send_link_email": "Link per E-Mail senden",
@@ -120,10 +112,8 @@
       "properties": "Eigenschaften",
       "price_per_item": "Preis pro Artikel",
       "created": "Erstellt",
-      "not_available": "N/V",
       "purchase_order_number": "Bestellnummer",
       "promotion_code": "Aktionscode",
-      "vendor": "Anbieter",
       "secure_checkout": "Sicherer Checkout",
       "creates": "Erstellt",
       "payment_number": "Zahlungs-ID",
@@ -145,8 +135,6 @@
       "last_year": "Letztes Jahr",
       "custom_date": "Benutzerdefiniertes Datum",
       "background_image": "Hintergrundbild",
-      "product_quantity": "Produktmenge",
-      "toggle_vendor_select": "Anbieter-Auswahl umschalten",
       "default_language": "Standardsprache",
       "default_currency": "Standardwährung",
       "organizations": "Organisationen",
@@ -165,12 +153,9 @@
       "expires": "Läuft ab:"
     },
     "suffixes": {
-      "from": "Von",
-      "per_item": " pro Artikel",
       "product_count_in_stock": "auf Lager"
     },
     "messages": {
-      "loading_text": "Lädt...",
       "product_out_of_stock": "Nicht auf Lager",
       "required_field": "Dieses Feld ist erforderlich",
       "email_is_not_correct": "Bitte geben Sie eine gültige E-Mail-Adresse ein, z.B. johndoe{'@'}gmail.com",
@@ -194,7 +179,6 @@
       "wishlists_available_for_authorized": "Wunschlisten sind nur für authentifizierte Benutzer verfügbar",
       "no_addresses": "Sie haben noch keine Adressen",
       "confirm_delete_address": "Sind Sie sicher, dass Sie diese Adresse löschen möchten?",
-      "no_results": "Keine Ergebnisse gefunden",
       "save_changes": "Möchten Sie die Änderungen speichern?",
       "address_deletion_successful": "Die Adresse wurde erfolgreich gelöscht",
       "cart_contains_deleted_products": "Der Warenkorb enthält Produkte, die nicht mehr gekauft werden können. Bitte entfernen Sie diese Produkte und versuchen Sie es erneut",
@@ -207,7 +191,8 @@
       "password_new_same_old": "Ihr aktuelles Passwort und das neue Passwort müssen unterschiedlich sein.",
       "blocked": "Sie wurden blockiert. Sie können keine Informationen abrufen oder Bestellungen aufgeben. Für weitere Details ",
       "password_about_expire": "Ihr Passwort läuft in {value} Tag(en) ab. Bitte setzen Sie ein neues Passwort im Profil.",
-      "password_expired": "Ihr Passwort ist abgelaufen"
+      "password_expired": "Ihr Passwort ist abgelaufen",
+      "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
@@ -564,7 +549,8 @@
         "message": "Möchten Sie Ihren Warenkorb leeren?"
       },
       "configuration_items": {
-        "title": "Komponentenliste"
+        "title": "Komponentenliste",
+        "edit_configuration": "Konfiguration bearbeiten"
       }
     },
     "catalog": {
@@ -587,6 +573,7 @@
         "assets_block_title": "Dateien",
         "vendor_label": "Anbieter",
         "share_product_label": "Produkt teilen",
+        "create_configuration_button": "Konfiguration erstellen",
         "price_block": {
           "title": "Preis und Lieferung",
           "add_to_list_button": "Zur Liste hinzufügen",
@@ -612,7 +599,9 @@
         "product_configuration": {
           "title": "Parameter konfigurieren",
           "none": "Keine",
-          "nothing_selected": "Nicht ausgewählt"
+          "nothing_selected": "Nicht ausgewählt",
+          "changed_notification": "Die Produktkonfiguration wurde geändert. Sie können die Änderungen später immer durch Klicken auf den \"@:{'ui_kit.buttons.update_cart'}\" Button speichern.",
+          "changed_confirmation": "Die Produktkonfiguration wurde geändert. Möchten Sie sie speichern?"
         }
       },
       "discount_badge": {
@@ -1116,7 +1105,7 @@
       },
       "impersonate": {
         "title": "Nachahmung",
-        "success": "Sie werden nachgeahmt",
+        "success": "Impersonation erfolgreich",
         "error": "Einige Probleme während der Nachahmung. Überprüfen Sie Ihre Berechtigungen"
       }
     },
@@ -1233,6 +1222,7 @@
       "add_to_wishlist_tooltip": "Zur Liste hinzufügen",
       "in_the_list_tooltip": "In der Liste",
       "variations_button": "{0} Variationen",
+      "customize_button": "Konfigurieren",
       "show_on_a_separate_page": "Auf einer separaten Seite anzeigen",
       "no_products_message": "Es gibt keine Produkte in dieser Kategorie",
       "no_products_filtered_message": "Keine Ergebnisse gefunden",

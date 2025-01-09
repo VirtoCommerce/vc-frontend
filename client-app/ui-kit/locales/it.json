@@ -1,0 +1,83 @@
+{
+  "ui_kit": {
+    "buttons": {
+      "add_to_cart": "Aggiungi al carrello",
+      "apply": "Applica",
+      "cancel": "Annulla",
+      "close": "Chiudi",
+      "copy": "Copia",
+      "deny": "Nega",
+      "filters": "Filtri",
+      "ok": "OK",
+      "remove_all": "Rimuovi tutto",
+      "remove_from_cart": "Rimuovi dal carrello",
+      "remove_selected": "Rimuovi selezionati",
+      "see_more": "Vedi di più",
+      "see_less": "Vedi meno",
+      "show_hide_password": "Mostra/nascondi password",
+      "toggle_dropdown": "Attiva/disattiva menu a tendina",
+      "update_cart": "Aggiorna carrello"
+    },
+    "labels": {
+      "not_available": "N/D",
+      "price_per_item": "Prezzo per articolo",
+      "product": "Prodotto",
+      "product_quantity": "Quantità prodotto",
+      "properties": "Proprietà",
+      "subtotal": "Subtotale",
+      "toggle_vendor_select": "Attiva/disattiva selezione fornitore",
+      "total": "Totale",
+      "vendor": "Fornitore"
+    },
+    "suffixes": {
+      "from": "Da",
+      "per_item": " per articolo"
+    },
+    "messages": {
+      "loading_text": "Caricamento...",
+      "no_results": "Nessun risultato trovato"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "nel carrello",
+        "already_in_cart_message": "{0} è già stato aggiunto al carrello",
+        "enter_correct_number_message": "Inserisci un numero valido",
+        "min": "Ordine minimo {0} articolo(i)",
+        "max": "Ordine massimo {0} articolo(i)",
+        "min_max": "Ordine da {0} a {1} articolo(i)",
+        "min_not_available": "Ordine minimo {0} articolo(i) non disponibile in magazzino",
+        "out_of_stock": "Esaurito",
+        "positive_number": "Il valore deve essere un numero positivo",
+        "integer_number": "Il valore deve essere un numero intero",
+        "pack_size": "Ordina in pacchi da {0}"
+      }
+    },
+    "pagination": {
+      "previous": "Precedente",
+      "next": "Successivo"
+    },
+    "select": {
+      "items_selected": "{0} articoli selezionati"
+    },
+    "file": {
+      "progress": "{percent} completato",
+      "uploaded": "Caricamento completato"
+    },
+    "file_uploader": {
+      "drag_and_drop": "Trascina e rilascia il file qui o",
+      "browse": "Sfoglia i tuoi file",
+      "requirements": "I file disponibili per il caricamento sono nei formati {formats}. Ogni file non deve superare {fileSize}. Massimo {maxFileCount} file consentiti.",
+      "any_format": "qualsiasi",
+      "errors": {
+        "fix_to_continue": "Correggi gli errori di caricamento dei file per continuare.",
+        "has_max_file_count": "Hai caricato il numero massimo di file possibile. Ulteriori caricamenti non sono possibili.",
+        "tried_more_than_max_file_count": "Hai provato a caricare più del numero massimo di file consentiti."
+      }
+    },
+    "reach_limit": {
+      "end_list": "Hai raggiunto la fine della lista.",
+      "page_limit_filters": "Nessun altro risultato. Prova a cambiare i filtri.",
+      "page_limit": "Non è possibile mostrare altri risultati."
+    }
+  }
+}

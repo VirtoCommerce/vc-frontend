@@ -1,31 +1,18 @@
-import { useLocalStorage, createGlobalState } from "@vueuse/core";
+import type { AfterFetchContext } from "@vueuse/core";
+import { createGlobalState, useLocalStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useFetch } from "@/core/api/common";
 import { errorHandler, toServerError } from "@/core/api/common/utils";
 import { globals } from "@/core/globals";
 import { TabsType, unauthorizedErrorEvent, useBroadcast, userBeforeUnauthorizeEvent } from "@/shared/broadcast";
-import type { AfterFetchContext } from "@vueuse/core";
-
-type IdentityErrorType = {
-  code?: string;
-  description?: string;
-};
-
-type ConnectTokenResponseType = {
-  expires_in?: number;
-  access_token?: string;
-  refresh_token?: string;
-  errors?: Array<IdentityErrorType>;
-  error: string;
-  token_type?: string;
-};
+import type { ConnectTokenResponseType } from "../types";
 
 function _useAuth() {
   const broadcast = useBroadcast();
 
   const getTokenParams = ref<URLSearchParams>();
 
-  let getTokenRequest = Promise.resolve();
+  let getTokenRequest: Promise<unknown> = Promise.resolve();
   const {
     data,
     execute: getToken,
@@ -103,19 +90,15 @@ function _useAuth() {
 
     getTokenParams.value = params;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await (getTokenRequest = getToken(true));
   }
 
   async function externalSignInCallback(): Promise<void> {
-    const params = new URLSearchParams({
+    getTokenParams.value = new URLSearchParams({
       grant_type: "external_sign_in",
       scope: "offline_access",
     });
 
-    getTokenParams.value = params;
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await (getTokenRequest = getToken(true));
   }
 
@@ -133,14 +116,13 @@ function _useAuth() {
 
     try {
       if (!isAuthorizing.value) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         await (getTokenRequest = getToken(true));
       } else {
         await getTokenRequest;
       }
     } catch {
       state.value = { ...INITIAL_STATE };
-      broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
+      void broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.CURRENT);
     }
   }
 
@@ -187,6 +169,7 @@ function _useAuth() {
     setTokenType,
     setAccessToken,
     setExpiresAt,
+    setRefreshToken,
   };
 }
 

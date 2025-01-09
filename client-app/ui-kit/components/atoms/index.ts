@@ -1,5 +1,4 @@
 export { default as VcActionInput } from "./action-input/vc-action-input.vue";
-export { default as VcAddressLine } from "./address-line/vc-address-line.vue";
 export { default as VcBadge } from "./badge/vc-badge.vue";
 export { default as VcBreadcrumbs } from "./breadcrumbs/vc-breadcrumbs.vue";
 export { default as VcCardSkeleton } from "./card-skeleton/vc-card-skeleton.vue";
@@ -11,12 +10,12 @@ export { default as VcDateSelector } from "./date-selector/vc-date-selector.vue"
 export { default as VcDialog } from "./dialog/vc-dialog.vue";
 export { default as VcEmptyView } from "./empty-view/vc-empty-view.vue";
 export { default as VcExpansionPanels } from "./expansion-panels/vc-expansion-panels.vue";
-export { default as VcHexagonIcon } from "./hexagon-icon/vc-hexagon-icon.vue";
 export { default as VcIcon } from "./icon/vc-icon.vue";
 export { default as VcImage } from "./image/vc-image.vue";
 export { default as VcInfinityScrollLoader } from "./infinity-scroll-loader/vc-infinity-scroll-loader.vue";
 export { default as VcInputDetails } from "./input-details/vc-input-details.vue";
 export { default as VcLabel } from "./label/vc-label.vue";
+export { default as VcLayout } from "./layout/vc-layout.vue";
 export { default as VcLineItemProperty } from "./line-item-property/vc-line-item-property.vue";
 export { default as VcListItem } from "./list-item/vc-list-item.vue";
 export { default as VcLoader } from "./loader/vc-loader.vue";
@@ -33,7 +32,6 @@ export { default as VcProductsGrid } from "./products-grid/vc-products-grid.vue"
 export { default as VcProperty } from "./property/vc-property.vue";
 export { default as VcRadioButton } from "./radio-button/vc-radio-button.vue";
 export { default as VcScrollTopButton } from "./scroll-top-button/vc-scroll-top-button.vue";
-export { default as VcSection } from "./section/vc-section.vue";
 export { default as VcSwitch } from "./switch/vc-switch.vue";
 export { default as VcTabs } from "./tabs/vc-tabs.vue";
 export { default as VcTooltip } from "./tooltip/vc-tooltip.vue";

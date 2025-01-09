@@ -3,7 +3,7 @@ export enum RegistrationKind {
   organization = "organization",
 }
 
-export type RegisterOrganization = {
+export type RegisterOrganizationType = {
   userName: string;
   email: string;
   password: string;
@@ -13,7 +13,7 @@ export type RegisterOrganization = {
   organizationName?: string;
 };
 
-export type SignMeUp = {
+export type SignMeUpType = {
   userName: string;
   email: string;
   password: string;
@@ -21,44 +21,44 @@ export type SignMeUp = {
   lastName: string;
 };
 
-export type ForgotPassword = {
+export type ForgotPasswordType = {
   email: string;
   resetPasswordUrlPath: string;
 };
 
-export type ResetPassword = {
+export type ResetPasswordType = {
   userId: string;
   token: string;
   password: string;
 };
 
-export type ChangePassword = {
+export type ChangePasswordType = {
   userId: string;
   oldPassword: string;
   newPassword: string;
 };
 
-export type CheckoutDefaults = {
+export type CheckoutDefaultsType = {
   deliveryMethod?: string;
   shippingMethodId?: string;
   paymentMethodCode?: string;
 };
 
-export type UserPersonalData = {
+export type UserPersonalDataType = {
   firstName: string;
   lastName: string;
   defaultLanguage?: string;
   currencyCode?: string;
 };
 
-export type OrdersFilterData = {
+export type OrdersFilterDataType = {
   statuses: string[];
   startDate?: string;
   endDate?: string;
 };
 
-export type OrdersFilterChipsItem = {
-  fieldName: keyof OrdersFilterData;
+export type OrdersFilterChipsItemType = {
+  fieldName: keyof OrdersFilterDataType;
   value?: string;
   label: string;
 };

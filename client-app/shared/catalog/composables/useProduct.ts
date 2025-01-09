@@ -1,16 +1,12 @@
 import { ref, computed, readonly } from "vue";
 import { getProduct } from "@/core/api/graphql/catalog";
 import { Logger } from "@/core/utilities";
-import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
-import type { GetProductQuery } from "@/core/api/graphql/types";
-import type { ProductInWishlistEventDataType } from "@/shared/broadcast";
+import type { Product } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
 export function useProduct() {
   const fetching: Ref<boolean> = ref(true);
-  const product: Ref<GetProductQuery["product"] | undefined> = ref();
-
-  const broadcast = useBroadcast();
+  const product: Ref<Product | undefined> = ref();
 
   async function fetchProduct(id: string) {
     fetching.value = true;
@@ -23,14 +19,6 @@ export function useProduct() {
       fetching.value = false;
     }
   }
-
-  broadcast.on(productsInWishlistEvent, (eventItems: ProductInWishlistEventDataType[]) => {
-    eventItems.forEach(({ productId, inWishlist }) => {
-      if (product.value && product.value.id === productId) {
-        product.value = { ...product.value, inWishlist };
-      }
-    });
-  });
 
   return {
     fetchProduct,

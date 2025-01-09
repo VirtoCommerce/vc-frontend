@@ -11,7 +11,7 @@
     with-total
     with-subtotal
     removable
-    selectable
+    :selectable="selectable"
     @select:items="$emit('select:items', $event)"
     @remove:items="$emit('remove:items', $event)"
   >
@@ -42,7 +42,13 @@
     </template>
 
     <template #after-content="{ item }">
-      <ConfigurationItems v-if="item.configurationItems?.length" :configuration-items="item.configurationItems" />
+      <ConfigurationItems
+        v-if="item.isConfigurable"
+        :configuration-items="item.configurationItems"
+        :line-item-id="item.id"
+        allow-edit
+        :route="item.route"
+      />
 
       <div v-if="localizedItemsErrors[item.id]" class="flex flex-col gap-1">
         <VcAlert
@@ -74,6 +80,7 @@ interface IProps {
   readonly?: boolean;
   items?: LineItemType[];
   validationErrors?: ValidationErrorType[];
+  selectable?: boolean;
   sharedSelectedItemIds?: string[];
 }
 
@@ -88,6 +95,7 @@ defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
   validationErrors: () => [],
+  selectable: true,
 });
 
 const validationErrors = toRef(props, "validationErrors");

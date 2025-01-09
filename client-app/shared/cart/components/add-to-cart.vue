@@ -6,6 +6,7 @@
     :min-quantity="product.minQuantity"
     :max-quantity="maxQty"
     :pack-size="product.packSize"
+    :is-active="product.availabilityData?.isActive"
     :is-available="product.availabilityData?.isAvailable"
     :is-buyable="product.availabilityData?.isBuyable"
     :is-in-stock="product.availabilityData?.isInStock"
@@ -15,7 +16,6 @@
     :loading="loading"
     show-empty-details
     validate-on-mount
-    :is-add-only="isConfigurable"
     @update:model-value="onInput"
     @update:cart-item-quantity="onChange"
     @update:validation="onValidationUpdate"
@@ -29,22 +29,16 @@ import { isDefined } from "@vueuse/core";
 import { clone } from "lodash";
 import { computed, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
-import { useErrorsTranslator, useGoogleAnalytics, useHistoricalEvents } from "@/core/composables";
-import { LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
+import { useErrorsTranslator, useAnalytics, useHistoricalEvents } from "@/core/composables";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM, LINE_ITEM_QUANTITY_LIMIT } from "@/core/constants";
 import { ValidationErrorObjectType } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { Logger } from "@/core/utilities";
+import { getUrlSearchParam, Logger } from "@/core/utilities";
 import { useShortCart } from "@/shared/cart/composables";
-import { useConfigurableProduct } from "@/shared/catalog";
+import { useConfigurableProduct } from "@/shared/catalog/composables";
 import { useNotifications } from "@/shared/notification";
 import { AddToCartModeType } from "@/ui-kit/enums";
-import type {
-  Product,
-  ShortCartFragment,
-  ShortLineItemFragment,
-  VariationType,
-  ValidationErrorType,
-} from "@/core/api/graphql/types";
+import type { Product, ShortLineItemFragment, VariationType, ValidationErrorType } from "@/core/api/graphql/types";
 
 const emit = defineEmits<IEmits>();
 
@@ -65,9 +59,10 @@ interface IProps {
 const product = toRef(props, "product");
 const { cart, addToCart, changeItemQuantity } = useShortCart();
 const { t } = useI18n();
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { translate } = useErrorsTranslator<ValidationErrorType>("validation_error");
-const { selectedConfigurationInput } = useConfigurableProduct(product.value.id);
+const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
+const { selectedConfigurationInput, changeCartConfiguredItem } = useConfigurableProduct(product.value.id);
 
 const loading = ref(false);
 const errorMessage = ref<string | undefined>();
@@ -101,34 +96,52 @@ function onInput(value: number): void {
 async function onChange() {
   loading.value = true;
 
-  let lineItem = getLineItem(cart.value?.items);
+  try {
+    const lineItem = getLineItem(cart.value?.items);
+    const mode = lineItem ? AddToCartModeType.Update : AddToCartModeType.Add;
+    const updatedCart = await updateOrAddToCart(lineItem, mode);
 
-  let updatedCart: ShortCartFragment | undefined;
+    if (isConfigurable.value && mode === AddToCartModeType.Add) {
+      loading.value = false;
+      return;
+    }
 
-  const isAlreadyExistsInTheCart = !!lineItem;
-  const mode = isAlreadyExistsInTheCart && !isConfigurable.value ? AddToCartModeType.Update : AddToCartModeType.Add;
+    const updatedLineItem = getLineItem(updatedCart?.items);
+    handleUpdateResult(updatedLineItem, mode);
+  } finally {
+    loading.value = false;
+  }
+}
 
-  if (mode === AddToCartModeType.Update) {
-    updatedCart = await changeItemQuantity(lineItem!.id, enteredQuantity.value || 0);
-  } else {
-    const inputQuantity = enteredQuantity.value || minQty.value;
-    const configurationSections = isConfigurable.value ? selectedConfigurationInput.value : undefined;
-    updatedCart = await addToCart(product.value.id, inputQuantity, configurationSections);
-
-    /**
-     * Send Google Analytics event for an item added to cart.
-     */
-    ga.addItemToCart(product.value, inputQuantity);
-    void pushHistoricalEvent({
-      eventType: "addToCart",
-      sessionId: cart.value?.id,
-      productId: product.value.id,
-      storeId: globals.storeId,
-    });
+async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
+  if (mode === AddToCartModeType.Update && !enteredQuantity.value) {
+    return cart.value;
+  }
+  if (mode === AddToCartModeType.Update && !!lineItem && enteredQuantity.value) {
+    return isConfigurable.value
+      ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
+      : await changeItemQuantity(lineItem.id, enteredQuantity.value);
   }
 
-  lineItem = clone(getLineItem(updatedCart?.items));
+  const quantity = enteredQuantity.value || minQty.value;
+  const config = isConfigurable.value ? selectedConfigurationInput.value : undefined;
+  const updatedCart = await addToCart(product.value.id, quantity, config);
 
+  trackAddToCart(quantity);
+  return updatedCart;
+}
+
+function trackAddToCart(quantity: number) {
+  analytics("addItemToCart", product.value, quantity);
+  void pushHistoricalEvent({
+    eventType: "addToCart",
+    sessionId: cart.value?.id,
+    productId: product.value.id,
+    storeId: globals.storeId,
+  });
+}
+
+function handleUpdateResult(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
   if (!lineItem) {
     Logger.error(onChange.name, 'The variable "lineItem" must be defined');
     notifications.error({
@@ -136,31 +149,34 @@ async function onChange() {
         mode === AddToCartModeType.Update
           ? "common.messages.fail_to_change_quantity_in_cart"
           : "common.messages.fail_add_product_to_cart",
-        {
-          reason: updatedCart?.validationErrors
-            ?.filter(
-              (validationError) =>
-                validationError.objectId === product.value.id &&
-                validationError.objectType === ValidationErrorObjectType.CatalogProduct,
-            )
-            .map((el) => {
-              return translate(el);
-            })
-            .join(" "),
-        },
+        { reason: getValidationErrors() },
       ),
       duration: 4000,
       single: true,
     });
-  } else {
-    emit("update:lineItem", lineItem);
+    return;
   }
 
-  loading.value = false;
+  emit("update:lineItem", clone(lineItem));
+}
+
+function getValidationErrors(): string {
+  return (
+    cart.value?.validationErrors
+      ?.filter(
+        (error) => error.objectId === product.value.id && error.objectType === ValidationErrorObjectType.CatalogProduct,
+      )
+      .map(translate)
+      .join(" ") || ""
+  );
 }
 
 function getLineItem(items?: ShortLineItemFragment[]): ShortLineItemFragment | undefined {
-  return items?.find((item) => item.productId === product.value.id);
+  if (isConfigurable.value) {
+    return configurableLineItemId ? items?.find((item) => item.id === configurableLineItemId) : undefined;
+  } else {
+    return items?.find((item) => item.productId === product.value.id);
+  }
 }
 
 function onValidationUpdate(validation: { isValid: true } | { isValid: false; errorMessage: string }) {

@@ -24,5 +24,5 @@ const { t } = useI18n();
 const toggled = useVModel(props, "modelValue", emit);
 
 const icon = computed<string>(() => (toggled.value ? "chevron-up" : "chevron-down"));
-const text = computed<string>(() => t(toggled.value ? "common.buttons.see_less" : "common.buttons.see_more"));
+const text = computed<string>(() => t(toggled.value ? "ui_kit.buttons.see_less" : "ui_kit.buttons.see_more"));
 </script>

@@ -7,7 +7,13 @@
   >
     <div id="product-configuration-anchor" />
     <div class="product-configuration__widgets">
-      <VcWidget v-for="section in configuration" :key="section.id" collapsible size="xs">
+      <VcWidget
+        v-for="(section, index) in configuration"
+        :key="section.id"
+        collapsible
+        size="xs"
+        :collapsed="index !== 0"
+      >
         <template #title>
           {{ section.name }}
           <div v-if="section.description" class="product-configuration__description">
@@ -18,11 +24,12 @@
           </div>
         </template>
 
-        <div v-if="section.type === 'product' && section.options?.length" class="product-configuration__items">
+        <div v-if="section.options?.length" class="product-configuration__items">
           <template v-for="{ id, product, quantity, listPrice, salePrice, extendedPrice } in section.options" :key="id">
             <VcProductCard v-if="!!product" view-mode="item" class="product-configuration__item">
               <template #media>
                 <VcRadioButton
+                  :model-value="selectedConfiguration[section.id]?.productId"
                   :value="product.id"
                   :name="`selection-${section.id}`"
                   @input="
@@ -79,17 +86,24 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { PropertyType } from "@/core/api/graphql/types";
-import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
+import { getProductRoute, getPropertiesGroupedByName, getUrlSearchParam } from "@/core/utilities";
 import { useConfigurableProduct } from "@/shared/catalog/composables";
+import { SaveChangesModal } from "@/shared/common";
+import { useModal } from "@/shared/modal";
+import { useNotifications } from "@/shared/notification";
 import type { ConfigurationSectionInput, ConfigurationSectionType, Property } from "@/core/api/graphql/types";
 import type { DeepReadonly } from "vue";
 
 const props = defineProps<IProps>();
 
+const configurableLineItemId = getUrlSearchParam(LINE_ITEM_ID_URL_SEARCH_PARAM);
 const PRODUCT_PROPERTY_LIMIT = 3;
+const NOTIFICATIONS_GROUP = "product-configuration";
 
 interface IProps {
   configuration: DeepReadonly<ConfigurationSectionType[]>;
@@ -99,7 +113,34 @@ interface IProps {
 const configurableProductId = toRef(props, "productId");
 
 const { t } = useI18n();
-const { selectSectionValue, selectedConfiguration } = useConfigurableProduct(configurableProductId.value);
+const {
+  selectSectionValue,
+  selectedConfiguration,
+  selectedConfigurationInput,
+  isConfigurationChanged,
+  changeCartConfiguredItem,
+} = useConfigurableProduct(configurableProductId.value);
+
+const { openModal } = useModal();
+const notifications = useNotifications();
+
+watch(isConfigurationChanged, (isChanged) => {
+  if (isChanged && configurableLineItemId) {
+    notifications.info({
+      text: t("shared.catalog.product_details.product_configuration.changed_notification"),
+      group: NOTIFICATIONS_GROUP,
+      button: {
+        text: t("common.buttons.save"),
+        color: "accent",
+        clickHandler() {
+          void changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+        },
+      },
+    });
+  } else {
+    notifications.clear(NOTIFICATIONS_GROUP);
+  }
+});
 
 function handleInput({ sectionId, value }: ConfigurationSectionInput) {
   selectSectionValue({ sectionId, value });
@@ -115,6 +156,41 @@ function getProperties(properties: DeepReadonly<Property[]>) {
     0,
     PRODUCT_PROPERTY_LIMIT,
   );
+}
+
+async function canChangeRoute(): Promise<boolean> {
+  if (!configurableLineItemId) {
+    return true;
+  }
+  if (!isConfigurationChanged.value) {
+    return true;
+  }
+  return await openSaveChangesModal();
+}
+onBeforeRouteLeave(canChangeRoute);
+onBeforeRouteUpdate(canChangeRoute);
+
+async function openSaveChangesModal(): Promise<boolean> {
+  notifications.clear(NOTIFICATIONS_GROUP);
+  return await new Promise<boolean>((resolve) => {
+    const closeModal = openModal({
+      component: SaveChangesModal,
+      props: {
+        title: t("common.titles.save_changes"),
+        message: t("shared.catalog.product_details.product_configuration.changed_confirmation"),
+        onConfirm: async () => {
+          closeModal();
+          if (configurableLineItemId) {
+            await changeCartConfiguredItem(configurableLineItemId, undefined, selectedConfigurationInput.value);
+          }
+          resolve(true);
+        },
+        onClose: () => {
+          resolve(true);
+        },
+      },
+    });
+  });
 }
 </script>
 

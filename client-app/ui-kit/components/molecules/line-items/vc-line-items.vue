@@ -5,7 +5,7 @@
       <div v-if="withHeader" class="vc-line-items__head">
         <VcCheckbox
           v-if="selectable"
-          :name="$t('common.labels.toggle_vendor_select')"
+          :name="$t('ui_kit.labels.toggle_vendor_select')"
           :model-value="isAllItemsSelected"
           :indeterminate="isSomeItemsSelected"
           class="vc-line-items__checkbox"
@@ -14,7 +14,7 @@
         />
 
         <div class="vc-line-items__product">
-          {{ $t("common.labels.product") }}
+          {{ $t("ui_kit.labels.product") }}
         </div>
 
         <div
@@ -26,11 +26,11 @@
             },
           ]"
         >
-          {{ $t("common.labels.properties") }}
+          {{ $t("ui_kit.labels.properties") }}
         </div>
 
         <div v-if="showPrice" class="vc-line-items__price">
-          {{ $t("common.labels.price_per_item") }}
+          {{ $t("ui_kit.labels.price_per_item") }}
         </div>
 
         <div v-if="$slots.default" class="vc-line-items__slot" :style="{ width: slotWidth }">
@@ -38,7 +38,7 @@
         </div>
 
         <div v-if="showTotal" class="vc-line-items__total">
-          {{ $t("common.labels.total") }}
+          {{ $t("ui_kit.labels.total") }}
         </div>
 
         <div v-if="removable" class="vc-line-items__removable"></div>
@@ -57,6 +57,7 @@
             :list-price="item.listPrice"
             :actual-price="item.actualPrice"
             :total="item.extendedPrice"
+            :list-total="item.listTotal"
             :with-image="showImage"
             :with-properties="showProperties"
             :with-price="showPrice"
@@ -67,6 +68,7 @@
             :selectable="selectable"
             :selected="selectable && selectedItemIds?.includes(item.id)"
             :browser-target="browserTarget"
+            :show-placed-price="item.showPlacedPrice"
             @select="($event) => selectSingleItem(item.id, $event)"
             @remove="() => removeSingleItem(item.id)"
           >
@@ -93,25 +95,28 @@
         <template v-if="selectable">
           <VcButton
             class="vc-line-items__button vc-line-items__button--desktop"
+            color="secondary"
+            variant="outline"
             size="xs"
             :disabled="!selectedItemIds.length"
             @click="removeSelectedItems"
           >
-            {{ $t("common.buttons.remove_selected") }}
+            {{ $t("ui_kit.buttons.remove_selected") }}
           </VcButton>
 
           <VcButton
             class="vc-line-items__button vc-line-items__button--mobile"
+            color="secondary"
             size="xs"
             variant="outline"
             @click="removeAllItems"
           >
-            {{ $t("common.buttons.remove_all") }}
+            {{ $t("ui_kit.buttons.remove_all") }}
           </VcButton>
         </template>
 
         <div v-if="withSubtotal" class="vc-line-items__subtotal">
-          <span class="vc-line-items__subtotal-label">{{ $t("common.labels.subtotal") }}:</span>
+          <span class="vc-line-items__subtotal-label">{{ $t("ui_kit.labels.subtotal") }}:</span>
           <span class="vc-line-items__subtotal-sum">{{ $n(subtotal, "currency") }}</span>
         </div>
       </div>

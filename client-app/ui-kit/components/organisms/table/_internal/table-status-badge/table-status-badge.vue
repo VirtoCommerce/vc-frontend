@@ -5,12 +5,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-const props = defineProps({
-  status: {
-    type: String,
-    default: null,
-  },
-});
+interface IProps {
+  status?: string;
+}
+
+const props = defineProps<IProps>();
 
 const newStatusClass = "bg-success text-additional-50";
 const processingStatusClass = "border border-success text-success";

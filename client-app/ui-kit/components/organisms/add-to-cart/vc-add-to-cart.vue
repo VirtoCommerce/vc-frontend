@@ -4,7 +4,7 @@
       v-model.number="quantity"
       :name
       type="number"
-      :aria-label="$t('common.labels.product_quantity')"
+      :aria-label="$t('ui_kit.labels.product_quantity')"
       :disabled="disabled"
       :max="maxQuantity"
       :min="minQuantity"
@@ -93,7 +93,6 @@ interface IProps {
   readonly?: boolean;
   timeout?: number;
   validateOnMount?: boolean;
-  isAddOnly?: boolean;
 }
 
 const emit = defineEmits<IEmits>();
@@ -118,14 +117,13 @@ const {
   isBuyable,
   packSize,
   countInCart,
-  isAddOnly,
 } = toRefs(props);
 
-const mode = computed(() => (countInCart.value && !isAddOnly.value ? AddToCartModeType.Update : AddToCartModeType.Add));
+const mode = computed(() => (countInCart.value ? AddToCartModeType.Update : AddToCartModeType.Add));
 const isButtonOutlined = computed<boolean>(() => mode.value === AddToCartModeType.Add);
 
 const buttonText = computed<string>(() =>
-  mode.value === AddToCartModeType.Update ? t("common.buttons.update_cart") : t("common.buttons.add_to_cart"),
+  mode.value === AddToCartModeType.Update ? t("ui_kit.buttons.update_cart") : t("ui_kit.buttons.add_to_cart"),
 );
 
 const icon = computed<"refresh" | "cart">(() => (mode.value === AddToCartModeType.Update ? "refresh" : "cart"));
@@ -143,7 +141,8 @@ const { quantitySchema } = useQuantityValidationSchema({
 
 const rules = computed(() => toTypedSchema(quantitySchema.value));
 const isDisabled = computed(
-  () => !isValid.value || disabled.value || !isActive || !isAvailable.value || !isBuyable.value || !isInStock.value,
+  () =>
+    !isValid.value || disabled.value || !isActive.value || !isAvailable.value || !isBuyable.value || !isInStock.value,
 );
 
 const {

@@ -8,6 +8,10 @@ fragment orderLineItemFields on OrderLineItemType {
   name
   productId
   productType
+  showPlacedPrice
+  listTotal {
+    ...money
+  }
   product {
     id
     brandName
@@ -36,6 +40,10 @@ fragment orderLineItemFields on OrderLineItemType {
   }
   discountTotal {
     ...money
+  }
+  discounts {
+    promotionId
+    promotionName
   }
   outerId
   vendor {

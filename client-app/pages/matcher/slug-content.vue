@@ -1,19 +1,13 @@
 <template>
-  <div v-if="isVisible && !loading && (hasContent || objectType)" class="slug-content">
+  <div v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent)" class="slug-content">
     <CatalogComponent v-if="objectType === ObjectType.Catalog" />
-
     <CategoryComponent
-      v-else-if="objectType === ObjectType.Category"
+      v-else-if="objectType === 'Category'"
       :category-id="slugInfo?.entityInfo?.objectId"
       allow-set-meta
     />
-
-    <Product
-      v-else-if="objectType === ObjectType.CatalogProduct"
-      :product-id="slugInfo?.entityInfo?.objectId"
-      allow-set-meta
-    />
-
+    <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+    <VirtoPage v-else-if="hasPageDocumentContent" :page-document="pageDocumentContent" />
     <StaticPage v-else-if="hasContent" />
   </div>
 </template>
@@ -42,6 +36,7 @@ const props = defineProps<IProps>();
 const CatalogComponent = defineAsyncComponent(() => import("@/pages/catalog.vue"));
 const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vue"));
 const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
+const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
 const StaticPage = defineAsyncComponent(() => import("@/pages/static-page.vue"));
 
 const { setMatchingRouteName } = useNavigations();
@@ -57,13 +52,24 @@ const seoUrl = computedEager(() => {
   return paths.join("/");
 });
 
-const { loading, slugInfo, objectType, hasContent, pageContent, fetchContent } = useSlugInfo(seoUrl);
+const {
+  loading,
+  slugInfo,
+  objectType,
+  hasContent,
+  hasPageDocumentContent,
+  pageDocumentContent,
+  pageContent,
+  fetchContent,
+  fetchPageDocumentContent,
+} = useSlugInfo(seoUrl);
 
 enum ObjectType {
   Catalog = "Catalog",
   CatalogProduct = "CatalogProduct",
   Category = "Category",
   ContentFile = "ContentFile",
+  VirtoPages = "Pages",
 }
 
 watchEffect(() => {
@@ -72,6 +78,8 @@ watchEffect(() => {
   } else if (
     [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)
   ) {
+    emit("setState", "ready");
+  } else if (pageDocumentContent.value) {
     emit("setState", "ready");
   } else if (pageContent.value) {
     emit("setState", "ready");
@@ -91,6 +99,9 @@ watch(slugInfo, () => {
       break;
     case ObjectType.ContentFile:
       void fetchContent();
+      break;
+    case ObjectType.VirtoPages:
+      void fetchPageDocumentContent();
       break;
     default:
       clearState();

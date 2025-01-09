@@ -102,7 +102,7 @@ const divUnderSharedPopover = shallowRef<HTMLElement | null>(null);
 
 const isMobile = breakpoints.smaller("lg");
 
-const pageUrl = computed(() => location.origin + route.fullPath);
+const pageUrl = computed(() => location.origin + route.path);
 const shareProductPopoverShown = ref(false);
 
 const mailToLink = computed(

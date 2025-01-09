@@ -1,5 +1,57 @@
 {
   "ui_kit": {
+    "buttons": {
+      "add_to_cart": "In den Warenkorb",
+      "apply": "Anwenden",
+      "cancel": "Abbrechen",
+      "close": "Schließen",
+      "copy": "Kopieren",
+      "deny": "Verweigern",
+      "filters": "Filter",
+      "ok": "OK",
+      "remove_all": "Alle entfernen",
+      "remove_from_cart": "Aus dem Warenkorb entfernen",
+      "remove_selected": "Ausgewählte entfernen",
+      "see_more": "Mehr anzeigen",
+      "see_less": "Weniger anzeigen",
+      "show_hide_password": "Passwort anzeigen/verbergen",
+      "toggle_dropdown": "Dropdown umschalten",
+      "update_cart": "Warenkorb aktualisieren"
+    },
+    "labels": {
+      "not_available": "N/V",
+      "price_per_item": "Preis pro Artikel",
+      "product": "Produkt",
+      "product_quantity": "Produktmenge",
+      "properties": "Eigenschaften",
+      "subtotal": "Zwischensumme",
+      "toggle_vendor_select": "Anbieter-Auswahl umschalten",
+      "total": "Gesamt",
+      "vendor": "Anbieter"
+    },
+    "suffixes": {
+      "from": "Von",
+      "per_item": " pro Artikel"
+    },
+    "messages": {
+      "loading_text": "Lädt...",
+      "no_results": "Keine Ergebnisse gefunden"
+    },
+    "add_to_cart": {
+      "errors": {
+        "in_cart": "im Warenkorb",
+        "already_in_cart_message": "{0} wurde bereits zum Warenkorb hinzugefügt",
+        "enter_correct_number_message": "Bitte geben Sie eine gültige Zahl ein",
+        "min": "Minimale Bestellung {0} Artikel(n)",
+        "max": "Maximale Bestellung {0} Artikel(n)",
+        "min_max": "Bestellen Sie von {0} bis {1} Artikel(n)",
+        "min_not_available": "Minimale Bestellung von {0} Artikel(n) ist nicht auf Lager",
+        "out_of_stock": "Nicht auf Lager",
+        "positive_number": "Der Wert muss eine positive Zahl sein",
+        "integer_number": "Der Wert muss eine ganze Zahl sein",
+        "pack_size": "Bestellen in Packungen von {0}"
+      }
+    },
     "pagination": {
       "previous": "Vorherige",
       "next": "Nächste"

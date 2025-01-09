@@ -111,13 +111,14 @@ import { cloneDeep, isEqual, keyBy, pick } from "lodash";
 import { computed, ref, watchEffect, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { useGoogleAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
+import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { prepareLineItem } from "@/core/utilities";
-import { productsInWishlistEvent, useBroadcast } from "@/shared/broadcast";
+import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, getItemsForAddBulkItemsToCartResultsModal } from "@/shared/cart";
 import { ProductSkeletonGrid } from "@/shared/catalog";
+import { SaveChangesModal } from "@/shared/common";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import {
@@ -126,7 +127,6 @@ import {
   DeleteWishlistProductModal,
   WishlistLineItems,
   WishlistProductItemSkeleton,
-  SaveWishlistChangesModal,
 } from "@/shared/wishlists";
 import type {
   InputUpdateWishlistItemsType,
@@ -146,7 +146,7 @@ const props = defineProps<IProps>();
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
 const { t } = useI18n();
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const broadcast = useBroadcast();
 const { openModal } = useModal();
 const { listLoading, list, fetchWishList, updateItemsInWishlist } = useWishlists();
@@ -207,7 +207,7 @@ async function addAllListItemsToCart(): Promise<void> {
   await addItemsToCart(items);
 
   const products = wishlistItems.value.map((item) => item.product!);
-  ga.addItemsToCart(products);
+  analytics("addItemsToCart", products);
   void pushHistoricalEvent({
     eventType: "addToCart",
     sessionId: cart.value?.id,
@@ -233,8 +233,10 @@ async function updateItems() {
 async function openSaveChangesModal(): Promise<boolean> {
   return await new Promise<boolean>((resolve) => {
     const closeModal = openModal({
-      component: SaveWishlistChangesModal,
+      component: SaveChangesModal,
       props: {
+        title: t("pages.account.list_details.save_changes"),
+        message: t("pages.account.list_details.save_changes_message"),
         onConfirm: async () => {
           closeModal();
           await updateItems();
@@ -287,7 +289,7 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   } else {
     await addToCart(lineItem.product.id, quantity);
 
-    ga.addItemToCart(lineItem.product, quantity);
+    analytics("addItemToCart", lineItem.product, quantity);
     void pushHistoricalEvent({
       eventType: "addToCart",
       sessionId: cart.value?.id,
@@ -313,7 +315,7 @@ function openDeleteProductModal(values: string[]): void {
         async onResult(): Promise<void> {
           const previousPagesCount = pagesCount.value;
 
-          void broadcast.emit(productsInWishlistEvent, [{ productId: item.productId, inWishlist: false }]);
+          void broadcast.emit(dataChangedEvent);
 
           wishlistItems.value = wishlistItems.value?.filter((listItem) => listItem.id !== item.id);
 
@@ -355,7 +357,7 @@ watchEffect(() => {
     .filter(Boolean);
 
   if (items?.length) {
-    ga.viewItemList(items, {
+    analytics("viewItemList", items, {
       item_list_name: `Wishlist "${list.value?.name}"`,
     });
   }

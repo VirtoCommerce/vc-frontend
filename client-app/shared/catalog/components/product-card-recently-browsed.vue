@@ -14,8 +14,17 @@
     />
 
     <VcProductButton
-      v-if="product.hasVariations"
+      v-if="product.isConfigurable"
       :to="link"
+      :button-text="$t('pages.catalog.customize_button')"
+      icon="cube-transparent"
+      target="_blank"
+    />
+
+    <VcProductButton
+      v-else-if="product.hasVariations"
+      :to="link"
+      target="_blank"
       :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
     />
 
@@ -92,6 +101,6 @@ function onValidationUpdate(validation: { isValid: true } | { isValid: false; er
 }
 
 watch(countInCart, (newCount) => {
-  quantity.value = newCount || 1;
+  quantity.value = newCount || product.value.minQuantity || 1;
 });
 </script>

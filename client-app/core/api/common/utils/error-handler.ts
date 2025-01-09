@@ -12,13 +12,13 @@ export function errorHandler(error: ServerError | undefined) {
 
   switch (error) {
     case ServerError.Unhandled:
-      broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
+      void broadcast.emit(unhandledErrorEvent, undefined, TabsType.ALL);
       break;
     case ServerError.Unauthorized:
-      broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
+      void broadcast.emit(unauthorizedErrorEvent, undefined, TabsType.ALL);
       break;
     case ServerError.Forbidden:
-      broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
+      void broadcast.emit(forbiddenEvent, undefined, TabsType.CURRENT);
       break;
   }
 }

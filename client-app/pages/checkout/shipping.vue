@@ -1,8 +1,8 @@
 <template>
-  <VcLayoutWithRightSidebar is-sidebar-sticky>
+  <VcLayout sidebar-position="right" sticky-sidebar>
     <ShippingDetailsSection />
 
-    <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
+    <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
 
     <template #sidebar>
       <OrderSummary :cart="cart!" :selected-items="selectedLineItems" footnote>
@@ -10,7 +10,9 @@
           <ProceedTo
             :to="{ name: 'Billing' }"
             :disabled="!isValidShipment"
-            @click="ga.addShippingInfo({ ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)"
+            @click="
+              analytics('addShippingInfo', { ...cart!, items: selectedLineItems }, {}, shipment?.shipmentMethodOption)
+            "
           >
             {{ $t("common.buttons.go_to_billing") }}
           </ProceedTo>
@@ -29,15 +31,15 @@
         </template>
       </OrderSummary>
     </template>
-  </VcLayoutWithRightSidebar>
+  </VcLayout>
 </template>
 
 <script setup lang="ts">
-import { useGoogleAnalytics } from "@/core/composables";
+import { useAnalytics } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { OrderCommentSection, OrderSummary, ProceedTo, ShippingDetailsSection, useCheckout } from "@/shared/checkout";
 
 const { cart, shipment, selectedLineItems, hasValidationErrors } = useFullCart();
 const { comment, isValidShipment } = useCheckout();
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 </script>

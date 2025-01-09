@@ -2,7 +2,14 @@
   <teleport to="body">
     <!-- Sidebar back cover -->
     <transition name="fade">
-      <div v-if="isVisible" class="fixed inset-0 z-50 size-full bg-neutral-900/30" @click="onHide" />
+      <div
+        v-if="isVisible"
+        class="fixed inset-0 z-50 size-full bg-neutral-900/30"
+        role="button"
+        tabindex="0"
+        @click="onHide"
+        @keypress="onHide"
+      />
     </transition>
 
     <!-- Sidebar content -->
@@ -20,7 +27,7 @@
         <div class="relative z-[1] flex items-center justify-between gap-2 ps-5 shadow-sm">
           <slot name="header" :hide="onHide">
             <div class="text-2xl font-bold">
-              {{ title ?? $t("common.buttons.filters") }}
+              {{ title ?? $t("ui_kit.buttons.filters") }}
             </div>
 
             <button type="button" class="appearance-none px-5 py-4" @click="onHide">

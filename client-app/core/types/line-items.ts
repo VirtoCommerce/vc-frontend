@@ -1,4 +1,11 @@
-import type { AvailabilityData, CommonVendor, MoneyType, Product, Property } from "@/core/api/graphql/types";
+import type {
+  AvailabilityData,
+  CommonVendor,
+  MoneyType,
+  Product,
+  Property,
+  VariationType,
+} from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
 export type AnyLineItemType = {
@@ -24,10 +31,15 @@ export type AnyLineItemType = {
     price: MoneyType;
     quantity: number;
   };
+  isConfigurable?: boolean;
+  hasVariations?: boolean;
+  variations?: VariationType[];
   configurationItems?: {
     id: string;
     name?: string;
   }[];
+  showPlacedPrice?: boolean;
+  listTotal?: MoneyType;
 };
 
 export type VendorGroupType<T> = {
@@ -57,8 +69,13 @@ export type PreparedLineItemType = {
   sku?: string;
   productId?: string;
   countInCart?: number;
+  isConfigurable?: boolean;
+  hasVariations?: boolean;
+  variations?: VariationType[];
   configurationItems?: {
     id: string;
     name?: string;
   }[];
+  showPlacedPrice?: boolean;
+  listTotal?: MoneyType;
 };

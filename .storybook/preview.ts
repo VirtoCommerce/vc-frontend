@@ -1,12 +1,10 @@
 import { setup } from "@storybook/vue3";
-import { merge } from "lodash";
 import { vueRouter } from "storybook-vue3-router";
 import { useFetch } from "../client-app/core/api/common";
 import { setGlobals } from "../client-app/core/globals";
 import { createI18n } from "../client-app/i18n";
 import { uiKit } from "../client-app/ui-kit";
 import UI_KIT_DEFAULT_MESSAGE from "../client-app/ui-kit/locales/en.json";
-import DEFAULT_MESSAGE from "../locales/en.json";
 import type { I18n } from "../client-app/i18n";
 import type { Preview } from "@storybook/vue3";
 
@@ -35,7 +33,7 @@ async function configureThemeSettings() {
 }
 
 function configureI18N() {
-  i18n.global.setLocaleMessage(DEFAULT_LOCALE, merge({}, DEFAULT_MESSAGE, UI_KIT_DEFAULT_MESSAGE));
+  i18n.global.setLocaleMessage(DEFAULT_LOCALE, UI_KIT_DEFAULT_MESSAGE);
 }
 
 setup(async (app) => {

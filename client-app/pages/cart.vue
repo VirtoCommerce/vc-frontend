@@ -1,22 +1,24 @@
 <template>
-  <VcLoaderOverlay v-if="loading" no-bg />
+  <template v-if="!cart?.items?.length">
+    <VcLoaderOverlay v-if="loading" no-bg />
 
-  <VcEmptyPage
-    v-else-if="!cart?.items?.length"
-    :title="$t('pages.cart.title')"
-    :description="$t('pages.cart.empty_cart_description')"
-    image="/static/images/errors/emptyCart.webp"
-    mobile-image="/static/images/errors/emptyCartMobile.webp"
-    :breadcrumbs="breadcrumbs"
-  >
-    <template #actions>
-      <VcButton :to="{ name: 'Catalog' }" size="lg">
-        {{ $t("common.buttons.continue_shopping") }}
-      </VcButton>
-    </template>
-  </VcEmptyPage>
+    <VcEmptyPage
+      v-else
+      :title="$t('pages.cart.title')"
+      :description="$t('pages.cart.empty_cart_description')"
+      image="/static/images/errors/emptyCart.webp"
+      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template #actions>
+        <VcButton :to="{ name: 'Catalog' }" size="lg">
+          {{ $t("common.buttons.continue_shopping") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+  </template>
 
-  <VcContainer v-else class="relative z-0">
+  <VcContainer v-else class="relative z-0 max-lg:pb-12">
     <VcLoaderOverlay :visible="isCartLoked" fixed-spinner />
 
     <VcBreadcrumbs :items="breadcrumbs" class="max-lg:hidden" />
@@ -25,7 +27,7 @@
       {{ $t("pages.cart.title") }}
     </VcTypography>
 
-    <VcLayoutWithRightSidebar is-sidebar-sticky>
+    <VcLayout sidebar-position="right" sticky-sidebar>
       <ProductsSection
         :grouped="!!$cfg.line_items_group_by_vendor_enabled"
         :items="cart.items"
@@ -42,19 +44,20 @@
       <GiftsSection
         v-if="$cfg.checkout_gifts_enabled && availableExtendedGifts.length"
         :gifts="availableExtendedGifts"
+        class="mt-5"
         @toggle:gift="toggleGift"
       />
 
       <!-- Sections for single page checkout -->
       <template v-if="!$cfg.checkout_multistep_enabled">
-        <ShippingDetailsSection v-if="!allItemsAreDigital" />
+        <ShippingDetailsSection v-if="!allItemsAreDigital" class="mt-5" />
 
-        <BillingDetailsSection />
+        <BillingDetailsSection class="mt-5" />
 
-        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" />
+        <OrderCommentSection v-if="$cfg.checkout_comment_enabled" v-model:comment="comment" class="mt-5" />
       </template>
 
-      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" />
+      <RecentlyBrowsedProducts v-if="recentlyBrowsedProducts.length" :products="recentlyBrowsedProducts" class="mt-5" />
 
       <template #sidebar>
         <OrderSummary :cart="cart!" :selected-items="selectedLineItems" :no-shipping="allItemsAreDigital" footnote>
@@ -77,11 +80,12 @@
               v-if="$cfg.checkout_multistep_enabled"
               :to="{ name: 'Checkout' }"
               :disabled="hasOnlyUnselectedLineItems"
+              class="mt-4"
             >
               {{ $t("common.buttons.go_to_checkout") }}
             </ProceedTo>
 
-            <PlaceOrder v-else />
+            <PlaceOrder v-else class="mt-4" />
 
             <template v-if="!$cfg.checkout_multistep_enabled">
               <transition name="slide-fade-top" mode="out-in" appear>
@@ -117,31 +121,43 @@
           :is="item.element"
           v-for="item in sidebarWidgets"
           :key="item.id"
+          class="mt-5"
           @lock-cart="isCartLoked = true"
           @unlock-cart="isCartLoked = false"
         />
       </template>
-    </VcLayoutWithRightSidebar>
+    </VcLayout>
 
     <transition name="slide-fade-bottom">
       <div
-        v-if="!isEmpty(selectedItemIds)"
-        class="shadow-t-lgs fixed bottom-0 left-0 z-10 flex w-full justify-center bg-additional-50 p-6 md:hidden print:hidden"
+        v-if="!loading && cart?.items?.length"
+        class="fixed bottom-0 left-0 z-10 w-full bg-additional-50 px-6 pb-5 pt-3 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.1),0px_0px_25px_-5px_rgba(0,0,0,0.2)] md:hidden print:hidden"
       >
-        <VcButton variant="outline" prepend-icon="trash" @click="handleRemoveItems(selectedItemIds)">
-          {{ $t("common.buttons.remove_selected") }}
-        </VcButton>
+        <div class="text-end text-base font-bold text-neutral-950">
+          <span class="me-1">{{ $t("common.labels.total") }}:</span>
+          <VcPriceDisplay v-if="cart.total" :value="cart.total" />
+        </div>
+
+        <ProceedTo
+          v-if="$cfg.checkout_multistep_enabled"
+          :to="{ name: 'Checkout' }"
+          :disabled="hasOnlyUnselectedLineItems"
+          class="!mt-2"
+        >
+          {{ $t("common.buttons.go_to_checkout") }}
+        </ProceedTo>
+
+        <PlaceOrder v-else class="!mt-2" />
       </div>
     </transition>
   </VcContainer>
 </template>
 
 <script setup lang="ts">
-import { isEmpty } from "lodash";
 import { computed, inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
 import { configInjectionKey } from "@/core/injection-keys";
@@ -164,7 +180,7 @@ import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browse
 
 const config = inject(configInjectionKey, {});
 
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
 const {
@@ -216,7 +232,10 @@ async function handleRemoveItems(itemIds: string[]): Promise<void> {
   /**
    * Send Google Analytics event for an item was removed from cart.
    */
-  ga.removeItemsFromCart(cart.value!.items!.filter((item) => itemIds.includes(item.id)));
+  analytics(
+    "removeItemsFromCart",
+    cart.value!.items!.filter((item) => itemIds.includes(item.id)),
+  );
 }
 
 function handleSelectItems(value: { itemIds: string[]; selected: boolean }) {
@@ -234,7 +253,7 @@ void (async () => {
    * Send a Google Analytics shopping cart view event.
    */
   if (cart.value) {
-    ga.viewCart(cart.value);
+    analytics("viewCart", cart.value);
   }
 
   if (!config.checkout_multistep_enabled) {

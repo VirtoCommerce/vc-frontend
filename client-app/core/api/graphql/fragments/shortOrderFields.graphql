@@ -21,6 +21,7 @@ fragment shortOrderFields on CustomerOrderType {
     coupon
     description
     promotionId
+    promotionName
   }
   discountTotal {
     ...money

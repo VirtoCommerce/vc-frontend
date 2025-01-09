@@ -1,12 +1,12 @@
 <template>
   <VcContainer>
-    <div class="flex gap-x-6">
-      <!-- First column-->
-      <AccountNavigation v-if="!$route.meta?.hideLeftSidebar" class="w-2/6 max-w-[236px] flex-none max-lg:hidden" />
+    <VcLayout>
+      <template v-if="!$route.meta?.hideLeftSidebar" #sidebar>
+        <AccountNavigation class="max-md:hidden" />
+      </template>
 
-      <!-- Second column-->
-      <router-view class="relative flex w-full min-w-0 flex-col gap-y-5" />
-    </div>
+      <router-view class="relative flex flex-col gap-y-5" />
+    </VcLayout>
   </VcContainer>
 </template>
 

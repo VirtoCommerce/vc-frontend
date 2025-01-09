@@ -1,0 +1,5 @@
+mutation ChangeCartConfiguredItem($command: InputChangeCartConfiguredItemType!) {
+  changeCartConfiguredItem(command: $command) {
+    ...fullCart
+  }
+}

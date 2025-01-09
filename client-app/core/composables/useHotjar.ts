@@ -16,7 +16,7 @@ export function useHotjar() {
         const { useHotjarModule } = await import("@virto-commerce/front-modules-hotjar");
         const { initModule } = useHotjarModule();
 
-        initModule({
+        void initModule({
           getModuleSettings,
           isDevelopment: IS_DEVELOPMENT,
           logger: Logger,

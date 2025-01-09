@@ -126,7 +126,7 @@
 import { computed, ref, inject, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetProductWishlistsQuery } from "@/core/api/graphql/catalog/queries/getProductWishlists";
-import { useGoogleAnalytics } from "@/core/composables";
+import { useAnalytics } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
@@ -135,7 +135,7 @@ import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import { useWishlists } from "../composables";
 import type { Product as ProductType } from "@/core/api/graphql/types";
-import type { WishlistInputType } from "@/shared/wishlists/types";
+import type { IWishlistInput } from "@/shared/wishlists/types";
 import WishlistStatus from "@/shared/wishlists/components/wishlist-status.vue";
 
 interface IProps {
@@ -165,7 +165,7 @@ const {
   removeItemsFromWishlists,
 } = useWishlists({ autoRefetch: false });
 const notifications = useNotifications();
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const {
   loading: loadingProductWishlists,
   load: fetchProductWishlists,
@@ -176,7 +176,7 @@ const {
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
 const removedLists = ref<string[]>([]);
-const newLists = ref<WishlistInputType[]>([]);
+const newLists = ref<IWishlistInput[]>([]);
 
 const config = inject(configInjectionKey);
 const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
@@ -228,7 +228,7 @@ async function addToWishlistsFromListOther() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value!);
+  analytics("addItemToWishList", product.value!);
 }
 
 async function createLists() {
@@ -249,7 +249,7 @@ async function createLists() {
   /**
    * Send Google Analytics event for an item added to wish list.
    */
-  ga.addItemToWishList(product.value!);
+  analytics("addItemToWishList", product.value!);
 }
 
 async function removeProductFromWishlists() {

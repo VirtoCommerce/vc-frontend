@@ -17,7 +17,7 @@
             {{ $t("shared.checkout.billing_details_section.labels.same_as_shipping_address") }}
           </VcCheckbox>
 
-          <VcAddressSelection
+          <AddressSelection
             :placeholder="
               !allItemsAreDigital && billingAddressEqualsShipping
                 ? $t('shared.checkout.shipping_details_section.links.select_address')
@@ -83,6 +83,7 @@
 <script setup lang="ts">
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout/composables";
+import { AddressSelection } from "@/shared/common";
 
 interface IProps {
   disabled?: boolean;

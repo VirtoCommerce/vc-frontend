@@ -37,8 +37,8 @@
       </VcCopyText>
     </div>
 
-    <div class="mt-5 flex flex-col gap-6 sm:gap-7 md:flex-row md:items-start md:gap-4 lg:gap-5 xl:gap-6">
-      <div class="contents md:block md:w-0 md:grow md:space-y-6 xl:space-y-7">
+    <VcLayout sidebar-position="right" sticky-sidebar class="mt-5">
+      <div class="space-y-5 xl:space-y-7">
         <component
           :is="productInfoSection?.type"
           v-if="productInfoSection && !productInfoSection.hidden"
@@ -96,15 +96,14 @@
         </template>
       </div>
 
-      <ProductSidebar
-        :class="[
-          'flex-none md:sticky md:top-18 md:w-64 lg:top-[6.5rem] xl:w-[17.875rem]',
-          { 'print:hidden': product.hasVariations },
-        ]"
-        :product="sideBarProduct"
-        :variations="variations"
-      />
-    </div>
+      <template #sidebar>
+        <ProductSidebar
+          :class="['max-md:mt-5', { 'print:hidden': product.hasVariations }]"
+          :product="product"
+          :variations="variations"
+        />
+      </template>
+    </VcLayout>
   </VcContainer>
 
   <Error404 v-else-if="!fetchingProduct && productTemplate" />
@@ -116,7 +115,7 @@ import { useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
-import { useBreadcrumbs, useGoogleAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
 import { useHistoricalEvents } from "@/core/composables/useHistoricalEvents";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS } from "@/core/constants";
@@ -144,10 +143,9 @@ import {
   useRecommendedProducts,
   useConfigurableProduct,
 } from "@/shared/catalog";
-import type { Product } from "@/core/api/graphql/types";
 import type { FacetItemType, FacetValueItemType, ISortInfo } from "@/core/types";
 import type { FiltersDisplayOrderType, ProductsFiltersType, ProductsSearchParamsType } from "@/shared/catalog";
-import type { PageTemplate } from "@/shared/static-content";
+import type { IPageTemplate } from "@/shared/static-content";
 import FiltersPopupSidebar from "@/shared/catalog/components/category/filters-popup-sidebar.vue";
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -200,7 +198,7 @@ const { recommendedProducts, fetchRecommendedProducts } = useRecommendedProducts
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
-const ga = useGoogleAnalytics();
+const { analytics } = useAnalytics();
 const { catalogBreadcrumb } = useCategory();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
@@ -221,16 +219,12 @@ const variationsSearchParams = shallowRef<ProductsSearchParamsType>({
   ]),
 });
 
-const sideBarProduct = computed(() => {
-  return product.value as Product;
-});
-
 const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.value?.name);
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
 
-const productTemplate = _productTemplate as PageTemplate;
+const productTemplate = _productTemplate as IPageTemplate;
 
 const productInfoSection = productTemplate?.content?.find((item) => item?.type === "product-info");
 
@@ -363,7 +357,7 @@ watchEffect(async () => {
 watchEffect(() => {
   if (product.value) {
     // todo https://github.com/VirtoCommerce/vc-theme-b2b-vue/issues/1098
-    ga.viewItem(product.value as Product);
+    analytics("viewItem", product.value);
     void pushHistoricalEvent({
       eventType: "click",
       productId: product.value.id,
@@ -377,7 +371,7 @@ watchEffect(() => {
  */
 watchEffect(() => {
   if (relatedProducts.value.length) {
-    ga.viewItemList(relatedProducts.value, {
+    analytics("viewItemList", relatedProducts.value, {
       item_list_id: "related_products",
       item_list_name: t("pages.product.related_product_section_title"),
     });
