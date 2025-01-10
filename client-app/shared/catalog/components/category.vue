@@ -470,7 +470,7 @@ watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
   () => {
     if (categoryProductsAnchor.value) {
-      categoryProductsAnchor.value.scrollIntoView({ behavior: "smooth", block: "center" });
+      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
     }
     void fetchProducts();
   },
