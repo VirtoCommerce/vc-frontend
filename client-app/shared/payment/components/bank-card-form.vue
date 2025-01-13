@@ -162,14 +162,14 @@ const [month] = defineField("month");
 const [year] = defineField("year");
 const [securityCode] = defineField("securityCode");
 
-const expirationDate = computed<string>({
+const expirationDate = computed<string | undefined, string>({
   get: (previousValue) => {
     const isMonthComplete = !!month.value && month.value.length === 2;
     const isRemovingYear = !year.value && previousValue?.includes("/");
     const showDivider = (isMonthComplete && !isRemovingYear) || year.value;
     return showDivider ? `${month.value ?? "  "} / ${year.value}` : month.value;
   },
-  set: (value: string) => {
+  set: (value) => {
     if (value) {
       const rawMonth = value.slice(0, 2);
       const rawYear = value.includes("/") ? value.split(/\s*\/\s*/)[1] : value.slice(2, 4);
