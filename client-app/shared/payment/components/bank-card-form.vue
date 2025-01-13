@@ -162,14 +162,22 @@ const [month] = defineField("month");
 const [year] = defineField("year");
 const [securityCode] = defineField("securityCode");
 
-const expirationDate = computed({
-  get: () =>
-    (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
-  set: (value) => {
+const expirationDate = computed<string>({
+  get: (previousValue) => {
+    const isRemovingYear = !year.value && previousValue?.includes("/");
+    return (month.value && month.value.length > 1 && !isRemovingYear) || year.value
+      ? `${month.value ?? "  "} / ${year.value}`
+      : month.value;
+  },
+  set: (value: string) => {
     if (value) {
-      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
+      const rawMonth = value.slice(0, 2);
+      const rawYear = value.includes("/") ? value.split(/\s*\/\s*/)[1] : value.slice(2, 4);
       month.value = rawMonth;
       year.value = rawYear;
+    } else {
+      month.value = "";
+      year.value = "";
     }
   },
 });
