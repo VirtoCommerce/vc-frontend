@@ -164,10 +164,10 @@ const [securityCode] = defineField("securityCode");
 
 const expirationDate = computed<string>({
   get: (previousValue) => {
+    const isMonthComplete = !!month.value && month.value.length === 2;
     const isRemovingYear = !year.value && previousValue?.includes("/");
-    return (month.value && month.value.length > 1 && !isRemovingYear) || year.value
-      ? `${month.value ?? "  "} / ${year.value}`
-      : month.value;
+    const showDivider = (isMonthComplete && !isRemovingYear) || year.value;
+    return showDivider ? `${month.value ?? "  "} / ${year.value}` : month.value;
   },
   set: (value: string) => {
     if (value) {
