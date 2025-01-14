@@ -64,9 +64,6 @@ export interface IEmits {
 interface IAttributes {
   to?: RouteLocationRaw | null;
   href?: string;
-  style?: {
-    minWidth?: string;
-  };
 }
 
 interface IProps {
@@ -87,6 +84,7 @@ interface IProps {
   fullWidth?: boolean;
   noWrap?: boolean;
   minWidth?: string;
+  tag?: string;
 }
 
 defineEmits<IEmits>();
@@ -102,6 +100,8 @@ const props = withDefaults(defineProps<IProps>(), {
   truncate: false,
   fullWidth: false,
   noWrap: false,
+  minWidth: "",
+  tag: "",
 });
 
 const enabled = eagerComputed<boolean>(() => !props.disabled && !props.loading);
@@ -113,6 +113,10 @@ const target = computed<string | undefined>(() =>
 );
 
 const componentTag = computed(() => {
+  if (props.tag) {
+    return props.tag;
+  }
+
   if (isRouterLink.value) {
     return "router-link";
   }
@@ -135,19 +139,14 @@ const attrs = computed(() => {
     attributes.href = props.externalLink;
   }
 
-  if (props.minWidth) {
-    attributes.style = {
-      minWidth: props.minWidth,
-    };
-  }
-
   return attributes;
 });
 </script>
 
 <style lang="scss">
 .vc-button {
-  --min-w: var(--vc-button-min-width, auto);
+  --props-min-width: v-bind(props.minWidth);
+  --min-w: var(--props-min-width, var(--vc-button-min-width, auto));
 
   $colors: primary, secondary, success, info, neutral, warning, danger, accent;
 
@@ -160,7 +159,7 @@ const attrs = computed(() => {
   $loaderIcon: "";
   $noWrap: "";
 
-  @apply relative inline-block rounded border-2 select-none text-center tracking-wide;
+  @apply relative inline-block rounded border-2 select-none text-center;
 
   &--truncate {
     $truncate: &;
@@ -208,21 +207,25 @@ const attrs = computed(() => {
     &--xs {
       --line-height: 0.875rem;
 
-      @apply px-2.5 py-1 text-xs/[--line-height] font-bold;
+      @apply px-3 py-1.5 text-xs/[--line-height] font-bold;
 
       &#{$icon} {
-        @apply px-1;
+        @apply px-1.5;
       }
 
       & #{$loaderIcon} {
-        @apply border-2 w-3.5 h-3.5;
+        @apply border-2 size-3.5;
       }
     }
 
     &--sm {
-      --line-height: 1rem;
+      --line-height: 1.25rem;
 
-      @apply p-2 text-xs/[--line-height] uppercase font-black;
+      @apply px-3.5 py-2 text-xs/[--line-height] uppercase font-black;
+
+      &#{$icon} {
+        @apply px-2;
+      }
 
       & #{$loaderIcon} {
         @apply border-2 w-4 h-4;
@@ -232,7 +235,11 @@ const attrs = computed(() => {
     &--md {
       --line-height: 1.25rem;
 
-      @apply p-2.5 text-sm/[--line-height] uppercase font-black;
+      @apply px-4 py-2.5 text-sm/[--line-height] uppercase font-black;
+
+      &#{$icon} {
+        @apply px-2.5;
+      }
 
       & #{$loaderIcon} {
         @apply border-[3px] w-5 h-5;
@@ -242,7 +249,11 @@ const attrs = computed(() => {
     &--lg {
       --line-height: 1.5rem;
 
-      @apply p-3.5 text-base/[--line-height] uppercase font-black;
+      @apply px-5 py-3.5 text-base/[--line-height] uppercase font-black;
+
+      &#{$icon} {
+        @apply px-3.5;
+      }
 
       & #{$loaderIcon} {
         @apply border-[3px] w-6 h-6;
@@ -257,13 +268,13 @@ const attrs = computed(() => {
       }
 
       &:not([class*="--solid--"]) #{$loaderIcon} {
-        @apply border-[--color-#{$color}-100] border-r-[--color-#{$color}-500];
+        @apply border-[--color-#{$color}-100] border-r-[--color-#{$color}-600];
       }
     }
 
     &--solid--#{$color} {
-      @apply bg-[--color-#{$color}-500]
-      border-[--color-#{$color}-500]
+      @apply bg-[--color-#{$color}-600]
+      border-[--color-#{$color}-600]
       text-additional-50;
 
       &:hover:not(#{$loading}, #{$disabled}) {
@@ -277,7 +288,7 @@ const attrs = computed(() => {
     }
 
     &--no-border--#{$color} {
-      @apply bg-additional-50 text-[--color-#{$color}-500] border-additional-50;
+      @apply bg-additional-50 text-[--color-#{$color}-600] border-additional-50;
 
       &:hover:not(#{$loading}, #{$disabled}) {
         @apply bg-[--color-#{$color}-100] border-[--color-#{$color}-100] text-[--color-#{$color}-700];
@@ -287,21 +298,17 @@ const attrs = computed(() => {
     &--outline {
       &--#{$color} {
         @apply bg-additional-50
-        text-[--color-#{$color}-500]
+        text-[--color-#{$color}-600]
         border-current;
 
         &:hover:not(#{$loading}, #{$disabled}) {
           @apply text-[--color-#{$color}-700];
         }
       }
-
-      &--secondary {
-        @apply text-secondary-600;
-      }
     }
 
     &--no-background--#{$color} {
-      @apply bg-transparent text-[--color-#{$color}-500] border-transparent;
+      @apply bg-transparent text-[--color-#{$color}-600] border-transparent;
 
       &:hover:not(#{$loading}, #{$disabled}) {
         @apply text-[--color-#{$color}-700];
@@ -309,6 +316,7 @@ const attrs = computed(() => {
     }
   }
 
+  &#{$disabled}:not(#{$loading}),
   &:disabled#{$disabled}:not(#{$loading}) {
     &[class*="--solid--"] {
       @apply bg-neutral-200 border-neutral-200 text-neutral-400;
