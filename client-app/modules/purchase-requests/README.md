@@ -16,7 +16,7 @@ Purchase request — feature that allows you to upload orders and order-like doc
 This module is currently **experimental** and under active development. Please note the following:
 
 - **Limited Support**: This feature is in a prototype phase, and its implementation is subject to change. Use it at your own risk.
-- **No Type Definitions**: Type definitions will not be generated for this module during its experimental phase.
+- **No Type Definitions**: Type generation with `generate:graphql-types` command is turned off for this module during its experimental phase.
 - **Feedback Welcome**: We encourage the community to test and provide feedback, which will help shape its development.
 
 Thank you for your understanding and contributions to improving this feature!
