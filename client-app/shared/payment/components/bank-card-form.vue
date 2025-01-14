@@ -91,6 +91,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   errors: () => ({}),
 });
+const EXPIRATION_DATE_DIVIDER = " / ";
 
 interface IEmits {
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
@@ -167,12 +168,12 @@ const expirationDate = computed<string | undefined, string>({
     const isMonthComplete = !!month.value && month.value.length === 2;
     const isRemovingYear = !year.value && previousValue?.includes("/");
     const showDivider = (isMonthComplete && !isRemovingYear) || year.value;
-    return showDivider ? `${month.value ?? "  "} / ${year.value}` : month.value;
+    return showDivider ? `${month.value ?? "  "}${EXPIRATION_DATE_DIVIDER}${year.value}` : month.value;
   },
   set: (value) => {
     if (value) {
       const rawMonth = value.slice(0, 2);
-      const rawYear = value.includes("/") ? value.split(/\s*\/\s*/)[1] : value.slice(2, 4);
+      const rawYear = value.includes("/") ? value.split(EXPIRATION_DATE_DIVIDER)[1] : value.slice(2, 4);
       month.value = rawMonth;
       year.value = rawYear;
     } else {
