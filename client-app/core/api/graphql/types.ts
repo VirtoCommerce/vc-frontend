@@ -35,6 +35,11 @@ export type AccountCreationResultType = {
   succeeded: Scalars['Boolean']['output'];
 };
 
+export type ActivateBackInStockSubscriptionCommandType = {
+  productId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
+
 export type AddAddressToFavoritesCommandType = {
   addressId: Scalars['String']['input'];
 };
@@ -103,6 +108,43 @@ export type AvailabilityData = {
   isInStock: Scalars['Boolean']['output'];
   /** Is track inventory */
   isTrackInventory: Scalars['Boolean']['output'];
+};
+
+/** A connection from an object to a list of objects of type `BackInStockSubscriptionQuery`. */
+export type BackInStockSubscriptionQueryConnection = {
+  /** A list of all of the edges returned in the connection. */
+  edges?: Maybe<Array<Maybe<BackInStockSubscriptionQueryEdge>>>;
+  /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
+  items?: Maybe<Array<Maybe<BackInStockSubscriptionQueryType>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
+  totalCount?: Maybe<Scalars['Int']['output']>;
+};
+
+/** An edge in a connection from an object to another object of type `BackInStockSubscriptionQuery`. */
+export type BackInStockSubscriptionQueryEdge = {
+  /** A cursor for use in pagination */
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge */
+  node?: Maybe<BackInStockSubscriptionQueryType>;
+};
+
+export type BackInStockSubscriptionQueryType = {
+  id?: Maybe<Scalars['String']['output']>;
+  isActive?: Maybe<Scalars['Boolean']['output']>;
+  productId?: Maybe<Scalars['String']['output']>;
+  storeId?: Maybe<Scalars['String']['output']>;
+  triggered?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type BackInStockSubscriptionType = {
+  id: Scalars['String']['output'];
+  isActive: Scalars['Boolean']['output'];
+  productId: Scalars['String']['output'];
+  storeId: Scalars['String']['output'];
+  triggered?: Maybe<Scalars['DateTime']['output']>;
+  userId: Scalars['String']['output'];
 };
 
 export type Breadcrumb = {
@@ -899,6 +941,11 @@ export enum CustomerReviewStatus {
   New = 'NEW',
   Rejected = 'REJECTED'
 }
+
+export type DeactivateBackInStockSubscriptionCommandType = {
+  productId: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+};
 
 export type DeclineQuoteCommandType = {
   quoteId: Scalars['String']['input'];
@@ -2975,6 +3022,7 @@ export type MoneyType = {
 };
 
 export type Mutations = {
+  activateBackInStockSubscription?: Maybe<BackInStockSubscriptionType>;
   addAddressToFavorites?: Maybe<Scalars['Boolean']['output']>;
   addBulkItemsCart?: Maybe<BulkCartType>;
   addCartAddress?: Maybe<CartType>;
@@ -3027,6 +3075,7 @@ export type Mutations = {
   createReview?: Maybe<CreateReviewResult>;
   createUser?: Maybe<IdentityResultType>;
   createWishlist?: Maybe<WishlistType>;
+  deactivateBackInStockSubscription?: Maybe<BackInStockSubscriptionType>;
   declineQuoteRequest?: Maybe<QuoteType>;
   deleteContact?: Maybe<Scalars['Boolean']['output']>;
   deleteFcmToken?: Maybe<Scalars['Boolean']['output']>;
@@ -3093,6 +3142,11 @@ export type Mutations = {
   updateRole?: Maybe<IdentityResultType>;
   updateUser?: Maybe<IdentityResultType>;
   updateWishListItems?: Maybe<WishlistType>;
+};
+
+
+export type MutationsActivateBackInStockSubscriptionArgs = {
+  command: ActivateBackInStockSubscriptionCommandType;
 };
 
 
@@ -3348,6 +3402,11 @@ export type MutationsCreateUserArgs = {
 
 export type MutationsCreateWishlistArgs = {
   command: InputCreateWishlistType;
+};
+
+
+export type MutationsDeactivateBackInStockSubscriptionArgs = {
+  command: DeactivateBackInStockSubscriptionCommandType;
 };
 
 
@@ -4693,6 +4752,7 @@ export type Query = {
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
+  getBackInStockSubscriptions?: Maybe<BackInStockSubscriptionQueryConnection>;
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
@@ -4908,6 +4968,21 @@ export type QueryFulfillmentCentersArgs = {
   query?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetBackInStockSubscriptionsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  endTriggeredDate?: InputMaybe<Scalars['DateTime']['input']>;
+  filter?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  startTriggeredDate?: InputMaybe<Scalars['DateTime']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

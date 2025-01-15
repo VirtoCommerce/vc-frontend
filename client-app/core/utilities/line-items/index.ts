@@ -1,7 +1,7 @@
 import { getProductRoute } from "../product";
 import { getPropertiesGroupedByName } from "../properties";
 import type { AnyLineItemType, VendorGroupType, VendorGroupByVendorIdType, PreparedLineItemType } from "../../types";
-import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
+import type { LineItemType, OrderLineItemType, Product } from "@/core/api/graphql/types";
 
 export function groupByVendor<T extends LineItemType | OrderLineItemType>(items: T[]): VendorGroupType<T>[] {
   // NOTE: The group without the vendor should be displayed last.
@@ -92,4 +92,48 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
 
 export function prepareLineItems(items: AnyLineItemType[]): PreparedLineItemType[] {
   return items.map((item) => prepareLineItem(item));
+}
+
+export function prepareLineItemForProduct(item: Product, countInCart?: number): PreparedLineItemType {
+  const { listPrice, extendedPrice, actualPrice } = prepareItemPrices({
+    id: item.id,
+    name: item.name,
+    imageUrl: item.imgSrc,
+    product: item,
+    productId: item.id,
+    sku: item.code,
+    quantity: 0,
+    inStockQuantity: item.availabilityData.availableQuantity,
+    productType: item.productType,
+    price: item.price.actual,
+  });
+  const productType = item.productType;
+  const isVariation = !!item.masterVariation;
+  const quantity = 0;
+  const inStockQuantity = item.availabilityData.availableQuantity;
+  const properties = Object.values(getPropertiesGroupedByName(item?.properties ?? []));
+  const route = isVariation
+    ? getProductRoute(item!.masterVariation!.id || "", item.masterVariation!.slug)
+    : getProductRoute(item.id, item?.slug);
+
+  return {
+    id: item.id,
+    name: item.name || "",
+    imageUrl: item.imgSrc,
+    availabilityData: item.availabilityData,
+    productType,
+    sku: item.code,
+    productId: item.id,
+    listPrice,
+    actualPrice,
+    extendedPrice,
+    quantity,
+    inStockQuantity,
+    route,
+    deleted: false,
+    properties: properties.slice(0, 3),
+    countInCart,
+    minQuantity: item.minQuantity,
+    maxQuantity: item.maxQuantity,
+  };
 }
