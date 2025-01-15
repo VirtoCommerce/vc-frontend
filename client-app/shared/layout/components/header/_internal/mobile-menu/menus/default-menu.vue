@@ -12,11 +12,14 @@
       <MobileMenuLink
         v-else
         :link="item"
+        :format-function="capitalizeText"
         class="py-1 text-lg"
         @close="$emit('close')"
         @select="$emit('selectItem', item)"
       >
-        {{ item.title }}
+        <template #default="{ formattedText }">
+          {{ formattedText }}
+        </template>
       </MobileMenuLink>
     </li>
   </ul>
@@ -40,4 +43,15 @@ interface IEmits {
   (event: "close"): void;
   (event: "selectItem", item: ExtendedMenuLinkType): void;
 }
+
+const capitalizeText = (text: string | undefined) => {
+  return text
+    ? text
+        .toLowerCase()
+        .replace(
+          /^(\w)(\w*)/,
+          (match: string, firstLetter: string, restOfWord: string) => firstLetter?.toUpperCase() + restOfWord,
+        )
+    : "";
+};
 </script>
