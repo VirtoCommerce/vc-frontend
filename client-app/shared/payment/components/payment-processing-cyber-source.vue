@@ -1,5 +1,5 @@
 <template>
-  <div class="form-group">
+  <div ref="root" class="form-group">
     <VcInput
       v-model.trim="cardholderName"
       :label="labels.cardholderName"
@@ -11,7 +11,7 @@
     />
     <div class="mt-3">
       <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
-      <div id="cardNumber-container" class="form-control h-11 border border-neutral-200 px-3"></div>
+      <div id="cardNumber-container" class="cyber-source__card-number form-control"></div>
     </div>
     <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <!-- todo add placeholder translation -->
@@ -34,7 +34,8 @@
       />
       <div class="basis-1/4">
         <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
-        <div id="securityCode-container" class="form-control h-11 border border-neutral-200 px-3"></div>
+        <!-- todo add circles -->
+        <div id="securityCode-container" class="form-control cyber-source__code"></div>
       </div>
     </div>
   </div>
@@ -54,7 +55,7 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
-import { useScriptTag } from "@vueuse/core";
+import { useScriptTag, useCssVar } from "@vueuse/core";
 import { useForm } from "vee-validate";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -293,12 +294,13 @@ function onChange(data: { valid: boolean; card: Array<unknown> }) {
   }
 }
 
+const root = ref(null);
 const customStyles = {
   input: {
-    "font-size": "16px",
+    "font-size": "1rem",
     // custom font-family like Lato not supported
     "font-family": "sans-serif",
-    color: "#555",
+    color: useCssVar("--body-text-color", root).value,
     "::placeholder": {
       color: "red",
     },
@@ -357,3 +359,18 @@ function removeScript() {
 
 onUnmounted(removeScript);
 </script>
+
+<style lang="scss">
+.cyber-source__card-number,
+.cyber-source__code {
+  --base-color: var(--vc-input-base-color, var(--color-primary-500));
+  --focus-color: rgb(from var(--base-color) r g b / 0.3);
+
+  @apply h-11 text-base relative m-px px-3 appearance-none bg-transparent border bg-additional-50 rounded-[3px] leading-none w-full min-w-0;
+}
+
+.cyber-source__card-number.flex-microform-focused,
+.cyber-source__code.flex-microform-focused {
+  @apply ring ring-[--focus-color];
+}
+</style>
