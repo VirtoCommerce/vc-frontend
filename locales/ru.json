@@ -21,7 +21,7 @@
       "allFilters": "Все фильтры",
       "filters": "Фильтры",
       "back": "Назад",
-      "reset": "Сброс",
+      "reset": "Очистить",
       "register": "Регистрация",
       "reset_password": "Сбросить пароль",
       "reset_filters": "Сбросить фильтры",
@@ -49,7 +49,7 @@
       "pay_now": "Оплатить сейчас",
       "payment_details": "Детали оплаты",
       "reorder_all": "Повторить заказ",
-      "view_cart": "Просмотреть корзину",
+      "view_cart": "Перейти в корзину",
       "add_new": "Добавить новый",
       "add_new_address": "Добавить новый адрес",
       "remove_selected": "Удалить выбранное",
@@ -1160,7 +1160,7 @@
           "block_user": "Заблокировать пользователя",
           "unblock_user": "Разблокировать пользователя",
           "delete": "Удалить",
-          "no_members": "Продолжить просмотр"
+          "no_members": "Перейти в каталог"
         },
         "content_header": {
           "name": "Имя",
@@ -1237,7 +1237,7 @@
       "variations_total_label": "Всего в вашей корзине:",
       "view_cart_button": "В корзину",
       "recommended_products": {
-        "related-products_section_title": "Похожие товары",
+        "related-products_section_title": "Сопутствующие товары",
         "bought-together_section_title": "Также покупают вместе"
       },
       "related_product_section_title": "Связанные товары",
@@ -1348,7 +1348,7 @@
       },
       "empty_list": {
         "title": "Сравнение товаров",
-        "message": "Список товаров для сравнения пуст",
+        "message": "Нет товаров для сравнения",
         "button_text": "Перейти в каталог",
         "img_alt": "пустаяКорзина",
         "img_alt_mobile": "пустаяКорзинаMobile"
