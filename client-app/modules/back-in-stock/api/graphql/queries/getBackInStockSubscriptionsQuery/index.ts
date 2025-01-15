@@ -1,7 +1,8 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
 import getBackInStockSubscriptionsQueryDocument from "./getBackInStockSubscriptionsQuery.graphql";
-import type { BackInStockSubscriptionQueryConnection, Query, QueryGetBackInStockSubscriptionsArgs } from "../../types";
+import type { BackInStockSubscriptionQueryConnection, QueryGetBackInStockSubscriptionsArgs } from "../../types";
+import type { Query } from "@/core/api/graphql/types";
 
 export async function getBackInStockSubscriptions(
   payload?: QueryGetBackInStockSubscriptionsArgs,

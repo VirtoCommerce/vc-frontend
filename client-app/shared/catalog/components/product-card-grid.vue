@@ -164,37 +164,43 @@
       <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" />
     </div>
 
-    <VcProductButton
-      v-if="product.isConfigurable"
-      :to="link"
-      link-text="Customize"
-      button-text="Customize"
-      icon="cube-transparent"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
-      @link-click="$emit('linkClick', $event)"
-    />
-
-    <VcProductButton
-      v-else-if="product.hasVariations"
-      :to="link"
-      :link-text="$t('pages.catalog.show_on_a_separate_page')"
-      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-      :target="browserTarget || $cfg.details_browser_target || '_blank'"
-      @link-click="$emit('linkClick', $event)"
-    />
+    <template v-if="customProductCardComponents.button && customProductCardComponents.button.shouldRender(product)">
+      <component :is="customProductCardComponents.button.component" :product="product" />
+    </template>
 
     <template v-else>
-      <slot name="cart-handler" />
+      <VcProductButton
+        v-if="product.isConfigurable"
+        :to="link"
+        link-text="Customize"
+        button-text="Customize"
+        icon="cube-transparent"
+        :target="browserTarget || $cfg.details_browser_target || '_blank'"
+        @link-click="$emit('linkClick', $event)"
+      />
 
-      <div class="mt-1 flex flex-wrap items-center gap-1">
-        <InStock
-          :is-in-stock="product.availabilityData?.isInStock"
-          :is-digital="isDigital"
-          :quantity="product.availabilityData?.availableQuantity"
-        />
+      <VcProductButton
+        v-else-if="product.hasVariations"
+        :to="link"
+        :link-text="$t('pages.catalog.show_on_a_separate_page')"
+        :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+        :target="browserTarget || $cfg.details_browser_target || '_blank'"
+        @link-click="$emit('linkClick', $event)"
+      />
 
-        <CountInCart :product-id="product.id" />
-      </div>
+      <template v-else>
+        <slot name="cart-handler" />
+
+        <div class="mt-1 flex flex-wrap items-center gap-1">
+          <InStock
+            :is-in-stock="product.availabilityData?.isInStock"
+            :is-digital="isDigital"
+            :quantity="product.availabilityData?.availableQuantity"
+          />
+
+          <CountInCart :product-id="product.id" />
+        </div>
+      </template>
     </template>
   </div>
 </template>
@@ -206,6 +212,7 @@ import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { useCustomProductCardComponents } from "@/shared/catalog/composables";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -222,6 +229,8 @@ defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 const props = withDefaults(defineProps<IProps>(), {
   lazy: true,
 });
+
+const { customProductCardComponents } = useCustomProductCardComponents();
 
 interface IProps {
   product: Product;

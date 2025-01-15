@@ -21,7 +21,7 @@
           <VcInput
             v-model="keyword"
             :disabled="allLoading"
-            :placeholder="$t('shared.back-in-stock.search_placeholder')"
+            :placeholder="$t('shared.back_in_stock.search_placeholder')"
             maxlength="64"
             class="w-full"
             @keydown.enter="applyKeyword"
@@ -38,7 +38,7 @@
               </button>
 
               <VcButton
-                :aria-label="$t('shared.back-in-stock.search_placeholder')"
+                :aria-label="$t('shared.back_in_stock.search_placeholder')"
                 :disabled="allLoading"
                 icon="search"
                 @click="applyKeyword"
@@ -91,12 +91,12 @@
         <!-- Empty list -->
         <VcEmptyView
           v-else-if="!allLoading && subscriptionsItems.length === 0"
-          :text="$t('shared.back-in-stock.list_details.empty_list')"
+          :text="$t('shared.back_in_stock.list_details.empty_list')"
           icon="thin-lists"
         >
           <template #button>
             <VcButton :to="{ name: 'Catalog' }">
-              {{ $t("shared.back-in-stock.list_details.empty_list_button") }}
+              {{ $t("shared.back_in_stock.list_details.empty_list_button") }}
             </VcButton>
           </template>
         </VcEmptyView>

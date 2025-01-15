@@ -15,18 +15,17 @@ import type {
   QueryGetBackInStockSubscriptionsArgs,
 } from "../api/graphql/types";
 import type { ISortInfo } from "@/core/types";
-import type { Ref } from "vue";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
-const loading = ref(true);
+const loading = ref(false);
 const backInStockSubscriptions = shallowRef<BackInStockSubscriptionQueryType[]>([]);
-const itemsPerPage: Ref<number> = ref(DEFAULT_ITEMS_PER_PAGE);
-const pages: Ref<number> = ref(0);
-const page: Ref<number> = ref(1);
-const keyword: Ref<string> = ref("");
-const sort: Ref<ISortInfo> = ref(DEFAULT_SORT);
-const lastFetched: Ref<number | null> = ref(null);
-const lastFetchedProductIds: Ref<Array<string> | undefined> = ref([]);
+const itemsPerPage = ref<number>(DEFAULT_ITEMS_PER_PAGE);
+const pages = ref<number>(0);
+const page = ref<number>(1);
+const keyword = ref<string>("");
+const sort = ref<ISortInfo>(DEFAULT_SORT);
+const lastFetched = ref<number | null>(null);
+const lastFetchedProductIds = ref<Array<string> | undefined>([]);
 
 createSharedComposable(useBackInStockSubscriptions);
 
