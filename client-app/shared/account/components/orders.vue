@@ -41,21 +41,18 @@
         </VcButton>
 
         <!-- Desktop filters dropdown -->
-        <div
+        <OrdersFilter
           v-if="filtersVisible && !isMobile"
           ref="filtersDropdownElement"
-          class="absolute right-0 z-[1] mt-2 rounded border bg-additional-50 p-6 shadow-lg"
+          class="absolute right-0 z-[1] mt-2"
+          @apply="applyOrderFilters"
+          @reset="resetOrderFilters"
+          @close="hideFilters"
         >
-          <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-3 align-top" @click="hideFilters">
-            <VcIcon class="fill-danger" name="delete-thin" :size="18" />
-          </button>
-
-          <OrdersFilter @apply="applyOrderFilters" @reset="resetOrderFilters">
-            <template #dateFilterType>
-              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
-            </template>
-          </OrdersFilter>
-        </div>
+          <template #dateFilterType>
+            <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+          </template>
+        </OrdersFilter>
       </div>
 
       <div class="flex grow">
