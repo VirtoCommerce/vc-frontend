@@ -1,7 +1,6 @@
 fragment purchaseRequest on PurchaseRequestType {
   id
   number
-  cartId
   quoteId
   sources {
     name
