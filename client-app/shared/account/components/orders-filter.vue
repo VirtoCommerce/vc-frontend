@@ -1,15 +1,21 @@
 <template>
   <div class="w-[27.5rem]">
     <VcDialog dividers>
-      <VcDialogHeader @close="$emit('close')">Title</VcDialogHeader>
+      <VcDialogHeader @close="$emit('close')">
+        {{ $t("shared.account.orders_filter.title") }}
+      </VcDialogHeader>
 
       <VcDialogContent>
-        <div v-if="!!facets" class="space-y-4">
-          <div class="font-bold uppercase lg:normal-case lg:text-neutral-400">
-            {{ $t("shared.account.orders_filter.status_label") }}
-          </div>
+        <VcLabel>{{ $t("shared.account.orders_filter.created_date_label") }}</VcLabel>
 
-          <VcCheckboxGroup v-model="filterData.statuses" class="space-y-4">
+        <div class="mb-5 flex flex-col space-y-5">
+          <slot name="dateFilterType" />
+        </div>
+
+        <div v-if="!!facets">
+          <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
+
+          <VcCheckboxGroup v-model="filterData.statuses" class="mt-1 space-y-3.5">
             <VcCheckbox
               v-for="facet in facets"
               :key="facet.term"
@@ -22,14 +28,6 @@
               </div>
             </VcCheckbox>
           </VcCheckboxGroup>
-        </div>
-
-        <div class="flex w-48 flex-col space-y-3">
-          <div class="font-bold uppercase lg:normal-case lg:text-neutral-400">
-            {{ $t("shared.account.orders_filter.created_date_label") }}
-          </div>
-
-          <slot name="dateFilterType" />
         </div>
       </VcDialogContent>
 

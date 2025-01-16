@@ -467,7 +467,8 @@
         }
       },
       "orders_filter": {
-        "status_label": "@:common.labels.status",
+        "title": "Orders filters",
+        "status_label": "Select order status",
         "created_date_label": "Create date",
         "start_date_label": "Start date",
         "end_date_label": "End date",
