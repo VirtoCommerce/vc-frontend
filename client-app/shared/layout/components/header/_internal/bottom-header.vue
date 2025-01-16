@@ -21,12 +21,10 @@
         ref="showCatalogMenuButton"
         :append-icon="catalogMenuItems?.length ? catalogButtonIcon : undefined"
         variant="outline"
-        class="border-primary px-[0.8rem] py-[0.55rem] text-sm"
+        size="md"
         @click="toggleCatalogDropdown"
       >
-        <span
-          class="font-bold uppercase tracking-wide text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
-        >
+        <span class="text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]">
           {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
         </span>
       </VcButton>
