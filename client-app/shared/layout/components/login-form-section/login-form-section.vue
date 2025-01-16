@@ -33,15 +33,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from "vue";
-import { configInjectionKey } from "@/core/injection-keys";
+import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 import { SignInForm, useUser } from "@/shared/account";
 import { getImageUrl } from "@/ui-kit/utilities";
 
-const cfg = inject(configInjectionKey);
+const { themeContext } = useThemeContext();
 const { isAuthenticated } = useUser();
 
-const bgImage = computed(() => (cfg?.homepage_background_image ? getImageUrl(cfg?.homepage_background_image) : "none"));
+const bgImage = computed(() =>
+  themeContext.value.settings.homepage_background_image
+    ? getImageUrl(themeContext.value.settings.homepage_background_image)
+    : "none",
+);
 </script>
 
 <style scoped>
