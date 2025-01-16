@@ -467,6 +467,7 @@
         }
       },
       "orders_filter": {
+        "title": "Фильтры заказов",
         "status_label": "@:common.labels.status",
         "created_date_label": "Дата создания",
         "start_date_label": "Дата начала",
@@ -1148,6 +1149,7 @@
         "no_members_message": "Сотрудников пока нет",
         "no_results_message": "Результаты не найдены",
         "invite_sent": "Приглашение отправлено",
+        "filters": "Фильтры участников",
         "labels": {
           "role": "Роль",
           "status": "Статус"

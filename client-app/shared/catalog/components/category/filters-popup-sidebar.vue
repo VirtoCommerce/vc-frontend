@@ -69,18 +69,33 @@
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         variant="outline"
+        color="secondary"
         :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
+        :title="$t('common.buttons.reset')"
+        size="sm"
+        icon="reset"
         @click="
           $emit('resetFacetFilters');
           $emit('hidePopupSidebar');
         "
+      />
+
+      <VcButton
+        class="filters-popup-sidebar__footer-btn"
+        variant="outline"
+        :disabled="!isExistSelectedFacets && !isExistSelectedPopupSidebarFacets"
+        min-width="6.25rem"
+        size="sm"
+        @click="$emit('hidePopupSidebar')"
       >
-        {{ $t("common.buttons.reset") }}
+        {{ $t("common.buttons.cancel") }}
       </VcButton>
 
       <VcButton
         class="filters-popup-sidebar__footer-btn"
         :disabled="!isPopupSidebarFilterDirty"
+        min-width="6.25rem"
+        size="sm"
         @click="
           $emit('applyFilters', popupSidebarFilters);
           $emit('hidePopupSidebar');
@@ -144,6 +159,12 @@ const isExistSelectedPopupSidebarFacets = computedEager<boolean>(() =>
 
   &__sorting-label {
     @apply font-bold text-neutral-900;
+  }
+
+  &__footer-btn {
+    &:first-child {
+      @apply me-auto;
+    }
   }
 }
 </style>

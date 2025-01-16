@@ -1,17 +1,17 @@
 <template>
-  <dl>
-    <dt class="mb-1.5 text-lg font-bold leading-5 text-neutral">
+  <div>
+    <VcLabel>
       {{ facet.label }}
-    </dt>
+    </VcLabel>
 
-    <dd v-for="(facetValue, index) in facet.values" :key="index">
-      <VcCheckbox v-model="facetValue.selected" class="py-2" @change="change">
-        <span :class="{ 'text-neutral': !facetValue.selected }" class="whitespace-nowrap leading-5">
+    <div class="mt-2 space-y-3.5">
+      <template v-for="(facetValue, index) in facet.values" :key="index">
+        <VcCheckbox v-model="facetValue.selected" @change="change">
           {{ facetValue.label }}
-        </span>
-      </VcCheckbox>
-    </dd>
-  </dl>
+        </VcCheckbox>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

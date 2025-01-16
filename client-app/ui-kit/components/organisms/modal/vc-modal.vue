@@ -34,13 +34,15 @@
           leave-to="opacity-0 scale-95"
           @after-leave="$emit('close')"
         >
-          <div class="vc-modal__dialog" :style="{ maxWidth }">
+          <DialogPanel class="vc-modal__dialog" :style="{ maxWidth }">
             <VcDialog :dividers="dividers" :is-mobile-fullscreen="isMobileFullscreen">
-              <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
-                <slot name="title">
-                  {{ title }}
-                </slot>
-              </VcDialogHeader>
+              <DialogTitle>
+                <VcDialogHeader :icon="icon" :color="variant" :closable="!isPersistent" @close="close">
+                  <slot name="title">
+                    {{ title }}
+                  </slot>
+                </VcDialogHeader>
+              </DialogTitle>
 
               <VcDialogContent>
                 <slot :close="close" />
@@ -50,7 +52,7 @@
                 <slot name="actions" :close="close" />
               </VcDialogFooter>
             </VcDialog>
-          </div>
+          </DialogPanel>
         </TransitionChild>
       </div>
     </Dialog>
@@ -58,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { TransitionRoot, TransitionChild, Dialog } from "@headlessui/vue";
+import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
 import { ref, watchSyncEffect } from "vue";
 
 interface IEmits {

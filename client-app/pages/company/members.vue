@@ -19,22 +19,39 @@
 
     <!-- Mobile filters sidebar -->
     <VcPopupSidebar :is-visible="isMobile && filtersVisible" @hide="hideFilters">
-      <FacetItem v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
+      <div class="space-y-3.5">
+        <FacetItem v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
+      </div>
 
       <template #footer>
         <VcButton
           :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+          class="me-auto"
           variant="outline"
+          color="secondary"
+          size="sm"
+          icon="reset"
+          :title="$t('common.buttons.reset')"
           @click="
             resetFilters();
             hideFilters();
           "
+        />
+
+        <VcButton
+          :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+          variant="outline"
+          size="sm"
+          min-width="6.25rem"
+          @click="hideFilters"
         >
-          {{ $t("common.buttons.reset") }}
+          {{ $t("common.buttons.cancel") }}
         </VcButton>
 
         <VcButton
           :disabled="!isFacetsDirty"
+          size="sm"
+          min-width="6.25rem"
           @click="
             applyFilters();
             hideFilters();
@@ -84,43 +101,62 @@
         <div
           v-if="filtersVisible && !isMobile"
           ref="filtersDropdownElement"
-          class="absolute right-0 z-[1] mt-2 rounded border bg-additional-50 p-6 shadow-lg"
+          class="absolute right-0 z-[1] mt-2 w-[27.5rem]"
         >
-          <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-2" @click="hideFilters">
-            <VcIcon class="fill-danger" name="delete-thin" :size="18" />
-          </button>
+          <VcDialog dividers>
+            <VcDialogHeader @close="hideFilters">
+              {{ $t("pages.company.members.filters") }}
+            </VcDialogHeader>
 
-          <div class="flex flex-row gap-6 pr-4">
-            <FacetItem v-for="(_, index) in selectableFacets" :key="index" v-model="selectableFacets[index]" />
-          </div>
+            <VcDialogContent>
+              <div class="flex gap-5">
+                <FacetItem
+                  v-for="(_, index) in selectableFacets"
+                  :key="index"
+                  v-model="selectableFacets[index]"
+                  class="w-0 grow"
+                />
+              </div>
+            </VcDialogContent>
 
-          <div class="mt-6 flex flex-row justify-end gap-4">
-            <VcButton
-              :disabled="!numberOfFacetsApplied && !isFacetsDirty"
-              color="secondary"
-              size="sm"
-              class="w-full lg:w-auto"
-              variant="outline"
-              @click="
-                resetFilters();
-                hideFilters();
-              "
-            >
-              {{ $t("common.buttons.reset") }}
-            </VcButton>
+            <VcDialogFooter>
+              <VcButton
+                :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+                color="secondary"
+                size="sm"
+                variant="outline"
+                min-width="6.25rem"
+                @click="
+                  resetFilters();
+                  hideFilters();
+                "
+              >
+                {{ $t("common.buttons.reset") }}
+              </VcButton>
 
-            <VcButton
-              :disabled="!isFacetsDirty"
-              size="sm"
-              class="w-full lg:w-auto"
-              @click="
-                applyFilters();
-                hideFilters();
-              "
-            >
-              {{ $t("common.buttons.apply") }}
-            </VcButton>
-          </div>
+              <VcButton
+                :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+                size="sm"
+                variant="outline"
+                min-width="6.25rem"
+                @click="hideFilters()"
+              >
+                {{ $t("common.buttons.cancel") }}
+              </VcButton>
+
+              <VcButton
+                :disabled="!isFacetsDirty"
+                size="sm"
+                min-width="6.25rem"
+                @click="
+                  applyFilters();
+                  hideFilters();
+                "
+              >
+                {{ $t("common.buttons.apply") }}
+              </VcButton>
+            </VcDialogFooter>
+          </VcDialog>
         </div>
       </div>
 
