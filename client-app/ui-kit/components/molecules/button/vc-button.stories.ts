@@ -51,13 +51,14 @@ export default {
         },
       },
     },
+    onClick: { action: "VcButton click" },
   },
 } as Meta<typeof VcButton>;
 
 const Template: StoryFn<typeof VcButton> = (args) => ({
   components: { VcButton },
   setup: () => ({ args }),
-  template: '<VcButton v-bind="args">Button text</VcButton>',
+  template: '<VcButton v-bind="args" @click="args.onClick">Button text</VcButton>',
 });
 
 export const Basic = Template.bind({});
