@@ -84,3 +84,7 @@ export function toRemovedFile(file: FileType): IRemovedFile {
     status: "removed",
   });
 }
+
+export function isFilenameOnly(src: string): boolean {
+  return /^[a-zA-Z0-9._-]+(\.[a-zA-Z0-9]+)?$/.test(src);
+}
