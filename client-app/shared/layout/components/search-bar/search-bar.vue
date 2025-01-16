@@ -131,7 +131,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
-import { computed, inject, ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -139,7 +139,6 @@ import { DEFAULT_PAGE_SIZE } from "@/core/constants";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
-import { configInjectionKey } from "@/core/injection-keys";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { useSearchBar } from "../../composables";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
@@ -148,6 +147,8 @@ import type { Category } from "@/core/api/graphql/types";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 
+const { themeContext } = useThemeContext();
+
 const searchBarElement = ref<HTMLElement | null>(null);
 
 // Number of categories column items in dropdown list
@@ -155,10 +156,8 @@ const CATEGORIES_ITEMS_PER_COLUMN = 4;
 
 const SEARCH_BAR_DEBOUNCE_TIME = 300;
 
-const config = inject(configInjectionKey);
-
-const MAX_LENGTH = config?.search_max_chars || 999;
-const MIN_LENGTH = config?.search_min_chars || 0;
+const MAX_LENGTH = themeContext.value?.settings?.search_max_chars || 999;
+const MIN_LENGTH = themeContext.value?.settings?.search_min_chars || 0;
 
 const {
   total,
@@ -176,7 +175,6 @@ const {
 
 const { analytics } = useAnalytics();
 const router = useRouter();
-const { themeContext } = useThemeContext();
 
 const searchPhraseInUrl = useRouteQueryParam<string>(QueryParamName.SearchPhrase);
 const categoriesRoutes = useCategoriesRoutes(categories);

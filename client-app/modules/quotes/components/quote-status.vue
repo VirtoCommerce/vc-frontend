@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject, computed } from "vue";
-import { configInjectionKey } from "@/core/injection-keys";
+import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 
 interface IQuoteStatus {
   code: string;
@@ -20,9 +20,10 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { themeContext } = useThemeContext();
+
 const defaultColor = "neutral";
-const config = inject(configInjectionKey);
-const statuses = config?.quote_statuses || [];
+const statuses = themeContext.value?.settings?.quote_statuses || [];
 
 const quoteStatus = computed(() => statuses.find((s: IQuoteStatus) => props.status === s.code));
 </script>

@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject, computed } from "vue";
-import { configInjectionKey } from "@/core/injection-keys";
+import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 import type { IOrderStatus } from "@/core/types";
 
 interface IProps {
@@ -16,9 +16,10 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
+const { themeContext } = useThemeContext();
+
 const defaultColor = "neutral";
-const config = inject(configInjectionKey);
-const statuses = config?.orders_statuses || [];
+const statuses = themeContext.value?.settings?.orders_statuses || [];
 
 const orderStatus = computed(() => statuses.find((s: IOrderStatus) => props.status === s.code));
 </script>

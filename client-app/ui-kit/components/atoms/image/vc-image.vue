@@ -11,9 +11,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
+import { useThemeContext } from "@/core/composables";
 import { NO_IMAGE_URL } from "@/core/constants";
-import { configInjectionKey } from "@/core/injection-keys";
 import { appendSuffixToFilename } from "@/core/utilities";
 import { getImageUrl, isFilenameOnly } from "../../../utilities";
 
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<IProps>(), {
   fallbackSrc: NO_IMAGE_URL,
 });
 
-const cfg = inject(configInjectionKey);
+const { themeContext } = useThemeContext();
 
 const fallbackEnabled = ref(false);
 const originalEnabled = ref(false);
@@ -49,9 +49,11 @@ const preparedSrc = computed<string>(() => {
     return getImageUrl(props.src);
   }
 
-  const sizeSuffix = props.sizeSuffix ? cfg?.image_thumbnails_suffixes?.[props.sizeSuffix] : "";
+  const sizeSuffix = props.sizeSuffix
+    ? themeContext.value?.settings?.image_thumbnails_suffixes?.[props.sizeSuffix]
+    : "";
 
-  if (originalEnabled.value || !cfg?.image_thumbnails_enabled || !sizeSuffix) {
+  if (originalEnabled.value || !themeContext.value?.settings?.image_thumbnails_enabled || !sizeSuffix) {
     return props.src;
   }
 
@@ -65,8 +67,8 @@ function setFallback(): void {
   if (
     !originalEnabled.value &&
     props.sizeSuffix &&
-    cfg?.image_thumbnails_enabled &&
-    cfg?.image_thumbnails_original_fallback_enabled
+    themeContext.value?.settings?.image_thumbnails_enabled &&
+    themeContext.value?.settings?.image_thumbnails_original_fallback_enabled
   ) {
     originalEnabled.value = true;
   } else if (!fallbackEnabled.value) {

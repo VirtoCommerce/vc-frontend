@@ -1,11 +1,10 @@
 import { useLocalStorage } from "@vueuse/core";
 import { cloneDeep, isEqual } from "lodash";
-import { computed, inject, readonly, ref, shallowRef, triggerRef } from "vue";
+import { computed, readonly, ref, shallowRef, triggerRef } from "vue";
 import { searchProducts } from "@/core/api/graphql/catalog";
-import { useRouteQueryParam } from "@/core/composables";
+import { useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { FFC_LOCAL_STORAGE, IN_STOCK_PRODUCTS_LOCAL_STORAGE, PAGE_LIMIT, PRODUCT_SORTING_LIST } from "@/core/constants";
 import { QueryParamName, SortDirection } from "@/core/enums";
-import { configInjectionKey } from "@/core/injection-keys";
 import {
   getFilterExpressionFromFacets,
   Logger,
@@ -33,11 +32,11 @@ export function useProducts(
     useQueryParams?: boolean;
   } = {},
 ) {
-  const config = inject(configInjectionKey, {});
+  const { themeContext } = useThemeContext();
   const {
     withFacets = false,
-    withImages = config.image_carousel_in_product_card_enabled,
-    withZeroPrice = config.zero_price_product_enabled,
+    withImages = themeContext.value?.settings?.image_carousel_in_product_card_enabled,
+    withZeroPrice = themeContext.value?.settings?.zero_price_product_enabled,
   } = options;
   const { openModal } = useModal();
 
@@ -211,8 +210,8 @@ export function useProducts(
   }
 
   function setFacets({ termFacets = [], rangeFacets = [] }: { termFacets?: TermFacet[]; rangeFacets?: RangeFacet[] }) {
-    if (config.product_filters_sorting) {
-      const ascDirection = config.product_filters_sorting_direction === SortDirection.Ascending;
+    if (themeContext.value?.settings?.product_filters_sorting) {
+      const ascDirection = themeContext.value?.settings?.product_filters_sorting_direction === SortDirection.Ascending;
 
       termFacets.sort((a, b) => (ascDirection ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label)));
       rangeFacets.sort((a, b) => (ascDirection ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label)));

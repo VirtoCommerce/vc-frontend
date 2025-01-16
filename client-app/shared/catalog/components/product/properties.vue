@@ -30,10 +30,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
+import { useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
-import { configInjectionKey } from "@/core/injection-keys";
 import { getPropertiesGroupedByName } from "@/core/utilities";
 import {
   MODULE_ID as CUSTOMER_REVIEWS_MODULE_ID,
@@ -53,8 +53,7 @@ interface IProps {
 
 const props = defineProps<IProps>();
 
-const config = inject(configInjectionKey, {});
-
+const { themeContext } = useThemeContext();
 const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
@@ -62,6 +61,8 @@ const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)),
 );
 
-const showVendor = computed(() => config.vendor_enabled && !props.product.hasVariations && props.product.vendor);
+const showVendor = computed(
+  () => themeContext.value?.settings?.vendor_enabled && !props.product.hasVariations && props.product.vendor,
+);
 const showPropertiesBlock = computed(() => !props.model.hidden && (properties.value.length || showVendor.value));
 </script>
