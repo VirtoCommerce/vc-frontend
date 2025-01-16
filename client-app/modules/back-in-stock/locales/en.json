@@ -11,17 +11,18 @@
       "empty_list_button": "Continue browsing"
     },
     "messages": {
+      "click_to_receive_alert": "Click to receive an alert",
       "notify_me_when_in_stock": "Notify me when in stock",
       "you_will_be_notified": "You'll be notified"
     },
     "navigation": {
-      "route_name": "Quote Requests"
+      "route_name": "Back-in-Stock List"
     },
     "subscriptions": {
       "date_label": "@:common.labels.date",
       "meta": {
         "table_description": "back in stock subscriptions",
-        "title": "@:pages.account.back_in_stock_subscriptions.title"
+        "title": "Back-in-Stock List"
       },
       "no_back_in_stock_subscriptions_message": "There are no back in stock subscriptions requests yet",
       "no_results_message": "No results found",

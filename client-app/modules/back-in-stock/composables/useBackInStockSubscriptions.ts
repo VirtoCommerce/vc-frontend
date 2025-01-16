@@ -10,10 +10,9 @@ import {
 } from "../api/graphql";
 import type {
   ActivateBackInStockSubscriptionCommandType,
-  BackInStockSubscriptionQueryType,
   BackInStockSubscriptionType,
   DeactivateBackInStockSubscriptionCommandType,
-  QueryGetBackInStockSubscriptionsArgs,
+  QueryBackInStockSubscriptionsArgs,
 } from "../api/graphql/types";
 import type { FetchParametersType, PaginationType } from "../types";
 
@@ -21,7 +20,7 @@ const DEFAULT_ITEMS_PER_PAGE = 10;
 const DEBOUNCE_IN_MS = 300;
 
 const fetching = ref(false);
-const subscriptions = shallowRef<BackInStockSubscriptionQueryType[]>([]);
+const subscriptions = shallowRef<BackInStockSubscriptionType[]>([]);
 const pendingProductIds = ref<Set<string>>(new Set());
 const visibleProductIds = ref<string[]>([]);
 
@@ -33,7 +32,7 @@ const pagination = ref<PaginationType>({
 const fetchParameters = ref<FetchParametersType>({
   keyword: "",
   sort: DEFAULT_SORT,
-  productIds: [],
+  productIds: undefined,
 });
 
 function updateSubscription(subscription: BackInStockSubscriptionType) {
@@ -86,7 +85,7 @@ function _useBackInStockSubscriptions() {
     return newSubscription;
   }
 
-  async function fetchSubscriptions(payload?: QueryGetBackInStockSubscriptionsArgs, partial = false): Promise<void> {
+  async function fetchSubscriptions(payload?: QueryBackInStockSubscriptionsArgs, partial = false): Promise<void> {
     fetching.value = true;
     const {
       first = pagination.value.itemsPerPage,
@@ -148,6 +147,9 @@ function _useBackInStockSubscriptions() {
     visibleProductIds,
     (newProductIds, oldProductIds) => {
       const diff = difference(newProductIds, oldProductIds ?? []);
+      if (!diff.length) {
+        return;
+      }
       void fetchSubscriptions(
         {
           productIds: Array.from(diff),

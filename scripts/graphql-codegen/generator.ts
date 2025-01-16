@@ -37,7 +37,7 @@ const independentModules: ModuleType[] = [
   {
     name: "BackInStock",
     apiPath: "client-app/modules/back-in-stock/api/graphql",
-    schemaPath: `${process.env.APP_BACKEND_URL}/graphql`,
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/back-in-stock`,
   },
 ];
 

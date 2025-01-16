@@ -1,33 +1,26 @@
 <template>
   <VcProductButton
     color="accent"
-    class=" flex-g"
-    icon="notification-v2"
+    class="back-in-stock-notify-button"
+    :icon="isProductSubscriptionActive(product.id) ? 'notification' : 'notification-non-active'"
     :loading="isProductSubscriptionPending(product.id)"
     :button-text="
       isProductSubscriptionActive(product.id)
         ? $t('back_in_stock.messages.you_will_be_notified')
         : $t('back_in_stock.messages.notify_me_when_in_stock')
     "
-    @click="updateBackInStockSubscription"
+    @link-click="updateBackInStockSubscription"
   >
-    <div class="mt-6 flex flex-wrap items-center gap-1">
-      <InStock
-        :is-in-stock="product.availabilityData?.isInStock"
-        :is-digital="isDigital"
-        :quantity="product.availabilityData?.availableQuantity"
-      />
-
-      <CountInCart :product-id="product.id" />
+    <div class="back-in-stock-notify-button__text">
+      <VcIcon name="information-circle" size="xs" />
+      {{ $t("back_in_stock.messages.click_to_receive_alert") }}
     </div>
   </VcProductButton>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, toRefs } from "vue";
-import { ProductType } from "@/core/enums";
+import { onMounted, onUnmounted, toRefs } from "vue";
 import { globals } from "@/core/globals";
-import { CountInCart, InStock } from "@/shared/catalog/components";
 import { useBackInStockSubscriptions } from "../composables";
 import type { DeactivateBackInStockSubscriptionCommandType } from "../api/graphql/types";
 import type { Product } from "@/core/api/graphql/types";
@@ -46,8 +39,6 @@ const {
   addVisibleProductId,
   removeVisibleProductId,
 } = useBackInStockSubscriptions();
-
-const isDigital = computed(() => product.value.productType === ProductType.Digital);
 
 const updateBackInStockSubscription = async () => {
   const activatePayload: DeactivateBackInStockSubscriptionCommandType = {
@@ -73,3 +64,14 @@ onUnmounted(() => {
   removeVisibleProductId(product.value.id);
 });
 </script>
+
+<style lang="scss">
+.back-in-stock-notify-button {
+  --vc-icon-size: 1.5rem;
+  --vc-icon-color: var(--link-color, theme("colors.accent.600"));
+
+  &__text {
+    @apply flex items-center text-xs font-bold gap-1 w-full justify-start h-5 mt-4.5 text-[--link-color];
+  }
+}
+</style>

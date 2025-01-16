@@ -110,40 +110,34 @@ export type AvailabilityData = {
   isTrackInventory: Scalars['Boolean']['output'];
 };
 
-/** A connection from an object to a list of objects of type `BackInStockSubscriptionQuery`. */
-export type BackInStockSubscriptionQueryConnection = {
+/** A connection from an object to a list of objects of type `BackInStockSubscription`. */
+export type BackInStockSubscriptionConnection = {
   /** A list of all of the edges returned in the connection. */
-  edges?: Maybe<Array<Maybe<BackInStockSubscriptionQueryEdge>>>;
+  edges?: Maybe<Array<Maybe<BackInStockSubscriptionEdge>>>;
   /** A list of all of the objects returned in the connection. This is a convenience field provided for quickly exploring the API; rather than querying for "{ edges { node } }" when no edge data is needed, this field can be used instead. Note that when clients like Relay need to fetch the "cursor" field on the edge to enable efficient pagination, this shortcut cannot be used, and the full "{ edges { node } } " version should be used instead. */
-  items?: Maybe<Array<Maybe<BackInStockSubscriptionQueryType>>>;
+  items?: Maybe<Array<Maybe<BackInStockSubscriptionType>>>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** A count of the total number of objects in this connection, ignoring pagination. This allows a client to fetch the first five objects by passing "5" as the argument to `first`, then fetch the total count so it could display "5 of 83", for example. In cases where we employ infinite scrolling or don't have an exact count of entries, this field will return `null`. */
   totalCount?: Maybe<Scalars['Int']['output']>;
 };
 
-/** An edge in a connection from an object to another object of type `BackInStockSubscriptionQuery`. */
-export type BackInStockSubscriptionQueryEdge = {
+/** An edge in a connection from an object to another object of type `BackInStockSubscription`. */
+export type BackInStockSubscriptionEdge = {
   /** A cursor for use in pagination */
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
-  node?: Maybe<BackInStockSubscriptionQueryType>;
-};
-
-export type BackInStockSubscriptionQueryType = {
-  id?: Maybe<Scalars['String']['output']>;
-  isActive?: Maybe<Scalars['Boolean']['output']>;
-  productId?: Maybe<Scalars['String']['output']>;
-  storeId?: Maybe<Scalars['String']['output']>;
-  triggered?: Maybe<Scalars['DateTime']['output']>;
+  node?: Maybe<BackInStockSubscriptionType>;
 };
 
 export type BackInStockSubscriptionType = {
   id: Scalars['String']['output'];
   isActive: Scalars['Boolean']['output'];
+  memberId?: Maybe<Scalars['String']['output']>;
   productId: Scalars['String']['output'];
+  productName?: Maybe<Scalars['String']['output']>;
+  sentDate?: Maybe<Scalars['DateTime']['output']>;
   storeId: Scalars['String']['output'];
-  triggered?: Maybe<Scalars['DateTime']['output']>;
   userId: Scalars['String']['output'];
 };
 
@@ -4731,6 +4725,7 @@ export type PushMessageType = {
 };
 
 export type Query = {
+  backInStockSubscriptions?: Maybe<BackInStockSubscriptionConnection>;
   canLeaveFeedback?: Maybe<Scalars['Boolean']['output']>;
   cart?: Maybe<CartType>;
   carts?: Maybe<CartConnection>;
@@ -4752,7 +4747,6 @@ export type Query = {
   fileUploadOptions?: Maybe<FileUploadScopeOptionsType>;
   fulfillmentCenter?: Maybe<FulfillmentCenterType>;
   fulfillmentCenters?: Maybe<FulfillmentCenterConnection>;
-  getBackInStockSubscriptions?: Maybe<BackInStockSubscriptionQueryConnection>;
   me?: Maybe<UserType>;
   menu?: Maybe<MenuLinkListType>;
   menus: Array<MenuLinkListType>;
@@ -4797,6 +4791,19 @@ export type Query = {
   whiteLabelingSettings?: Maybe<WhiteLabelingSettingsType>;
   wishlist?: Maybe<WishlistType>;
   wishlists?: Maybe<WishlistConnection>;
+};
+
+
+export type QueryBackInStockSubscriptionsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  endSentDate?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  keyword?: InputMaybe<Scalars['String']['input']>;
+  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+  startSentDate?: InputMaybe<Scalars['DateTime']['input']>;
+  storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -4968,21 +4975,6 @@ export type QueryFulfillmentCentersArgs = {
   query?: InputMaybe<Scalars['String']['input']>;
   sort?: InputMaybe<Scalars['String']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryGetBackInStockSubscriptionsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  endTriggeredDate?: InputMaybe<Scalars['DateTime']['input']>;
-  filter?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  keyword?: InputMaybe<Scalars['String']['input']>;
-  productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  sort?: InputMaybe<Scalars['String']['input']>;
-  startTriggeredDate?: InputMaybe<Scalars['DateTime']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

@@ -9,5 +9,5 @@ export type PaginationType = {
 export type FetchParametersType = {
   keyword: string;
   sort: ISortInfo;
-  productIds: string[];
+  productIds: string[] | undefined;
 };

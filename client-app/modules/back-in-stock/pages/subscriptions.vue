@@ -93,17 +93,15 @@
         <!-- Empty list -->
         <VcEmptyView
           v-else-if="!allLoading && subscriptionsItems.length === 0"
-          :text="$t('shared.back_in_stock.list_details.empty_list')"
+          :text="$t('back_in_stock.list_details.empty_list')"
           icon="thin-lists"
         >
           <template #button>
             <VcButton :to="{ name: 'Catalog' }">
-              {{ $t("shared.back_in_stock.list_details.empty_list_button") }}
+              {{ $t("back_in_stock.list_details.empty_list_button") }}
             </VcButton>
           </template>
         </VcEmptyView>
-
-        <Error404 v-else-if="!allLoading && !subscriptionsItems" />
       </div>
     </div>
   </div>
@@ -112,7 +110,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints, useElementVisibility } from "@vueuse/core";
 import { keyBy } from "lodash";
-import { computed, ref, watchEffect, defineAsyncComponent, shallowRef } from "vue";
+import { computed, ref, watchEffect, shallowRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAnalytics, useHistoricalEvents, usePageHead } from "@/core/composables";
 import { PAGE_LIMIT } from "@/core/constants";
@@ -128,7 +126,6 @@ import DeactivateBackInStockSubscriptionModal from "../components/deactivate-bac
 import { useBackInStockSubscriptions } from "../composables";
 import type { Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 const { t } = useI18n();
 const { analytics } = useAnalytics();
 const { openModal } = useModal();

@@ -2,7 +2,6 @@ mutation deactivateBackInStockSubscription($command: DeactivateBackInStockSubscr
   deactivateBackInStockSubscription(command: $command) {
     id
     storeId
-    triggered
     isActive
     productId
   }
