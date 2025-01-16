@@ -136,7 +136,6 @@ import {
 import {
   useProduct,
   useRelatedProducts,
-  useCategory,
   ProductSidebar,
   ProductConfiguration,
   useProducts,
@@ -199,7 +198,6 @@ const { isEnabled } = useModuleSettings(CUSTOMER_REVIEWS_MODULE_ID);
 const productReviewsEnabled = isEnabled(CUSTOMER_REVIEWS_ENABLED_KEY);
 
 const { analytics } = useAnalytics();
-const { catalogBreadcrumb } = useCategory();
 const { pushHistoricalEvent } = useHistoricalEvents();
 
 const variationsFilterExpression = ref(`productfamilyid:${productId.value} is:product,variation`);
@@ -236,9 +234,7 @@ const relatedProductsSection = productTemplate?.content?.find((item) => item?.ty
 
 const recommendedProductsSection = productTemplate?.content?.find((item) => item?.type === "recommended-products");
 
-const breadcrumbs = useBreadcrumbs(() => {
-  return [catalogBreadcrumb].concat(buildBreadcrumbs(product.value?.breadcrumbs));
-});
+const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(product.value?.breadcrumbs));
 
 const productComponentAnchor = shallowRef<HTMLElement | null>(null);
 const productComponentAnchorIsVisible = useElementVisibility(productComponentAnchor);

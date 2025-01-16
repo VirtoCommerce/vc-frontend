@@ -327,7 +327,7 @@ const {
   useQueryParams: true,
   withFacets: true,
 });
-const { loading: loadingCategory, category: currentCategory, catalogBreadcrumb, fetchCategory } = useCategory();
+const { loading: loadingCategory, category: currentCategory, fetchCategory } = useCategory();
 const { analytics } = useAnalytics();
 
 const savedViewMode = useLocalStorage<ViewModeType>("viewMode", "grid");
@@ -348,11 +348,8 @@ const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentA
 
 useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible });
 
+const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
-
-const breadcrumbs = useBreadcrumbs(() => {
-  return [catalogBreadcrumb].concat(buildBreadcrumbs(currentCategory.value?.breadcrumbs));
-});
 
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,

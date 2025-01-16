@@ -4,17 +4,12 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
 import type { Category } from "@/core/api/graphql/types";
-import type { RouteLocationRaw } from "vue-router";
 
 export function useCategory() {
   const loading = ref(false);
   const category = shallowRef<Category>();
 
-  const { catalogId, i18n } = globals;
-
-  const catalogName = i18n.global.t("pages.catalog.title");
-  const catalogRoute: RouteLocationRaw = { name: "Catalog" };
-  const catalogBreadcrumb: IBreadcrumb = { title: catalogName, route: catalogRoute };
+  const { catalogId } = globals;
 
   async function fetchCategory(payload: Omit<ExtendedQueryCategoryArgsType, "storeId">) {
     loading.value = true;
@@ -24,7 +19,7 @@ export function useCategory() {
       category.value = {
         ...data.category,
         childCategories: data.childCategories.childCategories ?? [],
-        name: data.category?.name ?? catalogName,
+        name: data.category?.name,
         id: data.category?.id || catalogId,
       };
     } catch (e) {
@@ -36,7 +31,6 @@ export function useCategory() {
   }
 
   return {
-    catalogBreadcrumb,
     fetchCategory,
     loading: readonly(loading),
     category: computed(() => category.value),
