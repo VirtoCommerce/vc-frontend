@@ -185,6 +185,7 @@
         </VcChip>
       </div>
 
+      <div ref="categoryProductsAnchor"></div>
       <!-- Products -->
       <CategoryProducts
         :card-type="cardType"
@@ -348,6 +349,7 @@ const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentA
 useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible });
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
+const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
   categoryId: props.categoryId,
@@ -463,7 +465,12 @@ watch(props, ({ viewMode }) => {
 
 watchDebounced(
   computed(() => JSON.stringify(searchParams.value)),
-  fetchProducts,
+  () => {
+    if (categoryProductsAnchor.value) {
+      categoryProductsAnchor.value.scrollIntoView({ block: "center" });
+    }
+    void fetchProducts();
+  },
   {
     debounce: 20,
     flush: "post",
