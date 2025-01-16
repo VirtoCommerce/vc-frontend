@@ -58,6 +58,7 @@ const props = withDefaults(defineProps<IProps>(), {
   placement: "bottom-end",
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const { address, placement } = toRefs(props);
 const { isCorporateMember } = useUser();
 
