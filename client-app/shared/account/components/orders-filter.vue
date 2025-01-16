@@ -15,7 +15,7 @@
         <div v-if="!!facets">
           <VcLabel>{{ $t("shared.account.orders_filter.status_label") }}</VcLabel>
 
-          <VcCheckboxGroup v-model="filterData.statuses" class="mt-1 space-y-3.5">
+          <VcCheckboxGroup v-model="filterData.statuses" class="mt-2 space-y-3.5">
             <VcCheckbox
               v-for="facet in facets"
               :key="facet.term"

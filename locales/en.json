@@ -1149,6 +1149,7 @@
         "no_members_message": "There are no members yet",
         "no_results_message": "No results found",
         "invite_sent": "Invite sent",
+        "filters": "Members filters",
         "labels": {
           "role": "Role",
           "status": "Status"

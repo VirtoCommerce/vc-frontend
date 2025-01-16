@@ -1,50 +1,42 @@
 <template>
   <teleport to="body">
-    <!-- Sidebar back cover -->
-    <transition name="fade">
-      <div
-        v-if="isVisible"
-        class="fixed inset-0 z-50 size-full bg-neutral-900/30"
-        role="button"
-        tabindex="0"
-        @click="onHide"
-        @keypress="onHide"
-      />
-    </transition>
+    <div class="vc-popup-sidebar">
+      <!-- Sidebar back cover -->
+      <transition name="fade">
+        <div
+          v-if="isVisible"
+          class="vc-popup-sidebar__backdrop"
+          role="button"
+          tabindex="0"
+          @click="onHide"
+          @keypress="onHide"
+        />
+      </transition>
 
-    <!-- Sidebar content -->
-    <transition
-      enter-from-class="-translate-x-full"
-      leave-to-class="-translate-x-full"
-      enter-active-class="will-change-transform"
-      leave-active-class="will-change-transform"
-    >
-      <div
-        v-if="isVisible"
-        v-bind="$attrs"
-        class="fixed inset-0 z-50 flex w-72 flex-col bg-additional-50 transition-transform"
+      <!-- Sidebar content -->
+      <transition
+        enter-from-class="-translate-x-full"
+        leave-to-class="-translate-x-full"
+        enter-active-class="will-change-transform"
+        leave-active-class="will-change-transform"
       >
-        <div class="relative z-[1] flex items-center justify-between gap-2 ps-5 shadow-sm">
-          <slot name="header" :hide="onHide">
-            <div class="text-2xl font-bold">
-              {{ title ?? $t("ui_kit.buttons.filters") }}
+        <VcDialog v-if="isVisible" v-bind="$attrs" class="vc-popup-sidebar__dialog" dividers>
+          <VcDialogHeader @close="onHide">
+            {{ title ?? $t("ui_kit.buttons.filters") }}
+          </VcDialogHeader>
+
+          <VcDialogContent>
+            <slot />
+          </VcDialogContent>
+
+          <VcDialogFooter>
+            <div class="vc-popup-sidebar__footer">
+              <slot name="footer" />
             </div>
-
-            <button type="button" class="appearance-none px-5 py-4" @click="onHide">
-              <VcIcon class="fill-neutral-600" name="delete-thin" />
-            </button>
-          </slot>
-        </div>
-
-        <div class="grow overflow-y-auto p-5">
-          <slot />
-        </div>
-
-        <div class="relative z-[1] flex flex-wrap gap-4 px-5 py-4 shadow-2xl [&>*]:flex-1">
-          <slot name="footer" />
-        </div>
-      </div>
-    </transition>
+          </VcDialogFooter>
+        </VcDialog>
+      </transition>
+    </div>
   </teleport>
 </template>
 
@@ -76,3 +68,27 @@ function onHide() {
   emit("hide");
 }
 </script>
+
+<style lang="scss">
+.vc-popup-sidebar {
+  &__backdrop {
+    @apply fixed inset-0 z-50 size-full bg-neutral-900/30;
+  }
+
+  &__dialog {
+    @apply fixed inset-y-2 left-2 z-50 w-full max-w-[21.25rem];
+  }
+
+  &__footer {
+    @apply flex flex-wrap items-center gap-x-3.5 gap-y-2 w-full;
+
+    & > .vc-button:not(.vc-button--icon) {
+      @apply w-full;
+
+      @container (min-width: theme("containers.xxs")) {
+        @apply flex-none min-w-[6.25rem] w-auto;
+      }
+    }
+  }
+}
+</style>
