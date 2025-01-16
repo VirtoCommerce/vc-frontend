@@ -38,13 +38,20 @@
           "
         />
 
-        <VcButton :disabled="!numberOfFacetsApplied && !isFacetsDirty" variant="outline" size="sm" @click="hideFilters">
+        <VcButton
+          :disabled="!numberOfFacetsApplied && !isFacetsDirty"
+          variant="outline"
+          size="sm"
+          min-width="6.25rem"
+          @click="hideFilters"
+        >
           {{ $t("common.buttons.cancel") }}
         </VcButton>
 
         <VcButton
           :disabled="!isFacetsDirty"
           size="sm"
+          min-width="6.25rem"
           @click="
             applyFilters();
             hideFilters();

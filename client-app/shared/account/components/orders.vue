@@ -9,11 +9,28 @@
       </MobileOrdersFilter>
 
       <template #footer>
-        <VcButton :disabled="isFilterEmpty && !isFilterDirty" variant="outline" @click="resetOrderFilters">
-          {{ $t("common.buttons.reset") }}
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          class="me-auto"
+          color="secondary"
+          variant="outline"
+          size="sm"
+          icon="reset"
+          :title="$t('common.buttons.reset')"
+          @click="resetOrderFilters"
+        />
+
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          variant="outline"
+          size="sm"
+          min-width="6.25rem"
+          @click="hideFilters"
+        >
+          {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton :disabled="!isFilterDirty" @click="applyOrderFilters">
+        <VcButton :disabled="!isFilterDirty" size="sm" min-width="6.25rem" @click="applyOrderFilters">
           {{ $t("common.buttons.apply") }}
         </VcButton>
       </template>

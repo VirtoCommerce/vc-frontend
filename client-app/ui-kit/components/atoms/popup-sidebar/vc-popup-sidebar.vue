@@ -76,19 +76,11 @@ function onHide() {
   }
 
   &__dialog {
-    @apply fixed inset-y-2 left-2 z-50 w-full max-w-[21.25rem];
+    @apply fixed inset-y-2 left-2 z-50 w-[calc(100%-1rem)] max-w-[21.25rem];
   }
 
   &__footer {
     @apply flex flex-wrap items-center gap-x-3.5 gap-y-2 w-full;
-
-    & > .vc-button:not(.vc-button--icon) {
-      @apply w-full;
-
-      @container (min-width: theme("containers.xxs")) {
-        @apply flex-none min-w-[6.25rem] w-auto;
-      }
-    }
   }
 }
 </style>
