@@ -165,7 +165,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 
 ### Clone repository
 ```bash
-git clone https://github.com/VirtoCommerce/vc-theme-b2b-vue.git "C:\vc-theme-b2b-vue\"
+git clone https://github.com/VirtoCommerce/vc-frontend.git "C:\vc-frontend\"
 ```
 
 ### Check yarn version
@@ -188,7 +188,7 @@ yarn install
 
 ```dotenv
 # .env.local file
-APP_BACKEND_URL=https://localhost:5001
+APP_BACKEND_URL=[your endpoint, example https://localhost:5001]
 ```
 
 - Run command: `yarn dev` or `yarn dev-expose`
