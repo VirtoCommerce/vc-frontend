@@ -8,7 +8,7 @@
       <!-- Title block -->
       <div class="contents md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
         <VcTypography tag="h1">
-          {{ $t("shared.account.navigation.links.back_in_stock_subscriptions") }}
+          {{ $t("back_in_stock.subscriptions.meta.title") }}
         </VcTypography>
       </div>
 
@@ -19,16 +19,16 @@
       >
         <div class="flex grow">
           <VcInput
-            v-model="keyword"
+            v-model="fetchParameters.keyword"
             :disabled="allLoading"
-            :placeholder="$t('shared.back_in_stock.search_placeholder')"
+            :placeholder="$t('back_in_stock.subscriptions.search_placeholder')"
             maxlength="64"
             class="w-full"
             @keydown.enter="applyKeyword"
           >
             <template #append>
               <button
-                v-if="keyword"
+                v-if="fetchParameters.keyword"
                 :aria-label="$t('quotes.reset_search')"
                 type="button"
                 class="flex h-full items-center px-4"
@@ -75,11 +75,13 @@
                 @remove:items="openDeleteProductModal"
               />
 
-              <p v-if="page >= PAGE_LIMIT" class="my-3 text-center">{{ $t("ui_kit.reach_limit.page_limit") }}</p>
+              <p v-if="pagination.page >= PAGE_LIMIT" class="my-3 text-center">
+                {{ $t("ui_kit.reach_limit.page_limit") }}
+              </p>
 
               <VcPagination
                 v-if="pagesCount > 1"
-                v-model:page="page"
+                v-model:page="pagination.page"
                 :pages="Math.min(pagesCount, PAGE_LIMIT)"
                 :scroll-target="listElement"
                 :scroll-offset="60"
@@ -132,11 +134,10 @@ const { analytics } = useAnalytics();
 const { openModal } = useModal();
 const {
   fetchSubscriptions,
-  loading: subscriptionsLoading,
-  backInStockSubscriptions,
-  itemsPerPage,
-  page,
-  keyword,
+  fetching: subscriptionsFetching,
+  subscriptions,
+  pagination,
+  fetchParameters,
 } = useBackInStockSubscriptions();
 const { fetchProducts, products, fetchingProducts } = useProducts();
 const { loading: cartLoading, changing: cartChanging, cart, addToCart, changeItemQuantity } = useShortCart();
@@ -156,25 +157,31 @@ const preparedLineItems = computed<PreparedLineItemType[]>(() =>
   subscriptionsItems.value.map((item) => prepareLineItemForProduct(item, cartItemsBySkus.value[item.code!]?.quantity)),
 );
 const allLoading = computed<boolean>(
-  () => subscriptionsLoading.value || fetchingProducts.value || cartLoading.value || cartChanging.value,
+  () => subscriptionsFetching.value || fetchingProducts.value || cartLoading.value || cartChanging.value,
 );
-const pagesCount = computed<number>(() => Math.ceil((subscriptionsItems.value.length ?? 0) / itemsPerPage.value));
+const pagesCount = computed<number>(() =>
+  Math.ceil((subscriptionsItems.value.length ?? 0) / pagination.value.itemsPerPage),
+);
 const pagedListItems = computed<PreparedLineItemType[]>(() =>
-  preparedLineItems.value.slice((page.value - 1) * itemsPerPage.value, page.value * itemsPerPage.value),
+  preparedLineItems.value.slice(
+    (pagination.value.page - 1) * pagination.value.itemsPerPage,
+    pagination.value.page * pagination.value.itemsPerPage,
+  ),
 );
-const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || itemsPerPage.value);
+const actualPageRowsCount = computed<number>(() => pagedListItems.value.length || pagination.value.itemsPerPage);
 const isMobile = breakpoints.smaller("lg");
+
 const fetchProductsAndSubscriptions = async () => {
   await fetchSubscriptions({ isActive: true });
-  if (backInStockSubscriptions.value.length > 0) {
+  if (subscriptions.value.length > 0) {
     await fetchProducts({
-      productIds: backInStockSubscriptions.value.map((item) => item.productId!),
+      productIds: subscriptions.value.map((item) => item.productId!),
       itemsPerPage: 10,
     });
     const productsResult: Product[] = [];
-    page.value = 1;
+    pagination.value.page = 1;
     if (products.value.length > 0) {
-      backInStockSubscriptions.value.forEach((subscription) => {
+      subscriptions.value.forEach((subscription) => {
         if (subscription.isActive) {
           const product = products.value.filter((item) => item.id === subscription.productId)[0];
           if (product) {
@@ -212,12 +219,12 @@ async function addOrUpdateCartItem(item: PreparedLineItemType, quantity: number)
   pendingItems.value[item.id] = false;
 }
 async function applyKeyword(): Promise<void> {
-  page.value = 1;
+  pagination.value.page = 1;
   await fetchProductsAndSubscriptions();
 }
 async function resetKeyword(): Promise<void> {
-  keyword.value = "";
-  page.value = 1;
+  fetchParameters.value.keyword = "";
+  pagination.value.page = 1;
   await applyKeyword();
 }
 function openDeleteProductModal(values: string[]): void {
@@ -230,8 +237,12 @@ function openDeleteProductModal(values: string[]): void {
         productName: item.name,
         onResult(): void {
           const previousPagesCount = pagesCount.value;
-          if (previousPagesCount > 1 && previousPagesCount === page.value && previousPagesCount > pagesCount.value) {
-            page.value -= 1;
+          if (
+            previousPagesCount > 1 &&
+            previousPagesCount === pagination.value.page &&
+            previousPagesCount > pagesCount.value
+          ) {
+            pagination.value.page -= 1;
           }
           fetchProductsAndSubscriptions();
         },

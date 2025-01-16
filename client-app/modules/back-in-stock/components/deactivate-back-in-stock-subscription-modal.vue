@@ -11,7 +11,7 @@
     </i18n-t>
 
     <template #actions="{ close }">
-      <VcButton :loading="loading" color="danger" @click="remove(close)">
+      <VcButton :loading="fetching" color="danger" @click="remove(close)">
         {{ $t("back_in_stock.deactivate_back_in_stock_subscription_modal.delete_button") }}
       </VcButton>
 
@@ -39,7 +39,7 @@ interface IProps {
   productName: string;
 }
 
-const { loading, deactivateSubscription } = useBackInStockSubscriptions();
+const { fetching, deactivateSubscription } = useBackInStockSubscriptions();
 
 async function remove(closingHandle: () => void) {
   const payload: DeactivateBackInStockSubscriptionCommandType = {

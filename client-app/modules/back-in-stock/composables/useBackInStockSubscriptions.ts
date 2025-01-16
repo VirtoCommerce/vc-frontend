@@ -1,5 +1,6 @@
-import { createSharedComposable } from "@vueuse/core";
-import { computed, ref, shallowRef } from "vue";
+import { createSharedComposable, watchDebounced } from "@vueuse/core";
+import difference from "lodash/difference";
+import { readonly, ref, shallowRef } from "vue";
 import { DEFAULT_SORT } from "@/core/constants";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import {
@@ -14,39 +15,52 @@ import type {
   DeactivateBackInStockSubscriptionCommandType,
   QueryGetBackInStockSubscriptionsArgs,
 } from "../api/graphql/types";
-import type { ISortInfo } from "@/core/types";
+import type { FetchParametersType, PaginationType } from "../types";
 
 const DEFAULT_ITEMS_PER_PAGE = 10;
-const loading = ref(false);
-const backInStockSubscriptions = shallowRef<BackInStockSubscriptionQueryType[]>([]);
-const itemsPerPage = ref<number>(DEFAULT_ITEMS_PER_PAGE);
-const pages = ref<number>(0);
-const page = ref<number>(1);
-const keyword = ref<string>("");
-const sort = ref<ISortInfo>(DEFAULT_SORT);
-const lastFetched = ref<number | null>(null);
-const lastFetchedProductIds = ref<Array<string> | undefined>([]);
+const DEBOUNCE_IN_MS = 300;
 
-createSharedComposable(useBackInStockSubscriptions);
+const fetching = ref(false);
+const subscriptions = shallowRef<BackInStockSubscriptionQueryType[]>([]);
+const pendingProductIds = ref<Set<string>>(new Set());
+const visibleProductIds = ref<string[]>([]);
 
-export function useBackInStockSubscriptions(options: { autoRefetch: boolean } = { autoRefetch: true }) {
+const pagination = ref<PaginationType>({
+  page: 1,
+  pages: 0,
+  itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+});
+const fetchParameters = ref<FetchParametersType>({
+  keyword: "",
+  sort: DEFAULT_SORT,
+  productIds: [],
+});
+
+function updateSubscription(subscription: BackInStockSubscriptionType) {
+  const index = subscriptions.value.findIndex((item) => item.id === subscription.id);
+  if (index !== -1) {
+    subscriptions.value[index] = subscription;
+  } else {
+    subscriptions.value.push(subscription);
+  }
+}
+
+function _useBackInStockSubscriptions() {
   async function activateSubscription(
     payload: ActivateBackInStockSubscriptionCommandType,
   ): Promise<BackInStockSubscriptionType | undefined> {
     let newSubscription: BackInStockSubscriptionType | undefined;
-    loading.value = true;
-
+    pendingProductIds.value.add(payload.productId);
     try {
       newSubscription = await activateBackInStockSubscription(payload);
-      if (options.autoRefetch) {
-        await fetchSubscriptions({
-          productIds: lastFetchedProductIds.value,
-          first: lastFetchedProductIds.value?.length,
-        });
+      if (newSubscription) {
+        updateSubscription(newSubscription);
       }
     } catch (e) {
-      Logger.error(`${useBackInStockSubscriptions.name}.${useBackInStockSubscriptions.name}`, e);
+      Logger.error(`${useBackInStockSubscriptions.name}.${activateSubscription.name}`, e);
       throw e;
+    } finally {
+      pendingProductIds.value.delete(payload.productId);
     }
 
     return newSubscription;
@@ -56,60 +70,111 @@ export function useBackInStockSubscriptions(options: { autoRefetch: boolean } = 
     payload: DeactivateBackInStockSubscriptionCommandType,
   ): Promise<BackInStockSubscriptionType | undefined> {
     let newSubscription: BackInStockSubscriptionType | undefined;
-    loading.value = true;
-
+    pendingProductIds.value.add(payload.productId);
     try {
       newSubscription = await deactivateBackInStockSubscription(payload);
-      if (options.autoRefetch) {
-        await fetchSubscriptions({
-          productIds: lastFetchedProductIds.value,
-          first: lastFetchedProductIds.value?.length,
-        });
+      if (newSubscription) {
+        updateSubscription(newSubscription);
       }
     } catch (e) {
-      Logger.error(`${useBackInStockSubscriptions.name}.${useBackInStockSubscriptions.name}`, e);
-      loading.value = false;
+      Logger.error(`${useBackInStockSubscriptions.name}.${deactivateSubscription.name}`, e);
       throw e;
+    } finally {
+      pendingProductIds.value.delete(payload.productId);
     }
 
     return newSubscription;
   }
 
-  async function fetchSubscriptions(payload?: QueryGetBackInStockSubscriptionsArgs): Promise<void> {
-    loading.value = true;
+  async function fetchSubscriptions(payload?: QueryGetBackInStockSubscriptionsArgs, partial = false): Promise<void> {
+    fetching.value = true;
+    const {
+      first = pagination.value.itemsPerPage,
+      after = String((pagination.value.page - 1) * pagination.value.itemsPerPage),
+      keyword = fetchParameters.value.keyword.trim(),
+      sort = getSortingExpression(fetchParameters.value.sort),
+      isActive,
+      productIds = fetchParameters.value.productIds,
+    } = payload ?? {};
+    if (payload?.productIds?.length) {
+      payload.productIds.forEach((productId) => pendingProductIds.value.add(productId));
+    }
     try {
       const response = await getBackInStockSubscriptions({
-        first: payload?.first ?? itemsPerPage.value,
-        after: payload?.after ?? String((page.value - 1) * itemsPerPage.value),
-        keyword: payload?.keyword ?? keyword.value.trim(),
-        sort: payload?.sort ?? getSortingExpression(sort.value),
-        isActive: payload?.isActive,
-        productIds: payload?.productIds,
+        first,
+        after,
+        keyword,
+        sort,
+        isActive,
+        productIds,
       });
 
-      lastFetchedProductIds.value = payload?.productIds;
-      backInStockSubscriptions.value = response.items ?? [];
-      pages.value = Math.ceil((response.totalCount ?? 0) / (payload?.first ?? itemsPerPage.value));
-      lastFetched.value = Date.now();
+      if (partial) {
+        subscriptions.value = [...subscriptions.value, ...(response.items ?? [])];
+      } else {
+        subscriptions.value = response.items ?? [];
+        pagination.value.pages = Math.ceil(
+          (response.totalCount ?? 0) / (payload?.first ?? pagination.value.itemsPerPage),
+        );
+      }
     } catch (e) {
       Logger.error("useBackInStockSubscriptions.fetchSubscriptions", e);
-      backInStockSubscriptions.value = [];
+      subscriptions.value = [];
     } finally {
-      loading.value = false;
+      if (payload?.productIds?.length) {
+        payload.productIds.forEach((productId) => pendingProductIds.value.delete(productId));
+      }
+      fetching.value = false;
     }
   }
+
+  function addVisibleProductId(productId: string) {
+    visibleProductIds.value = [...visibleProductIds.value, productId];
+  }
+
+  function removeVisibleProductId(productId: string) {
+    visibleProductIds.value = visibleProductIds.value.filter((id) => id !== productId);
+  }
+
+  function isProductSubscriptionPending(productId: string) {
+    return pendingProductIds.value.has(productId);
+  }
+
+  function isProductSubscriptionActive(productId: string) {
+    return subscriptions.value.some((item) => item.productId === productId && item.isActive);
+  }
+
+  watchDebounced(
+    visibleProductIds,
+    (newProductIds, oldProductIds) => {
+      const diff = difference(newProductIds, oldProductIds ?? []);
+      void fetchSubscriptions(
+        {
+          productIds: Array.from(diff),
+          first: diff.length,
+        },
+        true,
+      );
+    },
+    {
+      debounce: DEBOUNCE_IN_MS,
+      immediate: true,
+    },
+  );
 
   return {
     fetchSubscriptions,
     activateSubscription,
     deactivateSubscription,
-    itemsPerPage,
-    pages,
-    page,
-    keyword,
-    sort,
-    lastFetched,
-    loading: computed(() => loading.value),
-    backInStockSubscriptions: computed(() => backInStockSubscriptions.value),
+    isProductSubscriptionPending,
+    isProductSubscriptionActive,
+    addVisibleProductId,
+    removeVisibleProductId,
+    pagination,
+    fetchParameters,
+    fetching: readonly(fetching),
+    subscriptions: readonly(subscriptions),
   };
 }
+
+export const useBackInStockSubscriptions = createSharedComposable(_useBackInStockSubscriptions);
