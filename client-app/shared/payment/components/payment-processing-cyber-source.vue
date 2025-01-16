@@ -11,7 +11,7 @@
     />
     <div class="mt-3">
       <VcLabel required for-id="cardNumber-container">{{ labels.number }}</VcLabel>
-      <div id="cardNumber-container" class="cyber-source__card-number form-control"></div>
+      <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
     </div>
     <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
       <!-- todo add placeholder translation -->
@@ -35,7 +35,7 @@
       <div class="basis-1/4">
         <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
         <!-- todo add circles -->
-        <div id="securityCode-container" class="form-control cyber-source__code"></div>
+        <div id="securityCode-container" class="form-control cyber-source-input-wrap"></div>
       </div>
     </div>
   </div>
@@ -278,7 +278,7 @@ function initForm() {
   const number = microform.createField("number");
   const securityCode = microform.createField("securityCode", {
     placeholder: "•••",
-    maxLength: 4,
+    maxLength: 3,
   });
   number.load("#cardNumber-container");
   number.on("change", onChange);
@@ -295,15 +295,12 @@ function onChange(data: { valid: boolean; card: Array<unknown> }) {
 }
 
 const root = ref(null);
+
+// custom font-family like Lato not supported
 const customStyles = {
   input: {
     "font-size": "1rem",
-    // custom font-family like Lato not supported
-    "font-family": "sans-serif",
     color: useCssVar("--body-text-color", root).value,
-    "::placeholder": {
-      color: "red",
-    },
   },
 };
 
@@ -361,16 +358,19 @@ onUnmounted(removeScript);
 </script>
 
 <style lang="scss">
-.cyber-source__card-number,
-.cyber-source__code {
+.cyber-source-input-wrap {
   --base-color: var(--vc-input-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
 
   @apply h-11 text-base relative m-px px-3 appearance-none bg-transparent border bg-additional-50 rounded-[3px] leading-none w-full min-w-0;
 }
 
-.cyber-source__card-number.flex-microform-focused,
-.cyber-source__code.flex-microform-focused {
+.cyber-source-input-wrap.flex-microform-focused {
   @apply ring ring-[--focus-color];
+}
+
+.cyber-source-input-wrap.flex-microform-invalid {
+  --base-color: var(--color-danger-500);
+  @apply border-[--base-color];
 }
 </style>
