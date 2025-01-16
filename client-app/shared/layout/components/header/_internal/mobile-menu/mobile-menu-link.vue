@@ -27,7 +27,7 @@
             : 'text-[--mobile-menu-link-color]',
         ]"
       >
-        <slot v-bind="{ isActive, isExactActive, formattedText: formatText(link.title) }" />
+        <slot v-bind="{ isActive, isExactActive, formattedText: formatTextFunction(link.title) }" />
       </span>
 
       <VcBadge v-if="count" variant="solid-light" color="neutral" size="lg" rounded>
@@ -53,12 +53,13 @@ interface IEmits {
 interface IProps {
   link: ExtendedMenuLinkType;
   count?: number;
-  formatFunction?: (text: string) => string;
+  formatTextFunction?: (text: string | undefined) => string;
 }
 
 const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   count: 0,
+  formatTextFunction: (text: string | undefined) => text ?? "",
 });
 
 const isParent = computed<boolean>(() => !!props.link.children?.length);
@@ -75,18 +76,6 @@ function click(navigate: () => Promise<void | NavigationFailure>) {
     }
     emit("close");
   }
-}
-
-function formatText(text: string | undefined): string {
-  if (!text) {
-    return "";
-  }
-
-  if (props.formatFunction) {
-    return props.formatFunction(text);
-  }
-
-  return text;
 }
 
 const isExternalLink = computed(() => {
