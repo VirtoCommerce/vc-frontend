@@ -1,6 +1,6 @@
 import { useLocalStorage } from "@vueuse/core";
-import { inject, computed } from "vue";
-import { configInjectionKey } from "@/core/injection-keys";
+import { computed } from "vue";
+import { useThemeContext } from "@/core/composables";
 import { truncate } from "@/core/utilities";
 import { useNotifications } from "@/shared/notification";
 import type { Product } from "@/core/api/graphql/types";
@@ -12,9 +12,9 @@ const NAME_MAX_LENGTH = 60;
 const productsIds = useLocalStorage<string[]>("productCompareListIds", []);
 
 export function useCompareProducts() {
-  const config = inject(configInjectionKey);
+  const { themeContext } = useThemeContext();
   const notifications = useNotifications();
-  const productsLimit = config?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
+  const productsLimit = themeContext.value?.settings?.product_compare_limit || DEFAULT_MAX_PRODUCTS;
 
   function addToCompareList(product: Product) {
     if (productsIds.value.includes(product.id)) {
