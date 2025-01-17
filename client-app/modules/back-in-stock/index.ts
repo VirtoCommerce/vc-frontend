@@ -17,7 +17,7 @@ const { mergeMenuSchema } = useNavigations();
 const { registerCustomProductCardComponent } = useCustomProductCardComponents();
 const route: RouteRecordRaw = {
   path: "back-in-stock",
-  name: "Subscriptions",
+  name: "BackInStockSubscriptions",
   component: Subscriptions,
 };
 
@@ -28,10 +28,10 @@ const menuItems: DeepPartial<MenuType> = {
         children: [
           {
             id: "back-in-stock",
-            route: { name: "Subscriptions" },
+            route: { name: "BackInStockSubscriptions" },
             title: "back_in_stock.navigation.route_name",
-            icon: "notification-v2",
-            priority: 90,
+            icon: "cube",
+            priority: 100,
           },
         ],
       },
@@ -41,10 +41,10 @@ const menuItems: DeepPartial<MenuType> = {
         children: [
           {
             id: "back-in-stock",
-            route: { name: "Subscriptions" },
+            route: { name: "BackInStockSubscriptions" },
             title: "back_in_stock.navigation.route_name",
-            icon: "notification-v2",
-            priority: 90,
+            icon: "cube",
+            priority: 100,
           },
         ],
       },
