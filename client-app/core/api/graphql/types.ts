@@ -1995,7 +1995,7 @@ export type InputMemberAddressType = {
   /** First name */
   firstName?: InputMaybe<Scalars['String']['input']>;
   /** Id */
-  id: Scalars['String']['input'];
+  id?: InputMaybe<Scalars['String']['input']>;
   /** key */
   key?: InputMaybe<Scalars['String']['input']>;
   /** Last name */
