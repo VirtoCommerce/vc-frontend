@@ -121,7 +121,7 @@ export type Breadcrumb = {
 export type BulkCartType = {
   /** Cart */
   cart?: Maybe<CartType>;
-  /** A set of errors in case the Skus are invalid */
+  /** A set of errors in case the SKUs are invalid */
   errors?: Maybe<Array<Maybe<ValidationErrorType>>>;
 };
 
@@ -671,6 +671,7 @@ export type CountryType = {
   id: Scalars['String']['output'];
   /** Name of country. For example 'United States of America'. */
   name: Scalars['String']['output'];
+  /** Country regions. */
   regions: Array<CountryRegionType>;
 };
 
@@ -1246,7 +1247,7 @@ export type FulfillmentCenterType = {
   address?: Maybe<FulfillmentCenterAddressType>;
   /** Fulfillment Center description. */
   description?: Maybe<Scalars['String']['output']>;
-  /** Fulfillment Center geo location. */
+  /** Fulfillment Center GEO location. */
   geoLocation?: Maybe<Scalars['String']['output']>;
   /** Fulfillment Center ID. */
   id: Scalars['String']['output'];
@@ -1507,7 +1508,7 @@ export type InputAddressType = {
   /** First name */
   firstName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** ID */
-  id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['OptionalString']['input']>;
   /** ID */
   key?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Last name */
@@ -1885,12 +1886,7 @@ export type InputCreateOrderFromCartType = {
 export type InputCreateOrganizationType = {
   addresses?: InputMaybe<Array<InputMaybe<InputMemberAddressType>>>;
   dynamicProperties?: InputMaybe<Array<InputMaybe<InputDynamicPropertyValueType>>>;
-  emails?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  groups?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  memberType?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  phones?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export type InputCreateUserType = {
@@ -1935,8 +1931,6 @@ export type InputDeleteUserType = {
 export type InputDynamicPropertyValueType = {
   /** Culture name ("en-US") for multilingual property */
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** Language ("en-US") for multilingual property */
-  locale?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic property name */
   name: Scalars['String']['input'];
   /** Dynamic property value. ID must be passed for dictionary item */
@@ -2000,6 +1994,7 @@ export type InputMemberAddressType = {
   email?: InputMaybe<Scalars['String']['input']>;
   /** First name */
   firstName?: InputMaybe<Scalars['String']['input']>;
+  /** Id */
   id?: InputMaybe<Scalars['String']['input']>;
   /** key */
   key?: InputMaybe<Scalars['String']['input']>;
@@ -2096,7 +2091,7 @@ export type InputOrderAddressType = {
   /** First name */
   firstName?: InputMaybe<Scalars['OptionalString']['input']>;
   /** ID */
-  id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Id */
   key?: InputMaybe<Scalars['OptionalString']['input']>;
   /** Last name */
@@ -2453,7 +2448,7 @@ export type InputUpdateApplicationUserType = {
   lockoutEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   /** End date of lockout */
   lockoutEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  /** Id of the associated Memeber */
+  /** Id of the associated Member */
   memberId?: InputMaybe<Scalars['String']['input']>;
   /** Password Hash */
   passwordHash?: InputMaybe<Scalars['String']['input']>;
@@ -5866,7 +5861,7 @@ export type VariationType = {
   /** The type of product */
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
-  /** Product raiting */
+  /** Product rating */
   rating?: Maybe<Rating>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;

@@ -373,8 +373,6 @@ export type ImageType = {
 export type InputDynamicPropertyValueType = {
   /** Culture name ("en-US") for multilingual property */
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** Language ("en-US") for multilingual property */
-  locale?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic property name */
   name: Scalars['String']['input'];
   /** Dynamic property value. ID must be passed for dictionary item */
@@ -1133,7 +1131,7 @@ export type VariationType = {
   /** The type of product */
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
-  /** Product raiting */
+  /** Product rating */
   rating?: Maybe<Rating>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;
