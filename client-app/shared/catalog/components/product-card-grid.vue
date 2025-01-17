@@ -164,43 +164,46 @@
       <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" />
     </div>
 
-    <template v-if="customProductCardComponents.button && customProductCardComponents.button.shouldRender(product)">
-      <component :is="customProductCardComponents.button.component" :product="product" />
-    </template>
+    <component
+      :is="getCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+      v-if="
+        isCustomProductComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
+        shouldRenderCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
+      "
+      :product="product"
+    />
+
+    <VcProductButton
+      v-else-if="product.isConfigurable"
+      :to="link"
+      link-text="Customize"
+      button-text="Customize"
+      icon="cube-transparent"
+      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      @link-click="$emit('linkClick', $event)"
+    />
+
+    <VcProductButton
+      v-else-if="product.hasVariations"
+      :to="link"
+      :link-text="$t('pages.catalog.show_on_a_separate_page')"
+      :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
+      :target="browserTarget || $cfg.details_browser_target || '_blank'"
+      @link-click="$emit('linkClick', $event)"
+    />
 
     <template v-else>
-      <VcProductButton
-        v-if="product.isConfigurable"
-        :to="link"
-        link-text="Customize"
-        button-text="Customize"
-        icon="cube-transparent"
-        :target="browserTarget || $cfg.details_browser_target || '_blank'"
-        @link-click="$emit('linkClick', $event)"
-      />
+      <slot name="cart-handler" />
 
-      <VcProductButton
-        v-else-if="product.hasVariations"
-        :to="link"
-        :link-text="$t('pages.catalog.show_on_a_separate_page')"
-        :button-text="$t('pages.catalog.variations_button', [(product.variations?.length || 0) + 1])"
-        :target="browserTarget || $cfg.details_browser_target || '_blank'"
-        @link-click="$emit('linkClick', $event)"
-      />
+      <div class="mt-1 flex flex-wrap items-center gap-1">
+        <InStock
+          :is-in-stock="product.availabilityData?.isInStock"
+          :is-digital="isDigital"
+          :quantity="product.availabilityData?.availableQuantity"
+        />
 
-      <template v-else>
-        <slot name="cart-handler" />
-
-        <div class="mt-1 flex flex-wrap items-center gap-1">
-          <InStock
-            :is-in-stock="product.availabilityData?.isInStock"
-            :is-digital="isDigital"
-            :quantity="product.availabilityData?.availableQuantity"
-          />
-
-          <CountInCart :product-id="product.id" />
-        </div>
-      </template>
+        <CountInCart :product-id="product.id" />
+      </div>
     </template>
   </div>
 </template>
@@ -212,7 +215,8 @@ import { computed, ref } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
-import { useCustomProductCardComponents } from "@/shared/catalog/composables";
+import { useCustomProductComponents } from "@/shared/common/composables";
+import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -223,14 +227,11 @@ import type { Product } from "@/core/api/graphql/types";
 import type { BrowserTargetType } from "@/core/types";
 import type { Swiper as SwiperInstance } from "swiper/types";
 import ProductRating from "@/modules/customer-reviews/components/product-rating.vue";
-
 defineEmits<{ (eventName: "linkClick", globalEvent: MouseEvent): void }>();
 
 const props = withDefaults(defineProps<IProps>(), {
   lazy: true,
 });
-
-const { customProductCardComponents } = useCustomProductCardComponents();
 
 interface IProps {
   product: Product;
@@ -249,6 +250,9 @@ const properties = computed(() =>
   Object.values(getPropertiesGroupedByName(props.product.properties ?? [], PropertyType.Product)).slice(0, 3),
 );
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
+
+const { isCustomProductComponentRegistered, getCustomProductComponent, shouldRenderCustomProductComponent } =
+  useCustomProductComponents();
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;
