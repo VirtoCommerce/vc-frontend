@@ -20,6 +20,7 @@ describe("toInputAddress", () => {
     };
 
     const expected: InputMemberAddressType = {
+      id: "123",
       key: "123",
       firstName: "John",
       lastName: "Doe",
@@ -48,6 +49,7 @@ describe("toInputAddress", () => {
     };
 
     const expected: InputMemberAddressType = {
+      id: "123",
       key: "456",
       city: "Los Angeles",
       line1: "456 Elm St",
