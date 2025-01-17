@@ -41,8 +41,9 @@
                   :key="socialSharingService.name"
                   target="_blank"
                   :href="getProductSocialShareUrl(socialSharingService.url_template, pageUrl)"
+                  :aria-label="`Share via ${socialSharingService.name}`"
                 >
-                  <img
+                  <VcImage
                     class="rounded-sm"
                     width="40"
                     height="40"

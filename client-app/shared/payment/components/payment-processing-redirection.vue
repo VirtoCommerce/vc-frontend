@@ -6,7 +6,7 @@
 
   <!-- Main -->
   <div v-else-if="initialized" class="text-center md:pb-4 md:pt-10">
-    <VcImage src="/static/images/payment/paysafecard.webp" alt="paysafecard" class="mb-2 inline-block md:mb-3" lazy />
+    <VcImage src="paysafecard.webp" alt="paysafecard" class="mb-2 inline-block md:mb-3" lazy />
 
     <p v-html-safe="$t('shared.payment.redirection.text', [$t('shared.payment.redirection.pay_now_button')])" />
 

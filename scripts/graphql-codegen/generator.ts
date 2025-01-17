@@ -20,11 +20,6 @@ const independentModules: ModuleType[] = [
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/customerReviews`,
   },
   {
-    name: "PurchaseRequests",
-    apiPath: "client-app/modules/purchase-requests/api/graphql",
-    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/aiDocumentProcessing`,
-  },
-  {
     name: "PushMessages",
     apiPath: "client-app/modules/push-messages/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/pushMessages`,
@@ -39,6 +34,12 @@ const independentModules: ModuleType[] = [
     apiPath: "client-app/modules/back-in-stock/api/graphql",
     schemaPath: `${process.env.APP_BACKEND_URL}/graphql/back-in-stock`,
   },
+  /* EXPERIMENTAL FEATURE
+  {
+    name: "PurchaseRequests",
+    apiPath: "client-app/modules/purchase-requests/api/graphql",
+    schemaPath: `${process.env.APP_BACKEND_URL}/graphql/aiDocumentProcessing`,
+  },*/
 ];
 
 const CONFIG = {
@@ -110,7 +111,7 @@ async function runCodegen() {
     true,
   );
   // eslint-disable-next-line no-console
-  console.log(`Types for The Core have been generated in "${typesPath}\n"`);
+  console.log(`Types for The Core have been generated in "${typesPath}\n`);
 
   await Promise.allSettled(
     independentModules.map(async (module) => {
