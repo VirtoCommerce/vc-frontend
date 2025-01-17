@@ -112,6 +112,9 @@ function _useBackInStockSubscriptions() {
         subscriptions.value = [...subscriptions.value, ...(response.items ?? [])];
       } else {
         subscriptions.value = response.items ?? [];
+        console.log("totalCount", response.totalCount);
+        console.log("first", payload?.first);
+        console.log("itemsPerPage", pagination.value.itemsPerPage);
         pagination.value.pages = Math.ceil(
           (response.totalCount ?? 0) / (payload?.first ?? pagination.value.itemsPerPage),
         );

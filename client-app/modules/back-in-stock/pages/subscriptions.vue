@@ -85,11 +85,10 @@
                   <CountInCart :product-id="item.productId" />
                 </template>
               </VcLineItems>
-
               <VcPagination
-                v-if="pagesCount > 1"
+                v-if="pagination.pages > 1"
                 v-model:page="pagination.page"
-                :pages="Math.min(pagesCount, PAGE_LIMIT)"
+                :pages="Math.min(pagination.pages, PAGE_LIMIT)"
                 :scroll-target="listElement"
                 :scroll-offset="60"
               />
@@ -160,9 +159,6 @@ const preparedLineItems = computed<PreparedLineItemType[]>(() =>
 const allLoading = computed<boolean>(
   () => subscriptionsFetching.value || fetchingProducts.value || cartLoading.value || cartChanging.value,
 );
-const pagesCount = computed<number>(() =>
-  Math.ceil((subscriptionsItems.value.length ?? 0) / pagination.value.itemsPerPage),
-);
 
 const actualPageRowsCount = computed<number>(() => preparedLineItems.value.length || pagination.value.itemsPerPage);
 const isMobile = breakpoints.smaller("lg");
@@ -172,10 +168,9 @@ const fetchProductsAndSubscriptions = async () => {
   if (subscriptions.value.length > 0) {
     await fetchProducts({
       productIds: subscriptions.value.map((item) => item.productId!),
-      itemsPerPage: 10,
+      itemsPerPage: subscriptions.value.length,
     });
     const productsResult: Product[] = [];
-    pagination.value.page = 1;
     if (products.value.length > 0) {
       subscriptions.value.forEach((subscription) => {
         if (subscription.isActive) {
@@ -199,6 +194,7 @@ async function resetKeyword(): Promise<void> {
   pagination.value.page = 1;
   await applyKeyword();
 }
+
 function openDeleteProductModal(values: string[]): void {
   const item = subscriptionsItems.value?.find((i) => values.includes(i.id));
   if (item) {
@@ -208,11 +204,11 @@ function openDeleteProductModal(values: string[]): void {
         productId: item.id,
         productName: item.name,
         onResult(): void {
-          const previousPagesCount = pagesCount.value;
+          const previousPagesCount = pagination.value.pages;
           if (
             previousPagesCount > 1 &&
             previousPagesCount === pagination.value.page &&
-            previousPagesCount > pagesCount.value
+            previousPagesCount > pagination.value.pages
           ) {
             pagination.value.page -= 1;
           }
