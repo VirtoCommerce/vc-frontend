@@ -39,7 +39,7 @@
           lazy
         />
 
-        <span class="language-selector__item-text">
+        <span class="language-selector__item-text capitalize">
           {{ item.nativeName.replace(/ *\([^)]*\) */g, "") }}
         </span>
       </VcMenuItem>
