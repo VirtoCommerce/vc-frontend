@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import { globals } from "@/core/globals";
 import { useBackInStockSubscriptions } from "../composables/useBackInStockSubscriptions";
-import type { DeactivateBackInStockSubscriptionCommandType } from "@/core/api/graphql/types";
+import type { DeactivateBackInStockSubscriptionCommandType } from "../api/graphql/types";
 
 interface IEmits {
   (event: "result"): void;
