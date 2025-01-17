@@ -2,7 +2,7 @@
   <div class="account-navigation-item" :class="{ 'account-navigation-item--active': isActive }">
     <component :is="item?.route ? 'router-link' : 'a'" :to="item?.route" class="account-navigation-item__link">
       <VcIcon size="sm" class="account-navigation-item__icon" :name="item?.icon" />
-      <span class="account-navigation-item__text">{{ item?.title }}</span>
+      <span class="account-navigation-item__text">{{ formatTextFunction(item?.title) }}</span>
     </component>
     <slot />
   </div>
@@ -13,7 +13,9 @@ import { toRef } from "vue";
 import { useLink } from "vue-router";
 import type { ExtendedMenuLinkType } from "@/core/types";
 
-const props = defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  formatTextFunction: (text: string | undefined) => text ?? "",
+});
 
 const item = toRef(props, "item");
 
@@ -21,6 +23,7 @@ const { isActive } = useLink({ to: item.value?.route ?? {} });
 
 interface IProps {
   item: ExtendedMenuLinkType;
+  formatTextFunction?: (text: string | undefined) => string;
 }
 </script>
 
