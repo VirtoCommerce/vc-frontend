@@ -19,23 +19,23 @@ export type Scalars = {
 };
 
 export type CreateCustomerReviewCommandType = {
-  entityId?: InputMaybe<Scalars['String']['input']>;
-  entityName?: InputMaybe<Scalars['String']['input']>;
-  entityType?: InputMaybe<Scalars['String']['input']>;
+  entityId: Scalars['String']['input'];
+  entityName: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
   rating: Scalars['Int']['input'];
-  review?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
-  userId?: InputMaybe<Scalars['String']['input']>;
-  userName?: InputMaybe<Scalars['String']['input']>;
+  review: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+  userName: Scalars['String']['input'];
 };
 
 export type CreateReviewCommandType = {
-  entityId?: InputMaybe<Scalars['String']['input']>;
-  entityType?: InputMaybe<Scalars['String']['input']>;
+  entityId: Scalars['String']['input'];
+  entityType: Scalars['String']['input'];
   rating: Scalars['Int']['input'];
-  review?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
+  review: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
 };
 
 export type CreateReviewResult = {
@@ -47,18 +47,18 @@ export type CreateReviewResult = {
 
 export type CustomerReview = {
   createdDate: Scalars['DateTime']['output'];
-  entityId?: Maybe<Scalars['String']['output']>;
-  entityName?: Maybe<Scalars['String']['output']>;
-  entityType?: Maybe<Scalars['String']['output']>;
-  id?: Maybe<Scalars['String']['output']>;
+  entityId: Scalars['String']['output'];
+  entityName: Scalars['String']['output'];
+  entityType: Scalars['String']['output'];
+  id: Scalars['String']['output'];
   modifiedDate?: Maybe<Scalars['DateTime']['output']>;
   rating: Scalars['Int']['output'];
-  review?: Maybe<Scalars['String']['output']>;
+  review: Scalars['String']['output'];
   reviewStatus?: Maybe<CustomerReviewStatus>;
-  storeId?: Maybe<Scalars['String']['output']>;
+  storeId: Scalars['String']['output'];
   title?: Maybe<Scalars['String']['output']>;
-  userId?: Maybe<Scalars['String']['output']>;
-  userName?: Maybe<Scalars['String']['output']>;
+  userId: Scalars['String']['output'];
+  userName: Scalars['String']['output'];
 };
 
 /** A connection from an object to a list of objects of type `CustomerReview`. */
@@ -171,7 +171,7 @@ export type GetCustomerReviewsQueryVariables = Exact<{
 }>;
 
 
-export type GetCustomerReviewsQuery = { customerReviews?: { totalCount?: number, items?: Array<{ id?: string, createdDate: any, userId?: string, userName?: string, title?: string, review?: string, rating: number }> } };
+export type GetCustomerReviewsQuery = { customerReviews?: { totalCount?: number, items?: Array<{ id: string, createdDate: any, userId: string, userName: string, title?: string, review: string, rating: number }> } };
 
 
 export const CreateReviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateReview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateReviewCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createReview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"validationErrors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"errorCode"}},{"kind":"Field","name":{"kind":"Name","value":"errorMessage"}}]}}]}}]}}]} as unknown as DocumentNode<CreateReviewMutation, CreateReviewMutationVariables>;

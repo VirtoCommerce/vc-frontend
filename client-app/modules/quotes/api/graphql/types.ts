@@ -23,17 +23,17 @@ export type Scalars = {
 };
 
 export type AddQuoteAttachmentsCommandType = {
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
   urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
 export type AddQuoteItemsCommandType = {
   newQuoteItems: Array<InputMaybe<InputNewQuoteItemType>>;
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
 };
 
 export type ApproveQuoteCommandType = {
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
 };
 
 export type ApproveQuoteResultType = {
@@ -97,8 +97,8 @@ export type Breadcrumb = {
 };
 
 export type CancelQuoteCommandType = {
-  comment?: InputMaybe<Scalars['String']['input']>;
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  comment: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type CatalogDiscountType = {
@@ -184,14 +184,14 @@ export type CategoryDescriptionType = {
 };
 
 export type ChangeQuoteCommentCommandType = {
-  comment?: InputMaybe<Scalars['String']['input']>;
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  comment: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type ChangeQuoteItemQuantityCommandType = {
-  lineItemId?: InputMaybe<Scalars['String']['input']>;
+  lineItemId: Scalars['String']['input'];
   quantity: Scalars['Int']['input'];
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
 };
 
 export type CommonVendor = {
@@ -204,15 +204,15 @@ export type CommonVendor = {
 };
 
 export type CreateQuoteCommandType = {
-  cultureName?: InputMaybe<Scalars['String']['input']>;
-  currencyCode?: InputMaybe<Scalars['String']['input']>;
-  storeId?: InputMaybe<Scalars['String']['input']>;
-  userId?: InputMaybe<Scalars['String']['input']>;
+  cultureName: Scalars['String']['input'];
+  currencyCode: Scalars['String']['input'];
+  storeId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type CreateQuoteFromCartCommandType = {
-  cartId?: InputMaybe<Scalars['String']['input']>;
-  comment?: InputMaybe<Scalars['String']['input']>;
+  cartId: Scalars['String']['input'];
+  comment: Scalars['String']['input'];
 };
 
 export type CurrencyType = {
@@ -231,11 +231,11 @@ export type CurrencyType = {
 };
 
 export type DeclineQuoteCommandType = {
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
 };
 
 export type DeleteQuoteAttachmentsCommandType = {
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
   urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
@@ -374,7 +374,7 @@ export type InputDynamicPropertyValueType = {
   /** Culture name ("en-US") for multilingual property */
   cultureName?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic property name */
-  name?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
   /** Dynamic property value. ID must be passed for dictionary item */
   value?: InputMaybe<Scalars['DynamicPropertyValue']['input']>;
 };
@@ -417,8 +417,8 @@ export type InventoryInfo = {
   allowPreorder: Scalars['Boolean']['output'];
   /** Backorder availability date */
   backorderAvailabilityDate?: Maybe<Scalars['DateTime']['output']>;
-  fulfillmentCenterId?: Maybe<Scalars['String']['output']>;
-  fulfillmentCenterName?: Maybe<Scalars['String']['output']>;
+  fulfillmentCenterId: Scalars['String']['output'];
+  fulfillmentCenterName: Scalars['String']['output'];
   /** Inventory in stock quantity */
   inStockQuantity: Scalars['Long']['output'];
   /** Preorder availability date */
@@ -1054,8 +1054,8 @@ export type Rating = {
 };
 
 export type RemoveQuoteItemCommandType = {
-  lineItemId?: InputMaybe<Scalars['String']['input']>;
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  lineItemId: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type SeoInfo = {
@@ -1074,8 +1074,8 @@ export type SeoInfo = {
 };
 
 export type SubmitQuoteCommandType = {
-  comment?: InputMaybe<Scalars['String']['input']>;
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  comment: Scalars['String']['input'];
+  quoteId: Scalars['String']['input'];
 };
 
 export type TierPriceType = {
@@ -1089,18 +1089,18 @@ export type TierPriceType = {
 
 export type UpdateQuoteAddressesCommandType = {
   addresses: Array<InputMaybe<InputQuoteAddressType>>;
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
 };
 
 export type UpdateQuoteAttachmentsCommandType = {
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
   urls: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
 export type UpdateQuoteDynamicPropertiesCommandType = {
   /** Dynamic properties */
   dynamicProperties: Array<InputMaybe<InputDynamicPropertyValueType>>;
-  quoteId?: InputMaybe<Scalars['String']['input']>;
+  quoteId: Scalars['String']['input'];
 };
 
 export type VariationType = {
