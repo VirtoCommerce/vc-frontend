@@ -93,8 +93,17 @@
     </div>
 
     <div class="vc-product-card-list__add-to-cart mt-3 flex w-full flex-col gap-2 sm:mt-0">
+      <component
+        :is="getCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+        v-if="
+          isCustomProductComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
+          shouldRenderCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
+        "
+        :product="product"
+      />
+
       <VcProductButton
-        v-if="product.isConfigurable"
+        v-else-if="product.isConfigurable"
         :to="link"
         link-text="Customize"
         button-text="Customize"
@@ -135,6 +144,8 @@ import { computed } from "vue";
 import { PropertyType } from "@/core/api/graphql/types";
 import { ProductType } from "@/core/enums";
 import { getProductRoute, getPropertiesGroupedByName } from "@/core/utilities";
+import { useCustomProductComponents } from "@/shared/common/composables";
+import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { AddToCompareCatalog } from "@/shared/compare";
 import { AddToList } from "@/shared/wishlists";
 import CountInCart from "./count-in-cart.vue";
@@ -157,6 +168,9 @@ interface IProps {
   browserTarget?: BrowserTargetType;
   productReviewsEnabled?: boolean;
 }
+
+const { isCustomProductComponentRegistered, getCustomProductComponent, shouldRenderCustomProductComponent } =
+  useCustomProductComponents();
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);

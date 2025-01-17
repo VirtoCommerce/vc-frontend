@@ -78,4 +78,5 @@ export type PreparedLineItemType = {
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
+  product?: Product;
 };
