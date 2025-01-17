@@ -563,6 +563,8 @@ export type ConfigurationSectionType = {
   /** Configuration section name */
   name?: Maybe<Scalars['String']['output']>;
   options?: Maybe<Array<Maybe<ConfigurationLineItemType>>>;
+  /** Configuration section type */
+  type?: Maybe<Scalars['String']['output']>;
 };
 
 export type ConfirmTaskCommandType = {
