@@ -29,7 +29,7 @@ defineEmits<IEmits>();
       @apply flex-1;
     }
 
-    @container (min-width: theme("containers.sm")) {
+    @container (min-width: theme("containers.md")) {
       @apply flex-none min-w-32 w-auto;
     }
   }
