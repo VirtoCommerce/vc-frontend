@@ -136,7 +136,6 @@ export type BackInStockSubscriptionType = {
   memberId?: Maybe<Scalars['String']['output']>;
   productId: Scalars['String']['output'];
   productName?: Maybe<Scalars['String']['output']>;
-  sentDate?: Maybe<Scalars['DateTime']['output']>;
   storeId: Scalars['String']['output'];
   userId: Scalars['String']['output'];
 };
@@ -4796,13 +4795,11 @@ export type Query = {
 
 export type QueryBackInStockSubscriptionsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
-  endSentDate?: InputMaybe<Scalars['DateTime']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   keyword?: InputMaybe<Scalars['String']['input']>;
   productIds?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   sort?: InputMaybe<Scalars['String']['input']>;
-  startSentDate?: InputMaybe<Scalars['DateTime']['input']>;
   storeId?: InputMaybe<Scalars['String']['input']>;
 };
 
