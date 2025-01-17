@@ -87,6 +87,7 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     variations: item.product?.variations,
     configurationItems: "configurationItems" in item ? item.configurationItems : undefined,
     showPlacedPrice: item.showPlacedPrice,
+    product: item.product,
   };
 }
 

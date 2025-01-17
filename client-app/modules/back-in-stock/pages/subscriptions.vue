@@ -74,7 +74,7 @@
                 @remove:items="openDeleteProductModal"
               >
                 <template #default="{ item }">
-                  <AddToCart :product="item" />
+                  <AddToCart v-if="item.product" :product="item.product" />
                   <InStock
                     :is-in-stock="item.availabilityData?.isInStock"
                     :is-available="!item.deleted"
