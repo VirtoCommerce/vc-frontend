@@ -195,29 +195,32 @@ async function resetKeyword(): Promise<void> {
   await applyKeyword();
 }
 
-function openDeleteProductModal(values: string[]): void {
-  const item = subscriptionsItems.value?.find((i) => values.includes(i.id));
-  if (item) {
-    openModal({
-      component: DeactivateBackInStockSubscriptionModal,
-      props: {
-        productId: item.id,
-        productName: item.name,
-        onResult(): void {
-          const previousPagesCount = pagination.value.pages;
-          if (
-            previousPagesCount > 1 &&
-            previousPagesCount === pagination.value.page &&
-            previousPagesCount > pagination.value.pages
-          ) {
-            pagination.value.page -= 1;
-          }
-          fetchProductsAndSubscriptions();
-        },
-      },
-    });
+function openDeleteProductModal(ids: string[]): void {
+  const item = subscriptionsItems.value?.find(({ id }) => ids.includes(id));
+  if (!item) {
+    return;
   }
+  openModal({
+    component: DeactivateBackInStockSubscriptionModal,
+    props: {
+      productId: item.id,
+      productName: item.name,
+      onResult(): void {
+        const previousPagesCount = pagination.value.pages;
+        if (
+          previousPagesCount > 1 &&
+          previousPagesCount === pagination.value.page &&
+          previousPagesCount > pagination.value.pages
+        ) {
+          pagination.value.page -= 1;
+        }
+        void fetchProductsAndSubscriptions();
+      },
+    },
+  });
 }
+
+pagination.value.page = 1;
 watchEffect(async () => {
   await fetchProductsAndSubscriptions();
 });

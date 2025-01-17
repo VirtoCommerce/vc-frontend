@@ -6,8 +6,6 @@ query GetBackInStockSubscriptions(
   $storeId: String
   $productIds: [String]
   $isActive: Boolean
-  $startSentDate: DateTime
-  $endSentDate: DateTime
 ) {
   backInStockSubscriptions(
     after: $after
@@ -17,8 +15,6 @@ query GetBackInStockSubscriptions(
     storeId: $storeId
     productIds: $productIds
     isActive: $isActive
-    startSentDate: $startSentDate
-    endSentDate: $endSentDate
   ) {
     items {
       id

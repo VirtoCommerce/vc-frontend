@@ -1,10 +1,6 @@
 <template>
-  <VcModal
-    :title="$t('back_in_stock.deactivate_back_in_stock_subscription_modal.title')"
-    variant="danger"
-    icon="warning"
-  >
-    <i18n-t keypath="back_in_stock.deactivate_back_in_stock_subscription_modal.message" scope="global" tag="p">
+  <VcModal :title="$t('back_in_stock.deactivate_modal.title')" variant="danger" icon="warning">
+    <i18n-t keypath="back_in_stock.deactivate_modal.message" scope="global" tag="p">
       <template #productName>
         <b class="font-black">{{ productName }}</b>
       </template>
@@ -12,11 +8,11 @@
 
     <template #actions="{ close }">
       <VcButton :loading="fetching" color="danger" @click="remove(close)">
-        {{ $t("back_in_stock.deactivate_back_in_stock_subscription_modal.delete_button") }}
+        {{ $t("back_in_stock.deactivate_modal.delete_button") }}
       </VcButton>
 
       <VcButton color="secondary" variant="outline" class="ms-auto" @click="close">
-        {{ $t("back_in_stock.deactivate_back_in_stock_subscription_modal.cancel_button") }}
+        {{ $t("back_in_stock.deactivate_modal.cancel_button") }}
       </VcButton>
     </template>
   </VcModal>
