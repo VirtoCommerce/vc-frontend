@@ -100,6 +100,7 @@
           shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
         "
         :product="product"
+        v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
       />
 
       <VcProductButton
@@ -169,7 +170,7 @@ interface IProps {
   productReviewsEnabled?: boolean;
 }
 
-const { isComponentRegistered, getComponent, shouldRenderComponent } = useCustomProductComponents();
+const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);

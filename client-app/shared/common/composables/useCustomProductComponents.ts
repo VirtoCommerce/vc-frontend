@@ -9,6 +9,7 @@ export type ElementType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: DefineComponent<{ product: Product }, Record<string, any>, any>;
   shouldRender: (product: Product) => boolean;
+  props?: Record<string, unknown>;
 };
 
 function _useCustomProductComponents() {
@@ -36,11 +37,16 @@ function _useCustomProductComponents() {
       : true;
   }
 
+  function getComponentProps(id: string) {
+    return customProductComponents.value[id]?.props;
+  }
+
   return {
     registerComponent,
     getComponent,
     isComponentRegistered,
     shouldRenderComponent,
+    getComponentProps,
   };
 }
 

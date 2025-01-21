@@ -37,6 +37,7 @@
               shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)
             "
             :product="product"
+            v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
           />
           <AddToCart v-else :product="product">
             <InStock
@@ -78,7 +79,7 @@ const product = toRef(props, "product");
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
-const { getComponent, isComponentRegistered, shouldRenderComponent } = useCustomProductComponents();
+const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

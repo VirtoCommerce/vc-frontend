@@ -171,6 +171,7 @@
         shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
       "
       :product="product"
+      v-bind="getComponentProps(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
     />
 
     <VcProductButton
@@ -251,7 +252,7 @@ const properties = computed(() =>
 );
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
-const { isComponentRegistered, getComponent, shouldRenderComponent } = useCustomProductComponents();
+const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

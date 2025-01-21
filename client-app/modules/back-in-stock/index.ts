@@ -63,6 +63,7 @@ export function init(router: Router, i18n: I18n) {
       id: CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON,
       component: BackInStockButton,
       shouldRender: (product) => !product.availabilityData.isInStock,
+      props: { showText: true },
     });
     registerComponent({
       id: CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON,
