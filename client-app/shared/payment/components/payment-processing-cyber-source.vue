@@ -143,7 +143,7 @@ const validationSchema = toTypedSchema(
       return monthYupSchema.isValidSync(month)
         ? schema
             .length(4)
-            .matches(/^2[0-1][0-9][0-9]$/, t("shared.payment.bank_card_form.errors.year"))
+            .matches(/^2[0-1]\d\d$/, t("shared.payment.bank_card_form.errors.year"))
             .label(labels.value.yearLabel)
         : schema;
     }),
