@@ -25,7 +25,10 @@ import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
 import { useNotifications } from "@/shared/notification/composables";
 import { useBackInStockSubscriptions } from "../composables";
-import type { DeactivateBackInStockSubscriptionCommandType } from "../api/graphql/types";
+import type {
+  ActivateBackInStockSubscriptionCommandType,
+  DeactivateBackInStockSubscriptionCommandType,
+} from "../api/graphql/types";
 import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -47,18 +50,14 @@ const {
 } = useBackInStockSubscriptions();
 
 const updateBackInStockSubscription = async () => {
-  const activatePayload: DeactivateBackInStockSubscriptionCommandType = {
-    productId: product.value.id,
-    storeId: storeId,
-  };
-  const deactivatePayload: DeactivateBackInStockSubscriptionCommandType = {
+  const payload: ActivateBackInStockSubscriptionCommandType | DeactivateBackInStockSubscriptionCommandType = {
     productId: product.value.id,
     storeId: storeId,
   };
   if (isProductSubscriptionActive(product.value.id)) {
-    await deactivateSubscription(deactivatePayload);
+    await deactivateSubscription(payload);
   } else {
-    await activateSubscription(activatePayload);
+    await activateSubscription(payload);
     success({
       text: t("back_in_stock.messages.you_are_subscribed"),
       group: "back-in-stock",

@@ -7,7 +7,7 @@
       "title": "Подтвердить удаление"
     },
     "list_details": {
-      "empty_list": "Ваша корзина пуста",
+      "empty_list": "Список ожидаемых товаров пуст",
       "empty_list_button": "Продолжить покупки"
     },
     "messages": {
@@ -25,7 +25,7 @@
       },
       "reset_search": "Сбросить поиск",
       "search_button": "Поиск",
-      "search_placeholder": "Поиск пользователя"
+      "search_placeholder": "Поиск"
     }
   }
 }

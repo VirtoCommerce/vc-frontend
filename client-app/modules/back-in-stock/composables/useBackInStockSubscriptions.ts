@@ -69,7 +69,7 @@ function _useBackInStockSubscriptions() {
   }
 
   async function _fetchSubscriptions(
-    payload?: QueryBackInStockSubscriptionsArgs,
+    payload: QueryBackInStockSubscriptionsArgs = {},
   ): Promise<BackInStockSubscriptionConnection | undefined> {
     fetching.value = true;
     const {
@@ -79,7 +79,7 @@ function _useBackInStockSubscriptions() {
       sort = getSortingExpression(DEFAULT_SORT),
       isActive,
       productIds,
-    } = payload ?? {};
+    } = payload;
 
     try {
       return await getBackInStockSubscriptions({

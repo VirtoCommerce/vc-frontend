@@ -1,7 +1,5 @@
 <template>
   <div class="back-in-stock-subscriptions">
-    <VcLoaderOverlay :visible="allLoading" fixed-spinner />
-
     <BackButtonInHeader v-if="isMobile" @click="$router.back" />
 
     <VcTypography tag="h1" class="back-in-stock-subscriptions__title">
@@ -24,6 +22,7 @@
             :title="$t('back_in_stock.subscriptions.reset_search')"
             type="button"
             class="flex h-full items-center px-4"
+            :disabled="allLoading"
             @click="resetKeyword"
           >
             <VcIcon class="text-primary" name="delete-2" size="xs" />
@@ -124,7 +123,7 @@ usePageHead({
 });
 
 const { fetchProducts, products, fetchingProducts } = useProducts();
-const { loading: cartLoading, changing: cartChanging, cart } = useShortCart();
+const { loading: cartLoading, cart } = useShortCart();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
@@ -145,9 +144,7 @@ const preparedLineItems = computed<PreparedLineItemType[]>(() =>
   ),
 );
 
-const allLoading = computed<boolean>(
-  () => subscriptionsFetching.value || fetchingProducts.value || cartLoading.value || cartChanging.value,
-);
+const allLoading = computed<boolean>(() => subscriptionsFetching.value || fetchingProducts.value || cartLoading.value);
 
 const actualItemsCount = computed<number>(() => preparedLineItems.value.length || pagination.value.itemsPerPage);
 
