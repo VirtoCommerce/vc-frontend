@@ -39,7 +39,7 @@
           lazy
         />
 
-        <span class="language-selector__item-text capitalize">
+        <span class="language-selector__item-text">
           {{ item.nativeName.replace(/ *\([^)]*\) */g, "") }}
         </span>
       </VcMenuItem>
@@ -122,6 +122,10 @@ function getCountryCode(language: ILanguage): string {
 
   &__item-img {
     @apply size-3.5;
+  }
+
+  &__item-text {
+    text-transform: capitalize;
   }
 }
 </style>
