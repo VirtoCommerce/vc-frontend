@@ -125,7 +125,7 @@ function getCountryCode(language: ILanguage): string {
   }
 
   &__item-text {
-    text-transform: capitalize;
+    @apply capitalize;
   }
 }
 </style>
