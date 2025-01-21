@@ -720,7 +720,13 @@
         "month_placeholder": "ММ",
         "year_label": "Год",
         "year_placeholder": "ГГ",
-        "security_code_label": "Код безопасности"
+        "security_code_label": "Код безопасности",
+        "expiration_date_placeholder_extended": "MM / ГГГГ",
+        "errors": {
+          "month": "Укажите действительный месяц истечения срока действия",
+          "year": "Укажите действительный год окончания срока действия"
+        },
+        "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты"
       },
       "authorize_net": {
         "user_agreement_link": "Пользовательского соглашения",

@@ -720,7 +720,13 @@
         "month_placeholder": "MM",
         "year_label": "年",
         "year_placeholder": "YY",
-        "security_code_label": "安全码"
+        "security_code_label": "安全码",
+        "expiration_date_placeholder_extended": "月 / 年",
+        "errors": {
+          "month": "请选择有效的月份",
+          "year": "请输入有效的年份"
+        },
+        "user_error_message": "无法初始化支付。请稍后再试或使用其他支付方式"
       },
       "authorize_net": {
         "user_agreement_link": "用户协议",

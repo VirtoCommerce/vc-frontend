@@ -720,7 +720,13 @@
         "month_placeholder": "MM",
         "year_label": "Rok",
         "year_placeholder": "RR",
-        "security_code_label": "Kod bezpieczeństwa"
+        "security_code_label": "Kod bezpieczeństwa",
+        "expiration_date_placeholder_extended": "MM /RRRR",
+        "errors": {
+          "month": "Podaj prawidłowy miesiąc ważności",
+          "year": "Podaj prawidłowy rok ważności"
+        },
+        "user_error_message": "Nie można zainicjować płatności. Spróbuj ponownie później lub użyj innej metody płatności"
       },
       "authorize_net": {
         "user_agreement_link": "Umowa użytkownika",

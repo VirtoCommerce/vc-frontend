@@ -14,13 +14,12 @@
       <div id="cardNumber-container" class="cyber-source-input-wrap form-control"></div>
     </div>
     <div class="flex-25 mt-3 flex flex-col gap-x-6 gap-y-3 sm:flex-row">
-      <!-- todo add placeholder translation -->
       <VcInput
         v-model="expirationDate"
         v-maska
         data-maska="## / ####"
         :label="labels.expirationDate"
-        placeholder="YYYY"
+        :placeholder="labels.datePlaceholder"
         :message="expirationDateErrors"
         :error="!!expirationDateErrors"
         :disabled="disabled"
@@ -34,7 +33,7 @@
       />
       <div class="basis-1/4">
         <VcLabel required for-id="securityCode-container">{{ labels.securityCode }}</VcLabel>
-        <!-- todo add circles -->
+
         <div id="securityCode-container" class="form-control cyber-source-input-wrap"></div>
       </div>
     </div>
@@ -123,6 +122,7 @@ const labels = computed(() => {
     cardholderName: t("shared.payment.bank_card_form.cardholder_name_label"),
     expirationDate: t("shared.payment.bank_card_form.expiration_date_label"),
     yearLabel: t("shared.payment.bank_card_form.year_label"),
+    datePlaceholder: t("shared.payment.bank_card_form.expiration_date_placeholder_extended"),
     monthLabel: t("shared.payment.bank_card_form.month_label"),
     securityCode: t("shared.payment.bank_card_form.security_code_label"),
   };
@@ -132,8 +132,7 @@ const monthYupSchema = yup
   .string()
   .required()
   .length(2)
-  // todo refactor lang message location
-  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.authorize_net.errors.month"))
+  .matches(/^(0?[1-9]|1[0-2])$/, t("shared.payment.bank_card_form.errors.month"))
   .label(labels.value.monthLabel);
 
 const validationSchema = toTypedSchema(
@@ -144,7 +143,7 @@ const validationSchema = toTypedSchema(
       return monthYupSchema.isValidSync(month)
         ? schema
             .length(4)
-            .matches(/^2[0-1][0-9][0-9]$/, t("shared.payment.authorize_net.errors.year"))
+            .matches(/^2[0-1][0-9][0-9]$/, t("shared.payment.bank_card_form.errors.year"))
             .label(labels.value.yearLabel)
         : schema;
     }),
@@ -262,8 +261,7 @@ async function initPayment() {
   const scriptUrl = getValue(publicParameters, "clientScript");
 
   if (!publicParameters || !scriptUrl) {
-    // todo add translation
-    showError("Can't init payment");
+    showError(t("shared.payment.bank_card_form.user_error_message"));
     return;
   }
 
@@ -326,7 +324,6 @@ function createMicroformAsync(options: { styles: Record<string, unknown> }): Pro
   });
 }
 
-// todo find in common
 function getValue(publicParameters?: KeyValueType[], key?: string) {
   return publicParameters?.find((x) => x.key === key)?.value;
 }

@@ -716,11 +716,17 @@
         "cardholder_name_label": "Cardholder name",
         "expiration_date_label": "Expiration date",
         "expiration_date_placeholder": "MM / YY",
+        "expiration_date_placeholder_extended": "MM / YYYY",
         "month_label": "Month",
         "month_placeholder": "MM",
         "year_label": "Year",
         "year_placeholder": "YY",
-        "security_code_label": "Security code"
+        "security_code_label": "Security code",
+        "errors": {
+          "month": "Please provide a valid expiration month",
+          "year": "Please provide a valid expiration year"
+        },
+        "user_error_message": "Can't initialize payment. Please try again later or use another payment method"
       },
       "authorize_net": {
         "user_agreement_link": "User agreement",
