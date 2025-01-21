@@ -53,7 +53,7 @@ const menuItems: DeepPartial<MenuType> = {
 };
 
 export function init(router: Router, i18n: I18n) {
-  if (!isEnabled(ENABLED_KEY)) {
+  if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "back-in-stock");

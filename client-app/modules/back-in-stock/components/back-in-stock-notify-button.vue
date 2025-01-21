@@ -42,8 +42,8 @@ const {
   deactivateSubscription,
   isProductSubscriptionActive,
   isProductSubscriptionPending,
-  addVisibleProductId,
-  removeVisibleProductId,
+  addShownProductId,
+  removeShownProductId,
 } = useBackInStockSubscriptions();
 
 const updateBackInStockSubscription = async () => {
@@ -75,11 +75,11 @@ const updateBackInStockSubscription = async () => {
 };
 
 onMounted(() => {
-  addVisibleProductId(product.value.id);
+  addShownProductId(product.value.id);
 });
 
 onUnmounted(() => {
-  removeVisibleProductId(product.value.id);
+  removeShownProductId(product.value.id);
 });
 </script>
 

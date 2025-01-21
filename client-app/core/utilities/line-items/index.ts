@@ -104,9 +104,9 @@ export function prepareLineItemForProduct(item: Product, countInCart?: number): 
     productId: item.id,
     sku: item.code,
     quantity: 0,
-    inStockQuantity: item.availabilityData.availableQuantity,
+    inStockQuantity: item.availabilityData?.availableQuantity,
     productType: item.productType,
-    price: item.price.actual,
+    price: item.price?.actual,
   };
 
   return prepareLineItem(tempLineItem, countInCart);
