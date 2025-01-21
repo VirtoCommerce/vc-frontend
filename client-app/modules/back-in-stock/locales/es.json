@@ -1,1 +1,31 @@
-{}
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "¿Seguro que quieres darte de baja de las notificaciones de existencias de “{productName}”?",
+      "title": "Confirmar eliminación"
+    },
+    "list_details": {
+      "empty_list": "Tu lista está vacía",
+      "empty_list_button": "Continuar navegando"
+    },
+    "messages": {
+      "click_to_receive_alert": "Haz clic para recibir una alerta",
+      "notify_me_when_in_stock": "Notificarme cuando esté disponible",
+      "you_are_subscribed": "¡Te has suscrito! Te avisaremos cuando vuelva a estar disponible.",
+      "you_will_be_notified": "Se le notificará"
+    },
+    "navigation": {
+      "route_name": "Lista de reposición"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Lista de reposición"
+      },
+      "reset_search": "Restablecer búsqueda",
+      "search_button": "Buscar",
+      "search_placeholder": "Búsqueda de usuario"
+    }
+  }
+}

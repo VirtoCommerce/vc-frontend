@@ -21,18 +21,11 @@
     },
     "subscriptions": {
       "meta": {
-        "table_description": "back in stock subscriptions",
         "title": "Back-in-Stock List"
       },
-      "no_back_in_stock_subscriptions_message": "There are no back in stock subscriptions requests yet",
-      "no_results_message": "No results found",
-      "product_name_label": "Product",
       "reset_search": "Reset search",
-      "search_back_in_stock_subscriptions_requests": "Search back in stock subscriptions requests",
-      "search_placeholder": "Enter keyword...",
-      "status_label": "@:common.labels.status",
-      "total_label": "@:common.labels.total",
-      "total_number_label": "total"
+      "search_button": "Search",
+      "search_placeholder": "User search"
     }
   }
 }

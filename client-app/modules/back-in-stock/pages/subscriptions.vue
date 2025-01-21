@@ -21,6 +21,7 @@
           <button
             v-if="keyword"
             :aria-label="$t('back_in_stock.subscriptions.reset_search')"
+            :title="$t('back_in_stock.subscriptions.reset_search')"
             type="button"
             class="flex h-full items-center px-4"
             @click="resetKeyword"
@@ -29,7 +30,8 @@
           </button>
 
           <VcButton
-            :aria-label="$t('shared.back_in_stock.search_placeholder')"
+            :aria-label="$t('back_in_stock.subscriptions.search_button')"
+            :title="$t('back_in_stock.subscriptions.search_button')"
             :disabled="allLoading"
             icon="search"
             @click="applyKeyword"
@@ -180,11 +182,10 @@ function openDeleteProductModal(ids: string[]): void {
       productId: item.id,
       productName: item.name,
       onResult(): void {
-        if (
-          pagination.value.pages > 1 &&
-          pagination.value.page === pagination.value.pages &&
-          pagination.value.totalCount % pagination.value.itemsPerPage === 1
-        ) {
+        const hasPagination = pagination.value.pages > 1;
+        const isLastPage = pagination.value.page === pagination.value.pages;
+        const isLastPageWithOneItem = isLastPage && pagination.value.totalCount % pagination.value.itemsPerPage === 1;
+        if (hasPagination && isLastPageWithOneItem) {
           pagination.value.page -= 1;
         }
         void fetchProductsAndSubscriptions();

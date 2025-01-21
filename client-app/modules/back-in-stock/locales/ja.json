@@ -1,1 +1,31 @@
-{}
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "「{productName}」の在庫通知を解除してもよろしいですか？",
+      "title": "削除を確認する"
+    },
+    "list_details": {
+      "empty_list": "リストが空です",
+      "empty_list_button": "閲覧を続ける"
+    },
+    "messages": {
+      "click_to_receive_alert": "クリックして通知を受け取る",
+      "notify_me_when_in_stock": "入荷時に通知する",
+      "you_are_subscribed": "購読ありがとうございます！在庫が復活したらお知らせします。",
+      "you_will_be_notified": "通知します"
+    },
+    "navigation": {
+      "route_name": "再入荷リスト"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "再入荷リスト"
+      },
+      "reset_search": "検索をリセット",
+      "search_button": "検索",
+      "search_placeholder": "ユーザー検索"
+    }
+  }
+}
