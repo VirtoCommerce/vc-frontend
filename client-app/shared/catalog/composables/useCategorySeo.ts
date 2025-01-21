@@ -34,10 +34,16 @@ export function useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible 
         },
       });
 
+      const seoUrl = currentCategory.value?.seoInfo?.semanticUrl
+        ? `${window.location.host}\${currentCategory.value?.seoInfo?.semanticUrl`
+        : window.location.toString();
+
       useSeoMeta({
+        ogUrl: seoUrl,
         ogTitle: seoTitle,
         ogDescription: seoDescription,
         ogImage: seoImageUrl,
+        ogType: "website",
       });
     }
   });
