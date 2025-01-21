@@ -10,7 +10,7 @@ import type { I18n } from "@/i18n";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
 
-const Subscriptions = () => import("./pages/subscriptions.vue");
+const Subscriptions = defineAsyncComponent(() => import("./pages/subscriptions.vue"));
 const BackInStockButton = defineAsyncComponent(() => import("./components/back-in-stock-notify-button.vue"));
 
 const { isEnabled } = useModuleSettings(MODULE_ID);
