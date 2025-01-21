@@ -1032,11 +1032,6 @@ export type DynamicPropertyType = {
   name: Scalars['String']['output'];
   /** Object type */
   objectType: Scalars['String']['output'];
-  /**
-   * Value type
-   * @deprecated Use dynamicPropertyValueType instead
-   */
-  valueType: Scalars['String']['output'];
 };
 
 
@@ -2120,15 +2115,6 @@ export type InputOrderAddressType = {
   zip?: InputMaybe<Scalars['OptionalString']['input']>;
 };
 
-export type InputOrderBankCardInfoType = {
-  bankCardCVV2: Scalars['String']['input'];
-  bankCardMonth: Scalars['Int']['input'];
-  bankCardNumber: Scalars['String']['input'];
-  bankCardType: Scalars['String']['input'];
-  bankCardYear: Scalars['Int']['input'];
-  cardholderName: Scalars['String']['input'];
-};
-
 export type InputOrderPaymentType = {
   amount?: InputMaybe<Scalars['OptionalDecimal']['input']>;
   billingAddress?: InputMaybe<InputOrderAddressType>;
@@ -2173,15 +2159,6 @@ export type InputPersonalDataType = {
   fullName?: InputMaybe<Scalars['String']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   middleName?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type InputProcessOrderPaymentType = {
-  /** Credit card details */
-  bankCardInfo?: InputMaybe<InputOrderBankCardInfoType>;
-  /** Order ID */
-  orderId: Scalars['String']['input'];
-  /** Payment ID */
-  paymentId: Scalars['String']['input'];
 };
 
 export type InputPushHistoricalEventType = {
@@ -2360,13 +2337,6 @@ export type InputRemoveWishlistItemsType = {
 export type InputRemoveWishlistType = {
   /** List ID */
   listId: Scalars['String']['input'];
-};
-
-export type InputRenameWishlistType = {
-  /** List ID */
-  listId: Scalars['String']['input'];
-  /** New List name */
-  listName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type InputRequestRegistrationType = {
@@ -3037,8 +3007,6 @@ export type Mutations = {
   markPushMessageUnread?: Maybe<Scalars['Boolean']['output']>;
   mergeCart?: Maybe<CartType>;
   moveWishlistItem?: Maybe<WishlistType>;
-  /** @deprecated Obsolete. Use 'initializePayment' mutation */
-  processOrderPayment?: Maybe<ProcessPaymentRequestResultType>;
   pushHistoricalEvent?: Maybe<Scalars['Boolean']['output']>;
   refreshCart?: Maybe<CartType>;
   registerByInvitation?: Maybe<CustomIdentityResultType>;
@@ -3056,8 +3024,6 @@ export type Mutations = {
   removeWishlist?: Maybe<Scalars['Boolean']['output']>;
   removeWishlistItem?: Maybe<WishlistType>;
   removeWishlistItems?: Maybe<WishlistType>;
-  /** @deprecated Obsolete. Use 'changeWishlist' instead. */
-  renameWishlist?: Maybe<WishlistType>;
   requestRegistration?: Maybe<RequestRegistrationType>;
   resetPasswordByToken?: Maybe<CustomIdentityResultType>;
   selectAllCartItems?: Maybe<CartType>;
@@ -3419,11 +3385,6 @@ export type MutationsMoveWishlistItemArgs = {
 };
 
 
-export type MutationsProcessOrderPaymentArgs = {
-  command: InputProcessOrderPaymentType;
-};
-
-
 export type MutationsPushHistoricalEventArgs = {
   command: InputPushHistoricalEventType;
 };
@@ -3506,11 +3467,6 @@ export type MutationsRemoveWishlistItemArgs = {
 
 export type MutationsRemoveWishlistItemsArgs = {
   command: InputRemoveWishlistItemsType;
-};
-
-
-export type MutationsRenameWishlistArgs = {
-  command: InputRenameWishlistType;
 };
 
 
@@ -4302,26 +4258,6 @@ export type PriceType = {
   startDate?: Maybe<Scalars['DateTime']['output']>;
   /** Tier prices */
   tierPrices: Array<TierPriceType>;
-  /**
-   * Valid from
-   * @deprecated startDate
-   */
-  validFrom?: Maybe<Scalars['DateTime']['output']>;
-  /**
-   * Valid until
-   * @deprecated endDate
-   */
-  validUntil?: Maybe<Scalars['DateTime']['output']>;
-};
-
-export type ProcessPaymentRequestResultType = {
-  errorMessage?: Maybe<Scalars['String']['output']>;
-  htmlForm?: Maybe<Scalars['String']['output']>;
-  isSuccess: Scalars['Boolean']['output'];
-  /** New payment status */
-  newPaymentStatus?: Maybe<Scalars['String']['output']>;
-  outerId?: Maybe<Scalars['String']['output']>;
-  redirectUrl?: Maybe<Scalars['String']['output']>;
 };
 
 /** Products are the sellable goods in an e-commerce project. */
@@ -4536,28 +4472,12 @@ export type Property = {
   multivalue: Scalars['Boolean']['output'];
   /** The name of the property. */
   name: Scalars['String']['output'];
-  /** @deprecated Use propertyDictionaryItems instead. */
-  propertyDictItems?: Maybe<PropertyDictionaryItemConnection>;
   propertyDictionaryItems?: Maybe<PropertyDictionaryItemConnection>;
   propertyType: PropertyType;
   /** ValueType of the property. */
   propertyValueType: PropertyValueTypes;
-  /** @deprecated Use propertyType instead. */
-  type: Scalars['String']['output'];
   value?: Maybe<Scalars['PropertyValue']['output']>;
   valueId?: Maybe<Scalars['String']['output']>;
-  /**
-   * ValueType of the property.
-   * @deprecated Use propertyValueType instead.
-   */
-  valueType: Scalars['String']['output'];
-};
-
-
-/** Products attributes. */
-export type PropertyPropertyDictItemsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -5285,8 +5205,6 @@ export type QuoteAddressType = {
 
 export type QuoteAttachmentType = {
   contentType?: Maybe<Scalars['String']['output']>;
-  /** @deprecated Use ContentType */
-  mimeType?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   size: Scalars['Long']['output'];
   url: Scalars['String']['output'];
@@ -5692,9 +5610,15 @@ export type StoreSettingsType = {
   /** Allow anonymous users to visit the store  */
   anonymousUsersAllowed: Scalars['Boolean']['output'];
   authenticationTypes: Array<Maybe<Scalars['String']['output']>>;
-  /** Allow anonymous users to create orders (XAPI) */
+  /**
+   * Allow anonymous users to create orders (XAPI)
+   * @deprecated Use XOrder.CreateAnonymousOrderEnabled public property instead.
+   */
   createAnonymousOrderEnabled: Scalars['Boolean']['output'];
-  /** Default "Selected for checkout" state for new line items and gifts */
+  /**
+   * Default "Selected for checkout" state for new line items and gifts
+   * @deprecated Use XPurchase.IsSelectedForCheckout public property instead.
+   */
   defaultSelectedForCheckout: Scalars['Boolean']['output'];
   /** Email address verification enabled */
   emailVerificationEnabled: Scalars['Boolean']['output'];
