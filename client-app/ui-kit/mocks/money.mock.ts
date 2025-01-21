@@ -20,7 +20,7 @@ export function getMoney(amount: number, culture = "en-US", currencyCode = "USD"
 
   return {
     amount,
-    decimalDigits: currencyFormat.resolvedOptions().maximumFractionDigits,
+    decimalDigits: currencyFormat.resolvedOptions().maximumFractionDigits ?? 0,
     formattedAmount,
     formattedAmountWithoutCurrency,
     formattedAmountWithoutPoint,
