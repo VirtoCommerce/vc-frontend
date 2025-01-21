@@ -10,6 +10,7 @@ import {
 } from "../api/graphql";
 import type {
   ActivateBackInStockSubscriptionCommandType,
+  BackInStockSubscriptionConnection,
   BackInStockSubscriptionType,
   DeactivateBackInStockSubscriptionCommandType,
   QueryBackInStockSubscriptionsArgs,
@@ -28,6 +29,7 @@ function _useBackInStockSubscriptions() {
     page: 1,
     pages: 0,
     itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
+    totalCount: 0,
   });
 
   function updateSubscriptionInList(subscription: BackInStockSubscriptionType): void {
@@ -58,13 +60,17 @@ function _useBackInStockSubscriptions() {
     }
   }
 
-  const activateSubscription = (payload: ActivateBackInStockSubscriptionCommandType) =>
-    handleSubscriptionAction(payload, activateBackInStockSubscription);
+  function activateSubscription(payload: ActivateBackInStockSubscriptionCommandType) {
+    return handleSubscriptionAction(payload, activateBackInStockSubscription);
+  }
 
-  const deactivateSubscription = (payload: DeactivateBackInStockSubscriptionCommandType) =>
-    handleSubscriptionAction(payload, deactivateBackInStockSubscription);
+  function deactivateSubscription(payload: DeactivateBackInStockSubscriptionCommandType) {
+    return handleSubscriptionAction(payload, deactivateBackInStockSubscription);
+  }
 
-  async function fetchSubscriptions(payload?: QueryBackInStockSubscriptionsArgs, partialUpdate = false): Promise<void> {
+  async function _fetchSubscriptions(
+    payload?: QueryBackInStockSubscriptionsArgs,
+  ): Promise<BackInStockSubscriptionConnection | undefined> {
     fetching.value = true;
     const {
       first = pagination.value.itemsPerPage,
@@ -75,13 +81,8 @@ function _useBackInStockSubscriptions() {
       productIds,
     } = payload ?? {};
 
-    const requestProductIds = payload?.productIds;
-    if (requestProductIds?.length) {
-      requestProductIds.forEach((id) => pendingProductIds.value.add(id));
-    }
-
     try {
-      const response = await getBackInStockSubscriptions({
+      return await getBackInStockSubscriptions({
         first,
         after,
         keyword,
@@ -89,49 +90,49 @@ function _useBackInStockSubscriptions() {
         isActive,
         productIds,
       });
-
-      if (partialUpdate) {
-        subscriptions.value = [...subscriptions.value, ...(response.items ?? [])];
-      } else {
-        subscriptions.value = response.items ?? [];
-        pagination.value.pages = Math.ceil((response.totalCount ?? 0) / first);
-      }
     } catch (e) {
       Logger.error("useBackInStockSubscriptions.fetchSubscriptions", e);
-      subscriptions.value = [];
     } finally {
-      if (requestProductIds?.length) {
-        requestProductIds.forEach((id) => pendingProductIds.value.delete(id));
-      }
       fetching.value = false;
     }
   }
 
-  const addShownProductId = (productId: string) => {
+  async function fetchSubscriptionsByProductIds(productIds: string[]): Promise<void> {
+    productIds?.forEach((id) => pendingProductIds.value.add(id));
+    const response = await _fetchSubscriptions({ productIds, first: productIds.length });
+    subscriptions.value = [...subscriptions.value, ...(response?.items ?? [])];
+    productIds?.forEach((id) => pendingProductIds.value.delete(id));
+  }
+
+  async function fetchSubscriptions(payload?: QueryBackInStockSubscriptionsArgs): Promise<void> {
+    const response = await _fetchSubscriptions(payload);
+    subscriptions.value = response?.items ?? [];
+    pagination.value.totalCount = response?.totalCount ?? 0;
+    pagination.value.pages = Math.ceil((response?.totalCount ?? 0) / pagination.value.itemsPerPage);
+  }
+
+  function addShownProductId(productId: string) {
     shownProductIds.value = [...shownProductIds.value, productId];
-  };
+  }
 
-  const removeShownProductId = (productId: string) => {
+  function removeShownProductId(productId: string) {
     shownProductIds.value = shownProductIds.value.filter((id) => id !== productId);
-  };
+  }
 
-  const isProductSubscriptionPending = (productId: string): boolean => pendingProductIds.value.has(productId);
+  function isProductSubscriptionPending(productId: string): boolean {
+    return pendingProductIds.value.has(productId);
+  }
 
-  const isProductSubscriptionActive = (productId: string): boolean =>
-    subscriptions.value.some((item) => item.productId === productId && item.isActive);
+  function isProductSubscriptionActive(productId: string): boolean {
+    return subscriptions.value.some((item) => item.productId === productId && item.isActive);
+  }
 
   watchDebounced(
     shownProductIds,
     (newProductIds, oldProductIds) => {
       const diff = difference(newProductIds, oldProductIds ?? []);
       if (diff.length) {
-        void fetchSubscriptions(
-          {
-            productIds: Array.from(diff),
-            first: diff.length,
-          },
-          true,
-        );
+        void fetchSubscriptionsByProductIds(Array.from(diff));
       }
     },
     { debounce: DEBOUNCE_IN_MS, immediate: true },

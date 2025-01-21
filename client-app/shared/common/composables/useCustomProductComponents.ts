@@ -14,7 +14,7 @@ export type ElementType = {
 function _useCustomProductComponents() {
   const customProductComponents = ref<{ [key: string]: ElementType }>({});
 
-  function registerCustomProductComponent(element: ElementType) {
+  function registerComponent(element: ElementType) {
     if (!customProductComponents.value[element.id]) {
       customProductComponents.value[element.id] = element;
     } else {
@@ -22,23 +22,25 @@ function _useCustomProductComponents() {
     }
   }
 
-  function getCustomProductComponent(id: string) {
+  function getComponent(id: string) {
     return customProductComponents.value[id]?.component;
   }
 
-  function isCustomProductComponentRegistered(id: string) {
+  function isComponentRegistered(id: string) {
     return customProductComponents.value[id] !== undefined;
   }
 
-  function shouldRenderCustomProductComponent(id: string, product: Product) {
-    return customProductComponents.value[id]?.shouldRender(product);
+  function shouldRenderComponent(id: string, product: Product) {
+    return typeof customProductComponents.value[id]?.shouldRender === "function"
+      ? customProductComponents.value[id]?.shouldRender(product)
+      : true;
   }
 
   return {
-    registerCustomProductComponent,
-    getCustomProductComponent,
-    isCustomProductComponentRegistered,
-    shouldRenderCustomProductComponent,
+    registerComponent,
+    getComponent,
+    isComponentRegistered,
+    shouldRenderComponent,
   };
 }
 

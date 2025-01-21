@@ -31,10 +31,10 @@
 
         <div class="mt-4 print:hidden">
           <component
-            :is="getCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
+            :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON)"
             v-if="
-              isCustomProductComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON) &&
-              shouldRenderCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)
+              isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON) &&
+              shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON, product)
             "
             :product="product"
           />
@@ -78,8 +78,7 @@ const product = toRef(props, "product");
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
 const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
-const { getCustomProductComponent, isCustomProductComponentRegistered, shouldRenderCustomProductComponent } =
-  useCustomProductComponents();
+const { getComponent, isComponentRegistered, shouldRenderComponent } = useCustomProductComponents();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

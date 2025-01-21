@@ -165,10 +165,10 @@
     </div>
 
     <component
-      :is="getCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
+      :is="getComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON)"
       v-if="
-        isCustomProductComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
-        shouldRenderCustomProductComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
+        isComponentRegistered(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON) &&
+        shouldRenderComponent(CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON, product)
       "
       :product="product"
     />
@@ -251,8 +251,7 @@ const properties = computed(() =>
 );
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
-const { isCustomProductComponentRegistered, getCustomProductComponent, shouldRenderCustomProductComponent } =
-  useCustomProductComponents();
+const { isComponentRegistered, getComponent, shouldRenderComponent } = useCustomProductComponents();
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

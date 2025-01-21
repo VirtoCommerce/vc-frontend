@@ -157,7 +157,7 @@ const fetchProductsAndSubscriptions = async () => {
   });
   subscriptionsProducts.value = subscriptions.value
     .map((subscription) => products.value.find((item) => item.id === subscription.productId))
-    .filter((item) => item !== undefined);
+    .filter((item): item is Product => item !== undefined);
 };
 
 function applyKeyword(): void {
@@ -180,16 +180,14 @@ function openDeleteProductModal(ids: string[]): void {
       productId: item.id,
       productName: item.name,
       onResult(): void {
-        const previousPagesCount = pagination.value.pages;
         if (
-          previousPagesCount > 1 &&
-          previousPagesCount === pagination.value.page &&
-          previousPagesCount > pagination.value.pages
+          pagination.value.pages > 1 &&
+          pagination.value.page === pagination.value.pages &&
+          pagination.value.totalCount % pagination.value.itemsPerPage === 1
         ) {
           pagination.value.page -= 1;
-        } else {
-          void fetchProductsAndSubscriptions();
         }
+        void fetchProductsAndSubscriptions();
       },
     },
   });
