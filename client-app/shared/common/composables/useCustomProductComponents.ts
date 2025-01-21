@@ -8,7 +8,7 @@ export type ElementType = {
   id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: DefineComponent<{ product: Product }, Record<string, any>, any>;
-  shouldRender: (product: Product) => boolean;
+  shouldRender?: (product: Product) => boolean;
   props?: Record<string, unknown>;
 };
 
