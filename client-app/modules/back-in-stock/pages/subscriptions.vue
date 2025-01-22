@@ -100,6 +100,7 @@ import { PAGE_LIMIT } from "@/core/constants";
 import { ProductType } from "@/core/enums";
 import { prepareLineItemForProduct } from "@/core/utilities";
 import { PageToolbarBlock } from "@/shared/account";
+import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useShortCart, AddToCart } from "@/shared/cart";
 import { InStock, CountInCart, useProducts, ProductSkeletonList } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
@@ -108,7 +109,6 @@ import { DeactivateBackInStockSubscriptionModal } from "../components";
 import { useBackInStockSubscriptions } from "../composables";
 import type { Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
-
 const { t } = useI18n();
 const { openModal } = useModal();
 const {
@@ -124,6 +124,7 @@ usePageHead({
 
 const { fetchProducts, products, fetchingProducts } = useProducts();
 const { loading: cartLoading, cart } = useShortCart();
+const broadcast = useBroadcast();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller("lg");
@@ -186,6 +187,7 @@ function openDeleteProductModal(ids: string[]): void {
           pagination.value.page -= 1;
         }
         void fetchProductsAndSubscriptions();
+        void broadcast.emit(dataChangedEvent);
       },
     },
   });

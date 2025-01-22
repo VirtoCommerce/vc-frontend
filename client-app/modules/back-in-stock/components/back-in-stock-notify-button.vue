@@ -23,6 +23,7 @@ import { onMounted, onUnmounted, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
 import { globals } from "@/core/globals";
+import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useNotifications } from "@/shared/notification/composables";
 import { useBackInStockSubscriptions } from "../composables";
 import type {
@@ -39,6 +40,7 @@ const props = defineProps<IProps>();
 const { product } = toRefs(props);
 const { storeId } = globals;
 
+const broadcast = useBroadcast();
 const { success } = useNotifications();
 const { t } = useI18n();
 const {
@@ -72,6 +74,7 @@ const updateBackInStockSubscription = async () => {
       },
     });
   }
+  void broadcast.emit(dataChangedEvent);
 };
 
 onMounted(() => {
