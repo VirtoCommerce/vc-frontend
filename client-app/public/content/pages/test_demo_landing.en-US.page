@@ -12,7 +12,7 @@
       "id": "calltoactionwithimageDoUZ",
       "title": "Commercial management has never been that easy",
       "subtitle": "Anything you dream about may come true right at the moment you decide to win",
-      "image": "/static/images/demo-landing/note.webp",
+      "image": "note.webp",
       "imagePosition": "right",
       "background": "bg-neutral-100",
       "buttons": [
@@ -47,17 +47,17 @@
         {
           "title": "EPIC AERIAL VIDEO",
           "text": "With the Phantom 3 Professional, you can shoot 4K videos at up to 30 frames per second and capture 12MP photos.",
-          "image": "/static/images/demo-landing/feat-1.svg"
+          "image": "feat-1.svg"
         },
         {
           "title": "LIVE HD VIEW",
           "text": "Simply connect your phone or tablet and showcase 720p HD view of everything your camera sees.",
-          "image": "/static/images/demo-landing/feat-2.svg"
+          "image": "feat-2.svg"
         },
         {
           "title": "COMPLETE CONTROL",
           "text": "Keep your Phantom 3 fully under your command while accessing the most used features right on the included remote",
-          "image": "/static/images/demo-landing/feat-3.svg"
+          "image": "feat-3.svg"
         }
       ],
       "background": "bg-neutral-100"

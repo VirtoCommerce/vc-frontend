@@ -6,20 +6,24 @@
       :path-match="pathMatch || ['/']"
       @set-state="updateState($event, 'slugContent')"
     />
+
     <BuilderIo
       v-if="previewers.builderIo.isActive"
       :is-visible="visibleComponent === 'builderIo'"
       :api-key="builderIoApiKey"
       @set-state="updateState($event, 'builderIo')"
     />
+
     <Internal
       v-if="previewers.internal.isActive"
       :is-visible="visibleComponent === 'internal'"
       @set-state="updateState($event, 'internal')"
     />
-    <div v-if="visibleComponent === 'loader'" class="min-h-[80vh]">
+
+    <div v-if="visibleComponent === 'loader'">
       <VcLoaderOverlay />
     </div>
+
     <NotFound v-if="!visibleComponent" />
   </div>
 </template>

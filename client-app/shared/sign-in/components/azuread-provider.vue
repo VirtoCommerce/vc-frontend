@@ -1,9 +1,5 @@
 <template>
-  <IdentityProvider
-    :text="$t('pages.sign_in.providers.azure_ad.button_text')"
-    icon="/static/images/sign-in/ms.svg"
-    @sign-in="signIn"
-  />
+  <IdentityProvider :text="$t('pages.sign_in.providers.azure_ad.button_text')" icon="ms.svg" @sign-in="signIn" />
 </template>
 
 <script setup lang="ts">
