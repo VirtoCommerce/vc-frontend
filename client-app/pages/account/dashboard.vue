@@ -29,7 +29,7 @@
       <VcWidget :title="$t('pages.account.dashboard.monthly_report_card.title')" class="lg:w-0 lg:grow">
         <div class="flex content-center space-x-9 lg:space-x-4">
           <VcImage
-            src="/static/images/dashboard/spend-chart.svg"
+            src="spend-chart.svg"
             class="size-24"
             :alt="$t('pages.account.dashboard.monthly_report_card.spend_chart_alt')"
             lazy
