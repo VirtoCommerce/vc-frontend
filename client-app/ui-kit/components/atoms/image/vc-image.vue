@@ -5,7 +5,7 @@
     :loading="lazy ? 'lazy' : 'eager'"
     :data-src="fallbackEnabled ? src : null"
     :data-size-suffix="fallbackEnabled || originalEnabled ? sizeSuffix : null"
-    :class="{ 'object-scale-down object-center': preparedSrc === fallbackSrc }"
+    :class="{ 'object-scale-down object-center': fallbackEnabled || !src }"
     @error="setFallback"
   />
 </template>
@@ -15,6 +15,7 @@ import { computed, ref, watch } from "vue";
 import { useThemeContext } from "@/core/composables";
 import { NO_IMAGE_URL } from "@/core/constants";
 import { appendSuffixToFilename } from "@/core/utilities";
+import { getImageUrl, isFilenameOnly } from "../../../utilities";
 
 export interface IProps {
   lazy?: boolean;
@@ -41,7 +42,11 @@ const originalEnabled = ref(false);
 
 const preparedSrc = computed<string>(() => {
   if (fallbackEnabled.value || !props.src) {
-    return props.fallbackSrc;
+    return isFilenameOnly(props.fallbackSrc) ? getImageUrl(props.fallbackSrc) : props.fallbackSrc;
+  }
+
+  if (isFilenameOnly(props.src)) {
+    return getImageUrl(props.src);
   }
 
   const sizeSuffix = props.sizeSuffix
