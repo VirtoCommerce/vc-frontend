@@ -54,7 +54,6 @@ function _useBackInStockSubscriptions() {
       return newSubscription;
     } catch (e) {
       Logger.error(`${useBackInStockSubscriptions.name}.${action.name}`, e);
-      throw e;
     } finally {
       pendingProductIds.value.delete(payload.productId);
     }

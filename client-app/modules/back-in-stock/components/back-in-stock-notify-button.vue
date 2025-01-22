@@ -11,7 +11,7 @@
     "
     @link-click="updateBackInStockSubscription"
   >
-    <div v-if="showText" class="back-in-stock-notify-button__text">
+    <div v-if="isTextShown" class="back-in-stock-notify-button__text">
       <VcIcon name="information-circle" size="xs" />
       {{ $t("back_in_stock.messages.click_to_receive_alert") }}
     </div>
@@ -33,7 +33,7 @@ import type { Product } from "@/core/api/graphql/types";
 
 interface IProps {
   product: Product;
-  showText?: boolean;
+  isTextShown?: boolean;
 }
 const props = defineProps<IProps>();
 const { product } = toRefs(props);
