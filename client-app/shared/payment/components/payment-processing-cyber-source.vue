@@ -265,7 +265,9 @@ async function initPayment() {
     return;
   }
 
-  await useDynamicScript(scriptUrl);
+  const clientLibraryIntegrity = getValue(publicParameters, "clientLibraryIntegrity");
+
+  await useDynamicScript(scriptUrl, clientLibraryIntegrity);
   await initFlex(getValue(publicParameters, "jwt")!);
   initForm();
 
@@ -338,9 +340,16 @@ function showError(message: string) {
 
 let scriptTag: Ref<HTMLScriptElement | null, HTMLScriptElement | null>;
 
-async function useDynamicScript(url: string): Promise<void> {
+async function useDynamicScript(url: string, integrity?: string): Promise<void> {
+  const options: { attrs?: { integrity: string }; crossOrigin?: "anonymous" } = {};
+
+  if (integrity) {
+    options.attrs = { integrity };
+    options.crossOrigin = "anonymous";
+  }
+
   return new Promise((resolve: () => void) => {
-    const { scriptTag: tag } = useScriptTag(url, resolve);
+    const { scriptTag: tag } = useScriptTag(url, resolve, options);
     scriptTag = tag;
   });
 }
