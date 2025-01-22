@@ -186,8 +186,8 @@ function openDeleteProductModal(ids: string[]): void {
         if (hasPagination && isLastPageWithOneItem) {
           pagination.value.page -= 1;
         }
-        void fetchProductsAndSubscriptions();
         void broadcast.emit(dataChangedEvent);
+        void fetchProductsAndSubscriptions();
       },
     },
   });
