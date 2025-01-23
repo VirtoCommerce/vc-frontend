@@ -112,7 +112,12 @@
           </template>
         </VcSelect>
 
-        <VcButton :disabled="!isDirty" class="mt-8 self-center lg:self-start" @click="saveDefaults()">
+        <VcButton
+          :disabled="!isDirty"
+          class="mt-8 self-center lg:self-start"
+          min-width="6.25rem"
+          @click="saveDefaults()"
+        >
           {{ $t("pages.account.checkout_defaults.update_button") }}
         </VcButton>
       </div>
