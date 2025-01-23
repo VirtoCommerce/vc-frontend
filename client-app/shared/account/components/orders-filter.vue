@@ -59,12 +59,7 @@ interface IEmits {
   (event: "close"): void;
 }
 
-interface IProps {
-  isOpened?: boolean;
-}
-
 defineEmits<IEmits>();
-defineProps<IProps>();
 
 const { facets } = useUserOrders({});
 const { filterData, isFilterEmpty, isFilterDirty } = useUserOrdersFilter();
