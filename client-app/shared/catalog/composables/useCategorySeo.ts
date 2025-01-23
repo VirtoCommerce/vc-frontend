@@ -2,28 +2,27 @@ import { useSeoMeta } from "@unhead/vue";
 import { computed, watchEffect } from "vue";
 import { usePageHead } from "@/core/composables";
 import { globals } from "@/core/globals";
-import { useCategory } from "@/shared/catalog/composables/useCategory";
+import type { Category } from "@/core/api/graphql/types";
 import type { Ref } from "vue";
 
 type PropsType = {
+  category: Ref<Category | undefined>;
   allowSetMeta: Ref<boolean>;
   categoryComponentAnchorIsVisible: Ref<boolean>;
 };
 
 const { i18n } = globals;
 
-export function useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible }: PropsType) {
-  const { category: currentCategory, loading: categoryLoading } = useCategory();
-
+export function useCategorySeo({ category, allowSetMeta, categoryComponentAnchorIsVisible }: PropsType) {
   const seoTitle = computed(
     () =>
-      currentCategory.value?.seoInfo?.pageTitle ??
-      currentCategory.value?.name ??
-      (categoryLoading.value ? "" : i18n.global.t("pages.catalog.title")),
+      category.value?.seoInfo?.pageTitle ??
+      category.value?.name ??
+      (category.value ? "" : i18n.global.t("pages.catalog.title")),
   );
-  const seoDescription = computed(() => currentCategory.value?.seoInfo?.metaDescription);
-  const seoKeywords = computed(() => currentCategory.value?.seoInfo?.metaKeywords);
-  const seoImageUrl = computed(() => currentCategory.value?.images?.[0]?.url);
+  const seoDescription = computed(() => category.value?.seoInfo?.metaDescription);
+  const seoKeywords = computed(() => category.value?.seoInfo?.metaKeywords);
+  const seoImageUrl = computed(() => category.value?.images?.[0]?.url);
 
   watchEffect(() => {
     if (allowSetMeta.value && categoryComponentAnchorIsVisible.value) {
@@ -35,7 +34,7 @@ export function useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible 
         },
       });
 
-      const seoUrl = currentCategory.value?.seoInfo?.semanticUrl
+      const seoUrl = category.value?.seoInfo?.semanticUrl
         ? `${window.location.host}\${currentCategory.value?.seoInfo?.semanticUrl`
         : window.location.toString();
 
