@@ -49,7 +49,7 @@
                 <span class="text-neutral-400 md:hidden">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </span>
-                <span class="font-bold">{{ item.sku }}</span>
+                <span class="font-bold max-lg:break-all">{{ item.sku }}</span>
               </div>
 
               <div
