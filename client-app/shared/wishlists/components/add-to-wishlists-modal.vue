@@ -123,12 +123,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, onMounted, toRef } from "vue";
+import { computed, ref, onMounted, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useGetProductWishlistsQuery } from "@/core/api/graphql/catalog/queries/getProductWishlists";
-import { useAnalytics } from "@/core/composables";
+import { useAnalytics, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT, DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
-import { configInjectionKey } from "@/core/injection-keys";
 import { asyncForEach } from "@/core/utilities";
 import { useUser } from "@/shared/account/composables";
 import { useModal } from "@/shared/modal";
@@ -172,14 +171,14 @@ const {
   refetch: refetchProductWishlists,
   result: productWishlistsResult,
 } = useGetProductWishlistsQuery(product.value.id);
+const { themeContext } = useThemeContext();
 
 const loading = ref(false);
 const selectedListsOtherIds = ref<string[]>([]);
 const removedLists = ref<string[]>([]);
 const newLists = ref<IWishlistInput[]>([]);
 
-const config = inject(configInjectionKey);
-const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
+const listsLimit = themeContext.value?.settings?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length + newLists.value.length >= listsLimit);
 
