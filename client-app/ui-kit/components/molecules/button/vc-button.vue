@@ -221,14 +221,14 @@ const attrs = computed(() => {
     &--sm {
       --line-height: 1.25rem;
 
-      @apply px-3.5 py-2 text-xs/[--line-height] uppercase font-black;
+      @apply px-3.5 py-1.5 text-xs/[--line-height] uppercase font-black;
 
       &#{$icon} {
-        @apply px-2;
+        @apply px-1.5;
       }
 
       & #{$loaderIcon} {
-        @apply border-2 w-4 h-4;
+        @apply border-2 size-5;
       }
     }
 
@@ -249,10 +249,10 @@ const attrs = computed(() => {
     &--lg {
       --line-height: 1.5rem;
 
-      @apply px-5 py-3.5 text-base/[--line-height] uppercase font-black;
+      @apply px-5 py-3 text-base/[--line-height] uppercase font-black;
 
       &#{$icon} {
-        @apply px-3.5;
+        @apply px-3;
       }
 
       & #{$loaderIcon} {
