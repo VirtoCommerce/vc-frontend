@@ -14,6 +14,7 @@ const { i18n } = globals;
 
 export function useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible }: PropsType) {
   const { category: currentCategory, loading: categoryLoading } = useCategory();
+
   const seoTitle = computed(
     () =>
       currentCategory.value?.seoInfo?.pageTitle ??

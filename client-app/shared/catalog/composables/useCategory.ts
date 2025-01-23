@@ -6,10 +6,10 @@ import type { ExtendedQueryCategoryArgsType } from "@/core/api/graphql";
 import type { Category } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
-export function useCategory() {
-  const loading = ref(false);
-  const category = shallowRef<Category>();
+const loading = ref(false);
+const category = shallowRef<Category>();
 
+export function useCategory() {
   const { catalogId, i18n } = globals;
 
   const catalogName = i18n.global.t("pages.catalog.title");
