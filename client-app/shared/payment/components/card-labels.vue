@@ -1,8 +1,8 @@
 <template>
   <div class="card-labels">
-    <img class="card-labels__item" src="/static/images/payment/methods/visa.svg" alt="" />
-    <img class="card-labels__item" src="/static/images/payment/methods/maestro.svg" alt="" />
-    <img class="card-labels__item" src="/static/images/payment/methods/mastercard.svg" alt="" />
+    <VcImage class="card-labels__item" src="visa.svg" alt="" />
+    <VcImage class="card-labels__item" src="maestro.svg" alt="" />
+    <VcImage class="card-labels__item" src="mastercard.svg" alt="" />
   </div>
 </template>
 

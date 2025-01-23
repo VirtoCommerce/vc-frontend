@@ -11,12 +11,12 @@
       "id": "slider2e19",
       "slides": [
         {
-          "image": "/static/images/home/slide-1.webp",
+          "image": "slide-1.webp",
           "text": "",
           "title": ""
         },
         {
-          "image": "/static/images/home/slide-2.webp",
+          "image": "slide-2.webp",
           "text": "",
           "title": ""
         }
@@ -39,22 +39,22 @@
       "background": "bg-neutral-100",
       "columns": [
         {
-          "image": "/static/images/home/hexa-1.webp",
+          "image": "hexa-1.webp",
           "text": null,
           "title": "Corporate account management"
         },
         {
-          "image": "/static/images/home/hexa-2.webp",
+          "image": "hexa-2.webp",
           "text": null,
           "title": "Quote management and price negotiation"
         },
         {
-          "image": "/static/images/home/hexa-3.webp",
+          "image": "hexa-3.webp",
           "text": null,
           "title": "Multiple stores, channels, and locations"
         },
         {
-          "image": "/static/images/home/hexa-4.webp",
+          "image": "hexa-4.webp",
           "text": null,
           "title": "B2B customization and price management"
         }
