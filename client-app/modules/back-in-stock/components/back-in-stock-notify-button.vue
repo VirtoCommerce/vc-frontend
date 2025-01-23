@@ -4,6 +4,13 @@
     class="back-in-stock-notify-button"
     :icon="isProductSubscriptionActive(product.id) ? 'notification' : 'notification-non-active'"
     :loading="isProductSubscriptionPending(product.id)"
+    no-wrap
+    truncate
+    :title="
+      isProductSubscriptionActive(product.id)
+        ? $t('back_in_stock.messages.you_will_be_notified')
+        : $t('back_in_stock.messages.notify_me_when_in_stock')
+    "
     :button-text="
       isProductSubscriptionActive(product.id)
         ? $t('back_in_stock.messages.you_will_be_notified')
