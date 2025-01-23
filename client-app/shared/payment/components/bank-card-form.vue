@@ -173,7 +173,7 @@ const expirationDate = computed<string | undefined, string>({
   set: (value) => {
     if (value) {
       const rawMonth = value.slice(0, 2);
-      const rawYear = value.includes("/") ? value.split(EXPIRATION_DATE_DIVIDER)[1] : value.slice(2, 4);
+      const rawYear = value.includes("/") ? value.split("/")[1].trim() : value.slice(2, 4);
       month.value = rawMonth;
       year.value = rawYear;
     } else {
