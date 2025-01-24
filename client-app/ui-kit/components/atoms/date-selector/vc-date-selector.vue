@@ -1,9 +1,10 @@
 <template>
-  <div v-if="label">
-    <span class="font-bold text-neutral-900">{{ label }}</span>
-    <span v-if="isRequired" class="text-danger">*</span>
-  </div>
+  <VcLabel v-if="label" :for-id="componentId" :required="isRequired" :error="!!errorMessage">
+    {{ label }}
+  </VcLabel>
+
   <input
+    :id="componentId"
     v-model="dateOnly"
     :disabled="isDisabled"
     :name="name"
@@ -15,6 +16,7 @@
 
 <script setup lang="ts">
 import { useVModel } from "@vueuse/core";
+import { useComponentId } from "@/ui-kit/composables";
 
 interface IEmits {
   (e: "update:modelValue", value: string | undefined): void;
@@ -32,5 +34,6 @@ interface IProps {
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
 
+const componentId = useComponentId("input");
 const dateOnly = useVModel(props, "modelValue", emit);
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <DialogTitle :class="['vc-dialog-header', `vc-dialog-header--color--${color}`]">
+  <div :class="['vc-dialog-header', `vc-dialog-header--color--${color}`]">
     <div class="vc-dialog-header__main">
       <div v-if="icon" class="vc-dialog-header__icon">
         <VcIcon :name="icon" size="sm" />
@@ -13,12 +13,10 @@
     <button v-if="closable" type="button" class="vc-dialog-header__close" @click="$emit('close')">
       <VcIcon name="delete-thin" :size="16" />
     </button>
-  </DialogTitle>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { DialogTitle } from "@headlessui/vue";
-
 export interface IEmits {
   (event: "close"): void;
 }
