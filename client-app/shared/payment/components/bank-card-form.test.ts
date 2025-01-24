@@ -1,4 +1,9 @@
-import { render, fireEvent, cleanup, waitForElementToBeRemoved } from "@testing-library/vue";
+import {
+  render,
+  fireEvent,
+  cleanup,
+  waitForElementToBeRemoved as _waitForElementToBeRemoved,
+} from "@testing-library/vue";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { VcInput, VcButton, VcInputDetails, VcLabel } from "@/ui-kit/components";
 import BankCardForm from "./bank-card-form.vue";
@@ -17,6 +22,25 @@ vi.mock("vue-i18n", () => {
 });
 
 const EXPIRATION_FIELD_LABEL = "shared.payment.bank_card_form.expiration_date_label";
+const ERROR_MESSAGES = {
+  MONTH: "shared.payment.authorize_net.errors.month",
+  MONTH_INCOMPLETE: "shared.payment.bank_card_form.month_label must be exactly 2 characters",
+  YEAR_INCOMPLETE: "shared.payment.bank_card_form.year_label must be exactly 2 characters",
+} as const;
+
+async function findElementByText(text: string) {
+  return await renderedComponent.findByText(text);
+}
+function queryElementByText(text: string) {
+  return renderedComponent.queryByText(text);
+}
+function getExpirationInput() {
+  return renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+}
+
+async function waitForElementToBeRemoved(selector: string) {
+  return await _waitForElementToBeRemoved(() => renderedComponent.queryByText(selector));
+}
 
 let renderedComponent: RenderResult;
 
@@ -74,7 +98,7 @@ describe("BankCardForm", () => {
   describe("Expiration Date Field", () => {
     describe("Formatting", () => {
       it("should format input as MM/YY while typing", async () => {
-        const input = renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+        const input = getExpirationInput();
 
         await fireEvent.update(input, "12");
         expect(input.value).toBe("12 / ");
@@ -84,7 +108,7 @@ describe("BankCardForm", () => {
       });
 
       it("should handle backspace correctly", async () => {
-        const input = renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+        const input = getExpirationInput();
 
         // Type full date then erase
         await fireEvent.update(input, "1223");
@@ -100,9 +124,8 @@ describe("BankCardForm", () => {
         expect(input.value).toBe("1");
       });
 
-      // TODO: fix the component to pass this case
       it.skip("should not allow non-numeric input", async () => {
-        const input = renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+        const input = getExpirationInput();
 
         await fireEvent.update(input, "ab");
         expect(input.value).toBe("");
@@ -112,7 +135,7 @@ describe("BankCardForm", () => {
       });
 
       it("should limit input to 4 digits", async () => {
-        const input = renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+        const input = getExpirationInput();
 
         await fireEvent.update(input, "123456");
         expect(input.value).toBe("12 / 34");
@@ -121,52 +144,41 @@ describe("BankCardForm", () => {
 
     describe("Validation", () => {
       it("should show error for invalid month (00-12)", async () => {
-        const input = renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+        const input = getExpirationInput();
 
         // Invalid months
         await fireEvent.update(input, "0");
-        expect(
-          await renderedComponent.findByText("shared.payment.bank_card_form.month_label must be exactly 2 characters"),
-        ).toBeVisible();
+        expect(await findElementByText(ERROR_MESSAGES.MONTH_INCOMPLETE)).toBeVisible();
 
         await fireEvent.update(input, "00");
-        expect(await renderedComponent.findByText("shared.payment.authorize_net.errors.month")).toBeVisible();
+        expect(await findElementByText(ERROR_MESSAGES.MONTH)).toBeVisible();
 
         await fireEvent.update(input, "13");
-        expect(await renderedComponent.findByText("shared.payment.authorize_net.errors.month")).toBeVisible();
+        expect(await findElementByText(ERROR_MESSAGES.MONTH)).toBeVisible();
 
         // Valid months
         await fireEvent.update(input, "01");
-        await waitForElementToBeRemoved(() =>
-          renderedComponent.queryByText("shared.payment.authorize_net.errors.month"),
-        );
-        expect(renderedComponent.queryByText("shared.payment.authorize_net.errors.month")).not.toBeInTheDocument();
+        await waitForElementToBeRemoved(ERROR_MESSAGES.MONTH);
+        expect(queryElementByText(ERROR_MESSAGES.MONTH)).not.toBeInTheDocument();
 
         await fireEvent.update(input, "12");
-        expect(renderedComponent.queryByText("shared.payment.authorize_net.errors.month")).not.toBeInTheDocument();
+        expect(queryElementByText(ERROR_MESSAGES.MONTH)).not.toBeInTheDocument();
       });
 
       it("should show error for incomplete input", async () => {
-        const input = renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
+        const input = getExpirationInput();
 
         // Single digit
         await fireEvent.update(input, "1");
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        expect(
-          await renderedComponent.findByText("shared.payment.bank_card_form.month_label must be exactly 2 characters"),
-        ).toBeInTheDocument();
+        expect(await findElementByText(ERROR_MESSAGES.MONTH_INCOMPLETE)).toBeInTheDocument();
 
         // Month only
         await fireEvent.update(input, "12");
-        expect(
-          await renderedComponent.findByText("shared.payment.bank_card_form.year_label must be exactly 2 characters"),
-        ).toBeInTheDocument();
+        expect(await findElementByText(ERROR_MESSAGES.YEAR_INCOMPLETE)).toBeInTheDocument();
 
         // Month and partial year
         await fireEvent.update(input, "12/2");
-        expect(
-          await renderedComponent.findByText("shared.payment.bank_card_form.year_label must be exactly 2 characters"),
-        ).toBeInTheDocument();
+        expect(await findElementByText(ERROR_MESSAGES.YEAR_INCOMPLETE)).toBeInTheDocument();
       });
     });
   });
