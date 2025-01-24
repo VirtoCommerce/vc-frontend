@@ -78,6 +78,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { shallowRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
@@ -97,6 +98,13 @@ watch(homePageAnchorIsVisible, (value) => {
         keywords: t("pages.home.meta.keywords"),
         description: t("pages.home.meta.description"),
       },
+    });
+
+    useSeoMeta({
+      ogUrl: window.location.toString(),
+      ogTitle: t("pages.home.meta.title"),
+      ogDescription: t("pages.home.meta.description"),
+      ogType: "website",
     });
   }
 });
