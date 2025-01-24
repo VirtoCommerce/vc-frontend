@@ -1131,7 +1131,8 @@
           "country": "国",
           "default": "既定",
           "favorite": "お気に入り",
-          "actions": "操作"
+          "actions": "操作",
+          "company_logo": "会社ロゴ"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

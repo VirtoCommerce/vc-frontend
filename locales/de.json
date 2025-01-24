@@ -1131,7 +1131,8 @@
           "country": "Land",
           "default": "Standard",
           "favorite": "Favorit",
-          "actions": "Aktionen"
+          "actions": "Aktionen",
+          "company_logo": "Firmenlogo"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

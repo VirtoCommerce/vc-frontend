@@ -1131,7 +1131,8 @@
           "country": "国家",
           "default": "默认",
           "favorite": "收藏",
-          "actions": "操作"
+          "actions": "操作",
+          "company_logo": "公司标志"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

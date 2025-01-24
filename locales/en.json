@@ -192,7 +192,8 @@
       "blocked": "You have been blocked. You can not reach any information or create the order. For more details please ",
       "password_about_expire": "Your password is about to expire in {value} day(s). Please set a new password in profile",
       "password_expired": "Your password is expired",
-      "data_changed": "The data has been modified on one of the other tabs. Please refresh the page to display the latest data."
+      "data_changed": "The data has been modified on one of the other tabs. Please refresh the page to display the latest data.",
+      "logo_changed": "Logo successfully added. Please refresh the page to see the changes."
     },
     "placeholders": {
       "enter_value": "Please enter a value",
@@ -1131,7 +1132,8 @@
           "country": "Country",
           "default": "Default",
           "favorite": "Favorite",
-          "actions": "Actions"
+          "actions": "Actions",
+          "company_logo": "Company logo"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

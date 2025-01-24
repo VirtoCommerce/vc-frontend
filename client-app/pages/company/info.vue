@@ -3,14 +3,12 @@
     <VcTypography tag="h1">
       {{ $t("pages.company.info.title") }}
     </VcTypography>
-
-    <VcWidget size="lg">
-      <template #default-container>
-        <!-- Company name block -->
-        <div class="p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
+    <div class="space-y-5 lg:space-y-6">
+      <!-- Company name block -->
+      <VcWidget :title="$t('pages.company.info.labels.company_name')" size="lg">
+        <div>
           <VcInput
             v-model="organizationName"
-            :label="$t('pages.company.info.labels.company_name')"
             :disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
             :message="errors[0]"
             :error="!!errors[0]"
@@ -29,12 +27,49 @@
             </template>
           </VcInput>
         </div>
+      </VcWidget>
+      <VcWidget
+        v-if="userCanEditOrganization || !loadingOrganization || !loadingUser"
+        :title="$t('pages.company.info.labels.company_logo')"
+        size="lg"
+      >
+        <div class="flex gap-4">
+          <div v-if="logoUrl" class="flex flex-col justify-between">
+            <div>
+              <VcImage :alt="$t('pages.company.info.labels.company_logo')" :src="logoUrl" class="logo-preview__image" />
+            </div>
 
-        <!-- Content block -->
-        <div class="px-4 md:px-5 md:pb-5">
+            <VcButton
+              :disabled="!logoUrl"
+              :loading="loadingOrganizationLogo"
+              class="whitespace-nowrap"
+              size="sm"
+              variant="outline"
+              @click="saveOrganizationLogo"
+            >
+              {{ $t("common.buttons.save") }}
+            </VcButton>
+          </div>
+          <div class="grow">
+            <VcFileUploader
+              :files="files"
+              :loading="loadingOrganizationLogo"
+              removable
+              v-bind="fileOptions"
+              @download="onFileDownload"
+              @add-files="onAddFiles"
+              @remove-files="onRemoveFiles"
+            />
+          </div>
+        </div>
+      </VcWidget>
+
+      <!-- Content block -->
+      <VcWidget size="lg">
+        <div>
           <div
             v-if="addresses.length || loadingAddresses"
-            class="mb-4 mt-9 flex flex-row items-center justify-between gap-3 md:mt-1.5"
+            class="mb-4 flex flex-row items-center justify-between gap-3"
           >
             <VcTypography tag="h2" variant="h3">
               {{ $t("pages.company.info.content_header") }}
@@ -258,8 +293,8 @@
             </VcTable>
           </div>
         </div>
-      </template>
-    </VcWidget>
+      </VcWidget>
+    </div>
   </div>
 </template>
 
@@ -267,13 +302,19 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { string } from "yup";
 import { usePageHead } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
-import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import {
+  AddOrUpdateCompanyAddressModal,
+  useOrganization,
+  useOrganizationAddresses,
+  useOrganizationLogo,
+} from "@/shared/company";
+import { useFiles, downloadFile } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -283,6 +324,19 @@ const page = ref(1);
 const itemsPerPage = ref(10);
 
 const { t } = useI18n();
+
+const DEFAULT_COMPANY_FILES_SCOPE = "organization-logos";
+const {
+  files,
+  uploadedFiles,
+  addFiles,
+  validateFiles,
+  uploadFiles,
+  removeFiles,
+  fetchOptions: fetchFileOptions,
+  options: fileOptions,
+} = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
+const logoUrl = ref<string>("");
 
 usePageHead({
   title: t("pages.company.info.meta.title"),
@@ -294,6 +348,7 @@ usePageHead({
  */
 const { loading: loadingUser, organization, checkPermissions } = useUser();
 const { loading: loadingOrganization, updateOrganization } = useOrganization();
+const { loading: loadingOrganizationLogo, updateLogo } = useOrganizationLogo();
 const {
   addresses,
   sort,
@@ -385,6 +440,15 @@ async function saveOrganizationName(): Promise<void> {
   });
 }
 
+async function saveOrganizationLogo(): Promise<void> {
+  await updateLogo(organizationId.value, logoUrl.value);
+  notifications.success({
+    text: t("common.messages.logo_changed"),
+    duration: 10000,
+    single: true,
+  });
+}
+
 function openDeleteAddressModal(address: MemberAddressType): void {
   if (address.isDefault) {
     return;
@@ -448,6 +512,24 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
 
 void fetchAddresses();
 
+async function onAddFiles(items: INewFile[]) {
+  addFiles(items);
+  validateFiles();
+  await uploadFiles();
+  logoUrl.value = uploadedFiles.value.map((attachment) => attachment.url)[0];
+}
+
+async function onRemoveFiles(items: FileType[]) {
+  await removeFiles(items);
+  logoUrl.value = "";
+}
+
+function onFileDownload(file: FileType) {
+  if (file && file.url) {
+    void downloadFile(file.url, file.name);
+  }
+}
+
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
   if (addressId) {
     isFavoriteAddress ? await removeAddressFromFavorite(addressId) : await addAddressToFavorite(addressId);
@@ -459,4 +541,18 @@ watch(
   (name) => resetOrganizationField({ value: name }),
   { immediate: true },
 );
+
+watchEffect(async () => {
+  await Promise.all([fetchFileOptions()]);
+  fileOptions.value.maxFileCount = 1;
+});
 </script>
+
+<style lang="scss">
+.logo-preview {
+  &__image {
+    height: 70px;
+    @apply object-cover;
+  }
+}
+</style>

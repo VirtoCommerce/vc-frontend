@@ -1131,7 +1131,8 @@
           "country": "Страна",
           "default": "По умолчанию",
           "favorite": "Избранное",
-          "actions": "Действия"
+          "actions": "Действия",
+          "company_logo": "Логотип компании"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",
