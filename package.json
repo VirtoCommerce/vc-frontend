@@ -41,7 +41,7 @@
     "fix-locales": "yarn precheck && vite-node scripts/fix-missing-locales.ts -- locales client-app/ui-kit/locales client-app/modules/**/locales"
   },
   "dependencies": {
-    "@apollo/client": "^3.10.5",
+    "@apollo/client": "^3.12.7",
     "@builder.io/sdk-vue": "^3.0.0",
     "@floating-ui/vue": "^1.1.4",
     "@headlessui/vue": "^1.7.22",
@@ -59,11 +59,11 @@
     "firebase": "^11.0.1",
     "graphql": "^16.8.2",
     "graphql-tag": "^2.12.6",
+    "graphql-ws": "^6.0.2",
     "lodash": "^4.17.21",
     "marked": "^13.0.3",
     "maska": "^2.1.11",
     "skyflow-js": "^1.36.2",
-    "subscriptions-transport-ws": "^0.11.0",
     "swiper": "11.1.14",
     "tw-elements": "^1.1.0",
     "utility-types": "^3.11.0",
