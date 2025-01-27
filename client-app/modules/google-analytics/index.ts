@@ -4,12 +4,14 @@ import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
+import type { TrackerEventsType } from "client-app/core/types/analytics";
 
 const { currentCurrency } = useCurrency();
 
 const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
+const TRACKER_NAME = "google-analytics";
 
-export async function init(): Promise<void> {
+export async function init({ events: additionalEvents }: { events?: TrackerEventsType } = {}): Promise<void> {
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
   const { trackId, isEnabled } = getModuleSettings(GOOGLE_ANALYTICS_SETTINGS_MAPPING);
 
@@ -18,8 +20,16 @@ export async function init(): Promise<void> {
   }
   useScriptTag(`https://www.googletagmanager.com/gtag/js?id=${trackId}`);
   const { addTracker } = useAnalytics();
-  const tracker = await import("./events");
-  addTracker(tracker.analytics);
+  const { events } = await import("./events");
+  addTracker({
+    meta: {
+      name: TRACKER_NAME,
+    },
+    events: {
+      ...events,
+      ...additionalEvents,
+    },
+  });
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag() {
     // is not working with rest

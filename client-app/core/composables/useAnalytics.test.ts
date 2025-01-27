@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Logger } from "@/core/utilities";
 import type { CustomerOrderType, LineItemType, Product } from "../api/graphql/types";
 import type { useAnalytics as useAnalyticsType } from "@/core/composables/useAnalytics";
-import type { AnalyticsEventNameType, IAnalyticsEventMap, TackerType } from "@/core/types/analytics";
+import type { AnalyticsEventNameType, IAnalyticsEventMap, TrackerType } from "@/core/types/analytics";
 
 vi.mock("@/core/utilities/logger", () => ({
   Logger: {
@@ -30,8 +30,8 @@ describe("useAnalytics", () => {
   let analyticsInstance: ReturnType<typeof useAnalyticsType>;
   let addTracker: ReturnType<typeof useAnalyticsType>["addTracker"];
   let analytics: ReturnType<typeof useAnalyticsType>["analytics"];
-  let mockTracker1: TackerType;
-  let mockTracker2: TackerType;
+  let mockTracker1: TrackerType;
+  let mockTracker2: TrackerType;
 
   beforeEach(async () => {
     vi.resetModules();
@@ -154,7 +154,7 @@ describe("useAnalytics", () => {
   });
 
   it("should handle trackers with partial event support gracefully", () => {
-    const partialTracker: TackerType = {
+    const partialTracker: TrackerType = {
       viewItem: vi.fn(),
       search: vi.fn(),
     };
@@ -179,13 +179,13 @@ describe("useAnalytics", () => {
   });
 
   it("should continue dispatching events even if one tracker throws an error", () => {
-    const faultyTracker: TackerType = {
+    const faultyTracker: TrackerType = {
       viewItem: vi.fn(() => {
         throw new Error("Tracker error");
       }),
     };
 
-    const normalTracker: TackerType = {
+    const normalTracker: TrackerType = {
       viewItem: vi.fn(),
     };
 
@@ -217,7 +217,7 @@ describe("useAnalytics", () => {
 
   it("should handle a high volume of events and multiple trackers without issues", () => {
     const numTrackers = 10;
-    const trackers: TackerType[] = Array.from({ length: numTrackers }, () => ({
+    const trackers: TrackerType[] = Array.from({ length: numTrackers }, () => ({
       viewItem: vi.fn(),
       search: vi.fn(),
     }));

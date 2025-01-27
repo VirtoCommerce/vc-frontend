@@ -1,12 +1,12 @@
 import { createGlobalState } from "@vueuse/core";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities/logger";
-import type { AnalyticsEventNameType, IAnalyticsEventMap, TackerType } from "../types/analytics";
+import type { AnalyticsEventNameType, IAnalyticsEventMap, TrackerType } from "../types/analytics";
 
 function _useAnalytics() {
-  const trackers: Set<TackerType> = new Set();
+  const trackers: Set<TrackerType> = new Set();
 
-  function addTracker(tracker: TackerType): void {
+  function addTracker(tracker: TrackerType): void {
     trackers.add(tracker);
   }
 
@@ -16,15 +16,15 @@ function _useAnalytics() {
       return;
     }
     trackers.forEach((tracker) => {
-      const handler = tracker[event];
+      const handler = tracker.events[event];
       if (handler) {
         try {
-          handler(...args);
+          void handler(...args);
         } catch (error) {
-          Logger.error(`useAnalytics, error calling event: "${event}" in tracker.`, error);
+          Logger.error(`useAnalytics, error calling event: "${event}" in tracker ${tracker.meta?.name}.`, error);
         }
       } else {
-        Logger.warn(`useAnalytics, unsupported event: "${event}" in tracker.`);
+        Logger.warn(`useAnalytics, unsupported event: "${event}" in tracker ${tracker.meta?.name}.`);
       }
     });
   }
