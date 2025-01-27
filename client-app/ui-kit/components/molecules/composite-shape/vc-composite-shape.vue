@@ -41,6 +41,8 @@ const props = withDefaults(defineProps<IProps>(), {
   --icon-size: var(--props-icon-size, var(--vc-composite-shape-icon-size, 26.5%));
   --icon-top: var(--vc-composite-shape-icon-top, 11%);
   --icon-left: var(--vc-composite-shape-icon-left, -8%);
+  --icon-right: var(--vc-composite-shape-icon-right, auto);
+  --icon-bottom: var(--vc-composite-shape-icon-bottom, auto);
 
   @apply relative size-[--size];
 
@@ -53,7 +55,7 @@ const props = withDefaults(defineProps<IProps>(), {
   &__icon {
     --vc-shape-size: 100%;
 
-    @apply absolute top-[--icon-top] left-[--icon-left] size-[--icon-size];
+    @apply absolute top-[--icon-top] bottom-[--icon-bottom] left-[--icon-left] right-[--icon-right] size-[--icon-size];
   }
 }
 </style>

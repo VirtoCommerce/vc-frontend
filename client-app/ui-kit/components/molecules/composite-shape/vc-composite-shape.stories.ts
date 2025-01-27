@@ -17,12 +17,12 @@ export const Basic = Template.bind({});
 export const IconImage = Template.bind({});
 IconImage.args = {
   icon: "academic-cap",
-  img: "/static/images/user.jpg",
+  img: "basket.jpg",
 };
 
 export const Mask = Template.bind({});
 Mask.args = {
-  img: "/static/images/user.jpg",
+  img: "basket.jpg",
   mask: "emoji-happy",
   iconMask: "ai",
 };
