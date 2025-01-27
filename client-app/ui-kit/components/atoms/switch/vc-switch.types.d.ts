@@ -1,4 +1,4 @@
-import type { COLORS } from "@/core/constants";
+import type { COLORS } from "../../../constants";
 
 declare global {
   type VcSwitchColorType =

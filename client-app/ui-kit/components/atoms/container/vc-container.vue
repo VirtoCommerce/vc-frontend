@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import bgImageRaw from "../../../images/main-bg.svg?raw";
-import { isCssVariable } from "../../../utilities";
+import { getColorValue } from "../../../utilities";
 
 interface IProps {
   loading?: boolean;
@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<IProps>(), {
   bgImage: true,
 });
 
-const _bgColor = computed(() => (isCssVariable(props.bgColor) ? `var(${props.bgColor})` : props.bgColor));
+const _bgColor = computed(() => getColorValue(props.bgColor));
 </script>
 
 <style lang="scss">

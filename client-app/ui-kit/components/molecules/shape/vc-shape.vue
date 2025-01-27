@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { isCssVariable, getImageUrl, getIconUrl } from "@/ui-kit/utilities";
+import { getImageUrl, getIconUrl, getColorValue } from "../../../utilities";
 
 interface IProps {
   size?: string;
@@ -35,8 +35,8 @@ const style = computed(() => ({
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
 
-const _bgColor = computed(() => (isCssVariable(props.bgColor) ? `var(${props.bgColor})` : props.bgColor));
-const _iconColor = computed(() => (isCssVariable(props.iconColor) ? `var(${props.iconColor})` : props.iconColor));
+const _bgColor = computed(() => getColorValue(props.bgColor));
+const _iconColor = computed(() => getColorValue(props.iconColor));
 </script>
 
 <style lang="scss">

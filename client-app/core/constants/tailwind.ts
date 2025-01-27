@@ -1,3 +1,5 @@
+import type { COLORS } from "@/ui-kit/constants";
+
 export const BREAKPOINTS = {
   xs: "480px",
   sm: "640px",
@@ -8,17 +10,5 @@ export const BREAKPOINTS = {
 } as const;
 
 export type BreakpointsType = keyof typeof BREAKPOINTS;
-
-export const COLORS = {
-  accent: "accent",
-  primary: "primary",
-  secondary: "secondary",
-  neutral: "neutral",
-  info: "info",
-  success: "success",
-  warning: "warning",
-  danger: "danger",
-  additional: "additional",
-} as const;
 
 export type ColorsType = keyof typeof COLORS;
