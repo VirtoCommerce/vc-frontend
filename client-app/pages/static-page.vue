@@ -25,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { useSeoMeta } from "@unhead/vue";
 import { useElementVisibility } from "@vueuse/core";
 import { computed, shallowRef, unref, watchEffect } from "vue";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
@@ -40,12 +41,23 @@ const staticPageAnchorIsVisible = useElementVisibility(staticPageAnchor);
 
 watchEffect(() => {
   if (staticPageAnchorIsVisible.value) {
+    const pageTitle = unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name;
+    const pageDescription = unref(template)?.settings?.seoInfo?.metaDescription;
+    const pageKeywords = unref(template)?.settings?.seoInfo?.metaKeywords;
+
     usePageHead({
-      title: computed(() => unref(template)?.settings?.seoInfo?.pageTitle || unref(template)?.settings?.name),
+      title: computed(() => pageTitle),
       meta: {
-        keywords: computed(() => unref(template)?.settings?.seoInfo?.metaKeywords),
-        description: computed(() => unref(template)?.settings?.seoInfo?.metaDescription),
+        keywords: computed(() => pageKeywords),
+        description: computed(() => pageDescription),
       },
+    });
+
+    useSeoMeta({
+      ogUrl: window.location.toString(),
+      ogTitle: pageTitle,
+      ogDescription: pageDescription,
+      ogType: "website",
     });
   }
 });

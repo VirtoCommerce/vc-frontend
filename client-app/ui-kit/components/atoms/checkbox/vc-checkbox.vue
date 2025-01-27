@@ -25,6 +25,7 @@
         @change="handleChange"
         @click="onClick"
       />
+
       <span v-if="$slots.default" class="vc-checkbox__label">
         <slot v-bind="{ checked: isChecked }" />
       </span>
@@ -151,7 +152,7 @@ function onClick(event: Event) {
   }
 
   &__container {
-    @apply flex items-center cursor-pointer;
+    @apply flex items-start cursor-pointer;
 
     #{$disabled} & {
       @apply cursor-not-allowed;
@@ -193,7 +194,7 @@ function onClick(event: Event) {
   }
 
   &__label {
-    @apply min-w-0;
+    @apply flex items-center min-w-0 min-h-[--size];
 
     #{$left} & {
       @apply order-first me-2;

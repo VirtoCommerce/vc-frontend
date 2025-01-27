@@ -467,6 +467,7 @@
         }
       },
       "orders_filter": {
+        "title": "注文フィルター",
         "status_label": "@:common.labels.status",
         "created_date_label": "作成日",
         "start_date_label": "開始日",
@@ -1148,6 +1149,7 @@
         "no_members_message": "メンバーが登録されていません",
         "no_results_message": "該当する結果が見つかりません",
         "invite_sent": "招待を送信しました",
+        "filters": "メンバーフィルター",
         "labels": {
           "role": "役割",
           "status": "ステータス"
