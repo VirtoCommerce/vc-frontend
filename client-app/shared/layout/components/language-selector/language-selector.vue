@@ -123,5 +123,9 @@ function getCountryCode(language: ILanguage): string {
   &__item-img {
     @apply size-3.5;
   }
+
+  &__item-text {
+    @apply capitalize;
+  }
 }
 </style>

@@ -49,7 +49,7 @@
                 <span class="text-neutral-400 md:hidden">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </span>
-                <span class="break-all font-bold">{{ item.sku }}</span>
+                <span class="font-bold max-lg:break-all">{{ item.sku }}</span>
               </div>
 
               <div
@@ -81,16 +81,15 @@
     </VcExpansionPanels>
 
     <template #actions="{ close }">
-      <VcButton :to="{ name: 'Cart' }" class="max-sm:!min-w-full sm:me-auto" @click="close()">
+      <VcButton :to="{ name: 'Cart' }" class="max-xs:!min-w-full xs:me-auto" @click="close()">
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 
-      <VcButton variant="outline" class="max-sm:shrink-1 max-sm:grow max-sm:basis-0" @click="print()">
+      <VcButton variant="outline" @click="print()">
         {{ $t("common.buttons.print") }}
       </VcButton>
 
       <VcButton
-        class="max-sm:shrink-1 max-sm:grow max-sm:basis-0"
         @click="
           close();
           $emit('confirm');
