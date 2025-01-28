@@ -20,7 +20,7 @@ export function getColorValue(color: string): string {
   if (isValidCssVariableName(color)) {
     return `var(${color})`;
   } else if (isVcColorType(color)) {
-    return `--color-${color}-500`;
+    return `var(--color-${color}-500)`;
   } else if (isValidColor(color)) {
     return color;
   }
