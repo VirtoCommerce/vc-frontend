@@ -1,7 +1,7 @@
 import { createGlobalState } from "@vueuse/core";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { Logger } from "@/core/utilities/logger";
-import type { AnalyticsEventNameType, IAnalyticsEventMap, TrackerType } from "../types/analytics";
+import type { AnalyticsEventNameType, IAnalyticsEventMap, TrackerType } from "@/core/types/analytics";
 
 function _useAnalytics() {
   const trackers: Set<TrackerType> = new Set();

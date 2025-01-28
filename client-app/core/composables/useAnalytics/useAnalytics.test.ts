@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Logger } from "@/core/utilities";
-import type { CustomerOrderType, LineItemType, Product } from "../api/graphql/types";
+import type { CustomerOrderType, LineItemType, Product } from "@/core/api/graphql/types";
 import type { useAnalytics as useAnalyticsType } from "@/core/composables/useAnalytics";
 import type { AnalyticsEventNameType, IAnalyticsEventMap, TrackerType } from "@/core/types/analytics";
 

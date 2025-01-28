@@ -67,7 +67,7 @@ export function lineItemToGtagItem(
   };
 }
 
-export function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
+function getCategories(breadcrumbs: Breadcrumb[] = []): Record<string, string> {
   const categories: Record<string, string> = {};
 
   breadcrumbs

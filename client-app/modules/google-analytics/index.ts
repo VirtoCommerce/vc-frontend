@@ -4,10 +4,12 @@ import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
-import { sendEvent } from "./utils";
-import type { TrackerEventsType } from "@/core/types/analytics";
-
-type ExtendEventsType = (sendEventFunction: typeof sendEvent) => TrackerEventsType;
+import {
+  sendEvent as sendEventFunction,
+  productToGtagItem as productToGtagItemFunction,
+  lineItemToGtagItem as lineItemToGtagItemFunction,
+} from "./utils";
+import type { ExtendEventsType } from "./types";
 
 const { currentCurrency } = useCurrency();
 
@@ -30,7 +32,11 @@ export async function init({ extendEvents }: { extendEvents?: ExtendEventsType }
     },
     events: {
       ...events,
-      ...extendEvents?.(sendEvent),
+      ...extendEvents?.({
+        sendEvent: sendEventFunction,
+        productToGtagItem: productToGtagItemFunction,
+        lineItemToGtagItem: lineItemToGtagItemFunction,
+      }),
     },
   });
   window.dataLayer = window.dataLayer || [];
