@@ -25,6 +25,8 @@ const mockedCustomerOrder = {
 } as CustomerOrderType;
 
 const arbitraryParam = { someParam: "value" };
+const trackerMeta1 = { name: "tracker1" };
+const trackerMeta2 = { name: "tracker2" };
 
 describe("useAnalytics", () => {
   let analyticsInstance: ReturnType<typeof useAnalyticsType>;
@@ -45,6 +47,7 @@ describe("useAnalytics", () => {
     analytics = analyticsInstance.analytics;
 
     mockTracker1 = {
+      meta: trackerMeta1,
       events: {
         viewItemList: vi.fn(),
         selectItem: vi.fn(),
@@ -65,6 +68,7 @@ describe("useAnalytics", () => {
     };
 
     mockTracker2 = {
+      meta: trackerMeta2,
       events: {
         viewItemList: vi.fn(),
         selectItem: vi.fn(),
@@ -141,7 +145,7 @@ describe("useAnalytics", () => {
     analytics(event, ...args);
 
     expect(mockTracker1.events.purchase).toBeUndefined();
-    expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker.');
+    expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker tracker1.');
   });
 
   it("should handle adding the same tracker multiple times", () => {
@@ -159,6 +163,7 @@ describe("useAnalytics", () => {
 
   it("should handle trackers with partial event support gracefully", () => {
     const partialTracker: TrackerType = {
+      meta: trackerMeta1,
       events: {
         viewItem: vi.fn(),
         search: vi.fn(),
@@ -181,7 +186,7 @@ describe("useAnalytics", () => {
     analytics(event2, ...args2);
 
     expect(partialTracker.events.purchase).toBeUndefined();
-    expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker.');
+    expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker tracker1.');
   });
 
   it("should continue dispatching events even if one tracker throws an error", () => {
