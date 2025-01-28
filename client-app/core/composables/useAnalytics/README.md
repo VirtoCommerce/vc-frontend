@@ -94,7 +94,7 @@ export const events: TrackerEventsType = {
 };
 ```
 
-4. Implement the interface of extending events. See an [example of implementation](/client-app/modules/google-analytics/README.md) in Google Analytics module.
+4. Implement the interface of extending events. See an [example of implementation](/client-app/modules/google-analytics/README.md#extending-events) in Google Analytics module.
 
 5. Register your analytics provider module in the app:
 
@@ -117,4 +117,4 @@ await initMyAnalytics();
 ### Example: Google Analytics Module
 
 The Google Analytics module demonstrates a complete implementation.
-For more details, refer to the [Google Analytics module implementation](/client-app/modules/google-analytics/README.md) in the codebase.
+For more details, refer to the Google Analytics module [implementation](/client-app/modules/google-analytics/index.ts) and [documentation](/client-app/modules/google-analytics/README.md) in the codebase.

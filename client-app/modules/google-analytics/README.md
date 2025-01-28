@@ -15,7 +15,7 @@ await initGoogleAnalytics();
 
 ## Extending Events
 
-1. Create custom events in your declaration file to extend the core analytics composable ([see documentation](/client-app/core/composables//useAnalytics/README.md)):
+1. Create custom events in your declaration file to extend the core analytics composable ([see documentation](/client-app/core/composables//useAnalytics/README.md#extending-with-custom-events)):
 
 ```typescript
 declare module "client-app/core/types/analytics" {
