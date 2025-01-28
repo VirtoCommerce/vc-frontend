@@ -20,19 +20,17 @@
 
 <script setup lang="ts">
 import { computedEager } from "@vueuse/core";
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
-import { usePageHead } from "@/core/composables";
-import { configInjectionKey } from "@/core/injection-keys";
+import { usePageHead, useThemeContext } from "@/core/composables";
 import { useFullCart } from "@/shared/cart";
 import { useCheckout } from "@/shared/checkout";
-
-const config = inject(configInjectionKey, {});
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
+const { themeContext } = useThemeContext();
 const { loading: loadingCart, changing: changingCart, allItemsAreDigital, forceFetch } = useFullCart();
 const {
   loading: loadingCheckout,
@@ -63,7 +61,7 @@ const steps = computed<IStepsItem[]>(() => {
     });
   }
 
-  if (config.checkout_multistep_enabled) {
+  if (themeContext.value?.settings?.checkout_multistep_enabled) {
     result.push(
       {
         id: "Shipping",

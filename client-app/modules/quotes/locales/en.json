@@ -21,7 +21,7 @@
       "title": "Quote request"
     },
     "navigation": {
-      "route_name": "Quote Requests"
+      "route_name": "Quote requests"
     },
     "errors": {
       "creating_quote_error": "Error when creating an quote"
