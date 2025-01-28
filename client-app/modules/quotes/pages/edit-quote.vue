@@ -118,7 +118,7 @@ import { cloneDeep, every, isEqual, remove } from "lodash";
 import { useField } from "vee-validate";
 import { computed, onMounted, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
 import { string } from "yup";
 import { useBreadcrumbs, usePageHead } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -128,7 +128,7 @@ import { asyncForEach, isEqualAddresses } from "@/core/utilities";
 import { FILE_UPLOAD_SCOPE_NAME, MODULE_ID } from "@/modules/quotes/constants";
 import { useUser, useUserAddresses } from "@/shared/account";
 import { SelectAddressModal } from "@/shared/checkout";
-import { AddressSelection } from "@/shared/common";
+import { AddressSelection, SaveChangesModal } from "@/shared/common";
 import { useOrganizationAddresses } from "@/shared/company";
 import { downloadFile, useFiles } from "@/shared/files";
 import { useModal } from "@/shared/modal";
@@ -466,4 +466,31 @@ watchEffect(async () => {
   comment.value = quote.value?.comment;
   setBillingAddressEqualsShipping();
 });
+
+async function canChangeRoute(): Promise<boolean> {
+  return !canSaveChanges.value || (await openSaveChangesModal());
+}
+
+async function openSaveChangesModal(): Promise<boolean> {
+  return await new Promise<boolean>((resolve) => {
+    openModal({
+      component: SaveChangesModal,
+      props: {
+        title: t("pages.account.list_details.save_changes"),
+        message: t("common.messages.save_changes"),
+        onConfirm: async () => {
+          closeModal();
+          await saveChanges();
+          resolve(true);
+        },
+        onClose: () => {
+          resolve(true);
+        },
+      },
+    });
+  });
+}
+
+onBeforeRouteLeave(canChangeRoute);
+onBeforeRouteUpdate(canChangeRoute);
 </script>
