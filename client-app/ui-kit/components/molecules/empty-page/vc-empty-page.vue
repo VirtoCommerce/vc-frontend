@@ -66,7 +66,7 @@ defineProps<IProps>();
   &__title {
     @apply mb-7 text-center;
 
-    @media (max-width: theme("screens.sm")) {
+    @media (max-width: theme("screens.lg")) {
       @apply empty:hidden;
     }
 
