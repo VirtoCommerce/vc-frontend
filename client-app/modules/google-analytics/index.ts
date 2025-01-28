@@ -4,14 +4,16 @@ import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
-import type { TrackerEventsType } from "client-app/core/types/analytics";
+import { sendEvent } from "./utils";
+import type { TrackerEventsType } from "@/core/types/analytics";
 
 const { currentCurrency } = useCurrency();
 
 const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
 const TRACKER_NAME = "google-analytics";
+type ExtendEventsType = (sendEventFunction: typeof sendEvent) => TrackerEventsType;
 
-export async function init({ events: additionalEvents }: { events?: TrackerEventsType } = {}): Promise<void> {
+export async function init({ extendEvents }: { extendEvents?: ExtendEventsType } = {}): Promise<void> {
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
   const { trackId, isEnabled } = getModuleSettings(GOOGLE_ANALYTICS_SETTINGS_MAPPING);
 
@@ -27,7 +29,7 @@ export async function init({ events: additionalEvents }: { events?: TrackerEvent
     },
     events: {
       ...events,
-      ...additionalEvents,
+      ...extendEvents?.(sendEvent),
     },
   });
   window.dataLayer = window.dataLayer || [];

@@ -1,6 +1,6 @@
 import { Logger } from "@/core/utilities";
 import { canUseDOM, DEBUG_PREFIX } from "./constants";
-import type { CustomEventNamesType, EventParamsType } from "./types";
+import type { EventParamsType } from "./types";
 import type {
   Breadcrumb,
   LineItemType,
@@ -10,6 +10,10 @@ import type {
   DiscountType,
   OrderDiscountType,
 } from "@/core/api/graphql/types";
+import type { CamelToSnake } from "@/core/types/utility";
+import type { AnalyticsEventNameType } from "client-app/core/types/analytics";
+
+type CustomEventNamesType = Exclude<CamelToSnake<AnalyticsEventNameType>, Gtag.EventNames>;
 
 export function sendEvent(eventName: Gtag.EventNames | CustomEventNamesType, eventParams?: EventParamsType): void {
   if (canUseDOM && window.gtag) {

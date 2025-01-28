@@ -1,4 +1,3 @@
-export type CustomEventNamesType = "place_order" | "clear_cart";
 export type EventParamsType = Gtag.ControlParams & Gtag.EventParams & Gtag.CustomParams;
 
 declare global {

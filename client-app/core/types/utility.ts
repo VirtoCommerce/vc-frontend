@@ -20,3 +20,11 @@ export type DeepOmitByType<T, U extends DeepPartial<T>> = {
     ? _DeepOmitByType<T[K], U[K]>
     : T[K];
 };
+
+export type CamelToSnake<T extends string> = T extends `${infer First}${infer Rest}`
+  ? `${First extends Uppercase<First> ? "_" : ""}${Lowercase<First>}${CamelToSnake<Rest>}`
+  : T;
+
+export type SnakeCase<T extends string> = T extends `${infer First}${infer Rest}`
+  ? `${Lowercase<First>}${CamelToSnake<Rest>}`
+  : T;

@@ -45,39 +45,43 @@ describe("useAnalytics", () => {
     analytics = analyticsInstance.analytics;
 
     mockTracker1 = {
-      viewItemList: vi.fn(),
-      selectItem: vi.fn(),
-      viewItem: vi.fn(),
-      addItemToWishList: vi.fn(),
-      addItemToCart: vi.fn(),
-      addItemsToCart: vi.fn(),
-      removeItemsFromCart: vi.fn(),
-      viewCart: vi.fn(),
-      clearCart: vi.fn(),
-      beginCheckout: vi.fn(),
-      addShippingInfo: vi.fn(),
-      addPaymentInfo: vi.fn(),
-      purchase: vi.fn(),
-      placeOrder: vi.fn(),
-      search: vi.fn(),
+      events: {
+        viewItemList: vi.fn(),
+        selectItem: vi.fn(),
+        viewItem: vi.fn(),
+        addItemToWishList: vi.fn(),
+        addItemToCart: vi.fn(),
+        addItemsToCart: vi.fn(),
+        removeItemsFromCart: vi.fn(),
+        viewCart: vi.fn(),
+        clearCart: vi.fn(),
+        beginCheckout: vi.fn(),
+        addShippingInfo: vi.fn(),
+        addPaymentInfo: vi.fn(),
+        purchase: vi.fn(),
+        placeOrder: vi.fn(),
+        search: vi.fn(),
+      },
     };
 
     mockTracker2 = {
-      viewItemList: vi.fn(),
-      selectItem: vi.fn(),
-      viewItem: vi.fn(),
-      addItemToWishList: vi.fn(),
-      addItemToCart: vi.fn(),
-      addItemsToCart: vi.fn(),
-      removeItemsFromCart: vi.fn(),
-      viewCart: vi.fn(),
-      clearCart: vi.fn(),
-      beginCheckout: vi.fn(),
-      addShippingInfo: vi.fn(),
-      addPaymentInfo: vi.fn(),
-      purchase: vi.fn(),
-      placeOrder: vi.fn(),
-      search: vi.fn(),
+      events: {
+        viewItemList: vi.fn(),
+        selectItem: vi.fn(),
+        viewItem: vi.fn(),
+        addItemToWishList: vi.fn(),
+        addItemToCart: vi.fn(),
+        addItemsToCart: vi.fn(),
+        removeItemsFromCart: vi.fn(),
+        viewCart: vi.fn(),
+        clearCart: vi.fn(),
+        beginCheckout: vi.fn(),
+        addShippingInfo: vi.fn(),
+        addPaymentInfo: vi.fn(),
+        purchase: vi.fn(),
+        placeOrder: vi.fn(),
+        search: vi.fn(),
+      },
     };
   });
 
@@ -89,7 +93,7 @@ describe("useAnalytics", () => {
 
     analytics(event, ...args);
 
-    expect(mockTracker1.viewItemList).toHaveBeenCalledWith(...args);
+    expect(mockTracker1.events.viewItemList).toHaveBeenCalledWith(...args);
     expect(Logger.debug).not.toHaveBeenCalled();
     expect(Logger.warn).not.toHaveBeenCalled();
   });
@@ -103,8 +107,8 @@ describe("useAnalytics", () => {
 
     analytics(event, ...args);
 
-    expect(mockTracker1.selectItem).toHaveBeenCalledWith(...args);
-    expect(mockTracker2.selectItem).toHaveBeenCalledWith(...args);
+    expect(mockTracker1.events.selectItem).toHaveBeenCalledWith(...args);
+    expect(mockTracker2.events.selectItem).toHaveBeenCalledWith(...args);
     expect(Logger.debug).not.toHaveBeenCalled();
     expect(Logger.warn).not.toHaveBeenCalled();
   });
@@ -119,9 +123,9 @@ describe("useAnalytics", () => {
     analytics(event, ...args1);
     analytics(event, ...args2);
 
-    expect(mockTracker1.viewItem).toHaveBeenCalledTimes(2);
-    expect(mockTracker1.viewItem).toHaveBeenCalledWith(...args1);
-    expect(mockTracker1.viewItem).toHaveBeenCalledWith(...args2);
+    expect(mockTracker1.events.viewItem).toHaveBeenCalledTimes(2);
+    expect(mockTracker1.events.viewItem).toHaveBeenCalledWith(...args1);
+    expect(mockTracker1.events.viewItem).toHaveBeenCalledWith(...args2);
     expect(Logger.debug).not.toHaveBeenCalled();
     expect(Logger.warn).not.toHaveBeenCalled();
   });
@@ -129,14 +133,14 @@ describe("useAnalytics", () => {
   it("should log a warning if a tracker does not handle the event", () => {
     addTracker(mockTracker1);
 
-    delete mockTracker1.purchase;
+    delete mockTracker1.events.purchase;
 
     const event: AnalyticsEventNameType = "purchase";
     const args: IAnalyticsEventMap["purchase"] = [mockedCustomerOrder, "txn123", arbitraryParam];
 
     analytics(event, ...args);
 
-    expect(mockTracker1.purchase).toBeUndefined();
+    expect(mockTracker1.events.purchase).toBeUndefined();
     expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker.');
   });
 
@@ -149,14 +153,16 @@ describe("useAnalytics", () => {
 
     analytics(event, ...args);
 
-    expect(mockTracker1.search).toHaveBeenCalledTimes(1);
-    expect(mockTracker1.search).toHaveBeenCalledWith(...args);
+    expect(mockTracker1.events.search).toHaveBeenCalledTimes(1);
+    expect(mockTracker1.events.search).toHaveBeenCalledWith(...args);
   });
 
   it("should handle trackers with partial event support gracefully", () => {
     const partialTracker: TrackerType = {
-      viewItem: vi.fn(),
-      search: vi.fn(),
+      events: {
+        viewItem: vi.fn(),
+        search: vi.fn(),
+      },
     };
 
     addTracker(partialTracker);
@@ -166,7 +172,7 @@ describe("useAnalytics", () => {
 
     analytics(event1, ...args1);
 
-    expect(partialTracker.viewItem).toHaveBeenCalledWith(...args1);
+    expect(partialTracker.events.viewItem).toHaveBeenCalledWith(...args1);
     expect(Logger.warn).not.toHaveBeenCalled();
 
     const event2: AnalyticsEventNameType = "purchase";
@@ -174,19 +180,23 @@ describe("useAnalytics", () => {
 
     analytics(event2, ...args2);
 
-    expect(partialTracker.purchase).toBeUndefined();
+    expect(partialTracker.events.purchase).toBeUndefined();
     expect(Logger.warn).toHaveBeenCalledWith('useAnalytics, unsupported event: "purchase" in tracker.');
   });
 
   it("should continue dispatching events even if one tracker throws an error", () => {
     const faultyTracker: TrackerType = {
-      viewItem: vi.fn(() => {
-        throw new Error("Tracker error");
-      }),
+      events: {
+        viewItem: vi.fn(() => {
+          throw new Error("Tracker error");
+        }),
+      },
     };
 
     const normalTracker: TrackerType = {
-      viewItem: vi.fn(),
+      events: {
+        viewItem: vi.fn(),
+      },
     };
 
     addTracker(faultyTracker);
@@ -199,8 +209,8 @@ describe("useAnalytics", () => {
 
     analytics(event, ...args);
 
-    expect(faultyTracker.viewItem).toHaveBeenCalledWith(...args);
-    expect(normalTracker.viewItem).toHaveBeenCalledWith(...args);
+    expect(faultyTracker.events.viewItem).toHaveBeenCalledWith(...args);
+    expect(normalTracker.events.viewItem).toHaveBeenCalledWith(...args);
     expect(loggerErrorSpy).toHaveBeenCalled();
   });
 
@@ -210,7 +220,7 @@ describe("useAnalytics", () => {
 
     analytics(event, ...args);
 
-    expect(mockTracker1.viewItem).not.toHaveBeenCalled();
+    expect(mockTracker1.events.viewItem).not.toHaveBeenCalled();
     expect(Logger.warn).not.toHaveBeenCalled();
     expect(Logger.debug).not.toHaveBeenCalled();
   });
@@ -218,8 +228,10 @@ describe("useAnalytics", () => {
   it("should handle a high volume of events and multiple trackers without issues", () => {
     const numTrackers = 10;
     const trackers: TrackerType[] = Array.from({ length: numTrackers }, () => ({
-      viewItem: vi.fn(),
-      search: vi.fn(),
+      events: {
+        viewItem: vi.fn(),
+        search: vi.fn(),
+      },
     }));
 
     trackers.forEach(addTracker);
@@ -232,9 +244,9 @@ describe("useAnalytics", () => {
     }
 
     trackers.forEach((tracker) => {
-      expect(tracker.viewItem).toHaveBeenCalledTimes(numEvents);
+      expect(tracker.events.viewItem).toHaveBeenCalledTimes(numEvents);
       for (let i = 0; i < numEvents; i++) {
-        expect(tracker.viewItem).toHaveBeenNthCalledWith(i + 1, mockedProduct, { someParam: `value${i}` });
+        expect(tracker.events.viewItem).toHaveBeenNthCalledWith(i + 1, mockedProduct, { someParam: `value${i}` });
       }
     });
 
@@ -259,7 +271,7 @@ describe("useAnalytics", () => {
 
     analyticsDev(event, ...args);
 
-    expect(mockTracker1.addItemToCart).not.toHaveBeenCalled();
+    expect(mockTracker1.events.addItemToCart).not.toHaveBeenCalled();
     expect(Logger.debug).toHaveBeenCalledWith("useAnalytics, can't track event in development mode");
     expect(Logger.warn).not.toHaveBeenCalled();
   });
@@ -270,7 +282,7 @@ describe("useAnalytics", () => {
 
     analytics(event, ...args);
 
-    expect(mockTracker1.viewItem).not.toHaveBeenCalled();
+    expect(mockTracker1.events.viewItem).not.toHaveBeenCalled();
     expect(Logger.warn).not.toHaveBeenCalled();
     expect(Logger.debug).not.toHaveBeenCalled();
   });
