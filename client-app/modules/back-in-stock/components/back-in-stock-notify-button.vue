@@ -95,9 +95,6 @@ onUnmounted(() => {
 
 <style lang="scss">
 .back-in-stock-notify-button {
-  --vc-icon-size: 1.5rem;
-  --vc-icon-color: var(--link-color, theme("colors.accent.600"));
-
   &__text {
     @apply flex items-center text-xs font-bold gap-1 w-full justify-start h-5 mt-4.5 text-[--link-color] truncate;
   }
