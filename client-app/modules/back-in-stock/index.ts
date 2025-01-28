@@ -1,6 +1,7 @@
 import { defineAsyncComponent } from "vue";
 import { useNavigations } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
+import { useUser } from "@/shared/account/composables";
 import { useCustomProductComponents } from "@/shared/common/composables";
 import { CUSTOM_PRODUCT_COMPONENT_IDS } from "@/shared/common/constants";
 import { loadModuleLocale } from "../utils";
@@ -55,7 +56,8 @@ const menuItems: DeepPartial<MenuType> = {
 };
 
 export function init(router: Router, i18n: I18n) {
-  if (isEnabled(ENABLED_KEY)) {
+  const { isAuthenticated } = useUser();
+  if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "back-in-stock");
