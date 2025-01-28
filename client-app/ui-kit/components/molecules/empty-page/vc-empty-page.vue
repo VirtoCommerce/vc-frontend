@@ -50,7 +50,7 @@ defineProps<IProps>();
   &__wrapper {
     @apply py-7;
 
-    @media (min-width: theme("screens.sm")) {
+    @media (min-width: theme("screens.lg")) {
       @apply pt-0 pb-24;
     }
   }
@@ -66,8 +66,16 @@ defineProps<IProps>();
   &__title {
     @apply mb-7 text-center;
 
+    @media (max-width: theme("screens.sm")) {
+      @apply empty:hidden;
+    }
+
     @media (min-width: theme("screens.sm")) {
       @apply text-start;
+    }
+
+    @media (min-width: theme("screens.lg")) {
+      @apply empty:pt-4;
     }
   }
 
