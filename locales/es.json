@@ -70,7 +70,8 @@
       "all_filters": "Todos los filtros",
       "sort_by": "Ordenar por",
       "add_items_to_cart": "Añadir artículos al carrito",
-      "show_details": "Mostrar detalles"
+      "show_details": "Mostrar detalles",
+      "add_with_bulk_order": "Añadir con pedido masivo"
     },
     "labels": {
       "actions": "Acciones",

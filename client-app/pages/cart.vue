@@ -6,15 +6,23 @@
       v-else
       :title="$t('pages.cart.title')"
       :description="$t('pages.cart.empty_cart_description')"
-      image="emptyCart.webp"
-      mobile-image="emptyCartMobile.webp"
+      image="basket.jpg"
+      icon="outline-cart"
       :breadcrumbs="breadcrumbs"
     >
-      <template #actions>
-        <VcButton :to="{ name: 'Catalog' }" size="lg">
+      <div class="mb-6 text-lg font-bold">
+        {{ $t("pages.cart.empty_cart_description") }}
+      </div>
+
+      <div class="flex flex-wrap gap-x-6 gap-y-2.5 max-sm:justify-center">
+        <VcButton :to="{ name: 'Catalog' }" prepend-icon="shopping-bag">
           {{ $t("common.buttons.continue_shopping") }}
         </VcButton>
-      </template>
+
+        <VcButton :to="{ name: 'BulkOrder' }" prepend-icon="bulk">
+          {{ $t("common.buttons.add_with_bulk_order") }}
+        </VcButton>
+      </div>
     </VcEmptyPage>
   </template>
 
