@@ -11,9 +11,7 @@ const propertiesMock: Property[] = [
     propertyValueType: PropertyValueTypes.ShortText,
     name: "Brand",
     value: "GRAINGER APPROVED",
-    type: "Product",
     hidden: false,
-    valueType: "ShortText",
     label: "Brand",
   },
   {
@@ -23,9 +21,7 @@ const propertiesMock: Property[] = [
     propertyValueType: PropertyValueTypes.ShortText,
     name: "EYE INSIDE DIA",
     value: "3/4''",
-    type: "Product",
     hidden: false,
-    valueType: "ShortText",
     label: "EYE INSIDE DIA",
   },
   {
@@ -35,9 +31,7 @@ const propertiesMock: Property[] = [
     propertyValueType: PropertyValueTypes.ShortText,
     name: "EYEBOLT TYPE",
     value: "Turned Wire",
-    type: "Product",
     hidden: false,
-    valueType: "ShortText",
     label: "EYEBOLT TYPE",
   },
   {
@@ -47,9 +41,7 @@ const propertiesMock: Property[] = [
     propertyValueType: PropertyValueTypes.ShortText,
     name: "MATERIAL",
     value: "Steel",
-    type: "Product",
     hidden: false,
-    valueType: "ShortText",
     label: "MATERIAL",
   },
   {
@@ -59,9 +51,7 @@ const propertiesMock: Property[] = [
     propertyValueType: PropertyValueTypes.ShortText,
     name: "OVERALL LENGTH",
     value: '2.50"',
-    type: "Product",
     hidden: false,
-    valueType: "ShortText",
     label: "OVERALL LENGTH",
   },
   {
@@ -71,9 +61,7 @@ const propertiesMock: Property[] = [
     propertyValueType: PropertyValueTypes.ShortText,
     name: "SYSTEM OF MEASUREMENT",
     value: "Inch",
-    type: "Product",
     hidden: false,
-    valueType: "ShortText",
     label: "SYSTEM OF MEASUREMENT",
   },
   {
@@ -83,9 +71,7 @@ const propertiesMock: Property[] = [
     propertyValueType: PropertyValueTypes.ShortText,
     name: "THREAD SIZE",
     value: "3/8-16″",
-    type: "Product",
     hidden: false,
-    valueType: "ShortText",
     label: "THREAD SIZE",
   },
 ];

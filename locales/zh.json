@@ -468,6 +468,7 @@
         }
       },
       "orders_filter": {
+        "title": "订单筛选",
         "status_label": "@:common.labels.status",
         "created_date_label": "创建日期",
         "start_date_label": "开始日期",
@@ -1155,6 +1156,7 @@
         "no_members_message": "尚无成员",
         "no_results_message": "未找到结果",
         "invite_sent": "邀请已发送",
+        "filters": "成员筛选",
         "labels": {
           "role": "角色",
           "status": "状态"

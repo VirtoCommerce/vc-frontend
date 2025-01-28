@@ -468,6 +468,7 @@
         }
       },
       "orders_filter": {
+        "title": "Filtros de pedidos",
         "status_label": "@:common.labels.status",
         "created_date_label": "Data de criação",
         "start_date_label": "Data de início",
@@ -1155,6 +1156,7 @@
         "no_members_message": "Ainda não há membros",
         "no_results_message": "Nenhum resultado encontrado",
         "invite_sent": "Convite enviado",
+        "filters": "Filtros de membros",
         "labels": {
           "role": "Papel",
           "status": "Status"
