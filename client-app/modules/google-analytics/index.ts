@@ -7,11 +7,12 @@ import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
 import { sendEvent } from "./utils";
 import type { TrackerEventsType } from "@/core/types/analytics";
 
+type ExtendEventsType = (sendEventFunction: typeof sendEvent) => TrackerEventsType;
+
 const { currentCurrency } = useCurrency();
 
 const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
 const TRACKER_NAME = "google-analytics";
-type ExtendEventsType = (sendEventFunction: typeof sendEvent) => TrackerEventsType;
 
 export async function init({ extendEvents }: { extendEvents?: ExtendEventsType } = {}): Promise<void> {
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
