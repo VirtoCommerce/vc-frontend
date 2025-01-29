@@ -1,5 +1,12 @@
 <template>
-  <VcContainer class="vc-empty-page">
+  <VcContainer
+    :class="[
+      'vc-empty-page',
+      {
+        'vc-empty-page--hide-mobile-side': hideMobileSide,
+      },
+    ]"
+  >
     <div class="vc-empty-page__wrapper">
       <VcBreadcrumbs v-if="breadcrumbs?.length" :items="breadcrumbs" class="vc-empty-page__breadcrumbs" />
 
@@ -34,6 +41,7 @@ export interface IProps {
   icon?: string;
   statusColor?: string;
   breadcrumbs?: IBreadcrumb[];
+  hideMobileSide?: boolean;
 }
 
 defineProps<IProps>();
@@ -41,10 +49,16 @@ defineProps<IProps>();
 
 <style lang="scss">
 .vc-empty-page {
+  $hideMobileSide: "";
+
   --vc-composite-shape-size: 15rem;
 
   @media (min-width: theme("screens.lg")) {
     --vc-composite-shape-size: 27.5rem;
+  }
+
+  &--hide-mobile-side {
+    $hideMobileSide: &;
   }
 
   &__wrapper {
@@ -100,6 +114,12 @@ defineProps<IProps>();
 
     @media (min-width: theme("screens.sm")) {
       @apply order-last w-auto;
+    }
+
+    #{$hideMobileSide} & {
+      @media (max-width: theme("screens.sm")) {
+        @apply hidden;
+      }
     }
   }
 }
