@@ -1,33 +1,27 @@
 <template>
-  <TwoColumn class="sign-in" breakpoint="md" :always-show-right="hasIdentityProviders && !hasOnlyIdentityProviders">
-    <template #left>
+  <VcEmptyPage class="sign-in" icon="outline-security" image="sign-in.jpg">
+    <div class="sign-in__form">
       <VcTypography tag="h1" class="sign-in__title">
         {{ $t("pages.sign_in.header") }}
       </VcTypography>
 
-      <SignInForm v-if="hasPasswordAuthentication" class="sign-in__form" />
-      <IdentityProviders
-        v-if="hasOnlyIdentityProviders"
-        :providers="identityProviders"
-        class="sign-in__providers sign-in__providers--left"
-      />
-    </template>
-    <div v-if="hasIdentityProviders && hasPasswordAuthentication" class="sign-in__divider">
-      {{ $t("pages.sign_in.divider_text") }}
+      <SignInForm v-if="hasPasswordAuthentication" />
     </div>
-    <template #right>
-      <VcImage
-        v-if="!hasIdentityProviders || hasOnlyIdentityProviders"
-        :alt="$t('common.labels.background_image')"
-        class="sign-in__image"
-        src="sign-in-page-image.webp"
-        lazy
-      />
-      <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders">
-        <IdentityProviders class="sign-in__providers sign-in__providers--right" :providers="identityProviders" />
-      </template>
+
+    <template #side>
+      <div class="sign-in__side">
+        <div v-if="hasIdentityProviders && hasPasswordAuthentication" class="sign-in__divider">
+          {{ $t("pages.sign_in.divider_text") }}
+        </div>
+
+        <IdentityProviders
+          v-if="hasIdentityProviders && !hasOnlyIdentityProviders"
+          :providers="identityProviders"
+          class="sign-in__providers"
+        />
+      </div>
     </template>
-  </TwoColumn>
+  </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
@@ -35,7 +29,6 @@ import { computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { usePageHead, useThemeContext } from "@/core/composables";
 import { SignInForm } from "@/shared/account";
-import { TwoColumn } from "@/shared/layout";
 
 const PASSWORD_AUTHENTICATION_TYPE = "Password";
 
@@ -65,20 +58,38 @@ usePageHead({
 
 <style lang="scss">
 .sign-in {
-  @apply max-w-screen-xl;
+  &__form {
+    @apply order-first w-full;
+
+    @media (width > theme("screens.sm")) {
+      @apply pe-8;
+    }
+
+    @media (width > theme("screens.lg")) {
+      @apply px-16;
+    }
+  }
 
   &__title {
-    @apply mb-4 text-center;
+    @apply mb-3;
+  }
 
-    @media (width > theme("screens.md")) {
-      @apply mb-6 text-left;
+  &__side {
+    @apply mt-8 flex w-full flex-col gap-8;
+
+    @media (width > theme("screens.sm")) {
+      @apply w-72 flex-row gap-6;
+    }
+
+    @media (width > theme("screens.lg")) {
+      @apply w-[30rem] gap-16;
     }
   }
 
   &__divider {
     @apply relative flex flex-col items-center uppercase;
 
-    @media (width > theme("screens.md")) {
+    @media (width > theme("screens.sm")) {
       @apply flex-row;
     }
 
@@ -86,7 +97,7 @@ usePageHead({
     &::after {
       @apply content-[''] absolute h-px w-[calc(50%-2rem)] top-1/2 bg-neutral-300;
 
-      @media (width > theme("screens.md")) {
+      @media (width > theme("screens.sm")) {
         @apply h-[calc(50%-2rem)] w-px;
       }
     }
@@ -94,7 +105,7 @@ usePageHead({
     &::before {
       @apply left-0;
 
-      @media (width > theme("screens.md")) {
+      @media (width > theme("screens.sm")) {
         @apply top-2 left-1/2;
       }
     }
@@ -102,7 +113,7 @@ usePageHead({
     &::after {
       @apply right-0;
 
-      @media (width > theme("screens.md")) {
+      @media (width > theme("screens.sm")) {
         @apply top-auto bottom-2 left-1/2;
       }
     }
@@ -113,18 +124,10 @@ usePageHead({
   }
 
   &__providers {
-    @apply mx-auto;
+    @apply max-sm:mx-auto;
 
-    @media (width > theme("screens.md")) {
-      @apply ml-0;
-    }
-
-    &--left {
-      @apply mt-9 max-w-80 w-full;
-    }
-
-    &--right {
-      @apply h-full max-w-72;
+    @media (width > theme("screens.lg")) {
+      @apply w-56;
     }
   }
 }

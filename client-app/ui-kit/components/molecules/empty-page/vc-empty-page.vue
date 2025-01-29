@@ -96,10 +96,10 @@ defineProps<IProps>();
   }
 
   &__side {
-    @apply order-first flex justify-center mb-7;
+    @apply order-first flex w-full justify-center mb-7;
 
     @media (min-width: theme("screens.sm")) {
-      @apply order-last;
+      @apply order-last w-auto;
     }
   }
 }
