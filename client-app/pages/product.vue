@@ -221,6 +221,11 @@ const seoTitle = computed(() => product.value?.seoInfo?.pageTitle || product.val
 const seoDescription = computed(() => product.value?.seoInfo?.metaDescription);
 const seoKeywords = computed(() => product.value?.seoInfo?.metaKeywords);
 const seoImageUrl = computed(() => product.value?.imgSrc);
+const seoUrl = computed(() =>
+  product.value?.seoInfo?.semanticUrl
+    ? `${window.location.host}\${product.value?.seoInfo?.semanticUrl}`
+    : window.location.toString(),
+);
 
 const productTemplate = _productTemplate as IPageTemplate;
 
@@ -316,9 +321,11 @@ watchEffect(() => {
     });
 
     useSeoMeta({
+      ogUrl: seoUrl,
       ogTitle: seoTitle,
       ogDescription: seoDescription,
       ogImage: seoImageUrl,
+      ogType: "website",
     });
   }
 });

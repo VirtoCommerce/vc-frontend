@@ -45,7 +45,7 @@
         >
           <template #placeholder>
             <div class="flex items-center gap-3 p-3 text-sm">
-              <VcImage class="size-12 rounded-sm bg-neutral-100" src="/static/icons/placeholders/select-payment.svg" />
+              <VcImage class="size-12 rounded-sm bg-neutral-100" src="select-payment.svg" />
 
               {{ $t("common.placeholders.select_payment_method") }}
             </div>

@@ -49,7 +49,7 @@
                 <span class="text-neutral-400 md:hidden">
                   {{ $t("shared.cart.add_bulk_items_to_cart_results_modal.labels.sku") }}
                 </span>
-                <span class="break-all font-bold">{{ item.sku }}</span>
+                <span class="font-bold max-lg:break-all">{{ item.sku }}</span>
               </div>
 
               <div
@@ -81,16 +81,15 @@
     </VcExpansionPanels>
 
     <template #actions="{ close }">
-      <VcButton :to="{ name: 'Cart' }" class="max-sm:!min-w-full sm:me-auto" @click="close()">
+      <VcButton :to="{ name: 'Cart' }" class="max-xs:!min-w-full xs:me-auto" @click="close()">
         {{ $t("common.buttons.view_cart") }}
       </VcButton>
 
-      <VcButton variant="outline" class="max-sm:shrink-1 max-sm:grow max-sm:basis-0" @click="print()">
+      <VcButton variant="outline" @click="print()">
         {{ $t("common.buttons.print") }}
       </VcButton>
 
       <VcButton
-        class="max-sm:shrink-1 max-sm:grow max-sm:basis-0"
         @click="
           close();
           $emit('confirm');
@@ -107,6 +106,7 @@ import { computed, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { useProductsRoutes, useWhiteLabeling } from "@/core/composables";
 import { VcButton } from "@/ui-kit/components";
+import { getImageUrl, getIconUrl } from "@/ui-kit/utilities";
 import type { ItemForAddBulkItemsToCartResultsModalType } from "@/shared/cart/types";
 
 type GroupType = { name: "added" | "not_added"; items: ItemForAddBulkItemsToCartResultsModalType[] };
@@ -175,9 +175,11 @@ function print() {
     .map((el) => el.outerHTML)
     .join("");
 
+  const logoImage = getImageUrl(logoUrl.value);
+
   const headerHtml = `
   <header class="flex justify-between items-start">
-    <img class="h-7" src="${logoUrl.value}" alt="">
+    <img class="h-7" src="${logoImage}" alt="">
 
     <div class="p-2 border border-neutral-100 rounded text-xs">
       <div class="font-black">${t("common.labels.created_date")}</div>
@@ -196,12 +198,12 @@ function print() {
   };
 
   groups.value.forEach((group) => {
+    const icon = getIconUrl(iconName(group.name));
+
     contentHtml += `
     <div class="space-y-3">
       <h3 class="flex items-center gap-1.5 text-sm font-bold">
-        <svg class="vc-icon vc-icon--size--sm text-secondary-300 flex-none">
-          <use href="/static/icons/basic/${iconName(group.name)}.svg#icon" />
-        </svg>
+        <img src="${icon}" class="size-3.5" />
         ${t(`shared.cart.add_bulk_items_to_cart_results_modal.groups.${group.name}`)}
       </h3>
 

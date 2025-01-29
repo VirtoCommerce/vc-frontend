@@ -346,7 +346,7 @@ const hideViewModeSelector = computed(() => {
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
-useCategorySeo({ allowSetMeta, categoryComponentAnchorIsVisible });
+useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
 const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);

@@ -1,9 +1,5 @@
 <template>
-  <IdentityProvider
-    :text="$t('pages.sign_in.providers.google_sso.button_text')"
-    icon="/static/images/sign-in/google.webp"
-    @sign-in="signIn"
-  />
+  <IdentityProvider :text="$t('pages.sign_in.providers.google_sso.button_text')" icon="google.webp" @sign-in="signIn" />
 </template>
 
 <script setup lang="ts">

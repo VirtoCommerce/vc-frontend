@@ -6,8 +6,8 @@
       v-else
       :title="$t('pages.cart.title')"
       :description="$t('pages.cart.empty_cart_description')"
-      image="/static/images/errors/emptyCart.webp"
-      mobile-image="/static/images/errors/emptyCartMobile.webp"
+      image="emptyCart.webp"
+      mobile-image="emptyCartMobile.webp"
       :breadcrumbs="breadcrumbs"
     >
       <template #actions>
@@ -154,13 +154,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { recentlyBrowsed } from "@/core/api/graphql";
-import { useBreadcrumbs, useAnalytics, usePageHead } from "@/core/composables";
+import { useBreadcrumbs, useAnalytics, usePageHead, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_ID_XRECOMMEND, XRECOMMEND_ENABLED_KEY } from "@/core/constants/modules";
-import { configInjectionKey } from "@/core/injection-keys";
 import { useUser } from "@/shared/account";
 import { useFullCart, useCoupon } from "@/shared/cart";
 import { useCartExtensionPoints } from "@/shared/cart/composables/useCartExtensionPoints";
@@ -178,8 +177,7 @@ import GiftsSection from "@/shared/cart/components/gifts-section.vue";
 import ProductsSection from "@/shared/cart/components/products-section.vue";
 import RecentlyBrowsedProducts from "@/shared/catalog/components/recently-browsed-products.vue";
 
-const config = inject(configInjectionKey, {});
-
+const { themeContext } = useThemeContext();
 const { analytics } = useAnalytics();
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
@@ -256,7 +254,7 @@ void (async () => {
     analytics("viewCart", cart.value);
   }
 
-  if (!config.checkout_multistep_enabled) {
+  if (!themeContext.value?.settings?.checkout_multistep_enabled) {
     await initialize();
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <DialogPanel
+  <div
     :class="[
       'vc-dialog',
       {
@@ -8,22 +8,30 @@
     ]"
   >
     <slot />
-  </DialogPanel>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { DialogPanel } from "@headlessui/vue";
-
 interface IProps {
   dividers?: boolean;
+  width?: string;
+  maxHeight?: string;
 }
 
-defineProps<IProps>();
+const props = withDefaults(defineProps<IProps>(), {
+  width: "",
+  maxHeight: "",
+});
 </script>
 
 <style lang="scss">
 .vc-dialog {
-  @apply grid w-full max-h-full rounded-md bg-additional-50 shadow-lg transition-all text-start w-full max-h-full;
+  --props-width: v-bind(props.width);
+  --props-max-height: v-bind(props.maxHeight);
+  --w: var(--props-width, var(--vc-dialog-width, 100%));
+  --max-h: var(--props-max-height, var(--vc-dialog-max-height, 100%));
+
+  @apply grid w-[--w] max-h-[--max-h] rounded-md bg-additional-50 shadow-lg transition-all text-start;
 
   grid-template-areas:
     "vc-dialog-header"
