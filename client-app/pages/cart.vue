@@ -5,7 +5,6 @@
     <VcEmptyPage
       v-else
       :title="$t('pages.cart.title')"
-      :description="$t('pages.cart.empty_cart_description')"
       image="basket.jpg"
       icon="outline-cart"
       :breadcrumbs="breadcrumbs"

@@ -36,7 +36,6 @@
 <script setup lang="ts">
 export interface IProps {
   title?: string;
-  description?: string;
   image?: string;
   icon?: string;
   statusColor?: string;
