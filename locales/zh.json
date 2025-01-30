@@ -192,7 +192,8 @@
       "blocked": "您已被封锁。您无法访问任何信息或创建订单。如需更多信息，请 ",
       "password_about_expire": "您的密码将在 {value} 天后过期。请在配置文件中设置新密码。",
       "password_expired": "您的密码已过期",
-      "data_changed": "数据在其他标签中被修改。请刷新页面以显示当前数据。"
+      "data_changed": "数据在其他标签中被修改。请刷新页面以显示当前数据。",
+      "logo_changed": "徽标已成功添加。请刷新页面以查看更改。"
     },
     "placeholders": {
       "enter_value": "请输入值",

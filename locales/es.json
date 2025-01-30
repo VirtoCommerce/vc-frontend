@@ -192,7 +192,8 @@
       "blocked": "Has sido bloqueado. No puedes acceder a ninguna información ni crear el pedido. Para más detalles, por favor ",
       "password_about_expire": "Tu contraseña está a punto de expirar en {value} día(s). Por favor, establece una nueva contraseña en el perfil.",
       "password_expired": "Tu contraseña ha expirado",
-      "data_changed": "Los datos han sido modificados en uno de los otros tabs. Por favor, actualiza la página para mostrar los datos actuales."
+      "data_changed": "Los datos han sido modificados en uno de los otros tabs. Por favor, actualiza la página para mostrar los datos actuales.",
+      "logo_changed": "Logotipo añadido correctamente. Actualiza la página para ver los cambios."
     },
     "placeholders": {
       "enter_value": "Por favor, introduce un valor",

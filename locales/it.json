@@ -192,7 +192,8 @@
       "blocked": "Sei stato bloccato. Non puoi accedere a nessuna informazione o creare l'ordine. Per ulteriori dettagli, per favore ",
       "password_about_expire": "La tua password sta per scadere tra {value} giorno(i). Imposta una nuova password nel profilo.",
       "password_expired": "La tua password è scaduta",
-      "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti."
+      "data_changed": "I dati sono stati modificati in uno degli altri tab. Per favore, aggiorna la pagina per visualizzare i dati correnti.",
+      "logo_changed": "Logo aggiunto correttamente. Aggiorna la pagina per vedere le modifiche."
     },
     "placeholders": {
       "enter_value": "Inserisci un valore",
