@@ -1,56 +1,52 @@
 <template>
-  <TwoColumn class="max-w-screen-xl">
-    <template #left>
-      <VcTypography tag="h1">
+  <VcEmptyPage
+    icon="outline-security"
+    :image="isResetMode ? 'sign-in.jpg' : 'reg.jpg'"
+    :status-color="!isValidData ? 'danger' : isSucceeded ? 'success' : 'secondary'"
+    :hide-mobile-side="isValidData && !isSucceeded"
+  >
+    <div class="w-full sm:pe-12 md:pe-24">
+      <VcTypography tag="h1" class="order-first mb-3">
         {{ $t(`pages.${localizationPageTerm}.header`) }}
       </VcTypography>
 
       <template v-if="isValidData">
         <template v-if="!isSucceeded">
-          <p class="mb-5 text-lg md:text-base lg:mb-4">
+          <div class="mb-4 text-base font-bold">
             {{ $t(`pages.${localizationPageTerm}.enter_new_password_message`) }}
-          </p>
+          </div>
 
           <ResetPasswordForm
             :user-id="userId"
             :token="token"
             :mode="isResetMode ? 'reset' : 'set'"
+            class="w-full"
             @succeeded="onSucceeded()"
           />
         </template>
 
-        <div v-else class="space-y-10 text-center lg:mt-12 lg:space-y-12 lg:text-left">
-          <div class="space-x-0 space-y-10 lg:flex lg:items-center lg:space-x-3 lg:space-y-0">
-            <VcIcon class="fill-success" name="check-circle" :size="36" />
-            <p class="text-lg">
-              {{ $t(`pages.${localizationPageTerm}.success_message`) }}
-            </p>
+        <template v-else>
+          <div class="mb-3 text-base sm:mb-6">
+            {{ $t(`pages.${localizationPageTerm}.success_message`) }}
           </div>
 
-          <VcButton :to="{ name: 'SignIn' }" class="w-48">
+          <VcButton :to="{ name: 'SignIn' }" min-width="12rem">
             {{ $t(`pages.${localizationPageTerm}.log_in_button`) }}
           </VcButton>
-        </div>
+        </template>
       </template>
 
-      <div v-else class="space-y-10 text-center lg:mt-12 lg:space-y-12 lg:text-left">
-        <div class="space-x-0 space-y-10 lg:flex lg:items-center lg:space-x-3 lg:space-y-0">
-          <VcIcon class="fill-danger" name="delete" :size="36" />
-          <p class="text-lg">
-            {{ $t("common.messages.invalid_user_id_or_token") }}
-          </p>
+      <template v-else>
+        <div class="mb-3 text-base font-bold text-danger sm:mb-6">
+          {{ $t("common.messages.invalid_user_id_or_token") }}
         </div>
 
-        <VcButton to="/" class="w-48">
+        <VcButton to="/" min-width="12rem">
           {{ $t("common.buttons.home") }}
         </VcButton>
-      </div>
-    </template>
-
-    <template #right>
-      <VcImage class="max-w-md" :src="isResetMode ? 'sign-in-page-image.webp' : 'sign-up-page-image.webp'" lazy />
-    </template>
-  </TwoColumn>
+      </template>
+    </div>
+  </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
@@ -59,7 +55,6 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { ResetPasswordForm } from "@/shared/account";
-import { TwoColumn } from "@/shared/layout";
 
 const route = useRoute();
 const { t } = useI18n();
