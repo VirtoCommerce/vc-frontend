@@ -57,10 +57,12 @@ const menuItems: DeepPartial<MenuType> = {
 
 export function init(router: Router, i18n: I18n) {
   const { isAuthenticated } = useUser();
-  if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
+  if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
-    mergeMenuSchema(menuItems);
     void loadModuleLocale(i18n, "back-in-stock");
+  }
+  if (isAuthenticated.value && isEnabled(ENABLED_KEY)) {
+    mergeMenuSchema(menuItems);
     registerComponent({
       id: CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON,
       component: BackInStockButton,

@@ -40,43 +40,40 @@
     </PageToolbarBlock>
 
     <div ref="listElement">
+      <template v-if="allLoading">
+        <ProductSkeletonList v-for="index in actualItemsCount" :key="index" />
+      </template>
       <template v-if="subscriptionsProducts.length">
-        <template v-if="allLoading">
-          <ProductSkeletonList v-for="index in actualItemsCount" :key="index" />
-        </template>
+        <VcLineItems
+          class="back-in-stock-subscriptions__list"
+          :items="preparedLineItems"
+          with-image
+          with-properties
+          with-price
+          removable
+          @remove:items="openDeleteProductModal"
+        >
+          <template #default="{ item }">
+            <AddToCart v-if="item.product" :product="item.product" />
+            <InStock
+              :is-in-stock="item.availabilityData?.isInStock"
+              :is-available="!item.deleted"
+              :quantity="item.availabilityData?.availableQuantity"
+              :is-digital="item.productType === ProductType.Digital"
+            />
 
-        <div v-else>
-          <VcLineItems
-            class="back-in-stock-subscriptions__list"
-            :items="preparedLineItems"
-            with-image
-            with-properties
-            with-price
-            removable
-            @remove:items="openDeleteProductModal"
-          >
-            <template #default="{ item }">
-              <AddToCart v-if="item.product" :product="item.product" />
-              <InStock
-                :is-in-stock="item.availabilityData?.isInStock"
-                :is-available="!item.deleted"
-                :quantity="item.availabilityData?.availableQuantity"
-                :is-digital="item.productType === ProductType.Digital"
-              />
+            <CountInCart :product-id="item.productId" />
+          </template>
+        </VcLineItems>
 
-              <CountInCart :product-id="item.productId" />
-            </template>
-          </VcLineItems>
-
-          <VcPagination
-            v-if="pagination.pages > 1"
-            v-model:page="pagination.page"
-            class="back-in-stock-subscriptions__pagination"
-            :pages="Math.min(pagination.pages, PAGE_LIMIT)"
-            :scroll-target="listElement"
-            :scroll-offset="60"
-          />
-        </div>
+        <VcPagination
+          v-if="pagination.pages > 1"
+          v-model:page="pagination.page"
+          class="back-in-stock-subscriptions__pagination"
+          :pages="Math.min(pagination.pages, PAGE_LIMIT)"
+          :scroll-target="listElement"
+          :scroll-offset="60"
+        />
       </template>
 
       <VcEmptyView v-else-if="!allLoading" :text="$t('back_in_stock.list_details.empty_list')" icon="thin-lists">
@@ -109,6 +106,7 @@ import { DeactivateBackInStockSubscriptionModal } from "../components";
 import { useBackInStockSubscriptions } from "../composables";
 import type { Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
+
 const { t } = useI18n();
 const { openModal } = useModal();
 const {
