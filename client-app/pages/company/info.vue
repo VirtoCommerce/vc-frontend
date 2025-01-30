@@ -9,14 +9,14 @@
         <div>
           <VcInput
             v-model="organizationName"
-            :disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
+            :disabled="!canEditOrganization || loadingOrganization || loadingUser"
             :message="errors[0]"
             :error="!!errors[0]"
             name="organization-name"
             autocomplete="off"
             maxlength="64"
           >
-            <template v-if="userCanEditOrganization" #append>
+            <template v-if="canEditOrganization" #append>
               <VcButton
                 :loading="loadingOrganization || loadingUser"
                 :disabled="!meta.valid || !meta.dirty"
@@ -28,15 +28,20 @@
           </VcInput>
         </div>
       </VcWidget>
+
       <VcWidget
-        v-if="userCanEditOrganization || !loadingOrganization || !loadingUser"
+        v-if="canEditOrganization || !loadingOrganization || !loadingUser"
         :title="$t('pages.company.info.labels.company_logo')"
         size="lg"
       >
         <div class="flex gap-4">
           <div v-if="logoUrl" class="flex flex-col justify-between">
             <div>
-              <VcImage :alt="$t('pages.company.info.labels.company_logo')" :src="logoUrl" class="logo-preview__image" />
+              <VcImage
+                :alt="$t('pages.company.info.labels.company_logo')"
+                :src="logoUrl"
+                class="h-[70px] object-cover"
+              />
             </div>
 
             <VcButton
@@ -50,6 +55,7 @@
               {{ $t("common.buttons.save") }}
             </VcButton>
           </div>
+
           <div class="grow">
             <VcFileUploader
               :files="files"
@@ -76,7 +82,7 @@
             </VcTypography>
 
             <VcButton
-              v-if="userCanEditOrganization"
+              v-if="canEditOrganization"
               size="sm"
               variant="outline"
               @click="openAddOrUpdateCompanyAddressModal()"
@@ -91,7 +97,7 @@
             :text="$t('pages.company.info.no_addresses_message')"
             icon="thin-address"
           >
-            <template v-if="userCanEditOrganization" #button>
+            <template v-if="canEditOrganization" #button>
               <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
                 {{ $t("pages.company.info.buttons.add_new_address") }}
               </VcButton>
@@ -171,7 +177,7 @@
                   </div>
 
                   <AddressDropdownMenu
-                    v-if="userCanEditOrganization"
+                    v-if="canEditOrganization"
                     :address="item"
                     placement="left-start"
                     @edit="openAddOrUpdateCompanyAddressModal(item)"
@@ -264,14 +270,14 @@
                     {{ address.description }}
                   </td>
 
-                  <td :class="{ 'text-right': !userCanEditOrganization }" class="px-5 py-3 text-center">
+                  <td :class="{ 'text-right': !canEditOrganization }" class="px-5 py-3 text-center">
                     <VcChip v-if="address.isDefault" color="info" variant="outline-dark" size="sm" rounded>
                       <VcIcon name="apply" />
                       {{ $t("pages.company.info.labels.default") }}
                     </VcChip>
                   </td>
 
-                  <td v-if="userCanEditOrganization" class="px-5 py-3 text-center">
+                  <td v-if="canEditOrganization" class="px-5 py-3 text-center">
                     <AddressDropdownMenu
                       class="inline-block"
                       :address="address"
@@ -370,7 +376,7 @@ const {
 } = useField<string>("organizationName", toTypedSchema(string().trim().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
-const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const canEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
@@ -411,7 +417,7 @@ const columns = computed<ITableColumn[]>(() => {
     },
   ];
 
-  if (userCanEditOrganization.value) {
+  if (canEditOrganization.value) {
     result.push({
       id: "id",
       title: t("pages.company.info.labels.actions"),
@@ -543,7 +549,7 @@ watch(
 );
 
 watchEffect(async () => {
-  await Promise.all([fetchFileOptions()]);
+  await fetchFileOptions();
   fileOptions.value.maxFileCount = 1;
 });
 </script>
