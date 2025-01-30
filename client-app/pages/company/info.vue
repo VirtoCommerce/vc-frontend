@@ -553,12 +553,3 @@ watchEffect(async () => {
   fileOptions.value.maxFileCount = 1;
 });
 </script>
-
-<style lang="scss">
-.logo-preview {
-  &__image {
-    height: 70px;
-    @apply object-cover;
-  }
-}
-</style>
