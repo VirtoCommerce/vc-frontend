@@ -33,6 +33,7 @@ export type CreateCustomerReviewCommandType = {
 export type CreateReviewCommandType = {
   entityId: Scalars['String']['input'];
   entityType: Scalars['String']['input'];
+  imageUrls?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   rating: Scalars['Int']['input'];
   review: Scalars['String']['input'];
   storeId: Scalars['String']['input'];
@@ -51,6 +52,7 @@ export type CustomerReview = {
   entityName: Scalars['String']['output'];
   entityType: Scalars['String']['output'];
   id: Scalars['String']['output'];
+  images?: Maybe<Array<Maybe<CustomerReviewImage>>>;
   modifiedDate?: Maybe<Scalars['DateTime']['output']>;
   rating: Scalars['Int']['output'];
   review: Scalars['String']['output'];
@@ -79,6 +81,12 @@ export type CustomerReviewEdge = {
   cursor: Scalars['String']['output'];
   /** The item at the end of the edge */
   node?: Maybe<CustomerReview>;
+};
+
+export type CustomerReviewImage = {
+  id: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  url: Scalars['String']['output'];
 };
 
 export enum CustomerReviewStatus {

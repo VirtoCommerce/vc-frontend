@@ -93,8 +93,8 @@ export function useStickySidebar({ content, sidebar }: PropsType) {
 
     const re = /\d+/;
 
-    maxOffsetTop.value = Number(re.exec(_maxOffsetTop)![0]);
-    maxOffsetBottom.value = Number(re.exec(_maxOffsetBottom)![0]);
+    maxOffsetTop.value = Number(re.exec(_maxOffsetTop)?.[0]);
+    maxOffsetBottom.value = Number(re.exec(_maxOffsetBottom)?.[0]);
 
     window.addEventListener("scroll", setSidebarPosition);
     window.addEventListener("resize", setSidebarPosition);
