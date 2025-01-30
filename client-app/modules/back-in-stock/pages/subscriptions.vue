@@ -50,7 +50,6 @@
           with-image
           with-properties
           with-price
-          removable
           @remove:items="openDeleteProductModal"
         >
           <template #default="{ item }">
@@ -148,7 +147,7 @@ const allLoading = computed<boolean>(() => subscriptionsFetching.value || fetchi
 const actualItemsCount = computed<number>(() => preparedLineItems.value.length || pagination.value.itemsPerPage);
 
 const fetchProductsAndSubscriptions = async () => {
-  await fetchSubscriptions({ isActive: true, keyword: keyword.value });
+  await fetchSubscriptions({ keyword: keyword.value });
   await fetchProducts({
     productIds: subscriptions.value.map((item) => item.productId!),
     itemsPerPage: subscriptions.value.length,

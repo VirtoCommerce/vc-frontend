@@ -1,7 +1,8 @@
 import { createSharedComposable, watchDebounced } from "@vueuse/core";
 import difference from "lodash/difference";
 import { readonly, ref, shallowRef } from "vue";
-import { DEFAULT_SORT } from "@/core/constants";
+import { SortDirection } from "@/core/enums";
+import { Sort } from "@/core/types/search/sorting";
 import { getSortingExpression, Logger } from "@/core/utilities";
 import {
   activateBackInStockSubscription,
@@ -75,7 +76,7 @@ function _useBackInStockSubscriptions() {
       first = pagination.value.itemsPerPage,
       after = String((pagination.value.page - 1) * pagination.value.itemsPerPage),
       keyword = "",
-      sort = getSortingExpression(DEFAULT_SORT),
+      sort = getSortingExpression(new Sort("isActive", SortDirection.Ascending)),
       isActive,
       productIds,
     } = payload;
