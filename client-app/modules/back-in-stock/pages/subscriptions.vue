@@ -43,6 +43,7 @@
       <template v-if="allLoading">
         <ProductSkeletonList v-for="index in actualItemsCount" :key="index" />
       </template>
+
       <template v-if="subscriptionsProducts.length">
         <VcLineItems
           class="back-in-stock-subscriptions__list"
@@ -53,15 +54,25 @@
           @remove:items="openDeleteProductModal"
         >
           <template #default="{ item }">
-            <AddToCart v-if="item.product" :product="item.product" />
-            <InStock
-              :is-in-stock="item.availabilityData?.isInStock"
-              :is-available="!item.deleted"
-              :quantity="item.availabilityData?.availableQuantity"
-              :is-digital="item.productType === ProductType.Digital"
-            />
+            <template
+              v-if="
+                item.product && !isProductSubscriptionActive(item.product.id) && item.product.availabilityData.isInStock
+              "
+            >
+              <AddToCart :product="item.product" />
 
-            <CountInCart :product-id="item.productId" />
+              <div class="back-in-stock-subscriptions__info">
+                <InStock
+                  :is-in-stock="item.availabilityData?.isInStock"
+                  :is-available="!item.deleted"
+                  :quantity="item.availabilityData?.availableQuantity"
+                  :is-digital="item.productType === ProductType.Digital"
+                />
+                <CountInCart :product-id="item.productId" />
+              </div>
+            </template>
+
+            <BackInStockNotifyButton v-else-if="item.product" :product="item.product" lazy />
           </template>
         </VcLineItems>
 
@@ -101,7 +112,7 @@ import { useShortCart, AddToCart } from "@/shared/cart";
 import { InStock, CountInCart, useProducts, ProductSkeletonList } from "@/shared/catalog";
 import { BackButtonInHeader } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
-import { DeactivateBackInStockSubscriptionModal } from "../components";
+import { DeactivateBackInStockSubscriptionModal, BackInStockNotifyButton } from "../components";
 import { useBackInStockSubscriptions } from "../composables";
 import type { Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
@@ -113,6 +124,7 @@ const {
   fetching: subscriptionsFetching,
   subscriptions,
   pagination,
+  isProductSubscriptionActive,
 } = useBackInStockSubscriptions();
 
 usePageHead({
@@ -209,6 +221,10 @@ watchEffect(fetchProductsAndSubscriptions);
 
   &__pagination {
     @apply mt-5;
+  }
+
+  &__info {
+    @apply flex items-center gap-1;
   }
 }
 </style>

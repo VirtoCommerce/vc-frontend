@@ -42,6 +42,7 @@ import type { Product } from "@/core/api/graphql/types";
 interface IProps {
   product: Product;
   isTextShown?: boolean;
+  lazy?: boolean;
 }
 const props = defineProps<IProps>();
 const { product } = toRefs(props);
@@ -85,11 +86,15 @@ const updateBackInStockSubscription = async () => {
 };
 
 onMounted(() => {
-  addShownProductId(product.value.id);
+  if (!props.lazy) {
+    addShownProductId(product.value.id);
+  }
 });
 
 onUnmounted(() => {
-  removeShownProductId(product.value.id);
+  if (!props.lazy) {
+    removeShownProductId(product.value.id);
+  }
 });
 </script>
 

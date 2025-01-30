@@ -1,6 +1,6 @@
 import { graphqlClient } from "@/core/api/graphql/client";
 import { globals } from "@/core/globals";
-import getBackInStockSubscriptionsQueryDocument from "./getBackInStockSubscriptionsQuery.graphql";
+import { GetBackInStockSubscriptionsDocument } from "../../types";
 import type { BackInStockSubscriptionConnection, QueryBackInStockSubscriptionsArgs, Query } from "../../types";
 
 export async function getBackInStockSubscriptions(
@@ -12,7 +12,7 @@ export async function getBackInStockSubscriptions(
     Required<Pick<Query, "backInStockSubscriptions">>,
     QueryBackInStockSubscriptionsArgs
   >({
-    query: getBackInStockSubscriptionsQueryDocument,
+    query: GetBackInStockSubscriptionsDocument,
     variables: {
       storeId,
       ...payload,

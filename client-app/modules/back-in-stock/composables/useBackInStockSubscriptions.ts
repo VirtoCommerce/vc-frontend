@@ -1,6 +1,6 @@
 import { createSharedComposable, watchDebounced } from "@vueuse/core";
 import difference from "lodash/difference";
-import { readonly, ref, shallowRef } from "vue";
+import { readonly, ref } from "vue";
 import { DEFAULT_SORT } from "@/core/constants";
 import { SortDirection } from "@/core/enums";
 import { Sort } from "@/core/types/search/sorting";
@@ -24,7 +24,7 @@ const DEBOUNCE_IN_MS = 300;
 
 function _useBackInStockSubscriptions() {
   const fetching = ref(false);
-  const subscriptions = shallowRef<BackInStockSubscriptionType[]>([]);
+  const subscriptions = ref<BackInStockSubscriptionType[]>([]);
   const pendingProductIds = ref<Set<string>>(new Set());
   const shownProductIds = ref<string[]>([]);
   const pagination = ref<PaginationType>({
@@ -124,7 +124,10 @@ function _useBackInStockSubscriptions() {
     return pendingProductIds.value.has(productId);
   }
 
-  function isProductSubscriptionActive(productId: string): boolean {
+  function isProductSubscriptionActive(productId?: string): boolean {
+    if (!productId) {
+      return false;
+    }
     return subscriptions.value.some((item) => item.productId === productId && item.isActive);
   }
 

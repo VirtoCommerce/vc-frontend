@@ -1,5 +1,5 @@
 import { graphqlClient } from "@/core/api/graphql/client";
-import mutationDocument from "./deactivateBackInStockSubscription.graphql";
+import { DeactivateBackInStockSubscriptionDocument } from "../../types";
 import type {
   DeactivateBackInStockSubscriptionCommandType,
   Mutations,
@@ -9,12 +9,12 @@ import type {
 
 export async function deactivateBackInStockSubscription(
   payload: DeactivateBackInStockSubscriptionCommandType,
-): Promise<Promise<BackInStockSubscriptionType | undefined>> {
+): Promise<BackInStockSubscriptionType | undefined> {
   const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "deactivateBackInStockSubscription">>,
     MutationsDeactivateBackInStockSubscriptionArgs
   >({
-    mutation: mutationDocument,
+    mutation: DeactivateBackInStockSubscriptionDocument,
     variables: {
       command: payload,
     },
