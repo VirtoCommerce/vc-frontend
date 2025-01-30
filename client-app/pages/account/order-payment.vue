@@ -38,66 +38,48 @@
           class="p-6 max-lg:-mx-6 md:rounded lg:px-9"
         >
           <!-- Successful payment -->
-          <VcEmptyPage
-            v-if="success"
-            image="order-payment-successful.webp"
-            mobile-image="order-payment-successful.webp"
-            class="-mx-6 -mb-6 -mt-16 md:-mt-6 lg:-mx-9 lg:pl-14"
-          >
-            <template #description>
-              <h2 class="mb-3 text-center text-2xl font-bold text-neutral-900 lg:text-left">
-                {{ $t("pages.account.order_payment.success.title") }}
-              </h2>
+          <div v-if="success" class="flex min-h-[50vh] flex-col items-start justify-center">
+            <VcTypography tag="h2" class="mb-3">
+              {{ $t("pages.account.order_payment.success.title") }}
+            </VcTypography>
 
-              <p class="mb-8 max-w-md text-center lg:text-left">
-                {{ $t("pages.account.order_payment.success.text") }}
-              </p>
-            </template>
+            <p class="mb-8 max-w-md text-center lg:text-left">
+              {{ $t("pages.account.order_payment.success.text") }}
+            </p>
 
-            <template #actions>
-              <div class="flex flex-wrap justify-center gap-5 lg:justify-start">
-                <VcButton
-                  :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
-                  variant="outline"
-                  prepend-icon="chevron-left"
-                >
-                  {{ $t("pages.account.order_payment.back_to_order_button") }}
-                </VcButton>
+            <div class="flex flex-wrap justify-center gap-5 lg:justify-start">
+              <VcButton
+                :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
+                variant="outline"
+                prepend-icon="chevron-left"
+              >
+                {{ $t("pages.account.order_payment.back_to_order_button") }}
+              </VcButton>
 
-                <VcButton :to="{ name: 'Orders', replace: true }" class="lg:min-w-40">
-                  {{ $t("pages.account.order_payment.orders_list_button") }}
-                </VcButton>
+              <VcButton :to="{ name: 'Orders', replace: true }" class="lg:min-w-40">
+                {{ $t("pages.account.order_payment.orders_list_button") }}
+              </VcButton>
 
-                <VcButton :to="{ name: 'Catalog', replace: true }">
-                  {{ $t("pages.account.order_payment.continue_shopping_button") }}
-                </VcButton>
-              </div>
-            </template>
-          </VcEmptyPage>
+              <VcButton :to="{ name: 'Catalog', replace: true }">
+                {{ $t("pages.account.order_payment.continue_shopping_button") }}
+              </VcButton>
+            </div>
+          </div>
 
           <!-- Payment failure -->
-          <VcEmptyPage
-            v-else-if="failure"
-            image="order-payment-failed.webp"
-            mobile-image="order-payment-failed.webp"
-            class="-mx-9 -mb-6 -mt-16 md:-mt-6 lg:pl-14"
-          >
-            <template #description>
-              <h2 class="mb-3 text-center text-2xl font-bold text-neutral-900 lg:text-left">
-                {{ $t("pages.account.order_payment.failure.title") }}
-              </h2>
+          <div v-else-if="failure" class="flex flex-col items-start justify-center lg:min-h-[50vh]">
+            <VcTypography tag="h2" class="mb-3">
+              {{ $t("pages.account.order_payment.failure.title") }}
+            </VcTypography>
 
-              <p class="mb-8 max-w-md text-center lg:text-left">
-                {{ $t("pages.account.order_payment.failure.text") }}
-              </p>
-            </template>
+            <div class="mb-8 text-base">
+              {{ $t("pages.account.order_payment.failure.text") }}
+            </div>
 
-            <template #actions>
-              <VcButton class="w-48" @click="tryAgain">
-                {{ $t("pages.account.order_payment.try_again_button") }}
-              </VcButton>
-            </template>
-          </VcEmptyPage>
+            <VcButton min-width="12rem" @click="tryAgain">
+              {{ $t("pages.account.order_payment.try_again_button") }}
+            </VcButton>
+          </div>
 
           <!-- Main content -->
           <template v-else>
