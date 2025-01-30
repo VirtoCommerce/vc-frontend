@@ -14,7 +14,7 @@
           type="button"
           @click="applyOrderFilter(facet.term)"
         >
-          <span class="grow overflow-hidden text-ellipsis text-nowrap text-left">{{ facet.label }}</span>
+          <span class="grow overflow-hidden text-ellipsis text-nowrap text-start">{{ facet.label }}</span>
           <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
         </button>
       </div>
