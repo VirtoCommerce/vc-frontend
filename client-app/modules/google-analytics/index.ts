@@ -3,6 +3,7 @@ import { useCurrency } from "@/core/composables";
 import { useAnalytics } from "@/core/composables/useAnalytics";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { IS_DEVELOPMENT } from "@/core/constants";
+import { useUser } from "@/shared/account";
 import { MODULE_ID, GOOGLE_ANALYTICS_SETTINGS_MAPPING } from "./constants";
 import {
   sendEvent as sendEventFunction,
@@ -11,7 +12,9 @@ import {
 } from "./utils";
 import type { ExtendEventsType } from "./types";
 
+const DEBUG_MODE = true;
 const { currentCurrency } = useCurrency();
+const { isAuthenticated, user } = useUser();
 
 const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
 const TRACKER_NAME = "google-analytics";
@@ -46,7 +49,12 @@ export async function init({ extendEvents }: { extendEvents?: ExtendEventsType }
     window.dataLayer.push(arguments);
   };
 
+  const config = {
+    debugMode: DEBUG_MODE,
+    currency: currentCurrency.value.code,
+    user_id: isAuthenticated ? user.value.id : undefined,
+  };
+
   window.gtag("js", new Date());
-  window.gtag("config", String(trackId), { debug_mode: true });
-  window.gtag("set", { currency: currentCurrency.value.code });
+  window.gtag("config", String(trackId), config);
 }
