@@ -174,5 +174,18 @@ export default async () => {
 
   await router.isReady();
 
+  app.config.warnHandler = (msg, _, trace) => {
+    // to remove builder.io warnings
+    if (
+      msg.includes('Failed setting prop "attributes" on <div>: value [object Object] is invalid.') ||
+      msg.includes(
+        "Extraneous non-props attributes (attributes) were passed to component but could not be automatically inherited because component renders fragment or text root nodes",
+      )
+    ) {
+      return;
+    }
+    Logger.warn(msg, trace);
+  };
+
   app.mount(appElement);
 };
