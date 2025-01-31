@@ -45,6 +45,22 @@
           <div>
             {{ review.review }}
           </div>
+
+          <div v-if="review.images?.length" class="image-gallery__thumbs-container">
+            <Swiper
+              :slides-per-view="MAX_REVIEW_IMAGES_COUNT"
+              :slides-per-group="MAX_REVIEW_IMAGES_COUNT"
+              :thumbs="{ swiper: imagesSwiper }"
+              :modules="swiperModules"
+              class="image-gallery__thumbs mx-0"
+              data-te-lightbox-init
+              @swiper="setImagesSwiper"
+            >
+              <SwiperSlide v-for="(image, index) in review.images" :key="index" class="image-gallery__thumb">
+                <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
+              </SwiperSlide>
+            </Swiper>
+          </div>
         </div>
       </div>
 
@@ -96,6 +112,16 @@
           {{ $t("common.labels.fields_required") }}
         </div>
 
+        <VcWidget class="mt-4">
+          <VcFileUploader
+            v-bind="imageOptions"
+            :files="files"
+            removable
+            @add-files="onAddFiles"
+            @remove-files="onRemoveFiles"
+          />
+        </VcWidget>
+
         <div class="mt-4 flex flex-wrap justify-between gap-3 max-xs:justify-center">
           <VcButton
             v-if="reviews?.length"
@@ -124,13 +150,18 @@
 </template>
 
 <script setup lang="ts">
+import { Navigation, Thumbs } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/vue";
 import { onActivated, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
+import { useFiles } from "@/shared/files";
+import { DEFAULT_REVIEW_IMAGES_SCOPE, MAX_REVIEW_IMAGES_COUNT } from "../constants";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
 import ReviewRating from "./review-rating.vue";
 import type { Rating } from "@/core/api/graphql/types";
+import type SwiperCore from "swiper";
 
 const props = defineProps<IProps>();
 
@@ -138,6 +169,15 @@ const ENTITY_TYPE = "Product";
 
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
+const {
+  files,
+  options: imageOptions,
+  uploadedFiles: uploadedReviewImages,
+  addFiles,
+  validateFiles,
+  uploadFiles,
+  removeFiles,
+} = useFiles(DEFAULT_REVIEW_IMAGES_SCOPE);
 
 interface IProps {
   productId: string;
@@ -172,6 +212,8 @@ const productReviewsPayload = ref({
   page: 1,
   sort: "createddate:desc",
 });
+const imagesSwiper = ref<SwiperCore | null>(null);
+const swiperModules = [Navigation, Thumbs];
 
 async function changeSortByDate(value: string): Promise<void> {
   productReviewsPayload.value.page = 1;
@@ -196,6 +238,7 @@ async function submitReview(): Promise<void> {
     entityType: ENTITY_TYPE,
     review: newReviewContent.value,
     rating: newReviewRating.value,
+    imageUrls: uploadedReviewImages.value?.map((item) => item.url),
   });
 
   await fetchCustomerReviews(productReviewsPayload.value);
@@ -203,6 +246,21 @@ async function submitReview(): Promise<void> {
   newReviewContent.value = "";
   newReviewRating.value = 0;
   reviewSubmitted.value = true;
+}
+
+async function onAddFiles(items: INewFile[]): Promise<void> {
+  addFiles(items);
+  validateFiles();
+
+  await uploadFiles();
+}
+
+async function onRemoveFiles(items: FileType[]): Promise<void> {
+  await removeFiles(items);
+}
+
+function setImagesSwiper(swiper: SwiperCore): void {
+  imagesSwiper.value = swiper;
 }
 
 onActivated(async () => {
