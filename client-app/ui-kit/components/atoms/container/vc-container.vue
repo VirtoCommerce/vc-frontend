@@ -7,7 +7,7 @@
       },
     ]"
   >
-    <div v-if="bgImage" class="vc-container__bg" v-html="bgImageRaw"></div>
+    <div v-if="hasBgImage" class="vc-container__bg" v-html="bgImageRaw"></div>
 
     <div class="vc-container__wrapper">
       <slot />
@@ -24,13 +24,13 @@ interface IProps {
   loading?: boolean;
   maxWidth?: string;
   bgColor?: string;
-  bgImage?: boolean;
+  hasBgImage?: boolean;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   maxWidth: "",
   bgColor: "",
-  bgImage: true,
+  hasBgImage: true,
 });
 
 const _bgColor = computed(() => getColorValue(props.bgColor));

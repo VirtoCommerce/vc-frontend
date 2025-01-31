@@ -1,241 +1,260 @@
 <template>
-  <div v-if="order">
-    <div class="space-y-3">
+  <template v-if="order">
+    <VcEmptyPage
+      v-if="executed"
+      :icon="success ? 'outline-payment-success' : 'outline-payment-failed'"
+      image="basket.jpg"
+      :status-color="success ? 'success' : 'danger'"
+      :has-bg-image="false"
+      bg-color="transparent"
+      class="p-0"
+    >
+      <!-- Successful payment -->
+      <template v-if="success">
+        <VcTypography tag="h1" class="order-first mb-3">
+          {{ $t("pages.account.order_payment.success.title") }}
+        </VcTypography>
+
+        <VcTypography tag="h4">
+          {{ $t("pages.account.order_payment.processed_title", [order.number]) }}
+        </VcTypography>
+
+        <!-- Subtitle block -->
+        <div class="gap-x-4 md:flex">
+          <div class="text-sm">
+            <span class="font-bold">
+              {{ $t("pages.account.order_payment.order_date") }}
+            </span>
+            {{ $d(order.createdDate) }}
+          </div>
+
+          <div class="text-sm">
+            <span class="font-bold">
+              {{ $t("pages.account.order_payment.status_label") }}
+            </span>
+
+            {{ order.statusDisplayValue }}
+          </div>
+        </div>
+
+        <p class="mb-8 mt-4 max-w-md text-base">
+          {{ $t("pages.account.order_payment.success.text") }}
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-5 lg:justify-start">
+          <VcButton
+            :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
+            variant="outline"
+            prepend-icon="chevron-left"
+          >
+            {{ $t("pages.account.order_payment.back_to_order_button") }}
+          </VcButton>
+
+          <VcButton :to="{ name: 'Orders', replace: true }" class="lg:min-w-40">
+            {{ $t("pages.account.order_payment.orders_list_button") }}
+          </VcButton>
+
+          <VcButton :to="{ name: 'Catalog', replace: true }">
+            {{ $t("pages.account.order_payment.continue_shopping_button") }}
+          </VcButton>
+        </div>
+      </template>
+
+      <!-- Payment failure -->
+      <template v-else-if="failure">
+        <VcTypography tag="h1" class="order-first mb-3">
+          {{ $t("pages.account.order_payment.failure.title") }}
+        </VcTypography>
+
+        <VcTypography tag="h4">
+          {{ $t("pages.account.order_payment.processed_title", [order.number]) }}
+        </VcTypography>
+
+        <!-- Subtitle block -->
+        <div class="gap-x-4 md:flex">
+          <div class="text-sm">
+            <span class="font-bold">
+              {{ $t("pages.account.order_payment.order_date") }}
+            </span>
+            {{ $d(order.createdDate) }}
+          </div>
+
+          <div class="text-sm">
+            <span class="font-bold">
+              {{ $t("pages.account.order_payment.status_label") }}
+            </span>
+
+            {{ order.statusDisplayValue }}
+          </div>
+        </div>
+
+        <div class="mb-8 mt-4 max-w-md text-base">
+          {{ $t("pages.account.order_payment.failure.text") }}
+        </div>
+
+        <VcButton min-width="12rem" @click="tryAgain">
+          {{ $t("pages.account.order_payment.try_again_button") }}
+        </VcButton>
+      </template>
+    </VcEmptyPage>
+
+    <template v-else>
       <VcBreadcrumbs :items="breadcrumbs" />
 
-      <VcTypography tag="h1">
-        {{
-          executed
-            ? $t("pages.account.order_payment.processed_title", [order.number])
-            : $t("pages.account.order_payment.title")
-        }}
+      <VcTypography tag="h1" class="mb-5 mt-3">
+        {{ $t("pages.account.order_payment.title") }}
       </VcTypography>
-    </div>
 
-    <!-- Subtitle block -->
-    <div v-if="executed" class="gap-x-4 md:flex">
-      <div class="text-sm">
-        <span class="font-bold">
-          {{ $t("pages.account.order_payment.order_date") }}
-        </span>
-        {{ $d(order.createdDate) }}
-      </div>
+      <VcLayout sidebar-position="right">
+        <VcWidget size="lg">
+          <!-- region Billing address -->
+          <h5 class="mb-1 font-black">
+            {{ $t("pages.account.order_payment.billing_address_label") }}
+          </h5>
 
-      <div class="text-sm">
-        <span class="font-bold">
-          {{ $t("pages.account.order_payment.status_label") }}
-        </span>
+          <div class="mb-6 rounded border">
+            <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
+              <!-- TODO: create an atom component to display address -->
+              <div class="min-w-0 text-sm">
+                <span class="line-clamp-2 font-black">
+                  {{ payment?.billingAddress?.firstName }}
+                  {{ payment?.billingAddress?.lastName }}
+                </span>
 
-        {{ order.statusDisplayValue }}
-      </div>
-    </div>
+                <p class="line-clamp-3">
+                  {{ payment?.billingAddress?.countryCode }}
+                  {{ payment?.billingAddress?.regionName }}
+                  {{ payment?.billingAddress?.city }}
+                  {{ payment?.billingAddress?.line1 }}
+                  {{ payment?.billingAddress?.line2 }}
+                  {{ payment?.billingAddress?.postalCode }}
+                </p>
 
-    <div class="flex flex-col lg:flex-row lg:flex-nowrap lg:space-x-6">
-      <!-- Main section -->
-      <div class="w-full grow lg:w-3/4 xl:w-4/5">
-        <div
-          :class="executed ? 'md:bg-additional-50 md:border md:shadow-sm' : 'bg-additional-50 border shadow-sm'"
-          class="p-6 max-lg:-mx-6 md:rounded lg:px-9"
-        >
-          <!-- Successful payment -->
-          <div v-if="success" class="flex min-h-[50vh] flex-col items-start justify-center">
-            <VcTypography tag="h2" class="mb-3">
-              {{ $t("pages.account.order_payment.success.title") }}
-            </VcTypography>
-
-            <p class="mb-8 max-w-md text-center lg:text-left">
-              {{ $t("pages.account.order_payment.success.text") }}
-            </p>
-
-            <div class="flex flex-wrap justify-center gap-5 lg:justify-start">
-              <VcButton
-                :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
-                variant="outline"
-                prepend-icon="chevron-left"
-              >
-                {{ $t("pages.account.order_payment.back_to_order_button") }}
-              </VcButton>
-
-              <VcButton :to="{ name: 'Orders', replace: true }" class="lg:min-w-40">
-                {{ $t("pages.account.order_payment.orders_list_button") }}
-              </VcButton>
-
-              <VcButton :to="{ name: 'Catalog', replace: true }">
-                {{ $t("pages.account.order_payment.continue_shopping_button") }}
-              </VcButton>
-            </div>
-          </div>
-
-          <!-- Payment failure -->
-          <div v-else-if="failure" class="flex flex-col items-start justify-center lg:min-h-[50vh]">
-            <VcTypography tag="h2" class="mb-3">
-              {{ $t("pages.account.order_payment.failure.title") }}
-            </VcTypography>
-
-            <div class="mb-8 text-base">
-              {{ $t("pages.account.order_payment.failure.text") }}
-            </div>
-
-            <VcButton min-width="12rem" @click="tryAgain">
-              {{ $t("pages.account.order_payment.try_again_button") }}
-            </VcButton>
-          </div>
-
-          <!-- Main content -->
-          <template v-else>
-            <!-- region Billing address -->
-            <h5 class="mb-1 font-black">
-              {{ $t("pages.account.order_payment.billing_address_label") }}
-            </h5>
-
-            <div class="mb-6 rounded border">
-              <div class="flex flex-row justify-between space-x-3 p-4 md:p-5">
-                <!-- TODO: create an atom component to display address -->
-                <div class="min-w-0 text-sm">
-                  <span class="line-clamp-2 font-black">
-                    {{ payment?.billingAddress?.firstName }}
-                    {{ payment?.billingAddress?.lastName }}
+                <p class="truncate">
+                  <span class="font-black">
+                    {{ $t("pages.account.order_payment.phone_label") }}
                   </span>
+                  {{ payment?.billingAddress?.phone }}
+                </p>
 
-                  <p class="line-clamp-3">
-                    {{ payment?.billingAddress?.countryCode }}
-                    {{ payment?.billingAddress?.regionName }}
-                    {{ payment?.billingAddress?.city }}
-                    {{ payment?.billingAddress?.line1 }}
-                    {{ payment?.billingAddress?.line2 }}
-                    {{ payment?.billingAddress?.postalCode }}
-                  </p>
-
-                  <p class="truncate">
-                    <span class="font-black">
-                      {{ $t("pages.account.order_payment.phone_label") }}
-                    </span>
-                    {{ payment?.billingAddress?.phone }}
-                  </p>
-
-                  <p class="truncate">
-                    <span class="font-black">
-                      {{ $t("pages.account.order_payment.email_label") }}
-                    </span>
-                    {{ payment?.billingAddress?.email }}
-                  </p>
-                </div>
-
-                <div class="self-start md:self-center">
-                  <VcButton
-                    :disabled="paymentMethodComponent?.loading || loading"
-                    :loading="changeAddressLoading"
-                    size="sm"
-                    variant="outline"
-                    class="!hidden self-start md:!inline-flex"
-                    @click="showEditAddressModal"
-                  >
-                    {{ $t("pages.account.order_payment.edit_button") }}
-                  </VcButton>
-
-                  <VcButton
-                    :disabled="paymentMethodComponent?.loading || loading"
-                    class="md:!hidden"
-                    size="sm"
-                    icon="edit"
-                    variant="outline"
-                    @click="paymentMethodComponent?.loading || loading ? null : showEditAddressModal()"
-                  />
-                </div>
-              </div>
-            </div>
-            <!-- endregion Billing address -->
-
-            <!-- region Payment method -->
-            <h5 class="mb-1 font-black">
-              {{ $t("pages.account.order_payment.payment_method_label") }}
-            </h5>
-
-            <div class="rounded border">
-              <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
-                <div class="min-w-0 truncate">
-                  <template v-if="payment?.paymentMethod">
-                    <VcImage
-                      :src="payment.paymentMethod.logoUrl"
-                      class="mr-3.5 inline-block size-8 object-center md:size-9"
-                      lazy
-                    />
-
-                    <span>{{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}</span>
-                  </template>
-                  <template v-else>
-                    <VcImage
-                      src="select-payment.svg"
-                      class="mr-3.5 inline-block size-10 object-center md:size-12"
-                      lazy
-                    />
-
-                    <span>{{ $t("common.placeholders.select_payment_method") }}</span>
-                  </template>
-                </div>
-
-                <div>
-                  <VcButton
-                    :disabled="paymentMethodComponent?.loading || loading"
-                    :loading="changeMethodLoading"
-                    size="sm"
-                    variant="outline"
-                    class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
-                    @click="showChangePaymentMethodModal"
-                  >
-                    {{ $t("pages.account.order_payment.edit_button") }}
-                  </VcButton>
-
-                  <VcButton
-                    :disabled="paymentMethodComponent?.loading || loading"
-                    class="md:!hidden"
-                    size="sm"
-                    icon="edit"
-                    variant="outline"
-                    @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodModal()"
-                  />
-                </div>
+                <p class="truncate">
+                  <span class="font-black">
+                    {{ $t("pages.account.order_payment.email_label") }}
+                  </span>
+                  {{ payment?.billingAddress?.email }}
+                </p>
               </div>
 
-              <div class="p-5 md:p-6">
-                <PaymentProcessingManual
-                  v-if="[PaymentActionType.Unknown, PaymentActionType.Standard].includes(paymentMethodType!)"
-                />
+              <div class="self-start md:self-center">
+                <VcButton
+                  :disabled="paymentMethodComponent?.loading || loading"
+                  :loading="changeAddressLoading"
+                  size="sm"
+                  variant="outline"
+                  class="!hidden self-start md:!inline-flex"
+                  @click="showEditAddressModal"
+                >
+                  {{ $t("pages.account.order_payment.edit_button") }}
+                </VcButton>
 
-                <PaymentProcessingRedirection
-                  v-else-if="paymentMethodType === PaymentActionType.Redirection"
-                  :order="order"
-                  :disabled="loading"
-                />
-
-                <PaymentProcessingAuthorizeNet
-                  v-else-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
-                  ref="paymentMethodComponent"
-                  :order="order"
-                  :disabled="loading"
-                  @success="success = true"
-                  @fail="failure = true"
-                />
-
-                <PaymentProcessingSkyflow
-                  v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
-                  :order="order"
-                  @success="success = true"
-                  @fail="failure = true"
+                <VcButton
+                  :disabled="paymentMethodComponent?.loading || loading"
+                  class="md:!hidden"
+                  size="sm"
+                  icon="edit"
+                  variant="outline"
+                  @click="paymentMethodComponent?.loading || loading ? null : showEditAddressModal()"
                 />
               </div>
             </div>
-            <!-- endregion Payment method -->
-          </template>
-        </div>
-      </div>
+          </div>
+          <!-- endregion Billing address -->
 
-      <!-- Sidebar -->
-      <div :class="executed ? 'hidden md:flex' : 'flex'" class="order-first mb-6 flex-col lg:order-1 lg:mb-0 lg:w-1/4">
-        <OrderSummary :cart="order" />
-      </div>
-    </div>
-  </div>
+          <!-- region Payment method -->
+          <h5 class="mb-1 font-black">
+            {{ $t("pages.account.order_payment.payment_method_label") }}
+          </h5>
+
+          <div class="rounded border">
+            <div class="flex flex-row items-center justify-between space-x-3 p-4 shadow-lg md:p-5">
+              <div class="min-w-0 truncate">
+                <template v-if="payment?.paymentMethod">
+                  <VcImage
+                    :src="payment.paymentMethod.logoUrl"
+                    class="mr-3.5 inline-block size-8 object-center md:size-9"
+                    lazy
+                  />
+
+                  <span>{{ $t(`common.methods.payment_by_code.${payment.paymentMethod.code}`) }}</span>
+                </template>
+                <template v-else>
+                  <VcImage src="select-payment.svg" class="mr-3.5 inline-block size-10 object-center md:size-12" lazy />
+
+                  <span>{{ $t("common.placeholders.select_payment_method") }}</span>
+                </template>
+              </div>
+
+              <div>
+                <VcButton
+                  :disabled="paymentMethodComponent?.loading || loading"
+                  :loading="changeMethodLoading"
+                  size="sm"
+                  variant="outline"
+                  class="!hidden self-start px-5 font-bold uppercase md:!inline-flex"
+                  @click="showChangePaymentMethodModal"
+                >
+                  {{ $t("pages.account.order_payment.edit_button") }}
+                </VcButton>
+
+                <VcButton
+                  :disabled="paymentMethodComponent?.loading || loading"
+                  class="md:!hidden"
+                  size="sm"
+                  icon="edit"
+                  variant="outline"
+                  @click="paymentMethodComponent?.loading || loading ? null : showChangePaymentMethodModal()"
+                />
+              </div>
+            </div>
+
+            <div class="p-5 md:p-6">
+              <PaymentProcessingManual
+                v-if="[PaymentActionType.Unknown, PaymentActionType.Standard].includes(paymentMethodType!)"
+              />
+
+              <PaymentProcessingRedirection
+                v-else-if="paymentMethodType === PaymentActionType.Redirection"
+                :order="order"
+                :disabled="loading"
+              />
+
+              <PaymentProcessingAuthorizeNet
+                v-else-if="paymentTypeName === 'AuthorizeNetPaymentMethod'"
+                ref="paymentMethodComponent"
+                :order="order"
+                :disabled="loading"
+                @success="success = true"
+                @fail="failure = true"
+              />
+
+              <PaymentProcessingSkyflow
+                v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
+                :order="order"
+                @success="success = true"
+                @fail="failure = true"
+              />
+            </div>
+          </div>
+          <!-- endregion Payment method -->
+        </VcWidget>
+
+        <!-- Sidebar -->
+        <template #sidebar>
+          <OrderSummary :cart="order" />
+        </template>
+      </VcLayout>
+    </template>
+  </template>
 </template>
 
 <script setup lang="ts">

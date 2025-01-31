@@ -6,6 +6,8 @@
         'vc-empty-page--hide-mobile-side': hideMobileSide,
       },
     ]"
+    :bg-color="bgColor"
+    :bg-image="bgImage"
   >
     <div class="vc-empty-page__wrapper">
       <VcBreadcrumbs v-if="breadcrumbs?.length" :items="breadcrumbs" class="vc-empty-page__breadcrumbs" />
@@ -41,6 +43,8 @@ export interface IProps {
   statusColor?: string;
   breadcrumbs?: IBreadcrumb[];
   hideMobileSide?: boolean;
+  bgColor?: string;
+  bgImage?: boolean;
 }
 
 defineProps<IProps>();
