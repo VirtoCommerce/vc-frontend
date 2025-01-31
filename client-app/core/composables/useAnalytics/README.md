@@ -39,6 +39,10 @@ declare module "client-app/core/types/analytics" {
 export {};
 ```
 
+> [!TIP]
+>
+> [TypeScript Documentation - Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html)
+
 2. Use your custom event:
 
 ```typescript

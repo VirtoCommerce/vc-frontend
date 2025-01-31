@@ -26,6 +26,10 @@ declare module "client-app/core/types/analytics" {
 }
 ```
 
+> [!TIP]
+>
+> [TypeScript Documentation - Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html)
+
 2. Extend the module with custom event handlers:
 
 ```typescript
@@ -52,6 +56,48 @@ export const extendGoogleAnalyticsEvents: ExtendEventsType = ({ sendEvent, produ
     },
   })
 ```
+
+# Extending parameters
+
+You can extend the GA4 implementation in several ways:
+
+### Configuration Parameters
+
+Use `extendConfig` to set additional [configuration parameters](https://developers.google.com/analytics/devguides/collection/ga4/reference/config):
+
+```typescript
+// client-app/app-runner.ts
+await initGoogleAnalytics({
+  extendConfig: {
+    send_page_view: false,
+    allow_google_signals: false,
+    // ... other GA4 config parameters
+  },
+});
+```
+
+> [!TIP]
+>
+> [Google tag API reference - Config](https://developers.google.com/tag-platform/gtagjs/reference#config)
+
+### Global Parameters
+
+Use `extendSet` to define global parameters and custom dimensions that will be included with all subsequent events:
+
+```typescript
+// client-app/app-runner.ts
+await initGoogleAnalytics({
+  extendSet: {
+    country: "US",
+    language: "en",
+    // ... other global parameters
+  },
+});
+```
+
+> [!TIP]
+>
+> [Google tag API reference - Set](https://developers.google.com/tag-platform/gtagjs/reference#set)
 
 ## Utility Functions
 

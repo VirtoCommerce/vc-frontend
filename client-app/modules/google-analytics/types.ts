@@ -23,3 +23,9 @@ export type ExtendEventsType = ({
   productToGtagItem: typeof productToGtagItemFunction;
   lineItemToGtagItem: typeof lineItemToGtagItemFunction;
 }) => TrackerEventsType;
+
+export type InitOptionsType = {
+  extendEvents?: ExtendEventsType;
+  extendConfig?: Record<string, unknown>;
+  extendSet?: Record<string, unknown>;
+};

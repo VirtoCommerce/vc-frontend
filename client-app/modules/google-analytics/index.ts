@@ -10,7 +10,7 @@ import {
   productToGtagItem as productToGtagItemFunction,
   lineItemToGtagItem as lineItemToGtagItemFunction,
 } from "./utils";
-import type { ExtendEventsType } from "./types";
+import type { InitOptionsType } from "./types";
 
 const DEBUG_MODE = true;
 const { currentCurrency } = useCurrency();
@@ -19,7 +19,7 @@ const { isAuthenticated, user } = useUser();
 const canUseDOM = !!(typeof window !== "undefined" && window.document?.createElement);
 const TRACKER_NAME = "google-analytics";
 
-export async function init({ extendEvents }: { extendEvents?: ExtendEventsType } = {}): Promise<void> {
+export async function init({ extendEvents, extendConfig, extendSet }: InitOptionsType = {}): Promise<void> {
   const { getModuleSettings, hasModuleSettings } = useModuleSettings(MODULE_ID);
   const { trackId, isEnabled } = getModuleSettings(GOOGLE_ANALYTICS_SETTINGS_MAPPING);
 
@@ -53,8 +53,14 @@ export async function init({ extendEvents }: { extendEvents?: ExtendEventsType }
     debugMode: DEBUG_MODE,
     currency: currentCurrency.value.code,
     user_id: isAuthenticated ? user.value.id : undefined,
+    ...extendConfig,
   };
 
   window.gtag("js", new Date());
+
+  if (extendSet) {
+    window.gtag("set", extendSet);
+  }
+
   window.gtag("config", String(trackId), config);
 }
