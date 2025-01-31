@@ -20,3 +20,5 @@ This module is currently **experimental** and under active development. Please n
 - **Feedback Welcome**: We encourage the community to test and provide feedback, which will help shape its development.
 
 Thank you for your understanding and contributions to improving this feature!
+
+If you have any questions, contact support at [support@virtocommerce.com](mailto:support@virtocommerce.com) or leave a post [here](https://www.virtocommerce.org/t/possiblity-of-ocr-in-virto/729/2).
