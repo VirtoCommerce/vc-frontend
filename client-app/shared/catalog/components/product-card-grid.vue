@@ -167,8 +167,8 @@
     <VcProductButton
       v-if="product.isConfigurable"
       :to="link"
-      link-text="Customize"
-      button-text="Customize"
+      :link-text="$t('pages.catalog.customize_button')"
+      :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
       :target="browserTarget || $cfg.details_browser_target || '_blank'"
       @link-click="$emit('linkClick', $event)"

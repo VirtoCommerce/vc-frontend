@@ -146,7 +146,11 @@
       "date_new_to_old": "Data, od najnowszej do najstarszej",
       "date_old_to_new": "Data, od najstarszej do najnowszej",
       "comments": "Komentarze",
-      "fields_required": "Pola są wymagane"
+      "fields_required": "Pola są wymagane",
+      "support_phone_number": "Numer telefonu wsparcia",
+      "main_menu": "Menu główne",
+      "toggle_search_bar": "Przełącz pasek wyszukiwania",
+      "slider_image": "Obraz slajdera"
     },
     "prefixes": {
       "please": "Proszę",
