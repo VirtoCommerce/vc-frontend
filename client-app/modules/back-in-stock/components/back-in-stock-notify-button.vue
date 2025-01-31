@@ -69,6 +69,9 @@ const updateBackInStockSubscription = async () => {
     await deactivateSubscription(payload);
   } else {
     await activateSubscription(payload);
+    if (props.lazy) {
+      return;
+    }
     success({
       text: t("back_in_stock.messages.you_are_subscribed"),
       group: "back-in-stock",
