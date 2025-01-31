@@ -1,6 +1,5 @@
 import { useGlobalInterceptors } from "@/core/api/common";
 import { WEBSOCKETS_ENDPOINT_URL } from "@/core/api/graphql/consts";
-import type { ConnectionParams } from "subscriptions-transport-ws";
 
 export const apolloFetch = (() => {
   const { onRequest, onResponse } = useGlobalInterceptors();
@@ -16,8 +15,8 @@ export const apolloFetch = (() => {
 export const apolloWebSocketConnectionParams = (() => {
   const { onRequest } = useGlobalInterceptors();
 
-  return async (): Promise<ConnectionParams> => {
-    const init: ConnectionParams = {};
+  return async () => {
+    const init = {};
     await Promise.all(onRequest.value.map((intercept) => intercept(WEBSOCKETS_ENDPOINT_URL, init)));
     return init;
   };
