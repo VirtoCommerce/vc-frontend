@@ -1,25 +1,13 @@
-import { COLORS } from "../constants";
+import { MAIN_COLORS } from "../constants";
 
-const VcColors = [
-  COLORS.primary,
-  COLORS.secondary,
-  COLORS.neutral,
-  COLORS.info,
-  COLORS.success,
-  COLORS.warning,
-  COLORS.danger,
-] as const;
-
-export type VcColorType = (typeof VcColors)[number];
-
-export function isVcColorType(value: string): value is VcColorType {
-  return VcColors.includes(value as VcColorType);
+export function isMainColorType(value: string): value is VcMainColorType {
+  return MAIN_COLORS.includes(value as VcMainColorType);
 }
 
 export function getColorValue(color: string): string {
   if (isValidCssVariableName(color)) {
     return `var(${color})`;
-  } else if (isVcColorType(color)) {
+  } else if (isMainColorType(color)) {
     return `var(--color-${color}-500)`;
   } else if (isValidColor(color)) {
     return color;
