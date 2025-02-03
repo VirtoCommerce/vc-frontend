@@ -65,8 +65,6 @@ const CartItemsSelectionFragment = gql`
   }
 `;
 
-const { storeId, currencyCode, cultureName, userId } = globals;
-
 function _useSharedShortCart() {
   const { result: query, refetch, loading } = useGetShortCartQuery();
   const cart = computed(() => query.value?.cart);
@@ -82,6 +80,7 @@ const useSharedShortCart = createSharedComposable(_useSharedShortCart);
 
 export function useShortCart() {
   const { cart, refetch, loading } = useSharedShortCart();
+  const { storeId, currencyCode, cultureName, userId } = globals;
 
   const { mutate: _addToCart, loading: addToCartLoading } = useMutation(AddItemDocument);
   async function addToCart(
@@ -174,6 +173,7 @@ export function _useFullCart() {
   const { openModal } = useModal();
   const { analytics } = useAnalytics();
   const { client, resolveClient } = useApolloClient();
+  const { storeId, userId } = globals;
 
   const { result: query, load, refetch, loading } = useGetFullCartQuery();
 
