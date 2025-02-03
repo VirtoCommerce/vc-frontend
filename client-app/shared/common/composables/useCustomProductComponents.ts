@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { ref } from "vue";
+import { shallowRef } from "vue";
 import { Logger } from "@/core/utilities";
 import type { Product } from "@/core/api/graphql/types";
 import type { DefineComponent } from "vue";
@@ -13,7 +13,7 @@ export type ElementType = {
 };
 
 function _useCustomProductComponents() {
-  const customProductComponents = ref<{ [key: string]: ElementType }>({});
+  const customProductComponents = shallowRef<{ [key: string]: ElementType }>({});
 
   function registerComponent(element: ElementType) {
     if (!customProductComponents.value[element.id]) {
