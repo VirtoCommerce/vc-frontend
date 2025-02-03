@@ -35,6 +35,7 @@
       >
         <div class="relative flex gap-4 max-md:block">
           <VcImage
+            v-if="logoUrl"
             :alt="$t('pages.company.info.labels.company_logo')"
             :src="logoUrl"
             class="mb-4 h-[4.375rem] w-[5.875rem] object-cover"
@@ -53,6 +54,7 @@
           </div>
 
           <VcButton
+            v-if="logoUrl"
             :disabled="!logoUrl"
             :loading="loadingOrganizationLogo"
             class="absolute bottom-0 left-0 mt-4 max-md:relative"
