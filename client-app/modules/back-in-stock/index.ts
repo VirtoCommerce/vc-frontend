@@ -11,7 +11,8 @@ import type { I18n } from "@/i18n";
 import type { DeepPartial } from "utility-types";
 import type { Router, RouteRecordRaw } from "vue-router";
 
-const Subscriptions = defineAsyncComponent(() => import("./pages/subscriptions.vue"));
+// By using () => import('./MyPage.vue'), you ensure that Vue Router can handle the component as a lazy-loaded route, which is the intended usage pattern.
+const Subscriptions = () => import("./pages/subscriptions.vue");
 const BackInStockButton = defineAsyncComponent(() => import("./components/back-in-stock-notify-button.vue"));
 
 const { isEnabled } = useModuleSettings(MODULE_ID);
