@@ -2,12 +2,12 @@
   <template v-if="order">
     <VcEmptyPage
       v-if="executed"
-      :icon="success ? 'outline-payment-success' : 'outline-payment-failed'"
+      :icon="success ? 'outline-payment-successful' : 'outline-payment-failed'"
       image="basket.jpg"
       :status-color="success ? 'success' : 'danger'"
       :has-bg-image="false"
       bg-color="transparent"
-      class="p-0"
+      no-padding
     >
       <!-- Successful payment -->
       <template v-if="success">
@@ -41,7 +41,7 @@
           {{ $t("pages.account.order_payment.success.text") }}
         </p>
 
-        <div class="flex flex-wrap justify-center gap-5 lg:justify-start">
+        <div class="flex flex-wrap justify-center gap-5 sm:justify-start">
           <VcButton
             :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
             variant="outline"
@@ -50,7 +50,7 @@
             {{ $t("pages.account.order_payment.back_to_order_button") }}
           </VcButton>
 
-          <VcButton :to="{ name: 'Orders', replace: true }" class="lg:min-w-40">
+          <VcButton :to="{ name: 'Orders', replace: true }" class="sm:min-w-40">
             {{ $t("pages.account.order_payment.orders_list_button") }}
           </VcButton>
 
