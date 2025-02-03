@@ -1396,14 +1396,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@builder.io/sdk-vue@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@builder.io/sdk-vue@npm:3.0.0"
+"@builder.io/sdk-vue@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "@builder.io/sdk-vue@npm:3.0.3"
   dependencies:
     isolated-vm: "npm:^5.0.0"
   peerDependencies:
     vue: ">= 3"
-  checksum: 10c0/3ff7c73198f9da651957fe3b167835135f0395eb42044fe35b9307816301b9e723f436f83b93d0400ba32acb29827faac9707356e5126ff92c604549531bee46
+  checksum: 10c0/58828811fa6ceb62ae55bb360936d1b3bc4a9852433dd54c0503df9efe9c3b57864e8190fa4434759617e02024a0fa61c5a9c023f856c608a2842389770ecc66
   languageName: node
   linkType: hard
 
@@ -14822,7 +14822,7 @@ __metadata:
   resolution: "vc-theme-b2b-vue@workspace:."
   dependencies:
     "@apollo/client": "npm:^3.12.7"
-    "@builder.io/sdk-vue": "npm:^3.0.0"
+    "@builder.io/sdk-vue": "npm:^3.0.3"
     "@commitlint/cli": "npm:^19.3.0"
     "@commitlint/config-conventional": "npm:^19.2.2"
     "@floating-ui/vue": "npm:^1.1.4"
