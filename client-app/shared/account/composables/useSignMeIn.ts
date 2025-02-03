@@ -1,8 +1,8 @@
 import { useMutation } from "@vue/apollo-composable";
 import { syncRefs, useAsyncState } from "@vueuse/core";
 import { ref } from "vue";
-import { useChangeCartCurrencyMutation, useGetMeQuery } from "@/core/api/graphql";
-import { ClearCartDocument, MergeCartDocument } from "@/core/api/graphql/types";
+import { useGetMeQuery } from "@/core/api/graphql";
+import { ChangeCartCurrencyDocument, ClearCartDocument, MergeCartDocument } from "@/core/api/graphql/types";
 import { useAuth } from "@/core/composables/useAuth";
 import { useCurrency } from "@/core/composables/useCurrency";
 import { useLanguages } from "@/core/composables/useLanguages";
@@ -20,8 +20,8 @@ export function useSignMeIn() {
   const { mutate: mergeCart } = useMutation(MergeCartDocument);
   const { unpinLocale, removeLocaleFromUrl } = useLanguages();
   const { supportedCurrencies, saveCurrencyCode } = useCurrency();
-  const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
-  const { currencyCode: currentCurencyCode, storeId } = globals;
+  const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
+  const { currencyCode: currentCurrencyCode, storeId, cultureName } = globals;
   const { mutate: clearCurrencyCart } = useMutation(ClearCartDocument);
 
   const { isLoading: loading, execute: signIn } = useAsyncState(
@@ -38,9 +38,9 @@ export function useSignMeIn() {
 
       if (me.value?.me && currencyCode) {
         if (cart.value?.id && cart.value.items?.length) {
-          if (currencyCode !== currentCurencyCode) {
+          if (currencyCode !== currentCurrencyCode) {
             await clearCurrencyCart({
-              command: { userId: me.value.me.id, currencyCode: currentCurencyCode, storeId },
+              command: { userId: me.value.me.id, currencyCode: currentCurrencyCode, storeId },
               skipQuery: false,
             });
           }
@@ -49,11 +49,14 @@ export function useSignMeIn() {
             command: { userId: me.value.me.id, secondCartId: cart.value.id, storeId },
           });
 
-          if (currencyCode !== currentCurencyCode) {
+          if (currencyCode !== currentCurrencyCode) {
             await changeCartCurrency({
               command: {
                 userId: me.value.me.id,
                 newCurrencyCode: currencyCode,
+                storeId,
+                cultureName,
+                currencyCode: currentCurrencyCode,
               },
             });
           }

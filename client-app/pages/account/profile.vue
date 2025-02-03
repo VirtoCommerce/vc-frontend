@@ -82,17 +82,18 @@
 
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/yup";
+import { useMutation } from "@vue/apollo-composable";
 import { useForm } from "vee-validate";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import * as yup from "yup";
-import { useChangeCartCurrencyMutation } from "@/core/api/graphql";
+import { ChangeCartCurrencyDocument } from "@/core/api/graphql/types";
 import { useCurrency, usePageHead, useThemeContext } from "@/core/composables";
 import { useLanguages } from "@/core/composables/useLanguages";
+import { globals } from "@/core/globals";
 import { ProfileUpdateSuccessModal, useUser } from "@/shared/account";
 import { dataChangedEvent, useBroadcast } from "@/shared/broadcast";
 import { useModal } from "@/shared/modal";
-
 const MAX_NAME_LENGTH = 64;
 
 const { t } = useI18n();
@@ -101,8 +102,9 @@ const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const { removeLocaleFromUrl, unpinLocale } = useLanguages();
 const { supportedCurrencies, saveCurrencyCode } = useCurrency();
-const { mutate: changeCartCurrency } = useChangeCartCurrencyMutation();
+const { mutate: changeCartCurrency } = useMutation(ChangeCartCurrencyDocument);
 const broadcast = useBroadcast();
+const { storeId, cultureName } = globals;
 
 usePageHead({
   title: computed(() => t("pages.account.profile.meta.title")),
@@ -145,8 +147,11 @@ async function applyCurrency(): Promise<void> {
   if (user.value?.contact?.currencyCode) {
     await changeCartCurrency({
       command: {
+        storeId,
         userId: user.value.id,
         newCurrencyCode: user.value.contact.currencyCode,
+        cultureName,
+        currencyCode: globals.currencyCode,
       },
     });
 
