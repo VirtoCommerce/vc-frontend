@@ -63,8 +63,8 @@ const menuItems: DeepPartial<MenuType> = {
   },
 };
 
-const Notifications = defineAsyncComponent(() => import("@/modules/push-messages/pages/notifications.vue"));
-const PushMessage = defineAsyncComponent(() => import("@/modules/push-messages/pages/push-message.vue"));
+const Notifications = () => import("@/modules/push-messages/pages/notifications.vue");
+const PushMessage = () => import("@/modules/push-messages/pages/push-message.vue");
 
 const menuLinkCustomElement: ElementType = {
   id: "push-messages",
