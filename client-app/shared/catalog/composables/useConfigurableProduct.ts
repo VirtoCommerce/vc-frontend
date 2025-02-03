@@ -114,9 +114,9 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  const { mutate } = useMutation(CreateConfiguredLineItemDocument);
+  const { mutate: createConfiguredLineItemMutation } = useMutation(CreateConfiguredLineItemDocument);
   const { add: batchedCreateConfiguredLineItem, abort: abortBatchedCreateConfiguredLineItem } = useMutationBatcher(
-    mutate,
+    createConfiguredLineItemMutation,
     {
       mergeStrategy: getMergeStrategyUniqueBy("sectionId"),
     },
