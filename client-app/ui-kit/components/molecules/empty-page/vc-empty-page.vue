@@ -7,7 +7,7 @@
       },
     ]"
     :bg-color="bgColor"
-    :bg-image="bgImage"
+    :has-bg-image="hasBgImage"
   >
     <div class="vc-empty-page__wrapper">
       <VcBreadcrumbs v-if="breadcrumbs?.length" :items="breadcrumbs" class="vc-empty-page__breadcrumbs" />
@@ -44,7 +44,7 @@ export interface IProps {
   breadcrumbs?: IBreadcrumb[];
   hideMobileSide?: boolean;
   bgColor?: string;
-  bgImage?: boolean;
+  hasBgImage?: boolean;
 }
 
 defineProps<IProps>();
