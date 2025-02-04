@@ -111,7 +111,7 @@
 
 <script setup lang="ts">
 import { useSeoMeta } from "@unhead/vue";
-import { useBreakpoints, useElementVisibility } from "@vueuse/core";
+import { useBreakpoints, useElementVisibility, useScriptTag } from "@vueuse/core";
 import { computed, defineAsyncComponent, ref, shallowRef, toRef, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _productTemplate from "@/config/product.json";
@@ -154,6 +154,8 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
+
+useScriptTag("https://vc-ai-assistant.ambitiouswave-a4bade76.westus2.azurecontainerapps.io/public/virto-assistant.js");
 
 interface IProps {
   productId?: string;
