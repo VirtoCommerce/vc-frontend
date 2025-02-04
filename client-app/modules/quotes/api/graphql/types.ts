@@ -137,7 +137,7 @@ export type Category = {
   imgSrc?: Maybe<Scalars['String']['output']>;
   /** Level in hierarchy */
   level: Scalars['Int']['output'];
-  /** Name of category. */
+  /** The name of the category. */
   name: Scalars['String']['output'];
   /** All parent categories ids relative to the requested catalog and concatenated with \ . E.g. (1/21/344) */
   outline?: Maybe<Scalars['String']['output']>;
@@ -300,11 +300,6 @@ export type DynamicPropertyType = {
   name: Scalars['String']['output'];
   /** Object type */
   objectType: Scalars['String']['output'];
-  /**
-   * Value type
-   * @deprecated Use dynamicPropertyValueType instead
-   */
-  valueType: Scalars['String']['output'];
 };
 
 
@@ -373,8 +368,6 @@ export type ImageType = {
 export type InputDynamicPropertyValueType = {
   /** Culture name ("en-US") for multilingual property */
   cultureName?: InputMaybe<Scalars['String']['input']>;
-  /** Language ("en-US") for multilingual property */
-  locale?: InputMaybe<Scalars['String']['input']>;
   /** Dynamic property name */
   name: Scalars['String']['input'];
   /** Dynamic property value. ID must be passed for dictionary item */
@@ -596,16 +589,6 @@ export type PriceType = {
   startDate?: Maybe<Scalars['DateTime']['output']>;
   /** Tier prices */
   tierPrices: Array<TierPriceType>;
-  /**
-   * Valid from
-   * @deprecated startDate
-   */
-  validFrom?: Maybe<Scalars['DateTime']['output']>;
-  /**
-   * Valid until
-   * @deprecated endDate
-   */
-  validUntil?: Maybe<Scalars['DateTime']['output']>;
 };
 
 /** Products are the sellable goods in an e-commerce project. */
@@ -790,28 +773,12 @@ export type Property = {
   multivalue: Scalars['Boolean']['output'];
   /** The name of the property. */
   name: Scalars['String']['output'];
-  /** @deprecated Use propertyDictionaryItems instead. */
-  propertyDictItems?: Maybe<PropertyDictionaryItemConnection>;
   propertyDictionaryItems?: Maybe<PropertyDictionaryItemConnection>;
   propertyType: PropertyType;
   /** ValueType of the property. */
   propertyValueType: PropertyValueTypes;
-  /** @deprecated Use propertyType instead. */
-  type: Scalars['String']['output'];
   value?: Maybe<Scalars['PropertyValue']['output']>;
   valueId?: Maybe<Scalars['String']['output']>;
-  /**
-   * ValueType of the property.
-   * @deprecated Use propertyValueType instead.
-   */
-  valueType: Scalars['String']['output'];
-};
-
-
-/** Products attributes. */
-export type PropertyPropertyDictItemsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -923,8 +890,6 @@ export type QuoteAddressType = {
 
 export type QuoteAttachmentType = {
   contentType?: Maybe<Scalars['String']['output']>;
-  /** @deprecated Use ContentType */
-  mimeType?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   size: Scalars['Long']['output'];
   url: Scalars['String']['output'];
@@ -1133,7 +1098,7 @@ export type VariationType = {
   /** The type of product */
   productType?: Maybe<Scalars['String']['output']>;
   properties: Array<Property>;
-  /** Product raiting */
+  /** Product rating */
   rating?: Maybe<Rating>;
   /** Request related slug for product */
   slug?: Maybe<Scalars['String']['output']>;

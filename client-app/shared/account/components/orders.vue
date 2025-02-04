@@ -9,11 +9,28 @@
       </MobileOrdersFilter>
 
       <template #footer>
-        <VcButton :disabled="isFilterEmpty && !isFilterDirty" variant="outline" @click="resetOrderFilters">
-          {{ $t("common.buttons.reset") }}
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          class="me-auto"
+          color="secondary"
+          variant="outline"
+          size="sm"
+          icon="reset"
+          :title="$t('common.buttons.reset')"
+          @click="resetOrderFilters"
+        />
+
+        <VcButton
+          :disabled="isFilterEmpty && !isFilterDirty"
+          variant="outline"
+          size="sm"
+          min-width="6.25rem"
+          @click="hideFilters"
+        >
+          {{ $t("common.buttons.cancel") }}
         </VcButton>
 
-        <VcButton :disabled="!isFilterDirty" @click="applyOrderFilters">
+        <VcButton :disabled="!isFilterDirty" size="sm" min-width="6.25rem" @click="applyOrderFilters">
           {{ $t("common.buttons.apply") }}
         </VcButton>
       </template>
@@ -41,21 +58,18 @@
         </VcButton>
 
         <!-- Desktop filters dropdown -->
-        <div
+        <OrdersFilter
           v-if="filtersVisible && !isMobile"
           ref="filtersDropdownElement"
-          class="absolute right-0 z-[1] mt-2 rounded border bg-additional-50 p-6 shadow-lg"
+          class="absolute right-0 z-[1] mt-2"
+          @apply="applyOrderFilters"
+          @reset="resetOrderFilters"
+          @close="hideFilters"
         >
-          <button type="button" class="absolute right-0 top-0 appearance-none px-4 py-3 align-top" @click="hideFilters">
-            <VcIcon class="fill-danger" name="delete-thin" :size="18" />
-          </button>
-
-          <OrdersFilter @apply="applyOrderFilters" @reset="resetOrderFilters">
-            <template #dateFilterType>
-              <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
-            </template>
-          </OrdersFilter>
-        </div>
+          <template #dateFilterType>
+            <DateFilterSelect :date-filter-type="selectedDateFilterType" @change="handleOrdersFilterChange" />
+          </template>
+        </OrdersFilter>
       </div>
 
       <div class="flex grow">

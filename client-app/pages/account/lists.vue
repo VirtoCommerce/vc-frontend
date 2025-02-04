@@ -48,11 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { usePageHead } from "@/core/composables";
+import { usePageHead, useThemeContext } from "@/core/composables";
 import { DEFAULT_WISHLIST_LIMIT } from "@/core/constants";
-import { configInjectionKey } from "@/core/injection-keys";
 import { useModal } from "@/shared/modal";
 import {
   AddOrUpdateWishlistModal,
@@ -65,6 +64,7 @@ import {
 import type { WishlistScopeType, WishlistType } from "@/core/api/graphql/types";
 
 const { t } = useI18n();
+const { themeContext } = useThemeContext();
 const { openModal } = useModal();
 const { loading, lists, fetchWishlists, updateWishlist } = useWishlists();
 
@@ -72,8 +72,7 @@ usePageHead({
   title: t("pages.account.lists.meta.title"),
 });
 
-const config = inject(configInjectionKey);
-const listsLimit = config?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
+const listsLimit = themeContext.value?.settings?.wishlists_limit || DEFAULT_WISHLIST_LIMIT;
 
 const creationButtonDisabled = computed(() => lists.value.length >= listsLimit);
 
