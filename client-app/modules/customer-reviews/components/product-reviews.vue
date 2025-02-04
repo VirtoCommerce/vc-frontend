@@ -46,20 +46,42 @@
             {{ review.review }}
           </div>
 
-          <div v-if="review.images?.length" class="image-gallery__thumbs-container">
+          <div v-if="review.images?.length" :id="`images_${review.id}`" class="flex items-center justify-between">
+            <VcNavButton
+              v-if="review.images.length > displayedReviewImagesCount"
+              :label="$t('common.buttons.previous')"
+              size="xs"
+              direction="left"
+              data-nav-prev
+            />
+
             <Swiper
-              :slides-per-view="MAX_REVIEW_IMAGES_COUNT"
-              :slides-per-group="MAX_REVIEW_IMAGES_COUNT"
+              :slides-per-view="displayedReviewImagesCount"
+              :slides-per-group="displayedReviewImagesCount"
               :thumbs="{ swiper: imagesSwiper }"
               :modules="swiperModules"
-              class="image-gallery__thumbs mx-0"
+              :navigation="{
+                prevEl: `#images_${review.id} [data-nav-prev]`,
+                nextEl: `#images_${review.id} [data-nav-next]`,
+              }"
+              class="mx-0 w-full p-1"
               data-te-lightbox-init
+              watch-slides-progress
+              loop
               @swiper="setImagesSwiper"
             >
-              <SwiperSlide v-for="(image, index) in review.images" :key="index" class="image-gallery__thumb">
+              <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
                 <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
               </SwiperSlide>
             </Swiper>
+
+            <VcNavButton
+              v-if="review.images.length > displayedReviewImagesCount"
+              :label="$t('common.buttons.next')"
+              size="xs"
+              direction="right"
+              data-nav-next
+            />
           </div>
         </div>
       </div>
@@ -150,13 +172,14 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 import { Navigation, Thumbs } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { onActivated, ref, toRef } from "vue";
+import { computed, onActivated, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { useFiles } from "@/shared/files";
-import { DEFAULT_REVIEW_IMAGES_SCOPE, MAX_REVIEW_IMAGES_COUNT } from "../constants";
+import { DEFAULT_REVIEW_IMAGES_SCOPE } from "../constants";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
 import ReviewRating from "./review-rating.vue";
@@ -178,6 +201,9 @@ const {
   uploadFiles,
   removeFiles,
 } = useFiles(DEFAULT_REVIEW_IMAGES_SCOPE);
+const { fetching, pagesCount, pageNumber, reviews, canLeaveFeedback, createCustomerReview, fetchCustomerReviews } =
+  useCustomerReviews();
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 interface IProps {
   productId: string;
@@ -195,9 +221,6 @@ const sortByDateItems = [
   },
 ];
 
-const { fetching, pagesCount, pageNumber, reviews, canLeaveFeedback, createCustomerReview, fetchCustomerReviews } =
-  useCustomerReviews();
-
 const productId = toRef(props, "productId");
 
 const sortByDate = ref(sortByDateItems[0].id);
@@ -214,6 +237,10 @@ const productReviewsPayload = ref({
 });
 const imagesSwiper = ref<SwiperCore | null>(null);
 const swiperModules = [Navigation, Thumbs];
+
+const isMobile = breakpoints.smaller("lg");
+
+const displayedReviewImagesCount = computed(() => (isMobile.value ? 2 : 5));
 
 async function changeSortByDate(value: string): Promise<void> {
   productReviewsPayload.value.page = 1;
