@@ -203,7 +203,7 @@ async function sendPaymentData() {
   if (!isValidBankCard.value) {
     return;
   }
-
+  loading.value = true;
   try {
     const token = await createToken({
       // cardholderName is optional for cybersource
@@ -232,6 +232,8 @@ async function sendPaymentData() {
   } catch (e) {
     Logger.error(sendPaymentData.name, e);
     emit("fail");
+  } finally {
+    loading.value = false;
   }
 }
 
