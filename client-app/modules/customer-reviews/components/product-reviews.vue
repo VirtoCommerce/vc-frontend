@@ -175,7 +175,11 @@ import { computed, onActivated, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
 import { useFiles } from "@/shared/files";
-import { DEFAULT_REVIEW_IMAGES_SCOPE } from "../constants";
+import {
+  DEFAULT_DESKTOP_DISPLAY_SLIDES_PER_REVIEW,
+  DEFAULT_MOBILE_DISPLAY_SLIDES_PER_REVIEW,
+  DEFAULT_REVIEW_IMAGES_SCOPE,
+} from "../constants";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
 import ReviewRating from "./review-rating.vue";
@@ -237,7 +241,9 @@ const swiperModules = [Navigation, Thumbs];
 
 const isMobile = breakpoints.smaller("lg");
 
-const displayedReviewImagesCount = computed(() => (isMobile.value ? 2 : (imageOptions.value?.maxFileCount ?? 5)));
+const displayedReviewImagesCount = computed(() =>
+  isMobile.value ? DEFAULT_MOBILE_DISPLAY_SLIDES_PER_REVIEW : DEFAULT_DESKTOP_DISPLAY_SLIDES_PER_REVIEW,
+);
 
 async function changeSortByDate(value: string): Promise<void> {
   productReviewsPayload.value.page = 1;
