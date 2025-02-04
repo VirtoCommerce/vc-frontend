@@ -33,12 +33,12 @@
         :title="$t('pages.company.info.labels.company_logo')"
         size="lg"
       >
-        <div class="relative flex gap-4 max-md:block">
+        <div class="flex gap-4 max-md:flex-col-reverse">
           <VcImage
-            v-if="logoUrl"
+            v-if="newLogoUrl"
             :alt="$t('pages.company.info.labels.company_logo')"
-            :src="logoUrl"
-            class="mb-4 h-[4.375rem] w-[5.875rem] object-cover"
+            :src="newLogoUrl"
+            class="h-8 self-start object-contain xl:h-[2.8rem]"
           />
 
           <div class="grow">
@@ -52,12 +52,11 @@
               @remove-files="onRemoveFiles"
             />
           </div>
-
+        </div>
+        <div class="mt-0 flex justify-end md:mt-4">
           <VcButton
-            v-if="logoUrl"
-            :disabled="!logoUrl"
+            :disabled="isSaveLogoDisabled || !newLogoUrl"
             :loading="loadingOrganizationLogo"
-            class="absolute bottom-0 left-0 mt-4 max-md:relative"
             min-width="4.375rem"
             size="sm"
             variant="outline"
@@ -304,7 +303,7 @@ import { useField } from "vee-validate";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { string } from "yup";
-import { usePageHead } from "@/core/composables";
+import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
 import {
@@ -335,7 +334,9 @@ const {
   fetchOptions: fetchFileOptions,
   options: fileOptions,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
-const logoUrl = ref<string>("");
+const { logoUrl } = useWhiteLabeling();
+const newLogoUrl = ref<string>(logoUrl.value || "");
+const isSaveLogoDisabled = ref(true);
 
 usePageHead({
   title: t("pages.company.info.meta.title"),
@@ -440,7 +441,8 @@ async function saveOrganizationName(): Promise<void> {
 }
 
 async function saveOrganizationLogo(): Promise<void> {
-  await updateLogo(organizationId.value, logoUrl.value);
+  await updateLogo(organizationId.value, newLogoUrl.value);
+  isSaveLogoDisabled.value = true;
   notifications.success({
     text: t("common.messages.logo_changed"),
     duration: 10000,
@@ -515,12 +517,14 @@ async function onAddFiles(items: INewFile[]) {
   addFiles(items);
   validateFiles();
   await uploadFiles();
-  logoUrl.value = uploadedFiles.value.map((attachment) => attachment.url)[0];
+  newLogoUrl.value = uploadedFiles.value.map((attachment) => attachment.url)[0];
+  isSaveLogoDisabled.value = false;
 }
 
 async function onRemoveFiles(items: FileType[]) {
   await removeFiles(items);
-  logoUrl.value = "";
+  newLogoUrl.value = logoUrl.value || "";
+  isSaveLogoDisabled.value = true;
 }
 
 function onFileDownload(file: FileType) {
