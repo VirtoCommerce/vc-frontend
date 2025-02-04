@@ -227,6 +227,7 @@ import {
   whenever,
 } from "@vueuse/core";
 import { computed, ref, shallowRef, toRef, toRefs, watch } from "vue";
+import { useRoute } from "vue-router";
 import { useBreadcrumbs, useAnalytics, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { BREAKPOINTS, DEFAULT_PAGE_SIZE, PRODUCT_SORTING_LIST } from "@/core/constants";
@@ -242,6 +243,7 @@ import {
   getFilterExpressionFromFacets,
 } from "@/core/utilities";
 import { useCategorySeo } from "@/shared/catalog/composables/useCategorySeo";
+import { useSlugInfo } from "@/shared/common";
 import { useCategory, useProducts } from "../composables";
 import CategorySelector from "./category-selector.vue";
 import ProductsFilters from "./products-filters.vue";
@@ -346,9 +348,25 @@ const hideViewModeSelector = computed(() => {
 const categoryComponentAnchor = shallowRef<HTMLElement | null>(null);
 const categoryComponentAnchorIsVisible = useElementVisibility(categoryComponentAnchor);
 
+const route = useRoute();
+const { objectType, slugInfo } = useSlugInfo(route.path.slice(1));
+
 useCategorySeo({ category: currentCategory, allowSetMeta, categoryComponentAnchorIsVisible });
 
-const breadcrumbs = useBreadcrumbs(() => buildBreadcrumbs(currentCategory.value?.breadcrumbs));
+const breadcrumbs = useBreadcrumbs(() =>
+  buildBreadcrumbs(
+    objectType.value === "Catalog" && !!slugInfo.value?.entityInfo
+      ? [
+          {
+            itemId: slugInfo.value.entityInfo.id,
+            semanticUrl: slugInfo.value.entityInfo.semanticUrl,
+            title: slugInfo.value.entityInfo.pageTitle ?? slugInfo.value.entityInfo.semanticUrl,
+            typeName: objectType.value,
+          },
+        ]
+      : currentCategory.value?.breadcrumbs,
+  ),
+);
 const categoryProductsAnchor = shallowRef<HTMLElement | null>(null);
 
 const searchParams = computedEager<ProductsSearchParamsType>(() => ({
