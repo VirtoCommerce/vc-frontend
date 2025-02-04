@@ -46,29 +46,25 @@
             {{ review.review }}
           </div>
 
-          <div v-if="review.images?.length" :id="`images_${review.id}`" class="flex items-center justify-between">
+          <div v-if="review.images?.length" class="flex items-center justify-between">
             <VcNavButton
               v-if="review.images.length > displayedReviewImagesCount"
+              :id="`images_${review.id}_prev`"
               :label="$t('common.buttons.previous')"
               size="xs"
               direction="left"
-              data-nav-prev
             />
 
             <Swiper
               :slides-per-view="displayedReviewImagesCount"
-              :slides-per-group="displayedReviewImagesCount"
               :thumbs="{ swiper: imagesSwiper }"
               :modules="swiperModules"
               :navigation="{
-                prevEl: `#images_${review.id} [data-nav-prev]`,
-                nextEl: `#images_${review.id} [data-nav-next]`,
+                prevEl: `#images_${review.id}_prev`,
+                nextEl: `#images_${review.id}_next`,
               }"
               class="mx-0 w-full p-1"
               data-te-lightbox-init
-              watch-slides-progress
-              loop
-              @swiper="setImagesSwiper"
             >
               <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
                 <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
@@ -77,10 +73,10 @@
 
             <VcNavButton
               v-if="review.images.length > displayedReviewImagesCount"
+              :id="`images_${review.id}_next`"
               :label="$t('common.buttons.next')"
               size="xs"
               direction="right"
-              data-nav-next
             />
           </div>
         </div>
@@ -196,6 +192,7 @@ const {
   files,
   options: imageOptions,
   uploadedFiles: uploadedReviewImages,
+  fetchOptions: fetchImageUploadOptions,
   addFiles,
   validateFiles,
   uploadFiles,
@@ -240,7 +237,7 @@ const swiperModules = [Navigation, Thumbs];
 
 const isMobile = breakpoints.smaller("lg");
 
-const displayedReviewImagesCount = computed(() => (isMobile.value ? 2 : 5));
+const displayedReviewImagesCount = computed(() => (isMobile.value ? 2 : (imageOptions.value?.maxFileCount ?? 5)));
 
 async function changeSortByDate(value: string): Promise<void> {
   productReviewsPayload.value.page = 1;
@@ -286,16 +283,16 @@ async function onRemoveFiles(items: FileType[]): Promise<void> {
   await removeFiles(items);
 }
 
-function setImagesSwiper(swiper: SwiperCore): void {
-  imagesSwiper.value = swiper;
-}
-
 onActivated(async () => {
   await fetchCustomerReviews(productReviewsPayload.value);
 
   if (isAuthenticated.value) {
     feedbackAvailable.value = await canLeaveFeedback(props.productId, ENTITY_TYPE);
     reviewFormVisible.value = !reviews.value?.length;
+
+    if (feedbackAvailable.value) {
+      await fetchImageUploadOptions();
+    }
   }
 });
 </script>
