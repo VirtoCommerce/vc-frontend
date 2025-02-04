@@ -1,0 +1,26 @@
+query GetBackInStockSubscriptions(
+  $after: String
+  $first: Int
+  $keyword: String
+  $sort: String
+  $storeId: String
+  $productIds: [String]
+  $isActive: Boolean
+) {
+  backInStockSubscriptions(
+    after: $after
+    first: $first
+    keyword: $keyword
+    sort: $sort
+    storeId: $storeId
+    productIds: $productIds
+    isActive: $isActive
+  ) {
+    items {
+      id
+      isActive
+      productId
+    }
+    totalCount
+  }
+}

@@ -11,6 +11,7 @@ import { setGlobals } from "@/core/globals";
 import { applicationInsightsPlugin, authPlugin, configPlugin, contextPlugin, permissionsPlugin } from "@/core/plugins";
 import { extractHostname, getBaseUrl, Logger } from "@/core/utilities";
 import { createI18n } from "@/i18n";
+import { init as initModuleBackInStock } from "@/modules/back-in-stock";
 import { init as initCustomerReviews } from "@/modules/customer-reviews";
 import { init as initializeGoogleAnalytics } from "@/modules/google-analytics";
 import { initialize as initializePurchaseRequests } from "@/modules/purchase-requests";
@@ -131,6 +132,7 @@ export default async () => {
   await fetchWhiteLabelingSettings();
   void initPushNotifications(router, i18n);
   void initModuleQuotes(router, i18n);
+  void initModuleBackInStock(router, i18n);
   void initCustomerReviews(i18n);
   void initializePurchaseRequests(router, i18n);
   void initializeGoogleAnalytics();
@@ -173,6 +175,19 @@ export default async () => {
   Object.entries(ProductBlocks).forEach(([name, component]) => app.component(name, component));
 
   await router.isReady();
+
+  app.config.warnHandler = (msg, _, trace) => {
+    // to remove builder.io warnings
+    if (
+      msg.includes('Failed setting prop "attributes" on <div>: value [object Object] is invalid.') ||
+      msg.includes(
+        "Extraneous non-props attributes (attributes) were passed to component but could not be automatically inherited because component renders fragment or text root nodes",
+      )
+    ) {
+      return;
+    }
+    Logger.warn(msg, trace);
+  };
 
   app.mount(appElement);
 };
