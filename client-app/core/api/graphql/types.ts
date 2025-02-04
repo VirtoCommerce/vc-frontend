@@ -1149,8 +1149,8 @@ export type Facet = {
 export type FacetRangeType = {
   /** Amount of products for which the values in a field fall into the specified range */
   count: Scalars['Long']['output'];
-  /** The range’s lower endpoint in number format, 0 represents infinity */
-  from: Scalars['Long']['output'];
+  /** The range’s lower endpoint in number format */
+  from?: Maybe<Scalars['Decimal']['output']>;
   /** The range’s lower endpoint in string format, empty string represents infinity */
   fromStr?: Maybe<Scalars['String']['output']>;
   /** The flag indicates that From exclusive */
@@ -1162,11 +1162,11 @@ export type FacetRangeType = {
   /** Localization label */
   label: Scalars['String']['output'];
   /** Maximum value among all values contained within the range */
-  max: Scalars['Long']['output'];
+  max: Scalars['Decimal']['output'];
   /** Minimum value among all values contained within the range */
-  min: Scalars['Long']['output'];
-  /** The range’s upper endpoint in number format, 0 represents infinity */
-  to: Scalars['Long']['output'];
+  min: Scalars['Decimal']['output'];
+  /** The range’s upper endpoint in number format */
+  to?: Maybe<Scalars['Decimal']['output']>;
   /** The range’s upper endpoint in string format, empty string represents infinity */
   toStr?: Maybe<Scalars['String']['output']>;
   /** Sum of all values contained in the range */
@@ -6660,7 +6660,7 @@ export type SearchProductsQueryVariables = Exact<{
 }>;
 
 
-export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, packSize: number, inWishlist: boolean, productType?: string, isConfigurable: boolean, hasVariations: boolean, slug?: string, outline?: string, imgSrc?: string, vendor?: { id: string, name: string }, variations: Array<{ id: string, price: { list: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, actual: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } }>, images?: Array<{ url: string }>, description?: { content?: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, price: { discountPercent: number, actual: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountAmount: { amount: number, formattedAmount: string }, sale: { amount: number, formattedAmount: string }, list: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, minVariationPrice?: { actual: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, rating?: { value: number, reviewCount: number } }>, term_facets?: Array<{ name: string, label: string, terms: Array<{ label: string, term: string, count: number, isSelected: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges: Array<{ label: string, count: number, from: number, to: number, includeFrom: boolean, includeTo: boolean, isSelected: boolean }> }> } };
+export type SearchProductsQuery = { products?: { totalCount?: number, items?: Array<{ name: string, id: string, code: string, minQuantity?: number, maxQuantity?: number, packSize: number, inWishlist: boolean, productType?: string, isConfigurable: boolean, hasVariations: boolean, slug?: string, outline?: string, imgSrc?: string, vendor?: { id: string, name: string }, variations: Array<{ id: string, price: { list: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, actual: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } } }>, images?: Array<{ url: string }>, description?: { content?: string }, availabilityData: { isActive: boolean, isAvailable: boolean, isBuyable: boolean, isInStock: boolean, availableQuantity: number }, price: { discountPercent: number, actual: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } }, discountAmount: { amount: number, formattedAmount: string }, sale: { amount: number, formattedAmount: string }, list: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, minVariationPrice?: { actual: { amount: number, formattedAmount: string, formattedAmountWithoutCurrency: string, currency: { code: string, symbol: string } } }, properties: Array<{ name: string, value?: string | number | boolean | null, propertyType: PropertyType, hidden: boolean, propertyValueType: PropertyValueTypes, label: string, displayOrder?: number }>, rating?: { value: number, reviewCount: number } }>, term_facets?: Array<{ name: string, label: string, terms: Array<{ label: string, term: string, count: number, isSelected: boolean }> }>, range_facets?: Array<{ name: string, label: string, ranges: Array<{ label: string, count: number, from?: number, to?: number, includeFrom: boolean, includeTo: boolean, isSelected: boolean }> }> } };
 
 export type GetProductRecommendationsQueryVariables = Exact<{
   storeId: Scalars['String']['input'];
