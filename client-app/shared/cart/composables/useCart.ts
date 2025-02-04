@@ -309,9 +309,11 @@ export function _useFullCart() {
   }
 
   const { mutate: _clearCart, loading: clearCartLoading, onDone: onClearCartDone } = useMutation(ClearCartDocument);
+
   onClearCartDone(() => resolveClient().cache.gc());
+
   async function clearCart(): Promise<void> {
-    await _clearCart();
+    await _clearCart({ command: { storeId, userId }, skipQuery: false });
   }
 
   const { mutate: _removeItems, loading: removeItemsLoading } = useMutation(RemoveCartItemsDocument);

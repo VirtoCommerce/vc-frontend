@@ -19,8 +19,6 @@ import type {
 } from "@/core/api/graphql/types";
 import type { DeepReadonly, Ref } from "vue";
 
-const { storeId, currencyCode, cultureName, userId } = globals;
-
 type SelectedConfigurationType = {
   productId: string | undefined;
   quantity: number | undefined;
@@ -48,6 +46,7 @@ function _useConfigurableProduct(configurableProductId: string) {
   const fetching: Ref<boolean> = ref(false);
   const creating: Ref<boolean> = ref(false);
   const { cart } = useShortCart();
+  const { storeId, currencyCode, cultureName, userId } = globals;
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
