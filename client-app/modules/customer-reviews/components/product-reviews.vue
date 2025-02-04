@@ -56,6 +56,7 @@
             />
 
             <Swiper
+              v-if="review.images.length > displayedReviewImagesCount"
               :slides-per-view="displayedReviewImagesCount"
               :thumbs="{ swiper: imagesSwiper }"
               :modules="swiperModules"
@@ -70,6 +71,18 @@
                 <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
               </SwiperSlide>
             </Swiper>
+
+            <div v-else class="flex w-full items-center justify-between gap-2" data-te-lightbox-init>
+              <VcImage
+                v-for="image in review.images"
+                :key="image.id"
+                :src="image.url"
+                :alt="$t('common.labels.product_review_image')"
+                class="w-1/6 cursor-pointer"
+                size-suffix="sm"
+                lazy
+              />
+            </div>
 
             <VcNavButton
               v-if="review.images.length > displayedReviewImagesCount"
