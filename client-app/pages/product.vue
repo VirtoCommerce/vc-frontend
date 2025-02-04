@@ -155,7 +155,9 @@ const props = withDefaults(defineProps<IProps>(), {
 const ProductReviews = defineAsyncComponent(() => import("@/modules/customer-reviews/components/product-reviews.vue"));
 const Error404 = defineAsyncComponent(() => import("@/pages/404.vue"));
 
-useScriptTag("https://vc-ai-assistant.ambitiouswave-a4bade76.westus2.azurecontainerapps.io/public/virto-assistant.js");
+useScriptTag("https://localhost:8000/public/virto-assistant.js", undefined, {
+  type: "module",
+});
 
 interface IProps {
   productId?: string;
