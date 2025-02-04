@@ -1,0 +1,31 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "Are you sure you want to unsubscribe from “{productName}” in stock notifications?",
+      "title": "Confirm Delete"
+    },
+    "list_details": {
+      "empty_list": "Your list is empty",
+      "empty_list_button": "Continue browsing"
+    },
+    "messages": {
+      "click_to_receive_alert": "Click to receive an alert",
+      "notify_me_when_in_stock": "Notify me when in stock",
+      "you_are_subscribed": "You’re subscribed! We’ll let you know when it’s back in stock.",
+      "you_will_be_notified": "You'll be notified"
+    },
+    "navigation": {
+      "route_name": "Back-in-Stock List"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Back-in-Stock List"
+      },
+      "reset_search": "Reset search",
+      "search_button": "Search",
+      "search_placeholder": "User search"
+    }
+  }
+}

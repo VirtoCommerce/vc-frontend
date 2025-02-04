@@ -91,6 +91,7 @@ const emit = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   errors: () => ({}),
 });
+const EXPIRATION_DATE_DIVIDER = " / ";
 
 interface IEmits {
   (event: "update:modelValue", bankCardData: Partial<BankCardType>): void;
@@ -162,14 +163,22 @@ const [month] = defineField("month");
 const [year] = defineField("year");
 const [securityCode] = defineField("securityCode");
 
-const expirationDate = computed({
-  get: () =>
-    (month.value && month.value.length > 1) || year.value ? `${month.value ?? "  "} / ${year.value}` : month.value,
+const expirationDate = computed<string | undefined, string>({
+  get: (previousValue) => {
+    const isMonthComplete = !!month.value && month.value.length === 2;
+    const isRemovingYear = !year.value && previousValue?.includes("/");
+    const showDivider = (isMonthComplete && !isRemovingYear) || year.value;
+    return showDivider ? `${month.value ?? "  "}${EXPIRATION_DATE_DIVIDER}${year.value}` : month.value;
+  },
   set: (value) => {
     if (value) {
-      const [rawMonth = "", rawYear = ""] = value.split(/\s*\/\s*/);
+      const rawMonth = value.slice(0, 2);
+      const rawYear = value.includes("/") ? value.split("/")[1].trim() : value.slice(2, 4);
       month.value = rawMonth;
       year.value = rawYear;
+    } else {
+      month.value = "";
+      year.value = "";
     }
   },
 });

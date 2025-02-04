@@ -1,0 +1,31 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "Czy na pewno chcesz zrezygnować z powiadomień o dostępności produktu „{productName}”?",
+      "title": "Potwierdź usunięcie"
+    },
+    "list_details": {
+      "empty_list": "Twoja lista jest pusta",
+      "empty_list_button": "Kontynuuj przeglądanie"
+    },
+    "messages": {
+      "click_to_receive_alert": "Kliknij, aby otrzymać powiadomienie",
+      "notify_me_when_in_stock": "Powiadom mnie o dostępności",
+      "you_are_subscribed": "Jesteś zapisany! Poinformujemy Cię, gdy produkt będzie ponownie dostępny.",
+      "you_will_be_notified": "Zostaniesz powiadomiony"
+    },
+    "navigation": {
+      "route_name": "Lista powiadomień o dostępności"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Lista powiadomień o dostępności"
+      },
+      "reset_search": "Resetuj wyszukiwanie",
+      "search_button": "Szukaj",
+      "search_placeholder": "Wyszukiwanie użytkownika"
+    }
+  }
+}

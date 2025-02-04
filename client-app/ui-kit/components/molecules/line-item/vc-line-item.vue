@@ -388,7 +388,8 @@ watchEffect(() => {
         .add-to-cart,
         * .add-to-cart,
         .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
-        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button)
+        * .vc-add-to-cart:not(.vc-add-to-cart--hide-button),
+        .vc-product-button
       ) {
       @apply w-full;
 

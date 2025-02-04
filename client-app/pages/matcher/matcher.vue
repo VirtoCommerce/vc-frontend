@@ -3,7 +3,7 @@
     <SlugContent
       v-if="previewers.slugContent.isActive"
       :is-visible="visibleComponent === 'slugContent'"
-      :path-match="pathMatch || ['/']"
+      :path-match="computedPathMatch"
       @set-state="updateState($event, 'slugContent')"
     />
 
@@ -36,10 +36,10 @@ import type { StateType, PreviewerStateType } from "./priorityManager";
 import NotFound from "@/pages/404.vue";
 
 interface IProps {
-  pathMatch?: string[];
+  pathMatch?: string | string[];
 }
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
 
 const DEFAULT_PRIORITIES = {
   builderIo: 1,
@@ -100,6 +100,13 @@ function updateState(state: StateType, previewerId: PreviewerStateType["id"]) {
     previewers.value[previewerId].state = state;
   }
 }
+
+const computedPathMatch = computed<string[]>(() => {
+  if (Array.isArray(props.pathMatch)) {
+    return props.pathMatch;
+  }
+  return ["/"];
+});
 
 watch(
   viewQueryParam,
