@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { readonly, ref } from "vue";
+import { shallowReadonly, shallowRef } from "vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { DefineComponent } from "vue";
 
@@ -10,7 +10,7 @@ export type ElementType = {
 };
 
 function _useCustomMobileMenuLinkComponents() {
-  const customLinkComponents = ref<{ [key: ElementType["id"]]: ElementType["component"] }>({});
+  const customLinkComponents = shallowRef<{ [key: ElementType["id"]]: ElementType["component"] }>({});
 
   function registerCustomLinkComponent(element: ElementType) {
     if (!customLinkComponents.value[element.id]) {
@@ -19,7 +19,7 @@ function _useCustomMobileMenuLinkComponents() {
   }
 
   return {
-    customLinkComponents: readonly(customLinkComponents),
+    customLinkComponents: shallowReadonly(customLinkComponents),
     registerCustomLinkComponent,
   };
 }

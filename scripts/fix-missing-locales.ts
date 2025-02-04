@@ -9,6 +9,10 @@ import type { LocaleDataType } from "./check-locales-missing-keys";
 const PREFIX = "[FIX_LOCALES_UTILITY]";
 const DELAY_BETWEEN_TRANSLATIONS_MS = 4000;
 
+function shouldTranslate(text: string) {
+  return !text.startsWith("@:") && !text.startsWith("@:{");
+}
+
 export async function fixLocales() {
   const missingKeys = getMissingKeys();
   if (missingKeys.length === 0) {
@@ -48,7 +52,9 @@ export async function fixLocales() {
       const originLanguage = originFile.split(".")[0];
       const targetLanguage = targetFile.split(".")[0];
 
-      const translatedString = await translate(originString, originLanguage, targetLanguage);
+      const translatedString = shouldTranslate(originString)
+        ? await translate(originString, originLanguage, targetLanguage)
+        : originString;
 
       const tableRow = `${key} (${index + 1}/${missingKeys.length})`;
       console.table({
@@ -57,7 +63,9 @@ export async function fixLocales() {
       });
 
       set(targetFileContent, key, translatedString);
-      await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_TRANSLATIONS_MS)); // delay to avoid API rate limits
+      if (shouldTranslate(originString)) {
+        await new Promise((resolve) => setTimeout(resolve, DELAY_BETWEEN_TRANSLATIONS_MS)); // delay to avoid API rate limits
+      }
     } catch (error) {
       console.error(
         `${PREFIX} Error translating ${key}:`,
