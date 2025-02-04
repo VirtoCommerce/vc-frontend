@@ -11,6 +11,9 @@
         size="sm"
         full-width
         :no-wrap="noWrap"
+        :loading="loading"
+        :truncate="truncate"
+        :title="title"
         @click="$emit('linkClick', $event)"
       >
         {{ buttonText }}
@@ -45,6 +48,9 @@ interface IProps {
   color?: string;
   icon?: string;
   noWrap?: boolean;
+  loading?: boolean;
+  truncate?: boolean;
+  title?: string;
 }
 
 defineEmits<IEmits>();

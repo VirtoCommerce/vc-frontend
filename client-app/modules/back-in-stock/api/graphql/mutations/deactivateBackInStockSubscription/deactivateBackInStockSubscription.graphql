@@ -1,0 +1,7 @@
+mutation deactivateBackInStockSubscription($command: DeactivateBackInStockSubscriptionCommandType!) {
+  deactivateBackInStockSubscription(command: $command) {
+    id
+    isActive
+    productId
+  }
+}
