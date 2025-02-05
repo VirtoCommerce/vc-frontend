@@ -66,8 +66,8 @@ export function getFilterExpressionFromFacetRange(
   const firstBracket = includeFrom ? "[" : "(";
   const lastBracket = includeTo ? "]" : ")";
 
-  const fromStr = `${from} `;
-  const toStr = to ? ` ${to}` : "";
+  const fromStr = from != undefined ? `${from} ` : "";
+  const toStr = to != undefined ? ` ${to}` : "";
 
   return `${firstBracket}${fromStr}TO${toStr}${lastBracket}`;
 }
