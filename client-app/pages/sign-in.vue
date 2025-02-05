@@ -8,17 +8,19 @@
       <SignInForm v-if="hasPasswordAuthentication" />
     </div>
 
-    <template #side>
+    <IdentityProviders
+      v-if="hasOnlyIdentityProviders"
+      :providers="identityProviders"
+      class="sign-in__providers sign-in__providers--only"
+    />
+
+    <template v-if="hasIdentityProviders && !hasOnlyIdentityProviders" #side>
       <div class="sign-in__side">
-        <div v-if="hasIdentityProviders && hasPasswordAuthentication" class="sign-in__divider">
+        <div class="sign-in__divider">
           {{ $t("pages.sign_in.divider_text") }}
         </div>
 
-        <IdentityProviders
-          v-if="hasIdentityProviders && !hasOnlyIdentityProviders"
-          :providers="identityProviders"
-          class="sign-in__providers"
-        />
+        <IdentityProviders :providers="identityProviders" class="sign-in__providers" />
       </div>
     </template>
   </VcEmptyPage>
@@ -128,6 +130,16 @@ usePageHead({
 
     @media (width > theme("screens.lg")) {
       @apply w-56;
+    }
+
+    &--only {
+      @media (width > theme("screens.md")) {
+        @apply w-[24rem];
+      }
+
+      @media (width > theme("screens.lg")) {
+        @apply mt-8 ms-16;
+      }
     }
   }
 }
