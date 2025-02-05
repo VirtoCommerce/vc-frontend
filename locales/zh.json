@@ -147,7 +147,11 @@
       "date_new_to_old": "日期，从新到旧",
       "date_old_to_new": "日期，从旧到新",
       "comments": "评论",
-      "fields_required": "字段为必填项"
+      "fields_required": "字段为必填项",
+      "support_phone_number": "支持电话号码",
+      "main_menu": "主菜单",
+      "toggle_search_bar": "切换搜索栏",
+      "slider_image": "滑动图像"
     },
     "prefixes": {
       "please": "请",

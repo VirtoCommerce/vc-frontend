@@ -147,7 +147,11 @@
       "date_new_to_old": "Data, do mais recente para o mais antigo",
       "date_old_to_new": "Data, do mais antigo para o mais recente",
       "comments": "Comentários",
-      "fields_required": "Campos obrigatórios"
+      "fields_required": "Campos obrigatórios",
+      "support_phone_number": "Número de telefone de suporte",
+      "main_menu": "Menu principal",
+      "toggle_search_bar": "Alternar barra de pesquisa",
+      "slider_image": "Imagem do slider"
     },
     "prefixes": {
       "please": "Por favor",

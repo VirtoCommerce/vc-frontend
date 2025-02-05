@@ -147,7 +147,11 @@
       "date_new_to_old": "新しい順",
       "date_old_to_new": "古い順",
       "comments": "コメント",
-      "fields_required": "必須項目"
+      "fields_required": "必須項目",
+      "support_phone_number": "サポート電話番号",
+      "main_menu": "メインメニュー",
+      "toggle_search_bar": "検索バーを切り替える",
+      "slider_image": "スライダー画像"
     },
     "prefixes": {
       "please": "お願いします",

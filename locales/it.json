@@ -147,7 +147,11 @@
       "date_new_to_old": "Data, dal nuovo al vecchio",
       "date_old_to_new": "Data, dal vecchio al nuovo",
       "comments": "Commenti",
-      "fields_required": "I campi sono obbligatori"
+      "fields_required": "I campi sono obbligatori",
+      "support_phone_number": "Numero di telefono di supporto",
+      "main_menu": "Menu principale",
+      "toggle_search_bar": "Attiva/Disattiva barra di ricerca",
+      "slider_image": "Immagine del cursore"
     },
     "prefixes": {
       "please": "Per favore",

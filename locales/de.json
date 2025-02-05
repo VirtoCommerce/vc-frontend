@@ -147,7 +147,11 @@
       "date_new_to_old": "Datum, neu bis alt",
       "date_old_to_new": "Datum, alt bis neu",
       "comments": "Kommentare",
-      "fields_required": "Felder sind Pflichtfelder"
+      "fields_required": "Felder sind Pflichtfelder",
+      "support_phone_number": "Support-Telefonnummer",
+      "main_menu": "Hauptmenü",
+      "toggle_search_bar": "Suchleiste umschalten",
+      "slider_image": "Slider-Bild"
     },
     "prefixes": {
       "please": "Bitte",
