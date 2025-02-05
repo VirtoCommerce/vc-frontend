@@ -179,10 +179,10 @@ Each module should export an `init` function that accepts the router and other n
 // modules/your-module/index.ts
 import { Router } from "vue-router";
 import { I18n } from "@/i18n";
-import { defineAsyncComponent } from "vue";
 
 // Define your components
-const YourModulePage = defineAsyncComponent(() => import("./pages/YourModulePage.vue"));
+const YourModulePage = () => import("./pages/YourModulePage.vue");
+// By using () => import('./pages/YourModulePage.vue'), you ensure that Vue Router can handle the component as a lazy-loaded route, which is the intended usage pattern.
 
 export async function init(router: Router, i18n: I18n): Promise<void> {
   const route = {
