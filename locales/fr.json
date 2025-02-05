@@ -146,7 +146,11 @@
       "date_new_to_old": "Date, du nouveau à l’ancien",
       "date_old_to_new": "Date, de l’ancien au nouveau",
       "comments": "Commentaires",
-      "fields_required": "Les champs sont obligatoires"
+      "fields_required": "Les champs sont obligatoires",
+      "support_phone_number": "Numéro de téléphone du support",
+      "main_menu": "Menu principal",
+      "toggle_search_bar": "Basculer la barre de recherche",
+      "slider_image": "Image du curseur"
     },
     "prefixes": {
       "please": "S'il vous plaît",
