@@ -1,4 +1,4 @@
-import type { COLORS } from "../../../constants";
+import type { COLORS } from "@/ui-kit/constants";
 
 declare global {
   type VcBadgeColorType =

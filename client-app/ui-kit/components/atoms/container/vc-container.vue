@@ -18,8 +18,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import bgImageRaw from "../../../images/main-bg.svg?raw";
-import { getColorValue } from "../../../utilities";
+import bgImageRaw from "@/ui-kit/images/main-bg.svg?raw";
+import { getColorValue } from "@/ui-kit/utilities";
 
 interface IProps {
   loading?: boolean;
