@@ -15,7 +15,12 @@
         >
           <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
             <div class="vc-slider__image-wrap">
-              <VcImage :src="item.image" class="vc-slider__image" :lazy="index > 0" />
+              <VcImage
+                :aria-label="item.title ?? $t('common.labels.slider_image')"
+                :lazy="index > 0"
+                :src="item.image"
+                class="vc-slider__image"
+              />
             </div>
             <div v-if="item.title" class="my-3 text-2xl font-bold uppercase">
               {{ item.title }}

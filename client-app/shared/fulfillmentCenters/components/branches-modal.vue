@@ -57,19 +57,13 @@
               {{ $t("shared.catalog.branches_modal.selected_branches") }}
             </div>
 
-            <div
-              class="flex cursor-pointer items-center pl-2"
-              role="button"
-              tabindex="0"
-              @click="clearSelection"
-              @keypress="clearSelection"
-            >
-              <VcIcon name="clear" class="fill-primary" :size="16" />
+            <button class="flex cursor-pointer items-center pl-2" type="button" @click="clearSelection">
+              <VcIcon :size="16" class="fill-primary" name="clear"/>
 
-              <div class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
+              <span class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
                 {{ $t("shared.catalog.branches_modal.clear_selection") }}
-              </div>
-            </div>
+              </span>
+            </button>
           </div>
 
           <transition-group tag="div" name="branch" class="h-[23.8rem] max-h-screen-60 grow overflow-y-auto">

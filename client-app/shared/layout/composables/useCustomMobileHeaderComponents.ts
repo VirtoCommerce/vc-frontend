@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { readonly, ref } from "vue";
+import { shallowReadonly, shallowRef } from "vue";
 import type { DefineComponent } from "vue";
 
 export type ElementType = {
@@ -9,7 +9,7 @@ export type ElementType = {
 };
 
 function _useCustomMobileHeaderComponents() {
-  const customComponents = ref<{ [key: ElementType["id"]]: ElementType["component"] }>({});
+  const customComponents = shallowRef<{ [key: ElementType["id"]]: ElementType["component"] }>({});
 
   function registerCustomComponent(element: ElementType) {
     if (!customComponents.value[element.id]) {
@@ -18,7 +18,7 @@ function _useCustomMobileHeaderComponents() {
   }
 
   return {
-    customComponents: readonly(customComponents),
+    customComponents: shallowReadonly(customComponents),
     registerCustomComponent,
   };
 }

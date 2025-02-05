@@ -1,0 +1,31 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "Êtes-vous sûr de vouloir vous désinscrire des notifications de stock pour « {productName} » ?",
+      "title": "Confirmer la suppression"
+    },
+    "list_details": {
+      "empty_list": "Votre liste est vide",
+      "empty_list_button": "Continuer à naviguer"
+    },
+    "messages": {
+      "click_to_receive_alert": "Cliquez pour recevoir une alerte",
+      "notify_me_when_in_stock": "M'avertir lors de la disponibilité",
+      "you_are_subscribed": "Vous êtes abonné ! Nous vous informerons de son retour en stock.",
+      "you_will_be_notified": "Vous serez notifié"
+    },
+    "navigation": {
+      "route_name": "Liste des retours en stock"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Liste des retours en stock"
+      },
+      "reset_search": "Réinitialiser la recherche",
+      "search_button": "Recherche",
+      "search_placeholder": "Recherche utilisateur"
+    }
+  }
+}
