@@ -1,8 +1,8 @@
 <template>
   <div class="back-in-stock-subscriptions">
-    <BackButtonInHeader v-if="isMobile" @click="$router.back" />
+    <BackButtonInHeader v-if="isMobile" @click="$router.back"/>
 
-    <VcTypography tag="h1" class="back-in-stock-subscriptions__title">
+    <VcTypography class="back-in-stock-subscriptions__title" tag="h1">
       {{ $t("back_in_stock.subscriptions.meta.title") }}
     </VcTypography>
 
@@ -11,27 +11,27 @@
         v-model="keywordInput"
         :disabled="allLoading"
         :placeholder="$t('back_in_stock.subscriptions.search_placeholder')"
-        maxlength="64"
         class="back-in-stock-subscriptions__keyword-input"
+        maxlength="64"
         @keydown.enter="applyKeyword"
       >
         <template #append>
           <button
             v-if="keyword"
             :aria-label="$t('back_in_stock.subscriptions.reset_search')"
-            :title="$t('back_in_stock.subscriptions.reset_search')"
-            type="button"
-            class="flex h-full items-center px-4"
             :disabled="allLoading"
+            :title="$t('back_in_stock.subscriptions.reset_search')"
+            class="flex h-full items-center px-4"
+            type="button"
             @click="resetKeyword"
           >
-            <VcIcon class="text-primary" name="delete-2" size="xs" />
+            <VcIcon class="text-primary" name="delete-2" size="xs"/>
           </button>
 
           <VcButton
             :aria-label="$t('back_in_stock.subscriptions.search_button')"
-            :title="$t('back_in_stock.subscriptions.search_button')"
             :disabled="allLoading"
+            :title="$t('back_in_stock.subscriptions.search_button')"
             icon="search"
             @click="applyKeyword"
           />
@@ -41,16 +41,16 @@
 
     <div ref="listElement">
       <template v-if="allLoading">
-        <ProductSkeletonList v-for="index in actualItemsCount" :key="index" />
+        <ProductSkeletonList v-for="index in actualItemsCount" :key="index"/>
       </template>
 
       <template v-if="subscriptionsProducts.length">
         <VcLineItems
-          class="back-in-stock-subscriptions__list"
           :items="preparedLineItems"
+          class="back-in-stock-subscriptions__list"
           with-image
-          with-properties
           with-price
+          with-properties
           @remove:items="openDeleteProductModal"
         >
           <template #default="{ item }">
@@ -59,30 +59,30 @@
                 item.product && !isProductSubscriptionActive(item.product.id) && item.product.availabilityData.isInStock
               "
             >
-              <AddToCart :product="item.product" />
+              <AddToCart :product="item.product"/>
 
               <div class="back-in-stock-subscriptions__info">
                 <InStock
-                  :is-in-stock="item.availabilityData?.isInStock"
                   :is-available="!item.deleted"
-                  :quantity="item.availabilityData?.availableQuantity"
                   :is-digital="item.productType === ProductType.Digital"
+                  :is-in-stock="item.availabilityData?.isInStock"
+                  :quantity="item.availabilityData?.availableQuantity"
                 />
-                <CountInCart :product-id="item.productId" />
+                <CountInCart :product-id="item.productId"/>
               </div>
             </template>
 
-            <BackInStockNotifyButton v-else-if="item.product" :product="item.product" lazy />
+            <BackInStockNotifyButton v-else-if="item.product" :product="item.product" lazy/>
           </template>
         </VcLineItems>
 
         <VcPagination
           v-if="pagination.pages > 1"
           v-model:page="pagination.page"
-          class="back-in-stock-subscriptions__pagination"
           :pages="Math.min(pagination.pages, PAGE_LIMIT)"
-          :scroll-target="listElement"
           :scroll-offset="60"
+          :scroll-target="listElement"
+          class="back-in-stock-subscriptions__pagination"
         />
       </template>
 
@@ -117,8 +117,8 @@ import { useBackInStockSubscriptions } from "../composables";
 import type { Product } from "@/core/api/graphql/types";
 import type { PreparedLineItemType } from "@/core/types";
 
-const { t } = useI18n();
-const { openModal } = useModal();
+const {t} = useI18n();
+const {openModal} = useModal();
 const {
   fetchSubscriptions,
   fetching: subscriptionsFetching,
@@ -131,8 +131,8 @@ usePageHead({
   title: computed(() => t("back_in_stock.subscriptions.meta.title")),
 });
 
-const { fetchProducts, products, fetchingProducts } = useProducts();
-const { loading: cartLoading, cart } = useShortCart();
+const {fetchProducts, products, fetchingProducts} = useProducts();
+const {loading: cartLoading, cart} = useShortCart();
 const broadcast = useBroadcast();
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -159,7 +159,7 @@ const allLoading = computed<boolean>(() => subscriptionsFetching.value || fetchi
 const actualItemsCount = computed<number>(() => preparedLineItems.value.length || pagination.value.itemsPerPage);
 
 const fetchProductsAndSubscriptions = async () => {
-  await fetchSubscriptions({ keyword: keyword.value });
+  await fetchSubscriptions({keyword: keyword.value});
   await fetchProducts({
     productIds: subscriptions.value.map((item) => item.productId!),
     itemsPerPage: subscriptions.value.length,
@@ -173,13 +173,14 @@ function applyKeyword(): void {
   keyword.value = keywordInput.value;
   pagination.value.page = 1;
 }
+
 function resetKeyword(): void {
   keywordInput.value = "";
   applyKeyword();
 }
 
 function openDeleteProductModal(ids: string[]): void {
-  const item = subscriptionsProducts.value?.find(({ id }) => ids.includes(id));
+  const item = subscriptionsProducts.value?.find(({id}) => ids.includes(id));
   if (!item) {
     return;
   }

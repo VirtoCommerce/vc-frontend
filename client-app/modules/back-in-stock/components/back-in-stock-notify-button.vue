@@ -1,31 +1,31 @@
 <template>
   <VcProductButton
-    color="accent"
-    class="back-in-stock-notify-button"
-    :icon="isProductSubscriptionActive(product.id) ? 'notification' : 'notification-non-active'"
-    :loading="isProductSubscriptionPending(product.id)"
-    no-wrap
-    truncate
-    :title="
-      isProductSubscriptionActive(product.id)
-        ? $t('back_in_stock.messages.you_will_be_notified')
-        : $t('back_in_stock.messages.notify_me_when_in_stock')
-    "
     :button-text="
       isProductSubscriptionActive(product.id)
         ? $t('back_in_stock.messages.you_will_be_notified')
         : $t('back_in_stock.messages.notify_me_when_in_stock')
     "
+    :icon="isProductSubscriptionActive(product.id) ? 'notification' : 'notification-non-active'"
+    :loading="isProductSubscriptionPending(product.id)"
+    :title="
+      isProductSubscriptionActive(product.id)
+        ? $t('back_in_stock.messages.you_will_be_notified')
+        : $t('back_in_stock.messages.notify_me_when_in_stock')
+    "
+    class="back-in-stock-notify-button"
+    color="accent"
+    no-wrap
+    truncate
     @link-click="updateBackInStockSubscription"
   >
     <div v-if="isTextShown" class="back-in-stock-notify-button__text">
-      <VcIcon name="information-circle" size="xs" />
+      <VcIcon name="information-circle" size="xs"/>
       {{ $t("back_in_stock.messages.click_to_receive_alert") }}
     </div>
   </VcProductButton>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, onUnmounted, toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import { DEFAULT_NOTIFICATION_DURATION } from "@/core/constants";
@@ -44,13 +44,14 @@ interface IProps {
   isTextShown?: boolean;
   lazy?: boolean;
 }
+
 const props = defineProps<IProps>();
-const { product } = toRefs(props);
-const { storeId } = globals;
+const {product} = toRefs(props);
+const {storeId} = globals;
 
 const broadcast = useBroadcast();
-const { success } = useNotifications();
-const { t } = useI18n();
+const {success} = useNotifications();
+const {t} = useI18n();
 const {
   activateSubscription,
   deactivateSubscription,

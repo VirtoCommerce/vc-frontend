@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit manually.
 
 import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+
 export type Maybe<T> = T;
 export type InputMaybe<T> = T;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -128,9 +129,161 @@ export type GetBackInStockSubscriptionsQueryVariables = Exact<{
 export type GetBackInStockSubscriptionsQuery = { backInStockSubscriptions?: { totalCount?: number, items?: Array<{ id: string, isActive: boolean, productId: string }> } };
 
 
-export const ActivateBackInStockSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"activateBackInStockSubscription"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ActivateBackInStockSubscriptionCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateBackInStockSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}}]}}]}}]} as unknown as DocumentNode<ActivateBackInStockSubscriptionMutation, ActivateBackInStockSubscriptionMutationVariables>;
-export const DeactivateBackInStockSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deactivateBackInStockSubscription"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"command"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeactivateBackInStockSubscriptionCommandType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deactivateBackInStockSubscription"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"command"},"value":{"kind":"Variable","name":{"kind":"Name","value":"command"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}}]}}]}}]} as unknown as DocumentNode<DeactivateBackInStockSubscriptionMutation, DeactivateBackInStockSubscriptionMutationVariables>;
-export const GetBackInStockSubscriptionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetBackInStockSubscriptions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"productIds"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isActive"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"backInStockSubscriptions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}},{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"keyword"},"value":{"kind":"Variable","name":{"kind":"Name","value":"keyword"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"storeId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"storeId"}}},{"kind":"Argument","name":{"kind":"Name","value":"productIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"productIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"isActive"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isActive"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"productId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}}]}}]}}]} as unknown as DocumentNode<GetBackInStockSubscriptionsQuery, GetBackInStockSubscriptionsQueryVariables>;
+export const ActivateBackInStockSubscriptionDocument = {
+  "kind": "Document",
+  "definitions": [{
+    "kind": "OperationDefinition",
+    "operation": "mutation",
+    "name": {"kind": "Name", "value": "activateBackInStockSubscription"},
+    "variableDefinitions": [{
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "command"}},
+      "type": {
+        "kind": "NonNullType",
+        "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "ActivateBackInStockSubscriptionCommandType"}}
+      }
+    }],
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "activateBackInStockSubscription"},
+        "arguments": [{
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "command"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "command"}}
+        }],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "isActive"}
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "productId"}}]
+        }
+      }]
+    }
+  }]
+} as unknown as DocumentNode<ActivateBackInStockSubscriptionMutation, ActivateBackInStockSubscriptionMutationVariables>;
+export const DeactivateBackInStockSubscriptionDocument = {
+  "kind": "Document",
+  "definitions": [{
+    "kind": "OperationDefinition",
+    "operation": "mutation",
+    "name": {"kind": "Name", "value": "deactivateBackInStockSubscription"},
+    "variableDefinitions": [{
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "command"}},
+      "type": {
+        "kind": "NonNullType",
+        "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "DeactivateBackInStockSubscriptionCommandType"}}
+      }
+    }],
+    "selectionSet": {
+      "kind": "SelectionSet",
+      "selections": [{
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "deactivateBackInStockSubscription"},
+        "arguments": [{
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "command"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "command"}}
+        }],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "isActive"}
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "productId"}}]
+        }
+      }]
+    }
+  }]
+} as unknown as DocumentNode<DeactivateBackInStockSubscriptionMutation, DeactivateBackInStockSubscriptionMutationVariables>;
+export const GetBackInStockSubscriptionsDocument = {
+  "kind": "Document", "definitions": [{
+    "kind": "OperationDefinition",
+    "operation": "query",
+    "name": {"kind": "Name", "value": "GetBackInStockSubscriptions"},
+    "variableDefinitions": [{
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "after"}},
+      "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}
+    }, {
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "first"}},
+      "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "Int"}}
+    }, {
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "keyword"}},
+      "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}
+    }, {
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "sort"}},
+      "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}
+    }, {
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "storeId"}},
+      "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}
+    }, {
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "productIds"}},
+      "type": {"kind": "ListType", "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "String"}}}
+    }, {
+      "kind": "VariableDefinition",
+      "variable": {"kind": "Variable", "name": {"kind": "Name", "value": "isActive"}},
+      "type": {"kind": "NamedType", "name": {"kind": "Name", "value": "Boolean"}}
+    }],
+    "selectionSet": {
+      "kind": "SelectionSet", "selections": [{
+        "kind": "Field",
+        "name": {"kind": "Name", "value": "backInStockSubscriptions"},
+        "arguments": [{
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "after"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "after"}}
+        }, {
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "first"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "first"}}
+        }, {
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "keyword"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "keyword"}}
+        }, {
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "sort"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "sort"}}
+        }, {
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "storeId"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "storeId"}}
+        }, {
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "productIds"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "productIds"}}
+        }, {
+          "kind": "Argument",
+          "name": {"kind": "Name", "value": "isActive"},
+          "value": {"kind": "Variable", "name": {"kind": "Name", "value": "isActive"}}
+        }],
+        "selectionSet": {
+          "kind": "SelectionSet",
+          "selections": [{
+            "kind": "Field",
+            "name": {"kind": "Name", "value": "items"},
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [{"kind": "Field", "name": {"kind": "Name", "value": "id"}}, {
+                "kind": "Field",
+                "name": {"kind": "Name", "value": "isActive"}
+              }, {"kind": "Field", "name": {"kind": "Name", "value": "productId"}}]
+            }
+          }, {"kind": "Field", "name": {"kind": "Name", "value": "totalCount"}}]
+        }
+      }]
+    }
+  }]
+} as unknown as DocumentNode<GetBackInStockSubscriptionsQuery, GetBackInStockSubscriptionsQueryVariables>;
 export const OperationNames = {
   Query: {
     GetBackInStockSubscriptions: 'GetBackInStockSubscriptions'
