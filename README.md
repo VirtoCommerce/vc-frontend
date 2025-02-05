@@ -96,6 +96,9 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 ├── locales                          // Locale files used to provide translated content.
 |   └──...
 |
+├── modules                          // Modules with their own components, APIs, and logic.
+|   └──...
+|
 ├── scripts                          // Auxiliary build files that run in the Node environment.
 |   └──...
 |
