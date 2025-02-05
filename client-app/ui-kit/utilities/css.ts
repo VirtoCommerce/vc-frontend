@@ -1,4 +1,4 @@
-import { MAIN_COLORS } from "../constants";
+import { MAIN_COLORS } from "@/ui-kit/constants";
 
 export function isMainColorType(value: string): value is VcMainColorType {
   return MAIN_COLORS.includes(value as VcMainColorType);
