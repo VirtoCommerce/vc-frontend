@@ -1,6 +1,11 @@
 <template>
   <div v-if="isVisible && !loading && (hasContent || objectType || hasPageDocumentContent)" class="slug-content">
-    <CategoryComponent v-if="objectType === 'Category'" :category-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
+    <CatalogComponent v-if="objectType === ObjectType.Catalog" />
+    <CategoryComponent
+      v-else-if="objectType === 'Category'"
+      :category-id="slugInfo?.entityInfo?.objectId"
+      allow-set-meta
+    />
     <Product v-else-if="objectType === 'CatalogProduct'" :product-id="slugInfo?.entityInfo?.objectId" allow-set-meta />
     <VirtoPage v-else-if="hasPageDocumentContent" :page-document="pageDocumentContent" />
     <StaticPage v-else-if="hasContent" />
@@ -28,6 +33,7 @@ const emit = defineEmits<IEmits>();
 
 const props = defineProps<IProps>();
 
+const CatalogComponent = defineAsyncComponent(() => import("@/pages/catalog.vue"));
 const CategoryComponent = defineAsyncComponent(() => import("@/pages/category.vue"));
 const Product = defineAsyncComponent(() => import("@/pages/product.vue"));
 const VirtoPage = defineAsyncComponent(() => import("@/pages/matcher/virto-pages/virto-pages.vue"));
@@ -59,6 +65,7 @@ const {
 } = useSlugInfo(seoUrl);
 
 enum ObjectType {
+  Catalog = "Catalog",
   CatalogProduct = "CatalogProduct",
   Category = "Category",
   ContentFile = "ContentFile",
@@ -68,7 +75,9 @@ enum ObjectType {
 watchEffect(() => {
   if (loading.value) {
     emit("setState", "loading");
-  } else if ([ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)) {
+  } else if (
+    [ObjectType.Catalog, ObjectType.Category, ObjectType.CatalogProduct].includes(objectType.value as ObjectType)
+  ) {
     emit("setState", "ready");
   } else if (pageDocumentContent.value) {
     emit("setState", "ready");

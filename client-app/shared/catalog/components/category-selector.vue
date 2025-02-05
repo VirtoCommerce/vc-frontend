@@ -19,7 +19,13 @@
 
     <template v-if="category?.childCategories?.length" #default>
       <div class="-mt-1 mb-0.5 py-0.5 text-xs font-black uppercase text-neutral-900">
-        {{ category?.name }}
+        <template v-if="objectType === 'Category'">
+          {{ category.name }}
+        </template>
+
+        <template v-else-if="objectType === 'Catalog'">
+          {{ seoInfo?.pageTitle }}
+        </template>
       </div>
 
       <div class="flex flex-col pl-4">
@@ -38,8 +44,10 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { useCategoriesRoutes } from "@/core/composables";
 import { getCategoryRoute } from "@/core/utilities";
+import { useSlugInfo } from "@/shared/common";
 import type { Category } from "@/core/api/graphql/types";
 
 interface IProps {
@@ -48,6 +56,9 @@ interface IProps {
 }
 
 const props = defineProps<IProps>();
+
+const route = useRoute();
+const { objectType, seoInfo } = useSlugInfo(route.path.slice(1));
 
 const parentCategory = computed<Category | undefined>(() => props.category?.parent);
 const subcategories = computed<Category[]>(() => props.category?.childCategories || []);
