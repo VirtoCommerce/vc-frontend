@@ -2,7 +2,7 @@
   <VcEmptyPage
     icon="outline-security"
     :image="isResetMode ? 'sign-in.jpg' : 'reg.jpg'"
-    :status-color="!isValidData ? 'danger' : isSucceeded ? 'success' : 'secondary'"
+    :status-color="statusColor"
     :hide-mobile-side="isValidData && !isSucceeded"
   >
     <div class="w-full sm:pe-12 md:pe-24">
@@ -55,6 +55,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { usePageHead, useRouteQueryParam } from "@/core/composables";
 import { ResetPasswordForm } from "@/shared/account";
+import { COLORS } from "@/ui-kit/constants";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -71,6 +72,17 @@ const token = useRouteQueryParam<string>("token");
 const isValidData = computed<boolean>(() => Boolean(userId.value && token.value));
 const isResetMode = computed<boolean>(() => route.name === "ResetPassword");
 const localizationPageTerm = computed<string>(() => (isResetMode.value ? "reset_password" : "set_password"));
+const statusColor = computed<string>(() => {
+  if (!isValidData.value) {
+    return COLORS.danger;
+  }
+
+  if (isSucceeded.value) {
+    return COLORS.success;
+  }
+
+  return COLORS.secondary;
+});
 
 function onSucceeded() {
   isSucceeded.value = true;
