@@ -7,7 +7,8 @@
       "feedback": "Rétroaction",
       "rating": "Notation",
       "rate_product": "Évaluer le produit",
-      "item_as_described_by_vendor": "Article tel que décrit par le vendeur?"
+      "item_as_described_by_vendor": "Article tel que décrit par le vendeur?",
+      "product_review_image": "Image d'évaluation de produit"
     },
     "messages": {
       "thanks_for_feedback": "Vos commentaires ont été soumis avec succès et sont en attente de confirmation. Merci!"

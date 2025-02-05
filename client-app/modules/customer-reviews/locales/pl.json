@@ -7,7 +7,8 @@
       "feedback": "Opinia",
       "rating": "Ocena",
       "rate_product": "Oceń produkt",
-      "item_as_described_by_vendor": "Czy produkt jest zgodny z opisem sprzedawcy?"
+      "item_as_described_by_vendor": "Czy produkt jest zgodny z opisem sprzedawcy?",
+      "product_review_image": "Obraz przeglądu produktu"
     },
     "messages": {
       "thanks_for_feedback": "Twoja opinia została przesłana i oczekuje na potwierdzenie. Dziękujemy!"

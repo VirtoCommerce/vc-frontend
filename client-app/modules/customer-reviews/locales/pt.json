@@ -7,7 +7,8 @@
       "feedback": "Feedback",
       "rating": "Avaliação",
       "rate_product": "Avaliar produto",
-      "item_as_described_by_vendor": "O item é como descrito pelo vendedor?"
+      "item_as_described_by_vendor": "O item é como descrito pelo vendedor?",
+      "product_review_image": "Imagem de avaliação de produto"
     },
     "messages": {
       "thanks_for_feedback": "Seu feedback foi enviado e está aguardando confirmação. Obrigado!"
