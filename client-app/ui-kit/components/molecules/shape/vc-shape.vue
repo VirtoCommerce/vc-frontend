@@ -8,39 +8,47 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getImageUrl, getIconUrl } from "@/ui-kit/utilities";
+import { getImageUrl, getIconUrl, getColorValue } from "../../../utilities";
 
 interface IProps {
-  size?: number | string;
+  size?: string;
   icon?: string;
+  iconColor?: string;
+  bgColor?: string;
   img?: string;
   mask?: string;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  size: "2.5rem",
   mask: "polygon",
+  size: "",
+  iconColor: "",
+  bgColor: "",
   img: "",
 });
 
 const iconUrl = computed(() => getIconUrl(props.mask));
 const imgUrl = computed(() => getImageUrl(props.img));
 
-const _size = computed(() => (typeof props.size === "number" ? `${props.size}px` : props.size));
-
 const style = computed(() => ({
-  width: _size.value,
-  height: _size.value,
   backgroundImage: props.img ? `url("${imgUrl.value}")` : "none",
   maskImage: iconUrl.value ? `url("${iconUrl.value}")` : "none",
 }));
+
+const _bgColor = computed(() => getColorValue(props.bgColor));
+const _iconColor = computed(() => getColorValue(props.iconColor));
 </script>
 
 <style lang="scss">
 .vc-shape {
-  --size: var(--vc-shape-icon-size, 2.5rem);
-  --bg-color: var(--vc-shape-icon-bg-color, theme("colors.secondary.500"));
-  --vc-icon-color: var(--vc-shape-icon-color, theme("colors.additional.50"));
+  --props-size: v-bind(props.size);
+  --props-bg-color: v-bind(_bgColor);
+  --props-icon-color: v-bind(_iconColor);
+
+  --size: var(--props-size, var(--vc-shape-size, 2.5rem));
+  --bg-color: var(--props-bg-color, var(--vc-shape-bg-color, theme("colors.secondary.500")));
+
+  --vc-icon-color: var(--props-icon-color, var(--vc-shape-color, theme("colors.additional.50")));
   --vc-icon-size: 50%;
 
   @apply relative flex items-center justify-center size-[--size] bg-[--bg-color] bg-cover bg-center;

@@ -1,5 +1,5 @@
 <template>
-  <form @submit="onSubmit">
+  <form class="text-start" @submit="onSubmit">
     <VcInput
       v-model.trim="email"
       class="mb-4"

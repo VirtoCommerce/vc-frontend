@@ -37,3 +37,10 @@ ImageIcon.args = {
   size: "300px",
   icon: "adjustments",
 };
+
+export const Mask = Template.bind({});
+Mask.args = {
+  img: "/static/images/home/main-banner.webp",
+  size: "300px",
+  mask: "academic-cap",
+};

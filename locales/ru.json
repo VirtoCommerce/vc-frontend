@@ -70,7 +70,8 @@
       "all_filters": "Все фильтры",
       "sort_by": "Сортировать по",
       "add_items_to_cart": "Добавить товары в корзину",
-      "show_details": "Показать детали"
+      "show_details": "Показать детали",
+      "add_with_bulk_order": "Добавить оптом"
     },
     "labels": {
       "actions": "Действия",

@@ -1,5 +1,5 @@
 <template>
-  <form @submit="onSubmit">
+  <form class="text-start" @submit="onSubmit">
     <VcInput
       v-model="password"
       class="mb-4 w-full"

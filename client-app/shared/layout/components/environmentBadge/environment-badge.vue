@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { useEnvironmentName } from "@/core/composables/useEnvironmentName";
-import { COLORS } from "@/core/constants";
+import { COLORS } from "@/ui-kit/constants";
 
 const BADGE_COLORS: Record<string, VcBadgeColorType> = {
   dev: COLORS.secondary,

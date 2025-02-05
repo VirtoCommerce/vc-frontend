@@ -1,5 +1,5 @@
 <template>
-  <form @submit="onSubmit">
+  <form class="w-full text-start" @submit="onSubmit">
     <VcInput
       v-model="oldPassword"
       class="mb-5"
@@ -44,9 +44,11 @@
       {{ translate(error) }}
     </VcAlert>
 
-    <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" type="submit" class="mt-5 w-full lg:w-48">
-      {{ $t("common.buttons.change") }}
-    </VcButton>
+    <div class="mt-5 max-sm:text-center">
+      <VcButton :disabled="!meta.valid || meta.pending" :loading="loading" type="submit" min-width="12rem">
+        {{ $t("common.buttons.change") }}
+      </VcButton>
+    </div>
   </form>
 </template>
 

@@ -10,6 +10,7 @@ declare module "vue" {
     VcCarousel: typeof Components.VcCarousel;
     VcChip: typeof Components.VcChip;
     VcCollapsibleContent: typeof Components.VcCollapsibleContent;
+    VcCompositeShape: typeof Components.VcCompositeShape;
     VcCopyText: typeof Components.VcCopyText;
     VcDialogContent: typeof Components.VcDialogContent;
     VcDialogFooter: typeof Components.VcDialogFooter;

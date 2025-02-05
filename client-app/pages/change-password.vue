@@ -1,25 +1,23 @@
 <template>
-  <TwoColumn class="max-w-screen-xl">
-    <template #left>
+  <VcEmptyPage
+    class="sign-in"
+    icon="outline-security"
+    image="sign-in.jpg"
+    hide-mobile-side
+    :status-color="isSucceeded ? 'success' : 'secondary'"
+  >
+    <div class="w-full sm:pe-8 md:pe-16 lg:pe-24">
       <VcTypography tag="h1" class="mb-8">
         {{ $t("pages.change_password.header") }}
       </VcTypography>
 
-      <div v-if="!isSucceeded">
-        <ChangePasswordForm @succeeded="onSucceeded()" />
+      <ChangePasswordForm v-if="!isSucceeded" @succeeded="onSucceeded()" />
+
+      <div v-else class="text-base">
+        {{ $t("pages.change_password.success_message") }}
       </div>
-
-      <div v-else class="flex flex-col items-center gap-10 lg:flex-row lg:gap-3">
-        <VcIcon class="fill-success" name="check-circle" :size="36" />
-
-        <div class="text-lg">{{ $t("pages.change_password.success_message") }}</div>
-      </div>
-    </template>
-
-    <template #right>
-      <VcImage class="max-w-md" src="sign-in-page-image.webp" lazy />
-    </template>
-  </TwoColumn>
+    </div>
+  </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
@@ -28,7 +26,6 @@ import { useI18n } from "vue-i18n";
 import { usePageHead } from "@/core/composables";
 import { ChangePasswordForm } from "@/shared/account";
 import { openReturnUrl, TabsType, useBroadcast } from "@/shared/broadcast";
-import { TwoColumn } from "@/shared/layout";
 
 const { t } = useI18n();
 const broadcast = useBroadcast();

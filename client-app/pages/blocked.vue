@@ -1,17 +1,13 @@
 <template>
-  <VcEmptyPage image="blocked.webp" mobile-image="blocked.webp">
-    <template #description>
-      <VcTypography tag="h1" class="mb-6">
-        {{ $t("pages.blocked.title") }}
-      </VcTypography>
+  <VcEmptyPage image="lock.jpg" icon="outline-security">
+    <VcTypography tag="h1" class="order-first mb-5 sm:pe-8 lg:pe-16">
+      {{ $t("pages.blocked.title") }}
+    </VcTypography>
 
-      <VcTypography>
-        <span>
-          {{ $t("pages.blocked.message") }}
-          <ContactAdministratorLink />.
-        </span>
-      </VcTypography>
-    </template>
+    <VcTypography class="sm:pe-8 lg:pe-16">
+      {{ $t("pages.blocked.message") }}
+      <ContactAdministratorLink />.
+    </VcTypography>
   </VcEmptyPage>
 </template>
 

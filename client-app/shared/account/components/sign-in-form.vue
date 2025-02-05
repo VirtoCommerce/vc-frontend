@@ -1,5 +1,5 @@
 <template>
-  <form @submit="onSubmit">
+  <form class="text-start" @submit="onSubmit">
     <!-- Errors block -->
     <VcAlert
       v-for="error in errors"
@@ -67,12 +67,12 @@
     </div>
 
     <!-- Form actions -->
-    <div class="mt-8 flex" :class="{ 'max-w-sm': !props.growButtons }">
-      <VcButton :loading="loading" type="submit" class="flex-1 shrink">
+    <div class="mt-8 flex flex-wrap gap-4" :class="{ 'max-w-sm': !props.growButtons }">
+      <VcButton :loading="loading" type="submit" class="flex-1 shrink" no-wrap>
         {{ $t("shared.account.sign_in_form.login_button") }}
       </VcButton>
 
-      <VcButton :to="{ name: 'SignUp' }" :disabled="loading" variant="outline" class="ml-4 flex-1">
+      <VcButton :to="{ name: 'SignUp' }" :disabled="loading" variant="outline" class="flex-1" no-wrap>
         {{ $t("shared.account.sign_in_form.registration_button") }}
       </VcButton>
     </div>
