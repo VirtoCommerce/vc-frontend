@@ -270,7 +270,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Carte bancaire (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manuel",
-        "SkyflowPaymentMethod": "Carte bancaire (Skyflow)"
+        "SkyflowPaymentMethod": "Carte bancaire (Skyflow)",
+        "CyberSourcePaymentMethod": "Carte bancaire (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarif fixe (Terre)",
@@ -724,7 +725,13 @@
         "month_placeholder": "MM",
         "year_label": "Année",
         "year_placeholder": "AA",
-        "security_code_label": "Code de sécurité"
+        "security_code_label": "Code de sécurité",
+        "expiration_date_placeholder_extended": "MM / AAAA",
+        "errors": {
+          "month": "Veuillez indiquer un mois d'expiration valide",
+          "year": "Veuillez indiquer une année d'expiration valide"
+        },
+        "user_error_message": "Impossible d'initialiser le paiement. Veuillez réessayer plus tard ou utiliser un autre mode de paiement"
       },
       "authorize_net": {
         "user_agreement_link": "Contrat d'utilisation",
