@@ -2,7 +2,7 @@
   <div>
     <!-- Title block -->
     <div class="flex items-center justify-between gap-3">
-      <VcTypography tag="h1">
+      <VcTypography class="[word-break:break-word]" tag="h1">
         {{ $t("pages.company.members.title") }}
       </VcTypography>
 
