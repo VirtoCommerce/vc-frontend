@@ -24,7 +24,7 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
 - **[Atomic Design Pattern.](https://virtocommerce.com/atomic-architecture)** The Frontend Application UI is based on Atoms, Molecules and Organisms, combined within Pages and shared Components. This provides a high level of code reusability.
 - **Fully responsive.** We made our Frontend Application work on multiple devices from Desktops to Mobile phones, concentrating both on UI and UX.
 - **Simple styling and customization.** We use TailwindCSS to provide the easiest and most convenient way of CSS usage. Write as less of code as possible, and reuse existing highly customizable framework features.
-- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios.
+- **Fully aligned with Virto Commerce Platform.** The SPA is fully aligned with the [Virto Commerce Platform](https://github.com/VirtoCommerce/vc-platform) to provide all common B2B and B2C scenarios. 
 
 ## The Application structure
 
@@ -159,9 +159,9 @@ Virto Commerce Frontend is designed to be used as-is within the actual **Virto C
     npm uninstall --global yarn
     ```
   - or through your Operation System installation tools
-    - `Control Panel`, `Chocolatey` or `Scoop` on *Windows*
-    - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on *macOs*
-    - Native package manager such as `apt` on *Linux*
+     - `Control Panel`, `Chocolatey` or `Scoop` on *Windows*
+     - `Launchpad`, `Finder`, `Homebrew` or `MacPorts` on *macOs*
+     - Native package manager such as `apt` on *Linux*
 
 ### Clone repository
 ```bash
@@ -258,7 +258,7 @@ The script will output warnings for any missing keys in the locale files. Review
 ```
 yarn fix-locales -- path/to/locales_folder path/to/\*\*/locales
 ```
-This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language and updates locale files accordingly.
+This command can be run locally to automatically fix missing translations in locale files by using AI translation. It analyzes all locale files, identifies missing keys, and translates the missing content from the source language to the target language and updates locale files accordingly. 
 
 > [!IMPORTANT]
 > This command requires the `APP_GEMINI_API_KEY` environment variable to be set. You can obtain this API key from the [Google AI Studio](https://aistudio.google.com/app/apikey) website.
