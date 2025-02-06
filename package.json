@@ -6,7 +6,7 @@
     "url": "https://virtocommerce.com"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.12.7",
-    "@builder.io/sdk-vue": "^3.0.0",
+    "@builder.io/sdk-vue": "^3.0.3",
     "@floating-ui/vue": "^1.1.4",
     "@headlessui/vue": "^1.7.22",
     "@tailwindcss/container-queries": "^0.1.1",
@@ -63,7 +63,7 @@
     "lodash": "^4.17.21",
     "marked": "^13.0.3",
     "maska": "^2.1.11",
-    "skyflow-js": "^1.36.2",
+    "skyflow-js": "^1.38.2",
     "swiper": "11.1.14",
     "tw-elements": "^1.1.0",
     "utility-types": "^3.11.0",
@@ -101,6 +101,8 @@
     "@storybook/test": "^8.2.7",
     "@storybook/vue3": "^8.2.7",
     "@storybook/vue3-vite": "^8.2.7",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/vue": "^8.1.0",
     "@tsconfig/node22": "^22.0.0",
     "@types/dompurify": "^3.0.5",
     "@types/gtag.js": "^0.0.20",

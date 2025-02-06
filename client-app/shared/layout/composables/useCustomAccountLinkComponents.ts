@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { defineAsyncComponent, readonly, ref } from "vue";
+import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { DefineComponent } from "vue";
 
@@ -10,7 +10,7 @@ export type ElementType = {
 };
 
 function _useCustomAccountLinkComponents() {
-  const customAccountLinkComponents = ref<{ [key: ElementType["id"]]: ElementType["component"] }>({
+  const customAccountLinkComponents = shallowRef<{ [key: ElementType["id"]]: ElementType["component"] }>({
     orders: defineAsyncComponent(
       () => import("@/shared/account/components/account-navigation-link-components/link-orders.vue"),
     ),
@@ -26,7 +26,7 @@ function _useCustomAccountLinkComponents() {
   }
 
   return {
-    customLinkComponents: readonly(customAccountLinkComponents),
+    customLinkComponents: shallowReadonly(customAccountLinkComponents),
     registerCustomLinkComponent,
   };
 }

@@ -146,7 +146,11 @@
       "date_new_to_old": "Date, new to old",
       "date_old_to_new": "Date, old to new",
       "comments": "Comments",
-      "fields_required": "Fields are required"
+      "fields_required": "Fields are required",
+      "support_phone_number": "Support phone number",
+      "main_menu": "Main menu",
+      "toggle_search_bar": "Toggle search bar",
+      "slider_image": "Slider image"
     },
     "prefixes": {
       "please": "Please",
