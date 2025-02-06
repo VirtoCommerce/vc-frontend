@@ -19,7 +19,6 @@
           {{ $t("pages.account.order_payment.processed_title", [order.number]) }}
         </VcTypography>
 
-        <!-- Subtitle block -->
         <div class="gap-x-4 md:flex">
           <div class="text-sm">
             <span class="font-bold">
@@ -92,9 +91,19 @@
           {{ $t("pages.account.order_payment.failure.text") }}
         </div>
 
-        <VcButton min-width="12rem" @click="tryAgain">
-          {{ $t("pages.account.order_payment.try_again_button") }}
-        </VcButton>
+        <div class="flex flex-wrap justify-center gap-3 sm:justify-start">
+          <VcButton min-width="12rem" prepend-icon="reset" @click="tryAgain">
+            {{ $t("pages.account.order_payment.try_again_button") }}
+          </VcButton>
+
+          <VcButton
+            :to="{ name: 'OrderDetails', params: { orderId }, replace: true }"
+            variant="outline"
+            prepend-icon="chevron-left"
+          >
+            {{ $t("pages.account.order_payment.back_to_order_button") }}
+          </VcButton>
+        </div>
       </template>
     </VcEmptyPage>
 
