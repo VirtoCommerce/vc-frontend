@@ -49,6 +49,7 @@ export interface IProps {
 
 withDefaults(defineProps<IProps>(), {
   hasBgImage: true,
+  bgColor: "--color-neutral-50",
 });
 </script>
 
