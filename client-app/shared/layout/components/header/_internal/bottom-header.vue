@@ -17,17 +17,19 @@
       </template>
 
       <!-- Catalog button -->
-      <VcButton
+      <a
         ref="showCatalogMenuButton"
-        :append-icon="catalogMenuItems?.length ? catalogButtonIcon : undefined"
-        variant="outline"
-        size="md"
+        :href="catalogLink"
+        type="button"
+        class="flex select-none items-center rounded border-2 border-primary px-[0.8rem] py-[0.55rem] text-sm text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]"
         @click="toggleCatalogDropdown"
       >
-        <span class="text-[--header-bottom-link-color] hover:text-[--header-bottom-link-hover-color]">
+        <span class="font-bold uppercase tracking-wide">
           {{ $t("shared.layout.header.bottom_header.catalog_menu_button") }}
         </span>
-      </VcButton>
+
+        <VcIcon v-if="catalogMenuItems.length" :name="catalogButtonIcon" size="xs" class="ml-3 fill-primary" />
+      </a>
 
       <SearchBar />
 
@@ -61,7 +63,7 @@
 <script setup lang="ts">
 import { onClickOutside, syncRefs, useElementBounding, useScrollLock } from "@vueuse/core";
 import { computed, ref, shallowRef, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useNavigations, useWhiteLabeling } from "@/core/composables";
 import { useUser } from "@/shared/account/composables/useUser";
 import { SearchBar } from "@/shared/layout";
@@ -70,6 +72,7 @@ import CatalogMenu from "./catalog-menu.vue";
 import type { StyleValue } from "vue";
 import LinkDefault from "@/shared/layout/components/header/_internal/link-components/link-default.vue";
 
+const router = useRouter();
 const { organization } = useUser();
 const { logoUrl } = useWhiteLabeling();
 const { catalogMenuItems, desktopMainMenuItems } = useNavigations();
@@ -88,6 +91,8 @@ const catalogMenuStyle = computed<StyleValue | undefined>(() =>
   bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined,
 );
 
+const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
+
 onClickOutside(
   catalogMenuElement,
   () => {
@@ -98,6 +103,7 @@ onClickOutside(
 
 syncRefs(catalogMenuVisible, useScrollLock(document.body));
 
+// TODO: Redirect to localized catalog path if catalogMenuItems has not items
 function toggleCatalogDropdown(event: Event) {
   if (catalogMenuItems.value.length) {
     event.preventDefault();

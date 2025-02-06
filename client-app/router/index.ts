@@ -42,6 +42,7 @@ export function createRouter(options: { base: string }) {
       return next({ name: "Account" });
     }
 
+    // TODO: Need refactoring
     // Make Dashboard the default Home page for authorized users
     if (
       isAuthenticated.value &&
@@ -55,7 +56,7 @@ export function createRouter(options: { base: string }) {
         "ConfirmInvitation",
       ).includes(to.name!)
     ) {
-      return next(getReturnUrlValue() || { name: "Home" });
+      return next(getReturnUrlValue() || { name: "Catalog" });
     }
 
     return next();
