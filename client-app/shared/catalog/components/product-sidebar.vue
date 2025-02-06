@@ -46,7 +46,7 @@
               :quantity="product.availabilityData?.availableQuantity"
             />
 
-            <CountInCart :product-id="product.id"/>
+            <CountInCart :product-id="product.id" />
           </AddToCart>
         </div>
       </template>
@@ -78,8 +78,8 @@ const product = toRef(props, "product");
 
 const { currentCurrency } = useCurrency();
 const { getItemsTotal } = useShortCart();
-const {configuredLineItem, loading: configuredLineItemLoading} = useConfigurableProduct(product.value.id);
-const {getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps} = useCustomProductComponents();
+const { configuredLineItem, loading: configuredLineItemLoading } = useConfigurableProduct(product.value.id);
+const { getComponent, isComponentRegistered, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const isDigital = computed<boolean>(() => props.product.productType === ProductType.Digital);
 

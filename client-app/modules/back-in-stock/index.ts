@@ -15,9 +15,9 @@ import type { Router, RouteRecordRaw } from "vue-router";
 const Subscriptions = () => import("./pages/subscriptions.vue");
 const BackInStockButton = defineAsyncComponent(() => import("./components/back-in-stock-notify-button.vue"));
 
-const {isEnabled} = useModuleSettings(MODULE_ID);
-const {mergeMenuSchema} = useNavigations();
-const {registerComponent} = useCustomProductComponents();
+const { isEnabled } = useModuleSettings(MODULE_ID);
+const { mergeMenuSchema } = useNavigations();
+const { registerComponent } = useCustomProductComponents();
 
 const route: RouteRecordRaw = {
   path: "back-in-stock",
@@ -32,7 +32,7 @@ const menuItems: DeepPartial<MenuType> = {
         children: [
           {
             id: "back-in-stock",
-            route: {name: "BackInStockSubscriptions"},
+            route: { name: "BackInStockSubscriptions" },
             title: "back_in_stock.navigation.route_name",
             icon: "cube",
             priority: 100,
@@ -45,7 +45,7 @@ const menuItems: DeepPartial<MenuType> = {
         children: [
           {
             id: "back-in-stock",
-            route: {name: "BackInStockSubscriptions"},
+            route: { name: "BackInStockSubscriptions" },
             title: "back_in_stock.navigation.route_name",
             icon: "cube",
             priority: 100,
@@ -57,7 +57,7 @@ const menuItems: DeepPartial<MenuType> = {
 };
 
 export function init(router: Router, i18n: I18n) {
-  const {isAuthenticated} = useUser();
+  const { isAuthenticated } = useUser();
   if (isEnabled(ENABLED_KEY)) {
     router.addRoute("Account", route);
     void loadModuleLocale(i18n, "back-in-stock");
@@ -68,7 +68,7 @@ export function init(router: Router, i18n: I18n) {
       id: CUSTOM_PRODUCT_COMPONENT_IDS.CARD_BUTTON,
       component: BackInStockButton,
       shouldRender: (product) => !product.availabilityData.isInStock,
-      props: {isTextShown: true},
+      props: { isTextShown: true },
     });
     registerComponent({
       id: CUSTOM_PRODUCT_COMPONENT_IDS.PAGE_SIDEBAR_BUTTON,

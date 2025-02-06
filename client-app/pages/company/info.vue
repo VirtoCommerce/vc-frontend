@@ -334,7 +334,7 @@ const {
   fetchOptions: fetchFileOptions,
   options: fileOptions,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
-const { logoUrl } = useWhiteLabeling();
+const { logoUrl, updateCustomCompanyLogo } = useWhiteLabeling();
 const newLogoUrl = ref(logoUrl.value ?? "");
 const isSaveLogoDisabled = ref(true);
 
@@ -361,7 +361,6 @@ const {
 } = useOrganizationAddresses(organization.value!.id);
 const { openModal } = useModal();
 const notifications = useNotifications();
-const { updateCustomCompanyLogo } = useWhiteLabeling();
 
 const {
   meta,

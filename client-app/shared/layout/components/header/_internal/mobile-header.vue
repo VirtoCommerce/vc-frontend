@@ -13,15 +13,15 @@
         <div v-else class="flex h-full items-center">
           <button
             :aria-label="$t('common.labels.main_menu')"
-            class="h-full pe-3 ps-5 sm:pe-5"
             type="button"
+            class="h-full pe-3 ps-5 sm:pe-5"
             @click="mobileMenuVisible = true"
           >
-            <VcIcon :size="32" class="fill-primary" name="menu"/>
+            <VcIcon class="fill-primary" name="menu" :size="32" />
           </button>
 
           <router-link :to="$context.settings.default_return_url ?? '/'">
-            <VcImage :alt="$context.storeName" :src="logoUrl" class="h-8" lazy/>
+            <VcImage :src="logoUrl" :alt="$context.storeName" class="h-8" lazy />
           </router-link>
         </div>
         <!-- endregion Left slot -->
@@ -33,26 +33,26 @@
           <a
             v-if="support_phone_number"
             :aria-label="$t('common.labels.support_phone_number')"
-            :href="`tel:${support_phone_number}`"
             class="px-1 py-2 xs:px-2"
+            :href="`tel:${support_phone_number}`"
           >
-            <VcIcon :size="28" class="fill-primary" name="phone"/>
+            <VcIcon class="fill-primary" name="phone" :size="28" />
           </a>
 
           <button
             :aria-label="$t('common.labels.toggle_search_bar')"
-            class="px-1 py-2 xs:px-2"
             type="button"
+            class="px-1 py-2 xs:px-2"
             @click="toggleSearchBar"
           >
-            <VcIcon :size="28" class="fill-primary" name="search"/>
+            <VcIcon class="fill-primary" name="search" :size="28" />
           </button>
 
-          <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2"/>
+          <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
 
-          <router-link :aria-label="$t('common.links.cart')" :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
+          <router-link :to="{ name: 'Cart' }" :aria-label="$t('common.links.cart')" class="px-1 py-2 xs:px-2">
             <span class="relative block">
-              <VcIcon :size="28" class="fill-primary" name="cart"/>
+              <VcIcon class="fill-primary" name="cart" :size="28" />
 
               <transition
                 mode="out-in"

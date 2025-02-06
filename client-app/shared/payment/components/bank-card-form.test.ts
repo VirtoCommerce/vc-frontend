@@ -31,11 +31,9 @@ const ERROR_MESSAGES = {
 async function findElementByText(text: string) {
   return await renderedComponent.findByText(text);
 }
-
 function queryElementByText(text: string) {
   return renderedComponent.queryByText(text);
 }
-
 function getExpirationInput() {
   return renderedComponent.getByLabelText<HTMLInputElement>(EXPIRATION_FIELD_LABEL);
 }

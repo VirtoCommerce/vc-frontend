@@ -170,7 +170,7 @@ interface IProps {
   productReviewsEnabled?: boolean;
 }
 
-const {isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps} = useCustomProductComponents();
+const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 const link = computed(() => getProductRoute(props.product.id, props.product.slug));
 const isDigital = computed(() => props.product.productType === ProductType.Digital);

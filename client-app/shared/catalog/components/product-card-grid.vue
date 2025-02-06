@@ -161,7 +161,7 @@
 
     <!-- Product price -->
     <div class="my-4 lg:my-3">
-      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price"/>
+      <VcItemPriceCatalog :has-variations="product.hasVariations" :value="price" />
     </div>
 
     <component
@@ -177,8 +177,8 @@
     <VcProductButton
       v-else-if="product.isConfigurable"
       :to="link"
-      :button-text="$t('pages.catalog.customize_button')"
       :link-text="$t('pages.catalog.customize_button')"
+      :button-text="$t('pages.catalog.customize_button')"
       icon="cube-transparent"
       :target="browserTarget || $cfg.details_browser_target || '_blank'"
       @link-click="$emit('linkClick', $event)"
@@ -252,7 +252,7 @@ const properties = computed(() =>
 );
 const price = computed(() => (props.product.hasVariations ? props.product.minVariationPrice : props.product.price));
 
-const {isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps} = useCustomProductComponents();
+const { isComponentRegistered, getComponent, shouldRenderComponent, getComponentProps } = useCustomProductComponents();
 
 function slideChanged(swiper: SwiperInstance) {
   const activeIndex: number = swiper.activeIndex;

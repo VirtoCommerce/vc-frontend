@@ -6,10 +6,10 @@
         class="relative aspect-video cursor-pointer rounded border border-neutral-200 bg-additional-950"
         @click="openVideoModal(video)"
       >
-        <VcImage :src="video.thumbnailUrl" class="size-full rounded-sm object-cover object-center opacity-60"/>
+        <VcImage class="size-full rounded-sm object-cover object-center opacity-60" :src="video.thumbnailUrl" />
 
         <span class="absolute inset-0 flex items-center justify-center text-additional-50 hover:text-primary">
-          <VcIcon :size="36" name="play"/>
+          <VcIcon :size="36" name="play" />
         </span>
       </button>
     </div>

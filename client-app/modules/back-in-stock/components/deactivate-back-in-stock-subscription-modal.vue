@@ -1,5 +1,5 @@
 <template>
-  <VcModal :title="$t('back_in_stock.deactivate_modal.title')" icon="warning" variant="danger">
+  <VcModal :title="$t('back_in_stock.deactivate_modal.title')" variant="danger" icon="warning">
     <i18n-t keypath="back_in_stock.deactivate_modal.message" scope="global" tag="p">
       <template #productName>
         <span class="font-black">{{ productName }}</span>
@@ -11,14 +11,14 @@
         {{ $t("back_in_stock.deactivate_modal.delete_button") }}
       </VcButton>
 
-      <VcButton class="ms-auto" color="secondary" variant="outline" @click="close">
+      <VcButton color="secondary" variant="outline" class="ms-auto" @click="close">
         {{ $t("back_in_stock.deactivate_modal.cancel_button") }}
       </VcButton>
     </template>
   </VcModal>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { globals } from "@/core/globals";
 import { useBackInStockSubscriptions } from "../composables/useBackInStockSubscriptions";
 import type { DeactivateBackInStockSubscriptionCommandType } from "../api/graphql/types";
@@ -29,14 +29,13 @@ interface IEmits {
 
 const emit = defineEmits<IEmits>();
 const props = defineProps<IProps>();
-const {storeId} = globals;
-
+const { storeId } = globals;
 interface IProps {
   productId: string;
   productName: string;
 }
 
-const {fetching, deactivateSubscription} = useBackInStockSubscriptions();
+const { fetching, deactivateSubscription } = useBackInStockSubscriptions();
 
 async function remove(closingHandle: () => void) {
   const payload: DeactivateBackInStockSubscriptionCommandType = {

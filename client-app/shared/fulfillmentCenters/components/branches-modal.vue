@@ -57,8 +57,8 @@
               {{ $t("shared.catalog.branches_modal.selected_branches") }}
             </div>
 
-            <button class="flex cursor-pointer items-center pl-2" type="button" @click="clearSelection">
-              <VcIcon :size="16" class="fill-primary" name="clear"/>
+            <button type="button" class="flex cursor-pointer items-center pl-2" @click="clearSelection">
+              <VcIcon name="clear" class="fill-primary" :size="16" />
 
               <span class="pl-2 text-sm font-bold text-[--link-color] hover:text-[--link-hover-color]">
                 {{ $t("shared.catalog.branches_modal.clear_selection") }}

@@ -12,8 +12,8 @@
         full-width
         :no-wrap="noWrap"
         :loading="loading"
-        :title="title"
         :truncate="truncate"
+        :title="title"
         @click="$emit('linkClick', $event)"
       >
         {{ buttonText }}

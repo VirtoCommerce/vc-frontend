@@ -10,7 +10,7 @@ import type {
 export async function deactivateBackInStockSubscription(
   payload: DeactivateBackInStockSubscriptionCommandType,
 ): Promise<BackInStockSubscriptionType | undefined> {
-  const {data} = await graphqlClient.mutate<
+  const { data } = await graphqlClient.mutate<
     Required<Pick<Mutations, "deactivateBackInStockSubscription">>,
     MutationsDeactivateBackInStockSubscriptionArgs
   >({

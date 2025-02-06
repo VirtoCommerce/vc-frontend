@@ -19,7 +19,7 @@ export async function fixLocales() {
     console.log(`${PREFIX} No missing keys found`);
     return;
   }
-  const allNeededFiles = missingKeys.reduce((acc, {originFile, targetFile, localeFolder}) => {
+  const allNeededFiles = missingKeys.reduce((acc, { originFile, targetFile, localeFolder }) => {
     acc.add(path.join(localeFolder, originFile));
     acc.add(path.join(localeFolder, targetFile));
     return acc;
@@ -58,8 +58,8 @@ export async function fixLocales() {
 
       const tableRow = `${key} (${index + 1}/${missingKeys.length})`;
       console.table({
-        [originLanguage]: {[tableRow]: originString},
-        [targetLanguage]: {[tableRow]: translatedString},
+        [originLanguage]: { [tableRow]: originString },
+        [targetLanguage]: { [tableRow]: translatedString },
       });
 
       set(targetFileContent, key, translatedString);

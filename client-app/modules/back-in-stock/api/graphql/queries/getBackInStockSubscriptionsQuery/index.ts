@@ -6,9 +6,9 @@ import type { BackInStockSubscriptionConnection, QueryBackInStockSubscriptionsAr
 export async function getBackInStockSubscriptions(
   payload?: QueryBackInStockSubscriptionsArgs,
 ): Promise<BackInStockSubscriptionConnection> {
-  const {storeId} = globals;
+  const { storeId } = globals;
 
-  const {data} = await graphqlClient.query<
+  const { data } = await graphqlClient.query<
     Required<Pick<Query, "backInStockSubscriptions">>,
     QueryBackInStockSubscriptionsArgs
   >({

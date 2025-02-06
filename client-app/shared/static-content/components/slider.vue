@@ -16,9 +16,9 @@
           <SwiperSlide v-for="(item, index) in slides" :key="index" class="text-center">
             <div class="vc-slider__image-wrap">
               <VcImage
+                :src="item.image"
                 :aria-label="item.title ?? $t('common.labels.slider_image')"
                 :lazy="index > 0"
-                :src="item.image"
                 class="vc-slider__image"
               />
             </div>

@@ -100,7 +100,7 @@ function _useBackInStockSubscriptions() {
 
   async function fetchSubscriptionsByProductIds(productIds: string[]): Promise<void> {
     productIds?.forEach((id) => pendingProductIds.value.add(id));
-    const response = await _fetchSubscriptions({productIds, first: productIds.length});
+    const response = await _fetchSubscriptions({ productIds, first: productIds.length });
     subscriptions.value = [...subscriptions.value, ...(response?.items ?? [])];
     productIds?.forEach((id) => pendingProductIds.value.delete(id));
   }
@@ -139,7 +139,7 @@ function _useBackInStockSubscriptions() {
         void fetchSubscriptionsByProductIds(Array.from(diff));
       }
     },
-    {debounce: DEBOUNCE_IN_MS, immediate: true},
+    { debounce: DEBOUNCE_IN_MS, immediate: true },
   );
 
   return {
