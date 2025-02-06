@@ -86,11 +86,12 @@ const catalogMenuVisible = ref(false);
 const { bottom } = useElementBounding(bottomHeader);
 const route = useRoute();
 
-const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
 const catalogButtonIcon = computed<string>(() => (catalogMenuVisible.value ? "chevron-up" : "chevron-down"));
 const catalogMenuStyle = computed<StyleValue | undefined>(() =>
   bottom.value ? { maxHeight: `calc(100vh - ${bottom.value}px)` } : undefined,
 );
+
+const catalogLink = router.resolve({ name: "Catalog" }).fullPath;
 
 onClickOutside(
   catalogMenuElement,
@@ -102,6 +103,7 @@ onClickOutside(
 
 syncRefs(catalogMenuVisible, useScrollLock(document.body));
 
+// TODO: Redirect to localized catalog path if catalogMenuItems has not items
 function toggleCatalogDropdown(event: Event) {
   if (catalogMenuItems.value.length) {
     event.preventDefault();
