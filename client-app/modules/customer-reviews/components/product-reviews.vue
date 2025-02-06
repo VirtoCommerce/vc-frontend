@@ -45,6 +45,41 @@
           <div>
             {{ review.review }}
           </div>
+
+          <div v-if="review.images?.length" class="flex items-center justify-between">
+            <VcNavButton
+              v-if="review.images.length > displayedReviewImagesCount"
+              :id="`images_${review.id}_prev`"
+              :label="$t('common.buttons.previous')"
+              size="xs"
+              direction="left"
+            />
+
+            <Swiper
+              :slides-per-view="displayedReviewImagesCount"
+              :thumbs="{ swiper: imagesSwiper }"
+              :modules="swiperModules"
+              :navigation="{
+                prevEl: `#images_${review.id}_prev`,
+                nextEl: `#images_${review.id}_next`,
+              }"
+              wrapper-class="items-center"
+              class="mx-0 w-full p-1"
+              data-te-lightbox-init
+            >
+              <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
+                <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
+              </SwiperSlide>
+            </Swiper>
+
+            <VcNavButton
+              v-if="review.images.length > displayedReviewImagesCount"
+              :id="`images_${review.id}_next`"
+              :label="$t('common.buttons.next')"
+              size="xs"
+              direction="right"
+            />
+          </div>
         </div>
       </div>
 
@@ -96,6 +131,16 @@
           {{ $t("common.labels.fields_required") }}
         </div>
 
+        <VcWidget class="mt-4">
+          <VcFileUploader
+            v-bind="imageOptions"
+            :files="files"
+            removable
+            @add-files="onAddFiles"
+            @remove-files="onRemoveFiles"
+          />
+        </VcWidget>
+
         <div class="mt-4 flex flex-wrap justify-between gap-3 max-xs:justify-center">
           <VcButton
             v-if="reviews?.length"
@@ -124,13 +169,23 @@
 </template>
 
 <script setup lang="ts">
-import { onActivated, ref, toRef } from "vue";
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { Navigation, Thumbs } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { computed, onActivated, ref, toRef } from "vue";
 import { useI18n } from "vue-i18n";
 import { useUser } from "@/shared/account";
+import { useFiles } from "@/shared/files";
+import {
+  DEFAULT_DESKTOP_DISPLAY_SLIDES_PER_REVIEW,
+  DEFAULT_MOBILE_DISPLAY_SLIDES_PER_REVIEW,
+  DEFAULT_REVIEW_IMAGES_SCOPE,
+} from "../constants";
 import { useCustomerReviews } from "../useCustomerReviews";
 import ProductRating from "./product-rating.vue";
 import ReviewRating from "./review-rating.vue";
 import type { Rating } from "@/core/api/graphql/types";
+import type SwiperCore from "swiper";
 
 const props = defineProps<IProps>();
 
@@ -138,6 +193,19 @@ const ENTITY_TYPE = "Product";
 
 const { t } = useI18n();
 const { isAuthenticated } = useUser();
+const {
+  files,
+  options: imageOptions,
+  uploadedFiles: uploadedReviewImages,
+  fetchOptions: fetchImageUploadOptions,
+  addFiles,
+  validateFiles,
+  uploadFiles,
+  removeFiles,
+} = useFiles(DEFAULT_REVIEW_IMAGES_SCOPE);
+const { fetching, pagesCount, pageNumber, reviews, canLeaveFeedback, createCustomerReview, fetchCustomerReviews } =
+  useCustomerReviews();
+const breakpoints = useBreakpoints(breakpointsTailwind);
 
 interface IProps {
   productId: string;
@@ -155,9 +223,6 @@ const sortByDateItems = [
   },
 ];
 
-const { fetching, pagesCount, pageNumber, reviews, canLeaveFeedback, createCustomerReview, fetchCustomerReviews } =
-  useCustomerReviews();
-
 const productId = toRef(props, "productId");
 
 const sortByDate = ref(sortByDateItems[0].id);
@@ -172,6 +237,14 @@ const productReviewsPayload = ref({
   page: 1,
   sort: "createddate:desc",
 });
+const imagesSwiper = ref<SwiperCore | null>(null);
+const swiperModules = [Navigation, Thumbs];
+
+const isMobile = breakpoints.smaller("lg");
+
+const displayedReviewImagesCount = computed(() =>
+  isMobile.value ? DEFAULT_MOBILE_DISPLAY_SLIDES_PER_REVIEW : DEFAULT_DESKTOP_DISPLAY_SLIDES_PER_REVIEW,
+);
 
 async function changeSortByDate(value: string): Promise<void> {
   productReviewsPayload.value.page = 1;
@@ -196,6 +269,7 @@ async function submitReview(): Promise<void> {
     entityType: ENTITY_TYPE,
     review: newReviewContent.value,
     rating: newReviewRating.value,
+    imageUrls: uploadedReviewImages.value?.map((item) => item.url),
   });
 
   await fetchCustomerReviews(productReviewsPayload.value);
@@ -205,12 +279,27 @@ async function submitReview(): Promise<void> {
   reviewSubmitted.value = true;
 }
 
+async function onAddFiles(items: INewFile[]): Promise<void> {
+  addFiles(items);
+  validateFiles();
+
+  await uploadFiles();
+}
+
+async function onRemoveFiles(items: FileType[]): Promise<void> {
+  await removeFiles(items);
+}
+
 onActivated(async () => {
   await fetchCustomerReviews(productReviewsPayload.value);
 
   if (isAuthenticated.value) {
     feedbackAvailable.value = await canLeaveFeedback(props.productId, ENTITY_TYPE);
     reviewFormVisible.value = !reviews.value?.length;
+
+    if (feedbackAvailable.value) {
+      await fetchImageUploadOptions();
+    }
   }
 });
 </script>
