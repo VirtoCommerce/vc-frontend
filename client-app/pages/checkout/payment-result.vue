@@ -1,6 +1,6 @@
 <template>
   <VcEmptyPage
-    :icon="isPaymentSuccess ? 'outline-payment-success' : 'outline-payment-failed'"
+    :icon="isPaymentSuccess ? 'outline-payment-successful' : 'outline-payment-failed'"
     :status-color="isPaymentSuccess ? 'success' : 'danger'"
     image="basket.jpg"
   >
