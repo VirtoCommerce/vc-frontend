@@ -47,7 +47,9 @@ export interface IProps {
   hasBgImage?: boolean;
 }
 
-defineProps<IProps>();
+withDefaults(defineProps<IProps>(), {
+  hasBgImage: true,
+});
 </script>
 
 <style lang="scss">
