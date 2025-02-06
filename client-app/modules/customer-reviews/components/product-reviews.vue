@@ -47,49 +47,38 @@
           </div>
 
           <div v-if="review.images?.length" class="flex items-center justify-between">
-            <template v-if="review.images.length > displayedReviewImagesCount">
-              <VcNavButton
-                :id="`images_${review.id}_prev`"
-                :label="$t('common.buttons.previous')"
-                size="xs"
-                direction="left"
-              />
+            <VcNavButton
+              v-if="review.images.length > displayedReviewImagesCount"
+              :id="`images_${review.id}_prev`"
+              :label="$t('common.buttons.previous')"
+              size="xs"
+              direction="left"
+            />
 
-              <Swiper
-                :slides-per-view="displayedReviewImagesCount"
-                :thumbs="{ swiper: imagesSwiper }"
-                :modules="swiperModules"
-                :navigation="{
-                  prevEl: `#images_${review.id}_prev`,
-                  nextEl: `#images_${review.id}_next`,
-                }"
-                class="mx-0 w-full p-1"
-                data-te-lightbox-init
-              >
-                <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
-                  <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
-                </SwiperSlide>
-              </Swiper>
+            <Swiper
+              :slides-per-view="displayedReviewImagesCount"
+              :thumbs="{ swiper: imagesSwiper }"
+              :modules="swiperModules"
+              :navigation="{
+                prevEl: `#images_${review.id}_prev`,
+                nextEl: `#images_${review.id}_next`,
+              }"
+              wrapper-class="items-center"
+              class="mx-0 w-full p-1"
+              data-te-lightbox-init
+            >
+              <SwiperSlide v-for="(image, index) in review.images" :key="index" class="cursor-pointer p-2">
+                <VcImage :src="image.url" :alt="$t('common.labels.product_review_image')" size-suffix="sm" lazy />
+              </SwiperSlide>
+            </Swiper>
 
-              <VcNavButton
-                :id="`images_${review.id}_next`"
-                :label="$t('common.buttons.next')"
-                size="xs"
-                direction="right"
-              />
-            </template>
-
-            <div v-else class="flex w-full items-center gap-2" data-te-lightbox-init>
-              <VcImage
-                v-for="image in review.images"
-                :key="image.id"
-                :src="image.url"
-                :alt="$t('common.labels.product_review_image')"
-                class="w-1/6 cursor-pointer"
-                size-suffix="sm"
-                lazy
-              />
-            </div>
+            <VcNavButton
+              v-if="review.images.length > displayedReviewImagesCount"
+              :id="`images_${review.id}_next`"
+              :label="$t('common.buttons.next')"
+              size="xs"
+              direction="right"
+            />
           </div>
         </div>
       </div>
