@@ -79,7 +79,7 @@
               />
             </template>
 
-            <div v-else class="flex w-full items-center justify-between gap-2" data-te-lightbox-init>
+            <div v-else class="flex w-full items-center gap-2" data-te-lightbox-init>
               <VcImage
                 v-for="image in review.images"
                 :key="image.id"
