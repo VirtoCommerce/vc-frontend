@@ -11,7 +11,12 @@
         <component :is="customSlots.left" v-if="customSlots.left" />
 
         <div v-else class="flex h-full items-center">
-          <button type="button" class="h-full pe-3 ps-5 sm:pe-5" @click="mobileMenuVisible = true">
+          <button
+            :aria-label="$t('common.labels.main_menu')"
+            type="button"
+            class="h-full pe-3 ps-5 sm:pe-5"
+            @click="mobileMenuVisible = true"
+          >
             <VcIcon class="fill-primary" name="menu" :size="32" />
           </button>
 
@@ -25,17 +30,27 @@
         <component :is="customSlots.right" v-if="customSlots.right" />
 
         <div v-else class="flex h-full flex-row items-center pr-4">
-          <a v-if="support_phone_number" class="px-1 py-2 xs:px-2" :href="`tel:${support_phone_number}`">
+          <a
+            v-if="support_phone_number"
+            :aria-label="$t('common.labels.support_phone_number')"
+            class="px-1 py-2 xs:px-2"
+            :href="`tel:${support_phone_number}`"
+          >
             <VcIcon class="fill-primary" name="phone" :size="28" />
           </a>
 
-          <button type="button" class="px-1 py-2 xs:px-2" @click="toggleSearchBar">
+          <button
+            :aria-label="$t('common.labels.toggle_search_bar')"
+            type="button"
+            class="px-1 py-2 xs:px-2"
+            @click="toggleSearchBar"
+          >
             <VcIcon class="fill-primary" name="search" :size="28" />
           </button>
 
           <component :is="item" v-for="(item, index) in customComponents" :key="index" class="px-1 py-2 xs:px-2" />
 
-          <router-link :to="{ name: 'Cart' }" class="px-1 py-2 xs:px-2">
+          <router-link :to="{ name: 'Cart' }" :aria-label="$t('common.links.cart')" class="px-1 py-2 xs:px-2">
             <span class="relative block">
               <VcIcon class="fill-primary" name="cart" :size="28" />
 
