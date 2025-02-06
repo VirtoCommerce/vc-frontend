@@ -335,7 +335,7 @@ const {
   options: fileOptions,
 } = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
 const { logoUrl } = useWhiteLabeling();
-const newLogoUrl = ref<string>(logoUrl.value || "");
+const newLogoUrl = ref(logoUrl.value ?? "");
 const isSaveLogoDisabled = ref(true);
 
 usePageHead({
@@ -361,6 +361,7 @@ const {
 } = useOrganizationAddresses(organization.value!.id);
 const { openModal } = useModal();
 const notifications = useNotifications();
+const { updateCustomCompanyLogo } = useWhiteLabeling();
 
 const {
   meta,
@@ -442,12 +443,17 @@ async function saveOrganizationName(): Promise<void> {
 
 async function saveOrganizationLogo(): Promise<void> {
   await updateLogo(organizationId.value, newLogoUrl.value);
+
+  updateCustomCompanyLogo(newLogoUrl.value);
+
   isSaveLogoDisabled.value = true;
   notifications.success({
     text: t("common.messages.logo_changed"),
     duration: 10000,
     single: true,
   });
+
+  files.value = [];
 }
 
 function openDeleteAddressModal(address: MemberAddressType): void {
@@ -523,7 +529,7 @@ async function onAddFiles(items: INewFile[]) {
 
 async function onRemoveFiles(items: FileType[]) {
   await removeFiles(items);
-  newLogoUrl.value = logoUrl.value || "";
+  newLogoUrl.value = logoUrl.value ?? "";
   isSaveLogoDisabled.value = true;
 }
 
