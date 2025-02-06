@@ -7,7 +7,8 @@
       "feedback": "Feedback",
       "rating": "Rating",
       "rate_product": "Rate product",
-      "item_as_described_by_vendor": "Item as described by the vendor?"
+      "item_as_described_by_vendor": "Item as described by the vendor?",
+      "product_review_image": "Product review image"
     },
     "messages": {
       "thanks_for_feedback": "Your feedback has been successfully submitted and is awaiting confirmation. Thank you!"
