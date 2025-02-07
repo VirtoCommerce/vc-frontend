@@ -4,262 +4,295 @@
       {{ $t("pages.company.info.title") }}
     </VcTypography>
 
-    <VcWidget size="lg">
-      <template #default-container>
-        <!-- Company name block -->
-        <div class="p-5 shadow [--tw-shadow:0_10px_15px_0_rgb(0_0_0_/_0.06)]">
-          <VcInput
-            v-model="organizationName"
-            :label="$t('pages.company.info.labels.company_name')"
-            :disabled="!userCanEditOrganization || loadingOrganization || loadingUser"
-            :message="errors[0]"
-            :error="!!errors[0]"
-            name="organization-name"
-            autocomplete="off"
-            maxlength="64"
+    <div class="space-y-5 lg:space-y-6">
+      <!-- Company name block -->
+      <VcWidget :title="$t('pages.company.info.labels.company_name')" size="lg">
+        <VcInput
+          v-model="organizationName"
+          :disabled="!canEditOrganization || loadingOrganization || loadingUser"
+          :error="!!errors[0]"
+          :message="errors[0]"
+          autocomplete="off"
+          maxlength="64"
+          name="organization-name"
+        >
+          <template v-if="canEditOrganization" #append>
+            <VcButton
+              :disabled="!meta.valid || !meta.dirty"
+              :loading="loadingOrganization || loadingUser"
+              class="flex-none"
+              icon="save-v2"
+              @click="saveOrganizationName"
+            />
+          </template>
+        </VcInput>
+      </VcWidget>
+
+      <VcWidget
+        v-if="canEditOrganization || !loadingOrganization || !loadingUser"
+        :title="$t('pages.company.info.labels.company_logo')"
+        size="lg"
+      >
+        <div class="flex gap-4 max-md:flex-col-reverse">
+          <VcImage
+            v-if="newLogoUrl"
+            :alt="$t('pages.company.info.labels.company_logo')"
+            :src="newLogoUrl"
+            class="h-8 self-start object-contain xl:h-[2.8rem]"
+          />
+
+          <div class="grow">
+            <VcFileUploader
+              :files="files"
+              :loading="loadingOrganizationLogo"
+              removable
+              v-bind="fileOptions"
+              @download="onFileDownload"
+              @add-files="onAddFiles"
+              @remove-files="onRemoveFiles"
+            />
+          </div>
+        </div>
+        <div class="mt-0 flex justify-end md:mt-4">
+          <VcButton
+            :disabled="isSaveLogoDisabled || !newLogoUrl"
+            :loading="loadingOrganizationLogo"
+            min-width="4.375rem"
+            size="sm"
+            variant="outline"
+            @click="saveOrganizationLogo"
           >
-            <template v-if="userCanEditOrganization" #append>
-              <VcButton
-                :loading="loadingOrganization || loadingUser"
-                :disabled="!meta.valid || !meta.dirty"
-                icon="save-v2"
-                class="flex-none"
-                @click="saveOrganizationName"
-              />
-            </template>
-          </VcInput>
+            {{ $t("common.buttons.save") }}
+          </VcButton>
+        </div>
+      </VcWidget>
+
+      <!-- Content block -->
+      <VcWidget size="lg">
+        <div v-if="addresses.length || loadingAddresses" class="mb-4 flex flex-row items-center justify-between gap-3">
+          <VcTypography tag="h2" variant="h3">
+            {{ $t("pages.company.info.content_header") }}
+          </VcTypography>
+
+          <VcButton
+            v-if="canEditOrganization"
+            size="sm"
+            variant="outline"
+            @click="openAddOrUpdateCompanyAddressModal()"
+          >
+            <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
+            <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
+          </VcButton>
         </div>
 
-        <!-- Content block -->
-        <div class="px-4 md:px-5 md:pb-5">
-          <div
-            v-if="addresses.length || loadingAddresses"
-            class="mb-4 mt-9 flex flex-row items-center justify-between gap-3 md:mt-1.5"
-          >
-            <VcTypography tag="h2" variant="h3">
-              {{ $t("pages.company.info.content_header") }}
-            </VcTypography>
-
-            <VcButton
-              v-if="userCanEditOrganization"
-              size="sm"
-              variant="outline"
-              @click="openAddOrUpdateCompanyAddressModal()"
-            >
-              <span class="sm:hidden">{{ $t("pages.company.info.buttons.add_new_address_mobile") }}</span>
-              <span class="hidden sm:inline">{{ $t("pages.company.info.buttons.add_new_address") }}</span>
+        <VcEmptyView
+          v-if="!addresses.length && !loadingAddresses"
+          :text="$t('pages.company.info.no_addresses_message')"
+          icon="thin-address"
+        >
+          <template v-if="canEditOrganization" #button>
+            <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
+              {{ $t("pages.company.info.buttons.add_new_address") }}
             </VcButton>
-          </div>
+          </template>
+        </VcEmptyView>
 
-          <VcEmptyView
-            v-if="!addresses.length && !loadingAddresses"
-            :text="$t('pages.company.info.no_addresses_message')"
-            icon="thin-address"
+        <div v-else class="flex flex-col md:rounded md:border">
+          <VcTable
+            :columns="columns"
+            :description="$t('pages.company.info.meta.table_description')"
+            :items="paginatedAddresses"
+            :loading="loadingAddresses"
+            :page="page"
+            :pages="pages"
+            :sort="sort"
+            @header-click="applySorting"
+            @page-changed="onPageChange"
           >
-            <template v-if="userCanEditOrganization" #button>
-              <VcButton prepend-icon="plus" @click="openAddOrUpdateCompanyAddressModal()">
-                {{ $t("pages.company.info.buttons.add_new_address") }}
-              </VcButton>
-            </template>
-          </VcEmptyView>
+            <template #mobile-item="{ item }">
+              <div class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0">
+                <div class="grow space-y-2.5 pe-2">
+                  <div>
+                    <div class="mb-1 flex gap-1 empty:hidden">
+                      <VcBadge v-if="item.isDefault" color="info" rounded size="sm" variant="outline-dark">
+                        <VcIcon name="apply" />
+                        <span>{{ $t("pages.company.info.labels.default") }}</span>
+                      </VcBadge>
 
-          <div v-else class="flex flex-col md:rounded md:border">
-            <VcTable
-              :loading="loadingAddresses"
-              :columns="columns"
-              :items="paginatedAddresses"
-              :sort="sort"
-              :pages="pages"
-              :page="page"
-              :description="$t('pages.company.info.meta.table_description')"
-              @header-click="applySorting"
-              @page-changed="onPageChange"
-            >
-              <template #mobile-item="{ item }">
-                <div class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0">
-                  <div class="grow space-y-2.5 pe-2">
-                    <div>
-                      <div class="mb-1 flex gap-1 empty:hidden">
-                        <VcBadge v-if="item.isDefault" size="sm" color="info" variant="outline-dark" rounded>
-                          <VcIcon name="apply" />
-                          <span>{{ $t("pages.company.info.labels.default") }}</span>
-                        </VcBadge>
-
-                        <VcBadge v-if="item.isFavorite" size="sm" variant="outline-dark" rounded>
-                          <VcIcon name="whishlist" />
-                          <span>{{ $t("pages.company.info.labels.favorite") }}</span>
-                        </VcBadge>
-                      </div>
-
-                      <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.address") }}
-                      </div>
-
-                      <div class="text-sm font-bold text-neutral-950">
-                        <span>{{ item.line1 }}</span>
-                        <template v-if="item.city">, {{ item.city }}</template>
-                        <template v-if="item.regionName">, {{ item.regionName }}</template>
-                      </div>
+                      <VcBadge v-if="item.isFavorite" rounded size="sm" variant="outline-dark">
+                        <VcIcon name="whishlist" />
+                        <span>{{ $t("pages.company.info.labels.favorite") }}</span>
+                      </VcBadge>
                     </div>
 
-                    <div v-if="item.description">
-                      <div class="mb-0.5 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.description") }}
-                      </div>
-
-                      <div class="text-sm text-neutral-950">
-                        {{ item.description }}
-                      </div>
+                    <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
+                      {{ $t("pages.company.info.labels.address") }}
                     </div>
 
-                    <div class="flex">
-                      <div class="w-1/2 pe-2">
-                        <div class="mb-0.5 text-xs text-neutral">
-                          {{ $t("pages.company.info.labels.zip") }}
-                        </div>
-
-                        <div class="text-sm text-neutral-950">
-                          {{ item.postalCode }}
-                        </div>
-                      </div>
-
-                      <div class="w-1/2 ps-2">
-                        <div class="mb-0.5 text-xs text-neutral">
-                          {{ $t("pages.company.info.labels.country") }}
-                        </div>
-
-                        <div class="text-sm text-neutral-950">
-                          {{ item.countryName }}
-                        </div>
-                      </div>
+                    <div class="text-sm font-bold text-neutral-950">
+                      <span>{{ item.line1 }}</span>
+                      <template v-if="item.city">, {{ item.city }}</template>
+                      <template v-if="item.regionName">, {{ item.regionName }}</template>
                     </div>
                   </div>
 
-                  <AddressDropdownMenu
-                    v-if="userCanEditOrganization"
-                    :address="item"
-                    placement="left-start"
-                    @edit="openAddOrUpdateCompanyAddressModal(item)"
-                    @delete="openDeleteAddressModal(item)"
-                    @toggle-favorite="toggleFavoriteAddress(item.isFavorite, item.id)"
-                  />
-                </div>
-              </template>
+                  <div v-if="item.description">
+                    <div class="mb-0.5 text-xs text-neutral">
+                      {{ $t("pages.company.info.labels.description") }}
+                    </div>
 
-              <template #mobile-skeleton>
-                <div
-                  v-for="i in paginatedAddresses.length"
-                  :key="i"
-                  class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0"
-                >
-                  <div class="grow space-y-2.5 pe-2">
-                    <div>
-                      <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
-                        {{ $t("pages.company.info.labels.address") }}
+                    <div class="text-sm text-neutral-950">
+                      {{ item.description }}
+                    </div>
+                  </div>
+
+                  <div class="flex">
+                    <div class="w-1/2 pe-2">
+                      <div class="mb-0.5 text-xs text-neutral">
+                        {{ $t("pages.company.info.labels.zip") }}
+                      </div>
+
+                      <div class="text-sm text-neutral-950">
+                        {{ item.postalCode }}
+                      </div>
+                    </div>
+
+                    <div class="w-1/2 ps-2">
+                      <div class="mb-0.5 text-xs text-neutral">
+                        {{ $t("pages.company.info.labels.country") }}
+                      </div>
+
+                      <div class="text-sm text-neutral-950">
+                        {{ item.countryName }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <AddressDropdownMenu
+                  v-if="canEditOrganization"
+                  :address="item"
+                  placement="left-start"
+                  @delete="openDeleteAddressModal(item)"
+                  @edit="openAddOrUpdateCompanyAddressModal(item)"
+                  @toggle-favorite="toggleFavoriteAddress(item.isFavorite, item.id)"
+                />
+              </div>
+            </template>
+
+            <template #mobile-skeleton>
+              <div
+                v-for="i in paginatedAddresses.length"
+                :key="i"
+                class="relative mb-3 flex items-start rounded border px-3.5 py-4 last:mb-0"
+              >
+                <div class="grow space-y-2.5 pe-2">
+                  <div>
+                    <div class="mb-0.5 flex items-center gap-1 text-xs text-neutral">
+                      {{ $t("pages.company.info.labels.address") }}
+                    </div>
+
+                    <div class="h-4.5 animate-pulse bg-neutral-200"></div>
+                  </div>
+
+                  <div class="flex">
+                    <div class="w-1/2 pe-2">
+                      <div class="mb-0.5 text-xs text-neutral">
+                        {{ $t("pages.company.info.labels.zip") }}
                       </div>
 
                       <div class="h-4.5 animate-pulse bg-neutral-200"></div>
                     </div>
 
-                    <div class="flex">
-                      <div class="w-1/2 pe-2">
-                        <div class="mb-0.5 text-xs text-neutral">
-                          {{ $t("pages.company.info.labels.zip") }}
-                        </div>
-
-                        <div class="h-4.5 animate-pulse bg-neutral-200"></div>
+                    <div class="w-1/2 ps-2">
+                      <div class="mb-0.5 text-xs text-neutral">
+                        {{ $t("pages.company.info.labels.country") }}
                       </div>
 
-                      <div class="w-1/2 ps-2">
-                        <div class="mb-0.5 text-xs text-neutral">
-                          {{ $t("pages.company.info.labels.country") }}
-                        </div>
-
-                        <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                      </div>
+                      <div class="h-4.5 animate-pulse bg-neutral-200"></div>
                     </div>
                   </div>
                 </div>
-              </template>
+              </div>
+            </template>
 
-              <template #desktop-body>
-                <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
-                  <td class="px-4 py-3 text-center">
-                    <VcTooltip placement="bottom-start" width="max-content">
-                      <template #trigger>
-                        <VcIcon
-                          :class="[
-                            'cursor-pointer',
-                            {
-                              'fill-neutral-400': !address.isFavorite,
-                              'fill-primary': address.isFavorite,
-                            },
-                          ]"
-                          name="whishlist"
-                          size="md"
-                          @click="toggleFavoriteAddress(address.isFavorite, address.id)"
-                        />
-                      </template>
+            <template #desktop-body>
+              <tr v-for="address in paginatedAddresses" :key="address.id" class="even:bg-neutral-50">
+                <td class="px-4 py-3 text-center">
+                  <VcTooltip placement="bottom-start" width="max-content">
+                    <template #trigger>
+                      <VcIcon
+                        :class="[
+                          'cursor-pointer',
+                          {
+                            'fill-neutral-400': !address.isFavorite,
+                            'fill-primary': address.isFavorite,
+                          },
+                        ]"
+                        name="whishlist"
+                        size="md"
+                        @click="toggleFavoriteAddress(address.isFavorite, address.id)"
+                      />
+                    </template>
 
-                      <template #content>
-                        {{
-                          address.isFavorite
-                            ? $t("pages.company.info.remove_from_favorites")
-                            : $t("pages.company.info.add_to_favorites")
-                        }}
-                      </template>
-                    </VcTooltip>
-                  </td>
+                    <template #content>
+                      {{
+                        address.isFavorite
+                          ? $t("pages.company.info.remove_from_favorites")
+                          : $t("pages.company.info.add_to_favorites")
+                      }}
+                    </template>
+                  </VcTooltip>
+                </td>
 
-                  <td class="px-5 py-3">
-                    <span>{{ address.line1 }}</span>
-                    <template v-if="address.city">, {{ address.city }}</template>
-                    <template v-if="address.regionName">, {{ address.regionName }}</template>
-                  </td>
+                <td class="px-5 py-3">
+                  <span>{{ address.line1 }}</span>
+                  <template v-if="address.city">, {{ address.city }}</template>
+                  <template v-if="address.regionName">, {{ address.regionName }}</template>
+                </td>
 
-                  <td class="px-5 py-3">
-                    {{ address.countryName }}
-                  </td>
+                <td class="px-5 py-3">
+                  {{ address.countryName }}
+                </td>
 
-                  <td class="px-5 py-3 text-center">
-                    {{ address.postalCode }}
-                  </td>
+                <td class="px-5 py-3 text-center">
+                  {{ address.postalCode }}
+                </td>
 
-                  <td class="px-5 py-3">
-                    {{ address.description }}
-                  </td>
+                <td class="px-5 py-3">
+                  {{ address.description }}
+                </td>
 
-                  <td :class="{ 'text-right': !userCanEditOrganization }" class="px-5 py-3 text-center">
-                    <VcChip v-if="address.isDefault" color="info" variant="outline-dark" size="sm" rounded>
-                      <VcIcon name="apply" />
-                      {{ $t("pages.company.info.labels.default") }}
-                    </VcChip>
-                  </td>
+                <td :class="{ 'text-right': !canEditOrganization }" class="px-5 py-3 text-center">
+                  <VcChip v-if="address.isDefault" color="info" rounded size="sm" variant="outline-dark">
+                    <VcIcon name="apply" />
+                    {{ $t("pages.company.info.labels.default") }}
+                  </VcChip>
+                </td>
 
-                  <td v-if="userCanEditOrganization" class="px-5 py-3 text-center">
-                    <AddressDropdownMenu
-                      class="inline-block"
-                      :address="address"
-                      @edit="openAddOrUpdateCompanyAddressModal(address)"
-                      @delete="openDeleteAddressModal(address)"
-                      @toggle-favorite="toggleFavoriteAddress(address.isFavorite, address.id)"
-                    />
-                  </td>
-                </tr>
-              </template>
+                <td v-if="canEditOrganization" class="px-5 py-3 text-center">
+                  <AddressDropdownMenu
+                    :address="address"
+                    class="inline-block"
+                    @delete="openDeleteAddressModal(address)"
+                    @edit="openAddOrUpdateCompanyAddressModal(address)"
+                    @toggle-favorite="toggleFavoriteAddress(address.isFavorite, address.id)"
+                  />
+                </td>
+              </tr>
+            </template>
 
-              <template #desktop-skeleton>
-                <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-neutral-50">
-                  <td v-for="column in columns.length" :key="column" class="px-5 py-4">
-                    <div class="h-4.5 animate-pulse bg-neutral-200"></div>
-                  </td>
-                </tr>
-              </template>
-            </VcTable>
-          </div>
+            <template #desktop-skeleton>
+              <tr v-for="i in paginatedAddresses.length" :key="i" class="even:bg-neutral-50">
+                <td v-for="column in columns.length" :key="column" class="px-5 py-4">
+                  <div class="h-4.5 animate-pulse bg-neutral-200"></div>
+                </td>
+              </tr>
+            </template>
+          </VcTable>
         </div>
-      </template>
-    </VcWidget>
+      </VcWidget>
+    </div>
   </div>
 </template>
 
@@ -267,13 +300,19 @@
 import { toTypedSchema } from "@vee-validate/yup";
 import { computedEager } from "@vueuse/core";
 import { useField } from "vee-validate";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import { string } from "yup";
-import { usePageHead } from "@/core/composables";
+import { usePageHead, useWhiteLabeling } from "@/core/composables";
 import { AddressType, XApiPermissions } from "@/core/enums";
 import { AddressDropdownMenu, useUser } from "@/shared/account";
-import { AddOrUpdateCompanyAddressModal, useOrganization, useOrganizationAddresses } from "@/shared/company";
+import {
+  AddOrUpdateCompanyAddressModal,
+  useOrganization,
+  useOrganizationAddresses,
+  useOrganizationLogo,
+} from "@/shared/company";
+import { useFiles, downloadFile } from "@/shared/files";
 import { useModal } from "@/shared/modal";
 import { useNotifications } from "@/shared/notification";
 import type { MemberAddressType } from "@/core/api/graphql/types";
@@ -283,6 +322,21 @@ const page = ref(1);
 const itemsPerPage = ref(10);
 
 const { t } = useI18n();
+
+const DEFAULT_COMPANY_FILES_SCOPE = "organization-logos";
+const {
+  files,
+  uploadedFiles,
+  addFiles,
+  validateFiles,
+  uploadFiles,
+  removeFiles,
+  fetchOptions: fetchFileOptions,
+  options: fileOptions,
+} = useFiles(DEFAULT_COMPANY_FILES_SCOPE, undefined);
+const { logoUrl, updateCustomCompanyLogo } = useWhiteLabeling();
+const newLogoUrl = ref(logoUrl.value ?? "");
+const isSaveLogoDisabled = ref(true);
 
 usePageHead({
   title: t("pages.company.info.meta.title"),
@@ -294,6 +348,7 @@ usePageHead({
  */
 const { loading: loadingUser, organization, checkPermissions } = useUser();
 const { loading: loadingOrganization, updateOrganization } = useOrganization();
+const { loading: loadingOrganizationLogo, updateLogo } = useOrganizationLogo();
 const {
   addresses,
   sort,
@@ -315,7 +370,7 @@ const {
 } = useField<string>("organizationName", toTypedSchema(string().trim().required().max(64)));
 
 const organizationId = computed<string>(() => organization.value!.id);
-const userCanEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
+const canEditOrganization = computedEager<boolean>(() => checkPermissions(XApiPermissions.CanEditOrganization));
 
 const pages = computed<number>(() => Math.ceil(addresses.value.length / itemsPerPage.value));
 const paginatedAddresses = computed<MemberAddressType[]>(() =>
@@ -356,7 +411,7 @@ const columns = computed<ITableColumn[]>(() => {
     },
   ];
 
-  if (userCanEditOrganization.value) {
+  if (canEditOrganization.value) {
     result.push({
       id: "id",
       title: t("pages.company.info.labels.actions"),
@@ -383,6 +438,21 @@ async function saveOrganizationName(): Promise<void> {
     id: organizationId.value,
     name: organizationName.value.trim(),
   });
+}
+
+async function saveOrganizationLogo(): Promise<void> {
+  await updateLogo(organizationId.value, newLogoUrl.value);
+
+  updateCustomCompanyLogo(newLogoUrl.value);
+
+  isSaveLogoDisabled.value = true;
+  notifications.success({
+    text: t("common.messages.logo_changed"),
+    duration: 10000,
+    single: true,
+  });
+
+  files.value = [];
 }
 
 function openDeleteAddressModal(address: MemberAddressType): void {
@@ -448,6 +518,26 @@ function openAddOrUpdateCompanyAddressModal(address?: MemberAddressType): void {
 
 void fetchAddresses();
 
+async function onAddFiles(items: INewFile[]) {
+  addFiles(items);
+  validateFiles();
+  await uploadFiles();
+  newLogoUrl.value = uploadedFiles.value.map((attachment) => attachment.url)[0];
+  isSaveLogoDisabled.value = false;
+}
+
+async function onRemoveFiles(items: FileType[]) {
+  await removeFiles(items);
+  newLogoUrl.value = logoUrl.value ?? "";
+  isSaveLogoDisabled.value = true;
+}
+
+function onFileDownload(file: FileType) {
+  if (file && file.url) {
+    void downloadFile(file.url, file.name);
+  }
+}
+
 async function toggleFavoriteAddress(isFavoriteAddress: boolean, addressId?: string) {
   if (addressId) {
     isFavoriteAddress ? await removeAddressFromFavorite(addressId) : await addAddressToFavorite(addressId);
@@ -459,4 +549,9 @@ watch(
   (name) => resetOrganizationField({ value: name }),
   { immediate: true },
 );
+
+watchEffect(async () => {
+  await fetchFileOptions();
+  fileOptions.value.maxFileCount = 1;
+});
 </script>
