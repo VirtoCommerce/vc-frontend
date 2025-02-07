@@ -70,7 +70,8 @@
       "all_filters": "Todos los filtros",
       "sort_by": "Ordenar por",
       "add_items_to_cart": "Añadir artículos al carrito",
-      "show_details": "Mostrar detalles"
+      "show_details": "Mostrar detalles",
+      "add_with_bulk_order": "Añadir con pedido masivo"
     },
     "labels": {
       "actions": "Acciones",
@@ -271,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Tarjeta bancaria (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Tarjeta bancaria (Skyflow)"
+        "SkyflowPaymentMethod": "Tarjeta bancaria (Skyflow)",
+        "CyberSourcePaymentMethod": "Tarjeta bancaria (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarifa fija (terrestre)",
@@ -725,7 +727,13 @@
         "month_placeholder": "MM",
         "year_label": "Año",
         "year_placeholder": "AA",
-        "security_code_label": "Código de seguridad"
+        "security_code_label": "Código de seguridad",
+        "expiration_date_placeholder_extended": "MM / YYYY",
+        "errors": {
+          "month": "Por favor, proporciona un mes de vencimiento válido",
+          "year": "Por favor, proporcione un año de vencimiento válido"
+        },
+        "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago"
       },
       "authorize_net": {
         "user_agreement_link": "Acuerdo de usuario",

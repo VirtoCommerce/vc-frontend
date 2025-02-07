@@ -70,7 +70,8 @@
       "all_filters": "Все фильтры",
       "sort_by": "Сортировать по",
       "add_items_to_cart": "Добавить товары в корзину",
-      "show_details": "Показать детали"
+      "show_details": "Показать детали",
+      "add_with_bulk_order": "Добавить оптом"
     },
     "labels": {
       "actions": "Действия",
@@ -271,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Банковская карта (Authorize.Net)",
         "DefaultManualPaymentMethod": "Вручную",
-        "SkyflowPaymentMethod": "Банковская карта (Skyflow)"
+        "SkyflowPaymentMethod": "Банковская карта (Skyflow)",
+        "CyberSourcePaymentMethod": "Банковская карта (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Фиксированная ставка (наземный транспорт)",
@@ -725,7 +727,13 @@
         "month_placeholder": "ММ",
         "year_label": "Год",
         "year_placeholder": "ГГ",
-        "security_code_label": "Код безопасности"
+        "security_code_label": "Код безопасности",
+        "expiration_date_placeholder_extended": "MM / ГГГГ",
+        "errors": {
+          "month": "Укажите действительный месяц истечения срока действия",
+          "year": "Укажите действительный год окончания срока действия"
+        },
+        "user_error_message": "Не удалось инициализировать платёж. Попробуйте позже или выберите другой способ оплаты"
       },
       "authorize_net": {
         "user_agreement_link": "Пользовательского соглашения",
