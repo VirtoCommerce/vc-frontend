@@ -70,7 +70,8 @@
       "all_filters": "All filters",
       "sort_by": "Sort by",
       "add_items_to_cart": "Add items to cart",
-      "show_details": "Show details"
+      "show_details": "Show details",
+      "add_with_bulk_order": "Add with bulk order"
     },
     "labels": {
       "actions": "Actions",

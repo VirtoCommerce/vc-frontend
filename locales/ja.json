@@ -70,7 +70,8 @@
       "all_filters": "全フィルター",
       "sort_by": "並び替え",
       "add_items_to_cart": "カートに追加",
-      "show_details": "詳細表示"
+      "show_details": "詳細表示",
+      "add_with_bulk_order": "一括注文で追加"
     },
     "labels": {
       "actions": "操作",

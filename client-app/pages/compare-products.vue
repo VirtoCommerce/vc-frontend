@@ -3,15 +3,16 @@
     v-if="!productsIds.length"
     :breadcrumbs="breadcrumbs"
     :title="$t('pages.compare.empty_list.title')"
-    :description="$t('pages.compare.empty_list.message')"
-    image="emptyCompareList.webp"
-    mobile-image="emptyCompareListMobile.webp"
+    icon="outline-compare"
+    image="pills.jpg"
   >
-    <template #actions>
-      <VcButton :to="{ name: 'Catalog' }">
-        {{ $t("pages.compare.empty_list.button_text") }}
-      </VcButton>
-    </template>
+    <div class="mb-6 text-lg font-bold">
+      {{ $t("pages.compare.empty_list.message") }}
+    </div>
+
+    <VcButton :to="{ name: 'Catalog' }" prepend-icon="shopping-bag">
+      {{ $t("pages.compare.empty_list.button_text") }}
+    </VcButton>
   </VcEmptyPage>
 
   <VcContainer v-else>
