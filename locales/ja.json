@@ -271,7 +271,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "クレジットカード (Authorize.Net)",
         "DefaultManualPaymentMethod": "手動決済",
-        "SkyflowPaymentMethod": "クレジットカード (Skyflow)"
+        "SkyflowPaymentMethod": "クレジットカード (Skyflow)",
+        "CyberSourcePaymentMethod": "クレジットカード (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "固定料金 (地上)",
@@ -725,7 +726,13 @@
         "month_placeholder": "MM",
         "year_label": "Year",
         "year_placeholder": "YY",
-        "security_code_label": "Security Code"
+        "security_code_label": "Security Code",
+        "expiration_date_placeholder_extended": "MM / YYYY",
+        "errors": {
+          "month": "有効な有効期限月を入力してください",
+          "year": "有効な有効期限の年を入力してください"
+        },
+        "user_error_message": "決済を開始できません。後でやり直すか、別の支払い方法をご利用ください"
       },
       "authorize_net": {
         "user_agreement_link": "User Agreement",

@@ -271,7 +271,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Bankkarte (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manuell",
-        "SkyflowPaymentMethod": "Bankkarte (Skyflow)"
+        "SkyflowPaymentMethod": "Bankkarte (Skyflow)",
+        "CyberSourcePaymentMethod": "Bankkarte (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Festpreis (Boden)",
@@ -725,7 +726,13 @@
         "month_placeholder": "MM",
         "year_label": "Jahr",
         "year_placeholder": "JJ",
-        "security_code_label": "Sicherheitscode"
+        "security_code_label": "Sicherheitscode",
+        "expiration_date_placeholder_extended": "MM / JJJJ",
+        "errors": {
+          "month": "Bitte geben Sie einen gültigen Ablaufmonat an",
+          "year": "Bitte geben Sie ein gültiges Ablaufjahr an"
+        },
+        "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode."
       },
       "authorize_net": {
         "user_agreement_link": "Nutzungsbedingungen",

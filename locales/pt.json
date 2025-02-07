@@ -271,7 +271,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Cartão bancário (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Cartão bancário (Skyflow)"
+        "SkyflowPaymentMethod": "Cartão bancário (Skyflow)",
+        "CyberSourcePaymentMethod": "Cartão bancário (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Taxa Fixa (Terrestre)",
@@ -725,7 +726,13 @@
         "month_placeholder": "MM",
         "year_label": "Ano",
         "year_placeholder": "AA",
-        "security_code_label": "Código de Segurança"
+        "security_code_label": "Código de Segurança",
+        "expiration_date_placeholder_extended": "MM/AAAA",
+        "errors": {
+          "month": "Por favor, forneça um mês de validade válido",
+          "year": "Por favor, forneça um ano de validade válido"
+        },
+        "user_error_message": "Não foi possível inicializar o pagamento. Tente novamente mais tarde ou use outro método de pagamento"
       },
       "authorize_net": {
         "user_agreement_link": "Acordo de Usuário",

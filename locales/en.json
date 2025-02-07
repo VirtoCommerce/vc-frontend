@@ -271,7 +271,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Bank card (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Bank card (Skyflow)"
+        "SkyflowPaymentMethod": "Bank card (Skyflow)",
+        "CyberSourcePaymentMethod": "Bank card (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Fixed Rate (Ground)",
@@ -721,11 +722,17 @@
         "cardholder_name_label": "Cardholder name",
         "expiration_date_label": "Expiration date",
         "expiration_date_placeholder": "MM / YY",
+        "expiration_date_placeholder_extended": "MM / YYYY",
         "month_label": "Month",
         "month_placeholder": "MM",
         "year_label": "Year",
         "year_placeholder": "YY",
-        "security_code_label": "Security code"
+        "security_code_label": "Security code",
+        "errors": {
+          "month": "Please provide a valid expiration month",
+          "year": "Please provide a valid expiration year"
+        },
+        "user_error_message": "Can't initialize payment. Please try again later or use another payment method"
       },
       "authorize_net": {
         "user_agreement_link": "User agreement",
@@ -1384,7 +1391,7 @@
         "title": "Registration completed"
       },
       "title": "Registration completed",
-      "description": "Thank you for showing your interest in registering with us. We kindly ask you to check your mailbox to verify the email address you’ve entered."
+      "description": "Thank you for showing your interest in registering with us. We kindly ask you to check your mailbox to verify the email address you've entered."
     },
     "blocked": {
       "meta": {

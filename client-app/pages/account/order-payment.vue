@@ -227,9 +227,7 @@
             </div>
 
             <div class="p-5 md:p-6">
-              <PaymentProcessingManual
-                v-if="[PaymentActionType.Unknown, PaymentActionType.Standard].includes(paymentMethodType!)"
-              />
+              <PaymentProcessingManual v-if="paymentTypeName === 'DefaultManualPaymentMethod'" />
 
               <PaymentProcessingRedirection
                 v-else-if="paymentMethodType === PaymentActionType.Redirection"
@@ -248,6 +246,13 @@
 
               <PaymentProcessingSkyflow
                 v-else-if="paymentTypeName === 'SkyflowPaymentMethod'"
+                :order="order"
+                @success="success = true"
+                @fail="failure = true"
+              />
+
+              <PaymentProcessingCyberSource
+                v-if="paymentTypeName === 'CyberSourcePaymentMethod'"
                 :order="order"
                 @success="success = true"
                 @fail="failure = true"
@@ -280,6 +285,7 @@ import type { MemberAddressType, OrderPaymentMethodType, PaymentInType } from "@
 import type { Optional } from "utility-types";
 import AddOrUpdateAddressModal from "@/shared/account/components/add-or-update-address-modal.vue";
 import PaymentProcessingAuthorizeNet from "@/shared/payment/components/payment-processing-authorize-net.vue";
+import PaymentProcessingCyberSource from "@/shared/payment/components/payment-processing-cyber-source.vue";
 import PaymentProcessingSkyflow from "@/shared/payment/components/payment-processing-skyflow.vue";
 
 interface IProps {
