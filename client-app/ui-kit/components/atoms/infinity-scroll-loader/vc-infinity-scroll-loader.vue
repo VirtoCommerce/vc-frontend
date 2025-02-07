@@ -6,7 +6,7 @@
 
     <slot v-else name="loaded">
       <VcIcon
-        v-if="!isPageLimitReached || (!loading && pageNumber === pagesCount)"
+        v-if="isPageLimitReached || (!loading && pageNumber === pagesCount)"
         class="size-7 fill-primary"
         name="badge-check"
       />
