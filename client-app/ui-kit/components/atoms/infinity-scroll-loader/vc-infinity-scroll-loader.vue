@@ -5,10 +5,13 @@
     </slot>
 
     <slot v-else name="loaded">
-      <VcIcon class="size-7 fill-primary" name="badge-check" />
+      <VcIcon
+        v-if="!isPageLimitReached || (!loading && pageNumber === pagesCount)"
+        class="size-7 fill-primary"
+        name="badge-check"
+      />
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
-
       <span v-else-if="!loading && pageNumber === pagesCount">{{ $t("ui_kit.reach_limit.end_list") }}</span>
     </slot>
   </div>
@@ -60,11 +63,15 @@ function initObserver(): void {
   observer.observe(target.value!);
 }
 
-onMounted(initObserver);
+onMounted(() => {
+  initObserver();
+  document.documentElement.style.setProperty("overflow-anchor", "none");
+});
 
 onBeforeUnmount(() => {
   observer?.disconnect();
   observer = null;
+  document.documentElement.style.removeProperty("overflow-anchor");
 });
 
 watch(() => [props.viewport, props.distance], initObserver);
