@@ -8,6 +8,7 @@
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
+      @focus="onSearchBarFocused"
     >
       <template #append>
         <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click.stop="reset">
@@ -141,7 +142,7 @@ import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
 import { ROUTES } from "@/router/routes/constants";
-import { useSearchBar } from "@/shared/layout";
+import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category } from "@/core/api/graphql/types";
@@ -293,6 +294,12 @@ const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEAR
 function onSearchPhraseChanged() {
   hideSearchDropdown();
   void searchProductsDebounced();
+}
+
+function onSearchBarFocused() {
+  if (trimmedSearchPhrase.value) {
+    showSearchDropdown();
+  }
 }
 
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
