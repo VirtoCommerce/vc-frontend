@@ -169,6 +169,7 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
 }));
 
 function reset() {
+  searchPhrase.value = "";
   void router.push({ name: ROUTES.CATALOG.NAME });
 }
 

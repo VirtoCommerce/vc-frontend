@@ -339,7 +339,7 @@ function inputClick() {
     }
 
     #{$search} & {
-      @apply appearance-none #{!important};
+      @apply appearance-none;
 
       &::-webkit-search-cancel-button {
         @apply appearance-none;
