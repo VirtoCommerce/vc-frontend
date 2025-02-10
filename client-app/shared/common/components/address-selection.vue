@@ -16,7 +16,7 @@
         :disabled="disabled"
         variant="outline"
         icon
-        size="sm"
+        size="xs"
         class="vc-address-selection__button"
         @click="$emit('change')"
       >
