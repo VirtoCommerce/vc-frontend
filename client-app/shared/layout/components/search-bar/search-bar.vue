@@ -184,15 +184,13 @@ const trimmedSearchPhrase = computed(() => {
   return searchPhrase.value.trim();
 });
 
-const isApplied = computed<boolean>(() => searchPhraseInUrl.value === trimmedSearchPhrase.value);
-
 const { bottom } = useElementBounding(searchBarElement);
 
 const searchDropdownStyle = computed<StyleValue | undefined>(() => {
   return { maxHeight: bottom.value ? `calc(100vh - ${bottom.value + 40}px)` : "auto" };
 });
 
-onClickOutside(searchBarElement, () => hideSearchDropdown());
+onClickOutside(searchBarElement, hideSearchDropdown);
 
 const categoriesColumns = computed<Array<Category[]>>(() => {
   const columnsCount: number = Math.ceil(categories.value.length / CATEGORIES_ITEMS_PER_COLUMN);
@@ -254,9 +252,7 @@ async function searchAndShowDropdownResults(): Promise<void> {
 
   await searchResults(params);
 
-  if (!isApplied.value) {
-    showSearchDropdown();
-  }
+  showSearchDropdown();
 
   /**
    * Send Google Analytics event for products.
@@ -290,11 +286,7 @@ function reset() {
   hideSearchDropdown();
 }
 
-const searchProductsDebounced = useDebounceFn(() => {
-  if (!isApplied.value) {
-    void searchAndShowDropdownResults();
-  }
-}, SEARCH_BAR_DEBOUNCE_TIME);
+const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
 
 function onSearchPhraseChanged() {
   hideSearchDropdown();
