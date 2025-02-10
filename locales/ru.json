@@ -1107,7 +1107,7 @@
           "title": "Список: {0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes в списке?"
+        "save_changes_message": "@:common.messages.save_changes"
       },
       "profile": {
         "meta": {
