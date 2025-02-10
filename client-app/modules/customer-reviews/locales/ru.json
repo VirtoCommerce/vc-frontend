@@ -7,7 +7,8 @@
       "feedback": "Отзыв",
       "rating": "Рейтинг",
       "rate_product": "Оценить продукт",
-      "item_as_described_by_vendor": "Товар соответствует описанию продавца?"
+      "item_as_described_by_vendor": "Товар соответствует описанию продавца?",
+      "product_review_image": "Изображение товара из отзыва"
     },
     "messages": {
       "thanks_for_feedback": "Ваш отзыв успешно отправлен и ожидает подтверждения. Спасибо!"

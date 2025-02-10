@@ -8,17 +8,15 @@
       >
         <VcIcon class="flex-none fill-primary" size="xs" name="minus" />
 
-        <a
+        <button
           :class="{ 'font-bold': isSelectedOrderStatus(facet.term) }"
           class="line-clamp-2 flex w-full cursor-pointer gap-1 py-0.5 hover:text-neutral-950"
-          tabindex="0"
-          role="button"
+          type="button"
           @click="applyOrderFilter(facet.term)"
-          @keypress="applyOrderFilter(facet.term)"
         >
-          <div class="grow overflow-hidden text-ellipsis text-nowrap">{{ facet.label }}</div>
+          <span class="grow overflow-hidden text-ellipsis text-nowrap text-start">{{ facet.label }}</span>
           <VcBadge variant="outline" rounded>{{ facet.count }}</VcBadge>
-        </a>
+        </button>
       </div>
     </template>
   </AccountNavigationItem>

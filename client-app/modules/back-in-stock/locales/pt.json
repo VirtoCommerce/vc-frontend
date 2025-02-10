@@ -1,0 +1,31 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "Tem certeza de que deseja cancelar a inscrição nas notificações de estoque de “{productName}”?",
+      "title": "Confirmar Exclusão"
+    },
+    "list_details": {
+      "empty_list": "Sua lista está vazia",
+      "empty_list_button": "Continuar navegando"
+    },
+    "messages": {
+      "click_to_receive_alert": "Clique para receber um alerta",
+      "notify_me_when_in_stock": "Avise-me quando estiver em estoque",
+      "you_are_subscribed": "Você está inscrito! Avisaremos quando voltar ao estoque.",
+      "you_will_be_notified": "Você será notificado"
+    },
+    "navigation": {
+      "route_name": "Lista de Reabastecimento"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Lista de Reabastecimento"
+      },
+      "reset_search": "Redefinir pesquisa",
+      "search_button": "Pesquisar",
+      "search_placeholder": "Pesquisa do usuário"
+    }
+  }
+}

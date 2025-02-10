@@ -70,7 +70,8 @@
       "all_filters": "Alle Filter",
       "sort_by": "Sortieren nach",
       "add_items_to_cart": "Artikel in den Warenkorb legen",
-      "show_details": "Details anzeigen"
+      "show_details": "Details anzeigen",
+      "add_with_bulk_order": "Mit Sammelbestellung hinzufügen"
     },
     "labels": {
       "actions": "Aktionen",
@@ -146,7 +147,11 @@
       "date_new_to_old": "Datum, neu bis alt",
       "date_old_to_new": "Datum, alt bis neu",
       "comments": "Kommentare",
-      "fields_required": "Felder sind Pflichtfelder"
+      "fields_required": "Felder sind Pflichtfelder",
+      "support_phone_number": "Support-Telefonnummer",
+      "main_menu": "Hauptmenü",
+      "toggle_search_bar": "Suchleiste umschalten",
+      "slider_image": "Slider-Bild"
     },
     "prefixes": {
       "please": "Bitte",
@@ -192,7 +197,8 @@
       "blocked": "Sie wurden blockiert. Sie können keine Informationen abrufen oder Bestellungen aufgeben. Für weitere Details ",
       "password_about_expire": "Ihr Passwort läuft in {value} Tag(en) ab. Bitte setzen Sie ein neues Passwort im Profil.",
       "password_expired": "Ihr Passwort ist abgelaufen",
-      "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen."
+      "data_changed": "Die Daten wurden in einem der anderen Tabs geändert. Bitte aktualisieren Sie die Seite, um die aktuellen Daten anzuzeigen.",
+      "logo_changed": "Logo erfolgreich hinzugefügt. Bitte aktualisieren Sie die Seite, um die Änderungen zu sehen."
     },
     "placeholders": {
       "enter_value": "Bitte geben Sie einen Wert ein",
@@ -266,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Bankkarte (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manuell",
-        "SkyflowPaymentMethod": "Bankkarte (Skyflow)"
+        "SkyflowPaymentMethod": "Bankkarte (Skyflow)",
+        "CyberSourcePaymentMethod": "Bankkarte (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Festpreis (Boden)",
@@ -720,7 +727,13 @@
         "month_placeholder": "MM",
         "year_label": "Jahr",
         "year_placeholder": "JJ",
-        "security_code_label": "Sicherheitscode"
+        "security_code_label": "Sicherheitscode",
+        "expiration_date_placeholder_extended": "MM / JJJJ",
+        "errors": {
+          "month": "Bitte geben Sie einen gültigen Ablaufmonat an",
+          "year": "Bitte geben Sie ein gültiges Ablaufjahr an"
+        },
+        "user_error_message": "Zahlung konnte nicht initialisiert werden. Bitte versuchen Sie es später noch einmal oder wählen Sie eine andere Zahlungsmethode."
       },
       "authorize_net": {
         "user_agreement_link": "Nutzungsbedingungen",
@@ -1131,7 +1144,8 @@
           "country": "Land",
           "default": "Standard",
           "favorite": "Favorit",
-          "actions": "Aktionen"
+          "actions": "Aktionen",
+          "company_logo": "Firmenlogo"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

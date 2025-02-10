@@ -1,72 +1,62 @@
 <template>
   <!-- Success -->
-  <VcEmptyPage v-if="emailConfirmed || linkSentSuccessfully" image="email.webp" class="flex grow flex-col">
-    <template #description>
-      <VcTypography tag="h1" class="mb-6 text-center lg:text-left">
-        {{ $t("pages.confirm_email.header") }}
-      </VcTypography>
+  <VcEmptyPage
+    v-if="emailConfirmed || linkSentSuccessfully"
+    image="email.jpg"
+    icon="outline-e-mail"
+    :status-color="emailConfirmed ? 'success' : 'secondary'"
+  >
+    <VcTypography tag="h1" class="order-first mb-6">
+      {{ $t("pages.confirm_email.header") }}
+    </VcTypography>
 
-      <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
-        <VcIcon name="check" size="xxl" class="fill-success" />
+    <div class="mb-10 max-w-md">
+      <span v-if="linkSentSuccessfully">
+        {{ $t("pages.confirm_email.link_sent_successfully_text") }}
+      </span>
 
-        <p class="max-w-md text-center text-lg lg:text-left">
-          <span v-if="linkSentSuccessfully">
-            {{ $t("pages.confirm_email.link_sent_successfully_text") }}
-          </span>
+      <span v-if="emailConfirmed">
+        <div class="mb-2 font-bold">
+          {{ $t("pages.confirm_email.subtitle") }}
+        </div>
 
-          <span v-if="emailConfirmed">
-            <strong class="mb-2 block">
-              {{ $t("pages.confirm_email.subtitle") }}
-            </strong>
+        {{ $t("pages.confirm_email.text") }}
+      </span>
+    </div>
 
-            {{ $t("pages.confirm_email.text") }}
-          </span>
-        </p>
-      </div>
-    </template>
+    <VcButton v-if="linkSentSuccessfully" :to="{ name: 'Home' }" min-width="12rem">
+      {{ $t("common.links.home") }}
+    </VcButton>
 
-    <template #actions>
-      <VcButton v-if="linkSentSuccessfully" :to="{ name: 'Home' }" class="w-36">
-        {{ $t("common.links.home") }}
-      </VcButton>
-
-      <VcButton v-else-if="emailConfirmed" :to="{ name: 'SignIn' }" class="w-36">
-        {{ $t("pages.confirm_email.continue_button") }}
-      </VcButton>
-    </template>
+    <VcButton v-else-if="emailConfirmed" :to="{ name: 'SignIn' }" min-width="12rem">
+      {{ $t("pages.confirm_email.continue_button") }}
+    </VcButton>
   </VcEmptyPage>
 
   <!-- Error -->
   <VcEmptyPage
     v-else-if="loaded && (!emailConfirmed || !linkSentSuccessfully)"
-    image="email.webp"
-    class="flex grow flex-col"
+    image="email.jpg"
+    icon="outline-e-mail"
+    status-color="danger"
   >
-    <template #description>
-      <VcTypography tag="h1" class="mb-6 text-center lg:text-left">
-        {{ $t("pages.confirm_email.header") }}
-      </VcTypography>
+    <VcTypography tag="h1" class="order-first mb-6">
+      {{ $t("pages.confirm_email.header") }}
+    </VcTypography>
 
-      <div class="mb-10 flex flex-col items-center gap-5 lg:flex-row">
-        <VcIcon name="exclamation-circle" size="xxl" class="fill-danger" />
+    <div class="mb-10 max-w-md">
+      <span v-if="!emailConfirmed">
+        {{ $t("pages.confirm_email.email_confirmation_failed_text") }}
+      </span>
 
-        <p class="max-w-md text-center text-lg font-bold lg:text-left">
-          <span v-if="!emailConfirmed">
-            {{ $t("pages.confirm_email.email_confirmation_failed_text") }}
-          </span>
+      <span v-if="linkSentSuccessfully === false">
+        {{ $t("pages.confirm_email.link_sent_error_text") }}
+      </span>
+    </div>
 
-          <span v-if="linkSentSuccessfully === false">
-            {{ $t("pages.confirm_email.link_sent_error_text") }}
-          </span>
-        </p>
-      </div>
-    </template>
-
-    <template #actions>
-      <VcButton :loading="loading" class="w-48" @click="resendLink">
-        {{ $t("common.buttons.resend_link") }}
-      </VcButton>
-    </template>
+    <VcButton :loading="loading" min-width="12rem" @click="resendLink">
+      {{ $t("common.buttons.resend_link") }}
+    </VcButton>
   </VcEmptyPage>
 
   <!-- Loader -->

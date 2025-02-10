@@ -1,0 +1,31 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "Вы уверены, что хотите отписаться от уведомлений о наличии товара \"{productName}\"?",
+      "title": "Подтвердить удаление"
+    },
+    "list_details": {
+      "empty_list": "Список ожидаемых товаров пуст",
+      "empty_list_button": "Продолжить покупки"
+    },
+    "messages": {
+      "click_to_receive_alert": "Нажмите, чтобы получить уведомление",
+      "notify_me_when_in_stock": "Сообщить о поступлении",
+      "you_are_subscribed": "Вы подписаны! Мы сообщим вам, когда товар снова появится в наличии.",
+      "you_will_be_notified": "Вам будет отправлено уведомление"
+    },
+    "navigation": {
+      "route_name": "Список ожидаемых товаров"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "Список ожидаемых товаров"
+      },
+      "reset_search": "Сбросить поиск",
+      "search_button": "Поиск",
+      "search_placeholder": "Поиск"
+    }
+  }
+}

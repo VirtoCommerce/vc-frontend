@@ -70,7 +70,8 @@
       "all_filters": "Todos los filtros",
       "sort_by": "Ordenar por",
       "add_items_to_cart": "Añadir artículos al carrito",
-      "show_details": "Mostrar detalles"
+      "show_details": "Mostrar detalles",
+      "add_with_bulk_order": "Añadir con pedido masivo"
     },
     "labels": {
       "actions": "Acciones",
@@ -146,7 +147,11 @@
       "date_new_to_old": "Fecha, de nuevo a viejo",
       "date_old_to_new": "Fecha, de viejo a nuevo",
       "comments": "Comentarios",
-      "fields_required": "Los campos son obligatorios"
+      "fields_required": "Los campos son obligatorios",
+      "support_phone_number": "Número de teléfono de soporte",
+      "main_menu": "Menú principal",
+      "toggle_search_bar": "Alternar barra de búsqueda",
+      "slider_image": "Imagen del deslizador"
     },
     "prefixes": {
       "please": "Por favor",
@@ -192,7 +197,8 @@
       "blocked": "Has sido bloqueado. No puedes acceder a ninguna información ni crear el pedido. Para más detalles, por favor ",
       "password_about_expire": "Tu contraseña está a punto de expirar en {value} día(s). Por favor, establece una nueva contraseña en el perfil.",
       "password_expired": "Tu contraseña ha expirado",
-      "data_changed": "Los datos han sido modificados en uno de los otros tabs. Por favor, actualiza la página para mostrar los datos actuales."
+      "data_changed": "Los datos han sido modificados en uno de los otros tabs. Por favor, actualiza la página para mostrar los datos actuales.",
+      "logo_changed": "Logotipo añadido correctamente. Actualiza la página para ver los cambios."
     },
     "placeholders": {
       "enter_value": "Por favor, introduce un valor",
@@ -266,7 +272,8 @@
       "payment_by_code": {
         "AuthorizeNetPaymentMethod": "Tarjeta bancaria (Authorize.Net)",
         "DefaultManualPaymentMethod": "Manual",
-        "SkyflowPaymentMethod": "Tarjeta bancaria (Skyflow)"
+        "SkyflowPaymentMethod": "Tarjeta bancaria (Skyflow)",
+        "CyberSourcePaymentMethod": "Tarjeta bancaria (CyberSource)"
       },
       "delivery_by_id": {
         "FixedRate_Ground": "Tarifa fija (terrestre)",
@@ -720,7 +727,13 @@
         "month_placeholder": "MM",
         "year_label": "Año",
         "year_placeholder": "AA",
-        "security_code_label": "Código de seguridad"
+        "security_code_label": "Código de seguridad",
+        "expiration_date_placeholder_extended": "MM / YYYY",
+        "errors": {
+          "month": "Por favor, proporciona un mes de vencimiento válido",
+          "year": "Por favor, proporcione un año de vencimiento válido"
+        },
+        "user_error_message": "No se pudo inicializar el pago. Inténtalo de nuevo más tarde o usa otro método de pago"
       },
       "authorize_net": {
         "user_agreement_link": "Acuerdo de usuario",
@@ -1131,7 +1144,8 @@
           "country": "País",
           "default": "Predeterminado",
           "favorite": "Favorito",
-          "actions": "Acciones"
+          "actions": "Acciones",
+          "company_logo": "Logotipo de la empresa"
         },
         "buttons": {
           "add_new_address": "@:common.buttons.add_new_address",

@@ -1,5 +1,5 @@
 import { createGlobalState } from "@vueuse/core";
-import { defineAsyncComponent, readonly, ref } from "vue";
+import { defineAsyncComponent, shallowReadonly, shallowRef } from "vue";
 import type { ExtendedMenuLinkType } from "@/core/types";
 import type { DefineComponent } from "vue";
 
@@ -10,7 +10,7 @@ export type ElementType = {
 };
 
 function _useCustomHeaderLinkComponents() {
-  const customLinkComponents = ref<{ [key: ElementType["id"]]: ElementType["component"] }>({
+  const customLinkComponents = shallowRef<{ [key: ElementType["id"]]: ElementType["component"] }>({
     compare: defineAsyncComponent(
       () => import("@/shared/layout/components/header/_internal/link-components/link-compare.vue"),
     ),
@@ -26,7 +26,7 @@ function _useCustomHeaderLinkComponents() {
   }
 
   return {
-    customLinkComponents: readonly(customLinkComponents),
+    customLinkComponents: shallowReadonly(customLinkComponents),
     registerCustomLinkComponent,
   };
 }

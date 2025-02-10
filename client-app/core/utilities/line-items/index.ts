@@ -1,7 +1,7 @@
 import { getProductRoute } from "../product";
 import { getPropertiesGroupedByName } from "../properties";
 import type { AnyLineItemType, VendorGroupType, VendorGroupByVendorIdType, PreparedLineItemType } from "../../types";
-import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
+import type { LineItemType, OrderLineItemType, Product } from "@/core/api/graphql/types";
 
 export function groupByVendor<T extends LineItemType | OrderLineItemType>(items: T[]): VendorGroupType<T>[] {
   // NOTE: The group without the vendor should be displayed last.
@@ -87,9 +87,27 @@ export function prepareLineItem(item: AnyLineItemType, countInCart?: number): Pr
     variations: item.product?.variations,
     configurationItems: "configurationItems" in item ? item.configurationItems : undefined,
     showPlacedPrice: item.showPlacedPrice,
+    product: item.product,
   };
 }
 
 export function prepareLineItems(items: AnyLineItemType[]): PreparedLineItemType[] {
   return items.map((item) => prepareLineItem(item));
+}
+
+export function prepareLineItemForProduct(item: Product, countInCart?: number): PreparedLineItemType {
+  const tempLineItem: AnyLineItemType = {
+    id: item.id,
+    name: item.name,
+    imageUrl: item.imgSrc,
+    product: item,
+    productId: item.id,
+    sku: item.code,
+    quantity: 0,
+    inStockQuantity: item.availabilityData?.availableQuantity,
+    productType: item.productType,
+    price: item.price?.actual,
+  };
+
+  return prepareLineItem(tempLineItem, countInCart);
 }

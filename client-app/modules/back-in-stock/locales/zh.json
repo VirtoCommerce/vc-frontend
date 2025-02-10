@@ -1,0 +1,31 @@
+{
+  "back_in_stock": {
+    "deactivate_modal": {
+      "cancel_button": "@:common.buttons.cancel",
+      "delete_button": "@:common.buttons.delete",
+      "message": "您确定要取消订阅“{productName}”到货通知吗？",
+      "title": "确认删除"
+    },
+    "list_details": {
+      "empty_list": "您的列表为空",
+      "empty_list_button": "继续浏览"
+    },
+    "messages": {
+      "click_to_receive_alert": "点击接收提醒",
+      "notify_me_when_in_stock": "到货通知我",
+      "you_are_subscribed": "您已订阅！我们会在商品重新上市时通知您。",
+      "you_will_be_notified": "您将收到通知"
+    },
+    "navigation": {
+      "route_name": "补货清单"
+    },
+    "subscriptions": {
+      "meta": {
+        "title": "补货清单"
+      },
+      "reset_search": "重置搜索",
+      "search_button": "搜索",
+      "search_placeholder": "用户搜索"
+    }
+  }
+}
