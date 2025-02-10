@@ -1,18 +1,19 @@
 <template>
   <div ref="target" class="flex items-center justify-center gap-2 text-base">
+    <div>
+      <div>isPageLimitReached {{ isPageLimitReached }}</div>
+      <div>pageNumber {{ pageNumber }}</div>
+      <div>pagesCount {{ pagesCount }}</div>
+      <div>loading {{ loading }}</div>
+    </div>
     <slot v-if="loading" name="loader">
       <VcLoader />
     </slot>
-
     <slot v-else name="loaded">
-      <VcIcon
-        v-if="isPageLimitReached || (!loading && pageNumber === pagesCount)"
-        class="size-7 fill-primary"
-        name="badge-check"
-      />
+      <VcIcon v-if="isPageLimitReached || pageNumber === pagesCount" class="size-7 fill-primary" name="badge-check" />
 
       <span v-if="isPageLimitReached">{{ $t("ui_kit.reach_limit.page_limit_filters") }}</span>
-      <span v-else-if="!loading && pageNumber === pagesCount">{{ $t("ui_kit.reach_limit.end_list") }}</span>
+      <span v-else-if="pageNumber === pagesCount">{{ $t("ui_kit.reach_limit.end_list") }}</span>
     </slot>
   </div>
 </template>

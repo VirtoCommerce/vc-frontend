@@ -40,6 +40,8 @@ export function useProducts(
   } = options;
   const { openModal } = useModal();
 
+  console.log("PAGE_LIMIT", PAGE_LIMIT);
+
   const localStorageInStock = useLocalStorage<boolean>(IN_STOCK_PRODUCTS_LOCAL_STORAGE, true);
   const localStorageBranches = useLocalStorage<string[]>(FFC_LOCAL_STORAGE, []);
 
@@ -244,6 +246,8 @@ export function useProducts(
         PAGE_LIMIT,
       );
 
+      console.log("fetchProducts", pagesCount.value);
+
       if (withFacets) {
         setFacets({
           termFacets: term_facets,
@@ -276,6 +280,8 @@ export function useProducts(
         Math.ceil(totalProductsCount.value / (searchParams.itemsPerPage || DEFAULT_ITEMS_PER_PAGE)),
         PAGE_LIMIT,
       );
+
+      console.log("fetchMoreProducts", pagesCount.value);
     } catch (e) {
       Logger.error(`useProducts.${fetchMoreProducts.name}`, e);
       throw e;
@@ -313,6 +319,7 @@ export function useProducts(
 
   function updateCurrentPage(page: number) {
     currentPage.value = page;
+    console.log("updateCurrentPage", currentPage.value);
   }
 
   function resetCurrentPage() {
