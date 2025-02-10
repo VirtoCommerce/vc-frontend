@@ -1,3 +1,4 @@
+import { ROUTES } from "@/router/routes/constants";
 import { accountRoutes } from "./account";
 import { checkoutRoutes } from "./checkout";
 import { corporateRoutes } from "./company";
@@ -68,7 +69,7 @@ export const mainRoutes: RouteRecordRaw[] = [
   { path: "/cart", name: "Cart", component: Cart },
   { path: "/successful-registration", name: "Welcome", component: Welcome, meta: { public: true } },
   ...checkoutRoutes,
-  { path: "/catalog", name: "Catalog", component: Catalog, props: true },
+  { path: ROUTES.CATALOG.PATH, name: ROUTES.CATALOG.NAME, component: Catalog, props: true },
   { path: "/category/:categoryId", name: "Category", component: Category, props: true },
   { path: "/product/:productId", name: "Product", component: Product, props: true },
 
