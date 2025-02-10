@@ -28,7 +28,11 @@
         </VcInput>
       </VcWidget>
 
-      <VcWidget v-if="canEditOrganization" :title="$t('pages.company.info.labels.company_logo')" size="lg">
+      <VcWidget
+        v-if="canEditOrganization && !(loadingOrganization || loadingUser)"
+        :title="$t('pages.company.info.labels.company_logo')"
+        size="lg"
+      >
         <div class="flex gap-4 max-md:flex-col-reverse">
           <VcImage
             v-if="newLogoUrl"
