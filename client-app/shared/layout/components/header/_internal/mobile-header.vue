@@ -89,7 +89,13 @@
         class="mr-4 grow"
         no-border
         @keydown.enter="searchPhrase && $router.push(searchPageLink)"
-      />
+      >
+        <template #append>
+          <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click.stop="reset">
+            <VcIcon name="delete-2" size="xs" class="fill-primary" />
+          </button>
+        </template>
+      </VcInput>
 
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 
@@ -121,11 +127,13 @@
 
 <script setup lang="ts">
 import { syncRefs, useElementSize, useScrollLock, whenever } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useRouteQueryParam, useWhiteLabeling } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
 import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
+import { ROUTES } from "@/router/routes/constants";
 import { useShortCart } from "@/shared/cart";
 import { useNestedMobileHeader } from "@/shared/layout";
 import { useCustomMobileHeaderComponents } from "@/shared/layout/composables/useCustomMobileHeaderComponents";
@@ -133,6 +141,7 @@ import { useSearchBar } from "@/shared/layout/composables/useSearchBar";
 import MobileMenu from "./mobile-menu/mobile-menu.vue";
 import type { StyleValue } from "vue";
 import type { RouteLocationRaw } from "vue-router";
+const router = useRouter();
 
 const { customComponents } = useCustomMobileHeaderComponents();
 const searchPhrase = ref("");
@@ -159,8 +168,11 @@ const searchPageLink = computed<RouteLocationRaw>(() => ({
   },
 }));
 
+function reset() {
+  void router.push({ name: ROUTES.CATALOG.NAME });
+}
+
 syncRefs(mobileMenuVisible, useScrollLock(document.body));
 
-watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 </script>

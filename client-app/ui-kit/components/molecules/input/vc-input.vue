@@ -10,6 +10,7 @@
         'vc-input--no-border': noBorder,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
+        'vc-input--search': type === 'search',
       },
     ]"
     v-bind="attrs"
@@ -190,6 +191,7 @@ function inputClick() {
   $noBorder: "";
   $center: "";
   $truncate: "";
+  $search: "";
 
   --base-color: var(--vc-input-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
@@ -334,6 +336,14 @@ function inputClick() {
 
     #{$error} & {
       @apply text-[--base-color];
+    }
+
+    #{$search} & {
+      @apply appearance-none #{!important};
+
+      &::-webkit-search-cancel-button {
+        @apply appearance-none;
+      }
     }
   }
 

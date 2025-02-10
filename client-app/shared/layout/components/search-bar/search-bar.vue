@@ -18,6 +18,7 @@
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
+          :loading="loading"
           @click="goToSearchResultsPage"
         />
       </template>
