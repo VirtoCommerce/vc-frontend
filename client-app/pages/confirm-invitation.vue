@@ -1,13 +1,13 @@
 <template>
-  <TwoColumn class="max-w-screen-xl">
-    <template #left>
+  <VcEmptyPage icon="outline-security-pc" image="reg.jpg" hide-mobile-side>
+    <div class="w-full sm:pe-12 lg:pe-24 lg:ps-12">
       <VcTypography tag="h1" class="mb-3">
         {{ $t("pages.confirm_invitation.header") }}
       </VcTypography>
 
       <p v-html-safe="$t('pages.confirm_invitation.text')" class="mb-4 text-sm" />
 
-      <form @submit="onSubmit">
+      <form class="text-start" @submit="onSubmit">
         <VcInput
           v-model="firstName"
           :label="$t('common.labels.first_name')"
@@ -91,17 +91,15 @@
             {{ error }}
           </VcAlert>
 
-          <VcButton :loading="loading" :disabled="!meta.valid" type="submit" class="mt-4 w-full lg:w-48">
-            {{ $t("common.buttons.register") }}
-          </VcButton>
+          <div class="max-sm:text-center">
+            <VcButton :loading="loading" :disabled="!meta.valid" type="submit" class="mt-4" min-width="12rem">
+              {{ $t("common.buttons.register") }}
+            </VcButton>
+          </div>
         </div>
       </form>
-    </template>
-
-    <template #right>
-      <VcImage class="max-w-md" src="sign-up-page-image.webp" lazy />
-    </template>
-  </TwoColumn>
+    </div>
+  </VcEmptyPage>
 </template>
 
 <script setup lang="ts">
@@ -112,7 +110,6 @@ import { useI18n } from "vue-i18n";
 import { object, ref as yupRef, string } from "yup";
 import { useErrorsTranslator, usePageHead, useRouteQueryParam } from "@/core/composables";
 import { PasswordTips, RegistrationSuccessModal, usePasswordRequirements, useUser } from "@/shared/account";
-import { TwoColumn } from "@/shared/layout";
 import { useModal } from "@/shared/modal";
 import type { IdentityErrorInfoType } from "@/core/api/graphql/types";
 

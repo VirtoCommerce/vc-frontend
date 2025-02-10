@@ -57,6 +57,7 @@ export function useCustomerReviews() {
     entityType: string;
     review: string;
     rating: number;
+    imageUrls?: string[];
   }): Promise<void> {
     fetching.value = true;
 
