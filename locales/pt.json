@@ -1107,7 +1107,7 @@
           "title": "Lista: {0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes na lista?"
+        "save_changes_message": "@:common.messages.save_changes"
       },
       "profile": {
         "meta": {
