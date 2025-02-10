@@ -2,7 +2,6 @@ import { createGlobalState } from "@vueuse/core";
 import cloneDeep from "lodash/cloneDeep";
 import { computed, ref } from "vue";
 import settingsData from "@/config/settings_data.json";
-import { useFetch } from "@/core/api/common";
 import { IS_DEVELOPMENT } from "../constants";
 import type { StoreResponseType } from "../api/graphql/types";
 import type { IThemeConfig, IThemeContext, IThemeConfigPreset } from "../types";
@@ -34,9 +33,11 @@ function _useThemeContext() {
     if (typeof preset === "string") {
       const presetFileName = preset.toLowerCase().replace(" ", "-");
 
-      const { data } = await useFetch(`/config/presets/${presetFileName}.json`).get().json<IThemeConfigPreset>();
+      const module = (await import(`@/assets/presets/${presetFileName}.json`)) as {
+        default: IThemeConfigPreset;
+      };
 
-      return data.value!;
+      return module.default;
     }
 
     return preset;
