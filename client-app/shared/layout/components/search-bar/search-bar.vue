@@ -10,7 +10,7 @@
       @input="onSearchPhraseChanged"
     >
       <template #append>
-        <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click="reset">
+        <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click.stop="reset">
           <VcIcon name="delete-2" size="xs" class="fill-primary" />
         </button>
 
@@ -131,7 +131,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -140,7 +140,8 @@ import { MODULE_XAPI_KEYS } from "@/core/constants/modules";
 import { QueryParamName } from "@/core/enums";
 import { globals } from "@/core/globals";
 import { getFilterExpressionForCategorySubtree, getFilterExpressionForZeroPrice } from "@/core/utilities";
-import { useSearchBar } from "../../composables";
+import { ROUTES } from "@/router/routes/constants";
+import { useSearchBar } from "@/shared/layout";
 import SearchBarProductCard from "./_internal/search-bar-product-card.vue";
 import type { GetSearchResultsParamsType } from "@/core/api/graphql/catalog";
 import type { Category } from "@/core/api/graphql/types";
@@ -284,6 +285,7 @@ function goToSearchResultsPage() {
 function reset() {
   searchPhrase.value = "";
   hideSearchDropdown();
+  void router.push({ name: ROUTES.CATALOG.NAME });
 }
 
 const searchProductsDebounced = useDebounceFn(searchAndShowDropdownResults, SEARCH_BAR_DEBOUNCE_TIME);
@@ -293,6 +295,5 @@ function onSearchPhraseChanged() {
   void searchProductsDebounced();
 }
 
-watchEffect(() => (searchPhrase.value = searchPhraseInUrl.value ?? ""));
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
 </script>
