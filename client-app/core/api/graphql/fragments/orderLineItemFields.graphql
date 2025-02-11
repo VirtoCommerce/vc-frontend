@@ -57,5 +57,6 @@ fragment orderLineItemFields on OrderLineItemType {
   configurationItems {
     id
     name
+    customText
   }
 }
