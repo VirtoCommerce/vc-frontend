@@ -61,18 +61,14 @@ function _useConfigurableProduct(configurableProductId: string) {
   const selectedConfiguration = computed(() => {
     return selectedConfigurationInput.value
       ?.filter((value) => {
-        const rawSection = configuration.value.find(({ id }) => id === value.sectionId);
-        return rawSection
-          ? validateValue(rawSection, { customText: value.customText, productId: value.option?.productId })
-          : false;
+        return validateValue(value.sectionId, { customText: value.customText, productId: value.option?.productId });
       })
       ?.reduce(
         (acc, section) => {
-          const rawSection = configuration.value.find(({ id }) => id === section.sectionId);
           acc[section.sectionId] = {
             productId: section.option?.productId,
             quantity: section.option?.quantity,
-            selectedOptionTextValue: getSelectedOptionTextValue(section, rawSection),
+            selectedOptionTextValue: getSelectedOptionTextValue(section, section.sectionId),
           };
           return acc;
         },
@@ -98,7 +94,7 @@ function _useConfigurableProduct(configurableProductId: string) {
 
       configuration.value.forEach((section) => {
         const preselectedValue = preselectedValues?.find(({ sectionId }) => sectionId === section.id);
-        const isPreselectedValueValid = validateValue(section, preselectedValue);
+        const isPreselectedValueValid = validateValue(section.id, preselectedValue);
         if ((preselectedValue && isPreselectedValueValid) || section.isRequired) {
           changeSelectionValue({
             sectionId: section.id,
@@ -154,10 +150,9 @@ function _useConfigurableProduct(configurableProductId: string) {
     const sectionIndex = selectedConfigurationInput.value?.findIndex(
       (section) => section.sectionId === payload.sectionId,
     );
-    const rawSection = configuration.value.find(({ id }) => id === payload.sectionId);
     if (sectionIndex !== -1) {
       const newValue = [...selectedConfigurationInput.value];
-      rawSection && validateValue(rawSection, payload)
+      validateValue(payload.sectionId, payload)
         ? newValue.splice(sectionIndex, 1, payload)
         : newValue.splice(sectionIndex, 1);
       selectedConfigurationInput.value = newValue;
@@ -215,7 +210,8 @@ function _useConfigurableProduct(configurableProductId: string) {
     abortBatchedCreateConfiguredLineItem();
   }
 
-  function getSelectedOptionTextValue(section: ConfigurationSectionInput, rawSection?: ConfigurationSectionType) {
+  function getSelectedOptionTextValue(section: ConfigurationSectionInput, sectionId: string) {
+    const rawSection = configuration.value.find(({ id }) => id === sectionId);
     if (!rawSection) {
       return "";
     }
@@ -229,7 +225,11 @@ function _useConfigurableProduct(configurableProductId: string) {
     }
   }
 
-  function validateValue(section: ConfigurationSectionType, value?: { productId?: string; customText?: string }) {
+  function validateValue(sectionId: string, value?: { productId?: string; customText?: string }) {
+    const section = configuration.value.find(({ id }) => id === sectionId);
+    if (!section) {
+      return false;
+    }
     switch (section.type) {
       case ProductConfigurationSectionType.Product:
         return (
