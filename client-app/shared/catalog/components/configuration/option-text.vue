@@ -41,7 +41,9 @@ interface IEmits {
 }
 
 watch(propsValue, (newVal) => {
-  inputValue.value = newVal;
+  if (newVal) {
+    inputValue.value = newVal;
+  }
 });
 </script>
 

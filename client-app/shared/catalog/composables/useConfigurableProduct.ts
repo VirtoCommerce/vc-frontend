@@ -154,10 +154,15 @@ function _useConfigurableProduct(configurableProductId: string) {
     const sectionIndex = selectedConfigurationInput.value?.findIndex(
       (section) => section.sectionId === payload.sectionId,
     );
+    const rawSection = configuration.value.find(({ id }) => id === payload.sectionId);
     if (sectionIndex !== -1) {
-      selectedConfigurationInput.value[sectionIndex] = payload;
+      const newValue = [...selectedConfigurationInput.value];
+      rawSection && validateValue(rawSection, payload)
+        ? newValue.splice(sectionIndex, 1, payload)
+        : newValue.splice(sectionIndex, 1);
+      selectedConfigurationInput.value = newValue;
     } else {
-      selectedConfigurationInput.value.push(payload);
+      selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
     }
   }
 
@@ -225,13 +230,17 @@ function _useConfigurableProduct(configurableProductId: string) {
   }
 
   function validateValue(section: ConfigurationSectionType, value?: { productId?: string; customText?: string }) {
-    if (section.type === ProductConfigurationSectionType.Product) {
-      return value?.productId && section.options?.some(({ product }) => product?.id === value.productId);
+    switch (section.type) {
+      case ProductConfigurationSectionType.Product:
+        return (
+          (!value?.productId && !section.isRequired) ||
+          section.options?.some(({ product }) => product?.id === value?.productId)
+        );
+      case ProductConfigurationSectionType.Text:
+        return true;
+      default:
+        return false;
     }
-    if (section.type === ProductConfigurationSectionType.Text) {
-      return value?.customText !== undefined;
-    }
-    return false;
   }
 
   return {
