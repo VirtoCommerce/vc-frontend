@@ -1107,7 +1107,7 @@
           "title": "清单：{0}"
         },
         "save_changes": "@:common.titles.save_changes",
-        "save_changes_message": "@:common.messages.save_changes 列表中吗?"
+        "save_changes_message": "@:common.messages.save_changes"
       },
       "profile": {
         "meta": {

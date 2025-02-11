@@ -29,7 +29,7 @@
       </VcWidget>
 
       <VcWidget
-        v-if="canEditOrganization || !loadingOrganization || !loadingUser"
+        v-if="canEditOrganization && !(loadingOrganization || loadingUser)"
         :title="$t('pages.company.info.labels.company_logo')"
         size="lg"
       >
