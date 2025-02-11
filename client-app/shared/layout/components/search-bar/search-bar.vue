@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 import { onClickOutside, useDebounceFn, useElementBounding, whenever } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useCategoriesRoutes, useAnalytics, useRouteQueryParam, useThemeContext } from "@/core/composables";
 import { useModuleSettings } from "@/core/composables/useModuleSettings";
@@ -303,4 +303,10 @@ function onSearchBarFocused() {
 }
 
 whenever(searchBarVisible, () => (searchPhrase.value = searchPhraseInUrl.value ?? ""), { immediate: true });
+
+onMounted(() => {
+  if(searchPhraseInUrl.value) {
+    searchPhrase.value = searchPhraseInUrl.value;
+  }
+});
 </script>

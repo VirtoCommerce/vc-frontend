@@ -83,10 +83,6 @@
 import { computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
-interface IEmits {
-  (event: "clear"): void;
-}
-
 export interface IProps {
   autocomplete?: string;
   readonly?: boolean;
@@ -115,6 +111,10 @@ export interface IProps {
   browserTooltip?: "enabled" | "disabled";
   selectOnClick?: boolean;
   testIdInput?: string;
+}
+
+interface IEmits {
+  (event: "clear"): void;
 }
 
 defineOptions({
