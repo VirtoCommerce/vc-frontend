@@ -24,6 +24,15 @@ export type ViewItemListParamsAdditionalType = { item_list_id?: string; item_lis
 
 export type EventParamsType = Record<string, unknown>;
 
-export type TackerType = Partial<{
+export type TrackerType = {
+  meta?: TrackerMetaType;
+  events: TrackerEventsType;
+};
+
+export type TrackerMetaType = {
+  name: string;
+};
+
+export type TrackerEventsType = Partial<{
   [K in AnalyticsEventNameType]: (...args: IAnalyticsEventMap[K]) => void | Promise<void>;
 }>;
