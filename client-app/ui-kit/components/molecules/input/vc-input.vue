@@ -10,7 +10,6 @@
         'vc-input--no-border': noBorder,
         'vc-input--center': center,
         'vc-input--truncate': truncate,
-        'vc-input--search': type === 'search',
       },
     ]"
     v-bind="attrs"
@@ -84,6 +83,10 @@
 import { computed, ref } from "vue";
 import { useAttrsOnly, useComponentId, useListeners } from "@/ui-kit/composables";
 
+interface IEmits {
+  (event: "clear"): void;
+}
+
 export interface IProps {
   autocomplete?: string;
   readonly?: boolean;
@@ -117,6 +120,8 @@ export interface IProps {
 defineOptions({
   inheritAttrs: false,
 });
+
+const emit = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
   type: "text",
@@ -161,6 +166,7 @@ function handleContainerClick() {
 function clear() {
   model.value = undefined;
   inputElement.value?.focus();
+  emit("clear");
 }
 
 // Workaround to fix Safari bug
@@ -191,7 +197,6 @@ function inputClick() {
   $noBorder: "";
   $center: "";
   $truncate: "";
-  $search: "";
 
   --base-color: var(--vc-input-base-color, var(--color-primary-500));
   --focus-color: rgb(from var(--base-color) r g b / 0.3);
@@ -301,6 +306,10 @@ function inputClick() {
   &__input {
     @apply relative m-px px-3 appearance-none bg-transparent rounded-[3px] leading-none w-full min-w-0;
 
+    &::-webkit-search-cancel-button {
+      @apply appearance-none;
+    }
+
     &:autofill {
       &:disabled {
         box-shadow: 0 0 0 1000px #f9fafb inset;
@@ -336,14 +345,6 @@ function inputClick() {
 
     #{$error} & {
       @apply text-[--base-color];
-    }
-
-    #{$search} & {
-      @apply appearance-none;
-
-      &::-webkit-search-cancel-button {
-        @apply appearance-none;
-      }
     }
   }
 

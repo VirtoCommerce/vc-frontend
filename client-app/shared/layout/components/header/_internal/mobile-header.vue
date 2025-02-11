@@ -88,14 +88,10 @@
         :placeholder="$t('shared.layout.header.mobile.search_bar.input_placeholder')"
         class="mr-4 grow"
         no-border
+        clearable
         @keydown.enter="searchPhrase && $router.push(searchPageLink)"
-      >
-        <template #append>
-          <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click.stop="reset">
-            <VcIcon name="delete-2" size="xs" class="fill-primary" />
-          </button>
-        </template>
-      </VcInput>
+        @clear="reset"
+      />
 
       <VcButton :to="searchPhrase && searchPageLink" icon="search" />
 

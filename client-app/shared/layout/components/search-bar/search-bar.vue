@@ -2,19 +2,18 @@
   <div ref="searchBarElement" class="relative flex grow items-stretch">
     <VcInput
       v-model="searchPhrase"
+      type="search"
       :maxlength="MAX_LENGTH"
       class="w-full"
       :placeholder="$t('shared.layout.search_bar.enter_keyword_placeholder')"
+      clearable
       @keyup.enter="goToSearchResultsPage"
       @keyup.esc="hideSearchDropdown"
       @input="onSearchPhraseChanged"
       @focus="onSearchBarFocused"
+      @clear="reset"
     >
       <template #append>
-        <button v-if="searchPhrase" type="button" class="flex h-full items-center px-3" @click.stop="reset">
-          <VcIcon name="delete-2" size="xs" class="fill-primary" />
-        </button>
-
         <VcButton
           :aria-label="$t('shared.layout.search_bar.search_button')"
           icon="search"
