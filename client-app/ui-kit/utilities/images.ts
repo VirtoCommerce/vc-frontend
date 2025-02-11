@@ -2,7 +2,7 @@ import DOMPurify from "dompurify";
 import { Logger } from "@/core/utilities";
 
 export function getImageUrl(fileName?: string) {
-  return new URL(`/client-app/assets/images/${fileName}`, import.meta.url).href;
+  return new URL(`../../assets/images/${fileName}`, import.meta.url).href;
 }
 
 export function getIconUrl(name?: string) {
