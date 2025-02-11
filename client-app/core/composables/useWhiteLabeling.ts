@@ -1,5 +1,5 @@
 import { createGlobalState, useEventBus } from "@vueuse/core";
-import { computed, shallowRef } from "vue";
+import { computed, ref, shallowRef } from "vue";
 import { getGetWhiteLabelingSettings } from "@/core/api/graphql/whiteLabeling/queries";
 import { WHITE_LABELING_FETCHED_SETTINGS_EVENT } from "@/core/constants/modules-events";
 import { Logger, convertToExtendedMenuLink } from "@/core/utilities";
@@ -21,6 +21,8 @@ const moduleEnabled = computed(
 
 const { emit } = useEventBus(WHITE_LABELING_FETCHED_SETTINGS_EVENT);
 
+const customCompanyLogo = ref<string | undefined>();
+
 function _useWhiteLabeling() {
   async function fetchWhiteLabelingSettings(): Promise<void> {
     if (moduleEnabled.value) {
@@ -34,8 +36,14 @@ function _useWhiteLabeling() {
     }
   }
 
+  function updateCustomCompanyLogo(logoUrl: string): void {
+    customCompanyLogo.value = logoUrl;
+  }
+
   return {
-    logoUrl: computed(() => whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image),
+    logoUrl: computed(
+      () => customCompanyLogo.value ?? whiteLabelingSettings.value?.logoUrl ?? themeContext.value?.settings?.logo_image,
+    ),
     secondaryLogoUrl: computed(
       () => whiteLabelingSettings.value?.secondaryLogoUrl ?? themeContext.value?.settings?.logo_inverted_image,
     ),
@@ -45,6 +53,7 @@ function _useWhiteLabeling() {
     favIcons: computed(() => whiteLabelingSettings.value?.favicons),
     themePresetName: computed(() => whiteLabelingSettings.value?.themePresetName),
     fetchWhiteLabelingSettings,
+    updateCustomCompanyLogo,
   };
 }
 

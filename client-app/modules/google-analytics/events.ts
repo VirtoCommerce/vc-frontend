@@ -3,11 +3,11 @@ import { globals } from "@/core/globals";
 import { Logger } from "@/core/utilities";
 import { DEBUG_PREFIX } from "./constants";
 import { lineItemToGtagItem, productToGtagItem, sendEvent } from "./utils";
-import type { TackerType } from "@/core/types/analytics";
+import type { TrackerEventsType } from "@/core/types/analytics";
 
 const { currencyCode } = globals;
 
-export const analytics: TackerType = {
+export const events: TrackerEventsType = {
   viewItemList(items, params) {
     sendEvent("view_item_list", {
       ...params,
