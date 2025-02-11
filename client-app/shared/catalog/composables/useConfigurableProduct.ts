@@ -90,27 +90,10 @@ function _useConfigurableProduct(configurableProductId: string) {
     try {
       const data = await getProductConfiguration(configurableProductId);
       configuration.value = (data?.configurationSections as ConfigurationSectionType[]) ?? [];
-      const preselectedValues = await getPreselectedValues();
 
-      configuration.value.forEach((section) => {
-        const preselectedValue = preselectedValues?.find(({ sectionId }) => sectionId === section.id);
-        const isPreselectedValueValid = validateValue(section.id, preselectedValue);
-        if ((preselectedValue && isPreselectedValueValid) || section.isRequired) {
-          changeSelectionValue({
-            sectionId: section.id,
-            customText:
-              section.type === ProductConfigurationSectionType.Text ? preselectedValue?.customText : undefined,
-            type: section.type as unknown as CartConfigurationItemEnumType,
-            option:
-              section.type === ProductConfigurationSectionType.Product
-                ? {
-                    productId: preselectedValue?.productId ?? section.options?.[0]?.product?.id ?? "",
-                    quantity: preselectedValue?.quantity ?? section.options?.[0]?.quantity ?? 1,
-                  }
-                : undefined,
-          });
-        }
-      });
+      const preselectedValues = await getPreselectedValues();
+      updateWithPreselectedValues(preselectedValues);
+
       initialSelectedConfigurationInput.value = selectedConfigurationInput.value;
       void createConfiguredLineItem();
     } catch (e) {
@@ -241,6 +224,30 @@ function _useConfigurableProduct(configurableProductId: string) {
       default:
         return false;
     }
+  }
+
+  function updateWithPreselectedValues(preselectedValues?: CartConfigurationItemType[]) {
+    if (!preselectedValues) {
+      return;
+    }
+    preselectedValues.forEach((value) => {
+      const section = configuration.value.find(({ id }) => id === value.sectionId);
+      const isPreselectedValueValid = section && validateValue(section.id, value);
+      if (isPreselectedValueValid || section?.isRequired) {
+        changeSelectionValue({
+          sectionId: section.id,
+          customText: section.type === ProductConfigurationSectionType.Text ? value?.customText : undefined,
+          type: section.type as unknown as CartConfigurationItemEnumType,
+          option:
+            section.type === ProductConfigurationSectionType.Product
+              ? {
+                  productId: value?.productId ?? section.options?.[0]?.product?.id ?? "",
+                  quantity: value?.quantity ?? section.options?.[0]?.quantity ?? 1,
+                }
+              : undefined,
+        });
+      }
+    });
   }
 
   return {
