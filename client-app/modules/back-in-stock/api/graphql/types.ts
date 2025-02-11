@@ -46,6 +46,7 @@ export type BackInStockSubscriptionType = {
   id: Scalars['String']['output'];
   isActive: Scalars['Boolean']['output'];
   memberId?: Maybe<Scalars['String']['output']>;
+  productCode?: Maybe<Scalars['String']['output']>;
   productId: Scalars['String']['output'];
   productName?: Maybe<Scalars['String']['output']>;
   storeId: Scalars['String']['output'];

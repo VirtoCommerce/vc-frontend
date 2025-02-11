@@ -96,6 +96,7 @@ export enum CustomerReviewStatus {
 }
 
 export type Mutations = {
+  /** @deprecated Use createReview mutation instead. */
   createCustomerReview?: Maybe<CustomerReview>;
   createReview?: Maybe<CreateReviewResult>;
 };
