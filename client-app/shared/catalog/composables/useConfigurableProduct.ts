@@ -10,6 +10,7 @@ import {
   useChangeCartConfiguredItemMutation,
   useCreateConfiguredLineItemMutation,
 } from "@/core/api/graphql";
+import { ProductConfigurationSectionType } from "@/core/api/graphql/types";
 import { getMergeStrategyUniqueBy, useMutationBatcher } from "@/core/composables";
 import { LINE_ITEM_ID_URL_SEARCH_PARAM } from "@/core/constants";
 import { getUrlSearchParam, Logger } from "@/core/utilities";
@@ -20,13 +21,14 @@ import type {
   ConfigurationSectionType,
   CreateConfiguredLineItemMutation,
   ShortCartFragment,
+  CartConfigurationItemEnumType,
 } from "@/core/api/graphql/types";
 import type { DeepReadonly, Ref } from "vue";
 
 type SelectedConfigurationType = {
   productId: string | undefined;
   quantity: number | undefined;
-  selectedProductTitle: string | undefined;
+  selectedTextValue: string | undefined;
 };
 
 provideApolloClient(apolloClient);
@@ -53,20 +55,24 @@ function _useConfigurableProduct(configurableProductId: string) {
 
   const configuration: Ref<ConfigurationSectionType[]> = ref([]);
   const configuredLineItem: Ref<CreateConfiguredLineItemMutation["createConfiguredLineItem"]> = ref();
-  const selectedConfigurationInput: Ref<ConfigurationSectionInput[] | []> = ref([]);
+  const selectedConfigurationInput: Ref<ConfigurationSectionInput[]> = ref([]);
   const initialSelectedConfigurationInput: Ref<DeepReadonly<ConfigurationSectionInput[] | []>> = ref([]);
 
   const selectedConfiguration = computed(() => {
     return selectedConfigurationInput.value
-      ?.filter(({ value }) => value !== undefined)
+      ?.filter((value) => {
+        const rawSection = configuration.value.find(({ id }) => id === value.sectionId);
+        return rawSection
+          ? validateValue(rawSection, { customText: value.customText, productId: value.option?.productId })
+          : false;
+      })
       ?.reduce(
         (acc, section) => {
           const rawSection = configuration.value.find(({ id }) => id === section.sectionId);
           acc[section.sectionId] = {
-            productId: section.value?.productId,
-            quantity: section.value?.quantity,
-            selectedProductTitle: rawSection?.options?.find(({ product }) => product?.id === section.value?.productId)
-              ?.product?.name,
+            productId: section.option?.productId,
+            quantity: section.option?.quantity,
+            selectedTextValue: getSelectedTextValue(section, rawSection),
           };
           return acc;
         },
@@ -92,17 +98,20 @@ function _useConfigurableProduct(configurableProductId: string) {
 
       configuration.value.forEach((section) => {
         const preselectedValue = preselectedValues?.find(({ sectionId }) => sectionId === section.id);
-        const isPreselectedValueValid =
-          preselectedValue?.productId &&
-          section.options?.some(({ product }) => product?.id === preselectedValue.productId);
-
+        const isPreselectedValueValid = validateValue(section, preselectedValue);
         if ((preselectedValue && isPreselectedValueValid) || section.isRequired) {
           changeSelectionValue({
             sectionId: section.id,
-            value: {
-              productId: preselectedValue?.productId ?? section.options?.[0]?.product?.id ?? "",
-              quantity: preselectedValue?.quantity ?? section.options?.[0]?.quantity ?? 1,
-            },
+            customText:
+              section.type === ProductConfigurationSectionType.Text ? preselectedValue?.customText : undefined,
+            type: section.type as unknown as CartConfigurationItemEnumType,
+            option:
+              section.type === ProductConfigurationSectionType.Product
+                ? {
+                    productId: preselectedValue?.productId ?? section.options?.[0]?.product?.id ?? "",
+                    quantity: preselectedValue?.quantity ?? section.options?.[0]?.quantity ?? 1,
+                  }
+                : undefined,
           });
         }
       });
@@ -146,11 +155,9 @@ function _useConfigurableProduct(configurableProductId: string) {
       (section) => section.sectionId === payload.sectionId,
     );
     if (sectionIndex !== -1) {
-      const newValue = [...selectedConfigurationInput.value];
-      payload.value ? newValue.splice(sectionIndex, 1, payload) : newValue.splice(sectionIndex, 1);
-      selectedConfigurationInput.value = newValue;
-    } else if (payload.value) {
-      selectedConfigurationInput.value = [...selectedConfigurationInput.value, payload];
+      selectedConfigurationInput.value[sectionIndex] = payload;
+    } else {
+      selectedConfigurationInput.value.push(payload);
     }
   }
 
@@ -164,7 +171,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     if (lineItemId) {
       try {
         const result = await getConfigurationItems(lineItemId, cart.value?.id);
-        return result?.configurationItems ?? [];
+        return (result?.configurationItems as CartConfigurationItemType[]) ?? [];
       } catch (e) {
         Logger.error(`${useConfigurableProduct.name}.${getPreselectedValues.name}`, e);
         throw e;
@@ -201,6 +208,30 @@ function _useConfigurableProduct(configurableProductId: string) {
     configuration.value = [];
     configuredLineItem.value = undefined;
     abortBatchedCreateConfiguredLineItem();
+  }
+
+  function getSelectedTextValue(section: ConfigurationSectionInput, rawSection?: ConfigurationSectionType) {
+    if (!rawSection) {
+      return "";
+    }
+    switch (rawSection.type) {
+      case ProductConfigurationSectionType.Text:
+        return section.customText;
+      case ProductConfigurationSectionType.Product:
+        return rawSection.options?.find(({ product }) => product?.id === section.option?.productId)?.product?.name;
+      default:
+        return "";
+    }
+  }
+
+  function validateValue(section: ConfigurationSectionType, value?: { productId?: string; customText?: string }) {
+    if (section.type === ProductConfigurationSectionType.Product) {
+      return value?.productId && section.options?.some(({ product }) => product?.id === value.productId);
+    }
+    if (section.type === ProductConfigurationSectionType.Text) {
+      return value?.customText !== undefined;
+    }
+    return false;
   }
 
   return {

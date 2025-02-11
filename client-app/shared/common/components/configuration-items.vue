@@ -8,7 +8,7 @@
 
     <ul class="space-y-1.5 pt-2 text-xs" :class="{ hidden: isCollapsed }">
       <li v-for="(configurationItem, index) in configurationItems" :key="configurationItem.id">
-        {{ `${index + 1}. ${configurationItem.name}` }}
+        {{ `${index + 1}. ${configurationItem.name ?? configurationItem.customText}` }}
       </li>
       <li>
         <VcButton v-if="allowEdit" size="xs" :to="editRoute" append-icon="edit" variant="outline">
@@ -27,6 +27,7 @@ interface IProps {
   configurationItems?: {
     id: string;
     name?: string;
+    customText?: string;
   }[];
   lineItemId?: string;
   allowEdit?: boolean;

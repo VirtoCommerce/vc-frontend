@@ -37,6 +37,7 @@ export type AnyLineItemType = {
   configurationItems?: {
     id: string;
     name?: string;
+    customText?: string;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
@@ -75,6 +76,7 @@ export type PreparedLineItemType = {
   configurationItems?: {
     id: string;
     name?: string;
+    customText?: string;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
