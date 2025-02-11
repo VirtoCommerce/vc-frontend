@@ -28,7 +28,7 @@ import type { DeepReadonly, Ref } from "vue";
 type SelectedConfigurationType = {
   productId: string | undefined;
   quantity: number | undefined;
-  selectedTextValue: string | undefined;
+  selectedOptionTextValue: string | undefined;
 };
 
 provideApolloClient(apolloClient);
@@ -72,7 +72,7 @@ function _useConfigurableProduct(configurableProductId: string) {
           acc[section.sectionId] = {
             productId: section.option?.productId,
             quantity: section.option?.quantity,
-            selectedTextValue: getSelectedTextValue(section, rawSection),
+            selectedOptionTextValue: getSelectedOptionTextValue(section, rawSection),
           };
           return acc;
         },
@@ -215,7 +215,7 @@ function _useConfigurableProduct(configurableProductId: string) {
     abortBatchedCreateConfiguredLineItem();
   }
 
-  function getSelectedTextValue(section: ConfigurationSectionInput, rawSection?: ConfigurationSectionType) {
+  function getSelectedOptionTextValue(section: ConfigurationSectionInput, rawSection?: ConfigurationSectionType) {
     if (!rawSection) {
       return "";
     }

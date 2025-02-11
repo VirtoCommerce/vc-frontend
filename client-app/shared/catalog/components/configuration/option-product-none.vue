@@ -1,5 +1,5 @@
 <template>
-  <VcProductCard view-mode="item" class="product-configuration__item">
+  <VcProductCard view-mode="item" class="configuration-option-product-none">
     <template #media>
       <VcRadioButton
         value="none"

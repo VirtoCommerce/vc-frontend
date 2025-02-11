@@ -114,6 +114,7 @@ async function onChange() {
 }
 
 async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mode: AddToCartModeType) {
+  console.log("add", selectedConfigurationInput.value);
   if (mode === AddToCartModeType.Update && !enteredQuantity.value) {
     return cart.value;
   }
@@ -122,7 +123,6 @@ async function updateOrAddToCart(lineItem: ShortLineItemFragment | undefined, mo
       ? await changeCartConfiguredItem(lineItem.id, enteredQuantity.value, selectedConfigurationInput.value)
       : await changeItemQuantity(lineItem.id, enteredQuantity.value);
   }
-
   const quantity = enteredQuantity.value || minQty.value;
   const config = isConfigurable.value ? selectedConfigurationInput.value : undefined;
   const updatedCart = await addToCart(product.value.id, quantity, config);

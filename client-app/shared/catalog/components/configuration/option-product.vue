@@ -9,7 +9,10 @@
       />
       <VcProductImage :img-src="product.imgSrc" :alt="product.name" />
     </template>
-    <VcProductTitle :to="getProductRoute(product.id, product.slug)">{{ product.name }}</VcProductTitle>
+
+    <VcProductTitle :to="getProductRoute(product.id, product.slug)">
+      {{ product.name }}
+    </VcProductTitle>
 
     <VcProductProperties>
       <VcProperty
@@ -18,6 +21,7 @@
         :label="property.name"
         :value="property.value"
       />
+
       <VcProperty class="@2xl:hidden" :label="$t('common.labels.price_per_item')">
         <VcPriceDisplay :value="listPrice" />
       </VcProperty>

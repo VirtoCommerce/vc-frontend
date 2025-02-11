@@ -102,7 +102,7 @@ describe("useConfigurableProduct", () => {
         "Section 1": {
           productId: "product-1",
           quantity: 1,
-          selectedTextValue: "Product 1",
+          selectedOptionTextValue: "Product 1",
         },
       });
     });
@@ -131,12 +131,12 @@ describe("useConfigurableProduct", () => {
         "Section 1": {
           productId: "product-1",
           quantity: 1,
-          selectedTextValue: "Product 1",
+          selectedOptionTextValue: "Product 1",
         },
         "Section 2": {
           productId: "product-3",
           quantity: 1,
-          selectedTextValue: "Product 3",
+          selectedOptionTextValue: "Product 3",
         },
       });
     });
@@ -350,17 +350,17 @@ describe("useConfigurableProduct", () => {
         "Section 1": {
           productId: "product-2",
           quantity: 1,
-          selectedTextValue: "Product 2",
+          selectedOptionTextValue: "Product 2",
         },
         "Section 2": {
           productId: "product-4",
           quantity: 2,
-          selectedTextValue: "Product 4",
+          selectedOptionTextValue: "Product 4",
         },
         "Section 3": {
           productId: "product-5",
           quantity: 1,
-          selectedTextValue: "Product 5",
+          selectedOptionTextValue: "Product 5",
         },
       });
     });
@@ -417,7 +417,7 @@ describe("useConfigurableProduct", () => {
         "Section 1": {
           productId: "product-1",
           quantity: 1,
-          selectedTextValue: "Product 1",
+          selectedOptionTextValue: "Product 1",
         },
         "Section 2": undefined,
       });

@@ -7,7 +7,11 @@
         value="selected"
         @input="$emit('input', inputValue)"
       />
-      <VcInput v-model="inputValue" class="configuration-option-text__input" @input="$emit('input', inputValue)" />
+      <VcInput
+        v-model="inputValue"
+        class="configuration-option-text__input"
+        @input="selected && $emit('input', inputValue)"
+      />
     </div>
 
     <div v-if="!isRequired" class="configuration-option-text__field configuration-option-text__field--none">

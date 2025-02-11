@@ -65,7 +65,7 @@
           <OptionText
             v-if="section.type === ProductConfigurationSectionType.Text"
             :is-required="section.isRequired"
-            :value="selectedConfiguration[section.id]?.selectedTextValue"
+            :value="selectedConfiguration[section.id]?.selectedOptionTextValue"
             :selected="!!selectedConfiguration[section.id]"
             @input="
               handleInput({
@@ -143,24 +143,22 @@ watch(isConfigurationChanged, (isChanged) => {
   }
 });
 
-function handleInput({ sectionId, option, customText, type }: ConfigurationSectionInput) {
-  selectSectionValue({ sectionId, option, customText, type });
+function handleInput(payload: ConfigurationSectionInput) {
+  selectSectionValue(payload);
 }
 
 function getSectionSubtitle(section: DeepReadonly<ConfigurationSectionType>) {
-  let emptyText = "";
+  if (selectedConfiguration.value?.[section.id]?.selectedOptionTextValue) {
+    return selectedConfiguration.value?.[section.id]?.selectedOptionTextValue;
+  }
   switch (section.type) {
     case ProductConfigurationSectionType.Product:
-      emptyText = t("shared.catalog.product_details.product_configuration.nothing_selected");
-      break;
+      return t("shared.catalog.product_details.product_configuration.nothing_selected");
     case ProductConfigurationSectionType.Text:
-      emptyText = t("shared.catalog.product_details.product_configuration.no_text_entered");
-      break;
+      return t("shared.catalog.product_details.product_configuration.no_text_entered");
     default:
-      emptyText = t("shared.catalog.product_details.product_configuration.nothing_selected");
-      break;
+      return t("shared.catalog.product_details.product_configuration.nothing_selected");
   }
-  return selectedConfiguration.value?.[section.id]?.selectedTextValue ?? emptyText;
 }
 
 async function canChangeRoute(): Promise<boolean> {
