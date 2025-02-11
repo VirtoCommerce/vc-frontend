@@ -35,6 +35,8 @@ import { computed } from "vue";
 import { prepareLineItems } from "@/core/utilities";
 import { ConfigurationItems } from "@/shared/common";
 import type { LineItemType, OrderLineItemType } from "@/core/api/graphql/types";
+import type { AnyLineItemType } from "@/core/types";
+
 interface IProps {
   items?: OrderLineItemType[] | LineItemType[];
 }
@@ -43,5 +45,5 @@ const props = withDefaults(defineProps<IProps>(), {
   items: () => [],
 });
 
-const preparedLineItems = computed(() => prepareLineItems(props.items));
+const preparedLineItems = computed(() => prepareLineItems(props.items as AnyLineItemType[]));
 </script>

@@ -8,7 +8,7 @@
 
     <ul class="space-y-1.5 pt-2 text-xs" :class="{ hidden: isCollapsed }">
       <li v-for="(configurationItem, index) in configurationItems" :key="configurationItem.id">
-        {{ `${index + 1}. ${configurationItem.name ?? configurationItem.customText}` }}
+        {{ `${index + 1}. ${getText(configurationItem)}` }}
       </li>
       <li>
         <VcButton v-if="allowEdit" size="xs" :to="editRoute" append-icon="edit" variant="outline">
@@ -21,14 +21,18 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef } from "vue";
+import { CartConfigurationItemEnumType } from "@/core/api/graphql/types";
 import type { RouteLocationRaw } from "vue-router";
 
+type ConfigurationItemType = {
+  id: string;
+  name?: string;
+  customText?: string;
+  type: CartConfigurationItemEnumType;
+};
+
 interface IProps {
-  configurationItems?: {
-    id: string;
-    name?: string;
-    customText?: string;
-  }[];
+  configurationItems?: ConfigurationItemType[];
   lineItemId?: string;
   allowEdit?: boolean;
   route?: RouteLocationRaw;
@@ -49,4 +53,15 @@ const editRoute = computed(() => {
   }
   return "";
 });
+
+function getText(configurationItem: ConfigurationItemType): string {
+  switch (configurationItem.type) {
+    case CartConfigurationItemEnumType.Text:
+      return configurationItem.customText ?? "";
+    case CartConfigurationItemEnumType.Product:
+      return configurationItem.name ?? "";
+    default:
+      return "";
+  }
+}
 </script>

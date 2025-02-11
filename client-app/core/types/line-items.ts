@@ -1,5 +1,6 @@
 import type {
   AvailabilityData,
+  CartConfigurationItemEnumType,
   CommonVendor,
   MoneyType,
   Product,
@@ -38,6 +39,7 @@ export type AnyLineItemType = {
     id: string;
     name?: string;
     customText?: string;
+    type: CartConfigurationItemEnumType;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
@@ -77,6 +79,7 @@ export type PreparedLineItemType = {
     id: string;
     name?: string;
     customText?: string;
+    type: CartConfigurationItemEnumType;
   }[];
   showPlacedPrice?: boolean;
   listTotal?: MoneyType;
