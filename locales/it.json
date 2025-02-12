@@ -558,8 +558,7 @@
       },
       "configuration_items": {
         "title": "Elenco componenti",
-        "edit_configuration": "Modifica configurazione",
-        "selected_text": "Testo selezionato: {text}"
+        "edit_configuration": "Modifica configurazione"
       }
     },
     "catalog": {
@@ -610,8 +609,7 @@
           "none": "Nessuno",
           "nothing_selected": "Niente selezionato",
           "changed_notification": "La configurazione del prodotto è stata modificata. Puoi sempre salvarla più tardi facendo clic sul pulsante \"@:{'ui_kit.buttons.update_cart'}\".",
-          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?",
-          "no_text": "Nessun testo selezionato"
+          "changed_confirmation": "La configurazione del prodotto è stata modificata. Vuoi salvarla?"
         }
       },
       "discount_badge": {
