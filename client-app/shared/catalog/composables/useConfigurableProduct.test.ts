@@ -328,19 +328,19 @@ describe("useConfigurableProduct", () => {
         },
         {
           customText: undefined,
-          sectionId: "Section 2",
+          sectionId: "Section 3",
           option: {
-            productId: "product-4",
-            quantity: 2,
+            productId: "product-5",
+            quantity: 1,
           },
           type: CartConfigurationItemEnumType.Product,
         },
         {
           customText: undefined,
-          sectionId: "Section 3",
+          sectionId: "Section 2",
           option: {
-            productId: "product-5",
-            quantity: 1,
+            productId: "product-4",
+            quantity: 2,
           },
           type: CartConfigurationItemEnumType.Product,
         },
